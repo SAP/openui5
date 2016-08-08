@@ -132,5 +132,69 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "faf04fa39fe67fae1862543f68f4f56af0264acc",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter Fix for IE11 when oData.domNode is an SVG element.",
+        "references": []
+      }
+    ]
+  },
+  "1.38.5": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "12f3196fcf68599ea5a7abd9fe6ad5862fd1b163",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
+        "references": []
+      },
+      {
+        "id": "71b0c56a185dc26b8e3de0a9bc93b3b358fa9814",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
+        "references": []
+      },
+      {
+        "id": "7f6190cf743321833ae7cd0d4ad0093c8d2a783a",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
+        "references": []
+      },
+      {
+        "id": "a83845c2fbd70b2338cdca8ee0d5d04763dc830f",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
+        "references": []
+      }
+    ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "369fb4d741285d087a0ddbd5460afe258b7cf235",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "0b2d382108d026c681395b97d5884d295eab9ea3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
   }
 }

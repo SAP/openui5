@@ -1110,5 +1110,67 @@
         "references": []
       }
     ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "2536066ef3945407048ec8709b598ff2e1278b18",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      }
+    ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "858845f0e8b4b83b8f685007a9ce16ce0dfbafe6",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Accordion: Width issue is fixed",
+        "references": []
+      },
+      {
+        "id": "b9330830eae1513a610da19056420f22f1d5208e",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: set size of cursor and colorBox inline",
+        "references": []
+      },
+      {
+        "id": "3d2bb18815ff022e0688f1dc522b77f5f561f0e5",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "677e0263683725c46e75d06160f6c93c540cea8e",
+        "author": "i032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Accordion: Right border is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.37": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "0b8a38bc8e7405cc82a9abcc8ceee49cea3b58d8",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: select text by opening",
+        "references": []
+      }
+    ]
   }
 }

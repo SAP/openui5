@@ -2875,5 +2875,137 @@
         "references": []
       }
     ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "24d748d53f3773975bf5b64313b3c253478fcd4a",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataBinding: Properly cleanup binding info when binding becomes invalid",
+        "references": []
+      },
+      {
+        "id": "08e2d380d4e1291fc9a673c62d1e253d353eac8c",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Themeroots / preloadLibCss: Register correct module paths",
+        "references": []
+      }
+    ]
+  },
+  "1.28.34": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "d817f03117c57091cb013502c38e8b912451b949",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "cdecb8ae16e4e7c94d3f0c56e9dc80c629d90816",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: don\u0027t boot before all tasks have been created",
+        "references": []
+      },
+      {
+        "id": "10c7d91564ad02e50cd0f13fb3eac842c72c14db",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Promise Polyfill: Replace polyfill with es6 compliant version",
+        "references": []
+      },
+      {
+        "id": "a06da3eec16ba2ba8015fe01a6a693213241a487",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "don\u0027t fail when access to local storage is disallowed",
+        "references": []
+      },
+      {
+        "id": "ebf487b5045906335c7206e4c62670cce621fc73",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: fix scrolling in the ui.table.Table for FioriClient and Edge browser on Windows 10 and Windows 8.",
+        "references": []
+      },
+      {
+        "id": "1a3281813ec57d77cf765c87337f9818b4f90490",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "953744fdf6e4cf6a43947dfe5216c251eef90675",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Set length to final in InlineRepeat mode",
+        "references": []
+      }
+    ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "92243277530c7d17c6dd3fa252faf867523ca84c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Fix disabling in case of document.hidden \u003d\u003d\u003d false",
+        "references": []
+      },
+      {
+        "id": "3d2bb18815ff022e0688f1dc522b77f5f561f0e5",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      },
+      {
+        "id": "9b411e5709d4e0c7793c8bc5064ac1c5385d6942",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createKey must URI encode property values",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "15694a5e26e126cc47f5c501c060f0564db73d7d",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: delegate the owner in lazy component creation",
+        "references": []
+      },
+      {
+        "id": "fad758b31c0e509f5812a5e8976d4cda6f1c888f",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: don\u0027t skip onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "2f08d32f9c5685545adc149ef62c5a9ca33a8df4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: extend timeout to fix custom.css",
+        "references": []
+      },
+      {
+        "id": "aa0910f8e715766aa50079a0a447662b2f6ca2bb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Wrong data-url delimiter",
+        "references": []
+      }
+    ]
   }
 }

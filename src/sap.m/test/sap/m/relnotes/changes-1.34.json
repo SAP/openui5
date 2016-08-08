@@ -2984,5 +2984,178 @@
         "references": []
       }
     ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "55307e9d08317e68cf5a48349a7fc519ad378003",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "OverflowtoolBar wasn\u0027t displaying properly segmentedButton in the overflow popup",
+        "references": []
+      },
+      {
+        "id": "535d2f1db5e1db8a764523e428946c63d9307c8b",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dialog repositioning is fixed",
+        "references": []
+      },
+      {
+        "id": "b67721aed81117e20da9fc33042a8a2314895170",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter - enable screen readers to read the filter list position.",
+        "references": []
+      },
+      {
+        "id": "e227fb4f00da5e7b22259ba843652b27e4333c88",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
+        "references": []
+      },
+      {
+        "id": "8726f5bbc0361e46841dc03b0345a44a97e2b686",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "b9abf789a51f5b8f4c99334198b89106def540ab",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Adjustments to tests due to browser changes",
+        "references": []
+      },
+      {
+        "id": "7e111e1631c64daf2be53bfe544931c3a851857b",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected workaround for IE",
+        "references": []
+      },
+      {
+        "id": "15321513da0a4e53167af0a2316c8e632d405e71",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Workaround for incorrect base size calculation (IE)",
+        "references": []
+      },
+      {
+        "id": "41b9213e5b931353969d7c3a8da6921795a7f1e1",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: margin-top of subheader removed",
+        "references": []
+      },
+      {
+        "id": "9e13a9860007cde6c0fdaa1a31f3c0da257d87ba",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tab selection in Chrome is now fixed",
+        "references": []
+      },
+      {
+        "id": "c7f16e352d11c9a8812d7fbb67d8547a55b7184e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Image: should remove the sapMNoImg class when the src is invalid",
+        "references": []
+      },
+      {
+        "id": "b9b05c852b9aa4d0c79135ae1725f133cf5592ad",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: adjust container sizes in phone mode",
+        "references": []
+      },
+      {
+        "id": "77fbc3dbfd8fcca2d548dd0ec618c03ed67d4388",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: avoid setting value in MultiInput in paste event",
+        "references": []
+      },
+      {
+        "id": "62efc188eedcb94aa5042c742d01ebdc846105c4",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix overlay issue of MultiInput in layout control",
+        "references": []
+      },
+      {
+        "id": "78b76a7382de83cc2670898ad6bc59729d375252",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: Number from Right-to-Left language displayed properly",
+        "references": []
+      },
+      {
+        "id": "2282890d6c5c8c7463bae2cd999c531886097954",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "a21cb4c67a11ab0c088d68c2f59a926c8a7c4ca9",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Title textDirection support corrected",
+        "references": []
+      },
+      {
+        "id": "b5c47113f3be07b745e43bf9507bf788b5cd3343",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - on phone the panel text is shown now",
+        "references": []
+      },
+      {
+        "id": "0ffe5a17c2c247923364aae57dabb54e0a268681",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Unsafe toString() called on a null value",
+        "references": []
+      },
+      {
+        "id": "b880bd347111227c013e720c3fdda2c1566df363",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: texts truncation",
+        "references": []
+      },
+      {
+        "id": "f4539597358277eef5b8bdbf0054a8220afaaad3",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: ItemNavigation should include only direct children.",
+        "references": []
+      },
+      {
+        "id": "a8fb84a60d74662ba861f3deb840cdfac7b14571",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Tooltip for Upload button added",
+        "references": []
+      },
+      {
+        "id": "160074092a2248a55864d43e73796f05f6089673",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Focus is now preserved on list items re-render",
+        "references": []
+      },
+      {
+        "id": "afa642af662e68656b1d40fa9896f3353e97bf45",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group\u0027s \"None\" button now returns undefined",
+        "references": []
+      }
+    ]
   }
 }
