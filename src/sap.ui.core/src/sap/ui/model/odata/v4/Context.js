@@ -144,18 +144,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys the context. Sets the context to undefined on all dependent bindings. Deletes
-	 * oBinding and oModel, so that they cannot be actively used anymore, but keeps sPath and
-	 * iIndex, so that the context can still be identified in case of error.
+	 * Destroys this context, that is, it removes this context from all dependent bindings and drops
+	 * references to binding and model, so that the context cannot be used anymore; it keeps path
+	 * and index for debugging purposes.
 	 *
-	 * @private
+	 * @public
+	 * @see sap.ui.model.Context#destroy
+	 * @since 1.41.0
 	 */
+	// @override
 	Context.prototype.destroy = function () {
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
 		this.oModel = undefined;
+		BaseContext.prototype.destroy.apply(this);
 	};
 
 	/**

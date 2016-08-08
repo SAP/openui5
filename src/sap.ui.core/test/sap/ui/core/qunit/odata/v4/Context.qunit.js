@@ -610,6 +610,7 @@ sap.ui.require([
 			.returns([oBinding1, oBinding2]);
 		this.mock(oBinding1).expects("setContext").withExactArgs(undefined);
 		this.mock(oBinding2).expects("setContext").withExactArgs(undefined);
+		this.mock(BaseContext.prototype).expects("destroy").on(oContext).withExactArgs();
 
 		// code under test
 		oContext.destroy();
