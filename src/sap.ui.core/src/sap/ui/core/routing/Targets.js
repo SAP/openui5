@@ -401,14 +401,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 *
 			 * Could be triggered by calling the display function or by the {@link sap.ui.core.routing.Router} when a target is referenced in a matching route.
 			 *
+			 * @name sap.ui.core.routing.Targets#display
+			 * @event
 			 * @param {object} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {object} oEvent.getParameters.view The view that got displayed.
 			 * @param {object} oEvent.getParameters.control The control that now contains the view in the controlAggregation
 			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Targets#constuctor}
 			 * @param {object} oEvent.getParameters.name The name of the target firing the event
 			 * @param {object} oEvent.getParameters.data The data passed into the {@link sap.ui.core.routing.Targets#display} function
-			 * @event
 			 * @public
 			 */
 

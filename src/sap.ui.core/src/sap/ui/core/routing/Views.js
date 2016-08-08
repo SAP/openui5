@@ -121,11 +121,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			 *
 			 * @name sap.ui.core.routing.Views#created
 			 * @event
-			 * @param {sap.ui.base.Event} oEvent have a look at the @link {sap.ui.base.EventProvider} for details about getSource and getParameters
+			 * @param {sap.ui.base.Event} oEvent refer to {@link sap.ui.base.EventProvider} for details about getSource and getParameters
 			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {sap.ui.core.mvc.View} oEvent.getParameters.view the instance of the created view.
 			 * @param {object} oEvent.getParameters.viewOptions The view options passed to {@link sap.ui.view}
+			 * @public
 			 */
 
 			/**

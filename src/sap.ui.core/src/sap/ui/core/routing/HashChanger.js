@@ -52,6 +52,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
+	 * The 'hashChanged' event is fired when the URL hash is changed
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.oldHash The URL hash before it's changed
+	 * @param {object} oEvent.getParameters.newHash The new URL hash
+	 * @protected
+	 */
+
+	/**
+	 * The 'hashSet' event is fired when {@link sap.ui.core.routing.HashChanger#setHash} is called
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashSet
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
+	 */
+
+	/**
+	 * The 'hashReplaced' event is fired when {@link sap.ui.core.routing.HashChanger#replaceHash} is called
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashReplaced
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
+	 */
+
+	/**
 	 * Fires the hashchanged event, may be extended to modify the hash before fireing the event
 	 * @param {string} newHash the new hash of the browser
 	 * @param {string} oldHash - the previous hash
