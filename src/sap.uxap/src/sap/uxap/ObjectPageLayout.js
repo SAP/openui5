@@ -831,27 +831,37 @@ sap.ui.define([
 
 		/* obtain the currently selected section in the navBar before navBar is destroyed,
 		 in order to reselect that section after that navBar is reconstructed */
-		var sSelectedSectionId = this._getSelectedSectionId();
+		var sSelectedSectionId = this._getSelectedSectionId(),
+			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId),
+			bSelectionChanged = false,
+			bKeepExpandedMode = false;
 
 		this._applyUxRules(true);
 
-		var oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId);
-
 		/* check if the section that was previously selected is still available,
 		 as it might have been deleted, or emptied, or set to hidden in the previous step */
-		if (oSelectedSection && oSelectedSection.getVisible() && oSelectedSection._getInternalVisible()) {
+		if (!oSelectedSection || !oSelectedSection.getVisible() || !oSelectedSection._getInternalVisible()) {
+			oSelectedSection = this._oFirstVisibleSection;
+			sSelectedSectionId = oSelectedSection && oSelectedSection.getId();
+			bSelectionChanged = true;
+		}
+
+		if (oSelectedSection) {
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar
 			this._adjustLayout(null, false, true /* requires a check on lazy loading */);
-			return;
-		}
-		/* the section that was previously selected is not available anymore, so we cannot reselect it;
-		 in that case we have to select the first visible section instead */
-		oSelectedSection = this._oFirstVisibleSection;
-		if (oSelectedSection) {
-			// fixes BCP:1680125278, new sections positionTop was not ready when calling scroll
-			jQuery.sap.delayedCall(0, this, function () {
-				this.scrollToSection(oSelectedSection.getId());
-			});
+
+			bKeepExpandedMode = !this._bStickyAnchorBar
+				&& this._oFirstVisibleSection
+				&& (this._oFirstVisibleSection.getId() === oSelectedSection.getId());
+
+			if (bSelectionChanged && !bKeepExpandedMode) { /* bKeepExpandedMode check needed since scroll to section always brings sticky mode,
+			 so if the page is expanded and the selected section is
+			 the top section, then should not scroll */
+
+				jQuery.sap.delayedCall(0, this, function () { /* delayed call fixes BCP:1680125278, new sections positionTop was not ready when calling scroll */
+					this.scrollToSection(sSelectedSectionId);
+				});
+			}
 		}
 	};
 
