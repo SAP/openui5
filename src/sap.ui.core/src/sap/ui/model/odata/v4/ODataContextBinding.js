@@ -173,11 +173,20 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype._delete = function (sGroupId, sEditUrl) {
+		var that = this;
+
 		// a context binding without path can simply delegate to its parent context.
 		if (this.sPath === "") {
 			return this.oContext["delete"](sGroupId);
 		}
-		throw new Error(this + ": delete is not supported");
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+		return this.deleteFromCache(sGroupId, sEditUrl, "", function () {
+			that.oElementContext.destroy();
+			that.oElementContext = null;
+			that._fireChange({reason : ChangeReason.Remove});
+		});
 	};
 
 	/**
@@ -324,6 +333,9 @@ sap.ui.define([
 			fnCallback) {
 		var oPromise;
 
+		if (this.oOperation) {
+			throw new Error("Cannot delete a deferred operation");
+		}
 		if (this.oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
@@ -680,6 +692,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
+		if (!this.oElementContext) { // refresh after delete
+			this.oElementContext = Context.create(this.oModel, this,
+				this.oModel.resolve(this.sPath, this.oContext));
+			if (!this.oCache) { // make sure event IS fired
+				this._fireChange({reason : ChangeReason.Refresh});
+			}
+		}
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;

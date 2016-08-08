@@ -110,6 +110,18 @@ sap.ui.define([
 			}
 		},
 
+		onDeleteBusinessPartner: function () {
+			var oContext = this.getView().byId("BusinessPartner").getBindingContext();
+
+			oContext["delete"](oContext.getModel().getUpdateGroupId()).then(function () {
+				MessageBox.alert("Deleted Business Partner",
+					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+			}, function (oError) {
+				MessageBox.alert("Could not delete Business Partner: " + oError.message,
+					{icon : MessageBox.Icon.ERROR, title : "Error"});
+			});
+		},
+
 		onDeleteSalesOrder : function () {
 			var sMessage,
 				sOrderID,
