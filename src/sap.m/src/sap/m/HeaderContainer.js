@@ -5,10 +5,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation) {
 	"use strict";
 
+	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
+		metadata : {
+			defaultAggregation : "item",
+			aggregations : {
+				item : {
+					type : "sap.ui.core.Control",
+					multiple : false
+				}
+			}
+		},
+		renderer : function (oRM, oControl) {
+			oRM.write("<div");
+			oRM.writeControlData(oControl);
+			oRM.addClass("sapMHdrCntrItemCntr");
+			oRM.addClass("sapMHrdrCntrInner");
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.renderControl(oControl.getAggregation("item"));
+			oRM.write("</div>");
+		}
+
+	});
+
 	/**
 	 * Constructor for the new HeaderContainer control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class The container that provides a horizontal layout. It provides a horizontal scrolling on the mobile devices.
@@ -287,14 +310,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	HeaderContainer.prototype.addItem = function(oItem) { // TODO: Needs to be checked if needed.
-		return this._oScrollCntr.addContent(oItem.addStyleClass("sapMHrdrCntrInner"));
-	};
-
-	HeaderContainer.prototype.insertItem = function(oItem, iIndex) {  // TODO: Needs to be checked if needed.
-		return this._oScrollCntr.insertContent(oItem.addStyleClass("sapMHrdrCntrInner"), iIndex);
-	};
-
 	HeaderContainer.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) { // TODO: Needs to be checked if needed.
 		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
 	};
@@ -522,11 +537,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * @description Unwrapps the conent of HeaderContainerItemContainer. Ignores elements that are not HeaderContainerItemContainer (allowing the proper behaviour if using with indexOf).
+	 * Works on single elements and arrays.
+	 * @private
+	 */
+	HeaderContainer.prototype._unWrapHeaderContainerItemContainer = function(wrapped) {
+		if (wrapped instanceof HeaderContainerItemContainer) {
+			wrapped = wrapped.getItem();
+		} else if (jQuery.isArray(wrapped)) {
+			for (var i = 0; i < wrapped.length; i++) {
+				if (wrapped[i] instanceof HeaderContainerItemContainer) {
+					wrapped[i] = wrapped[i].getItem();
+				}
+			}
+		}
+		return wrapped;
+	};
+
 	HeaderContainer.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName) {
 		var args = Array.prototype.slice.call(arguments);
 		if (sAggregationName === "items") {
+			var oItem = args[2];
 			args[1] = "content";
-			return this._oScrollCntr[sFunctionName].apply(this._oScrollCntr, args.slice(1));
+			if (oItem instanceof sap.ui.core.Control) {
+				if ((["validateAggregation", "validateAggregation", "getAggregation", "setAggregation", "indexOfAggregation", "removeAggregation"].indexOf(sFunctionName) != -1)
+						 && (oItem.getParent() instanceof HeaderContainerItemContainer)) {
+					args[2] = oItem.getParent();
+				} else if (["insertAggregation", "addAggregation"].indexOf(sFunctionName) != -1) {
+					args[2] = new HeaderContainerItemContainer({item: oItem});
+				}
+			}
+			return this._unWrapHeaderContainerItemContainer(this._oScrollCntr[sFunctionName].apply(this._oScrollCntr, args.slice(1)));
 		} else {
 			return sap.ui.base.ManagedObject.prototype[sFunctionName].apply(this, args.slice(1)); // TODO: Check if it is needed that MO is called instead of prototype of HeaderContainer
 		}
