@@ -362,18 +362,6 @@
 			]
 		},
 		{
-			"id": "sap.m.HeaderContainer",
-			"name": "Header Container",
-			"category": "Container",
-			"since": "1.42.0",
-			"samples": [
-				"sap.m.sample.HeaderContainer",
-				"sap.m.sample.HeaderContainerNoDividers",
-				"sap.m.sample.HeaderContainerOH",
-				"sap.m.sample.HeaderContainerVM"
-			]
-		},
-		{
 		  "id": "sap.m.IconTabBar",
 		  "name": "Icon Tab Bar",
 		  "category": "Container",
