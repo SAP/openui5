@@ -208,7 +208,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * @private
 	 */
 	DynamicPageTitle.prototype._getShowExpandContent = function () {
-		return this._bShowExpandContent || false;
+		return this._bShowExpandContent;
 	};
 
 	return DynamicPageTitle;
