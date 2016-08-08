@@ -69,6 +69,9 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			line(html, true, true, "Core Version", function(buffer){
 				return oData.version + " (built at " + oData.build + ", last change " + oData.change + ")";
 			});
+			line(html, true, true, "Loaded jQuery Version", function(buffer){
+				return oData.jquery;
+			});
 			line(html, true, true, "User Agent", function(buffer){
 				return oData.useragent + (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : "");
 			});
@@ -232,6 +235,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 				version: oCfg.commonInformation.version,
 				build: oCfg.commonInformation.buildTime,
 				change: oCfg.commonInformation.lastChange,
+				jquery: oCfg.commonInformation.jquery,
 				useragent: oCfg.commonInformation.userAgent,
 				docmode: oCfg.commonInformation.documentMode,
 				debug: oCfg.commonInformation.debugMode,
