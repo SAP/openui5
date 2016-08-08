@@ -1041,7 +1041,8 @@ sap.ui.define([
 		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
 			bIconURI = IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
-			sClasses, sProp, oIconInfo, mDefaultAttributes;
+			bAriaLabelledBy = false,
+			sClasses, sProp, oIconInfo, mDefaultAttributes, sLabel, sInvTextId;
 
 		if (typeof aClasses === "string") {
 			aClasses = [aClasses];
@@ -1075,7 +1076,6 @@ sap.ui.define([
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.text || oIconInfo.name,
 				"title": oIconInfo.text || null
 			};
 
@@ -1090,6 +1090,25 @@ sap.ui.define([
 
 		mAttributes = jQuery.extend(mDefaultAttributes, mAttributes);
 
+		if (!mAttributes.id) {
+			mAttributes.id = jQuery.sap.uid();
+		}
+
+		if (bIconURI) {
+			sLabel = mAttributes.alt || mAttributes.title || oIconInfo.text || oIconInfo.name;
+			sInvTextId = mAttributes.id + "-label";
+
+			// When aria-labelledby is given, the icon's text is output in a hidden span
+			// whose id is appended to the aria-labelledby attribute
+			// Otherwise the icon's text is output to aria-label attribute
+			if (mAttributes["aria-labelledby"]) {
+				bAriaLabelledBy = true;
+				mAttributes["aria-labelledby"] += (" " + sInvTextId);
+			} else if (!mAttributes.hasOwnProperty("aria-label")) { // when "aria-label" isn't set in the attributes object
+				mAttributes["aria-label"] = sLabel;
+			}
+		}
+
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
 				if (mAttributes.hasOwnProperty(sProp) && mAttributes[sProp] !== null) {
@@ -1098,7 +1117,16 @@ sap.ui.define([
 			}
 		}
 
-		this.write(bIconURI ? "></span>" : "/>");
+		if (bIconURI) {
+			this.write(">");
+			if (bAriaLabelledBy) {
+				// output the invisible text for aria-labelledby
+				this.write("<span style=\"display:none;\" id=\"" + sInvTextId + "\">" + sLabel + "</span>");
+			}
+			this.write("</span>");
+		} else {
+			this.write("/>");
+		}
 
 		return this;
 	};

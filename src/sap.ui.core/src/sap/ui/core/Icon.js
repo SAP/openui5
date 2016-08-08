@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Icon.
-sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './library'],
-	function(jQuery, Device, Control, IconPool, library) {
+sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './InvisibleText', './library'],
+	function(jQuery, Device, Control, IconPool, InvisibleText, library) {
 	"use strict";
 
 	// shortcut
@@ -110,6 +110,13 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			 * @since 1.30.1
 			 */
 			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false}
+		},
+		aggregations: {
+
+			/**
+			 * Hidden aggregation for holding the InvisibleText instance which is used for outputing the text labeling the control
+			 */
+			_invisibleText : {type : "sap.ui.core.InvisibleText", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 
@@ -283,18 +290,23 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	/* =========================================================== */
 
 	Icon.prototype.setSrc = function(sSrc) {
-		var oIconInfo = IconPool.getIconInfo(sSrc);
+		var oIconInfo = IconPool.getIconInfo(sSrc),
+			$Icon = this.$(),
+			bOutputIconLabel, sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
 
-		if (oIconInfo) {
-			var $Icon = this.$();
+		// when the given sSrc can't be found in IconPool, rerender the icon is needed.
+		this.setProperty("src", sSrc, !!oIconInfo);
+
+		if (oIconInfo && $Icon.length) {
 			$Icon.css("font-family", oIconInfo.fontFamily);
 			$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
 			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
 
-			var sTooltip = this.getTooltip_AsString(),
-				alabelledBy = this.getAriaLabelledBy(),
-				sAlt = this.getAlt(),
-				bUseIconTooltip = this.getUseIconTooltip();
+			sTooltip = this.getTooltip_AsString();
+			aLabelledBy = this.getAriaLabelledBy();
+			bUseIconTooltip = this.getUseIconTooltip();
+			bOutputIconLabel = this._shouldOutputIconLabel();
+			sIconLabel = this._getIconLabel();
 
 			if (sTooltip || (bUseIconTooltip && oIconInfo.text)) {
 				$Icon.attr("title", sTooltip || oIconInfo.text);
@@ -302,19 +314,19 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 				$Icon.attr("title", null);
 			}
 
-			// Only adopt "aria-label" if there is no "labelledby" as this is managed separately
-			if (alabelledBy.length === 0) {
-				if (sAlt || sTooltip || bUseIconTooltip) {
-					$Icon.attr("aria-label", sAlt || sTooltip || oIconInfo.text || oIconInfo.name);
+			if (aLabelledBy.length === 0) { // Only adapt "aria-label" if there is no "labelledby" as this is managed separately
+				if (bOutputIconLabel) {
+					$Icon.attr("aria-label", sIconLabel);
 				} else {
 					$Icon.attr("aria-label", null);
 				}
+			} else { // adapt the text in InvisibleText control
+				oInvisibleText = this.getAggregation("_invisibleText");
+				if (oInvisibleText) {
+					oInvisibleText.setText(sIconLabel);
+				}
 			}
-
 		}
-
-		// when the given sSrc can't be found in IconPool, rerender the icon is needed.
-		this.setProperty("src", sSrc, !!oIconInfo);
 
 		return this;
 	};
@@ -433,13 +445,45 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		return this;
 	};
 
-	Icon.prototype._getAccessibilityAttributes = function() {
+	Icon.prototype._shouldOutputIconLabel = function() {
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
-			alabelledBy = this.getAriaLabelledBy(),
-			sTooltip = this.getTooltip_AsString(),
 			sAlt = this.getAlt(),
-			bUseIconTooltip = this.getUseIconTooltip(),
-			mAccAttributes = {};
+			sTooltip = this.getTooltip_AsString(),
+			bUseIconTooltip = this.getUseIconTooltip();
+
+		return !!(sAlt || sTooltip || (bUseIconTooltip && oIconInfo));
+	};
+
+	Icon.prototype._getIconLabel = function() {
+		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
+			sAlt = this.getAlt(),
+			sTooltip = this.getTooltip_AsString();
+
+		return sAlt || sTooltip || oIconInfo.text || oIconInfo.name;
+	};
+
+	Icon.prototype._createInvisibleText = function(sText) {
+		var oInvisibleText = this.getAggregation("_invisibleText");
+
+		if (!oInvisibleText) {
+			oInvisibleText = new InvisibleText(this.getId() + "-label", {
+				text: sText
+			});
+
+			this.setAggregation("_invisibleText", oInvisibleText, true);
+		} else {
+			// avoid triggering invalidation during rendering
+			oInvisibleText.setProperty("text", sText, true);
+		}
+
+		return oInvisibleText;
+	};
+
+	Icon.prototype._getAccessibilityAttributes = function() {
+		var aLabelledBy = this.getAriaLabelledBy(),
+			mAccAttributes = {},
+			bOutputIconLabel = this._shouldOutputIconLabel(),
+			oInvisibleText, sIconLabel;
 
 		if (this.getDecorative()) {
 			mAccAttributes.role = "presentation";
@@ -452,10 +496,18 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			}
 		}
 
-		if (alabelledBy.length > 0) {
-			mAccAttributes.labelledby = alabelledBy.join(" ");
-		} else if (sAlt || sTooltip || (bUseIconTooltip && oIconInfo)) {
-			mAccAttributes.label = sAlt || sTooltip || oIconInfo.text || oIconInfo.name;
+		if (bOutputIconLabel) {
+			sIconLabel = this._getIconLabel();
+		}
+
+		if (aLabelledBy.length > 0) {
+			if (bOutputIconLabel) {
+				oInvisibleText = this._createInvisibleText(sIconLabel);
+				aLabelledBy.push(oInvisibleText.getId());
+			}
+			mAccAttributes.labelledby = aLabelledBy.join(" ");
+		} else if (bOutputIconLabel) {
+			mAccAttributes.label = sIconLabel;
 		}
 
 		return mAccAttributes;
