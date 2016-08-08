@@ -615,6 +615,15 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
+	 * Sets the search value to a given string.
+	 * @param {string} sValue The value to be set
+	 * @private
+	 */
+	FacetFilterList.prototype._setSearchValue = function(sValue) {
+		this._searchValue = sValue;
+	};
+
+	/**
 	 * Determines the selected state of the given item.
 	 * The item's text value will be used as the lookup key if the item does not have a key set.
 	 * This is done for convenience to allow applications to only set the item text and have it used also as the key.
