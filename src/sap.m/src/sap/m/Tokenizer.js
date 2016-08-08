@@ -299,6 +299,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * 	the complete tokens' width
 	 */
 	Tokenizer.prototype.getScrollWidth = function(){
+		if (!this.getDomRef()) {
+			return 0;
+		}
+
 		//if the last token is truncated, the scrollWidth will be incorrect
 		this._removeLastTokensTruncation();
 
