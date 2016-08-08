@@ -1139,15 +1139,15 @@
 							if (!objDiv) {
 								return '';
 							}
-							if (!sap.ui.Device.browser.internet_explorer) {
-								return objDiv.innerText;
-							} else {
+							if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
 								return jQuery(objDiv)
 										.clone()
 										.children()
 										.remove()
 										.end()
 										.text();
+							} else {
+								return objDiv.innerText;
 							}
 						},
 						oValueStateInput = new sap.m.Input("vsinput", {
