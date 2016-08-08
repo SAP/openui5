@@ -62,13 +62,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Width of the RadioButton or it's label depending on the useEntireWidth property
-			 */
+             * Width of the RadioButton or it's label depending on the useEntireWidth property.
+             * By Default width is set only for the label.
+             * @see {sap.m.RadioButton#useEntireWidth}
+             */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
 			 * Indicates if the given width will be applied for the whole RadioButton or only it's label.
-			 * By Default widrh is set only for the label.
+			 * By Default width is set only for the label.
 			 * @since 1.42
 			 */
 			useEntireWidth : {type : "boolean", group: "Appearance", defaultValue : false },
