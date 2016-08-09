@@ -53,12 +53,16 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 /* Custom focus outline: */
 html.sap-desktop {
 	.sapMSegBBtnFocusable:focus {
-		outline: none;
+		outline: 1px dotted;
+		outline-offset:  -3px;
+		outline-color:  @sapUiContentFocusColor;
 		border:  1px dotted @sapUiContentFocusColor;
 	}
 
 	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
-		outline: none;
+		outline: 1px dotted;
+		outline-offset:  -3px;
+		outline-color:  @sapUiContentContrastFocusColor;
 		border:  1px dotted @sapUiContentContrastFocusColor;
 	}
 
