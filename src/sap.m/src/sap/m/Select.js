@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button'],
-	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage) {
 		"use strict";
 
 		/**
@@ -161,6 +161,18 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					},
 
 					/**
+					 * Defines the text of the value state message popup.
+					 * If this is not specified, a default text is shown from the resource bundle.
+					 *
+					 * @since 1.40.5
+					 */
+					valueStateText: {
+						type: "string",
+						group: "Misc",
+						defaultValue: ""
+					},
+
+					/**
 					 * Indicates whether the text values of the <code>additionalText</code> property of a
 					 * {@link sap.ui.core.ListItem} are shown.
 					 * @since 1.40
@@ -272,7 +284,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		}
 
 		Select.prototype._handleFocusout = function() {
-			this._bFocusoutDueRendering = this._bRenderingPhase;
+			this._bFocusoutDueRendering = this.bRenderingPhase;
 
 			if (this._bFocusoutDueRendering) {
 				this._bProcessChange = false;
@@ -496,11 +508,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 *
 		 * @private
 		 */
-		Select.prototype.onBeforeOpen = function() {
+		Select.prototype.onBeforeOpen = function(oControlEvent) {
 			var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
 
 			// add the active state to the Select's field
 			this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
+
+			// close value state message before opening the picker
+			this.closeValueStateMessage();
 
 			// call the hook to add additional content to the list
 			this.addContent();
@@ -513,7 +528,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 *
 		 * @private
 		 */
-		Select.prototype.onAfterOpen = function() {
+		Select.prototype.onAfterOpen = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
 				oItem = null;
 
@@ -539,9 +554,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * This event handler is called before the picker popup is closed.
 		 *
-		 * @private
 		 */
-		Select.prototype.onBeforeClose = function() {
+		Select.prototype.onBeforeClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
@@ -551,6 +565,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
+
+				// if the focus is back to the input after closing the picker,
+				// the value state message should be reopened
+				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
+					this.openValueStateMessage();
+				}
 			}
 
 			// remove the active state of the Select's field
@@ -560,9 +580,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * This event handler is called after the picker popup is closed.
 		 *
-		 * @private
 		 */
-		Select.prototype.onAfterClose = function() {
+		Select.prototype.onAfterClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
@@ -645,7 +664,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * Decorates a <code>sap.m.Popover</code> instance.
 		 *
-		 * @param {sap.m.Popover}
+		 * @param {sap.m.Popover} oPopover
 		 * @private
 		 */
 		Select.prototype._decoratePopover = function(oPopover) {
@@ -749,9 +768,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			this._oSelectionOnFocus = null;
 
 			// to detect when the control is in the rendering phase
-			this._bRenderingPhase = false;
+			this.bRenderingPhase = false;
 
-			// to detect if the focusout event is triggered due a rendering
+			// to detect if the focusout event is triggered due a re-rendering
 			this._bFocusoutDueRendering = false;
 
 			// used to prevent the change event from firing when the user scrolls
@@ -760,12 +779,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this.sTypedChars = "";
 			this.iTypingTimeoutID = -1;
+
+			// delegate object used to open/close value state message popups
+			this._oValueStateMessage = new ValueStateMessage(this);
 		};
 
 		Select.prototype.onBeforeRendering = function() {
 
 			// rendering phase is started
-			this._bRenderingPhase = true;
+			this.bRenderingPhase = true;
 
 			// note: in Firefox 38, the focusout event is not fired when the select is removed
 			if (sap.ui.Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
@@ -778,11 +800,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.onAfterRendering = function() {
 
 			// rendering phase is finished
-			this._bRenderingPhase = false;
+			this.bRenderingPhase = false;
 		};
 
 		Select.prototype.exit = function() {
+			var oValueStateMessage = this.getValueStateMessage();
 			this._oSelectionOnFocus = null;
+
+			if (oValueStateMessage) {
+				this.closeValueStateMessage();
+				oValueStateMessage.destroy();
+			}
+
+			this._oValueStateMessage = null;
 		};
 
 		/* =========================================================== */
@@ -1212,6 +1242,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this._bProcessChange = true;
 
+			// open the value state popup message as long as the dropdown list is closed
+			setTimeout(function() {
+				if (!this.isOpen() && this.shouldValueStateMessageBeOpened() && (document.activeElement === this.getFocusDomRef())) {
+					this.openValueStateMessage();
+				}
+			}.bind(this), 100);
+
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
 
@@ -1226,8 +1263,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Select.prototype.onfocusout = function() {
+		Select.prototype.onfocusout = function(oEvent) {
 			this._handleFocusout();
+
+			if (this.bRenderingPhase) {
+				return;
+			}
+
+			// close value state message popup when focus is out of the input
+			this.closeValueStateMessage();
 		};
 
 		/**
@@ -1733,7 +1777,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 *
 		 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
 		 * association and the labels referencing this control.
-		 * @since 1.40
+		 * @since 1.40.5
 		 */
 		Select.prototype.getLabels = function() {
 			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
@@ -1749,6 +1793,73 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			return aLabelIDs;
+		};
+
+		/**
+		 * Gets the DOM element reference where the message popup is attached.
+		 *
+		 * @returns {object} The DOM element reference where the message popup is attached.
+		 * @since 1.40.5
+		 */
+		Select.prototype.getDomRefForValueStateMessage = function() {
+			return this.getDomRef();
+		};
+
+		/**
+		 * Gets the ID of the value state message.
+		 *
+		 * @returns {string} The ID of the value state message
+		 * @since 1.40.5
+		 */
+		Select.prototype.getValueStateMessageId = function() {
+			return this.getId() + "-message";
+		};
+
+		/**
+		 * Gets the value state message delegate object.
+		 *
+		 * @returns {sap.m.delegate.ValueState} The value state message delegate object.
+		 * @since 1.40.5
+		 */
+		Select.prototype.getValueStateMessage = function() {
+			return this._oValueStateMessage;
+		};
+
+		/**
+		 * Opens value state message popup.
+		 *
+		 * @since 1.40.5
+		 */
+		Select.prototype.openValueStateMessage = function() {
+			var oValueStateMessage = this.getValueStateMessage();
+
+			if (oValueStateMessage) {
+				oValueStateMessage.open();
+			}
+		};
+
+		/**
+		 * Closes value state message popup.
+		 *
+		 * @since 1.40.5
+		 */
+		Select.prototype.closeValueStateMessage = function() {
+			var oValueStateMessage = this.getValueStateMessage();
+
+			if (oValueStateMessage) {
+				oValueStateMessage.close();
+			}
+		};
+
+		/**
+		 * Whether or not the value state message should be opened.
+		 *
+		 * @returns {boolean} <code>false</true> if the field is disabled or the default value state is set,
+		 * otherwise it returns <code>true</code>.
+		 * @since 1.40.5
+		 */
+		Select.prototype.shouldValueStateMessageBeOpened = function() {
+			return ((this.getValueState() !== sap.ui.core.ValueState.None) && this.getEnabled());
 		};
 
 		/* ----------------------------------------------------------- */
