@@ -26,109 +26,155 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @alias sap.m.SelectList
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata: {
+		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ {
+			metadata: {
+				library: "sap.m",
+				properties: {
 
-			library: "sap.m",
-			properties: {
+					/**
+					 * Indicates whether the user can change the selection.
+					 */
+					enabled: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
+					},
 
-				/**
-				 * Indicates whether the user can change the selection.
-				 */
-				enabled : { type: "boolean", group: "Behavior", defaultValue: true },
+					/**
+					 * Sets the width of the control.
+					 */
+					width: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "auto"
+					},
 
-				/**
-				 * Sets the width of the control.
-				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
+					/**
+					 * Sets the maximum width of the control.
+					 */
+					maxWidth: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "100%"
+					},
 
-				/**
-				 * Sets the maximum width of the control.
-				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
+					/**
+					 * Key of the selected item.
+					 *
+					 * <b>Note: </b> If duplicate keys exist, the first item matching the key is used.
+					 */
+					selectedKey: {
+						type: "string",
+						group: "Data",
+						defaultValue: ""
+					},
 
-				/**
-				 * Key of the selected item.
-				 *
-				 * <b>Note: </b> If duplicate keys exist, the first item matching the key is used.
-				 */
-				selectedKey: { type: "string", group: "Data", defaultValue: "" },
+					/**
+					 * ID of the selected item.
+					 */
+					selectedItemId: {
+						type: "string",
+						group: "Misc",
+						defaultValue: ""
+					},
 
-				/**
-				 * ID of the selected item.
-				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Indicates whether the text values of the <code>additionalText</code> property of a
+					 * {@link sap.ui.core.ListItem} are shown.
+					 * @since 1.32.3
+					 */
+					showSecondaryValues: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: false
+					},
 
-				/**
-				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} are shown.
-				 * @since 1.32.3
-				 */
-				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false },
-
-				/**
-				 * Defines the keyboard navigation mode.
-				 *
-				 * <b>Note:</b> The <code>sap.m.SelectListKeyboardNavigationMode.None</code> enumeration value, is only
-				 * intended for use in some composite controls that handles keyboard navigation by themselves.
-				 *
-				 * @protected
-				 * @since 1.38
-				 */
-				keyboardNavigationMode: { type: "sap.m.SelectListKeyboardNavigationMode", group: "Behavior", defaultValue: sap.m.SelectListKeyboardNavigationMode.Delimited }
-			},
-			defaultAggregation: "items",
-			aggregations: {
-
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" }
-			},
-			associations: {
-
-				/**
-				 * Sets or retrieves the selected item from the aggregation named items.
-				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false },
-
-				/**
-				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-				 * @since 1.27.0
-				 */
-				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-			},
-			events: {
-
-				/**
-				 * This event is fired when the selection has changed.
-				 *
-				 * <b>Note: </b> The selection can be changed by pressing an non-selected item or
-				 * via keyboard and after the enter or space key is pressed.
-				 */
-				selectionChange: {
-					parameters: {
-
-						/**
-						 * The selected item.
-						 */
-						selectedItem: { type: "sap.ui.core.Item" }
+					/**
+					 * Defines the keyboard navigation mode.
+					 *
+					 * <b>Note:</b> The <code>sap.m.SelectListKeyboardNavigationMode.None</code> enumeration value,
+					 * is only intended for use in some composite controls that handles keyboard navigation by themselves.
+					 *
+					 * @protected
+					 * @since 1.38
+					 */
+					keyboardNavigationMode: {
+						type: "sap.m.SelectListKeyboardNavigationMode",
+						group: "Behavior",
+						defaultValue: sap.m.SelectListKeyboardNavigationMode.Delimited
 					}
 				},
+				defaultAggregation: "items",
+				aggregations: {
 
-				/**
-				 * This event is fired when an item is pressed.
-				 * @since 1.32.4
-				 */
-				itemPress: {
-					parameters: {
+					/**
+					 * Defines the items contained within this control.
+					 */
+					items: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						singularName: "item",
+						bindable: "bindable"
+					}
+				},
+				associations: {
 
-						/**
-						 * The pressed item.
-						 */
-						item: { type: "sap.ui.core.Item" }
+					/**
+					 * Sets or retrieves the selected item from the aggregation named items.
+					 */
+					selectedItem: {
+						type: "sap.ui.core.Item",
+						multiple: false
+					},
+
+					/**
+					 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+					 * @since 1.27.0
+					 */
+					ariaLabelledBy: {
+						type: "sap.ui.core.Control",
+						multiple: true,
+						singularName: "ariaLabelledBy"
+					}
+				},
+				events: {
+
+					/**
+					 * This event is fired when the selection has changed.
+					 *
+					 * <b>Note: </b> The selection can be changed by pressing an non-selected item or
+					 * via keyboard and after the enter or space key is pressed.
+					 */
+					selectionChange: {
+						parameters: {
+
+							/**
+							 * The selected item.
+							 */
+							selectedItem: {
+								type: "sap.ui.core.Item"
+							}
+						}
+					},
+
+					/**
+					 * This event is fired when an item is pressed.
+					 * @since 1.32.4
+					 */
+					itemPress: {
+						parameters: {
+
+							/**
+							 * The pressed item.
+							 */
+							item: {
+								type: "sap.ui.core.Item"
+							}
+						}
 					}
 				}
 			}
-		}});
+		});
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
