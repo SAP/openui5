@@ -322,7 +322,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				lightBoxContainer = this.getDomRef(),
 				lightBoxWidth,
 				lightBoxHeight,
-				minimumOffset = calculateOffset();
+				minimumOffset = calculateOffset(),
+				hcbBorderSize = 2;
 
 			if (oImageContent._getImageState() === "LOADED") {
 				this._calculateSizes(oImageContent._getNativeImage());
@@ -345,6 +346,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (window.innerHeight > lightBoxHeight + minimumOffset) {
 				top = '50%';
 				marginTop = Math.round(-lightBoxHeight / 2);
+			}
+
+			if (sap.ui.getCore().getConfiguration().getTheme() === 'sap_hcb') {
+				marginTop -= hcbBorderSize;
+				marginLeft -= hcbBorderSize;
 			}
 
 			this._$lightBox.css({
