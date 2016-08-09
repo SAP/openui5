@@ -116,7 +116,7 @@ sap.ui.define([], function() {
 						var bIsEnabled = true;
 						if (sType === "sap.ui.layout.form.FormContainer"){
 							sChangeType = "removeSimpleFormGroup";
-							bIsEnabled = !!oRemovedElement.getTitle();
+							bIsEnabled = !!oRemovedElement.getTitle() || !!oRemovedElement.getToolbar();
 						} else if (sType === "sap.ui.layout.form.FormElement"){
 							sChangeType = "hideSimpleFormField";
 						}
@@ -124,6 +124,25 @@ sap.ui.define([], function() {
 						return {
 							changeType : sChangeType,
 							isEnabled : bIsEnabled,
+							getConfirmationText : function(oRemovedElement){
+								var bContent = false;
+								if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer"
+										&& oRemovedElement.getToolbar && oRemovedElement.getToolbar()) {
+									var aToolbarContent = oRemovedElement.getToolbar().getContent();
+									if (aToolbarContent.length > 1) {
+											bContent = true;
+									} else if ((aToolbarContent.length === 1) &&
+														(!aToolbarContent[0].getMetadata().isInstanceOf("sap.ui.core.Label") &&
+														 !aToolbarContent[0] instanceof sap.ui.core.Title && !aToolbarContent[0] instanceof sap.m.Title)) {
+											bContent = true;
+									}
+								}
+								if (bContent) {
+									var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
+								}
+							},
+
 							getState : function(oRemovedElement) {
 								var that = this;
 
@@ -131,10 +150,10 @@ sap.ui.define([], function() {
 									return fnGetFormElementState.call(this, oRemovedElement);
 								} else {
 									var aElementsState = [];
-									var oTitle = oRemovedElement.getTitle();
+									var oTitleOrToolbar = oRemovedElement.getTitle() || oRemovedElement.getToolbar();
 									aElementsState.push({
-										element : oTitle,
-										index : this.getContent().indexOf(oTitle)
+										element : oTitleOrToolbar,
+										index : this.getContent().indexOf(oTitleOrToolbar)
 									});
 
 									oRemovedElement.getFormElements().forEach(function(oFormElement) {
