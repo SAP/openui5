@@ -897,28 +897,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.34
+		 * @since 1.34.0
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 	sap.m.FrameType = {
 
 		/**
 		 * The 1x1 frame type.
+		 * @public
 		 */
 		OneByOne : "OneByOne",
 
 		/**
 		 * The 2x1 frame type.
+		 * @public
 		 */
 		TwoByOne : "TwoByOne",
 
 		/**
 		 * The 2/3 frame type.
+		 * @protected
 		 */
 		TwoThirds : "TwoThirds",
 
 		/**
 		 * The Auto frame type that adjusts the size of the control to the content.
+		 * @protected
 		 */
 		Auto : "Auto"
 
