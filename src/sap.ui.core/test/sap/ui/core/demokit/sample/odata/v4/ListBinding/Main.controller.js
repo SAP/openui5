@@ -108,7 +108,9 @@ sap.ui.define([
 						.getCurrentContexts()[0];
 
 				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
-				oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
+				if (oEmployeesControl.getItems()[0]) {
+					oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
+				}
 				oView.setBusy(false);
 			}
 
@@ -132,12 +134,14 @@ sap.ui.define([
 		},
 
 		onDeleteEmployee : function (oEvent) {
-//			var oEmployeeContext = oEvent.getSource().getBindingContext();
+			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
-//			TODO the code will be needed when "remove" is implemented
-//			MessageBox.alert(oEmployeeContext.getPath(), {
-//					icon : MessageBox.Icon.SUCCESS,
-//					title : "Success"});
+			oEmployeeContext["delete"]().then(function () {
+				MessageBox.alert(oEmployeeContext.getPath(), {
+					icon : MessageBox.Icon.SUCCESS,
+					title : "Success"
+				});
+			});
 		},
 
 		onEmployeeSelect : function (oEvent) {
