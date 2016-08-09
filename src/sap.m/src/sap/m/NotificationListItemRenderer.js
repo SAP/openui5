@@ -243,14 +243,20 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderDetails = function(oRm, oControl) {
+		if (!oControl.getAuthorName() && !oControl.getDatetime()) {
+			return;
+		}
+
 		oRm.write('<div class="' + classNameDetails + '">');
 		this.renderAuthorName(oRm, oControl);
 
 		if (oControl.getAuthorName()) {
 			oRm.write('<span class="' + classNameBullet + '">&#x00B7</span>');
 		}
+
 		this.renderDatetime(oRm, oControl);
 		oRm.write('</div>');
+
 	};
 
 	/**
