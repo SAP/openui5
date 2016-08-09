@@ -537,7 +537,7 @@
 @sapUiButtonLiteBackground: transparent;
 @sapUiButtonLiteBorderColor: transparent;
 @sapUiButtonLiteTextColor: @sapUiButtonTextColor;
-@sapUiButtonLiteHoverBackground: fade(darken(@sapUiButtonHoverBackground, 17), 50);
+@sapUiButtonLiteHoverBackground: fade(darken(@sapUiButtonHoverBackground, 22), 50);
 @sapUiButtonLiteHoverBorderColor: @sapUiButtonLiteHoverBackground;
 @sapUiButtonLiteActiveBackground: @sapUiButtonActiveBackground;
 @sapUiButtonLiteActiveBorderColor: @sapUiButtonLiteActiveBackground;
@@ -548,11 +548,11 @@
 @sapUiButtonActionSelectBackground: @sapUiPageFooterBackground;
 @sapUiButtonActionSelectBorderColor: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 8), lighten(@sapUiButtonActionSelectBackground, 12));
 @sapUiButtonLiteActionSelectHoverBackground: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 3), lighten(@sapUiButtonActionSelectBackground, 5));
-@sapUiToggleButtonPressedBackground: @sapUiButtonActiveBackground;
+@sapUiToggleButtonPressedBackground: darken(@sapUiButtonActiveBackground, 10);
 @sapUiToggleButtonPressedBorderColor:  darken(@sapUiToggleButtonPressedBackground, 5);
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiToggleButtonPressedHoverBackground: darken(@sapUiToggleButtonPressedBackground, 5);
-@sapUiToggleButtonPressedHoverBorderColor: darken(@sapUiToggleButtonPressedBackground, 5);
+@sapUiToggleButtonPressedHoverBackground: lighten(@sapUiToggleButtonPressedBackground, 10);
+@sapUiToggleButtonPressedHoverBorderColor: @sapUiToggleButtonPressedHoverBackground;
 @sapUiToggleButtonPressedDisabledBackground: @sapUiToggleButtonPressedBackground;
 @sapUiToggleButtonPressedDisabledBorderColor: @sapUiToggleButtonPressedBorderColor;
 @sapUiToggleButtonPressedDisabledTextColor: mix(@sapUiButtonTextColor, #fff, 25);
@@ -562,10 +562,10 @@
 @sapUiSegmentedButtonHoverBackground: @sapUiButtonHoverBackground;
 @sapUiSegmentedButtonActiveBackground: @sapUiButtonActiveBackground;
 @sapUiSegmentedButtonActiveTextColor: contrast(@sapUiSegmentedButtonActiveBackground, @sapUiSegmentedButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiSegmentedButtonSelectedBackground: @sapUiButtonActiveBackground;
-@sapUiSegmentedButtonSelectedTextColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiSegmentedButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiSegmentedButtonSelectedHoverBackground: darken(@sapUiSegmentedButtonSelectedBackground, 5);
-@sapUiSegmentedButtonSelectedHoverBorderColor: @sapUiSegmentedButtonSelectedHoverBackground;
+@sapUiSegmentedButtonSelectedBackground: @sapUiToggleButtonPressedBackground;
+@sapUiSegmentedButtonSelectedTextColor: @sapUiToggleButtonPressedTextColor;
+@sapUiSegmentedButtonSelectedHoverBackground: @sapUiToggleButtonPressedHoverBackground;
+@sapUiSegmentedButtonSelectedHoverBorderColor: @sapUiToggleButtonPressedHoverBorderColor;
 @sapUiSegmentedButtonIconColor: contrast(@sapUiSegmentedButtonBackground, @sapUiContentIconColor, @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonActiveIconColor: contrast(@sapUiSegmentedButtonActiveBackground, @sapUiContentIconColor, @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiContentIconColor, @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
