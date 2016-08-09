@@ -556,6 +556,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		oEnvironment.beforeEach = function () {
 			oGlobalSandbox = sinon.sandbox.create();
 			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
+			this.oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			if (fnBeforeEach) {
 				fnBeforeEach.apply(this, arguments);
 			}
@@ -889,7 +892,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo;
 
-			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(
+			this.oLogMock.expects("warning").withExactArgs(
 				"Could not find property '" + sPath + "' starting from '/Value/Path'", null,
 				"sap.ui.model.odata.AnnotationHelper");
 
@@ -1466,7 +1469,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo;
 
-			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").exactly(bIsSimple ? 2 : 1)
+			this.oLogMock.expects("warning").exactly(bIsSimple ? 2 : 1)
 				.withExactArgs(
 					"Could not find property '" + sPath + "' starting from '/Value/Path'", null,
 					"sap.ui.model.odata.AnnotationHelper");
@@ -1637,6 +1640,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		}
 
 		QUnit.test(sTitle, function (assert) {
+			var that = this;
+
 			return withGwsampleModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
@@ -1674,6 +1679,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				});
 
 				// gotoEntitySet
+				if (!oFixture.entitySet) {
+					that.oLogMock.expects("warning").withExactArgs(oFixture.metaPath
+						+ ": found 'undefined' which is not a name of an entity set",
+						undefined, "sap.ui.model.odata.AnnotationHelper");
+				}
 				assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext),
 					oFixture.entitySet
 						? oMetaModel.getODataEntitySet(oFixture.entitySet, true)
@@ -1725,6 +1735,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		resolvedPath : undefined
 	}].forEach(function (oFixture) {
 		QUnit.test("Missing path expression, context: " + oFixture.metaPath, function (assert) {
+			var that = this;
+
 			return withGwsampleModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath);
@@ -1744,6 +1756,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					"getNavigationPath");
 
 				// gotoEntitySet
+				that.oLogMock.expects("warning").withExactArgs(
+					oFixture.metaPath + ": found 'undefined' which is not a name of an entity set",
+					undefined, "sap.ui.model.odata.AnnotationHelper");
 				assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined,
 					"gotoEntitySet");
 
@@ -1751,11 +1766,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				assert.strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple), "",
 					"isMultiple");
 
-				oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(
-						oFixture.metaPath + ": Path could not be resolved ", undefined,
-						"sap.ui.model.odata.AnnotationHelper");
-
 				// resolvePath
+				that.oLogMock.expects("warning").withExactArgs(
+					oFixture.metaPath + ": Path could not be resolved ", undefined,
+					"sap.ui.model.odata.AnnotationHelper");
 				assert.strictEqual(AnnotationHelper.resolvePath(oContext), undefined,
 					"resolvePath");
 			});
@@ -1793,22 +1807,23 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 
 	//*********************************************************************************************
-	QUnit.test("gotoEntityType: entity type's qualified name not found",
-		function (assert) {
-			return withGwsampleModel(assert, function (oMetaModel) {
-				var sMetaPath
-						= "/dataServices/schema/0/entityContainer/0/associationSet/0/end/0/"
-						+ "entitySet",
-					oContext = oMetaModel.createBindingContext(sMetaPath);
+	QUnit.test("gotoEntityType: entity type's qualified name not found", function (assert) {
+		var that = this;
 
-				oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
-					+ ": found 'VH_LanguageSet' which is not a name of an entity type", undefined,
-					"sap.ui.model.odata.AnnotationHelper");
+		return withGwsampleModel(assert, function (oMetaModel) {
+			var sMetaPath
+					= "/dataServices/schema/0/entityContainer/0/associationSet/0/end/0/entitySet",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-				assert.strictEqual(AnnotationHelper.gotoEntityType(oContext), undefined);
+			that.oLogMock.expects("warning").withExactArgs(sMetaPath
+				+ ": found 'VH_LanguageSet' which is not a name of an entity type", undefined,
+				"sap.ui.model.odata.AnnotationHelper");
 
-			});
+			assert.strictEqual(AnnotationHelper.gotoEntityType(oContext), undefined);
+
 		});
+	});
+
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
 
@@ -1828,12 +1843,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("gotoEntitySet: entity set's name not found", function (assert) {
+		var that = this;
+
 		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath
 					= "/dataServices/schema/0/entityContainer/0/functionImport/0/parameter/0/name",
 				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
+			that.oLogMock.expects("warning").withExactArgs(sMetaPath
 				+ ": found 'NoOfSalesOrders' which is not a name of an entity set", undefined,
 				"sap.ui.model.odata.AnnotationHelper");
 
@@ -1858,12 +1875,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("gotoFunctionImport: function import not found", function (assert) {
+		var that = this;
+
 		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath =
 					sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Description/Action2",
 				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
+			that.oLogMock.expects("warning").withExactArgs(sMetaPath
 				+ ": found 'GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo' which is not a name of a "
 				+ "function import", undefined, "sap.ui.model.odata.AnnotationHelper");
 
