@@ -24,19 +24,32 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-	var Tokenizer1;
+	var tokenizer;
+	var tokenizer1;
 	var key = "testKey";
 	var text = "testText";
 
-	var oTokenizer = new sap.m.Tokenizer("t1");
-	oTokenizer.placeAt("content");
+	module("Init", {
+		setup : function() {
+			tokenizer = new sap.m.Tokenizer();
+		},
+		teardown : function() {
+			tokenizer.destroy();
+		}
+	});
+
+	test("test scroll width", function() {
+		strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
+	});
 
 	module("Basic", {
 		setup : function() {
-			tokenizer1 = sap.ui.getCore().getControl("t1");
+			tokenizer1 = new sap.m.Tokenizer("t1");
+			tokenizer1.placeAt("content");
 		},
 		teardown : function() {
 			token1 = null;
+			tokenizer1.destroy();
 		}
 	});
 
@@ -258,9 +271,9 @@
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
-		oTokenizer.setTokens([token1, token2, token3]);
+		tokenizer.setTokens([token1, token2, token3]);
 
-		oTokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		tokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
 		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
 		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
 		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
@@ -269,12 +282,12 @@
 		token2.setSelected(false);
 		token3.setSelected(false);
 
-		oTokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		tokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
 		equals(token1.getSelected(), true, "Token1 got selected using metaKey+a");
 		equals(token2.getSelected(), true, "Token2 got selected using metaKey+a");
 		equals(token3.getSelected(), true, "Token3 got selected using metaKey+a");
 
-		oTokenizer.removeAllTokens();
+		tokenizer.removeAllTokens();
 	});
 
 
@@ -387,7 +400,7 @@
 			}
 		}
 
-		var oCopyEvent = jQuery.Event({ 
+		var oCopyEvent = jQuery.Event({
 			type: "copy",
 			clipboardData : {
 				setData : function(sType, sSelectedText) {
