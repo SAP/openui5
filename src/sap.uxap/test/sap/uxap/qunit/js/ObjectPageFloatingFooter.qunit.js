@@ -57,9 +57,7 @@
 		});
 
 		QUnit.test("ObjectPage Footer is visible after setting to false and then to true consecutively", function (assert) {
-			var $footerWrapper = this.oObjectPage.$("footerWrapper"),
-				oFooter = this.oObjectPage.getFooter(),
-				$footer = oFooter.$();
+			var $footerWrapper = this.oObjectPage.$("footerWrapper");
 
 			this.oObjectPage.setShowFooter(false);
 			this.oObjectPage.setShowFooter(true);
@@ -67,7 +65,20 @@
 			this.clock.tick(1000);
 
 			assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "Footer is visible");
-			assert.ok($footer.hasClass("sapUxAPObjectPageFloatingFooterShow"));
+		});
+
+		QUnit.test("Animation CSS class is removed after the animation is over", function (assert) {
+			var oFooter = this.oObjectPage.getFooter(),
+				$footer = oFooter.$(),
+				iSomeMsBeforeAnimationEnd = 20;
+
+			this.oObjectPage.setShowFooter(true);
+
+			this.clock.tick(sap.uxap.ObjectPageLayout.FOOTER_ANIMATION_DURATION - iSomeMsBeforeAnimationEnd);
+			assert.ok($footer.hasClass("sapUxAPObjectPageFloatingFooterShow"), "Animation CSS class is still there while animation is running");
+
+			this.clock.tick(iSomeMsBeforeAnimationEnd + 1);
+			assert.ok(!$footer.hasClass("sapUxAPObjectPageFloatingFooterShow"), "Animation CSS class is removed");
 		});
 	});
 
