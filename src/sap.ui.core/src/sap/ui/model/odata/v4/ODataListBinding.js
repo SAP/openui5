@@ -164,10 +164,9 @@ sap.ui.define([
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()))
-			.then(function () {
-				var iIndex = oContext.getIndex(),
-					i,
+		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()),
+			function (iIndex) {
+				var i,
 					oNextContext;
 
 				for (i = iIndex; i < that.aContexts.length; i += 1) {
@@ -330,6 +329,9 @@ sap.ui.define([
 	 *   The edit URL to be used for the DELETE request
 	 * @param {string} sPath
 	 *   The path of the entity relative to this binding
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
@@ -338,7 +340,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath) {
+	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath, fnCallback) {
 		var oPromise;
 
 		if (this.oCache) {
@@ -346,12 +348,12 @@ sap.ui.define([
 			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath);
+			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
 			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath));
+			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
 	};
 
 	/**

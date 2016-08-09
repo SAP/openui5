@@ -1452,7 +1452,7 @@ sap.ui.require([
 //		oDependentBindingC.setContext(oBinding.aContexts[0]);
 
 		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs("myGroup", "TEAMS('1')", "")
+			.withExactArgs("myGroup", "TEAMS('1')", "") // TODO callback
 			.returns(Promise.resolve({}));
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Remove});
@@ -1482,24 +1482,28 @@ sap.ui.require([
 	["$auto", undefined].forEach(function (sGroupId) {
 		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
 			var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
+				fnCallback = {},
 				oPromise = {};
 
 			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 				.withExactArgs().returns("$auto");
 			this.mock(oBinding.oCache).expects("_delete")
-				.withExactArgs("$auto", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3")
+				.withExactArgs("$auto", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
+					sinon.match.same(fnCallback))
 				.returns(oPromise);
 			this.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$auto");
 
 			assert.strictEqual(
-				oBinding.deleteFromCache(sGroupId, "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3"),
+				oBinding.deleteFromCache(sGroupId, "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
+					fnCallback),
 				oPromise);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
-		var oParentBinding = {
+		var fnCallback = {},
+			oParentBinding = {
 				deleteFromCache : function () {}
 			},
 			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS/42", 42),
@@ -1510,17 +1514,18 @@ sap.ui.require([
 			.withExactArgs(42, "", "TEAM_2_EMPLOYEES/1")
 			.returns("~");
 		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs("$auto", "EMPLOYEES('1')", "~")
+			.withExactArgs("$auto", "EMPLOYEES('1')", "~", sinon.match.same(fnCallback))
 			.returns(oPromise);
 
 		assert.strictEqual(
-			oBinding.deleteFromCache("$auto", "EMPLOYEES('1')", "TEAM_2_EMPLOYEES/1"),
+			oBinding.deleteFromCache("$auto", "EMPLOYEES('1')", "TEAM_2_EMPLOYEES/1", fnCallback),
 			oPromise);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: illegal group ID", function (assert) {
-		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')");
+		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
+			fnCallback = {};
 
 		assert.throws(function () {
 			oBinding.deleteFromCache("myGroup");
@@ -1533,10 +1538,12 @@ sap.ui.require([
 		}, new Error("Illegal update group ID: myGroup"));
 
 		this.mock(oBinding.oCache).expects("_delete")
-			.withExactArgs("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3")
+			.withExactArgs("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3",
+				sinon.match.same(fnCallback))
 			.returns(Promise.resolve());
 
-		return oBinding.deleteFromCache("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3")
+		return oBinding
+			.deleteFromCache("$direct", "EQUIPMENTS('3')", "EMPLOYEE_2_EQUIPMENTS/3", fnCallback)
 			.then();
 	});
 
