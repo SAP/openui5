@@ -7,7 +7,7 @@
 		xmlns:f="sap.f"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
-		<f:DynamicPage id="dynamicPageId" headerScrollable="false" headerExpanded="{/headerExpanded}">
+		<f:DynamicPage id="dynamicPageId" headerAlwaysExpanded="true" headerExpanded="{/headerExpanded}">
 			<!-- DynamicPage Title -->
 			<f:title>
 				<f:DynamicPageTitle>
@@ -90,33 +90,31 @@
 			</f:header>
 
 			<f:content>
-				<VBox fitContainer="true">
-					<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
-						<t:toolbar>
-							<OverflowToolbar>
-								<Title text="Title Bar Here"/>
-								<ToolbarSpacer/>
-								<SearchField width="12rem"/>
-								<SegmentedButton>
-									<buttons>
-										<Button icon="sap-icon://table-view"/>
-										<Button icon="sap-icon://bar-chart"/>
-									</buttons>
-								</SegmentedButton>
-								<Button icon="sap-icon://group-2" type="Transparent"/>
-								<Button icon="sap-icon://action-settings" type="Transparent"/>
-							</OverflowToolbar>
-						</t:toolbar>
-						<t:columns>
-							<t:AnalyticalColumn/>
-							<t:AnalyticalColumn/>
-							<t:AnalyticalColumn/>
-						</t:columns>
-						<t:layoutData>
-							<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
-						</t:layoutData>
-					</t:AnalyticalTable>
-				</VBox>
+				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+					<t:toolbar>
+						<OverflowToolbar>
+							<Title text="Title Bar Here"/>
+							<ToolbarSpacer/>
+							<SearchField width="12rem"/>
+							<SegmentedButton>
+								<buttons>
+									<Button icon="sap-icon://table-view"/>
+									<Button icon="sap-icon://bar-chart"/>
+								</buttons>
+							</SegmentedButton>
+							<Button icon="sap-icon://group-2" type="Transparent"/>
+							<Button icon="sap-icon://action-settings" type="Transparent"/>
+						</OverflowToolbar>
+					</t:toolbar>
+					<t:columns>
+						<t:AnalyticalColumn/>
+						<t:AnalyticalColumn/>
+						<t:AnalyticalColumn/>
+					</t:columns>
+					<t:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
+					</t:layoutData>
+				</t:AnalyticalTable>
 			</f:content>
 			<!-- DynamicPage Footer -->
 			<f:footer>
