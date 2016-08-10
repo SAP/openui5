@@ -90,9 +90,7 @@ sap.ui.define([
 							searchOpenDialogs : true,
 							controlType : "sap.m.StandardListItem",
 							matchers :  new Opa5.matchers.PropertyStrictEquals({name : "title", value : sListItemTitle}),
-							success : function (aListItems) {
-								aListItems[0].$().trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage : "Did not find list item with title " + sListItemTitle + " in View Settings Dialog."
 						});
 					},
@@ -314,14 +312,13 @@ sap.ui.define([
 						return this.waitFor({
 							viewName : sViewName,
 							id : "page",
-							matchers : new PropertyStrictEquals({name : "title", value : "Objects (0)"}),
+							matchers : new PropertyStrictEquals({name : "title", value : "<ObjectName> (0)"}),
 							success : function () {
-								Opa5.assert.ok(true, "The list header displays 'Objects (0)'");
+								Opa5.assert.ok(true, "The list header displays zero hits");
 							},
-							errorMessage : "The list still has items"
+							errorMessage : "The list header still has items"
 						});
 					},
-
 
 					theListHasEntries : function () {
 						return this.waitFor({
@@ -523,7 +520,7 @@ sap.ui.define([
 								this.waitFor({
 									id : "page",
 									viewName : sViewName,
-									matchers : new PropertyStrictEquals({name : "title", value : "Objects (" + iExpectedLength + ")"}),
+									matchers : new PropertyStrictEquals({name : "title", value : "<ObjectName> (" + iExpectedLength + ")"}),
 									success : function () {
 										Opa5.assert.ok(true, "The master page header displays " + iExpectedLength + " items");
 									},

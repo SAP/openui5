@@ -3,9 +3,8 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/demo/worklist/model/formatter",
 		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, History) {
+		"sap/ui/model/FilterOperator"
+	], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.worklist.controller.Worklist", {
@@ -29,7 +28,6 @@ sap.ui.define([
 				// so it can be restored later on. Busy handling on the table is
 				// taken care of by the table itself.
 				iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
-				this._oTable = oTable;
 				// keeps the search state
 				this._oTableSearchState = [];
 
@@ -128,7 +126,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onRefresh : function () {
-				this._oTable.getBinding("items").refresh();
+				var oTable = this.byId("table");
+				oTable.getBinding("items").refresh();
 			},
 
 			/* =========================================================== */
@@ -153,8 +152,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_applySearch: function(oTableSearchState) {
-				var oViewModel = this.getModel("worklistView");
-				this._oTable.getBinding("items").filter(oTableSearchState, "Application");
+				var oTable = this.byId("table"),
+					oViewModel = this.getModel("worklistView");
+				oTable.getBinding("items").filter(oTableSearchState, "Application");
 				// changes the noDataText of the list in case there are no filter results
 				if (oTableSearchState.length !== 0) {
 					oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
