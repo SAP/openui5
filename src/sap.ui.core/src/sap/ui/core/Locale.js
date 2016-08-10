@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				// If the given Locale string cannot be parsed by the regular expression above we
 				// should at least tell the developer why the core fails to load.
 				if (aResult === null) {
-					throw "The given language does not adhere to BCP-47.";
+					throw "The given language '" + sLocaleId + "' does not adhere to BCP-47.";
 				}
 
 				this.sLocaleId = sLocaleId;
