@@ -8,6 +8,7 @@
 			id="PC1"
 			startDate="{path: '/startDate'}"
 			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
 			showEmptyIntervalHeaders="false">
 			<toolbarContent>

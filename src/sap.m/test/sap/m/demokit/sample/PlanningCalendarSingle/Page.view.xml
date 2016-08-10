@@ -10,6 +10,7 @@
 			startDate="{path: '/startDate'}"
 			viewKey="Day"
 			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
 			intervalSelect="handleIntervalSelect"
 			showEmptyIntervalHeaders="false">

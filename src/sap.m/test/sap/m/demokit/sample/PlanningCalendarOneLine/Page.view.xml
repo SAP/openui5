@@ -11,6 +11,7 @@
 			appointmentsReducedHeight="true"
 			startDate="{path: '/startDate'}"
 			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>

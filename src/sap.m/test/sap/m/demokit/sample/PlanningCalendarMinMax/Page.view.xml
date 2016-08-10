@@ -11,6 +11,7 @@
 			minDate="{path: '/minDate'}"
 			maxDate="{path: '/maxDate'}"
 			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
