@@ -30,6 +30,8 @@
 
 			sap.ui.test.qunit.delayTestStart();
 
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			var oActionSheet = new sap.m.ActionSheet("actionsheet", {
 				showCancelButton: true,
 				buttons: [
@@ -542,17 +544,28 @@
 
 				setTimeout(function(){
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
-						sInvisibleText = oButton1.getAriaLabelledBy()[1],
-						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
+						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-					strictEqual(oButton1.getAriaLabelledBy().length, 2 , "Button should be labelled by itself and a hidden text");
-					strictEqual(oInvisibleTextObj instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
-					strictEqual(oInvisibleTextObj.getText(), "1 of 2", "Text should be the index of the button");
+					strictEqual(oButton1.getAriaLabelledBy().length, 2, "Button should be labelled by itself and a hidden text");
+					strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
+					strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
+					strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
 
-					start();
 					oActionSheet.close();
-					oButton.destroy();
-					oActionSheet.destroy();
+					oActionSheet._getAllButtons()[1].setVisible(false);
+					oButton.firePress();
+
+					setTimeout(function(){
+						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
+
+						strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Text should be the index of the button");
+						strictEqual(aInvisibleTexts[1].getText(), "", "There is no Aria information for not visible buttons");
+						start();
+						oActionSheet.close();
+						oButton.destroy();
+						oActionSheet.destroy();
+					}, 500);
+
 				}, 500);
 			});
 
