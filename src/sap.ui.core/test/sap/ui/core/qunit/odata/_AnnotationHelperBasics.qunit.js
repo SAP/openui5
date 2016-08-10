@@ -10,7 +10,19 @@ sap.ui.require([
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata._AnnotationHelperBasics");
+	QUnit.module("sap.ui.model.odata._AnnotationHelperBasics", {
+		beforeEach : function () {
+			this.oSandbox = sinon.sandbox.create();
+			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+
+		afterEach : function () {
+			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
+			this.oSandbox.verifyAndRestore();
+		}
+	});
 
 	//*********************************************************************************************
 	QUnit.test("toJSON, toErrorString", function (assert) {
@@ -58,7 +70,7 @@ sap.ui.require([
 			oPathValue = {path : "/path/to/foo", value : {foo : "bar"}},
 			sMessage = oPathValue.path + ": " + sErrorText;
 
-		this.mock(jQuery.sap.log).expects("error").withExactArgs(sMessage,
+		this.oLogMock.expects("error").withExactArgs(sMessage,
 			Basics.toErrorString(oPathValue.value), "sap.ui.model.odata.AnnotationHelper");
 
 		assert.throws(function () {
