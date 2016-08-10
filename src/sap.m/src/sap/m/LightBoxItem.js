@@ -92,16 +92,16 @@ sap.ui.define([
         LightBoxItem.prototype._createNativeImage = function () {
             var that = this;
 
-            this._imageState = "LOADING";
+            this._imageState = sap.m.LightBoxLoadingStates.Loading;
             this._oImage = new window.Image();
             this._oImage.onload = function(oEvent) {
-                if (this.complete && that._imageState === "LOADING") {
-                    that._setImageState("LOADED");
+                if (this.complete && that._imageState === sap.m.LightBoxLoadingStates.Loading) {
+                    that._setImageState(sap.m.LightBoxLoadingStates.Loaded);
                 }
             };
 
             this._oImage.onerror = function(oEvent) {
-                that._setImageState("ERROR");
+                that._setImageState(sap.m.LightBoxLoadingStates.Error);
             };
         };
 
@@ -151,7 +151,7 @@ sap.ui.define([
                 return this;
             }
 
-            this._imageState = "LOADING";
+            this._imageState = sap.m.LightBoxLoadingStates.Loading;
 
             if (oLightBox && oLightBox._oPopup.getOpenState() === sap.ui.core.OpenState.OPEN) {
                 this._oImage.src = sImageSrc;

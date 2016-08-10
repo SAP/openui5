@@ -85,7 +85,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		LightBox.prototype.init = function () {
 			this._createPopup();
-			this._createErrorControls();
 			this._width = 0; //to be calculated later
 			this._height = 0; //to be calculated later
 			this._isRendering = true;
@@ -101,19 +100,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oNativeImage = oImageContent._getNativeImage(),
 				sState = oImageContent._getImageState();
 
+			this._createErrorControls();
 			oNativeImage.src = oImageContent.getImageSrc();
 
 			switch (sState) {
-				case "LOADING":
+				case sap.m.LightBoxLoadingStates.Loading:
 					this._timeoutId = setTimeout(function () {
-						oImageContent._setImageState("ERROR");
+						oImageContent._setImageState(sap.m.LightBoxLoadingStates.TimeOutError);
 					}, 10000);
 					break;
-				case "LOADED":
+				case sap.m.LightBoxLoadingStates.Loaded:
 					clearTimeout(this._timeoutId);
 					this._calculateSizes(oNativeImage);
 					break;
-				case "ERROR":
+				case sap.m.LightBoxLoadingStates.Error:
 					clearTimeout(this._timeoutId);
 					break;
 				default:
@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		LightBox.prototype._imageStateChanged = function (sNewState) {
-			if ((sNewState === "LOADED" || sNewState === "ERROR") && !this._isRendering) {
+			if ((sNewState === sap.m.LightBoxLoadingStates.Loaded || sNewState === sap.m.LightBoxLoadingStates.Error) && !this._isRendering) {
 				this.rerender();
 			}
 		};
@@ -289,12 +289,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		LightBox.prototype._createErrorControls = function() {
+			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var errorMessageTitle;
+			var errorMessageSubtitle;
+
+			if (this._getImageContent()._getImageState() === sap.m.LightBoxLoadingStates.TimeOutError) {
+				errorMessageTitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT');
+				errorMessageSubtitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT_DETAILS');
+			} else {
+				errorMessageTitle = resourceBundle.getText('LIGHTBOX_IMAGE_ERROR');
+				errorMessageSubtitle = resourceBundle.getText('LIGHTBOX_IMAGE_ERROR_DETAILS');
+			}
+
 			var errorTitle = new Text({
-				text : "Oops... something went wrong.",
+				text : errorMessageTitle,
 				textAlign : sap.ui.core.TextAlign.Center
 			}).addStyleClass("sapMLightBoxErrorTitle"),
 				errorSubtitle = new Text({
-					text : "The image could not be loaded.",
+					text : errorMessageSubtitle,
 					textAlign : sap.ui.core.TextAlign.Center
 				}).addStyleClass("sapMLightBoxErrorSubtitle"),
 				errorIcon = new Icon({
@@ -324,7 +336,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				lightBoxHeight,
 				minimumOffset = calculateOffset();
 
-			if (oImageContent._getImageState() === "LOADED") {
+			if (oImageContent._getImageState() === sap.m.LightBoxLoadingStates.Loaded) {
 				this._calculateSizes(oImageContent._getNativeImage());
 
 				lightBoxWidth = this._width;
