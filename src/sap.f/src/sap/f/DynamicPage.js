@@ -636,15 +636,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the position/height of the "fake" scrollbar
+	 * Updates the position/height of the "fake" ScrollBar
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
 		var oScrollBar,
-			iOffsetHeight = 0,
-			bNeedsScrollBar = this._needsVerticalScrollBar();
+			bScrollBarNeeded,
+			iOffsetHeight = 0;
 
-		if (!Device.system.desktop) {
+		if (!Device.system.desktop || !exists(this.$wrapper)) {
 			return;
 		}
 
@@ -654,10 +654,11 @@ sap.ui.define([
 			iOffsetHeight = this._measureOffsetHeight();
 		}
 
+		bScrollBarNeeded = this._needsVerticalScrollBar();
 		oScrollBar = this._getScrollBar();
 		oScrollBar.setContentSize(iOffsetHeight + this.$wrapper[0].scrollHeight + "px");
-		oScrollBar.toggleStyleClass("sapUiHidden", !bNeedsScrollBar);
-		this.toggleStyleClass("sapFDynamicPageWithScroll", bNeedsScrollBar);
+		oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
+		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
 		jQuery.sap.delayedCall(0, this, this._updateScrollBarOffset);
 	};
 
