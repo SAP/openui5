@@ -190,7 +190,7 @@
 					<Text text="{path: '@odata.etag', type: 'sap.ui.model.odata.type.String'}"/>
 				</cells>
 				<cells>
-					<Button enabled="false" icon="sap-icon://delete" text="Delete"
+					<Button icon="sap-icon://delete" text="Delete"
 						press="onDeleteEmployee"/>
 				</cells>
 				<cells>
