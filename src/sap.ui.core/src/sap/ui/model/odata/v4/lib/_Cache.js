@@ -668,7 +668,9 @@ sap.ui.define([
 			that = this;
 
 		return this.read(sGroupId, sParentPath).then(function (vCacheData) {
-			var oEntity = vCacheData[vDeleteProperty],
+			var oEntity = vDeleteProperty
+					? vCacheData[vDeleteProperty]
+					: vCacheData, // deleting at root level
 				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
 
 			if (oEntity["$ui5.deleting"]) {
@@ -692,7 +694,11 @@ sap.ui.define([
 						vCacheData.splice(vDeleteProperty, 1);
 						fnCallback(Number(vDeleteProperty));
 					} else {
-						vCacheData[vDeleteProperty] = null;
+						if (vDeleteProperty) {
+							vCacheData[vDeleteProperty] = null;
+						} else { // deleting at root level
+							oEntity["$ui5.deleted"] = true;
+						}
 						fnCallback();
 					}
 				});
@@ -820,6 +826,8 @@ sap.ui.define([
 			if (that.bSingleProperty) {
 				// 204 No Content: map undefined to null
 				oResult = oResult ? oResult.value : null;
+			} else if (oResult["$ui5.deleted"]) {
+				throw new Error("Cannot read a deleted entity");
 			}
 			addByPath(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
 			if (sPath) {

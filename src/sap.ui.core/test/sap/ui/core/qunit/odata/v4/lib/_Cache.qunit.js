@@ -2033,6 +2033,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("SingleCache#_delete: root entity", function (assert) {
+		var sEtag = 'W/"19770724000000.0000000"',
+			oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.createSingle(oRequestor, "Employees('42')"),
+			oData = {
+				"@odata.etag" : sEtag
+			},
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('42')", "groupId")
+			.returns(Promise.resolve(oData));
+
+		return oCache.read("groupId").then(function () {
+			var fnCallback = sinon.spy();
+
+			oRequestorMock.expects("request")
+				.withExactArgs("DELETE", "Employees('42')", "groupId", {"If-Match" : sEtag})
+				.returns(Promise.resolve({}));
+
+			// code under test
+			return oCache._delete("groupId", "Employees('42')", "", fnCallback)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+					sinon.assert.calledOnce(fnCallback);
+					sinon.assert.calledWithExactly(fnCallback);
+
+					oCache.read().then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message, "Cannot read a deleted entity");
+					});
+				});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache#_delete: parallel delete", function (assert) {
 		var fnCallback = sinon.spy(),
 			oRequestor = _Requestor.create("/~/"),
@@ -2076,6 +2113,5 @@ sap.ui.require([
 				assert.strictEqual(oError.message, "Must not delete twice: Equipments('0')");
 			});
 	});
-	// TODO SingleCache#_delete: root entity
 });
 //TODO: resetCache if error in update?

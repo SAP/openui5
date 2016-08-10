@@ -289,6 +289,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				for (sUrl in mUrls) {
 					oServer.respondWith("GET", sUrl, mUrls[sUrl]);
 				}
+				oServer.respondWith("DELETE", /.*/, [204, {}, ""]);
 
 				// wrap oServer.restore to also clear the filter
 				fnRestore = oServer.restore;
@@ -305,12 +306,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
 					var fnBatch;
 
-					if (sUrl in mUrls) {
-						return false;
-					}
-					if (sMethod === "DELETE") {
-						mUrls[sUrl] = [204, {}, ""];
-						oServer.respondWith("DELETE", sUrl, mUrls[sUrl]);
+					if (sMethod === "DELETE" || sUrl in mUrls) {
 						return false;
 					}
 					if (rBatch.test(sUrl)) {
