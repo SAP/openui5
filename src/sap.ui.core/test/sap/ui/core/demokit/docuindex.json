@@ -96,7 +96,8 @@
 					"sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
 					"sap.ui.core.sample.OpaAction",
 					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
-					"sap.ui.core.sample.gherkin.GherkinWithPageObjects"
+					"sap.ui.core.sample.gherkin.GherkinWithPageObjects",
+					"sap.ui.comp.sample.smartfilterbartest"
 				]
 			},
 			{
