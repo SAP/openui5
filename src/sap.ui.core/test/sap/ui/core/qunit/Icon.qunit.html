@@ -15,6 +15,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 		<script language="javascript">
 			jQuery.sap.require("sap.ui.core.Icon");
@@ -40,35 +41,37 @@
 
 			oIcon.placeAt("uiAreaA");
 
-			module("Icon Control");
+			QUnit.module("Icon Control");
 
-			test("Initial Check", function() {
-				ok(jQuery.sap.domById("icon1"), "Icon is rendered");
+			QUnit.test("Initial Check", function(assert) {
+				assert.ok(jQuery.sap.domById("icon1"), "Icon is rendered");
 				$icon = oIcon.$();
 				$dummy = jQuery.sap.byId("dummy");
 			});
 
-			asyncTest("Loading font file", function(){
-				setTimeout(function(){
-					notEqual(jQuery.sap.byId("icon1").height(), 0, "Font file is loaded successfully");
-					start();
+			QUnit.test("Loading font file", function(assert) {
+				var done = assert.async();
+
+				setTimeout(function() {
+					assert.notEqual(jQuery.sap.byId("icon1").height(), 0, "Font file is loaded successfully");
+					done();
 				}, 500);
 			});
 
-			test("Normal state properties", function(){
+			QUnit.test("Normal state properties", function(assert) {
 				$dummy.css({
 					"color": "#666666",
 					"backgroundColor": "#FFFFFF"
 				});
-				equal(window.parseInt($icon.css("font-size"), 10), 20);
-				equal($icon.width(), 24);
-				equal($icon.height(), 24);
-				equal($icon.css("color"), $dummy.css("color"));
-				equal($icon.css("background-color"), $dummy.css("background-color"));
+				assert.equal(window.parseInt($icon.css("font-size"), 10), 20);
+				assert.equal($icon.width(), 24);
+				assert.equal($icon.height(), 24);
+				assert.equal($icon.css("color"), $dummy.css("color"));
+				assert.equal($icon.css("background-color"), $dummy.css("background-color"));
 			});
 
 
-			test("Active color", function(){
+			QUnit.test("Active color", function(assert) {
 				$dummy.css("color", "#222222");
 				$dummy.css("background-color", "#999999");
 				if (sap.ui.Device.support.touch) {
@@ -76,8 +79,8 @@
 				} else {
 					qutils.triggerEvent("mousedown", oIcon.getId());
 				}
-				equal($icon.css("color"), $dummy.css("color"));
-				equal($icon.css("background-color"), $dummy.css("background-color"));
+				assert.equal($icon.css("color"), $dummy.css("color"));
+				assert.equal($icon.css("background-color"), $dummy.css("background-color"));
 				if (sap.ui.Device.support.touch) {
 					qutils.triggerTouchEvent("touchend", oIcon.getId());
 				} else {
@@ -86,17 +89,17 @@
 			});
 
 
-			if(!sap.ui.Device.support.touch){
-				test("Hover color", function(){
+			if (!sap.ui.Device.support.touch) {
+				QUnit.test("Hover color", function(assert) {
 					$dummy.css("color", "#444444");
 					$dummy.css("background-color", "#CCCCCC");
 					qutils.triggerEvent("mouseover", oIcon.getId());
-					equal($icon.css("color"), $dummy.css("color"));
-					equal($icon.css("background-color"), $dummy.css("background-color"));
+					assert.equal($icon.css("color"), $dummy.css("color"));
+					assert.equal($icon.css("background-color"), $dummy.css("background-color"));
 				});
 			}
 
-			test("Attach press handler", function(){
+			QUnit.test("Attach press handler", function(assert) {
 				var fn1 = function(){}, fn2 = function(){};
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
@@ -105,18 +108,18 @@
 
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
-				equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+				assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
 				oIcon.attachPress(fn2);
-				equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+				assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
 				oIcon.detachPress(fn1);
-				equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
+				assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
 				oIcon.detachPress(fn2);
-				equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
+				assert.equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
 
 				oIcon.destroy();
 			});
 
-			test("Set color with values in sap.ui.core.IconColor enum", function() {
+			QUnit.test("Set color with values in sap.ui.core.IconColor enum", function(assert) {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
 					color: sap.ui.core.IconColor.Critical
@@ -124,19 +127,19 @@
 
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
-				ok(oIcon.$().hasClass("sapUiIconColorCritical"), "The color property set in instantiation is applied");
+				assert.ok(oIcon.$().hasClass("sapUiIconColorCritical"), "The color property set in instantiation is applied");
 				oIcon.setColor(sap.ui.core.IconColor.Positive);
-				ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
+				assert.ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
 				oIcon.setColor(sap.ui.core.IconColor.Negative);
-				ok(!oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is removed");
-				ok(oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is set");
+				assert.ok(!oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is removed");
+				assert.ok(oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is set");
 				oIcon.setColor("red");
-				ok(!oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is removed");
+				assert.ok(!oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is removed");
 
 				oIcon.destroy();
 			});
 
-			test("Set background-color with values in sap.ui.core.IconColor enum", function() {
+			QUnit.test("Set background-color with values in sap.ui.core.IconColor enum", function(assert) {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
 					backgroundColor: sap.ui.core.IconColor.Critical
@@ -144,19 +147,19 @@
 
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
-				ok(oIcon.$().hasClass("sapUiIconBGColorCritical"), "The backgroundColor property set in instantiation is applied");
+				assert.ok(oIcon.$().hasClass("sapUiIconBGColorCritical"), "The backgroundColor property set in instantiation is applied");
 				oIcon.setBackgroundColor(sap.ui.core.IconColor.Positive);
-				ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
+				assert.ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
 				oIcon.setBackgroundColor(sap.ui.core.IconColor.Negative);
-				ok(!oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is removed");
-				ok(oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is set");
+				assert.ok(!oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is removed");
+				assert.ok(oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is set");
 				oIcon.setBackgroundColor("red");
-				ok(!oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is removed");
+				assert.ok(!oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is removed");
 
 				oIcon.destroy();
 			});
 
-			test("set src should also change the tooltip", function() {
+			QUnit.test("set src should also change the tooltip", function(assert) {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("delete")
 				});
@@ -168,25 +171,26 @@
 				var sLabel = oIcon.$().attr("aria-label");
 				var sLabelledBy = oIcon.$().attr("aria-labelledby");
 
-				ok(!!sTitle, "tooltip has been set");
-				ok(!!sLabel, "aria-label has been set");
-				ok(!sLabelledBy, "No aria-labelledby has been set");
+				assert.ok(!!sTitle, "tooltip has been set");
+				assert.ok(!!sLabel, "aria-label has been set");
+				assert.ok(!sLabelledBy, "No aria-labelledby has been set");
 
 				oIcon.setSrc(sap.ui.core.IconPool.getIconURI("add"));
 				sap.ui.getCore().applyChanges();
 
-				notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
-				notEqual(oIcon.$().attr("aria-label"), sLabel, "ARIA label should have changed when changing the icon src.");
-				equal(oIcon.$().attr("aria-labelledby"), undefined, "ARIA labelledby should still not be set when changing the icon src.");
+				assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
+				assert.notEqual(oIcon.$().attr("aria-label"), sLabel, "ARIA label should have changed when changing the icon src.");
+				assert.equal(oIcon.$().attr("aria-labelledby"), undefined, "ARIA labelledby should still not be set when changing the icon src.");
 
 				oIcon.destroy();
 			});
 
-			test("set src should not change aria-label when 'labelledby' is set", function() {
-				var oIcon = new sap.ui.core.Icon({
-					src: sap.ui.core.IconPool.getIconURI("delete"),
-					ariaLabelledBy: "foo"
-				});
+			QUnit.test("set src should not change aria-label when 'labelledby' is set", function(assert) {
+				var sLabelledById = "foo",
+					oIcon = new sap.ui.core.Icon({
+						src: sap.ui.core.IconPool.getIconURI("delete"),
+						ariaLabelledBy: sLabelledById
+					});
 
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
@@ -194,17 +198,27 @@
 				var sTitle = oIcon.$().attr("title");
 				var sLabel = oIcon.$().attr("aria-label");
 				var sLabelledBy = oIcon.$().attr("aria-labelledby");
+				var $InvisibleText = oIcon.$("label");
+				var sText = $InvisibleText.text();
 
-				ok(!!sTitle, "A tooltip has been set");
-				ok(!sLabel, "No aria-label has been set");
-				ok(!!sLabelledBy, "aria-labelledby has been set");
+				assert.ok(!!sTitle, "A tooltip has been set");
+				assert.ok(!sLabel, "No aria-label has been set");
+				assert.ok(!!sLabelledBy, "aria-labelledby has been set");
+				assert.ok(!!sText, "The InvisibleText control has some text set");
+
+				var aLabels = sLabelledBy.split(" ");
+
+				assert.equal(aLabels.length, 2, "ARIA labelledby should have both the icon text and the set ariaLabelledBy");
+				assert.equal(aLabels[0], sLabelledById, "The first label id in aLabelledBy should be the one set to ariaLabelledBy");
+				assert.equal(aLabels[1], oIcon.getId() + "-label", "The second label id in aLabelledBy should be the icon's own one");
 
 				oIcon.setSrc(sap.ui.core.IconPool.getIconURI("add"));
 				sap.ui.getCore().applyChanges();
 
-				notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
-				equal(oIcon.$().attr("aria-label"), undefined, "ARIA label should still not be set when changing the icon src.");
-				equal(oIcon.$().attr("aria-labelledby"), sLabelledBy, "ARIA labelledby should still be the same when changing the icon src.");
+				assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
+				assert.equal(oIcon.$().attr("aria-label"), undefined, "ARIA label should still not be set when changing the icon src.");
+				assert.equal(oIcon.$().attr("aria-labelledby"), sLabelledBy, "ARIA labelledby should still be the same when changing the icon src.");
+				assert.notEqual(oIcon.$("label").text(), sText, "The text in InvisibleText should be changed when changing the icon src");
 
 				oIcon.destroy();
 			});
@@ -288,15 +302,26 @@
 
 			QUnit.test("When ariaLabelledBy IS set", function (assert) {
 				var sId = "non-existing-id",
-					$icon;
+					$Icon, $InvisibleText, sText;
 
 				this.oAriaIcon.addAriaLabelledBy(sId);
 				sap.ui.getCore().applyChanges();
 
-				$icon = this.oAriaIcon.$();
+				$Icon = this.oAriaIcon.$();
+				$InvisibleText = this.oAriaIcon.$("label");
+				sText = $InvisibleText.text();
 
-				assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label should be undefined");
-				assert.strictEqual($icon.attr("aria-labelledby"), sId, "aria-labelledby should be " + sId);
+				assert.strictEqual($Icon.attr("aria-label"), undefined, "aria-label should be undefined");
+				assert.strictEqual($Icon.attr("aria-labelledby"), sId + " " + $InvisibleText.attr("id"), "aria-labelledby should be " + sId + " " + $InvisibleText.attr("id"));
+				assert.notEqual(sText, undefined, "The content of InvisibleText is set a non-undefined string");
+
+				this.oAriaIcon.setAlt(this.sAlt);
+				sap.ui.getCore().applyChanges();
+
+				$InvisibleText = this.oAriaIcon.$("label");
+				sText = $InvisibleText.text();
+
+				assert.strictEqual(sText, this.sAlt, "The content of InvisibleText is set with the given alt");
 			});
 
 			QUnit.test("Property noTabStop", function (assert) {
