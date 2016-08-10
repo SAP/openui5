@@ -53,6 +53,7 @@ QUnit.test("Check If PopupSupport Was Loaded Properly", function(assert) {
 	assert.ok(aMethods.indexOf("getParentPopupId"), "'getParentPopupId' was added as public method");
 	assert.ok(aMethods.indexOf("addToPopup"), "'addToPopup' was added as public method");
 	assert.ok(aMethods.indexOf("removeFromPopup"), "'removeFromPopup' was added as public method");
+	assert.ok(aMethods.indexOf("focusOpener"), "'focusOpener' was added as public method");
 });
 
 QUnit.test("Check Amount of Public Methods", function(assert) {
@@ -204,7 +205,8 @@ QUnit.module("Focus", {
 			}
 		}
 	}
-})
+});
+
 QUnit.asyncTest("Initial Focus in non-modal mode, auto", function(assert) {
 	expect(2);
 
@@ -320,12 +322,66 @@ QUnit.asyncTest("Check if focus is inside the Popup", function(assert) {
 		oButtonOustide.focus();
 		assert.ok(!oPopup._isFocusInsidePopup(), "Focus is outside of the Popup");
 
+		oPopup.close(0);
 		start();
 	};
 
 	// act
 	oPopup.attachOpened(fnOpened, this);
 	oPopup.open();
+});
+
+QUnit.test("Check if focus is set back to the opener after closing", function(assert) {
+	var done = assert.async();
+	var sLeftTop = sap.ui.core.Popup.Dock.LeftTop;
+	var sRightTop = sap.ui.core.Popup.Dock.RightTop;
+
+	var oAutoCloseDOM = document.createElement("div");
+	oAutoCloseDOM.style.height = "100px";
+	oAutoCloseDOM.style.width = "100px";
+	oAutoCloseDOM.style.backgroundColor = "red";
+
+	var oAutoCloseButton = document.createElement("button");
+	oAutoCloseButton.id = "autocloseButton";
+	oAutoCloseDOM.appendChild(oAutoCloseButton);
+
+	var oAutoClosePopup = new sap.ui.core.Popup(
+		oAutoCloseDOM,
+		/*modal*/false,
+		/*shadow*/false,
+		/*autoclose*/true
+	);
+	var fnAutoCloseOpened = function() {
+		oAutoClosePopup.detachOpened(fnAutoCloseOpened, this);
+
+		this.oPopup.open(0);
+	};
+
+	var oOpenButton = jQuery("#popup1-btn");
+	jQuery.sap.focus(oOpenButton);
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened, this);
+		this.oPopup.close(0)
+	};
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed, this);
+
+		setTimeout(function() {
+			assert.equal(document.activeElement.id, oAutoCloseButton.id, "Focus is set back to button inside autoclose Popup");
+
+			oAutoClosePopup.destroy();
+			oAutoCloseDOM.remove();
+			done();
+		}.bind(this), 200);
+	};
+
+	oAutoClosePopup.attachOpened(fnAutoCloseOpened, this);
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.setModal(true);
+
+	oAutoClosePopup.open(0, sLeftTop, sRightTop, oOpenButton);
 });
 
 QUnit.module("Animation", {
