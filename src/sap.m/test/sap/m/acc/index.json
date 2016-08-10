@@ -42,7 +42,7 @@
 		},
 		{
 			"control": "sap.m.Carousel",
-			"url": "../Carousel.html",
+			"url": "../CarouselLessPages.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{

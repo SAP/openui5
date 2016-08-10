@@ -27,6 +27,8 @@
 		assert.strictEqual(this.oCarousel.getHeight(), '100%', "Default 'height' value is 100%");
 		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
 		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
+		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
+		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), sap.m.PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), sap.m.CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
 	});
 
@@ -194,12 +196,18 @@
 	//================================================================================
 	QUnit.module("Events", {
 		setup: function () {
-			this.oCarousel = new sap.m.Carousel({
+			//carousel with 9 pages. Page Indicator will be numeric.
+			this.oCarousel = new sap.m.Carousel("myCrsl", {
 				pages: [
 					new sap.m.Page("keyTestPage_1"),
 					new sap.m.Page("keyTestPage_2"),
 					new sap.m.Page("keyTestPage_3"),
-					new sap.m.Page("keyTestPage_4")
+					new sap.m.Page("keyTestPage_4"),
+					new sap.m.Page("keyTestPage_5"),
+					new sap.m.Page("keyTestPage_6"),
+					new sap.m.Page("keyTestPage_7"),
+					new sap.m.Page("keyTestPage_8"),
+					new sap.m.Page("keyTestPage_9")
 				],
 				activePage: "keyTestPage_2"
 			});
@@ -246,6 +254,18 @@
 	QUnit.test("Active page should be set when specified in constructor'", function (assert) {
 		//Assert
 		assert.strictEqual(this.oCarousel.getActivePage(), 'keyTestPage_2', "Active page should be 'keyTestPage_2'");
+	});
+
+	QUnit.test("When 'pageChanged' event is fired the numeric value of the page indicator should change", function (assert) {
+
+		// Assert
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML,"2 of 9", "Page indicator should show '2 of 9'");
+
+		// Act
+		this.oCarousel.next();
+
+		// Assert
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML,"3 of 9", "Page indicator should show '3 of 9'");
 	});
 
 	//================================================================================
