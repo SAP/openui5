@@ -103,4 +103,17 @@ describe("sap.m.IconTabBar", function() {
 		element(by.id("itb12")).click();
 		expect(takeScreenshot(itb12)).toLookAs("11_stretchContentHeight_ResponsivePaddin");
 	});
+
+	var itb13 = element(by.id("overFlowTab"));
+	it("should show icon tab overflow", function() {
+		//next line is to move the view in the window
+		element(by.id("overFlowTab")).click();
+		expect(takeScreenshot(itb13)).toLookAs("12_icontab_overflow");
+	});
+
+	it("should have show overflow menu", function() {
+		//next line is to move the view in the window
+		element(by.id("overFlowTab--header-overflow")).click();
+		expect(takeScreenshot()).toLookAs("13_opened_overflow_tab");
+	});
 });
