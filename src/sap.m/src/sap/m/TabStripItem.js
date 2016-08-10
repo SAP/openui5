@@ -51,7 +51,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 						parameters: {
 
 							/**
-							 * Tab ID of the tab to be closed.
+							 * The <code>TabStripItem</code> to be closed.
 							 */
 							item: {type: "sap.m.TabStripItem"}
 						}
