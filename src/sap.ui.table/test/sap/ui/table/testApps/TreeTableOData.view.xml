@@ -82,7 +82,7 @@
 							</f:FormElement>
 							<f:FormElement label="Root Level">
 								<f:fields>
-									<Input value="{/rootLevel}" id="rootLevel"/>
+									<Input value="{path:'/rootLevel', type:'sap.ui.model.type.Integer'}" id="rootLevel"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="# of exp. Level">
@@ -195,10 +195,10 @@
 			<table:TreeTable
 				id="tableOData"
 				selectionMode="Single"
-				visibleRowCount="{path:'/visibleRowCount', type:'Integer'}"
+				visibleRowCount="{path:'/visibleRowCount', type:'sap.ui.model.type.Integer'}"
 				visibleRowCountMode="{/visibleRowCountMode}"
 				threshold="{/tableThreshold}"
-				rootLevel="{path:'/rootLevel', type:'Integer'}">
+				rootLevel="{/rootLevel}">
 				<table:toolbar>
 					<Toolbar>
 						<Label text="Table-Tools" />

@@ -552,6 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
+			context: this.oContext,
 			urlParameters: aUrlParameters,
 			filters: [new Filter({
 				filters: aFilters,
@@ -700,6 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
+			context: this.oContext,
 			urlParameters: aUrlParameters,
 			filters: [new Filter({
 				filters: aFilters,
