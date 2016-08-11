@@ -19,8 +19,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * or by using createBindingContext.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
-	 * @param {String} sPath the path
-	 * @param {Object} oContext the context object
+	 * @param {String} sPath the binding path
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Context
@@ -28,7 +27,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 */
 	var Context = BaseObject.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
 
-		constructor : function(oModel, sPath){
+		constructor : function(oModel, sPath) {
 
 			BaseObject.apply(this);
 
