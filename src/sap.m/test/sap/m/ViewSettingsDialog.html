@@ -869,6 +869,7 @@
 								case "value4": aFilters = new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.BT, 50, 70); break;
 								case "value5": aFilters = new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.GT, 70); break;
 							}
+
 							// add filters
 							if (aFilters) {
 								// the filter could be an array of filters or a single filter so we transform it to an array
@@ -902,7 +903,8 @@
 					"composed sorters: " + JSON.stringify(aTableSorters) + "\n" +
 					"composed filters: " + JSON.stringify(aTableFilters)
 				);
-			}
+			},
+			filterSearchOperator: sap.m.StringFilterOperator.Contains
 		});
 
 		// init sorting (with simple sorters as custom data for all fields)

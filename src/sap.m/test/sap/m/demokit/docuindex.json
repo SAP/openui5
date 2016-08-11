@@ -1054,6 +1054,7 @@
 			"sap.m.sample.ViewSettingsDialog",
 			"sap.m.sample.ViewSettingsDialogCustom",
 			"sap.m.sample.ViewSettingsDialogCustomTabs",
+			"sap.m.sample.ViewSettingsDialogCustomFilterDetails",
 			"sap.m.sample.TableViewSettingsDialog"
 		  ]
 		},
@@ -2222,6 +2223,11 @@
 		  "id": "sap.m.sample.ViewSettingsDialogCustom",
 		  "name": "View Settings Dialog - Custom Filters",
 		  "description": "You can have custom filters in your View Settings Dialog, as shown in this example here."
+		},
+		{
+		  "id": "sap.m.sample.ViewSettingsDialogCustomFilterDetails",
+		  "name": "View Settings Dialog - Custom Search",
+		  "description": "You can filter the items in the filter details page using different string filter operators."
 		},
 		{
 		  "id": "sap.m.sample.ViewSettingsDialogCustomTabs",
