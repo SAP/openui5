@@ -319,6 +319,133 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("IFrame navigation - with window.location", {
+			beforeEach: function () {
+				this.oOpa5 = new Opa5();
+				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+
+				this.oOpa5.waitFor({
+					success: function () {
+						this.oHashChanger = Opa5.getHashChanger();
+						this.oHashChanger.init();
+					}.bind(this)
+				});
+			}
+		});
+
+		function windowLocationTest (fnTestBody, assert) {
+			var fnOpaDone = assert.async(),
+				bHashChangeDone = false;
+
+			// Act
+			this.oOpa5.waitFor({
+				success: function () {
+					fnTestBody.call(this, function () {
+						bHashChangeDone = true;
+					});
+				}.bind(this)
+			});
+
+			this.oOpa5.waitFor({
+				check: function () {
+					return bHashChangeDone;
+				}
+			});
+
+			this.oOpa5.iTeardownMyAppFrame();
+
+			Opa5.emptyQueue().done(fnOpaDone);
+		}
+
+		QUnit.test("Should react to hashChanges with no initial hash", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges with a set hash call", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges with a replace hash call", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.replaceHash("foo");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges by window.location.hash = ''", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+				this.oHashChanger.replaceHash("baz");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges by window.location.hash = '' combined with back and forward", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+				this.oHashChanger.replaceHash("baz");
+				this.oHashChanger.setHash("biz");
+				Opa5.getWindow().history.go(-1);
+				Opa5.getWindow().history.go(1);
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						Opa5.getWindow().history.go(-1);
+						assert.strictEqual(this.oHashChanger.getHash(), "biz", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
 
 		QUnit.module("ControlType", {
 			beforeEach: function () {
