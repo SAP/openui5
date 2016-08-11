@@ -61,6 +61,8 @@ sap.ui.define(['jquery.sap.global'],
 				aInvisibleTexts[i].setText(oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [iVisibleButtonTempCount, iVisibleButtonCount]));
 				iVisibleButtonTempCount++;
 				oRm.renderControl(aInvisibleTexts[i]);
+			} else {
+				aInvisibleTexts[i].setText("");
 			}
 		}
 
