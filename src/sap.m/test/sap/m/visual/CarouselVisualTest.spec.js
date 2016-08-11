@@ -1,6 +1,6 @@
 describe("sap.m.CarouselVisualTest", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Carousel';
-	
+
 	var myCarousel = element(by.id("myCarousel"));
 
 	// initial loading"
@@ -37,17 +37,31 @@ describe("sap.m.CarouselVisualTest", function() {
 	it("should change the width to 400px", function () {
 		element(by.id("btnWidth400px")).click();
 		expect(takeScreenshot(myCarousel)).toLookAs("5_width_400px");
+
+		element(by.id("buttonResetCarousel")).click();
 	});
 
-	// hide page indicatior
-	it("should hide page indicator", function () {
-		element(by.id("btnHideIndicator")).click();
-		expect(takeScreenshot(myCarousel)).toLookAs("6_hide_page_indicatior");
+	// change arrows position
+	it("should change arrows placement", function() {
+		element(by.id("arrowsPlacementSelect")).click();
+		element(by.id("arrowPlacementIndicatorItem")).click();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("6_arrow_placement");
 	});
 
-	// move page indicatior to top
-	it("should move page idicator to top", function () {
-		element(by.id("btnMoveIndicatorTop")).click();
-		expect(takeScreenshot(myCarousel)).toLookAs("7_move_page_indicatior_top");
+	// change page indicator position
+	it("should change page indicator placement", function() {
+		element(by.id("showPageIndicatorSelect")).click();
+		element(by.id("hidePI")).click();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("7_page_indicator_visibility");
+	});
+
+	// toggle page indicator visibility
+	it("should change page indicator placement", function() {
+		element(by.id("pageIndicatorPlacementSelect")).click();
+		element(by.id("pageIndicatorTopItem")).click();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("8_page_indicator_placement");
 	});
 });
