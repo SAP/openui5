@@ -86,6 +86,11 @@
         }
     });
 
+	QUnit.test("it should not throw an error when the .destroy() method is called twice", function(assert) {
+		this.rangeSlider.destroy();
+		assert.ok(true);
+	});
+
     QUnit.test("Default Values", function(assert) {
         // assert
         var aRange = this.rangeSlider.getRange();
