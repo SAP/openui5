@@ -15,7 +15,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 *
 		 * @class
 		 * Items provide information about Error Messages in the page.
-		 * @extends sap.ui.core.Element
+		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
 		 * @version ${version}
