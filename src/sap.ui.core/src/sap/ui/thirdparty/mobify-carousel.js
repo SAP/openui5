@@ -492,7 +492,22 @@ Mobify.UI.Carousel = (function($, Utils) {
         });
 
         $element.on('afterSlide', function(e, previousSlide, nextSlide) {
-            self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
+            // SAP MODIFICATION BEGIN
+            // due to https://sapjira.wdf.sap.corp/browse/BGSOFUIRODOPI-828
+            // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
+            var bActive = self._getClass('active'),
+                oItems = self.$items, iStart, iStop;
+            if (previousSlide === 1 && nextSlide === oItems.length ||
+                previousSlide === oItems.length && nextSlide === 1) {
+                // the border use cases
+                iStart = Math.min(previousSlide, nextSlide);
+                iStop = Math.max(previousSlide, nextSlide);
+                for(var i = iStart; i < iStop - 1; i++) {
+                    jQuery(oItems[i]).removeClass(bActive);
+                }
+            }
+            // SAP MODIFICATION ENDS
+
             self.$items.eq(nextSlide - 1).addClass(self._getClass('active'));
 
             self.$element.find('[data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
@@ -551,7 +566,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         	//SAP MODIFICATION
             //if looping move to last index
         	if(this._bLoop) {
-        		this.changeAnimation('sapMCrslNoTransition');
+        		// this.changeAnimation('sapMCrslNoTransition');
         		newIndex = this._length;
         	} else {
         		newIndex = 1;
@@ -560,7 +575,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         	//SAP MODIFICATION
             //if looping move to first index
         	if(this._bLoop) {
-        		this.changeAnimation('sapMCrslNoTransition');
+        		// this.changeAnimation('sapMCrslNoTransition');
         		newIndex = 1;
         	} else {
         		newIndex = length;
