@@ -27,6 +27,15 @@
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+<script>
+	// Enable code coverage
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if (window.blanket) {
+		window.blanket.options("sap-ui-cover-only", "[sap/ui/model/odata/v2/ODataModel.js]");
+	}
+</script>
+
+
 <!-- Test functions -->
 <script language="javascript">
 
@@ -4785,6 +4794,84 @@
 		}
 		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
 	});
+
+
+	asyncTest("ListBinding gets correct change reason", function() {
+		jQuery.sap.require("sap.m.List");
+		jQuery.sap.require("sap.m.StandardListItem");
+
+		var oList = new sap.m.List({
+			items: {
+				path: "ToProducts",
+				template: new sap.m.StandardListItem()
+			},
+			growing: true
+		});
+		oList.bindElement({path:"/BusinessPartnerSet('0100000000')", parameters: { expand:"ToProducts"} });
+		oList.setModel(oModel);
+
+
+		oModel.metadataLoaded().then(function() {
+			var iElementBindingCounter = {};
+			var iListBindingCounter = {};
+
+
+			var fnCount = function(oEvent) {
+				var sReason = oEvent.getParameter("reason");
+				if (!iElementBindingCounter[sReason]) {
+					iElementBindingCounter[sReason] = 0;
+				}
+				iElementBindingCounter[sReason]++;
+
+				switch (iElementBindingCounter[sap.ui.model.ChangeReason.Context]) {
+					case 1:
+						oList.bindElement({path:"/BusinessPartnerSet('0100000044')", events: {change: fnCount}, parameters: { expand:"ToProducts"}});
+						break;
+
+					case 2:
+						oList.bindElement({path:"/BusinessPartnerSet('0100000000')", events: {change: fnCount}, parameters: { expand:"ToProducts"}});
+						break;
+
+					case 3:
+						fnSecondTest();
+				}
+			};
+
+
+			var fnSecondTest = function() {
+				equals(iElementBindingCounter[sap.ui.model.ChangeReason.Context], 3, "Correct number of context-changes");
+				equals(Object.keys(iElementBindingCounter).length, 1, "No other changes were fired");
+
+
+				oBinding = oList.getBinding("items");
+				oBinding.attachChange(function(oEvent) {
+					var sReason = oEvent.getParameter("reason");
+					if (!iListBindingCounter[sReason]) {
+						iListBindingCounter[sReason] = 0;
+					}
+					iListBindingCounter[sReason]++;
+
+					switch (iListBindingCounter[sap.ui.model.ChangeReason.Context]) {
+						case 1:
+							oBinding.setContext(oModel.createBindingContext("/BusinessPartnerSet('0100000000')"));
+							break;
+
+						case 2:
+							equals(iListBindingCounter[sap.ui.model.ChangeReason.Context], 2, "Correct number of context-changes");
+							equals(Object.keys(iListBindingCounter).length, 1, "No other changes were fired");
+							oList.destroy();
+							start();
+					}
+				});
+
+				oBinding.setContext(oModel.createBindingContext("/BusinessPartnerSet('0100000044')"));
+			};
+
+			oList.getElementBinding().attachChange(fnCount);
+		});
+
+	});
+
 	</script>
 
 </head>

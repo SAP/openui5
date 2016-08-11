@@ -408,14 +408,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 						this.bClientOperation = true;
 						this.applyFilter();
 						this.applySort();
-						this._fireChange();
+						this._fireChange({ reason: ChangeReason.Context });
 					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){
 						// if path does not resolve, or data is known to be null (e.g. expanded list)
 						this.aAllKeys = null;
 						this.aKeys = [];
 						this.iLength = 0;
 						this.bLengthFinal = true;
-						this._fireChange();
+						this._fireChange({ reason: ChangeReason.Context });
 					} else {
 						this._refresh();
 					}

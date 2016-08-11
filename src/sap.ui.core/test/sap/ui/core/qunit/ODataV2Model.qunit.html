@@ -34,6 +34,15 @@
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
 
+<script>
+	// Enable code coverage
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if (window.blanket) {
+		window.blanket.options("sap-ui-cover-only", "[sap/ui/model/odata/v2/ODataModel.js]");
+	}
+</script>
+
+
 <script type="text/xmlview" id="xmlview">
 	<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns="sap.m" controllerName="my.Controller">
 				<List id='myList' items="{path: '/Categories', suspended: true}">
@@ -3592,7 +3601,7 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
-	
+
 	asyncTest("callFunction:check eTag", function() {
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
