@@ -4,7 +4,9 @@
 
 /*global sap */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/Utils"], function(jQuery, Base, Utils) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/JsControlTreeModifier", "sap/ui/fl/Utils"
+], function(jQuery, BaseChangeHandler, JsControlTreeModifier, Utils) {
 	"use strict";
 
 	/**
@@ -30,24 +32,28 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 	 * @private
 	 * @name sap.ui.layout.changeHandler.RenameForm#applyChange
 	 */
-	RenameForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
-		var oChange = oChangeWrapper.getDefinition();
+	RenameForm.applyChange = function(oChange, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
 
-		// oChange.content.sRenameId field key was used in 1.40, do not remove
-		var sRenameId = oChange.content.stableRenamedElementId || oChange.content.sRenameId;
-		var oReferrer = oModifier.byId(sRenameId, oView);
+		var oChangeDefinition = oChange.getDefinition();
 
-		if (oChange.texts && oChange.texts.formText && this._isProvided(oChange.texts.formText.value)) {
+		// !important : sRenameId was used in 1.40, do not remove for compatibility!
+		var vSelector = oChangeDefinition.content.elementSelector || oChangeDefinition.content.sRenameId;
+		var oRenamedElement = oModifier.bySelector(vSelector, oAppComponent, oView);
+
+		if (oChangeDefinition.texts && oChangeDefinition.texts.formText && this._isProvided(oChangeDefinition.texts.formText.value)) {
 			if (!oControl) {
 				throw new Error("no Control provided for renaming");
 			}
 
-			var sValue = oChange.texts.formText.value;
-			oModifier.setProperty(oReferrer, "text", sValue);
+			var sValue = oChangeDefinition.texts.formText.value;
+			oModifier.setProperty(oRenamedElement, "text", sValue);
 
 			return true;
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
+			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChange.fileName + "." + oChange.fileType);
 			//however subsequent changes should be applied
 		}
 	};
@@ -69,16 +75,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
 			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
 			if (oSpecificChangeInfo.changeType === "renameLabel") {
-				oChange.content.stableRenamedElementId = oRenamedElement.getLabel().getId();
+				oChange.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getLabel());
 			} else if (oSpecificChangeInfo.changeType === "renameTitle") {
-				oChange.content.stableRenamedElementId = oRenamedElement.getTitle().getId();
+				oChange.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getTitle());
 			}
 		} else {
 			throw new Error("oSpecificChangeInfo.renamedElement attribute required");
 		}
 
 		if (this._isProvided(oSpecificChangeInfo.value)) {
-			Base.setTextInChange(oChange, "formText", oSpecificChangeInfo.value, "XFLD");
+			BaseChangeHandler.setTextInChange(oChange, "formText", oSpecificChangeInfo.value, "XFLD");
 		} else {
 			throw new Error("oSpecificChangeInfo.value attribute required");
 		}

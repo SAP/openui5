@@ -24,7 +24,10 @@ sap.ui.define([
 	 * @param {object} oControlMap flat list of ids that point to control instances
 	 * @public
 	 */
-	AddGroup.applyChange = function(oChangeWrapper, oForm, oModifier, oView) {
+	AddGroup.applyChange  = function(oChangeWrapper, oForm, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+
 		var oChange = oChangeWrapper.getDefinition();
 		if (oChange.texts && oChange.texts.groupLabel && oChange.texts.groupLabel.value && oChange.content && oChange.content.group && oChange.content.group.id) {
 			var sGroupId = oChange.content.group.id;

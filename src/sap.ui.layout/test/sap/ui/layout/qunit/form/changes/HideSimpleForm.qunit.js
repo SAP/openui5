@@ -19,7 +19,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oInput0 = new sap.m.Input({id : "Input0", visible : true});
 			this.oInput1 = new sap.m.Input({id : "Input1"});
 			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
-				id : "SimpleForm", title : "Simple Form", class : "editableForm",
+				id : "SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("content");
@@ -52,7 +52,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, {modifier : this.oJsControlTreeModifier}), "no errors occur");
 		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
 	});
 
@@ -65,7 +65,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oInput0 = new sap.m.Input({id : "Input0", visible : true});
 			this.oInput1 = new sap.m.Input({id : "Input1"});
 			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
-				id : "SimpleForm", title : "Simple Form", class : "editableForm",
+				id : "SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("content");
@@ -79,7 +79,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 						"id": "SimpleForm"
 					},
 					"content": {
-						"removedElement": {
+						"elementSelector": {
 							id : this.oFormElement.getLabel().getId()
 						}
 					},
@@ -100,7 +100,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, {modifier : this.oJsControlTreeModifier}), "no errors occur");
 		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
 	});
 
@@ -124,18 +124,19 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, this.oXmlTreeModifier, this.oXmlDocument), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+			modifier : this.oXmlTreeModifier,
+			view : this.oXmlDocument
+		}), "no errors occur");
 		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
 		var exception, oControl;
 
-		oControl = {};
-
 		//Call CUT
 		try {
-			this.oChangeHandler.applyChange(this.oChangeWrapper, oControl, this.JsControlTreeModifier);
+			this.oChangeHandler.applyChange(this.oChangeWrapper, oControl, {modifier : this.JsControlTreeModifier});
 		} catch (ex) {
 			exception = ex;
 		}
@@ -156,7 +157,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 
-		assert.equal(oChange.content.removedElement.id, "Label1", "removedElement.id has been added to the change");
+		assert.equal(oChange.content.elementSelector.id, "Label1", "elementSelector.id has been added to the change");
 	});
 
 	QUnit.test('when calling completeChangeContent without removedElement.id', function (assert) {
@@ -170,7 +171,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier);
+			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm);
 			},
 			new Error("oSpecificChangeInfo.removedElement.id attribute required"),
 			"the undefined value raises an error message"

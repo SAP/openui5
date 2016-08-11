@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global'
-], function(jQuery) {
+	'jquery.sap.global', "sap/ui/fl/changeHandler/JsControlTreeModifier"
+], function(jQuery, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -23,17 +23,21 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @public
 	 */
-	UnhideForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
-		var oChange = oChangeWrapper.getDefinition();
-		var sUnhideId = oChange.content.sUnhideId;
+	UnhideForm.applyChange = function(oChange, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
 
-		var oCtrl = oModifier.byId(sUnhideId, oView);
+		var oChangeDefinition = oChange.getDefinition();
+
+		// !important : sUnhideId was used in 1.40, do not remove for compatibility!
+		var oControlToUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
-		if (oChange.changeType === "unhideSimpleFormField") {
+		if (oChangeDefinition.changeType === "unhideSimpleFormField") {
 			aContent.some(function (oField, index) {
-				if (oField === oCtrl) {
+				if (oField === oControlToUnhide) {
 					iStart = index;
 					oModifier.setVisible(oField, true);
 				}
@@ -60,7 +64,7 @@ sap.ui.define([
 	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
 		var oChange = oChangeWrapper.getDefinition();
 		if (oSpecificChangeInfo.sUnhideId) {
-			oChange.content.sUnhideId = oSpecificChangeInfo.sUnhideId;
+			oChange.content.elementSelector = JsControlTreeModifier.getSelector(sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId));
 		} else {
 			throw new Error("oSpecificChangeInfo.sUnhideId attribute required");
 		}
