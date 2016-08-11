@@ -65,6 +65,12 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, A
 				return;
 			}
 
+			$ActionDomRef.focus();
+
+			if (!$ActionDomRef.is(":focus")) {
+				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+			}
+
 			var oUtils = this.getUtils();
 
 			var createAndDispatchFocusEvent = function (sName) {
@@ -86,9 +92,12 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, A
 				$.sap.log.info("Dispatched focus event: '" + sName + "'", this._sLogPrefix);
 			}.bind(this);
 
-			createAndDispatchFocusEvent("focusin");
-			createAndDispatchFocusEvent("focus");
-			createAndDispatchFocusEvent("activate");
+			var bWasFocused = $ActionDomRef.is(":focus");
+			if (!bWasFocused) {
+				createAndDispatchFocusEvent("focusin");
+				createAndDispatchFocusEvent("focus");
+				createAndDispatchFocusEvent("activate");
+			}
 
 			if (this.getClearTextFirst()) {
 				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
