@@ -976,11 +976,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		var oColumn = oDomRef.querySelector(".sapUiTableCol");
-		if (oColumn) {
-			oSizes.columnRowHeight = oColumn.clientHeight;
-			oSizes.columnRowOuterHeight = oColumn.offsetHeight;
+		function getColumnSize(oColumn) {
+			oSizes.columnRowHeight = Math.max(oColumn.clientHeight || 0, oSizes.columnRowHeight);
+			oSizes.columnRowOuterHeight = Math.max(oColumn.offsetHeight || 0, oSizes.columnRowOuterHeight);
 		}
+		Array.prototype.forEach.call(oDomRef.querySelectorAll(".sapUiTableCol"), getColumnSize);
 
 		if (!aTableRowHeights) {
 			oSizes.tableRowHeights = this._collectRowHeights();
