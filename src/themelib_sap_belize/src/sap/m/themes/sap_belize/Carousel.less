@@ -49,7 +49,6 @@
 	margin: -1.5625px 0 0 0;
 	padding: 0;
 	text-decoration: none;
-	overflow: hidden;
 	background-color: @sapUiContentContrastIconColor;
 	border-radius: 50%;
 	color: @sapUiContentContrastIconColor;
@@ -111,8 +110,62 @@
 }
 
 .sapMCrslHud .sapMCrslPrev:focus,
-.sapMCrslHud .sapMCrslNext:focus {
-  outline: 1px dotted @sapUiContentFocusColor;
+.sapMCrslHud .sapMCrslNext:focus,
+.sapMCrslHud .sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslHud .sapMCrslNext .sapUiIcon:focus {
+  outline: none;
+}
+
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+  	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px solid @sapUiInvertedFocus;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px dotted @sapUiFocus;
+	}
+}
+
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslHud .sapMCrslPrev:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslHud .sapMCrslNext:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslHud .sapMCrslPrev .sapUiIcon:focus,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslHud .sapMCrslNext .sapUiIcon:focus {
+  	&::before {
+		position: absolute;
+		padding-top: 0.625rem;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px solid @sapUiInvertedFocus;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px dotted @sapUiFocus;
+	}
 }
 
 html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
