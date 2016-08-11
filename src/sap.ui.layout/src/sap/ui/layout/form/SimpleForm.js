@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			}
 			this._changedFormContainers.push(oFormContainer);
 		} else if (oElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
-			if (oOldElement instanceof sap.ui.core.Title || oElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+			if (oOldElement instanceof sap.ui.core.Title || oOldElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
 				// add new FormElement to previous container
 				oOldFormContainer = oOldElement.getParent();
 				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);

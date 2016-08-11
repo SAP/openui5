@@ -397,6 +397,13 @@
 			iIndex = oElement.indexOfField(oTextField);
 			equal(iIndex, oElement.getFields().length - 1, "TextField is last field FormElement");
 
+			oLabel = new sap.ui.commons.Label("L-ZZ",{value:"Label ZZ"});
+			oSimpleForm2.insertContent(oLabel, 10); // insert before Toolbar
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[1].getId(), "new Label in container 1");
+			iIndex = aContainers[1].indexOfFormElement(oElement);
+			equal(iIndex, aContainers[1].getFormElements().length - 1, "is last FormElement in Container2");
+
 			sap.ui.getCore().applyChanges();
 		});
 
@@ -460,6 +467,7 @@
 			equal(oElement.getFields().length, 2, "FormElement number of fields after removing TextField");
 			ok(!oTextField.getLayoutData(), "TextField has no LayoutData");
 
+			oSimpleForm2.removeContent("L-ZZ"); // remove Label
 			oSimpleForm2.removeContent("TF-ZZ"); // remove TextField
 			oSimpleForm2.removeContent("SF2-TB2"); // remove Toolbar
 			aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
