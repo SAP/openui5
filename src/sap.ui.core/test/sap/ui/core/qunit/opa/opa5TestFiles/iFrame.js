@@ -396,14 +396,15 @@ sap.ui.define([
 
 		QUnit.module("Tests that timeout");
 
-		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			function createMatcherForTestMessage (oOptions) {
-				return function () {
-					var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
-					return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
-				}
+		function createMatcherForTestMessage (oOptions) {
+			return function () {
+				var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
+				return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
 			}
+		}
 
+
+		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
 			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
 
 			oOpa.waitFor({
@@ -481,6 +482,24 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
 					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+				}
+			});
+
+			oOpa.iTeardownMyApp();
+		});
+
+		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
+			oOpa.iStartMyAppInAFrame("../testdata/failingIFrameOpaTest.html");
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 1,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
 				}
 			});
 
