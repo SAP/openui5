@@ -9,6 +9,7 @@ module.exports = [
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
 	"Label.spec.js",
+	"LightBox.spec.js",
 	"MessagePage.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
