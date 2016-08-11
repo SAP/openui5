@@ -163,10 +163,6 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._updateHandle(this._mHandleTooltip.end.handle, aRange[1]);
         };
 
-        RangeSlider.prototype.exit = function () {
-            this._aInitialFocusRange = null;
-        };
-
 		/**
          * Creates input field that will be used in slider's tooltip
          *
