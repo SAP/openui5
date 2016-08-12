@@ -363,6 +363,11 @@ sap.ui.define([
 			oDynamicPageTitle = this.getTitle(),
 			oDynamicPageHeader = this.getHeader();
 
+		if (this._bPinned) {
+			jQuery.sap.log.debug("DynamicPage :: header toggle aborted, header is pinned", this);
+			return;
+		}
+
 		if (exists(oDynamicPageTitle)) {
 			oDynamicPageTitle._setShowExpandContent(bExpanded);
 			oDynamicPageTitle._setShowSnapContent(!bExpanded);
