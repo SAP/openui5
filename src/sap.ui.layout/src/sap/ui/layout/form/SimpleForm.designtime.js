@@ -49,12 +49,21 @@ sap.ui.define([], function() {
 					},
 					rename : function(oElement){
 						var sType = oElement.getMetadata().getName();
+						var bIsEnabled = true;
 						var oRenameMetadata;
 						if (sType === "sap.ui.layout.form.FormContainer"){
+							if (oElement.getToolbar && oElement.getToolbar()) {
+								bIsEnabled = false;
+							}
 							oRenameMetadata = {
 								changeType : "renameTitle",
+								isEnabled : bIsEnabled,
 								domRef : function (oControl){
-									return oControl.getTitle().getDomRef();
+									if (oControl.getTitle && oControl.getTitle()) {
+										return oControl.getTitle().getDomRef();
+									} else {
+										return;
+									}
 								},
 								getState : function (oControl) {
 									var oState = {
@@ -81,6 +90,7 @@ sap.ui.define([], function() {
 						} else if (sType === "sap.ui.layout.form.FormElement"){
 							oRenameMetadata = {
 								changeType : "renameLabel",
+								isEnabled : bIsEnabled,
 								domRef : function (oControl){
 									return oControl.getLabel().getDomRef();
 								},
