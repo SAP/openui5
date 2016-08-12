@@ -32,6 +32,8 @@
 			"sap/m/IconTabBar",
 			"sap/m/IconTabFilter",
 			"sap/ui/model/json/JSONModel",
+			"sap/ui/model/odata/v2/ODataModel",
+			"sap/ui/core/util/MockServer",
 			"sap/ui/table/Table",
 			"sap/ui/table/Column",
 			"sap/m/Label",
@@ -41,7 +43,10 @@
 			"sap/m/Page",
 			"sap/m/semantic/FullscreenPage",
 			"sap/m/semantic/DetailPage",
-			"sap/m/CheckBox"],
+			"sap/m/CheckBox",
+			"sap/ui/test/opaQunit",
+			"sap/ui/test/Opa5"
+		],
 		function(Press,
 				 Button,
 				 Link,
@@ -51,6 +56,8 @@
 				 IconTabBar,
 				 IconTabFilter,
 				 JSONModel,
+				 ODataModel,
+				 MockServer,
 				 Table,
 				 Column,
 				 Label,
@@ -60,7 +67,9 @@
 				 Page,
 				 FullscreenPage,
 				 DetailPage,
-				 CheckBox){
+				 CheckBox,
+				 opaTest,
+				 Opa5){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -206,49 +215,6 @@
 				oPressAction.executeOn(oSecondListItem);
 			});
 
-			QUnit.test("List should load more items", function(assert) {
-				// Arrange
-				var fnDone = assert.async(),
-					oData = { items: [{}, {}]},
-					oModel = new JSONModel(),
-					oList = new sap.m.List({
-						growing : true,
-						growingThreshold: 1,
-						items : {
-							path : "/items",
-							template : new StandardListItem()
-						}
-					});
-
-				oModel.setData(oData);
-				oList.setModel(oModel);
-
-				oList.placeAt("qunit-fixture");
-
-				//No need to add the list items as they will be
-				//cleaned up by its list
-				aControlsToClean.push(oList);
-
-				//Make sure that the list is rendered
-				sap.ui.getCore().applyChanges();
-				assert.equal(oList.getItems().length, 1, "Only one item is visible");
-
-				// System under Test
-				var oPressAction = new Press();
-
-				oList.attachEventOnce("updateFinished", function () {
-					// Act
-					oPressAction.executeOn(oList);
-
-					oList.attachEventOnce("updateFinished", function () {
-						assert.equal(oList.getItems().length, 2, "Triggered growing");
-						fnDone();
-					});
-				});
-
-			});
-
-
 			QUnit.test("IconTabBar should fire selection change event", function(assert) {
 				var done = assert.async();
 
@@ -352,7 +318,83 @@
 				oPressAction.executeOn(oTile);
 			});
 
+			(function () {
+				var oModel;
+				var oMockServer;
+				var oList;
 
+				QUnit.module("Growing list with press", {
+					beforeEach: function () {
+						oList = new List({
+							growing : true,
+							growingThreshold: 1,
+							items : {
+								path : "/Products",
+								template : new StandardListItem()
+							}
+						});
+						oList.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+
+					},
+					afterEach: function () {
+						if (oMockServer) {
+							oMockServer.stop();
+							oMockServer.destroy();
+						}
+						oModel.destroy();
+						oList.destroy();
+					}
+				});
+
+
+				[
+					{
+						createModel: function () {
+							oModel = new JSONModel();
+							oModel.setData({ Products: [{}, {}]});
+						},
+						name: "List should load more items with JSON"
+					},
+					{
+						createModel: function () {
+							var sServerUrl = "/myODataService/";
+							var oMockServer = new MockServer({ rootUri : sServerUrl});
+
+							MockServer.config({
+								autoRespond : true,
+								autoRespondAfter : 2000
+							});
+
+							oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
+								bGenerateMissingMockData : true
+							});
+
+							oMockServer.start();
+
+							oModel = new ODataModel(sServerUrl);
+						},
+						name: "List should load more items with ODATA"
+					}
+				].forEach(function (oTest) {
+					opaTest(oTest.name, function(oOpa) {
+						oTest.createModel();
+						oList.setModel(oModel);
+
+						oOpa.waitFor({
+							id: oList.getId(),
+							actions: new Press()
+						});
+
+						oOpa.waitFor({
+							id: oList.getId(),
+							actions: function () {
+								assert.equal(oList.getItems().length, 2, "Triggered growing");
+							}
+						});
+					});
+				});
+			})();
 
 			QUnit.module("SearchField",{
 				beforeEach: function() {
