@@ -354,6 +354,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 * @param {sap.m.ListItemBase} oLI List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (sap.ui.Device.browser.msie) {
+			rm.addClass("sapMLIBNativeOutline");
+		}
 	};
 
 	return ColumnListItemRenderer;
