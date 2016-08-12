@@ -2234,6 +2234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			this._toggleVSb();
 		}
+		this.getDomRef("vsb").style.maxHeight = (this.getVisibleRowCount() * iDefaultRowHeight) + "px";
 		this.getDomRef("vsb-content").style.height = iVSbHeight + "px";
 
 		if (!TableUtils.isVariableRowHeightEnabled(this)) {
