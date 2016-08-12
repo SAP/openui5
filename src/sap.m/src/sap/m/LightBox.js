@@ -103,6 +103,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			oNativeImage.src = oImageContent.getImageSrc();
 
+			if (this._resizeListenerId) {
+				Device.resize.detachHandler(this._onResize);
+				ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+
 			switch (sState) {
 				case "LOADING":
 					this._timeoutId = setTimeout(function () {
