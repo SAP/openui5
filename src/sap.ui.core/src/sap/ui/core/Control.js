@@ -772,9 +772,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		} else {
 			//Remove the busy indicator from the DOM
 			this.$("busyIndicator").remove();
-			this.$().removeClass('sapUiLocalBusy');
+			$this.removeClass('sapUiLocalBusy');
 			//Unset the actual DOM Element´s 'aria-busy'
-			this.$().removeAttr('aria-busy');
+			$this.removeAttr('aria-busy');
 
 			//Reset the position style to its original state
 			if (this._busyStoredPosition) {
