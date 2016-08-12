@@ -627,6 +627,43 @@
 				}
 			});
 
+			test("ViewSettingsFilterItem event handlers are attached", function () {
+				var oVSD = new sap.m.ViewSettingsDialog(),
+						oVSItem = new sap.m.ViewSettingsItem({
+							key: "name1",
+							text: "Headphone"
+						}),
+						oVSFilterItem1 = new sap.m.ViewSettingsFilterItem({
+							key: "myNameFilter",
+							text: "Name",
+							items: [oVSItem]
+						}),
+						oVSFilterItem2 = oVSFilterItem1.clone();
+
+				//Assert
+				ok(!oVSFilterItem1.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 1");
+				ok(!oVSFilterItem2.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 2");
+
+				ok(!oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 1");
+				ok(!oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 2");
+
+				//Act
+				oVSD.addFilterItem(oVSFilterItem1);
+
+				//Assert
+				ok(oVSFilterItem1.hasListeners("itemPropertyChanged"), "addFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				ok(oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "addFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+
+				//Act
+				oVSD.insertFilterItem(oVSFilterItem2);
+
+				//Assert
+				ok(oVSFilterItem2.hasListeners("itemPropertyChanged"), "insertFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				ok(oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "insertFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+
+				oVSD.destroy();
+			});
+
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
