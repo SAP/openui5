@@ -235,7 +235,29 @@
         test("tooltip", function() {
             this.sut.openBy();
             var oItemFridge = this.sut._getMenu().getItems()[0];
+
+            //Assert
             equals(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
+        });
+
+        test("visible", function() {
+            //Act
+            this.sut.getItems()[0].setVisible(false);
+            this.sut.openBy();
+            var oItemFridge = this.sut._getMenu().getItems()[0];
+
+            //Assert
+            equals(oItemFridge.getVisible(), false, "menu item is not visible");
+        });
+
+        test("enabled", function() {
+            //Act
+            this.sut.getItems()[0].setEnabled(false);
+            this.sut.openBy();
+            var oItemFridge = this.sut._getMenu().getItems()[0];
+
+            //Assert
+            equals(oItemFridge.getEnabled(), false, "menu item is not enabled");
         });
 
         test('Opening/closing/reopening', function () {
