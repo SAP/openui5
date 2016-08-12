@@ -46,27 +46,45 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("scrollStep should be set to 300", function(assert) {
+	QUnit.test("Default value for width is defined", function(assert) {
+		assert.equal(this.oHeaderContainer.getWidth(), "100%");
+	});
+
+	QUnit.test("Warning is logged if no value for the mandatory height property is set", function(assert) {
+		//Arrange
+		sinon.spy(jQuery.sap.log, "warning");
+		//Act
+		this.oHeaderContainer.onBeforeRendering();
+		//Assert
+		assert.equal(this.oHeaderContainer.getHeight(), undefined);
+		assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning logged once");
+		assert.ok(jQuery.sap.log.warning.calledWith("No height provided for the sap.m.HeaderContainer control."),
+			"Warning logged with expected message");
+		// Restore
+		jQuery.sap.log.warning.restore();
+	});
+
+	QUnit.test("ScrollStep should be set to 300", function(assert) {
 		assert.equal(this.oHeaderContainer.getScrollStep(), 300);
 	});
 
-	QUnit.test("scrollTime should be set to 500", function(assert) {
+	QUnit.test("ScrollTime should be set to 500", function(assert) {
 		assert.equal(this.oHeaderContainer.getScrollTime(), 500);
 	});
 
-	QUnit.test("showDividers should be set to true", function(assert) {
+	QUnit.test("ShowDividers should be set to true", function(assert) {
 		assert.ok(this.oHeaderContainer.getShowDividers());
 	});
 
-	QUnit.test("view should be set to Horizontal", function(assert) {
+	QUnit.test("View should be set to Horizontal", function(assert) {
 		assert.deepEqual(this.oHeaderContainer.getView(), sap.m.HeaderContainerView.Horizontal);
 	});
 
-	QUnit.test("backgroundDesign should be set to Transparent", function(assert) {
+	QUnit.test("BackgroundDesign should be set to Transparent", function(assert) {
 		assert.deepEqual(this.oHeaderContainer.getBackgroundDesign(), sap.m.BackgroundDesign.Transparent);
 	});
 
-	QUnit.test("items multiple should be set to true", function(assert) {
+	QUnit.test("Items multiple should be set to true", function(assert) {
 		assert.ok(this.oHeaderContainer.getItems());
 	});
 

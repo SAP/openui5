@@ -94,7 +94,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					type : "sap.m.BackgroundDesign",
 					defaultValue : library.BackgroundDesign.Transparent,
 					group : "Appearance"
-				}
+				},
+				/**
+				 * The width of the whole HeaderContainer.
+				 */
+				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue : "100%"},
+				/**
+				 * The height of the whole HeaderContainer.
+				 */
+				height: {type: "sap.ui.core.CSSSize", group: "Appearance"}
 			},
 			defaultAggregation : "items",
 			aggregations : {
@@ -189,7 +197,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						that._oItemNavigation.setTabIndex0();
 						that._oItemNavigation.setCycling(false);
 					}
-					that._refreshScroll();
 				},
 
 				onBeforeRendering : function() {
@@ -208,6 +215,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
+		if (!this.getHeight()) {
+			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
+		}
 		if (Device.system.desktop) {
 			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
 			this._oArrowPrev.setIcon(this.getView() === library.HeaderContainerView.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
@@ -225,7 +235,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (Device.system.desktop) {
 			this.$().bind("swipe", this._handleSwipe.bind(this)); // TODO: check why click is bind for desktop devices.
 		}
-		this._sScrollResizeHandlerId = sap.ui.core.ResizeHandler.register(this,  this._refreshScroll.bind(this));
 	};
 
 	HeaderContainer.prototype.exit = function() {
@@ -349,18 +358,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 	/* Private methods                                             */
 	/* =========================================================== */
-	HeaderContainer.prototype._refreshScroll = function() {
-		var oHc = this.$();
-		var iRealHeight = jQuery.sap.domById(this.getId() + "-scrl-cntnr").scrollHeight; // TODO: use this.$()
-		var iAvailHeight = oHc.height();
-
-		if (iRealHeight > iAvailHeight) {
-			oHc.css("height", "100%");
-		} else {
-			oHc.css("height", "");
-		}
-	};
-
 	HeaderContainer.prototype._setScrollInProcess = function(value) {
 		this.bScrollInProcess = value;
 	};
@@ -500,27 +497,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			var oOldScrollBack = this._oArrowPrev.$().is(":visible");
-			var bRefresh = false;
 			if (oOldScrollBack && !bScrollBack) {
 				this._oArrowPrev.$().hide();
-				bRefresh = true;
 			}
 			if (!oOldScrollBack && bScrollBack) {
 				this._oArrowPrev.$().show();
-				bRefresh = true;
 			}
 
 			var oOldScrollForward = this._oArrowNext.$().is(":visible");
 			if (oOldScrollForward && !bScrollForward) {
 				this._oArrowNext.$().hide();
-				bRefresh = true;
 			}
 			if (!oOldScrollForward && bScrollForward) {
 				this._oArrowNext.$().show();
-				bRefresh = true;
-			}
-			if (bRefresh) {
-				this._refreshScroll();
 			}
 		}
 	};

@@ -35,6 +35,8 @@
 	var oData = {
 		"scrollStep" : 200,
 		"scrollTime" : 500,
+		"height" : "7.5rem",
+		"width" : "100%",
 		"items" : [{
 			"content" : [{
 				"type" : "numeric",
@@ -97,15 +99,13 @@
 	var oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
 		scrollStep : "{/scrollStep}",
 		scrollTime : "{/scrollTime}",
+		height:"{/height}",
+		width:"{/width}",
 		items : {
 			path : "/items",
 			factory : fnContentFactory
 		}
 	});
-
-	var oFlexBox = new sap.m.FlexBox({
-		items : oHeaderContainer
-	}).addStyleClass("sapUiLargeMarginTopBottom");
 
 	var oAddButton = new sap.m.Button("add-button", {
 		width : "10rem",
@@ -203,6 +203,49 @@
 			})
 		]
 	});
+	var oWidthInput =  new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Width",
+				labelFor : "width-input"
+			}), new sap.m.Input("width-input", {
+				placeholder : "Enter value ...",
+				value : {
+					path : "/width",
+					type : new sap.ui.model.type.String()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData[width] = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
+
+	var oHeightInput =  new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Height",
+				labelFor : "height-input"
+			}), new sap.m.Input("height-input", {
+				placeholder : "Enter value ...",
+				value : {
+					path : "/height",
+					type : new sap.ui.model.type.String()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData[Height] = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
 
 	var oAdjustForm = new sap.ui.layout.form.SimpleForm({
 		maxContainerCols : 2,
@@ -212,12 +255,14 @@
 			oRemoveButton,
 			oScrollStepInput,
 			oScrollTimeInput,
+			oWidthInput,
+			oHeightInput,
 			oDevidersControls
 		]
 	});
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.HeaderContainer",
-		content : [oFlexBox, oAdjustForm]
+		content : [oHeaderContainer, oAdjustForm]
 	});
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]
