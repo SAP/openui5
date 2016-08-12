@@ -4,8 +4,9 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
-		'sap/ui/Device'
-	], function (jQuery, URI, Device) {
+		'sap/ui/Device',
+		'sap/ui/test/_XHRCounter'
+	], function (jQuery, URI, Device, _XHRCounter) {
 	"use strict";
 	var sLogPrefix = "Opa5 - finding controls",
 		$ = jQuery,
@@ -15,7 +16,8 @@ sap.ui.define([
 		oFrameUtils = null,
 		oFrameJQuery = null,
 		bRegiesteredToUI5Init = false,
-		bUi5Loaded = false;
+		bUi5Loaded = false,
+		oXHRCounter = null;
 
 	/*
 	 * INTERNALS
@@ -173,6 +175,9 @@ sap.ui.define([
 		oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 		oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin(sLogPrefix);
 
+		oFrameJQuery.sap.require("sap.ui.test._XHRCounter");
+		oXHRCounter = oFrameWindow.sap.ui.test._XHRCounter;
+
 		registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 		oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 		oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
@@ -194,6 +199,7 @@ sap.ui.define([
 		oFrameWindow = null;
 		bUi5Loaded = false;
 		bRegiesteredToUI5Init = false;
+		oXHRCounter = null;
 	}
 
 	/**
@@ -252,6 +258,9 @@ sap.ui.define([
 		},
 		getWindow: function () {
 			return oFrameWindow;
+		},
+		_getIXHRCounter:function () {
+			return oXHRCounter || _XHRCounter;
 		},
 		teardown: function () {
 			destroyFrame();
