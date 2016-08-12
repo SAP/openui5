@@ -27,6 +27,16 @@
 	<script language="javascript">
 		qutils.delayTestStart();
 
+		function AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sValue) {
+			for (var i = 0; i <= aAriaLabelledByIds.length; i++) {
+				if (sap.ui.getCore().byId(aAriaLabelledByIds[i]).getText() === sValue) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+
 		module("Basic", {
 			beforeEach: function () {
 				this.sut = new sap.m.MenuButton("menuButton1");
@@ -262,31 +272,24 @@
 			sap.ui.getCore().applyChanges();
 
 			var oInnerButton = this.sut._getButtonControl(),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]),
 				aAriaLabelledIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 				aAriaLabelledByDomElements = aAriaLabelledIds.map(function(id) {
 					return jQuery("#" + id);
 				});
 
-
 			//assert
-			strictEqual(aAriaLabelledByDomElements.length, 2, "There exactly 2 dom elements referenced in the aria-labelledby");
+			strictEqual(aAriaLabelledByDomElements.length, 3, "There exactly 2 dom elements referenced in the aria-labelledby");
 			strictEqual(aAriaLabelledByDomElements[0].text(),
 					sText,
 					'Referenced control in "aria-labelledby" shows the text of the button');
 			strictEqual(aAriaLabelledByDomElements[1].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
 					'Referenced control in "aria-labelledby" shows that this is a split button');
-
-			strictEqual(aAriaDescribedIds.length, 1, "There exactly one ID in the aria-describedby");
-			ok(oAriaDescribedByCtrl.getDomRef(), "There is a control with that ID in the DOM");
-
-			aAriaLabelledByDomElements
-			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
-			strictEqual(sAriaDescribedByText,
+			
+			strictEqual(aAriaLabelledByDomElements[2].text(),
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
-					'Referenced control in "aria-describedby" shows the keyboard handling hint');
+					'Referenced control in "aria-labelledby" shows the keyboard handling hint');
+
 		});
 
 		test("MenuButton with tooltip in Split mode", function () {
@@ -321,14 +324,12 @@
 			var oInnerButton = this.sut._getButtonControl(),
 				oTextButton = oInnerButton._getTextButton(),
 				oArrowButton = oInnerButton._getArrowButton(),
-				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
-					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT");
-				});
+				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");console.log(aAriaLabelledByIds)
+				bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
 			//assert
-			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 1 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct value');
+			ok(bHasAriaLabeledBy && aAriaLabelledByIds.length == 2 && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
 
 			strictEqual(oInnerButton.$().attr("title"), sIconName, "The inner split button has a title property with the icon name");
 			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
@@ -363,17 +364,15 @@
 			sap.ui.getCore().applyChanges();
 
 			var oInnerButton = this.sut._getButtonControl(),
-				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
-					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
-							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				}),
+				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+				bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED")),
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
 			ok(!oInvisibleTooltip, "There is no tooltip info label");
-			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+			ok(bHasAriaLabeledBy && aAriaLabelledByIds.length == 3 && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		test("Semantic MenuButton with tooltip in Split mode", function () {
@@ -386,12 +385,10 @@
 			sap.ui.getCore().applyChanges();
 
 			var oInnerButton = this.sut._getButtonControl(),
-				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
-					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
-							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				}),
+				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+				bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED")),
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
@@ -399,7 +396,7 @@
 			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
 			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
 			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
-			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+			ok(bHasAriaLabeledBy && aAriaLabelledByIds.length == 2 && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		test("Semantic MenuButton IconOnly in Split mode", function () {
@@ -411,19 +408,17 @@
 			sap.ui.getCore().applyChanges();
 
 			var oInnerButton = this.sut._getButtonControl(),
-				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
-					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
-							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				}),
+				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+				bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED")),
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
 			ok(oInvisibleTooltip, "There is a tooltip info label");
 			strictEqual(oInvisibleTooltip.getText(), sIconName, "The tooltip info label holds the icon name");
 			strictEqual(oInnerButton.$().attr("title"), sIconName, "The inner split button has a title property with the icon name");
-			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+			ok(bHasAriaLabeledBy && aAriaLabelledByIds.length == 2 && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 		});
 
 		test("Semantic MenuButton IconOnly with tooltip in Split mode", function () {
@@ -436,12 +431,10 @@
 			sap.ui.getCore().applyChanges();
 
 			var oInnerButton = this.sut._getButtonControl(),
-				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
-				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
-				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
-					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
-							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_REJECT");
-				}),
+				bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+				bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+				bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT")),
 				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
 
 			//assert
@@ -455,7 +448,7 @@
 
 			//assert
 			ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
-			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct value');
+			ok(bHasAriaLabeledBy && aAriaLabelledByIds.length == 2 && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
 			strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully overriden");
 		});
 
