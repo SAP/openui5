@@ -2218,6 +2218,15 @@
 			ok(!!oClone.getCustomControl(), "Custom control is cloned");
 		});
 
+		test("model is propagated to the dialog", function() {
+			var oVSD = new sap.m.ViewSettingsDialog(),
+					sData = "this is the model",
+					oModel = new sap.ui.model.json.JSONModel({ data: sData});
+
+			oVSD.setModel(oModel);
+			equals(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
+		});
+
 		module("Accessibility", {
 			setup : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
