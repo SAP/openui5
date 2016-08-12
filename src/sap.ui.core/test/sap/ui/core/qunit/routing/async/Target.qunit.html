@@ -491,6 +491,134 @@
 
 		});
 
+		QUnit.module("titleChanged event", {
+			setup: function () {
+				this.oApp = new sap.m.App();
+				this.oView =  createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
+
+				this.oConfig = {
+					key: "myTarget",
+					viewPath: "bar",
+					viewName: "foo",
+					controlAggregation: "pages",
+					controlId: this.oApp.getId(),
+					viewType: "XML",
+					viewId: "baz",
+					_async: true
+				};
+
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oViews.setView("bar.foo", this.oView);
+
+			},
+			teardown: function () {
+				this.oApp.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+		QUnit.test("static text", function(assert) {
+			var done = assert.async(),
+				sTitle = "myTitle";
+
+			this.oConfig.title = sTitle;
+
+			// System under test + Arrange
+			this.oTarget = new sap.ui.core.routing.Target(
+					this.oConfig,
+					this.oViews
+			);
+
+			this.oTarget.attachTitleChanged(function(oEvent) {
+				assert.equal(oEvent.getParameter("title"), sTitle);
+				done();
+			});
+
+			this.oTarget.display();
+		});
+
+		QUnit.test("normal binding", function(assert) {
+			var done = assert.async(),
+				sTitle = "myTitle",
+				oModel = new sap.ui.model.json.JSONModel({
+					title : sTitle
+				});
+
+			this.oView.setModel(oModel, "myModel");
+			this.oConfig.title = "{myModel>/title}";
+
+			// System under test + Arrange
+			this.oTarget = new sap.ui.core.routing.Target(
+					this.oConfig,
+					this.oViews
+			);
+
+			this.oTarget.attachTitleChanged(function(oEvent) {
+				assert.equal(oEvent.getParameter("title"), sTitle);
+				done();
+			});
+
+			this.oTarget.display();
+		});
+
+		QUnit.test("composite binding", function(assert) {
+			var done = assert.async(),
+				sTemplate = "Track trace of product {0}",
+				sProductName = "Laptop",
+				oModel = new sap.ui.model.json.JSONModel({
+					productName : sProductName
+				}),
+				i18nModel = new sap.ui.model.json.JSONModel({
+					title : sTemplate
+				}),
+				sResult = jQuery.sap.formatMessage(sTemplate, sProductName);
+
+			this.oApp.setModel(i18nModel, "i18n");
+			this.oView.setModel(oModel, "myModel");
+			this.oConfig.title = {
+				parts: ["i18n>/title", "myModel>/productName"],
+				formatter: jQuery.sap.formatMessage
+			};
+
+			// System under test + Arrange
+			this.oTarget = new sap.ui.core.routing.Target(
+					this.oConfig,
+					this.oViews
+			);
+
+			this.oTarget.attachTitleChanged(function(oEvent) {
+				assert.equal(oEvent.getParameter("title"), sResult);
+				done();
+			});
+
+			this.oTarget.display();
+		});
+
+		QUnit.test("no title set", function(assert) {
+			var done = assert.async(),
+				oFireSpy;
+
+			// System under test + Arrange
+			this.oTarget = new sap.ui.core.routing.Target(
+					this.oConfig,
+					this.oViews
+			);
+
+			oFireSpy = this.spy(this.oTarget, "fireTitleChanged");
+			assert.notOk(this.oTarget._oTitleProvider, "TitleProvider should not be instantiated");
+
+			this.oTarget.attachDisplay(function(oEvent) {
+				sinon.assert.notCalled(oFireSpy);
+				done();
+			});
+
+			this.oTarget.display();
+		});
+
 		QUnit.module("destruction");
 
 		QUnit.test("Should destroy all dependencies", function () {
@@ -501,11 +629,14 @@
 			// System under test
 			var oTarget = new sap.ui.core.routing.Target(
 					{
-						_async: true
+						_async: true,
+						title: "myTitle"
 					},
 					oViews,
 					oParentTarget
 			);
+
+			var oTitleProvider = oTarget._oTitleProvider;
 
 			// Act
 			oTarget.destroy();
@@ -516,6 +647,8 @@
 			strictEqual(oTarget._oViews, null, "Did free the views reference");
 			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
 			strictEqual(oTarget._oOptions, null, "Did free the options reference");
+			assert.ok(oTitleProvider.bIsDestroyed, "TitleProvider is destroyed");
+			assert.strictEqual(oTarget._oTitleProvider, null, "Did free the TitleProvider");
 
 			// Cleanup
 			oParentTarget.destroy();

@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				}
 			} else {
 				// let targets do the placement + the events
-				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oArguments, oSequencePromise);
+				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oArguments, this._oConfig.titleTarget, oSequencePromise);
 			}
 
 			return oSequencePromise.then(function(oResult) {
