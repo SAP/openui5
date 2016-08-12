@@ -217,6 +217,106 @@ jQuery.sap.initMobile();
 		this.oHeaderContainer.removeAllAggregation("items", true);
 		assert.equal(this.oHeaderContainer.getAggregation("items"), undefined, "All items should be removed");
 	});
+
+	QUnit.module("Wrapping and unwrapping HeaderContainerItemContainer", {
+		beforeEach : function () {
+			this.oBox0 = new sap.m.FlexBox("box0");
+			this.oBox1 = new sap.m.FlexBox("box1");
+			this.oBox2 = new sap.m.FlexBox("box2");
+			this.oBox3 = new sap.m.FlexBox("box3");
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				items : [
+					this.oBox0
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oBox0.destroy();
+			this.oBox0 = null;
+			this.oBox1.destroy();
+			this.oBox1 = null;
+			this.oBox2.destroy();
+			this.oBox2 = null;
+			this.oBox3.destroy();
+			this.oBox3 = null;
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("HeaderContainer addItem is properly overwritten", function(assert) {
+		//Act
+		this.oHeaderContainer.addItem(this.oBox1);
+		//Assert
+		assert.strictEqual(this.oHeaderContainer.getAggregation("items").length, 2, "HeaderContainer returns 2 items also if called via getAggregation");
+		assert.strictEqual(this.oHeaderContainer.getItems().length, 2, "HeaderContainer has 2 items");
+		assert.equal(this.oHeaderContainer.getAggregation("items")[0], this.oBox0, "Unwrapping has been done correctly");
+		assert.equal(this.oHeaderContainer.getItems()[1], this.oBox1, "Unwrapping has been done correctly");
+	});
+
+	QUnit.test("HeaderContainer destroyItems is properly overwritten", function(assert) {
+		//Arrange
+		var sItemId = this.oBox1.getId();
+		this.oHeaderContainer.addItem(this.oBox1);
+		//Act
+		this.oHeaderContainer.destroyItems();
+		//Assert
+		assert.strictEqual(this.oHeaderContainer.getItems().length, 0, "Items aggregation has been removed");
+		assert.notOk(sap.ui.getCore().byId(sItemId), "The item control has been destroyed");
+	});
+
+	QUnit.test("HeaderContainer removeItem is properly overwritten", function(assert) {
+		//Arrange
+		var sItemId = this.oBox1.getId();
+		this.oHeaderContainer.addItem(this.oBox1);
+		this.oHeaderContainer.addItem(this.oBox2);
+		//Act
+		var oRemovedItem = this.oHeaderContainer.removeItem(this.oBox1);
+		//Assert
+		assert.strictEqual(this.oHeaderContainer.getItems().length, 2, "Items have been properly removed from the HeaderContainer");
+		assert.strictEqual(this.oBox1, oRemovedItem, "Correct item has been returned from the removeAggregation");
+		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox1), -1, "Item has been deleted from aggregation ");
+	});
+
+	QUnit.test("HeaderContainer removeAllItems is properly overwritten", function(assert) {
+		//Arrange
+		var sItemId = this.oBox1.getId();
+		this.oHeaderContainer.addItem(this.oBox1);
+		this.oHeaderContainer.addItem(this.oBox2);
+		sap.ui.getCore().applyChanges();
+		//Act
+		var aRemovedItems = this.oHeaderContainer.removeAllItems();
+		//Assert
+		assert.strictEqual(this.oHeaderContainer.getItems().length, 0, "Items aggregation has been removed from the HeaderContainer");
+		assert.strictEqual(aRemovedItems.length, 3, "Items aggregation has been removed from the HeaderContainer");
+		assert.strictEqual(this.oBox1, aRemovedItems[1], "Correct item has been returned from the removeAggregation");
+		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox1), -1, "Item has been deleted from aggregation ");
+		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox2), -1, "Item has been deleted from aggregation ");
+	});
+
+	QUnit.test("HeaderContainer insertItem is properly overwritten", function(assert) {
+		//Arrange
+		var sItemId = this.oBox3.getId();
+		this.oHeaderContainer.addItem(this.oBox1);
+		this.oHeaderContainer.addItem(this.oBox2);
+		//Act
+		this.oHeaderContainer.insertItem(this.oBox3, 1);
+		//Assert
+		assert.strictEqual(this.oHeaderContainer.getItems()[1].getId(), sItemId, "The control has been inserted on correct place");
+	});
+
+	QUnit.test("HeaderContainer indexOfItem is properly overwritten", function(assert) {
+		//Arrange
+		this.oHeaderContainer.addItem(this.oBox1);
+		this.oHeaderContainer.addItem(this.oBox2);
+		this.oHeaderContainer.addItem(this.oBox3);
+		//Act
+		var iIndexOfItem = this.oHeaderContainer.indexOfItem(this.oBox3);
+		//Assert
+		assert.strictEqual(iIndexOfItem, 3, "Correct index of Item has been returned");
+	});
 })();
 </script>
 </head>
