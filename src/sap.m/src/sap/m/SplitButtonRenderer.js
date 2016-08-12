@@ -81,7 +81,6 @@ sap.ui.define(['jquery.sap.global'],
 
 			this.writeAriaRole(oButton, mAccProps);
 			this.writeAriaLabelledBy(oButton, mAccProps);
-			this.writeAriaDescribedBy(oButton, mAccProps);
 
 			oRm.writeAccessibilityState(oButton, mAccProps);
 		};
@@ -92,7 +91,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		SplitButtonRenderer.writeAriaLabelledBy = function(oButton, mAccProperties) {
 			var sAriaLabelledByValue = "",
-				sTitleAttribute = oButton.getTitleAttributeValue();
+				sTitleAttribute = oButton.getTitleAttributeValue(),
+				oButtonTypeAriaLabel = oButton.getButtonTypeAriaLabel();
 
 			if (sTitleAttribute) {
 				sAriaLabelledByValue += oButton.getTooltipInfoLabel(sTitleAttribute).getId();
@@ -104,21 +104,16 @@ sap.ui.define(['jquery.sap.global'],
 				sAriaLabelledByValue += " ";
 			}
 
+			if (oButtonTypeAriaLabel) {
+				sAriaLabelledByValue += oButtonTypeAriaLabel.getId();
+				sAriaLabelledByValue += " ";
+			}
+
 			sAriaLabelledByValue += oButton.getSplitButtonAriaLabel().getId();
 
+			sAriaLabelledByValue += " " + oButton.getKeyboardDescriptionAriaLabel().getId();
+
 			mAccProperties["labelledby"] = {value: sAriaLabelledByValue, append: true };
-		};
-
-		SplitButtonRenderer.writeAriaDescribedBy = function(oButton, mAccProperties) {
-			var sAriaDescribedByValue = "",
-				oButtonTypeAriaLabel = oButton.getButtonTypeAriaLabel();
-			if (oButtonTypeAriaLabel) {
-				sAriaDescribedByValue += oButtonTypeAriaLabel.getId();
-				sAriaDescribedByValue += " ";
-			}
-			sAriaDescribedByValue += oButton.getKeyboardDescriptionAriaLabel().getId();
-
-			mAccProperties["describedby"] = {value: sAriaDescribedByValue, append: true };
 		};
 
 		return SplitButtonRenderer;
