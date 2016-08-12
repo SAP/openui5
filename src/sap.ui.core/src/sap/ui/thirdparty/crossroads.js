@@ -512,7 +512,7 @@ var factory = function (signals) {
                     //optional because if the slash is optional, hash "foobar" will also match foo/:bar:
                     //with parameter bar set to "bar"
                     //arsbq stands for "after required slash or before query"
-                    res_arsbq : '(?:(?:\\/(?=[^\\/?]+))|^\\/?|\\/?$)'
+                    res_arsbq : '(?:(?:\\/(?=(?:[^\\/?]+)?))|^\\/?|\\/?$)'
                     // ##### END: MODIFIED BY SAP
                 },
                 'RS' : {
