@@ -105,6 +105,10 @@ sap.ui.define([
             };
         };
 
+        LightBoxItem.prototype.exit = function () {
+           this._oImage = null;
+        };
+
         /**
          * Sets the state of the image. Possible values are "LOADING", "LOADED" and "ERROR"
          * @private
