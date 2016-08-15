@@ -24,7 +24,7 @@
 }
 
 .sapMGT {
-	border: none;
+	border: 1px solid @sapUiTileBorderColor;
 	box-shadow: @sapUiShadowLevel0;
 	background: @sapUiTileBackground;
 }
@@ -87,15 +87,7 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 }
 
 /* This part is used to achieve dotted white black interlace border*/
-html.sap-desktop .sapMGT:focus .sapMGTFocusDiv:after {
-	content: "";
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	border-radius: 0.25rem;
-	margin: -1px;
+html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
