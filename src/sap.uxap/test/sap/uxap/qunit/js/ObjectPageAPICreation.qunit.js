@@ -20,7 +20,7 @@
 					new sap.m.Text({text: sText || "some text"})
 				]
 			},
-			getObjectPage: function (sId) {
+			getObjectPage: function () {
 				return new sap.uxap.ObjectPageLayout();
 			},
 			getObjectPageLayoutWithIconTabBar: function () {
@@ -31,8 +31,8 @@
 		},
 
 		helpers = {
-			generateObjectPageWithIconTabBarAndContent: function (oFactory, iNumberOfSection) {
-				var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
+				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar(): oFactory.getObjectPage(),
 					oSection,
 					oSubSection;
 
@@ -91,6 +91,23 @@
 	});
 
 
+	module("test scrollToSection API");
+
+	QUnit.test("Calling scrollToSection when OPL is not rendered should do nothing", function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
+			oFirstSection = oObjectPage.getSections()[0],
+			oLoggerSpy = this.spy(jQuery.sap.log, "warning"),
+			oComputeScrollPositionSpy = this.spy(oObjectPage, "_computeScrollPosition");
+
+		assert.ok(!oObjectPage.getDomRef(), "ObjectPage is not rendered");
+
+		oObjectPage.scrollToSection(oFirstSection.getId());
+
+		assert.ok(!oComputeScrollPositionSpy.called, "Compute scroll position not called when OPL is not rendered");
+
+		assert.ok(oLoggerSpy.calledWith("scrollToSection can only be used after the ObjectPage is rendered", oObjectPage), "Warning message is logged");
+	});
+
 	module("Use IconTabBar with no sections", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
@@ -117,7 +134,7 @@
 	module("Use IconTabBar with one section", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 1;
-			this.oObjectPage = helpers.generateObjectPageWithIconTabBarAndContent(oFactory, this.NUMBER_OF_SECTIONS);
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
 			helpers.renderObject(this.oObjectPage);
 		},
 		afterEach: function () {
@@ -148,7 +165,7 @@
 	module("IconTabBar section selection", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
-			this.oObjectPage = helpers.generateObjectPageWithIconTabBarAndContent(oFactory, this.NUMBER_OF_SECTIONS);
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
 			this.oFirstSection = this.oObjectPage.getSections()[0];
 			this.oSecondSection = this.oObjectPage.getSections()[1];
 			this.iLoadingDelay = 500;
