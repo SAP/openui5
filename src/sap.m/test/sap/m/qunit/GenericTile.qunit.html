@@ -142,10 +142,10 @@
 			this.oGenericTile.rerender();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-style'), "none", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "none", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "none", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "none", "Border left style was rendered successfully");
+			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -174,10 +174,10 @@
 			this.oGenericTile.rerender();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-style'), "none", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "none", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "none", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "none", "Border left style was rendered successfully");
+			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
 			done();
 		}.bind(this));
 	});
