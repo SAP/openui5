@@ -1332,8 +1332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (sSelectionMode === SelectionMode.Multi) {
 			sSelectionMode = SelectionMode.MultiToggle;
-			this.setProperty("selectionBehavior", SelectionBehavior.RowOnly);
-			jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle' and selection behavior 'RowOnly'");
+			jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
 		}
 
 		this.setProperty("selectionMode", sSelectionMode);
