@@ -345,7 +345,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
 				startsSection: oItem.getStartsSection(),
-				tooltip: oItem.getTooltip()
+				tooltip: oItem.getTooltip(),
+				visible: oItem.getVisible(),
+				enabled: oItem.getEnabled()
 			});
 		};
 
