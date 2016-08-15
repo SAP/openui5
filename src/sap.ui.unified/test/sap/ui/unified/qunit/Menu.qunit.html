@@ -913,6 +913,15 @@
 			ok(!lastSelectedItemId, "No Event triggered on Escape");
 		});
 
+		module("Aria");
+
+		test("Aria-level is not used anymore", function() {
+			//Act
+			openMenu(oRootMenu);
+			//Assert
+			equal(oRootMenu.$().attr("aria-level"), undefined, "There must be no any aria-level attribute");
+		});
+
 		module("Misc");
 
 		test("Destruction", function() {
