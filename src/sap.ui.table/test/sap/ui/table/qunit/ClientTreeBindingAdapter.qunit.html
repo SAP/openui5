@@ -550,6 +550,29 @@
 			oBinding.expand(1);
 		});
 
+		test("The length of binding should be independent from the parameters passed to getContexts", function() {
+			var oContext, iLength1, iLength2;
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: false,
+				numberOfExpandedLevels: 99
+			});
+
+			oBinding.getContexts(0, 2);
+			iLength1 = oBinding.getLength();
+
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: false,
+				numberOfExpandedLevels: 99
+			});
+
+			oBinding.getContexts(0, 10);
+			iLength2 = oBinding.getLength();
+
+			equal(iLength1, iLength2, "binding length shouldn't be dependent on the contexts length");
+		});
+
 		/**
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set
@@ -871,13 +894,13 @@
 
 			equal(aContexts.length, 4);
 			equal(oBinding.getLength(), 4);
-			
+
 			// synchronous expands
 			oBinding.expand(0);
 			oBinding.expand(5); // this synchronous call was not working before
 
 			aContexts = oBinding.getContexts(0, 100);
-			
+
 			// synchronous tree update works
 			equal(oBinding.getLength(), 9, "Length is correctly calculated synchronously");
 
@@ -945,7 +968,7 @@
 
 				start();
 			}
-			
+
 		});
 	</script>
 
