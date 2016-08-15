@@ -863,7 +863,7 @@
 		ok(oText instanceof sap.m.Text, "Summary bar should have a Text control as its contents");
 		ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
 		equal(oSummaryBar.getDesign(), sap.m.ToolbarDesign.Info, "Summary bar design should be Info");
-		equal(oSummaryBar.getHeight(), "auto", "Toolbar height should be auto");
+		equal(oSummaryBar.getHeight(), "", "Toolbar height shouldn't be specified");
 
 		oSummaryBar.firePress();
 		oSummaryBar.attachEventOnce("afterOpen", function() {
