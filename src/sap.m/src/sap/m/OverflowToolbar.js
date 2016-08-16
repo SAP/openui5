@@ -679,6 +679,7 @@ sap.ui.define([
 
 	OverflowToolbar.prototype.removeContent = function (oControl) {
 		var vContent = this._callToolbarMethod("removeContent", arguments);
+		this._getPopover().removeAssociatedContent(vContent.getId());
 		this._resetAndInvalidateToolbar(false);
 
 		this._postProcessControl(vContent);
