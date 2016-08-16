@@ -536,5 +536,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "11c632e7e12f425c5f4842282a3dffcf97a01b34",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setting content-type for edge browser fixed",
+        "references": []
+      }
+    ]
   }
 }
