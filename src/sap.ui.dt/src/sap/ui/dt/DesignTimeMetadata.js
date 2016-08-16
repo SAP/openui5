@@ -5,9 +5,11 @@
 // Provides class sap.ui.dt.DesignTimeMetadata.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/base/ManagedObject'
+	'sap/ui/base/ManagedObject',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, ManagedObject) {
+function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 	"use strict";
 
 
@@ -114,6 +116,24 @@ function(jQuery, ManagedObject) {
 	 */
 	DesignTimeMetadata.prototype.getDomRef = function() {
 		return this.getData().domRef;
+	};
+
+	DesignTimeMetadata.prototype.getAssociatedDomRef = function(sAction, oElement) {
+
+		var oElementDomRef = ElementUtil.getDomRef(oElement);
+		var vAssociatedDomRef = this.getAction(sAction, oElement).domRef;
+
+		if (oElementDomRef) {
+			if (typeof vAssociatedDomRef === "string") {
+				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vAssociatedDomRef).get(0);
+			} else if (typeof vAssociatedDomRef === "function") {
+				return vAssociatedDomRef.call(this, oElement);
+			}
+		} else {
+			if (typeof vAssociatedDomRef === "function") {
+				return vAssociatedDomRef.call(this, oElement);
+			}
+		}
 	};
 
 	/**
