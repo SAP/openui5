@@ -943,6 +943,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked) {
 		var oSection = sap.ui.getCore().byId(sId);
 
+		if (!this.getDomRef()){
+			jQuery.sap.log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
+			return;
+		}
+
 		if (this.getUseIconTabBar()) {
 			var oToSelect = ObjectPageSection._getClosestSection(oSection);
 
