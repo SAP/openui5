@@ -42,13 +42,15 @@
 			//assert
 			var $stepInput = this.stepInput.$();
 			ok($stepInput.length > 0, "The control was successfully rendered");
-			equals($stepInput.attr("tabindex"), undefined, "There must be no any tabindex attribute");
+			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
 		test("incrementButton", function () {
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
+
 			//assert
+			equal(oIncrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oIncrementButton.getMetadata().getName(), "sap.m.Button",
 					"the picker aggregation holds an instance of a button");
 
@@ -64,6 +66,7 @@
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			//assert
+			equal(oDecrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oDecrementButton.getMetadata().getName(), "sap.m.Button",
 					"the step input _decrementButton aggregation holds an instance of a button");
 

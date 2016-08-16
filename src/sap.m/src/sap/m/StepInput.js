@@ -184,11 +184,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 */
 		StepInput.prototype._getIncrementButton = function () {
 			if (!this.getAggregation("_incrementButton")) {
-				this.setAggregation("_incrementButton", new Button({
+				var oButton = new Button({
 					icon: IconPool.getIconURI("add"),
 					id: this.getId() + "-incrementButton",
 					type: sap.m.ButtonType.Transparent
-				}));
+				});
+				oButton._bExcludeFromTabChain = true;
+				this.setAggregation("_incrementButton", oButton);
 			}
 			return this.getAggregation("_incrementButton");
 		};
@@ -200,11 +202,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 */
 		StepInput.prototype._getDecrementButton = function () {
 			if (!this.getAggregation("_decrementButton")) {
-				this.setAggregation("_decrementButton", new Button({
+				var oButton = new Button({
 					icon: IconPool.getIconURI("less"),
 					id: this.getId() + "-decrementButton",
 					type: sap.m.ButtonType.Transparent
-				}));
+				});
+				oButton._bExcludeFromTabChain = true;
+				this.setAggregation("_decrementButton", oButton);
 			}
 			return this.getAggregation("_decrementButton");
 		};
