@@ -736,9 +736,14 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed.
+	 * Note: Do not use refreshMetadata if the metadata is outdated or should be updated.
+	 * 	     This will lead to inconsistent data in the application.
+	 *
 	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
 	 *
 	 * @returns {Promise} returns a promise on metadata loaded state or null if metadata is not initialized or currently refreshed.
+	 *
+	 * @deprecated
 	 *
 	 * @public
 	 */
