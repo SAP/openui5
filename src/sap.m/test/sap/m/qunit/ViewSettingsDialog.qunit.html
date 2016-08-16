@@ -1407,18 +1407,33 @@
 
 				//Act
 				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Equals);
-				oSearchField.fireLiveChange({ newValue: "Mouse" }); // Matches: Mousepad, Monitor, Optical Mouse
+				oSearchField.fireLiveChange({ newValue: "Mouse" }); // Matches: None
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
 				equal(aFilteredItems.length, 0, "After filter search with 'equals', there are 0 visible items in the list.");
 
 				//Act
-				oSearchField.fireLiveChange({ newValue: "Mousepad" }); // Matches: Mousepad, Monitor, Optical Mouse
+				oSearchField.fireLiveChange({ newValue: "Mousepad" }); // Matches: Mousepad
 
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
 				equal(aFilteredItems.length, 1, "After filter search with 'equals', there is 1 visible item in the list.");
+
+				//Act
+				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
+				oSearchField.fireLiveChange({ newValue: "mou" }); // Matches: Mousepad, Optical Mouse
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 2, "After filter search with 'anywordstartswith', there are 2 visible items in the list.");
+
+				//Act
+				oSearchField.fireLiveChange({ newValue: "ou" }); // Matches: None
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 0, "After filter search with 'anywordstartswith', there are 0 visible items in the list.");
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "" }); // Matches: All
@@ -1450,10 +1465,20 @@
 		test("StringFilter", function() {
 			var fnStringFilter = this.oVSD._getStringFilter();
 
+			//Assert
 			ok(!fnStringFilter("ab", ""), "filtering an empty string is always false");
 			ok(!fnStringFilter("ab"), "filtering an empty string is always false");
 			ok(!fnStringFilter("ab", null), "filtering an empty string is always false");
 			ok(fnStringFilter("", ""), "unless the query is also empty");
+
+			this.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
+			fnStringFilter = this.oVSD._getStringFilter();
+
+			//Assert
+			ok(fnStringFilter("mou", "mousepad"), "'anywordstartswith' matches correctly the beginning of the first word");
+			ok(fnStringFilter("mou", "optical mouse"), "'anywordstartswith' matches correctly the beginning of the second word");
+			ok(!fnStringFilter("ou", "mousepad"), "'anywordstartswith' does not match strings in the middle of the first word");
+			ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
 		});
 
 		test("setFilterSearchCallback", function() {
