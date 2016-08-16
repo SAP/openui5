@@ -645,6 +645,18 @@
 				oInput.destroy();
 			});
 
+			test("Aria in calendar with Secondary calendar type", function() {
+				var oFormatSecondaryLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
+					oSecondaryDay = sap.ui.core.date.UniversalDate.getInstance(new Date(2015, 10, 25, 0, 0, 0), "Gregorian");
+					sAriaSecondaryDay = oFormatSecondaryLong.format(oSecondaryDay, true),
+					sDayAriaText = jQuery("#DP5-inner").val(),
+					sExpectedAria = sDayAriaText + " " + sAriaSecondaryDay,
+					sAriaText = jQuery("#DP5-cal--Month0-20151124").attr('aria-label');
+
+				strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
+			});
+
+
 		</script>
 
 	</head>
