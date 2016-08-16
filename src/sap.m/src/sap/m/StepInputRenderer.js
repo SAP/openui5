@@ -20,6 +20,7 @@ sap.ui.define([], function () {
 				bEditable = oControl.getEditable();
 
 			oRm.write("<div");
+			bEnabled && bEditable && oRm.write(" tabindex='-1'");
 			oRm.addStyle("width", sWidth);
 			oRm.writeStyles();
 			oRm.writeControlData(oControl);
