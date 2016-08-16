@@ -413,6 +413,44 @@
 	});
 
 
+	test("Tooltip is recognized", function() {
+
+		// Arrange
+		var oButton = new sap.m.Button({text: "MyText",
+			icon: "sap-icon://search"});
+
+		strictEqual(oButton._getTooltip(), undefined, "Should not return tooltip");
+
+		// Act
+		oButton.setTooltip("MyTooltip");
+
+		// Assert
+		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the tooltip");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
+	test("Tooltip is derived for icon-only buttons", function() {
+
+		// Arrange
+		var oButton = new sap.m.Button({tooltip: "MyTooltip",
+			icon: "sap-icon://search"});
+
+		strictEqual(oButton._getTooltip(), "MyTooltip", "Should return the primary tooltip");
+
+		// Act
+		oButton.setTooltip(null);
+
+		// Assert
+		strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
 	test("getAccessibilityInfo", function() {
 		var oButton = new sap.m.Button({tooltip: "Tooltip"});
 		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
