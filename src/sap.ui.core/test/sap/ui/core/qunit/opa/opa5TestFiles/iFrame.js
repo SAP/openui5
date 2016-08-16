@@ -376,8 +376,7 @@ sap.ui.define([
 		QUnit.test("Should not call success if a regex does not find controls", function (assert) {
 			var fnSuccessSpy = sinon.spy(),
 				fnErrorSpy = sinon.spy(),
-				fnDoneTesting = assert.async(),
-				fnIFrameTeardown = assert.async();
+				fnDone = assert.async();
 
 			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
 
@@ -391,12 +390,10 @@ sap.ui.define([
 			Opa5.emptyQueue().always(function () {
 				sinon.assert.notCalled(fnSuccessSpy);
 				sinon.assert.calledOnce(fnErrorSpy);
-				fnDoneTesting();
-			});
 
-			this.oOpa5.iTeardownMyAppFrame();
-
-			 Opa5.emptyQueue().always(fnIFrameTeardown);
+				this.oOpa5.iTeardownMyAppFrame();
+				Opa5.emptyQueue().always(fnDone);
+			}.bind(this));
 		});
 
 		// In this module a site full of errors is launched and the error messages are checked
