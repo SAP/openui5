@@ -311,7 +311,17 @@ function runODataAnnotationsV2Tests() {
 			],
 			serviceValid     : true,
 			annotationsValid : "all"
-		}
+		},
+		"LastModified Header": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : [
+				"fakeService://testdata/odata/multiple-annotations-01.xml",
+				"fakeService://testdata/odata/multiple-annotations-02.xml",
+				"fakeService://testdata/odata/multiple-annotations-03.xml"
+			],
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
 
 	};
 
@@ -321,6 +331,7 @@ function runODataAnnotationsV2Tests() {
 		mTest.name = sName;
 		aServices.push(mTest);
 	}
+
 
 
 	module("Standard Tests for All Annotation Cases")
@@ -687,10 +698,167 @@ function runODataAnnotationsV2Tests() {
 		}
 	}
 
+	module("Misc Test to increase test coverage");
 
-	module("Annotation Test Cases for Bugfixes and Specification Changes")
+	var fnTestMisc1 = function() {
+
+		var mService = mAdditionalTestsServices["LastModified Header"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+			annotationURI: mService.annotations,
+			skipMetadataAnnotationParsing: false
+		});
+
+		// Instantiate without options argument - use defaults
+		var oAnnotationsFromMetadata = new sap.ui.model.odata.v2.ODataAnnotations(oModel.oMetadata);
+
+		equals(oAnnotationsFromMetadata.getAnnotationsData(), oAnnotationsFromMetadata.getData(), "Check deprecated API");
+
+		var oAnnotations = new sap.ui.model.odata.v2.ODataAnnotations(oModel.oMetadata, { skipMetadata: true });
 
 
+		var fnEvent = function() {
+			ok(false, "Success/Error/Loaded handler should not be called for this instance");
+		};
+		oAnnotations.attachSuccess(fnEvent);
+		oAnnotations.attachError(fnEvent);
+		oAnnotations.attachLoaded(fnEvent);
+		oAnnotations.attachFailed(fnEvent);
+
+
+		// Add empty source
+		oAnnotations.addSource().then(function() {
+			// Add empty source as array
+			oAnnotations.addSource([]).then(function() {
+				oAnnotations.detachSuccess(fnEvent);
+				oAnnotations.detachError(fnEvent);
+				oAnnotations.detachLoaded(fnEvent);
+				oAnnotations.detachFailed(fnEvent);
+
+				// Add invalid source
+				oAnnotations.addSource({
+					type: "invalid"
+				}).then(function() {
+					ok(false, "Adding invalid sources should not be successful");
+				}).catch(function() {
+					ok(true, "Adding invalid sources should lead to an error");
+
+					oAnnotations.addSource({
+						type: "xml",
+						xml: "I am not valid XML"
+					}).then(function() {
+						// This is a phantomJS bug...
+						ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
+
+						if (sap.ui.Device.browser.phantomJS) {
+							throw "Continue in catch block";
+						}
+
+					}).catch(function() {
+						ok(true, "Adding sources with invalid XML content should lead to an error");
+
+						oAnnotations.addSource({
+							type: "xml",
+							document: { invalid: "I ain't no XML document..." }
+						}).then(function() {
+							// This is a phantomJS bug...
+							ok(!!sap.ui.Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
+
+							if (sap.ui.Device.browser.phantomJS) {
+								throw "Continue in catch block";
+							}
+
+						}).catch(function() {
+							ok(true, "Adding sources with invalid XML documents should lead to an error");
+
+
+
+							// XML Parser is not available should lead to an error
+							var oOriginalDOMParser = window.DOMParser;
+							window.DOMParser = function() {
+								this.parseFromString = function() {}
+							};
+
+							oAnnotations.addSource({
+								type: "url",
+								data: "fakeService://testdata/odata/multiple-annotations-01.xml"
+							}).then(function() {
+								ok(false, "Adding annotations without having a DOM parser should not be successful");
+							}).catch(function() {
+								ok(true, "Adding annotations without having a DOM parser should lead to an error");
+
+								window.DOMParser = oOriginalDOMParser;
+
+								// Mock IE XML Parser
+								var bIsIE = sap.ui.Device.browser.internet_explorer;
+								sap.ui.Device.browser.internet_explorer = true;
+								var oOriginalActiveXObject = window.ActiveXObject;
+								window.ActiveXObject = function() {
+									this.loadXML = function() {}
+								};
+
+								oAnnotations.addSource({
+									type: "url",
+									data: "fakeService://testdata/odata/multiple-annotations-01.xml"
+								}).then(function() {
+									ok(false, "Adding annotations without having a DOM parser should not be successful");
+								}).catch(function() {
+									ok(true, "Adding annotations without having a DOM parser should lead to an error");
+
+
+									window.ActiveXObject = oOriginalActiveXObject;
+									sap.ui.Device.browser.internet_explorer = bIsIE;
+
+									// Clean up
+									oModel.destroy();
+									oAnnotationsFromMetadata.destroy();
+									oAnnotations.destroy();
+
+									start();
+								});
+							});
+						});
+					});
+				});
+			});
+
+		});
+
+
+		var oAnnotationsObject = oModel.getServiceAnnotations();
+
+
+	};
+
+	asyncTest("Loading and accessing annotations", fnTestMisc1);
+
+
+
+	module("Annotation Test Cases for Bugfixes and Specification Changes");
+
+
+	var fnTestLastModified = function() {
+		expect(4);
+
+		var mService = mAdditionalTestsServices["LastModified Header"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+			annotationURI: mService.annotations,
+			skipMetadataAnnotationParsing: false
+		});
+
+		oModel.annotationsLoaded().then(function(aAnnotations) {
+			ok(aAnnotations[0].document.lastModified, "LastModified information exists for first annotation document");
+			ok(aAnnotations[1].document.lastModified, "LastModified information exists for first annotation document");
+			ok(aAnnotations[2].document.lastModified, "LastModified information exists for first annotation document");
+			ok(aAnnotations[3].document.lastModified, "LastModified information exists for first annotation document");
+
+			start();
+		});
+
+	};
+
+	asyncTest("Access to lastModified header", fnTestLastModified);
 
 
 

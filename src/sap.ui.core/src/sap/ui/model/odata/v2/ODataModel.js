@@ -4043,6 +4043,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Retuns a promise that resolves with an array containing information about the initially loaded annotations.
+	 * Important: This covers the annotations that were given to the model constructor, not the ones that might have
+	 * been added lateron using the protected API method addAnnotationUrl. In order to get information about them, the
+	 * annotationsLoaded-event must be used.
+	 *
+	 * @retuns {Promise} Returns a promise to load the annotation URLs that were given to the model on instantiation.
+	 *
+	 * @public
+	 * @since 1.42
+	 */
+	ODataModel.prototype.annotationsLoaded = function() {
+		return this.pAnnotationsLoaded;
+	};
+
+	/**
 	 * Checks whether metadata loading has failed in the past.
 	 *
 	 * @public
