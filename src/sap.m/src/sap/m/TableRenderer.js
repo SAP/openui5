@@ -71,7 +71,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		if (isHeaderHidden) {
 			rm.addClass("sapMListTblHeaderNone");
 		} else {
-			rm.addClass("sapMListTblRow sapMListTbl" + type + "er");
+			rm.addClass("sapMListTblRow sapMLIBFocusable sapMListTbl" + type + "er");
+			ColumnListItemRenderer.addLegacyOutlineClass.call(ColumnListItemRenderer, rm);
 		}
 
 		rm.writeClasses();
