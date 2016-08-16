@@ -1036,6 +1036,7 @@ sap.ui.require([
 			oListBinding.refreshInternal("myGroup");
 
 			assert.strictEqual(oListBinding.mCacheByContext, undefined);
+			assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Refresh);
 		});
 	});
 
@@ -1224,6 +1225,22 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts after refresh", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oChild1 = {checkUpdate : function () {}},
+			oChild2 = {checkUpdate : function () {}};
+
+		oBinding.sChangeReason = ChangeReason.Refresh;
+		this.mock(this.oModel).expects("getDependentBindings").withExactArgs(oBinding)
+			.returns([oChild1, oChild2]);
+		this.mock(oChild1).expects("checkUpdate").withExactArgs();
+		this.mock(oChild2).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding.oCache).expects("read").returns(createResult(10));
+
+		oBinding.getContexts(0, 10);
 	});
 
 	//*********************************************************************************************

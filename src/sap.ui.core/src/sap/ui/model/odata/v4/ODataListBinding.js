@@ -633,6 +633,11 @@ sap.ui.define([
 			aContexts.diff = aContexts.dataRequested ? [] : this.aDiff;
 			this.aDiff = [];
 		}
+		if (sChangeReason === ChangeReason.Refresh) {
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
 		return aContexts;
 	};
 
@@ -837,6 +842,7 @@ sap.ui.define([
 			}
 		}
 		this.reset();
+		this.sChangeReason = ChangeReason.Refresh;
 		this._fireRefresh({reason : ChangeReason.Refresh});
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			if (oDependentBinding.refreshInternal) {

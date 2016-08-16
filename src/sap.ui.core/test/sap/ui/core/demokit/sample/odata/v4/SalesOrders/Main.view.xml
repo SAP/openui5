@@ -68,8 +68,8 @@
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
-							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
+						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
+							tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
 						<SearchField enabled="{ui>/bRealOData}"
 							placeholder="Filter by gross amount greater than"
@@ -155,7 +155,7 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
+						<Input value="{Note}"/>
 					</cells>
 					<cells>
 						<Text text="{LifecycleStatusDesc}"/>
@@ -195,8 +195,8 @@
 						tooltip="Schedules"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
-						press="onCancelSalesOrder" tooltip="Cancel sales order changes"/>
+					<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrder"
+						tooltip="Cancel sales order changes"/>
 				</content>
 				<dependents>
 					<Dialog class="sapUiSizeCompact"
@@ -257,7 +257,7 @@
 					<Label text="Lifecycle Status Desc" />
 					<Text text="{LifecycleStatusDesc}" />
 					<Label labelFor="Note" text="Note" />
-					<Input enabled="{ui>/bRealOData}" id="Note" value="{Note}" />
+					<Input id="Note" value="{Note}" />
 				</form:SimpleForm>
 				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
 					editable="true" id="BusinessPartner" labelSpanM="4"
@@ -276,12 +276,11 @@
 					<Label text="CompanyName" />
 					<Text text="{CompanyName}" />
 					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
-					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
+					<Input id="BPPhoneNumber" value="{PhoneNumber}" />
 					<Label labelFor="BPCity" text="City" />
-					<Input enabled="{ui>/bRealOData}" id="BPCity" value="{Address/City}"/>
+					<Input id="BPCity" value="{Address/City}"/>
 					<Label labelFor="BPPostalCode" text="Postal Code" />
-					<Input enabled="{ui>/bRealOData}" id="BPPostalCode"
-						value="{Address/PostalCode}"/>
+					<Input id="BPPostalCode" value="{Address/PostalCode}"/>
 				</form:SimpleForm>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
@@ -343,7 +342,7 @@
 						<Text text="Delivery Date"/>
 					</Column>
 					<Column>
-						<Text text="Note ({:= ${ui>/bRealOData} ? 'editable' : 'read-only'})"/>
+						<Text text="Note"/>
 					</Column>
 				</columns>
 				<items>
@@ -370,7 +369,7 @@
 							<Text text="{DeliveryDate}"/>
 						</cells>
 						<cells>
-							<Input editable="{ui>/bRealOData}" value="{Note}"/>
+							<Input value="{Note}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

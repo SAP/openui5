@@ -118,10 +118,8 @@ sap.ui.define([
 				.attachEventOnce("dataReceived", setTeamContext);
 		},
 
-		onCancelEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog");
-
-			oCreateEmployeeDialog.close();
+		onCancel: function (oEvent) {
+			this.getView().getModel().resetChanges();
 		},
 
 		onCreateEmployee : function (oEvent) {
@@ -184,18 +182,35 @@ sap.ui.define([
 			};
 		},
 
-		onSaveEmployee : function (oEvent) {
-//			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog"),
-//				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
-//				that = this;
+		onRefresh : function (oEvent) {
+			var oModel = this.getView().getModel();
 
-			//TODO validate oEmployeeData according to types
-			//TODO deep create incl. LOCATION etc.
-//				TODO the code will be needed when "create" is implemented
-//				MessageBox.alert(JSON.stringify(oData), {
-//					icon : MessageBox.Icon.SUCCESS,
-//					title : "Success"});
-//				that.onCancelEmployee();
+			if (oModel.hasPendingChanges()) {
+				MessageBox.alert("Cannot refresh due to pending changes", {
+					icon : MessageBox.Icon.ERROR,
+					title : "Error"
+				});
+			} else {
+				oModel.refresh();
+			}
+		},
+
+		onSave: function (oEvent) {
+			var oModel = this.getView().getModel();
+
+			// TODO this should be the default for submitBatch
+			oModel.submitBatch(oModel.getUpdateGroupId()).then(function () {
+				// TODO the success handler could get all errors of failed parts
+				MessageBox.alert("Changes have been saved", {
+					icon : MessageBox.Icon.SUCCESS,
+					title : "Success"
+				});
+			}, function (oError) {
+				MessageBox.alert(oError.message, {
+					icon : MessageBox.Icon.ERROR,
+					title : "Unexpected Error"
+				});
+			});
 		},
 
 		onTeamSelect : function (oEvent) {
