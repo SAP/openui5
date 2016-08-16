@@ -46,7 +46,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
@@ -131,6 +131,9 @@
 					<Text text="Note"/>
 				</Column>
 				<Column>
+					<Text text="Life Cycle Status"/>
+				</Column>
+				<Column>
 					<Text text="Changed At"/>
 				</Column>
 			</columns>
@@ -153,6 +156,9 @@
 					</cells>
 					<cells>
 						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
+					</cells>
+					<cells>
+						<Text text="{LifecycleStatusDesc}"/>
 					</cells>
 					<cells>
 						<Text text="{ChangedAt}"/>

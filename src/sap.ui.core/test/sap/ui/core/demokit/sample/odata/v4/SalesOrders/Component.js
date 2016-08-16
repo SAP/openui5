@@ -66,16 +66,16 @@ sap.ui.define([
 					"ProductList('HT-1000')/Name?custom-option=value" : {
 						source : "ProductList.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
+					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=5" : {
 						source : "SalesOrderList.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=10" : {
+					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=10" : {
 						source : "SalesOrderList.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
+					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$skip=5&$top=5" : {
 						source : "SalesOrderListNoMoreData.json"
 					},
-					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=4&$top=1" : {
+					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$skip=4&$top=1" : {
 						source : "SalesOrderListReplacementForDelete.json"
 					},
 					"SalesOrderList('0500000000')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
