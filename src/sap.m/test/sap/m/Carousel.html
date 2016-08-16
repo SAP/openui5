@@ -7,7 +7,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="1.20">
 		</script>
@@ -293,8 +293,8 @@
 			items: [
 					{ name: "Michelle", color: "orange", number: 3.14 },
 					{ name: "Joseph", color: "blue", number: 1.618 },
-					{ name: "David", color: "green", number: 0 },
-			],
+					{ name: "David", color: "green", number: 0 }
+			]
 		}));
 
 
@@ -304,7 +304,7 @@
 			metadata: {
 				properties: {
 					large: "sap.ui.core.URI"
-				},
+				}
 			},
 			// set up the inner controls
 			init: function () {
@@ -324,7 +324,7 @@
 					stretch: sap.ui.Device.system.phone,
 					customHeader: new sap.m.Bar({
 						contentLeft: new sap.m.Label({
-							text: this.getAlt(),
+							text: this.getAlt()
 						}),
 						contentRight: new sap.m.Button({
 							icon: "sap-icon://decline",
@@ -338,8 +338,8 @@
 					afterClose: fnClose,
 					content: [
 						new sap.m.Image({
-							src: this.getLarge(),
-						}).attachPress(fnClose),
+							src: this.getLarge()
+						}).attachPress(fnClose)
 					]
 				}).addStyleClass("lightboxDialog");
 				oDialog.open();
@@ -387,7 +387,7 @@
 			vertical: true,
 			content:[imgForest],
 			width:'100%',
-			height:'100%',
+			height:'100%'
 		});
 
 
@@ -448,11 +448,96 @@
 			//pageIndicatorPlacement: sap.m.PlacementType.Bottom,
 			activePage: imgElephant,
 			//width: "50%",
-			//height: "50%",
+			height: "50%",
 			//showPageIndicator: false,
 			loop: true,
 			//showBusyIndicator: false,
 			pages: [imgDesert, oView, imgElephant, imgDesert2, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3]
+		});
+
+		var arrowsPlacementLabel = new sap.m.Label({
+			text : "Carousel arrow placement"
+		});
+		var arrowsPlacementSelect = new sap.m.Select('arrowsPlacementSelect', {
+			items : [
+				new sap.ui.core.Item("arrowPlacementImageItem", {
+					text : sap.m.CarouselArrowsPlacement.Image,
+					key : sap.m.CarouselArrowsPlacement.Image
+				}),
+				new sap.ui.core.Item("arrowPlacementIndicatorItem", {
+					text : sap.m.CarouselArrowsPlacement.Indicator,
+					key : sap.m.CarouselArrowsPlacement.Indicator
+				})
+			],
+			change : function (oEvent) {
+				carousel.setArrowsPlacement(oEvent.getParameter('selectedItem').getKey());
+			}
+		});
+
+		var pageIndicatorPlacementLabel = new sap.m.Label({
+			text : "Page indicator placement"
+		});
+
+		var pageIndicatorPlacementSelect = new sap.m.Select('pageIndicatorPlacementSelect', {
+			items : [
+				new sap.ui.core.Item("pageIndicatorTopItem", {
+					text : sap.m.PlacementType.Top,
+					key : sap.m.PlacementType.Top
+				}),
+				new sap.ui.core.Item("pageIndicatorBottomItem", {
+					text : sap.m.PlacementType.Bottom,
+					key : sap.m.PlacementType.Bottom
+				})
+			],
+			selectedKey : sap.m.PlacementType.Bottom,
+			change : function (oEvent) {
+				carousel.setPageIndicatorPlacement(oEvent.getParameter('selectedItem').getKey());
+			}
+		});
+
+		var showPageIndicatorLabel = new sap.m.Label({
+			text : "Show page indicator"
+		});
+
+		var showPageIndicatorSelect = new sap.m.Select('showPageIndicatorSelect', {
+			items : [
+				new sap.ui.core.Item("showPI", {
+					text : 'Yes',
+					key : 'true'
+				}),
+				new sap.ui.core.Item("hidePI", {
+					text : 'No',
+					key : 'false'
+				})
+			],
+			change : function (oEvent) {
+				var showPageIndicator = oEvent.getParameter('selectedItem').getKey() === 'true';
+				carousel.setShowPageIndicator(showPageIndicator);
+			}
+		});
+
+		var appearanceForm = new sap.ui.layout.form.SimpleForm({
+			labelSpanL : 3,
+			labelSpanM : 3,
+			editable : true,
+			layout : "ResponsiveGridLayout",
+			content : [
+				new sap.m.Toolbar({
+					content : [
+						new sap.m.Title({
+							text : "Appearance",
+							level : "H5",
+							titleStyle : "H5"
+						})
+					]
+				}),
+				arrowsPlacementLabel,
+				arrowsPlacementSelect,
+				pageIndicatorPlacementLabel,
+				pageIndicatorPlacementSelect,
+				showPageIndicatorLabel,
+				showPageIndicatorSelect
+			]
 		});
 
 
@@ -500,6 +585,7 @@
 			enableScrolling: false }
 		);
 
+		carouselPage.addContent(appearanceForm);
 		carouselPage.addContent(carousel);
 		appCarousel.addPage(carouselPage);
 		appCarousel.placeAt("body");

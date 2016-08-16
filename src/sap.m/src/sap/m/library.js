@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.ButtonType",
+			"sap.m.CarouselArrowsAlign",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
 			"sap.m.DeviationIndicator",
@@ -339,7 +340,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
-
 	/**
 	 * Different types for a button (predefined types)
 	 *
@@ -399,6 +399,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Carousel arrows align
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.CarouselArrowsPlacement = {
+		/**
+		 * Carousel arrows are placed on the sides of the current Carousel page.
+		 * @public
+		 */
+		Image : "Image",
+
+		/**
+		 * Carousel arrows are placed on the sides of the page indicator of the Carousel.
+		 * @public
+		 */
+		Indicator : "Indicator"
+	};
 
 	/**
 	 * A subset of DateTimeInput types that fit to a simple API returning one string.

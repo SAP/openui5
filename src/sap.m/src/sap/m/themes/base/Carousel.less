@@ -134,11 +134,11 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   Carousel control base styling
 */
 .sapMCrslControls {
-  padding-top: 0.625rem;
   text-align: center;
 }
 
-.sapMCrslControls a {
+.sapMCrslControls a,
+.sapMCrslHud a {
   padding: 0.3125rem;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
@@ -148,20 +148,128 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   user-drag: none;
 }
 
-.sapMCrslBulleted.sapMCrslBottomOffset {
-  position: absolute;
-  padding-top: 0;
-  bottom: 0.3125rem;
-  width: 100%;
-  z-index: 10;
-}
-
 .sapMCrslBulleted.sapMCrslTopOffset {
   position: absolute;
   padding-bottom: 0.125rem;
   width: 100%;
   z-index: 10;
   padding-top: 0.1875rem;
+}
+
+.sapMCrslItem.sapMCrslBottomOffset {
+  padding-bottom: 1.6875rem;
+}
+
+.sapMCrslItem.sapMCrslBottomArrowsOffset {
+  padding-bottom: 4.25rem;
+}
+
+.sapMCrslItem.sapMCrslTopOffset {
+  padding-top: 1.6875rem;
+}
+
+.sapMCrslItem.sapMCrslTopArrowsOffset {
+  padding-top: 4.25rem;
+}
+
+.sapMCrslControls.sapMCrslControlsTop {
+  position: absolute;
+  top: 0;
+  padding: 0.1875rem 0 0.125rem;
+  width: 100%;
+  z-index: 10;
+}
+
+.sapMCrslControls.sapMCrslControlsBottom {
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 0.3125rem;
+  width: 100%;
+}
+
+.sapMCrslControls .sapMCrslPrev,
+.sapMCrslControls .sapMCrslNext {
+  width: 3rem;
+  height: 3rem;
+  display: inline-block;
+  padding: 0;
+  text-decoration: none;
+  text-align: center;
+  background-color: @sapUiContentContrastIconColor;
+  border-radius: 50%;
+  box-shadow: @sapUiShadowLevel1;
+  outline: none;
+  position: relative;
+}
+
+.sapMCrslHud .sapMCrslPrev,
+.sapMCrslHud .sapMCrslNext {
+  position: absolute;
+}
+
+.sapMCrslArrowInner {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.sapMCrslArrowInner .sapUiIcon {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.sapMCrslPrev .sapMCrslArrowInner .sapUiIcon {
+  text-indent: -0.0625rem;
+  font-size: 1.375rem;
+}
+
+.sapMCrslNext .sapMCrslArrowInner .sapUiIcon {
+  text-indent: 0.0625rem;
+  font-size: 1.375rem;
+}
+
+.sapMCrslBulleted {
+  display: inline-block;
+  position: relative;
+  bottom: 1.0625rem;
+  max-width: calc(~"100% - 6.5rem");
+}
+
+.sapMCrslBulleted.sapMCrslBulletedNoArrows {
+  width: 100%;
+  position: relative;
+  bottom: 0;
+}
+
+/* Styles for carousel dots on different screens */
+/* screen width < 600px */
+@media screen and (max-width: 599px) {
+  .sapMCrslBulleted {
+	width: 12rem;
+  }
+}
+
+/* 600px <= screen width < 1024px */
+@media screen and (min-width : 600px) and (max-width: 1023px) {
+  .sapMCrslBulleted {
+	width: 16rem;
+  }
+}
+
+/* 1024px <= screen width < 1440px */
+@media screen and (min-width : 1024px) and (max-width: 1439px) {
+  .sapMCrslBulleted {
+	width: 20rem;
+  }
+}
+
+/* screen width >= 1440px */
+@media screen and (min-width: 1440px) {
+  .sapMCrslBulleted {
+	width: 24rem;
+  }
 }
 
 /* Styles needed for keyboard handling
