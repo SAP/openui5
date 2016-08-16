@@ -8,11 +8,11 @@
 html.sap-desktop .sapMST:hover,
 html.sap-tablet .sapMSTHvr:active,
 html.sap-phone .sapMSTHvr:active {
-	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiContentContrastShadowColor;
 }
 
 html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
-	border: 1px solid @sapUiLightShadowTint;
+	border: 1px solid @sapUiContentContrastShadowColor;
 }
 
 /* This part is used to achieve dotted white black interlace border*/
@@ -31,12 +31,12 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
 /* Bulleted indicator of multiple tiles*/
 .sapMSTBulleted > span {
 	background-color: lighten(@sapUiElement, 38);
-	box-shadow: 0 0 0.25rem fade(@sapUiLightShadowTint, 30);
+	box-shadow: 0 0 0.25rem fade(@sapUiContentContrastShadowColor, 30);
 }
 
 .sapMSTBulleted > span.sapMSTActive {
 	background-color: @sapUiElement;
-	box-shadow: 0 0 0.25rem fade(@sapUiLightShadowTint, 30);
+	box-shadow: 0 0 0.25rem fade(@sapUiContentContrastShadowColor, 30);
 }
 
 .sapMST .sapMSTIconDisplayArea {
