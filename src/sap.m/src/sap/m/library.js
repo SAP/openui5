@@ -2479,7 +2479,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Checks if the text starts with the search string.
 		 * @public
 		 */
-		StartsWith : "StartsWith"
+		StartsWith : "StartsWith",
+
+		/**
+		 * Checks if any word in the text starts with the search string.
+		 * @public
+		 */
+		AnyWordStartsWith : "AnyWordStartsWith"
 	};
 
 	/*global Element: true */

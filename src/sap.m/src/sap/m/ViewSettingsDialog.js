@@ -50,7 +50,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 			/**
 			 * Provides a string filter operator which is used when the user searches items in filter details page.
-			 * Possible operators are: <code>Contains</code>, <code>StartsWith</code>, <code>Equals</code>.
+			 * Possible operators are: <code>AnyWordStartsWith</code>, <code>Contains</code>, <code>StartsWith</code>, <code>Equals</code>.
 			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
 			 * @since 1.42
 			 */
@@ -2876,6 +2876,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			case sap.m.StringFilterOperator.StartsWith:
 				this.fnOperator = fnStartsWith;
 				break;
+			case sap.m.StringFilterOperator.AnyWordStartsWith:
+				this.fnOperator = fnAnyWordStartsWith;
+				break;
 			default:
 				//warning when operator has been given but it doesn't match a value from sap.m.StringFilterOperator enum
 				jQuery.sap.log.warning("Unknown string compare operator. Use values from sap.m.StringFilterOperator. Default operator should be used.");
@@ -2916,6 +2919,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 	function fnStartsWith(sQuery, sValue) {
 		return sValue.indexOf(sQuery) === 0;
+	}
+
+	function fnAnyWordStartsWith(sQuery, sValue) {
+		var rAnyWordStartsWith = new RegExp(".*\\b" + sQuery + ".*");
+		return rAnyWordStartsWith.test(sValue);
 	}
 
 	return ViewSettingsDialog;

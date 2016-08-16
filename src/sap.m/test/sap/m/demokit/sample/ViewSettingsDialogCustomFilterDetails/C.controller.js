@@ -25,6 +25,12 @@ sap.ui.define([
 				.setFilterSearchCallback(this.caseSensitiveStringContains)
 				.open();
 		},
+		handleOpenDialogSearchWordsStartWith: function() {
+			this._getDialog()
+				.setFilterSearchCallback(null)
+				.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith)
+				.open();
+		},
 		caseSensitiveStringContains: function (sQuery, sItemText) {
 			return sItemText.indexOf(sQuery) > -1;
 		}
