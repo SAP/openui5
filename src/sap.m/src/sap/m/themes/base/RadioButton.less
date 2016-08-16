@@ -8,6 +8,12 @@
 	outline: none;
 	text-overflow: ellipsis;
 	position: relative;
+	white-space: nowrap;
+	max-width: 100%;
+
+	> .sapMLabel {
+		max-width: calc(~"100% - 2.8125rem");
+	}
 }
 
 .sapMILI-CTX .sapMRb {
@@ -56,7 +62,7 @@
 }
 
 .sapMRbHasLabel.sapMRb:focus:before {
-	right: -0.0625rem;
+	right: 0;
 }
 
 .sapMRbDis:focus:before {
