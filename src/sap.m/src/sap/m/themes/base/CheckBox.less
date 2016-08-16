@@ -7,6 +7,10 @@
 	display: inline-block;
 	position: relative;
 	white-space: normal;
+
+	&:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		pointer-events: none;
+	}
 }
 
 .sapMCb .sapMLabel {
