@@ -5,8 +5,9 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
-		'sap/ui/test/_LogCollector'
-	], function (jQuery, URI, Device, LogCollector) {
+		'sap/ui/test/_LogCollector',
+		'sap/ui/test/_XHRCounter'
+	], function (jQuery, URI, Device, _LogCollector, _XHRCounter) {
 	"use strict";
 	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
@@ -16,7 +17,8 @@ sap.ui.define([
 		oFrameUtils = null,
 		oFrameJQuery = null,
 		bRegiesteredToUI5Init = false,
-		bUi5Loaded = false;
+		bUi5Loaded = false,
+		oXHRCounter = null;
 
 	/*
 	 * INTERNALS
@@ -81,7 +83,7 @@ sap.ui.define([
 		modifyIFrameNavigation();
 
 		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
-		oFrameJQuery.sap.log.addLogListener(LogCollector.getInstance()._oListener);
+		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
 	}
 
 	/**
@@ -186,6 +188,9 @@ sap.ui.define([
 		oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 		oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin(sLogPrefix);
 
+		oFrameJQuery.sap.require("sap.ui.test._XHRCounter");
+		oXHRCounter = oFrameWindow.sap.ui.test._XHRCounter;
+
 		registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 		oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 		oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
@@ -207,6 +212,7 @@ sap.ui.define([
 		oFrameWindow = null;
 		bUi5Loaded = false;
 		bRegiesteredToUI5Init = false;
+		oXHRCounter = null;
 	}
 
 	/**
@@ -265,6 +271,9 @@ sap.ui.define([
 		},
 		getWindow: function () {
 			return oFrameWindow;
+		},
+		_getIXHRCounter:function () {
+			return oXHRCounter || _XHRCounter;
 		},
 		teardown: function () {
 			destroyFrame();
