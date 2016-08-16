@@ -196,5 +196,38 @@
         "references": []
       }
     ]
+  },
+  "1.38.7": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "8e5ee4b388e970e32108458887281f3bc79d0e3a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "ac3a7f73fa0bc1bfc084bda39c8b19d447220607",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      },
+      {
+        "id": "369fb4d741285d087a0ddbd5460afe258b7cf235",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "0b2d382108d026c681395b97d5884d295eab9ea3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
   }
 }
