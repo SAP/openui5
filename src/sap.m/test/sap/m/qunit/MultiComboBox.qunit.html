@@ -3329,6 +3329,36 @@
 		this.clock.reset();
 	});
 
+	test("Clicking on token should not throw an exception", function() {
+		// system under test
+		var oItem = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items : [oItem]
+			}), oToken;
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBox.setSelectedItems([oItem]);
+		sap.ui.getCore().applyChanges();
+
+		// act - clicking on control
+		oToken = oMultiComboBox._oTokenizer.getTokens()[0];
+		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
+			srcControl: oToken,
+			target: oToken.getFocusDomRef()
+		});
+		this.clock.tick(500);
+
+		ok(true, "The test should not throw and exception");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
+
 	// --------------------------------- //
 	// Scenarios - opening dropdown list //
 	// --------------------------------- //
