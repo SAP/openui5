@@ -27,7 +27,7 @@
 		assert.strictEqual(this.oCarousel.getHeight(), '100%', "Default 'height' value is 100%");
 		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
 		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
-		assert.strictEqual(this.oCarousel.getArrowsPlacement(), sap.m.CarouselArrowsPlacement.Image, "Default 'arrowsPlacement' value is 'Image'");
+		assert.strictEqual(this.oCarousel.getArrowsPlacement(), sap.m.CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
 	});
 
 	//================================================================================
@@ -171,17 +171,17 @@
 		assert.ok(this.oCarousel.$().children().last().hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
 	});
 
-	QUnit.test("#setArrowsPlacement() to 'Image' position", function (assert) {
+	QUnit.test("#setArrowsPlacement() to 'Content' position", function (assert) {
 		// Act
-		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Image);
+		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Content);
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 1, "Arrows should be rendered next to the image");
 	});
 
-	QUnit.test("#setArrowsPlacement() to 'Indicator' position", function (assert) {
+	QUnit.test("#setArrowsPlacement() to 'PageIndicator' position", function (assert) {
 		// Act
-		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Indicator);
+		this.oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.PageIndicator);
 		sap.ui.getCore().applyChanges();
 
 		// Assert

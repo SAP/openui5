@@ -74,11 +74,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			busyIndicatorSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '6em', deprecated: true},
 
 			/**
-			 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Image</code> used to
-			 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.Indicator</code> can
+			 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Content</code> used to
+			 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
 			 * be used to place the arrows on the sides of the page indicator.
 			 */
-			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : sap.m.CarouselArrowsPlacement.Image}
+			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : sap.m.CarouselArrowsPlacement.Content}
 		},
 		defaultAggregation : "pages",
 		aggregations : {

@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		this._renderInnerDiv(rm, oCarousel, aPages, sPageIndicatorPlacement);
 
-		if (sap.ui.Device.system.desktop && iPageCount > 1 && sArrowsPlacement === sap.m.CarouselArrowsPlacement.Image) {
+		if (sap.ui.Device.system.desktop && iPageCount > 1 && sArrowsPlacement === sap.m.CarouselArrowsPlacement.Content) {
 			this._renderHudArrows(rm, oCarousel);
 		}
 
@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			if (aArray.length > 1 && sap.ui.Device.system.desktop &&
-				oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.Indicator) {
+				oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator) {
 				if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
 					rm.write(" sapMCrslBottomArrowsOffset");
 				} else {
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global'],
 	CarouselRenderer._renderPageIndicatorAndArrows = function(settings, oCarousel){
 		var rm = settings.rm,
 			iPageCount = settings.iPageCount,
-			bShowIndicatorArrows = sap.ui.Device.system.desktop && settings.sArrowsPlacement === sap.m.CarouselArrowsPlacement.Indicator,
+			bShowIndicatorArrows = sap.ui.Device.system.desktop && settings.sArrowsPlacement === sap.m.CarouselArrowsPlacement.PageIndicator,
 			bBottom = settings.bBottom,
 			bShowPageIndicator = settings.bShowPageIndicator,
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
