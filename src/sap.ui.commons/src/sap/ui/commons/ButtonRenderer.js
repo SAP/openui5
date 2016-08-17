@@ -249,11 +249,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.addClass("sapUiBtnIco");
         if (oButton.getText()) { // only add a distance to the text if there is text
-			if (oButton.getIconFirst()) {
-				rm.addClass("sapUiBtnIcoL");
-			} else {
-				rm.addClass("sapUiBtnIcoR");
-			}
+			rm.addClass(oButton.getIconFirst() ? "sapUiBtnIcoL" : "sapUiBtnIcoR");
 		}
 		rm.writeClasses();
 
@@ -266,17 +262,11 @@ sap.ui.define(['jquery.sap.global'],
 	ButtonRenderer.writeIconHtml = function(oRenderManager, oButton) {
 
 		var rm = oRenderManager;
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
 		var aClasses = [];
 		var mAttributes = buildIconAttributes(oButton);
 		aClasses.push("sapUiBtnIco");
 		if (oButton.getText()) { // only add a distance to the text if there is text
-			var bRTL = rm.getConfiguration().getRTL();
-			if ((oButton.getIconFirst() && (!bRTL || oIconInfo.skipMirroring)) || (!oButton.getIconFirst() && !oIconInfo.skipMirroring && bRTL)) {
-				aClasses.push("sapUiBtnIcoL");
-			} else {
-				aClasses.push("sapUiBtnIcoR");
-			}
+			aClasses.push(oButton.getIconFirst() ? "sapUiBtnIcoL" : "sapUiBtnIcoR");
 		}
 
 		rm.writeIcon(oButton.getIcon(), aClasses, mAttributes);
