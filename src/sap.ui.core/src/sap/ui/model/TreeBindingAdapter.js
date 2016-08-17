@@ -477,6 +477,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		};
 
+		/**
+		 * Calculate the request length based on the given information
+		 *
+		 * @param {int} iMaxGroupSize the maximum group size
+		 * @param {object} oSection the information of the current section
+		 * @protected
+		 */
+		TreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
+			var iRequestedLength;
+
+			if (!iMaxGroupSize) {
+				iRequestedLength = oSection.length;
+			} else {
+				//the maximum entries we can request is the groupSize
+				iRequestedLength = Math.max(Math.min(oSection.length, iMaxGroupSize - oSection.startIndex), 0);
+			}
+
+			return iRequestedLength;
+		};
+
 		TreeBindingAdapter.prototype._loadChildContexts = function (oNode) {
 			var oNodeState = oNode.nodeState;
 
@@ -503,13 +523,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				var oCurrentSection = oNodeState.sections[i];
 
-				var iRequestedLength;
-				if (!iMaxGroupSize) {
-					iRequestedLength = oCurrentSection.length;
-				} else {
-					//the maximum entries we can request is the groupSize
-					iRequestedLength = Math.max(Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex), 0);
-				}
+				var iRequestedLength = this._calculateRequestLength(iMaxGroupSize, oCurrentSection);
 
 				//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
 				//paging is handled differently

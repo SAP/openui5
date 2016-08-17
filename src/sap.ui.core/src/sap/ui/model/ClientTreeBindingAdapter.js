@@ -168,6 +168,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 		};
 
+		/**
+		 * Calculate the request length based on the given information
+		 *
+		 * Because client treebinding knows all of the data from the very beginning, it should simply return the the
+		 * maximum group size without looking at the current section.
+		 *
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
+			return iMaxGroupSize;
+		};
+
 		ClientTreeBindingAdapter.prototype.getLength = function() {
 			this._buildTree();
 			return TreeBindingAdapter.prototype.getLength.apply(this, arguments);
