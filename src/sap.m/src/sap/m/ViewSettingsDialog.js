@@ -54,7 +54,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
 			 * @since 1.42
 			 */
-			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behaviour", defaultValue: sap.m.StringFilterOperator.StartsWith }
+			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: sap.m.StringFilterOperator.StartsWith }
 		},
 		aggregations : {
 
