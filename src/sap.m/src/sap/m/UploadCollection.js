@@ -145,7 +145,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 *
 			 * @since 1.34
 			 */
-			mode: {type : "sap.m.ListMode", group : "Behavior", defaultValue : "None"}
+			mode: {type : "sap.m.ListMode", group : "Behavior", defaultValue : "None"},
+
+			/**
+			 * If true, the button used for uploading files is invisible.
+			 * @since 1.42.0
+			 */
+			uploadButtonInvisible : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * If true, the button that is used to terminate the instant file upload gets visible.
+			 * The button normally appears when a file is being uploaded.
+			 * @since 1.42.0
+			 */
+			terminationEnabled : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -614,8 +627,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		return this._oList.getMode();
 	};
 
-	UploadCollection.prototype.getToolbar = function(){
+	UploadCollection.prototype.getToolbar = function() {
 		return this._oHeaderToolbar;
+	};
+
+	UploadCollection.prototype.setUploadButtonInvisible = function(uploadButtonInvisible) {
+		if (this.getUploadButtonInvisible() === uploadButtonInvisible) {
+			return this;
+		}
+		this.setProperty("uploadButtonInvisible", uploadButtonInvisible, true);
+		if (this.getInstantUpload()) {
+			this._getFileUploader().setVisible(!uploadButtonInvisible);
+		} else {
+			this._setFileUploaderVisibility(uploadButtonInvisible);
+		}
+		return this;
 	};
 
 	/* =========================================================== */
@@ -1465,7 +1491,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._createDeleteButton = function(sItemId, sButton, oItem, sErrorState, that) {
-		var bEnabled, oDeleteButton;
+		var bEnabled, oDeleteButton, bButtonVisible;
 
 		bEnabled = oItem.getEnableDelete();
 		if (sErrorState === "Error"){
@@ -1488,13 +1514,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					this._handleDelete(oEvent, that);
 				}.bind(that));
 			} else if (sButton === "terminateButton") {
+				if (!this.getTerminationEnabled()) {
+					oDeleteButton.setVisible(false);
+				}
 				oDeleteButton.attachPress(function(oEvent) {
 					this._handleTerminate.bind(this)(oEvent, oItem);
 				}.bind(that));
 			}
 		} else { // delete button exists already
-				oDeleteButton.setEnabled(bEnabled);
-				oDeleteButton.setVisible(oItem.getVisibleDelete());
+			oDeleteButton.setEnabled(bEnabled);
+			bButtonVisible = oItem.getVisibleDelete();
+			if (sButton === "terminateButton") {
+				bButtonVisible = bButtonVisible && this.getTerminationEnabled();
+			}
+			oDeleteButton.setVisible(bButtonVisible);
 		}
 		return oDeleteButton;
 	};
@@ -1575,6 +1608,22 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			});
 		} else {
 			this._oNumberOfAttachmentsTitle.setText(sText);
+		}
+	};
+
+	/**
+	 * @description Makes file upload button invisible.
+	 * @param {boolean} uploadButtonInvisible Defines whether the upload button is visible or not.
+	 * @private
+	 */
+	UploadCollection.prototype._setFileUploaderVisibility = function(uploadButtonInvisible) {
+		var aToolbarElements = this._oHeaderToolbar.getContent();
+
+		if (aToolbarElements) {
+			var oPlaceHolder = aToolbarElements[this._iFileUploaderPH];
+			if (oPlaceHolder instanceof sap.ui.unified.FileUploader) {
+				oPlaceHolder.setVisible(!uploadButtonInvisible);
+			}
 		}
 	};
 
@@ -2393,7 +2442,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				},
 				uploadStart : function(oEvent) {
 					that._onUploadStart(oEvent);
-				}
+				},
+				visible: !this.getUploadButtonInvisible()
 			});
 		}
 		return this._oFileUploader;

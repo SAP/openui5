@@ -9,9 +9,9 @@
 		<content>
 			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<Label
-					text="Layout: Enable FileUploader">
-				</Label>
+				<Label text="Upload button invisible"></Label>
+				<Switch id="uploadInvisibleSwitch" state="false" change="onSwitchUploadInvisibleChange" type="Transparent"></Switch>
+				<Label text="Layout: Enable FileUploader"></Label>
 				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
 				<Label text="Multi-selection mode"></Label>
 				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
