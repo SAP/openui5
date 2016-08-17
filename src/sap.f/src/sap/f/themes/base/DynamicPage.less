@@ -16,6 +16,7 @@
 
 .sapFDynamicPageContentWrapper {
 	.sapFDynamicPageContentWrapperSpacer {
+		height: 4rem;
 		flex: 0 0 4rem;
 	}
 }
@@ -23,15 +24,26 @@
 .sapUiSizeCompact {
 	.sapFDynamicPageContentWrapper {
 		.sapFDynamicPageContentWrapperSpacer {
+			height: 3.5rem;
 			flex: 0 0 3.5rem;
 		}
 	}
 }
 
 .sapFDynamicPageContent {
+	position: relative;
 	padding-right: 2rem;
 	padding-left: 2rem;
 	padding-bottom: 1rem;
+}
+
+.sapFDynamicPageContentFitContainer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	padding: 1rem;
 }
 
 .sapFDynamicPage-Std-Tablet {

@@ -214,6 +214,7 @@ sap.ui.define([
 
 		this._headerBiggerThanAllowedHeight = true;
 		this._moveHeaderToContentArea();
+		this._updateScrollBar();
 	};
 
 	/**
@@ -269,6 +270,7 @@ sap.ui.define([
 
 		if (exists($footerSpacer)) {
 			$footerSpacer.toggleClass("sapFDynamicPageContentWrapperSpacer", bToggle);
+			this.$('contentFitContainer').css("bottom", bToggle ? "4rem" : 0);
 		}
 	};
 
@@ -646,7 +648,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._measureOffsetHeightHeaderAlwaysExpanded = function () {
-		return this.getHeaderExpanded() ? this._getTitleHeight() + this._getHeaderHeight() :  this._getTitleHeight();
+		return this._headerAlwaysExpanded() ? this._getTitleHeight() + this._getHeaderHeight() :  this._getTitleHeight();
 	};
 
 	/**

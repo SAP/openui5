@@ -64,11 +64,18 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.addClass("sapFDynamicPageContent");
 		oRm.writeClasses();
 		oRm.write(">");
+		oRm.write('<div');
+		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-contentFitContainer');
+		oRm.addClass("sapFDynamicPageContentFitContainer");
+		oRm.writeClasses();
+		oRm.write(">");
 		oRm.renderControl(oDynamicPageContent);
-		oRm.write("</div>");
-
 		// Renders Dynamic Page Footer Spacer
 		DynamicPageRenderer.renderFooterSpacer(oRm, oDynamicPageFooter, oDynamicPage);
+		oRm.write("</div>");
+		oRm.write("</div>");
+
+
 		oRm.write("</div>");
 
 		// Renders Dynamic Page Footer
