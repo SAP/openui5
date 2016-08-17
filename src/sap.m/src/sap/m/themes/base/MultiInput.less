@@ -61,3 +61,12 @@ html.sap-desktop .sapMMultiInputBorder{
 .sapMMultiInputMultiModeInputContainer {
 	position: static;
 }
+
+// focus styles
+html.sap-desktop .sapMMultiInput.sapMFocus .sapMInputBaseInner:focus {
+	outline: none;
+}
+
+.sapMMultiInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
+	background: transparent;
+}
