@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global'
-], function(jQuery) {
+	'jquery.sap.global',
+	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+], function(jQuery, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -23,24 +24,21 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @public
 	 */
-	HideForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
-		var oChange = oChangeWrapper.getDefinition();
-		var sRemoveElementId;
-		if (!oChange.content.removedElement || !oChange.content.removedElement.id) {
-			// sHideId field key was used in 1.40, do not remove!
-			sRemoveElementId = oChange.content.sHideId;
-		} else {
-			sRemoveElementId = oChange.content.removedElement.id;
-		}
+	HideForm.applyChange = function(oChange, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
 
+		var oChangeDefinition = oChange.getDefinition();
 
-		var oCtrl = oModifier.byId(sRemoveElementId, oView);
+		// !important : sHideId was used in 1.40, do not remove for compatibility!
+		var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
-		if (oChange.changeType === "hideSimpleFormField") {
+		if (oChangeDefinition.changeType === "hideSimpleFormField") {
 			aContent.some(function (oField, index) {
-				if (oField === oCtrl) {
+				if (oField === oRemovedElement) {
 					iStart = index;
 					oModifier.setVisible(oField, false);
 				}
@@ -55,9 +53,9 @@ sap.ui.define([
 					}
 				}
 			});
-		} else if (oChange.changeType === "removeSimpleFormGroup") {
+		} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
 			aContent.some(function (oField, index) {
-				if (oField === oCtrl) {
+				if (oField === oRemovedElement) {
 					iStart = index;
 				}
 				if (iStart >= 0 && index > iStart) {
@@ -74,7 +72,7 @@ sap.ui.define([
 					}
 				}
 			});
-			oModifier.removeAggregation(oControl, "content", oCtrl, oView);
+			oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
 		}
 
 		return true;
@@ -103,10 +101,8 @@ sap.ui.define([
 	HideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
 		var oChange = oChangeWrapper.getDefinition();
 		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
-			var sStableId = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id)).getId();
-			oChange.content.removedElement = {
-				id : sStableId
-			};
+			var oStableElement = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id));
+			oChange.content.elementSelector = JsControlTreeModifier.getSelector(oStableElement);
 		} else {
 			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
 		}
@@ -120,7 +116,7 @@ sap.ui.define([
 	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
 	 * @public
 	 */
-	HideForm.buildStableChangeInfo = function(mRemoveActionParameter){
+	HideForm.buildStableChangeInfo = function(mRemoveActionParameter) {
 		return mRemoveActionParameter;
 	};
 
