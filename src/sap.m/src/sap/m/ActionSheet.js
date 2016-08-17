@@ -458,13 +458,30 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	ActionSheet.prototype._addAriaHiddenTexts = function(oButton) {
+		var sButtonId = oButton.getId();
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			var oInvisibleText = new InvisibleText();
+			var oInvisibleText = new InvisibleText(sButtonId + "-actionSheetHiddenText");
 
 			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);
-			oButton.addAriaLabelledBy(oButton.getId());
+
+			// Prevent duplicate self reference
+			if (oButton.getAriaLabelledBy().indexOf(sButtonId) === -1) {
+				oButton.addAriaLabelledBy(sButtonId);
+			}
 			oButton.addAriaLabelledBy(oInvisibleText.getId());
 		}
+	};
+
+	ActionSheet.prototype._removeAriaHiddenTexts = function(oButton) {
+		oButton.getAriaLabelledBy().forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+
+			if (oControl instanceof InvisibleText && sId.indexOf("actionSheetHiddenText") > -1) {
+				this.removeAggregation("_invisibleAriaTexts", oControl, false);
+				oButton.removeAriaLabelledBy(oControl);
+				oControl.destroy();
+			}
+		}, this);
 	};
 
 	/* Override API methods */
@@ -488,6 +505,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		var result = this.removeAggregation("buttons",oButton, false);
 		if (result) {
 			result.detachPress(this._buttonSelected, this);
+			this._removeAriaHiddenTexts(result);
 		}
 		return result;
 	};
