@@ -1014,7 +1014,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// Experimental: Load SAP web fonts
 		this._loadWebFonts();
 
-		if ( this.oThemeCheck.themeLoaded || !this.oConfiguration['xx-waitForTheme'] ) {
+		if ( this.isThemeApplied() || !this.oConfiguration['xx-waitForTheme'] ) {
 			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
 		} else {
 			log.info("initial rendering delayed until theme has been loaded");
