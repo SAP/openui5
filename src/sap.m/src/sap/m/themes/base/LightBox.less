@@ -49,7 +49,6 @@
   left: 0;
 }
 
-
 /* ==========================================================================
    Footer
   ========================================================================== */
@@ -64,12 +63,12 @@
   -webkit-box-orient: horizontal;
   -webkit-box-align: start;
   justify-content: space-between;
-  height:3rem;
+  height: 3rem;
   align-items: flex-end;
   border-radius: 0 0 0.25rem 0.25rem;
 
-  &.sapMLightBoxFooterTwoLines{
-    height:4.5rem;
+  &.sapMLightBoxFooterTwoLines {
+    height: 4.5rem;
   }
 }
 
@@ -83,6 +82,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
 }
 
 .sapMLightBoxFooter .sapMBtn {
@@ -91,7 +91,6 @@
 
 /* Footer title
   ========================================================================== */
-
 
 .sapMLightBoxImageContainer {
   min-height: (@lightBoxMinHeight - 4rem); //TODO: ma trqq go calnem
@@ -107,7 +106,6 @@
   width: 100%;
   height: calc(~"100% - " @footerTwoLinesHeightMobile);
 }
-
 
 /* ==========================================================================
    Busy Indicator
@@ -194,11 +192,12 @@
 }
 
 .sapUiSizeCompact .sapMLightBoxFooter {
-  height:2.5rem;
-  &.sapMLightBoxFooterTwoLines{
-    height:4rem;
+  height: 2.5rem;
+  &.sapMLightBoxFooterTwoLines {
+    height: 4rem;
   }
 }
+
 .sapUiSizeCompact .sapMLightBoxTitleSection {
   padding: 0.75rem 0;
 }
