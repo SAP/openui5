@@ -17,18 +17,18 @@
 	border-radius: 0.3125rem;
 }
 
-.sapMTBActive:focus {
+.sapMTB-Info-CTX.sapMTBActive:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.1875rem;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
 html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapMTBActive:focus {
+	.sapMTB-Info-CTX.sapMTBActive:focus {
 		outline: none;
 		position: relative;
 	}
-	.sapMTBActive:focus:before {
+	.sapMTB-Info-CTX.sapMTBActive:focus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: calc(~'100% - 0.0625rem');
