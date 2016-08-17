@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/ScrollBar",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device"
-], function (jQuery, library, Control, ScrollBar, ResizeHandler, Device) {
+], function (jQuery, library, Control, ScrollBar, ResizeHandler, ScrollEnablement, Device) {
 	"use strict";
 
 	/**
@@ -139,6 +140,10 @@ sap.ui.define([
 		this._bHeaderInTitleArea = false;
 		this._bExpandingWithAClick = false;
 		this._headerBiggerThanAllowedHeight = false;
+		this._oScroller = new ScrollEnablement(this, this.getId() + "-content", {
+			horizontal: false,
+			vertical: true
+		});
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -186,6 +191,10 @@ sap.ui.define([
 
 		this._titleExpandCollapseWhenAllowed();
 		return this;
+	};
+
+	DynamicPage.prototype.getScrollDelegate = function () {
+		return this._oScroller;
 	};
 
 	/**
