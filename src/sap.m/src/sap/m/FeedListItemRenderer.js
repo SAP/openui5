@@ -74,15 +74,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			}
 
 			rm.write('</div>');
-			rm.write('<p class="sapMFeedListItemText">');
+			rm.write('<div class="sapMFeedListItemText">');
 			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemText">');
 			if (!!oFeedListItem._checkTextIsExpandable()) {
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
-				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write(oFeedListItem._sFullText);
 				rm.write('</span>');
 			}
-			rm.write('</p>');
+			rm.write('</div>');
 			if (!!oFeedListItem.getInfo()) {
 				// info
 				rm.write('<p class="sapMFeedListItemFooter">');
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.write('sapMFeedListItemHasFigure');
 			}
 			rm.write('" >');
-			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText"');
+			rm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText"');
 			rm.writeAttribute("aria-hidden", true);
 			rm.write('>');
 			if (!!oFeedListItem.getSender()) {
@@ -112,10 +112,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			if (!!oFeedListItem._checkTextIsExpandable()) {
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
-				rm.writeEscaped(oFeedListItem.getText(), true);
+				rm.write(oFeedListItem._sFullText);
 				rm.write('</span>');
 			}
-			rm.write('</p>');
+			rm.write('</div>');
 			if (!!oFeedListItem.getInfo() || !!oFeedListItem.getTimestamp()) {
 				// info and date
 				rm.write('<p class="sapMFeedListItemFooter">');
@@ -166,13 +166,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	FeedListItemRenderer._writeCollapsedText = function(rm, oFeedListItem, sMyId) {
 		// 'oFeedListItem._bTextExpanded' is true if the text had been expanded and rendering needs to be done again.
 		if (oFeedListItem._bTextExpanded) {
-			rm.writeEscaped(oFeedListItem._sFullText, true);
+			rm.write(oFeedListItem._sFullText);
 			rm.write('</span>');
 			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
 			rm.write("&#32"); // space
 			rm.write('</span>');
 		} else {
-			rm.writeEscaped(oFeedListItem._getCollapsedText(), true);
+			rm.write(oFeedListItem._sShortText);
 			rm.write('</span>');
 			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
 			rm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
@@ -184,13 +184,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 
 	FeedListItemRenderer._writeTimestamp = function(rm, oFeedListItem, sMyId) {
-		rm.write('<span id="' + sMyId + '-timestamp">');
+		rm.write('<span id="' + sMyId + '-timestamp" class="sapMFeedListItemTimestampText">');
 		rm.writeEscaped(oFeedListItem.getTimestamp());
 		rm.write('</span>');
 	};
 
 	FeedListItemRenderer._writeInfo = function(rm, oFeedListItem, sMyId) {
-		rm.write('<span id="' + sMyId + '-info">');
+		rm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfoText">');
 		rm.writeEscaped(oFeedListItem.getInfo());
 		rm.write('</span>');
 	};
