@@ -31,7 +31,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMHrdrCntrDvdrs");
 		}
 		oRm.writeClasses();
-		oRm.addStyle("height", "100%");
+		if (oControl.getHeight()) {
+			oRm.addStyle("height", oControl.getHeight());
+		}
+		oRm.addStyle("width", oControl.getWidth());
 		oRm.writeStyles();
 		var sDesc = "";
 		var aItems = oControl.getItems();
