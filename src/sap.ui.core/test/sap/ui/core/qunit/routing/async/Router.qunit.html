@@ -1558,6 +1558,21 @@
 				});
 			});
 
+			QUnit.test("Interpolate on pattern with multiple optional params", function() {
+				var oRouter = new sap.ui.core.routing.Router([{
+						name: "page1",
+						pattern: "page1/:context:/:context1:"
+					}]),
+					sUrl;
+
+				//Act
+				sUrl = oRouter.getURL("page1", {
+					context1: "context1"
+				});
+
+				assert.equal(sUrl, "page1//context1", "the URL should be correctly calculated");
+			});
+
 			QUnit.module("nested components", {
 				beforeEach: function() {
 					jQuery.sap.require("sap.ui.core.UIComponent");
