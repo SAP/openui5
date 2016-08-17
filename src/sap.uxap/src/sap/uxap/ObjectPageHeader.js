@@ -674,19 +674,31 @@ sap.ui.define([
 		return oCopy;
 	};
 
-	ObjectPageHeader.prototype.onAfterRendering = function () {
-
-		this._adaptLayout();
+	ObjectPageHeader.prototype._handleImageNotFoundError = function () {
+		var oObjectImage = this._getInternalAggregation("_objectImage");
 
 		if (this.getShowPlaceholder()) {
-			jQuery(".sapUxAPObjectPageHeaderObjectImage").off("error").error(function () {
-				jQuery(this).hide();
-				jQuery(".sapUxAPObjectPageHeaderPlaceholder").removeClass("sapUxAPHidePlaceholder");
-			});
+			oObjectImage.$().hide();
+			this.$().find(".sapUxAPObjectPageHeaderPlaceholder").removeClass("sapUxAPHidePlaceholder");
 		} else {
-			jQuery(".sapUxAPObjectPageHeaderObjectImage").off("error").error(function () {
-				jQuery(this).addClass("sapMNoImg");
-			});
+			oObjectImage.addStyleClass("sapMNoImg");
+		}
+	};
+
+	ObjectPageHeader.prototype._clearImageNotFoundHandler = function (){
+		this._getInternalAggregation("_objectImage").$().off("error");
+	};
+
+	ObjectPageHeader.prototype.onAfterRendering = function () {
+		var $objectImage = this._getInternalAggregation("_objectImage").$();
+		this._adaptLayout();
+
+
+		this._clearImageNotFoundHandler();
+		$objectImage.error(this._handleImageNotFoundError.bind(this));
+
+		if (!this.getObjectImageURI()){
+			this._handleImageNotFoundError();
 		}
 
 		if (!this._iResizeId) {
@@ -948,7 +960,7 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype.exit = function () {
-		jQuery(".sapUxAPObjectPageHeaderObjectImage").off("error");
+		this._clearImageNotFoundHandler();
 		if (this._iResizeId) {
 			ResizeHandler.deregister(this._iResizeId);
 		}
