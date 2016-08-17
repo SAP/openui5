@@ -347,7 +347,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (oControl.isOpenArea(oEvent.target)) {
+			if (oControl.isOpenArea && oControl.isOpenArea(oEvent.target)) {
 
 				if (this.isOpen()) {
 					this.close();
