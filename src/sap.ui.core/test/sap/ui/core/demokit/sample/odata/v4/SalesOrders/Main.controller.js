@@ -247,7 +247,7 @@ sap.ui.define([
 
 			this.refresh(oModel,
 				"There are pending changes. Do you really want to refresh everything?",
-				oModel.getUpdateGroupId() || "SalesOrderListUpdateGroup");
+				["SalesOrderListUpdateGroup", "SalesOrderUpdateGroup"]);
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
@@ -325,11 +325,29 @@ sap.ui.define([
 			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		},
 
-		refresh : function (oRefreshable, sMessage, sGroupId) {
+		/**
+		 * Refreshes (parts of) the UI. Offers to reset changes via two-way binding before, because
+		 * otherwise the refresh would fail.
+		 *
+		 * @param {object} oRefreshable
+		 *   The object to be refreshed, either the model or a binding
+		 * @param {string} sMessage
+		 *   The message used for the confirmation dialog if there are pending changes
+		 * @param {string[]} [aUpdateGroupIds]
+		 *   A list of IDs of batch groups to reset. If not given, the refreshable's default group
+		 *   is reset.
+		 */
+		refresh : function (oRefreshable, sMessage, aUpdateGroupIds) {
 			if (oRefreshable.hasPendingChanges()) {
 				MessageBox.confirm(sMessage, function onConfirm(sCode) {
 					if (sCode === "OK") {
-						oRefreshable.resetChanges(sGroupId);
+						if (aUpdateGroupIds) {
+							aUpdateGroupIds.forEach(function (sUpdateGroupId) {
+								oRefreshable.resetChanges(sUpdateGroupId);
+							});
+						} else {
+							oRefreshable.resetChanges();
+						}
 						oRefreshable.refresh();
 					}
 				}, "Refresh");

@@ -476,6 +476,7 @@ sap.ui.require([
 					"Foo" : "baz"
 				},
 				body: '{"ID":1}',
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -488,6 +489,7 @@ sap.ui.require([
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
 				body : undefined,
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -501,6 +503,7 @@ sap.ui.require([
 					"Foo" : "bar"
 				},
 				body: undefined,
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -851,7 +854,10 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelPatch: various requests", function (assert) {
-		var iCount = 1,
+		var fnCancel1 = sinon.spy(),
+			fnCancel2 = sinon.spy(),
+			fnCancel3 = sinon.spy(),
+			iCount = 1,
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
@@ -869,13 +875,13 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel1)
 				.then(unexpected, rejected.bind(null, 3)),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId"),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
@@ -898,16 +904,22 @@ sap.ui.require([
 
 		// code under test
 		oRequestor.cancelPatch("groupId");
+
+		sinon.assert.calledOnce(fnCancel1);
+		sinon.assert.calledWithExactly(fnCancel1);
+		sinon.assert.calledOnce(fnCancel2);
+		sinon.assert.calledOnce(fnCancel3);
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+
 		oRequestor.submitBatch("groupId");
 
-		return oPromise.then(function () {
-			assert.strictEqual(oRequestor.hasPendingChanges(), false);
-		});
+		return oPromise;
 	});
 
 	//*****************************************************************************************
 	QUnit.test("cancelPatch: only PATCH", function (assert) {
-		var oPromise,
+		var fnCancel = function() {},
+			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
 		function unexpected () {
@@ -919,11 +931,11 @@ sap.ui.require([
 		}
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel)
 				.then(unexpected, rejected)
 		]);
 

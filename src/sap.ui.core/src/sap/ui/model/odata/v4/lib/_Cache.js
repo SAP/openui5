@@ -322,6 +322,17 @@ sap.ui.define([
 				_Helper.buildPath(sPath, oCache.bSingleProperty ? "value" : sPropertyPath),
 			oUpdatePromise;
 
+		/*
+		 * Synchronous callback to cancel the PATCH request so that it is really gone when
+		 * resetChanges has been called on the binding or model.
+		 */
+		function onCancel() {
+			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			// write the previous value into the cache
+			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
+				createUpdateData(aPropertyPath, vOldValue));
+		}
+
 		if (!oCacheData) {
 			throw new Error("Cannot update '" + sPropertyPath + "': '" + sPath
 				+ "' does not exist");
@@ -342,7 +353,8 @@ sap.ui.define([
 		_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
 			createUpdateData(aPropertyPath, vValue));
 		// send and register the PATCH request
-		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody,
+			onCancel);
 		addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 		return oUpdatePromise.then(function (oPatchResult) {
 			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
@@ -352,11 +364,6 @@ sap.ui.define([
 			return oPatchResult;
 		}, function (oError) {
 			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
-			if (oError.canceled) {
-				// write the previous value into the cache
-				_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
-					createUpdateData(aPropertyPath, vOldValue));
-			}
 			throw oError;
 		});
 	}

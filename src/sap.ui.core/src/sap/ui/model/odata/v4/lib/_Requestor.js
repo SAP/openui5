@@ -100,13 +100,11 @@ sap.ui.define([
 		}
 		oError.canceled = true;
 		aChangeSet = aBatchQueue[0];
-		aBatchQueue[0] = [];
 		for (i = aChangeSet.length - 1; i >= 0; i--) {
 			if (aChangeSet[i].method === "PATCH") {
+				aChangeSet[i].$cancel();
 				aChangeSet[i].$reject(oError);
-			} else {
-				// all other methods stay in the change set
-				aBatchQueue[0].push(aChangeSet[i]);
+				aChangeSet.splice(i, 1);
 			}
 		}
 		deleteEmptyGroup(this, sGroupId);
@@ -226,6 +224,9 @@ sap.ui.define([
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
 	 *   Data to be sent to the server
+	 * @param {function} [fnCancel]
+	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
+	 *   queue
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
@@ -234,7 +235,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-		bIsFreshToken) {
+			fnCancel, bIsFreshToken) {
 		var that = this,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
@@ -262,6 +263,7 @@ sap.ui.define([
 						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
 							mFinalHeaders),
 						body : sPayload,
+						$cancel : fnCancel,
 						$reject : fnReject,
 						$resolve : fnResolve
 					};
@@ -299,7 +301,7 @@ sap.ui.define([
 					// refresh CSRF token and repeat original request
 					that.refreshSecurityToken().then(function () {
 						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							true));
+							fnCancel/*ignored*/, true));
 					}, fnReject);
 				} else {
 					fnReject(_Helper.createError(jqXHR));

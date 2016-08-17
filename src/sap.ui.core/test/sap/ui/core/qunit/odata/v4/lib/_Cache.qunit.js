@@ -885,7 +885,7 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
-					"updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
+					"updateGroupId", {"If-Match" : sETag}, {Note : "foo"}, sinon.match.func)
 				.returns(oPatchPromise);
 
 			oCache.deregisterChange(0, "SO_2_SOITEM/0/Note", oNoteListener2);
@@ -945,7 +945,6 @@ sap.ui.require([
 	[false, true].forEach(function (bCancel) {
 		QUnit.test("update rejected: canceled=" + bCancel, function (assert) {
 			var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
-				oError = new Error(),
 				sETag = 'W/"19700101000000.0000000"',
 				fnReject,
 				oPatchPromise = new Promise(function (resolve, reject) {
@@ -972,12 +971,12 @@ sap.ui.require([
 			// fill the cache and register a listener
 			return oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener)
 				.then(function () {
-					var oUpdatePromise;
-
-					oRequestorMock.expects("request")
-						.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-							{Note : "foo"})
-						.returns(oPatchPromise);
+					var oUpdatePromise,
+						oError = new Error(),
+						oExpectation = oRequestorMock.expects("request")
+							.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
+								{Note : "foo"}, sinon.match.func)
+							.returns(oPatchPromise);
 
 					// code under test
 					oUpdatePromise = oCache
@@ -1004,6 +1003,9 @@ sap.ui.require([
 					// now it's time for the server's response
 					if (bCancel) {
 						oError.canceled = true;
+						// call the cancel func delivered by the cache via the request call
+						oExpectation.args[0][5]();
+						assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/0/Note"), false);
 					}
 					fnReject(oError);
 					return oUpdatePromise;
@@ -1043,11 +1045,11 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"})
+					{Note : "foo"}, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "bar"})
+					{Note : "bar"}, sinon.match.func)
 				.returns(oPatchPromise2);
 
 			// code under test
@@ -1111,11 +1113,11 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"})
+					{Note : "foo"}, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Foo : "baz"})
+					{Foo : "baz"}, sinon.match.func)
 				.returns(oPatchPromise2);
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
@@ -1490,7 +1492,7 @@ sap.ui.require([
 
 				oRequestorMock.expects("request")
 					.withExactArgs("PATCH", o.sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
-						"up", {"If-Match" : o.sETag}, {Name : "foo"})
+						"up", {"If-Match" : o.sETag}, {Name : "foo"}, sinon.match.func)
 					.returns(oPatchPromise);
 
 				oCache.deregisterChange("foo", {}); // do not crash on useless deregister
@@ -1586,7 +1588,7 @@ sap.ui.require([
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl,
 					"up",
-					{"If-Match" : 'W/"19700101000000.0000000"'}, oPatchData)
+					{"If-Match" : 'W/"19700101000000.0000000"'}, oPatchData, sinon.match.func)
 				.returns(oPatchPromise);
 			oHelperMock.expects("updateCache").withExactArgs(
 					sinon.match.same(oCache.mChangeListeners), "SO_2_BP",
@@ -1629,7 +1631,7 @@ sap.ui.require([
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl,
 					"up",
-					{"If-Match" : undefined}, oPatchData)
+					{"If-Match" : undefined}, oPatchData, sinon.match.func)
 				.returns(oPatchPromise);
 			oHelperMock.expects("updateCache").withExactArgs(
 					sinon.match.same(oCache.mChangeListeners), "",
@@ -1695,12 +1697,11 @@ sap.ui.require([
 				// fill the cache and attach a listener
 				return oCache.read("groupId", o.sReadPath, undefined, oNameListener)
 					.then(function () {
-						var oUpdatePromise;
-
-						oRequestorMock.expects("request")
-							.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag},
-								{Name : "foo"})
-							.returns(oPatchPromise);
+						var oUpdatePromise,
+							oExpectation = oRequestorMock.expects("request")
+								.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag},
+									{Name : "foo"}, sinon.match.func)
+								.returns(oPatchPromise);
 
 						// code under test
 						oUpdatePromise = oCache
@@ -1729,6 +1730,8 @@ sap.ui.require([
 						// now it's time for the server's response
 						if (bCancel) {
 							oError.canceled = true;
+							// call the cancel func delivered by the cache via the request call
+							oExpectation.args[0][5]();
 						}
 						fnReject(oError);
 
@@ -1767,11 +1770,11 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"})
+					{Note : "foo"}, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "bar"})
+					{Note : "bar"}, sinon.match.func)
 				.returns(oPatchPromise2);
 
 			// code under test
@@ -1830,11 +1833,11 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"})
+					{Note : "foo"}, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Foo : "baz"})
+					{Foo : "baz"}, sinon.match.func)
 				.returns(oPatchPromise2);
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
