@@ -411,13 +411,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Carousel arrows are placed on the sides of the current Carousel page.
 		 * @public
 		 */
-		Image : "Image",
+		Content : "Content",
 
 		/**
 		 * Carousel arrows are placed on the sides of the page indicator of the Carousel.
 		 * @public
 		 */
-		Indicator : "Indicator"
+		PageIndicator : "PageIndicator"
 	};
 
 	/**
