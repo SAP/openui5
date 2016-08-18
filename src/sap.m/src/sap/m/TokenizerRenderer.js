@@ -35,6 +35,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (!aTokens.length) {
 			oRm.addClass("sapMTokenizerEmpty");
 		}
+		var sPixelWdth = oControl.getWidth();
+		if (sPixelWdth) {
+			oRm.addStyle("width", sPixelWdth);
+			oRm.writeStyles();
+		}
 
 		oRm.writeClasses();
 
