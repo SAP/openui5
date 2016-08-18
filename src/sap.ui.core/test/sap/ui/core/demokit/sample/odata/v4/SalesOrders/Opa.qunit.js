@@ -318,7 +318,7 @@ sap.ui.require([
 		verifyTypeDetermination();
 
 		if (bRealOData) {
-			Opa5.assert.ok(true, "Deletion test skipped because unstable reals keys");
+			Opa5.assert.ok(true, "Deletion test skipped because unstable real keys");
 		} else {
 
 			//*****************************************************************************
