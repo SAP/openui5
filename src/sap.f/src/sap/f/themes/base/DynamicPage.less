@@ -5,13 +5,17 @@
 }
 
 .sapFDynamicPageContent {
-	padding-top: 1rem;
 	-webkit-flex-grow: 1;
 	-moz-flex-grow: 1;
 	-ms-flex-grow: 1;
 	flex-grow: 1;
 
 	background: @sapUiGroupContentBackground;
+}
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	padding-top: 1rem;
 }
 
 .sapFDynamicPageContentWrapper {
@@ -30,24 +34,25 @@
 	}
 }
 
-.sapFDynamicPageContent {
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
 	position: relative;
 	padding-right: 2rem;
 	padding-left: 2rem;
 	padding-bottom: 1rem;
 }
 
-.sapFDynamicPageContentFitContainer {
+.sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
 	position: absolute;
 	left: 0;
 	right: 0;
 	top: 0;
 	bottom: 0;
-	padding: 1rem;
 }
 
 .sapFDynamicPage-Std-Tablet {
-	.sapFDynamicPageContent {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
 		padding-right: 1rem;
 		padding-left: 1rem;
 		padding-bottom: 1rem;
@@ -55,7 +60,8 @@
 }
 
 .sapFDynamicPage-Std-Phone {
-	.sapFDynamicPageContent {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
 		padding-right: 0;
 		padding-left: 0;
 		padding-bottom: 0;
