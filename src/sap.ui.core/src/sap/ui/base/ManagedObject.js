@@ -4014,6 +4014,12 @@ sap.ui.define([
 				}
 			}
 		}
+
+		//clone the support info
+		if (ManagedObject._supportInfo) {
+			ManagedObject._supportInfo.addSupportInfo(oClone.getId(), ManagedObject._supportInfo.byId(this.getId()));
+		}
+
 		return oClone;
 	};
 

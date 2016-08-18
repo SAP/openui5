@@ -2536,11 +2536,13 @@ sap.ui.require([
 				{
 					getContext : sinon.match.func,
 					getResult : sinon.match.func,
+					getSettings : sinon.match.func,
+					getViewInfo : sinon.match.func,
 					insertFragment : sinon.match.func,
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
-					"with" : sinon.match.func
+					"with" : sinon.match.func,
 				})); // does not work in IE: fnVisitor.printf("%C")
 		});
 	});
@@ -2632,6 +2634,48 @@ sap.ui.require([
 			}, "foo", "Bar");
 
 			process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, getSettings, getViewInfo", function (assert) {
+		var mSettings = {
+				models: new JSONModel({answer: 42})
+			},
+			aViewContent = [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" />',
+				'</mvc:View>'
+			],
+			oViewInfo = {
+				caller : "qux",
+				componentId : "this._sOwnerId",
+				name : "this.sViewName",
+				nestedObject : {
+					foo : "bar"
+				}
+			},
+			that = this;
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				var mMySettings = oInterface.getSettings(),
+					oMyViewInfo = oInterface.getViewInfo();
+
+				assert.deepEqual(mMySettings, mSettings);
+				// Note: jQuery.extend() cannot clone objects constructed via new operator!
+//				mMySettings.models.setProperty("/answer", -1);
+//				assert.strictEqual(mSettings.models.getProperty("/answer"), 42, "deep copy");
+
+				assert.deepEqual(oMyViewInfo, oViewInfo);
+				//TODO If we cannot win for mSettings, is it worth trying for oViewInfo?
+				oMyViewInfo.nestedObject.foo = "hacked";
+				assert.strictEqual(oViewInfo.nestedObject.foo, "bar", "deep copy");
+			}, "foo", "Bar");
+
+			XMLPreprocessor.process(xml(assert, aViewContent), oViewInfo, mSettings);
 		} finally {
 			XMLPreprocessor.plugIn(null, "foo", "Bar");
 		}

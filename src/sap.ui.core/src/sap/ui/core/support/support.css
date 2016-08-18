@@ -3,7 +3,7 @@
 /* ============================================= */
 
 .sapUiSupportBody {
-	background-color: #F2F2F2;
+	/*background-color: #F2F2F2;*/
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
@@ -20,8 +20,9 @@
 
 .sapUiSupportHdr {
 	position: relative;
-	border-top: 5px solid #009de0;
-	background-color: #646464;
+	border-top: 2px solid #009de0;
+	border-bottom: 1px solid #009de0;
+	background-color:#f5f5f5;
 	height: 30px;
 	margin: 0;
 }
@@ -30,13 +31,14 @@
 	position: absolute;
 	left: 10px;
 	height: 29px;
+	display: none;
 }
 
 .sapUiSupportHdr > div {
-	color: #999999;
+	color: #007DC0;
 	font-size: 18px;
-	font-weight: bold;
-	left: 105px;
+	font-weight: normal;
+	left: 10px;
 	position: absolute;
 	top: 5px;
 }
@@ -59,10 +61,10 @@
 .sapUiSupportPnlHdr {
 	margin-top: 0;
 	margin-bottom: 5px;
-	color: #444444;
-	border-bottom: 2px solid #007DC0;
+	color: #555;
+	border-bottom: 1px solid #007DC0;
 	height: 25px;
-	font-weight: bold;
+	font-weight: normal;
 	font-size: 18px;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -71,7 +73,7 @@
 }
 
 .sapUiSupportPnlHdr:hover {
-	background-color: #ddd; /* indicate it is clickable */
+	color: #007DC0; /* indicate it is clickable */
 }
 
 .sapUiSupportPnlHdrHdl {
