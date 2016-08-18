@@ -3,8 +3,8 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
-	function(jQuery, EventProvider, asyncTarget, syncTarget) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
+	function(jQuery, Control, EventProvider, asyncTarget, syncTarget) {
 		"use strict";
 
 		/**
@@ -43,11 +43,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				this._oViews = oViews;
 				EventProvider.apply(this, arguments);
 
+				if (this._oOptions.title) {
+					this._oTitleProvider = new TitleProvider({
+						title: this._oOptions.title,
+						target: this
+					});
+				}
+
 				// branch by abstraction
 				var TargetStub = this._oOptions._async ?  asyncTarget : syncTarget;
 				for (var fn in TargetStub) {
 					this[fn] = TargetStub[fn];
 				}
+
+				this._bIsDisplayed = false;
 			},
 
 			/**
@@ -60,6 +69,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				this._oParent = null;
 				this._oOptions = null;
 				this._oViews = null;
+				if (this._oTitleProvider) {
+					this._oTitleProvider.destroy();
+				}
+				this._oTitleProvider = null;
 				EventProvider.prototype.destroy.apply(this, arguments);
 				this.bIsDestroyed = true;
 
@@ -129,7 +142,79 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @protected
 			 */
 			fireDisplay : function(mArguments) {
+				var sTitle = this._oTitleProvider && this._oTitleProvider.getTitle();
+				if (sTitle) {
+					this.fireTitleChanged({
+						name: this._oOptions.name,
+						title: sTitle
+					});
+				}
+
+				this._bIsDisplayed = true;
+
 				return this.fireEvent(this.M_EVENTS.DISPLAY, mArguments);
+			},
+
+			/**
+			 * Will be fired when the title of this Target has been changed.
+			 *
+			 * @name sap.ui.core.routing.Target#titleChanged
+			 * @event
+			 * @param {object} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
+			 * @param {object} oEvent.getParameters
+			 * @param {string} oEvent.getParameters.title The name of this target
+			 * @param {string} oEvent.getParameters.title The current displayed title
+			 * @private
+			 */
+
+			/**
+			 * Attach event-handler <code>fnFunction</code> to the 'titleChanged' event of this <code>sap.ui.core.routing.Target</code>.<br/>
+			 *
+			 * When the first event handler is registered later than the last title change, it's still called with the last changed title because
+			 * when title is set with static text, the event is fired synchronously with the instantiation of this Target and the event handler can't
+			 * be registered before the event is fired.
+			 *
+			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
+			 * oListener-instance (if present) or in a 'static way'.
+			 * @param {object} [oListener] Object on which to call the given function.
+			 *
+			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @private
+			 */
+			attachTitleChanged : function(oData, fnFunction, oListener) {
+				var bHasListener = this.hasListeners("titleChanged"),
+					sTitle = this._oTitleProvider && this._oTitleProvider.getTitle();
+
+				this.attachEvent(this.M_EVENTS.TITLE_CHANGED, oData, fnFunction, oListener);
+				// in case the title is changed before the first event listener is attached, we need to notify, too
+				if (!bHasListener && sTitle && this._bIsDisplayed) {
+					this.fireTitleChanged({
+						name: this._oOptions.name,
+						title: sTitle
+					});
+				}
+				return this;
+			},
+
+			/**
+			 * Detach event-handler <code>fnFunction</code> from the 'titleChanged' event of this <code>sap.ui.core.routing.Target</code>.<br/>
+			 *
+			 * The passed function and listener object must match the ones previously used for event registration.
+			 *
+			 * @param {function} fnFunction The function to call, when the event occurs.
+			 * @param {object} oListener Object on which the given function had to be called.
+			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @private
+			 */
+			detachTitleChanged : function(fnFunction, oListener) {
+				return this.detachEvent(this.M_EVENTS.TITLE_CHANGED, fnFunction, oListener);
+			},
+
+			// private
+			fireTitleChanged : function(mArguments) {
+				return this.fireEvent(this.M_EVENTS.TITLE_CHANGED, mArguments);
 			},
 
 			_getEffectiveViewName : function (sViewName) {
@@ -163,7 +248,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 */
 
 			M_EVENTS : {
-				DISPLAY : "display"
+				DISPLAY : "display",
+				TITLE_CHANGED : "titleChanged"
+			}
+		});
+
+		/**
+		 * This class resolves the property binding of the 'title' option.
+		 *
+		 * @class
+		 * @param {object} mSettings configuration object for the TitleProvider
+		 * @param {object} mSettings.target Target for which the TitleProvider is created
+		 * @private
+		 * @extends sap.ui.base.Control
+		 */
+		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
+			metadata: {
+				library: "sap.ui.core",
+				properties: {
+					/**
+					 * The title text provided by this class
+					 */
+					title: {
+						type: "string",
+						group: "Data",
+						defaultValue: null
+					}
+				}
+			},
+			constructor: function(mSettings) {
+				this._oTarget = mSettings.target;
+				delete mSettings.target;
+				Control.prototype.constructor.call(this, mSettings);
+			},
+			setTitle: function(sTitle) {
+				// Setting title property should not trigger two way change in model
+				this.setProperty("title", sTitle, true);
+
+				if (this._oTarget._bIsDisplayed) {
+					this._oTarget.fireTitleChanged({
+						name: this._oTarget._oOptions.name,
+						title: sTitle
+					});
+				}
 			}
 		});
 

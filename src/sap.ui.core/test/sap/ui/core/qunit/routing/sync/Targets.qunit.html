@@ -339,7 +339,7 @@
 		});
 
 		// our qunit is so old
-		function allPropertiesStrictEqual (object1, object2) {
+		function allPropertiesStrictEqual (object1, object2, assert) {
 			var sPropertyName;
 
 			for(sPropertyName in object1) {
@@ -420,6 +420,296 @@
 			strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
 		});
 
+		QUnit.module("titleChanged event", {
+			setup: function () {
+				this.oApp = new sap.m.App();
+				this.oView = createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
+
+				this.oDefaultConfig = {
+					viewPath: "bar",
+					viewName: "foo",
+					controlAggregation: "pages",
+					viewType: "XML",
+					controlId: this.oApp.getId()
+				};
+
+				this.oTargetsConfig = {
+					myTarget: {
+						title: "myTitle"
+					},
+					mySecondTarget: {
+						title: "mySecondTitle"
+					},
+					myNoTitleTarget: {
+					},
+					myChild: {
+						parent : "myTarget",
+						title: "myChildTarget"
+					},
+					myNoTitleGrandChild: {
+						parent: "myChild"
+					},
+					myNoTitleChild: {
+						parent : "myTarget"
+					}
+				};
+
+				this.oViews = new sap.ui.core.routing.Views();
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: this.oTargetsConfig,
+					views: this.oViews,
+					config: this.oDefaultConfig
+				});
+			},
+			teardown: function () {
+				this.oApp.destroy();
+				this.oTargets.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+
+		QUnit.test("fire/attach/detach", function(assert) {
+			// Arrange
+			var oParameters = { foo : "bar" },
+					fnEventSpy = this.spy(function(oEvent, oActualData) {
+						assert.strictEqual(oActualData, oData, "the data is correct");
+						assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+						assert.strictEqual(this, oListener, "the this pointer is correct");
+					}),
+					oListener = {},
+					oData = { some : "data" },
+					oFireReturnValue,
+					oDetachReturnValue,
+					oAttachReturnValue = this.oTargets.attachTitleChanged(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oTargets.fireTitleChanged(oParameters);
+			oDetachReturnValue = this.oTargets.detachTitleChanged(fnEventSpy, oListener);
+			this.oTargets.fireTitleChanged();
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			assert.strictEqual(oAttachReturnValue, this.oTargets, "did return this for chaining for attach");
+			assert.strictEqual(oDetachReturnValue, this.oTargets, "did return this for chaining for detach");
+			assert.strictEqual(oFireReturnValue, this.oTargets, "did return this for chaining for fire");
+		});
+
+		QUnit.test("single target", function (assert) {
+			// Arrange
+			var that = this,
+				oParameters = null,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				}),
+				oData = {some : "data"};
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display("myTarget", oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+			assert.strictEqual(oParameters.name, "myTarget", "parameter 'name' is set");
+			assert.strictEqual(oParameters.title, "myTitle", "parameter 'title' is set");
+		});
+
+		QUnit.test("multiple targets - default title", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					assert.strictEqual(oParameters.name, "myTarget", "target got passed to the event");
+					assert.strictEqual(oParameters.title, "myTitle", "title got passed to the event");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myNoTitleTarget", "myTarget", "mySecondTarget"], oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+		});
+
+		QUnit.test("multiple targets - provided TitleTarget", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					assert.strictEqual(oParameters.name, "mySecondTarget", "target got passed to the event");
+					assert.strictEqual(oParameters.title, "mySecondTitle", "title got passed to the event");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myNoTitleTarget", "myTarget", "mySecondTarget"], oData, "mySecondTarget");
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+		});
+
+		QUnit.test("multiple targets - provided TitleTarget pointing to target without title", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy();
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myNoTitleTarget", "myTarget", "mySecondTarget"], oData, "myNoTitleTarget");
+			this.clock.tick(0);
+
+			// Assert
+			sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+		});
+
+		QUnit.test("provided invalid TitleTarget", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy();
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+		var oLogSpy = this.spy(jQuery.sap.log, "error");
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myTarget"], oData, "foo");
+			this.clock.tick(0);
+
+			// Assert
+			sinon.assert.notCalled(fnEventSpy, "the event isn't fired");
+			sinon.assert.calledWithExactly(
+				oLogSpy,
+				"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
+				this.oTargets
+			);
+		});
+
+		QUnit.test("single target with parent", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					assert.strictEqual(oParameters.name, "myTarget", "name from parent target is taken");
+					assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myChild"], oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+		});
+
+		QUnit.test("single target with multiple ancestors", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					assert.strictEqual(oParameters.name, "myTarget", "name from parent target is taken");
+					assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myNoTitleGrandChild"], oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+		});
+
+		QUnit.test("multiple targets with children", function (assert) {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					aTargetNames.push(oParameters.name);
+					allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), assert);
+					assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
+					assert.strictEqual(oParameters.control, that.oApp, "control got passed to the event");
+					assert.strictEqual(oParameters.data, oData, "data was passed");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachDisplay(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myChild", "mySecondTarget"], oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 3, "the event got fired");
+			assert.strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
+			assert.strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
+			assert.strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
+		});
 
 		module("destruction");
 
