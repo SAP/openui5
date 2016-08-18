@@ -8,6 +8,17 @@
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
+.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder::before {
+	border: 1px dotted @sapUiContentFocusColor;
+	content: "";
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	pointer-events: none;
+}
+
 .sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:active {
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiButtonActiveTextColor;
