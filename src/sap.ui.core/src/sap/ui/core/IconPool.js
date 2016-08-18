@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				'sys-monitor': 0xe1cc, 'sys-prev-page': 0xe1cd, 'sys-first-page': 0xe1ce, 'sys-next-page': 0xe1cf,
 				'sys-last-page': 0xe1d0, 'generate-shortcut': 0xe1d1, 'create-session': 0xe1d2, 'display-more': 0xe1d3,
 				'enter-more': 0xe1d4, 'zoom-in': 0xe1d5, 'zoom-out': 0xe1d6, 'header': 0xe1d7,
-				'detail-view': 0xe1d8, 'collapse': 0xe1d9, 'expand': 0xe1da, 'positive': 0xe1db,
+				'detail-view': 0xe1d8, 'show-edit': 0xe1d8, 'collapse': 0xe1d9, 'expand': 0xe1da, 'positive': 0xe1db,
 				'negative': 0xe1dc, 'display': 0xe1dd, 'menu2': 0xe1de, 'redo': 0xe1df,
 				'undo': 0xe1e0, 'navigation-up-arrow': 0xe1e1, 'navigation-down-arrow': 0xe1e2, 'down': 0xe1e3,
 				'up': 0xe1e4, 'shelf': 0xe1e5, 'background': 0xe1e6, 'resize': 0xe1e7,
@@ -179,7 +179,9 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				'circle-task': 0xe254, 'circle-task-2': 0xe255, 'project-definition-triangle': 0xe256, 'project-definition-triangle-2': 0xe257,
 				'master-task-triangle': 0xe258, 'master-task-triangle-2': 0xe259, 'program-triangles': 0xe25a, 'program-triangles-2': 0xe25b,
 				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
-				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262
+				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262, 'filter-analytics': 0xe263, 'filter-facets': 0xe264,
+				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
+				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c
 			}
 		};
 
