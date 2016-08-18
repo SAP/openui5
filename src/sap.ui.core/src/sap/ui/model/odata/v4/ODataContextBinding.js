@@ -375,6 +375,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.destroy = function () {
+		if (this.oElementContext) {
+			this.oElementContext.destroy();
+		}
 		this.oModel.bindingDestroyed(this);
 		ContextBinding.prototype.destroy.apply(this);
 	};
@@ -703,7 +706,6 @@ sap.ui.define([
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
 				if (this.bRelative) {
-					this.oCache.deregisterChange();
 					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
 					this.mCacheByContext = undefined;
 				} else {
@@ -757,23 +759,20 @@ sap.ui.define([
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			if (this.bRelative) {
-				if (this.oCache) {
-					this.oCache.deregisterChange();
-					this.oCache = undefined;
+			if (this.bRelative && (this.oContext || oContext)) {
+				if (this.oElementContext) {
+					this.oElementContext.destroy();
+					this.oElementContext = null;
 				}
-			}
-			if (this.bRelative && (this.oElementContext || oContext)) {
-				// fire "change" iff. this.oElementContext changes
-				// do not call Model#resolve in vain
+				// no deregisterChange because all property bindings deregistered due to
+				// oElementContext.destroy()
+				this.oCache = undefined;
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && this.mQueryOptions) {
 						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
 					}
-				} else {
-					this.oElementContext = null;
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

@@ -287,14 +287,27 @@ sap.ui.define([
 			i,
 			bNewLengthFinal,
 			oModel = this.oModel,
-			sResolvedPath = oModel.resolve(this.sPath, oContext);
+			sResolvedPath = oModel.resolve(this.sPath, oContext),
+			that = this;
 
 		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				this.aContexts[i] = Context.create(oModel, this, sResolvedPath + "/" + i, i);
+				if (this.aPreviousContexts[i]) {
+					this.aContexts[i] = this.aPreviousContexts[i];
+					delete this.aPreviousContexts[i];
+				} else {
+					this.aContexts[i] = Context.create(oModel, this, sResolvedPath + "/" + i, i);
+				}
 			}
 		}
+		// destroy previous contexts which are not reused
+		sap.ui.getCore().addPrerenderingTask(function () {
+			that.aPreviousContexts.forEach(function (oPreviousContext) {
+				oPreviousContext.destroy();
+			});
+			that.aPreviousContexts = [];
+		});
 		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 			this.iMaxLength = Infinity;
 		}
@@ -384,6 +397,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
+		this.aContexts.forEach(function (oContext) {
+			oContext.destroy();
+		});
 		this.oModel.bindingDestroyed(this);
 		ListBinding.prototype.destroy.apply(this);
 	};
@@ -550,6 +566,10 @@ sap.ui.define([
 			oPromise,
 			oRange,
 			that = this;
+
+		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
+				+ iMaximumPrefetchSize + ")",
+			undefined, sClassName);
 
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
@@ -834,7 +854,6 @@ sap.ui.define([
 		this.sRefreshGroupId = sGroupId;
 		if (this.oCache) {
 			if (this.bRelative) {
-				this.oCache.deregisterChange();
 				this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
 				this.mCacheByContext = undefined;
 			} else {
@@ -858,6 +877,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.reset = function (sChangeReason) {
+		this.aPreviousContexts = this.aContexts || [];
 		this.aContexts = [];
 		// the range for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;

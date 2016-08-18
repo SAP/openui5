@@ -112,41 +112,51 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext, relative path", function (assert) {
-		var oBoundContext = {},
-			oBinding = this.oModel.bindContext("relative"),
-			oContext = {},
+		var oBinding = this.oModel.bindContext("relative"),
+			oContext1 = {},
+			oContext2 = {},
 			oModelMock = this.mock(this.oModel),
 			oSetContextSpy = this.spy(Binding.prototype, "setContext");
 
 
-		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
-			.returns("/absolute");
-		this.mock(oBinding).expects("_fireChange").twice()
+		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext1))
+			.returns("/absolute1");
+		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext2))
+			.returns("/absolute2");
+		this.mock(oBinding).expects("_fireChange").thrice()
 			.withExactArgs({reason : ChangeReason.Context});
-		this.mock(Context).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
-			.returns(oBoundContext);
 
 		// code under test
-		oBinding.setContext(oContext);
+		oBinding.setContext(oContext1);
 
-		assert.strictEqual(oBinding.oContext, oContext);
-		assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+		assert.strictEqual(oBinding.oContext, oContext1);
+		assert.strictEqual(oBinding.getBoundContext().getPath(), "/absolute1");
 		assert.strictEqual(oSetContextSpy.callCount, 1);
+
+		this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
+
+		// code under test: switch to another context fires change
+		oBinding.setContext(oContext2);
+
+		assert.strictEqual(oBinding.oContext, oContext2);
+		assert.strictEqual(oBinding.getBoundContext().getPath(), "/absolute2");
+		assert.strictEqual(oSetContextSpy.callCount, 2);
+
+		this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
 
 		// code under test: reset parent binding fires change
 		oBinding.setContext(undefined);
 
 		assert.strictEqual(oBinding.oContext, undefined);
 		assert.strictEqual(oBinding.getBoundContext(), null);
-		assert.strictEqual(oSetContextSpy.callCount, 2);
+		assert.strictEqual(oSetContextSpy.callCount, 3);
 
 		// code under test: setting to null doesn't change the bound context -> no change event
 		oBinding.setContext(null);
 
 		assert.strictEqual(oBinding.oContext, null);
 		assert.strictEqual(oBinding.getBoundContext(), null);
-		assert.strictEqual(oSetContextSpy.callCount, 2, "no addt'l change event");
+		assert.strictEqual(oSetContextSpy.callCount, 3, "no addt'l change event");
 	});
 
 	//*********************************************************************************************
@@ -165,8 +175,6 @@ sap.ui.require([
 		oBinding.setContext(oContext);
 
 		assert.strictEqual(oBinding.oCache, oCacheProxy);
-
-		this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
 
 		// code under test
 		oBinding.setContext();
@@ -305,7 +313,6 @@ sap.ui.require([
 			oBinding = this.oModel.bindContext(bRelative ? "TEAM_2_MANAGER" : "/EMPLOYEES(ID='1')",
 				oContext, {});
 			if (bRelative) {
-				this.mock(oCache).expects("deregisterChange").withExactArgs();
 				oHelperMock.expects("createContextCacheProxy")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 					.returns(oCache);
@@ -1404,16 +1411,27 @@ sap.ui.require([
 			oContextBindingMock = this.mock(ContextBinding.prototype),
 			oModelMock = this.mock(this.oModel);
 
-		oBinding.setContext(oContext);
 		oContextBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
+		// code under test
+		oBinding.destroy();
+
+		oBinding = this.oModel.bindContext("relative");
+		oBinding.setContext(oContext);
+		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
+		oContextBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+
+		// code under test
 		oBinding.destroy();
 
 		oBinding = this.oModel.bindContext("/absolute", oContext);
+		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
 		oContextBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
+		// code under test
 		oBinding.destroy();
 	});
 
