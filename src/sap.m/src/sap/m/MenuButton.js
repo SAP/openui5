@@ -108,7 +108,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * from the menu has been selected previously.
 				 */
 				defaultAction: {}
-			}
+			},
+			defaultAggregation : "menu"
 		}});
 
 		EnabledPropagator.call(MenuButton.prototype);
