@@ -1373,7 +1373,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * Calculate outerWidth of the element; used as hook for SVG elements
-		 *
+		 * @param {HTMLElement} oElement An Element for which outerWidth will be calculated.
+		 * @param {boolean} bIncludeMargin Determines if the margins should be included in the calculated outerWidth. Default value is false.
 		 * @protected
 		 */
 		Popover.outerWidth = function (oElement, bIncludeMargin) {
@@ -1381,12 +1382,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				return oElement.getBoundingClientRect().width;
 			}
 
-			return jQuery(oElement).outerWidth(bIncludeMargin);
+			return jQuery(oElement).outerWidth(!!bIncludeMargin);
 		};
 
 		/**
 		 * Calculate outerHeight of the element; used as hook for SVG elements
-		 *
+		 * @param {HTMLElement} oElement An Element for which outerHeight will be calculated.
+		 * @param {boolean} bIncludeMargin Determines if the margins should be included in the calculated outerHeight. Default value is false.
 		 * @protected
 		 */
 		Popover.outerHeight = function (oElement, bIncludeMargin) {
@@ -1394,7 +1396,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				return oElement.getBoundingClientRect().height;
 			}
 
-			return jQuery(oElement).outerHeight(bIncludeMargin);
+			return jQuery(oElement).outerHeight(!!bIncludeMargin);
 		};
 
 		Popover.prototype._getPositionParams = function ($popover, $arrow, $content, $scrollArea) {
