@@ -34,9 +34,6 @@
 		var oLabelDisabledAndError = new sap.m.Label({
 			text: "Disabled and error state"
 		});
-		var oLabelDisplayOnly = new sap.m.Label({
-			text: "Display only"
-		});
 		var oLabelError = new sap.m.Label({
 			text: "Error"
 		});
@@ -94,11 +91,6 @@
 						enabled: false,
 						valueState: "Error",
 						ariaLabelledBy: oLabelDisabledAndError
-					}),
-					oLabelDisplayOnly,
-					new sap.m.StepInput({
-						editable: false,
-						ariaLabelledBy: oLabelDisplayOnly
 					}),
 					oLabelStep3Value2Min0Max10,
 					new sap.m.Toolbar({
