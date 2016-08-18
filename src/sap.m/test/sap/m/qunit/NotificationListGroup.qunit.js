@@ -657,7 +657,7 @@
         }
     });
 
-    QUnit.test('Add 1 visible item - buttons are disabled', function(assert) {
+    QUnit.test('Add 1 visible item - buttons are enabled always', function(assert) {
         // arrange
         var that = this;
         var buttonsInFooter = 0;
@@ -692,7 +692,7 @@
 
 
         // assert
-        assert.strictEqual(this.NotificationListGroup.getButtons()[0].getEnabled(), false, 'Buttons are disabled');
+        assert.strictEqual(this.NotificationListGroup.getButtons()[0].getEnabled(), true, 'Buttons are enabled always');
     });
 
     QUnit.test('Add 2+ visible items - buttons are enabled', function(assert) {
