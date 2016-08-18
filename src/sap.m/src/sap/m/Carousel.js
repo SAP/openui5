@@ -974,10 +974,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			nNewIndex = this._getPageNumber(this.getActivePage()) + 1 + nIndex;
 		}
 
-		// Set the index in the interval between 1 and the total page count in the Carousel
-		nNewIndex = Math.max(nNewIndex, 1);
-		nNewIndex = Math.min(nNewIndex, this.getPages().length);
-
 		this._oMobifyCarousel.move(nNewIndex);
 	};
 
