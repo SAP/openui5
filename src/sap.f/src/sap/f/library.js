@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global',
 	 * Interface for controls which are suitable as a Header in sap.f.DynamicPage.
 	 * If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
 	 *
-	 * @since 1.38
+	 * @since 1.42
 	 * @name sap.f.ISnappable
 	 * @interface
 	 * @public
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.38
+	 * @since 1.42
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.f.ThreeColumnLayoutType = {
