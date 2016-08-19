@@ -1034,6 +1034,24 @@
 				}, 0);
 
 			});
+
+
+			module("ARIA");
+
+			test("Week day and date aria", function() {
+				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+				sap.ui.getCore().applyChanges();
+
+				var oFormatDate = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
+					oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2015, 0, 2, 10, 0, 0), "Gregorian"),
+					sAriaDate = oFormatDate.format(oDate, true),
+					aWeekDaysWide = oFormatDate.oLocaleData.getDaysStandAlone("wide", "Gregorian"),
+					sWeekDayAriaText = aWeekDaysWide[5],
+					sExpectedAria = sWeekDayAriaText + " " + sAriaDate;
+
+				strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
+			});
+
 		</script>
 
 	</head>
