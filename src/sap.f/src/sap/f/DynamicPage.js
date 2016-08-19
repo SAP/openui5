@@ -139,7 +139,7 @@ sap.ui.define([
 		this._bHeaderInTitleArea = false;
 		this._bExpandingWithAClick = false;
 		this._headerBiggerThanAllowedHeight = false;
-		this._oScroller = new ScrollEnablement(this, this.getId() + "-content", {
+		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
 			vertical: true
 		});
@@ -175,6 +175,9 @@ sap.ui.define([
 
 	DynamicPage.prototype.exit = function () {
 		this._detachResizeHandlers();
+		if (this._oScrollHelper) {
+			this._oScrollHelper.destroy();
+		}
 	};
 
 	DynamicPage.prototype.setShowFooter = function (bShowFooter) {
@@ -193,7 +196,7 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.getScrollDelegate = function () {
-		return this._oScroller;
+		return this._oScrollHelper;
 	};
 
 	/**
