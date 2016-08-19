@@ -144,16 +144,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
 		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
+		var disableExpandLink = this.getShowEmptyGroup() && (this._getVisibleItemsCount() === 0);
 
 		//Making sure the Expand/Collapse link text is set correctly
-		this.getAggregation('_collapseButton').setText(this.getCollapsed() ? expandText : collapseText);
+		this.getAggregation('_collapseButton').setText(this.getCollapsed() ? expandText : collapseText).setEnabled(!disableExpandLink);
 
-		// disable buttons when visible items are just 1 and empty groups are not shown
-		var bSingleItem = (this._getVisibleItemsCount() === 1) && !this.getShowEmptyGroup();
-		var buttons = this.getButtons();
-		buttons.forEach( function(button) {
-			button.setEnabled(!bSingleItem);
-		});
 
 	};
 
