@@ -294,6 +294,11 @@ jQuery.sap.initMobile();
 		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "Focused index of itemnavigation is updated");
 	});
 
+	QUnit.test("Test transparency of button", function(assert) {
+		assert.equal(this.oHeaderContainer._oArrowPrev.getType(), "Transparent", "Previous button is transparent");
+		assert.equal(this.oHeaderContainer._oArrowNext.getType(), "Transparent", "Next button is transparent");
+	});
+
 	QUnit.module("Aggregation Handling", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
