@@ -138,7 +138,6 @@ sap.ui.define([
 							+ mParameters.operationMode);
 					}
 					this.sOperationMode = mParameters.operationMode;
-					this._sQuery = oUri.search(); //return query part with leading "?"
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
 					this.mUriParameters
 						= _ODataHelper.buildQueryOptions(null, oUri.query(true), null, true);
@@ -502,27 +501,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all bindings which are relative to a context created by the given parent binding.
+	 * Returns all bindings which are relative to the given parent context or to a context created
+	 * by the given parent binding.
 	 *
+	 * @param {sap.ui.model.Binding|sap.ui.model.Context} oParent
+	 *   The parent binding or context
 	 * @returns {sap.ui.model.Binding[]}
+	 *   A list of all dependent bindings, never <code>null</code>
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.getDependentBindings = function (oParentBinding) {
+	ODataModel.prototype.getDependentBindings = function (oParent) {
 		return this.aAllBindings.filter(function (oBinding) {
-			return oBinding.isRelative() && oBinding.getContext()
-				&& oBinding.getContext().getBinding() === oParentBinding;
+			return oBinding.isRelative()
+				&& (oBinding.getContext() === oParent
+				|| oBinding.getContext() && oBinding.getContext().getBinding() === oParent);
 		});
 	};
 
 	/**
-	 * Returns the model's group ID as needed by
-	 * {@link sap.ui.model.odata.v4.lib._Requestor#request}.
+	 * Returns the model's group ID.
 	 *
 	 * @returns {string}
-	 *   The group id
+	 *   The group ID
 	 *
-	 * @private
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor
+	 * @since 1.41.0
 	 */
 	ODataModel.prototype.getGroupId = function () {
 		return this.sGroupId;
@@ -585,13 +590,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID that is used for update requests.
-	 * If no update group ID is specified, the group ID is used (see {@link #getGroupId}).
+	 * Returns the model's update group ID.
 	 *
 	 * @returns {string}
-	 *   The update group id
+	 *   The update group ID
 	 *
-	 * @private
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor
+	 * @since 1.41.0
 	 */
 	ODataModel.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId;

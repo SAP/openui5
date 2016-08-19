@@ -386,6 +386,60 @@ sap.ui.define([
 	}
 
 	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
+	 * @returns {Promise}
+	 *   A promise for the DELETE request
+	 */
+	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
+		var aSegments = sPath.split("/"),
+			iIndex = Number(aSegments.shift()),
+			vDeleteProperty = aSegments.pop(),
+			that = this;
+
+		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oCacheData) {
+			var oEntity, mHeaders;
+
+			if (!vDeleteProperty) {
+				// deleting at root level
+				oCacheData = that.aElements;
+				vDeleteProperty = iIndex;
+			}
+			oEntity = oCacheData[vDeleteProperty];
+			if (oEntity["$ui5.deleting"]) {
+				throw new Error("Must not delete twice: " + sEditUrl);
+			}
+			oEntity["$ui5.deleting"] = true;
+			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+				["catch"](function (oError) {
+					if (oError.status !== 404) {
+						delete oEntity["$ui5.deleting"];
+						throw oError;
+					} // else: map 404 to 200
+				})
+				.then(function () {
+					if (oCacheData[vDeleteProperty] !== oEntity) {
+						// oEntity might have moved due to parallel insert/delete
+						vDeleteProperty = oCacheData.indexOf(oEntity);
+					}
+					oCacheData.splice(vDeleteProperty, 1);
+					fnCallback(Number(vDeleteProperty));
+				});
+		});
+	};
+
+	/**
 	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
 	 * are deregistered.
 	 *
@@ -593,6 +647,65 @@ sap.ui.define([
 	}
 
 	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
+	 * @returns {Promise}
+	 *   A promise for the DELETE request
+	 */
+	SingleCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
+		var aSegments = sPath.split("/"),
+			vDeleteProperty = aSegments.pop(),
+			sParentPath = aSegments.join("/"),
+			that = this;
+
+		return this.read(sGroupId, sParentPath).then(function (vCacheData) {
+			var oEntity = vDeleteProperty
+					? vCacheData[vDeleteProperty]
+					: vCacheData, // deleting at root level
+				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+
+			if (oEntity["$ui5.deleting"]) {
+				throw new Error("Must not delete twice: " + sEditUrl);
+			}
+			oEntity["$ui5.deleting"] = true;
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+				["catch"](function (oError) {
+					if (oError.status !== 404) {
+						delete oEntity["$ui5.deleting"];
+						throw oError;
+					} // else: map 404 to 200
+				})
+				.then(function () {
+					if (Array.isArray(vCacheData)) {
+						if (vCacheData[vDeleteProperty] !== oEntity) {
+							// oEntity might have moved due to parallel insert/delete
+							vDeleteProperty = vCacheData.indexOf(oEntity);
+						}
+						vCacheData.splice(vDeleteProperty, 1);
+						fnCallback(Number(vDeleteProperty));
+					} else {
+						if (vDeleteProperty) {
+							vCacheData[vDeleteProperty] = null;
+						} else { // deleting at root level
+							oEntity["$ui5.deleted"] = true;
+						}
+						fnCallback();
+					}
+				});
+		});
+	};
+
+	/**
 	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
 	 * are deregistered.
 	 *
@@ -713,6 +826,8 @@ sap.ui.define([
 			if (that.bSingleProperty) {
 				// 204 No Content: map undefined to null
 				oResult = oResult ? oResult.value : null;
+			} else if (oResult["$ui5.deleted"]) {
+				throw new Error("Cannot read a deleted entity");
 			}
 			addByPath(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
 			if (sPath) {

@@ -160,6 +160,36 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
+	 *
+	 * @param {string} [sGroupId=getUpdateGroupId()]
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._delete = function (sGroupId, sEditUrl) {
+		var that = this;
+
+		// a context binding without path can simply delegate to its parent context.
+		if (this.sPath === "") {
+			return this.oContext["delete"](sGroupId);
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+		return this.deleteFromCache(sGroupId, sEditUrl, "", function () {
+			that.oElementContext.destroy();
+			that.oElementContext = null;
+			that._fireChange({reason : ChangeReason.Remove});
+		});
+	};
+
+	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
 	 * @returns {Promise}
@@ -277,6 +307,47 @@ sap.ui.define([
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
+
+	/**
+	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting the path.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @param {string} sPath
+	 *   The path of the entity relative to this binding
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath,
+			fnCallback) {
+		var oPromise;
+
+		if (this.oOperation) {
+			throw new Error("Cannot delete a deferred operation");
+		}
+		if (this.oCache) {
+			sGroupId = sGroupId || this.getUpdateGroupId();
+			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+				throw new Error("Illegal update group ID: " + sGroupId);
+			}
+			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
+			this.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}
+		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
+			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
+	};
 
 	/**
 	 * Deregisters the given change listener.
@@ -621,6 +692,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
+		if (!this.oElementContext) { // refresh after delete
+			this.oElementContext = Context.create(this.oModel, this,
+				this.oModel.resolve(this.sPath, this.oContext));
+			if (!this.oCache) { // make sure event IS fired
+				this._fireChange({reason : ChangeReason.Refresh});
+			}
+		}
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;

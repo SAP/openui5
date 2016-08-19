@@ -142,6 +142,58 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deletes the entity identified by the edit URL.
+	 *
+	 * @param {string} [sGroupId=getUpdateGroupId()]
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @param {number} oContext
+	 *   The context to be deleted
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If there are pending changes.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._delete = function (sGroupId, sEditUrl, oContext) {
+		var that = this;
+
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()),
+			function (iIndex) {
+				var i,
+					oNextContext;
+
+				for (i = iIndex; i < that.aContexts.length; i += 1) {
+					oContext = that.aContexts[i];
+					oNextContext = that.aContexts[i + 1];
+					if (oContext && !oNextContext) {
+						oContext.destroy();
+						delete that.aContexts[i];
+					} else if (!oContext && oNextContext) {
+						that.aContexts[i]
+							= Context.create(that.oModel, that, that.sPath + "/" + i, i);
+					} else if (!that.bUseExtendedChangeDetection) {
+						that.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
+							oBinding.checkUpdate();
+						});
+					}
+				}
+				that.aContexts.pop();
+				that.iMaxLength -= 1; // this doesn't change Infinity
+				if (that.bUseExtendedChangeDetection) {
+					that.aDiff = [{index : iIndex, type : "delete"}];
+				}
+				that._fireChange({reason : ChangeReason.Remove});
+			});
+	};
+
+	/**
 	 * The 'change' event is fired when the binding is initialized or new contexts are created or
 	 * its parent context is changed. It is to be used by controls to get notified about changes to
 	 * the binding contexts of this list binding. Registered event handlers are called with the
@@ -265,6 +317,43 @@ sap.ui.define([
 		if (bDataRequested) {
 			this.fireDataReceived(); // no try catch needed: uncaught in promise
 		}
+	};
+
+	/**
+	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting the path.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @param {string} sPath
+	 *   The path of the entity relative to this binding
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath, fnCallback) {
+		var oPromise;
+
+		if (this.oCache) {
+			sGroupId = sGroupId || this.getUpdateGroupId();
+			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+				throw new Error("Illegal update group ID: " + sGroupId);
+			}
+			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
+			this.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}
+		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
+			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
 	};
 
 	/**
@@ -445,6 +534,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
+	 * @throws {Error}
+	 *   If <code>iMaximumPrefetchSize</code> is set and extended change detection is enabled (see
+	 *   {@link ListBinding#enableExtendedChangeDetection})
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -459,6 +551,11 @@ sap.ui.define([
 			oPromise,
 			oRange,
 			that = this;
+
+		if (iMaximumPrefetchSize !== undefined && this.bUseExtendedChangeDetection) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
+					+ " third parameter must not be set if extended change detection is enabled");
+		}
 
 		if (this.bRelative && !oContext) { // unresolved relative binding
 			return [];
@@ -498,7 +595,7 @@ sap.ui.define([
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
 					iResultLength = aResult ? aResult.length : 0;
 					if (that.bUseExtendedChangeDetection) {
-						return _ODataHelper.requestDiff(that, aResult, iStart)
+						return _ODataHelper.requestDiff(that, aResult, iStart, iLength)
 							.then(function (aDiff) {
 								that.aDiff = aDiff;
 								that.createContexts(oRange, iResultLength, sChangeReason,
@@ -533,8 +630,13 @@ sap.ui.define([
 		aContexts = this.aContexts.slice(iStart, iStart + iLength);
 		if (this.bUseExtendedChangeDetection) {
 			aContexts.dataRequested = !!oRange;
-			aContexts.diff = this.aDiff;
+			aContexts.diff = aContexts.dataRequested ? [] : this.aDiff;
 			this.aDiff = [];
+		}
+		if (sChangeReason === ChangeReason.Refresh) {
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
 		}
 		return aContexts;
 	};
@@ -740,6 +842,7 @@ sap.ui.define([
 			}
 		}
 		this.reset();
+		this.sChangeReason = ChangeReason.Refresh;
 		this._fireRefresh({reason : ChangeReason.Refresh});
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			if (oDependentBinding.refreshInternal) {

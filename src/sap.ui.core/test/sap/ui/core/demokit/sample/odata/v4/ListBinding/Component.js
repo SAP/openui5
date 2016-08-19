@@ -48,7 +48,8 @@ sap.ui.define([
 					operationMode : oModel.sOperationMode,
 					serviceUrl : sServiceUrl + sQuery,
 					synchronizationMode : "None",
-					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId") || undefined
+					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId")
+						|| oModel.getUpdateGroupId()
 				});
 				this.setModel(oModel);
 			}

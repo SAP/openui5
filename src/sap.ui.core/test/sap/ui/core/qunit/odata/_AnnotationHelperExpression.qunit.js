@@ -18,7 +18,19 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata._AnnotationHelperExpression");
+	QUnit.module("sap.ui.model.odata._AnnotationHelperExpression", {
+		beforeEach : function () {
+			this.oSandbox = sinon.sandbox.create();
+			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+
+		afterEach : function () {
+			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
+			this.oSandbox.verifyAndRestore();
+		}
+	});
 
 	//*********************************************************************************************
 	[
@@ -224,7 +236,7 @@ sap.ui.require([
 
 				return {resolvedPath : sResolvedPath};
 			});
-			this.mock(jQuery.sap.log).expects("warning").never();
+			this.oLogMock.expects("warning").never();
 
 			oResult = Expression.path(oInterface, oPathValue);
 
@@ -249,7 +261,7 @@ sap.ui.require([
 				oResult;
 
 			this.stub(Basics, "followPath").returns(oTarget);
-			this.mock(jQuery.sap.log).expects("warning").withExactArgs(
+			this.oLogMock.expects("warning").withExactArgs(
 				"Could not find property 'unsupported' starting from '" + oPathValue.path + "'",
 				null, "sap.ui.model.odata.AnnotationHelper");
 
@@ -1525,7 +1537,7 @@ sap.ui.require([
 				Bool : "true"
 			};
 
-		this.mock(jQuery.sap.log).expects("warning")
+		this.oLogMock.expects("warning")
 			.withExactArgs(
 				"Complex binding syntax not active", null, "sap.ui.model.odata.AnnotationHelper")
 			.once(); // just a single warning, no matter how many calls to getExpression()!

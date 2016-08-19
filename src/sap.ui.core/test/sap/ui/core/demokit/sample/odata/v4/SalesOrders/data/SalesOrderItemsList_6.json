@@ -2,9 +2,9 @@
 	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
 	"value" : [
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000010",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000010",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000010",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "2963.10",
@@ -49,9 +49,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000020",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000020",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000020",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "ARS",
 			"GrossAmount" : "583.10",
@@ -96,9 +96,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000030",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000030",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000030",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "830.62",
@@ -143,9 +143,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000040",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000040",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000040",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "RUB",
 			"GrossAmount" : "330.82",
@@ -190,9 +190,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000050",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000050",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000050",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "USD",
 			"GrossAmount" : "117.81",
@@ -237,9 +237,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000060",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000060",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000060",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "404.60",
@@ -284,9 +284,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000070",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000070",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000070",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "117.81",
@@ -331,9 +331,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000001",
+			"SalesOrderID" : "0500000006",
 			"ItemPosition" : "0000000080",
-			"Note" : "EPM DG: SO ID 0500000001 Item 0000000080",
+			"Note" : "EPM DG: SO ID 0500000006 Item 0000000080",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "JPY",
 			"GrossAmount" : "28322",

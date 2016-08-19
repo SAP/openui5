@@ -33,6 +33,10 @@
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
 				<Button press="onRefreshAll" text="Refresh all"/>
+				<Button enabled="false"
+					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
+					tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
+					type="Transparent"/>
 			</content>
 		</Toolbar>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
@@ -42,7 +46,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
@@ -56,15 +60,16 @@
 					<content>
 						<Title text="Sales Orders" titleStyle="H2"/>
 						<Button enabled="false" icon="sap-icon://add"
-							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
-						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
-							type="Transparent"/>
+							press="onCreateSalesOrderDialog"/>
+						<Button
+							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
+							id="deleteSalesOrder" press="onDeleteSalesOrder"/>
 						<Button icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
-							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
+						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
+							tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
 						<SearchField enabled="{ui>/bRealOData}"
 							placeholder="Filter by gross amount greater than"
@@ -126,13 +131,16 @@
 					<Text text="Note"/>
 				</Column>
 				<Column>
-					<Text text="Delete Sales Order"/>
+					<Text text="Life Cycle Status"/>
+				</Column>
+				<Column>
+					<Text text="Changed At"/>
 				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Text text="{SalesOrderID}"/>
+						<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
 					</cells>
 					<cells>
 						<Text text="{BuyerName}"/>
@@ -147,11 +155,13 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
+						<Input value="{Note}"/>
 					</cells>
 					<cells>
-						<Button enabled="{ui>/bRealOData}" press="onDeleteSalesOrder"
-							text="Delete"/>
+						<Text text="{LifecycleStatusDesc}"/>
+					</cells>
+					<cells>
+						<Text text="{ChangedAt}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
@@ -178,26 +188,36 @@
 			<Toolbar design="Transparent">
 				<content>
 					<Title text="Sales Order Details" titleStyle="H2"/>
-					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
-						tooltip="Schedules"/>
 					<!--Button icon="sap-icon://refresh"
 						press="onRefreshSalesOrderDetails"/-->
+					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
+						id="showSalesOrderSchedules"
+						tooltip="Schedules"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
-						press="onCancelSalesOrder" tooltip="Cancel sales order changes"/>
+					<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrder"
+						tooltip="Cancel sales order changes"/>
 				</content>
 				<dependents>
 					<Dialog class="sapUiSizeCompact"
 							id="SalesOrderSchedulesDialog" title="Sales Order Schedules">
+						<Toolbar design="Transparent">
+							<content>
+								<Button enabled="{ui>/bScheduleSelected}"
+									id="deleteSalesOrderSchedules"
+									icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"/>
+							</content>
+						</Toolbar>
 						<buttons>
-							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
-								text="Save" type="Accept"/>
+							<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+								press="onSaveSalesOrderSchedules" text="Save" type="Accept"/>
 							<Button icon="sap-icon://sys-cancel-2"
 								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
 						</buttons>
 						<content>
-							<Table items="{SO_2_SCHDL}" mode="SingleSelectMaster">
+							<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
+									mode="MultiSelect"
+									selectionChange="onSalesOrderScheduleSelect">
 								<columns>
 									<Column>
 										<Text text="Schedule Key"/>
@@ -225,7 +245,9 @@
 			<form:SimpleForm layout="ResponsiveGridLayout">
 				<form:SimpleForm backgroundDesign="Transparent" editable="true" labelSpanM="4"
 					layout="ResponsiveGridLayout">
-					<core:Title text="Sales Order"/>
+					<form:title>
+						<core:Title text="Sales Order"/>
+					</form:title>
 					<Label text="Sales Order ID" />
 					<Text text="{SalesOrderID}" />
 					<Label text="Created At" />
@@ -235,22 +257,30 @@
 					<Label text="Lifecycle Status Desc" />
 					<Text text="{LifecycleStatusDesc}" />
 					<Label labelFor="Note" text="Note" />
-					<Input enabled="{ui>/bRealOData}" id="Note" value="{Note}" />
+					<Input id="Note" value="{Note}" />
 				</form:SimpleForm>
 				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
-					editable="true" labelSpanM="4" layout="ResponsiveGridLayout">
-					<core:Title text="Business Partner"/>
+					editable="true" id="BusinessPartner" labelSpanM="4"
+					layout="ResponsiveGridLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<content>
+								<Title text="Business Partner"/>
+								<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
+									id="deleteBusinessPartner" press="onDeleteBusinessPartner"/>
+							</content>
+						</Toolbar>
+					</form:toolbar>
 					<Label text="Business Partner ID" />
 					<Text text="{BusinessPartnerID}" />
 					<Label text="CompanyName" />
 					<Text text="{CompanyName}" />
 					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
-					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
+					<Input id="BPPhoneNumber" value="{PhoneNumber}" />
 					<Label labelFor="BPCity" text="City" />
-					<Input enabled="{ui>/bRealOData}" id="BPCity" value="{Address/City}"/>
+					<Input id="BPCity" value="{Address/City}"/>
 					<Label labelFor="BPPostalCode" text="Postal Code" />
-					<Input enabled="{ui>/bRealOData}" id="BPPostalCode"
-						value="{Address/PostalCode}"/>
+					<Input id="BPPostalCode" value="{Address/PostalCode}"/>
 				</form:SimpleForm>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
@@ -294,6 +324,9 @@
 						<Text text="Sales Order ID"/>
 					</Column>
 					<Column>
+						<Text text="Item Position"/>
+					</Column>
+					<Column>
 						<Text text="ProductID"/>
 					</Column>
 					<Column>
@@ -309,13 +342,16 @@
 						<Text text="Delivery Date"/>
 					</Column>
 					<Column>
-						<Text text="Note ({:= ${ui>/bRealOData} ? 'editable' : 'read-only'})"/>
+						<Text text="Note"/>
 					</Column>
 				</columns>
 				<items>
 					<ColumnListItem>
 						<cells>
 							<Text text="{SalesOrderID}"/>
+						</cells>
+						<cells>
+							<Text text="{ItemPosition}"/>
 						</cells>
 						<cells>
 							<Text text="{Product/ProductID}"/>
@@ -333,7 +369,7 @@
 							<Text text="{DeliveryDate}"/>
 						</cells>
 						<cells>
-							<Input editable="{ui>/bRealOData}" value="{Note}"/>
+							<Input value="{Note}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
