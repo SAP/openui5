@@ -10,10 +10,10 @@ sap.ui.define([],
 	return {
 		aggregations : {
 			formElements : {
-				domRef : function() {
-					var oDomRef = this.getDomRef();
-					if (!oDomRef && this.getFormElements().length === 0) {
-						var oTitle = this.getTitle();
+				domRef : function(oElement) {
+					var oDomRef = oElement.getDomRef();
+					if (!oDomRef && oElement.getFormElements().length === 0) {
+						var oTitle = oElement.getTitle();
 						if (oTitle) {
 							return oTitle.getDomRef();
 						}

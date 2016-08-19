@@ -10,13 +10,7 @@ sap.ui.define([],
 	return {
 		aggregations : {
 			formContainers : {
-				getAggregationDomRef : function(sAggregationName) {
-					if (this.getLayout() instanceof sap.ui.layout.form.GridLayout) {
-						return ":sap-domref tbody";
-					} else {
-						return ":sap-domref > div";
-					}
-				}
+
 			}
 		}
 	};
