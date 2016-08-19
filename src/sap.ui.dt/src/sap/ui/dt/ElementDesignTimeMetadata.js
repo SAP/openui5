@@ -100,6 +100,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		var oData =  this.getAggregation(sAggregationName);
 		return new AggregationDesignTimeMetadata({data : oData});
 	};
+
 	/**
 	 * Returns the DT metadata for all aggregations
 	 * @return {map} returns the DT metadata for all aggregations
@@ -107,6 +108,21 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 */
 	ElementDesignTimeMetadata.prototype.getAggregations = function() {
 		return this.getData().aggregations;
+	};
+
+	/**
+	 * Returns the relevant container of an element
+	 * This is usually the getParent or the value from a function in DTMetadata
+	 * @param {object} oElement the element for which the relevant container has to be evaluated
+	 * @return {object} returns the relevant container
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getRelevantContainer = function(oElement) {
+		var fnGetRelevantContainer = this.getData().getRelevantContainer;
+		if (!fnGetRelevantContainer || typeof fnGetRelevantContainer !== "function") {
+			return oElement.getParent();
+		}
+		return fnGetRelevantContainer(oElement);
 	};
 
 	return ElementDesignTimeMetadata;

@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 			oRm.addClass(classNameTwoLines);
 		}
 
-		if (oLightBoxItem._getImageState() !== "ERROR") {
+		if (oLightBoxItem._getImageState() !== sap.m.LightBoxLoadingStates.Error) {
 			oRm.addStyle('width', oControl._width + 'px');
 			oRm.addStyle('height', oControl._height + 'px');
 		} else {
@@ -55,9 +55,9 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 		oRm.write('>');
 
 		//if control is busy render busyIndicator instead
-		if (oLightBoxItem._getImageState() === "LOADING") {
+		if (oLightBoxItem._getImageState() === sap.m.LightBoxLoadingStates.Loading) {
 			this.renderBusyState(oRm, oControl);
-		} else if (oLightBoxItem._getImageState() === "ERROR") {
+		} else if (oLightBoxItem._getImageState() === sap.m.LightBoxLoadingStates.TimeOutError) {
 			this.renderError(oRm, oControl);
 		} else {
 			this.renderImage(oRm, oControl);

@@ -1041,7 +1041,7 @@
 		});
 
 
-		module("events", {
+		module("created event", {
 			setup: function () {
 				// System under test + Arrange
 				this.oRouter = new sap.ui.core.routing.Router();
@@ -1100,6 +1100,355 @@
 			strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
 			strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
 			strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
+		});
+
+		QUnit.module("titleChanged event", {
+			setup: function() {
+				sap.ui.core.routing.HashChanger.getInstance().setHash("");
+				this.oApp = new sap.m.App();
+				this.sPattern = "anything";
+				this.sTitle = "myTitle";
+
+				var oView = createXmlView();
+				this.fnStub = sinon.stub(sap.ui, "view", function () {
+					return oView;
+				});
+
+				this.oDefaults = {
+					// only shells will be used
+					controlAggregation: "pages",
+					viewName: "foo",
+					controlId: this.oApp.getId()
+				};
+
+			},
+			teardown: function() {
+				this.fnStub.restore();
+				this.oRouter.destroy();
+			}
+		});
+
+		QUnit.test("should be able to fire/attach/detach the titleChanged event", function(assert) {
+			// Arrange
+			var oParameters = { foo : "bar" },
+				fnEventSpy = this.spy(function(oEvent, oActualData) {
+					assert.strictEqual(oActualData, oData, "the data is correct");
+					assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+					assert.strictEqual(this, oListener, "the this pointer is correct");
+				}),
+				oListener = {},
+				oData = { some : "data" },
+				oFireReturnValue,
+				oDetachReturnValue,
+				oAttachReturnValue;
+
+			this.oRouterConfig = {
+				routeName : {
+					pattern : this.sPattern,
+					target: "home"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: this.sTitle
+				}
+			};
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+			this.oRouter.initialize();
+			oAttachReturnValue = this.oRouter.attachTitleChanged(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oRouter.fireTitleChanged(oParameters);
+			oDetachReturnValue = this.oRouter.detachTitleChanged(fnEventSpy, oListener);
+			this.oRouter.fireTitleChanged(oParameters);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			assert.strictEqual(oAttachReturnValue, this.oRouter, "did return this for chaining for attach");
+			assert.strictEqual(oDetachReturnValue, this.oRouter, "did return this for chaining for detach");
+			assert.strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
+		});
+
+		QUnit.test("Should fire the titleChanged event if the matched route has a target with title defined", function (assert) {
+			// Arrange
+			var oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			this.oRouterConfig = {
+				routeName : {
+					pattern : this.sPattern,
+					target: "home"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: this.sTitle
+				}
+			};
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+			this.oRouter.initialize();
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oRouter.oHashChanger.setHash(this.sPattern);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+			assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
+		});
+
+		QUnit.test("Should fire the titleChanged event if the matched route has a title defined", function (assert) {
+			// Arrange
+			var oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			this.oRouterConfig = {
+				routeName : {
+					pattern : this.sPattern,
+					target: ["home", "titleTarget"],
+					titleTarget: "titleTarget"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: "foo"
+				},
+				titleTarget: {
+					title: this.sTitle
+				}
+			};
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+			this.oRouter.initialize();
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oRouter.oHashChanger.setHash(this.sPattern);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+			assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
+		});
+
+		QUnit.test("Should fire the titleChanged only on the active route", function (assert) {
+			// Arrange
+			var oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				}),
+				sTitle = "title",
+				sTitle1 = "title1",
+				sPattern = "pattern",
+				sPattern1 = "pattern1",
+				oTarget;
+
+			this.oRouterConfig = {
+				route1 : {
+					pattern : sPattern,
+					target: "target"
+				},
+				route2 : {
+					pattern : sPattern1,
+					target: "target1"
+				}
+			};
+
+			this.oTargetConfig = {
+				target: {
+					title: sTitle
+				},
+				target1: {
+					title: sTitle1
+				}
+			};
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+			this.oRouter.initialize();
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oRouter.oHashChanger.setHash(sPattern);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+			assert.strictEqual(oParameters.title, sTitle, "Did pass title value to the event parameters");
+
+			// Act
+			this.oRouter.oHashChanger.setHash(sPattern1);
+			assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event was fired on the matched route");
+			assert.strictEqual(oParameters.title, sTitle1, "Did pass title value to the event parameters");
+
+
+			oTarget = this.oRouter.getTarget("target");
+			oTarget.fireTitleChanged({title: "foo"});
+			assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event wasn't fired again");
+		});
+
+		QUnit.module("title history", {
+			setup: function() {
+				// reset hash
+				sap.ui.core.routing.HashChanger.getInstance().setHash("");
+
+				this.oApp = new sap.m.App();
+
+				var oView = createXmlView();
+				this.fnStub = sinon.stub(sap.ui, "view", function () {
+					return oView;
+				});
+
+				this.oDefaults = {
+					// only shells will be used
+					controlAggregation: "pages",
+					viewName: "foo",
+					controlId: this.oApp.getId()
+				};
+
+			},
+			teardown: function() {
+				this.fnStub.restore();
+				this.oRouter.destroy();
+			}
+		});
+
+		QUnit.test("title history", function(assert) {
+				// Arrange
+				var done = assert.async(),
+					oParameters,
+					sHomeTitle = "HOME",
+					sProductTitle = "PRODUCT",
+					sProductDetailTitle = "PRODUCT_DETAIL",
+					fnEventSpy = this.spy(function (oEvent) {
+						oParameters = oEvent.getParameters();
+					});
+
+				this.oRouterConfig = {
+					home: {
+						pattern: "",
+						target: "home"
+					},
+					product : {
+						pattern : "product",
+						target: "product"
+					},
+					productDetail : {
+						pattern : "productDetail",
+						target: "productDetail"
+					}
+				};
+
+				this.oTargetConfig = {
+					home: {
+						title: sHomeTitle
+					},
+					product: {
+						title: sProductTitle
+					},
+					productDetail: {
+						title: sProductDetailTitle
+					}
+				};
+				this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+				this.oRouter.attachTitleChanged(fnEventSpy);
+
+				// Act
+				this.oRouter.initialize();
+
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [], "history state is currently empty");
+
+				// Act
+				this.oRouter.navTo("product");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [{
+					hash: "",
+					title: sHomeTitle
+				}], "history state is currently empty");
+
+				// Act
+				this.oRouter.navTo("productDetail");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+				assert.equal(oParameters.history.length, 2, "history was updated only once");
+				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+					hash: "product",
+					title: sProductTitle
+				}, "history state is currently empty");
+
+				// Act
+				window.history.go(-1);
+
+				this.oRouter.attachRouteMatched(function() {
+					// Assert
+					assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
+					assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+					assert.equal(oParameters.history.length, 1, "history was updated only once");
+					assert.deepEqual(oParameters.history, [{
+						hash: "",
+						title: sHomeTitle
+					}], "history state is currently empty");
+					done();
+				});
+
+		});
+
+		QUnit.test("titleChanged event is fired before next navigation shouldn't create new history entry", function(assert) {
+			// Arrange
+			var oParameters,
+				sHomeTitle = "homeTitle",
+				sNewTitle = "newTitle",
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				}),
+				oModel = new sap.ui.model.json.JSONModel({
+					title: sHomeTitle
+				});
+
+			this.oApp.setModel(oModel);
+
+			this.oRouterConfig = {
+				home: {
+					pattern: "",
+					target: "home"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: "{/title}"
+				}
+			};
+
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			// Act
+			this.oRouter.initialize();
+
+			sinon.assert.calledOnce(fnEventSpy, "titleChanged event is fired");
+			assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
+			assert.equal(oParameters.history.length, 0, "No new history entry is created");
+			assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
+
+			oModel.setProperty("/title", sNewTitle);
+			sinon.assert.calledTwice(fnEventSpy, "titleChanged event is fired again");
+			assert.equal(oParameters.title, sNewTitle, "title parameter is set");
+			assert.equal(oParameters.history.length, 0, "No new history entry is created");
+			assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
 		});
 
 		module("component");
@@ -1407,6 +1756,21 @@
 			assert.strictEqual(sMatchedRouteName, "page12", "correct route is matched");
 
 			oRouter.destroy();
+		});
+
+		QUnit.test("Interpolate on pattern with multiple optional params", function() {
+			var oRouter = new sap.ui.core.routing.Router([{
+					name: "page1",
+					pattern: "page1/:context:/:context1:"
+				}]),
+				sUrl;
+
+			//Act
+			sUrl = oRouter.getURL("page1", {
+				context1: "context1"
+			});
+
+			assert.equal(sUrl, "page1//context1", "the URL should be correctly calculated");
 		});
 
 		QUnit.module("nested components", {

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger', './Route', './Views', './Targets', 'sap/ui/thirdparty/crossroads'],
-	function(jQuery, EventProvider, HashChanger, Route, Views, Targets, crossroads) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventProvider', './HashChanger', './Route', './Views', './Targets', './History', 'sap/ui/thirdparty/crossroads'],
+	function(jQuery, library, EventProvider, HashChanger, Route, Views, Targets, History, crossroads) {
 	"use strict";
 
 		var oRouters = {};
@@ -284,6 +284,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 
 				oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
+				if (this._oTargets) {
+					this._oTargets.attachTitleChanged(function(oEvent) {
+						this.fireTitleChanged(oEvent.getParameters());
+					}.bind(this));
+
+					this._aHistory = [];
+				}
+
 				if (!oHashChanger.init()) {
 					this.parse(oHashChanger.getHash());
 				}
@@ -503,7 +511,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 *  c. the pattern of its nested route. When this occurs, the 'nestedRoute' parameter is set with the instance of nested route.
 			 * </pre>
 			 *
-			 * Please refer to {@link sap.ui.core.routing.Router#routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
+			 * Please refer to event {@link sap.ui.core.routing.Router#event:routePatternMatched|routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
 			 *
 			 * @name sap.ui.core.routing.Router#routeMatched
 			 * @event
@@ -699,7 +707,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * @public
 			 */
 			attachBypassed : function(oData, fnFunction, oListener) {
-				return this.attachEvent(Router.M_EVENTS.Bypassed, oData, fnFunction, oListener);
+				return this.attachEvent(Router.M_EVENTS.BYPASSED, oData, fnFunction, oListener);
 			},
 
 			/**
@@ -714,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * @public
 			 */
 			detachBypassed : function(fnFunction, oListener) {
-				return this.detachEvent(Router.M_EVENTS.Bypassed, fnFunction, oListener);
+				return this.detachEvent(Router.M_EVENTS.BYPASSED, fnFunction, oListener);
 			},
 
 			/**
@@ -727,7 +735,104 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * @protected
 			 */
 			fireBypassed : function(mArguments) {
-				return this.fireEvent(Router.M_EVENTS.Bypassed, mArguments);
+				return this.fireEvent(Router.M_EVENTS.BYPASSED, mArguments);
+			},
+
+			/**
+			 * Will be fired when the title of the "TitleTarget" in the currently matching Route has been changed.
+			 *
+			 * <pre>
+			 * A "TitleTarget" is resolved as the following:
+			 *  1. When the Route only has one target configured, the "TitleTarget" is resolved with this target when its {@link sap.ui.core.routing.Targets#constructor|title} options is set.
+			 *  2. When the Route has more than one target configured, the "TitleTarget" is resolved by default with the first target which has a {@link sap.ui.core.routing.Targets#constructor|title} option.
+			 *  3. When the {@link sap.ui.core.routing.Route#constructor|titleTarget} option on the Route is configured, this specific target is then used as the "TitleTarget".
+			 * </pre>
+			 *
+			 * @name sap.ui.core.routing.Router#titleChanged
+			 * @event
+			 * @param {object} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
+			 * @param {object} oEvent.getParameters
+			 * @param {string} oEvent.getParameters.title The current displayed title
+			 * @param {array} oEvent.getParameters.history An array which contains the history of previous titles
+			 * @param {string} oEvent.getParameters.history[].title The title
+			 * @param {string} oEvent.getParameters.history[].hash The hash
+			 * @public
+			 */
+
+			/**
+ 			 * Attach event-handler <code>fnFunction</code> to the 'titleChanged' event of this <code>sap.ui.core.routing.Router</code>.<br/>
+ 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+ 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
+ 			 * oListener-instance (if present) or in a 'static way'.
+ 			 * @param {object} [oListener] Object on which to call the given function.
+ 			 *
+ 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
+ 			 * @public
+ 			 */
+			attachTitleChanged : function(oData, fnFunction, oListener) {
+				this.attachEvent(Router.M_EVENTS.TITLE_CHANGED, oData, fnFunction, oListener);
+				return this;
+			},
+
+			/**
+			 * Detach event-handler <code>fnFunction</code> from the 'titleChanged' event of this <code>sap.ui.core.routing.Router</code>.<br/>
+			 *
+			 * The passed function and listener object must match the ones previously used for event registration.
+			 *
+			 * @param {function} fnFunction The function to call, when the event occurs.
+			 * @param {object} oListener Object on which the given function had to be called.
+			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
+			 * @public
+			 */
+			detachTitleChanged : function(fnFunction, oListener) {
+				return this.detachEvent(Router.M_EVENTS.TITLE_CHANGED, fnFunction, oListener);
+			},
+
+			// private
+			fireTitleChanged : function(mArguments) {
+				var sDirection,
+					oActiveRoute,
+					vTargets,
+					sTitleTarget,
+					sCalcedTargetName,
+					sHash = this.oHashChanger.getHash(),
+					bShouldFireEvent = true,
+					HistoryDirection = library.routing.HistoryDirection,
+					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1];
+
+				if (this._sActiveRouteName && this._oTargets) {
+					oActiveRoute = this.getRoute(this._sActiveRouteName);
+					vTargets = oActiveRoute._oConfig.target;
+					sTitleTarget = oActiveRoute._oConfig.titleTarget;
+					sCalcedTargetName = this._oTargets._getTitleTargetName(vTargets, sTitleTarget);
+					// should fire the event only when the titleChanged event comes from the TitleTarget
+					bShouldFireEvent = (mArguments.name === sCalcedTargetName);
+				}
+
+				if (bShouldFireEvent) {
+					sDirection = History.getInstance().getDirection();
+
+					if (sDirection === HistoryDirection.Backwards) {
+						// when back navigation, the last history state should be removed
+						this._aHistory.pop();
+					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
+						// if no actual navigation took place, we only need to update the title
+						oLastHistoryEntry.title = mArguments.title;
+					} else {
+						// push new history state into the stack
+						this._aHistory.push({
+							hash: sHash,
+							title: mArguments.title
+						});
+					}
+
+					mArguments.history = this._aHistory.slice(0, -1);
+
+					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
+				}
+
+				return this;
 			},
 
 			/**
@@ -774,10 +879,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 		});
 
 		Router.M_EVENTS = {
-			RouteMatched : "routeMatched",
-			RoutePatternMatched : "routePatternMatched",
-			ViewCreated : "viewCreated",
-			Bypassed: "bypassed"
+			ROUTE_MATCHED: "routeMatched",
+			ROUTE_PATTERN_MATCHED: "routePatternMatched",
+			VIEW_CREATED: "viewCreated",
+			BYPASSED: "bypassed",
+			TITLE_CHANGED: "titleChanged"
 		};
 
 		/**

@@ -15,13 +15,14 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		 * Creates a view and puts it in an aggregation of the specified control.
 		 *
 		 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
-		 * @param {any} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @param {object} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged|titleChanged} event
 		 * @private
 		 * @returns {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
 		 */
-		display : function (vTargets, vData) {
+		display : function (vTargets, vData, sTitleTarget) {
 			var oSequencePromise = Promise.resolve();
-			return this._display(vTargets, vData, oSequencePromise);
+			return this._display(vTargets, vData, sTitleTarget, oSequencePromise);
 		},
 
 		/**
@@ -29,18 +30,20 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		 * @param {array|object} vTargets targets or single target to be displayed
 		 * @param {object} vData  an object that will be passed to the display event in the data property. If the
 				target has parents, the data will also be passed to them.
-		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged|titleChanged} event
 		 * @return {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
 		 *
 		 * @private
 		 */
-		_display : function (vTargets, vData, oSequencePromise) {
+		_display : function (vTargets, vData, sTitleTarget, oSequencePromise) {
 			var that = this,
 				aViewInfos = [];
 
 			if (!jQuery.isArray(vTargets)) {
 				vTargets = [vTargets];
 			}
+
+			this._attachTitleChanged(vTargets, sTitleTarget);
 
 			return vTargets.reduce(function(oPromise, sTarget) {
 				// gather view infos while processing Promise chain

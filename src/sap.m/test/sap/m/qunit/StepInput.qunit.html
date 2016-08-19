@@ -40,13 +40,17 @@
 
 		test("DOM", function () {
 			//assert
-			ok(this.stepInput.$().length > 0, "The control was successfully rendered");
+			var $stepInput = this.stepInput.$();
+			ok($stepInput.length > 0, "The control was successfully rendered");
+			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
 		test("incrementButton", function () {
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
+
 			//assert
+			equal(oIncrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oIncrementButton.getMetadata().getName(), "sap.m.Button",
 					"the picker aggregation holds an instance of a button");
 
@@ -62,6 +66,7 @@
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			//assert
+			equal(oDecrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oDecrementButton.getMetadata().getName(), "sap.m.Button",
 					"the step input _decrementButton aggregation holds an instance of a button");
 
@@ -107,86 +112,86 @@
 					"The decrement button is enabled as it should be");
 
 			this.stepInput.setMin(3);
-            this.stepInput.onfocusout();
+			this.stepInput.onfocusout();
 
 			strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
 					"The decrement button is disabled as it should be");
-            this.stepInput.setValue(2);
+			this.stepInput.setValue(2);
 
-            strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
-                    "The decrement button is disabled as it should be because the min is 3 and the value is 2");
+			strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
+					"The decrement button is disabled as it should be because the min is 3 and the value is 2");
 
-            this.stepInput.setValue(4);
-            this.stepInput.onfocusout()
+			this.stepInput.setValue(4);
+			this.stepInput.onfocusout()
 
-            strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
-                    "The decrement button is enabled as it should be because the value is 1 bigger than the min");
+			strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
+					"The decrement button is enabled as it should be because the value is 1 bigger than the min");
 		});
 
 
-        test("Increment button enabled/disabled state", function () {
-            this.stepInput._getInput().setValue(11);
-            this.stepInput.onfocusout();
-            strictEqual(this.stepInput._getIncrementButton().getEnabled(), false,
-                    "The increment button is disabled as it should be because the value is 1 bigger than the max");
-        });
+		test("Increment button enabled/disabled state", function () {
+			this.stepInput._getInput().setValue(11);
+			this.stepInput.onfocusout();
+			strictEqual(this.stepInput._getIncrementButton().getEnabled(), false,
+					"The increment button is disabled as it should be because the value is 1 bigger than the max");
+		});
 
-        test("Error state when setting values out of the limit", function () {
-            this.stepInput.setMin(3);
-            this.stepInput.setValue(2);
-            this.stepInput.onfocusout();
-            strictEqual(this.stepInput._getInput().getValueState(), "Error",
-                    "The value state is Error as it should be because the value is under the limit");
+		test("Error state when setting values out of the limit", function () {
+			this.stepInput.setMin(3);
+			this.stepInput.setValue(2);
+			this.stepInput.onfocusout();
+			strictEqual(this.stepInput._getInput().getValueState(), "Error",
+					"The value state is Error as it should be because the value is under the limit");
 
-            //value becomes 3
-            this.stepInput._getIncrementButton().firePress();
+			//value becomes 3
+			this.stepInput._getIncrementButton().firePress();
 
-            this.stepInput.onfocusout();
-            strictEqual(this.stepInput._getInput().getValueState(), "None",
-                    "The value state is None as it should be because the value is equal to the min");
-        });
+			this.stepInput.onfocusout();
+			strictEqual(this.stepInput._getInput().getValueState(), "None",
+					"The value state is None as it should be because the value is equal to the min");
+		});
 
 
-        module("Floating point", {
-            beforeEach: function () {
-                this.stepInput = new sap.m.StepInput({
-                    step: 1.1,
-                    max: 2
-                });
+		module("Floating point", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					step: 1.1,
+					max: 2
+				});
 
-                this.stepInput.placeAt('qunit-fixture');
-                oCore.applyChanges();
-            },
-            afterEach: function () {
-                this.stepInput.destroy();
-            }
-        });
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
 
-        test("working with floating point", function () {
-            var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
-            var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+		test("working with floating point", function () {
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
-            oIncrementButton.firePress();
-            strictEqual(this.stepInput.getValue(), "1.1",
-                    "The value is successfuly incremented");
-            oDecrementButton.firePress();
-            strictEqual(this.stepInput.getValue(), "0.0",
-                    "The value is successfuly decremented");
+			oIncrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), "1.1",
+					"The value is successfuly incremented");
+			oDecrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), "0.0",
+					"The value is successfuly decremented");
 
-            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-            this.clock.tick(1000);
-            strictEqual(this.stepInput.getValue(), "1.1",
-                    "The value is successfuly incremented");
-            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-            this.clock.tick(1000);
-            strictEqual(this.stepInput.getValue(), "0.0",
-                    "The value is successfuly decremented");
-            oIncrementButton.firePress();
-            oIncrementButton.firePress();
-            strictEqual(this.stepInput.getValue(), 2,
-                    "The value is successfuly decremented");
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), "1.1",
+					"The value is successfuly incremented");
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), "0.0",
+					"The value is successfuly decremented");
+			oIncrementButton.firePress();
+			oIncrementButton.firePress();
+			strictEqual(this.stepInput.getValue(), 2,
+					"The value is successfuly decremented");
 
-        });
+		});
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
@@ -204,24 +209,24 @@
 			}
 		});
 
-        test("up/down increases/decreases the value", function () {
-            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-            this.clock.tick(1000);
-            strictEqual(this.stepInput.getValue(), 5,
-                    "The value is increasing with 1 after arrow up");
+		test("up/down increases/decreases the value", function () {
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 5,
+					"The value is increasing with 1 after arrow up");
 
-            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-            this.clock.tick(1000);
-            strictEqual(this.stepInput.getValue(), 4,
-                    "The value is decreasing with 1 after arrow down");
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 4,
+					"The value is decreasing with 1 after arrow down");
 
-            this.stepInput.setStep(5);
+			this.stepInput.setStep(5);
 
-            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-            this.clock.tick(1000);
-            strictEqual(this.stepInput.getValue(), 9,
-                    "The value is decreasing with 5 after arrow up");
-        });
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 9,
+					"The value is decreasing with 5 after arrow up");
+		});
 
 		test("pageup and pagedown increases/decreases the value with a larger step", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
@@ -234,7 +239,7 @@
 					"The value is decreasing with step=step*2 after pagedown");
 
 			this.stepInput.setStep(5);
-            this.clock.tick(1000);
+			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
 			strictEqual(this.stepInput.getValue(), 14,
@@ -253,7 +258,7 @@
 					"The value is decreasing with step=1 after arrow down");
 
 			this.stepInput.setStep(5);
-            this.clock.tick(1000);
+			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
 			strictEqual(this.stepInput.getValue(), 14,

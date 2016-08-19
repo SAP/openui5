@@ -600,6 +600,47 @@
 		}, this);
 	});
 
+	asyncTest("Relative Binding", function () {
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2});
+			var oBinding;
+
+			/**
+			 * The actual Table test case is the same as for the root level change.
+			 * This is only for validation that the table works as before when setting a binding context later.
+			 */
+			var fnHandler1 = function() {
+				oBinding = this.oTable.getBinding("rows");
+				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
+				equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
+				attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
+				this.oTable.setRootLevel(1);
+			};
+
+			var fnHandler2 = function() {
+				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
+				equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
+				start();
+			};
+
+			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+			
+			// relative binding
+			this.oTable.bindRows("Result");
+			
+			// check if binding is available
+			var oBinding = this.oTable.getBinding();
+			equal(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, true, "Binding is created");
+			
+			// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
+			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
+			oBinding.oModel.createBindingContext(sContextPath, null, function (oCreatedContext) {
+				this.oTable.setBindingContext(oCreatedContext);
+			}.bind(this));
+			
+		}, this);
+	});
+
 </script>
 
 </head>

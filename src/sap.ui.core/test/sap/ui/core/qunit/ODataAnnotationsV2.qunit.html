@@ -23,11 +23,10 @@
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script>
 	// Enable code coverage
-	window['sap-ui-qunit-coverage-whitelist'] = {
-		'sap/ui/model/odata/ODataAnnotationsNG.js': true,
-		'sap/ui/model/odata/AnnotationParser.js': true,
-	};
-    jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if (window.blanket) {
+		window.blanket.options("sap-ui-cover-only", "[sap/ui/model/odata/v2/ODataAnnotations.js,sap/ui/model/odata/AnnotationParser.js]");
+	}
 </script>
 
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>

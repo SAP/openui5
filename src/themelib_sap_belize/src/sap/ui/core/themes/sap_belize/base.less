@@ -333,6 +333,11 @@
 // [Tags "Base", "Shell", "Color", "Font"]
 @sapShell_TextColor: darken(@sapPrimary2, 10); // no contrast function allowed because background can be gradient
 
+// [Label "Shell Favicon"]
+// [Description "The URI to the favorite or shortcut icon displayed for the shell."]
+// [Tags "Base", "Shell", "URI", "Image"]
+@sapShell_Favicon: none;
+
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
 // [Tags "Base", "Button", "Dimension"]
@@ -689,7 +694,7 @@
 // [Label "Tile Border Color"]
 // [Description "The border color of tiles."]
 // [Tags "Base", "Tile", "Color"]
-@sapTile_BorderColor: darken(@sapTile_Background, 13.5);
+@sapTile_BorderColor: transparent;
 
 // [Label "Tile Title Text Color"]
 // [Description "The color of title texts on tiles."]

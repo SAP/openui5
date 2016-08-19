@@ -111,6 +111,11 @@
 			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.HeaderContainer",
+			"url":  "../HeaderContainer.html",
+			"appComponent" : "CA-UI5-BS-FCW"
+		},
+		{
 			"control": "sap.m.semantic.FullscreenPage",
 			"url": "./semantic/FullscreenPage.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"

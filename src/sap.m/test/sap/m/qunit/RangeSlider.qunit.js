@@ -221,6 +221,47 @@
         assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 72, "The function should return 72");
     });
 
+    QUnit.test("Calculate movement offset", function (assert) {
+        var aRange = [4, 27],
+            iStep = 5,
+            oSlider = new sap.m.RangeSlider("RangeSlider6", {
+                step: iStep,
+                min: 4,
+                max: 27,
+                range: aRange
+            }).placeAt(DOM_RENDER_LOCATION);
+        sap.ui.getCore().applyChanges();
+
+        //Act
+        oSlider._updateSliderValues(iStep, oSlider._mHandleTooltip.start.handle);
+        sap.ui.getCore().applyChanges();
+
+        //Test
+        aRange = oSlider.getRange();
+        assert.strictEqual(aRange[0], 9, "First value of the range to be updated");
+        // clock.tick(1000);
+
+        //Act
+        aRange = [10, 27];
+        oSlider.setRange(aRange);
+        sap.ui.getCore().applyChanges();
+        // clock.tick(1000);
+
+        assert.strictEqual(aRange[0], 10, "Range[0] to be set properly");
+        assert.strictEqual(aRange[1], 27, "Range[1] to be set properly");
+
+        //Act
+        oSlider._updateSliderValues(-1 * iStep, oSlider._mHandleTooltip.start.handle);
+        sap.ui.getCore().applyChanges();
+
+        //Test
+        aRange = oSlider.getRange();
+        assert.strictEqual(aRange[0], 4, "First value of the range to be set at the lowest possible value");
+
+        oSlider.destroy();
+        oSlider = null;
+    });
+
     QUnit.module("Events", {
         setup: function () {
             this.rangeSlider = new sap.m.RangeSlider();

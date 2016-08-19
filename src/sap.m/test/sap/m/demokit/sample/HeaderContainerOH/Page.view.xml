@@ -1,0 +1,49 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.HeaderContainerOH.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<ObjectHeader
+		id="oh1"
+		responsive="true"
+		binding="{/ProductCollection/0}"
+		intro="{Description}"
+		title="{Name}"
+		number="{Price}"
+		numberUnit="{CurrencyCode}"
+		showMarkers="true"
+		markFlagged="true"
+		markFavorite="true"
+		numberState="Success"
+		backgroundDesign="Translucent">
+		<attributes>
+			<ObjectAttribute
+				title="Manufacturer"
+				text="{SupplierName}"/>
+		</attributes>
+		<statuses>
+			<ObjectStatus
+				title="Approval"
+				text="Pending"
+				state="Warning"/>
+		</statuses>
+		<headerContainer>
+			<HeaderContainer scrollStep="200" scrollTime="500" id="headerContainer">
+				<l:HorizontalLayout
+					class="sapUiContentPadding">
+					<l:content>
+						<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
+						<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
+						<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
+						<NumericContent size="S" scale="M" value="3.65" valueColor="Good" indicator="Up" press="press" />
+						<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
+						<NumericContent size="S" scale="M" value="1.01" valueColor="Critical" indicator="Down" press="press" />
+						<NumericContent size="S" scale="M" value="1.42" valueColor="Good" indicator="Up" press="press" />
+						<NumericContent size="S" scale="M" value="0.21" valueColor="Error" indicator="Down" press="press" />
+					</l:content>
+				</l:HorizontalLayout>
+			</HeaderContainer>
+		</headerContainer>
+	</ObjectHeader>
+</mvc:View>

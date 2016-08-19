@@ -1,0 +1,228 @@
+<View xmlns="sap.m" xmlns:f="sap.f" xmlns:l="sap.ui.layout" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutDynamicPage.Master"
+      height="100%">
+    <f:DynamicPage id="masterPage">
+
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Label text="Filtered 1042 items based on 'unknown' criteria"></Label>
+                </f:heading>
+                <f:snappedContent>
+                    <MessageStrip text="Filtered by name"></MessageStrip>
+                    <MessageStrip text="Filtered by location"></MessageStrip>
+                    <MessageStrip text="Filtered by status"></MessageStrip>
+                    <MessageStrip text="Filtered by type"></MessageStrip>
+                </f:snappedContent>
+                <f:expandedContent>
+                    <SearchField value="Filter items..."></SearchField>
+                </f:expandedContent>
+                <f:actions>
+                    <Button text="Chart" icon="sap-icon://bar-chart"/>
+                    <OverflowToolbarButton text="Add" icon="sap-icon://add"/>
+                    <OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
+                    <OverflowToolbarButton text="Delete" icon="sap-icon://delete" press="deleteContentPressHandler"/>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader>
+                <f:content>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                </f:content>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <l:VerticalLayout width="100%">
+                <Table>
+                    <columns>
+                        <Column>
+                            <Title text="Master List"/>
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+                            <cells>
+                                <Text text="Master column LAST"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </l:VerticalLayout>
+        </f:content>
+        <f:footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button type="Accept" text="Accept"/>
+                <Button type="Reject" text="Reject"/>
+            </OverflowToolbar>
+        </f:footer>
+    </f:DynamicPage>
+</View>

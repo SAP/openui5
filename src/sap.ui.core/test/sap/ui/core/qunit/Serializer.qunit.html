@@ -68,7 +68,9 @@
 				}
 			});
 
-
+			function unescapeSpace(s) {
+				return s.replace("&#x20;", " ");
+			}
 
 			QUnit.module("Simple", {
 				beforeEach : function() {
@@ -115,11 +117,17 @@
 				for (var i=0; i < aContent.length; i++) {
 					var oControlSerializer = new Serializer(aContent[i], oXML, false);
 					var s = oControlSerializer.serialize();
-					assert.equal(s, aExpectedResults[i], "The generated string is right for control " + aContent[i].getId());
+					assert.equal(unescapeSpace(s), aExpectedResults[i], "The generated string is right for control " + aContent[i].getId());
 				}
 			});
 
-
+			QUnit.test("XML Serializing generates escaped attributes", function(assert) {
+				var oXML = new XMLDelegate();
+				var oControl = new TestControl({id:"mySpecial", text: "text with \" and with <"});
+				var oControlSerializer = new Serializer(oControl, oXML, false);
+				var s = oControlSerializer.serialize();
+				assert.equal(s, "<sap.test:TestControl id=\"mySpecial\" text=\"text&#x20;with&#x20;&quot;&#x20;and&#x20;with&#x20;&lt;\"></sap.test:TestControl>");
+			});
 
 			QUnit.module("Complex", {
 				beforeEach : function() {
@@ -166,7 +174,7 @@
 					var oControlSerializer = new Serializer(aContent[i], oHTML, false);
 					aCode.push(oControlSerializer.serialize());
 				}
-				assert.equal(aCode.join(""), sExpectedResult, "The generated string is right");
+				assert.equal(unescapeSpace(aCode.join("")), sExpectedResult, "The generated string is right");
 			});
 
 			QUnit.test("Complex XML Serializing", function(assert) {
@@ -196,7 +204,7 @@
 					var oControlSerializer = new Serializer(aContent[i], oXML, false);
 					aCode.push(oControlSerializer.serialize());
 				}
-				assert.equal(aCode.join(""), sExpectedResult, "The generated string is right");
+				assert.equal(unescapeSpace(aCode.join("")), sExpectedResult, "The generated string is right");
 			});
 
 			QUnit.test("Complex XML Serializing with excluding children using callback", function(assert) {
@@ -222,7 +230,7 @@
 							});
 					aCode.push(oControlSerializer.serialize());
 				}
-				assert.equal(aCode.join(""), sExpectedResult, "The generated string is right");
+				assert.equal(unescapeSpace(aCode.join("")), sExpectedResult, "The generated string is right");
 			});
 
 			QUnit.test("Complex XML Serializing with excluding aggregations using callback", function(assert) {
@@ -248,7 +256,7 @@
 							});
 					aCode.push(oControlSerializer.serialize());
 				}
-				assert.equal(aCode.join(""), sExpectedResult, "The generated string is right");
+				assert.equal(unescapeSpace(aCode.join("")), sExpectedResult, "The generated string is right");
 			});
 
 

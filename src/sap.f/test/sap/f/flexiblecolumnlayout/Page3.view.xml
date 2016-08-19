@@ -1,0 +1,7 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexibleColumnLayout.Page3" height="100%">
+	<Page title="This is the last page" backgroundDesign="Transparent">
+		<Toolbar>
+			<Label text="This is the last page. Use the back button to go back."/>
+		</Toolbar>
+	</Page>
+</View>

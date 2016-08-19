@@ -1,0 +1,16 @@
+.sapFDynamicPageTitle {
+	background: @sapUiObjectHeaderBackground;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
+}
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
+}
+
+.sapFDynamicPageTitle > .sapFDynamicPageTitleLeft {
+	.sapFDynamicPageTitleLeftInner {
+		.sapFDynamicPageTitleLeftSnappedExpandContent {
+			color: @sapUiContentLabelColor;
+		}
+	}
+}

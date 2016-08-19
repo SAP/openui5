@@ -8,6 +8,7 @@
 			type="text/javascript"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US"
 			src="../../../../resources/sap-ui-core.js">
 	</script>
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -262,6 +263,31 @@
 
 			cnt.destroy();
 		});
+
+		test("ShouldHaveAriaDescribedByAttribute", function () {
+			var m = sap.m,
+					sut = new m.Tile(),
+					tiles = [sut, new m.Tile()],
+					cnt = new m.TileContainer({tiles: tiles});
+
+			cnt.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// Assert
+			equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedBy should not exist');
+
+			// Act
+			sut.isEditable(true);
+			//Assert
+			equal(sut.$().attr('aria-describedby'), sut._getAriaDescribedByDeleteLabel().getId(), 'When tile is editable, aria-describedBy should exist');
+			equal(sut._getAriaDescribedByDeleteLabel().getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
+					'When tile is editable, aria-describedBy should point to a label with certain text');
+
+			cnt.destroy();
+		})
+
 
 	</script>
 </head>

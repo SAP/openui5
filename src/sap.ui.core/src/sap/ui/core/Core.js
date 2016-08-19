@@ -51,21 +51,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * @class Core Class of the SAP UI Library.
 	 *
-	 * This class boots the Core framework and makes it available for the Application
-	 * via the method <code>sap.ui.getCore()</code>.
+	 * This class boots the Core framework and makes it available for the application
+	 * via method <code>sap.ui.getCore()</code>.
 	 *
-	 * Example:<br/>
-	 * <pre>   var oCore = sap.ui.getCore();</pre><br/>
-	 *
-	 * It provides events where the Application can attach to.<br/>
-	 * Example:<br/>
+	 * Example:
 	 * <pre>
-	 * oCore.attachInit(function () {
-	 *   //do the needful, do it lean
-	 * });
-	 * </pre><br/>
 	 *
-	 * It registers the Browser Eventing.
+	 *   var oCore = sap.ui.getCore();
+	 *
+	 * </pre>
+	 *
+	 * With methods of the Core framework you can {@link #attachInit execute code} after the framework has been initialized.
+	 * It provides access to the {@link #getConfiguration configuration} and exposes events that
+	 * an application or a control can register to (e.g. {@link #event:localizationChanged localizationChanged},
+	 * {@link #event:parseError parseError}, {@link #event:validationError validationError},
+	 * {@link #event:formatError formatError}, {@link #event:validationSuccess validationSuccess}).
+	 *
+	 * Example:
+	 * <pre>
+	 *
+	 *   oCore.attachInit(function() {
+	 *     if ( oCore.getConfiguration().getRTL() ) {
+	 *       ...
+	 *     }
+	 *   });
+	 *
+	 *   oCore.attachLocalizationChanged(function(oEvent) {
+	 *     ...
+	 *   });
+	 *
+	 * </pre>
 	 *
 	 * @extends sap.ui.base.Object
 	 * @final
@@ -321,6 +336,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// a helper task to prevent the premature completion of oSyncPoint2
 			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
 
+			var bAsync = sPreloadMode === "async";
+
 			// load the version info file in case of a custom theme to determine
 			// the distribution version which should be provided in library.css requests.
 			if (this.oConfiguration["versionedLibCss"]) {
@@ -336,7 +353,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				};
 
 				// only use async mode if library prelaod is async
-				var bAsync = sPreloadMode === "async";
 				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
 				if (vReturn instanceof Promise) {
 					vReturn.then(fnCallback, function(oError) {
@@ -403,6 +419,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				AppCacheBuster.boot(oSyncPoint2);
 			}
 
+			//initialize support info stack
+			if (this.oConfiguration["xx-support"] !== null) {
+				var fnCallbackSupportInfo = function(Support) {
+					Support.initializeSupportMode(that.oConfiguration["xx-support"]);
+					oSyncPoint2.finishTask(iSupportInfoTask);
+				};
+				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
+				if (bAsync) {
+					sap.ui.require(["sap/ui/core/support/Support"], fnCallbackSupportInfo);
+				} else {
+					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
+				}
+			}
 			oSyncPoint2.finishTask(iCreateTasksTask);
 		},
 
@@ -761,7 +790,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require(mod);
 			}
 		});
-
 	};
 
 
@@ -999,7 +1027,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// Experimental: Load SAP web fonts
 		this._loadWebFonts();
 
-		if ( this.oThemeCheck.themeLoaded || !this.oConfiguration['xx-waitForTheme'] ) {
+		if ( this.isThemeApplied() || !this.oConfiguration['xx-waitForTheme'] ) {
 			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
 		} else {
 			log.info("initial rendering delayed until theme has been loaded");
@@ -1144,14 +1172,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attaches a given function to the <code>initEvent</code> event of the core.
+	 * Registers a given function that is executed after the framework has been initialized.
 	 *
-	 * This event will only be fired once; you can check if it has been fired already
-	 * by calling {@link #isInitialized}.
+	 * The method is executed only once and only if the framework has not been initialized already.
+	 * This could be checked by calling {@link #isInitialized}, but in most cases it is more convenient to
+	 * use {@link #attachInit} instead. This guarantees that the given function is executed exactly once,
+	 * independent of the state of the framework.
 	 *
-	 * @param {function} fnFunction the function to be called on event firing.
+	 * @param {function} fnFunction Function that is called after initialization of the framework
 	 * @public
-	 * @deprecated since 1.13.2 Register to the more convenient {@link sap.ui.core.Core#attachInit init event} instead
+	 * @deprecated since 1.13.2 Register with the more convenient {@link #attachInit} function instead
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
 		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
@@ -1161,12 +1191,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attaches a given function to the <code>initEvent</code> event of the core.
+	 * Registers a given function that is executed after the framework has been initialized.
 	 *
-	 * The given callback function will either be called once the Core has been initialized
+	 * The given function will either be called as soon as the framework has been initialized
 	 * or, if it has been initialized already, it will be called immediately.
 	 *
-	 * @param {function} fnFunction the callback function to be called on event firing.
+	 * @param {function} fnFunction Function to be after initialization of the framework
 	 * @public
 	 * @since 1.13.2
 	 */

@@ -87,22 +87,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Sets the favorite state to true or false. The showMarkers property must be true for this property to take effect.
+			 * Sets the favorite state for the ObjectHeader. The showMarkers property must be true for this property to take effect.<br><br>
+			 * <b>Note:</b> As this property is deprecated, we recommend you use the <code>markers</code> aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Favorite</code>.
+			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.<br><br>
 			 * @since 1.16.0
+			 * @deprecated Since version 1.42.0.
 			 */
-			markFavorite : {type : "boolean", group : "Misc", defaultValue : false},
+			markFavorite : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
 			/**
-			 * Sets the flagged state to true or false. The showMarkers property must be true for this property to take effect.
+			 * Sets the flagged state for the ObjectHeader. The showMarkers property must be true for this property to take effect.<br><br>
+			 * <b>Note:</b> As this property is deprecated, we recommend you use the <code>markers</code> aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Flagged</code>.
+			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.<br><br>
 			 * @since 1.16.0
+			 * @deprecated Since version 1.42.0.
 			 */
-			markFlagged : {type : "boolean", group : "Misc", defaultValue : false},
+			markFlagged : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
 			/**
-			 * Indicates if object header supports showing markers such as flagged and favorite.
+			 * If set to true, the ObjectHeader can be marked with icons such as favorite and flag.<br><br>
+			 * <b>Note:</b> This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
+			 * If you are using the <code>markers</code> aggregation, the visibility of the markers depends on what is set in the aggregation itself.<br><br>
 			 * @since 1.16.0
+			 * @deprecated Since version 1.42.0.
 			 */
-			showMarkers : {type : "boolean", group : "Misc", defaultValue : false},
+			showMarkers : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
 			/**
 			 * When set to true, the selector arrow icon/image is shown and can be pressed.
@@ -272,14 +281,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false},
 
 			/**
-			 * Manages the Favorite marker.
+			 * List of markers (icon and/or text) that can be displayed for the <code>ObjectHeader</code>, such as favorite and flagged.<br><br>
+			 * <b>Note:</b> You should use either this aggregation or the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>. Using both can lead to unexpected results.
 			 */
-			_markerFavorite : {type : "sap.m.ObjectMarker", multiple : false, visibility : "hidden"},
-
-			/**
-			 * Manages the Flagged marker.
-			 */
-			_markerFlagged : {type : "sap.m.ObjectMarker", multiple : false, visibility : "hidden"}
+			markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"}
 		},
 		associations : {
 
@@ -519,7 +524,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the new text for the tooltip of the select title arrow to the internal aggregation
 	 * @override
 	 * @public
-	 * @param sTooltip the new value
+	 * @param sTooltip the tooltip of the title selector
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
@@ -532,36 +537,108 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the visibility value of the Favorite marker.
 	 * @override
 	 * @public
-	 * @param {boolean} bMarked the new value
+	 * @param {boolean} bMarked visibility of the marker
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFavorite = function (bMarked) {
-		this.setProperty("markFavorite", bMarked, false);
-
-		if (bMarked) {
-			this._getMarkerFavorite();
-		} else {
-			this.destroyAggregation("_markerFavorite");
-		}
-		return this;
+		return this._setOldMarkers(sap.m.ObjectMarkerType.Favorite, bMarked);
 	};
 
 	/**
 	 * Sets the visibility value of the Flagged marker.
 	 * @override
 	 * @public
-	 * @param {boolean} bMarked the new value
+	 * @param {boolean} bMarked visibility of the marker
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFlagged = function (bMarked) {
-		this.setProperty("markFlagged", bMarked, false);
+		return this._setOldMarkers(sap.m.ObjectMarkerType.Flagged, bMarked);
+	};
 
-		if (bMarked) {
-			this._getMarkerFlagged();
-		} else {
-			this.destroyAggregation("_markerFlagged");
+	/**
+	 * Sets the visibility value of the Flagged and Favorite markers.
+	 * @override
+	 * @public
+	 * @param {boolean} bMarked visibility of all markers
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 */
+	ObjectHeader.prototype.setShowMarkers = function (bMarked) {
+		var sMarkerType,
+			aAllMarkers = this.getMarkers(),
+			i;
+
+		this.setProperty("showMarkers", bMarked, false);
+
+		for (i = 0; i < aAllMarkers.length; i++) {
+			sMarkerType = aAllMarkers[i].getType();
+
+			if ((sMarkerType === sap.m.ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
+				(sMarkerType === sap.m.ObjectMarkerType.Favorite && this.getMarkFavorite())) {
+					aAllMarkers[i].setVisible(bMarked);
+			}
 		}
+
 		return this;
+	};
+
+	/**
+	 * @private
+	 * @param {string} markerType the type of the marker which should be created to updated
+	 * @param {boolean} bMarked visibility of the marker
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 */
+	ObjectHeader.prototype._setOldMarkers = function (markerType, bMarked) {
+		var aAllMarkers = this.getMarkers(),
+			bHasMarker = false,
+			i,
+			oIds = {
+				Flagged : "-flag",
+				Favorite : "-favorite"
+			};
+
+		this.setProperty("mark" + markerType, bMarked, false);
+
+		if (!this.getShowMarkers()) {
+			bMarked = false;
+		}
+
+		for (i = 0; i < aAllMarkers.length; i++) {
+			if (aAllMarkers[i].getType() === markerType) {
+				bHasMarker = true;
+				aAllMarkers[i].setVisible(bMarked);
+
+				break;
+			}
+		}
+
+		if (!bHasMarker) {
+			this.insertAggregation("markers", new sap.m.ObjectMarker({
+				id: this.getId() + oIds[markerType],
+				type: markerType,
+				visible: bMarked
+			}));
+		}
+
+		return this;
+	};
+
+	/**
+	 * @private
+	 * @returns {Array}
+	 */
+	ObjectHeader.prototype._getVisibleMarkers = function() {
+
+		var aAllMarkers = this.getMarkers(),
+			aVisibleMarkers = [],
+			i;
+
+		for (i = 0; i < aAllMarkers.length; i++) {
+			if (aAllMarkers[i].getVisible()) {
+				aVisibleMarkers.push(aAllMarkers[i]);
+			}
+		}
+
+		return aVisibleMarkers;
 	};
 
 	/**
@@ -578,42 +655,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 
 			this.setAggregation("_objectNumber", oControl, true);
-		}
-		return oControl;
-	};
-
-	/**
-	 * Lazily initializes the <code>ObjectMarker</code> favorite aggregation.
-	 * @private
-	 * @returns {sap.m.ObjectMarker} The newly created control
-	 */
-	ObjectHeader.prototype._getMarkerFavorite = function () {
-		var oControl = this.getAggregation("_markerFavorite");
-
-		if (!oControl) {
-			oControl = new sap.m.ObjectMarker(this.getId() + "-favorite", {
-				type: sap.m.ObjectMarkerType.Favorite
-			});
-
-			this.setAggregation("_markerFavorite", oControl, true);
-		}
-		return oControl;
-	};
-
-	/**
-	 * Lazily initializes the <code>ObjectMarker</code> favorite aggregation.
-	 * @private
-	 * @returns {sap.m.ObjectMarker} The newly created control
-	 */
-	ObjectHeader.prototype._getMarkerFlagged = function () {
-		var oControl = this.getAggregation("_markerFlagged");
-
-		if (!oControl) {
-			oControl = new sap.m.ObjectMarker(this.getId() + "-flag", {
-				type: sap.m.ObjectMarkerType.Flagged
-			});
-
-			this.setAggregation("_markerFlagged", oControl, true);
 		}
 		return oControl;
 	};
@@ -764,7 +805,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.onsapenter = ObjectHeader.prototype._handleSpaceOrEnter;
 
 	/**
-	 * Handle link behaviour of the link and title when are active
+	 * Handle link behavior of the link and title when are active
 	 *
 	 * @private
 	 */

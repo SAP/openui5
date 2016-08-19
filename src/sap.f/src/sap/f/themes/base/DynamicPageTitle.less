@@ -1,0 +1,115 @@
+.sapFDynamicPageTitle {
+	z-index: 2;
+	min-height: 3rem;
+	position: relative;
+	padding: 0 2rem 0 3rem;
+	display: flex;
+	display: -webkit-flex;
+	align-items: center;
+	-webkit-align-items: center;
+
+	flex-direction: row;
+	-webkit-flex-direction: row;
+	box-sizing: border-box;
+}
+
+.sapFDynamicPageTitleRightActions .sapFDynamicPageTitleOverflowToolbar {
+	justify-content: flex-end;
+}
+
+.sapFDynamicPageTitle:hover {
+	cursor: pointer;
+}
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+	.sapFDynamicPageHeader {
+		border-bottom: none;
+	}
+}
+
+/* Title Left and Right Areas*/
+.sapFDynamicPageTitle > .sapFDynamicPageTitleLeft {
+	width: 60%;
+}
+
+.sapFDynamicPageTitle > .sapFDynamicPageTitleRight {
+	width: 40%;
+}
+
+.sapFDynamicPageTitle > .sapFDynamicPageTitleLeft {
+	.sapFDynamicPageTitleLeftInner {
+		.sapFDynamicPageTitleLeftHeading,
+		.sapFDynamicPageTitleLeftSnappedExpandContent {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			box-sizing: border-box;
+			vertical-align: middle;
+		}
+
+		.sapFDynamicPageTitleLeftHeading {
+			flex-shrink: 1;
+			-webkit-flex-shrink: 1;
+			padding-right: 1rem;
+		}
+
+		.sapFDynamicPageTitleLeftSnappedExpandContent {
+			flex: 1 1 10rem;
+			-webkit-flex: 1 1 10rem;
+			padding-right: 1rem;
+			font-size: 0.875rem;
+		}
+
+		.sapFDynamicPageTitleLeftSnappedExpandContent.sapFDynamicPageSnapContentVisible,
+		.sapFDynamicPageTitleLeftSnappedExpandContent.sapFDynamicPageExpandContentVisible {
+			min-width: 8rem;
+		}
+
+		display: flex;
+		display: -webkit-flex;
+
+		align-items: center;
+		-webkit-align-items: center;
+
+		flex-direction: row;
+		-webkit-flex-direction: row;
+
+		flex-wrap: wrap;
+		-webkit-flex-wrap: wrap; /* Safari */
+	}
+
+	.sapMTitle, .sapMLabel {
+		vertical-align: middle;
+	}
+	.sapMTitle {
+		font-size: 1.375rem;
+	}
+}
+
+.sapFDynamicPageTitle > .sapFDynamicPageTitleRight .sapMTB {
+	border: none;
+}
+
+/* Tablet Size */
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageTitle {
+		padding-left: 2rem;
+		padding-right: 1rem;
+	}
+}
+
+/* Phone Size */
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageTitle {
+		padding-left: 1rem;
+		padding-right: 0;
+	}
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageTitle {
+		padding-left: 3rem;
+		padding-right: 2rem;
+	}
+}

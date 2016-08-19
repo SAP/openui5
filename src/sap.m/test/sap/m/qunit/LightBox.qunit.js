@@ -7,7 +7,7 @@
     jQuery.sap.require('sap.ui.thirdparty.sinon');
     jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
     sinon.config.useFakeTimers = true;
-
+    jQuery.sap.require("sap.ui.qunit.qunit-coverage");
     //================================================================================
     // LightBox Base API
     //================================================================================
@@ -182,4 +182,37 @@
         this.clock.tick(1000);
     });
 
+    //================================================================================
+    // LightBox private methods
+    //================================================================================
+
+    QUnit.module('private methods', {
+        setup: function() {
+            this.LightBox = new sap.m.LightBox({
+                imageContent : [
+                    new sap.m.LightBoxItem()
+                ]
+            });
+        },
+        teardown: function() {
+            this.LightBox.destroy();
+        }
+    });
+
+    QUnit.test('pixel to numbers method', function(assert) {
+        var expectedResult = 1234567;
+        var actualResult = this.LightBox._pxToNumber('123456789');
+        // assert
+        assert.strictEqual(actualResult, expectedResult, 'The result should be 1234567');
+    });
+
+
+    QUnit.test('Setting image state', function(assert) {
+        var oImageContent = this.LightBox.getImageContent()[0];
+        oImageContent._setImageState('ERROR');
+        var actualResult = oImageContent._getImageState();
+        var expectedResult = 'ERROR';
+        // assert
+        assert.strictEqual(actualResult, expectedResult, 'The result should be "ERROR"');
+    });
 })();

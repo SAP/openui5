@@ -112,6 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("width", sWidth);
 			oRm.writeStyles();
 		}
+		renderTabIndex(oButton, oRm);
 
 		// close button tag
 		oRm.write(">");
@@ -168,6 +169,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		// add all classes to inner button tag
 		oRm.writeClasses();
+
+		//apply on the inner level as well as not applying it will allow for focusing the button after a mouse click
+		renderTabIndex(oButton, oRm);
 
 		// close inner button tag
 		oRm.write(">");
@@ -236,6 +240,17 @@ sap.ui.define(['jquery.sap.global'],
 	ButtonRenderer.writeInternalIconPoolHtml = function(oRm, oButton, sURI) {
 		oRm.renderControl(oButton._getInternalIconBtn((oButton.getId() + "-iconBtn"), sURI));
 	};
+
+	/**
+	 * Renders tabindex with value of "-1" if required by  <code>_bExcludeFromTabChain</code> property.
+	 * @param oButton
+	 * @param oRm
+	 */
+	function renderTabIndex(oButton, oRm){
+		if (oButton._bExcludeFromTabChain) {
+			oRm.writeAttribute("tabindex", -1);
+		}
+	}
 
 	return ButtonRenderer;
 

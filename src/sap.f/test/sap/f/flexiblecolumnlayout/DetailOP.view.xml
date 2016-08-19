@@ -1,0 +1,234 @@
+<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexibleColumnLayout.Detail"
+      height="100%">
+
+    <ObjectPageLayout id="ObjectPageLayout"
+                      showTitleInHeaderContent="true">
+        <headerTitle>
+            <ObjectPageHeader id="headerForTest"
+                              headerDesign="Light"
+                              objectTitle="Denise Smith"
+                              showTitleSelector="true"
+                              showMarkers="true"
+                              markFavorite="true"
+                              markFlagged="true"
+                              markChanges="true"
+                              markChangesPress="handleMarkChangesPress"
+                              objectSubtitle="Senior Developer"
+                              objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+                              objectImageShape="Circle"
+                              isObjectIconAlwaysVisible="false"
+                              isObjectTitleAlwaysVisible="false"
+                              isObjectSubtitleAlwaysVisible="false"
+                              isActionAreaAlwaysVisible="true"
+                              showPlaceholder="true">
+                <actions>
+                    <ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit" press="handlePress"/>
+                    <ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
+                </actions>
+            </ObjectPageHeader>
+        </headerTitle>
+        <headerContent>
+            <layout:VerticalLayout>
+                <m:Link text="denise-smith"/>
+                <m:Button text="To detail detail" press="handleDetailPress" />
+                <m:Link text="DeniseSmith@sap.com"/>
+                <layout:HorizontalLayout>
+                </layout:HorizontalLayout>
+            </layout:VerticalLayout>
+            <m:Text width="200px"
+                    text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+            <layout:VerticalLayout>
+                <m:Label text="Profile completion"/>
+                <m:ProgressIndicator
+                        percentValue="30"
+                        displayValue="30%"
+                        showValue="true"
+                        state="None"/>
+            </layout:VerticalLayout>
+        </headerContent>
+        <sections>
+            <ObjectPageSection title="2014 Goals Plan">
+                <subSections>
+                    <ObjectPageSubSection title=" ">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Personal">
+                <subSections>
+                    <ObjectPageSubSection title="Connect">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+
+                    <ObjectPageSubSection id="paymentSubSection" title="Payment information">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                        <moreBlocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </moreBlocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            <ObjectPageSection title="Fafa fafa fafa fafa">
+                <subSections>
+                    <ObjectPageSubSection title="Garga">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                    <ObjectPageSubSection title="Garga2">
+                        <blocks>
+                            <m:Button text="To detail detail" press="handleDetailPress" />
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+        </sections>
+    </ObjectPageLayout>
+</m:View>

@@ -557,16 +557,32 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * @private
 		 */
 		NavigationListItem.prototype._renderIcon =  function(rm) {
-			var icon = this.getIcon();
-			var iconInfo = IconPool.getIconInfo(icon);
-			var classes = ["sapUiIcon", "sapTntNavLIGroupIcon"];
-
-			if (iconInfo && !iconInfo.suppressMirroring) {
-				classes.push("sapUiIconMirrorInRTL");
-			}
+			var icon = this.getIcon(),
+				iconInfo = IconPool.getIconInfo(icon);
 
 			if (icon) {
-				rm.writeIcon(this.getIcon(), classes, { "aria-hidden" : true});
+				// Manually rendering the icon instead of using RenderManager's writeIcon. In this way title
+				// attribute is not rendered and the tooltip of the icon does not override item's tooltip
+				rm.write('<span');
+
+				rm.addClass("sapUiIcon");
+				rm.addClass("sapTntNavLIGroupIcon");
+
+				rm.writeAttribute("aria-hidden", true);
+
+				if (iconInfo && !iconInfo.suppressMirroring) {
+					rm.addClass("sapUiIconMirrorInRTL");
+				}
+
+				if (iconInfo) {
+					rm.writeAttribute("data-sap-ui-icon-content", iconInfo.content);
+					rm.addStyle("font-family", "'" + iconInfo.fontFamily + "'");
+				}
+
+				rm.writeClasses();
+				rm.writeStyles();
+
+				rm.write("></span>");
 			} else {
 				rm.write('<span class="sapUiIcon sapTntNavLIGroupIcon" aria-hidden="true"></span>');
 			}

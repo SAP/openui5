@@ -71,7 +71,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @deprecated Since version 1.18.7.
 			 * Since 1.18.7 pages are no longer loaded or unloaded. Therefore busy indicator is not necessary any longer.
 			 */
-			busyIndicatorSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '6em', deprecated: true}
+			busyIndicatorSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '6em', deprecated: true},
+
+			/**
+			 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Content</code> used to
+			 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
+			 * be used to place the arrows on the sides of the page indicator.
+			 */
+			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : sap.m.CarouselArrowsPlacement.Content}
 		},
 		defaultAggregation : "pages",
 		aggregations : {
@@ -145,6 +152,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//Constants convenient class selections
 	Carousel._INNER_SELECTOR = ".sapMCrslInner";
 	Carousel._PAGE_INDICATOR_SELECTOR = ".sapMCrslBulleted";
+	Carousel._PAGE_INDICATOR_ARROWS_SELECTOR = ".sapMCrslIndicatorArrow";
+	Carousel._CONTROLS = ".sapMCrslControls";
 	Carousel._HUD_SELECTOR = ".sapMCrslHud";
 	Carousel._ITEM_SELECTOR = ".sapMCrslItem";
 	Carousel._LEFTMOST_CLASS = "sapMCrslLeftmost";
@@ -499,62 +508,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * API method to place the page indicator.
-	 *
-	 * @param {sap.m.PlacementType} sPlacement either sap.m.PlacementType.Top or sap.m.PlacementType.Bottom
-	 * @public
-	 * @override
-	 */
-	Carousel.prototype.setPageIndicatorPlacement = function(sPlacement) {
-		if (sap.m.PlacementType.Top != sPlacement &&
-				sap.m.PlacementType.Bottom != sPlacement) {
-			jQuery.sap.assert(false, "sap.m.Carousel.prototype.setPageIndicatorPlacement: invalid value '" +
-					sPlacement + "'. Valid values: sap.m.PlacementType.Top, sap.m.PlacementType.Bottom." +
-							"\nUsing default value sap.m.PlacementType.Bottom");
-			sPlacement = sap.m.PlacementType.Bottom;
-		}
-
-		//do suppress rerendering
-		this.setProperty("pageIndicatorPlacement", sPlacement, true);
-
-		var $PageIndicator = this.$().find(Carousel._PAGE_INDICATOR_SELECTOR);
-
-		//set placement regardless of whether indicator is visible: it may become
-		//visible later on and then it should be at the right place
-		if (sap.m.PlacementType.Top === sPlacement) {
-			this.$().prepend($PageIndicator);
-			$PageIndicator.removeClass('sapMCrslBottomOffset').addClass('sapMCrslTopOffset');
-			this.$().find(Carousel._ITEM_SELECTOR).removeClass('sapMCrslBottomOffset').addClass('sapMCrslTopOffset');
-		} else {
-			this.$().append($PageIndicator);
-			$PageIndicator.addClass('sapMCrslBottomOffset').removeClass('sapMCrslTopOffset');
-			this.$().find(Carousel._ITEM_SELECTOR).addClass('sapMCrslBottomOffset').removeClass('sapMCrslTopOffset');
-		}
-		return this;
-	};
-
-
-	/*
-	 * API method to set whether the carousel should display the page indicator
-	 *
-	 * @param {boolean} bShowPageIndicator the new show property
-	 * @public
-	 * @override
-	 */
-	Carousel.prototype.setShowPageIndicator = function(bShowPageIndicator) {
-
-		var $PageInd = this.$().find(Carousel._PAGE_INDICATOR_SELECTOR);
-
-		bShowPageIndicator ? $PageInd.show() : $PageInd.hide();
-
-		//do suppress rerendering
-		this.setProperty("showPageIndicator", bShowPageIndicator, true);
-		return this;
-	};
-
-
-
-	/*
 	 * API method to set whether the carousel should loop, i.e
 	 * show the first page after the last page is reached and vice
 	 * versa.
@@ -809,13 +762,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Move focus to the next item. If focus is on the last item, do nothing.
+	 * Move focus to the previous item. If focus is on the first item, do nothing.
 	 *
 	 * @param {Object} oEvent - key event
 	 * @private
 	 */
 	Carousel.prototype.onsapup = function(oEvent) {
-		this._fnSkipToIndex(oEvent, 1);
+		this._fnSkipToIndex(oEvent, -1);
 	};
 
 	/**
@@ -829,13 +782,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Move focus to the previous item. If focus is on the first item, do nothing.
+	 *
+	 * Move focus to the next item. If focus is on the last item, do nothing.
 	 *
 	 * @param {Object} oEvent - key event
 	 * @private
 	 */
 	Carousel.prototype.onsapdown = function(oEvent) {
-		this._fnSkipToIndex(oEvent, -1);
+		this._fnSkipToIndex(oEvent, 1);
 	};
 
 	/**
@@ -1019,10 +973,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (nIndex !== 0) {
 			nNewIndex = this._getPageNumber(this.getActivePage()) + 1 + nIndex;
 		}
-
-		// Set the index in the interval between 1 and the total page count in the Carousel
-		nNewIndex = Math.max(nNewIndex, 1);
-		nNewIndex = Math.min(nNewIndex, this.getPages().length);
 
 		this._oMobifyCarousel.move(nNewIndex);
 	};

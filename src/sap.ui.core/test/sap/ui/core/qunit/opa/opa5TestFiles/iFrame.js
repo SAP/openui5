@@ -319,6 +319,133 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("IFrame navigation - with window.location", {
+			beforeEach: function () {
+				this.oOpa5 = new Opa5();
+				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+
+				this.oOpa5.waitFor({
+					success: function () {
+						this.oHashChanger = Opa5.getHashChanger();
+						this.oHashChanger.init();
+					}.bind(this)
+				});
+			}
+		});
+
+		function windowLocationTest (fnTestBody, assert) {
+			var fnOpaDone = assert.async(),
+				bHashChangeDone = false;
+
+			// Act
+			this.oOpa5.waitFor({
+				success: function () {
+					fnTestBody.call(this, function () {
+						bHashChangeDone = true;
+					});
+				}.bind(this)
+			});
+
+			this.oOpa5.waitFor({
+				check: function () {
+					return bHashChangeDone;
+				}
+			});
+
+			this.oOpa5.iTeardownMyAppFrame();
+
+			Opa5.emptyQueue().done(fnOpaDone);
+		}
+
+		QUnit.test("Should react to hashChanges with no initial hash", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges with a set hash call", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges with a replace hash call", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.replaceHash("foo");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges by window.location.hash = ''", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+				this.oHashChanger.replaceHash("baz");
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
+
+		QUnit.test("Should react to hashChanges by window.location.hash = '' combined with back and forward", function(assert) {
+			windowLocationTest.call(this, function (fnHashChanged) {
+				// Act + Assert
+				this.oHashChanger.setHash("foo");
+				this.oHashChanger.replaceHash("baz");
+				this.oHashChanger.setHash("biz");
+				Opa5.getWindow().history.go(-1);
+				Opa5.getWindow().history.go(1);
+
+				this.oHashChanger.attachEventOnce("hashChanged", function () {
+					setTimeout(function () {
+						assert.strictEqual(this.oHashChanger.getHash(), "bar", "window.location.hash changed the hash");
+						Opa5.getWindow().history.go(-1);
+						assert.strictEqual(this.oHashChanger.getHash(), "biz", "window.location.hash changed the hash");
+						fnHashChanged();
+					}.bind(this),100)
+				}.bind(this));
+
+				// trigger a hashchange without notifying hasher
+				Opa5.getWindow().location.hash = "bar";
+			}, assert);
+		});
 
 		QUnit.module("ControlType", {
 			beforeEach: function () {
@@ -376,8 +503,7 @@ sap.ui.define([
 		QUnit.test("Should not call success if a regex does not find controls", function (assert) {
 			var fnSuccessSpy = sinon.spy(),
 				fnErrorSpy = sinon.spy(),
-				fnDoneTesting = assert.async(),
-				fnIFrameTeardown = assert.async();
+				fnDone = assert.async();
 
 			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
 
@@ -391,25 +517,24 @@ sap.ui.define([
 			Opa5.emptyQueue().always(function () {
 				sinon.assert.notCalled(fnSuccessSpy);
 				sinon.assert.calledOnce(fnErrorSpy);
-				fnDoneTesting();
-			});
 
-			this.oOpa5.iTeardownMyAppFrame();
-
-			 Opa5.emptyQueue().always(fnIFrameTeardown);
+				this.oOpa5.iTeardownMyAppFrame();
+				Opa5.emptyQueue().always(fnDone);
+			}.bind(this));
 		});
 
 		// In this module a site full of errors is launched and the error messages are checked
 		QUnit.module("Tests with errors");
 
-		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			function createMatcherForTestMessage (oOptions) {
-				return function () {
-					var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
-					return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
-				}
+		function createMatcherForTestMessage (oOptions) {
+			return function () {
+				var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
+				return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
 			}
+		}
 
+
+		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
 			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
 
 			oOpa.waitFor({
@@ -552,6 +677,24 @@ sap.ui.define([
 				}),
 				success: function ($Messages) {
 					assertException($Messages, "success");
+				}
+			});
+
+			oOpa.iTeardownMyApp();
+		});
+
+		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
+			oOpa.iStartMyAppInAFrame("../testdata/failingIFrameOpaTest.html");
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 1,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
 				}
 			});
 

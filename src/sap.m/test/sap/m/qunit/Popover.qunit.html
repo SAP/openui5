@@ -826,13 +826,13 @@
 			this.clock.tick(500);
 
 			var $Content = jQuery.sap.byId(sId + "-cont");
-			$Content.scrollTop(iScrollTop).scrollLeft(iScrollLeft);
+			oPopover._oScroller.scrollTo(iScrollLeft, iScrollTop, 1);
 
 			//trigger content resize listener
 			oPopover._onOrientationChange();
 
-			equal($Content.scrollTop(), iScrollTop, "Popover should keep vertical scroll position");
-			equal($Content.scrollLeft(), iScrollLeft, "Popover should keep horizontal scroll position");
+			equal(oPopover._oScroller.getScrollTop(), iScrollTop, "Popover should keep vertical scroll position");
+			equal(oPopover._oScroller.getScrollLeft(), iScrollLeft, "Popover should keep horizontal scroll position");
 			oPopover.destroy();
 		});
 
@@ -1165,11 +1165,11 @@
 
 				this.clock.tick(500);
 				ok(oPopover.isOpen(), "Popover is open");
-				oPopover.$("cont").scrollTop(20).scrollLeft(30);
+				oPopover._oScroller.scrollTo(30, 20, 1);
 
 				oPopover._onOrientationChange();
-				equal(oPopover.$("cont").scrollTop(), 20, "scrollTop is restored");
-				equal(oPopover.$("cont").scrollLeft(), 30, "scrollLeft is restored");
+				equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
+				equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
 
 				oPopover.destroy();
 				oButton.destroy();

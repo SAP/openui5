@@ -827,15 +827,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	SelectDialog.prototype._setBusy = function (bBusy) {
 		if (this._iListUpdateRequested) { // check if the event was caused by our control
 			if (bBusy) {
-				if (this._bFirstRequest) { // also disable the search field for the first request
-					this._oSearchField.setEnabled(false);
-				}
 				this._oList.addStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'inline-block');
 			} else {
-				if (this._bFirstRequest) { // also enable the search field again for the first request
-					this._oSearchField.setEnabled(true);
-				}
 				this._oList.removeStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'none');
 			}

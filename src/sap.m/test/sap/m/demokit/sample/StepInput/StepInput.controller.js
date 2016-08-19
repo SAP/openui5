@@ -14,7 +14,7 @@ sap.ui.define([
 				{ label: "Step = 5, no value, no min, no max, width = 120px, largerStep = 3", step:5, width:"120px", largerStep:3 },
 				{ label: "Step = 1.1, no value, min = -6, max = 23.5, width = 120px", step: 1.1, min:-6, max:23.5, width:"120px" },
 				{ label: "Disabled, value = 12.3, width = 120px", value: 12.3, enabled:false, width:"120px"},
-				{ label: "Display only, value = 123, default width of 100%", editable:false, value:123}
+				{ label: "Read only, value = 123, default width of 100%", editable:false, value:123}
 			];
 
 			var oModel = new sap.ui.model.json.JSONModel({

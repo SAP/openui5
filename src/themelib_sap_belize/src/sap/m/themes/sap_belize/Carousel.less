@@ -32,7 +32,6 @@
 	background-color: @sapUiContentNonInteractiveIconColor;
 }
 
-
 /* Carousel controls: HUD */
 .sapMCrslHud {
 	padding-top: 0;
@@ -49,7 +48,6 @@
 	margin: -1.5625px 0 0 0;
 	padding: 0;
 	text-decoration: none;
-	overflow: hidden;
 	background-color: @sapUiContentContrastIconColor;
 	border-radius: 50%;
 	color: @sapUiContentContrastIconColor;
@@ -84,24 +82,6 @@
 	display: none;
 }
 
-.sapMCrslHud .sapMCrslHudInner {
-	border-radius: 50%;
-	margin:0.25rem;
-	background-color: @sapUiHighlight;
-	color: @sapUiContentContrastIconColor;
-	font-family: "SAP-icons";
-	font-size: 1.375rem;
-	font-weight: bold;
-	text-indent: 0;
-	text-align: center;
-	display: table;
-	z-index: 9;
-	width: 2.5rem;
-	height: 2.5rem;
-}
-
-
-
 .sapMCrslHud .sapMCrslPrev {
 	left: 0.625rem;
 }
@@ -110,29 +90,61 @@
 	right: 0.625rem;
 }
 
-.sapMCrslHud .sapMCrslPrev:focus,
-.sapMCrslHud .sapMCrslNext:focus {
-  outline: 1px dotted @sapUiContentFocusColor;
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+  outline: none;
 }
 
-html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslNext > .sapMCrslHudInner > .sapUiIcon {
-	left: auto;
-	right: 0;
-	text-indent: 0.0625rem;
+html.sap-desktop .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslNext:focus {
+  	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px solid @sapUiInvertedFocus;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		border: 1px dotted @sapUiFocus;
+	}
 }
 
-html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon {
-	right: auto;
-	left: 0;
-	text-indent: -0.0625rem;
-}
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev .sapUiIcon:focus,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
+  	&::before {
+		position: absolute;
+		padding-top: 0.625rem;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: 1px solid @sapUiInvertedFocus;
+	}
 
-.sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
-	cursor: inherit !important;
+  	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: 1px dotted @sapUiFocus;
+	}
 }
 
 /* extra bits */
@@ -145,7 +157,6 @@ html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 	text-align: center;
 }
 
-
 /* Default Themes/Sytles for Slider */
 .sapMCrslFluid .sapMCrslItem {
 	margin-right: 1.25rem;
@@ -154,6 +165,12 @@ html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 	overflow: hidden;
 }
 
-.sapMCrslItem.sapMCrslBottomOffset {
-	padding-bottom: 1.6875rem;
+.sapMCrslControls,
+.sapMCrslHud {
+	.sapMCrslPrev,
+	.sapMCrslNext {
+		border-color: 1px solid @sapUiButtonBorderColor;
+		background-color: @sapUiButtonBackground;
+		color: @sapUiButtonTextColor;
+	}
 }

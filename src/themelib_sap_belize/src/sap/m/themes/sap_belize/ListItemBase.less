@@ -9,13 +9,9 @@
 	padding: 0 1rem 0 1rem;
 }
 
-.sapMLIBFocusable:focus {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.0625rem;
-}
-
-.sapMLIBLegacyOutline:focus {
-  	outline: none;
+.sapMLIBFocusable:not(.sapMLIBNativeOutline):focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
@@ -183,7 +179,7 @@ html.sap-desktop .sapMLIBIconDel:focus {
 }
 
 .sapMListBGTranslucent .sapMLIB {
-	background: fade(@sapUiListBackground, @sapUiTranslucentBGOpacity);
+	background: @sapUiListBackground;
 }
 
 .sapMListBGSolid .sapMLIB{

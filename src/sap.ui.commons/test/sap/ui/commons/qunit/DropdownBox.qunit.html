@@ -115,6 +115,7 @@
 			equal(oDropdown2.getValue(), "red", "Default value (if no value set) should be the first item.");
 			equal(jQuery.sap.domById(sDropdownId+"2-input").value, "red", "Default value (if no value set) should be the first item in the HTML.");
 
+			equal(jQuery("#" + sDropdownId + " > input").attr("aria-describedby"), sDropdownId + "-SecVal", "aria-describesby");
 		});
 
 		test("Setter / Getter", function(){

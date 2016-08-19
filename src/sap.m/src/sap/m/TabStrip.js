@@ -381,10 +381,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 
 				if (iScrollLeft > 0) {
-					bScrollBack = true;
+					if (this._bRtl && Device.browser.webkit) {
+						bScrollForward = true;
+					} else {
+						bScrollBack = true;
+					}
 				}
 				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
-					bScrollForward = true;
+					if (this._bRtl && Device.browser.webkit) {
+						bScrollBack = true;
+					} else {
+						bScrollForward = true;
+					}
 				}
 
 				this.$().toggleClass("sapMTSScrollBack", bScrollBack)
@@ -459,17 +467,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
 			var iScrollLeft = this.getDomRef("tabsContainer").scrollLeft,
+				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge,
 				iScrollTarget;
 
-			if (this._bRtl && Device.browser.firefox) {
+			if (this._bRtl && !bIE_Edge) {
 				iScrollTarget = iScrollLeft - iDelta;
 
-				// Avoid out ofRange situation
-				if (iScrollTarget < -this._iMaxOffsetLeft) {
-					iScrollTarget = -this._iMaxOffsetLeft;
-				}
-				if (iScrollTarget > 0) {
-					iScrollTarget = 0;
+				if (Device.browser.firefox) {
+					// Avoid out ofRange situation
+					if (iScrollTarget < -this._iMaxOffsetLeft) {
+						iScrollTarget = -this._iMaxOffsetLeft;
+					}
+					if (iScrollTarget > 0) {
+						iScrollTarget = 0;
+					}
 				}
 			} else {
 				iScrollTarget = iScrollLeft + iDelta;

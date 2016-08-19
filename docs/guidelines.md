@@ -156,6 +156,11 @@ Also see the [list of common JSDoc pitfalls](guidelines/jsdocpitfalls.md).
 UI5 Control Development Guidelines
 ----------------------------------
 
+### General
+
+-   Keep things simple! Keep the number of entities created for a new control minimal
+-   Re-use is good, but not when it comes with a significant performance penalty. E.g. when a control needs a clickable area, implementing `onclick` and checking where the click came from is easy, comes with zero runtime weight and is hence usually better than instantiating and aggregating a Button control and using not much else than its "press" event. It is always a question how much functionality of the other control is actually needed.
+
 ### API
 
 -   Get the API right the first time, you will not be able to change it later (compatibility)
@@ -173,6 +178,7 @@ UI5 Control Development Guidelines
     -   When there is one most important aggregation, it should be marked as default aggregation (easier usage in XMLViews)
 -   Properties, associations and aggregations should be preferred to API methods due to data binding support and easier usage in XMLViews
 -   Make sure not to break usage in XMLViews; e.g. types like sap.ui.core/object and sap.ui.core/any may not be used for mandatory properties
+-   Be careful about initial dependencies. E.g. the Input control should not always load the table library just because some Inputs may show a value help table after certain user interaction
 
 ### Behavior
 

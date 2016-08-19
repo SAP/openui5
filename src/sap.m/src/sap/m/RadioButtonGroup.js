@@ -18,7 +18,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The RadioButtonGroup lets you do things like attach a single event handler on a group of buttons, rather than on each individual button.
 			 * The grouped radio buttons can be arranged within different number of columns.
 			 * Based on the number of specified columns and the number of radio buttons used, different layout types can be achieved - as a 'matrix',
-			 * horizontally or vertically aligned radio buttons.
+			 * horizontally or vertically aligned radio buttons.<br/>
+			 * <b>Note:</b> Design guidelines recommend application developers create radio button groups with only one row or only one column.
 
 			 * @extends sap.ui.core.Control
 			 *

@@ -70,7 +70,8 @@ sap.ui.define([
 				 * The most recently selected Subsection by the user.
 				 */
 				selectedSubSection: {type: "sap.uxap.ObjectPageSubSection", multiple: false}
-			}
+			},
+			designTime: true
 		}
 	});
 

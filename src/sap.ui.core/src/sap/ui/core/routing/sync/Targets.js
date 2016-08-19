@@ -15,15 +15,17 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		/**
 		 * @private
 		 */
-		display: function(vTargets, vData) {
-			this._display(vTargets, vData);
+		display: function(vTargets, vData, sTitleTarget) {
+			this._display(vTargets, vData, sTitleTarget);
 		},
 
 		/**
 		 * @private
 		 */
-		_display: function(vTargets, vData) {
+		_display: function(vTargets, vData, sTitleTarget) {
 			var that = this;
+
+			this._attachTitleChanged(vTargets, sTitleTarget);
 
 			if (jQuery.isArray(vTargets)) {
 				jQuery.each(vTargets, function(i, sTarget) {

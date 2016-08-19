@@ -711,19 +711,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 		var oAnnotations = AnnotationParser.parse(this._oMetadata, mSource.document);
 
-		if (oAnnotations) {
-			return Promise.resolve({
-				type: mSource.type,
-				data: mSource.data,
-				xml: mSource.xml,
-				document: mSource.document,
-				annotations: oAnnotations
-			});
-		} else {
-			var oError = new Error("Annotations XML document could not be parsed");
-			oError.source = mSource;
-			return Promise.reject(oError);
-		}
+		return Promise.resolve({
+			type: mSource.type,
+			data: mSource.data,
+			xml: mSource.xml,
+			document: mSource.document,
+			annotations: oAnnotations
+		});
 	};
 
 	/**
@@ -743,18 +737,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 		// added as property to the annotations object and then in the same way inside two special properties
 		// named "propertyAnnotations" and "EntityContainer"
 
-		function mergeAnnotation(sName, mSource, mTarget) {
+		function mergeAnnotation(sName, mAnnotations, mTarget) {
 			// Everythin in here must be on Term level, so we overwrite the target with the data from the source
 
-			if (Array.isArray(mSource[sName])) {
+			if (Array.isArray(mAnnotations[sName])) {
 				// This is a collection - make sure it stays one
-				mTarget[sName] = mSource[sName].slice(0);
+				mTarget[sName] = mAnnotations[sName].slice(0);
 			} else {
 				// Make sure the map exists in the target
 				mTarget[sName] = mTarget[sName] || {};
 
-				for (var sKey in mSource[sName]) {
-					mTarget[sName][sKey] = mSource[sName][sKey];
+				for (var sKey in mAnnotations[sName]) {
+					mTarget[sName][sKey] = mAnnotations[sName][sKey];
 				}
 			}
 		}

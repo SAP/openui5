@@ -616,7 +616,8 @@
 			"sap.m.sample.ObjectHeaderResponsiveII",
 			"sap.m.sample.ObjectHeaderResponsiveIII",
 			"sap.m.sample.ObjectHeaderResponsiveIV",
-			"sap.m.sample.ObjectHeaderResponsiveV"
+			"sap.m.sample.ObjectHeaderResponsiveV",
+			"sap.m.sample.ObjectHeaderMarkers"
 		  ]
 		},
 		{
@@ -1053,6 +1054,7 @@
 			"sap.m.sample.ViewSettingsDialog",
 			"sap.m.sample.ViewSettingsDialogCustom",
 			"sap.m.sample.ViewSettingsDialogCustomTabs",
+			"sap.m.sample.ViewSettingsDialogCustomFilterDetails",
 			"sap.m.sample.TableViewSettingsDialog"
 		  ]
 		},
@@ -1580,7 +1582,7 @@
 		{
 		  "id": "sap.m.sample.ObjectHeaderFavFlag",
 		  "name": "Object Header - Favorite & Flag",
-		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere."
+		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderTitleSel",
@@ -1621,6 +1623,11 @@
 		  "id": "sap.m.sample.ObjectHeaderResponsiveV",
 		  "name": "Object Header Responsive V",
 		  "description": "This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes."
+		},
+		{
+		  "id": "sap.m.sample.ObjectHeaderMarkers",
+		  "name": "Object Header - markers aggregation",
+		  "description": "This sample shows the different states of an Object Header, which can be set using the <code>markers</code>."
 		},
 		{
 		  "id": "sap.m.sample.ObjectIdentifier",
@@ -2218,6 +2225,11 @@
 		  "description": "You can have custom filters in your View Settings Dialog, as shown in this example here."
 		},
 		{
+		  "id": "sap.m.sample.ViewSettingsDialogCustomFilterDetails",
+		  "name": "View Settings Dialog - Custom Search",
+		  "description": "You can filter the items in the filter details page using different string filter operators."
+		},
+		{
 		  "id": "sap.m.sample.ViewSettingsDialogCustomTabs",
 		  "name": "View Settings Dialog - Custom Tabs",
 		  "description": "You can have custom tabs with your own defined content in the View Settings Dialog, as shown in this example."
@@ -2386,6 +2398,26 @@
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
 		  "description": "Shows the universal container for different content types and context information in the footer area."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainer",
+		  "name": "Header Container - Horizontal Mode",
+		  "description": "The Header Container with horizontal layout. It provides horizontal scrolling on mobile devices (tablet and phone). On a desktop, it provides scroll left and scroll right buttons."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerNoDividers",
+		  "name": "Header Container Without Dividers",
+		  "description": "The Header Container without divider lines."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerOH",
+		  "name": "Header Container With Object Header",
+		  "description": "The Header Container combined with sap.m.ObjectHeader."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerVM",
+		  "name": "Header Container - Vertical Mode",
+		  "description": "The Header Container with a vertical layout and with divider lines."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",

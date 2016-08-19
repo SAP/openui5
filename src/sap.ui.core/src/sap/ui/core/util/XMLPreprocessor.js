@@ -525,9 +525,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					sCurrentName = oViewInfo.name, // current view or fragment name
 					mFragmentCache = {},
-					iNestingLevel = 0,
 					sName,
+					iNestingLevel = 0,
 					oScope = {}, // for BindingParser.complexParser()
+					fnSupportInfo = oViewInfo._supportInfo,
 					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
 
 				/**
@@ -623,6 +624,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 								throw new Error("Binding not ready: " + sValue);
 							}
 							return vResult;
+						},
+
+						/**
+						 * Returns the settings object for XML template processing.
+						 *
+						 * @returns {object}
+						 *   settings for the XML preprocessor; might contain the properties
+						 *   "bindingContexts" and "models" and maybe others
+						 *
+						 * @function
+						 * @public
+						 * @since 1.41.0
+						 */
+						getSettings : function () {
+							return mSettings;
+						},
+
+						/**
+						 * Returns the view info object for XML template processing.
+						 *
+						 * @returns {object}
+						 *   info object of the XML preprocessor's calling instance; might contain
+						 *   the string properties "caller", "componentId", "name" and maybe others
+						 *
+						 * @function
+						 * @public
+						 * @since 1.41.0
+						 */
+						getViewInfo : function () {
+							return jQuery.extend(true, {}, oViewInfo);
 						},
 
 						/**
@@ -1397,7 +1428,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					// Note: iterate backwards to account for removal of attributes!
 					for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
+						if (fnSupportInfo) {
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+						}
 						resolveAttributeBinding(oElement, oAttributesList.item(i), oWithControl);
+						if (fnSupportInfo) {
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+						}
 					}
 				}
 
@@ -1436,6 +1473,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					// process only ELEMENT_NODEs
 					if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
 						return;
+					}
+					if (fnSupportInfo) {
+						fnSupportInfo({context:oNode, env:{caller:"visitNode", before: {name: oNode.tagName}}});
 					}
 					if (oNode.namespaceURI === sNAMESPACE) {
 						switch (localName(oNode)) {
@@ -1496,6 +1536,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					visitAttributes(oNode, oWithControl);
 					visitChildNodes(oNode, oWithControl);
+					if (fnSupportInfo) {
+						fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
+					}
 				}
 
 				/*
@@ -1533,6 +1576,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							debug(undefined, sName, "=", mSettings.bindingContexts[sName]);
 						}
 					}
+				}
+				if (fnSupportInfo) {
+					 fnSupportInfo({
+							context: oRootElement,
+							env: {
+								caller:"view",
+								viewinfo: jQuery.extend(true, {}, oViewInfo),
+								settings: jQuery.extend(true, {}, mSettings),
+								clone: oRootElement.cloneNode(true),
+								type: "template"}
+						});
 				}
 				requireFor(oRootElement);
 				visitNode(oRootElement, new With({

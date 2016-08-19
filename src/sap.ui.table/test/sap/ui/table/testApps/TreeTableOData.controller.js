@@ -9,7 +9,7 @@ sap.ui.define([
 		onInit: function () {
 			var oFormData = {
 				serviceURL: "odataFake",
-				collection: "orgHierarchy",
+				collection: "/orgHierarchy",
 				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE,MAGNITUDE",
 				initialLevel: 2,
 				countMode: "Inline",
@@ -59,6 +59,7 @@ sap.ui.define([
 			var sServiceUrl = oViewModel.getProperty("/serviceURL");
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
 
+			// auto expand mock service
 			if (sServiceUrl.indexOf("odataFake") >= 0) {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 				sServiceUrl = "/odataFake/";
@@ -68,6 +69,31 @@ sap.ui.define([
 						rootUri: sServiceUrl
 					});
 					this.oMockServer.simulate("../../core/qunit/model/metadata_orgHierarchy.xml", "../../core/qunit/model/orgHierarchy/");
+					this.oMockServer.start();
+				}
+			}
+			
+			// sequential expand mock service
+			if (sServiceUrl.indexOf("classicFake") >= 0) {
+				jQuery.sap.require("sap.ui.core.util.MockServer");
+				sServiceUrl = "/classicFake/";
+				if (!this.oMockServer) {
+					//Mock server for use with navigation properties
+					this.oMockServer = new sap.ui.core.util.MockServer({
+						rootUri: sServiceUrl
+					});
+					this.oMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
+					
+					/**
+					 * Clean-Up Hierarchy Annotation Mockdata/Metadata
+					 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
+					 */
+					var aAnnotationsMockdata = this.oMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+					for (var i = 0; i < aAnnotationsMockdata.length; i++) {
+						//convert string based level properties (NUMC fields) to real numbers
+						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+					}
+					
 					this.oMockServer.start();
 				}
 			}
@@ -85,10 +111,10 @@ sap.ui.define([
 			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
 
 			// the root level of the tree
-			var iRootLevel = parseInt(oView.byId("rootLevel").getValue(), 10);
+			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"), 10);
 
 			// initial # of expanded levels
-			var iInitialLevel = parseInt(oView.byId("initialLevel").getValue(), 10);
+			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"), 10);
 
 			// application filter values
 			var sFilterProperty = oViewModel.getProperty("/filterProperty");
@@ -159,7 +185,7 @@ sap.ui.define([
 
 			oTable.setModel(this.oODataModel, "odata");
 			oTable.bindRows({
-				path: "odata>/" + sCollection,
+				path: "odata>" + sCollection,
 				filters: oApplicationFilter,
 				parameters: {
 					threshold: iBindingThreshold,

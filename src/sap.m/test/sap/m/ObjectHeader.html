@@ -646,6 +646,28 @@
 		width : "200px"
 	}
 );
+
+	var ohMarkers = new sap.m.ObjectHeader(
+			"ohMarkers", {
+				intro : "Object header with sap.m.ObjectMarker",
+				title : "5678 some normal title RTL",
+				number : "3.624,00 RTL",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Success,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Error
+				}) ],
+				markers: [
+					new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+					new sap.m.ObjectMarker({id: "unsaved", type: sap.m.ObjectMarkerType.Unsaved})
+				]
+			});
+
 	objectHeaderLayout.addItem(ohCondensed9);
 
 	// put all the testing object header objects on the testing page
@@ -723,6 +745,7 @@
 	addToPage(ohCondensed7);
 	addToPage(ohCondensed8);
 	addToPage(ohAdditionalNumbers);
+	addToPage(ohMarkers);
 
 	app.placeAt('body');
 </script>

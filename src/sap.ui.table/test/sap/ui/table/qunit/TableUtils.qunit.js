@@ -610,7 +610,6 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 		}
 		TableUtils.scroll(oTable, true, false);
 	}
-
 });
 
 QUnit.module("TableUtils", {

@@ -627,6 +627,43 @@
 				}
 			});
 
+			test("ViewSettingsFilterItem event handlers are attached", function () {
+				var oVSD = new sap.m.ViewSettingsDialog(),
+						oVSItem = new sap.m.ViewSettingsItem({
+							key: "name1",
+							text: "Headphone"
+						}),
+						oVSFilterItem1 = new sap.m.ViewSettingsFilterItem({
+							key: "myNameFilter",
+							text: "Name",
+							items: [oVSItem]
+						}),
+						oVSFilterItem2 = oVSFilterItem1.clone();
+
+				//Assert
+				ok(!oVSFilterItem1.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 1");
+				ok(!oVSFilterItem2.hasListeners("itemPropertyChanged"), "Initially no 'itemPropertyChanged' event handler should be attached to the ViewSettingsFilterItem 2");
+
+				ok(!oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 1");
+				ok(!oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "Initially no 'filterDetailItemsAggregationChange' event handler should be attached to the ViewSettingsFilterItem 2");
+
+				//Act
+				oVSD.addFilterItem(oVSFilterItem1);
+
+				//Assert
+				ok(oVSFilterItem1.hasListeners("itemPropertyChanged"), "addFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				ok(oVSFilterItem1.hasListeners("filterDetailItemsAggregationChange"), "addFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+
+				//Act
+				oVSD.insertFilterItem(oVSFilterItem2);
+
+				//Assert
+				ok(oVSFilterItem2.hasListeners("itemPropertyChanged"), "insertFilterItem should attach 'itemPropertyChanged' event handler to the ViewSettingsFilterItem");
+				ok(oVSFilterItem2.hasListeners("filterDetailItemsAggregationChange"), "insertFilterItem should attach 'filterDetailItemsAggregationChange' event handler to the ViewSettingsFilterItem");
+
+				oVSD.destroy();
+			});
+
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
@@ -1338,7 +1375,10 @@
 
 		test("Query filter search field works correctly", function  (assert) {
 			var done = assert.async(),
-				that = this;
+				that = this,
+				fnIsVisible = function(oItem) {
+					return oItem.getVisible();
+				};
 
 			this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
@@ -1353,14 +1393,50 @@
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor
-				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
-					return oItem.getVisible();
-				});
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
 				//Assert
-				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items left in the list.");
+				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items in the list.");
 
 				//Act
-				oSearchField.fireLiveChange({ newValue: "" }); // Matches: Mousepad, Monitor
+				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Contains);
+				oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor, Optical Mouse
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 3, "After filter search with 'contains', there are 3 visible items in the list.");
+
+				//Act
+				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Equals);
+				oSearchField.fireLiveChange({ newValue: "Mouse" }); // Matches: None
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 0, "After filter search with 'equals', there are 0 visible items in the list.");
+
+				//Act
+				oSearchField.fireLiveChange({ newValue: "Mousepad" }); // Matches: Mousepad
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 1, "After filter search with 'equals', there is 1 visible item in the list.");
+
+				//Act
+				that.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
+				oSearchField.fireLiveChange({ newValue: "mou" }); // Matches: Mousepad, Optical Mouse
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 2, "After filter search with 'anywordstartswith', there are 2 visible items in the list.");
+
+				//Act
+				oSearchField.fireLiveChange({ newValue: "ou" }); // Matches: None
+
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(fnIsVisible);
+				//Assert
+				equal(aFilteredItems.length, 0, "After filter search with 'anywordstartswith', there are 0 visible items in the list.");
+
+				//Act
+				oSearchField.fireLiveChange({ newValue: "" }); // Matches: All
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				});
@@ -1370,9 +1446,7 @@
 
 				//Act
 				oSearchField.fireLiveChange({ newValue: "1" }); // Matches: none
-				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
-					return oItem.getVisible();
-				});
+
 				//Assert
 				console.log(that.oVSD._createSelectAllCheckbox(), that.oVSD._createSelectAllCheckbox().getSelected());
 				equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
@@ -1383,6 +1457,64 @@
 
 				//Assert
 				equal(that.oVSD._selectAllCheckBox.getSelected(), false, "Select all not checked");
+
+				done();
+			}, 1000);
+		});
+
+		test("StringFilter", function() {
+			var fnStringFilter = this.oVSD._getStringFilter();
+
+			//Assert
+			ok(!fnStringFilter("ab", ""), "filtering an empty string is always false");
+			ok(!fnStringFilter("ab"), "filtering an empty string is always false");
+			ok(!fnStringFilter("ab", null), "filtering an empty string is always false");
+			ok(fnStringFilter("", ""), "unless the query is also empty");
+
+			this.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith);
+			fnStringFilter = this.oVSD._getStringFilter();
+
+			//Assert
+			ok(fnStringFilter("mou", "mousepad"), "'anywordstartswith' matches correctly the beginning of the first word");
+			ok(fnStringFilter("mou", "optical mouse"), "'anywordstartswith' matches correctly the beginning of the second word");
+			ok(!fnStringFilter("ou", "mousepad"), "'anywordstartswith' does not match strings in the middle of the first word");
+			ok(!fnStringFilter("ou", "mousepad mousepad"), "'anywordstartswith' does not match strings in the middle of the second word");
+		});
+
+		test("setFilterSearchCallback", function() {
+			var done = assert.async(),
+				that = this,
+				oCallbackSpy = {
+					callCount: 0,
+					args: []
+				},
+				fnFilterSearchCallback = function() {
+					oCallbackSpy.callCount++;
+					oCallbackSpy.args.push([ arguments[0], arguments[1] ]);
+					return true;
+				};
+
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+			this.oVSD.setFilterSearchOperator(sap.m.StringFilterOperator.Contains);
+			this.oVSD.setFilterSearchCallback(fnFilterSearchCallback);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+					sSearchString = "Mo";
+
+				//Act
+				oSearchField.fireLiveChange({newValue: sSearchString});
+
+				//Assert
+				equal(oCallbackSpy.callCount, 7, "filter function is called as many times as it should");
+				equal(oCallbackSpy.args[0][0], sSearchString, "filter function is called with the right first argument");
+				equal(oCallbackSpy.args[0][1], that.oVSD.getFilterItems()[0].getItems()[0].getText(), "filter function is called with the right second argument");
 
 				done();
 			}, 1000);
@@ -2268,6 +2400,15 @@
 
 			var oClone = oViewSettingsCustomItem.clone();
 			ok(!!oClone.getCustomControl(), "Custom control is cloned");
+		});
+
+		test("model is propagated to the dialog", function() {
+			var oVSD = new sap.m.ViewSettingsDialog(),
+					sData = "this is the model",
+					oModel = new sap.ui.model.json.JSONModel({ data: sData});
+
+			oVSD.setModel(oModel);
+			equals(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
 		});
 
 		module("Accessibility", {

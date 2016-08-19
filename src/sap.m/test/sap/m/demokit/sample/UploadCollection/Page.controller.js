@@ -239,6 +239,12 @@ sap.ui.define([
 			}
 		},
 
+		onSwitchUploadInvisibleChange: function() {
+			var oUploadCollection = this.getView().byId("UploadCollection");
+			var bUploadButtonInvisible = oUploadCollection.getUploadButtonInvisible();
+			oUploadCollection.setUploadButtonInvisible(!bUploadButtonInvisible);
+		},
+
 		onSwitchModeChange: function(oEvent){
 			// Sets to MultiSelect
 			if (this.getView().byId("modeSwitch").getState()){

@@ -98,6 +98,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oView = this._oViews._getView(oViewOptions);
 			}
 
+			oView.addDependent(this._oTitleProvider);
+
 			if (oOptions.clearControlAggregation === true) {
 				oControl[oAggregationInfo._sRemoveAllMutator]();
 			}

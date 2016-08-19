@@ -8,7 +8,33 @@
       "namespace": "sap.f.sample",
       "ref": "test-resources/sap/f/demokit/sample"
     },
-    "entities": [],
-    "samples": []
+    "entities": [
+    ],
+    "samples": [
+      {
+        "id": "sap.f.sample.DynamicPageListReport",
+        "name": "Dynamic Page FIORI 2.0 List Report floor plan",
+        "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
+      },
+      {
+        "id": "sap.f.sample.DynamicPageAnalyticalTable",
+        "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
+        "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
+      },
+      {
+        "id": "sap.f.sample.DynamicMessageStripGenerator",
+        "name": "Dynamic Message Strip Generator",
+        "description": "Generates MessageStrips with random properties."
+      },
+      {  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
+        "name": "Flexible Column Layout basic sample",
+        "description": "This sample demonstrates a Flexible Column Layout aggregating three pages. Additionally the option to switch between the two different types of three-column layout is enabled. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
+      },
+      {
+        "id": "sap.f.sample.FlexibleColumnLayoutDynamicPage",
+        "name": "Flexible Column Layout with Dynamic Pages",
+        "description": "This sample demonstrates how to configure a Flexible Column Layout with three Dynamic Page instances, and additionally add a Fullscreen button to the page in the rightmost visible column. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
+      }
+    ]
   }
 }

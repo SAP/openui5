@@ -27,14 +27,14 @@
 						<SegmentedButtonItem text="Hybrid" />
 					</items>
 				</SegmentedButton>
-				<SegmentedButton selectedKey="competitor">
+				<SegmentedButton selectedKey="competitor" class="sapUiSmallMarginBottom">
 					<items>
 						<SegmentedButtonItem icon="sap-icon://taxi" />
 						<SegmentedButtonItem icon="sap-icon://lab" />
 						<SegmentedButtonItem icon="sap-icon://competitor" key="competitor" />
 					</items>
 				</SegmentedButton>
-				<SegmentedButton selectedKey="lab">
+				<SegmentedButton selectedKey="lab"  class="sapUiSmallMarginBottom">
 					<items>
 						<SegmentedButtonItem icon="sap-icon://taxi" text="Taxi" />
 						<SegmentedButtonItem icon="sap-icon://lab" text="Lab" key="lab" />

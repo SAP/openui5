@@ -36,7 +36,7 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.render = function (oRm, oControl) {
 		if (oControl.getVisible()) {
-			var _bShowGroupHdrFooter = (oControl._getVisibleItemsCount() > 0);
+			var _bShowGroupHdrFooter = oControl.getShowEmptyGroup() || (oControl._getVisibleItemsCount() > 0);
 			oRm.write('<li');
 			oRm.addClass(classNameItem);
 			oRm.addClass(classNameBase);

@@ -1019,7 +1019,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				this._oDateRange.setStartDate(new Date(oDate.getTime()));
 			}
 		} else {
-			this._oCalendar.focusDate(new Date());
+			var oFocusDate = new Date();
+			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
+
+			if (oFocusDate.getTime() < this._oMinDate.getTime() || oFocusDate.getTime() > iMaxTimeMillis) {
+				oFocusDate = this._oMinDate;
+			}
+			this._oCalendar.focusDate(oFocusDate);
+
 			if (this._oDateRange.getStartDate()) {
 				this._oDateRange.setStartDate(undefined);
 			}
@@ -1304,7 +1311,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code>.
+	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code> as specified by <code>valueFormat</code>.
 	 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid date.
 	 * @public
 	 */

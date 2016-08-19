@@ -863,7 +863,7 @@
 		ok(oText instanceof sap.m.Text, "Summary bar should have a Text control as its contents");
 		ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
 		equal(oSummaryBar.getDesign(), sap.m.ToolbarDesign.Info, "Summary bar design should be Info");
-		equal(oSummaryBar.getHeight(), "auto", "Toolbar height should be auto");
+		equal(oSummaryBar.getHeight(), "", "Toolbar height shouldn't be specified");
 
 		oSummaryBar.firePress();
 		oSummaryBar.attachEventOnce("afterOpen", function() {
@@ -1676,7 +1676,90 @@
 			destroyFF(oFF);
 		});
 
+		test("FacetFilterList._setSearchValue", function() {
+			var oFacetFilterList = new sap.m.FacetFilterList(),
+				sPredefinedSearchValue = "a";
 
+			//Act
+			oFacetFilterList._setSearchValue(sPredefinedSearchValue);
+
+			//Assert
+			equals(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
+		});
+
+		asyncTest("_searchValue is reset before popover opens", function() {
+			var oFacetFilter = new sap.m.FacetFilter(),
+				oFacetFilterList = new sap.m.FacetFilterList({
+					items: [
+						new sap.m.FacetFilterItem({
+							key: "one",
+							text: "One",
+							selected: true
+						}),
+						new sap.m.FacetFilterItem({
+							key: "two",
+							text: "Two",
+							selected: false
+						})
+					]
+				}),
+				oPopover;
+
+			oFacetFilter.addList(oFacetFilterList);
+
+			oFacetFilter.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oResetSearchSpy = sinon.spy(oFacetFilterList, "_setSearchValue");
+
+			oPopover = oFacetFilter._getPopover();
+
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+				start();
+
+				//Assert
+				ok(oResetSearchSpy.calledWith(""), "Search value is reset");
+				oFacetFilterList._setSearchValue.restore();
+			});
+
+			openPopover(oFacetFilter, 0);
+		});
+		//BCP: 1680160703
+		test("FacetFilterList._handleSelectAll does not inform the list for item selection changes", function() {
+			var oFFL = new sap.m.FacetFilterList({
+				items: [
+					new sap.m.FacetFilterItem({
+						key: "one",
+						text: "One",
+						selected: true
+					}),
+					new sap.m.FacetFilterItem({
+						key: "two",
+						text: "Two",
+						selected: false
+					}),
+					new sap.m.FacetFilterItem({
+						key: "three",
+						text: "Three",
+						selected: false
+					})
+				]
+			}),
+				oItemSetSelectedSpy = sinon.spy(sap.m.ListItemBase.prototype, "setSelected");
+
+			//act
+			oFFL._handleSelectAll(true);
+
+			//assert
+			ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
+			ok(oItemSetSelectedSpy.args[0][1], "1st time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[1][1], "2nd time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[2][1], "3rd time called with bDontNotifyParent: true");
+
+			//clean
+			sap.m.ListItemBase.prototype.setSelected.restore();
+			oFFL.destroy();
+		});
 
 		module("Events", {
 			beforeEach: function () {

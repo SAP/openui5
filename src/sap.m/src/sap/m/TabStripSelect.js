@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			this._oSelectionOnFocus = null;
 
 			// to detect when the control is in the rendering phase
-			this._bRenderingPhase = false;
+			this.bRenderingPhase = false;
 
 			// to detect if the focusout event is triggered due a rendering
 			this._bFocusoutDueRendering = false;

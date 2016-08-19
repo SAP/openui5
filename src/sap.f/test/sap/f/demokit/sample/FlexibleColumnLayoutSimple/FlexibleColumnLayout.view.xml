@@ -1,0 +1,9 @@
+<View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutSimple.FlexibleColumnLayout" height="100%">
+	<FlexibleColumnLayout threeColumnLayoutType="EndColumnEmphasized" threeColumnLayoutTypeFixed="false" id="fcl">
+		<beginColumn>
+			<mvc:XMLView id="beginView" viewName="sap.f.sample.FlexibleColumnLayoutSimple.Master" />
+		</beginColumn>
+	</FlexibleColumnLayout>
+</View>
+
+

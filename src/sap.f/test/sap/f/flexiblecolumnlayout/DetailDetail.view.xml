@@ -1,0 +1,148 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexibleColumnLayout.DetailDetail" height="100%">
+	<Page id="detailDetailPage" title="DetailDetail page" backgroundDesign="Transparent">
+		<Text text="Navigation to previous/next pages of the app: "></Text>
+
+		<Button text="To page1" press="handleBackPress"></Button>
+		<Button text="To page2" press="handleNextPress"></Button>
+
+		<Table>
+			<columns>
+				<Column><Label text="DetailDetail List" /></Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailDetailPress">
+					<cells>
+						<Text text="To the next page"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</View>
+
+

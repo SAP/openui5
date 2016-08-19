@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.ButtonType",
+			"sap.m.CarouselArrowsAlign",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
 			"sap.m.DeviationIndicator",
@@ -46,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
 			"sap.m.GenericTileMode",
+			"sap.m.HeaderContainerView",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -74,6 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
 			"sap.m.StandardTileType",
+			"sap.m.StringFilterOperator",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.ToolbarDesign",
@@ -129,6 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
 			"sap.m.HBox",
+			"sap.m.HeaderContainer",
 			"sap.m.IconTabBar",
 			"sap.m.IconTabBarSelectList",
 			"sap.m.IconTabHeader",
@@ -336,7 +340,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
-
 	/**
 	 * Different types for a button (predefined types)
 	 *
@@ -396,6 +399,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Carousel arrows align
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.CarouselArrowsPlacement = {
+		/**
+		 * Carousel arrows are placed on the sides of the current Carousel page.
+		 * @public
+		 */
+		Content : "Content",
+
+		/**
+		 * Carousel arrows are placed on the sides of the page indicator of the Carousel.
+		 * @public
+		 */
+		PageIndicator : "PageIndicator"
+	};
 
 	/**
 	 * A subset of DateTimeInput types that fit to a simple API returning one string.
@@ -901,28 +924,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.34
+		 * @since 1.34.0
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 	sap.m.FrameType = {
 
 		/**
 		 * The 1x1 frame type.
+		 * @public
 		 */
 		OneByOne : "OneByOne",
 
 		/**
 		 * The 2x1 frame type.
+		 * @public
 		 */
 		TwoByOne : "TwoByOne",
 
 		/**
 		 * The 2/3 frame type.
+		 * @protected
 		 */
 		TwoThirds : "TwoThirds",
 
 		/**
 		 * The Auto frame type that adjusts the size of the control to the content.
+		 * @protected
 		 */
 		Auto : "Auto"
 
@@ -949,6 +976,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		HeaderMode : "HeaderMode"
+	};
+
+	/**
+	 * The list of possible HeaderContainer views.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.HeaderContainerView = {
+			/**
+			 * The horizontal orientation of the control.
+			 * @public
+			 */
+			Horizontal : "Horizontal",
+
+			/**
+			 * The vertical orientation of the control.
+			 */
+			Vertical : "Vertical"
 	};
 
 	/**
@@ -1078,7 +1125,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
 
 	/**
 	 *
@@ -2426,7 +2472,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Solid : "Solid"
 
 	};
+
+	/**
+	 * Types of string filter operators.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.42
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.StringFilterOperator = {
+
+		/**
+		 * Checks if the text is equal with the search string.
+		 * @public
+		 */
+		Equals : "Equals",
+
+		/**
+		 * Checks if the text contains the search string.
+		 * @public
+		 */
+		Contains : "Contains",
+
+		/**
+		 * Checks if the text starts with the search string.
+		 * @public
+		 */
+		StartsWith : "StartsWith",
+
+		/**
+		 * Checks if any word in the text starts with the search string.
+		 * @public
+		 */
+		AnyWordStartsWith : "AnyWordStartsWith"
+	};
+
 	/*global Element: true */
+
+	/**
+	 * Types of LightBox loading stages
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.40
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.LightBoxLoadingStates = {
+
+		/**
+		 * The LightBox image is still loading.
+		 * @public
+		 */
+		Loading : "LOADING",
+		/**
+		 * The LightBox image has loaded.
+		 * @public
+		 */
+		Loaded : "LOADED",
+
+		/**
+		 * The LightBox image has timed out, could not load.
+		 * @public
+		 */
+		TimeOutError : "TIME_OUT_ERROR",
+
+		/**
+		 * The LightBox image could not load.
+		 * @public
+		 */
+		Error : "ERROR"
+	};
 
 
 	//lazy imports for MessageToast

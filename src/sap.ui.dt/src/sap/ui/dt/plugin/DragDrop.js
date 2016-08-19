@@ -257,8 +257,9 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	DragDrop.prototype.showGhost = function(oOverlay, oEvent) {
 		var that = this;
 
-		// not supported in IE10+
-		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setDragImage) {
+		// IE and Edge do no support dataTransfer.setDragImage on D&D event
+		if (!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie &&
+			oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setDragImage) {
 			this._$ghost = this.createGhost(oOverlay, oEvent);
 
 			// ghost should be visible to set it as dragImage

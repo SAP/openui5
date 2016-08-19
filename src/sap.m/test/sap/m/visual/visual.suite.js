@@ -9,6 +9,7 @@ module.exports = [
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
 	"Label.spec.js",
+	"LightBox.spec.js",
 	"MessagePage.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
@@ -31,9 +32,5 @@ module.exports = [
 	"TimePicker.spec.js",
 	"Token.spec.js",
 	"Tokenizer.spec.js",
-	"Wizard.spec.js",
-	"infra_ActionSelect.spec.js",
-	"infra_ObjectHeaderVisualTest.spec.js",
-	"infra_Page.spec.js",
-	"infra_SemanticPage.spec.js"
+	"Wizard.spec.js"
 ];

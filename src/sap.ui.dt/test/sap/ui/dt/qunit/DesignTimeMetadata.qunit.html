@@ -22,7 +22,7 @@
 
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
 
-			QUnit.module("Given that an DesignTimeMetadata is created for a control", {
+			QUnit.module("Given that the DesignTimeMetadata is created for a fake control", {
 				beforeEach : function() {
 					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
 						data : {
@@ -52,15 +52,162 @@
 			});
 
 			QUnit.test("when getAction is called...", function(assert) {
-				assert.strictEqual(this.oDesignTimeMetadata.getAction("action1"), "firstChangeType", "...for string action, the string is returned");
+				assert.propEqual(this.oDesignTimeMetadata.getAction("action1"), {changeType : "firstChangeType"}, "...for string action, the string is returned");
 				assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType : "secondChangeType"}, "...for object action, the object is returned");
 				assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType"}, "...for function action, the correct string is returned");
 			});
 
-			QUnit.test("when getActionChangeType is called...", function(assert) {
-				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action1"), "firstChangeType", "...for string action, the correct changeType is returned");
-				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action2"), "secondChangeType", "...for object action, the correct changeType is returned");
-				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action3", {name:"thirdChangeType"}), "thirdChangeType", "...for function action, the correct changeType is returned");
+
+			jQuery.sap.require("sap.m.Button");
+
+			QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
+				beforeEach : function() {
+
+					this.oButton = new sap.m.Button({
+						text : "myButton"
+					});
+
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+				}
+			});
+
+			QUnit.test("when getAssociatedDomRef is called on rename action with domRef as a function", function(assert) {
+				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								domRef : function (){
+									return "domRef returned from a function"
+								}
+							}
+						}
+					}
+				});
+
+				assert.ok(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), "then the domRef of the control is returned");
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), "domRef returned from a function", "then the value of domRef is correct");
+			});
+
+			QUnit.test("when getAssociatedDomRef is called on rename action with domRef as a string", function(assert) {
+				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								domRef : ".sapMBtnContent"
+							}
+						}
+					}
+				});
+
+				assert.ok(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), "then the domRef of the control is returned");
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton).textContent, "myButton", "then the text of the button is correct");
+			});
+
+			QUnit.test("when getAssociatedDomRef is called on rename action with domRef as undefined", function(assert) {
+				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								domRef : undefined
+							}
+						}
+					}
+				});
+
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), undefined, "then the domRef of the control is undefined ");
+			});
+
+			QUnit.test("when getAssociatedDomRef is called on Rename action with no domRef at all", function(assert) {
+				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+							}
+						}
+					}
+				});
+
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), undefined, "then the domRef of the control is undefined ");
+			});
+
+			QUnit.test("when getAssociatedDomRef is called on Rename action with an invalid/not available selector", function(assert) {
+				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								domRef: ""
+							}
+						}
+					}
+				});
+
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef("rename", this.oButton), undefined, "then the domRef of the control is undefined ");
+			});
+
+			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
+			jQuery.sap.require("sap.ui.core.Title");
+			jQuery.sap.require("sap.m.Label");
+			jQuery.sap.require("sap.m.Input");
+			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
+
+			QUnit.module("Given a dedicated rendered control and an AggregationDesignTimeMetadata is created for a control", {
+				beforeEach : function() {
+					this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
+					this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
+					this.oInput0 = new sap.m.Input({id : "Input0"});
+
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm("form", {
+						id : "SimpleForm",
+						title : "Simple Form",
+						content : [this.oTitle0, this.oLabel0, this.oInput0]
+					});
+
+					this.oSimpleForm.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oSimpleForm.destroy();
+				}
+			});
+
+			QUnit.test("when getAssociatedDomRef is called with domRef as a function", function(assert) {
+				var oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
+					data : {
+						actions : {
+							rename : function() {
+								return {
+									domRef : function (){
+										return "domRef returned from a function"
+									}
+								};
+							}
+						}
+					}
+				});
+
+				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef("rename", this.oSimpleForm), "then the domRef of the control is returned");
+				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef("rename", this.oSimpleForm), "domRef returned from a function", "then the domRef is correct");
+			});
+
+			QUnit.test("when getAssociatedDomRef is called with domRef as a function", function(assert) {
+				var oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
+					data : {
+						actions : {
+							rename : function() {
+								return {
+									domRef : ":sap-domref"
+								};
+							}
+						}
+					}
+				});
+
+				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef("rename", this.oSimpleForm), "then the domRef of the content is returned");
+				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef("rename", this.oSimpleForm).textContent, "Simple FormTitle 0Label 0", "then the title of the content is correct");
 			});
 
 		</script>

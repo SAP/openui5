@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global'
-], function(jQuery) {
+	'jquery.sap.global',
+	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+], function(jQuery, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -23,38 +24,44 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @public
 	 */
-	HideForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
-		var oChange = oChangeWrapper.getDefinition();
-		var sHideId = oChange.content.sHideId;
+	HideForm.applyChange = function(oChange, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
 
-		var oCtrl = oModifier.byId(sHideId, oView);
+		var oChangeDefinition = oChange.getDefinition();
+
+		// !important : sHideId was used in 1.40, do not remove for compatibility!
+		var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
-		if (oChange.changeType === "hideSimpleFormField") {
+		if (oChangeDefinition.changeType === "hideSimpleFormField") {
 			aContent.some(function (oField, index) {
-				if (oField === oCtrl) {
+				if (oField === oRemovedElement) {
 					iStart = index;
 					oModifier.setVisible(oField, false);
 				}
 				if (iStart >= 0 && index > iStart) {
 					if ((oModifier.getControlType(oField) === "sap.m.Label") ||
 							(oModifier.getControlType(oField) === "sap.ui.core.Title") ||
-							(oModifier.getControlType(oField) === "sap.ui.core.Toolbar")) {
+							(oModifier.getControlType(oField) === "sap.m.Title") ||
+							(oModifier.getControlType(oField) === "sap.m.Toolbar")) {
 						return true;
 					} else {
 						oModifier.setVisible(oField, false);
 					}
 				}
 			});
-		} else if (oChange.changeType === "removeSimpleFormGroup") {
+		} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
 			aContent.some(function (oField, index) {
-				if (oField === oCtrl) {
+				if (oField === oRemovedElement) {
 					iStart = index;
 				}
 				if (iStart >= 0 && index > iStart) {
 					if ((oModifier.getControlType(oField) === "sap.ui.core.Title") ||
-							(oModifier.getControlType(oField) === "sap.ui.core.Toolbar")) {
+							(oModifier.getControlType(oField) === "sap.m.Title") ||
+							(oModifier.getControlType(oField) === "sap.m.Toolbar")) {
 						if (iStart === 0) {
 							oModifier.removeAggregation(oControl, "content", oField, oView);
 							oModifier.insertAggregation(oControl, "content", oField, 0, oView);
@@ -65,10 +72,23 @@ sap.ui.define([
 					}
 				}
 			});
-			oModifier.removeAggregation(oControl, "content", oCtrl, oView);
+			oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
 		}
 
 		return true;
+	};
+
+	/**
+	 * @private
+	 */
+	HideForm._getStableElement = function(oElement) {
+		if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+			return oElement.getTitle() || oElement.getToolbar();
+		} else if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
+			return oElement.getLabel();
+		} else {
+			return oElement;
+		}
 	};
 
 	/**
@@ -80,11 +100,24 @@ sap.ui.define([
 	 */
 	HideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
 		var oChange = oChangeWrapper.getDefinition();
-		if (oSpecificChangeInfo.sHideId) {
-			oChange.content.sHideId = oSpecificChangeInfo.sHideId;
+		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
+			var oStableElement = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id));
+			oChange.content.elementSelector = JsControlTreeModifier.getSelector(oStableElement);
 		} else {
-			throw new Error("oSpecificChangeInfo.sHideId attribute required");
+			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
 		}
+	};
+
+
+	/**
+	 * Transform the remove action format to the hideControl change format
+	 *
+	 * @param {object} mRemoveActionParameter a json object with the remove parameter
+	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
+	 * @public
+	 */
+	HideForm.buildStableChangeInfo = function(mRemoveActionParameter) {
+		return mRemoveActionParameter;
 	};
 
 	return HideForm;

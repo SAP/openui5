@@ -20,12 +20,12 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oInput0 = new sap.m.Input({id : "Input0"});
 			this.oInput1 = new sap.m.Input({id : "Input1"});
 			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
-				id : "SimpleForm", title : "Simple Form", class : "editableForm",
+				id : "SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			
+
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
 
@@ -34,7 +34,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 						id : "SimpleForm"
 					},
 					content : {
-						stableRenamedElementId : this.oLabel0.getId()
+						sRenameId : this.oLabel0.getId()
 					},
 					texts : {
 						formText : {
@@ -43,7 +43,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 					}
 				};
 				this.oChangeWrapper = new sap.ui.fl.Change(oChange);
-				
+
 				this.oChangeHandler = sap.ui.layout.changeHandler.RenameSimpleForm;
 				this.oJsControlTreeModifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 				this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
@@ -56,7 +56,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, {modifier : this.oJsControlTreeModifier}), "no errors occur");
 		assert.equal(this.oFormElement.getLabel().getText(), this.sNewValue, "the label has changed");
 	});
 
@@ -80,18 +80,19 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, this.oXmlTreeModifier, this.oXmlDocument), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+			modifier : this.oXmlTreeModifier,
+			view : this.oXmlDocument
+		}), "no errors occur");
 		assert.equal(this.oXmlLabel0.getAttribute("text"), this.sNewValue, "the label has changed");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
 		var exception, oControl;
 
-		oControl = {};
-
 		//Call CUT
 		try {
-			this.oChangeHandler.applyChange(this.oChangeWrapper, oControl, this.JsControlTreeModifier);
+			this.oChangeHandler.applyChange(this.oChangeWrapper, oControl, {modifier : this.oJsControlTreeModifier});
 		} catch (ex) {
 			exception = ex;
 		}
@@ -106,7 +107,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			content : {
 			}
 		};
-		
+
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
 		var oSpecificChangeInfo = {
 			renamedElement :{
@@ -119,7 +120,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 
 		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
-		assert.equal(oChange.content.stableRenamedElementId, this.oLabel0.getId(), "stableRenamedElementId has been added to the change");
+		assert.equal(oChange.content.elementSelector.id, this.oLabel0.getId(), "stableRenamedElementId has been added to the change");
 	});
 
 	QUnit.test('when calling completeChangeContent for FormContainer', function (assert) {
@@ -130,7 +131,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			content : {
 			}
 		};
-		
+
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
 		var oSpecificChangeInfo = {
 			renamedElement :{
@@ -143,7 +144,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 
 		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
-		assert.equal(oChange.content.stableRenamedElementId, this.oTitle0.getId(), "stableRenamedElementId has been added to the change");
+		assert.equal(oChange.content.elementSelector.id, this.oTitle0.getId(), "stableRenamedElementId has been added to the change");
 	});
 
 	QUnit.test('when calling applyChange with an empty string as value', function (assert) {
@@ -152,7 +153,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				id : "SimpleForm"
 			},
 			content : {
-				stableRenamedElementId : this.oLabel0.getId(),
+				elementSelector : {
+					id :this.oLabel0.getId()
+				}
 			},
 			texts : {
 				formText : {
@@ -162,7 +165,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			}
 		});
 
-		assert.ok(this.oChangeHandler.applyChange(oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier), "no errors occur");
+		assert.ok(this.oChangeHandler.applyChange(oChangeWrapper, this.oSimpleForm, {modifier : this.oJsControlTreeModifier}), "no errors occur");
 		assert.equal(this.oFormElement.getLabel().getText(), "", "the label has changed");
 	});
 
@@ -175,7 +178,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		
+
 		var oSpecificChangeInfo1 = {
 			renamedElement :{
 				id: this.oFormContainer.getId()
@@ -194,11 +197,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			changeType: "renameTitle",
 			value: undefined
 		};
-		
+
 		assert.throws(function() {
 				this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo2);
-			}, 
-			new Error("oSpecificChangeInfo.value attribute required"), 
+			},
+			new Error("oSpecificChangeInfo.value attribute required"),
 			"the undefined value raises an error message"
 		);
 
@@ -213,7 +216,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		
+
 		var oSpecificChangeInfo = {
 			changeType: "renameTitle",
 			value: this.sNewValue
@@ -221,8 +224,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.throws(function() {
 			this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
-			}, 
-			new Error("oSpecificChangeInfo.renamedElement attribute required"), 
+			},
+			new Error("oSpecificChangeInfo.renamedElement attribute required"),
 			"the undefined value raises an error message"
 		);
 	});

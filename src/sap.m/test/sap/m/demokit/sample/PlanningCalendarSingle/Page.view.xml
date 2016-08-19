@@ -10,8 +10,10 @@
 			startDate="{path: '/startDate'}"
 			viewKey="Day"
 			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
-			intervalSelect="handleIntervalSelect">
+			intervalSelect="handleIntervalSelect"
+			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 			</toolbarContent>

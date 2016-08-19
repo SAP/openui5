@@ -3,7 +3,7 @@
 /* BlueCrystal theme                             */
 /* ============================================= */
 
-.sapMInputBase.sapMTextArea{
+.sapMInputBase.sapMTextArea {
 	height: auto;
 }
 
@@ -11,8 +11,12 @@
 	padding-top: 0.625rem;
 }
 
-.sapMTextArea > .sapMTextAreaInner{
+.sapMTextArea > .sapMTextAreaInner {
 	padding: 0.75rem;
+}
+
+.sapMTextArea.sapMInputBaseState > .sapMTextAreaInner {
+	padding: 0.6875rem;
 }
 
 .sapMTextArea > .sapMInputBaseReadonlyInner.sapMTextAreaInner {
@@ -20,7 +24,11 @@
 }
 
 /**** Compact Size ****/
-.sapUiSizeCompact .sapMTextArea > .sapMTextAreaInner{
+.sapUiSizeCompact .sapMTextArea > .sapMTextAreaInner {
 	padding: 0.3125rem 0.5rem;
 	height: auto;
+}
+
+.sapUiSizeCompact .sapMTextArea.sapMInputBaseState > .sapMTextAreaInner {
+	padding: 0.25rem 0.4375rem;
 }

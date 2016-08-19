@@ -1,0 +1,23 @@
+<core:View
+	controllerName="sap.m.sample.HeaderContainer.Page"
+	xmlns="sap.m"
+	xmlns:m="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core.mvc">
+	<HeaderContainer scrollStep="124" scrollTime="500" view="Vertical">
+		<l:VerticalLayout
+			class="sapDemokitSuiteHeaderContainerView"
+			width="100%">
+			<l:content>
+				<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
+				<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
+				<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
+				<NumericContent size="S" scale="M" value="3.65" valueColor="Good" indicator="Up" press="press" />
+				<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
+				<NumericContent size="S" scale="M" value="1.01" valueColor="Critical" indicator="Down" press="press" />
+				<NumericContent size="S" scale="M" value="1.42" valueColor="Good" indicator="Up" press="press" />
+				<NumericContent size="S" scale="M" value="0.21" valueColor="Error" indicator="Down" press="press" />
+			</l:content>
+		</l:VerticalLayout>
+	</HeaderContainer>
+</core:View>

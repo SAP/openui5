@@ -567,6 +567,55 @@
 		});
 	});
 
+	module("TwoWayBinding And Growing");
+	testOData("Property changes updates the list binding when growing feature is enabled", function() {
+		// arrange
+		var fnUpdateStartedSpy = this.spy(),
+			oMockServer = startMockServer(),
+			oModel = createJSONModel(),
+			oList = createList({
+				growing: true
+			}, {}, oModel);
+
+		// when initial binding is completed
+		oList.done(function () {
+			oList.attachUpdateStarted(fnUpdateStartedSpy);
+
+			oModel.setProperty("/Products/0/Name", ":(");
+			strictEqual(fnUpdateStartedSpy.callCount, 1, "Property update also updates the list binding");
+
+			// clean up
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+
+	testOData("Property changes should not update the list binding when unique key is defined", function() {
+		// arrange
+		var fnUpdateStartedSpy = this.spy(),
+			oMockServer = startMockServer(),
+			oModel = createJSONModel(),
+			oList = createList({
+				growing: true
+			}, {
+				key: "ProductId"
+			}, oModel);
+
+		// when initial binding is completed
+		oList.done(function () {
+			oList.attachUpdateStarted(fnUpdateStartedSpy);
+
+			oModel.setProperty("/Products/0/Name", ":)");
+			strictEqual(fnUpdateStartedSpy.callCount, 0, "Property update did not update the list binding.");
+
+			// clean up
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+
 </script>
 
 </head>
