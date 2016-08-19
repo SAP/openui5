@@ -1026,7 +1026,8 @@ sap.ui.require([
 			this.mock(oListBinding).expects("reset").withExactArgs();
 			this.mock(oListBinding).expects("_fireRefresh")
 				.withExactArgs({reason : ChangeReason.Refresh});
-			this.mock(this.oModel).expects("getDependentBindings").withExactArgs(oListBinding)
+			this.mock(this.oModel).expects("getDependentBindings")
+				.withExactArgs(sinon.match.same(oListBinding))
 				.returns([oChild1, oChild2, oChild3]);
 			this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
 			this.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup");
@@ -1035,6 +1036,7 @@ sap.ui.require([
 			oListBinding.refreshInternal("myGroup");
 
 			assert.strictEqual(oListBinding.mCacheByContext, undefined);
+			assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Refresh);
 		});
 	});
 
@@ -1060,7 +1062,8 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.then(function () {
-			that.mock(that.oModel).expects("getDependentBindings").withExactArgs(oListBinding)
+			that.mock(that.oModel).expects("getDependentBindings")
+				.withExactArgs(sinon.match.same(oListBinding))
 				.returns([oChild1]);
 			that.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
 
@@ -1222,6 +1225,22 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts after refresh", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oChild1 = {checkUpdate : function () {}},
+			oChild2 = {checkUpdate : function () {}};
+
+		oBinding.sChangeReason = ChangeReason.Refresh;
+		this.mock(this.oModel).expects("getDependentBindings").withExactArgs(oBinding)
+			.returns([oChild1, oChild2]);
+		this.mock(oChild1).expects("checkUpdate").withExactArgs();
+		this.mock(oChild2).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding.oCache).expects("read").returns(createResult(10));
+
+		oBinding.getContexts(0, 10);
 	});
 
 	//*********************************************************************************************
@@ -1427,7 +1446,8 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("/BusinessPartners"),
 			oResult = {};
 
-		this.mock(_ODataHelper).expects("hasPendingChanges").withExactArgs(oBinding, true)
+		this.mock(_ODataHelper).expects("hasPendingChanges")
+			.withExactArgs(sinon.match.same(oBinding), true)
 			.returns(oResult);
 
 		// code under test
@@ -1438,7 +1458,8 @@ sap.ui.require([
 	QUnit.test("resetChanges", function (assert) {
 		var oBinding = this.oModel.bindList("/BusinessPartners");
 
-		this.mock(_ODataHelper).expects("resetChanges").withExactArgs(oBinding, true);
+		this.mock(_ODataHelper).expects("resetChanges")
+			.withExactArgs(sinon.match.same(oBinding), true);
 
 		// code under test
 		oBinding.resetChanges();
@@ -1483,6 +1504,12 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oListBinding.suspend();
 		}, new Error("Unsupported operation: v4.ODataListBinding#suspend"));
+
+		oListBinding.enableExtendedChangeDetection(false);
+		assert.throws(function () { //TODO implement?
+			oListBinding.getContexts(0, 42, 0);
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, third"
+				+ " parameter must not be set if extended change detection is enabled"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
@@ -1863,7 +1890,8 @@ sap.ui.require([
 				}
 				oBinding.setContext(oContext);
 
-				oHelperMock.expects("toArray").withExactArgs(oFilter).returns(aFilters);
+				oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter))
+					.returns(aFilters);
 				oHelperMock.expects("createListCacheProxy")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 					.returns(oCacheProxy);
@@ -1932,13 +1960,13 @@ sap.ui.require([
 
 		oBinding.setContext(oContext);
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
-		oModelMock.expects("bindingDestroyed").withExactArgs(oBinding);
+		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
 		oBinding.destroy();
 
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
-		oModelMock.expects("bindingDestroyed").withExactArgs(oBinding);
+		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
 		oBinding.destroy();
 	});
@@ -1984,7 +2012,7 @@ sap.ui.require([
 			.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
 			.callsArg(4)
 			.returns(oReadPromise);
-		//TODO: this.mock(oBinding).expects("createContexts").withExactArgs(oResult);
+		//TODO: this.mock(oBinding).expects("createContexts").withExactArgs(sinon.match.same(oResult));
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 		this.mock(oBinding).expects("fireDataReceived").withExactArgs();
@@ -2029,6 +2057,7 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 		oBinding.enableExtendedChangeDetection(/*bDetectUpdates*/false, /*vKey*/ undefined);
+		oBinding.aDiff = [{index : 1, type : "delete"}];
 		this.mock(_ODataHelper).expects("getReadRange")
 			.withExactArgs(sinon.match.same(oBinding.aContexts), 0, 3, 0, Infinity)
 			.returns(oRange);
@@ -2037,7 +2066,7 @@ sap.ui.require([
 			.callsArg(4)
 			.returns(oReadPromise);
 		this.mock(_ODataHelper).expects("requestDiff")
-			.withExactArgs(oBinding, sinon.match.same(aData), 0)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(aData), 0, 3)
 			.returns(oDiffPromise);
 		this.mock(oBinding).expects("createContexts")
 			.withExactArgs(sinon.match.same(oRange), 3, ChangeReason.Change, true);
@@ -2046,6 +2075,7 @@ sap.ui.require([
 		aContexts = oBinding.getContexts(0, 3);
 
 		assert.strictEqual(aContexts.dataRequested, true);
+		assert.deepEqual(aContexts.diff, []);
 		return oReadPromise.then(function (aData) {
 			return oDiffPromise.then(function (aDiff) {
 				assert.strictEqual(oBinding.aDiff, aDiff);
@@ -2074,7 +2104,7 @@ sap.ui.require([
 			.callsArg(4)
 			.returns(oReadPromise);
 		this.mock(_ODataHelper).expects("requestDiff")
-			.withExactArgs(oBinding, sinon.match.same(aData), 0)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(aData), 0, 3)
 			.returns(oDiffPromise);
 		this.oLogMock.expects("error").withExactArgs(oError.message,
 			sinon.match(function (sDetails) {
@@ -2186,6 +2216,158 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oBinding.enableExtendedChangeDetection(bDetectUpdates), "foo");
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bUseExtendedChangeDetection) {
+		QUnit.test("_delete: success, bUseExtendedChangeDetection = " + bUseExtendedChangeDetection,
+			function (assert) {
+				var oBinding = this.oModel.bindList("/EMPLOYEES"),
+					oBinding1 = {
+						checkUpdate : function () {}
+					},
+					oBinding4a = {
+						checkUpdate : function () {}
+					},
+					oBinding4b = {
+						checkUpdate : function () {}
+					},
+					oModelMock = this.mock(this.oModel),
+					aPreviousContexts,
+					oPromise = {};
+
+				oBinding.bUseExtendedChangeDetection = bUseExtendedChangeDetection;
+				// [0, 1, 2, undefined, 4, 5]
+				oBinding.createContexts({start : 0, length : 3}, 3, ChangeReason.Change, false);
+				oBinding.createContexts({start : 4, length : 10}, 2, ChangeReason.Change, false);
+				assert.strictEqual(oBinding.iMaxLength, 6);
+				aPreviousContexts = oBinding.aContexts.slice();
+
+				this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
+				// We assume that we start deleting index 2, but when the response arrives, it has
+				// been moved to index 1.
+				this.mock(oBinding).expects("deleteFromCache")
+					.withExactArgs("myGroup", "EMPLOYEES('1')", "2", sinon.match.func)
+					.callsArgWith(3, 1)
+					.returns(oPromise);
+				this.mock(oBinding).expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Remove});
+				this.mock(oBinding.aContexts[2]).expects("destroy");
+				this.mock(oBinding.aContexts[5]).expects("destroy");
+				if (!bUseExtendedChangeDetection) {
+					oModelMock.expects("getDependentBindings")
+						.withExactArgs(oBinding.aContexts[1])
+						.returns([oBinding1]);
+					this.mock(oBinding1).expects("checkUpdate").withExactArgs();
+					oModelMock.expects("getDependentBindings")
+						.withExactArgs(oBinding.aContexts[4])
+						.returns([oBinding4a, oBinding4b]);
+					this.mock(oBinding4a).expects("checkUpdate").withExactArgs();
+					this.mock(oBinding4b).expects("checkUpdate").withExactArgs();
+				}
+
+				// code under test
+				assert.strictEqual(
+					oBinding._delete("myGroup", "EMPLOYEES('1')", oBinding.aContexts[2]),
+					oPromise);
+
+				assert.strictEqual(oBinding.aContexts.length, 5);
+				assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
+				assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
+				assert.notOk(2 in oBinding.aContexts);
+				assert.strictEqual(oBinding.aContexts[3].getIndex(), 3);
+				assert.strictEqual(oBinding.aContexts[3].getPath(), "/EMPLOYEES/3");
+				assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[4]);
+				assert.strictEqual(oBinding.aContexts.length, 5);
+				assert.strictEqual(oBinding.iMaxLength, 5);
+				if (bUseExtendedChangeDetection) {
+					assert.deepEqual(oBinding.aDiff, [{index : 1, type : "delete"}]);
+				} else {
+					assert.deepEqual(oBinding.aDiff, [], "unchanged");
+				}
+			}
+		);
+	});
+	// TODO check the row of a pending update with higher index
+
+	//*********************************************************************************************
+	QUnit.test("_delete: pending changes", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oBinding).expects("deleteFromCache").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		assert.throws(function () {
+			oBinding._delete("myGroup", "EMPLOYEES('1')", null);
+		}, new Error("Cannot delete due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	["$auto", undefined].forEach(function (sGroupId) {
+		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				fnCallback = {},
+				oPromise = {};
+
+			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
+				.withExactArgs().returns("$auto");
+			this.mock(oBinding.oCache).expects("_delete")
+				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					sinon.match.same(fnCallback))
+				.returns(oPromise);
+			this.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$auto");
+
+			assert.strictEqual(
+				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					fnCallback),
+				oPromise);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
+		var oParentBinding = {
+				deleteFromCache : function () {}
+			},
+			fnCallback = {},
+			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS/42", 42),
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oPromise = {};
+
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
+			.returns("~");
+		this.mock(oParentBinding).expects("deleteFromCache")
+			.withExactArgs("$auto", "EQUIPMENTS('3')", "~", sinon.match.same(fnCallback))
+			.returns(oPromise);
+
+		assert.strictEqual(
+			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+				fnCallback),
+			oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteFromCache: illegal group ID", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			fnCallback = {};
+
+		assert.throws(function () {
+			oBinding.deleteFromCache("myGroup");
+		}, new Error("Illegal update group ID: myGroup"));
+
+		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
+
+		assert.throws(function () {
+			oBinding.deleteFromCache();
+		}, new Error("Illegal update group ID: myGroup"));
+
+		this.mock(oBinding.oCache).expects("_delete")
+			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
+			.returns(Promise.resolve());
+
+		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
 	});
 });
 //TODO integration: 2 entity sets with same $expand, but different $select

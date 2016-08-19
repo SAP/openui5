@@ -1233,7 +1233,8 @@ sap.ui.require([
 			.withExactArgs(undefined, oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
 			.withExactArgs("foo", 42);
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy("foo", 42);
 	});
@@ -1248,7 +1249,8 @@ sap.ui.require([
 		this.oSandbox.mock(oContext).expects("deregisterChange")
 			.withExactArgs("Name", oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
 	});
@@ -1257,7 +1259,8 @@ sap.ui.require([
 	QUnit.test("destroy: relative binding unresolved", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("PRODUCT_2_BP");
 
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
 	});
@@ -1273,7 +1276,8 @@ sap.ui.require([
 			var done = assert.async(),
 				oModel = new ODataModel({
 					serviceUrl : TestUtils.proxy(sServiceUrl),
-					synchronizationMode : "None"
+					synchronizationMode : "None",
+					updateGroupId : "deferred"
 				}),
 				oControl = new TestControl({
 					models : oModel,
@@ -1281,17 +1285,27 @@ sap.ui.require([
 					text : "{path : 'PhoneNumber', type : 'sap.ui.model.odata.type.String'}"
 				});
 
-				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
+			//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
+			oControl.getBinding("text").attachEventOnce("change", function () {
+				var sPhoneNumber = oControl.getText().indexOf("/") < 0
+					? "06227/34567"
+					: "0622734567";
+
+				// in the change event resulting from the setText, submit the batch asychronously
+				// The event itself is fired before the PATCH is in the queue.
 				oControl.getBinding("text").attachEventOnce("change", function () {
-					var sPhoneNumber = oControl.getText().indexOf("/") < 0
-						? "06227/34567"
-						: "0622734567";
-
-					// code under test
-					oControl.setText(sPhoneNumber);
-
-					done();
+					Promise.resolve().then(function () {
+						oModel.submitBatch("deferred").then(function () {
+							done();
+						});
+					});
 				});
+
+				// code under test
+				oControl.setText(sPhoneNumber);
+
+				// assertion is only that no error/warning logs happen
+			});
 		});
 	}
 });

@@ -372,8 +372,10 @@ sap.ui.define([
 						vResponse.getResponseHeader = getResponseHeader;
 						oCause = _Helper.createError(vResponse);
 						vRequest.$reject(oCause);
-					} else {
+					} else if (vResponse.responseText) {
 						vRequest.$resolve(JSON.parse(vResponse.responseText));
+					} else {
+						vRequest.$resolve();
 					}
 				} else {
 					oError = new Error(

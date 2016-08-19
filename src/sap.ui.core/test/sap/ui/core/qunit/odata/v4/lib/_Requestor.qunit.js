@@ -466,7 +466,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): success", function (assert) {
-		var aExpectedRequests = [{
+		var aExpectedRequests = [[{
 				method: "POST",
 				url: "Customers",
 				headers: {
@@ -480,6 +480,18 @@ sap.ui.require([
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
 			}, {
+				method: "DELETE",
+				url: "SalesOrders('42')",
+				headers: {
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				},
+				body : undefined,
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func
+			}], {
 				method: "GET",
 				url: "Products",
 				headers: {
@@ -494,9 +506,11 @@ sap.ui.require([
 				$resolve: sinon.match.func
 			}],
 			aPromises = [],
-			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}],
-			aBatchResults = [
-				{responseText: JSON.stringify(aResults[1])},
+			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, undefined],
+			aBatchResults = [[
+					{responseText: JSON.stringify(aResults[1])},
+					{responseText: ""}
+				],
 				{responseText: JSON.stringify(aResults[0])}
 			],
 			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"});
@@ -516,6 +530,11 @@ sap.ui.require([
 			assert.deepEqual(oResult, aResults[1]);
 			aResults[1] = null;
 		}));
+		aPromises.push(oRequestor.request("DELETE", "SalesOrders('42')", "group1")
+			.then(function (oResult) {
+				assert.deepEqual(oResult, aResults[2]);
+				aResults[2] = null;
+			}));
 		oRequestor.request("GET", "SalesOrders", "group2");
 
 		this.mock(oRequestor).expects("request")
@@ -524,7 +543,7 @@ sap.ui.require([
 
 		aPromises.push(oRequestor.submitBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
-			assert.deepEqual(aResults, [null, null], "all batch requests already resolved");
+			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
 		}));
 		aPromises.push(oRequestor.submitBatch("group1")); // must not call request again
 

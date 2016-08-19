@@ -61,7 +61,8 @@
 				"dataSource" : "default",
 				"settings" : {
 					"operationMode" : "Server",
-					"synchronizationMode" : "None"
+					"synchronizationMode" : "None",
+					"updateGroupId" : "update"
 				}
 			}
 		},

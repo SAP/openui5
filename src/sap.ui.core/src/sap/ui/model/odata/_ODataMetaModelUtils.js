@@ -15,6 +15,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			"multi-value" : "MultiValue",
 			"single-value" : "SingleValue"
 		},
+		sLoggingModule = "sap.ui.model.odata.ODataMetaModel",
 		// maps V2 sap semantics annotations to a V4 annotations relative to
 		// com.sap.vocabularies.Communication.v1.
 		mSemanticsToV4AnnotationPath = {
@@ -93,9 +94,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			creatable : {
 				"Org.OData.Capabilities.V1.InsertRestrictions" : { "Insertable" : oBoolFalse }
 			},
-			deletable : {
-				"Org.OData.Capabilities.V1.DeleteRestrictions" : { "Deletable" : oBoolFalse }
-			},
+//			deletable : {
+//				"Org.OData.Capabilities.V1.DeleteRestrictions" : { "Deletable" : oBoolFalse }
+//			}, // see handleXableAndXablePath()
 			pageable : {
 				"Org.OData.Capabilities.V1.SkipSupported" : oBoolFalse,
 				"Org.OData.Capabilities.V1.TopSupported" : oBoolFalse
@@ -105,10 +106,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			},
 			topable : {
 				"Org.OData.Capabilities.V1.TopSupported" : oBoolFalse
-			},
-			updatable : {
-				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
 			}
+//			updatable : {
+//				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
+//			} // see handleXableAndXablePath()
 		},
 		// only if V4 name is different from V2 name
 		mV2ToV4Attribute = {
@@ -191,8 +192,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 					jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
 							+ oProperty["sap:filter-restriction"],
-						oEntitySet.entityType + "." + oProperty.name,
-						"sap.ui.model.odata._ODataMetaModelUtils");
+						oEntitySet.entityType + "." + oProperty.name, sLoggingModule);
 				}
 				return;
 			}
@@ -209,44 +209,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			});
 			oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] =
 				aFilterRestrictions;
-		},
-
-
-		/**
-		 * Adds the current navigation property to the
-		 * <code>NonInsertableNavigationProperties</code> collection of the
-		 * <code>Org.OData.Capabilities.V1.InsertRestrictions</code> V4 annotation at the given
-		 * entity set. If the annotation does not yet exist, it is created.
-		 *
-		 * @param {object} oEntitySet
-		 *   The entity set
-		 * @param {object} oNavigationProperty
-		 *   The navigation property
-		 */
-		addNonInsertableNavigationProperty : function (oEntitySet, oNavigationProperty) {
-			var oInsertRestrictions
-					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"]
-					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"] || {},
-				oNonInsertableCollection
-					= oInsertRestrictions["NonInsertableNavigationProperties"]
-					= oInsertRestrictions["NonInsertableNavigationProperties"] || [],
-				sCreatablePath = oNavigationProperty["sap:creatable-path"];
-
-			if (sCreatablePath) {
-				oNonInsertableCollection.push({
-					"If" : [{
-						"Not" : {
-							"Path" : sCreatablePath
-						}
-					}, {
-						"NavigationPropertyPath" : oNavigationProperty.name
-					}]
-				});
-			} else {
-				oNonInsertableCollection.push({
-					"NavigationPropertyPath" : oNavigationProperty.name
-				});
-			}
 		},
 
 		/**
@@ -299,8 +261,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					if (!aMatches) {
 						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 							jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
-								oType.name + "." + oProperty.name,
-								"sap.ui.model.odata._ODataMetaModelUtils");
+								oType.name + "." + oProperty.name, sLoggingModule);
 						}
 						return;
 					}
@@ -389,7 +350,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   "EntitySet"
 		 */
 		addV4Annotation : function (o, oExtension, sTypeClass) {
-			var sTerm;
 			switch (oExtension.name) {
 				case "display-format":
 					if (oExtension.value === "NonNegative") {
@@ -406,28 +366,14 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
 					break;
 				case "deletable":
-					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
-					// do not override existing annotation
-					if (!(o[sTerm] && o[sTerm].Deletable)) {
-						Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
-					}
+				case "deletable-path":
+					Utils.handleXableAndXablePath(o, oExtension, sTypeClass,
+						"Org.OData.Capabilities.V1.DeleteRestrictions", "Deletable");
 					break;
 				case "updatable":
-					sTerm = "Org.OData.Capabilities.V1.UpdateRestrictions";
-					// do not override existing annotation
-					if (!(o[sTerm] && o[sTerm].Updatable)) {
-						Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
-					}
-					break;
-				case "deletable-path":
-					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
-					o[sTerm] = o[sTerm] || {};
-					o[sTerm].Deletable = { "Path" : oExtension.value };
-					break;
 				case "updatable-path":
-					sTerm = "Org.OData.Capabilities.V1.UpdateRestrictions";
-					o[sTerm] = o[sTerm] || {};
-					o[sTerm].Updatable = { "Path" : oExtension.value };
+					Utils.handleXableAndXablePath(o, oExtension, sTypeClass,
+						"Org.OData.Capabilities.V1.UpdateRestrictions", "Updatable");
 					break;
 				case "requires-filter":
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "true", true);
@@ -500,10 +446,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet,
 							oNavigationProperty);
 					}
-					if (oNavigationProperty["sap:creatable"] === "false" ||
-						oNavigationProperty["sap:creatable-path"]) {
-						Utils.addNonInsertableNavigationProperty(oEntitySet, oNavigationProperty);
-					}
+					Utils.handleCreatableNavigationProperty(oEntitySet, oNavigationProperty);
 				});
 			}
 		},
@@ -709,8 +652,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						aResult.push(oV4TypeInfo.v4EnumType + "/" + sTargetType);
 					} else if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 						jQuery.sap.log.warning("Unsupported type for sap:semantics: " + sType,
-							oType.name + "." + oProperty.name,
-							"sap.ui.model.odata._ODataMetaModelUtils");
+							oType.name + "." + oProperty.name, sLoggingModule);
 					}
 				});
 			}
@@ -737,6 +679,103 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			}
 
 			return mValueLists;
+		},
+
+		/**
+		 * Convert sap:creatable and sap:creatable-path at navigation property to V4 annotation
+		 * 'Org.OData.Capabilities.V1.InsertRestrictions/NonInsertableNavigationProperties' at
+		 * the given entity set.
+		 * If both V2 annotations 'sap:creatable' and 'sap:creatable-path' are given the service is
+		 * broken and the navigation property is added as non-insertable navigation property.
+		 * If neither 'sap:creatable' nor 'sap:creatable-path' are given this function does
+		 * nothing.
+		 *
+		 * @param {object} oEntitySet
+		 *   The entity set
+		 * @param {object} oNavigationProperty
+		 *   The navigation property
+		 */
+		handleCreatableNavigationProperty : function (oEntitySet, oNavigationProperty) {
+			var sCreatable = oNavigationProperty["sap:creatable"],
+				sCreatablePath = oNavigationProperty["sap:creatable-path"],
+				oInsertRestrictions,
+				oNonInsertable = {"NavigationPropertyPath" : oNavigationProperty.name},
+				aNonInsertableNavigationProperties;
+
+			if (sCreatable && sCreatablePath) {
+				// inconsistent service if both v2 annotations are set
+				jQuery.sap.log.warning("Inconsistent service",
+					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property "
+						+ "'" + oEntitySet.entityType + "/" + oNavigationProperty.name + "'",
+					"sap.ui.model.odata.ODataMetaModel");
+				sCreatable = "false";
+				sCreatablePath = undefined;
+			}
+			if (sCreatable === "false" || sCreatablePath) {
+				oInsertRestrictions
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"]
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"] || {};
+				aNonInsertableNavigationProperties
+					= oInsertRestrictions["NonInsertableNavigationProperties"]
+					= oInsertRestrictions["NonInsertableNavigationProperties"] || [];
+				if (sCreatablePath) {
+					oNonInsertable = {
+						"If" : [{
+							"Not" : {
+								"Path" : sCreatablePath
+							}
+						}, oNonInsertable]
+					};
+				}
+				aNonInsertableNavigationProperties.push(oNonInsertable);
+			}
+		},
+
+		/**
+		 * Converts deletable/updatable and delatable-path/updatable-path into corresponding V4
+		 * annotation.
+		 * If both deletable/updatable and delatable-path/updatable-path are defined the service is
+		 * broken and the object is marked as non-deletable/non-updatable.
+		 *
+		 * @param {object} o
+		 *   any object
+		 * @param {object} oExtension
+		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
+		 * @param {string} sTypeClass
+		 *   the type class of the given object; supported type is "EntitySet"
+		 * @param {string} sTerm
+		 *   the V4 annotation term to use
+		 * @param {string} sProperty
+		 *   the V4 annotation property to use
+		 */
+		handleXableAndXablePath : function (o, oExtension, sTypeClass, sTerm, sProperty) {
+			var sV2Annotation = sProperty.toLowerCase(),
+				oValue;
+
+			if (sTypeClass !== "EntitySet") {
+				return; // "Property" not supported here, see liftSAPData()
+			}
+
+			if (o["sap:" + sV2Annotation] && o["sap:" + sV2Annotation + "-path"]) {
+				// the first extension (sap:xable or sap:xable-path) is processed as usual;
+				// only if a second extension (sap:xable-path or sap:xable) is processed,
+				// the warning is logged and the entity set is marked as non-deletable or
+				// non-updatable
+				jQuery.sap.log.warning("Inconsistent service",
+					"Use either 'sap:" + sV2Annotation + "' or 'sap:" + sV2Annotation + "-path'"
+						+ " at entity set '" + o.name + "'", sLoggingModule);
+				oValue = oBoolFalse;
+			} else if (sV2Annotation !== oExtension.name) {
+				// delatable-path/updatable-path
+				oValue = { "Path" : oExtension.value };
+			} else if (oExtension.value === "false") {
+				oValue = oBoolFalse;
+			}
+
+			if (oValue) {
+				o[sTerm] = o[sTerm] || {};
+				o[sTerm][sProperty] = oValue;
+			}
 		},
 
 		/**

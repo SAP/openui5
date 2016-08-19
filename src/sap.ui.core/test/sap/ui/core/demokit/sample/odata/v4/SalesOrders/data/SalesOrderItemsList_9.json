@@ -2,9 +2,9 @@
 	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
 	"value" : [
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000010",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000010",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000010",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "21.42",
@@ -49,9 +49,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000020",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000020",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000020",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "16.66",
@@ -96,9 +96,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000030",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000030",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000030",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "ARS",
 			"GrossAmount" : "26.18",
@@ -143,9 +143,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000040",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000040",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000040",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "BRL",
 			"GrossAmount" : "49.98",
@@ -190,9 +190,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000050",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000050",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000050",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "CAD",
 			"GrossAmount" : "19.04",
@@ -237,9 +237,9 @@
 			}
 		},
 		{
-			"SalesOrderID" : "0500000004",
+			"SalesOrderID" : "0500000009",
 			"ItemPosition" : "0000000060",
-			"Note" : "EPM DG: SO ID 0500000004 Item 0000000060",
+			"Note" : "EPM DG: SO ID 0500000009 Item 0000000060",
 			"NoteLanguage" : "E",
 			"CurrencyCode" : "CHF",
 			"GrossAmount" : "61.88",

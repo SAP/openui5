@@ -8,6 +8,29 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	>
 	<Toolbar>
+		<dependents>
+			<Dialog id="CreateEmployeeDialog" title="Create New Employee">
+				<buttons>
+					<Button text="OK" press="onCloseEmployeeDialog" type="Accept"/>
+				</buttons>
+				<content>
+					<form:SimpleForm layout="ResponsiveGridLayout">
+						<form:content>
+							<Label text="Name"/>
+							<!-- TODO Q: derive maxLength from type's constraints?!
+							          A: SmartField?! -->
+							<Input maxLength="16" value="{Name}"/>
+							<Label text="Age"/>
+							<Input value="{AGE}"/>
+							<Label text="Entry Date"/>
+							<Input value="{ENTRYDATE}"/>
+							<Label text="Is Manager"/>
+							<CheckBox selected="{Is_Manager}"/>
+						</form:content>
+					</form:SimpleForm>
+				</content>
+			</Dialog>
+		</dependents>
 		<Label text="Teams" labelFor="TeamSelect"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{path: '/TEAMS',
@@ -97,43 +120,12 @@
 				<content>
 					<Button enabled="false" icon="sap-icon://add" text="Create"
 						press="onCreateEmployee"/>
+					<Button icon="sap-icon://sys-cancel-2" text="Cancel"
+						press="onCancel"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
+						press="onSave"/>
+					<Button icon="sap-icon://refresh" press="onRefresh"/>
 				</content>
-				<dependents>
-					<Dialog id="CreateEmployeeDialog" title="Create New Employee">
-						<buttons>
-							<Button icon="sap-icon://sys-cancel-2" text="Cancel"
-								press="onCancelEmployee" type="Reject"/>
-							<Button icon="sap-icon://save" text="Save"
-								press="onSaveEmployee" type="Accept"/>
-						</buttons>
-						<content>
-							<form:SimpleForm layout="ResponsiveGridLayout">
-								<form:content>
-									<!-- TODO types should be determined automatically from OData
-										$metadata -->
-									<Label text="Name"/>
-									<!-- TODO Q: derive maxLength from type's constraints?!
-									          A: SmartField?! -->
-									<Input maxLength="16" value="{path: 'new>/Name',
-										type: 'sap.ui.model.odata.type.String',
-										constraints: {maxLength: 16, nullable: false}}"/>
-									<Label text="Age"/>
-									<Input value="{path: 'new>/AGE',
-										type: 'sap.ui.model.odata.type.Int16',
-										constraints: {nullable: false}}"/>
-									<Label text="Entry Date"/>
-									<Input value="{path: 'new>/ENTRYDATE',
-										type: 'sap.ui.model.odata.type.Date',
-										constraints: {nullable: false}}"/>
-									<Label text="Is Manager"/>
-									<CheckBox selected="{path: 'new>/Is_Manager',
-										type: 'sap.ui.model.odata.type.Boolean',
-										constraints: {nullable: false}}"/>
-								</form:content>
-							</form:SimpleForm>
-						</content>
-					</Dialog>
-				</dependents>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -144,6 +136,9 @@
 			</Column>
 			<Column>
 				<Text text="Employee ID"/>
+			</Column>
+			<Column>
+				<Text text="Is Manager"/>
 			</Column>
 			<Column>
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
@@ -170,19 +165,22 @@
 		<items>
 			<ColumnListItem>
 				<cells>
-					<Text text="{Name}"/>
+					<Input value="{Name}"/>
 				</cells>
 				<cells>
 					<Text text="{ID}"/>
 				</cells>
 				<cells>
-					<Text text="{AGE}"/>
+					<CheckBox selected="{Is_Manager}"/>
+				</cells>
+				<cells>
+					<Input value="{AGE}"/>
 				</cells>
 				<cells>
 					<Text text="{LOCATION/City/CITYNAME}"/>
 				</cells>
 				<cells>
-					<Text text="{ENTRYDATE}"/>
+					<Input value="{ENTRYDATE}"/>
 				</cells>
 				<cells>
 					<!-- Note: automatic type determination cannot work here and triggers a warning
@@ -288,7 +286,7 @@
 							</layoutData>
 						</Title>
 						<ToolbarSpacer width="1em"/>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh" text="Refresh"
+						<Button enabled="false" icon="sap-icon://refresh" text="Refresh"
 							press="onEquipmentsRefresh" />
 					</content>
 				</Toolbar>
