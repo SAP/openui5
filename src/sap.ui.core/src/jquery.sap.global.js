@@ -4470,9 +4470,6 @@
 		}
 	};
 
-	var oIEStyleSheetNode;
-	var mIEStyleSheets = jQuery.sap._mIEStyleSheets = {};
-
 	function _includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
 
 		var _createLink = function(sUrl, sId, fnLoadCallback, fnErrorCallback){
@@ -4533,75 +4530,21 @@
 
 		};
 
-		var _appendStyle = function(sUrl, sId, fnLoadCallback, fnErrorCallback){
-
-			if (Device.browser.msie && Device.browser.version <= 9 && document.styleSheets.length >= 28) {
-				// in IE9 only 30 links are alowed, so use stylesheet object insted
-				var sRootUrl = URI.parse(document.URL).path;
-				var sAbsoluteUrl = new URI(sUrl).absoluteTo(sRootUrl).toString();
-
-				if (sId) {
-					var oIEStyleSheet = mIEStyleSheets[sId];
-					if (oIEStyleSheet && oIEStyleSheet.href === sAbsoluteUrl) {
-						// if stylesheet was already included and href is the same, do nothing
-						return;
-					}
-				}
-
-				jQuery.sap.log.warning("Stylesheet " + (sId ? sId + " " : "") + "not added as LINK because of IE limits", sUrl, "jQuery.sap.includeStyleSheet");
-
-				if (!oIEStyleSheetNode) {
-					// create a style sheet to add additional style sheet. But for this the Replace logic will not work any more
-					// the callback functions are not used in this case
-					// the data-sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
-					oIEStyleSheetNode = document.createStyleSheet();
-				}
-				// add up to 30 style sheets to every of this style sheets. (result is a tree of style sheets)
-				var bAdded = false;
-				for ( var i = 0; i < oIEStyleSheetNode.imports.length; i++) {
-					var oStyleSheet = oIEStyleSheetNode.imports[i];
-					if (oStyleSheet.imports.length < 30) {
-						oStyleSheet.addImport(sAbsoluteUrl);
-						bAdded = true;
-						break;
-					}
-				}
-				if (!bAdded) {
-					oIEStyleSheetNode.addImport(sAbsoluteUrl);
-				}
-
-				if (sId) {
-					// remember id and href URL in internal map as there is no link tag that can be checked
-					mIEStyleSheets[sId] = {
-						href: sAbsoluteUrl
-					};
-				}
-
-				// always make sure to re-append the customcss in the end if it exists
-				var oCustomCss = document.getElementById('sap-ui-core-customcss');
-				if (!jQuery.isEmptyObject(oCustomCss)) {
-					appendHead(oCustomCss);
-				}
-			} else {
-				var oLink = _createLink(sUrl, sId, fnLoadCallback, fnErrorCallback);
-				if (jQuery('#sap-ui-core-customcss').length > 0) {
-					jQuery('#sap-ui-core-customcss').first().before(jQuery(oLink));
-				} else {
-					appendHead(oLink);
-				}
-			}
-
-		};
-
 		// check for existence of the link
+		var oLink = _createLink(sUrl, sId, fnLoadCallback, fnErrorCallback);
 		var oOld = jQuery.sap.domById(sId);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
 			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
-				jQuery(oOld).replaceWith(_createLink(sUrl, sId, fnLoadCallback, fnErrorCallback));
+				jQuery(oOld).replaceWith(oLink);
 			}
 		} else {
-			_appendStyle(sUrl, sId, fnLoadCallback, fnErrorCallback);
+			oOld = jQuery('#sap-ui-core-customcss');
+			if (oOld.length > 0) {
+				oOld.first().before(oLink);
+			} else {
+				appendHead(oLink);
+			}
 		}
 
 	}

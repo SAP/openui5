@@ -201,28 +201,16 @@
 				for (i = 0; i < iNewStylesheets; i++) {
 
 					// success / error callback will only be called for real link tags
-					// in IE < 9 there will be a @import statement in a inline style after the 28th stylesheet
-					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9 && document.styleSheets.length >= 28) {
-						includeStyleSheet(i);
-					} else {
-						// create promise to keep track of loading state
-						var oPromise = new Promise(function(fnResolve, fnReject) {
-							includeStyleSheet(i, fnResolve, fnReject);
-						});
-						aPromises.push(oPromise);
-					}
+					// create promise to keep track of loading state
+					var oPromise = new Promise(function(fnResolve, fnReject) {
+						includeStyleSheet(i, fnResolve, fnReject);
+					});
+					aPromises.push(oPromise);
 
 				}
 
-				var iExpectedStylesheets;
-				if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9) {
-					// in IE < 9 there is a technical stylesheet link limit
-					// jQuery.sap.includeStyleSheet should not produce more than 29 link tags
-					iExpectedStylesheets = 29;
-				} else {
-					// in all other browsers, all new stylesheets should be added
-					iExpectedStylesheets = iInitialStylesheets + iNewStylesheets;
-				}
+				// all new stylesheets should be added
+				var iExpectedStylesheets = iInitialStylesheets + iNewStylesheets;
 
 				// wait until all stylesheets are loaded
 				return Promise.all(aPromises).then(function() {

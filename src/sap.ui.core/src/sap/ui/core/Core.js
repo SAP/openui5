@@ -866,11 +866,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 			}
 
-			// remove additional css files (ie9 rule limit fix)
-			if ($this.attr("data-sap-ui-css-count")) {
-				$this.remove();
-			}
-
 			// set new URL
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
