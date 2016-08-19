@@ -32,8 +32,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.38
+	 * @since 1.42
 	 * @alias sap.f.DynamicPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1105,4 +1104,4 @@ sap.ui.define([
 
 	return DynamicPage;
 
-}, /* bExport= */ false);
+}, /* bExport= */ true);
