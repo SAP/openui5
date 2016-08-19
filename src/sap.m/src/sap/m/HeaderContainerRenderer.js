@@ -52,6 +52,10 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-after");
+		oRm.writeAttribute("tabindex", "0");
+		oRm.write("/>");
 		oRm.write("</div>");
 
 		var oButton = oControl.getAggregation("_prevButton");

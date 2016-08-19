@@ -267,14 +267,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype.onsaptabnext = function(oEvt) {
 		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
-		var oFocusables = this.$().find(":focusable");		// all tabstops in the control
-		var iThis = oFocusables.index(oEvt.target);				// focused element index
-		var oNext = oFocusables.eq(iThis + 1).get(0);			// next tab stop element
+		var oFocusables = this.$().find(":focusable");	// all tabstops in the control
+		var iThis = oFocusables.index(oEvt.target);  // focused element index
+		var oNext = oFocusables.eq(iThis + 1).get(0);	// next tab stop element
 		var oFromCell = this._getParentCell(oEvt.target);
-		var oToCell = (typeof oNext != 'undefined') ? this._getParentCell(oNext) : undefined;
-		if ((typeof oFromCell != 'undefined') && (typeof oToCell != 'undefined') && oFromCell.id != oToCell.id) { // attempt to jump to other cell
+		var oToCell;
+		if (oNext) {
+			oToCell = this._getParentCell(oNext);
+		}
+
+		if (oFromCell && oToCell && oFromCell.id !== oToCell.id || oNext && oNext.id === this.getId() + "-after") { // attempt to jump out of HeaderContainer
 			var oLastInnerTab = oFocusables.last().get(0);
-			if (typeof oLastInnerTab != 'undefined') {
+			if (oLastInnerTab) {
+				this._bIgnoreFocusIn = true;
 				oLastInnerTab.focus();
 			}
 		}
@@ -286,17 +291,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oPrev = oFocusables.eq(iThis - 1).get(0);				// previous tab stop element
 		var oFromCell = this._getParentCell(oEvt.target);
 		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
-		var oToCell = (typeof oPrev != 'undefined') ? this._getParentCell(oPrev) : undefined;
-		if (typeof oPrev != 'undefined' && typeof oToCell != 'undefined' && oToCell.id == oPrev.id) { // previous step goes to cell
-			oEvt.preventDefault();
-			oEvt.stopPropagation();
-			oToCell.tabindex = 0;
-			oToCell.focus();
-		} else if (typeof oToCell == 'undefined' || oFromCell && oFromCell.id != oToCell.id) { // attempt to jump outside or to other cell
-			var sTabIndex = this.$().attr("tabindex");	// save tabindex
+		var oToCell;
+		if (oPrev) {
+			oToCell = this._getParentCell(oPrev);
+		}
+
+		if (!oToCell || oFromCell && oFromCell.id !== oToCell.id) { // attempt to jump out of HeaderContainer
+			var sTabIndex = this.$().attr("tabindex");		// save tabindex
 			this.$().attr("tabindex", "0");
-			this.$().focus(); 													// set focus before the control
-			if (typeof sTabIndex == 'undefined') {			// restore tabindex
+			this.$().focus(); 								// set focus before the control
+			if (!sTabIndex) {								// restore tabindex
 				this.$().removeAttr("tabindex");
 			} else {
 				this.$().attr("tabindex", sTabIndex);
@@ -565,6 +569,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype._getParentCell = function(oDomElement) {
 		return jQuery(oDomElement).parents(".sapMHrdrCntrInner").andSelf(".sapMHrdrCntrInner").get(0);
+	};
+
+
+	HeaderContainer.prototype.onfocusin = function(oEvt) {
+		if (this._bIgnoreFocusIn) {
+			this._bIgnoreFocusIn = false;
+			return;
+		}
+		if (oEvt.target.id === this.getId() + "-after") {
+			this._restoreLastFocused();
+		} else {
+			return;
+		}
+	};
+
+	HeaderContainer.prototype._restoreLastFocused = function() {
+		if (!this._oItemNavigation) {
+			return;
+		}
+		//get the last focused Element from the HeaderContainer
+		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+
+		// find related item control to get tabbables
+		var oRelatedControl = $LastFocused.control(0) || {};
+		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
+
+		// get the last tabbable item or itself and focus
+		$Tabbables.eq(-1).add($LastFocused).eq(-1).focus();
 	};
 
 	return HeaderContainer;
