@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeStyles();
 			oRm.writeControlData(oSlider);
 
-			if (sTooltip) {
+			if (sTooltip && oSlider.getShowHandleTooltip()) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 
@@ -88,13 +88,17 @@ sap.ui.define(['jquery.sap.global'],
 		/**
 		 * This hook method is reserved for derived classes to render more handles.
 		 *
-		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
 		 */
 		SliderRenderer.renderHandles = function(oRm, oSlider) {
 			this.renderHandle(oRm, oSlider,  {
 				id: oSlider.getId() + "-handle"
 			});
+
+			if (oSlider.getShowAdvancedTooltip()) {
+				this.renderTooltips(oRm, oSlider);
+			}
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
@@ -121,6 +125,45 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("></span>");
+		};
+
+		/**
+		 * This hook method is reserved for derived classes to render more tooltips.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+		 */
+		SliderRenderer.renderTooltips = function(oRm, oSlider) {
+			// The tooltips container
+			oRm.write("<div");
+			oRm.writeAttribute("id", oSlider.getId() + "-TooltipsContainer");
+			oRm.addClass(SliderRenderer.CSS_CLASS + "TooltipContainer");
+			oRm.addStyle("left","0%");
+			oRm.addStyle("right","0%");
+			oRm.addStyle("min-width", "0%");
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			this.renderTooltip(oRm, oSlider, oSlider.getInputsAsTooltips());
+
+			oRm.write("</div>");
+		};
+
+		SliderRenderer.renderTooltip = function(oRm, oSlider, bInput) {
+			if (bInput) {
+				oRm.renderControl(oSlider._oInputTooltip);
+			} else {
+				oRm.write("<span");
+				oRm.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
+				oRm.addStyle("width", oSlider._iLongestRangeTextWidth + "px");
+				oRm.writeAttribute("id", oSlider.getId() + "-Tooltip");
+
+				oRm.writeClasses();
+				oRm.writeStyles();
+				oRm.write(">");
+				oRm.write("</span>");
+			}
 		};
 
 		/**
