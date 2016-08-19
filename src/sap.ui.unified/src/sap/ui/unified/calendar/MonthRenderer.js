@@ -380,6 +380,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		oRm.writeAttribute("tabindex", "-1");
 		oRm.writeAttribute("data-sap-day", sYyyymmdd);
+		if (bDayName) {
+			mAccProps["label"] = mAccProps["label"] + oHelper.aWeekDaysWide[iWeekDay] + " ";
+		}
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDay, true);
 
 		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
@@ -424,7 +427,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oRm.write("<span");
 			oRm.addClass("sapUiCalDayName");
 			oRm.writeClasses();
-			oRm.writeAccessibilityState(null, {label: oHelper.aWeekDaysWide[iWeekDay]});
 			oRm.write(">"); // span
 			oRm.write(oHelper.aWeekDays[iWeekDay]);
 			oRm.write("</span>");
