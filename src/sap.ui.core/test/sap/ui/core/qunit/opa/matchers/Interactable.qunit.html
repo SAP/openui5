@@ -19,7 +19,13 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-			QUnit.config.autostart = false;
+			(function () {
+				QUnit.config.autostart = false;
+				// HACK to have noglobals active - in phantom js this introduces XMLHttpRequest
+				var XHR = sinon.useFakeXMLHttpRequest();
+				XHR.restore();
+			})();
+
 
 			sap.ui.require([
 					'sap/ui/test/matchers/Interactable',
@@ -29,8 +35,19 @@
 					'sap/m/App',
 					'sap/m/Page',
 					'sap/m/Dialog',
-					'sap/m/Toolbar'
-				], function (Interactable, $, Button, NavContainer, App, Page, Dialog, Toolbar) {
+					'sap/m/Toolbar',
+					'sap/ui/test/opaQunit',
+					'sap/ui/test/Opa5'
+				], function (Interactable,
+							 $,
+							 Button,
+							 NavContainer,
+							 App,
+							 Page,
+							 Dialog,
+							 Toolbar,
+							 opaTest,
+			 				 Opa5) {
 					"use strict";
 
 					[NavContainer, App].forEach(function (fnConstructor) {
@@ -343,6 +360,93 @@
 						// Assert
 						assert.ok(!bResult, "Does not match because the page because the toolbar is disabled");
 						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled", oInteractable._sLogPrefix);
+					});
+
+					QUnit.module("Fake XHRs", {
+						beforeEach: function () {
+							this.oButton = new Button();
+							this.oButton.placeAt("qunit-fixture");
+							this.oInteractable = new Interactable();
+							sap.ui.getCore().applyChanges();
+						},
+						afterEach: function () {
+							this.oButton.destroy();
+							sap.ui.getCore().applyChanges();
+						}
+					});
+
+					QUnit.test("Should wait for open XHRs", function (assert) {
+						var oXHR = sinon.useFakeXMLHttpRequest();
+						var aRequests = [];
+
+						oXHR.onCreate = function (xhr) {
+							aRequests.push(xhr);
+						};
+
+						var bResult = this.oInteractable.isMatching(this.oButton);
+						assert.ok(bResult, "is matching");
+
+						$.get({ url: "foo"});
+						bResult = this.oInteractable.isMatching(this.oButton);
+						assert.ok(!bResult, "there is an open XHR");
+
+						aRequests[0].respond(200, {}, '{}');
+
+						bResult = this.oInteractable.isMatching(this.oButton);
+						assert.ok(bResult, "is matching");
+
+
+						oXHR.restore();
+					});
+
+					opaTest("Should wait for open XHRs in an iFrame", function (oOpa) {
+						oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
+						var aRequests = [];
+						var oXHR;
+
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myButton",
+							actions: function () {
+								Opa5.assert.ok(true, "there was no open XHR");
+
+								// prepare sinon and start an XHR
+								oXHR = Opa5.getWindow().sinon.useFakeXMLHttpRequest();
+
+								oXHR.onCreate = function (xhr) {
+									aRequests.push(xhr);
+								};
+
+								Opa5.getJQuery().get({ url: "foo"});
+							}
+						});
+
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myButton",
+							success: function (oButton) {
+								var oInteractable = new Interactable();
+								var bIsMatching = oInteractable.isMatching(oButton);
+								Opa5.assert.ok(!bIsMatching, "there is an open XHR");
+
+								aRequests[0].respond(200, {}, '{}');
+
+								bIsMatching = oInteractable.isMatching(oButton);
+								Opa5.assert.ok(bIsMatching, "there is no open XHR");
+							}
+						});
+
+
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myButton",
+							actions: function () {
+								Opa5.assert.ok(true, "there was no open XHR");
+								oXHR.restore();
+							}
+						});
+
+						oOpa.iTeardownMyApp();
 					});
 
 					jQuery(function () {
