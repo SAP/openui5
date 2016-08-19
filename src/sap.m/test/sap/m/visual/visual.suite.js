@@ -32,9 +32,5 @@ module.exports = [
 	"TimePicker.spec.js",
 	"Token.spec.js",
 	"Tokenizer.spec.js",
-	"Wizard.spec.js",
-	"infra_ActionSelect.spec.js",
-	"infra_ObjectHeaderVisualTest.spec.js",
-	"infra_Page.spec.js",
-	"infra_SemanticPage.spec.js"
+	"Wizard.spec.js"
 ];
