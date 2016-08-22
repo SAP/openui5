@@ -295,10 +295,22 @@
 				})]
 			});
 
+			// The translations should be stubbed because of language parameter
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+			sinon.stub(this.oResourceBundle, "getText")
+				.withArgs("RESPONSIVE_SPLITTER_RESIZE").returns("Resize split screen between pane")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", [1, 2]).returns("1 and pane 2")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", [2, 3]).returns("2 and pane 3")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", ["3.1", "3.2"]).returns("3.1 and pane 3.2")
+				.withArgs("RESPONSIVE_SPLITTER_HOME").returns("Go to split screen")
+				.withArgs("RESPONSIVE_SPLITTER_AND").returns("and")
+				.withArgs("RESPONSIVE_SPLITTER_GOTO").returns("Go to screen");
+
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
 			sap.ui.getCore().applyChanges();
 		}, teardown: function () {
 			this.oScrollContainer.destroy();
+			this.oResourceBundle.getText.restore();
 		}
 	});
 
