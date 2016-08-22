@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject) {
 	"use strict";
 
 	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
@@ -156,7 +156,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 
 		this.setAggregation("_scrollContainer", this._oScrollCntr, true);
-		var that = this;
 
 		if (Device.system.desktop) {
 			this._oArrowPrev = new sap.m.Button({
@@ -167,6 +166,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._scroll(-this.getScrollStep(), this.getScrollTime());
 				}.bind(this)
 			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+			this._oArrowPrev._bExcludeFromTabChain = true;
 			this.setAggregation("_prevButton", this._oArrowPrev, true);
 
 			this._oArrowNext = new sap.m.Button({
@@ -177,31 +177,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._scroll(this.getScrollStep(), this.getScrollTime());
 				}.bind(this)
 			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+			this._oArrowNext._bExcludeFromTabChain = true;
 			this.setAggregation("_nextButton", this._oArrowNext, true);
 
 			this._oScrollCntr.addDelegate({
 				onAfterRendering : function() {
 					if (Device.system.desktop) {
-						var oFocusRef = jQuery.sap.domById(that.getId() + "-scrl-cntnr-scroll"); // TODO: use this$()
-						var oFocusObj = jQuery.sap.byId(that.getId() + "-scrl-cntnr-scroll");    // TODO: use this$()
+						var oFocusRef = this._oScrollCntr.getDomRef("scroll");
+						var oFocusObj = this._oScrollCntr.$("scroll");
 						var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
 
-						if (!that._oItemNavigation) {
-							that._oItemNavigation = new ItemNavigation();
-							that.addDelegate(that._oItemNavigation);
-							that._oItemNavigation.attachEvent(sap.ui.core.delegate.ItemNavigation.Events.BorderReached, that._handleBorderReached, that); // TODO: use short cut for long module access
-							that._oItemNavigation.attachEvent(sap.ui.core.delegate.ItemNavigation.Events.AfterFocus, that._handleBorderReached, that);    // TODO: use short cut for long module access
+						if (!this._oItemNavigation) {
+							this._oItemNavigation = new ItemNavigation();
+							this.addDelegate(this._oItemNavigation);
+							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
+							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
 						}
-						that._oItemNavigation.setRootDomRef(oFocusRef);
-						that._oItemNavigation.setItemDomRefs(aDomRefs);
-						that._oItemNavigation.setTabIndex0();
-						that._oItemNavigation.setCycling(false);
+						this._oItemNavigation.setRootDomRef(oFocusRef);
+						this._oItemNavigation.setItemDomRefs(aDomRefs);
+						this._oItemNavigation.setTabIndex0();
+						this._oItemNavigation.setCycling(false);
 					}
-				},
+				}.bind(this),
 
 				onBeforeRendering : function() {
 					if (Device.system.desktop) {
-						that._oScrollCntr._oScroller = new ScrollEnablement(that._oScrollCntr, that._oScrollCntr.getId() + "-scroll", {
+						this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
 							horizontal : true,
 							vertical : true,
 							zynga : false,
@@ -209,7 +210,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							nonTouchScrolling : true
 						});
 					}
-				}
+				}.bind(this)
 			});
 		}
 	};
@@ -230,8 +231,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype.onAfterRendering = function() {
-		jQuery.sap.byId(this.getId() + "-scrl-next-button").attr("tabindex","-1"); // TODO: use this.$()
-		jQuery.sap.byId(this.getId() + "-scrl-prev-button").attr("tabindex","-1"); // TODO: use this.$()
 		if (Device.system.desktop) {
 			this.$().bind("swipe", this._handleSwipe.bind(this)); // TODO: check why click is bind for desktop devices.
 		}
@@ -267,9 +266,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype.onsaptabnext = function(oEvt) {
 		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
-		var oFocusables = this.$().find(":focusable");	// all tabstops in the control
-		var iThis = oFocusables.index(oEvt.target);  // focused element index
-		var oNext = oFocusables.eq(iThis + 1).get(0);	// next tab stop element
+		var oFocusables = this.$().find(":focusable"); // all tabstops in the control
+		var iThis = oFocusables.index(oEvt.target); // focused element index
+		var oNext = oFocusables.eq(iThis + 1).get(0); // next tab stop element
 		var oFromCell = this._getParentCell(oEvt.target);
 		var oToCell;
 		if (oNext) {
@@ -286,9 +285,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype.onsaptabprevious = function(oEvt) {
-		var oFocusables = this.$().find(":focusable");			// all tabstops in the control
-		var iThis = oFocusables.index(oEvt.target);					// focused element index
-		var oPrev = oFocusables.eq(iThis - 1).get(0);				// previous tab stop element
+		var oFocusables = this.$().find(":focusable"); // all tabstops in the control
+		var iThis = oFocusables.index(oEvt.target); // focused element index
+		var oPrev = oFocusables.eq(iThis - 1).get(0); // previous tab stop element
 		var oFromCell = this._getParentCell(oEvt.target);
 		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
 		var oToCell;
@@ -297,10 +296,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (!oToCell || oFromCell && oFromCell.id !== oToCell.id) { // attempt to jump out of HeaderContainer
-			var sTabIndex = this.$().attr("tabindex");		// save tabindex
+			var sTabIndex = this.$().attr("tabindex"); // save tabindex
 			this.$().attr("tabindex", "0");
-			this.$().focus(); 								// set focus before the control
-			if (!sTabIndex) {								// restore tabindex
+			this.$().focus(); // set focus before the control
+			if (!sTabIndex) { // restore tabindex
 				this.$().removeAttr("tabindex");
 			} else {
 				this.$().attr("tabindex", sTabIndex);
@@ -311,51 +310,53 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 	/* Public property getters/setters                             */
 	/* =========================================================== */
-	HeaderContainer.prototype.setView = function(value) {
-	  this.setProperty("view", value, true);
+	HeaderContainer.prototype.setOrientation = function(value) {
+	  this.setProperty("orientation", value, true);
 		if (value === Orientation.Horizontal && !Device.system.desktop) {
-			this._oScrollCntr.setHorizontal(true); // TODO: check if setProperty can used instead.
+			// Needs to be done by setter. No re-rendering done.
+			this._oScrollCntr.setHorizontal(true);
 			this._oScrollCntr.setVertical(false);
 		} else if (!Device.system.desktop) {
+			// Needs to be done by setter. No re-rendering done.
 			this._oScrollCntr.setHorizontal(false);
 			this._oScrollCntr.setVertical(true);
 		}
 		return this;
 	};
 
-	HeaderContainer.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
 		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
 	};
 
-	HeaderContainer.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("getAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.indexOfAggregation = function(sAggregationName, oObject) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.indexOfAggregation = function(sAggregationName, oObject) {
 		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
 	};
 
-	HeaderContainer.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
 	};
 
-	HeaderContainer.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) { // TODO: Needs to be checked if needed.
+	HeaderContainer.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
 	};
 
@@ -377,14 +378,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._vScroll = function(iDelta, iDuration) {
-		var oDomRef = jQuery.sap.domById(this.getId() + "-scrl-cntnr"); // TODO: use this.$()
+		var oDomRef = this._oScrollCntr.getDomRef();
 		var iScrollTop = oDomRef.scrollTop;
 		var iScrollTarget = iScrollTop + iDelta;
 		this._oScrollCntr.scrollTo(0, iScrollTarget, iDuration);
 	};
 
 	HeaderContainer.prototype._hScroll = function(iDelta, iDuration) {
-		var oDomRef = jQuery.sap.domById(this.getId() + "-scrl-cntnr"); // TODO: use this.$()
+		var oDomRef = this._oScrollCntr.getDomRef();
 		var iScrollTarget;
 		if (!this._bRtl) {
 			var iScrollLeft = oDomRef.scrollLeft;
@@ -531,7 +532,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @description Unwrapps the conent of HeaderContainerItemContainer. Ignores elements that are not HeaderContainerItemContainer (allowing the proper behaviour if using with indexOf).
+	 * @description Unwraps the content of HeaderContainerItemContainer. Ignores elements that are not HeaderContainerItemContainer (allowing the proper behavior if used with indexOf).
 	 * Works on single elements and arrays.
 	 * @private
 	 */
@@ -548,22 +549,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return wrapped;
 	};
 
+	HeaderContainer._AGGREGATION_FUNCTIONS = ["validateAggregation", "validateAggregation", "getAggregation", "setAggregation", "indexOfAggregation", "removeAggregation"];
+	HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT = ["insertAggregation", "addAggregation"];
 	HeaderContainer.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName) {
 		var args = Array.prototype.slice.call(arguments);
 		if (sAggregationName === "items") {
 			var oItem = args[2];
 			args[1] = "content";
-			if (oItem instanceof sap.ui.core.Control) {
-				if ((["validateAggregation", "validateAggregation", "getAggregation", "setAggregation", "indexOfAggregation", "removeAggregation"].indexOf(sFunctionName) != -1)
-						 && (oItem.getParent() instanceof HeaderContainerItemContainer)) {
+			if (oItem instanceof Control) {
+				if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS) > -1 && oItem.getParent() instanceof HeaderContainerItemContainer) {
 					args[2] = oItem.getParent();
-				} else if (["insertAggregation", "addAggregation"].indexOf(sFunctionName) != -1) {
-					args[2] = new HeaderContainerItemContainer({item: oItem});
+				} else if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT) > -1) {
+					args[2] = new HeaderContainerItemContainer({
+						item: oItem
+					});
 				}
 			}
 			return this._unWrapHeaderContainerItemContainer(this._oScrollCntr[sFunctionName].apply(this._oScrollCntr, args.slice(1)));
 		} else {
-			return sap.ui.base.ManagedObject.prototype[sFunctionName].apply(this, args.slice(1)); // TODO: Check if it is needed that MO is called instead of prototype of HeaderContainer
+			return ManagedObject.prototype[sFunctionName].apply(this, args.slice(1));
 		}
 	};
 
