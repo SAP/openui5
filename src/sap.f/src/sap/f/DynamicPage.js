@@ -613,19 +613,20 @@ sap.ui.define([
 	 * @returns {Number}
 	 * @private
 	 */
-	DynamicPage.prototype._measureOffsetHeight = function () {
+	DynamicPage.prototype._measureScrollBarOffsetHeight = function () {
 		var iHeight = 0,
-			bSnapped = !this.getHeaderExpanded();
+			bSnapped = !this.getHeaderExpanded(),
+			bHeaderAlwaysExpanded = this._headerAlwaysExpanded();
 
-		if (this._bPinned) {
-			iHeight = this._getTitleHeight() + this._getHeaderHeight();
-			jQuery.sap.log.debug("DynamicPage :: always show header :: title height + header height" + iHeight, this);
+		if (bHeaderAlwaysExpanded || this._bPinned) {
+			iHeight = this._getTitleAreaHeight();
+			jQuery.sap.log.debug("DynamicPage :: header always expanded or header pinned :: title area height" + iHeight, this);
 			return iHeight;
 		}
 
 		if (bSnapped || !exists(this.getTitle()) || !this._canSnap()) {
 			iHeight = this._getTitleHeight();
-			jQuery.sap.log.debug("DynamicPage :: snapped mode :: title height " + iHeight, this);
+			jQuery.sap.log.debug("DynamicPage :: header snapped :: title height " + iHeight, this);
 			return iHeight;
 		}
 
@@ -642,36 +643,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height that is needed to correctly offset the "fake" ScrollBar in header always expanded mode
-	 * @returns {Number}
-	 * @private
-	 */
-	DynamicPage.prototype._measureOffsetHeightHeaderAlwaysExpanded = function () {
-		return this._headerAlwaysExpanded() ? this._getTitleHeight() + this._getHeaderHeight() :  this._getTitleHeight();
-	};
-
-	/**
 	 * Updates the position/height of the "fake" ScrollBar
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
 		var oScrollBar,
-			bScrollBarNeeded,
-			iOffsetHeight = 0;
+			bScrollBarNeeded;
 
 		if (!Device.system.desktop || !exists(this.$wrapper)) {
 			return;
 		}
 
-		if (this._headerAlwaysExpanded()) {
-			iOffsetHeight = this._measureOffsetHeightHeaderAlwaysExpanded();
-		} else {
-			iOffsetHeight = this._measureOffsetHeight();
-		}
-
 		bScrollBarNeeded = this._needsVerticalScrollBar();
 		oScrollBar = this._getScrollBar();
-		oScrollBar.setContentSize(iOffsetHeight + this.$wrapper[0].scrollHeight + "px");
+		oScrollBar.setContentSize(this._measureScrollBarOffsetHeight() + this.$wrapper[0].scrollHeight + "px");
 		oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
 		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
 
@@ -775,6 +760,16 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._getWidth = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+	};
+
+	/**
+	 * Determines the height of the DynamicPage`s outer header DOM element (the so called title area),
+	 * the wrapper of the DynamicPageTitle and DynamicPageHeader.
+	 * @returns {Number}
+	 * @private
+	 */
+	DynamicPage.prototype._getTitleAreaHeight = function () {
+		return exists(this.$titleArea) ? this.$titleArea.outerHeight() || 0 : 0;
 	};
 
 	/**
