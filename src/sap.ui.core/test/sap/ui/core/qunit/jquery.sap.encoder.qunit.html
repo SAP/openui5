@@ -222,6 +222,27 @@ test("Syntax check", function() {
 	sUrl = "http://www.sap.com/index.html#hash/with/slashes?and/question/marks";
 	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
 
+	sUrl = "http://<invalid hostname>/index.html";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://some.0.more-complicated.name/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://some.invalid-.name/index.html";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://192.168.1.1/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://192.168.0.256/index.html";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://[3ffe:2a00:100:7031::1]/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://[1:::3]/index.html";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
 });
 
 test("Whitelist", function() {
