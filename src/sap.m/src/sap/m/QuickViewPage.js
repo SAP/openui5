@@ -273,10 +273,12 @@ sap.ui.define([
 					oForm.addAriaLabelledBy(oPageTitleControl);
 				}
 
-				return {
-					form : oForm,
-					header : oHeader
+				this._mPageContent = {
+					form: oForm,
+					header: oHeader
 				};
+
+				return this._mPageContent;
 			};
 
 			/**
@@ -495,9 +497,33 @@ sap.ui.define([
 				};
 			};
 
+			QuickViewPage.prototype._destroyPageContent = function() {
+				if (!this._mPageContent) {
+					return;
+				}
+
+				if (this._mPageContent.form) {
+					this._mPageContent.form.destroy();
+				}
+
+				if (this._mPageContent.header) {
+					this._mPageContent.header.destroy();
+				}
+
+				this._mPageContent = null;
+
+			};
+
 			QuickViewPage.prototype.exit = function() {
 				this._oResourceBundle = null;
-				this._oPage = null;
+
+				if (this._oPage) {
+					this._oPage.destroy();
+					this._oPage = null;
+				} else {
+					this._destroyPageContent();
+				}
+
 				this._mNavContext = null;
 			};
 
