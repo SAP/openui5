@@ -229,6 +229,8 @@ xhr.onCreate = function(request) {
 				break;
 		}
 
+		mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+
 		if (request.async === true) {
 			_setTimeout(function() {
 				jQuery.sap.log.info("[FakeService] Responding to: " + request.url);
