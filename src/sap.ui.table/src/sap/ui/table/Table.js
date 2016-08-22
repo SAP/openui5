@@ -925,12 +925,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var iFixedHeaderWidthSum = 0;
 		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
+			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
 				var oHeaderElementClientBoundingRect = aHeaderElements[i].getBoundingClientRect();
 				var iHeaderWidth = oHeaderElementClientBoundingRect.right - oHeaderElementClientBoundingRect.left;
 				aHeaderWidths.push(iHeaderWidth);
 
-				if (!this.getColumns()[i].getVisible()) {
+				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
 					// the fixedColumnCount does not consider the visibility of the column, whereas the DOM only represents
 					// the visible columns. In order to match both, the fixedColumnCount (aggregation) and fixedColumnCount
 					// of the DOM, for each invisible column, 1 must be deducted from the fixedColumnCount (aggregation).
