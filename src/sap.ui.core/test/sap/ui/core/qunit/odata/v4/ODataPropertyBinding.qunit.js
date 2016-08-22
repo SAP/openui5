@@ -1273,38 +1273,33 @@ sap.ui.require([
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
-			var done = assert.async(),
-				oModel = new ODataModel({
+			var oModel = new ODataModel({
 					serviceUrl : TestUtils.proxy(sServiceUrl),
-					synchronizationMode : "None",
-					updateGroupId : "deferred"
+					synchronizationMode : "None"
 				}),
 				oControl = new TestControl({
 					models : oModel,
 					objectBindings : "/BusinessPartnerList('0100000000')",
 					text : "{path : 'PhoneNumber', type : 'sap.ui.model.odata.type.String'}"
+				}),
+				oBinding = oControl.getBinding("text"),
+				oSandbox = this.oSandbox;
+
+			return new Promise(function (resolve, reject) {
+				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
+				oBinding.attachEventOnce("change", function () {
+					var sPhoneNumber = oControl.getText().indexOf("/") < 0
+							? "06227/34567"
+							: "0622734567",
+						fnSpy = oSandbox.spy(oBinding.getContext(), "updateValue");
+
+					// code under test
+					oControl.setText(sPhoneNumber);
+
+					// wait for Context#updateValue to finish (then the response has been processed)
+					// assertion is only that no error/warning logs happen
+					resolve(fnSpy.returnValues[0]);
 				});
-
-			//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
-			oControl.getBinding("text").attachEventOnce("change", function () {
-				var sPhoneNumber = oControl.getText().indexOf("/") < 0
-					? "06227/34567"
-					: "0622734567";
-
-				// in the change event resulting from the setText, submit the batch asychronously
-				// The event itself is fired before the PATCH is in the queue.
-				oControl.getBinding("text").attachEventOnce("change", function () {
-					Promise.resolve().then(function () {
-						oModel.submitBatch("deferred").then(function () {
-							done();
-						});
-					});
-				});
-
-				// code under test
-				oControl.setText(sPhoneNumber);
-
-				// assertion is only that no error/warning logs happen
 			});
 		});
 	}
