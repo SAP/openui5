@@ -11,6 +11,7 @@ module.exports = [
 	"Label.spec.js",
 	"LightBox.spec.js",
 	"MessagePage.spec.js",
+	"MessagePopover.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
 	"NotificationListItem.spec.js",
