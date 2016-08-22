@@ -47,11 +47,11 @@ sap.ui.define([
 						return this.waitFor({
 							searchOpenDialogs: true,
 							controlType: "sap.m.Dialog",
+							matchers : new PropertyStrictEquals({ name: "type", value: "Message"}),
 							success: function () {
 								Opa5.assert.ok(true, "The correct MessageBox was shown");
 							}
 						});
-
 					}
 
 				}

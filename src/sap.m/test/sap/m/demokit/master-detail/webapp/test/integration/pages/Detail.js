@@ -20,9 +20,7 @@ sap.ui.define([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							actions : function (oPage) {
-								oPage.$("navButton").trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage : "Did not find the nav button on detail page"
 						});
 					}
@@ -166,7 +164,7 @@ sap.ui.define([
 								return this.waitFor({
 									id : "lineItemsHeader",
 									viewName : sViewName,
-									matchers : new PropertyStrictEquals({name: "text", value: "LineItems (" + iNumberOfItems + ")"}),
+									matchers : new PropertyStrictEquals({name: "text", value: "<LineItemNamePlural> (" + iNumberOfItems + ")"}),
 									success : function () {
 										Opa5.assert.ok(true, "The line item list displays " + iNumberOfItems + " items");
 									},

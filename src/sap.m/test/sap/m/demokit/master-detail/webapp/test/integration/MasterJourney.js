@@ -72,8 +72,8 @@ sap.ui.define([
 
 			// Action
 			When.onTheMasterPage.iOpenViewSettingsDialog().
-				and.iSelectListItemInViewSettingsDialog("UnitNumber").
-				and.iSelectListItemInViewSettingsDialog("<100 UnitOfMeasure").
+				and.iSelectListItemInViewSettingsDialog("<UnitNumber>").
+				and.iSelectListItemInViewSettingsDialog("<100 <UnitOfMeasure>").
 				and.iPressOKInViewSelectionDialog();
 
 			// Assertion
@@ -83,7 +83,7 @@ sap.ui.define([
 		opaTest("MasterList Filtering on UnitNumber more than 100", function(Given, When, Then) {
 			// Action
 			When.onTheMasterPage.iOpenViewSettingsDialog().
-				and.iSelectListItemInViewSettingsDialog(">100 UnitOfMeasure").
+				and.iSelectListItemInViewSettingsDialog(">100 <UnitOfMeasure>").
 				and.iPressOKInViewSelectionDialog();
 
 			// Assertion

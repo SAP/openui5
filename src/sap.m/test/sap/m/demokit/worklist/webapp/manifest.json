@@ -1,8 +1,7 @@
 {
-	"_version": "1.2.0",
+	"_version": "1.4.0",
 
 	"sap.app": {
-		"_version": "1.2.0",
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -24,7 +23,6 @@
 	},
 
 	"sap.ui": {
-		"_version": "1.2.0",
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
@@ -46,7 +44,6 @@
 	},
 
 	"sap.ui5": {
-		"_version": "1.2.0",
 		"rootView": {
 			"viewName": "sap.ui.demo.worklist.view.App",
 			"type": "XML",
@@ -54,16 +51,13 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.38.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.36.0"
+					"minVersion": "1.38.0"
 				},
 				"sap.m": {
-					"minVersion": "1.36.0"
-				},
-				"sap.ui.layout" : {
-					"minVersion": "1.36.0"
+					"minVersion": "1.38.0"
 				}
 			}
 		},
@@ -82,11 +76,7 @@
 			},
 			"" : {
 				"dataSource": "mainService",
-				"settings": {
-					"metadataUrlParams": {
-						"sap-documentation": "heading"
-					}
-				}
+				"preload": true
 			}
 		},
 

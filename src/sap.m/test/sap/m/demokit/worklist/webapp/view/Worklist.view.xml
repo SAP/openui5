@@ -44,7 +44,7 @@
 					<Column id="nameColumn">
 						<Text text="{i18n>tableNameColumnTitle}" id="nameColumnTitle"/>
 					</Column>
-					<Column id="unitNumberColumn" hAlign="End">
+					<Column id="unitNumberColumn" hAlign="Right">
 						<Text text="{i18n>tableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
 					</Column>
 				</columns>

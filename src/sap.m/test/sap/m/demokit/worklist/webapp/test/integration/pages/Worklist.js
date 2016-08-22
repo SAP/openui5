@@ -79,9 +79,7 @@ sap.ui.define([
 							matchers : function (oTable) {
 								return !!oTable.$("trigger").length;
 							},
-							actions : function (oTable) {
-								oTable.$("trigger").trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "The Table does not have a trigger"
 						});
 					},

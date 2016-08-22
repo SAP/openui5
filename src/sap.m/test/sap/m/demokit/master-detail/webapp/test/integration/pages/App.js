@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
-		"sap/ui/demo/masterdetail/test/integration/pages/Common"
-	], function(Opa5, Common) {
+		"sap/ui/demo/masterdetail/test/integration/pages/Common",
+		"sap/ui/test/matchers/PropertyStrictEquals"
+	], function(Opa5, Common, PropertyStrictEquals) {
 		"use strict";
 
 		var sViewName = "App",
@@ -42,11 +43,13 @@ sap.ui.define([
 						});
 					},
 
-					iShouldSeeTheMessageBox : function (sMessageBoxId) {
+					iShouldSeeTheMessageBox : function () {
 						return this.waitFor({
-							id : sMessageBoxId,
-							success : function () {
-								Opa5.assert.ok(true, "the correct MessageBox was shown");
+							searchOpenDialogs: true,
+							controlType: "sap.m.Dialog",
+							matchers : new PropertyStrictEquals({ name: "type", value: "Message"}),
+							success: function () {
+								Opa5.assert.ok(true, "The correct MessageBox was shown");
 							}
 						});
 					}
