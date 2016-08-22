@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation) {
 	"use strict";
 
 	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
@@ -80,11 +80,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Appearance"
 				},
 				/**
-				 * The view of the HeaderContainer.
+				 * The orientation of the HeaderContainer.
 				 */
-				view : {
-					type : "sap.m.HeaderContainerView",
-					defaultValue : library.HeaderContainerView.Horizontal,
+				orientation : {
+					type : "sap.ui.core.Orientation",
+					defaultValue : Orientation.Horizontal,
 					group : "Appearance"
 				},
 				/**
@@ -220,8 +220,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		if (Device.system.desktop) {
 			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
-			this._oArrowPrev.setIcon(this.getView() === library.HeaderContainerView.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
-			this._oArrowNext.setIcon(this.getView() === library.HeaderContainerView.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
+			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
+			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
 			this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
 		}
 		if (this._sScrollResizeHandlerId) {
@@ -313,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 	HeaderContainer.prototype.setView = function(value) {
 	  this.setProperty("view", value, true);
-		if (value === library.HeaderContainerView.Horizontal && !Device.system.desktop) {
+		if (value === Orientation.Horizontal && !Device.system.desktop) {
 			this._oScrollCntr.setHorizontal(true); // TODO: check if setProperty can used instead.
 			this._oScrollCntr.setVertical(false);
 		} else if (!Device.system.desktop) {
@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	HeaderContainer.prototype._scroll = function(iDelta, iDuration) {
 		this._setScrollInProcess(true);
 		jQuery.sap.delayedCall(iDuration + 300, this, this._setScrollInProcess, [false]);
-		if (this.getView() === library.HeaderContainerView.Horizontal) {
+		if (this.getOrientation() === Orientation.Horizontal) {
 			this._hScroll(iDelta, iDuration);
 		} else {
 			this._vScroll(iDelta, iDuration);
@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._checkOverflow = function() {
-		if (this.getView() === library.HeaderContainerView.Horizontal) {
+		if (this.getOrientation() === Orientation.Horizontal) {
 			this._checkHOverflow();
 		} else {
 			this._checkVOverflow();
