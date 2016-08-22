@@ -47,7 +47,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
 			"sap.m.GenericTileMode",
-			"sap.m.HeaderContainerView",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -976,26 +975,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		HeaderMode : "HeaderMode"
-	};
-
-	/**
-	 * The list of possible HeaderContainer views.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.HeaderContainerView = {
-			/**
-			 * The horizontal orientation of the control.
-			 * @public
-			 */
-			Horizontal : "Horizontal",
-
-			/**
-			 * The vertical orientation of the control.
-			 */
-			Vertical : "Vertical"
 	};
 
 	/**
