@@ -1,35 +1,28 @@
 <mvc:View controllerName="sap.ui.demokit.icex.view.Favorite"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:control="control"
-	xmlns:h="http://www.w3.org/1999/xhtml">
+	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		title="Favorites ({fav>/count})"
 		showNavButton="{ui>/inDisplay}"
 		navButtonPress="navBack"
 		icon="{img>/icon/ui5}">
 		<headerContent>
 			<Button
+			  	id="editFavorites"
 				icon="sap-icon://edit"
 				press="toggleUiModel"
-				tooltip="Delete Favorites"
+				tooltip="{i18n>deleteFavoritesButtonTooltip}"
 				visible="{ui>/inDisplay}">
+			</Button>
+			<Button
+			  id="endEditFavorites"
+			  icon="sap-icon://accept"
+			  press="toggleUiModel"
+			  visible="{ui>/inEdit}">
 			</Button>
 		</headerContent>
 		<footer>
-			<Toolbar
-				visible="{ui>/showToolbar}">
-				<ToolbarSpacer/>
-				<Button
-					icon="sap-icon://accept"
-					text="done"
-					press="toggleUiModel"
-					tooltip="Finish Deleting Favorites"
-					visible="{ui>/inEdit}">
-				</Button>
-			</Toolbar>
+			<Toolbar visible="{ui>/showToolbar}" />
 		</footer>
 		<content>
 			<List

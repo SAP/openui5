@@ -24,12 +24,9 @@ sap.ui.define([
 			this.app = new SplitApp();
 
 			this.app.addMasterPage(sap.ui.xmlview("Master", "sap.ui.demokit.icex.view.Master"));
-
 			this.app.addDetailPage(sap.ui.xmlview("Welcome", "sap.ui.demokit.icex.view.Welcome"));
 
 			return new Shell("Shell", {
-				title : "SAPUI5 Icon Explorer",
-				showLogout : false,
 				app : this.app,
 				homeIcon : {
 					'phone' : 'img/57_iPhone_Desktop_Launch.png',
