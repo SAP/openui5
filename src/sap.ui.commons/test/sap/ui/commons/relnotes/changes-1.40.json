@@ -514,5 +514,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "c4879af3bdca06497818c9dc9919b03ca90815c0",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
+        "references": []
+      }
+    ]
   }
 }
