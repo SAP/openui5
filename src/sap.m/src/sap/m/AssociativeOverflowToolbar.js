@@ -44,6 +44,11 @@ sap.ui.define(['./OverflowToolbar', './OverflowToolbarRenderer', './Toolbar'],
 			});
 		};
 
+		AssociativeOverflowToolbar.prototype.exit = function () {
+			OverflowToolbar.prototype.exit.apply(this, arguments);
+			return this._callToolbarMethod('destroyContent', [true]);
+		};
+
 		AssociativeOverflowToolbar.prototype.indexOfContent = function(oControl) {
 			var controlIds = this.getAssociation("content") || [];
 			return controlIds.indexOf(oControl.getId());
@@ -68,7 +73,9 @@ sap.ui.define(['./OverflowToolbar', './OverflowToolbarRenderer', './Toolbar'],
 						return sap.ui.getCore().byId(controlId);
 					});
 					content.forEach(function (control) {
-						control.destroy();
+						if (control) {
+							control.destroy();
+						}
 					});
 					return this;
 				case 'removeAllContent':
