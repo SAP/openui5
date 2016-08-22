@@ -5,22 +5,8 @@
 
 /* Carousel controls: Bulleted */
 .sapMCrslBulleted > span {
-	text-indent: 2rem;
-	line-height: 0;
-	text-decoration: none;
-	overflow: hidden;
-	display: inline-block;
-	padding: 0.25rem;
-	width: 0;
-	height: 0;
-	margin: 0 0.25rem;
-	color: @sapHCStandardBG;
-	background-color: @sapHCStandardBG;
-	-webkit-transition: background-color 0.1s ease-in;
-	-moz-transition: background-color 0.1s ease-in;
-	transition: background-color 0.1s ease-in;
-	box-shadow: 0 0 0 0.0625rem @sapHCStandardFG;
-	border-radius: 50%;
+	border: 1px solid @sapHCStandardFG;;
+	background: @sapHCStandardBG;
 }
 
 .sapMCrslBulleted > span:hover,
@@ -30,8 +16,8 @@
 }
 
 .sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapHCHighlightAltBG;
-	background-color: @sapHCHighlightAltBG;
+	border: none;
+	background-color: @sapHCStandardFG;
 }
 
 /* Carousel controls: HUD */
@@ -41,23 +27,9 @@
 }
 
 .sapMCrslHud a {
-	z-index: 2;
-	opacity: 0;
-	display: none;
-	position: absolute;
-	top: calc(50% - 3.875rem);
-	width: 3rem;
-	height: 3rem;
-	margin: -1.5625px 0 0 0;
-	padding: 0;
-	text-decoration: none;
-	overflow: hidden;
 	background-color: @sapHCStandardFG;
 	color: @sapHCStandardBG;
-	-webkit-transition: opacity 0.1s ease-in;
-	-moz-transition: opacity 0.1s ease-in;
-	transition: opacity 0.1s ease-in;
-	border-radius: 50%;
+	box-shadow: 0 0.25rem 1.875rem 0.125rem fade(@sapHCStandardFG, 80%);
 }
 
 .sapMCrsl {
@@ -72,13 +44,6 @@
 .sapMCrsl:hover .sapMCrslHud a {
 	opacity: 1;
 	display: block;
-}
-
-.sapMCrslArrowInner {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0.25rem solid @sapHCStandardFG;
-  border-radius: 50%;
 }
 
 .sapMCrslHud .sapMCrslPrev {
@@ -114,11 +79,39 @@
 }
 
 /* HCB Additional Styles */
+.sapMCrslControls.sapMCrslControlsBottom,
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
+	background: @sapHCStandardBG;
+	border-top: 1px solid @sapHCStandardFG;
 
-.sapMCrslArrowInner:hover {
+}
+
+.sapMCrslControls.sapMCrslControlsTop,
+.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+	background: @sapHCStandardBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+}
+
+.sapMCrslHud .sapMCrslPrev, .sapMCrslHud .sapMCrslNext {
+	background-color: @sapHCStandardBG;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
+}
+
+.sapMCrslControls .sapMCrslPrev,
+.sapMCrslControls .sapMCrslNext {
+	background-color: @sapHCStandardBG;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
+}
+
+.sapMCrslPrev:hover, .sapMCrslNext:hover {
 	background: @sapHCHighlightBG;
 }
 
+.sapMCrslPrev:focus, .sapMCrslNext:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+}
 .sapMCrslHud a:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 }
