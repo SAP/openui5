@@ -653,6 +653,22 @@
 
 			});
 
+			test('After removing buttons the additional invisible texts should be cleaned', function () {
+				var oButton = new sap.m.Button({text: "Button1"}),
+					oActionSheet = new sap.m.ActionSheet({
+						cancelButtonText: "Cancel",
+						title: "Title"
+					});
+
+				oActionSheet.addButton(oButton)
+				oActionSheet.removeButton(oButton);
+				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+
+				oActionSheet.addButton(oButton)
+				oActionSheet.removeAllButtons();
+				strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
+			});
+
 			QUnit.done(function() {
 				// hide the content so that the QUnit results can be seen
 				jQuery("#content").css('height', '0');
