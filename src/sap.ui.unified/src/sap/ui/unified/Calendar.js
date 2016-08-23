@@ -278,17 +278,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		for (var i = 0; i < aMonths.length; i++) {
-			var oMonth = aMonths[i];
 			oMonthDate = this._newUniversalDate(oDate);
 			if (i > 0) {
 				oMonthDate.setUTCDate(1);
 				oMonthDate.setUTCMonth(oMonthDate.getUTCMonth() + i);
 			}
+			var oDisplayDate = oMonthDate;
 			if (oFocusedDate.getUTCFullYear() == oMonthDate.getUTCFullYear() && oFocusedDate.getUTCMonth() == oMonthDate.getUTCMonth()) {
-				oMonth.setDate(CalendarUtils._createLocalDate(oFocusedDate));
-			} else {
-				oMonth.displayDate(CalendarUtils._createLocalDate(oMonthDate));
+				oDisplayDate = oFocusedDate;
 			}
+			aMonths[i].displayDate(CalendarUtils._createLocalDate(oDisplayDate));
 		}
 
 		this._updateHeader(oDate);
