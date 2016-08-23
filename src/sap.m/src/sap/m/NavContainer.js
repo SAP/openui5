@@ -226,6 +226,7 @@ sap.ui.define([
 		this._iTransitionsCompleted = 0; // to track proper callback at the end of transitions
 		this._bNeverRendered = true;
 		this._bNavigating = false;
+		this._bRenderingInProgress = false;
 	};
 
 
@@ -657,6 +658,12 @@ sap.ui.define([
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
 					jQuery.sap.log.info("'Hidden' 'to' navigation in not-rendered NavContainer " + this.toString());
+
+					// BCP: 1680140633 - Firefox issue
+					if (this._bRenderingInProgress) {
+						jQuery.sap.delayedCall(0, this, this.invalidate);
+					}
+
 					return this;
 				}
 
