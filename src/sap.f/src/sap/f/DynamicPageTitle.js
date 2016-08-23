@@ -80,6 +80,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
 		this._cacheDomElements();
+		this._setShowSnapContent(this._getShowSnapContent());
+		this._setShowExpandContent(this._getShowExpandContent());
 	};
 
 	/**

@@ -131,6 +131,12 @@ sap.ui.define([
 		DESKTOP: "sapFDynamicPage-Std-Desktop"
 	};
 
+	DynamicPage.RESIZE_HANDLER_ID = {
+		PAGE: "_sResizeHandlerId",
+		TITLE: "_sTitleResizeHandlerId",
+		CONTENT: "_sContentResizeHandlerId"
+	};
+
 	/**
 	 * LIFECYCLE METHODS
 	 */
@@ -436,6 +442,7 @@ sap.ui.define([
 		if (!this._bPinned) {
 			this._bPinned = true;
 			this._moveHeaderToTitleArea();
+			this._updateScrollBar();
 			this.getHeader()._updateARIAPinButtonState(this._bPinned);
 		}
 	};
@@ -733,19 +740,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the visibility of the snapped/expanded content.
-	 * @private
-	 */
-	DynamicPage.prototype._updateSnappedExpandedContent = function () {
-		var oDynamicPageTitle = this.getTitle();
-
-		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._setShowSnapContent(oDynamicPageTitle._getShowSnapContent());
-			oDynamicPageTitle._setShowExpandContent(oDynamicPageTitle._getShowExpandContent());
-		}
-	};
-
-	/**
 	 * Determines the height of a control safely. If the control doesn't exist it returns 0,
 	 * so it doesn't confuse any calculations based on it. If it exists it just returns its dom element height.
 	 * @param  {sap.ui.core.Control} oControl
@@ -822,25 +816,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Caches the dom elements in a jQuery wrapper for later reuse
+	 * Caches the DynamicPage DOM elements in a jQuery object for later reuse
 	 * @private
 	 */
 	DynamicPage.prototype._cacheDomElements = function () {
-		var oTitle = this.getTitle(),
-			oFooter = this.getFooter();
-
-		if (exists(oTitle)) {
-			this.$title = oTitle.$();
-		}
+		var oFooter = this.getFooter();
 
 		if (exists(oFooter)) {
 			this.$footer = oFooter.$();
 			this.$footerWrapper = this.$("footerWrapper");
 		}
 
-		this.$titleArea = this.$("header");
 		this.$wrapper = this.$("contentWrapper");
 		this.$contentFitContainer = this.$('contentFitContainer');
+		this.$titleArea = this.$("header");
+
+		this._cacheTitleDom();
+	};
+
+	/**
+	 * Caches the DynamicPageTitle DOM element as jQuery object for later reuse,
+	 * used when DynamicPageTitle is re-rendered (_onChildControlAfterRendering method) to ensure the DynamicPageTitle DOM reference
+	 * is the current one.
+	 * @private
+	 */
+	DynamicPage.prototype._cacheTitleDom = function () {
+		var oTitle = this.getTitle();
+
+		if (exists(oTitle)) {
+			this.$title = oTitle.$();
+		}
 	};
 
 	/**
@@ -857,14 +862,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * React when the aggregated child controls are re-rendered in order to adjust the update
-	 * the scrollbar and content height properly.
+	 * Reacts to DynamicPage child controls re-rendering, updating the ScrollBar size.
+	 * In case DynamicPageTitle is re-rendering, the DynamicPageTitle DOM reference and resize handlers should be also updated.
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	DynamicPage.prototype._onChildControlsAfterRendering = function () {
-		this._updateSnappedExpandedContent();
+	DynamicPage.prototype._onChildControlAfterRendering = function (oEvent) {
+		if (oEvent.srcControl instanceof sap.f.DynamicPageTitle ) {
+			this._cacheTitleDom();
+			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
+			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
+		}
 		jQuery.sap.delayedCall(0, this, this._updateScrollBar);
 	};
+
 
 	/**
 	 * React when the aggregated child controls are changes its height in order to adjust the update the scrollbar.
@@ -1003,16 +1014,27 @@ sap.ui.define([
 	DynamicPage.prototype._attachResizeHandlers = function () {
 		var fnChildControlSizeChangeHandler = this._onChildControlsHeightChange.bind(this);
 
-		if (!this._sResizeHandlerId) {
-			this._sResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
+		this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.PAGE, this, this._onResize.bind(this));
+
+		if (exists(this.$title)) {
+			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], fnChildControlSizeChangeHandler);
 		}
 
-		if (!this._sTitleResizeHandlerId && exists(this.$title)) {
-			this._sTitleResizeHandlerId = ResizeHandler.register(this.$title[0], fnChildControlSizeChangeHandler);
+		if (exists(this.$contentFitContainer)) {
+			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.CONTENT, this.$contentFitContainer[0], fnChildControlSizeChangeHandler);
 		}
+	};
 
-		if (!this._sContentResizeHandlerId && exists(this.$contentFitContainer)) {
-			this._sContentResizeHandlerId = ResizeHandler.register(this.$contentFitContainer[0], fnChildControlSizeChangeHandler);
+	/**
+	 * Registers resize handler
+	 * @param {string} sHandler the handler ID
+	 * @param {Object} oObject
+	 * @param {Function} fnHandler
+	 * @private
+	 */
+	DynamicPage.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
+		if (!this[sHandler]) {
+			this[sHandler] = ResizeHandler.register(oObject, fnHandler);
 		}
 	};
 
@@ -1021,17 +1043,17 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._detachResizeHandlers = function () {
-		this._deRegisterHandler("_sResizeHandlerId");
-		this._deRegisterHandler("_sTitleResizeHandlerId");
-		this._deRegisterHandler("_sContentResizeHandlerId");
+		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.PAGE);
+		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
+		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.CONTENT);
 	};
 
 	/**
-	 * De-registers the given handler
-	 * @param {string} sHandler handler
+	 * De-registers resize handler
+	 * @param {string} sHandler the handler ID
 	 * @private
 	 */
-	DynamicPage.prototype._deRegisterHandler = function (sHandler) {
+	DynamicPage.prototype._deRegisterResizeHandler = function (sHandler) {
 		if (this[sHandler]) {
 			ResizeHandler.deregister(this[sHandler]);
 			this[sHandler] = null;
@@ -1045,14 +1067,14 @@ sap.ui.define([
 	DynamicPage.prototype._attachPageChildrenAfterRenderingDelegates = function () {
 		var oTitle = this.getTitle(),
 			oContent = this.getContent(),
-			fnOnPageChildrenAfterRenderingHandler = {onAfterRendering: this._onChildControlsAfterRendering.bind(this)};
+			oPageChildrenAfterRenderingDelegate = {onAfterRendering: this._onChildControlAfterRendering.bind(this)};
 
 		if (exists(oTitle)) {
-			oTitle.addEventDelegate(fnOnPageChildrenAfterRenderingHandler);
+			oTitle.addEventDelegate(oPageChildrenAfterRenderingDelegate);
 		}
 
 		if (exists(oContent)) {
-			oContent.addEventDelegate(fnOnPageChildrenAfterRenderingHandler);
+			oContent.addEventDelegate(oPageChildrenAfterRenderingDelegate);
 		}
 	};
 
