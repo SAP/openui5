@@ -1,0 +1,21 @@
+{
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "96a2e84b1a5cd6c84d78bafc7b436bab7b689226",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.LightBox: Initial implementation.",
+        "references": []
+      },
+      {
+        "id": "96a2e84b1a5cd6c84d78bafc7b436bab7b689226",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.LightBox: Initial implementation.",
+        "references": []
+      }
+    ]
+  }
+}
