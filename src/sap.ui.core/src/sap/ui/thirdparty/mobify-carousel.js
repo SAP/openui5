@@ -478,6 +478,16 @@ Mobify.UI.Carousel = (function($, Utils) {
 
 
         $element.on('click', '[data-slide]', function(e){
+
+	        // SAP MODIFICATION BEGIN
+	        // The event might bubble up from another carousel inside of this one.
+	        // In this case we ignore the event.
+	        var oCarousel = jQuery(e.target).closest('.sapMCrsl');
+	        if (oCarousel[0] != $element[0]) {
+		        return;
+	        }
+	        // SAP MODIFICATION END
+
             e.preventDefault();
             var action = $(this).attr('data-slide')
               , index = parseInt(action, 10);
