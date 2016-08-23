@@ -170,7 +170,7 @@ public class ReleaseNotes {
   
   private boolean haveNewNotes() throws IOException {
     List<String> status = context.git.status();
-    return status.size() > 1 || (status.size() == 1 && !status.get(0).equals(".version-tool.xml"));
+    return isNewNote || status.size() > 1 || (status.size() == 1 && !status.get(0).equals(".version-tool.xml"));
   }
 
   private void deleteFolder(File folder) {
