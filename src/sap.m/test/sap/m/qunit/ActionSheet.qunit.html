@@ -569,6 +569,52 @@
 				}, 500);
 			});
 
+			asyncTest('Removing a button and adding it again should not add wrong labels', function() {
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				}),
+				button1 = new sap.m.Button({ text: "Button1", id: "asButton1" }),
+				aInvisibleTexts, aButtonLabels,
+				oActionSheet = new sap.m.ActionSheet({
+					cancelButtonText: "Cancel",
+					title: "Title",
+					buttons: [
+						button1
+					]
+				});
+
+				oActionSheet.removeButton(button1);
+				oActionSheet.addButton(button1);
+				oActionSheet.removeButton(button1);
+				oActionSheet.addButton(button1);
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					oActionSheet.close();
+					oButton.firePress();
+
+					setTimeout(function(){
+						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
+						aButtonLabels = button1.getAriaLabelledBy();
+
+						strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
+						strictEqual(aButtonLabels.length, 2, "Button should be labelled by 2 ids");
+						ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
+						start();
+						oActionSheet.close();
+						oButton.destroy();
+						oActionSheet.destroy();
+					}, 500);
+
+				}, 500);
+			});
+
 			asyncTest('Invisible buttons should not be counted', function() {
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
