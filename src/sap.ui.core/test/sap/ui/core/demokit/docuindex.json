@@ -106,6 +106,7 @@
 				"since": "1.32",
 				"samples": [
 					"sap.ui.core.sample.matcher.BindingPath",
+					"sap.ui.core.sample.matcher.I18NText",
 					"sap.ui.core.sample.OpaMatchers"
 				]
 			},
@@ -529,8 +530,13 @@
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
-				"name": "Binding Path",
-				"description": "Checks if a control has a binding context with the exact same binding path"
+				"name": "Binding Path Matcher",
+				"description": "The binding path matcher checks if a control has a binding context with the exact same binding path"
+			},
+			{
+				"id": "sap.ui.core.sample.matcher.I18NText",
+				"name": "I18N Text Matcher",
+				"description": "The I18N text matcher checks if a control property has the same value as a text of an I18N file."
 			},
 			{
 				"id": "sap.ui.core.sample.OpaStartup.iStartMyUIComponent",

@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.core.sample.matcher.BindingPath.Component", {
+	return UIComponent.extend("sap.ui.core.sample.matcher.I18NText.Component", {
 		metadata: {
 			dependencies: {
 				libs: [
@@ -16,6 +16,7 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"Opa.html",
+						"i18n/i18n.properties",
 						"webapp/view/Main.view.xml",
 						"webapp/controller/Main.controller.js",
 						"webapp/index.html"
