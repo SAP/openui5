@@ -776,12 +776,14 @@
 	QUnit.test("DynamicPage _pin()/_unPin()", function (assert) {
 		var $headerWrapper = this.oDynamicPage.$("header"),
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
-			sHeaderId = this.oDynamicPage.getHeader().getId();
+			sHeaderId = this.oDynamicPage.getHeader().getId(),
+			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar");
 
 		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
 
 		this.oDynamicPage._pin();
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
+		assert.ok(oPinSpy.called, "The ScrollBar is updated");
 
 		this.oDynamicPage._unPin();
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header remains in the header wrapper when unpinned until scroll");
