@@ -13,14 +13,15 @@
           "src/sap.ui.table/pom.xml": "1",
           "src/sap.ui.dt/pom.xml": "1",
           "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.f/pom.xml": "1",
           "src/sap.ui.layout/pom.xml": "1",
           "src/themelib_sap_belize/pom.xml": "1",
           "src/sap.tnt/pom.xml": "1",
           "src/sap.ui.suite/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/sap.ui.commons/pom.xml": "1",
           "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
