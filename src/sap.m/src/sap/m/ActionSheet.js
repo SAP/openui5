@@ -515,6 +515,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			that = this;
 		jQuery.each(result, function(i, oButton) {
 			oButton.detachPress(that._buttonSelected, that);
+			that._removeAriaHiddenTexts(oButton);
 		});
 		return result;
 	};
