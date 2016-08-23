@@ -152,8 +152,10 @@ public class ReleaseNotes {
       currentRepository = repo;
       context.git.setRepository(repo.getRepository());
       isNewNote = false;
-      processCommand = new GatherPreviousNotesCommand();
-      gatherFromPreviousCodelines(repo.getRepository());
+      if (!context.branch.equals("master")) { 
+        processCommand = new GatherPreviousNotesCommand();
+        gatherFromPreviousCodelines(repo.getRepository());
+      }
       processCommand = new GatherNotesCommand();
       scan(repo.getRepository());
       if (haveNewNotes()) {
