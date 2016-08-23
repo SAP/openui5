@@ -1019,3 +1019,109 @@ QUnit.test("getContentDensity table in UI Area", function(assert) {
 	oCore.applyChanges();
 	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 });
+
+QUnit.module("TableUtils", {
+	beforeEach: function() {
+		createTables();
+
+		function addColumn(sTitle, sText, bFocusable, bTabbable) {
+			var oControlTemplate;
+			if (!bFocusable) {
+				oControlTemplate = new TestControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: bTabbable
+				})
+			} else {
+				oControlTemplate = new TestInputControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: bTabbable
+				})
+			}
+
+			oTable.addColumn(new sap.ui.table.Column({
+				label: sTitle,
+				width: "100px",
+				template: oControlTemplate
+			}));
+			iNumberOfCols++;
+
+			for (var i = 0; i < iNumberOfRows; i++) {
+				oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+			}
+		}
+
+		addColumn("Not Focusable & Not Tabbable", "NoFocusNoTab", false, false);
+		addColumn("Focusable & Tabbable", "FocusTab", true, true);
+		addColumn("Focusable & Not Tabbable", "NoTab", true, false);
+
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: function() {
+		destroyTables();
+		iNumberOfCols -= 3;
+	}
+});
+
+QUnit.test("getInteractiveElements", function(assert) {
+	var $InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1));
+	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable control: One control was returned");
+	assert.strictEqual($InteractiveControls[0].value, "NoTab1", "Data cell (jQuery) with focusable control: The correct control was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
+	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable control: One control was returned");
+	assert.strictEqual($InteractiveControls[0].value, "NoTab1", "Data cell (DOM) with focusable control: The correct control was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2));
+	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable & tabbable control: One control was returned");
+	assert.strictEqual($InteractiveControls[0].value, "FocusTab1", "Data cell (jQuery) with focusable & tabbable control: The correct control was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
+	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable & tabbable control: One control was returned");
+	assert.strictEqual($InteractiveControls[0].value, "FocusTab1", "Data cell (DOM) with focusable & tabbable control: The correct control was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 3));
+	assert.strictEqual($InteractiveControls, null, "Data cell without interactive control: Null was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getColumnHeader(0));
+	assert.strictEqual($InteractiveControls, null, "Column header: Null was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getRowHeader(0));
+	assert.strictEqual($InteractiveControls, null, "Row header: Null was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(getSelectAll(0));
+	assert.strictEqual($InteractiveControls, null, "SelectAll: Null was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements();
+	assert.strictEqual($InteractiveControls, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("getParentDataCell", function(assert) {
+	var oCell = getCell(0, iNumberOfCols - 1);
+	var $InteractiveControls = TableUtils.getInteractiveElements(oCell);
+	var $ParentDataCell = TableUtils.getParentDataCell(oTable, $InteractiveControls[0]);
+	assert.strictEqual($ParentDataCell.length, 1, "One data cell was returned");
+	assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(oCell[0]);
+	$ParentDataCell = TableUtils.getParentDataCell(oTable, $InteractiveControls[0]);
+	assert.strictEqual($ParentDataCell.length, 1, "One data cell was returned");
+	assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+	oCell = getCell(0, iNumberOfCols - 2);
+	$InteractiveControls = TableUtils.getInteractiveElements(oCell);
+	$ParentDataCell = TableUtils.getParentDataCell(oTable, $InteractiveControls[0]);
+	assert.strictEqual($ParentDataCell.length, 1, "One data cell was returned");
+	assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
+
+	$InteractiveControls = TableUtils.getInteractiveElements(oCell[0]);
+	$ParentDataCell = TableUtils.getParentDataCell(oTable, $InteractiveControls[0]);
+	assert.strictEqual($ParentDataCell.length, 1, "One data cell was returned");
+	assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+	$ParentDataCell = TableUtils.getParentDataCell(oTable);
+	assert.strictEqual($ParentDataCell, null, "No parameter passed: Null was returned");
+});

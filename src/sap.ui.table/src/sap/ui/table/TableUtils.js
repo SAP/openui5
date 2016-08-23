@@ -458,6 +458,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns a jQuery object containing all interactive elements in data cell.
+		 * @param {Object|Element} oCell The data cell from which to get the interactive elements. Can be a jQuery object or a DOM Element.
+		 * @returns {Object|null} Returns null if the passed cell is not a cell or does not contain any interactive elements.
+		 * @private
+		 */
+		getInteractiveElements : function(oCell) {
+			if (!oCell) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell[0]);
+
+			if (oCellInfo !== null && oCellInfo.type === this.CELLTYPES.DATACELL) {
+				var $InteractiveElements = $Cell.find(":sapFocusable");
+				if ($InteractiveElements.length > 0) {
+					return $InteractiveElements;
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns a jQuery object containing the data cell which is the parent of the specified element.
+		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
+		 * @param {Object|Element} oElement An element inside a table data cell. Can be a jQuery object or a DOM Element.
+		 * @returns {Object|null} Returns null if the passed element is not inside a data cell.
+		 * @private
+		 */
+		getParentDataCell: function(oTable, oElement) {
+			if (!oElement) {
+				return null;
+			}
+
+			var $Element = jQuery(oElement);
+			var $ParentCell = $Element.parent().closest(".sapUiTableTd", oTable.getDomRef());
+
+			if ($ParentCell.length > 0) {
+				return $ParentCell;
+			}
+
+			return null;
+		},
+
+		/**
 		 * Registers a ResizeHandler for a DOM reference identified by its ID suffix. The ResizeHandler ID is tracked
 		 * in _mResizeHandlerIds of the table instance. The sIdSuffix is used as key.
 		 * Existing ResizeHandlers will be de-registered before the new one is registered.

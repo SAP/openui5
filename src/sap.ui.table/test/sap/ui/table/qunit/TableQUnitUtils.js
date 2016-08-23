@@ -28,6 +28,29 @@ sap.ui.core.Control.extend("TestControl", {
 	}
 });
 
+sap.ui.core.Control.extend("TestInputControl", {
+	metadata : {
+		properties : {
+			"text" : "string",
+			"visible" : "boolean",
+			"tabbable" : "boolean",
+			"index" : "int" //Results in different behavior of the control in different columns
+		}
+	},
+
+	renderer : function(oRm, oControl) {
+		oRm.write("<input");
+		oRm.writeControlData(oControl);
+		oRm.writeAttribute("type", "text");
+		oRm.writeAttribute("value", oControl.getText());
+		oRm.writeClasses();
+		if (!oControl.getTabbable()) {
+			oRm.writeAttribute("tabindex", "-1");
+		}
+		oRm.write(">");
+	}
+});
+
 sap.ui.table.TableHelper = {
 	createLabel: function(mConfig){ return new TestControl(mConfig); },
 	createTextView: function(mConfig){ return new TestControl(mConfig); },
