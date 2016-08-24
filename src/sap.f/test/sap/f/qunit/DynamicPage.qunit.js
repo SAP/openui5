@@ -191,6 +191,17 @@
 		assert.ok(this.oDynamicPage.getHeader(), "The DynamicPage Header has instantiated successfully");
 	});
 
+	QUnit.test("Enabling headerAlwaysExpanded should mutate headerExpanded", function (assert) {
+		this.oDynamicPage._snapHeader();
+
+		assert.ok(!this.oDynamicPage.getHeaderExpanded(), "The DynamicPage`s headerExpanded is false, header collapsed");
+		assert.ok(!this.oDynamicPage.getHeaderAlwaysExpanded(), "The DynamicPage headerAlwaysExpanded is false");
+
+		this.oDynamicPage.setHeaderAlwaysExpanded(true);
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "The DynamicPage`s headerExpanded is true, mutated internally");
+		assert.ok(this.oDynamicPage.getHeaderAlwaysExpanded(), "The DynamicPage headerAlwaysExpanded is true");
+	});
+
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
 		beforeEach: function () {
