@@ -195,6 +195,31 @@ sap.ui.define([], function() {
 							}
 						};
 					}
+				},
+				getStableElements : function(oElement) {
+					var aStableElements = [];
+					var oLabel;
+					var oTitleOrToolbar;
+					if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
+						oLabel = oElement.getLabel();
+						if (oLabel) {
+							aStableElements.push(oLabel);
+						}
+						aStableElements = aStableElements.concat(oElement.getFields());
+					} else if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+						oTitleOrToolbar = oElement.getTitle() || oElement.getToolbar();
+						if (oTitleOrToolbar) {
+							aStableElements[0] = oTitleOrToolbar;
+						}
+						oElement.getFormElements().forEach(function(oFormElement) {
+							oLabel = oFormElement.getLabel();
+							if (oLabel) {
+								aStableElements.push(oLabel);
+							}
+							aStableElements = aStableElements.concat(oFormElement.getFields());
+						});
+					}
+					return aStableElements;
 				}
 			}
 		}
