@@ -18,7 +18,8 @@ sap.ui.define([
 		oFrameJQuery = null,
 		bRegiesteredToUI5Init = false,
 		bUi5Loaded = false,
-		oXHRCounter = null;
+		oXHRCounter = null,
+		FrameHashChanger = null;
 
 	/*
 	 * INTERNALS
@@ -78,12 +79,12 @@ sap.ui.define([
 
 
 	function handleUi5Loaded () {
-		bUi5Loaded = true;
-		setFrameVariables();
-		modifyIFrameNavigation();
+		setFrameVariables().then(function () {
+			// forward OPA log messages from the inner iframe to the Log listener of the outer frame
+			oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
 
-		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
-		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
+			bUi5Loaded = true;
+		});
 	}
 
 	/**
@@ -92,23 +93,19 @@ sap.ui.define([
 	 * This makes it necessary to hook into all navigation methods
 	 * @private
 	 */
-	function modifyIFrameNavigation () {
-		oFrameWindow.jQuery.sap.require("sap.ui.thirdparty.hasher");
-		oFrameWindow.jQuery.sap.require("sap.ui.core.routing.History");
-		oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
+	function modifyIFrameNavigation (hasher, History, HashChanger) {
 
-		var oHashChanger = new oFrameWindow.sap.ui.core.routing.HashChanger(),
-			oHistory = new oFrameWindow.sap.ui.core.routing.History(oHashChanger),
-			oHasher = oFrameWindow.hasher,
-			fnOriginalSetHash = oHasher.setHash,
-			fnOriginalGetHash = oHasher.getHash,
+		var oHashChanger = new HashChanger(),
+			oHistory = new History(oHashChanger),
+			fnOriginalSetHash = hasher.setHash,
+			fnOriginalGetHash = hasher.getHash,
 			sCurrentHash,
 			bKnownHashChange = false,
 			fnOriginalGo = oFrameWindow.history.go;
 
 		// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
 		// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
-		oHasher.replaceHash = function (sHash) {
+		hasher.replaceHash = function (sHash) {
 			bKnownHashChange = true;
 			var sOldHash = this.getHash();
 			sCurrentHash = sHash;
@@ -118,7 +115,7 @@ sap.ui.define([
 			this.changed.dispatch(sHash, sOldHash);
 		};
 
-		oHasher.setHash = function (sHash) {
+		hasher.setHash = function (sHash) {
 			bKnownHashChange = true;
 			var sRealCurrentHash = fnOriginalGetHash.call(this);
 			sCurrentHash = sHash;
@@ -137,7 +134,7 @@ sap.ui.define([
 		};
 
 		// This function also needs to be manipulated since hasher does not know about our intercepted replace
-		oHasher.getHash = function() {
+		hasher.getHash = function() {
 			//initial hash
 			if (sCurrentHash === undefined) {
 				return fnOriginalGetHash.apply(this, arguments);
@@ -147,7 +144,7 @@ sap.ui.define([
 		};
 
 		// when a link is clicked or the hash is directly set we only get a changed event.
-		oHasher.changed.add(function (sNewHash) {
+		hasher.changed.add(function (sNewHash) {
 			// only if the change does not come from the other known places it is likely to be a pressed link
 			if (!bKnownHashChange) {
 				// fire the secret events for the local history so the recording is correct.
@@ -166,7 +163,7 @@ sap.ui.define([
 				sNewCurrentHash = oHistory.getPreviousHash();
 
 			sCurrentHash = sNewCurrentHash;
-			oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
+			hasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 		}
 
 		function goForward () {
@@ -180,7 +177,7 @@ sap.ui.define([
 			}
 
 			sCurrentHash = sNewCurrentHash;
-			oHasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
+			hasher.changed.dispatch(sNewCurrentHash, sNewPreviousHash);
 		}
 
 		oFrameWindow.history.back = goBack;
@@ -201,19 +198,37 @@ sap.ui.define([
 	}
 
 	function setFrameVariables() {
-		oFrameJQuery = oFrameWindow.jQuery;
-		//All Opa related resources in the iframe should be the same version
-		//that is running in the test and not the (evtl. not available) version of Opa of the running App.
-		registerAbsoluteModulePathInIframe("sap.ui.test");
-		oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
-		oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin(sLogPrefix);
+		return new Promise(function (fnResolve) {
+			oFrameJQuery = oFrameWindow.jQuery;
+			//All Opa related resources in the iframe should be the same version
+			//that is running in the test and not the (evtl. not available) version of Opa of the running App.
+			registerAbsoluteModulePathInIframe("sap.ui.test");
+			registerAbsoluteModulePathInIframe("sap.ui.qunit");
+			registerAbsoluteModulePathInIframe("sap.ui.thirdparty");
 
-		oFrameJQuery.sap.require("sap.ui.test._XHRCounter");
-		oXHRCounter = oFrameWindow.sap.ui.test._XHRCounter;
-
-		registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
-		oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-		oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
+			oFrameWindow.sap.ui.require([
+				"sap/ui/test/OpaPlugin",
+				"sap/ui/test/_XHRCounter",
+				"sap/ui/qunit/QUnitUtils",
+				"sap/ui/thirdparty/hasher",
+				"sap/ui/core/routing/History",
+				"sap/ui/core/routing/HashChanger"
+			], function (
+				OpaPlugin,
+				_XHRCounter,
+				QUnitUtils,
+				hasher,
+				History,
+				HashChanger
+			) {
+				oFramePlugin = new OpaPlugin(sLogPrefix);
+				oXHRCounter = _XHRCounter;
+				oFrameUtils = QUnitUtils;
+				modifyIFrameNavigation(hasher, History, HashChanger);
+				FrameHashChanger = HashChanger;
+				fnResolve();
+			});
+		});
 	}
 
 	function registerAbsoluteModulePathInIframe(sModule) {
@@ -233,6 +248,7 @@ sap.ui.define([
 		bUi5Loaded = false;
 		bRegiesteredToUI5Init = false;
 		oXHRCounter = null;
+		FrameHashChanger = null;
 	}
 
 	/**
@@ -269,12 +285,11 @@ sap.ui.define([
 			return checkForUI5ScriptLoaded();
 		},
 		getHashChanger: function () {
-			if (!oFrameWindow) {
+			if (!FrameHashChanger) {
 				return null;
 			}
-			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
-			return oFrameWindow.sap.ui.core.routing.HashChanger.getInstance();
+			return FrameHashChanger.getInstance();
 		},
 		getPlugin: function () {
 			return oFramePlugin;
