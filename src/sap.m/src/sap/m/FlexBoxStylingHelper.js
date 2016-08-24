@@ -186,12 +186,12 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 
 		// Finally, write property value to control using either the render manager or the element directly
 		if (oRm) {
-			if (sValue) {
+			if (sValue === 0 || sValue) {
 				oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
 			}
 		} else {
 			// jQuery removes 'null' styles
-			if (!sValue) {
+			if (sValue !== 0 && !sValue) {
 				oLayoutData.$().css(sPropertyPrefix + sProperty, null);
 			} else {
 				oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
