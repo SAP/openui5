@@ -753,6 +753,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal", function (assert) {
+		var oBinding = this.oModel.bindProperty("PRODUCT_2_BP", {/*oContext*/});
+
+		this.oSandbox.mock(oBinding).expects("checkUpdate")
+			.withExactArgs(true, ChangeReason.Refresh, "groupId");
+
+		// code under test
+		oBinding.refreshInternal("groupId");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("Name");
 
@@ -1263,10 +1274,6 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("checkUpdate and listener: absolute", function (assert) {
 	});
 
 	//*********************************************************************************************

@@ -506,9 +506,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
-		this.sChangeReason = ChangeReason.Filter;
-		this.reset();
-		this._fireRefresh({reason : ChangeReason.Filter});
+		this.reset(ChangeReason.Filter);
 
 		return this;
 	};
@@ -632,11 +630,6 @@ sap.ui.define([
 			aContexts.dataRequested = !!oRange;
 			aContexts.diff = aContexts.dataRequested ? [] : this.aDiff;
 			this.aDiff = [];
-		}
-		if (sChangeReason === ChangeReason.Refresh) {
-			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
 		}
 		return aContexts;
 	};
@@ -841,13 +834,9 @@ sap.ui.define([
 				this.oCache.refresh();
 			}
 		}
-		this.reset();
-		this.sChangeReason = ChangeReason.Refresh;
-		this._fireRefresh({reason : ChangeReason.Refresh});
+		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			if (oDependentBinding.refreshInternal) {
-				oDependentBinding.refreshInternal(sGroupId);
-			}
+			oDependentBinding.refreshInternal(sGroupId);
 		});
 	};
 
@@ -855,9 +844,13 @@ sap.ui.define([
 	 * Resets the binding's contexts array and its members related to current contexts and length
 	 * calculation.
 	 *
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason; if given, a refresh event with this reason is fired and the next
+	 *   getContexts() fires a change event with this reason.
+	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function () {
+	ODataListBinding.prototype.reset = function (sChangeReason) {
 		this.aContexts = [];
 		// the range for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
@@ -865,6 +858,10 @@ sap.ui.define([
 		this.iMaxLength = Infinity;
 		// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 		this.bLengthFinal = false;
+		if (sChangeReason) {
+			this.sChangeReason = sChangeReason;
+			this._fireRefresh({reason : sChangeReason});
+		}
 	};
 
 	/**
@@ -970,11 +967,7 @@ sap.ui.define([
 			this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1),
 				_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
 		}
-		this.reset();
-
-		// store change reason for next change event
-		this.sChangeReason = ChangeReason.Sort;
-		this._fireRefresh({reason : ChangeReason.Sort});
+		this.reset(ChangeReason.Sort);
 
 		return this;
 	};
