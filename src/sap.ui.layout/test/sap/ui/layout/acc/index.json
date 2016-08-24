@@ -4,7 +4,7 @@
 		"control": "sap.ui.layout.form.ResponsiveGridLayout",
 		"url": "ResponsiveGridLayout.html",
 		"desc": "Form using ResponsiveGridLayout",
-		"appComponent": "CA-UI5-CTR-WDF"
+		"appComponent": "CA-UI5-TBL"
 	  },
 	  {
 		"control": "sap.ui.layout.ResponsiveSplitter",
@@ -16,7 +16,7 @@
 		"control": "sap.ui.layout.form.ResponsiveLayout",
 		"url": "ResponsiveLayout.html",
 		"desc": "Form using ResponsiveLayout",
-		"appComponent": "CA-UI5-CTR-WDF"
+		"appComponent": "CA-UI5-TBL"
 	  },
 	  {
 		"control": "sap.ui.layout.FixFlex",

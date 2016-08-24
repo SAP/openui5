@@ -30,7 +30,7 @@
         url="../../../../test-resources/sap/ui/table/relnotes/changes-{major}.{minor}.json"
         resolve="lib" />
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
-        <component>CA-UI5-CTR-WDF</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+        <component>CA-UI5-TBL</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
     </ownership>
   </appData>
 
