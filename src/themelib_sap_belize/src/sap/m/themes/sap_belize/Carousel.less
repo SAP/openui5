@@ -97,15 +97,15 @@
   outline: none;
 }
 
-html.sap-desktop .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslNext:focus {
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
   	&::before {
 		content: "";
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
 		pointer-events: none;
 		border: 1px solid @sapUiInvertedFocus;
 	}
@@ -113,10 +113,10 @@ html.sap-desktop .sapMCrslNext:focus {
   	&::after {
 		content: "";
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
 		pointer-events: none;
 		border: 1px dotted @sapUiFocus;
 	}
@@ -129,20 +129,20 @@ html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
   	&::before {
 		position: absolute;
 		padding-top: 0.625rem;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
 		border: 1px solid @sapUiInvertedFocus;
 	}
 
   	&::after {
 		content: "";
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
 		border: 1px dotted @sapUiFocus;
 	}
 }
@@ -169,7 +169,7 @@ html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
 .sapMCrslHud {
 	.sapMCrslPrev,
 	.sapMCrslNext {
-		border-color: 1px solid @sapUiButtonBorderColor;
+		border: 1px solid @sapUiButtonBorderColor;
 		background-color: @sapUiButtonBackground;
 		color: @sapUiButtonTextColor;
 	}

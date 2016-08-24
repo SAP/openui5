@@ -16,9 +16,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Carousel control can be used to navigate through a list of sap.m controls just like flipping through the pages of a book by swiping right or left. An indicator shows the current position within the control list. When displayed in a desktop browser, a left- and right-arrow button is displayed on the carousel's sides, which can be used to navigate through the carousel.
+	 * The Carousel control can be used to navigate through a list of sap.m controls just like flipping through the pages of a book by swiping right or left. <br>
+	 * An indicator shows the current position within the control list. If the pages are less than 9, the page indicator is represented with bullets. If the pages are 9 or more, the page indicator is numeric.<br>
+	 * When displayed in a desktop browser, a left- and right-arrow button is displayed on the carousel's sides, which can be used to navigate through the carousel.
 	 *
-	 * Note: when displa Internet Explorer 9, page changes are not animated.
+	 * Note: When displayed in Internet Explorer 9, page changes are not animated.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -161,6 +163,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel._LATERAL_CLASSES = "sapMCrslLeftmost sapMCrslRightmost";
 	Carousel._bIE9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10);
 	Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING = 10; // The number 10 is by keyboard specification
+	Carousel._BULLETS_TO_NUMBERS_THRESHOLD = 9; //The number 9 is by visual specification. Less than 9 pages - bullets for page indicator. 9 or more pages - numeric page indicator.
 
 	/**
 	 * Initialize member variables which are needed later on.
@@ -441,12 +444,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sOldActivePageId = this.getActivePage();
 		var sNewActivePageId = this.getPages()[iNewPageIndex - 1].getId();
 		this.setAssociation("activePage", sNewActivePageId, true);
+		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
+		var sId = this.getId() + '-' + 'slide-number';
+		var sNewPageNumber = iNewPageIndex + ' ' + sTextBetweenNumbers + ' ' + this.getPages().length;
 
 		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
 
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
+
+		//change the number in the page indicator
+		if (document.getElementById(sId)) {
+			document.getElementById(sId).innerHTML = sNewPageNumber;
+		}
+
+
 	};
 
 	/**
@@ -617,9 +630,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._aScrollContainers.push(oScrollContainer);
 		return oScrollContainer;
 	};
-
-
-
 
 	/**
 	 * Call this method to display the previous page (corresponds to a swipe left). Returns 'this' for method chaining.
