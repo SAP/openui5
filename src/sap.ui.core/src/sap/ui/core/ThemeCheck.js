@@ -34,7 +34,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this._CUSTOMID = "sap-ui-core-customcss";
 			this._customCSSAdded = false;
 			this._themeCheckedForCustom = null;
-			this._mAdditionalLibCss = {};
 		},
 
 		getInterface : function() {
@@ -88,7 +87,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			jQuery.sap.clearDelayedCall(oThemeCheck._sThemeCheckId);
 			oThemeCheck._sThemeCheckId = null;
 			oThemeCheck._iCount = 0;
-			oThemeCheck._mAdditionalLibCss = {};
 		}
 	}
 
@@ -106,69 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 		function checkLib(lib) {
 			res = res && ThemeCheck.checkStyle("sap-ui-theme-" + lib, true);
-			if (!!res) {
-
-			// check for css rule count
-				if (Device.browser.msie && Device.browser.version <= 9) {
-					var oStyle = jQuery.sap.domById("sap-ui-theme-" + lib);
-					var iRules = oStyle && oStyle.sheet && oStyle.sheet.rules &&
-									oStyle.sheet.rules.length ? oStyle.sheet.rules.length : 0;
-
-					// IE9 and below can only handle up to 4095 rules and therefore additional
-					// css files have to be included
-					if (iRules === 4095) {
-						var iNumber = parseInt(jQuery(oStyle).attr("data-sap-ui-css-count"), 10);
-						if (isNaN(iNumber)) {
-							iNumber = 1; // first additional stylesheet
-						} else {
-							iNumber += 1;
-						}
-						var sAdditionalLibSuffix = "ie9_" + iNumber;
-						var sAdditionalLibName = this.name + "-" + sAdditionalLibSuffix;
-						var sLinkId = "sap-ui-theme-" + sAdditionalLibName;
-						if (!oThemeCheck._mAdditionalLibCss[sAdditionalLibName] && !jQuery.sap.domById(sLinkId)) {
-							oThemeCheck._mAdditionalLibCss[sAdditionalLibName] = {
-								name: this.name // remember original libName
-							};
-							var oBaseStyleSheet;
-							if (lib !== this.name) {
-								// use first stylesheet element of theme
-								oBaseStyleSheet = jQuery.sap.domById("sap-ui-theme-" + this.name);
-							} else {
-								oBaseStyleSheet = oStyle;
-							}
-							// parse original href
-							var oHref = new URI(oBaseStyleSheet.getAttribute("href"));
-							var sSuffix = oHref.suffix();
-							// get filename without suffix
-							var sFileName = oHref.filename();
-							if (sSuffix.length > 0) {
-								sSuffix = "." + sSuffix;
-								sFileName = sFileName.slice(0, -sSuffix.length);
-							}
-							// change filename only (to keep URI parameters)
-							oHref.filename(sFileName + "_" + sAdditionalLibSuffix + sSuffix);
-							// build final href
-							var sHref = oHref.toString();
-							// create the new link element
-							var oLink = document.createElement("link");
-							oLink.type = "text/css";
-							oLink.rel = "stylesheet";
-							oLink.href = sHref;
-							oLink.id = sLinkId;
-
-							jQuery(oLink)
-							.attr("data-sap-ui-css-count", iNumber)
-							.load(function() {
-								jQuery(oLink).attr("data-sap-ui-ready", "true");
-							}).error(function() {
-								jQuery(oLink).attr("data-sap-ui-ready", "false");
-							});
-
-							oStyle.parentNode.insertBefore(oLink, oStyle.nextSibling);
-						}
-					}
-				}
+			if (res) {
 
 				/* as soon as css has been loaded, look if there is a flag for custom css inclusion inside, but only
 				 * if this has not been checked successfully before for the same theme
@@ -205,7 +141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		}
 
 		jQuery.each(mLibs, checkLib);
-		jQuery.each(oThemeCheck._mAdditionalLibCss, checkLib);
 
 		if (!res) {
 			jQuery.sap.log.warning("ThemeCheck: Theme not yet applied.");
