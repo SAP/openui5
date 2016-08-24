@@ -4,11 +4,10 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("appUnderTest.controller.Main", {
+	return Controller.extend("webapp.controller.Main", {
 		onInit: function () {
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
 		}
 	});
-
 });
