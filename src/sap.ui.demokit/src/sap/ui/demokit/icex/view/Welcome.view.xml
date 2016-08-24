@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" >
 	<Page
-		title="Welcome">
+		title="{i18n>welcomePageTitle}">
 		<footer>
 			<Toolbar>
 			</Toolbar>
@@ -37,7 +37,7 @@
 			</HBox>
 			<Text
 				class="welcomeText"
-				text="SAPUI5 comes with a built-in set of 500 icons that you can easily use in your applications. The Icon Explorer helps you to find icons by browsing through categories or simply by searching. You get a live preview of how the icon will look when being applied to a SAPUI5 control. Add the discovered icons to your favorites to remember them at a later stage." />
+				text="{i18n>welcomePageMessage}" />
 		</content>
 	</Page>
 </mvc:View>

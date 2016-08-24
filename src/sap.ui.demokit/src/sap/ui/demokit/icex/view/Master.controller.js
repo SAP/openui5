@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/icex/model/Config",
-	"sap/ui/Device"], function (Controller, Filter, FilterOperator, JSONModel, Config, Device) {
+	"sap/ui/Device"
+], function (Controller, Filter, FilterOperator, JSONModel, Config, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Master", {

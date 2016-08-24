@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"jquery.sap.history",
 	'sap/ui/Device',
-	'sap/ui/core/mvc/View'], function (Controller, InstanceManager, jQuery, Device, View) {
+	'sap/ui/core/mvc/View'],
+function (Controller, InstanceManager, jQuery, Device, View) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.App", {
