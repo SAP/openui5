@@ -1361,6 +1361,36 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 
+	asyncTest("test bindElement 7 - checkUpdate", 2, function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oModel.read("/Categories(2)");
+		oModel.read("/Categories(7)");
+		oModel.metadataLoaded().then(function() {
+			oModel.createBindingContext("/Products(2)", function(oContext) {
+				oLabel.setBindingContext(oContext);
+				oLabel.bindElement("Category");
+				oLabel.getElementBinding().attachChange(fnHandler);
+			});
+		});
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oModel.oData["Products(2)"].Category.__ref = "Categories(7)";
+			oModel.checkUpdate();
+		}
+		var fnHandler2 = function(oEvent) {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(7)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+	});
+
+
 	asyncTest("test data events for bindElement",3, function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});

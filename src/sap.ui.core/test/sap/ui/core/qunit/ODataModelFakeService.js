@@ -5333,6 +5333,7 @@ var sCategories2XML = "\
       <d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID>\
       <d:CategoryName>Condiments</d:CategoryName>\
       <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+      <d:Picture></d:Picture>\
     </m:properties>\
   </content>\
 </entry>\
@@ -5355,6 +5356,7 @@ var sCategories7XML = "\
       <d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\
       <d:CategoryName>Condiments</d:CategoryName>\
       <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+      <d:Picture></d:Picture>\
     </m:properties>\
   </content>\
 </entry>\
