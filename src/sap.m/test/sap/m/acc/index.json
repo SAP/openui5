@@ -103,7 +103,7 @@
 		{
 			"control": "sap.m.FormattedText",
 			"url": "FormattedText.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.GenericTile",
@@ -149,7 +149,7 @@
 			"control": "sap.m.List",
 			"url": "../List.html",
 			"desc" : "Including StandardListItem, DisplayListItem, InputListItem, CustomListItem",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.semantic.MasterPage",
@@ -199,12 +199,12 @@
 		{
 			"control": "sap.m.MultiInput",
 			"url": "../MultiInput.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.MultiComboBox",
 			"url": "../MultiComboBox.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.sap.m.NavContainer",
@@ -304,7 +304,7 @@
 		{
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.QuickView",
@@ -334,7 +334,7 @@
 		{
 			"control": "sap.m.RatingIndicator",
 			"url": "RatingIndicator.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.ResponsivePopover",
@@ -354,7 +354,7 @@
 		{
 			"control": "sap.m.Select",
 			"url": "Select.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.SelectDialog",
@@ -364,7 +364,7 @@
 		{
 			"control": "sap.m.SelectList",
 			"url": "../SelectList.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.Shell",
@@ -400,7 +400,7 @@
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
 			"desc" : "Suggestions list of the Search Field",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.Switch",
@@ -415,7 +415,7 @@
 		{
 			"control": "sap.m.Table",
 			"url": "../Table.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.TableSelectDialog",
@@ -435,12 +435,12 @@
 		{
 			"control": "sap.m.TextArea",
 			"url": "../TextArea.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.Tile",
@@ -460,7 +460,7 @@
 		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.ToggleButton",

@@ -55,7 +55,7 @@
             </modules>
         </component>
         <component>
-            <name>CA-UI5-DOC</name>
+            <name>CA-UI5-FST</name>
             <modules>
                 <module>sap/m/tutorial/Walkthrough</module>
                 <module>sap/m/tutorial/Testing-BulletinBoard</module>

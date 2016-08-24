@@ -341,7 +341,7 @@
         </component>
 
         <component>
-            <name>CA-UI5-DOC</name>
+            <name>CA-UI5-FST</name>
             <modules>
                 <module>sap/ui/test/*</module>
             </modules>
