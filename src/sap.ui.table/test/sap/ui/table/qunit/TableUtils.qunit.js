@@ -86,6 +86,18 @@ QUnit.test("isRowSelectorSelectionAllowed", function(assert) {
 	check("RowOnly", "None", true, false);
 });
 
+QUnit.test("areAllRowsSelected", function(assert) {
+	assert.strictEqual(TableUtils.areAllRowsSelected(), null, "No table was passed: Returned null");
+
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "Not all rows are selected");
+	oTable.selectAll();
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows are selected");
+	oTable.clearSelection();
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "Not all rows are selected");
+	TableUtils.toggleRowSelection(oTable, 0, true);
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "Not all rows are selected");
+});
+
 QUnit.test("hasFixedColumns", function(assert) {
 	assert.ok(TableUtils.hasFixedColumns(oTable), "Table has fixed columns");
 	assert.ok(!TableUtils.hasFixedColumns(oTreeTable), "Table has no fixed columns");
@@ -267,6 +279,77 @@ QUnit.test("toggleGroupHeader", function(assert) {
 	doToggle("Wrong DomRef", "", oTreeTable.$(), true, false, false);
 	doToggle("Wrong DomRef", "", oTreeTable.$(), false, false, false);
 	doToggle("Wrong DomRef", "", oTreeTable.$(), null, false, false);
+});
+
+QUnit.test("toggleRowSelection", function(assert) {
+	function test(oRowIndicator) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		sap.ui.getCore().applyChanges();
+
+		var iRowIndex = 0;
+		if (oRowIndicator === parseInt(oRowIndicator, 10)) {
+			iRowIndex = oRowIndicator;
+		}
+
+		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator); // Toggle
+		assert.ok(oTable.isIndexSelected(iRowIndex), "Row selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator, true); // Select
+		assert.ok(oTable.isIndexSelected(iRowIndex), "Row selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator); // Toggle
+		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator, false); // Deselect
+		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator, true); // Select
+		assert.ok(oTable.isIndexSelected(iRowIndex), "Row selected");
+		TableUtils.toggleRowSelection(oTable, oRowIndicator, false); // Deselect
+		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
+	}
+
+	// Test by passing a cell as the row indicator.
+	test(getRowHeader(0));
+	test(getCell(0, 0));
+
+	// If row selection is not allowed on data cells the selection state should not change.
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+	sap.ui.getCore().applyChanges();
+
+	var oElem = getCell(0, 0);
+	TableUtils.toggleRowSelection(oTable, oElem); // Toggle
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+	TableUtils.toggleRowSelection(oTable, oElem, true); // Select
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+	TableUtils.toggleRowSelection(oTable, oElem, false); // Deselect
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+
+	oTable.addSelectionInterval(0, 0);
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
+
+	TableUtils.toggleRowSelection(oTable, oElem); // Toggle
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
+	TableUtils.toggleRowSelection(oTable, oElem, true); // Select
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
+	TableUtils.toggleRowSelection(oTable, oElem, false); // Deselect
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
+
+	// Test by passing a row index as the row indicator.
+	test(0);
+	test(iNumberOfRows - 1);
+
+	// Test by passing invalid row indices.
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1), "Row index out of bound: No selection was performed"); // Toggle
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1, true), "Row index out of bound: No selection was performed"); // Select
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1, false), "Row index out of bound: No selection was performed"); // Deselect
+	assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount()), "Row index out of bound: No selection was performed"); // Toggle
+	assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), true), "Row index out of bound: No selection was performed"); // Select
+	assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), false), "Row index out of bound: No selection was performed"); // Deselect
+
+	// Selection is not possible when the table has no row binding.
+	oTable.unbindAggregation("rows");
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1), "No row binding: No selection was performed"); // Toggle
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1, true), "No row binding: No selection was performed"); // Select
+	assert.ok(!TableUtils.toggleRowSelection(oTable, -1, false), "No row binding: No selection was performed"); // Deselect
 });
 
 QUnit.test("isInSumRow", function(assert) {

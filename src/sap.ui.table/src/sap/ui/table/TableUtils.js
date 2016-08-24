@@ -77,6 +77,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Finds out if all rows are selected in a table.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Returns <code>true</code> if all rows in the table are selected.
+		 */
+		areAllRowsSelected: function(oTable) {
+			if (oTable == null) {
+				return null;
+			}
+
+			return oTable._getRowCount() === oTable._oSelection.aSelectedIndices.length;
+		},
+
+		/**
 		 * Returns whether the no data text is currently shown or not
 		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
@@ -145,6 +159,75 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return bChanged;
 			}
 			return false;
+		},
+
+		/**
+		 * Toggles the selection state of the row which contains the given cell DOM element.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {jQuery|HTMLElement|int} oRowIndicator The data cell in the row, or the data row index of the row,
+		 * 												 where the selection state should be toggled.
+		 * @param {boolean} [bSelect] If defined, then instead of toggling the desired state is set.
+		 * @returns {boolean} Returns <code>true</code> if the selection state of the row has been changed.
+		 * @private
+		 */
+		toggleRowSelection: function(oTable, oRowIndicator, bSelect) {
+			if (oTable == null ||
+				oTable.getBinding("rows") == null ||
+				oTable.getSelectionMode() === SelectionMode.None ||
+				oRowIndicator == null) {
+
+				return false;
+			}
+
+			function setSelectionState(iAbsoluteRowIndex) {
+				oTable._iSourceRowIndex = iAbsoluteRowIndex; // To indicate that the selection was changed by user interaction.
+
+				if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
+					if (bSelect != null && bSelect) {
+						return false;
+					}
+					oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+				} else {
+					if (bSelect != null && !bSelect) {
+						return false;
+					}
+					oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+				}
+
+				delete oTable._iSourceRowIndex;
+				return true;
+			}
+
+			// Variable oRowIndicator is a row index value.
+			if (typeof oRowIndicator === "number") {
+				if (oRowIndicator < 0 || oRowIndicator >= oTable._getRowCount()) {
+					return false;
+				}
+				return setSelectionState(oRowIndicator);
+
+			// Variable oRowIndicator is a jQuery object or DOM element.
+			} else {
+				var $Cell = jQuery(oRowIndicator);
+				var oCellInfo = this.getCellInfo($Cell[0]);
+
+				if (oCellInfo !== null
+					&& !TableUtils.isInGroupingRow($Cell[0])
+					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && this.isRowSelectionAllowed(oTable))
+					|| (oCellInfo.type === this.CELLTYPES.ROWHEADER && this.isRowSelectorSelectionAllowed(oTable)))) {
+
+					var iAbsoluteRowIndex;
+					if (oCellInfo.type === this.CELLTYPES.DATACELL) {
+						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"), 10)].getIndex();
+					} else { // CELLTYPES.ROWHEADER
+						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"), 10)].getIndex();
+					}
+
+					return setSelectionState(iAbsoluteRowIndex);
+				}
+
+				return false;
+			}
 		},
 
 		/**

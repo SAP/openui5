@@ -68,6 +68,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	};
 
 	/*
+	 * Handler which is called when the Space or Enter keys are pressed.
+	 */
+	TableKeyboardDelegate._handleSpaceAndEnter = function(oTable, oEvent) {
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		// Open column menu.
+		if (oCellInfo.type === CellType.COLUMNHEADER) {
+			oTable._bShowMenu = true;
+			oTable._onSelect(oEvent);
+			oTable._bShowMenu = false;
+
+		// Select/Deselect all.
+		} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
+			oTable._onSelect(oEvent);
+
+		// Collapse/Expand group.
+		} else if (TableUtils.isInGroupingRow(oEvent.target)) {
+			// FIXME: Expanding a group causes a re-rendering of (parts?) of the table. The focus gets lost, set it back. Do it! NOW!!
+			TableUtils.toggleGroupHeader(oTable, oEvent.target);
+
+		// Select/Deselect row.
+		} else if (oCellInfo.type === CellType.ROWHEADER) {
+			TableUtils.toggleRowSelection(oTable, oEvent.target);
+
+		} else if (oCellInfo.type === CellType.DATACELL) {
+
+			// Select/Deselect row.
+			if (TableUtils.isRowSelectionAllowed(oTable)) {
+				TableUtils.toggleRowSelection(oTable, oEvent.target);
+
+			// Fire cell click event.
+			} else if (oTable._findAndfireCellEvent(oTable.fireCellClick, oEvent) !== false) {
+				// CellClick event handler exists and was called.
+
+			// Enter action mode.
+			} else {
+				var $InteractiveElements = TableUtils.getInteractiveElements(oEvent.target);
+				if ($InteractiveElements !== null) {
+					$InteractiveElements[0].focus();
+				}
+			}
+		}
+	};
+
+	//******************************************************************************************
+
+	/*
 	 * Hook which is called by the keyboard extension when the table should enter the action mode.
 	 * @see TableKeyboardExtension#setActionMode
 	 */
@@ -83,8 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.leaveActionMode = function() {
 		this._getKeyboardExtension()._resumeItemNavigation();
 	};
-
-	//******************************************************************************************
 
 	TableKeyboardDelegate.prototype.onfocusin = function(oEvent) {
 		if (oEvent.isMarked("sapUiTableIgnoreFocusIn")) {
@@ -161,13 +206,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 			var $InteractiveElements = TableUtils.getInteractiveElements(oEvent.target);
 			if ($InteractiveElements !== null) {
 				$InteractiveElements[0].focus();
-				return;
-			}
 
 			// Leave action mode.
-			var $ParentDataCell = TableUtils.getParentDataCell(this, oEvent.target);
-			if ($ParentDataCell !== null) {
-				$ParentDataCell.focus();
+			} else {
+				var $ParentDataCell = TableUtils.getParentDataCell(this, oEvent.target);
+				if ($ParentDataCell !== null) {
+					$ParentDataCell.focus();
+				}
 			}
 		}
 	};
@@ -176,6 +221,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		// End the range selection mode.
 		if (oEvent.keyCode === jQuery.sap.KeyCodes.SHIFT) {
 			delete this._oRangeSelection;
+		}
+
+		if (oEvent.keyCode === jQuery.sap.KeyCodes.SPACE && !oEvent.shiftKey) {
+			oEvent.preventDefault(); // To prevent the browser window to scroll down.
+			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 		}
 	};
 
@@ -288,13 +338,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				if (this._oRangeSelection.startIndex <= iDataRowIndex) {
 					iDataRowIndex++;
 					if (this._oRangeSelection.selected) {
-						this.addSelectionInterval(iDataRowIndex, iDataRowIndex);
+						TableUtils.toggleRowSelection(this, iDataRowIndex, true);
 					} else {
-						this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
+						TableUtils.toggleRowSelection(this, iDataRowIndex, false);
 					}
 				} else {
 					// When moving back down to the row where the range selection started, the rows always get deselected.
-					this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
+					TableUtils.toggleRowSelection(this, iDataRowIndex, false);
 				}
 
 			} else {
@@ -352,13 +402,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				if (this._oRangeSelection.startIndex >= iDataRowIndex) {
 					iDataRowIndex--;
 					if (this._oRangeSelection.selected) {
-						this.addSelectionInterval(iDataRowIndex, iDataRowIndex);
+						TableUtils.toggleRowSelection(this, iDataRowIndex, true);
 					} else {
-						this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
+						TableUtils.toggleRowSelection(this, iDataRowIndex, false);
 					}
 				} else {
 					// When moving back up to the row where the range selection started, the rows always get deselected.
-					this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
+					TableUtils.toggleRowSelection(this, iDataRowIndex, false);
 				}
 
 			} else {
@@ -372,6 +422,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 			oEvent.preventDefault(); // To avoid text selection flickering.
 
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+			var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			/* Range Selection */
 
@@ -392,20 +443,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			/* Range Selection: Required for RTL mode. */
 
-			} else if (oCellInfo.type === CellType.ROWHEADER) {
+			} else if (oCellInfo.type === CellType.ROWHEADER && bIsRTL) {
 				// If selection on rows is not possible, then do not allow to move focus to them when performing a range selection.
 				if (!TableUtils.isRowSelectionAllowed(this)) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 
-			} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
+			} else if (oCellInfo.type === CellType.COLUMNROWHEADER && bIsRTL) {
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 
 			/* Column Resizing */
 
 			} else if (oCellInfo.type === CellType.COLUMNHEADER) {
 				var iResizeDelta = -this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (bIsRTL) {
 					iResizeDelta = iResizeDelta * -1;
 				}
 
@@ -438,7 +489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				}
 
 			} else if (oCellInfo.type === CellType.ROWHEADER) {
-				// If selection on data cells is not possible, then do not allow to move focus to the data cells.
+				// If selection on data cells is not possible, then do not allow to move focus to them when performing a range selection.
 				if (!TableUtils.isRowSelectionAllowed(this)) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
@@ -871,6 +922,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				}
 			}
 		}
+	};
+
+	TableKeyboardDelegate.prototype.onsapenter = function(oEvent) {
+		TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 	};
 
 	return TableKeyboardDelegate;
