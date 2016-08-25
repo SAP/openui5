@@ -1,7 +1,7 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], function ($, Opa, Opa5) {
 	"use strict";
 
-	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
+	var iExecutionDelay = Opa.config.executionDelay;
 
 	module("matchers without fake time");
 
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 		});
 		oOpa5.emptyQueue();
 
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
 		strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
 		strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 		});
 		Opa5.emptyQueue();
 
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
 		// Assert
 		strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
 		strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
@@ -339,8 +339,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
-		this.clock.tick(iInitialDelay);
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
 
 		strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 
