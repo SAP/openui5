@@ -495,6 +495,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getText();
 	};
 
+	// A hook to be used by controls that extend sap.m.Button and want to display the tooltip in a different way
+	Button.prototype._getTooltip = function() {
+
+		var sTooltip = this.getTooltip_AsString();
+
+		if (!sTooltip && !this.getText()) {
+			// get icon-font info. will return null if the icon is a image
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+
+			// add tooltip if available
+			if (oIconInfo && oIconInfo.text) {
+				sTooltip = oIconInfo.text;
+			}
+		}
+
+		return sTooltip;
+	};
+
 	Button.prototype.setType = function(sType) {
 
 		this.setProperty("type", sType);
