@@ -20,6 +20,12 @@
 
 <script type="text/javascript">
 
+	var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-newtablekeyboard');
+	if (sKeyboard === "true") {
+		jQuery.sap.require("sap.ui.table.TableKeyboardExtension");
+		sap.ui.table.TableKeyboardExtension._enableNewDelegate();
+	}
+
 	// TABLE SETTINGS
 	var oDialog = new sap.ui.commons.Dialog({
 		height: "500px",

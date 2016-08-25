@@ -378,6 +378,16 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		return this._type;
 	};
 
+	/**
+	 *
+	 * @private
+	 */
+	TableKeyboardExtension._enableNewDelegate = function() {
+		jQuery.sap.log.error("The new keyboard handling of sap.ui.table.Table is currently not supported for productive use.");
+		jQuery.sap.require("sap.ui.table.TableKeyboardDelegate2");
+		TableKeyboardDelegate = sap.ui.table.TableKeyboardDelegate2;
+	};
+
 
 	return TableKeyboardExtension;
 
