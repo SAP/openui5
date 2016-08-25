@@ -54,7 +54,9 @@ sap.ui.require([
 		var oViewInfo = {
 				caller : "qux",
 				componentId : "this._sOwnerId",
-				name : "this.sViewName"
+				name : "this.sViewName",
+				//TODO TDD is missing for support info calls!
+				_supportInfo : function () {} // Note: FAKE support info handler
 			};
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
@@ -2542,7 +2544,7 @@ sap.ui.require([
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
-					"with" : sinon.match.func,
+					"with" : sinon.match.func
 				})); // does not work in IE: fnVisitor.printf("%C")
 		});
 	});
@@ -2656,8 +2658,7 @@ sap.ui.require([
 				nestedObject : {
 					foo : "bar"
 				}
-			},
-			that = this;
+			};
 
 		try {
 			XMLPreprocessor.plugIn(function (oElement, oInterface) {

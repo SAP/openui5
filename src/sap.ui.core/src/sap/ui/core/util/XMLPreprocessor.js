@@ -1424,16 +1424,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function visitAttributes(oElement, oWithControl) {
 					var i,
+						oAttribute,
 						oAttributesList = oElement.attributes;
 
 					// Note: iterate backwards to account for removal of attributes!
 					for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
+						oAttribute = oAttributesList.item(i);
 						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttribute.name, value: oAttribute.value}}});
 						}
-						resolveAttributeBinding(oElement, oAttributesList.item(i), oWithControl);
+						resolveAttributeBinding(oElement, oAttribute, oWithControl);
 						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttribute.name, value: oAttribute.value}}});
 						}
 					}
 				}
