@@ -27,6 +27,9 @@
 
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
+			sinon.config.useFakeTimers = false;
 
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
@@ -62,7 +65,7 @@
 				intervalSelection: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "4"), endDate: new Date("2015", "1", "6")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+							   new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
 				select: handleSelect,
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
@@ -75,6 +78,10 @@
 				startDateChange: handleStartDateChange,
 				pickerPopup: true
 			}).placeAt("uiArea3");
+
+			var oCal4 = new sap.ui.unified.CalendarDateInterval("Cal4",{
+				startDate: new Date("2015", "1", "2")
+			}).placeAt("uiArea4");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 			var oToday = new Date();
@@ -306,6 +313,36 @@
 				oCal2.setStartDate(new Date(2015, 1, 2));
 			});
 
+			module("Focus private API");
+			test("_getFocusedDate()", function() {
+				var oOldFocusedDate = oCal4._oFocusedDate;
+
+				//Act
+				oCal4._getFocusedDate();
+
+				//Assert
+				equals(oCal4._oFocusedDate, oOldFocusedDate,
+						"_getFocusedDate() does not change the oFocusedDate after initial calculation");
+
+				var oNewDate = new Date(Date.UTC(2000, 1, 4));
+				oCal4.setProperty("startDate", oNewDate);
+
+				//Act
+				oCal4._getFocusedDate(true);
+
+				//Assert
+				equals(oCal4._oFocusedDate.oDate.toString(), oNewDate.toString(),
+						"_getFocusedDate() changes the oFocusedDate if it's called with parameter bForceRecalculate = true");
+
+				var oSpy = sinon.spy(oCal4, "_getFocusedDate");
+
+				//Act
+				oCal4.setStartDate(new Date(2000, 1, 4));
+
+				assert.ok(oSpy.getCall(0).args[0],
+						"When .setStartDate is called, _getFocusedDate is always forcing recalculation");
+			});
+
 		</script>
 
 	</head>
@@ -321,5 +358,7 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
 	</body>
 </html>

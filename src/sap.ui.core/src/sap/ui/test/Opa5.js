@@ -333,8 +333,20 @@ sap.ui.define([
 		 * An action has an 'executeOn' function that will receive a single control as a parameter.
 		 * If there are multiple actions defined all of them
 		 * will be executed (first in first out) on each control of, similar to the matchers.
+		 * Here is one of the most common usages:
+		 * <code>
+		 *     function (sButtonId) {
+		 *          // executes a Press on a button with a specific id
+		 *          new Opa5().waitFor({
+		 *              id: sButtonId,
+		 *              actions: new Press()
+		 *          });
+		 *     };
+		 * </code>
 		 * But actions will only be executed once and only after the check function returned true.
-		 * Before an action is executed the {@link sap.ui.test.matchers.Interactable} matcher will check if the action may be exected.
+		 * Before actions are executed the {@link sap.ui.test.matchers.Interactable}
+		 * matcher will check if the Control is currently able to perform actions if it is not,
+		 * Opa5 will try again after the 'pollingInterval'.
 		 * That means actions will only be executed if the control is not:
 		 * <ul>
 		 *     <li>
@@ -355,6 +367,34 @@ sap.ui.define([
 		 * In the documentation of the success parameter there is a list of conditions that have to be fulfilled.
 		 * They also apply for the actions.
 		 * There are some predefined actions in the {@link sap.ui.test.actions} namespace.
+		 * since 1.42 an Action may add other waitFors.
+		 * The next action or the success handler will not be executed until the waitFor of the action has finished.
+		 * An example:
+		 * <code>
+		 *     <pre>
+		 *     this.waitFor({
+		 *         id: "myButton",
+		 *         actions: function (oButton) {
+		 *            // this action is executed first
+		 *            this.waitFor({
+		 *              id: "anotherButton",
+		 *              actions: function () {
+		 *                // This is the second function that will be executed
+		 *                // Opa will also synchronize the UI again before executing this function
+		 *              },
+		 *              success: function () {
+		 *                // This is the third function that will be executed
+		 *              }
+		 *            })
+		 *         },
+		 *         success: function () {
+		 *             // This is the fourth function that will be executed
+		 *         }
+		 *     });
+		 *     </pre>
+		 * </code>
+		 * Executing multiple actions will not synchronize between them.
+		 * If you need synchronization between actions you need to split the actions into multiple 'waitFor' statements.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
@@ -413,6 +453,7 @@ sap.ui.define([
 			};
 
 			oOptionsPassedToOpa.success = function () {
+				var oWaitForCounter = Opa._getWaitForCounter();
 				// If the plugin does not look for controls execute actions even if vControl is falsy
 				if (vActions && (vResult || !bPluginLooksForControls)) {
 					oActionPipeline.process({
@@ -421,12 +462,33 @@ sap.ui.define([
 					});
 				}
 
-				if (fnOriginalSuccess) {
-					var aArgs = [];
-					vResult && aArgs.push(vResult);
-
-					fnOriginalSuccess.apply(this, aArgs);
+				// no success from the application.
+				// waitFors added by the actions will then be the next waitFors anyways.
+				// that means modifying the queue is not necessary
+				if (!fnOriginalSuccess) {
+					return;
 				}
+
+				var aArgs = [];
+				if (vResult) {
+					aArgs.push(vResult);
+				}
+
+				if (oWaitForCounter.get() === 0) {
+					// No waitFors added by actions - directly execute the success
+					fnOriginalSuccess.apply(this, aArgs);
+					return;
+				}
+
+				// Delay the current waitFor after a waitFor added by the actions.
+				// So waitFors added by an action will block the current execution of success
+				var oWaitForObject = createWaitForObjectWithoutDefaults();
+				oWaitForObject.success = function () {
+					fnOriginalSuccess.apply(this, aArgs);
+				};
+				// the delay is achieved by just not executing the waitFor and wrapping it into a new waitFor
+				// the new waitFor does not have any checks just directly executes the success result
+				this.waitFor(oWaitForObject);
 			};
 
 			return Opa.prototype.waitFor.call(this, oOptionsPassedToOpa);

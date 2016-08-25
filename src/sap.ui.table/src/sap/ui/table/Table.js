@@ -925,12 +925,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var iFixedHeaderWidthSum = 0;
 		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
+			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
 				var oHeaderElementClientBoundingRect = aHeaderElements[i].getBoundingClientRect();
 				var iHeaderWidth = oHeaderElementClientBoundingRect.right - oHeaderElementClientBoundingRect.left;
 				aHeaderWidths.push(iHeaderWidth);
 
-				if (!this.getColumns()[i].getVisible()) {
+				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
 					// the fixedColumnCount does not consider the visibility of the column, whereas the DOM only represents
 					// the visible columns. In order to match both, the fixedColumnCount (aggregation) and fixedColumnCount
 					// of the DOM, for each invisible column, 1 must be deducted from the fixedColumnCount (aggregation).
@@ -1338,6 +1339,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._oSelection.setSelectionMode(SelectionModel.MULTI_SELECTION);
 		}
 
+		// If this needs to be changed, remember to consider the related implementations in TreeTable and AnalyticalTable
 		if (sSelectionMode === SelectionMode.Multi) {
 			sSelectionMode = SelectionMode.MultiToggle;
 			jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		oRm.addClass("sapMHdrCntr");
-		oRm.addClass(oControl.getView());
+		oRm.addClass(oControl.getOrientation());
 		if (oControl.getShowDividers()) {
 			oRm.addClass("sapMHrdrCntrDvdrs");
 		}
@@ -47,11 +47,15 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oControl.getId() + "-scroll-area");
 		oRm.addClass("sapMHdrCntrCntr");
-		oRm.addClass(oControl.getView());
+		oRm.addClass(oControl.getOrientation());
 		oRm.addClass("sapMHdrCntrBG" + oControl.getBackgroundDesign());
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-after");
+		oRm.writeAttribute("tabindex", "0");
+		oRm.write("/>");
 		oRm.write("</div>");
 
 		var oButton = oControl.getAggregation("_prevButton");
@@ -59,7 +63,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrLeft");
-			oRm.addClass(oControl.getView());
+			oRm.addClass(oControl.getOrientation());
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oButton);
@@ -71,7 +75,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrRight");
-			oRm.addClass(oControl.getView());
+			oRm.addClass(oControl.getOrientation());
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oButton);

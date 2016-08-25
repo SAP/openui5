@@ -148,7 +148,8 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   user-drag: none;
 }
 
-.sapMCrslBulleted.sapMCrslTopOffset {
+.sapMCrslBulleted.sapMCrslTopOffset,
+.sapMCrslNumeric.sapMCrslTopOffset {
   position: absolute;
   padding-bottom: 0.125rem;
   width: 100%;
@@ -230,14 +231,16 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   font-size: 1.375rem;
 }
 
-.sapMCrslBulleted {
+.sapMCrslBulleted,
+.sapMCrslNumeric {
   display: inline-block;
   position: relative;
   bottom: 1.0625rem;
   max-width: calc(~"100% - 6.5rem");
 }
 
-.sapMCrslBulleted.sapMCrslBulletedNoArrows {
+.sapMCrslControlsNoArrows .sapMCrslBulleted,
+.sapMCrslControlsNoArrows .sapMCrslNumeric {
   width: 100%;
   position: relative;
   bottom: 0;
@@ -246,28 +249,32 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 /* Styles for carousel dots on different screens */
 /* screen width < 600px */
 @media screen and (max-width: 599px) {
-  .sapMCrslBulleted {
+  .sapMCrslBulleted,
+  .sapMCrslNumeric {
 	width: 12rem;
   }
 }
 
 /* 600px <= screen width < 1024px */
 @media screen and (min-width : 600px) and (max-width: 1023px) {
-  .sapMCrslBulleted {
+  .sapMCrslBulleted,
+  .sapMCrslNumeric {
 	width: 16rem;
   }
 }
 
 /* 1024px <= screen width < 1440px */
 @media screen and (min-width : 1024px) and (max-width: 1439px) {
-  .sapMCrslBulleted {
+  .sapMCrslBulleted,
+  .sapMCrslNumeric {
 	width: 20rem;
   }
 }
 
 /* screen width >= 1440px */
 @media screen and (min-width: 1440px) {
-  .sapMCrslBulleted {
+  .sapMCrslBulleted,
+  .sapMCrslNumeric {
 	width: 24rem;
   }
 }
@@ -279,4 +286,25 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 }
 .sapMCrslActive {
   visibility: visible;
+}
+
+/* Page Indicator Numeric
+   ====================================================================== */
+.sapMCrslNumeric span {
+  font-family: @sapUiFontFamily;
+  font-size: @sapMFontMediumSize;
+  font-weight: normal;
+  color: @sapUiContentLabelColor;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+/* remove transition when animation is off . As js depends of the animation, the duration is 0.01s */
+html[data-sap-ui-animation='off'] {
+  .sapMCrslInner {
+    -webkit-transition-duration: 0.01s;
+    transition-duration: 0.01s;
+  }
 }

@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._updateHeader(oUTCDate);
 
-		var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
+		var oDate = CalendarUtils._createLocalDate(this._getFocusedDate(true));
 		if (!oDatesRow.checkDateFocusable(oDate)) {
 			//focused date not longer visible -> focus start date  (but don't set focus)
 			this._setFocusedDate(oUTCDate);
@@ -229,9 +229,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	CalendarDateInterval.prototype._getFocusedDate = function(){
+	/**
+	* @param {boolean} [bForceRecalculate] Indicates if it's called within the <code>startDate</code> property setter and therefore
+	 * needs to be recalculated
+	 * @private
+	* @returns {object} UTC date
+	*/
+	CalendarDateInterval.prototype._getFocusedDate = function(bForceRecalculate){
 
-		if (!this._oFocusedDate) {
+		if (!this._oFocusedDate || bForceRecalculate) {
+			this._oFocusedDate = null;
 			Calendar.prototype._getFocusedDate.apply(this, arguments);
 			var oStartDate = this.getStartDate();
 			var oDatesRow = this.getAggregation("month")[0];

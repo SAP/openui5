@@ -866,11 +866,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 			}
 
-			// remove additional css files (ie9 rule limit fix)
-			if ($this.attr("data-sap-ui-css-count")) {
-				$this.remove();
-			}
-
 			// set new URL
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
@@ -2279,20 +2274,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * The 'themeChanged' event is fired when
+	 * <ul>
+	 *   <li>the theme has been initially applied (only fired if theme is not already applied on core init)
+	 *   <li>the theme has been changed and is now applied (see {@link #applyTheme})
+	 *   <li>a library has been loaded and its theme has been applied (only if library is loaded after core init)
+	 * </ul>
+	 *
 	 * @name sap.ui.core.Core#ThemeChanged
 	 * @event
-	 * @param {string} theme name of the new theme
-	 * @function
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {string} oControlEvent.getParameters.theme Theme name
+	 * @public
 	 */
 
+	 /**
+	 * Attach event-handler <code>fnFunction</code> to the 'themeChanged' event of this <code>sap.ui.core.Core</code>.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function.
+	 * @public
+	 */
 	Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
 	};
 
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'themeChanged' event of this <code>sap.ui.core.Core</code>.
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @public
+	 */
 	Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
 	};
 
+	/**
+	 * Fire event 'themeChanged' to attached listeners.
+	 *
+	 * @param {object} [mParameters] parameters to pass along with the event
+	 * @param {object} [mParameters.theme] Theme name
+	 * @protected
+	 */
 	Core.prototype.fireThemeChanged = function(mParameters) {
 		jQuery.sap.scrollbarSize(true);
 

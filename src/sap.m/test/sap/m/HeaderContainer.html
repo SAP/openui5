@@ -54,7 +54,35 @@
 		}, {
 			"content" : [{
 				"type" : "numeric",
-				"value" : 1115,
+				"value" : 15,
+				"scale" : "M",
+				"unit" : "EUR",
+				"size" : "M",
+				"valueColor" : "Good",
+				"indicator" : "Up",
+				"isFormatterValue" : false,
+				"truncateValueTo" : 4
+			}, {
+				"value" : "USD, Current"
+			}]
+		}, {
+			"content" : [{
+				"type" : "numeric",
+				"value" : 165,
+				"scale" : "M",
+				"unit" : "EUR",
+				"size" : "M",
+				"valueColor" : "Error",
+				"indicator" : "Up",
+				"isFormatterValue" : false,
+				"truncateValueTo" : 4
+			}, {
+				"value" : "USD, Current"
+			}]
+		}, {
+			"content" : [{
+				"type" : "numeric",
+				"value" : 11,
 				"scale" : "M",
 				"unit" : "USD",
 				"size" : "M",
@@ -83,7 +111,8 @@
 					formatterValue : "{" + oContext.sPath + "/content/" + i + "/isFormatterValue}",
 					truncateValueTo : "{" + oContext.sPath + "/content/" + i + "/truncateValueTo}",
 					state : "Loaded",
-					valueColor : "{" + oContext.sPath + "/content/" + i + "/valueColor}"
+					valueColor : "{" + oContext.sPath + "/content/" + i + "/valueColor}",
+					press : function() {}
 				});
 				oLayout.addContent(oNumericContent);
 			} else if (!aContent[i].type) {
@@ -101,6 +130,14 @@
 		scrollTime : "{/scrollTime}",
 		height:"{/height}",
 		width:"{/width}",
+		items : {
+			path : "/items",
+			factory : fnContentFactory
+		}
+	});
+	var oHeaderContainer2 = new sap.m.HeaderContainer("headerContainer2", {
+		scrollStep : "{/scrollStep}",
+		scrollTime : "{/scrollTime}",
 		items : {
 			path : "/items",
 			factory : fnContentFactory
@@ -262,7 +299,7 @@
 	});
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.HeaderContainer",
-		content : [oHeaderContainer, oAdjustForm]
+		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm]
 	});
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]

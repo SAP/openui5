@@ -9,6 +9,13 @@
       "ref": "test-resources/sap/f/demokit/sample"
     },
     "entities": [
+      {
+        "id": "sap.f.DynamicPage",
+        "name": "Dynamic Page",
+        "category": "Container",
+        "since": "1.42",
+        "samples": ["sap.f.sample.DynamicPageListReport", "sap.f.sample.DynamicPageAnalyticalTable"]
+      }
     ],
     "samples": [
       {
@@ -20,11 +27,6 @@
         "id": "sap.f.sample.DynamicPageAnalyticalTable",
         "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
         "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
-      },
-      {
-        "id": "sap.f.sample.DynamicMessageStripGenerator",
-        "name": "Dynamic Message Strip Generator",
-        "description": "Generates MessageStrips with random properties."
       },
       {  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
         "name": "Flexible Column Layout basic sample",

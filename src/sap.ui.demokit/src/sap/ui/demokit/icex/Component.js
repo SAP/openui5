@@ -4,13 +4,14 @@
 
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/model/json/JSONModel",
 	"./model/FavoriteModel",
 	"./util/Sorter"
-], function (jQuery, IconPool, UIComponent, JSView, JSONModel, FavoriteModel, Sorter) {
+], function (jQuery, ResourceModel, IconPool, UIComponent, JSView, JSONModel, FavoriteModel, Sorter) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demokit.icex.Component", {
@@ -28,10 +29,6 @@ sap.ui.define([
 
 			var sPath = jQuery.sap.getModulePath("sap.ui.demokit.icex");
 
-			// set img model
-			var imgModel = new JSONModel(sPath + "/model/img.json");
-			this.setModel(imgModel, "img");
-
 			// set favorite model
 			var favModel = new FavoriteModel();
 			this.setModel(favModel, "fav");
@@ -42,6 +39,11 @@ sap.ui.define([
 				success: jQuery.proxy(this.onGroupsLoaded, this)
 			});
 
+			// set i18n model
+			var i18nModel = new ResourceModel({
+				bundleName: "sap.ui.demokit.icex.i18n.i18n"
+			});
+			this.setModel(i18nModel, "i18n");
 		},
 
 		createContent : function() {

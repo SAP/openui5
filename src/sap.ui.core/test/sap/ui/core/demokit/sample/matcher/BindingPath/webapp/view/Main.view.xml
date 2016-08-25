@@ -1,0 +1,24 @@
+<mvc:View
+	id="mainView"
+	controllerName="webapp.controller.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page title="List Page">
+			<content>
+				<List
+					id="productList"
+					headerText="Product List"
+					items="{/ProductCollection}"
+					mode="MultiSelect"
+					includeItemInSelection="true">
+					<items>
+						<StandardListItem
+							title="{Name}"
+							description="{ProductId}"/>
+					</items>
+				</List>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

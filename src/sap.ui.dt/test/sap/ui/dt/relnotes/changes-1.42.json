@@ -1,0 +1,35 @@
+{
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "199f56da66d21f3091edeb6e73bf900c907b6d06",
+        "author": "Amiram Wingarten \u003camiram.wingarten@sap.com\u003e",
+        "type": "FIX",
+        "text": "block ghost creation on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "1150c2798a7c7830c2e42e051a4e3c79fc3b25ca",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "preparation for change 1793710(support sequences of add field for simple form), the deleted failing test is without value",
+        "references": []
+      },
+      {
+        "id": "199f56da66d21f3091edeb6e73bf900c907b6d06",
+        "author": "Amiram Wingarten \u003camiram.wingarten@sap.com\u003e",
+        "type": "FIX",
+        "text": "block ghost creation on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "1150c2798a7c7830c2e42e051a4e3c79fc3b25ca",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "preparation for change 1793710(support sequences of add field for simple form), the deleted failing test is without value",
+        "references": []
+      }
+    ]
+  }
+}

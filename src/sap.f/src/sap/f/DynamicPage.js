@@ -32,8 +32,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.38
+	 * @since 1.42
 	 * @alias sap.f.DynamicPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -675,8 +674,15 @@ sap.ui.define([
 		oScrollBar.setContentSize(iOffsetHeight + this.$wrapper[0].scrollHeight + "px");
 		oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
 		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
+
 		jQuery.sap.delayedCall(0, this, this._updateScrollBarOffset);
+		jQuery.sap.delayedCall(0, this, this._updateFitContainer);
 	};
+
+	DynamicPage.prototype._updateFitContainer = function () {
+		this.$contentFitContainer.toggleClass('sapFDynamicPageContentFitContainer', !this._needsVerticalScrollBar());
+	};
+
 
 	/**
 	 * Updates the title area/footer offset. Since the "real" scroll bar starts at just below the title and since the "fake"
@@ -836,7 +842,7 @@ sap.ui.define([
 
 		this.$titleArea = this.$("header");
 		this.$wrapper = this.$("contentWrapper");
-		this.$content = this.$("content");
+		this.$contentFitContainer = this.$('contentFitContainer');
 	};
 
 	/**
@@ -1007,8 +1013,8 @@ sap.ui.define([
 			this._sTitleResizeHandlerId = ResizeHandler.register(this.$title[0], fnChildControlSizeChangeHandler);
 		}
 
-		if (!this._sContentResizeHandlerId && exists(this.$content)) {
-			this._sContentResizeHandlerId = ResizeHandler.register(this.$content[0], fnChildControlSizeChangeHandler);
+		if (!this._sContentResizeHandlerId && exists(this.$contentFitContainer)) {
+			this._sContentResizeHandlerId = ResizeHandler.register(this.$contentFitContainer[0], fnChildControlSizeChangeHandler);
 		}
 	};
 
@@ -1098,4 +1104,4 @@ sap.ui.define([
 
 	return DynamicPage;
 
-}, /* bExport= */ false);
+}, /* bExport= */ true);

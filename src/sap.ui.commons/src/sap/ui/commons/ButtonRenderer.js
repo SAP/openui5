@@ -31,7 +31,6 @@ sap.ui.define(['jquery.sap.global'],
 		if (oButton.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oButton.getTooltip_AsString());
 		}
-
 		//styling
 		if (oButton.getStyled()) {
 			rm.addClass("sapUiBtnS");
@@ -67,6 +66,14 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oButton.getText() && oButton.getIcon()) { // icon, but no text => reduce padding
 			rm.addClass("sapUiBtnIconOnly");
 			bImageOnly = true; // only the image is there, so it must have some meaning
+
+			// add tooltip if available, if not - add the technical name of the icon
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon()),
+				sTooltip = oButton.getTooltip_AsString();
+
+			if (sTooltip || (oIconInfo && oIconInfo.name)) {
+				rm.writeAttributeEscaped("title", sTooltip || oIconInfo.name);
+			}
 		}
 
 		if (oButton.getIcon() && oButton.getText()) {
@@ -243,12 +250,12 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttribute("alt", ""); // there must be an ALT attribute
 		}
 
-        if (!bImageOnly) {
-            rm.writeAttribute("role", "presentation");
-        }
+		if (!bImageOnly) {
+			rm.writeAttribute("role", "presentation");
+		}
 
 		rm.addClass("sapUiBtnIco");
-        if (oButton.getText()) { // only add a distance to the text if there is text
+		if (oButton.getText()) { // only add a distance to the text if there is text
 			rm.addClass(oButton.getIconFirst() ? "sapUiBtnIcoL" : "sapUiBtnIcoR");
 		}
 		rm.writeClasses();
@@ -305,6 +312,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		oAttributes["id"] = oButton.getId() + "-icon";
 		if (sTooltip) { // prevents default icon tooltip
+
 			oAttributes["title"] = null;
 			oAttributes["aria-label"] = null;
 			oAttributes["aria-hidden"] = true;

@@ -98,17 +98,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			jQuery("link[id^=sap-ui-theme-]").each(function() {
 				fnCallback(this.getAttribute("id"), this.href);
 			});
-			// also check for additional imported stylesheets (IE9 limit, see jQuery.sap.includeStyleSheet)
-			if (jQuery.sap._mIEStyleSheets) {
-				for (var sId in jQuery.sap._mIEStyleSheets) {
-					if (sId.indexOf("sap-ui-theme-") === 0) {
-						var oStyleSheet = jQuery.sap._mIEStyleSheets[sId];
-						if (typeof oStyleSheet.href === "string") {
-							fnCallback(sId, oStyleSheet.href);
-						}
-					}
-				}
-			}
 		}
 
 		/*

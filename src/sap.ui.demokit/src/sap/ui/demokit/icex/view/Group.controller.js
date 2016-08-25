@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/icex/model/Config"
-	], function (jQuery, Device, Controller, JSONModel, Config) {
+], function (jQuery, Device, Controller, JSONModel, Config) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Group", {

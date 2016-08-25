@@ -25,7 +25,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 *
 	 * @constructor
 	 * @private
-	 * @since 1.38
+	 * @since 1.42
 	 * @alias sap.f.DynamicPageTitle
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

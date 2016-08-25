@@ -2,69 +2,79 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel", "sap/ui/Device"], function (Controller, JSONModel, Device) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"],
+function (Controller, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Favorite", {
 
 		onInit : function() {
+			this._initUiModel();
+			this.getView().addEventDelegate({
+				onBeforeShow : function(evt) {
+					this.updatePageTitle();
+				}.bind(this)
+			});
+		},
 
-			// init UI model
-			this.toggleUiModel();
-
-			this.oBus = this.getOwnerComponent().getEventBus();
-
+		_initUiModel : function () {
+			var oModel = new JSONModel({
+				inEdit : false,
+				inDisplay : true,
+				listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType : (Device.system.phone) ? "Active" : "Inactive",
+				showToolbar : (Device.system.phone) ? false : true
+			});
+			this.getView().setModel(oModel, "ui");
 		},
 
 		toggleUiModel : function() {
 
 			var model = this.getView().getModel("ui");
-			if (!model) {
 
-				// init
-				model = new JSONModel({
-					inEdit : false,
-					inDisplay : true,
-					listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
-					listItemType : (Device.system.phone) ? "Active" : "Inactive",
-					showToolbar : (Device.system.phone) ? false : true
-				});
-				this.getView().setModel(model, "ui");
+			// toggle
+			var data = model.getData();
+			var _listMode;
+			var _listItemType;
+			var _showToolbar = true;
 
+			if (data.inDisplay) {
+				_listMode = "Delete";
+				_listItemType = "Inactive";
 			} else {
-
-				// toggle
-				var data = model.getData();
-				var _listMode;
-				var _listItemType;
-				var _showToolbar = true;
-
-				if (data.inDisplay) {
-					_listMode = "Delete";
-					_listItemType = "Inactive";
-				} else {
-					_listMode = (Device.system.phone) ? "None" : "SingleSelectMaster";
-					_listItemType = (Device.system.phone) ? "Active" : "Inactive";
-					_showToolbar = (Device.system.phone) ? false : true;
-				}
-
-				model.setData({
-					inEdit : data.inDisplay,
-					inDisplay : data.inEdit,
-					listMode : _listMode,
-					listItemType : _listItemType,
-					showToolbar : _showToolbar
-				});
+				_listMode = (Device.system.phone) ? "None" : "SingleSelectMaster";
+				_listItemType = (Device.system.phone) ? "Active" : "Inactive";
+				_showToolbar = (Device.system.phone) ? false : true;
 			}
+
+			model.setData({
+				inEdit : data.inDisplay,
+				inDisplay : data.inEdit,
+				listMode : _listMode,
+				listItemType : _listItemType,
+				showToolbar : _showToolbar
+			});
+		},
+
+		updatePageTitle : function () {
+			var oFavModel = this.getView().getModel("fav"),
+				iCount = oFavModel.getData().count,
+				oBundle = this.getView().getModel("i18n").getResourceBundle(),
+				sTitle = oBundle.getText("favoritesPageTitle", [ iCount ]);
+			this.getView().byId("page").setTitle(sTitle);
 		},
 
 		navBack : function(evt) {
-			this.oBus.publish("nav", "back");
+			this.getOwnerComponent().getEventBus().publish("nav", "back");
 		},
 
 		deleteIconList : function(evt) {
 			var name = evt.getParameter("listItem").getTitle();
 			this.getView().getModel("fav").toggleFavorite(name);
+			this.updatePageTitle();
 		},
 
 		selectIconList : function(evt) {
@@ -77,13 +87,15 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel", "sap
 
 		_showDetail : function(item) {
 
+			var oBus = this.getOwnerComponent().getEventBus();
+
 			// tell app controller to navigate
-			this.oBus.publish("nav", "to", {
+			oBus.publish("nav", "to", {
 				id : "Detail"
 			});
 
 			// tell detail to update
-			this.oBus.publish("app", "RefreshDetail", {
+			oBus.publish("app", "RefreshDetail", {
 				name : item.getBindingContext("fav").getObject().name
 			});
 		}

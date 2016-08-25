@@ -3,8 +3,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.matcher.BindingPath.Component", {
-
+	return UIComponent.extend("sap.ui.core.sample.matcher.BindingPath.Component", {
 		metadata: {
 			dependencies: {
 				libs: [
@@ -13,20 +12,16 @@ sap.ui.define([
 			},
 			config: {
 				sample: {
-					iframe: "BindingPath.html",
+					iframe: "Opa.html",
 					stretch: true,
 					files: [
-						"BindingPath.html",
-						"applicationUnderTest/view/Main.view.xml",
-						"applicationUnderTest/controller/Main.controller.js",
-						"applicationUnderTest/index.html"
+						"Opa.html",
+						"webapp/view/Main.view.xml",
+						"webapp/controller/Main.controller.js",
+						"webapp/index.html"
 					]
 				}
 			}
 		}
-
 	});
-
-	return Component;
-
 });

@@ -28,7 +28,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @since 1.38
+	 * @since 1.42
 	 * @alias sap.f.FlexibleColumnLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
