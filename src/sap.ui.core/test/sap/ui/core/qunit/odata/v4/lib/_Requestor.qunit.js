@@ -910,10 +910,21 @@ sap.ui.require([
 		var oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected (oError) {
+			assert.strictEqual(oError.canceled, true);
+		}
+
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
+				.then(unexpected, rejected),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"})
+				.then(unexpected, rejected),
 			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+				.then(unexpected, rejected)
 		]);
 
 		this.mock(oRequestor).expects("request").never();
@@ -922,7 +933,7 @@ sap.ui.require([
 		oRequestor.cancelPatch("groupId");
 		oRequestor.submitBatch("groupId");
 
-		return oPromise.catch(function () {});
+		return oPromise;
 	});
 
 	//*****************************************************************************************
@@ -933,20 +944,22 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
 		var oPromise,
-			oRequestor = _Requestor.create("/Service/");
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+		oTestPromise = oPromise.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			});
 
 		// code under test
 		oRequestor.removePatch(oPromise);
 
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
-		return oPromise.then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.canceled, true);
-		});
+		return oTestPromise;
 	});
 
 	//*****************************************************************************************
