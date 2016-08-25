@@ -411,7 +411,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				content: "<span id=\"" + sHeadingDescrId + "\" style=\"display: none;\" role=\"heading\">" + sHeadingDescr + "</span>"
 			});
 
-			this._oPopover.addAssociation("ariaDescribedBy", sHeadingDescrId, true);
+			this._oPopover.addAssociation("ariaLabelledBy", sHeadingDescrId, true);
 
 			var oCloseBtn = new Button({
 				icon: ICONS["close"],
