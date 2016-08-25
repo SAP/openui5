@@ -199,20 +199,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	IconPool.insertFontFaceStyle();
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	// create an F5 ARIA announcement and remember its ID for later use in the renderer:
-	SearchField.prototype._sAriaF5LabelId = new sap.ui.core.InvisibleText({
-		text: oRb.getText("SEARCHFIELD_ARIA_F5")
-	}).toStatic().getId();
 
 	SearchField.prototype.init = function() {
 
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
 
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		// Default placeholder: "Search"
 		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
+
+		// create an F5 ARIA announcement and remember its ID for later use in the renderer:
+		this._sAriaF5Label = new sap.ui.core.InvisibleText({
+			text: oRb.getText("SEARCHFIELD_ARIA_F5")
+		}).toStatic();
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {
@@ -317,6 +319,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._oSuggest) {
 			this._oSuggest.destroy(true);
 			this._oSuggest = null;
+		}
+
+		if (this._sAriaF5Label) {
+			this._sAriaF5Label.destroy();
+			this._sAriaF5Label = null;
 		}
 	};
 
