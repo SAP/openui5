@@ -1404,6 +1404,10 @@ sap.ui.require([
 		current : [[40, 100]],
 		range : [89, 10, 100],
 		expected : {start : 0, length : 199}
+	}, { // transient context
+		range : [-1, 10, 1],
+		bTransient : true,
+		expected : {start : -1, length : 11}
 	}].forEach(function (oFixture) {
 		QUnit.test("getReadRange: " + oFixture.range, function (assert) {
 			var aContexts = [],
@@ -1418,6 +1422,9 @@ sap.ui.require([
 						aContexts[i] = i;
 					}
 				});
+			}
+			if (oFixture.bTransient) {
+				aContexts[-1] = -1;
 			}
 
 			oResult = _ODataHelper.getReadRange(aContexts, oFixture.range[0], oFixture.range[1],
@@ -1444,6 +1451,7 @@ sap.ui.require([
 				"path=" + sPath);
 		});
 	});
+	// TODO return true if the binding has a transient context
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): without cache", function (assert) {

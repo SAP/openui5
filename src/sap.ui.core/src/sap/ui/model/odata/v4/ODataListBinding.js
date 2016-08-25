@@ -168,24 +168,28 @@ sap.ui.define([
 			function (iIndex) {
 				var i,
 					oNextContext;
-
-				for (i = iIndex; i < that.aContexts.length; i += 1) {
-					oContext = that.aContexts[i];
-					oNextContext = that.aContexts[i + 1];
-					if (oContext && !oNextContext) {
-						oContext.destroy();
-						delete that.aContexts[i];
-					} else if (!oContext && oNextContext) {
-						that.aContexts[i]
-							= Context.create(that.oModel, that, that.sPath + "/" + i, i);
-					} else if (!that.bUseExtendedChangeDetection) {
-						that.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
-							oBinding.checkUpdate();
-						});
+				if (iIndex === -1) {
+					oContext.destroy();
+					delete that.aContexts[-1];
+				} else {
+					for (i = iIndex; i < that.aContexts.length; i += 1) {
+						oContext = that.aContexts[i];
+						oNextContext = that.aContexts[i + 1];
+						if (oContext && !oNextContext) {
+							oContext.destroy();
+							delete that.aContexts[i];
+						} else if (!oContext && oNextContext) {
+							that.aContexts[i]
+								= Context.create(that.oModel, that, that.sPath + "/" + i, i);
+						} else if (!that.bUseExtendedChangeDetection) {
+							that.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
+								oBinding.checkUpdate();
+							});
+						}
 					}
+					that.aContexts.pop();
+					that.iMaxLength -= 1; // this doesn't change Infinity
 				}
-				that.aContexts.pop();
-				that.iMaxLength -= 1; // this doesn't change Infinity
 				that._fireChange({reason : ChangeReason.Remove});
 			});
 	};
@@ -260,6 +264,52 @@ sap.ui.define([
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
+	/**
+	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
+	 * contains an entity created via this function, you cannot create another entity. This is only
+	 * possible after the POST request has been sent to the server and you have
+	 * {@link #refresh refreshed} the binding or the new entity is deleted in between.
+	 *
+	 * The created context can be {@link sap.ui.model.odata.v4.Context#delete deleted} again. In
+	 * this case, no request is sent and the pending POST is simply canceled.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the POST request; the default value is the binding's update
+	 *   group ID, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList binding parameter $$updateGroupId}
+	 * @param {object} [oInitialData={}]
+	 *   The initial data for the created entity. If the POST request is deferred and has not yet
+	 *   been sent to the server, user input via two-way binding modifies this data.
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The context object for the created entity.
+	 * @throws {Error}
+	 *   If the binding is relative or if the binding already contains an entity created via this
+	 *   function.
+	 *
+	 * @public
+	 * @since 1.43.0
+	 */
+	ODataListBinding.prototype.create = function (sGroupId, oInitialData) {
+		var oContext;
+
+		if (this.aContexts[-1]) {
+			throw new Error("Must not create twice");
+		}
+		if (this.bRelative) {
+			throw new Error("Create on relative bindings is not supported");
+		}
+
+		sGroupId = sGroupId || this.getUpdateGroupId();
+		oContext = Context.create(this.oModel, this,
+			this.oModel.resolve(this.sPath, this.oContext) + "/-1", -1,
+			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData || {}));
+
+		this.aContexts[-1] = oContext;
+		this._fireChange({reason : ChangeReason.Add});
+
+		return oContext;
 	};
 
 	/**
@@ -546,12 +596,14 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
+		// iStart: in view coordinates (always starting with 0)
 		var sChangeReason,
 			oContext = this.oContext,
 			aContexts,
 			bDataRequested = false,
 			bFireChange = false,
 			sGroupId,
+			iStartInModel, // in model coordinates
 			oPromise,
 			oRange,
 			that = this;
@@ -583,9 +635,10 @@ sap.ui.define([
 		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
 			iMaximumPrefetchSize = 0;
 		}
+		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
-			oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength,
+			oRange = _ODataHelper.getReadRange(this.aContexts, iStartInModel, iLength,
 				iMaximumPrefetchSize);
 			if (this.oCache) {
 				sGroupId = this.sRefreshGroupId || this.getGroupId();
@@ -607,6 +660,8 @@ sap.ui.define([
 				if (!that.bRelative || that.oContext === oContext) {
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
 					iResultLength = aResult ? aResult.length : 0;
+					// Note: aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.;
+					// fetchDiff() of course works with view coordinates; everything is fine here!
 					return _ODataHelper.fetchDiff(that, aResult, iStart, iLength)
 						.then(function (oDiff) {
 							that.oDiff = oDiff;
@@ -640,9 +695,14 @@ sap.ui.define([
 			// If the diff has not been calculated yet, we're asynchronous and have to fire a change
 			bFireChange = true;
 		}
-		this.iCurrentBegin = iStart;
-		this.iCurrentEnd = iStart + iLength;
-		aContexts = this.aContexts.slice(iStart, iStart + iLength);
+		this.iCurrentBegin = iStartInModel;
+		this.iCurrentEnd = iStartInModel + iLength;
+		if (iStartInModel === -1) {
+			aContexts = this.aContexts.slice(0, iStartInModel + iLength);
+			aContexts.unshift(this.aContexts[-1]);
+		} else {
+			aContexts = this.aContexts.slice(iStartInModel, iStartInModel + iLength);
+		}
 		if (this.bUseExtendedChangeDetection) {
 			if (this.oDiff && iLength !== this.oDiff.iLength) {
 				throw new Error("Extended change detection protocol violation: Expected "
@@ -671,8 +731,16 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.getCurrentContexts = function () {
-		var aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentEnd),
+		var aContexts,
 			iLength = Math.min(this.iCurrentEnd, this.iMaxLength) - this.iCurrentBegin;
+
+		if (this.iCurrentBegin === -1) {
+			aContexts = this.aContexts.slice(0, this.iCurrentBegin + iLength);
+			aContexts.unshift(this.aContexts[-1]);
+		} else {
+			aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentBegin + iLength);
+		}
+
 
 		while (aContexts.length < iLength) {
 			aContexts.push(undefined);
@@ -720,7 +788,15 @@ sap.ui.define([
 	 */
 	 // @override
 	ODataListBinding.prototype.getLength = function () {
-		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
+		var iLength = this.aContexts.length;
+
+		if (this.aContexts[-1]) {
+			iLength += 1;
+		}
+		if (!this.bLengthFinal) {
+			iLength += 10;
+		}
+		return iLength;
 	};
 
 	/**
@@ -857,7 +933,9 @@ sap.ui.define([
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.refreshInternal(sGroupId);
+			if (oDependentBinding.getContext().getIndex() >= 0) {
+				oDependentBinding.refreshInternal(sGroupId);
+			}
 		});
 	};
 

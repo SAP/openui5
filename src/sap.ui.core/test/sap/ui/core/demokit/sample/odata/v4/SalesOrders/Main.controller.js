@@ -28,11 +28,18 @@ sap.ui.define([
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		_setSalesOrderBindingContext : function (oSalesOrderContext) {
 			var oView = this.getView(),
+				oSalesOrdersTable = oView.byId("SalesOrders"),
 				oUIModel = oView.getModel("ui");
 
 			oUIModel.setProperty("/bSalesOrderSelected", !!oSalesOrderContext);
 			if (!oSalesOrderContext) {
-				oView.byId("SalesOrders").removeSelections();
+				oSalesOrdersTable.removeSelections();
+			} else if (oSalesOrderContext.getIndex() === -1 && this.bTransient) {
+				// TODO: eliminate this workaround:
+				// to ensure that no dependent data for the newly created SO is fetched
+				// unless it is persisted in backend
+				oSalesOrderContext = undefined;
+				oSalesOrdersTable.setSelectedItem(oSalesOrdersTable.getItems()[0]);
 			}
 			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
 
@@ -43,12 +50,6 @@ sap.ui.define([
 
 		onCancelSalesOrder : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
-		},
-
-		onCancelSalesOrderCreate : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
-
-			oCreateSalesOrderDialog.close();
 		},
 
 		onCancelSalesOrderSchedules : function (oEvent) {
@@ -82,33 +83,71 @@ sap.ui.define([
 			);
 		},
 
-		onCreateSalesOrderDialog : function (oEvent) {
-			var oView = this.getView(),
-				oBuyerIdInput = oView.byId("BuyerID"),
-				oCreateSalesOrderDialog = oView.byId("createSalesOrderDialog");
-
-			oCreateSalesOrderDialog.setModel(new JSONModel({}), "new");
-			if (!oBuyerIdInput.getBinding("suggestionItems")) {
-				oBuyerIdInput.bindAggregation("suggestionItems", {
-					path : '/BusinessPartnerList',
-					parameters : {'$$groupId' : '$direct'},
-					template : new Item({text : "{BusinessPartnerID}"})
-				});
-			}
-			oCreateSalesOrderDialog.open();
+		onCloseSalesOrderDialog : function (oEvent) {
+			this.getView().byId("CreateSalesOrderDialog").close();
 		},
 
 		onCreateSalesOrder : function (oEvent) {
-//			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
-//				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
-//				that = this;
+			var oView = this.getView(),
+				oContext = oView.byId("SalesOrders").getBinding("items")
+					.create(undefined, {
+						// TODO where to get initial values from to avoid "failed to drill-down"
+						// and "Not all properties provided while creation or update was executed."
+						// $select?
+						"SalesOrderID" : "",
+						"Note" : new Date().toString(),
+						"NoteLanguage" : "E",
+						"BuyerID" : "0100000000",
+						"BuyerName" : "SAP",
+						"CurrencyCode" : "EUR",
+						"GrossAmount" : "0.00",
+						"NetAmount" : "0.00",
+						"TaxAmount" : "0.00",
+						"LifecycleStatus" : "N",
+						"LifecycleStatusDesc" : "New",
+						"BillingStatus" : "",
+						"BillingStatusDesc" : "",
+						"DeliveryStatus" : "",
+						"DeliveryStatusDesc" : "",
+						"CreatedAt" : "",
+						"ChangedAt" : "",
+						"SOItemCount" : 0,
+						"SO_2_BP" : null
+					}),
+				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
+				that = this;
 
-			//TODO validate oSalesOrderData according to types
-			//TODO deep create incl. LOCATION etc.
-//				TODO the code will be needed when "create" is implemented
-//				MessageBox.alert(JSON.stringify(oData),
-//					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-//				that.onCancelSalesOrder();
+			this.bTransient = true; //TODO: workaround see above
+			oView.getModel("ui").setProperty("/bCreateSalesOrderPending", true);
+
+			oCreateSalesOrderDialog.setBindingContext(oContext);
+			this._setSalesOrderBindingContext(oContext);
+			oCreateSalesOrderDialog.open();
+
+			// Note: this promise fails only if the transient entity is deleted
+			oContext.created().then(function () {
+				that.bTransient = false;
+				that._setSalesOrderBindingContext(oContext);
+				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
+				MessageBox.alert("SalesOrder created: " + oContext.getProperty("SalesOrderID"), {
+					icon : MessageBox.Icon.SUCCESS,
+					title : "Success"
+				});
+			}, function (oError) {
+				// TODO:
+				// As for now create cancelation AND backend errors both result in
+				// a rejected created Promise; differentiation is possible with the canceled flag.
+				// Later on only cancelation is rejected, backend errors will be passed to the
+				// message manager and the POST request will be sent again after new user input
+				if (oError.canceled) {
+					oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
+					return; // delete of transient entity
+				}
+				MessageBox.alert(oError.message, {
+					icon : MessageBox.Icon.ERROR,
+					title : "Unexpected Error"
+				});
+			});
 		},
 
 		onDataEvents : function (oEvent) {

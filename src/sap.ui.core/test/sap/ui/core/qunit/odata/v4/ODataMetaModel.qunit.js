@@ -612,6 +612,9 @@ sap.ui.require([
 	}, { // global removal needed
 		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
 		metaPath : "/Foo/bar"
+	}, { // transient entity
+		dataPath : "/Foo/-1/bar",
+		metaPath : "/Foo/bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("getMetaContext: " + oFixture.dataPath, function (assert) {
 			var oMetaContext = this.oMetaModel.getMetaContext(oFixture.dataPath);
@@ -1129,6 +1132,15 @@ sap.ui.require([
 		canonicalUrl : "/TEAMS(~1)",
 		requests : [{
 			entityType : "tea_busi.TEAM",
+			predicate : "(~1)"
+		}]
+	}, { // simple entity in transient context
+		dataPath : "/TEAMS/-1",
+		canonicalUrl : "/TEAMS(~1)",
+		requests : [{
+			entityType : "tea_busi.TEAM",
+			// TODO a transient entity does not necessarily have all key properties, but this is
+			//      required to create a dependent cache
 			predicate : "(~1)"
 		}]
 	}, { // simple entity by key predicate

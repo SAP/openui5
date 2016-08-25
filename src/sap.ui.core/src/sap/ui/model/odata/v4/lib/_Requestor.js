@@ -83,6 +83,7 @@ sap.ui.define([
 	/**
 	 * Cancels all PATCH requests for a given group.
 	 * All pending requests are rejected with an error with property <code>canceled = true</code>.
+	 * PATCHes are canceled in reverse order to properly undo stacked changes.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
@@ -203,6 +204,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes the pending POST request with the given body from the given group.
+	 *
+	 * @param {string} sGroupId
+	 *   The ID of the group containing the request
+	 * @param {object} oBody
+	 *   The body of the request
+	 */
+	Requestor.prototype.removePost = function (sGroupId, oBody) {
+		var aBatchQueue, aChangeSet, oError, i;
+
+		aBatchQueue = this.mBatchQueue[sGroupId];
+		aChangeSet = aBatchQueue[0];
+		for (i = 0; i < aChangeSet.length; i++) {
+			if (aChangeSet[i].body === oBody) {
+				oError = new Error();
+				oError.canceled = true;
+				aChangeSet[i].$reject(oError);
+				aChangeSet.splice(i, 1);
+				deleteEmptyGroup(this, sGroupId);
+				return;
+			}
+		}
+	};
+
+	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
 	 * request-specific headers in addition to the mandatory OData V4 headers and the default
 	 * headers given to the factory. Takes care of CSRF token handling. Non-GET requests are bundled
@@ -223,7 +249,8 @@ sap.ui.define([
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
-	 *   Data to be sent to the server
+	 *   Data to be sent to the server; this object is live and can be modified until the request
+	 *   is really sent
 	 * @param {function} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue
@@ -232,6 +259,7 @@ sap.ui.define([
 	 *   again
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
+	 *
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
@@ -248,8 +276,6 @@ sap.ui.define([
 			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
 		} else {
-			sPayload = JSON.stringify(oPayload);
-
 			if (sGroupId !== "$direct") {
 				oPromise = new Promise(function (fnResolve, fnReject) {
 					var aRequests = that.mBatchQueue[sGroupId];
@@ -262,7 +288,7 @@ sap.ui.define([
 						url : sResourcePath,
 						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
 							mFinalHeaders),
-						body : sPayload,
+						body : oPayload,
 						$cancel : fnCancel,
 						$reject : fnReject,
 						$resolve : fnResolve
@@ -276,6 +302,8 @@ sap.ui.define([
 				oRequest.$promise = oPromise;
 				return oPromise;
 			}
+
+			sPayload = JSON.stringify(oPayload);
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -329,7 +357,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oPreviousChange The previous change, may be undefined
 		 * @param {object} oChange The current change
-		 * @returns {string} The merged body or undefined if no merge is possible
+		 * @returns {object} The merged body or undefined if no merge is possible
 		 */
 		function mergePatch(oPreviousChange, oChange) {
 			var oBody, oPreviousBody, sProperty;
@@ -339,8 +367,8 @@ sap.ui.define([
 					&& oChange.method === "PATCH"
 					&& oPreviousChange.url === oChange.url
 					&& jQuery.sap.equal(oPreviousChange.headers, oChange.headers)) {
-				oPreviousBody = JSON.parse(oPreviousChange.body);
-				oBody = JSON.parse(oChange.body);
+				oPreviousBody = oPreviousChange.body;
+				oBody = oChange.body;
 				for (sProperty in oPreviousBody) {
 					if (oPreviousBody[sProperty] === null
 							&& oBody[sProperty] && typeof oBody[sProperty] === "object") {
@@ -348,7 +376,7 @@ sap.ui.define([
 						return undefined;
 					}
 				}
-				return JSON.stringify(jQuery.extend(true, oPreviousBody, oBody));
+				return jQuery.extend(true, oPreviousBody, oBody);
 			}
 			return undefined;
 		}
@@ -395,10 +423,10 @@ sap.ui.define([
 
 		// iterate over the change set and merge related PATCH requests
 		aRequests[0].forEach(function (oChange) {
-			var sMergedBody = mergePatch(oPreviousChange, oChange);
+			var oMergedBody = mergePatch(oPreviousChange, oChange);
 
-			if (sMergedBody) {
-				oPreviousChange.body = sMergedBody;
+			if (oMergedBody) {
+				oPreviousChange.body = oMergedBody;
 				oChange.$resolve(oPreviousChange.$promise);
 			} else { // push into change set
 				aChangeSet.push(oChange);

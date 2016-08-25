@@ -319,6 +319,7 @@ sap.ui.define([
 			mHeaders, // the headers for the PATCH request
 			vOldValue, // the old value of the property
 			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
+			sTransientGroup,
 			// the path that is updated; the promise is registered here
 			sUpdatePath =
 				_Helper.buildPath(sPath, oCache.bSingleProperty ? "value" : sPropertyPath),
@@ -339,6 +340,12 @@ sap.ui.define([
 			throw new Error("Cannot update '" + sPropertyPath + "': '" + sPath
 				+ "' does not exist");
 		}
+		sTransientGroup = oCacheData["@$ui5.transient"];
+		if (sTransientGroup && sTransientGroup !== sGroupId) {
+			throw new Error("The entity will be created via group '" + sTransientGroup
+				+ "'. Cannot patch via group '" + sGroupId + "'");
+		}
+
 		sEditUrl += Cache.buildQueryString(oCache.mQueryOptions, true);
 		mHeaders = {"If-Match" : oCacheData["@odata.etag"]};
 		// create the PATCH request body
@@ -354,6 +361,11 @@ sap.ui.define([
 		// write the changed value into the cache
 		_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
 			createUpdateData(aPropertyPath, vValue));
+		if (sTransientGroup) {
+			// When updating a transient entity, _Helper.updateCache has already updated the POST
+			// request, because the request body is a reference into the cache.
+			return Promise.resolve({});
+		}
 		// send and register the PATCH request
 		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody,
 			onCancel);
@@ -404,8 +416,9 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The entity's path within the cache
 	 * @param {function} fnCallback
-	 *   A function which is called after the entity has been deleted from the server and from the
-	 *   cache; the index of the entity is passed as parameter
+	 *   A function which is called after a transient entity has been deleted from the cache or
+	 *   after the entity has been deleted from the server and from the cache; the index of the
+	 *   entity is passed as parameter
 	 * @returns {Promise}
 	 *   A promise for the DELETE request
 	 */
@@ -424,6 +437,11 @@ sap.ui.define([
 				vDeleteProperty = iIndex;
 			}
 			oEntity = oCacheData[vDeleteProperty];
+			if (oEntity["@$ui5.transient"]) {
+				that.oRequestor.removePost(oEntity["@$ui5.transient"], oEntity);
+				fnCallback(iIndex);
+				return Promise.resolve();
+			}
 			if (oEntity["$ui5.deleting"]) {
 				throw new Error("Must not delete twice: " + sEditUrl);
 			}
@@ -442,14 +460,55 @@ sap.ui.define([
 						// oEntity might have moved due to parallel insert/delete
 						vDeleteProperty = oCacheData.indexOf(oEntity);
 					}
-					oCacheData.splice(vDeleteProperty, 1);
-					if (oCacheData === that.aElements) {
-						// deleting at root level
-						that.iMaxElements -= 1; // this doesn't change Infinity
+					if (vDeleteProperty === -1) {
+						delete oCacheData[-1];
+					} else {
+						oCacheData.splice(vDeleteProperty, 1);
+						if (oCacheData === that.aElements) {
+							// deleting at root level
+							that.iMaxElements -= 1; // this doesn't change Infinity
+						}
 					}
 					fnCallback(Number(vDeleteProperty));
 				});
 		});
+	};
+
+	/**
+	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
+	 * group with the given ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPostPath
+	 *   The path for the POST request
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {string} oEntityData
+	 *   The initial entity data
+	 * @returns {Promise}
+	 *   A promise which is resolved without data when the POST request has been successfully sent
+	 *   and the entity has been marked as non-transient.
+	 */
+	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData) {
+		var that = this;
+
+		this.aElements[-1] = oEntityData;
+		oEntityData["@$ui5.transient"] = sGroupId;
+		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
+		oEntityData["@odata.etag"] = undefined;
+		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
+		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData)
+			.then(function (oResult) {
+				delete oEntityData["@$ui5.transient"];
+				// update the cache with the POST response
+				_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
+			}, function (oError) {
+				if (oError.canceled) {
+					delete that.aElements[-1];
+				}
+				throw oError;
+			});
 	};
 
 	/**
@@ -487,7 +546,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {number} iIndex
-	 *   The start index of the range; the first row has index 0
+	 *   The start index of the range in model coordinates; the first row has index -1 or 0!
 	 * @param {number} iLength
 	 *   The length of the range
 	 * @param {string} [sGroupId]
@@ -520,10 +579,12 @@ sap.ui.define([
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
 			bIsDataRequested = false,
+			iLowerBound = this.aElements[-1] ? -1 : 0,
+			iStart = Math.max(iIndex, 0), // for Array#slice()
 			that = this;
 
-		if (iIndex < 0) {
-			throw new Error("Illegal index " + iIndex + ", must be >= 0");
+		if (iIndex < iLowerBound) {
+			throw new Error("Illegal index " + iIndex + ", must be >= " + iLowerBound);
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
@@ -555,7 +616,8 @@ sap.ui.define([
 			fnDataRequested();
 		}
 
-		return _SyncPromise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
+		// Note: this.aElements[-1] cannot be a promise...
+		return _SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
 			var oResult;
 
 			if (sPath !== undefined) {
@@ -568,10 +630,14 @@ sap.ui.define([
 						null, "sap.ui.model.odata.v4.lib._Cache");
 				});
 			}
-			return {
+			oResult = {
 				"@odata.context" : that.sContext,
-				value : that.aElements.slice(iIndex, iEnd)
+				value : that.aElements.slice(iStart, iEnd)
 			};
+			if (iIndex === -1) {
+				oResult.value.unshift(that.aElements[-1]); // Note: returns new length!
+			}
+			return oResult;
 		});
 	};
 
@@ -608,6 +674,8 @@ sap.ui.define([
 	 * Updates the property of the given name with the given new value (and later with the server's
 	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
 	 * request.
+	 * In case of a transient entity, all property updates for this entity will not lead to a PATCH
+	 * request, but update the POST.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID

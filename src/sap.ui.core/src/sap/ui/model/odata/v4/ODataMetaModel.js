@@ -24,8 +24,8 @@ sap.ui.define([
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
 		// rest of segment after opening ( and segments that consist only of digits
-		rNotMetaContext = /\([^/]*|\/\d+/g,
-		rNumber = /^\d+$/,
+		rNotMetaContext = /\([^/]*|\/-?\d+/g,
+		rNumber = /^-?\d+$/,
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},

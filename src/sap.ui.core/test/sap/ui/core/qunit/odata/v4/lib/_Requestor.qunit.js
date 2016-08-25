@@ -475,7 +475,7 @@ sap.ui.require([
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "baz"
 				},
-				body: '{"ID":1}',
+				body: {"ID" : 1},
 				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
@@ -615,28 +615,27 @@ sap.ui.require([
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				[
 					sinon.match({
-						body : JSON.stringify({Name : "bar", Note : "hello, world"}),
+						body : {Name : "bar", Note : "hello, world"},
 						method : "PATCH",
 						url : "Products('0')"
 					}),
 					sinon.match({
-						body : JSON.stringify({Note : "no merge!"}),
+						body : {Note : "no merge!"},
 						method : "PATCH",
 						url : "Products('0')"
 					}),
 					sinon.match({
-						body : JSON.stringify({Name : "baz"}),
+						body : {Name : "baz"},
 						method : "POST",
 						url : "Products"
 					}),
 					sinon.match({
-						body : JSON.stringify({Address : null}),
+						body : {Address : null},
 						method : "PATCH",
 						url : "BusinessPartners('42')"
 					}),
 					sinon.match({
-						body :
-							JSON.stringify({Address : {City : "Walldorf", PostalCode : "69190"}}),
+						body : {Address : {City : "Walldorf", PostalCode : "69190"}},
 						method : "PATCH",
 						url : "BusinessPartners('42')"
 					})
@@ -789,14 +788,14 @@ sap.ui.require([
 					headers: {
 						"foo": "bar"
 					},
-					body: JSON.stringify({"a": "b"})
+					body: {"a": "b"}
 				}, {
 					method: "PATCH",
 					url: "EntitySet2",
 					headers: {
 						"bar": "baz"
 					},
-					body: JSON.stringify({"c": "d"})
+					body: {"c": "d"}
 				}]
 			],
 			"$auto": [
@@ -806,7 +805,7 @@ sap.ui.require([
 					headers: {
 						"header": "value"
 					},
-					body: JSON.stringify({"e": "f"})
+					body: {"e": "f"}
 				}]
 			]
 		});
@@ -996,13 +995,12 @@ sap.ui.require([
 			oRequestor.request("GET", "Employees", "groupId")
 		];
 
-
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				sinon.match({
 					method : "PATCH",
 					url : "Products('0')",
-					body: JSON.stringify({Name : "bar"})
+					body: {Name : "bar"}
 				}),
 				sinon.match({
 					method : "GET",
@@ -1018,6 +1016,60 @@ sap.ui.require([
 		oRequestor.submitBatch("groupId");
 
 		return Promise.all(aPromises);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost", function (assert) {
+		var oBody = {},
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
+
+		oTestPromise = Promise.all([
+			oRequestor.request("POST", "Products", "groupId", {}, oBody).then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			}),
+			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"})
+		]);
+
+		// code under test
+		oRequestor.removePost("groupId", oBody);
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "POST",
+					url : "Products",
+					body: {Name : "bar"}
+				})
+			]).returns(Promise.resolve([
+				{responseText : "{}"}
+			]));
+		oRequestor.submitBatch("groupId");
+		return oTestPromise;
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost with only one POST", function (assert) {
+		var oBody = {},
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
+
+		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody).then(
+			function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			}
+		);
+
+		// code under test
+		oRequestor.removePost("groupId", oBody);
+
+		this.mock(oRequestor).expects("request").never();
+		oRequestor.submitBatch("groupId");
+		return oTestPromise;
 	});
 
 	//*********************************************************************************************
@@ -1101,3 +1153,4 @@ sap.ui.require([
 // TODO: provide test that checks that .request() does not serialize twice in case of
 // 		 refreshSecurityToken and repeated request
 // TODO: cancelPatch: what about existing GET requests in deferred queue (delete or not)?
+// TODO: cancelPatch/removePatch/removePost are very similar, merge using a filter function?

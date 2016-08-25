@@ -520,6 +520,7 @@ sap.ui.require([
 		// code under test
 		oModel.resetChanges("groupId");
 	});
+	// TODO reset the POST requests in this group
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {

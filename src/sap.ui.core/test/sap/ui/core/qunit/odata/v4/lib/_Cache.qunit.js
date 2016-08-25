@@ -175,7 +175,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read(-1, 1)", function (assert) {
+	QUnit.test("read(-1, 1) w/o create", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath);
@@ -186,6 +186,13 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.read(-1, 1);
 		}, new Error("Illegal index -1, must be >= 0"));
+
+		oCache.aElements[-1] = {}; // mock a transient entity
+
+		// code under test
+		assert.throws(function () {
+			oCache.read(-2, 1);
+		}, new Error("Illegal index -2, must be >= -1"));
 	});
 
 	//*********************************************************************************************
@@ -668,6 +675,169 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create entity", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oEntityData = {},
+			oHelperMock = this.mock(_Helper),
+			oPatchPromise1,
+			oPatchPromise2,
+			oPostResult = {},
+			oPostPromise;
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
+				sinon.match.same(oEntityData))
+			.returns(Promise.resolve(oPostResult));
+		// called from update
+		oHelperMock.expects("updateCache")
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+				{bar : "baz"});
+		// called from the POST's success handler
+		oHelperMock.expects("updateCache")
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+				sinon.match.same(oPostResult));
+
+		// code under test
+		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
+
+		assert.strictEqual(oCache.aElements[-1], oEntityData);
+		assert.strictEqual(oEntityData["@$ui5.transient"], "updateGroup");
+		assert.ok("@odata.etag" in oEntityData, "@odata.etag available");
+
+		// code under test
+		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", "n/a", "-1");
+		oPatchPromise2 = oCache.update("anotherGroup", "bar", "qux", "n/a", "-1");
+
+		return Promise.all([
+			oPatchPromise1.then(), // check that update returned a promise
+			oPatchPromise2.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "The entity will be created via group "
+					+ "'updateGroup'. Cannot patch via group 'anotherGroup'");
+			}),
+			oPostPromise.then(function () {
+				assert.notOk("@$ui5.transient" in oEntityData);
+			})
+		]);
+	});
+	//TODO: reject PATCH if POST has been sent but not finished
+
+	//*********************************************************************************************
+	QUnit.test("read w/ transient context", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oEntityData = {foo : "bar"},
+			oReadResult = {value : [{}, {}]},
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, oEntityData)
+			.returns(new Promise(function () {})); // never resolve
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=2", "$direct")
+			.returns(Promise.resolve(oReadResult));
+
+		oCache.create("updateGroup", "Employees", "", oEntityData);
+
+		// code under test
+		return oCache.read(-1, 3, "$direct").then(function (oResult) {
+			assert.strictEqual(oResult.value.length, 3);
+			assert.ok(oResult.value[0]["@$ui5.transient"]);
+			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
+			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
+
+			// code under test
+			oResult = oCache.read(-1, 1, "$direct").getResult();
+			assert.strictEqual(oResult.value.length, 1);
+			assert.strictEqual(oResult.value[0].foo, "bar");
+
+			// code under test
+			oResult = oCache.read(-1, 1, "$direct", "foo").getResult();
+			assert.strictEqual(oResult, "bar");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create failure", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oEntityData = {},
+			oError = new Error("POST failed"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
+				sinon.match.same(oEntityData))
+			.returns(Promise.reject(oError));
+
+		// code under test
+		return oCache.create("updateGroup", "Employees", "", oEntityData).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oCache.aElements[-1], oEntityData);
+			assert.strictEqual(oError0, oError);
+		});
+	});
+	// TODO a failed request must be repeated, the promise of create may only fail on cancel
+
+	//*********************************************************************************************
+	QUnit.test("delete transient", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			fnCallback = sinon.spy(),
+			oDeletePromise,
+			oEntityData = {},
+			oError = new Error(),
+			oPostPromise = Promise.reject(oError); // would be rejected by removePost
+
+		oError.canceled = true;
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
+				sinon.match.same(oEntityData))
+			.returns(oPostPromise);
+
+		oCache.create("updateGroup", "Employees", "", oEntityData).catch(function () {});
+
+		this.mock(oRequestor).expects("removePost")
+			.withExactArgs("updateGroup", oEntityData);
+
+		// code under test
+		oDeletePromise = oCache._delete("$auto", "n/a", "-1", fnCallback).then(function () {
+			assert.notOk(-1 in oCache.aElements);
+			sinon.assert.calledWith(fnCallback, -1);
+		});
+
+		assert.ok(-1 in oCache.aElements);
+
+		return oDeletePromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete created entity", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees"),
+			oEntity = {"$odata.etag" : "anyEtag"};
+
+		oCache.aElements[-1] = {"$odata.etag" : "anyEtag"};
+		this.mock(oCache).expects("read").withExactArgs(-1, 1, "groupId", "")
+			.returns(_SyncPromise.resolve(oEntity));
+		this.mock(oCache.oRequestor).expects("request")
+			.withExactArgs("DELETE", "Employees('4711')", "groupId",
+				{"If-Match" : oEntity["@odata.etag"]})
+			.returns(_SyncPromise.resolve(/*don't care*/));
+
+		// code under test
+		return oCache._delete("groupId", "Employees('4711')", "-1", sinon.spy())
+			.then(function () {
+				assert.notOk(-1 in oCache.aElements);
+			});
+	});
+	//TODO: oCache._delete in resolve handler for that.oRequestor.request("DELETE"...
+	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
+
+	//**********************************************W***********************************************
 	QUnit.test("read single employee", function (assert) {
 		var oCache,
 			iDataRequestedCount = 0,
