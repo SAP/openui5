@@ -160,6 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (Device.system.desktop) {
 			this._oArrowPrev = new sap.m.Button({
 				id : this.getId() + "-scrl-prev-button",
+				type : sap.m.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_PREV_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
@@ -171,6 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this._oArrowNext = new sap.m.Button({
 				id : this.getId() + "-scrl-next-button",
+				type : sap.m.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_NEXT_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
