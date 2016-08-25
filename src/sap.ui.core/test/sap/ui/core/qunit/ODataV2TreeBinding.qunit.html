@@ -2254,6 +2254,11 @@
 				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
 
+				// reset context
+				// This call previously produced an error!
+				oBinding.setContext(null);
+				oBinding.setContext(undefined);
+				
 				start();
 			};
 

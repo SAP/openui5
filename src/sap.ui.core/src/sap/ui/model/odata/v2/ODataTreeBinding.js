@@ -1763,9 +1763,11 @@ sap.ui.define(['jquery.sap.global',
 				return;
 			}
 
-			this._initialize();
-
-			this._fireChange();
+			// only initialize the context
+			if (oContext) {
+				this._initialize();
+				this._fireChange();
+			}
 		}
 	};
 
