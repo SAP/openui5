@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sType = oButton.getType();
 		var bEnabled = oButton.getEnabled();
 		var sWidth = oButton.getWidth();
-		var sTooltip = oButton.getTooltip_AsString();
+		var sTooltip = oButton._getTooltip();
 		var sText = oButton._getText();
 		var sTextDir = oButton.getTextDirection();
 		var bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
@@ -97,12 +97,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
-		// get icon-font info. will return null if the icon is a image
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
-
 		// add tooltip if available
-		if (sTooltip || (oIconInfo && oIconInfo.text && !oButton.getText())) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
 		oRm.writeClasses();
