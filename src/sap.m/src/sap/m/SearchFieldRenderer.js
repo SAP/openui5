@@ -104,9 +104,9 @@ sap.ui.define(['jquery.sap.global'],
 			if (sValue) { rm.writeAttributeEscaped("value", sValue); }
 
 			//ARIA attributes
-			if (oSF.getEnabled() && bShowRefreshButton) {
+			if (oSF.getEnabled() && bShowRefreshButton && oSF._sAriaF5Label) {
 				oAccAttributes.describedby = {
-					value: oSF._sAriaF5LabelId,
+					value: oSF._sAriaF5Label.getId(),
 					append: true
 				};
 			}
