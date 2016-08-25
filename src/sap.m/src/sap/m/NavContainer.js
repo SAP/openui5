@@ -520,12 +520,16 @@ sap.ui.define([
 			oNavInfo.to.removeStyleClass("sapMNavItemHidden");
 		}
 
-		if (this._aQueue.length > 0) {
-			var fnNavigate = this._aQueue.shift();
+		this._dequeueNavigation();
+	};
+
+	NavContainer.prototype._dequeueNavigation = function () {
+		var fnNavigate = this._aQueue.shift();
+
+		if (typeof fnNavigate === "function") {
 			fnNavigate();
 		}
 	};
-
 
 	/**
 	 * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
@@ -598,7 +602,7 @@ sap.ui.define([
 		if (oFromPage && (oFromPage.getId() === pageId)) { // cannot navigate to the page that is already current
 			jQuery.sap.log.warning(this.toString() + ": Cannot navigate to page " + pageId + " because this is the current page.");
 			if (bFromQueue) {
-				this._aQueue.shift();
+				this._dequeueNavigation();
 			}
 			return this;
 		}
