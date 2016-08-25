@@ -4,5 +4,16 @@
 		"pic2": "test-resources/sap/ui/demokit/explored/img/HT-6120-large.jpg",
 		"pic3": "test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg",
 		"screw": "test-resources/sap/ui/demokit/explored/img/screw.jpg"
-	}
+	},
+	"images": [
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/273303_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/273537_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/274469_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/274731_high_jpg_eci_rgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/275278_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/277879_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/277908_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/278047_low_jpg_srgb.jpg",
+			"test-resources/sap/ui/demokit/explored/img/bigimgs/278292_low_jpg_srgb.jpg"
+	]
 }

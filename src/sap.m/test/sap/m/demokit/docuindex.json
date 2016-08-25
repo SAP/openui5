@@ -141,7 +141,8 @@
 		  "since": "1.10",
 		  "samples": [
 			  "sap.m.sample.Carousel",
-			  "sap.m.sample.CarouselWithControls"
+			  "sap.m.sample.CarouselWithControls",
+			  "sap.m.sample.CarouselWithDisplayOptions"
 		  ]
 		},
 		{
@@ -1374,6 +1375,11 @@
 		  "id": "sap.m.sample.CarouselWithControls",
 		  "name": "Carousel With Controls",
 		  "description": "With the Carousel a user can browse through multi-page content by swiping left or right."
+		},
+		{
+		  "id": "sap.m.sample.CarouselWithDisplayOptions",
+		  "name": "Carousel With Display Options",
+		  "description": "The Carousel have options for the arrows placement, page indicator placement and page indicator visibility."
 		},
 		{
 		  "id": "sap.m.sample.NavContainer",
