@@ -26,27 +26,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 		 * @alias sap.ui.layout.BlockLayoutRow
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var BlockLayoutRow = Control.extend("sap.ui.layout.BlockLayoutRow", { metadata : {
+		var BlockLayoutRow = Control.extend("sap.ui.layout.BlockLayoutRow", {
+			metadata: {
 
-			library : "sap.ui.layout",
+				library: "sap.ui.layout",
 
-			properties : {
+				properties: {
 
-				/**
-				 * Sets the rendering mode of the BlockLayoutRow to scrollable. In scrollable mode, the cells get
-				 * aligned side by side, with horizontal scroll bar for the row.
-				 */
-				scrollable: {type: "boolean", group: "Appearance", defaultValue: false}
-			},
-			defaultAggregation : "content",
-			aggregations: {
-				/**
-				 * The content cells to be included in the row.
-				 */
-				content: {type : "sap.ui.layout.BlockLayoutCell", multiple : true, singularName : "content"}
+					/**
+					 * Sets the rendering mode of the BlockLayoutRow to scrollable. In scrollable mode, the cells get
+					 * aligned side by side, with horizontal scroll bar for the row.
+					 */
+					scrollable: {type: "boolean", group: "Appearance", defaultValue: false},
 
+					/**
+					 * Defines background type for that row.
+					 * There might be several rows with the same type
+					 * @since 1.42
+					 */
+					rowColorSet: {type: "sap.ui.layout.BlockRowColorSets", group: "Appearance"}
+				},
+				defaultAggregation: "content",
+				aggregations: {
+					/**
+					 * The content cells to be included in the row.
+					 */
+					content: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "content"}
+				},
+				associations: {
+					/**
+					 * Cells that would be accented.
+					 * *Note:* This association has visual impact only for BlockLayouts with background types "Mixed" and "Accent".
+					 *
+					 * Mixed: In this type, areas of 25% (on desktop) can have a dark background color. Per section one area can be dark.
+					 * Accent: Every section can contain multiple gray blocks, which are used alternately, beginning with the bright one
+					 *
+					 * @since 1.42
+					 */
+					accentCells: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "accentCell"}
+				}
 			}
-		}});
+		});
 
 		BlockLayoutRow.CONSTANTS = {
 			maxScrollableCellsPerRow : 10,
@@ -59,6 +79,168 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 		 */
 		BlockLayoutRow.prototype.onBeforeRendering = function () {
 			this._checkGuidelinesAndUpdateCells();
+		};
+
+		/**
+		 * Changes dynamically row's color set
+		 * Note: this might invalidate cells inside and also change color sets of the other BlockLayoutRow-s below it.
+		 *
+		 * @param sType
+		 * @returns {BlockLayoutRow}
+		 * @since 1.42
+		 */
+		BlockLayoutRow.prototype.setRowColorSet = function (sType) {
+			// Apply here so if there's an exception the code bellow won't be executed
+			var aArgs = Array.prototype.slice.call(arguments),
+				oObject = Control.prototype.setProperty.apply(this, ["rowColorSet"].concat(aArgs)),
+				sClassName = "sapUiBlockLayoutBackground" + sType,
+				oParent = this.getParent(),
+				sBackground = oParent && oParent.getBackground(),
+				iThisIndexInParent = oParent && oParent.indexOfAggregation("content", this),
+				aParentContent = oParent && oParent.getContent(),
+				oPrevBlockRow = (iThisIndexInParent && aParentContent[iThisIndexInParent - 1]) || null,
+				oNextBlockRow = (aParentContent && aParentContent[iThisIndexInParent + 1]) || null,
+				oBlockRowColorSets = sap.ui.layout.BlockRowColorSets,
+				aColorSets = Object.keys(oBlockRowColorSets).map(function (sKey) {
+					return oBlockRowColorSets[sKey];
+				}),
+				bInvertedColorSet = false;
+
+			if (oPrevBlockRow && oPrevBlockRow._hasStyleClass(sClassName, sBackground, bInvertedColorSet, sType)) {
+				sClassName += "Inverted";
+				bInvertedColorSet = true;
+			}
+
+			aColorSets.forEach(function (sCurType) {
+				var sColorSetStyle = "sapUiBlockLayoutBackground" + sCurType,
+					sInvertedColorSetStyle = sColorSetStyle + "Inverted";
+
+				if (this._hasStyleClass(sColorSetStyle, sBackground, false, sCurType)) {
+					this.removeStyleClass(sColorSetStyle, true);
+				} else if (this._hasStyleClass(sInvertedColorSetStyle, sBackground, true, sCurType)) {
+					this.removeStyleClass(sInvertedColorSetStyle, true);
+				}
+			}, this);
+			this.addStyleClass(sClassName, true);
+
+			// If the next row is of the same type and has the same CSS class, recalculate it and cascade
+			if (oNextBlockRow && oNextBlockRow._hasStyleClass(sClassName, sBackground, bInvertedColorSet, sType)) {
+				oNextBlockRow.setRowColorSet.apply(oNextBlockRow, aArgs);
+			}
+
+			// Invalidate the whole row as the background dependencies, row color sets and accent cells should be resolved properly
+			this.invalidate();
+
+			return oObject;
+		};
+
+		BlockLayoutRow.prototype.addAccentCell = function (sId) {
+			var oObject,
+				args = Array.prototype.slice.call(arguments),
+				oBackgrounds = sap.ui.layout.BlockBackgroundType,
+				oParent = this.getParent(),
+				sLayoutBackground = oParent && (oParent.getBackground() || "");
+
+			oObject = this.addAssociation.apply(this, ["accentCells"].concat(args));
+
+			if (!oParent) {
+				return this;
+			}
+
+			if ([oBackgrounds.Accent, oBackgrounds.Mixed].indexOf(sLayoutBackground) === -1) {
+				jQuery.sap.log.warning(sId + " was not se as accent cell. Accent cells could be set only for 'Accent' and 'Mixed' layout backgrounds.");
+				return this;
+			}
+
+			if (oBackgrounds.Mixed === sLayoutBackground) {
+				this._processMixedCellStyles(sId, this.getContent());
+			} else if (oBackgrounds.Accent === sLayoutBackground) {
+				this._processAccentCellStyles(this.getAccentCells, this.getContent());
+			}
+
+			return oObject;
+		};
+
+		/**
+		 * Adjusts accents cells for Mixed background layout
+		 *
+		 * @param {string} sId
+		 * @param {Array} aCells
+		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @private
+		 */
+		BlockLayoutRow.prototype._processMixedCellStyles = function (sId, aCells) {
+			if (!aCells || !aCells.length) {
+				jQuery.sap.log.warning("No accent cells were set");
+				return this;
+			}
+
+			aCells.forEach(function (oCell) {
+				// Accent only on a cell with 25% width
+				if (oCell.getId() === sId && oCell.getWidth() === 1) {
+					oCell.addStyleClass("sapContrast").addStyleClass("sapContrastPlus");
+
+				} else if (oCell.getId() !== sId && (oCell.hasStyleClass("sapContrast") || oCell.hasStyleClass("sapContrastPlus"))) {
+					oCell.removeStyleClass("sapContrast").removeStyleClass("sapContrastPlus");
+
+					this.removeAssociation("accentCells", oCell);
+
+					jQuery.sap.log.warning(sId + " was removed as accent cell. Only one cell at a time could be accented for Mixed layout background");
+				}
+			}, this);
+
+			return this;
+		};
+
+		/**
+		 * Adjusts accents cells for Accent background layout
+		 *
+		 * @param {Array} aAccentCells
+		 * @param {Array} aRowCells
+		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @private
+		 */
+		BlockLayoutRow.prototype._processAccentCellStyles = function (aAccentCells, aRowCells) {
+			var oCell, sCellId, sCalculatedStyleClass,
+				iIndex = 0,
+				iInvertCellColorsModulo = 0,
+				aAccentCellsCopy = Array.prototype.slice.call(aAccentCells);
+
+			if (!aAccentCells || !aAccentCells.length) {
+				jQuery.sap.log.warning("No accent cells were set");
+				return this;
+			}
+
+			// Find the index of current accented cell and check if it should be of Accent type 1 OR 2
+			for (iIndex = 0; iIndex < aRowCells.length; iIndex++) {
+				oCell = aRowCells[iIndex];
+				sCellId = oCell.getId();
+
+				if (!aAccentCellsCopy.length) {
+					break;
+				}
+
+				if (aAccentCellsCopy.indexOf(sCellId) > -1) {
+					iInvertCellColorsModulo++;
+
+					sCalculatedStyleClass = "sapUiBlockLayoutBackgroundColorSetGray" + ((iInvertCellColorsModulo % 2) + 1);
+
+					// If the the cell already has the expected class, shouldn't loop further as everything below is already adjusted
+					if (oCell.hasStyleClass(sCalculatedStyleClass)) {
+						continue;
+					}
+
+					// Optimise a bit the next loop iteration
+					aAccentCellsCopy.splice(aAccentCellsCopy.indexOf(sCellId), 1);
+
+					oCell
+						.removeStyleClass("sapUiBlockLayoutBackgroundColorSetGray1")
+						.removeStyleClass("sapUiBlockLayoutBackgroundColorSetGray2")
+						.addStyleClass(sCalculatedStyleClass);
+				}
+			}
+
+			return this;
 		};
 
 		BlockLayoutRow.prototype._checkGuidelinesAndUpdateCells = function () {
@@ -199,6 +381,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 			}
 
 			return true;
+		};
+
+		/**
+		 * Checks for specific cases when two row color sets share the same colors e.g. Light and Mixed backgrounds
+		 *
+		 * @param sStyleClass
+		 * @param sLayoutBackground
+		 * @param bIsColorInverted
+		 * @param sType
+		 * @returns {boolean}
+		 * @private
+		 */
+		BlockLayoutRow.prototype._hasStyleClass = function (sStyleClass, sLayoutBackground, bIsColorInverted, sType) {
+			var oBackgrounds = sap.ui.layout.BlockBackgroundType,
+				oColorSets = sap.ui.layout.BlockRowColorSets,
+				i, aStyleClasses,
+				aEqualSets = [];
+
+			// Check if this is NOT Mixed or Light background and just do the normal check
+			if ([oBackgrounds.Light, oBackgrounds.Mixed].indexOf(sLayoutBackground) === -1) {
+				return this.hasStyleClass(sStyleClass);
+			} else if (this.hasStyleClass(sStyleClass)) { // Check if this class is there and don't continue further
+				return true;
+			}
+
+			// Define array with equal sets
+			aEqualSets = [
+				[oColorSets.ColorSet1, oColorSets.ColorSet3],
+				[oColorSets.ColorSet2, oColorSets.ColorSet4]
+			];
+
+			// Find on which index is sType
+			for (i = 0; i <= aEqualSets.length; i++) {
+				if (aEqualSets[i] && aEqualSets[i].indexOf(sType) > -1) {
+					break;
+				}
+			}
+
+			// If it's not found there, then return false, as if the class was inside, it would fulfill the first hasStyleClass above
+			if (!aEqualSets[i]) {
+				return false;
+			}
+
+			// Build class strings to check against
+			aStyleClasses = aEqualSets[i].map(function (sColorSet) {
+				return "sapUiBlockLayoutBackground" + sColorSet + (bIsColorInverted ? "Inverted" : "");
+			});
+
+			// Check if any of the classes is inside
+			return aStyleClasses.some(this.hasStyleClass, this);
 		};
 
 		return BlockLayoutRow;

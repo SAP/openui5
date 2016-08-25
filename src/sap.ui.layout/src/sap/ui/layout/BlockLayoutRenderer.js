@@ -3,38 +3,59 @@
  */
 
 sap.ui.define([],
-	function() {
+	function () {
 		"use strict";
 
 		var BlockLayoutRenderer = {};
 
-		BlockLayoutRenderer.render = function(rm, blockLayout){
-			this.startLayout(rm, blockLayout);
-			this.addContent(rm, blockLayout);
-			this.endLayout(rm);
+		BlockLayoutRenderer.render = function (oRm, oBlockLayout) {
+			this.startLayout(oRm, oBlockLayout);
+			this.addContent(oRm, oBlockLayout);
+			this.endLayout(oRm);
 		};
 
-		BlockLayoutRenderer.startLayout = function (rm, blockLayout) {
-			var backgroundType = blockLayout.getBackground();
+		BlockLayoutRenderer.startLayout = function (oRm, oBlockLayout) {
+			var backgroundType = oBlockLayout.getBackground();
 
-			rm.write("<div");
-			rm.writeControlData(blockLayout);
-			rm.addClass("sapUiBlockLayout");
-			if (backgroundType == "Light") {
-				rm.addClass("sapUiBlockLayoutLightBackground");
-			}
-			rm.writeStyles();
-			rm.writeClasses();
-			rm.write(">");
+			oBlockLayout.addStyleClass("sapUiBlockLayoutBackground" + backgroundType);
+
+			oRm.write("<div");
+			oRm.writeControlData(oBlockLayout);
+			oRm.addClass("sapUiBlockLayout");
+			oRm.writeStyles();
+			oRm.writeClasses();
+			oRm.write(">");
 		};
 
-		BlockLayoutRenderer.addContent = function (rm, blockLayout) {
-			var content = blockLayout.getContent();
-			content.forEach(rm.renderControl);
+		BlockLayoutRenderer.addContent = function (oRm, blockLayout) {
+			var aContent = blockLayout.getContent(),
+				oBlockRowType = sap.ui.layout.BlockRowColorSets,
+				aTypes = Object.keys(oBlockRowType).map(function (sKey) {
+					return oBlockRowType[sKey];
+				}),
+				iNumTypes = aTypes.length;
+
+
+			aContent.forEach(function (oBlockRow, iIndex, aRows) {
+				var sType = oBlockRow.getRowColorSet() || aTypes[iIndex % iNumTypes], // Get the type or fetch it from the stack
+					sClass = "sapUiBlockLayoutBackground" + sType, // Build the CSS class
+					oPrevBlockRow = (iIndex && aRows[iIndex - 1]) || null;
+
+				if (oPrevBlockRow && oPrevBlockRow.hasStyleClass(sClass)) {
+					oBlockRow.removeStyleClass(sClass);
+					sClass += "Inverted";
+				}
+
+				if (sClass) {
+					oBlockRow.addStyleClass(sClass);
+				}
+
+				oRm.renderControl(oBlockRow);
+			});
 		};
 
-		BlockLayoutRenderer.endLayout = function (rm) {
-			rm.write("</div>");
+		BlockLayoutRenderer.endLayout = function (oRm) {
+			oRm.write("</div>");
 		};
 
 		return BlockLayoutRenderer;
