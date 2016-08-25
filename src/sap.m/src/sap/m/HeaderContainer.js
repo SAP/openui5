@@ -158,9 +158,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setAggregation("_scrollContainer", this._oScrollCntr, true);
 
 		if (Device.system.desktop) {
-			this._oArrowPrev = new sap.m.Button({
+			this._oArrowPrev = new library.Button({
 				id : this.getId() + "-scrl-prev-button",
-				type : sap.m.ButtonType.Transparent,
+				type : library.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_PREV_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
@@ -170,9 +170,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oArrowPrev._bExcludeFromTabChain = true;
 			this.setAggregation("_prevButton", this._oArrowPrev, true);
 
-			this._oArrowNext = new sap.m.Button({
+			this._oArrowNext = new library.Button({
 				id : this.getId() + "-scrl-next-button",
-				type : sap.m.ButtonType.Transparent,
+				type : library.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_NEXT_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
@@ -231,11 +231,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
 		}
 		if (Device.system.desktop) {
-			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
-			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
+			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
+			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		} else if (Device.system.phone || Device.system.tablet) {
-			this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
-			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
+			this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
+			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		}
 		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
 		this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
@@ -454,13 +454,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (!bScrollBack) {
 				this._oArrowPrev.$().hide();
+				this.$().removeClass("sapMHrdrTopPadding");
 			} else {
 				this._oArrowPrev.$().show();
+				this.$().addClass("sapMHrdrTopPadding");
 			}
 			if (!bScrollForward) {
 				this._oArrowNext.$().hide();
+				this.$().removeClass("sapMHrdrBottomPadding");
 			} else {
 				this._oArrowNext.$().show();
+				this.$().addClass("sapMHrdrBottomPadding");
 			}
 		}
 	};
@@ -518,17 +522,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oOldScrollBack = this._oArrowPrev.$().is(":visible");
 			if (oOldScrollBack && !bScrollBack) {
 				this._oArrowPrev.$().hide();
+				this.$().removeClass("sapMHrdrLeftPadding");
 			}
 			if (!oOldScrollBack && bScrollBack) {
 				this._oArrowPrev.$().show();
+				this.$().addClass("sapMHrdrLeftPadding");
 			}
 
 			var oOldScrollForward = this._oArrowNext.$().is(":visible");
 			if (oOldScrollForward && !bScrollForward) {
 				this._oArrowNext.$().hide();
+				this.$().removeClass("sapMHrdrRightPadding");
 			}
 			if (!oOldScrollForward && bScrollForward) {
 				this._oArrowNext.$().show();
+				this.$().addClass("sapMHrdrRightPadding");
 			}
 		}
 	};

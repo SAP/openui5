@@ -27,7 +27,6 @@
 <script type="text/javascript" src="resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -224,6 +223,10 @@ jQuery.sap.initMobile();
 	});
 
 	QUnit.test("When focusing from outside (through shift + tab) on the surrogate div element, the focus is set on the previous focused element of the itemnavigation", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		this.oHeaderContainer._oItemNavigation.setFocusedIndex(0);
 		var oEvt = {
@@ -447,7 +450,7 @@ jQuery.sap.initMobile();
 		assert.strictEqual(iIndexOfItem, 3, "Correct index of Item has been returned");
 	});
 
-	QUnit.module("Left and right arrow indicators are rendered on mobile devices", {
+	QUnit.module("Left and right arrow indicators are created on mobile devices", {
 		beforeEach : function () {
 			sap.ui.Device.system.phone = true;
 			sap.ui.Device.system.desktop = false;
@@ -463,7 +466,7 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Left and right indicators are rendered on mobile devices", function(assert) {
+	QUnit.test("Left and right indicators are created on mobile devices", function(assert) {
 		//Act
 		var bIsLeftIcon = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.ui.core.Icon;
 		var bIsRightIcon = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.ui.core.Icon;
@@ -472,7 +475,7 @@ jQuery.sap.initMobile();
 		assert.ok(bIsRightIcon, "Right arrow indicator is rendered on mobile devices");
 	});
 
-	QUnit.module("Left and right arrow buttons are rendered on desktop", {
+	QUnit.module("Left and right arrow buttons are created on desktop", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
@@ -484,7 +487,7 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Left and right arrow buttons are rendered on desktop", function(assert) {
+	QUnit.test("Left and right arrow buttons are created on desktop", function(assert) {
 		//Act
 		var bIsLeftButton = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.m.Button;
 		var bIsRightButton = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.m.Button;
