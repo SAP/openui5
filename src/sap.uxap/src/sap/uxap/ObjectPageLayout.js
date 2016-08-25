@@ -1107,7 +1107,9 @@ sap.ui.define([
 				if (oInfo.isSection) {
 					if (sPreviousSectionId) {           //except for the very first section
 						this._oSectionInfo[sPreviousSectionId].positionBottom = oInfo.positionTop;
-						this._oSectionInfo[sPreviousSubSectionId].positionBottom = oInfo.positionTop;
+						if (sPreviousSubSectionId) {
+							this._oSectionInfo[sPreviousSubSectionId].positionBottom = oInfo.positionTop;
+						}
 					}
 					sPreviousSectionId = oSectionBase.getId();
 					sPreviousSubSectionId = null;
