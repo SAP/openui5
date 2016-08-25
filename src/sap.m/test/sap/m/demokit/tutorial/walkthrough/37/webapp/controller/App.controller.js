@@ -9,8 +9,8 @@ sap.ui.define([
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		},
 
-		onOpenDialog: function () {
-			this.getOwnerComponent().helloDialog.open(this.getView());
+		onOpenDialog : function () {
+			this.getOwnerComponent().openHelloDialog();
 		}
 	});
 
