@@ -1738,7 +1738,7 @@ sap.ui.require([
 				},
 				sPath : "EMPLOYEE_2_EQUIPMENTS",
 				aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
-					{"Category" : "C1a", "ID" : "ID1a"}]
+					{"Category" : "C1", "ID" : "ID1"}]
 			},
 			aDiff = [/*some diff*/],
 			oKeyPromise = Promise.resolve(["Category", "ID"]),
@@ -1748,9 +1748,9 @@ sap.ui.require([
 				getMetaContext : function () {}
 			},
 			oMetaModelMock = this.mock(oMetaModel),
-			aNewData = [{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}],
-			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
-				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+			aNewData = [{"Category" : "C0", "ID" : "ID0"}, {"Category" : "C2", "ID" : "ID2"}],
+			aResult = [{"Category" : "C0", "ID" : "ID0", "Name" : "Name0"},
+				{"Category" : "C2", "ID" : "ID2", "Name" : "Name2"}];
 
 		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
 		this.mock(oBinding.oModel).expects("resolve")
@@ -1761,13 +1761,12 @@ sap.ui.require([
 		oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
 			.returns(oKeyPromise);
 		this.mock(jQuery.sap).expects("arraySymbolDiff")
-			.withExactArgs([{"Category" : "C1a", "ID" : "ID1a"}], aNewData)
+			.withExactArgs(sinon.match.same(oBinding.aPreviousData), aNewData)
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
-			assert.deepEqual(oBinding.aPreviousData, [{"Category" : "C0", "ID" : "ID0"},
-				{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}]);
+		return _ODataHelper.requestDiff(oBinding, aResult, 0, 2).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, aNewData);
 			assert.strictEqual(aDiff0, aDiff);
 		});
 	});
@@ -1868,7 +1867,7 @@ sap.ui.require([
 					oFixture.logDetails, "sap.ui.model.odata.v4.ODataListBinding");
 
 			// code under test
-			return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
+			return _ODataHelper.requestDiff(oBinding, aResult, 0, 2).then(function (aDiff0) {
 				assert.deepEqual(oBinding.aPreviousData, []);
 				assert.strictEqual(aDiff0, undefined);
 			});
@@ -1883,18 +1882,17 @@ sap.ui.require([
 			},
 			aDiff = [/*some diff*/],
 			oJSONMock = this.mock(JSON),
-			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
-				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+			aResult = [{}, {}];
 
-		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s1 new");
-		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s2 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s0 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s1 new");
 		this.mock(jQuery.sap).expects("arraySymbolDiff")
-			.withExactArgs(["s1 previous"], ["s1 new", "s2 new"])
+			.withExactArgs(sinon.match.same(oBinding.aPreviousData), ["s0 new", "s1 new"])
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
-			assert.deepEqual(oBinding.aPreviousData, ["s0 previous", "s1 new", "s2 new"]);
+		return _ODataHelper.requestDiff(oBinding, aResult, 0, 2).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, ["s0 new", "s1 new"]);
 			assert.strictEqual(aDiff0, aDiff);
 		});
 	});

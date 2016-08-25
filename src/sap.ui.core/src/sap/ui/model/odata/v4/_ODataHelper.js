@@ -660,7 +660,9 @@ sap.ui.define([
 		 *   The array of OData entities read in the last request, can be undefined if no data is
 		 *   available e.g. in case of a missing $expand in the binding's parent binding
 		 * @param {number} iStart
-		 *   The start index of the range for which the OData entities have been read
+		 *   The start index of the range for which the OData entities have been read; must be 0 as
+		 *   controls with extended change detection only get contexts with start index 0 and
+		 *   it is unclear how ECD is supposed to work with start index !== 0
 		 * @param {number} iLength
 		 *   The length of the range for which the OData entities have been read
 		 * @returns {Promise}
@@ -681,20 +683,9 @@ sap.ui.define([
 			 * @returns {object[]} The diff array
 			 */
 			function diff() {
-				var i,
-					iDataLength = aData.length,
-					aDiff,
-					aPreviousData = oBinding.aPreviousData;
+				var aDiff = jQuery.sap.arraySymbolDiff(oBinding.aPreviousData, aNewData);
 
-				aDiff = jQuery.sap.arraySymbolDiff(
-					aPreviousData.slice(iStart, iStart + iLength), aNewData);
-				for (i = 0; i < iDataLength; i += 1) {
-					aPreviousData[iStart + i] = aNewData[i];
-				}
-				if (iDataLength < iLength) {
-					// short read -> there is no data beyond the read length
-					aPreviousData.length = iStart + iDataLength;
-				}
+				oBinding.aPreviousData = aNewData;
 				return aDiff;
 			}
 

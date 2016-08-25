@@ -1510,6 +1510,11 @@ sap.ui.require([
 			oListBinding.getContexts(0, 42, 0);
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, third"
 				+ " parameter must not be set if extended change detection is enabled"));
+
+		assert.throws(function() {
+			oListBinding.getContexts(42);
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, first parameter " +
+			"must be 0 if extended change detection is enabled, but is 42"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
