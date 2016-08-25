@@ -27,6 +27,8 @@ module.exports = [
 	"QuickViewCard.spec.js",
 	"RadioButton.spec.js",
 	"RadioButtonGroup.spec.js",
+	"RatingIndicator.spec.js",
+	"ResponsivePopover.spec.js",
 	"SemanticPage.spec.js",
 	"SplitApp.spec.js",
 	"StepInput.spec.js",
