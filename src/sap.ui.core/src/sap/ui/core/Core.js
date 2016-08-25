@@ -2281,7 +2281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *   <li>a library has been loaded and its theme has been applied (only if library is loaded after core init)
 	 * </ul>
 	 *
-	 * @name sap.ui.core.Core#ThemeChanged
+	 * @name sap.ui.core.Core#themeChanged
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
@@ -2362,7 +2362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * <code>sap.ui.core.theming.Parameters</code> module has been loaded.
 	 * By default this is not the case.
 	 *
-	 * @name sap.ui.core.Core#ThemeScopingChanged
+	 * @name sap.ui.core.Core#themeScopingChanged
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
