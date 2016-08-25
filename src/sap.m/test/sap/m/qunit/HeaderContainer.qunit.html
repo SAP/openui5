@@ -76,8 +76,8 @@ jQuery.sap.initMobile();
 		assert.ok(this.oHeaderContainer.getShowDividers());
 	});
 
-	QUnit.test("View should be set to Horizontal", function(assert) {
-		assert.deepEqual(this.oHeaderContainer.getView(), sap.m.HeaderContainerView.Horizontal);
+	QUnit.test("Orientation should be set to Horizontal", function(assert) {
+		assert.deepEqual(this.oHeaderContainer.getOrientation(), sap.ui.core.Orientation.Horizontal);
 	});
 
 	QUnit.test("BackgroundDesign should be set to Transparent", function(assert) {
@@ -105,8 +105,8 @@ jQuery.sap.initMobile();
 		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
 
-	QUnit.test("DOM Structure should exist for vertiacl header container", function(assert) {
-		this.oHeaderContainer.setView("Vertical");
+	QUnit.test("DOM Structure should exist for vertical header container", function(assert) {
+		this.oHeaderContainer.setOrientation("Vertical");
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
 		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
