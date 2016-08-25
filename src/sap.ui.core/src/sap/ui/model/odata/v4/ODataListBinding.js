@@ -113,7 +113,7 @@ sap.ui.define([
 				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
-				this.aDiff = [];
+				this.oDiff = undefined;
 				this.aFilters = [];
 				this.aPreviousData = [];
 				this.mQueryOptions = undefined;
@@ -186,9 +186,6 @@ sap.ui.define([
 				}
 				that.aContexts.pop();
 				that.iMaxLength -= 1; // this doesn't change Infinity
-				if (that.bUseExtendedChangeDetection) {
-					that.aDiff = [{index : iIndex, type : "delete"}];
-				}
 				that._fireChange({reason : ChangeReason.Remove});
 			});
 	};
@@ -273,15 +270,12 @@ sap.ui.define([
 	 *   The range as returned by {@link _ODataHelper#getReadRange}
 	 * @param {number} iResultLength
 	 *   The number of OData entities read from the cache for the given range
-	 * @param {string} sChangeReason
-	 *   The reason with which the change event is sent
-	 * @param {boolean} bDataRequested
-	 *   Whether data has been requested from the server by the cache
+	 * @returns {boolean}
+	 *   <code>true</code>, if contexts have been created or <code>isLengthFinal</code> has changed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (oRange, iResultLength, sChangeReason,
-				bDataRequested) {
+	ODataListBinding.prototype.createContexts = function (oRange, iResultLength) {
 		var bChanged = false,
 			oContext = this.oContext,
 			i,
@@ -310,13 +304,7 @@ sap.ui.define([
 			// bLengthFinal changed --> send change event even if no new data is available
 			bChanged = true;
 		}
-
-		if (bChanged) {
-			this._fireChange({reason : sChangeReason});
-		}
-		if (bDataRequested) {
-			this.fireDataReceived(); // no try catch needed: uncaught in promise
-		}
+		return bChanged;
 	};
 
 	/**
@@ -546,6 +534,7 @@ sap.ui.define([
 			oContext = this.oContext,
 			aContexts,
 			bDataRequested = false,
+			bFireChange = false,
 			sGroupId,
 			oPromise,
 			oRange,
@@ -575,10 +564,9 @@ sap.ui.define([
 			iMaximumPrefetchSize = 0;
 		}
 
-		oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iMaximumPrefetchSize,
-			this.iMaxLength);
-
-		if (oRange) {
+		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
+			oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength,
+				iMaximumPrefetchSize);
 			if (this.oCache) {
 				sGroupId = this.sRefreshGroupId || this.getGroupId();
 				this.sRefreshGroupId = undefined;
@@ -599,18 +587,18 @@ sap.ui.define([
 				if (!that.bRelative || that.oContext === oContext) {
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
 					iResultLength = aResult ? aResult.length : 0;
-					if (that.bUseExtendedChangeDetection) {
-						return _ODataHelper.requestDiff(that, aResult, iStart, iLength)
-							.then(function (aDiff) {
-								that.aDiff = aDiff;
-								that.createContexts(oRange, iResultLength, sChangeReason,
-									bDataRequested);
-							});
-					} else {
-						that.createContexts(oRange, iResultLength, sChangeReason, bDataRequested);
-					}
-				} else if (bDataRequested) { // fire dataReceived if not done in createContexts
-					that.fireDataReceived(); // no try catch needed: uncaught in promise
+					return _ODataHelper.fetchDiff(that, aResult, iStart, iLength)
+						.then(function (oDiff) {
+							that.oDiff = oDiff;
+							if (that.createContexts(oRange, iResultLength) && bFireChange) {
+								that._fireChange({reason: sChangeReason});
+							}
+							if (bDataRequested) {
+								that.fireDataReceived();
+							}
+						});
+				} else if (bDataRequested) { // fire dataReceived even if the result is irrelevant
+					that.fireDataReceived();
 				}
 			}, function (oError) {
 				// cache shares promises for concurrent read
@@ -629,15 +617,22 @@ sap.ui.define([
 			})["catch"](function (oError) {
 				jQuery.sap.log.error(oError.message, oError.stack, sClassName);
 			});
+			// If the diff has not been calculated yet, we're asynchronous and have to fire a change
+			bFireChange = true;
 		}
 		this.iCurrentBegin = iStart;
 		this.iCurrentEnd = iStart + iLength;
 		aContexts = this.aContexts.slice(iStart, iStart + iLength);
 		if (this.bUseExtendedChangeDetection) {
-			aContexts.dataRequested = !!oRange;
-			aContexts.diff = aContexts.dataRequested ? [] : this.aDiff;
-			this.aDiff = [];
+			if (this.oDiff && iLength !== this.oDiff.iLength) {
+				throw new Error("Extended change detection protocol violation: Expected "
+					+ "getContexts(0," + this.oDiff.iLength + "), but got getContexts(0,"
+					+ iLength + ")");
+			}
+			aContexts.dataRequested = !this.oDiff;
+			aContexts.diff = this.oDiff ? this.oDiff.aDiff :  [];
 		}
+		this.oDiff = undefined;
 		return aContexts;
 	};
 

@@ -382,9 +382,9 @@ sap.ui.define([
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
 		var sQuery = Cache.buildQueryString(mQueryOptions);
 
-		this.sContext = undefined;  // the "@odata.context" from the responses
-		this.aElements = [];        // the available elements
-		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
+		this.sContext = undefined;    // the "@odata.context" from the responses
+		this.aElements = [];          // the available elements
+		this.iMaxElements = Infinity; // the max. number of elements if known, Infinity otherwise
 		this.mChangeListeners = {};
 		this.mPatchRequests = {};
 		this.mQueryOptions = mQueryOptions;
@@ -441,6 +441,10 @@ sap.ui.define([
 						vDeleteProperty = oCacheData.indexOf(oEntity);
 					}
 					oCacheData.splice(vDeleteProperty, 1);
+					if (oCacheData === that.aElements) {
+						// deleting at root level
+						that.iMaxElements -= 1; // this doesn't change Infinity
+					}
 					fnCallback(Number(vDeleteProperty));
 				});
 		});
@@ -525,7 +529,7 @@ sap.ui.define([
 			throw new Error("Cannot drill-down for length " + iLength);
 		}
 
-		if (this.iMaxElements >= 0 && iEnd > this.iMaxElements) {
+		if (iEnd > this.iMaxElements) {
 			iEnd = this.iMaxElements;
 		}
 
@@ -574,7 +578,7 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
-		this.iMaxElements = -1;
+		this.iMaxElements = Infinity;
 		this.aElements = [];
 		removePatchRequests(this);
 	};
