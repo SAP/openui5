@@ -161,12 +161,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	var sBrowserPrefix = "";
 	// get the background image of the slider
 	var sBgSrc = sap.ui.resource('sap.ui.commons', 'img/ColorPicker/Alphaslider_BG.png');
+	// get resource bundle
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 	/**
 	 * Initialization hook... creating composite parts
 	 */
 	ColorPicker.prototype.init = function() {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 		// set gradient prefix depending of the browser
 		if (sap.ui.Device.browser.firefox) {
@@ -236,13 +237,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHtmlNewCol = new sap.ui.core.HTML({
 			content : "<div id=" + ncBoxID + " class=sapUiColorPicker-ColorPickerNewColor></div>"
 		});
-
-		this.oArrow = new sap.ui.core.Icon({
-			color: "#333",
-			backgroundColor: "transparent",
-			src: "sap-icon://arrow-right",
-			tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
-		}).addStyleClass("sapUiColorPicker-Arrow");
 
 		//	label and input field for Hexadecimal value
 		var inpID = this.getId() + '-hxF';
@@ -338,8 +332,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			selectedIndex: (this.Color.formatHSL ? 1 : 0 )
 		});
 		this.oRGBorHSLRBGroup.addStyleClass("sapUiColorPickerHSL-RB");
-
-		this.oRGBorHSLLabel = new sap.ui.commons.Label({ text: "Output:", labelFor: this.oRGBorHSLRBGroup});
 
 		// 1.Horizontal Layout containing Red field
 		this.oHLayout1 = new sap.ui.layout.HorizontalLayout({
@@ -454,155 +446,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		.unbind("mouseup", this.handleMouseUp);
 
 		//	destroy Objects
-		if (this.oArrow) {
-			this.oArrow.destroy();
-			this.oArrow = null;
-		}
+		this.oRGBorHSLRBGroup.destroy();
+		this.oRGBorHSLRBGroup = null;
 
-		if (this.oAlphaField) {
-			this.oAlphaField.destroy();
-			this.oAlphaField = null;
-		}
+		this.oSatUnits.destroy();
+		this.oSatUnits = null;
 
-		if (this.oLitField) {
-			this.oLitField.destroy();
-			this.oLitField = null;
-		}
+		this.oHLayout7a.destroy();
+		this.oHLayout7a = null;
 
-		if (this.oHexLabel) {
-			this.oHexLabel.destroy();
-			this.oHexLabel = null;
-		}
+		this.oHLayout7b.destroy();
+		this.oHLayout7b = null;
 
-		if (this.oLitLabel) {
-			this.oLitLabel.destroy();
-			this.oLitLabel = null;
-		}
+		this.oHLayout9.destroy();
+		this.oHLayout9 = null;
 
-		if (this.oLitUnits) {
-			this.oLitUnits.destroy();
-			this.oLitUnits = null;
-		}
+		this.oMatrix.destroy();
+		this.oMatrix = null;
 
-		if (this.oRedLabel) {
-			this.oRedLabel.destroy();
-			this.oRedLabel = null;
-		}
-
-		if (this.oRedLabel) {
-			this.oGreenLabel.destroy();
-			this.oGreenLabel = null;
-		}
-
-		if (this.oBlueLabel) {
-			this.oBlueLabel.destroy();
-			this.oBlueLabel = null;
-		}
-
-		if (this.oHueLabel) {
-			this.oHueLabel.destroy();
-			this.oHueLabel = null;
-		}
-
-		if (this.oSatLabel) {
-			this.oSatLabel.destroy();
-			this.oSatLabel = null;
-		}
-
-		if (this.oSatUnits) {
-			this.oSatUnits.destroy();
-			this.oSatUnits = null;
-		}
-
-		if (this.oValLabel) {
-			this.oValLabel.destroy();
-			this.oValLabel = null;
-		}
-
-		if (this.oAlphaLabel) {
-			this.oAlphaLabel.destroy();
-			this.oAlphaLabel = null;
-		}
-
-		if (this.oHLayout1) {
-			this.oHLayout1.destroy();
-			this.oHLayout1 = null;
-		}
-
-		if (this.oHLayout2) {
-			this.oHLayout2.destroy();
-			this.oHLayout2 = null;
-		}
-
-		if (this.oHLayout3) {
-			this.oHLayout3.destroy();
-			this.oHLayout3 = null;
-		}
-
-		if (this.oHLayout4) {
-			this.oHLayout4.destroy();
-			this.oHLayout4 = null;
-		}
-
-		if (this.oHLayout5) {
-			this.oHLayout5.destroy();
-			this.oHLayout5 = null;
-		}
-
-		if (this.oHLayout6) {
-			this.oHLayout6.destroy();
-			this.oHLayout6 = null;
-		}
-
-		if (this.oHLayout7) {
-			this.oHLayout7.destroy();
-			this.oHLayout7 = null;
-		}
-
-		if (this.oHLayout7a) {
-			this.oHLayout7a.destroy();
-			this.oHLayout7a = null;
-		}
-
-		if (this.oHLayout7b) {
-			this.oHLayout7b.destroy();
-			this.oHLayout7b = null;
-		}
-
-		if (this.oHLayout8) {
-			this.oHLayout8.destroy();
-			this.oHLayout8 = null;
-		}
-
-		if (this.oHLayout9) {
-			this.oHLayout9.destroy();
-			this.oHLayout9 = null;
-		}
-
-		if (this.oRGBorHSLRBGroup) {
-			this.oRGBorHSLRBGroup.destroy();
-			this.oRGBorHSLRBGroup = null;
-		}
-
-		if (this.oRGBorHSLLabel) {
-			this.oRGBorHSLLabel.destroy();
-			this.oRGBorHSLLabel = null;
-		}
-
-		if (this.oSlider) {
-			this.oSlider.destroy();
-			this.oSlider = null;
-		}
-
-		if (this.oAlphaSlider) {
-			this.oAlphaSlider.destroy();
-			this.oAlphaSlider = null;
-		}
-
-		if (this.oMatrix) {
-			this.oMatrix.destroy();
-			this.oMatrix = null;
-		}
 	};
 
 
@@ -611,6 +472,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ColorPicker.prototype.onBeforeRendering = function() {
 		if (this.getMode() === "HSL") {
+			if (!this.oArrow) {
+				this.oArrow = new sap.ui.core.Icon({
+					color: "#333",
+					backgroundColor: "transparent",
+					src: "sap-icon://arrow-right",
+					tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
+				}).addStyleClass("sapUiColorPicker-Arrow");
+			}
+
+			if (!this.oRGBorHSLLabel) {
+				this.oRGBorHSLLabel = new sap.ui.commons.Label({ text: "Output:", labelFor: this.oRGBorHSLRBGroup});
+			}
+
 			this.oHLayout8.addContent(this.oHtmlOldCol);
 			this.oHLayout8.addContent(this.oArrow);
 			this.oHLayout8.addContent(this.oHtmlNewCol);
