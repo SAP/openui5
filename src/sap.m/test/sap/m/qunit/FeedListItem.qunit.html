@@ -403,7 +403,7 @@
 
 			QUnit.module("Rendering behavior");
 
-			QUnit.test("Expanded text should be appear also after rerendering.", function(assert) {
+			QUnit.test("Expanded text should appear also after rerendering.", function(assert) {
 				oFeedList.getItems()[10]._toggleTextExpanded();
 				oFeedList.getItems()[10].invalidate();
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowLess);
@@ -457,6 +457,83 @@
 					srcControl : this.oFeedListItem
 				});
 				assert.ok(this.oFeedListItem, "FeedListItem is clickable");
+			});
+
+			QUnit.module("HTML Text inside", {
+				beforeEach : function() {
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender : null,
+						text : "Some text <strong>which</strong> is <em>displayed</em>."
+					}).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("Converts html text to plain text and back to html text", function(assert) {
+				//Arrange
+				var sHtmlText = this.oFeedListItem._sFullText;
+				var sPlainText = "Some text which is displayed.";
+				//Act
+				var sConvertedText1 = this.oFeedListItem._convertHtmlToPlainText(sHtmlText);
+				var sConvertedText2 = this.oFeedListItem._convertPlainToHtmlText(sConvertedText1);
+				//Assert
+				assert.equal(sConvertedText1, sPlainText, "Html text is converted to plain text");
+				assert.equal(sConvertedText2, sHtmlText, "Plain text is converted back to html text");
+			});
+
+			QUnit.test("No html text", function(assert) {
+				//Arrange
+				var sPlainText = "Some text which is displayed.";
+				//Act
+				this.oFeedListItem.setText(sPlainText);
+				sap.ui.getCore().applyChanges();
+				var sText = this.oFeedListItem._sFullText;
+				//Assert
+				assert.equal(sPlainText, sText, "Text does not have html tags");
+			});
+
+			QUnit.test("Html collapsed text ", function(assert) {
+				//Arrange
+				var sCollapsedText = "Some text <strong>which</strong>";
+				var sFullText = this.oFeedListItem.getText();
+				//Act
+				this.oFeedListItem.setMaxCharacters(17);
+				sap.ui.getCore().applyChanges();
+				var sCollapsedTextNew = this.oFeedListItem._sShortText;
+				var sFullTextNew = this.oFeedListItem._sFullText;
+				//Assert
+				assert.equal(sCollapsedText, sCollapsedTextNew, "Collapsed text has html tags");
+				assert.equal(this.oFeedListItem._checkTextIsExpandable(), true, "Text is expandable");
+				assert.equal(sFullText, sFullTextNew, "Full text has html tags");
+			});
+
+			QUnit.test("No collapsed text", function(assert) {
+				//Arrange
+				var sText = this.oFeedListItem._getCollapsedText();
+				var sShortText = this.oFeedListItem._sShortText;
+				//Act
+				//Assert
+				assert.ok(!sShortText, "Short text is null");
+				assert.ok(!sText, "Collapsed text is null");
+				assert.equal(this.oFeedListItem._checkTextIsExpandable(), false, "Text is not expandable");
+			});
+
+			QUnit.test("Empty html tags are removed for collapsed text", function(assert) {
+				//Arrange
+				var sText = "<p></p><ul></ul><strong></strong><p>Some</p> text";
+				var sCollapsedText = "<p>Some</p>";
+				//Act
+				this.oFeedListItem.setText(sText);
+				this.oFeedListItem.setMaxCharacters(5);
+				sap.ui.getCore().applyChanges();
+				var sCollapsedTextNew = this.oFeedListItem._sShortText;
+				var sFullText = this.oFeedListItem._sFullText;
+				//Assert
+				assert.equal(sCollapsedText, sCollapsedTextNew, "Empty html tags are removed for collapsed text");
+				assert.equal(sText, sFullText, "Full text remains the same");
 			});
 		</script>
 	</head>
