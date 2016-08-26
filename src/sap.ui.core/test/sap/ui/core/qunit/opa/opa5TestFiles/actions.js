@@ -251,7 +251,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			sinon.assert.notCalled(fnSuccessSpy);
-			this.oClock.tick();
+			this.oClock.tick(100);
 		}.bind(this));
 
 		oEmptyQueuePromise.always(fnDone);

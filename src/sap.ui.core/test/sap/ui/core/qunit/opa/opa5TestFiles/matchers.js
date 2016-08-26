@@ -1,4 +1,8 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], function ($, Opa, Opa5) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/test/Opa',
+	'sap/ui/test/Opa5'
+], function ($, Opa, Opa5) {
 	"use strict";
 
 	var iExecutionDelay = Opa.config.executionDelay;
