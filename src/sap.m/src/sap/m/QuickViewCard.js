@@ -94,6 +94,9 @@ sap.ui.define([
 
 			var mContent = oQuickViewPage._createPageContent();
 
+			// don't store the content for destroying, the nav container will destroy all the pages
+			oQuickViewPage._mPageContent = null;
+
 			var oContainer = new ScrollContainer(this.getId() + '-' + oQuickViewPage.getPageId(), {
 				horizontal : false,
 				vertical : false
