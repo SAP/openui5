@@ -118,4 +118,30 @@
 
 		assert.ok(oNewLink.bIsDestroyed, "There breadcrumbs are destroyed");
 	});
+
+	QUnit.module("Action buttons", {
+		setup: function () {
+			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		}
+	});
+
+	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming transparent", function (assert) {
+
+		var oActionButton = new sap.uxap.ObjectPageHeaderActionButton({
+			text:"Invisible Button",
+			visible: false
+		});
+
+		this._oHeader.addAction(oActionButton);
+
+		sap.ui.getCore().applyChanges();
+
+		oActionButton.setVisible(true);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oActionButton.getType(), "Transparent",
+			"The button is transparent");
+	});
+
 }(jQuery, QUnit));
