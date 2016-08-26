@@ -130,6 +130,7 @@
 						], "Center");
 
 				return new sap.ui.layout.BlockLayout({
+					id: "layout-" + sBackground.toLowerCase(),
 					background: sBackground,
 					content: [
 						new sap.ui.layout.BlockLayoutRow({
@@ -196,6 +197,7 @@
 
 			var fnCreateListItem = function (sBackground) {
 				return new sap.m.StandardListItem({
+					id: "navigate-to-" + sBackground.toLowerCase(),
 					title: sBackground + " BlockLayout",
 					type: "Active",
 					press: function () {
