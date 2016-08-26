@@ -48,7 +48,8 @@ sap.ui.define([
 			aConfigValuesForWaitFor = [
 				"visible",
 				"viewNamespace",
-				"viewName"
+				"viewName",
+				"autoWait"
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
 				"check", "error", "success"
@@ -231,8 +232,8 @@ sap.ui.define([
 		/**
 		 * Takes the same parameters as {@link sap.ui.test.Opa#waitFor}. Also allows you to specify additional parameters:
 		 *
-		 * @param {object} oOptions An Object containing conditions for waiting and callbacks
-		 * @param {string|regexp} [oOptions.id] The global ID of a control, or the ID of a control inside a view.
+		 * @param {object} options An Object containing conditions for waiting and callbacks
+		 * @param {string|regexp} [options.id] The global ID of a control, or the ID of a control inside a view.
 		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching ID.<br/>
 		 * Example of a waitFor:
 		 * <pre>
@@ -260,16 +261,16 @@ sap.ui.define([
 		 * Will result in matching two controls, the image with the effective ID myView--myImage and the button myView--myButton.
 		 * Although the IDs of the controls myView--bar and myView--baz contain a my,
 		 * they will not be matched since only the part you really write in your views will be matched.
-		 * @param {string} [oOptions.viewName] The name of a view.
+		 * @param {string} [options.viewName] The name of a view.
 		 * If this is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
-		 * @param {string} [oOptions.viewNamespace] This string gets appended before the viewName - should probably be set to the {@link sap.ui.test.Opa5#extendConfig}.
-		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
+		 * @param {string} [options.viewNamespace] This string gets appended before the viewName - should probably be set to the {@link sap.ui.test.Opa5#extendConfig}.
+		 * @param {function|array|sap.ui.test.matchers.Matcher} [options.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
 		 * Matchers will be applied to an every control found by the waitFor function.
 		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
 		 * If the previous output is a truthy value, the next matcher will receive this value as an input parameter.
 		 * If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values.
 		 * Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
-		 * @param {string} [oOptions.controlType] Selects all control by their type.
+		 * @param {string} [options.controlType] Selects all control by their type.
 		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
 		 * array will be returned. Here are some samples:
 		 * <code>
@@ -301,15 +302,15 @@ sap.ui.define([
 		 *         });
 		 *     </pre>
 		 * </code>
-		 * @param {boolean} [oOptions.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
-		 * @param {boolean} [oOptions.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {int} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
+		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
+		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
 		 * Timeout will increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true.
-		 * @param {int} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {function} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in check will not change the first parameter of success.
-		 * @param {function} [oOptions.success] Will get invoked after the following conditions are met:
+		 * @param {function} [options.success] Will get invoked after the following conditions are met:
 		 * <ol>
 		 *     <li>
 		 *         One or multiple controls were found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
@@ -324,11 +325,11 @@ sap.ui.define([
 		 * The first parameter passed into the function is either a single control (when a single string ID was used),
 		 * or an array of controls (viewName, controlType, multiple ID's, regex ID's) that matched all matchers.
 		 * Matchers can alter the array or single control to something different. Please read the documentation of waitFor's matcher parameter.
-		 * @param {function} [oOptions.error] Invoked when the timeout is reached and the check never returned true.
-		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+		 * @param {function} [options.error] Invoked when the timeout is reached and the check never returned true.
+		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
-		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} oOptions.actions
+		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} options.actions
 		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
 		 * An action has an 'executeOn' function that will receive a single control as a parameter.
 		 * If there are multiple actions defined all of them
@@ -380,7 +381,7 @@ sap.ui.define([
 		 *              id: "anotherButton",
 		 *              actions: function () {
 		 *                // This is the second function that will be executed
-		 *                // Opa will also synchronize the UI again before executing this function
+		 *                // Opa will also wait until anotherButton is Interactable before executing this function
 		 *              },
 		 *              success: function () {
 		 *                // This is the third function that will be executed
@@ -393,41 +394,73 @@ sap.ui.define([
 		 *     });
 		 *     </pre>
 		 * </code>
-		 * Executing multiple actions will not synchronize between them.
-		 * If you need synchronization between actions you need to split the actions into multiple 'waitFor' statements.
+		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
+		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
+		 * @param {boolean=false} [options.autoWait] @since 1.42 Only has an effect if set to true.
+		 * The waitFor statement will not execute success callbacks as long as there are open XMLHTTPRequests (requests to a server).
+		 * It will only execute success if the control is {@link sap.ui.test.matchers.Interactable}
+		 * So success behaves like an action in terms of waiting.
+		 * It is recommended to set this value to true for all your waitFor statements using:
+		 * <code>
+		 *     <pre>
+		 *     Opa5.extendConfig({
+		 *         autoWait: true
+		 *     });
+		 *     </pre>
+	 	 * </code>
+		 * Why is it recommended:
+		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
+		 * Setting the autoWait to true should stabilize most of those tests.
+		 * The default "false" could not be changed since it causes existing tests to fail.
+		 * There are cases where you do not want to wait for controls to be "Interactable":
+		 * For example when you are testing the Busy indication of your UI during the sending of a request.
+		 * But these cases are the exception so it is better to explicitly adding autoWait: false to this waitFor.
+		 * <code>
+		 *     <pre>
+		 *     this.waitFor({
+		 *         id: "myButton",
+		 *         autoWait: false,
+		 *         success: function (oButton) {
+		 *              Opa5.assert.ok(oButton.getBusy(), "My Button was busy");
+		 *         }
+		 *     });
+		 *     </pre>
+		 * </code>
+		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
+		 * will time out and finally disable autoWait in these Tests.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
-		Opa5.prototype.waitFor = function (oOptions) {
-			var vActions = oOptions.actions,
+		Opa5.prototype.waitFor = function (options) {
+			var vActions = options.actions,
 				oFilteredConfig = Opa._createFilteredConfig(aConfigValuesForWaitFor),
 				// only take the allowed properties from the config
 				oOptionsPassedToOpa;
 
-			oOptions = $.extend({},
+			options = $.extend({},
 					oFilteredConfig,
-					oOptions);
-			oOptions.actions = vActions;
+					options);
+			options.actions = vActions;
 
 			oValidator.validate({
 				validationInfo: Opa5._validationInfo,
-				inputToValidate: oOptions
+				inputToValidate: options
 			});
 
-			var fnOriginalCheck = oOptions.check,
+			var fnOriginalCheck = options.check,
 				vControl = null,
-				fnOriginalSuccess = oOptions.success,
+				fnOriginalSuccess = options.success,
 				vResult,
 				bPluginLooksForControls;
 
-			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, oOptions);
+			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, options);
 
 			oOptionsPassedToOpa.check = function () {
 				// Create a new options object for the plugin to keep the original one as is
 				var oPlugin = Opa5.getPlugin();
 
 				// even if we have no control the matchers may provide a value for vControl
-				vResult = oPlugin.getFilterdControls(oOptions, vControl);
+				vResult = oPlugin.getFilterdControls(options, vControl);
 
 				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
@@ -641,6 +674,7 @@ sap.ui.define([
 		 * 	<li>visible: true</li>
 		 * 	<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 		 * 	<li>pollingInterval: 400 milliseconds</li>
+		 * 	<li>autoWait: false - since 1.42</li>
 		 * </ul>
 		 * @public
 		 * @since 1.25
@@ -653,6 +687,7 @@ sap.ui.define([
 				actions : new Opa5(),
 				assertions : new Opa5(),
 				visible : true,
+				autoWait : false,
 				_stackDropCount : 1
 			});
 		};
@@ -787,7 +822,8 @@ sap.ui.define([
 			actions: "any",
 			id: "any",
 			controlType: "any",
-			searchOpenDialogs: "bool"
+			searchOpenDialogs: "bool",
+			autoWait: "bool"
 		}, Opa._validationInfo);
 
 		return Opa5;
