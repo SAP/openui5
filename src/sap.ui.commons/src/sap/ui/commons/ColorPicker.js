@@ -161,12 +161,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	var sBrowserPrefix = "";
 	// get the background image of the slider
 	var sBgSrc = sap.ui.resource('sap.ui.commons', 'img/ColorPicker/Alphaslider_BG.png');
+	// get resource bundle
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 	/**
 	 * Initialization hook... creating composite parts
 	 */
 	ColorPicker.prototype.init = function() {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 		// set gradient prefix depending of the browser
 		if (sap.ui.Device.browser.firefox) {
@@ -236,13 +237,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHtmlNewCol = new sap.ui.core.HTML({
 			content : "<div id=" + ncBoxID + " class=sapUiColorPicker-ColorPickerNewColor></div>"
 		});
-
-		this.oArrow = new sap.ui.core.Icon({
-			color: "#333",
-			backgroundColor: "transparent",
-			src: "sap-icon://arrow-right",
-			tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
-		}).addStyleClass("sapUiColorPicker-Arrow");
 
 		//	label and input field for Hexadecimal value
 		var inpID = this.getId() + '-hxF';
@@ -338,8 +332,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			selectedIndex: (this.Color.formatHSL ? 1 : 0 )
 		});
 		this.oRGBorHSLRBGroup.addStyleClass("sapUiColorPickerHSL-RB");
-
-		this.oRGBorHSLLabel = new sap.ui.commons.Label({ text: "Output:", labelFor: this.oRGBorHSLRBGroup});
 
 		// 1.Horizontal Layout containing Red field
 		this.oHLayout1 = new sap.ui.layout.HorizontalLayout({
@@ -454,7 +446,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		.unbind("mouseup", this.handleMouseUp);
 
 		//	destroy Objects
+		this.oRGBorHSLRBGroup.destroy();
+		this.oRGBorHSLRBGroup = null;
+
+		this.oSatUnits.destroy();
+		this.oSatUnits = null;
+
+		this.oHLayout7a.destroy();
+		this.oHLayout7a = null;
+
+		this.oHLayout7b.destroy();
+		this.oHLayout7b = null;
+
+		this.oHLayout9.destroy();
+		this.oHLayout9 = null;
+
 		this.oMatrix.destroy();
+		this.oMatrix = null;
 	};
 
 
@@ -463,6 +471,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ColorPicker.prototype.onBeforeRendering = function() {
 		if (this.getMode() === "HSL") {
+			if (!this.oArrow) {
+				this.oArrow = new sap.ui.core.Icon({
+					color: "#333",
+					backgroundColor: "transparent",
+					src: "sap-icon://arrow-right",
+					tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
+				}).addStyleClass("sapUiColorPicker-Arrow");
+			}
+
+			if (!this.oRGBorHSLLabel) {
+				this.oRGBorHSLLabel = new sap.ui.commons.Label({ text: "Output:", labelFor: this.oRGBorHSLRBGroup});
+			}
+
 			this.oHLayout8.addContent(this.oHtmlOldCol);
 			this.oHLayout8.addContent(this.oArrow);
 			this.oHLayout8.addContent(this.oHtmlNewCol);
