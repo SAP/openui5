@@ -1915,6 +1915,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aAggregationContent,
 			sAggregationName;
 
+		if (!oHeader) {
+			return;
+		}
+
 		if (oHeader.getContentLeft) {
 			aAggregationContent = oHeader.getContentLeft();
 			sAggregationName = "contentLeft";
@@ -1946,6 +1950,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (!bHidden && !bNoAnim) {
 			oPage = this._getRealPage(oPage);
+
+			if (!oPage) {
+				return;
+			}
+
 			oHeader = oPage._getAnyHeader();
 			if (oHeader /*&& !this._checkCustomHeader(oPage)*/) {
 				var aHeaderContent = SplitContainer._getHeaderButtonAggregation(oPage).aAggregationContent;
