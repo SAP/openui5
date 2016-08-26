@@ -3916,7 +3916,27 @@
 			}});
 		}});
 	});
+	
+	asyncTest("ListBinding: Custom params", function() {
+		expect(6);
 
+		var oModel = initModel(sURI);
+		oModel.metadataLoaded().then(function() {
+			var spy = sinon.spy(oModel, "createCustomParams");
+			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
+				ok(true, "should not break");
+				equals(spy.callCount, 1 , "custom Params created");
+				equals(spy.returnValues[0], "test" , "params created correctly");
+				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":undefined}}, function() {
+					ok(true, "should not break");
+					equals(spy.callCount, 2 , "custom Params created");
+					equals(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
+					oModel.createCustomParams.restore();
+					start();
+				}, true);
+			});
+		});
+	});
 
 	</script>
 

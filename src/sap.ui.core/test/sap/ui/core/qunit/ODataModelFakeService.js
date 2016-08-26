@@ -186,6 +186,10 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "5"],
 			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?test":
+				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?hubel=dubel&test":
+				[200, oJSONHeaders, sCategory1JSON],
 			"ZeroTest(1)":
 				[200, oJSONHeaders, sZeroTest],
 			"Categories(3)":
@@ -261,7 +265,11 @@ xhr.onCreate = function(request) {
 			"Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
 				[200, oXMLHeaders, sFaultTolerance2],
 			"Employees(2)/Employee1":
-				[204, oNodataHeaders, ""]
+				[204, oNodataHeaders, ""],
+			"SpecialHeaders":
+				[204, oSpecialHeaders, ""],
+			"SpecialHeadersError":
+				[500, oSpecialHeaders, ""]
 		},
 		"POST":{
 			//create Entry
@@ -549,7 +557,8 @@ function createBatchResponse(responses, token) {
 
 var oMetaDataHeaders = {
 		"Content-Type": "application/xml;charset=utf-8",
-		"DataServiceVersion": "1.0"
+		"DataServiceVersion": "1.0",
+		"last-modified": "Tue, 15 Nov 1994 12:45:26 GMT"
 	};
 var oNodataHeaders = 	{
 		"DataServiceVersion": "1.0"
@@ -587,7 +596,12 @@ var oCsrfResponseHeaders = 	{
 		"DataServiceVersion": "1.0",
 		"X-CSRF-Token": ""
 	};
-
+var oSpecialHeaders = {
+	"Content-Type": "application/xml;charset=utf-8",
+	"DataServiceVersion": "1.0",
+	"lAsT-mOdIfIeD": "morgen frueh",
+	"X-CuStOm-HeAdEr": "case-sensitive"
+};
 var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
