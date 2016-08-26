@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			/**
 			 * Determines the minimum width of the ResponsiveSplitter(in pixels). When it is reached the pane will be hidden from the screen.
 			*/
-			requiredParentWidth: { type : "int", defaultValue : '800'}
+			requiredParentWidth: { type : "int", defaultValue : 800}
 		},
 		defaultAggregation : "content",
 		aggregations : {
