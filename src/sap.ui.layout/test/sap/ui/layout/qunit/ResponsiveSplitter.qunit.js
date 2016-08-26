@@ -281,6 +281,33 @@
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should not move the focus");
 	});
 
+	QUnit.module("SplitPane API", {
+		beforeEach: function () {
+			this.oSplitPane = new sap.ui.layout.SplitPane();
+		},
+		afterEach: function () {
+			this.oSplitPane.destroy();
+			this.oSplitPane = null;
+		}
+	});
+
+	QUnit.test("Default values", function (assert) {
+		var bDemandPane = this.oSplitPane.getDemandPane(),
+			iRequiredParentWidth = this.oSplitPane.getRequiredParentWidth();
+
+		// demandPane property
+		assert.strictEqual(typeof bDemandPane, "boolean", "The default value of the demandPane " +
+			"property must be of type boolean");
+		assert.ok(bDemandPane, "The default value of the demandPane " +
+			"property should be true");
+
+		// requiredParentWidth property
+		assert.strictEqual(typeof iRequiredParentWidth, "number", "The default value of the " +
+			"requiredParentWidth property must be of type number");
+		assert.strictEqual(iRequiredParentWidth, 800, "The default value of the requiredParentWidth " +
+			"property should be equal to 800")
+	});
+
 	QUnit.module("Aria support", {
 		setup: function () {
 			initSetup.call(this);
