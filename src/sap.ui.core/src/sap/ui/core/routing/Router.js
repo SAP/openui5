@@ -273,9 +273,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 				this._bIsInitialized = true;
 
+				this._bLastHashReplaced = false;
+				this._bHashChangedAfterTitleChange = false;
+
 				this.fnHashChanged = function(oEvent) {
-					that.parse(oEvent.getParameter("newHash"), oEvent.getParameter("oldHash"));
+					that.parse(oEvent.getParameter("newHash"));
+					that._bHashChangedAfterTitleChange = true;
 				};
+
 
 				if (!oHashChanger) {
 					jQuery.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
@@ -287,7 +292,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 				if (this._oTargets) {
 					this._oTargets.attachTitleChanged(function(oEvent) {
 						this.fireTitleChanged(oEvent.getParameters());
-					}.bind(this));
+					}, this);
+
+					this.fnHashReplaced = function() {
+						this._bLastHashReplaced = true;
+					};
+
+					this.oHashChanger.attachEvent("hashReplaced", this.fnHashReplaced, this);
 
 					this._aHistory = [];
 				}
@@ -316,6 +327,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					this.oHashChanger.detachEvent("hashChanged", this.fnHashChanged);
 				}
 
+				if (this.fnHashReplaced) {
+					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
+				}
+
 				this._bIsInitialized = false;
 
 				return this;
@@ -338,6 +353,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 				if (this.fnHashChanged) {
 					this.oHashChanger.detachEvent("hashChanged", this.fnHashChanged);
+				}
+
+				if (this.fnHashReplaced) {
+					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
 				}
 
 				//will remove all the signals attached to the routes - all the routes will not be useable anymore
@@ -799,7 +818,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					sHash = this.oHashChanger.getHash(),
 					bShouldFireEvent = true,
 					HistoryDirection = library.routing.HistoryDirection,
-					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1];
+					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
+					oNewHistoryEntry;
 
 				if (this._sActiveRouteName && this._oTargets) {
 					oActiveRoute = this.getRoute(this._sActiveRouteName);
@@ -819,18 +839,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
 						// if no actual navigation took place, we only need to update the title
 						oLastHistoryEntry.title = mArguments.title;
+
+						// check whether there's a duplicate history entry with the last history entry and remove it if there is
+						this._aHistory.some(function(oEntry, i, aHistory) {
+							if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
+								return aHistory.splice(i, 1);
+							}
+						});
 					} else {
-						// push new history state into the stack
-						this._aHistory.push({
+						if (this._bLastHashReplaced) {
+							// if the current hash change is done via replacement, the last history entry should be removed
+							this._aHistory.pop();
+						}
+
+						oNewHistoryEntry = {
 							hash: sHash,
 							title: mArguments.title
+						};
+						// Array.some is sufficient here, as we ensure there is only one occurence
+						this._aHistory.some(function(oEntry, i, aHistory) {
+							if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
+								return aHistory.splice(i, 1);
+							}
 						});
+
+						// push new history state into the stack
+						this._aHistory.push(oNewHistoryEntry);
 					}
 
 					mArguments.history = this._aHistory.slice(0, -1);
 
 					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
 				}
+
+				this._bLastHashReplaced = false;
 
 				return this;
 			},

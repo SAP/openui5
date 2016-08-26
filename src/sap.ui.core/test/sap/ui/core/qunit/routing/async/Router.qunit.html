@@ -1551,6 +1551,157 @@
 
 			});
 
+		QUnit.test("avoid title history redundancy", function(assert) {
+				// Arrange
+				var oParameters,
+					sHomeTitle = "HOME",
+					sProductTitle = "PRODUCT",
+					sProductDetailTitle = "PRODUCT_DETAIL",
+					fnEventSpy = this.spy(function (oEvent) {
+						oParameters = oEvent.getParameters();
+					});
+
+				this.oRouterConfig = {
+					home: {
+						pattern: "",
+						target: "home"
+					},
+					product : {
+						pattern : "product",
+						target: "product"
+					},
+					productDetail : {
+						pattern : "productDetail",
+						target: "productDetail"
+					}
+				};
+
+				this.oTargetConfig = {
+					home: {
+						title: sHomeTitle
+					},
+					product: {
+						title: sProductTitle
+					},
+					productDetail: {
+						title: sProductDetailTitle
+					}
+				};
+				this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+				this.oRouter.attachTitleChanged(fnEventSpy);
+
+				// Act
+				this.oRouter.initialize();
+
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [], "history state is currently empty");
+
+				// Act
+				this.oRouter.navTo("product");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [{
+					hash: "",
+					title: sHomeTitle
+				}], "history state is correctly updated");
+
+				// Act
+				this.oRouter.navTo("productDetail");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+				assert.equal(oParameters.history.length, 2, "history was updated only once");
+				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+					hash: "product",
+					title: sProductTitle
+				}, "history state is correctly updated");
+
+				// Act
+				this.oRouter.navTo("home");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+				assert.equal(oParameters.history.length, 2, "history was updated only once");
+				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+					hash: "productDetail",
+					title: sProductDetailTitle
+				}, "history state is correctly updated");
+		});
+
+		QUnit.test("Replace the last history instead of inserting new one when hash is replaced", function(assert) {
+				// Arrange
+				var oParameters,
+					sHomeTitle = "HOME",
+					sProductTitle = "PRODUCT",
+					sProductDetailTitle = "PRODUCT_DETAIL",
+					fnEventSpy = this.spy(function (oEvent) {
+						oParameters = oEvent.getParameters();
+					});
+
+				this.oRouterConfig = {
+					home: {
+						pattern: "",
+						target: "home"
+					},
+					product : {
+						pattern : "product",
+						target: "product"
+					},
+					productDetail : {
+						pattern : "productDetail",
+						target: "productDetail"
+					}
+				};
+
+				this.oTargetConfig = {
+					home: {
+						title: sHomeTitle
+					},
+					product: {
+						title: sProductTitle
+					},
+					productDetail: {
+						title: sProductDetailTitle
+					}
+				};
+				this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+				this.oRouter.attachTitleChanged(fnEventSpy);
+
+				// Act
+				this.oRouter.initialize();
+
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [], "history state is currently empty");
+
+				// Act
+				this.oRouter.navTo("product");
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history, [{
+					hash: "",
+					title: sHomeTitle
+				}], "history state is correctly updated");
+
+				// Act
+				this.oRouter.navTo("productDetail", null, true);
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+				assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+				assert.equal(oParameters.history.length, 1, "history was updated only once");
+				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+					hash: "",
+					title: sHomeTitle
+				}, "history state is correctly updated");
+		});
+
 			QUnit.test("titleChanged event is fired before next navigation shouldn't create new history entry", function(assert) {
 				// Arrange
 				var oParameters,
