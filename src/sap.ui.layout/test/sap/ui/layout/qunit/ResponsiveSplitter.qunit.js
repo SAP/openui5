@@ -295,9 +295,22 @@
 				})]
 			});
 
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+			sinon.stub(this.oResourceBundle, "getText")
+				.withArgs("RESPONSIVE_SPLITTER_RESIZE").returns("Resize split screen between pane")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", [1, 2]).returns("1 and pane 2")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", [2, 3]).returns("2 and pane 3")
+				.withArgs("RESPONSIVE_SPLITTER_PANES", ["3.1", "3.2"]).returns("3.1 and pane 3.2")
+				.withArgs("RESPONSIVE_SPLITTER_HOME").returns("Go to split screen")
+				.withArgs("RESPONSIVE_SPLITTER_AND").returns("and")
+				.withArgs("RESPONSIVE_SPLITTER_GOTO").returns("Go to screen")
+				.withArgs("RESPONSIVESPLITTER_ARIA_PAGINATOR_LABEL").returns("Pane Switcher");
+
+
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
 			sap.ui.getCore().applyChanges();
 		}, teardown: function () {
+			this.oResourceBundle.getText.restore();
 			this.oScrollContainer.destroy();
 		}
 	});
@@ -305,23 +318,16 @@
 	QUnit.test("SplitterBars' tooltip", function (assert) {
 		var aSplitterBars = this.oResponsiveSplitter.$().find(".sapUiLoSplitterBar");
 
-		//TODO: find a better way to handle i18n strings
-		// assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize split screen between pane 1 and pane 2");
-		// assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize split screen between pane 2 and pane 3");
-		// assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize split screen between pane 3.1 and pane 3.2");
-		assert.ok(aSplitterBars[0].getAttribute("title").length, "Split screen text 1");
-		assert.ok(aSplitterBars[1].getAttribute("title").length, "Split screen text 2");
-		assert.ok(aSplitterBars[2].getAttribute("title").length, "Split screen text 3");
+		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize split screen between pane 1 and pane 2");
+		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize split screen between pane 2 and pane 3");
+		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize split screen between pane 3.1 and pane 3.2");
 	});
 
 	QUnit.test("Paginator button's tooltip", function (assert) {
 		var aPaginationButtons = this.oResponsiveSplitter._getVisibleButtons();
 
-		//TODO: find a better way to handle i18n strings
-		// assert.strictEqual(aPaginationButtons[0].getAttribute("title"), "Go to split screen 1, 2 and 3");
-		// assert.strictEqual(aPaginationButtons[1].getAttribute("title"), "Go to screen 4");
-		assert.ok(aPaginationButtons[0].getAttribute("title").length, "Title 1 text");
-		assert.ok(aPaginationButtons[1].getAttribute("title").length, "Title 2 text");
+		assert.strictEqual(aPaginationButtons[0].getAttribute("title"), "Go to split screen 1, 2 and 3");
+		assert.strictEqual(aPaginationButtons[1].getAttribute("title"), "Go to screen 4");
 	});
 
 	QUnit.test("Container of Paginator", function (assert) {
@@ -339,9 +345,7 @@
 			sLabel = "Pane Switcher";
 
 		assert.equal(oSplitterPaginatorItems.attr("role"), sRole, "Paginator role is" + sRole);
-		//TODO: find a better way to handle i18n strings
-		// assert.equal(oSplitterPaginatorItems.attr("aria-label"), sLabel, "Paginator aria-label is " + sLabel);
-		assert.ok(oSplitterPaginatorItems.attr("aria-label").length, "Paginator aria-label is available");
+		assert.equal(oSplitterPaginatorItems.attr("aria-label"), sLabel, "Paginator aria-label is " + sLabel);
 		assert.equal(oContainerPages.length > 0, true, "Paginator aria-controls is " + sContainerId);
 	});
 
