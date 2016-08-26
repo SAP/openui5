@@ -58,19 +58,20 @@ sap.ui.define([
 						});
 					},
 
-					theEditButtonHelper  : function (bState) {
+					theEditButtonHelper  : function (bIsEnabled) {
 						var sErrorMessage = "The edit button is enabled";
 						var sSuccessMessage = "The edit button is disabled";
-						if (bState) {
+						if (bIsEnabled) {
 							sErrorMessage = "The edit button is disabled";
 							sSuccessMessage = "The edit button is enabled";
 						}
 						return this.waitFor({
 							controlType : "sap.m.Button",
+							autoWait: bIsEnabled,
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://edit"}),
 							success : function (aButtons) {
 								Opa5.assert.strictEqual(
-									aButtons[0].getEnabled(), bState, sSuccessMessage
+									aButtons[0].getEnabled(), bIsEnabled, sSuccessMessage
 								);
 							},
 							errorMessage : sErrorMessage
