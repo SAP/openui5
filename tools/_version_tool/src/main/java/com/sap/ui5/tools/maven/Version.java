@@ -88,6 +88,14 @@ public class Version {
     return ops;
   }
   
+  public Version previousMinor(){	  
+	  return new Version(major, minor - 2, 0, null);
+  }
+  
+  public Version nextMinorSnapshot(){
+	  return new Version(major, minor + 1, 0, SNAPSHOT_SUFFIX);
+  }
+  
   public Version nextVersion(ReleaseOperation op) {
 
     int newMajor = major;
