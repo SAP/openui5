@@ -11,7 +11,8 @@ sap.ui.define([
 			arrangements : new Arrangement(),
 			actions : new BuyProductJourneyAction(),
 			assertions : new BuyProductJourneyAssertion(),
-			viewNamespace : "sap.ui.demo.cart.view."
+			viewNamespace : "sap.ui.demo.cart.view.",
+			autoWait: true
 		});
 
 	}
