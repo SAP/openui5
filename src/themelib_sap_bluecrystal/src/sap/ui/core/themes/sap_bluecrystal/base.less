@@ -593,18 +593,18 @@
 // [Tags "Base", "Toolbar", "Color"]
 @sapToolbar_SeparatorColor: @sapDarkBorderColor;
 
-// [Label "List Header Background Color"]
-// [Description "The background color of the header area of lists."]
+// [Label "List Column Header Background Color"]
+// [Description "The background color of the column header area of lists."]
 // [Tags "Base", "List", "Color"]
 @sapList_HeaderBackground: lighten(@sapExtraLightBackground,2);
 
-// [Label "List Header Border Color"]
-// [Description "The color of the borders of the list header area."]
+// [Label "List Column Header Border Color"]
+// [Description "The color of the borders of the list column header area."]
 // [Tags "Base", "List", "Color"]
 @sapList_HeaderBorderColor: @sapList_BorderColor;
 
-// [Label "List Header Text Color"]
-// [Description "The color of texts on the list header area."]
+// [Label "List Column Header Text Color"]
+// [Description "The color of texts on the list column header area."]
 // [Tags "Base", "List", "Color", "Font"]
 @sapList_HeaderTextColor: contrast(@sapList_HeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
@@ -732,7 +732,7 @@
 // [Label "Tile Icon Color"]
 // [Description "The color of icons on tiles."]
 // [Tags "Base", "Content", "Color"]
-@sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+@sapTile_IconColor: contrast(@sapTile_Background, @sapHighlightColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
