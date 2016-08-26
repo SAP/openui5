@@ -78,7 +78,6 @@ sap.ui.define([
 	}
 
 	function internalEmpty (deferred) {
-		var iInitialDelay = Device.browser.msie ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
@@ -92,7 +91,7 @@ sap.ui.define([
 		// I don't have a proper explanation for this.
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
-		}, iInitialDelay);
+		}, Opa.config.executionDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
@@ -267,6 +266,22 @@ sap.ui.define([
 		Opa.config = $.extend(Opa.config, options);
 	};
 
+	var iExecutionDelay, sExecutionDelayFromUrl = $.sap.getUriParameters().get("opaExecutionDelay");
+
+	if (sExecutionDelayFromUrl){
+		iExecutionDelay = parseInt(sExecutionDelayFromUrl, 10);
+	}
+
+	if (!iExecutionDelay) {
+		if (Device.browser.msie) {
+			iExecutionDelay = 50;
+		} else {
+			iExecutionDelay = 0;
+		}
+	}
+
+
+
 	/**
 	 * Reset Opa.config to its default values.
 	 * All of the global values can be overwritten in an individual waitFor call.
@@ -278,6 +293,14 @@ sap.ui.define([
 	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * 		<li>
+	 * 			executionDelay: 0 or 50 (depending on the browser) or coming from an URL parameter opaExecutionDelay.
+	 * 			The URL parameter takes priority over the browser value. The value is a number representing milliseconds.
+	 * 			The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
+	 * 			This does not effect the polling interval it just adds an initial pause.
+	 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
+	 * 			It is not recommended to use this parameter in any automated test executions.
+	 * 		</li>
 	 * </ul>
 	 *
 	 * @public
@@ -288,6 +311,7 @@ sap.ui.define([
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
+			executionDelay : iExecutionDelay,
 			timeout : 15,
 			pollingInterval : 400,
 			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
