@@ -28,6 +28,11 @@
 
 			QUnit.module("Test the App");
 
+			Opa5.extendConfig({
+				viewNamespace: "view.",
+				autoWait : true
+			});
+
 			opaTest("Pressing the load button shall will populate the list with products", function (Given, When, Then) {
 
 				// Arrange
@@ -35,7 +40,7 @@
 
 				// Act
 				When.waitFor({
-					viewName: "view.Main",
+					viewName: "Main",
 					controlType: "sap.m.Button",
 					matchers: new I18NText({
 						propertyName : "text",
@@ -47,7 +52,7 @@
 
 				// Assert
 				Then.waitFor({
-					viewName: "view.Main",
+					viewName: "Main",
 					controlType: "sap.m.Title",
 					matchers: new I18NText({
 						propertyName : "text",

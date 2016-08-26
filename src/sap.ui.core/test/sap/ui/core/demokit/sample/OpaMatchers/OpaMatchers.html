@@ -23,13 +23,18 @@
 			], function (Opa5, opaTest, PropertyStrictEquals, Properties, Ancestor) {
 				QUnit.module("Matchers");
 
+				Opa5.extendConfig({
+					viewNamespace: "appUnderTest.view.",
+					autoWait : true
+				});
+
 				opaTest("Should find a Button with a matching property", function(Given, When, Then) {
 
 					// Act
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 					When.waitFor({
-						viewName : "appUnderTest.view.Main",
+						viewName : "Main",
 						controlType : "sap.m.Button",
 						matchers : new PropertyStrictEquals({name : "text", value : "Changed text"}),
 						success : function (aButtons) {
@@ -56,7 +61,7 @@
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 					When.waitFor({
-						viewName : "appUnderTest.view.Main",
+						viewName : "Main",
 						controlType : "sap.m.Bar",
 						// inline-matcher directly as function
 						matchers : function(oControl) {
@@ -67,7 +72,7 @@
 
 							// nested waitFor
 							this.waitFor({
-								viewName : "appUnderTest.view.Main",
+								viewName : "Main",
 								controlType : "sap.m.Button",
 								matchers : [
 									// Properties matcher takes an object containing a properties to match as a parameter:

@@ -28,6 +28,11 @@
 
 				QUnit.module("Binding Path");
 
+				Opa5.extendConfig({
+					viewNamespace: "view.",
+					autoWait : true
+				});
+
 				opaTest("Should match the binding path for selected item", function (Given, When, Then) {
 
 					// Arrange
@@ -36,7 +41,7 @@
 					// Act
 					When.waitFor({
 						id: "productList",
-						viewName: "view.Main",
+						viewName: "Main",
 						matchers: new AggregationFilled({ name : "items" }),
 						success: function (oList) {
 							oList.setSelectedItem(oList.getItems()[0]);

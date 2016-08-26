@@ -24,25 +24,34 @@
 
 			sap.ui.require([
 				'sap/ui/test/opaQunit',
-				'sap/ui/test/Opa5'
-			], function (opaTest, Opa5) {
+				'sap/ui/test/Opa5',
+				'sap/ui/test/matchers/AggregationFilled'
+			], function (opaTest, Opa5, AggregationFilled) {
+				Opa5.extendConfig({
+					viewNamespace : "view.",
+					autoWait : true
+				});
 
 				QUnit.module("iStartMyAppInAFrame");
 
 				opaTest("Should start and teardown an app in a frame", function (Given, When, Then) {
-					var done = assert.async();
 
 					// Arrangements
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html").done(function(){
 						assert.ok(document.getElementById("OpaFrame"), "The frame was loaded");
 					});
 
-					// Assertions
-					Then.iTeardownMyAppFrame().done(function(){
-						assert.ok(!document.getElementById("OpaFrame"), "The frame was removed");
-						Opa5.emptyQueue();
-						done();
-					});
+					// execute your tests
+					Then.waitFor({
+						viewName: "Main",
+						id: "productList",
+						matchers: new AggregationFilled({ name: "items" }),
+						success: function () {
+							Opa5.assert.ok(true, "The List was visible");
+						}
+					}).
+					// Removes the component again
+					and.iTeardownMyApp();
 
 				});
 
