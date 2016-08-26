@@ -4219,10 +4219,9 @@
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
 
-		oMultiComboBox.focus();
 		oMultiComboBox.open();
-		this.clock.tick(500);
 
 		oMultiComboBox.setSelectedItems([oItem]);
 		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
@@ -4231,6 +4230,7 @@
 
 		// cleanup
 		oMultiComboBox.destroy();
+		this.clock.reset();
 	});
 
 	module("Accessibility");
