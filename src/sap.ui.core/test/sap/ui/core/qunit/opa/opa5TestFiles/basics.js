@@ -37,12 +37,31 @@ sap.ui.define([
 		assert.ok(Opa.config.arrangements instanceof Opa5, "assertions is an Opa5");
 	});
 
-	QUnit.test("Should have the correct defaults", function (assert) {
+	function assertDefaults (assert) {
+		assert.ok(!Opa.config.autoWait, "autoWait is false");
 		assert.strictEqual(Opa.config.viewNamespace, "", "namespace is correct");
-		assert.strictEqual(Opa.config.visible, true, "visible is set");
+		assert.ok(Opa.config.visible, "visible is set");
 		assert.strictEqual(Opa.config._stackDropCount, 1, "stack is cutting an additional level since OPA5 wraps waitFor");
 		assert.strictEqual(Opa.config.timeout, 15, "timeout is 15 sec");
 		assert.strictEqual(Opa.config.pollingInterval, 400, "polling is done every 400 ms");
+	}
+
+	QUnit.test("Should have the correct defaults", function (assert) {
+		assertDefaults(assert);
+	});
+
+	QUnit.test("Should reset to the defaults", function (assert) {
+		Opa5.extendConfig({
+			autoWait: true,
+			viewNamespace: "something",
+			visible: false,
+			_stackDropCount: 500,
+			timeout: 500,
+			pollingInterval: 500
+		});
+
+		Opa5.resetConfig();
+		assertDefaults(assert);
 	});
 
 	QUnit.test("Should replace the OPA5 instances but keep their own functions and properties", function (assert) {
