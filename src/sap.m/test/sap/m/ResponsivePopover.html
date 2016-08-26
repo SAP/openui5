@@ -135,7 +135,7 @@
 
 			var oInvisibleText = new sap.ui.core.InvisibleText({text: "I have a hidden label"});
 
-			var oResponsivePopover = new sap.m.ResponsivePopover({
+			var oResponsivePopover = new sap.m.ResponsivePopover("popoverBottom", {
 				placement: sap.m.PlacementType.Bottom,
 				title: "I'm Responsive now",
 				showHeader: true,
@@ -163,7 +163,7 @@
 			//uncomment this line when padding is needed in the content area
 			//oResponsivePopover.addStyleClass("sapUiPopupWithPadding");
 
-			var oButton = new sap.m.Button({
+			var oButton = new sap.m.Button("btnPopoverBottom", {
 				text : "Popover Bottom",
 				press : function() {
 					oResponsivePopover.openBy(this);
@@ -179,7 +179,7 @@
 			/*=======================================================================*/
 
 			//begin: create the list
-			var oList1 = new sap.m.List({
+			var oList1 = new sap.m.List("listInPopover", {
 			});
 			//end: create the list
 
@@ -238,14 +238,14 @@
 
 			oNavContainer.addPage(oPage1).addPage(oPage2);
 
-			var oButton1 = new sap.m.Button({
+			var oButton1 = new sap.m.Button("btnPopoverWithNavContainer", {
 				text: "NavContainer as Content",
 				press: function(){
 					oResponsivePopover1.openBy(this);
 				}
 			});
 
-			var oResponsivePopover1 = new sap.m.ResponsivePopover({
+			var oResponsivePopover1 = new sap.m.ResponsivePopover("popoverWithNavContainer", {
 				placement: sap.m.PlacementType.Bottom,
 				title: "I'm adaptive now",
 				showHeader: false,
@@ -277,7 +277,7 @@
 				to the navcontainer.
 			*/
 
-			var oButton2 = new sap.m.Button({
+			var oButton2 = new sap.m.Button("btnPopoverHeader", {
 				text: "Header in Popover",
 				press: function(){
 					oResponsivePopover2.openBy(this);
@@ -289,7 +289,7 @@
 				showNavButton: false,
 				showHeader: false,
 				content: [
-					new sap.m.Button({
+					new sap.m.Button("btnNextPage", {
 						text: "Next Page",
 						press: function(){
 							oNavContainer1.to("detailPage1");
@@ -314,7 +314,7 @@
 				pages: [oPage3, oPage4]
 			});
 
-			var oResponsivePopover2 = new sap.m.ResponsivePopover({
+			var oResponsivePopover2 = new sap.m.ResponsivePopover("popoverHeader", {
 				placement: sap.m.PlacementType.Bottom,
 				customHeader: new sap.m.Bar({
 					contentMiddle: new sap.m.Label({
