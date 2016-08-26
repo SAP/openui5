@@ -42,10 +42,6 @@
 			}
 		}
 
-		function jQueryVersionChanged(e) {
-			testfwk.setJQueryVersion(Combo_getValueAsKey(e.getSource()));
-		}
-
 		function checkTouchEventsHint(sUrl, sTheme, sLib) {
 			if (sLib === "sap.m" && !jQuery.support.touch && !sap.ui.getCore().byId("chkSimulateTouch").getChecked()) {
 				var oTouchWarning = new sap.ui.commons.Message({text:"Enable touch events here!",type:sap.ui.commons.MessageType.Warning});
@@ -139,11 +135,6 @@
 			oLayout.createRow(oLabel, oCheckBox);
 
 			testfwk.attachContentWillChange(checkTouchEventsHint);
-
-			oLabel = new sap.ui.commons.Label({text:'jQuery Version', labelFor:'jQueryCombo'});
-			oCombo = Combo_create("jQueryCombo", testfwk.JQUERY_VERSIONS, testfwk.getJQueryVersion());
-			oCombo.attachChange(jQueryVersionChanged);
-			oLayout.createRow(oLabel, oCombo);
 
 			sap.ui.setRoot("uiArea1", oLayout);
 
