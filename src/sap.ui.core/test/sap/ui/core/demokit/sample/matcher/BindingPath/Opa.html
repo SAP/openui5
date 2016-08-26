@@ -1,16 +1,13 @@
 <!DOCTYPE HTML>
 <html>
-
 	<head>
-
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Opa sample for binding path matcher</title>
-
-		<script id="sap-ui-bootstrap"
-		        src="../../../../../../../../resources/sap-ui-core.js"
-		        data-sap-ui-libs="sap.m">
+		<title>Opa Sample for Binding Path Matcher</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
 		</script>
-
 		<script>
 
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
@@ -27,14 +24,16 @@
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/Opa5'
 			], function (BindingPath, AggregationFilled, opaTest, Opa5) {
+				"use strict";
 
 				QUnit.module("Binding Path");
 
 				opaTest("Should match the binding path for selected item", function (Given, When, Then) {
-					// Arrangements
-					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
-					//Actions
+					// Arrange
+					Given.iStartMyAppInAFrame("webapp/index.html");
+
+					// Act
 					When.waitFor({
 						id: "productList",
 						viewName: "view.Main",
@@ -45,7 +44,7 @@
 						errorMessage: "Could not select the first item"
 					});
 
-					// Assertions
+					// Assert
 					Then.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers: new BindingPath({path: "/ProductCollection/0"}),
@@ -63,20 +62,16 @@
 					if (QUnit.config.noglobals) {
 						Then.iTeardownMyAppFrame();
 					}
-
 				});
+
 				QUnit.start();
 
 			});
 
 		</script>
-
 	</head>
-
 	<body>
-
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
-
 	</body>
 </html>
