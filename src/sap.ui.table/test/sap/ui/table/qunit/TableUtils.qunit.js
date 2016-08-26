@@ -612,6 +612,15 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 	}
 });
 
+QUnit.test("sanitizeSelectionMode", function(assert) {
+	var SM = sap.ui.table.SelectionMode;
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.None), SM.None, "SelectionMode None");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Single), SM.Single, "SelectionMode Single");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.MultiToggle), SM.MultiToggle, "SelectionMode MultiToggle");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Multi), SM.MultiToggle, "SelectionMode Multi");
+	assert.equal(TableUtils.sanitizeSelectionMode({_enableLegacyMultiSelection: true}, SM.Multi), SM.MultiToggle, "SelectionMode Multi (legacy)");
+});
+
 QUnit.module("TableUtils", {
 	setup: function() {
 		jQuery(document.body).toggleClass("sapUiSizeCozy", true);

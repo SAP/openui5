@@ -684,6 +684,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			sContentDensity = fnGetContentDensity("hasClass", $DomRef.closest("." + aContentDensityStyleClasses.join(",.")));
 
 			return sContentDensity;
+		},
+
+		/**
+		 * Checks and returns an adapted selection mode (e.g. changes deprecated mode "Multi" to "MultiToggle") if necessary.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {string} sSelectionMode the <code>sap.ui.table.SelectionMode</code>
+		 * @returns {string} the sanitized <code>sap.ui.table.SelectionMode</code>
+		 * @private
+		 */
+		sanitizeSelectionMode: function(oTable, sSelectionMode) {
+			if (sSelectionMode === SelectionMode.Multi) {
+				sSelectionMode = SelectionMode.MultiToggle;
+				jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
+			}
+			return sSelectionMode;
 		}
 	};
 
