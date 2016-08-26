@@ -1754,12 +1754,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @override
 		 */
 		ViewSettingsPopover.prototype.getDomRef = function (sSuffix) {
-			return this._getPopover().getAggregation("_popup").getDomRef(sSuffix);
+			return this._popover && this._popover.getAggregation("_popup").getDomRef(sSuffix);
 		};
 
 		//ToDo: this is taken from MessagePopover, but those auto generated methods are not having doc blocks this way - check if it's ok
 		// proxy several methods to the inner popover instance
-		["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
+		["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
 			ViewSettingsPopover.prototype[sName] = function() {
 				if (this._getPopover()[sName]) {
 					var res = this._getPopover()[sName].apply(this._getPopover() ,arguments);
@@ -1790,12 +1790,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			if (this._popover) {
-				this._popover.destroyAggregation("content", true);
-				this._popover.destroyAggregation("customHeader", true);
-				this._popover.destroyAggregation("subHeader", true);
-				this._popover.destroyAggregation("beginButton", true);
-				this._popover.destroyAggregation("endButton", true);
-				this._popover.destroyAggregation("_popup", true);
 				this._popover.destroy();
 				this._popover = null;
 			}
