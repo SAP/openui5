@@ -36,9 +36,10 @@ sap.ui.define([
 		fnCheck();
 
 		function fnCheck () {
+			var oResult;
 			oLogCollector.getAndClearLog();
 			try {
-				var oResult = fnCallback();
+				oResult = fnCallback();
 			} catch (oError) {
 				oDeferred.reject(oOptions, oError);
 				throw oError;
@@ -94,12 +95,12 @@ sap.ui.define([
 		}, iInitialDelay);
 	}
 
-	function ensureNewlyAddedWaitForStatementsPrepended (iPreviousQueueLength, nestedInOptions){
-		var iNewWaitForsCount = queue.length - iPreviousQueueLength;
+	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
+		var iNewWaitForsCount = oWaitForCounter.get();
 		if (iNewWaitForsCount) {
-			var aNewWaitFors = queue.splice(iPreviousQueueLength, iNewWaitForsCount);
+			var aNewWaitFors = queue.splice(queue.length - iNewWaitForsCount, iNewWaitForsCount);
 			aNewWaitFors.forEach(function(queueElement) {
-				queueElement.options._nestedIn = nestedInOptions;
+				queueElement.options._nestedIn = oNestedInOptions;
 			});
 			queue = aNewWaitFors.concat(queue);
 		}
@@ -370,7 +371,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Opa.stopQueue = function stopQueue () {
-		return Opa._stopQueue(true);
+		Opa._stopQueue(true);
 	};
 
 	Opa._stopQueue = function (bStoppedManually) {
@@ -420,14 +421,16 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {object} options These contain check, success and error functions
-		 * @param {int} [oOptions.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
-		 * @param {int} [oOptions.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {function} [options.check] Will get invoked in every polling interval.
+		 * If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in the check will not change the first parameter of success.
-		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined,
-		 * it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements
-		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+		 * @param {function} [options.success] Will get invoked after the check function returns true.
+		 * If there is no check function defined, it will be directly invoked.
+		 * waitFor statements added in the success handler will be executed before previously added waitFor statements.
+		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa is QUnit.
 		 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -468,12 +471,12 @@ sap.ui.define([
 
 					if (bResult) {
 						if (options.success) {
-							var iCurrentQueueLength = queue.length;
+							var oWaitForCounter = Opa._getWaitForCounter();
 							// do not catch here, there is another catch around the whole function
 							try {
 								options.success.apply(this, arguments);
 							} finally {
-								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
+								ensureNewlyAddedWaitForStatementsPrepended(oWaitForCounter, options);
 							}
 						}
 						deferred.resolve();
