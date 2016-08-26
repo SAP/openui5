@@ -67,7 +67,7 @@ sap.ui.define([
 				try {
 					oOptions.error(oOptions, oResult.arguments);
 				} finally {
-					oDeferred.reject(oOptions, oResult.arguments);
+					oDeferred.reject(oOptions);
 				}
 				return;
 			}
