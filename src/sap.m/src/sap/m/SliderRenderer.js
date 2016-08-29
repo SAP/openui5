@@ -151,8 +151,8 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		SliderRenderer.renderTooltip = function(oRm, oSlider, bInput) {
-			if (bInput) {
-				oRm.renderControl(oSlider._oInputTooltip);
+			if (bInput && oSlider._oInputTooltip) {
+				oRm.renderControl(oSlider._oInputTooltip.tooltip);
 			} else {
 				oRm.write("<span");
 				oRm.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");

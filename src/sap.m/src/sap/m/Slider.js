@@ -365,7 +365,8 @@ sap.ui.define([
 		Slider.prototype._updateAdvancedTooltipDom = function (sNewValue) {
 			var bInputTooltips = this.getInputsAsTooltips(),
 				oTooltipsContainer = this.getDomRef("TooltipsContainer"),
-				oTooltip = bInputTooltips ? this._oInputTooltip : this.getDomRef("Tooltip"),
+				oTooltip = bInputTooltips && this._oInputTooltip ?
+					this._oInputTooltip.tooltip : this.getDomRef("Tooltip"),
 				sAdjustProperty = this._bRTL ? "right" : "left";
 
 			if (!bInputTooltips) {
@@ -531,8 +532,19 @@ sap.ui.define([
 			this._ariaUpdateDelay = [];
 		};
 
-		Slider.prototype.onBeforeRendering = function() {
+		Slider.prototype.exit = function () {
+			if (this._oInputTooltip) {
+				this._oInputTooltip.label.destroy();
+				this._oInputTooltip.label = null;
 
+				this._oInputTooltip.tooltip.destroy();
+				this._oInputTooltip.tooltip = null;
+
+				this._oInputTooltip = null;
+			}
+		};
+
+		Slider.prototype.onBeforeRendering = function() {
 			var bError = this._validateProperties(),
 				aAbsRange = [Math.abs(this.getMin()), Math.abs(this.getMax())],
 				iRangeIndex = aAbsRange[0] > aAbsRange[1] ? 0 : 1;
@@ -554,9 +566,12 @@ sap.ui.define([
 				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
 			}
 
-			if (this.getInputsAsTooltips()) {
+			if (this.getInputsAsTooltips() && !this._oInputTooltip) {
 				var oSliderLabel = new InvisibleText({text: this._oResourceBundle.getText("SLIDER_HANDLE")});
-				this._oInputTooltip = this._createInputField("Tooltip", oSliderLabel);
+				this._oInputTooltip = {
+					tooltip: this._createInputField("Tooltip", oSliderLabel),
+					label: oSliderLabel
+				};
 			}
 		};
 
