@@ -201,6 +201,16 @@ sap.ui.define([
 		return this;
 	};
 
+	DynamicPage.prototype.setHeaderAlwaysExpanded = function (bHeaderAlwaysExpanded) {
+		var vResult = this.setProperty("headerAlwaysExpanded", bHeaderAlwaysExpanded, false);
+
+		if (bHeaderAlwaysExpanded) {
+			this.setProperty("headerExpanded", true, true);
+		}
+
+		return vResult;
+	};
+
 	DynamicPage.prototype.getScrollDelegate = function () {
 		return this._oScrollHelper;
 	};
