@@ -51,6 +51,7 @@
 		<branch></branch>
 		<version></version>
 		<versionAlias></versionAlias>
+		<reuseActiveVersion>false</reuseActiveVersion>
 		<overrideAuthMethod></overrideAuthMethod>
 		<ignoreSnapshots>true</ignoreSnapshots>
 
@@ -206,6 +207,7 @@
 							<goal>helium-multiversion</goal>
 						</goals>
 						<configuration>
+							<reuseActiveVersion>${reuseActiveVersion}</reuseActiveVersion>
 							<overrideAuthenticationMethod>${overrideAuthMethod}</overrideAuthenticationMethod>
 							<ignoreSnapshots>${ignoreSnapshots}</ignoreSnapshots>
 							<skip>${skipMultiVersion}</skip>
