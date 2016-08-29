@@ -85,6 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		} else {
 			this.setProperty("linebreak", bLinebreak);
 		}
+		return this;
 	};
 
 	ResponsiveFlowLayoutData.prototype.setLinebreakable = function(bLinebreakable) {
@@ -96,6 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 			this.setProperty("linebreakable", bLinebreakable);
 			// this.setMinWidth(0);
 		}
+		return this;
 	};
 
 	return ResponsiveFlowLayoutData;
