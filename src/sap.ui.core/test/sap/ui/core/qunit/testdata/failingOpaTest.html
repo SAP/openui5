@@ -89,7 +89,15 @@
 						});
 					});
 
-					QUnit.module("Exceptions");
+					QUnit.module("Exceptions", {
+						beforeEach: function () {
+							this.fnOriginal = window.onerror;
+							window.onerror = $.noop();
+						},
+						afterEach: function () {
+							window.onerror = this.fnOriginal;
+						}
+					});
 
 					opaTest("Should show an error thrown by a check", function (oOpa) {
 						oOpa.waitFor({
