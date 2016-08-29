@@ -645,8 +645,8 @@ sap.ui.require([
 		setTimeout(function () {
 			oOpa.waitFor({});
 			assert.strictEqual(oCounter.get(), 2, "waitFors has been added after some time has passed");
-			fnTimeoutDone();
 			Opa.stopQueue();
+			fnTimeoutDone();
 		}, 50);
 	});
 
@@ -659,7 +659,6 @@ sap.ui.require([
 		Opa.stopQueue();
 
 		assert.strictEqual(oCounter.get(), 0, "first waitFor added");
-
 	});
 
 	QUnit.module("waitFor counts", {
