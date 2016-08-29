@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Text, HTML, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer'],
+	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer) {
 	"use strict";
 
 	/**
@@ -95,6 +95,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 * The event is fired when the user chooses the tile.
 				 */
 				"press" : {}
+			}
+		},
+		renderer : function (oRm, oControl) {
+			if (oControl.getMode() === library.GenericTileMode.LineMode) {
+				LineModeRenderer.render(oRm, oControl);
+			} else {
+				GenericTileRenderer.render(oRm, oControl);
 			}
 		}
 	});
@@ -264,7 +271,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			}
 
 			if (uri) {
-				this._oImage = sap.ui.core.IconPool.createControlByURI({
+				this._oImage = IconPool.createControlByURI({
 					id : this.getId() + "-icon-image",
 					src : uri
 				}, sap.m.Image);

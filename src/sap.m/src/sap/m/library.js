@@ -974,7 +974,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Header mode (Four lines for the header and one line for the subtitle).
 		 * @public
 		 */
-		HeaderMode : "HeaderMode"
+		HeaderMode : "HeaderMode",
+		/**
+		 * Line mode (Only header and subtitle is rendered in one line).
+		 * @since 1.44.0
+		 * @public
+		 */
+		LineMode : "LineMode"
 	};
 
 	/**

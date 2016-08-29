@@ -395,6 +395,30 @@
 		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed.");
 	});
 
+	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.m.GenericTileLineModeRenderer, "render");
+		// Act
+		this.oGenericTile.setMode("LineMode");
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(oSpy.calledOnce, "GenericTileLineModeRenderer called");
+		//Restore
+		oSpy.restore();
+	});
+
+	QUnit.test("GenericTileRenderer called for HeaderMode", function(assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.m.GenericTileRenderer, "render");
+		// Act
+		this.oGenericTile.setMode("HeaderMode");
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(oSpy.calledOnce, "GenericTileRenderer called");
+		//Restore
+		oSpy.restore();
+	});
+
 	/* --------------------------------------- */
 	/* Test internal methods                   */
 	/* --------------------------------------- */
