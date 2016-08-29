@@ -21,16 +21,19 @@ jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 sinon.config.useFakeTimers = true;
 QUnit.config.autostart = false;
+// needed for tests that unload OPA
+QUnit.config.reorder = false;
 
-sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerInterceptor) {
+sap.ui.require(["jquery.sap.global","unitTests/utils/loggerInterceptor"], function ($, loggerInterceptor) {
 	"use strict";
+
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading
 	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
-	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
+	var iExecutionDelay = Opa.config.executionDelay;
 
 	QUnit.module("context");
 
@@ -43,7 +46,11 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
 	});
 
-	QUnit.module("waitFor");
+	QUnit.module("waitFor", {
+		afterEach: function () {
+			Opa.resetConfig();
+		}
+	});
 
 	test("Should wait for something", function() {
 		// Arrange
@@ -111,7 +118,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		});
 
 		Opa.emptyQueue();
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
 	});
 
 	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
@@ -211,9 +218,9 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
 
 		// 2 wait fors and an empty queue - 3 times initial delay
-		this.clock.tick(iInitialDelay);
-		this.clock.tick(iInitialDelay);
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
 
 		this.clock.tick(1000);
 		strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
@@ -232,6 +239,37 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		//clean the queue
 		this.clock.tick(100);
 		strictEqual(oDoneSpy.callCount, 1, "Did clear all waitFors");
+	});
+
+	QUnit.test("Should slow down the execution of OPA", function (assert) {
+		var oOpa = new Opa(),
+			fnFirstSuccessSpy = sinon.spy(),
+			fnSecondSuccessSpy = sinon.spy(),
+			fnDone = assert.async();
+
+		Opa.extendConfig({
+			executionDelay: 5000
+		});
+
+		oOpa.waitFor({
+			success: fnFirstSuccessSpy
+		});
+
+		oOpa.waitFor({
+			success: fnSecondSuccessSpy
+		});
+
+		sap.ui.test.Opa.emptyQueue().done(function () {
+			fnDone();
+		});
+
+		sinon.assert.notCalled(fnFirstSuccessSpy);
+		this.clock.tick(2000);
+		sinon.assert.notCalled(fnFirstSuccessSpy);
+		this.clock.tick(3000);
+		sinon.assert.calledOnce(fnFirstSuccessSpy);
+		sinon.assert.notCalled(fnSecondSuccessSpy);
+		this.clock.tick(5000);
 	});
 
 	module("Exception Handling");
@@ -406,6 +444,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		},
 		teardown : function () {
 			sinon.config.useFakeTimers = true;
+			Opa.resetConfig();
 		}
 	});
 
@@ -656,6 +695,82 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 
 	});
 
+	QUnit.module("Opa Config", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	function assertDefaults (assert) {
+		assert.strictEqual(Opa.config.timeout, 15);
+		assert.strictEqual(Opa.config.pollingInterval, 400);
+		assert.strictEqual(Opa.config._stackDropCount, 0);
+		assert.strictEqual(Opa.config.executionDelay, iExecutionDelay);
+		assert.ok(Opa.config.arrangements instanceof Opa);
+		assert.ok(Opa.config.actions instanceof Opa);
+		assert.ok(Opa.config.assertions instanceof Opa);
+	}
+
+	QUnit.test("Should have the correct defaults", function (assert) {
+		assertDefaults(assert);
+	});
+
+	QUnit.test("Should reset the config", function (assert) {
+		var oOpa = new Opa();
+		Opa.extendConfig({
+			arrangements : oOpa,
+			actions : oOpa,
+			assertions : oOpa,
+			timeout : 123,
+			pollingInterval : 123,
+			_stackDropCount : 123,
+			executionDelay: 9000
+		});
+
+		Opa.resetConfig();
+		assertDefaults(assert);
+		assert.notEqual(Opa.config.assertions, oOpa);
+		assert.notEqual(Opa.config.actions, oOpa);
+		assert.notEqual(Opa.config.assertions, oOpa);
+	});
+
+	[{
+		uriParameter: 2000,
+		expected: 2000
+	},
+	{
+		uriParameter: "2000",
+		expected: 2000
+	},
+	{
+		uriParameter: "foo",
+		expected: iExecutionDelay
+	},
+	{
+		uriParameter: null,
+		expected: iExecutionDelay
+	}].forEach(function (oTestCase) {
+		QUnit.test("Should set the executionDelay if a URL parameter is " + JSON.stringify(oTestCase), function (assert) {
+			var fnDone = assert.async();
+			var oStub = sinon.stub($.sap, "getUriParameters", function () {
+				return {
+					get: function () {
+						return oTestCase.uriParameter
+					}
+				}
+			});
+			$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+
+			sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+				assert.strictEqual(Opa.config.executionDelay, oTestCase.expected);
+				oStub.restore();
+				fnDone()
+			});
+		});
+	});
 	QUnit.start();
 });
 </script>

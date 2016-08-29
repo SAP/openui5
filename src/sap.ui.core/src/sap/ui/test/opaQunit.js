@@ -109,6 +109,17 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	// Export to global namespace to be backwards compatible
 	window.opaTest = opaTest;
 
+	QUnit.config.urlConfig.push({
+		id: "opaExecutionDelay",
+		value: {
+			400: "fast",
+			700: "medium",
+			1000: "slow"
+		},
+		label: "Opa speed",
+		tooltip: "Each waitFor will be delayed by a number of milliseconds. If it is not set Opa will execute the tests as fast as possible"
+	});
+
 	return opaTest;
 });
 
