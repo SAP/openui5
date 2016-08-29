@@ -90,13 +90,14 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Determines whether the header is always expanded when scrolling.
-				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example
+				 * Preserves the current header state when scrolling.
+				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
+				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
 				 * when the control is rendered on tablet or mobile and the control`s title and header
-				 * are with height bigger than given threshold.
+				 * are with height larger than the given threshold.
 				 * @since 1.42
 				 */
-				headerAlwaysExpanded: {type: "boolean", group: "Behaviour", defaultValue: false},
+				preserveHeaderStateOnScroll: {type: "boolean", group: "Behaviour", defaultValue: false},
 
 				/**
 				 * Determines whether the header is expanded.
@@ -200,7 +201,7 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
-		if (!this._headerAlwaysExpanded()) {
+		if (!this._preserveHeaderStateOnScroll()) {
 			this._attachPinPressHandler();
 		}
 
@@ -209,12 +210,9 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
-		var bHeaderAlwaysExpanded = this._headerAlwaysExpanded(),
-			oDynamicPageHeader = this.getHeader();
-
-		if (bHeaderAlwaysExpanded && exists(oDynamicPageHeader)) {
+		if (this._preserveHeaderStateOnScroll()) {
 			// Ensure that in this tick DP and it's aggregations are rendered
-			jQuery.sap.delayedCall(0, this, this._overrideHeaderAlwaysExpanded);
+			jQuery.sap.delayedCall(0, this, this._overridePreserveHeaderStateOnScroll);
 		}
 
 		this._bPinned = false;
@@ -250,10 +248,10 @@ sap.ui.define([
 		return this;
 	};
 
-	DynamicPage.prototype.setHeaderAlwaysExpanded = function (bHeaderAlwaysExpanded) {
-		var vResult = this.setProperty("headerAlwaysExpanded", bHeaderAlwaysExpanded, false);
+	DynamicPage.prototype.setPreserveHeaderStateOnScroll = function (bPreserveHeaderStateOnScroll) {
+		var vResult = this.setProperty("preserveHeaderStateOnScroll", bPreserveHeaderStateOnScroll, false);
 
-		if (bHeaderAlwaysExpanded) {
+		if (bPreserveHeaderStateOnScroll) {
 			this.setProperty("headerExpanded", true, true);
 		}
 
@@ -269,12 +267,13 @@ sap.ui.define([
 	 */
 
 	/**
-	 * If the header is larger than the allowed height, the control will be invalidated and rendered with scrollable header.
+	 * If the header is larger than the allowed height, the <code>preserveHeaderStateOnScroll</code> property will be ignored
+	 * and the header can be expanded or collapsed on page scroll.
 	 * @private
 	 * @returns {boolean} is rule overridden
 	 */
-	DynamicPage.prototype._overrideHeaderAlwaysExpanded = function () {
-		if (!this._shouldOverrideHeaderAlwaysExpanded()) {
+	DynamicPage.prototype._overridePreserveHeaderStateOnScroll = function () {
+		if (!this._shouldOverridePreserveHeaderStateOnScroll()) {
 			this._headerBiggerThanAllowedHeight = false;
 			return;
 		}
@@ -285,12 +284,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the headerAlwaysExpanded should be overridden
+	 * Determines if the <code>preserveHeaderStateOnScroll</code> should be ignored.
 	 * @private
 	 * @returns {boolean}
 	 */
-	DynamicPage.prototype._shouldOverrideHeaderAlwaysExpanded = function () {
-		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed() && this._headerAlwaysExpanded();
+	DynamicPage.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
+		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed() && this._preserveHeaderStateOnScroll();
 	};
 
 	/**
@@ -346,7 +345,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeader = function () {
-		if (this._headerAlwaysExpanded()) {
+		if (this._preserveHeaderStateOnScroll()) {
 			return;
 		}
 
@@ -404,7 +403,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts the header to expanded mode
+	 * Converts the header to expanded mode.
 	 * @param {boolean} bAppendHeaderToTitle
 	 * @private
 	 */
@@ -436,7 +435,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the header visibility in such a way, that the page content is pushed down or pulled up.
-	 * The method is used, when headerAlwaysExpanded is <code>true</code>
+	 * The method is used, when <code>preserveHeaderStateOnScroll</code> is enabled.
 	 * @param {boolean} bShow
 	 * @private
 	 */
@@ -563,7 +562,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._resetPinButtonState = function () {
-		if (this._headerAlwaysExpanded()) {
+		if (this._preserveHeaderStateOnScroll()) {
 			this._togglePinButtonVisibility(false);
 		} else {
 			this._togglePinButtonPressedState(false);
@@ -611,7 +610,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldSnap = function () {
-		return !this._headerAlwaysExpanded() && this._getScrollPosition() > this._getSnappingHeight()
+		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() > this._getSnappingHeight()
 			&& this.getHeaderExpanded() && !this._bPinned;
 	};
 
@@ -621,7 +620,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldExpand = function () {
-		return !this._headerAlwaysExpanded() && this._getScrollPosition() < this._getSnappingHeight()
+		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() < this._getSnappingHeight()
 			&& !this.getHeaderExpanded() && !this._bPinned;
 	};
 
@@ -635,16 +634,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is allowed to snap,
-	 * it`s not pinned, not already snapped and snap on scroll is allowed.
+	 * Determines if the header is allowed to collapse (snap),
+	 * not pinned, not already collapsed (snapped) and <code>preserveHeaderStateOnScroll</code> is <code>false</code>.
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._headerSnapAllowed = function () {
-		return !this._headerAlwaysExpanded() && this.getHeaderExpanded() && !this._bPinned;
+		return !this._preserveHeaderStateOnScroll() && this.getHeaderExpanded() && !this._bPinned;
 	};
+
 	/**
-	 * Determines if it's possible for the header to snap using scroll.
+	 * Determines if it's possible for the header to collapse (snap) on scroll.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -718,7 +718,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the header is larger than what's allowed for it to collapse (snap).
-	 * <b>Note: </b>If the header becomes larger than the screen height, it shouldn't be snapped while scrolling.
+	 * <b>Note: </b>If the header becomes larger than the screen height, it shouldn't collapse (snap) while scrolling.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -760,12 +760,11 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._measureScrollBarOffsetHeight = function () {
 		var iHeight = 0,
-			bSnapped = !this.getHeaderExpanded(),
-			bHeaderAlwaysExpanded = this._headerAlwaysExpanded();
+			bSnapped = !this.getHeaderExpanded();
 
-		if (bHeaderAlwaysExpanded || this._bPinned) {
+		if (this._preserveHeaderStateOnScroll() || this._bPinned) {
 			iHeight = this._getTitleAreaHeight();
-			jQuery.sap.log.debug("DynamicPage :: header always expanded or header pinned :: title area height" + iHeight, this);
+			jQuery.sap.log.debug("DynamicPage :: preserveHeaderState is enabled or header pinned :: title area height" + iHeight, this);
 			return iHeight;
 		}
 
@@ -831,8 +830,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the Header ARIA state depending on the header expanded/collapsed (snapped) state.
-	 * @param {Boolean} bExpanded determines if the header is expanded or snapped.
+	 * Updates the Header ARIA state depending on the <code>DynamicPageHeader</code> expanded/collapsed (snapped) state.
+	 * @param {Boolean} bExpanded determines if the header is expanded or collapsed (snapped).
 	 * @private
 	 */
 	DynamicPage.prototype._updateHeaderARIAState = function (bExpanded) {
@@ -927,8 +926,8 @@ sap.ui.define([
 	 * @returns {boolean}
 	 * @private
 	 */
-	DynamicPage.prototype._headerAlwaysExpanded = function () {
-		return this.getHeaderAlwaysExpanded() && !this._headerBiggerThanAllowedHeight;
+	DynamicPage.prototype._preserveHeaderStateOnScroll = function () {
+		return this.getPreserveHeaderStateOnScroll() && !this._headerBiggerThanAllowedHeight;
 	};
 
 	/**
@@ -970,10 +969,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Caches the <code>DynamicPageTitle</code>  DOM element as jQuery object for later reuse,
+	 * Caches the <code>DynamicPageTitle</code> DOM element as jQuery object for later reuse,
 	 * used when <code>DynamicPageTitle</code> is re-rendered (<code>_onChildControlAfterRendering</code> method)
-	 * to ensure the <code>DynamicPageTitle</code> DOM reference
-	 * is the current one.
+	 * to ensure the <code>DynamicPageTitle</code> DOM reference is the current one.
 	 * @private
 	 */
 	DynamicPage.prototype._cacheTitleDom = function () {
@@ -1036,7 +1034,7 @@ sap.ui.define([
 	DynamicPage.prototype._onResize = function (oEvent) {
 		var oDynamicPageHeader = this.getHeader();
 
-		if (!this._headerAlwaysExpanded() && oDynamicPageHeader) {
+		if (!this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
 			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
 				this._unPin();
 				this._togglePinButtonVisibility(false);
@@ -1099,7 +1097,7 @@ sap.ui.define([
 		}
 
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
-		if (this._headerAlwaysExpanded() || !this._needsVerticalScrollBar()) {
+		if (this._preserveHeaderStateOnScroll() || !this._needsVerticalScrollBar()) {
 			if (!this.getHeaderExpanded()) {
 				// Show header, pushing the content down
 				this._expandHeader(false);
@@ -1148,7 +1146,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Attaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element and <code>DynamicPage</code> content DOM Element.
+	 * Attaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element
+	 * and <code>DynamicPage</code> content DOM Element.
 	 * @private
 	 */
 	DynamicPage.prototype._attachResizeHandlers = function () {
@@ -1179,7 +1178,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element and <code>DynamicPage</code> content DOM Element.
+	 * Detaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element
+	 * and <code>DynamicPage</code> content DOM Element.
 	 * @private
 	 */
 	DynamicPage.prototype._detachResizeHandlers = function () {
