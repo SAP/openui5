@@ -1,22 +1,10 @@
-/* ================================================================= */
-/* CSS for control sap.m/InputBase High Contrast Black theme         */
-/* ================================================================= */
-
-.sapMInputBase {
-	height: 3rem;
-}
-
-.sapMInputBaseWidthPadding {
-	padding: 0.25rem 0;
-}
+/* =============================== */
+/* CSS for control sap.m/InputBase */
+/* High Contrast Black theme       */
+/* =============================== */
 
 .sapMInputBaseInner {
-	font-size: @sapMFontMediumSize;
 	font-style: normal;
-	font-family: @sapUiFontFamily;
-	line-height: normal;
-	height: 2.5rem;
-	padding: 0 0.75rem;
 }
 
 .sapMInputBaseDisabled {
@@ -24,38 +12,32 @@
 }
 
 .sapMInputBaseDisabledInner {
-	background: @sapHCReducedBG;
-	border-color: @sapHCReducedAltFG;
-	color: @sapHCReducedFG;
+	background: @sapUiFieldDisabledBackground;
+	border-color: @sapUiFieldDisabledBorderColor;
+	color: @sapUiContentDisabledTextColor;
 	font-weight: normal;
-	-webkit-text-fill-color: @sapHCReducedFG;
+	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
-	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
 }
 
 .sapMInputBaseInner::-moz-placeholder {
-	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
 	opacity: 1;
 }
 
 .sapMInputBaseInner:-ms-input-placeholder {
-	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
 }
 
 .sapMInputBasePlaceholder {
-	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
-	line-height: 2.5rem;
-	padding: 0 0.75rem;
 }
 
 .sapMInputBaseWarning > .sapMInputBasePlaceholder {
@@ -72,7 +54,6 @@
 
 .sapMInputBaseStateInner {
 	border-width: 1px;
-	padding: 0 0.6875rem;
 }
 
 .sapMInputBaseWarningInner {

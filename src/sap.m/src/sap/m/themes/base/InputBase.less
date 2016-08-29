@@ -1,6 +1,35 @@
-/* ============================================= */
-/* CSS for control sap.m/InputBase               */
-/* ============================================= */
+/* =============================== */
+/* CSS for control sap.m/InputBase */  
+/* base theme                      */
+/* =============================== */
+
+.sapMInputBase {
+	height: 3rem;
+	background: transparent;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sapMInputBaseWidthPadding {
+	padding: 0.25rem 0;
+}
+
+.sapMInputBaseInner {
+	color: @sapUiFieldTextColor;
+	background: @sapUiFieldBackground;
+	border: 1px solid @sapUiFieldBorderColor;
+	-webkit-appearance: none;
+	border-radius: 0;
+	vertical-align: top;
+	margin: 0;
+	-moz-appearance: textfield;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	height: 2.5rem;
+	padding: 0 0.75rem;
+}
 
 .sapMInputBase,
 .sapMInputBaseInner,
@@ -8,13 +37,37 @@
 	box-sizing: border-box;
 }
 
+.sapMInputBaseInner::-webkit-input-placeholder {
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
+}
+
+.sapMInputBaseInner::-moz-placeholder {
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
+}
+
+.sapMInputBaseInner:-ms-input-placeholder {
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
+}
+
 .sapMInputBasePlaceholder {
+	font-size: @sapMFontMediumSize;
 	color: @sapUiFieldPlaceholderTextColor;
 	cursor: text;
 	position: absolute;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+	font-style: italic;
+	line-height: 2.5rem;
+	padding: 0 0.75rem;
+}
+
+.sapMInputBaseStateInner {
+	border-width: 2px;
+	padding: 0 0.6875rem;
 }
 
 .sapMInputBaseDisabled > .sapMInputBaseReadonly,
@@ -36,24 +89,6 @@
 .sapMInputBaseInner::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
-}
-
-.sapMInputBase {
-	background: transparent;
-	position: relative;
-	display: inline-block;
-	vertical-align: top;
-}
-
-.sapMInputBaseInner {
-	color: @sapUiFieldTextColor;
-	background: @sapUiFieldBackground;
-	border: 1px solid @sapUiFieldBorderColor;
-	-webkit-appearance: none;
-	border-radius: 0;
-	vertical-align: top;
-	margin: 0;
-	-moz-appearance: textfield;
 }
 
 .sapMInputBaseInner:focus {
@@ -208,4 +243,14 @@ html[data-sap-ui-browser^="cr"] {
 	.sapMInputBaseInner::selection {
 		background: fade(@sapUiSelected, 99);
 	}
+}
+
+.sapMInputBaseWarningInner {
+	background: @sapUiFieldWarningBackground;
+	border-color: @sapUiFieldWarningColor;
+}
+
+.sapMInputBaseSuccessInner {
+	background: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
 }
