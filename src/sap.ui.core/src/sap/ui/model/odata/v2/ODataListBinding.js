@@ -583,6 +583,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			} else if (!bAborted) {
 				// reset data and trigger update
 				that.aKeys = [];
+				that.aAllKeys = [];
 				that.iLength = 0;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;

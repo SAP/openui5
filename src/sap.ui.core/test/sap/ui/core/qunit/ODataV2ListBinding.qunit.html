@@ -480,6 +480,28 @@
 
 	});
 
+	asyncTest("ListBinding Client Mode - Error in Initial Request", function(){
+		var oBinding = oModel.bindList("/CategoriesError", null, null, null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			oBinding.detachChange(handler);
+			ok(oBinding.bDataAvailable);
+			ok(jQuery.isArray(oBinding.aAllKeys) && oBinding.aAllKeys.length === 0, "AllKeys Array was correctly set to an empty array after an error from the GET request.");
+			start();
+		};
+
+		oModel.metadataLoaded().then(function () {
+			oBinding.initialize();
+
+			// sort in client mode, before data is available
+			oBinding.attachChange(handler);
+			oBinding.getContexts();
+		});
+
+	});
+
 	asyncTest("ListBinding expand", function(){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
 		var handler = function() { // delay the following test
