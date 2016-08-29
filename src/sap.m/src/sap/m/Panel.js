@@ -157,7 +157,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			oDomRef.style.height = sHeight;
-			oDomRef.querySelector(".sapMPanelContent").style.height = sHeight;
+			if (parseFloat(sHeight) != 0) {
+				oDomRef.querySelector(".sapMPanelContent").style.height = sHeight;
+			}
 			this._setContentHeight();
 		}
 
