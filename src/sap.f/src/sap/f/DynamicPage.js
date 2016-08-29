@@ -802,8 +802,10 @@ sap.ui.define([
 		jQuery.sap.delayedCall(0, this, this._updateFitContainer);
 	};
 
-	DynamicPage.prototype._updateFitContainer = function () {
-		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", !this._needsVerticalScrollBar());
+	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
+		var bToggleClass = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar();
+
+		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bToggleClass);
 	};
 
 
@@ -1012,6 +1014,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
+		var bNeedsVerticalScrollbar = this._needsVerticalScrollBar();
+
+		// FitContaner needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
+		if (bNeedsVerticalScrollbar) {
+			this._updateFitContainer(bNeedsVerticalScrollbar);
+		}
+
 		if (oEvent.size.height !== oEvent.oldSize.height && !this._bExpandingWithAClick) {
 			this._updateScrollBar();
 		}
