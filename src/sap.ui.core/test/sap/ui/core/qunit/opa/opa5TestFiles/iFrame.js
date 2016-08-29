@@ -535,16 +535,6 @@ sap.ui.define([
 
 		function startApp (oOpa, sUrl) {
 			oOpa.iStartMyAppInAFrame(sUrl);
-
-			oOpa.waitFor({
-				success: function () {
-					// exceptions thrown by the OPA frame will be propagated to the executing window.
-					// in this case i provoke the exceptions intentionally so i overwite the onerror with a noop
-					// this stops the propagation of errors
-					Opa5.getWindow().onerror = $.noop;
-				}
-			});
-
 		}
 
 
