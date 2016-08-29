@@ -5013,5 +5013,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.38": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4dd4da027a450da8791d896f27c136eee4c49e26",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
+        "references": []
+      }
+    ]
   }
 }
