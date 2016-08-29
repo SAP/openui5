@@ -772,8 +772,9 @@ function runODataAnnotationsV2Tests() {
 							ok(true, "Adding sources with invalid XML documents should lead to an error");
 
 
-
 							// XML Parser is not available should lead to an error
+							var bIsIE = sap.ui.Device.browser.internet_explorer;
+							sap.ui.Device.browser.internet_explorer = false;
 							var oOriginalDOMParser = window.DOMParser;
 							window.DOMParser = function() {
 								this.parseFromString = function() {}
@@ -787,10 +788,11 @@ function runODataAnnotationsV2Tests() {
 							}).catch(function() {
 								ok(true, "Adding annotations without having a DOM parser should lead to an error");
 
+								sap.ui.Device.browser.internet_explorer = bIsIE;
 								window.DOMParser = oOriginalDOMParser;
 
 								// Mock IE XML Parser
-								var bIsIE = sap.ui.Device.browser.internet_explorer;
+								bIsIE = sap.ui.Device.browser.internet_explorer;
 								sap.ui.Device.browser.internet_explorer = true;
 								var oOriginalActiveXObject = window.ActiveXObject;
 								window.ActiveXObject = function() {
@@ -848,10 +850,12 @@ function runODataAnnotationsV2Tests() {
 		});
 
 		oModel.annotationsLoaded().then(function(aAnnotations) {
-			ok(aAnnotations[0].document.lastModified, "LastModified information exists for first annotation document");
-			ok(aAnnotations[1].document.lastModified, "LastModified information exists for first annotation document");
-			ok(aAnnotations[2].document.lastModified, "LastModified information exists for first annotation document");
-			ok(aAnnotations[3].document.lastModified, "LastModified information exists for first annotation document");
+			var iLastModified = new Date("Wed, 15 Nov 1995 04:58:08 GMT").getTime();
+
+			equals(Date.parse(aAnnotations[0].lastModified), iLastModified, "LastModified header exists for first annotation document");
+			equals(Date.parse(aAnnotations[1].lastModified), iLastModified, "LastModified header exists for second annotation document");
+			equals(Date.parse(aAnnotations[2].lastModified), iLastModified, "LastModified header exists for third annotation document");
+			equals(Date.parse(aAnnotations[3].lastModified), iLastModified, "LastModified header exists for fourth annotation document");
 
 			start();
 		});
