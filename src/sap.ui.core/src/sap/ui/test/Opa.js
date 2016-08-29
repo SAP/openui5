@@ -85,10 +85,6 @@ sap.ui.define([
 
 		var queueElement = queue.shift();
 
-		// TODO: this only affects IE with the IFrame startup without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
-		// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
-		// Therefore the core code throws exceptions, when functions like setTimeout are called.
-		// I don't have a proper explanation for this.
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
 		}, Opa.config.executionDelay);
@@ -272,6 +268,13 @@ sap.ui.define([
 		iExecutionDelay = parseInt(sExecutionDelayFromUrl, 10);
 	}
 
+	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
+	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
+
+	// TODO: Workaround for IE with the IFrame startup. Without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
+	// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
+	// Therefore the core code throws exceptions, when functions like setTimeout are called.
+	// I don't have a proper explanation for this.
 	if (!iExecutionDelay) {
 		if (Device.browser.msie) {
 			iExecutionDelay = 50;
