@@ -5,7 +5,7 @@
 
     <VBox class="sapUiSmallMargin">
         <Label text = "With a complex menu"/>
-        <MenuButton icon="sap-icon://simulate" text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
+        <MenuButton text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
             <menu>
                 <Menu itemSelected="onMenuAction">
                     <items>
@@ -27,7 +27,7 @@
         </MenuButton>
 
         <Label text = "Regular mode button"/>
-        <MenuButton text="File" icon="sap-icon://open-folder">
+        <MenuButton text="File">
             <menu>
                 <Menu itemSelected="onMenuAction">
                     <items>
@@ -53,7 +53,7 @@
         </MenuButton>
 
         <Label text = "Split mode button with associated last action with initial icon"/>
-        <MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" icon="sap-icon://nurse">
+        <MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
             <menu>
                 <Menu itemSelected="onMenuAction">
                     <items>
@@ -79,7 +79,7 @@
         </MenuButton>
 
         <Label text = "Split mode with type Accept and constant default action"/>
-        <MenuButton icon="sap-icon://accept" text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" useDefaultActionOnly="true">
+        <MenuButton text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" useDefaultActionOnly="true">
             <menu>
                 <Menu itemSelected="onMenuAction">
                     <items>
