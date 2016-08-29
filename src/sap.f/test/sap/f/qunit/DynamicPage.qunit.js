@@ -800,8 +800,8 @@
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header remains in the header wrapper when unpinned until scroll");
 	});
 
-	QUnit.test("DynamicPage _canSnap() should return the correct value", function (assert) {
-		assert.equal(this.oDynamicPage._canSnap(), true, "The header can snap");
+	QUnit.test("DynamicPage _canSnapHeaderOnScroll() should return the correct value", function (assert) {
+		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});
 
 	QUnit.test("DynamicPage _shouldExpand() returns false initially", function (assert) {

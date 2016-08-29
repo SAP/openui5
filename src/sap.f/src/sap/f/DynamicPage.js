@@ -439,9 +439,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._scrollToSnapHeader = function () {
-		var iNewScrollPos = this._getSnappingHeight() + 1;
-		this.$wrapper && this.$wrapper.scrollTop(iNewScrollPos);
-		Device.system.desktop && this._getScrollBar().setScrollPosition(iNewScrollPos);
+		this._setScrollPosition(this._getSnappingHeight() + 1);
 	};
 
 	/**
@@ -490,6 +488,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the appropriate scroll position of the ScrollBar and DynamicPage content wrapper,
+	 * based on what the device
+	 * @param {Number} iNewScrollPosition
+	 * @private
+	 */
+	DynamicPage.prototype._setScrollPosition = function (iNewScrollPosition) {
+		if (exists(this.$wrapper)) {
+			this.$wrapper.scrollTop(iNewScrollPosition);
+			Device.system.desktop && this._getScrollBar().setScrollPosition(iNewScrollPosition);
+		}
+	};
+
+	/**
 	 * Determines if the header should snap
 	 * @returns {boolean}
 	 * @private
@@ -528,12 +539,12 @@ sap.ui.define([
 		return !this._headerAlwaysExpanded() && this.getHeaderExpanded() && !this._bPinned;
 	};
 	/**
-	 * Determines if it's possible for the header to snap
+	 * Determines if it's possible for the header to snap via scroll
 	 * @returns {boolean}
 	 * @private
 	 */
-	DynamicPage.prototype._canSnap = function () {
-		return this._getSnappingHeight() ? this.$wrapper[0].scrollHeight > this._getSnappingHeight() && !this._headerAlwaysExpanded() : false;
+	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
+		return this._getMaxScrollPosition() > (this._getSnappingHeight() + 1);
 	};
 
 	/**
@@ -546,19 +557,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the maximum scroll position, depending on the content size
+	 * @returns {Number}
+	 * @private
+	 */
+	DynamicPage.prototype._getMaxScrollPosition = function() {
+		var $wrapperDom;
+
+		if (exists(this.$wrapper)) {
+			$wrapperDom = this.$wrapper[0];
+			return $wrapperDom.scrollHeight - Math.ceil($wrapperDom.getBoundingClientRect().height);
+		}
+		return 0;
+	};
+
+	/**
 	 * Determines if the control would need a ScrollBar.
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		var $wrapperDom;
-
-		if (exists(this.$wrapper)) {
-			$wrapperDom = this.$wrapper[0];
-			return $wrapperDom.scrollHeight > Math.ceil($wrapperDom.getBoundingClientRect().height);
-		} else {
-			return false;
-		}
+		return this._getMaxScrollPosition() > 0;
 	};
 
 	/**
@@ -644,7 +663,7 @@ sap.ui.define([
 			return iHeight;
 		}
 
-		if (bSnapped || !exists(this.getTitle()) || !this._canSnap()) {
+		if (bSnapped || !exists(this.getTitle()) || !this._canSnapHeaderOnScroll()) {
 			iHeight = this._getTitleHeight();
 			jQuery.sap.log.debug("DynamicPage :: header snapped :: title height " + iHeight, this);
 			return iHeight;
@@ -989,12 +1008,15 @@ sap.ui.define([
 			this._expandHeader(true);
 
 		} else if (this._headerSnapAllowed()) {
+
 			if (this._headerScrolledOut()) {
 				// Header is scrolled out completely, then snap
 				this._snapHeader(true);
-			} else {
-				// Header is not scrolled out completely, and there scroll to snap
+			} else if (this._canSnapHeaderOnScroll()){
+				// Header is not scrolled out completely, then scroll to snap
 				this._scrollToSnapHeader();
+			} else {
+				jQuery.sap.log.warning("DynamicPage :: couldn't snap header. There isn't enough content to be scrolled", this);
 			}
 		}
 	};
