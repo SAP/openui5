@@ -10,5 +10,16 @@
 			min="0" max="50" enabled="false" class="sapUiSmallMarginBottom" />
 		<Slider value="9" width="77%"
 			min="0" max="10" class="sapUiSmallMarginBottom" />
+		<Slider value="50" width="100%"
+				min="0" max="100"
+				showAdvancedTooltip="true"
+				showHandleTooltip="false"
+				class="sapUiSmallMarginBottom" />
+		<Slider value="30" width="100%"
+				min="0" max="200"
+				showAdvancedTooltip="true"
+				showHandleTooltip="false"
+				inputsAsTooltips="true"
+				class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>
