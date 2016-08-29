@@ -540,18 +540,6 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 
 	/**
-	 * Function is called when mouse button is pressed.
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @private
-	 */
-	Column.prototype.onmousedown = function(oEvent) {
-		var oMenu = this.getAggregation("menu");
-		this._bSkipOpen = oMenu && oMenu.bOpen;
-	};
-
-
-	/**
 	 * Function is called when mouse leaves the control.
 	 *
 	 * @param {jQuery.Event} oEvent

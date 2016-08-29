@@ -288,6 +288,60 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 });
 
 
+QUnit.module("Mousedown", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
+
+QUnit.asyncTest("Columnheader", function(assert){
+	var oColumn = oTable._getVisibleColumns()[3];
+	var bColumnReorderingTriggered = false;
+
+	oTable._onColumnMoveStart = function(oColumns, bIsTouchMode) {
+		bColumnReorderingTriggered = true;
+	};
+
+	qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
+	assert.ok(!oColumn._bSkipOpen, "Menu not open -> no skipping needed");
+	assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+	setTimeout(function(){
+		assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
+		assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
+
+		oColumn.getMenu().bOpen = true;
+		oTable.setEnableColumnReordering(false);
+		sap.ui.getCore().applyChanges();
+		bColumnReorderingTriggered = false;
+
+		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
+		assert.ok(oColumn._bSkipOpen, "Menu open -> skipping needed");
+		assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+		setTimeout(function(){
+			assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
+			assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
+			start();
+		}, 250);
+	}, 250);
+});
+
+QUnit.test("Scrollbar", function(assert){
+	var oEvent = jQuery.Event({type : "mousedown"});
+	oEvent.target = oTable.getDomRef("hsb");
+	oEvent.button = 0
+	jQuery(oEvent.target).trigger(oEvent);
+	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on horizontal scrollbar");
+	oEvent = jQuery.Event({type : "mousedown"});
+	oEvent.target = oTable.getDomRef("vsb");
+	oEvent.button = 0
+	jQuery(oEvent.target).trigger(oEvent);
+	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on vertical scrollbar");
+});
+
+
 QUnit.module("Click", {
 	setup: function() {
 		createTables();
@@ -457,7 +511,7 @@ QUnit.module("Destruction", {
 
 
 QUnit.test("destroy()", function(assert) {
-	var oExtension = oTable._getKeyboardExtension();
+	var oExtension = oTable._getPointerExtension();
 	oTable.destroy();
 	assert.ok(!oExtension.getTable(), "Table cleared");
 	assert.ok(!oExtension._delegate, "Delegate cleared");
