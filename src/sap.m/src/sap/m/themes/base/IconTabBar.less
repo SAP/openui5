@@ -20,10 +20,9 @@
 	display: block;
 }
 
-.sapMITBFilterIcon,
-.sapMITBTextOnly .sapMITBFilter,
-.sapMITBTextOnly .sapMITBText,
-.sapMITBAll {
+.sapMITBFilter:not(.sapMITBDisabled) .sapMITBFilterIcon,
+.sapMITBTextOnly .sapMITBFilter:not(.sapMITBDisabled) .sapMITBText,
+.sapMITBAll:not(.sapMITBDisabled) {
 	cursor: pointer;
 }
 
@@ -228,7 +227,7 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	vertical-align: top;
 }
 
-.sap-desktop .sapMITBFilter {
+.sap-desktop .sapMITBFilter:not(.sapMITBDisabled)  {
 	cursor: pointer;
 }
 
