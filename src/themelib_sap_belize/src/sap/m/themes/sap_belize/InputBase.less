@@ -3,37 +3,6 @@
 /* Belize theme                     */
 /* ================================ */
 
-.sapMInputBase {
-	height: 3rem;
-}
-
-.sapMInputBaseWidthPadding {
-	padding: 0.25rem 0;
-}
-
-.sapMInputBaseInner {
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	line-height: normal;
-	height: 2.5rem;
-	padding: 0 0.75rem;
-}
-
-.sapMInputBaseInner::-webkit-input-placeholder {
-	font-size: @sapMFontMediumSize;
-	font-style: italic;
-}
-
-.sapMInputBaseInner::-moz-placeholder {
-	font-size: @sapMFontMediumSize;
-	font-style: italic;
-}
-
-.sapMInputBaseInner:-ms-input-placeholder {
-	font-size: @sapMFontMediumSize;
-	font-style: italic;
-}
-
 // When disabled or read-only hide placeholder by setting opacity to 0
 .sapMInputBaseDisabled {
 	.sapMInputBaseInner::-webkit-input-placeholder {
@@ -61,28 +30,6 @@
 	.sapMInputBaseInner:-ms-input-placeholder {
 		color: @sapUiFieldReadOnlyBackground;
 	}
-}
-
-.sapMInputBasePlaceholder {
-	font-size: @sapMFontMediumSize;
-	font-style: italic;
-	line-height: 2.5rem;
-	padding: 0 0.75rem;
-}
-
-.sapMInputBaseStateInner {
-	border: 2px solid @sapUiFieldBorderColor;
-	padding: 0 0.6875rem;
-}
-
-.sapMInputBaseWarningInner {
-	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
-}
-
-.sapMInputBaseSuccessInner {
-	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
 }
 
 html.sap-desktop .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
