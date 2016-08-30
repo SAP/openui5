@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				var iIndent = TableGrouping._calcGroupIndent(oTable, iLevel, bChildren);
 				$RowHdr.css(oTable._bRtlMode ? "right" : "left", iIndent + "px");
 				var $FirstCellContentInRow = $Row.find("td.sapUiTableTdFirst > .sapUiTableCell");
-				$FirstCellContentInRow.css(oTable._bRtlMode ? "padding-right" : "padding-left", (iIndent + 8/*USE FROME THEME*/) + "px");
+				$FirstCellContentInRow.css(oTable._bRtlMode ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCell */) + "px");
 			}
 
 			var $TreeIcon = null;

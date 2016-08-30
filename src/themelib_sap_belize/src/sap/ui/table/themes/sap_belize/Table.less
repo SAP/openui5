@@ -325,13 +325,6 @@ div.sapUiTable .sapUiTableCtrl .sapUiTableRowHvr.sapUiTableRowSel > td {
  * TABLE ADOPTIONS BY UX
  ******************************************************************************/
 
-
-/* Table Cells */
-
-.sapUiTableCell {
-	padding: 0 0.5rem;
-}
-
 // Hide last row bottom cell border
 .sapUiTableRowHdr:last-child,
 .sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
@@ -353,18 +346,6 @@ div.sapUiTable .sapUiTableCtrl .sapUiTableRowHvr.sapUiTableRowSel > td {
 .sapUiTableCell > .sapUiTv {
 	font-weight: normal;
 	font-size: 12px;
-}
-
-.sapUiTableTr > td.sapUiTableTdFirst > .sapUiTableCell {
-	padding-left: 6px;
-}
-
-.sapUiTableRSel .sapUiTableTr > td.sapUiTableTdFirst > .sapUiTableCell {
-	padding-left: 8px;
-}
-
-.sapUiSizeCondensed .sapUiTableTr > td.sapUiTableTdFirst > .sapUiTableCell {
-	padding: 0;
 }
 
 .sapUiTableRowHdr.sapUiTableRowHvr {
@@ -553,11 +534,6 @@ div.sapUiTable {
 .sapUiTableCCnt,
 .sapUiTableCtrlEmpty {
 	background-color: @sapUiListBackground;
-}
-
-/* Condensed mode */
-.sapUiSizeCondensed .sapUiTableCell {
-	padding: 0; /* Mobile controls like input fill 100% of the cell space */
 }
 
 .sapUiTableCtrlEmptyMsg {
