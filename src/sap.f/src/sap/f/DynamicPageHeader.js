@@ -24,7 +24,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @constructor
 		 * @public
 		 * @since 1.42
-		 * @alias f.DynamicPageHeader
+		 * @alias sap.f.DynamicPageHeader
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var DynamicPageHeader = Control.extend("sap.f.DynamicPageHeader", /** @lends sap.f.DynamicPageHeader.prototype */ {
