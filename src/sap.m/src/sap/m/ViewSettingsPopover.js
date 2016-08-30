@@ -1651,20 +1651,20 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		ViewSettingsPopover.prototype._getToolbar = function () {
 			if (!this._toolbar) {
-				var oCloseBtn, sCloseBtnARIAHiddenDescr;
+				var oCloseBtn;
 
 				this._toolbar = new sap.m.Toolbar({
 					id: this.getId() + TOOLBAR_SUFFIX
 				});
 
-				sCloseBtnARIAHiddenDescr = new sap.ui.core.InvisibleText({
+				this._oCloseBtnARIAInvText = new sap.ui.core.InvisibleText({
 					text: this._getText("MESSAGEPOPOVER_CLOSE")
-				}).toStatic().getId();
+				});
 
 				// create close button
 				oCloseBtn = new Button({
 					icon: IconPool.getIconURI("decline"),
-					ariaLabelledBy: sCloseBtnARIAHiddenDescr,
+					ariaLabelledBy: this._oCloseBtnARIAInvText.toStatic().getId(),
 					press: this._cancel.bind(this)
 				}).addStyleClass('sapMVSPCloseBtn');
 
@@ -1789,10 +1789,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				this._groupList = null;
 			}
 
-			if (this._popover) {
-				this._popover.destroy();
-				this._popover = null;
-			}
+			this._popover.destroy();
+			this._popover = null;
+
+			this._oCloseBtnARIAInvText.destroy();
+			this._oCloseBtnARIAInvText = null;
 
 			this._title = null;
 			this._navContainer = null;
