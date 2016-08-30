@@ -77,6 +77,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 	 */
 	TableExtension.prototype._init = function(oTable, sTableType, mSettings) { return null; };
 
+	/*
+	 * Hook which allows the extension to attach for additional browser events after the rendering of the table control.
+	 * Might be overridden in subclasses.
+	 * @see sap.ui.table.Table#_attachEvents
+	 */
+	TableExtension.prototype._attachEvents = function() {};
+
+	/*
+	 * Hook which allows the extension to detach previously attached browser event handlers.
+	 * Might be overridden in subclasses.
+	 * @see sap.ui.table.Table#_detachEvents
+	 */
+	TableExtension.prototype._detachEvents = function() {};
+
+
+	/*
+	 * Informs all registered extensions of the given table to attach their additional events, if needed.
+	 * @see sap.ui.table.TableExtension#_attachEvents
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableExtension.attachEvents = function(oTable) {
+		if (!oTable._aExtensions) {
+			return;
+		}
+		for (var i = 0; i < oTable._aExtensions.length; i++) {
+			oTable._aExtensions[i]._attachEvents();
+		}
+	};
+
+	/*
+	 * Informs all registered extensions of the given table to detach their previously attached
+	 * browser event handlers, if needed.
+	 * @see sap.ui.table.TableExtension#_detachEvents
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableExtension.detachEvents = function(oTable) {
+		if (!oTable._aExtensions) {
+			return;
+		}
+		for (var i = 0; i < oTable._aExtensions.length; i++) {
+			oTable._aExtensions[i]._detachEvents();
+		}
+	};
 
 	/*
 	 * Initializes the Extension with the given type and attaches it to the given Table control.
@@ -88,7 +131,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 		}
 
 		var oExtension = new oExtensionClass(oTable, mSettings);
+		if (!oTable._aExtensions) {
+			oTable._aExtensions = [];
+		}
+		oTable._aExtensions.push(oExtension);
 		return oExtension;
+	};
+
+	/*
+	 * Detaches and destroy all registered extensions of the given Table control.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableExtension.cleanup = function(oTable) {
+		if (!oTable._bExtensionsInitialized || !oTable._aExtensions) {
+			return;
+		}
+		for (var i = 0; i < oTable._aExtensions.length; i++) {
+			oTable._aExtensions[i].destroy();
+		}
+		delete oTable._aExtensions;
+		delete oTable._bExtensionsInitialized;
 	};
 
 	return TableExtension;

@@ -437,21 +437,57 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			this._getKeyboardExtension().initItemNavigation();
 
 			if (oEvent.button === 0) { // left mouse button
+				var $Target = jQuery(oEvent.target);
+
 				if (oEvent.target === this.getDomRef("sb")) { // mousedown on interactive resize bar
 					InteractiveResizeHelper.initInteractiveResizing(this, oEvent);
 				} else if (oEvent.target === this.getDomRef("rsz")) { // mousedown on column resize bar
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
-				} else if (jQuery(oEvent.target).hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
-					var iColIndex = jQuery(oEvent.target).closest(".sapUiTableCol").attr("data-sap-ui-colindex");
+				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
+					var iColIndex = $Target.closest(".sapUiTableCol").attr("data-sap-ui-colindex");
 					this._iLastHoveredColumnIndex = parseInt(iColIndex, 10);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
+				} else {
+					var $Col = $Target.closest(".sapUiTableCol", this.getDomRef());
+					if ($Col.length === 1) { // mousedown on a column header
+
+						var bIsTouchMode = this._isTouchMode(oEvent),
+							iIndex = parseInt($Col.attr("data-sap-ui-colindex"), 10),
+							oColumn = this.getColumns()[iIndex];
+
+						// Prevent potentially open column menu from closing and reopening again.
+						// see Column#_openMenu
+						var oMenu = oColumn.getAggregation("menu");
+						oColumn._bSkipOpen = oMenu && oMenu.bOpen;
+
+						this._bShowMenu = true;
+						this._mTimeouts.delayedMenuTimer = jQuery.sap.delayedCall(200, this, function() { this._bShowMenu = false; });
+
+						var bIsColumnMenuTarget = bIsTouchMode && $Target.hasClass("sapUiTableColDropDown");
+						if (this.getEnableColumnReordering() && !bIsColumnMenuTarget && iIndex > this._iLastFixedColIndex) {
+							// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
+							this._mTimeouts.delayedColumnReorderTimer = jQuery.sap.delayedCall(200, this, function() {
+								this._onColumnMoveStart(oColumn, bIsTouchMode);
+							});
+						}
+					}
+				}
+
+				// In case of FireFox and CTRL+CLICK it selects the target TD
+				//   => prevent the default behavior only in this case (to still allow text selection)
+				// Also prevent default when clicking on ScrollBars to prevent ItemNavigation to re-apply
+				// focus to old position (table cell).
+				if ((Device.browser.firefox && !!(oEvent.metaKey || oEvent.ctrlKey))
+						|| $Target.closest(".sapUiTableHSb", this.getDomRef()).length === 1
+						|| $Target.closest(".sapUiTableVSb", this.getDomRef()).length === 1) {
+					oEvent.preventDefault();
 				}
 			}
 		},
 
 		onmouseup : function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimer);
 		},
 
 		ondblclick : function(oEvent) {
@@ -463,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 		onclick : function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimer);
 
 			if (oEvent.isMarked()) {
 				// the event was already handled by some other handler, do nothing.
@@ -531,6 +567,28 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		},
 
 		/*
+		 * @see TableExtension._attachEvents
+		 */
+		_attachEvents : function() {
+			var oTable = this.getTable();
+			if (oTable) {
+				// Initialize the basic event handling for column resizing.
+				ColumnResizeHelper.initColumnTracking(oTable);
+			}
+		},
+
+		/*
+		 * @see TableExtension._detachEvents
+		 */
+		_detachEvents : function() {
+			var oTable = this.getTable();
+			if (oTable) {
+				// Cleans up the basic event handling for column resizing.
+				oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+			}
+		},
+
+		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {
@@ -552,28 +610,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			var oTable = this.getTable();
 			if (oTable) {
 				ColumnResizeHelper.doAutoResizeColumn(oTable, iColIndex);
-			}
-		},
-
-		/*
-		 * Initialize the basic event handling for column resizing.
-		 * @public (Part of the API for Table control only!)
-		 */
-		initColumnResizeEvents : function() {
-			var oTable = this.getTable();
-			if (oTable) {
-				ColumnResizeHelper.initColumnTracking(oTable);
-			}
-		},
-
-		/*
-		 * Cleans up the basic event handling for column resizing.
-		 * @public (Part of the API for Table control only!)
-		 */
-		cleanupColumnResizeEvents : function() {
-			var oTable = this.getTable();
-			if (oTable) {
-				oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
 			}
 		}
 
