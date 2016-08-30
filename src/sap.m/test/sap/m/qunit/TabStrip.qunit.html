@@ -195,6 +195,9 @@
 			oCore.applyChanges();
 			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
 
+			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
+			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
+
 			var itemToBeRemovedId = this.sut.getItems()[2].getId();
 
 			this.sut.removeItem(this.sut.getItems()[2]);
@@ -438,26 +441,26 @@
 			fnUpdateTestScrollValue();
 			//assert
 			strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
-			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
-			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
+			strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
-			this.sut._oRightArrowButton.firePress({});
+			this.sut.getAggregation("_rightArrowButton").firePress({});
 			this.clock.tick(1000);
-			this.sut._oRightArrowButton.firePress({});
+			this.sut.getAggregation("_rightArrowButton").firePress({});
 			this.clock.tick(1000);
-			this.sut._checkOverflow();
+			this.sut._handleOverflowButtons();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
 			//assert
 //			strictEqual(iTestCurrentScrollLeft, 640, "ScrollLeft value is as expected");
-			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
-			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut.getAggregation("_rightArrowButton").$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
-			this.sut._oLeftArrowButton.firePress({});
+			this.sut.getAggregation("_leftArrowButton").firePress({});
 			this.clock.tick(1000);
-			this.sut._checkOverflow();
+			this.sut._handleOverflowButtons();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
 			//arrange
@@ -468,13 +471,13 @@
 			this.sut._scroll(iLargeScroll, 500); //make sure that this enforces max right position
 			ok(true, "Performing very large scroll (" + iLargeScroll + "/" + this.sut._iMaxOffsetLeft + ")");
 			this.clock.tick(1000);
-			this.sut._checkOverflow();
+			this.sut._handleOverflowButtons();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
 			equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
 			fnUpdateTestScrollValue();
 			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
-			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut.getAggregation("_leftArrowButton").$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 //			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
 
@@ -631,6 +634,33 @@
 			//assert
 			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
+		});
+
+		test("No Overflow Buttons on phone", function () {
+			//arrange
+			var stubs = preparePhonePlatform.call(this);
+			this.sut = new sap.m.TabStrip({
+				hasSelect: true,
+				items: [
+					new sap.m.TabStripItem({key: "0", text: "item 1"})
+				]
+			});
+
+			var fnScrollingSpy = sinon.spy(this.sut, "_adjustScrolling");
+
+			this.sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone")
+			ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
+			ok(!this.sut.getAggregation("_rightArrowButton"), "Right button aggregation is not created");
+
+			ok(!this.sut.$().hasClass(this.sut.getRenderer().LEFT_OVERRFLOW_BTN_CLASS_NAME), "No left button placeholder");
+			ok(!this.sut.$().hasClass(this.sut.getRenderer().RIGHT_OVERRFLOW_BTN_CLASS_NAME), "No right button placeholder");
+
+			jQuery('body').removeClass('sap-phone');
+			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
 		module("Tablet platform tests", {
