@@ -423,13 +423,6 @@
         "references": []
       },
       {
-        "id": "d361fe776d269e8423fc546c917e486d246e5fbc",
-        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.HeaderContainer: enhancing keyboard navigation when leaving and returning to the control",
-        "references": []
-      },
-      {
         "id": "9b74687ba073de05c09c87df13e816b0ee103cf3",
         "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
         "type": "FIX",
@@ -1349,13 +1342,6 @@
         "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.GrowingEnablement: Upwards direction should not always",
-        "references": []
-      },
-      {
-        "id": "d361fe776d269e8423fc546c917e486d246e5fbc",
-        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.HeaderContainer: enhancing keyboard navigation when leaving and returning to the control",
         "references": []
       },
       {
