@@ -643,11 +643,14 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._handleImageNotFoundError = function () {
-		var oObjectImage = this._getInternalAggregation("_objectImage");
+		var oObjectImage = this._getInternalAggregation("_objectImage"),
+			oParent = this.getParent(),
+			$context = oParent ? oParent.$() : this.$();
 
 		if (this.getShowPlaceholder()) {
-			oObjectImage.$().hide();
-			this.$().find(".sapUxAPObjectPageHeaderPlaceholder").removeClass("sapUxAPHidePlaceholder");
+			/* The following two selectors affect both the HeaderTitle and HeaderContent */
+			$context.find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").hide();
+			$context.find(".sapUxAPObjectPageHeaderPlaceholder").removeClass("sapUxAPHidePlaceholder");
 		} else {
 			oObjectImage.addStyleClass("sapMNoImg");
 		}
