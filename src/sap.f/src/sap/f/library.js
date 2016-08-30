@@ -29,9 +29,6 @@ sap.ui.define(['jquery.sap.global',
 		types: [
 			"sap.f.ThreeColumnLayoutType"
 		],
-		interfaces: [
-			"sap.f.ISnappable"
-		],
 		controls: [
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
@@ -40,18 +37,6 @@ sap.ui.define(['jquery.sap.global',
 		],
 		elements: []
 	});
-
-	/**
-	 *
-	 * Interface for controls which are suitable as a Header in sap.f.DynamicPage.
-	 * If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
-	 *
-	 * @since 1.42
-	 * @name sap.f.ISnappable
-	 * @interface
-	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
-	 */
 
 	/**
 	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control
