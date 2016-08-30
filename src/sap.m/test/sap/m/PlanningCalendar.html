@@ -223,6 +223,20 @@
 			}
 		});
 
+		var oButtonToggleAlternatingRowColor = new sap.m.ToggleButton({
+			icon: "sap-icon://paging",
+			tooltip: "Toggle Alternating Row Color",
+			type: sap.m.ButtonType.Transparent,
+			pressed: true,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					oPC1.removeStyleClass("sapMPlanCalSuppressAlternatingRowColors");
+				} else {
+					oPC1.addStyleClass("sapMPlanCalSuppressAlternatingRowColors");
+				}
+			}
+		});
+
 		var oDialog2;
 		var oButtonMinMax = new sap.m.Button("B_MinMax", {
 			icon: "sap-icon://group-2",
@@ -618,6 +632,7 @@
 			                 oButtonShowRowHeaders,
 			                 oButtonLegend,
 			                 oButtonReducedHeight,
+			                 oButtonToggleAlternatingRowColor,
 			                 oButtonMinMax,
 			                 oVisSelect],
 			legend: "Legend1",
