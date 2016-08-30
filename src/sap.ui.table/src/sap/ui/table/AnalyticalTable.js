@@ -716,11 +716,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return iIndex >= 0 && oBinding ? oBinding.getNodeByIndex(iIndex) : null;
 	};
 
-	AnalyticalTable.prototype._onColumnMoved = function(oEvent) {
-		Table.prototype._onColumnMoved.apply(this, arguments);
-		this.updateAnalyticalInfo(true, true);
-	};
-
 	/**
 	 * This function is used by some composite controls to avoid updating the AnalyticalInfo when several column are added to the table.
 	 * In order to finally update the AnalyticalInfo and request data, resumeUpdateAnalyticalInfo must be called.
