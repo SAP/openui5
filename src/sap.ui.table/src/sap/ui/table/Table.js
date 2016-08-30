@@ -1933,17 +1933,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
 		});
 
-		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
-		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
-		$vsb.bind("scroll.sapUiTableVScroll", this.onvscroll.bind(this));
-		$hsb.bind("scroll.sapUiTableHScroll", this.onhscroll.bind(this));
-
-		if (Device.browser.firefox) {
-			this._getScrollTargets().bind("MozMousePixelScroll.sapUiTableMouseWheel", this._onMouseWheel.bind(this));
-		} else {
-			this._getScrollTargets().bind("wheel.sapUiTableMouseWheel", this._onMouseWheel.bind(this));
-		}
-
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
 			jQuery("body").bind('webkitTransitionEnd transitionend',
 				jQuery.proxy(function(oEvent) {
@@ -1964,24 +1953,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._detachEvents = function() {
 		var $this = this.$();
 
-		$this.find(".sapUiTableRowHdrScr").unbind();
 		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
 		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
-
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			$this.find(".sapUiTableCCnt").unbind("scroll.sapUiTableSyncScrollPosition");
-		}
-
-		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
-		$vsb.unbind("scroll.sapUiTableVScroll");
-
-		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
-		$hsb.unbind("scroll.sapUiTableHScroll");
-
-		var $scrollTargets = this._getScrollTargets();
-		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
-		$scrollTargets.unbind("wheel.sapUiTableMouseWheel");
 
 		var $body = jQuery(document.body);
 		$body.unbind('webkitTransitionEnd transitionend');
@@ -2749,160 +2722,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * Will be called by the vertical scrollbar. Updates the visualized data by
-	 * applying the first visible (scrollpos) row from the vertical scrollbar
-	 * @private
-	 */
-	Table.prototype.onvscroll = function(oEvent) {
-		var that = this;
-		// for interaction detection
-		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
-		// do not scroll in action mode!
-		this._getKeyboardExtension().setActionMode(false);
-
-		var updateVisibleRow = function() {
-			var oVSb = that.getDomRef(SharedDomRef.VerticalScrollBar);
-			if (!oVSb) {
-				return;
-			}
-			var iScrollTop = oVSb.scrollTop;
-			if (TableUtils.isVariableRowHeightEnabled(that)) {
-				that._iScrollTop = iScrollTop;
-				that._adjustTablePosition(iScrollTop, that._aRowHeights);
-			}
-			that.setFirstVisibleRow(that._getFirstVisibleRowByScrollTop(iScrollTop), true);
-		};
-
-		if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
-			window.clearTimeout(this._mTimeouts.scrollUpdateTimerId);
-			this._mTimeouts.scrollUpdateTimerId = window.setTimeout(function() {
-				updateVisibleRow();
-				that._mTimeouts._sScrollUpdateTimerId = null;
-			}, 300);
-		} else {
-			updateVisibleRow();
-		}
-		this._bIsScrolledByWheel = false;
-	};
-
-	/**
-	 * Handler for mousewheel event on scroll areas.
-	 * @private
-	 */
-	Table.prototype._onMouseWheel = function(oEvent) {
-		var oOriginalEvent = oEvent.originalEvent;
-		var bIsHorizontal = oOriginalEvent.shiftKey;
-		var iScrollDelta = 0;
-		if (Device.browser.firefox) {
-			iScrollDelta = oOriginalEvent.detail;
-		} else {
-			if (bIsHorizontal) {
-				iScrollDelta = oOriginalEvent.deltaX;
-			} else {
-				iScrollDelta = oOriginalEvent.deltaY;
-			}
-		}
-
-		if (bIsHorizontal) {
-			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-			if (oHsb) {
-				oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
-			}
-		} else {
-			var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-			if (oVsb) {
-				this._bIsScrolledByWheel = true;
-				var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
-				// If at least one row is scrolled, floor to full rows.
-				// Below one row, we scroll pixels.
-				if (iRowsPerStep > 1) {
-					iRowsPerStep = Math.floor(iRowsPerStep);
-				}
-				oVsb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
-			}
-		}
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * sync the column header and content
-	 * @private
-	 */
-	Table.prototype._syncHeaderAndContent = function(oTableSizes) {
-		if (!this._bSyncScrollLeft) {
-			this._bSyncScrollLeft = true;
-			// synchronize the scroll areas
-			var $this = this.$();
-			var iHSbScrollLeft = oTableSizes.tableHSbScrollLeft;
-			$this.find(".sapUiTableColHdrScr").scrollLeft(iHSbScrollLeft);
-			$this.find(".sapUiTableCtrlScr").scrollLeft(iHSbScrollLeft);
-			this._bSyncScrollLeft = false;
-		}
-	};
-
-	/**
-	 * Will be called when the horizontal scrollbar is used. Since the table does
-	 * not render/update the data of all columns (only the visible ones) in case
-	 * of scrolling horizontally we need to update the content of the columns which
-	 * became visible.
-	 * @private
-	 */
-	Table.prototype.onhscroll = function(oEvent) {
-		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
-
-		if (!this._bOnAfterRendering) {
-			// The scroll event is fired multiple times from start to end of one horizontal scrolling action. The event is fired
-			// the first time right after scrolling was started.
-			// Scrolling is interrupted when syncing header and content and is therefore performed only over a short distance.
-			// The timeout is used to overcome this issue, so syncing is performed only after the last occurrence of a scroll event.
-			if (this._mTimeouts.hScrollUpdateTimer) {
-				window.clearTimeout(this._mTimeouts.hScrollUpdateTimer);
-			}
-			this._mTimeouts.hScrollUpdateTimer = window.setTimeout(function() {
-				var oTableSizes = this._collectTableSizes();
-				this._syncHeaderAndContent(oTableSizes);
-				this._determineVisibleCols(oTableSizes);
-			}.bind(this), 50);
-		}
-	};
-
-	/**
-	 * when navigating within the column header we need to synchronize the content
-	 * area with the position (scrollLeft) of the column header.
-	 * @private
-	 */
-	Table.prototype._oncolscroll = function() {
-		if (!this._bSyncScrollLeft) {
-			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-			if (oHsb) {
-				var oColHdrScr = this.getDomRef().querySelector(".sapUiTableColHdrScr");
-				var iScrollLeft = 0;
-				if (oColHdrScr) {
-					iScrollLeft = oColHdrScr.scrollLeft;
-				}
-				oHsb.scrollLeft = iScrollLeft;
-			}
-		}
-	};
-
-	/**
-	 * when navigating within the content area we need to synchronize the column
-	 * header with the position (scrollLeft) of the content area.
-	 * @private
-	 */
-	Table.prototype._oncntscroll = function() {
-		if (!this._bSyncScrollLeft) {
-			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-			if (oHsb) {
-				var oColHdrScr = this.getDomRef().querySelector(".sapUiTableCtrlScr");
-				oHsb.scrollLeft = oColHdrScr.scrollLeft;
-			}
-		}
-	};
-
-	/**
 	 * Handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header.
 	 * @private
 	 */
@@ -3301,71 +3120,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// the column menu!
 		if (bExecuteDefault) {
 			oColumn._openMenu(oDomRef, bWithKeyboard);
-		}
-	};
-
-	/**
-	 * Handler for touchstart on the table, needed for scrolling.
-	 * @param oEvent
-	 */
-	Table.prototype.ontouchstart = function(oEvent) {
-		if ('ontouchstart' in document) {
-			this._aTouchStartPosition = null;
-			this._bIsScrollVertical = null;
-			var $scrollTargets = this._getScrollTargets();
-			var bDoScroll = jQuery(oEvent.target).closest($scrollTargets).length > 0;
-			if (bDoScroll) {
-				var oTouch = oEvent.targetTouches[0];
-				this._aTouchStartPosition = [oTouch.pageX, oTouch.pageY];
-				var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-				if (oVsb) {
-					this._iTouchScrollTop = oVsb.scrollTop;
-				}
-
-				var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-				if (oHsb) {
-					this._iTouchScrollLeft = oHsb.scrollLeft;
-				}
-			}
-		}
-	};
-
-	/**
-	 * Handler for touchmove on the table, needed for scrolling.
-	 * @param oEvent
-	 */
-	Table.prototype.ontouchmove = function(oEvent) {
-		if ('ontouchstart' in document && this._aTouchStartPosition) {
-			var oTouch = oEvent.targetTouches[0];
-			var iDeltaX = (oTouch.pageX - this._aTouchStartPosition[0]);
-			var iDeltaY = (oTouch.pageY - this._aTouchStartPosition[1]);
-			if (this._bIsScrollVertical == null) {
-				this._bIsScrollVertical = Math.abs(iDeltaY) > Math.abs(iDeltaX);
-			}
-
-			if (this._bIsScrollVertical) {
-				var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-				if (oVsb) {
-					var iScrollTop = this._iTouchScrollTop - iDeltaY;
-
-					if (iScrollTop > 0 && iScrollTop < (this.getDomRef("vsb-content").clientHeight - oVsb.clientHeight) - 1) {
-						oEvent.preventDefault();
-						oEvent.stopPropagation();
-					}
-					oVsb.scrollTop = iScrollTop;
-				}
-			} else {
-				var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-				if (oHsb) {
-					var iScrollLeft = this._iTouchScrollLeft - iDeltaX;
-
-					if (iScrollLeft > 0 && iScrollLeft < (this.getDomRef("hsb-content").clientWidth - oHsb.clientWidth) - 1) {
-						oEvent.preventDefault();
-						oEvent.stopPropagation();
-					}
-					oHsb.scrollLeft = iScrollLeft;
-				}
-			}
 		}
 	};
 
