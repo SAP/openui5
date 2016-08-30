@@ -153,22 +153,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	/**
 	 * Default texts are fetched from the sap.m resource bundle
 	 */
-
 	FeedListItem._sTextShowMore = FeedListItem._oRb.getText("TEXT_SHOW_MORE");
 	FeedListItem._sTextShowLess = FeedListItem._oRb.getText("TEXT_SHOW_LESS");
 
-	/**
-	 * Standard method called before control rendering
-	 */
+	FeedListItem.prototype.init = function () {
+		ListItemBase.prototype.init.apply(this);
+		this.setAggregation("_text", new FormattedText(this.getId() + "-formattedText"), true);
+	};
+
 	FeedListItem.prototype.onBeforeRendering = function() {
-		this.setAggregation("_text", new FormattedText({htmlText: this.getText()}), true);
+		this.getAggregation("_text").setHtmlText(this.getText());
 		this._sFullText = this.getAggregation("_text").getHtmlText();
 		this._sShortText = this._getCollapsedText();
 	};
 
-	/**
-	 * Standard method called after control rendering
-	 */
 	FeedListItem.prototype.onAfterRendering = function() {
 		if (this._checkTextIsExpandable()) {
 			//removes the remaining empty tags for collapsed text
@@ -180,11 +178,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 		}
 	};
 
-	/**
-	 * Function is called when exiting the control.
-	 *
-	 * @private
-	 */
 	FeedListItem.prototype.exit = function() {
 		// destroy link control if initialized
 		if (this._oLinkControl) {
