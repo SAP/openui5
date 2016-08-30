@@ -137,8 +137,8 @@
 	//********** Tests start********************************************
 	qutils.delayTestStart();
 
-	module("Basic checks", {
-		setup: function() {
+	QUnit.module("Basic checks", {
+		beforeEach: function() {
 			createTable({
 				firstVisibleRow: 5,
 				visibleRowCount: 7,
@@ -154,25 +154,25 @@
 				})
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("Properties", 8, function() {
-		equal(jQuery.sap.byId("__view0").text(), "TABLEHEADER", "Title of Table is correct!");
-		equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
-		equal(jQuery.sap.byId("__view1").text(), "Footer", "Title of Table is correct!");
-		equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
-		equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
-		equal(jQuery(".sapUiTableCtrl tr").length - 1, oTable.getVisibleRowCount(), "Visible Row Count correct!");
-		equal(jQuery(".sapUiTableRowHdr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
-		equal(5, oTable.getFirstVisibleRow(), "First Visible Row correct!");
+	QUnit.test("Properties", 8, function(assert) {
+		assert.equal(jQuery.sap.byId("__view0").text(), "TABLEHEADER", "Title of Table is correct!");
+		assert.equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
+		assert.equal(jQuery.sap.byId("__view1").text(), "Footer", "Title of Table is correct!");
+		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
+		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
+		assert.equal(jQuery(".sapUiTableCtrl tr").length - 1, oTable.getVisibleRowCount(), "Visible Row Count correct!");
+		assert.equal(jQuery(".sapUiTableRowHdr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
+		assert.equal(5, oTable.getFirstVisibleRow(), "First Visible Row correct!");
 	});
 
-	test("Filter", function() {
+	QUnit.test("Filter", function(assert) {
 		var oColFirstName = oTable.getColumns()[1];
 		var oColMoney = oTable.getColumns()[7];
 
-		equals(oTable.getBinding("rows").iLength, 200, "RowCount beforeFiltering ok");
+		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount beforeFiltering ok");
 		oTable.filter(oColFirstName, "M*");
 
 		// check that the column menu filter input field was updated
@@ -183,57 +183,57 @@
 
 		var oFilterField = sap.ui.getCore().byId(oMenu.getId() + "-filter");
 		if (oFilterField) {
-			equals(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
+			assert.equal(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
 			oTable.filter(oColFirstName, "D*");
-			equals(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
+			assert.equal(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
 		}
 
-		equals(oTable.getBinding("rows").iLength, 20, "RowCount after filtering FirstName 'M*'");
+		assert.equal(oTable.getBinding("rows").iLength, 20, "RowCount after filtering FirstName 'M*'");
 		oTable.filter(oColFirstName, "Mo*");
-		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
-		equals(oColFirstName.getFiltered(), true, "Column FirstName is filtered");
+		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
+		assert.equal(oColFirstName.getFiltered(), true, "Column FirstName is filtered");
 		oTable.filter(oColFirstName, "");
-		equals(oColFirstName.getFiltered(), false, "Column FirstName is not filtered anymore filtered");
-		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+		assert.equal(oColFirstName.getFiltered(), false, "Column FirstName is not filtered anymore filtered");
+		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 
 		oTable.filter(oColMoney, ">10");
-		equals(oTable.getBinding("rows").iLength, 120, "RowCount after filtering money >10");
+		assert.equal(oTable.getBinding("rows").iLength, 120, "RowCount after filtering money >10");
 		oTable.filter(oColMoney, "> 123,45");
-		equals(oTable.getBinding("rows").iLength, 70, "RowCount after filtering money >123,45");
+		assert.equal(oTable.getBinding("rows").iLength, 70, "RowCount after filtering money >123,45");
 		oTable.filter(oColMoney, "<50,55");
-		equals(oTable.getBinding("rows").iLength, 100, "RowCount after filtering money <50,55");
+		assert.equal(oTable.getBinding("rows").iLength, 100, "RowCount after filtering money <50,55");
 		oTable.filter(oColMoney, "9.35");
-		equals(oTable.getBinding("rows").iLength, 0, "RowCount after filtering money 9.35");
+		assert.equal(oTable.getBinding("rows").iLength, 0, "RowCount after filtering money 9.35");
 		oTable.filter(oColMoney, "5,67");
-		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money 5,67");
+		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money 5,67");
 		oTable.filter(oColMoney, "= 32,7600");
-		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money = 32,7600");
-		equals(oColMoney.getFiltered(), true, "Column Money is filtered");
+		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money = 32,7600");
+		assert.equal(oColMoney.getFiltered(), true, "Column Money is filtered");
 		oTable.filter(oColFirstName, "Do*");
-		equals(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Do*' and money 32,76");
-		equals(oColFirstName.getFiltered() && oColMoney.getFiltered(), true, "Column FirstName and Money are filtered");
+		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Do*' and money 32,76");
+		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), true, "Column FirstName and Money are filtered");
 		oTable.filter(oColFirstName, "Mo*");
-		equals(oTable.getBinding("rows").iLength, 0, "RowCount after filtering FirstName 'Mo*' and money 32,76");
+		assert.equal(oTable.getBinding("rows").iLength, 0, "RowCount after filtering FirstName 'Mo*' and money 32,76");
 		oTable.filter(oColFirstName, "");
 		oTable.filter(oColMoney, "");
-		equals(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
-		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
+		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
 
-	test("SelectionMode", function() {
+	QUnit.test("SelectionMode", function(assert) {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
-		equals(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
+		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
 
 		// check selection mode none without columns BCP: 1570822620
 		oTable.removeAllColumns();
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-		equals(oTable.getSelectionMode(), "None", "Selection mode is None!");
+		assert.equal(oTable.getSelectionMode(), "None", "Selection mode is None!");
 	});
-	
-	test("Multi Selection", function() {
-		
+
+	QUnit.test("Multi Selection", function(assert) {
+
 		var iFirstRow = oTable.getFirstVisibleRow();
-		
+
 		function triggerSelectionOnRow(i, bKeyboard, bCtrlKey, bShiftKey) {
 			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + i);
 			oCell.focus();
@@ -244,19 +244,19 @@
 				qutils.triggerEvent("click", oCell, {metaKey : !!bCtrlKey, ctrlKey : !!bCtrlKey, shiftKey: !!bShiftKey});
 			}
 		}
-		
+
 		function checkSelection(sText, aExpectedSelection) {
 			var aSelection = oTable.getSelectedIndices();
-			equals(aSelection.length, aExpectedSelection.length, sText + ": Number of selected items is " + aExpectedSelection.length);
+			assert.equal(aSelection.length, aExpectedSelection.length, sText + ": Number of selected items is " + aExpectedSelection.length);
 			for (var i = 0; i < aExpectedSelection.length; i++) {
-				equals(aSelection[i], iFirstRow + aExpectedSelection[i], sText + ": Selected index " + iFirstRow + aExpectedSelection[i]);
-			} 
+				assert.equal(aSelection[i], iFirstRow + aExpectedSelection[i], sText + ": Selected index " + iFirstRow + aExpectedSelection[i]);
+			}
 		}
-		
+
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
-		equals(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
+		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
 		sap.ui.getCore().applyChanges();
-		
+
 		checkSelection("MultiToggle - Initial", []);
 		triggerSelectionOnRow(0, false, false, false);
 		checkSelection("MultiToggle - After 1st selection", [0]);
@@ -276,13 +276,13 @@
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(6, false, false, true);
 		checkSelection("MultiToggle - After 9th selection", [0, 1, 2, 3, 4, 5, 6]);
-		
+
 		oTable.clearSelection();
 		oTable._enableLegacyMultiSelection = true;
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
-		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
+		assert.equal(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
 		sap.ui.getCore().applyChanges();
-		
+
 		checkSelection("Multi - Initial", []);
 		triggerSelectionOnRow(0, false, false, false);
 		checkSelection("Multi After - 1st selection", [0]);
@@ -308,66 +308,66 @@
 		checkSelection("Multi After - 11th selection", [1, 2, 3, 4, 5, 6]);
 	});
 
-	test("SelectedIndex", 1, function() {
+	QUnit.test("SelectedIndex", 1, function(assert) {
 		oTable.setSelectedIndex(8);
-		equals(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
+		assert.equal(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
 	});
 
-	test("Check Selection of Last fixedBottomRow", 1, function() {
+	QUnit.test("Check Selection of Last fixedBottomRow", 1, function(assert) {
 		oTable.setFixedBottomRowCount(3);
 		var aRows = oTable.getRows();
 		var oLastRow = aRows[aRows.length - 1];
 		var $LastRow = oLastRow.getDomRefs(true);
 		if ($LastRow.rowSelector) {
 			$LastRow.rowSelector.click();
-			equals(oTable.getSelectedIndex(), 199, "Selected Index is 199");
+			assert.equal(oTable.getSelectedIndex(), 199, "Selected Index is 199");
 		}
 	});
 
-	test("VisibleRowCount", 1, function() {
+	QUnit.test("VisibleRowCount", 1, function(assert) {
 		oTable.setVisibleRowCount(8);
-		equals( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
+		assert.equal( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
 	});
 
-	test("EnableColumnReordering", 1, function() {
+	QUnit.test("EnableColumnReordering", 1, function(assert) {
 		oTable.setEnableColumnReordering(true);
-		equals(oTable.getEnableColumnReordering(),true,"Reordering is allowed");
+		assert.equal(oTable.getEnableColumnReordering(),true,"Reordering is allowed");
 	});
 
-	test("FirstVisibleRow", 1, function() {
+	QUnit.test("FirstVisibleRow", 1, function(assert) {
 		oTable.setFirstVisibleRow(4, false);
 		sap.ui.getCore().applyChanges();
-		equals(oTable.getFirstVisibleRow(), 4, "First Visible Row correct!");
+		assert.equal(oTable.getFirstVisibleRow(), 4, "First Visible Row correct!");
 	});
 
-	test("ColumnHeaderHeight", 2, function() {
+	QUnit.test("ColumnHeaderHeight", 2, function(assert) {
 		oTable.setColumnHeaderHeight(100);
 		sap.ui.getCore().applyChanges();
-		equals(oTable.$().find(".sapUiTableColHdrCnt").height(), 100, "ColumnHeaderHeight ok");
+		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").height(), 100, "ColumnHeaderHeight ok");
 		oTable.setColumnHeaderHeight(0);
 		sap.ui.getCore().applyChanges();
 		ok(oTable.$().find(".sapUiTableColHdrCnt").height() < 100, "ColumnHeaderHeight ok");
 	});
 
-	test("ColumnHeaderVisible", 2, function() {
+	QUnit.test("ColumnHeaderVisible", 2, function(assert) {
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
-		equals(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "ColumnHeaderVisible ok");
+		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "ColumnHeaderVisible ok");
 		oTable.setColumnHeaderVisible(true);
 		sap.ui.getCore().applyChanges();
-		equals(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), true, "ColumnHeaderVisible ok");
+		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), true, "ColumnHeaderVisible ok");
 	});
 
-	test("RowHeight", 2, function() {
+	QUnit.test("RowHeight", 2, function(assert) {
 		oTable.setRowHeight(50);
 		sap.ui.getCore().applyChanges();
-		equals(oTable.$().find("tr[data-sap-ui-rowindex]").height(), 50, "RowHeight ok");
+		assert.equal(oTable.$().find("tr[data-sap-ui-rowindex]").height(), 50, "RowHeight ok");
 		oTable.setRowHeight(0);
 		sap.ui.getCore().applyChanges();
-		ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
+		assert.ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
 	});
-	
-	test("TableExtensions", 6, function(assert) {
+
+	QUnit.test("TableExtensions", 6, function(assert) {
 		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
 		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
 		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
@@ -382,40 +382,40 @@
 		}
 	});
 
-	module("Column operations", {
-		setup: function() {
+	QUnit.module("Column operations", {
+		beforeEach: function() {
 			createTable();
 		},
-		teardown: function() {
+		afterEach: function() {
 			destroyTable();
 		}
 	});
 
-	test("ColumnMenu", 5, function() {
+	QUnit.test("ColumnMenu", 5, function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
-		ok(oMenu !== null, "Column menu is not null");
-		ok(oMenu instanceof sap.ui.table.ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
+		assert.ok(oMenu !== null, "Column menu is not null");
+		assert.ok(oMenu instanceof sap.ui.table.ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
 		oMenu.open();
-		ok(oMenu.getItems().length > 0, "Column menu has more than one item");
+		assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
 		oMenu.close();
 
 		//Check column without sort
 		oColumn = oTable.getColumns()[5];
 		oMenu = oColumn.getMenu();
 		oMenu.open();
-		equals(oMenu.getItems().length, 1, "Column menu without sort has only one fitler item");
+		assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one fitler item");
 		oMenu.close();
 
 		//Check column without filter
 		oColumn = oTable.getColumns()[6];
 		oMenu = oColumn.getMenu();
 		oMenu.open();
-		equals(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
+		assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
 		oMenu.close();
 	});
 
-	test("ColumnMenuOpen Event", function() {
+	QUnit.test("ColumnMenuOpen Event", function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
 		var fnHandler = function(oEvent) {
@@ -429,29 +429,29 @@
 
 		oColumn.attachColumnMenuOpen(fnHandler);
 		oColumn._openMenu();
-		equals(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.OPEN, "ColumnMenu open");
+		assert.equal(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.OPEN, "ColumnMenu open");
 		oMenu.close();
 		oColumn.detachColumnMenuOpen(fnHandler);
 
 		oColumn.attachColumnMenuOpen(fnHandlerPreventDefault);
 		oColumn._openMenu();
-		equals(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
+		assert.equal(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
 		oColumn.detachColumnMenuOpen(fnHandlerPreventDefault);
 	});
 
-	test("ColumnVisibilityEvent", 4, function() {
+	QUnit.test("ColumnVisibilityEvent", 4, function(assert) {
 		oTable.setShowColumnVisibilityMenu(true);
 
 		oTable.attachColumnVisibility(function(oEvent) {
 			var oEventColumn = oEvent.getParameter("column");
 
 			if (oEventColumn === oColumn0) {
-				ok(true, "ColumnVisibility event fired for lastName column.");
+				assert.ok(true, "ColumnVisibility event fired for lastName column.");
 				oEvent.preventDefault();
 			} else if (oEventColumn === oColumn1) {
-				ok(true, "ColumnVisibility event fired for firstName column.");
+				assert.ok(true, "ColumnVisibility event fired for firstName column.");
 			} else {
-				ok(false, "ColumnVisibility event fired for wrong column (" + oEventColumn.getId() + ").");
+				assert.ok(false, "ColumnVisibility event fired for wrong column (" + oEventColumn.getId() + ").");
 			}
 
 		});
@@ -465,28 +465,28 @@
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-0", "click");
 
-		equal(oColumn0.getVisible(), true, "lastName column should be still visible (preventDefault)");
+		assert.equal(oColumn0.getVisible(), true, "lastName column should be still visible (preventDefault)");
 
 		oMenu.open();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-1", "click");
 
-		equal(oColumn1.getVisible(), false, "firstName column should be invisible (no preventDefault)");
+		assert.equal(oColumn1.getVisible(), false, "firstName column should be invisible (no preventDefault)");
 
 	});
 
-	test("CustomColumnMenu", 1, function() {
+	QUnit.test("CustomColumnMenu", 1, function(assert) {
 		var oCustomMenu = new sap.ui.commons.Menu("custom-menu");
 		var oColumn = oTable.getColumns()[1];
 		oCustomMenu.addItem(new sap.ui.commons.MenuItem({
 			text:"Custom Menu"
 		}));
 		oColumn.setMenu(oCustomMenu);
-		ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
+		assert.ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
 
-	module("Column filtering", {
-		setup: function() {
+	QUnit.module("Column filtering", {
+		beforeEach: function() {
 			createTable({
 				visibleRowCount: 5
 			}, function(oTable) {
@@ -494,143 +494,143 @@
 				oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Last Name"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", filterValue:"Dente", filtered: true}));
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("Menu & initial filter: references", 4, function() {
+	QUnit.test("Menu & initial filter: references", 4, function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
-		ok(oMenu !== null, "Column menu is not null");
-		ok(oMenu instanceof sap.ui.table.ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
-		ok(oMenu._oColumn instanceof sap.ui.table.Column, "Internal reference to column is set");
-		ok(oMenu._oTable instanceof sap.ui.table.Table, "Internal reference to table is set");
+		assert.ok(oMenu !== null, "Column menu is not null");
+		assert.ok(oMenu instanceof sap.ui.table.ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
+		assert.ok(oMenu._oColumn instanceof sap.ui.table.Column, "Internal reference to column is set");
+		assert.ok(oMenu._oTable instanceof sap.ui.table.Table, "Internal reference to table is set");
 	});
 
-	module("Navigation Paginator", {
-		setup: function() {
+	QUnit.module("Navigation Paginator", {
+		beforeEach: function() {
 			createTable({
 				navigationMode: sap.ui.table.NavigationMode.Paginator,
 				visibleRowCount: 13
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			destroyTable();
 		}
 	});
 
-	test("After initialization", function() {
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
-		equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
+		assert.equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
 
-		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
+		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
 		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
-		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
+		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
-		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
+		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
 		sap.ui.getCore().applyChanges();
 		$table = oTable.$();
-		equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
+		assert.equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
 		oTable._oPaginator.getDomRef("-lastPageLink").click();
-		equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
+		assert.equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});
 
-	module("VisibleRowcountMode Auto", {
-		setup: function() {
-			
+	QUnit.module("VisibleRowcountMode Auto", {
+		beforeEach: function() {
+
 			createTable({
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			destroyTable();
 			document.getElementById("qunit-fixture").style.height = "";
 		}
 	});
 
-	asyncTest("After initialization", function(){
+	QUnit.asyncTest("After initialization", function(assert) {
 		var fnTest = function() {
 			oTable.attachEvent("_rowsUpdated", fnTest2);
 		};
 
 		var fnTest2 = function() {
-			equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
-			start();
+			assert.equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
+			QUnit.start();
 		};
 
 		oTable.attachEventOnce("_rowsUpdated", fnTest);
 		document.getElementById("qunit-fixture").style.height = "800px";
 	});
 
-	module("Fixed columns", {
-		setup: function() {
+	QUnit.module("Fixed columns", {
+		beforeEach: function() {
 			createTable({
 				fixedColumnCount: 2,
 				width: '500px'
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			destroyTable();
 		}
 	});
 
-	test("After initialization", function(){
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
+		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
 	});
 
-	test("Hide one column in fixed area", function() {
+	QUnit.test("Hide one column in fixed area", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
 		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "225px", "Horizontal scrollbar has correct left margin");
+		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
+		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "225px", "Horizontal scrollbar has correct left margin");
 	});
 
-	test("Hide one column in scroll area", function() {
+	QUnit.test("Hide one column in scroll area", function(assert) {
 		oTable.getColumns()[5].setVisible(false);
 		sap.ui.getCore().applyChanges();
 		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
-		equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
+		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
 	});
 
-	test("No fixed column used, when table is too small.", function() {
+	QUnit.test("No fixed column used, when table is too small.", function(assert) {
 		oTable.setFixedColumnCount(3);
 		oTable.setWidth("400px");
 
 		sap.ui.getCore().applyChanges();
-		
-		equals(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
-		equals(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+
+		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
+		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
 
 		oTable.setWidth("500px");
 
 		sap.ui.getCore().applyChanges();
 
-		equals(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
 	});
 
-	module("API assertions", {
-		setup: function() {
+	QUnit.module("API assertions", {
+		beforeEach: function() {
 			createTable({
 				visibleRowCount: 10,
 				width: "100px",
 				firstVisibleRow: 1
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			destroyTable();
 		}
 	});
 
-	test("Scrollbars can be accessed by inheriting controls", function(assert) {
+	QUnit.test("Scrollbars can be accessed by inheriting controls", function(assert) {
 		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oHsb);
@@ -642,35 +642,35 @@
 		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
-	module("Fixed rows and columns", {
-		setup: function() {
+	QUnit.module("Fixed rows and columns", {
+		beforeEach: function() {
 			createTable({
 				fixedRowCount: 2,
 				fixedColumnCount: 2,
 				visibleRowCount: 8
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			destroyTable();
 		}
 	});
 
-	test("After initialization", function() {
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
-		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Top left tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Bottom left tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Top right tabled has 7 Columns");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Bottom right tabled has 7 Columns");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top left tabled has 2 rows");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom left tabled has 6 rows");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top right tabled has 2 rows");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom right tabled has 6 rows");
-		equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableRowHdr').filter(':eq(2)')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+		assert.equal(oTable.getFixedRowCount(), 2, "Fixed row count correct");
+		assert.equal($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Top left tabled has 3 Columns");
+		assert.equal($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Bottom left tabled has 3 Columns");
+		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Top right tabled has 7 Columns");
+		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Bottom right tabled has 7 Columns");
+		assert.equal($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top left tabled has 2 rows");
+		assert.equal($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom left tabled has 6 rows");
+		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top right tabled has 2 rows");
+		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom right tabled has 6 rows");
+		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableRowHdr').filter(':eq(2)')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
 	});
 
-	module("Fixed top and bottom rows and columns", {
-		setup: function() {
+	QUnit.module("Fixed top and bottom rows and columns", {
+		beforeEach: function() {
 			createTable({
 				fixedRowCount: 2,
 				fixedBottomRowCount: 2,
@@ -678,30 +678,30 @@
 				visibleRowCount: 8
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			destroyTable();
 		}
 	});
 
-	test("After initialization", function() {
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
-		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
-		equals(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Left fixed table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Left scroll table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 3, "Left fixed bottom table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Right table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Right scroll table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 7, "Right fixed bottom table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed tbody tr').length, 2, "Left fixed table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed tbody tr').length, 2, "Right table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll tbody tr').length, 4, "Left scroll table has 4 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll tbody tr').length, 4, "Right scroll table has 4 rows");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
-		equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
-		equals($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+		assert.equal(oTable.getFixedRowCount(), 2, "Fixed row count correct");
+		assert.equal(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
+		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Left fixed table has 2 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Left scroll table has 2 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 3, "Left fixed bottom table has 2 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Right table has 6 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Right scroll table has 6 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 7, "Right fixed bottom table has 6 columns + dummy rowsel");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed tbody tr').length, 2, "Left fixed table has 2 rows");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed tbody tr').length, 2, "Right table has 2 rows");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll tbody tr').length, 4, "Left scroll table has 4 rows");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll tbody tr').length, 4, "Right scroll table has 4 rows");
+		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
+		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
+		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+		assert.equal($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
 	});
 
 	QUnit.test("Sanity check for fixed rows", function(assert) {
@@ -795,31 +795,31 @@
 
 	});
 
-	module("Grouping", {
-		setup: function() {
+	QUnit.module("Grouping", {
+		beforeEach: function() {
 			createTable({
 				visibleRowCount: 5,
 				enableGrouping: true
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("InitialRowCount", 1, function() {
+	QUnit.test("InitialRowCount", 1, function(assert) {
 		var oBinding = oTable.getBinding("rows");
-		equal(oBinding.getLength(), 200, "Row count is correct!");
+		assert.equal(oBinding.getLength(), 200, "Row count is correct!");
 	});
 
-	test("Grouping using table API", 1, function() {
+	QUnit.test("Grouping using table API", 1, function(assert) {
 		var oColumn = oTable.getColumns()[3],
 			oBinding;
 
 		oTable.setGroupBy(oColumn);
 		oBinding = oTable.getBinding("rows");
-		equal(oBinding.getLength(), 203, "Row count is correct!");
+		assert.equal(oBinding.getLength(), 203, "Row count is correct!");
 	});
 
-	asyncTest("Grouping rendering", 10, function() {
+	QUnit.asyncTest("Grouping rendering", 10, function(assert) {
 		var oColumn = oTable.getColumns()[3];
 
 		var fnHandlerProxy = function() {
@@ -830,43 +830,43 @@
 			var $Table = oTable.$(),
 			$RowHeaders = $Table.find('.sapUiTableRowHdrScr div');
 
-			ok(jQuery($RowHeaders.get(0)).hasClass('sapUiTableGroupHeader'), 'Row header is marked as group header');
-			ok(!jQuery($RowHeaders.get(1)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(2)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(3)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(4)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(5)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(6)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(7)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(8)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(9)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			start();
-		}
+			assert.ok(jQuery($RowHeaders.get(0)).hasClass('sapUiTableGroupHeader'), 'Row header is marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(1)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(2)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(3)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(4)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(5)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(6)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(7)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(8)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			assert.ok(!jQuery($RowHeaders.get(9)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
+			QUnit.start();
+		};
 
 		oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);
 		oTable.setGroupBy(oColumn);
 	});
 
-	test("ExpandCollapseGroup", 3, function() {
+	QUnit.test("ExpandCollapseGroup", 3, function(assert) {
 		oTable.setGroupBy(oTable.getColumns()[3].getId());
 		var oBinding = oTable.getBinding("rows");
 		oBinding.collapse(0);
-		equal(oBinding.getLength(), 193, "Row count is correct!");
-		ok(oBinding.isGroupHeader(0) && oBinding.isGroupHeader(1), "First and second line are group headers!");
+		assert.equal(oBinding.getLength(), 193, "Row count is correct!");
+		assert.ok(oBinding.isGroupHeader(0) && oBinding.isGroupHeader(1), "First and second line are group headers!");
 		oBinding.expand(0);
-		equal(oBinding.getLength(), 203, "Row count is correct!");
+		assert.equal(oBinding.getLength(), 203, "Row count is correct!");
 	});
 
-	test("Reset grouping", 3, function() {
-		equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
+	QUnit.test("Reset grouping", 3, function(assert) {
+		assert.equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
 		oTable.setGroupBy(oTable.getColumns()[3]);
-		equal(oTable.getBinding("rows").getLength(), 203, "Row count is correct!");
+		assert.equal(oTable.getBinding("rows").getLength(), 203, "Row count is correct!");
 		oTable.setEnableGrouping(false);
-		equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
+		assert.equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
 	});
 
-	module("Multiple header rows", {
-		setup: function() {
+	QUnit.module("Multiple header rows", {
+		beforeEach: function() {
 			createTable({}, function(oTable) {
 				var oControl = new sap.ui.commons.TextView().bindProperty("text", "lastName");
 				var oColumn = new sap.ui.table.Column({multiLabels: [
@@ -883,26 +883,26 @@
 				oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Checked (very long label text to show wrapping behavior)"}), template: oControl, sortProperty: "checked", filterProperty: "checked", hAlign: "Center"}));
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			destroyTable();
 		}
 	});
 
-	test("Headers", 1, function() {
-		equal(jQuery.sap.byId("table").find(".sapUiTableColHdr .sapUiTableCol").length, 6, "Total count of headers");
+	QUnit.test("Headers", 1, function(assert) {
+		assert.equal(jQuery.sap.byId("table").find(".sapUiTableColHdr .sapUiTableCol").length, 6, "Total count of headers");
 	});
 
-	test("Equal widths", 3, function() {
+	QUnit.test("Equal widths", 3, function(assert) {
 		var $Table = jQuery.sap.byId("table");
 		var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
 		var $Head2 = $Table.find(".sapUiTableColHdr:eq(1)");
-		equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(), "First column headers have equal width");
-		equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(), "Second column headers have equal width");
-		equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
+		assert.equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(), "First column headers have equal width");
+		assert.equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(), "Second column headers have equal width");
+		assert.equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
 	});
 
-	module("Table with extension", {
-		setup: function() {
+	QUnit.module("Table with extension", {
+		beforeEach: function() {
 			createTable({
 				extension: [
 					new sap.ui.commons.Button("extensionButton", {
@@ -911,35 +911,35 @@
 				]
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("After initialization", function(){
+	QUnit.test("After initialization", function(assert){
 		var $table = oTable.$();
 		$button = $table.find('.sapUiTableExt').find('#extensionButton');
-		equals(oTable.getExtension().length, 1, "Table has 1 extension");
-		equals($button.length, 1, "Button in extension is rendered");
-		equals(sap.ui.getCore().byId($button.attr('id')).getText(), 'Click me!', "The correct button is rendered");
+		assert.equal(oTable.getExtension().length, 1, "Table has 1 extension");
+		assert.equal($button.length, 1, "Button in extension is rendered");
+		assert.equal(sap.ui.getCore().byId($button.attr('id')).getText(), 'Click me!', "The correct button is rendered");
 	});
 
-	module("Invisible table", {
-		setup: function() {
+	QUnit.module("Invisible table", {
+		beforeEach: function() {
 			createTable({
 				visible: false
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("After initialization", function(){
+	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
-		equal($table.children().length, 0, 'No table content is rendered');
+		assert.equal($table.children().length, 0, 'No table content is rendered');
 	});
 
 	var oExport = null;
 
-	module("Data export", {
-		setup: function() {
+	QUnit.module("Data export", {
+		beforeEach: function() {
 			createTable({}, null, "myModel");
 			oTable.filter(oTable.getColumns()[1], "Al");
 
@@ -948,14 +948,14 @@
 				exportType: new sap.ui.core.util.ExportTypeCSV()
 			});
 		},
-		teardown: function() {
+		afterEach: function() {
 			oExport.destroy();
 			oExport = null;
 			destroyTable();
 		}
 	});
 
-	asyncTest("Export filtered table with named model", function() {
+	QUnit.asyncTest("Export filtered table with named model", function(assert) {
 		oExport
 		.generate()
 		.done(function(sContent) {
@@ -971,18 +971,24 @@
 			"Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
 			"Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
 			"Dente - 180,Al,true,www.sap.com,male,4,3.45";
-			equal(sContent, sExpected, "Generated file content should be correct.");
+			assert.equal(sContent, sExpected, "Generated file content should be correct.");
 		})
 		.fail(function() {
-			ok(false, 'Generate should not fail.');
+			assert.ok(false, 'Generate should not fail.');
 		})
 		.always(function() {
-			start();
+			QUnit.start();
 		});
 	});
 
-	module("Toolbar");
-	test("Table toolbar should have the transparent design by default without changing the design property", function() {
+	QUnit.module("Toolbar", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+		}
+	});
+
+	QUnit.test("Table toolbar should have the transparent design by default without changing the design property", function(assert) {
 		var oTB = new sap.m.Toolbar(),
 			oTable = new sap.ui.table.Table({
 				toolbar: oTB
@@ -990,13 +996,13 @@
 
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "Design property of the Toolbar is Auto");
-		strictEqual(sap.m.ToolbarDesign.Transparent, oTB.getActiveDesign(), "Active design of the Toolbar is Transparent");
+		assert.strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "Design property of the Toolbar is Auto");
+		assert.strictEqual(sap.m.ToolbarDesign.Transparent, oTB.getActiveDesign(), "Active design of the Toolbar is Transparent");
 
 		oTable.destroy();
 	});
 
-	test("Table should respect the design property of the Toolbar when it is set", function() {
+	QUnit.test("Table should respect the design property of the Toolbar when it is set", function(assert) {
 		var oTB = new sap.m.Toolbar({
 				design: "Solid"
 			}),
@@ -1006,23 +1012,23 @@
 
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getDesign(), "Design property of the Toolbar is Solid");
-		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+		assert.strictEqual(sap.m.ToolbarDesign.Solid, oTB.getDesign(), "Design property of the Toolbar is Solid");
+		assert.strictEqual(sap.m.ToolbarDesign.Solid, oTB.getActiveDesign(), "Active design of the Toolbar is Solid as well");
 
 		oTable.destroy();
 	});
 
-	module("Sorting", {
-		setup: function() {
+	QUnit.module("Sorting", {
+		beforeEach: function() {
 			createTable({
 				title: "TABLEHEADER",
 				footer: "Footer"
 			})
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	asyncTest("Multi-columns sorting", function() {
+	QUnit.asyncTest("Multi-columns sorting", function(assert) {
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1030,14 +1036,14 @@
 
 			if (aSortedColumns.length === 2) {
 
-				strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
-				strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "check column name.");
+				assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
+				assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "check column name.");
 
-				strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
-				strictEqual(oTable.getRows()[3].getCells()[1].getValue(), "Doris", "first sorting column works.");
+				assert.strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
+				assert.strictEqual(oTable.getRows()[3].getCells()[1].getValue(), "Doris", "first sorting column works.");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
-				start();
+				QUnit.start();
 			}
 		};
 
@@ -1045,7 +1051,7 @@
 		sortTable();
 	});
 
-	asyncTest("Sort Icon", function() {
+	QUnit.asyncTest("Sort Icon", function(assert) {
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1054,17 +1060,17 @@
 
 			if (aSortedColumns.length === 2) {
 				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
-				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
-				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
+				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
 
 				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
-				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
-				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
+				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
-				start();
+				QUnit.start();
 			}
 		};
 
@@ -1074,7 +1080,7 @@
 		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
 	});
 
-	asyncTest("remove column", function() {
+	QUnit.asyncTest("remove column", function(assert) {
 		creatSortingTableData();
 		var oRemovedColumn;
 
@@ -1090,11 +1096,11 @@
 
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
-			strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
-			strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
-			strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
+			assert.strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
+			assert.strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
+			assert.strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
-			start();
+			QUnit.start();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1102,8 +1108,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-
-	asyncTest("remove all columns", function() {
+	QUnit.asyncTest("remove all columns", function(assert) {
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1120,8 +1125,8 @@
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
-			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			start();
+			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
+			QUnit.start();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1129,8 +1134,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-
-	asyncTest("destroy columns", function() {
+	QUnit.asyncTest("destroy columns", function(assert) {
 		creatSortingTableData();
 
 		var fnHandler = function() {
@@ -1147,8 +1151,8 @@
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
-			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			start();
+			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
+			QUnit.start();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1156,7 +1160,7 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	asyncTest("change column order", function() {
+	QUnit.asyncTest("change column order", function(assert) {
 		creatSortingTableData();
 		var oRemovedColumn;
 
@@ -1183,11 +1187,11 @@
 		var fnHandler3 = function() {
 
 			var aSortedColumns = oTable.getSortedColumns();
-			strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
-			strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
-			strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
+			assert.strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
+			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
+			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
 			oTable.detachEvent("_rowsUpdated", fnHandler3);
-			start();
+			QUnit.start();
 		};
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
@@ -1195,14 +1199,14 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	module("Performance improvements", {
-		setup: function() {
+	QUnit.module("Performance improvements", {
+		beforeEach: function() {
 			createTable();
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("Prevent re-rendering on setEnableBusyIndicator", function() {
+	QUnit.test("Prevent re-rendering on setEnableBusyIndicator", function(assert) {
 		var spy = this.spy();
 		oTable.addEventDelegate({onAfterRendering: spy});
 
@@ -1211,18 +1215,18 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		sinon.assert.notCalled(spy);
+		assert.ok(spy.notCalled, "onAfterRendering was not called");
 		assert.ok(oTable.getEnableBusyIndicator(), "The overwritten function still works");
 	});
 
-	module("Binding", {
-		setup: function() {
+	QUnit.module("Binding", {
+		beforeEach: function() {
 			createTable();
 		},
-		teardown: destroyTable
+		afterEach: destroyTable
 	});
 
-	test("BindRows", function() {
+	QUnit.test("BindRows", function(assert) {
 		var spy = this.spy(oTable, "destroyRows");
 		// bind rows again, binding could be resolved because model is set
 		oTable.bindRows(oTable.getBindingInfo("rows"));
@@ -1232,14 +1236,14 @@
 		// bind rows again. Binding was not yet resolved
 		oTable.bindRows("otherModel>/root");
 		// destroy rows must not be called
-		sinon.assert.notCalled(spy);
+		assert.ok(spy.notCalled, "destroyRows was not called");
 	});
 
-	module("Callbacks", {
-		teardown: destroyTable
+	QUnit.module("Callbacks", {
+		afterEach: destroyTable
 	});
 
-	asyncTest("_updateTableCell callback", function() {
+	QUnit.asyncTest("_updateTableCell callback", function(assert) {
 		var iCallCountUpdateTableCellOnTable = 0;
 		var iCallCountUpdateTableCell = 0;
 		var fnTest = function() {
@@ -1252,8 +1256,8 @@
 		var fnTestScroll = function() {
 			assert.equal(iCallCountUpdateTableCellOnTable, 40, "UpdateTableCell callback called on table ok");
 			assert.equal(iCallCountUpdateTableCell, 40, "UpdateTableCell callback called on cell ok");
-			start();
-		}
+			QUnit.start();
+		};
 
 		// create a dummy control for this test which has _updateTableCell implemented
 		var oRenderer = new sap.ui.commons.TextView().getRenderer();
@@ -1278,12 +1282,14 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-	module("Events", {
-		setup: createTable,
-		teardown: destroyTable
+	QUnit.module("Events", {
+		beforeEach: function() {
+			createTable();
+		},
+		afterEach: destroyTable
 	});
 
-	test("RowSelectionChange", 35, function() {
+	QUnit.test("RowSelectionChange", 35, function() {
 		var sTestCase = "";
 		var fnHandler = function(oEvent) {
 			switch(sTestCase) {
