@@ -112,10 +112,14 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	// * This file defines behavior for the control,
 	// */
 	MultiInput.prototype.init = function() {
-		var that = this;
+		var that = this,
+			oCore = sap.ui.getCore();
+
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		Input.prototype.init.call(this);
+
+		oCore.attachThemeChanged(this._handleThemeChanged, this);
 
 		this._bIsValidating = false;
 		this._tokenizer = new sap.m.Tokenizer();
@@ -220,7 +224,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 
 				that._oPopupInput.focus();
-
 			}
 		});
 
@@ -565,6 +568,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			delete this._sResizeHandlerId;
 		}
 
+		var oCore = sap.ui.getCore();
+		oCore.detachThemeChanged(this._handleThemeChanged, this);
+
 		Input.prototype.exit.apply(this, arguments);
 	};
 
@@ -696,10 +702,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 */
 	MultiInput.prototype.onAfterRendering = function() {
 
+		var oCore = sap.ui.getCore();
+
 		Input.prototype.onAfterRendering.apply(this, arguments);
 
-		this._setContainerSizes();
+		if (oCore.isThemeApplied()) {
+			this._setContainerSizes();
+		}
+	};
 
+	/**
+	 * Fired when the theme is changed.
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._handleThemeChanged = function() {
+		this._setContainerSizes();
 	};
 
 	/**
