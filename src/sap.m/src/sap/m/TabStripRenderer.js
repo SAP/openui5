@@ -11,6 +11,9 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 */
 	var TabStripRenderer = {};
 
+		TabStripRenderer.LEFT_OVERRFLOW_BTN_CLASS_NAME = "sapMTSLeftOverflowButtons";
+		TabStripRenderer.RIGHT_OVERRFLOW_BTN_CLASS_NAME = "sapMTSRightOverflowButtons";
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -27,11 +30,19 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		if (sap.ui.Device.system.phone === true) {
 			this.renderTouchArea(oRm, oControl);
 		} else {
-			this.renderLeftOverflowButtons(oRm, oControl);
+			oRm.write("<div id='" + oControl.getId() + "-leftOverflowButtons' class='" + this.LEFT_OVERRFLOW_BTN_CLASS_NAME + "'>");
+			if (oControl.getAggregation("_leftArrowButton")) {
+				this.renderLeftOverflowButtons(oRm, oControl, false);
+			}
+			oRm.write("</div>");
 			this.beginTabsContainer(oRm, oControl);
 			this.renderItems(oRm, oControl);
 			this.endTabsContainer(oRm);
-			this.renderRightOverflowButtons(oRm, oControl);
+			oRm.write("<div id='" + oControl.getId() + "-rightOverflowButtons' class='" + this.RIGHT_OVERRFLOW_BTN_CLASS_NAME + "'>");
+			if (oControl.getAggregation("_rightArrowButton")) {
+				this.renderRightOverflowButtons(oRm, oControl, false);
+			}
+			oRm.write("</div>");
 			this.renderTouchArea(oRm, oControl);
 		}
 		this.endTabStrip(oRm);
@@ -171,13 +182,14 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
+	 * @param bFlush {boolean} should the buffer be flushed into the provided DOM node
 	 */
-	TabStripRenderer.renderLeftOverflowButtons = function (oRm, oControl) {
-		oRm.write("<div id='" + oControl.getId() + "-leftOverflowButtons' class='sapMTSLeftOverflowButtons'>");
-		if (!sap.ui.Device.system.phone) {
-			oRm.renderControl(oControl._oLeftArrowButton);
+	TabStripRenderer.renderLeftOverflowButtons = function (oRm, oControl, bFlush) {
+		oRm.renderControl(oControl.getAggregation("_leftArrowButton"));
+
+		if (bFlush) { // flush only on lazy rendering
+			oRm.flush(oControl.$("leftOverflowButtons")[0]);
 		}
-		oRm.write("</div>");
 	};
 
 	/**
@@ -185,15 +197,14 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
+	 * @param bFlush {boolean} should the buffer be flushed into the provided DOM node
 	 */
-	TabStripRenderer.renderRightOverflowButtons = function (oRm, oControl) {
-		oRm.write("<div id='" + oControl.getId() + "-rightOverflowButtons'  class='sapMTSRightOverflowButtons'>");
+	TabStripRenderer.renderRightOverflowButtons = function (oRm, oControl, bFlush) {
+		oRm.renderControl(oControl.getAggregation("_rightArrowButton"));
 
-		if (!sap.ui.Device.system.phone) {
-			oRm.renderControl(oControl._oRightArrowButton);
+		if (bFlush) { // flush only on lazy rendering
+			oRm.flush(oControl.$("rightOverflowButtons")[0]);
 		}
-
-		oRm.write("</div>");
 	};
 
 	/**
