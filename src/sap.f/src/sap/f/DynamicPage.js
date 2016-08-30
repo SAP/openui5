@@ -21,10 +21,57 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A DynamicPage is a control that is used as a layout for an application. It consists of a title, a header,
-	 * content and a footer. Additionally it offers dynamic behavior when scrolling,
-	 * where part of the header snaps to the title.
-	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 * <strong><i>Overview</i></strong>
+	 * <br><br>
+	 * A {@link sap.f.DynamicPage} is a control that is used as a layout for an
+	 * application. It consists of a title, a header, content and a footer.
+	 * Additionally it offers dynamic behavior when scrolling, where part of the
+	 * header snaps to the title.
+	 * <br><br>
+	 * <strong>Notes:</strong>
+	 * <ul><li>If you're displaying a {@link sap.m.FlexBox FlexBox} control with
+	 * non-adaptive content (doesn't stretch to fill the available space), it is
+	 * recommended to set the <code>fitContainer</code> property of the
+	 * {@link sap.m.FlexBox FlexBox} to <code>false</code>.</li>
+	 * <li>If you are displaying a {@link sap.ui.table.Table}, keep in mind that it is
+	 * non-adaptive and may cause unpredicted behavior for the
+	 * {@link sap.f.DynamicPage DynamicPage} on smaller screen sizes, such as mobile.</li>
+	 * </ul>
+	 * <strong><i>Structure</i></strong>
+	 * <br><br>
+	 * The control consist of several components -
+	 * {@link sap.f.DynamicPageTitle DynamicPageTitle},
+	 * {@link sap.f.DynamicPageHeader DynamicPageHeader}, a content area, and a footer:
+	 * <ul><li>{@link sap.f.DynamicPageTitle DynamicPageTitle} - consists of a heading
+	 * on the left side, content in the middle, and actions on the right. The displayed
+	 * content changes based on the current mode of the {@link sap.f.DynamicPageHeader
+	 * DynamicPageHeader}.</li>
+	 * <li>{@link sap.f.DynamicPageHeader DynamicPageHeader} - a generic container, which
+	 * can contain a single layout control and does not care about the content alignement
+	 * and responsiveness. The header works in two modes - expanded and snapped and its
+	 * behavior can be adjusted with the help of different properties.</li>
+	 * <li>Content area - a generic container, which can have a single UI5 layout control
+	 * and does not care about the content alignement and responsiveness.</li>
+	 * <li>Footer - positioned at the bottom with a small offset and used for additional
+	 * actions, the footer floats above the content. It can be any {@link sap.m.IBar}
+	 * control.</li>
+	 * </ul>
+	 * <strong><i>Usage</i></strong>
+	 * <br><br>
+	 * Use the {@link sap.f.DynamicPage DynamicPage) if you need to have a title, that is
+	 * always visible and a header, that has configurable Expanding/Snapping functionality.
+	 * If you don't need the Expanding/Snapping functionality it is better to use the
+	 * {@link sap.m.Page} as a lighter control.
+	 * <br><br>
+	 * <strong><i>Responsive Behavior</i></strong>
+	 * <br><br>
+	 * The responsive behavior of the {@link sap.f.DynamicPage DynamicPage} depends on the
+	 * behavior of the content that is displayed.
+	 * <br><br>
+	 * <strong><i>Additional Information</i></strong>
+	 * <br><br>
+	 * Check out the <a href="/#docs/api/symbols/sap.f.DynamicPage.html" >API Reference</a>.
+	 *
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -61,13 +108,13 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behaviour", defaultValue: true},
 
 				/**
-				 * Determines whether the footer will be visible.
+				 * Determines whether the footer is visible.
 				 */
 				showFooter: {type: "boolean", group: "Behaviour", defaultValue: false}
 			},
 			aggregations: {
 				/**
-				 * Dynamic Page Layout Title managed internally by the DynamicPage control.
+				 * Dynamic Page Layout Title managed internally by the <code>DynamicPage</code> control.
 				 */
 				title: {type: "sap.f.DynamicPageTitle", multiple: false},
 
@@ -222,7 +269,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * If the header is bigger than the allowed height the control will be invalidated and rendered with scrollable header
+	 * If the header is larger than the allowed height, the control will be invalidated and rendered with scrollable header.
 	 * @private
 	 * @returns {boolean} is rule overridden
 	 */
@@ -247,7 +294,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hide/show the footer container
+	 * Hides/shows the footer container.
 	 * @param bShow
 	 * @private
 	 */
@@ -281,7 +328,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hide/show the footer spacer
+	 * Hides/shows the footer spacer.
 	 * @param {boolean} bToggle
 	 * @private
 	 */
@@ -295,7 +342,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Switches between snapped/expanded modes
+	 * Switches between expanded/collapsed (snapped) modes.
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeader = function () {
@@ -318,7 +365,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts the header to snapped mode
+	 * Converts the header to collapsed (snapped) mode.
 	 * @param {boolean} bAppendHeaderToContent
 	 * @private
 	 */
@@ -389,7 +436,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the header visibility in such a way, that the page content is pushed down or pulled up.
-	 * The method is used, when headerAlwaysExpanded is true
+	 * The method is used, when headerAlwaysExpanded is <code>true</code>
 	 * @param {boolean} bShow
 	 * @private
 	 */
@@ -415,7 +462,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Appends header to content area
+	 * Appends header to content area.
 	 * @private
 	 */
 	DynamicPage.prototype._moveHeaderToContentArea = function () {
@@ -428,7 +475,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Appends header to title area
+	 * Appends header to title area.
 	 * @private
 	 */
 	DynamicPage.prototype._moveHeaderToTitleArea = function () {
@@ -441,7 +488,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Scrolls the content to the snap point(header`s height + 1)
+	 * Scrolls the content to the snap point(header`s height + 1).
 	 * @private
 	 */
 	DynamicPage.prototype._scrollToSnapHeader = function () {
@@ -449,7 +496,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Pins the header
+	 * Pins the header.
 	 * @private
 	 */
 	DynamicPage.prototype._pin = function () {
@@ -462,7 +509,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Unpins the header
+	 * Unpins the header.
 	 * @private
 	 */
 	DynamicPage.prototype._unPin = function () {
@@ -533,7 +580,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the appropriate position of the ScrollBar based on what the device is.
+	 * Determines the appropriate position of the <code>ScrollBar</code> based on the used device.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -546,8 +593,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the appropriate scroll position of the ScrollBar and DynamicPage content wrapper,
-	 * based on what the device
+	 * Sets the appropriate scroll position of the <code>ScrollBar</code> and <code>DynamicPage</code> content wrapper,
+	 * based on the used device.
 	 * @param {Number} iNewScrollPosition
 	 * @private
 	 */
@@ -559,7 +606,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header should snap
+	 * Determines if the header should collapse (snap).
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -569,7 +616,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header should expand
+	 * Determines if the header should expand.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -579,7 +626,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is scrolled out completely
+	 * Determines if the header is scrolled out completely.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -589,7 +636,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the header is allowed to snap,
-	 * it`s not pinned, not already snapped and snap on scroll is allowed
+	 * it`s not pinned, not already snapped and snap on scroll is allowed.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -597,7 +644,7 @@ sap.ui.define([
 		return !this._headerAlwaysExpanded() && this.getHeaderExpanded() && !this._bPinned;
 	};
 	/**
-	 * Determines if it's possible for the header to snap via scroll
+	 * Determines if it's possible for the header to snap using scroll.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -606,7 +653,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the appropriate height at which the header can snap
+	 * Determines the appropriate height at which the header can collapse (snap).
 	 * @returns {Number}
 	 * @private
 	 */
@@ -615,7 +662,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the maximum scroll position, depending on the content size
+	 * Determines the maximum scroll position, depending on the content size.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -630,7 +677,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the control would need a ScrollBar.
+	 * Determines if the control would need a <code>ScrollBar</code>.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -639,7 +686,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the height of the Dynamic Page control
+	 * Retrieves the height of the <code>DynamicPage</code> control.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -648,7 +695,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the combined height of the title and the header
+	 * Determines the combined height of the title and the header.
 	 * @returns {Number} the combined height of the title and the header
 	 * @private
 	 */
@@ -670,8 +717,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is bigger than what's allowed for it to snap.
-	 * If the header becomes more than the screen height, it shouldn't be snapped while scrolling.
+	 * Determines if the header is larger than what's allowed for it to collapse (snap).
+	 * <b>Note: </b>If the header becomes larger than the screen height, it shouldn't be snapped while scrolling.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -680,7 +727,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is bigger than what's allowed for it to be pinned.
+	 * Determines if the header is larger than what's allowed for it to be pinned.
 	 * If the header becomes more than 60% of the screen height it cannot be pinned.
 	 * @param {Number} iControlHeight
 	 * @returns {boolean}
@@ -695,7 +742,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * Determines if the header is bigger than the allowed height
+	 * Determines if the header is larger than the allowed height.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -706,7 +753,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height that is needed to correctly offset the "fake" ScrollBar in none header not always expanded mode
+	 * Determines the height that is needed to correctly offset the <code>ScrollBar</code>,
+	 * when <code>preserveHeaderStateOnScroll</code> is set to <code>false</code>.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -740,7 +788,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the position/height of the "fake" ScrollBar
+	 * Updates the position/height of the <code>ScrollBar</code>
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
@@ -768,7 +816,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the title area/footer offset. Since the "real" scroll bar starts at just below the title and since the "fake"
-	 * ScrollBar doesn't shift the content of the title/footer, it is necessary to offset this ourselves, so it looks natural.
+	 * <code>ScrollBar</code> doesn't shift the content of the title/footer, it is necessary to offset this ourselves, so it looks natural.
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBarOffset = function () {
@@ -783,7 +831,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the Header ARIA state according to Header Expanded / Snapped state.
+	 * Updates the Header ARIA state depending on the header expanded/collapsed (snapped) state.
 	 * @param {Boolean} bExpanded determines if the header is expanded or snapped.
 	 * @private
 	 */
@@ -797,8 +845,8 @@ sap.ui.define([
 
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
-	 * This is necessary, because the control will be embedded in other controls (like the sap.f.FlexibleColumnLayout),
-	 * thus it will not be using all of the screens width, but despite that the paddings need to be appropriate.
+	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout<code>),
+	 * thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
 	 * @param {Number} iWidth - the actual width of the control
 	 * @private
 	 */
@@ -828,7 +876,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the height of a control safely. If the control doesn't exist it returns 0,
-	 * so it doesn't confuse any calculations based on it. If it exists it just returns its dom element height.
+	 * so it doesn't confuse any calculations based on it. If it exists it just returns its DOM element height.
 	 * @param  {sap.ui.core.Control} oControl
 	 * @return {Number} the height of the control
 	 */
@@ -838,7 +886,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the width of a control safely. If the control doesn't exist it returns 0,
-	 * so it doesn't confuse any calculations based on it. If it exists it just returns its dom element width.
+	 * so it doesn't confuse any calculations based on it. If it exists it just returns its DOM element width.
 	 * @param  {sap.ui.core.Control} oControl
 	 * @return {Number} the width of the control
 	 */
@@ -847,8 +895,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height of the DynamicPage`s outer header DOM element (the so called title area),
-	 * the wrapper of the DynamicPageTitle and DynamicPageHeader.
+	 * Determines the height of the <code>DynamicPage</code> outer header DOM element (the title area),
+	 * the wrapper of the <code>DynamicPageTitle</code> and <code>DynamicPageHeader</code>.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -857,7 +905,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height of the Title, if it's not present it returns 0
+	 * Determines the height of the <code>DynamicPageTitle</code> and if it's not present it returns 0.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -866,7 +914,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height of the Header, if it's not present it returns 0
+	 * Determines the height of the <code>DynamicPageHeader</code> and if it's not present it returns 0.
 	 * @returns {Number}
 	 * @private
 	 */
@@ -884,8 +932,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Lazily retrieves the "fake" scrollbar
-	 * @returns {sap.ui.core.ScrollBar} - the "fake" scrollbar
+	 * Lazily retrieves the "fake" <code>ScrollBar</code>.
+	 * @returns {sap.ui.core.ScrollBar} the "fake" <code>ScrollBar</code>
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollBar = function () {
@@ -903,7 +951,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Caches the DynamicPage DOM elements in a jQuery object for later reuse
+	 * Caches the <code>DynamicPage</code> DOM elements in a jQuery object for later reuse.
 	 * @private
 	 */
 	DynamicPage.prototype._cacheDomElements = function () {
@@ -922,8 +970,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Caches the DynamicPageTitle DOM element as jQuery object for later reuse,
-	 * used when DynamicPageTitle is re-rendered (_onChildControlAfterRendering method) to ensure the DynamicPageTitle DOM reference
+	 * Caches the <code>DynamicPageTitle</code>  DOM element as jQuery object for later reuse,
+	 * used when <code>DynamicPageTitle</code> is re-rendered (<code>_onChildControlAfterRendering</code> method)
+	 * to ensure the <code>DynamicPageTitle</code> DOM reference
 	 * is the current one.
 	 * @private
 	 */
@@ -940,8 +989,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Mark the event for components that need to know if the event was handled.
-	 * This allows drag scrolling of the control
+	 * Marks the event for components that need to know if the event was handled.
+	 * This allows drag scrolling of the control.
 	 * @param {jQuery.Event} oEvent
 	 */
 	DynamicPage.prototype.ontouchmove = function (oEvent) {
@@ -949,8 +998,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reacts to DynamicPage child controls re-rendering, updating the ScrollBar size.
-	 * In case DynamicPageTitle is re-rendering, the DynamicPageTitle DOM reference and resize handlers should be also updated.
+	 * Reacts to the <code>DynamicPage</code> child controls re-rendering, updating the <code>ScrollBar</code> size.
+	 * In case <code>DynamicPageTitle</code> is re-rendering, the <code>DynamicPageTitle</code> DOM reference and resize handlers should be also updated.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
@@ -965,7 +1014,8 @@ sap.ui.define([
 
 
 	/**
-	 * React when the aggregated child controls are changes its height in order to adjust the update the scrollbar.
+	 * Reacts when the aggregated child controls change their height
+	 * in order to adjust the update the <code>ScrollBar</code>.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
@@ -978,8 +1028,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the resize event of the DynamicPage.
-	 * It unpins the header if it has reached it's threshold, it updates the "fake" scroll height.
+	 * Handles the resize event of the <code>DynamicPage</code>.
+	 * Unpins the header when its size threshold has been reached and updates the "fake" <code>ScrollBar</code> height.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
@@ -1023,7 +1073,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the scrolling on the "fake" scrollbar.
+	 * Handles the scrolling on the "fake" <code>ScrollBar</code>.
 	 * @private
 	 */
 	DynamicPage.prototype._onScrollBarScroll = function () {
@@ -1080,7 +1130,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the pin/unpin button press event, which results in the pinning/unping of the header.
+	 * Handles the pin/unpin button press event, which results in the pinning/unpinning of the <code>DynamicPageHeader</code>.
 	 * @private
 	 */
 	DynamicPage.prototype._onPinUnpinButtonPress = function (oEvent) {
@@ -1098,7 +1148,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Attaches resize handlers on DynamicPage, DynamicPageTitle DOM Element and DynamicPageContent DOM Element
+	 * Attaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element and <code>DynamicPage</code> content DOM Element.
 	 * @private
 	 */
 	DynamicPage.prototype._attachResizeHandlers = function () {
@@ -1116,7 +1166,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers resize handler
+	 * Registers resize handler.
 	 * @param {string} sHandler the handler ID
 	 * @param {Object} oObject
 	 * @param {Function} fnHandler
@@ -1129,7 +1179,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches resize handlers on DynamicPage, DynamicPAgeTitle DOM Element and DynamicPageContent DOM Element
+	 * Detaches resize handlers on <code>DynamicPage</code>, <code>DynamicPageTitle</code> DOM Element and <code>DynamicPage</code> content DOM Element.
 	 * @private
 	 */
 	DynamicPage.prototype._detachResizeHandlers = function () {
@@ -1139,7 +1189,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * De-registers resize handler
+	 * De-registers resize handler.
 	 * @param {string} sHandler the handler ID
 	 * @private
 	 */
@@ -1151,7 +1201,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches a delegate for DynamicPage's child controls 'onAfterRendering' lifecycle events
+	 * Attaches a delegate for the <code>DynamicPage</code> child controls <code>onAfterRendering</code> lifecycle events.
 	 * @private
 	 */
 	DynamicPage.prototype._attachPageChildrenAfterRenderingDelegates = function () {
@@ -1169,7 +1219,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches the Title press handlers
+	 * Attaches the <code>DynamicPageTitle</code> press handler.
 	 * @private
 	 */
 	DynamicPage.prototype._attachTitlePressHandler = function () {
@@ -1182,7 +1232,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches the Pin/Unpin Button press handler
+	 * Attaches the <code>DynamicPageHeader</code> pin/unpin button press handler.
 	 * @private
 	 */
 	DynamicPage.prototype._attachPinPressHandler = function () {
@@ -1195,7 +1245,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches the scroll the content scroll handler using the 'native' scroll event
+	 * Attaches the <code>DynamicPage</code> content scroll handler.
 	 * @private
 	 */
 	DynamicPage.prototype._attachScrollHandler = function () {
@@ -1203,7 +1253,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches the scroll the content scroll handler using the 'native' scroll event
+	 * Detaches the the <code>DynamicPage</code> content scroll handler.
 	 * @private
 	 */
 	DynamicPage.prototype._detachScrollHandler = function () {
