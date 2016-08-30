@@ -166,11 +166,11 @@ sap.ui.define([
 			oDynamicPageHeader = this.getHeader();
 
 		if (bHeaderAlwaysExpanded && exists(oDynamicPageHeader)) {
-			oDynamicPageHeader._setShowPinBtn(false);
 			// Ensure that in this tick DP and it's aggregations are rendered
 			jQuery.sap.delayedCall(0, this, this._overrideHeaderAlwaysExpanded);
 		}
 
+		this._bPinned = false;
 		this._cacheDomElements();
 		this._detachResizeHandlers();
 		this._attachResizeHandlers();
@@ -178,6 +178,7 @@ sap.ui.define([
 		this._attachScrollHandler();
 		this._updateScrollBar();
 		this._attachPageChildrenAfterRenderingDelegates();
+		this._resetPinButtonState();
 	};
 
 	DynamicPage.prototype.exit = function () {
@@ -298,6 +299,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeader = function () {
+		if (this._headerAlwaysExpanded()) {
+			return;
+		}
+
 		if (this._shouldSnap()) {
 			this._snapHeader(true);
 			this._updateHeaderARIAState(false);
@@ -452,7 +457,7 @@ sap.ui.define([
 			this._bPinned = true;
 			this._moveHeaderToTitleArea();
 			this._updateScrollBar();
-			this.getHeader()._updateARIAPinButtonState(this._bPinned);
+			this._togglePinButtonARIAState(this._bPinned);
 		}
 	};
 
@@ -463,7 +468,59 @@ sap.ui.define([
 	DynamicPage.prototype._unPin = function () {
 		if (this._bPinned) {
 			this._bPinned = false;
-			this.getHeader()._updateARIAPinButtonState(this._bPinned);
+			this._togglePinButtonARIAState(this._bPinned);
+		}
+	};
+
+	/**
+	 * Shows/Hides the header pin button
+	 * @param {Boolean} bToggle
+	 * @private
+	 */
+	DynamicPage.prototype._togglePinButtonVisibility = function (bToggle) {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._setShowPinBtn(bToggle);
+		}
+	};
+
+	/**
+	 * Toggles the header pin button pressed state
+	 * @param {Boolean} bPressed
+	 * @private
+	 */
+	DynamicPage.prototype._togglePinButtonPressedState = function (bPressed) {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._togglePinButton(bPressed);
+		}
+	};
+
+	/**
+	 * Toggles the header pin button ARIA State
+	 * @param {Boolean} bPinned
+	 * @private
+	 */
+	DynamicPage.prototype._togglePinButtonARIAState = function (bPinned) {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._updateARIAPinButtonState(bPinned);
+		}
+	};
+
+	/**
+	 * Resets the header pin button state
+	 * @private
+	 */
+	DynamicPage.prototype._resetPinButtonState = function () {
+		if (this._headerAlwaysExpanded()) {
+			this._togglePinButtonVisibility(false);
+		} else {
+			this._togglePinButtonPressedState(false);
+			this._togglePinButtonARIAState(false);
 		}
 	};
 
@@ -932,10 +989,10 @@ sap.ui.define([
 		if (!this._headerAlwaysExpanded() && oDynamicPageHeader) {
 			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
 				this._unPin();
-				oDynamicPageHeader._setShowPinBtn(false);
-				oDynamicPageHeader._togglePinButton(false);
+				this._togglePinButtonVisibility(false);
+				this._togglePinButtonPressedState(false);
 			} else {
-				oDynamicPageHeader._setShowPinBtn(true);
+				this._togglePinButtonVisibility(true);
 			}
 		}
 

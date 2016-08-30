@@ -329,21 +329,22 @@
 	});
 
 	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
-		var oHeader = this.oDynamicPage.getHeader();
+		var oHeader = this.oDynamicPage.getHeader(),
+			oPinButton = oHeader.getAggregation("_pinButton");
 
 		oHeader.setPinnable(false);
 		core.applyChanges();
 
-		assert.ok(!this.oDynamicPage.getHeader().getAggregation("_pinButton").$()[0],
+		assert.ok(!oPinButton.$()[0],
 			"The DynamicPage Header Pin Button not rendered");
 
 		oHeader.setPinnable(true);
 		core.applyChanges();
 
-		assert.ok(this.oDynamicPage.getHeader().getAggregation("_pinButton").$()[0],
+		assert.ok(oPinButton.$()[0],
 			"The DynamicPage Header Pin Button rendered");
 
-		assert.equal(oHeader.getAggregation("_pinButton").$().hasClass("sapUiHidden"), false,
+		assert.equal(oPinButton.$().hasClass("sapUiHidden"), false,
 			"The DynamicPage Header Pin Button is visible");
 	});
 
@@ -1011,4 +1012,35 @@
 			"DynamicPage Header  Pin button aria-pressed 'true'");
 	});
 
+	QUnit.test("DynamicPage Header Pin button has the correct tooltip when pin and unpin", function (assert) {
+		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
+			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+
+		this.oDynamicPage._pin();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip, "The tooltip is correct");
+
+		this.oDynamicPage._unPin();
+		assert.equal(oPinButton.getTooltip(), sPinTooltip, "The tooltip is correct");
+	});
+
+	QUnit.test("DynamicPage Header Pin button has the correct tooltip when changing headerAlwaysExpanded", function (assert) {
+		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
+			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+
+		this.oDynamicPage._pin();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+			"The tooltip is correct");
+
+		this.oDynamicPage.setHeaderAlwaysExpanded(true);
+		core.applyChanges();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+			"The tooltip is correct: unchanged when headerAlwaysExpanded is true");
+
+		this.oDynamicPage.setHeaderAlwaysExpanded(false);
+		core.applyChanges();
+		assert.equal(oPinButton.getTooltip(), sPinTooltip,
+			"The tooltip is correct: resetted when headerAlwaysExpanded is false");
+	});
 }(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader));
