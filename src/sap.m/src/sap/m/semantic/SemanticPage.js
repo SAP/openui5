@@ -203,6 +203,16 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 			this._oWrappedFooter = null;
 		}
 
+		if (this._oTitle) {
+			this._oTitle.destroy();
+			this._oTitle = null;
+		}
+
+		if (this._oNavButton) {
+			this._oNavButton.destroy();
+			this._oNavButton = null;
+		}
+
 		this._oPositionsMap = null;
 	};
 
