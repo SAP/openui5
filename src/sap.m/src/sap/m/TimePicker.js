@@ -157,6 +157,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype.exit = function () {
+
+			if (this._oTimeSemanticMaskHelper._maskRuleHours) {
+				this._oTimeSemanticMaskHelper._maskRuleHours.destroy();
+				this._oTimeSemanticMaskHelper._maskRuleHours = null;
+			}
+
+			if (this._oTimeSemanticMaskHelper._maskRuleMinSec) {
+				this._oTimeSemanticMaskHelper._maskRuleMinSec.destroy();
+				this._oTimeSemanticMaskHelper._maskRuleMinSec = null;
+			}
+
+			if (this._oTimeSemanticMaskHelper._maskRuleChars) {
+				this._oTimeSemanticMaskHelper._maskRuleChars.destroy();
+				this._oTimeSemanticMaskHelper._maskRuleChars = null;
+			}
+
 			MaskInput.prototype.exit.apply(this, arguments);
 
 			this._removePickerEvents();
@@ -1164,10 +1180,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			} else {
 				sAllowedHourChars = "[" + this.sLeadingRegexChar + "1]";
 			}
-			oTimePicker.addRule(new MaskInputRule({
+
+			this._maskRuleHours = new MaskInputRule({
 				maskFormatSymbol: "h",
 				regex: sAllowedHourChars
-			}));
+			});
+			oTimePicker.addRule(this._maskRuleHours);
 			this.iHourNumber1Index = sMask.indexOf("h9");
 			this.iHourNumber2Index = this.iHourNumber1Index !== -1 ? this.iHourNumber1Index + 1 : -1;
 
@@ -1176,10 +1194,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			sMask = sMask.replace(/mm/g, "59");
 			this.iSecondNumber1Index = sMask.indexOf("ss");
 			sMask = sMask.replace(/ss/g, "59");
-			oTimePicker.addRule(new MaskInputRule({
+
+			this._maskRuleMinSec = new MaskInputRule({
 				maskFormatSymbol: "5",
 				regex: "[0-5]"
-			}));
+			});
+
+			oTimePicker.addRule(this._maskRuleMinSec);
 
 			this.aAllowedHours = genValidHourValues.call(this, this.b24H, this.sLeadingChar);
 			this.aAllowedMinutesAndSeconds = genValidMinutesAndSecondsValues.call(this);
@@ -1216,10 +1237,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 					currentDefinitionSymbol = String.fromCharCode(currentDefinitionSymbolCharCode++);
 					sAmPmRegex += currentDefinitionSymbol;
-					oTimePicker.addRule(new MaskInputRule({
+
+					this._maskRuleChars = new MaskInputRule({
 						maskFormatSymbol: currentDefinitionSymbol,
 						regex: currentAllowedChars
-					}));
+					});
+					oTimePicker.addRule(this._maskRuleChars);
 				}
 
 				sMask = sMask.replace(/a/g, sAmPmRegex);
