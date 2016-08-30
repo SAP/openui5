@@ -5,11 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(['jquery.sap.global',
-	'sap/ui/core/library', 'sap/m/library'], // library dependency
+sap.ui.define(["jquery.sap.global",
+	"sap/ui/core/library", "sap/m/library"], // library dependency
 	function() {
 
-	'use strict';
+	"use strict";
 
 	/**
 	 * SAPUI5 library with controls specialized for Fiori applications.
@@ -23,9 +23,9 @@ sap.ui.define(['jquery.sap.global',
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : 'sap.f',
-		version: '${version}',
-		dependencies : ['sap.ui.core','sap.m'],
+		name : "sap.f",
+		version: "${version}",
+		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
 			"sap.f.ThreeColumnLayoutType"
 		],
