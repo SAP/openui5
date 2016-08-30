@@ -578,7 +578,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel.prototype._getNavigationArrow = function(sName) {
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var mProperties = {
-			src : "sap-icon://navigation-" + sName + "-arrow",
+			src: "sap-icon://slim-arrow-" + sName,
 			useIconTooltip : false
 		};
 
@@ -605,9 +605,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param oPage the page to check
 	 * @private
 	 */
-	Carousel.prototype._createScrollContainer = function(oPage) {
+	Carousel.prototype._createScrollContainer = function (oPage) {
+		var imgClass;
+		var bShowIndicatorArrows = sap.ui.Device.system.desktop && this.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator;
+		if (bShowIndicatorArrows) {
+			imgClass = "sapMCrslImg";
+			if (this.getPageIndicatorPlacement() === sap.m.PlacementType.Top) {
+				imgClass += " sapMCrslImgTop";
+			}
+		} else {
+			imgClass = "sapMCrslImgNoArrows";
+			if (this.getPageIndicatorPlacement() === sap.m.PlacementType.Top) {
+				imgClass += " sapMCrslImgNoArrowsTop";
+			}
+		}
 
-		var cellClasses = oPage instanceof sap.m.Image ? "sapMCrslItemTableCell sapMCrslImg" : "sapMCrslItemTableCell",
+
+		var cellClasses = oPage instanceof sap.m.Image ? "sapMCrslItemTableCell " + imgClass : "sapMCrslItemTableCell",
 			oContent = new sap.ui.core.HTML({
 			content :	"<div class='sapMCrslItemTable'>" +
 							"<div class='" + cellClasses + "'></div>" +
