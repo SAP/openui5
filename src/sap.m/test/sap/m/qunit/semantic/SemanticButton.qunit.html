@@ -574,6 +574,111 @@
 			oSemanticPage.destroy();
 		});
 
+		module("eventDelegate");
+
+		test("add callback", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
+				callback = sinon.spy();
+
+			var oResult = oMultiSelectAction.addEventDelegate({onAfterRendering: callback});
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(callback.calledOnce, true, "delegate is called");
+
+			oSemanticPage.destroy();
+		});
+
+		test("callback references the semantic object", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
+					callback = sinon.spy();
+
+			var oResult = oMultiSelectAction.addEventDelegate({onAfterRendering: callback});
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(callback.getCall(0).args[0].srcControl.getId(), "multiAction");
+			strictEqual(oResult.getId(), "multiAction");
+
+			oSemanticPage.destroy();
+		});
+
+		test("addEventDelegate returns the semantic object", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
+					callback = sinon.spy();
+
+			var oResult = oMultiSelectAction.addEventDelegate({onAfterRendering: callback});
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oResult.getId(), "multiAction");
+
+			oSemanticPage.destroy();
+		});
+
+		test("remove callback", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
+					callback = sinon.spy(),
+					oDelegate = {onAfterRendering: callback};
+
+			oMultiSelectAction.addEventDelegate(oDelegate);
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(callback.calledOnce, true, "delegate is called");
+
+			var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
+
+			oSemanticPage.rerender();
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(callback.calledOnce, true, "delegate is called only once");
+
+			oSemanticPage.destroy();
+		});
+
+		test("removeEventDelegate returns the semantic object", function() {
+
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction"),
+					callback = sinon.spy(),
+					oDelegate = {onAfterRendering: callback};
+
+			oMultiSelectAction.addEventDelegate(oDelegate);
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction
+			});
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(callback.calledOnce, true, "delegate is called");
+
+			var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
+
+			strictEqual(oResult.getId(), "multiAction");
+
+			oSemanticPage.destroy();
+		});
 
 	</script>
 </head>
