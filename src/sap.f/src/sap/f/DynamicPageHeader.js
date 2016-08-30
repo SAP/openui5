@@ -29,9 +29,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 */
 		var DynamicPageHeader = Control.extend("sap.f.DynamicPageHeader", /** @lends sap.f.DynamicPageHeader.prototype */ {
 			metadata: {
-				interfaces: [
-					"sap.f.ISnappable"
-				],
 				library: "sap.f",
 				properties: {
 					/**
