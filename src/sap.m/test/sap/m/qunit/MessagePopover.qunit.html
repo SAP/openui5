@@ -616,6 +616,16 @@
 			assert.strictEqual(this.oMessagePopover._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
 		});
 
+		QUnit.test("aria-labelledby attribute", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef(),
+				sInvisibleHeadingLabelId = this.oMessagePopover.getId() + "-HeadingDescr",
+				sActualAriaLabelledBy = oDomRef.getAttribute("aria-labelledby");
+
+			assert.ok(sActualAriaLabelledBy !== null, "should be present");
+			assert.ok(sActualAriaLabelledBy.indexOf(sInvisibleHeadingLabelId) !== -1, "should have a reference to the hidden text with heading messages description");
+		});
+
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies : {},
