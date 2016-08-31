@@ -508,6 +508,13 @@ License: MIT License
 <year> = 2011
 <copyright holders> = Zynga Inc.
 
+Component: jalaali-js
+Licensor: Behrang Noruzi Niya
+Website: https://github.com/jalaali/jalaali-js/
+License: MIT License
+<copyright holders> = Behrang Noruzi Niya
+<year> = unspecified
+
 
 --------------------------------------------------------------------------------------------------------------------------
 
