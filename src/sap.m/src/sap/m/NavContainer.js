@@ -485,7 +485,7 @@ sap.ui.define([
 		if (bNavigatingBackToPreviousLocation) {
 			// set focus to the remembered focus object if available
 			// if no focus was set set focus to first focusable object in "to page"
-			domRefRememberedFocusSubject = this._mFocusObject[sPageId];
+			domRefRememberedFocusSubject = this._mFocusObject != null ? this._mFocusObject[sPageId] : null;
 			if (domRefRememberedFocusSubject) {
 				jQuery.sap.focus(domRefRememberedFocusSubject);
 			} else if (bAutoFocus) {
