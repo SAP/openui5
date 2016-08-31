@@ -336,7 +336,7 @@ sap.ui.define([
 
 		if (exists($footerSpacer)) {
 			$footerSpacer.toggleClass("sapFDynamicPageContentWrapperSpacer", bToggle);
-			this.$('contentFitContainer').css("bottom", bToggle ? "4rem" : 0);
+			this.$("contentFitContainer").css("bottom", bToggle ? "4rem" : 0);
 		}
 	};
 
@@ -809,7 +809,7 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype._updateFitContainer = function () {
-		this.$contentFitContainer.toggleClass('sapFDynamicPageContentFitContainer', !this._needsVerticalScrollBar());
+		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", !this._needsVerticalScrollBar());
 	};
 
 
@@ -962,7 +962,7 @@ sap.ui.define([
 		}
 
 		this.$wrapper = this.$("contentWrapper");
-		this.$contentFitContainer = this.$('contentFitContainer');
+		this.$contentFitContainer = this.$("contentFitContainer");
 		this.$titleArea = this.$("header");
 
 		this._cacheTitleDom();
