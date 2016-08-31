@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oDynamicPageHeader = oDynamicPage.getHeader(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
 			oDynamicPageContent = oDynamicPage.getContent(),
-			bHeaderAlwaysExpanded = oDynamicPage._headerAlwaysExpanded();
+			bPreserveHeaderStateOnScroll = oDynamicPage._preserveHeaderStateOnScroll();
 
 		// Dynamic Page Layout Root DOM Element.
 		oRm.write("<article");
@@ -44,7 +44,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitle);
-		if (bHeaderAlwaysExpanded) {
+		if (bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("</header>");
@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.addClass("sapFDynamicPageContentWrapper");
 		oRm.writeClasses();
 		oRm.write(">");
-		if (!bHeaderAlwaysExpanded) {
+		if (!bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("<div");
