@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// applying the theme after the bootstrap causes flickering, so we inject a URL parameter
 				// to override the bootstrap parameter of the iFrame example
 				if (sSearch) {
-					var oRegExp = /sap-ui-theme=[a-z0-9\-]+/;
+					var oRegExp = /sap-ui-theme=[a-z0-9\-\_]+/;
 					if (sSearch.match(oRegExp)) {
 						sSearch = sSearch.replace(oRegExp, sThemeUrlParameter);
 					} else {
