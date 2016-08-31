@@ -1474,6 +1474,10 @@ sap.ui.define([
 
 			this._adjustLayout(null, true);
 
+			if (this.getFooter() && this.getShowFooter()) {
+				this._shiftFooter();
+			}
+
 			this._scrollTo(this._$opWrapper.scrollTop(), 0);
 		});
 
