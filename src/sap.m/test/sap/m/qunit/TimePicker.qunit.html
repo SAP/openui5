@@ -1404,10 +1404,6 @@
 		module("MaskInput integration", {
 			beforeEach : function() {
 				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
-				this._leadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss", strictParsing: true, relative: false});
-				this._leadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false});
-				this._noLeadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "H:mm:ss", strictParsing: true, relative: false});
-				this._noLeadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "h:mm a", strictParsing: true, relative: false});
 			},
 			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue) {
 				//system under test
@@ -1872,7 +1868,79 @@
 			tp.destroy();
 		});
 
-		//todo - test caret position
+		test("TimeSemanticMaskHelper constructor", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				localeId: "en_US",
+				displayFormat: "h:mm:ss a",
+				valueFormat: "h:mm:ss",
+				value: "13:22:52"
+			});
+
+			// assert
+			equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 9, "AM/PM char index");
+			equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 0, "Hour start index");
+			equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 1,  "Hour end index");
+			equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 3, "Minute start index");
+			equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 6, "Second start index");
+
+
+			//system under test
+			tp = new sap.m.TimePicker({
+				localeId: "zh_CN",
+				displayFormat: "ah:mm:ss",
+				valueFormat: "HH:mm:ss",
+				value: "13:22:52"
+			});
+
+			// assert
+			equal(tp._oTimeSemanticMaskHelper.iAmPmChar1Index, 0, "AM/PM char index");
+			equal(tp._oTimeSemanticMaskHelper.iHourNumber1Index, 2, "Hours start index");
+			equal(tp._oTimeSemanticMaskHelper.iHourNumber2Index, 3, "Hours end index");
+			equal(tp._oTimeSemanticMaskHelper.iMinuteNumber1Index, 5, "Minutes start index");
+			equal(tp._oTimeSemanticMaskHelper.iSecondNumber1Index, 8, "Seconds start index");
+		});
+
+		test("TimeSemanticMaskHelper.prototype.formatValueWithLeadingTrailingSpaces", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				localeId: "en_US",
+				displayFormat: "h:mm:ss a"
+			});
+
+			//act && assert
+			equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("1:22:52 AM"), " 1:22:52 AM", "1:22:52 AM");
+
+			//system under test
+			tp = new sap.m.TimePicker({
+				localeId: "zh_CN",
+				displayFormat: "ah:mm:ss"
+			});
+
+			//act && assert
+			equal(tp._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces("AM1:22:52"), "AM 1:22:52", "AM1:22:52");
+		});
+
+		test("TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				localeId: "en_US",
+				displayFormat: "h:mm:ss a"
+			});
+
+			//act && assert
+			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("1:22:52 AM"), "1:22:52 AM", "1:22:52 AM");
+
+			//system under test
+			tp = new sap.m.TimePicker({
+				localeId: "zh_CN",
+				displayFormat: "ah:mm:ss"
+			});
+
+			//act && assert
+			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("AM 1:22:52"), "AM1:22:52", "AM 1:22:52");
+		});
+
 
 		module("events and event handlers", {
 			beforeEach: function () {

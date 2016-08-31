@@ -85,18 +85,23 @@
 					path: "/timeValue",
 					type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
 		 		}
-		 	}
+		 	}, {
+				localeId: "zh_CN",
+				displayFormat: "ah:mm:ss",
+				valueFormat: "HH:mm:ss",
+				value: "13:22:52"
+			}
 		];
 
 		var generateTimePickers = function() {
 			var i,
 				aControls = [],
 				sInfo,
-				oBar;
+				oBar,
+			    oTp;
 
 			for (i = 0; i < options.length; i++) {
 				options[i].change = handleChange;
-
 				if (options[i].value && options[i].value.path) { //data binding
 					oBar = new sap.m.Toolbar({
 						content: [
@@ -110,10 +115,11 @@
 						]
 					});
 				} else {
-					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "");
+                	oTp = new sap.m.TimePicker(options[i]);
+					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
 					oBar = new sap.m.Toolbar({
 						content: [
-							new sap.m.TimePicker(options[i]),
+							oTp,
 							new sap.m.Text({ text: sInfo })
 						]
 					});
