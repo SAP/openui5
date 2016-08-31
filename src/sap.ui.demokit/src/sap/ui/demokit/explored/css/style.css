@@ -64,6 +64,9 @@ pre.sapUiCodeViewer.sapUiExploredCodeViewer {
 	background-color: white;
 	word-wrap: break-word;
 	white-space: pre-wrap; /*for firefox*/
+	-moz-tab-size: 2;
+	-o-tab-size: 2;
+	tab-size: 2;
 }
 
 /* explored entity view */
