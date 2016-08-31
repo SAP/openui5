@@ -141,6 +141,11 @@
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
+			"control": "sap.m.LightBox",
+			"url": "../LightBox.html",
+			"appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
 			"control": "sap.m.Link",
 			"url": "../Link.html",
 			"appComponent": "CA-UI5-CTR-PIR"
@@ -199,7 +204,7 @@
 		{
 			"control": "sap.m.MultiInput",
 			"url": "../MultiInput.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.MultiComboBox",
@@ -438,9 +443,14 @@
 			"appComponent": "CA-UI5-TBL"
 		},
 		{
+			"control": "sap.m.Token",
+			"url": "../Token.html",
+			"appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.Tile",
