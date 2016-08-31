@@ -28,21 +28,24 @@
 				>
 		</script>
 
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	
 		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
 			QUnit.config.reorder = false; // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
 			QUnit.config.autostart = false;
-			
+
 			sap.ui.getCore().attachInit(function(){
 				"use strict";
 
 				sap.ui.require(
-					[
-						"jquery.sap.global"
-					],
-					function (jQuery) {
+						[
+							"jquery.sap.global",
+							"sap/ui/core/Control"
+						],
+						function (jQuery, Control) {
 						var oCore,
 							iAllControls = 0,
 							iFullyTestedControls = 0,
@@ -57,10 +60,6 @@
 								oCore = undefined;
 							}
 						});
-
-
-						jQuery.sap.require("sap.ui.commons.FileUploader"); // trying to avoid the static SearchField leak
-
 
 
 						/**
@@ -140,8 +139,8 @@
 
 
 						// checks whether the given property should not be set for this test
-						var shouldIgnoreProperty = function(oControl, sPropertyName) {
-							if (sControlName === "sap.m.PlanningCalendar" && sPropertyName === "key") { // control fails when key is set where nothing is registered
+						var shouldIgnoreProperty = function(sControlName, sPropertyName) {
+							if (sControlName === "sap.m.PlanningCalendar" && sPropertyName === "viewKey") { // control fails when key is set where nothing is registered
 								return true;
 							}
 						}
@@ -180,6 +179,8 @@
 								"sap.ui.ux3.NotificationBar",
 								"sap.ui.rta.ContextMenu",
 								"sap.ui.rta.AddElementsDialog",
+								"sap.ui.comp.navpopover.SmartLink",
+								"sap.ui.comp.navpopover.SemanticObjectController",
 								"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
 								"sap.chart.Chart",
 								"sap.makit.Chart",
@@ -234,7 +235,8 @@
 								"sap.uiext.inbox.composite.InboxUploadAttachmentTile",     // Ticket: TODO 7
 								"sap.uiext.inbox.InboxTaskCategoryFilterList",             // Ticket: TODO 8
 								"sap.ui.demokit.CodeSampleContainer",  // Ticket: none (Demokit Lib)
-								"sap.ui.demokit.UI5EntityCueCard"      // Ticket: none (Demokit Lib)
+								"sap.ui.demokit.UI5EntityCueCard",     // Ticket: none (Demokit Lib)
+								"sap.viz.ui5.controls.Popover"
 							   ].indexOf(sControlName) > -1) { // known to be leaking
 								assert.ok(true, "WARNING: " + sControlName + " is known to have memory leaks and is ignored until they are fixed.");
 								return true;
