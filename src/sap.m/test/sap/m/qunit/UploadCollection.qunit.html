@@ -125,6 +125,7 @@
 	});
 
 	QUnit.test("Composite Controls are rendered", function(assert) {
+		//Assert
 		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
 		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle"), "Title attachments is rendered");
@@ -312,6 +313,32 @@
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
+	});
+
+	QUnit.test("Info toolbar is not present", function(assert) {
+		//Arrange
+		//Act
+		var oInfoToolbar = this.oUploadCollection.getInfoToolbar();
+		var oInfoToolbarList = this.oUploadCollection._oList.getInfoToolbar();
+		//Assert
+		assert.ok(!oInfoToolbar, "Info toolbar is not present");
+		assert.ok(!oInfoToolbarList, "Info toolbar list is not present");
+	});
+
+	QUnit.test("Info toolbar is rendered", function(assert) {
+		//Arrange
+		//Act
+		var oInfoToolbar = new sap.m.Toolbar("uploadCollection-infoToolbar", {
+			content : [ new sap.m.Label("uploadCollection-infoToolbar-Label") ]
+		});
+		this.oUploadCollection.setInfoToolbar(oInfoToolbar);
+		var oInfoToolbar = this.oUploadCollection.getInfoToolbar();
+		var oInfoToolbarList = this.oUploadCollection._oList.getInfoToolbar();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(oInfoToolbar, oInfoToolbarList, "Info toolbar belongs to the item list");
+		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar"), "Info toolbar is rendered");
+		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar-Label"), "Info toolbar label is rendered");
 	});
 
 	QUnit.module("Rendering of UploadCollection with hideUploadButton = true", {
@@ -842,7 +869,7 @@
 		assert.strictEqual(oDeleteButton.getVisible(), true, "The terminate button is visible.");
 	});
 
-	QUnit.test("_setFileUploaderVisibility updates the visibility of the fil upload placeholder.", function(assert) {
+	QUnit.test("_setFileUploaderVisibility updates the visibility of the file upload placeholder.", function(assert) {
 		//Arrange
 		var bUploadButtonInvisible = true;
 		var oFileUploader = new sap.ui.unified.FileUploader();
@@ -862,6 +889,7 @@
 		this.oUploadCollection._aFileUploadersForPendingUpload = [];
 		stubGetContent.restore();
 	});
+
 	/* --------------------------------------- */
 	/* Test for upload progress rendering      */
 	/* --------------------------------------- */
