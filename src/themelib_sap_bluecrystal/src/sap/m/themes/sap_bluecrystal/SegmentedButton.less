@@ -54,7 +54,7 @@ html.sap-desktop {
 
 	.sapMSegBBtnFocusable:focus + .sapMSegBBtn{
 		outline: none;
-		border-left: 1px dotted @sapUiFocus;
+		border-left: 1px solid transparent;
 	}
 
 	.sapMSegBBtnFocusable.sapMSegBBtnSel {
@@ -81,6 +81,9 @@ html.sap-desktop {
 			border-color: @sapUiInvertedFocus;
 		}
 		.sapMSegBBtnSel + .sapMSegBBtn:focus {
+			border-left: 1px dotted @sapUiInvertedFocus;
+		}
+		.sapMSegBBtnFocusable.sapMSegBBtnSel + .sapMSegBBtn:not(.sapMSegBBtnSel):focus {
 			border-left: 1px dotted @sapUiInvertedFocus;
 		}
 	}
@@ -126,6 +129,7 @@ html.sap-desktop {
 	}
 }
 
+
 .sapMSegB img {
 	line-height: 2.375rem;
 	max-height:  2.375rem;
@@ -145,7 +149,10 @@ html.sap-desktop {
 	background-color: transparent;
 	color: @sapUiTextInverted;
 	&:not(.sapMSegBBtnSel) {
-		border-color: @sapUiSegmentedButtonFooterBorderColor;
+		border-right: 1px solid transparent;
+	}
+	&:last-child {
+		border-right: 1px solid @sapUiSegmentedButtonBorderColor;
 	}
 	&:hover {
 		background: @sapUiSegmentedButtonFooterHoverBackground;
