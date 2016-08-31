@@ -131,8 +131,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
 			"sap.m.HBox",
-			// Please get in contact with Oliver Rooke if you have questions.
-			//"sap.m.HeaderContainer",
 			"sap.m.IconTabBar",
 			"sap.m.IconTabBarSelectList",
 			"sap.m.IconTabHeader",
