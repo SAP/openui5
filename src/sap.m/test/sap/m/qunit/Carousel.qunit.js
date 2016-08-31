@@ -142,7 +142,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").css('opacity'), '0', "Page Indicator should be invisible");
+		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").length, 0, "Page Indicator should be invisible");
 	});
 
 	QUnit.test("#setShowPageIndicator(true) should make Page Indicator visible", function (assert) {
@@ -633,17 +633,17 @@
 
 		// Assert
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+		this.oCarousel.destroy();
 	});
 
 	//================================================================================
 	// Carousel Keyboard handling
 	//================================================================================
-	QUnit.module("Container Padding Classes");
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new sap.m.Carousel({
 				pages: [
-					new sap.m.Page("keyTestPage1")
+					new sap.m.Page("keyTestPage20")
 				]
 			}),
 			sContentSelector = ".sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll",
