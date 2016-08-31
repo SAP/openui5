@@ -8,15 +8,34 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	"use strict";
 
 	/**
-	 * Constructor for a new Dynamic Page Layout Title.
+	 * Constructor for a new <code>DynamicPageTitle</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The DynamicPage title can hold any UI5 control. It holds the most important information regarding the object
-	 * and will always remain visible while scrolling
-	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 * <strong><i>Overview</i></strong>
+	 * <br><br>
+	 * The {@link sap.f.DynamicPageTitle DynamicPageTitle} control is part of
+	 * the {@link sap.f.DynamicPage} family and is used to serve as title of
+	 * the {@link sap.f.DynamicPage DynamicPage}.
+	 * <br><br>
+	 * <strong><i>Usage</i></strong>
+	 * <br><br>
+	 * The {@link sap.f.DynamicPageTitle DynamicPageTitle} can hold any
+	 * control and displays the most important information regarding the
+	 * object that will always remain visible while scrolling.
+	 * <br><br>
+	 * By clicking on the {@link sap.f.DynamicPageTitle DynamicPageTitle},
+	 * the user can switch between the expanded/collapsed states of the
+	 * {@link sap.f.DynamicPageHeader DynamicPageHeader}.
+	 * </ul>
+	 * <br><br>
+	 * <strong><i>Responsive Behavior</i></strong>
+	 * <br><br>
+	 * The responsive behavior of the
+	 * {@link sap.f.DynamicPageTitle DynamicPageTitle} depends on the
+	 * behavior of the content that is displayed.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -40,22 +59,22 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				heading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
 
 				/**
-				 * The Global Actions buttons.
+				 * <code>DynamicPageTitle</code> actions.
 				 */
 				actions: {type: "sap.m.Button", multiple: true, singularName: "action"},
 
 				/**
-				 * The content that is displayed in the header in snapped mode.
+				 * The content that is displayed in the <code>DynamicPageTitle</code> in collapsed (snapped) state.
 				 */
 				snappedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
-				 * The content that is displayed in the header in expanded mode.
+				 * The content that is displayed in the <code>DynamicPageTitle</code> in expanded state.
 				 */
 				expandedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
-				 * Internal Overflow Toolbar for the global actions.
+				 * Internal <code>OverflowToolbar</code> for the <code>DynamicPageTitle</code> actions.
 				 */
 				_overflowToolbar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 
@@ -83,7 +102,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Fires the title press event
+	 * Fires the <code>DynamicPageTitle</code> press event.
 	 * @param {jQuery.Event} oEvent
 	 */
 	DynamicPageTitle.prototype.ontap = function (oEvent) {
@@ -93,7 +112,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Caches the dom elements in a jQuery wrapper for later reuse
+	 * Caches the DOM elements in a jQuery wrapper for later reuse.
 	 * @private
 	 */
 	DynamicPageTitle.prototype._cacheDomElements = function () {
@@ -102,7 +121,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Lazily retrieves the overflow toolbar.
+	 * Lazily retrieves the internal <code>OverflowToolbar</code> aggregation.
 	 * @returns {sap.m.OverflowToolbar}
 	 * @private
 	 */
@@ -117,8 +136,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Pre process an action before after inserting it in the aggregation so it returns the DynamicPageTitle as the
-	 * parent rather than its real parent (the OverflowToolbar), so to the outside world it looks like the DynamicPageTitle aggregates the actions.
+	 * Pre-processes a <code>DynamicPageTitle</code> action before inserting it in the aggregation.
+	 * The action would returns the <code>DynamicPageTitle</code> as its parent, rather than its real parent (the <code>OverflowToolbar</code>).
+	 * This way, it looks like the <code>DynamicPageTitle</code> aggregates the actions.
 	 * @param oAction
 	 * @private
 	 */
@@ -132,7 +152,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Post process an action just before removing it from the aggregation so it returns its real parent (the OverflowToolbar),
+	 * Post-processes a <code>DynamicPageTitle</code> action before removing it from the aggregation, so it returns its real parent (the <code>OverflowToolbar</code>),
 	 * thus allowing proper processing by the framework.
 	 * @param oAction
 	 * @private
@@ -146,7 +166,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Proxy the action aggregation's methods to the overflowToolbar's content aggregation.
+	 * Proxies the <code>DynamicPageTitle</code> action aggregation's methods to the <code>OverflowToolbar</code> content aggregation.
 	 * @override
 	 * @private
 	 */
@@ -172,7 +192,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		});
 
 	/**
-	 * Used to internally show/hide the snapped content without going through the rendering phase
+	 * Shows/hides the <code>DynamicPageTitle</code> snapped content without re-rendering.
 	 * @param {boolean} bValue - to show or to hide the content
 	 * @private
 	 */
@@ -183,7 +203,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Returns if the snapped content is currently shown.
+	 * Determines if the <code>DynamicPageTitle</code> snapped content is currently displayed.
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -192,7 +212,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Used to internally show/hide the expanded content without going through the rendering phase
+	 * Shows/hides the <code>DynamicPageTitle</code> expanded content without re-rendering.
 	 * @param {boolean} bValue - to show or to hide the content
 	 * @private
 	 */
@@ -203,7 +223,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
-	 * Returns if the expanded content is currently shown.
+	 * Determines if the <code>DynamicPageTitle</code> expanded content is currently displayed.
 	 * @returns {boolean}
 	 * @private
 	 */
