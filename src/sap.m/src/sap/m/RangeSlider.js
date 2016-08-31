@@ -72,7 +72,6 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
 
             this._ariaUpdateDelay = [];
 
-
             oStartLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_LEFT_HANDLE")});
             oEndLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RIGHT_HANDLE")});
             this._mHandleTooltip = {
@@ -109,6 +108,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._mHandleTooltip.end.tooltip = null;
             this._mHandleTooltip.end.label = null;
             this._ariaUpdateDelay = null;
+            this._iDecimalPrecision = null;
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
@@ -121,7 +121,8 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._validateProperties();
 
             //TODO: find a better way to determine this
-            this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length + 1) * CHARACTER_WIDTH_PX;
+            this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
+                + this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * CHARACTER_WIDTH_PX;
 
             // Attach tooltips
             if (!this._mHandleTooltip.start.tooltip) {
@@ -132,6 +133,8 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                 this._mHandleTooltip.end.tooltip = bInputsAsTooltips ?
                     this._createInputField("RightTooltip", this._mHandleTooltip.end.label) : null;
             }
+
+            this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(this.getStep());
         };
 
         RangeSlider.prototype.onAfterRendering = function () {
@@ -244,7 +247,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._recalculateRange();
         };
 
-        RangeSlider.prototype._updateHandleDom = function (oHandle, aRange, iIndex, fValue, fPercentVal) {
+        RangeSlider.prototype._updateHandleDom = function (oHandle, aRange, iIndex, sValue, fPercentVal) {
             var bMergedRanges,
                 sCssClass = this.getRenderer().CSS_CLASS,
                 oFormInput = this.getDomRef("input");
@@ -261,7 +264,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
 
             if (this.getShowHandleTooltip()) {
-                oHandle.title = fValue;
+                oHandle.title = sValue;
             }
 
             bMergedRanges = aRange[0] === aRange[1];
@@ -271,16 +274,16 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             // ARIA updates. Delay the update to prevent multiple updates- for example holding the arrow key.
             // We need only the latest state
             jQuery.sap.clearDelayedCall(this._ariaUpdateDelay[iIndex]);
-            this._ariaUpdateDelay[iIndex] = jQuery.sap.delayedCall(100, this, "_updateHandleAria", [oHandle, fValue]);
+            this._ariaUpdateDelay[iIndex] = jQuery.sap.delayedCall(100, this, "_updateHandleAria", [oHandle, sValue]);
         };
 
-        RangeSlider.prototype._updateHandleAria = function (oHandle, fValue) {
+        RangeSlider.prototype._updateHandleAria = function (oHandle, sValue) {
             var aRange = this.getRange(),
                 oProgressHandle = this.getDomRef("progress");
 
             this._updateHandlesAriaLabels();
 
-            oHandle.setAttribute("aria-valuenow", fValue);
+            oHandle.setAttribute("aria-valuenow", sValue);
 
             if (oProgressHandle) {
                 oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
@@ -289,7 +292,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
         };
 
-		/**
+        /**
          * Updates handles' ARIA Labels.
          * When handles are swapped, the corresponding labels should be swapped too. So the state would be always acurate
          *
@@ -317,14 +320,15 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * @param {int} iNewValue The new value
          * @private
          */
-        RangeSlider.prototype._updateTooltipContent = function (oTooltip, iNewValue) {
-            var bInputTooltips = this.getInputsAsTooltips();
+        RangeSlider.prototype._updateTooltipContent = function (oTooltip, fNewValue) {
+            var bInputTooltips = this.getInputsAsTooltips(),
+                sNewValue = this.toFixed(fNewValue, this._iDecimalPrecision);
 
             if (!bInputTooltips) {
-                oTooltip.text(iNewValue);
-            } else if (bInputTooltips && oTooltip.getValue() !== iNewValue) {
-                oTooltip.setValue(iNewValue);
-                oTooltip.$("inner").attr("value", iNewValue);
+                oTooltip.text(sNewValue);
+            } else if (bInputTooltips && oTooltip.getValue() !== sNewValue) {
+                oTooltip.setValue(sNewValue);
+                oTooltip.$("inner").attr("value", sNewValue);
             }
         };
 
@@ -386,12 +390,14 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
         RangeSlider.prototype._handleInputChange = function (oInput, oEvent) {
             var oHandle, oActiveTooltip,
                 bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped,
-                newValue = parseInt(oEvent.getParameter("value"), 10);
+                newValue = Number(oEvent.getParameter("value"));
 
             if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
                 oInput.setValueState("Error");
                 return;
             }
+
+            newValue = this._adjustRangeValue(newValue);
 
             oInput.setValueState("None");
 
@@ -433,8 +439,8 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                 this._updateHandleDom(this._mHandleTooltip.start.handle, aRange, 0, aRange[0], fPercentValStart);
                 this._updateHandleDom(this._mHandleTooltip.end.handle, aRange, 1, aRange[1], fPercentValEnd);
 
-                this._updateTooltipContent(this._mHandleTooltip.start.tooltip, parseInt(aRange[0], 10));
-                this._updateTooltipContent(this._mHandleTooltip.end.tooltip, parseInt(aRange[1], 10));
+                this._updateTooltipContent(this._mHandleTooltip.start.tooltip, aRange[0]);
+                this._updateTooltipContent(this._mHandleTooltip.end.tooltip, aRange[1]);
                 this._recalculateRange();
             }
             return this;
@@ -477,7 +483,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             return this._adjustRangeValue(fNewValue);
         };
 
-		/**
+        /**
          * Checks and adjusts value according to Min and Max properties and checks RTL mode
          *
          * @param {float} fValue Value to be checked and adjusted

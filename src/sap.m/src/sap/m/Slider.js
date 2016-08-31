@@ -492,7 +492,7 @@ sap.ui.define([
 		};
 
 		Slider.prototype._handleInputChange = function (oInput, oEvent) {
-			var newValue = parseFloat(oEvent.getParameter("value"), 10);
+			var newValue = parseFloat(oEvent.getParameter("value"));
 
 			if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
 				oInput.setValueState("Error");
@@ -563,7 +563,8 @@ sap.ui.define([
 			}
 
 			if (this.getShowAdvancedTooltip()) {
-				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
+				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
+					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
 			}
 
 			if (this.getInputsAsTooltips() && !this._oInputTooltip) {

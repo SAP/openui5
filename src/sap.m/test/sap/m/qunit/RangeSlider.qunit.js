@@ -221,6 +221,23 @@
         assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 72, "The function should return 72");
     });
 
+    QUnit.test("_calculateHandlePosition() with decimal step", function(){
+        this.rangeSlider._fSliderWidth = 100;
+        this.rangeSlider._fSliderOffsetLeft = 0;
+        this.rangeSlider._fSliderPaddingLeft = 0;
+        this.rangeSlider.setStep(0.5);
+
+        var value1 = 0.0,
+            value2 = 5.5,
+            value3 = 25.2,
+            value4 = 30.8;
+
+        assert.strictEqual(this.rangeSlider._calculateHandlePosition(value1), 0, "The function should return 0");
+        assert.strictEqual(this.rangeSlider._calculateHandlePosition(value2), 5.5, "The function should return 5.5");
+        assert.strictEqual(this.rangeSlider._calculateHandlePosition(value3), 25, "The function should return 25");
+        assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 31, "The function should return 31");
+    });
+
     QUnit.test("Calculate movement offset", function (assert) {
         var aRange = [4, 27],
             iStep = 5,
