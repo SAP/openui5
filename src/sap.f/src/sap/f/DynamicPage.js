@@ -74,7 +74,7 @@ sap.ui.define([
 				/**
 				 * Dynamic Page Layout Header.
 				 */
-				header: {type: "sap.f.ISnappable", multiple: false},
+				header: {type: "sap.f.DynamicPageHeader", multiple: false},
 
 				/**
 				 * Dynamic Page Layout Content.
