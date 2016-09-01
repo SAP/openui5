@@ -195,6 +195,8 @@ sap.ui.require([
 		oBinding.iMaxLength = 42;
 		oBinding.bLengthFinal = true;
 
+		this.mock(oBinding).expects("_fireRefresh").never();
+
 		// code under test
 		oBinding.reset();
 
@@ -203,6 +205,28 @@ sap.ui.require([
 		assert.strictEqual(oBinding.iCurrentBegin, 0);
 		assert.strictEqual(oBinding.iCurrentEnd, 0);
 		assert.strictEqual(oBinding.isLengthFinal(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset with change reason", function (assert) {
+		var done = assert.async(),
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			that = this;
+
+		oBinding.attachRefresh(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+			that.mock(oBinding.oCache).expects("read").returns(createResult(1));
+
+			oBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+				done();
+			});
+
+			oBinding.getContexts(0, 1);
+		});
+
+		// code under test
+		oBinding.reset(ChangeReason.Sort);
 	});
 
 	//*********************************************************************************************
@@ -999,7 +1023,6 @@ sap.ui.require([
 				},
 				oChild1 = {refreshInternal : function () {}},
 				oChild2 = {refreshInternal : function () {}},
-				oChild3 = {}, // refreshInternal missing, e.g. ODataPropertyBinding
 				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 				oHelperMock = this.mock(_ODataHelper),
 				oListBinding;
@@ -1023,12 +1046,10 @@ sap.ui.require([
 				this.mock(oCache).expects("refresh");
 			}
 
-			this.mock(oListBinding).expects("reset").withExactArgs();
-			this.mock(oListBinding).expects("_fireRefresh")
-				.withExactArgs({reason : ChangeReason.Refresh});
+			this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			this.mock(this.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oListBinding))
-				.returns([oChild1, oChild2, oChild3]);
+				.returns([oChild1, oChild2]);
 			this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
 			this.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup");
 
@@ -1036,7 +1057,6 @@ sap.ui.require([
 			oListBinding.refreshInternal("myGroup");
 
 			assert.strictEqual(oListBinding.mCacheByContext, undefined);
-			assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Refresh);
 		});
 	});
 
@@ -1054,14 +1074,13 @@ sap.ui.require([
 		oListBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 		// refresh event during refresh
-		oListBindingMock.expects("_fireRefresh")
-			.withExactArgs({reason : ChangeReason.Refresh});
 		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oReadPromise);
 
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.then(function () {
+			that.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			that.mock(that.oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oListBinding))
 				.returns([oChild1]);
@@ -1225,22 +1244,6 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.catch(function () {});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getContexts after refresh", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oChild1 = {checkUpdate : function () {}},
-			oChild2 = {checkUpdate : function () {}};
-
-		oBinding.sChangeReason = ChangeReason.Refresh;
-		this.mock(this.oModel).expects("getDependentBindings").withExactArgs(oBinding)
-			.returns([oChild1, oChild2]);
-		this.mock(oChild1).expects("checkUpdate").withExactArgs();
-		this.mock(oChild2).expects("checkUpdate").withExactArgs();
-		this.mock(oBinding.oCache).expects("read").returns(createResult(10));
-
-		oBinding.getContexts(0, 10);
 	});
 
 	//*********************************************************************************************
@@ -1747,7 +1750,6 @@ sap.ui.require([
 		QUnit.test("sort: vSorters = " + JSON.stringify(oFixture.vSorters) + " and mParameters = "
 				+ JSON.stringify(oFixture.mParameters), function (assert) {
 			var oCache = { read : function () {} },
-				done = assert.async(),
 				oListBinding,
 				oModel = oFixture.oModel || this.oModel;
 
@@ -1757,29 +1759,11 @@ sap.ui.require([
 			this.mock(_Cache).expects("create").withExactArgs(
 				sinon.match.same(oModel.oRequestor), "EMPLOYEES", oFixture.queryOptions)
 				.returns(oCache);
-			this.mock(oCache).expects("read")
-				.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
-				.callsArg(4)
-				.returns(createResult(10));
+			this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Sort);
 
 			this.spy(_ODataHelper, "buildOrderbyOption");
 			this.spy(_ODataHelper, "mergeQueryOptions");
 			this.spy(_ODataHelper, "toArray");
-			this.spy(oListBinding, "reset");
-
-			oListBinding.attachRefresh(function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
-				assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Sort);
-				assert.ok(oListBinding.reset.calledWithExactly());
-
-				oListBinding.getContexts(0, 10);
-				// check that next change event gets change reason sort
-				oListBinding.attachChange(function (oEvent) {
-					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
-					assert.strictEqual(oListBinding.sChangeReason, undefined);
-					done();
-				});
-			});
 
 			// Code under test
 			assert.strictEqual(oListBinding.sort(oFixture.vSorters), oListBinding, "chaining");
@@ -1816,9 +1800,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
 			.returns(oCacheProxy);
 		oListBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
-		this.mock(oListBinding).expects("reset").withExactArgs();
-		this.mock(oListBinding).expects("_fireRefresh")
-			.withExactArgs({reason : ChangeReason.Sort});
+		this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Sort);
 
 		// Code under test
 		assert.strictEqual(oListBinding.sort(oSorter), oListBinding, "chaining");
@@ -1826,7 +1808,6 @@ sap.ui.require([
 		assert.strictEqual(oListBinding.oCache, oCacheProxy);
 		assert.strictEqual(oListBinding.mCacheByContext, undefined);
 		assert.strictEqual(oListBinding.aSorters, aSorters, "store sorter");
-		assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Sort);
 	});
 
 	//*********************************************************************************************
@@ -1900,15 +1881,12 @@ sap.ui.require([
 				oHelperMock.expects("createListCacheProxy")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 					.returns(oCacheProxy);
-				this.mock(oBinding).expects("reset").withExactArgs();
-				this.mock(oBinding).expects("_fireRefresh")
-					.withExactArgs({reason : ChangeReason.Filter});
+				this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Filter);
 
 				// Code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
 
 				assert.strictEqual(oBinding.oCache, oCacheProxy);
-				assert.strictEqual(oBinding.sChangeReason, ChangeReason.Filter);
 				if (sFilterType === FilterType.Control) {
 					assert.strictEqual(oBinding.aFilters, aFilters);
 					assert.deepEqual(oBinding.aApplicationFilters, []);

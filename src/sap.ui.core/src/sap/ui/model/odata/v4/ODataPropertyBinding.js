@@ -76,7 +76,6 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				this.sGroupId = undefined;
-				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 				if (!this.bRelative) {
 					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
@@ -191,6 +190,8 @@ sap.ui.define([
 	 *   relative binding and the value is <code>undefined</code>.
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
 	 *   The change reason for the change event
+	 * @param {string} [sGroupId=getGroupId()]
+	 *   The group ID to be used for the read.
 	 * @returns {Promise}
 	 *   A Promise to be resolved when the check is finished
 	 *
@@ -198,11 +199,10 @@ sap.ui.define([
 	 * @see sap.ui.model.Binding#checkUpdate
 	 */
 	// @override
-	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason) {
+	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId) {
 		var oChangeReason = {reason : sChangeReason || ChangeReason.Change},
 			bDataRequested = false,
 			bFire = false,
-			sGroupId,
 			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
@@ -233,8 +233,7 @@ sap.ui.define([
 		if (this.isRelative()) {
 			oReadPromise = this.oContext.fetchValue(this.sPath, this);
 		} else {
-			sGroupId = this.sRefreshGroupId || this.getGroupId();
-			this.sRefreshGroupId = undefined;
+			sGroupId = sGroupId || this.getGroupId();
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
@@ -410,9 +409,21 @@ sap.ui.define([
 
 		_ODataHelper.checkGroupId(sGroupId);
 
-		this.sRefreshGroupId = sGroupId;
 		this.oCache.refresh();
-		this.checkUpdate(true, ChangeReason.Refresh);
+		this.refreshInternal(sGroupId);
+	};
+
+	/**
+	 * Internal method to refresh the binding, called by {@link #refresh} and also by a parent list
+	 * binding during its refresh.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId) {
+		this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
 	};
 
 	/**
