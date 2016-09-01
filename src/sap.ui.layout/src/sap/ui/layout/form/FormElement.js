@@ -86,6 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			if (oOldLabel && oOldLabel.isRequired) {
 				oOldLabel.isRequired = oOldLabel._sapuiIsRequired;
 				oOldLabel._sapuiIsRequired = undefined;
+				oOldLabel.disableRequiredChangeCheck(false);
 			}
 		}
 
@@ -95,7 +96,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			if (!this._oLabel) {
 				this._oLabel = sap.ui.layout.form.FormHelper.createLabel(oLabel);
 				this._oLabel.setParent(this);
-				if (oLabel.isRequired) {
+				this._oLabel.disableRequiredChangeCheck(true);
+				if (this._oLabel.isRequired) {
 					this._oLabel.isRequired = _labelIsRequired;
 				}
 			} else {
@@ -109,6 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			if (oLabel && oLabel.isRequired) {
 				oLabel._sapuiIsRequired = oLabel.isRequired;
 				oLabel.isRequired = _labelIsRequired;
+				oLabel.disableRequiredChangeCheck(true);
 			}
 		}
 
@@ -139,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.addField = function(oField) {
 
 		this.addAggregation("fields", oField);
-		oField.addDelegate(this._oFieldDelegate);
+		_attachDelegate.call(this, oField);
 		_updateLabelFor(this);
 
 		return this;
@@ -149,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.insertField = function(oField, iIndex) {
 
 		this.insertAggregation("fields", oField, iIndex);
-		oField.addDelegate(this._oFieldDelegate);
+		_attachDelegate.call(this, oField);
 		_updateLabelFor(this);
 
 		return this;
@@ -159,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.removeField = function(oField) {
 
 		var oRemovedField = this.removeAggregation("fields", oField);
-		oRemovedField.removeDelegate(this._oFieldDelegate);
+		_detachDelegate.call(this, oRemovedField);
 		_updateLabelFor(this);
 
 		return oRemovedField;
@@ -172,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for ( var i = 0; i < aRemovedFields.length; i++) {
 			var oRemovedField = aRemovedFields[i];
-			oRemovedField.removeDelegate(this._oFieldDelegate);
+			_detachDelegate.call(this, oRemovedField);
 		}
 		_updateLabelFor(this);
 
@@ -186,7 +189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for ( var i = 0; i < aFields.length; i++) {
 			var oField = aFields[i];
-			oField.removeDelegate(this._oFieldDelegate);
+			_detachDelegate.call(this, oField);
 		}
 
 		this.destroyAggregation("fields");
@@ -205,7 +208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for (i = 0; i < aFields.length; i++) {
 			oField = aFields[i];
-			oField.removeDelegate(this._oFieldDelegate);
+			_detachDelegate.call(this, oField);
 		}
 
 		this.updateAggregation("fields");
@@ -214,7 +217,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for (i = 0; i < aFields.length; i++) {
 			oField = aFields[i];
-			oField.addDelegate(this._oFieldDelegate);
+			_attachDelegate.call(this, oField);
 		}
 
 		_updateLabelFor(this);
@@ -315,12 +318,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		var oLabel = oFormElement._oLabel;
 		if (oLabel) {
-			oLabel.setAlternativeLabelFor(oField);
+			oLabel.setLabelFor(oField); // as Label is internal of FormElement, we can use original labelFor
 		}
 		oLabel = oFormElement.getLabel();
 		if (oLabel instanceof sap.ui.core.Control /*might also be a string*/) {
 			oLabel.setAlternativeLabelFor(oField);
 		}
+	}
+
+	function _attachDelegate(oField){
+
+		oField.addDelegate(this._oFieldDelegate);
+		if (oField.getMetadata().getProperty("required")) {
+			oField.attachEvent("_change", _handleControlChange, this);
+		}
+
+	}
+
+	function _detachDelegate(oField){
+
+		oField.removeDelegate(this._oFieldDelegate);
+		if (oField.getMetadata().getProperty("required")) {
+			oField.detachEvent("_change", _handleControlChange, this);
+		}
+
 	}
 
 	/*
@@ -332,6 +353,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		var oParent = this.oElement.getParent();
 		if (oParent && oParent.contentOnAfterRendering) {
 			oParent.contentOnAfterRendering( this.oElement, oEvent.srcControl);
+		}
+
+	}
+
+	function _handleControlChange(oEvent) {
+
+		if (oEvent.getParameter("name") == "required") {
+			var oLabel = this.getLabelControl();
+			if (oLabel) {
+				oLabel.invalidate();
+			}
 		}
 
 	}

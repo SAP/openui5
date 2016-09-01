@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.addStyle("font-weight", "bold");
 		}
 
-		if (oLabel.getRequired()) {
+		if (oLabel.isRequired()) {
 			rm.addClass("sapMLabelRequired");
 		}
 
