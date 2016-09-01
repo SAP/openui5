@@ -61,7 +61,7 @@
 
 .sapMITBFilter .sapMITBText {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBTextOnly .sapMITBText {
@@ -70,7 +70,7 @@
 
 .sapMITBTextOnly .sapMITBFilterDefault > .sapMITBText {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault:hover > .sapMITBText {
@@ -79,7 +79,7 @@
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
 	color: darken(@sapUiSelected, 5);
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected:hover > .sapMITBText {
@@ -116,7 +116,7 @@
 
 .sapMITBFilter .sapMITBCount {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 	max-width: 2rem;
 	overflow: hidden;
 	position: absolute;
@@ -133,7 +133,7 @@
 	border: 1px solid @sapUiHighlight;
 
   	&::before {
-		text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+		text-shadow: @sapUiShadowText;
 	}
 }
 
@@ -198,12 +198,12 @@
 
 .sapMITBAll .sapMITBCount {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBAll .sapMITBText {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 /* Tab Separator Item */
@@ -217,7 +217,7 @@
 }
 
 .sapMITBSepIcon::before {
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBArrowScroll {
