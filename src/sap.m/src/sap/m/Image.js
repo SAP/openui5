@@ -167,6 +167,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Image.prototype.onload = function(oEvent) {
+		var iWidth,
+			iHeight;
+
 		// This is used to fix the late load event handler problem on ios platform, if the event handler
 		// has not been called right after image is loaded, event is triggered manually in onAfterRendering
 		// method.
@@ -188,8 +191,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		if (!this._isWidthOrHeightSet()) {
 			if (this._iLoadImageDensity > 1) {
-				if (($DomNode.width() === oDomRef.naturalWidth) && ($DomNode.height() === oDomRef.naturalHeight)) {
-					$DomNode.width($DomNode.width() / this._iLoadImageDensity);
+				iWidth = Math.round(oDomRef.getBoundingClientRect().width);
+				iHeight = Math.round(oDomRef.getBoundingClientRect().height);
+
+				if ((iWidth === oDomRef.naturalWidth) && (iHeight === oDomRef.naturalHeight)) {
+					$DomNode.width(iWidth / this._iLoadImageDensity);
 				}
 			}
 		}
