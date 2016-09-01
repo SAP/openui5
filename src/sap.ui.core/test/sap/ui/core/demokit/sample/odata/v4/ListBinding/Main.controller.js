@@ -122,15 +122,6 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
-		onCreateEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog");
-
-			oCreateEmployeeDialog.setModel(new JSONModel({
-				"ENTRYDATE" : "2015-10-01"
-			}), "new");
-			oCreateEmployeeDialog.open();
-		},
-
 		onDeleteEmployee : function (oEvent) {
 			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
