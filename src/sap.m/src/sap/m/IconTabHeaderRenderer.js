@@ -170,6 +170,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.writeAttribute("aria-disabled", true);
 				}
 
+				oRM.writeAttribute("aria-selected", false);
+
 				var sTooltip = oItem.getTooltip_AsString();
 				if (sTooltip) {
 					oRM.writeAttributeEscaped("title", sTooltip);
