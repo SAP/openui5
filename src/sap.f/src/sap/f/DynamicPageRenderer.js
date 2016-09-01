@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oDynamicPageHeader = oDynamicPage.getHeader(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
 			oDynamicPageContent = oDynamicPage.getContent(),
-			bHeaderAlwaysExpanded = oDynamicPage._headerAlwaysExpanded();
+			bHeaderAlwaysExpanded = oDynamicPage._preserveHeaderStateOnScroll();
 
 		// Dynamic Page Layout Root DOM Element.
 		oRm.write("<article");
