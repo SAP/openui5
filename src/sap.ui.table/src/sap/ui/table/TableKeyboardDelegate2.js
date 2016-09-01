@@ -427,6 +427,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 	TableKeyboardDelegate.prototype.onsaphomemodifiers = function(oEvent) {
 		if (oEvent.metaKey || oEvent.ctrlKey) {
+			oEvent.preventDefault(); // To prevent the browser page from scrolling to the top.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 			if (oCellInfo.type === CellType.DATACELL ||
@@ -475,6 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 	TableKeyboardDelegate.prototype.onsapendmodifiers = function(oEvent) {
 		if (oEvent.metaKey || oEvent.ctrlKey) {
+			oEvent.preventDefault(); // To prevent the browser page from scrolling to the bottom.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 			if (oCellInfo.type === CellType.DATACELL ||
