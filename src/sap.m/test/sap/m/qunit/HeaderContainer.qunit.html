@@ -446,6 +446,52 @@ jQuery.sap.initMobile();
 		//Assert
 		assert.strictEqual(iIndexOfItem, 3, "Correct index of Item has been returned");
 	});
+
+	QUnit.module("Left and right arrow indicators are rendered on mobile devices", {
+		beforeEach : function () {
+			sap.ui.Device.system.phone = true;
+			sap.ui.Device.system.desktop = false;
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			sap.ui.Device.system.phone = false;
+			sap.ui.Device.system.desktop = true;
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Left and right indicators are rendered on mobile devices", function(assert) {
+		//Act
+		var bIsLeftIcon = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.ui.core.Icon;
+		var bIsRightIcon = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.ui.core.Icon;
+		//Assert
+		assert.ok(bIsLeftIcon, "Left arrow indicator is rendered on mobile devices");
+		assert.ok(bIsRightIcon, "Right arrow indicator is rendered on mobile devices");
+	});
+
+	QUnit.module("Left and right arrow buttons are rendered on desktop", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Left and right arrow buttons are rendered on desktop", function(assert) {
+		//Act
+		var bIsLeftButton = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.m.Button;
+		var bIsRightButton = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.m.Button;
+		//Assert
+		assert.ok(bIsLeftButton, "Arrow buttons are rendered on desktop");
+		assert.ok(bIsRightButton, "Arrow buttons are rendered on desktop");
+	});
 })();
 </script>
 </head>

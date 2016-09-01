@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject, Icon) {
 	"use strict";
 
 	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * Button that allows to scroll to previous section.
 				 */
 				_prevButton : {
-					type : "sap.m.Button",
+					type : "sap.ui.core.Control",
 					multiple : false,
 					visibility : "hidden"
 				},
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * Button that allows to scroll to next section.
 				 */
 				_nextButton : {
-					type : "sap.m.Button",
+					type : "sap.ui.core.Control",
 					multiple : false,
 					visibility : "hidden"
 				}
@@ -181,40 +181,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
 			this._oArrowNext._bExcludeFromTabChain = true;
 			this.setAggregation("_nextButton", this._oArrowNext, true);
-
-			this._oScrollCntr.addDelegate({
-				onAfterRendering : function() {
-					if (Device.system.desktop) {
-						var oFocusRef = this._oScrollCntr.getDomRef("scroll");
-						var oFocusObj = this._oScrollCntr.$("scroll");
-						var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
-
-						if (!this._oItemNavigation) {
-							this._oItemNavigation = new ItemNavigation();
-							this.addDelegate(this._oItemNavigation);
-							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
-							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
-						}
-						this._oItemNavigation.setRootDomRef(oFocusRef);
-						this._oItemNavigation.setItemDomRefs(aDomRefs);
-						this._oItemNavigation.setTabIndex0();
-						this._oItemNavigation.setCycling(false);
-					}
-				}.bind(this),
-
-				onBeforeRendering : function() {
-					if (Device.system.desktop) {
-						this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
-							horizontal : true,
-							vertical : true,
-							zynga : false,
-							preventDefault : false,
-							nonTouchScrolling : true
-						});
-					}
-				}.bind(this)
-			});
+		} else if (Device.system.phone || Device.system.tablet) {
+			this._oArrowPrev = new Icon({
+				id : this.getId() + "-scrl-prev-button"
+			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+			this.setAggregation("_prevButton", this._oArrowPrev, true);
+			this._oArrowNext = new Icon({
+				id : this.getId() + "-scrl-next-button"
+			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+			this.setAggregation("_nextButton", this._oArrowNext, true);
 		}
+
+		this._oScrollCntr.addDelegate({
+			onAfterRendering : function() {
+				if (Device.system.desktop) {
+					var oFocusRef = this._oScrollCntr.getDomRef("scroll");
+					var oFocusObj = this._oScrollCntr.$("scroll");
+					var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
+
+					if (!this._oItemNavigation) {
+						this._oItemNavigation = new ItemNavigation();
+						this.addDelegate(this._oItemNavigation);
+						this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
+						this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
+					}
+					this._oItemNavigation.setRootDomRef(oFocusRef);
+					this._oItemNavigation.setItemDomRefs(aDomRefs);
+					this._oItemNavigation.setTabIndex0();
+					this._oItemNavigation.setCycling(false);
+				}
+			}.bind(this),
+
+			onBeforeRendering : function() {
+				if (Device.system.desktop) {
+					this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
+						horizontal : true,
+						vertical : true,
+						zynga : false,
+						preventDefault : false,
+						nonTouchScrolling : true
+					});
+				}
+			}.bind(this)
+		});
 	};
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
@@ -222,11 +231,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
 		}
 		if (Device.system.desktop) {
-			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
 			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
 			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
-			this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
+		} else if (Device.system.phone || Device.system.tablet) {
+			this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
+			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
 		}
+		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
+		this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
 		if (this._sScrollResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
 		}
