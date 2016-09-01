@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<title>OData V4: Before Push Tests</title>
+
+		<script>
+		(function () {
+			"use strict";
+
+			var aTests = [
+					"qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage",
+					"qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&realOData=true",
+					"demokit/sample/common/index.html?component=odata.v4.ListBinding",
+					"demokit/sample/common/index.html?component=odata.v4.ListBinding&realOData=true",
+					"demokit/sample/common/index.html?component=odata.v4.SalesOrders",
+					"demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true",
+					"demokit/sample/common/index.html?component=odata.v4.SalesOrdersTemplate",
+					"demokit/sample/common/index.html?component=odata.v4.SalesOrdersTemplate&realOData=true",
+					"demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true"
+				],
+				oLoginRequest = new XMLHttpRequest();
+
+			// send a HEAD request to the service document from the v4 sample service to ensure that
+			// the credentials are known before opening the other windows.
+			oLoginRequest.open("HEAD", "/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default"
+				+ "/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
+			oLoginRequest.addEventListener("load", function () {
+				aTests.forEach(function (sPath) {
+					window.open("/testsuite/test-resources/sap/ui/core/" + sPath);
+				});
+			});
+			oLoginRequest.send();
+		}());
+		</script>
+	</head>
+	<body>
+		<h1>UI Services Before Push Tests</h1>
+
+		<p>This page opens windows or tabs via JavaScript. Many browsers have popup blockers that
+		prevent this by default. If the tests do not appear, adjust the settings of the popup
+		blocker accordingly.</p>
+	</body>
+</html>
