@@ -336,7 +336,10 @@ sap.ui.define([
 
 		if (exists($footerSpacer)) {
 			$footerSpacer.toggleClass("sapFDynamicPageContentWrapperSpacer", bToggle);
-			this.$("contentFitContainer").css("bottom", bToggle ? "4rem" : 0);
+		}
+
+		if (exists(this.$contentFitContainer)) {
+			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bToggle);
 		}
 	};
 
