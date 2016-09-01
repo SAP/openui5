@@ -936,16 +936,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderVSb = function(rm, oTable) {
+
 		rm.write("<div");
 		rm.addClass("sapUiTableVSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
+		rm.addStyle("height", oTable._getVSbHeight() + "px");
+
+		if (oTable.getFixedRowCount() > 0) {
+			rm.addStyle("top", (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1  + 'px');
+		}
+
+		rm.writeStyles();
 		rm.write(">");
 
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-vsb-content");
 		rm.addClass("sapUiTableVSbContent");
 		rm.writeClasses();
+		rm.addStyle("height", oTable._iMaxScrollbarHeight + "px");
+		rm.writeStyles();
 		rm.write(">");
 		rm.write("</div>");
 		rm.write("</div>");

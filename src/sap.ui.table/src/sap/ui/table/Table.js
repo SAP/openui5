@@ -645,6 +645,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		this._lastCalledUpdateRows = 0;
 		this._iBindingTimerDelay = 50;
+		this._iMaxScrollbarHeight = 1000000; // maximum px height of an element in FF/IE/Chrome
+		this._aRowHeights = [];
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			this._iRowHeightsDelta = 0;
+			this._iScrollTop = 0;
+			this._iRenderedFirstVisibleRow = 0;
+		}
 
 		var that = this;
 
@@ -656,22 +663,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
-
-						that._updateTableContent();
+					that._updateTableContent();
 
 					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
 
 					var oTableSizes = that._collectTableSizes();
-					that._updateRowHeader(oTableSizes.tableRowHeights);
+					that._aRowHeights = that._collectRowHeights();
+					that._updateRowHeader(that._aRowHeights);
 					that._syncColumnHeaders(oTableSizes);
+					if (TableUtils.isVariableRowHeightEnabled(that)) {
+						that._iRowHeightsDelta = this._getRowHeightsDelta(that._aRowHeights);
+						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
+					}
+					if (that._bBindingLengthChanged) {
+						that._updateVSb();
+					}
+					that._toggleVSb();
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._adjustTablePosition();
-					}
-
-					if (that._bBindingLengthChanged || TableUtils.isVariableRowHeightEnabled(that)) {
-						that._updateVSb(oTableSizes);
+						that._adjustTablePosition(that._iScrollTop, that._aRowHeights);
 					}
 				}
 
@@ -858,12 +869,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * for avoiding layout thrashing through read/write UI operations.
 	 * @private
 	 */
-	Table.prototype._collectTableSizes = function(aTableRowHeights) {
+	Table.prototype._collectTableSizes = function() {
 		var oSizes = {
 			tableCtrlScrollWidth: 0,
 			tableRowHdrScrWidth: 0,
-			tableCtrlRowScrollTop: 0,
-			tableCtrlRowScrollHeight: 0,
 			tableCtrlScrWidth: 0,
 			tableHSbScrollLeft: 0,
 			tableCtrlFixedWidth: 0,
@@ -894,12 +903,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oSapUiTableRowHdrScr = oDomRef.querySelector(".sapUiTableRowHdrScr");
 		if (oSapUiTableRowHdrScr) {
 			oSizes.tableRowHdrScrWidth = oSapUiTableRowHdrScr.clientWidth;
-		}
-
-		var oSapUiTableCtrlRowScroll = oDomRef.querySelector(".sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll");
-		if (oSapUiTableCtrlRowScroll) {
-			oSizes.tableCtrlRowScrollTop = oSapUiTableCtrlRowScroll.offsetTop;
-			oSizes.tableCtrlRowScrollHeight = oSapUiTableCtrlRowScroll.offsetHeight;
 		}
 
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr");
@@ -975,13 +978,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		Array.prototype.forEach.call(oDomRef.querySelectorAll(".sapUiTableCol"), getColumnSize);
 
-		if (!aTableRowHeights) {
-			oSizes.tableRowHeights = this._collectRowHeights();
-		} else {
-			oSizes.tableRowHeights = aTableRowHeights;
-		}
-
-
 		return oSizes;
 	};
 
@@ -1035,13 +1031,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._detachEvents();
 
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-			if (oVSb) {
-				this._iOldScrollTop = oVSb.scrollTop;
-			}
-		}
 
 		var aRows = this.getRows();
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive ||
@@ -1109,14 +1098,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._updateTableSizes();
 		}
 
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-			if (oVSb) {
-				oVSb.scrollTop = Math.max(oVSb.scrollTop, this._iOldScrollTop);
-			}
-		}
+		this._updateVSb(this._iScrollTop);
 
-			this._updateTableContent();
+		this._updateTableContent();
 
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
@@ -1152,8 +1136,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._resetRowHeights();
-		var aRowHeights = this._collectRowHeights();
-		this._getDefaultRowHeight(aRowHeights);
+		this._aRowHeights = this._collectRowHeights();
+		this._getDefaultRowHeight(this._aRowHeights);
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			this._iRowHeightsDelta = this._getRowHeightsDelta(this._aRowHeights);
+		}
 
 		var iRowContentSpace = 0;
 		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
@@ -1168,10 +1155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		TableUtils.deregisterResizeHandler(this, "");
 
-		// update Vertical Scrollbar before collection because it changes sizes
-		this._toggleVSb();
-
-		var oTableSizes = this._collectTableSizes(aRowHeights);
+		var oTableSizes = this._collectTableSizes();
 
 		if (this._mTimeouts.afterUpdateTableSizes) {
 			window.clearTimeout(this._mTimeouts.afterUpdateTableSizes);
@@ -1187,14 +1171,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Manipulation of UI Sizes
-		this._updateRowHeader(oTableSizes.tableRowHeights);
+		this._updateRowHeader(this._aRowHeights);
 		this._syncColumnHeaders(oTableSizes);
 		this._determineVisibleCols(oTableSizes);
 		if (!bSkipHandleRowCountMode) {
 			this._setRowContentHeight(iRowContentSpace);
 		}
 		this._updateHSb(oTableSizes);
-		this._updateVSb(oTableSizes);
 
 		this.$().find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
 
@@ -1350,37 +1333,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * and leads to a bigger vertical shift.
 	 * @private
 	 */
-	Table.prototype._adjustTablePosition = function() {
-		var iScrollTop = this.getDomRef(SharedDomRef.VerticalScrollBar).scrollTop;
-		var iDefaultRowHeight = this._getDefaultRowHeight();
-		var iRowHeightOffset = iScrollTop % iDefaultRowHeight;
+	Table.prototype._adjustTablePosition = function(iScrollTop, aRowHeights) {
+		var bScrollPositionAtVirtualRange = this.getFirstVisibleRow() < this._getMaxRowIndex();
+		var bVirtualScrollingNeeded = this._getRowCount() > this.getVisibleRowCount();
 
-		var oInnerScrollContainer = this.$().find(".sapUiTableCtrlRowScroll, .sapUiTableRowHdrScr");
-		if (this._iBindingLength <= this.getVisibleRowCount()) {
-			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iScrollTop) + "px, 0px)"});
-		} else {
-			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset, iScrollTop);
-			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection ) + "px, 0px)"});
+		// Only update table scroll simulation when table is not waiting for an update of rows
+		if (bScrollPositionAtVirtualRange && this.getFirstVisibleRow() != this._iRenderedFirstVisibleRow) {
+			return;
 		}
-	};
 
-	/**
-	 * Calculates the amount of pixels the scrolling areas have to be shifted vertically, when the actual row heights are
-	 * bigger than the estimated row heights.
-	 * @param {int} iDefaultRowHeight the estimated row height
-	 * @param {int} iRowHeightOffset the current offset for simulated pixel-based scrolling
-	 * @returns {number} the amount of pixels the scrolling areas have to be shifted vertically
-	 * @private
-	 */
-	Table.prototype._calculateRowCorrection = function(iDefaultRowHeight, iRowHeightOffset, iScrollTop) {
-		var iRowIndex = this.getFirstVisibleRow();
-		var iMaxRowIndex = this._iBindingLength - this.getVisibleRowCount();
+		var iRowCorrection = null;
+		if (bScrollPositionAtVirtualRange && bVirtualScrollingNeeded) {
+			var iFirstRowHeight = aRowHeights[0];
+			var iScrollingPixelsForRow = this._getScrollingPixelsForRow();
+			var iPixelOnCurrentRow = iScrollTop - (this.getFirstVisibleRow() * iScrollingPixelsForRow);
+			var iPercentOfFirstRowReached = iPixelOnCurrentRow / iScrollingPixelsForRow;
+			iRowCorrection = Math.ceil(iPercentOfFirstRowReached * iFirstRowHeight);
+			// Is scroll position over the first row height >> do nothing until performUpdateRows()
+			if (iRowCorrection > iFirstRowHeight) {
+				iRowCorrection = null;
+			}
+		} else if (this._iRowHeightsDelta > 0) {
+			// Correct the total amount of RowHeightsDelta over the overflow scroll area.
+			var iScrollPositionAtOverflowRange = bVirtualScrollingNeeded ? iScrollTop - this._getMaxScrollRange() : iScrollTop;
+			iRowCorrection = (this._iRowHeightsDelta / this._getScrollOverflowRange()) * iScrollPositionAtOverflowRange;
+		}
 
-		if (iRowIndex < iMaxRowIndex) {
-			var iFirstRowHeightDelta = TableUtils.getRowHeightByIndex(this, 0) - iDefaultRowHeight;
-			return Math.floor(iRowHeightOffset * (iFirstRowHeightDelta / iDefaultRowHeight)) + iRowHeightOffset;
-		} else if (iRowIndex == iMaxRowIndex) {
-			return iScrollTop - (this._iBindingLength * iDefaultRowHeight) + this.getDomRef("tableCCnt").clientHeight;
+		if (iRowCorrection != null && iRowCorrection > -1) {
+			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlRowScroll, .sapUiTableRowHdrScr");
+			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection ) + "px, 0px)"});
 		}
 	};
 
@@ -1407,23 +1388,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this.setProperty("firstVisibleRow", iRowIndex, true);
 
-		if (TableUtils.isVariableRowHeightEnabled(this)
-			&& this.getBinding("rows") && !this._bRefreshing && !bFirstVisibleRowChanged) {
-			this._adjustTablePosition();
-		}
-
 		// update the bindings:
 		//  - prevent the rerendering
 		//  - use the databinding fwk to update the content of the rows
 		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
-			if (this.getNavigationMode() == NavigationMode.Scrollbar) {
-				if (!bOnScroll) {
-					var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-					if (oVSb) {
-						oVSb.scrollTop = iRowIndex * (this._getDefaultRowHeight() || 28);
-					}
-				}
+			if (this.getNavigationMode() == NavigationMode.Scrollbar && !bOnScroll) {
+				this._updateVSb();
 			}
 		}
 
@@ -2183,55 +2154,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Update the vertical scrollbar position
 	 * @private
 	 */
-	Table.prototype._updateVSb = function(oTableSizes) {
-		// move the vertical scrollbar to the scrolling table only
+	Table.prototype._updateVSb = function(iScrollTop) {
 		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
 		if (!oVSb) {
-			return;
+            return;
 		}
+        if (iScrollTop === undefined) {
+            iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
+        }
 
-		var iFixedRowCount = this.getFixedRowCount();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		if (iFixedRowCount > 0 || iFixedBottomRowCount > 0) {
-			var $sapUiTableVSb = jQuery(oVSb);
-			if (iFixedRowCount > 0) {
-				$sapUiTableVSb.css('top', (oTableSizes.tableCtrlRowScrollTop - 1) + 'px');
-			}
-			if (iFixedBottomRowCount > 0) {
-				$sapUiTableVSb.css('height', oTableSizes.tableCtrlRowScrollHeight + 'px');
-			}
-		}
-
-		var iDefaultRowHeight = this._getDefaultRowHeight();
-		var iVSbHeight = (this._iBindingLength - iFixedRowCount - iFixedBottomRowCount) * iDefaultRowHeight;
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var iCCntHeight = 0;
-			var oCCntDomRef = this.getDomRef("tableCCnt");
-			if (oCCntDomRef) {
-				iCCntHeight = oCCntDomRef.clientHeight;
-			}
-
-			var iTableHeight = 0;
-			var oTableDomRef = this.getDomRef("table");
-			if (oTableDomRef) {
-				iTableHeight = oTableDomRef.clientHeight;
-			}
-
-			this._iRowHeightsDelta = iTableHeight - iCCntHeight - TableUtils.getRowHeightByIndex(this, this.getRows().length - 1);
-			if (this._iBindingLength <= this.getVisibleRowCount()) {
-				iVSbHeight = this._iRowHeightsDelta + (this.getVisibleRowCount() * iDefaultRowHeight);
-			} else {
-				iVSbHeight = this._iRowHeightsDelta + iVSbHeight;
-            }
-
-			this._toggleVSb();
-		}
-		this.getDomRef("vsb").style.maxHeight = (this.getVisibleRowCount() * iDefaultRowHeight) + "px";
-		this.getDomRef("vsb-content").style.height = iVSbHeight + "px";
-
-		if (!TableUtils.isVariableRowHeightEnabled(this)) {
-			oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * iDefaultRowHeight;
-		}
+		oVSb.scrollTop = iScrollTop;
 	};
 
 	/**
@@ -2277,11 +2209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._isVSbRequired = function() {
 		if (this.getNavigationMode() === NavigationMode.Scrollbar) {
-			if (TableUtils.isVariableRowHeightEnabled(this) && this._iRowHeightsDelta > 0) {
-				return true;
-			}
-
-			if (this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount()) {
+			if (this._iRowHeightsDelta > 0 || (this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount())) {
 				return true;
 			}
 		}
@@ -2452,30 +2380,104 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this._iBindingLength;
 	};
 
-
 	/**
 	 * Returns the current top scroll position of the scrollbar (row number)
 	 * @private
 	 */
 	Table.prototype._getFirstVisibleRowByScrollTop = function(iScrollTop) {
-		var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-		if (oVsb) {
-			iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
-			if (TableUtils.isVariableRowHeightEnabled(this)) {
-				if (this.getVisibleRowCount() >= this._iBindingLength) {
-					return 0;
-				} else {
-					return Math.min(this._iBindingLength - this.getVisibleRowCount(), Math.floor(iScrollTop / this._getDefaultRowHeight()));
-				}
+		if (this.getNavigationMode() === NavigationMode.Paginator) {
+			return (((this._oPaginator.getCurrentPage() || 1) - 1) * this.getVisibleRowCount());
+		} else {
+			if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
+				return 0;
 			} else {
-				return Math.ceil(iScrollTop / this._getDefaultRowHeight());
+				var iFirstVisibleRow = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
+				return Math.min(this._getMaxRowIndex(), iFirstVisibleRow);
+			}
+		}
+		return 0;
+	};
+
+	/**
+	 * Returns the amount of pixels which are to needed to scroll one data row
+	 * @private
+	 */
+	Table.prototype._getScrollingPixelsForRow = function() {
+		return this._getMaxScrollRange() / Math.max(1, this._getMaxRowIndex());
+	};
+
+	/**
+	 * Returns the vertical scroll bar height
+	 * @private
+	 */
+	Table.prototype._getVSbHeight = function() {
+		return this._getScrollableRowCount() * this._getDefaultRowHeight();
+	};
+
+	/**
+	 * Returns the amount of scrollable rows
+	 * @private
+	 */
+	Table.prototype._getScrollableRowCount = function() {
+		return Math.max(1, this.getVisibleRowCount() - this.getFixedRowCount() - this.getFixedBottomRowCount());
+	};
+
+	/**
+	 * Returns the delta height of the sum of the height of all rows, compared which the default row height
+	 * @private
+	 */
+	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
+		var iEstimatedViewportHeight = this._getDefaultRowHeight() * this.getVisibleRowCount();
+		// Case: Not enough data to fill all available rows, only sum used rows.
+		if (this.getVisibleRowCount() > this._getRowCount()) {
+			aRowHeights = aRowHeights.slice(0, this._getRowCount());
+		}
+		var iRowHeightsDelta = aRowHeights.reduce(function(a, b) { return a + b; }, 0) - iEstimatedViewportHeight;
+		if (iRowHeightsDelta > 0) {
+			iRowHeightsDelta = Math.ceil(iRowHeightsDelta);
+		}
+		return Math.max(0, iRowHeightsDelta);
+	};
+
+	/**
+	 * Returns the delta height of the sum of the height of all rows, compared which the default row height
+	 * @private
+	 */
+	Table.prototype._getMaxScrollRange = function() {
+		var iMaxScrollRange;
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			iMaxScrollRange = (this._iMaxScrollbarHeight - this._getVSbHeight()) * 0.95;
+		} else {
+			iMaxScrollRange = this._iMaxScrollbarHeight - this._getVSbHeight();
+		}
+		return Math.max(1, iMaxScrollRange);
+	};
+
+	/**
+	 * Returns the value of pixel which are used for correcting the RowHeightDelta
+	 * @private
+	 */
+	Table.prototype._getScrollOverflowRange = function() {
+		if (this._getRowCount() <= this.getVisibleRowCount()) {
+			return Math.max(1, (this._iMaxScrollbarHeight - this._getVSbHeight()));
+		} else {
+			return Math.max(1, (this._iMaxScrollbarHeight - this._getVSbHeight()) - this._getMaxScrollRange());
+		}
+	};
+
+	/**
+	 * Returns the maximum row index to which can be scrolled to
+	 * @private
+	 */
+	Table.prototype._getMaxRowIndex = function() {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			if (this.getVisibleRowCount() > this._getRowCount()) {
+				return this._getRowCount();
+			} else {
+				return Math.max(0, this._getRowCount() - this.getVisibleRowCount() - 1);
 			}
 		} else {
-			if (this.getNavigationMode() === NavigationMode.Paginator) {
-				return (((this._oPaginator.getCurrentPage() || 1) - 1) * this.getVisibleRowCount());
-			} else {
-				return 0;
-			}
+			return Math.max(0, this._getRowCount() - this.getVisibleRowCount());
 		}
 	};
 
@@ -2493,7 +2495,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		return aColumns;
 	};
-
 
 	/**
 	 * Returns the summed width of all rendered columns
@@ -2821,14 +2822,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 		// do not scroll in action mode!
 		this._getKeyboardExtension().setActionMode(false);
+
+		var updateVisibleRow = function() {
+			var oVSb = that.getDomRef(SharedDomRef.VerticalScrollBar);
+			if (!oVSb) {
+				return;
+			}
+			var iScrollTop = oVSb.scrollTop;
+			if (TableUtils.isVariableRowHeightEnabled(that)) {
+				that._iScrollTop = iScrollTop;
+				that._adjustTablePosition(iScrollTop, that._aRowHeights);
+			}
+			that.setFirstVisibleRow(that._getFirstVisibleRowByScrollTop(iScrollTop), true);
+		};
+
 		if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
 			window.clearTimeout(this._mTimeouts.scrollUpdateTimerId);
 			this._mTimeouts.scrollUpdateTimerId = window.setTimeout(function() {
-				that.setFirstVisibleRow(that._getFirstVisibleRowByScrollTop(), true);
+				updateVisibleRow();
 				that._mTimeouts._sScrollUpdateTimerId = null;
 			}, 300);
 		} else {
-			this.setFirstVisibleRow(this._getFirstVisibleRowByScrollTop(), true);
+			updateVisibleRow();
 		}
 		this._bIsScrolledByWheel = false;
 	};
@@ -2879,7 +2894,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
 			if (oVsb) {
 				this._bIsScrolledByWheel = true;
-				oVsb.scrollTop = oVsb.scrollTop + iScrollDelta;
+				var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
+				// If at least one row is scrolled, floor to full rows.
+				// Below one row, we scroll pixels.
+				if (iRowsPerStep > 1) {
+					iRowsPerStep = Math.floor(iRowsPerStep);
+				}
+				oVsb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
 			}
 		}
 
@@ -4660,10 +4681,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		iHeight = iHeight || 0;
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		var iVisibleRowCount = this.getVisibleRowCount();
+		var iDefaultRowHeight = this._getDefaultRowHeight();
 		var iMinVisibleRowCount = this.getMinAutoRowCount();
 		var iMinHeight;
 
-		var iDefaultRowHeight = this._getDefaultRowHeight();
+
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive || sVisibleRowCountMode == VisibleRowCountMode.Fixed) {
 			if (this._iTableRowContentHeight && sVisibleRowCountMode == VisibleRowCountMode.Interactive) {
 				iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
@@ -4689,12 +4711,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var $tableCCnt = jQuery(this.getDomRef("tableCCnt"));
-			if (sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) {
-				$tableCCnt.css("height", this._getDefaultRowHeight() * this.getVisibleRowCount() + "px");
-			} else if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
-				$tableCCnt.css("height", this._iTableRowContentHeight + "px");
-			}
+			jQuery(this.getDomRef("tableCCnt")).css("height", this._getDefaultRowHeight() * this.getVisibleRowCount() + "px");
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
@@ -4702,6 +4719,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
 		}
+
+		this._toggleVSb();
 	};
 
 	/**
