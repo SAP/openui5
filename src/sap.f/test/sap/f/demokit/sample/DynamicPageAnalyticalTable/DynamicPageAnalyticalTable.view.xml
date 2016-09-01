@@ -7,7 +7,7 @@
 		xmlns:f="sap.f"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
-		<f:DynamicPage id="dynamicPageId" headerAlwaysExpanded="true" headerExpanded="{/headerExpanded}">
+		<f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" headerExpanded="{/headerExpanded}">
 			<!-- DynamicPage Title -->
 			<f:title>
 				<f:DynamicPageTitle>
