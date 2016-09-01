@@ -4298,9 +4298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iSourceRowIndex = 0;
 			this.selectAll();
 		}
-		if (!!Device.browser.internet_explorer) {
-			this.$("selall").focus();
-		}
 		this._iSourceRowIndex = undefined;
 	};
 
