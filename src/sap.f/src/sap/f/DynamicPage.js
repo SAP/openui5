@@ -47,18 +47,18 @@ sap.ui.define([
 	 * content changes based on the current mode of the {@link sap.f.DynamicPageHeader
 	 * DynamicPageHeader}.</li>
 	 * <li>{@link sap.f.DynamicPageHeader DynamicPageHeader} - a generic container, which
-	 * can contain a single layout control and does not care about the content alignement
+	 * can contain a single layout control and does not care about the content alignment
 	 * and responsiveness. The header works in two modes - expanded and snapped and its
 	 * behavior can be adjusted with the help of different properties.</li>
 	 * <li>Content area - a generic container, which can have a single UI5 layout control
-	 * and does not care about the content alignement and responsiveness.</li>
+	 * and does not care about the content alignment and responsiveness.</li>
 	 * <li>Footer - positioned at the bottom with a small offset and used for additional
 	 * actions, the footer floats above the content. It can be any {@link sap.m.IBar}
 	 * control.</li>
 	 * </ul>
 	 * <strong><i>Usage</i></strong>
 	 * <br><br>
-	 * Use the {@link sap.f.DynamicPage DynamicPage) if you need to have a title, that is
+	 * Use the {@link sap.f.DynamicPage DynamicPage} if you need to have a title, that is
 	 * always visible and a header, that has configurable Expanding/Snapping functionality.
 	 * If you don't need the Expanding/Snapping functionality it is better to use the
 	 * {@link sap.m.Page} as a lighter control.
@@ -67,11 +67,6 @@ sap.ui.define([
 	 * <br><br>
 	 * The responsive behavior of the {@link sap.f.DynamicPage DynamicPage} depends on the
 	 * behavior of the content that is displayed.
-	 * <br><br>
-	 * <strong><i>Additional Information</i></strong>
-	 * <br><br>
-	 * Check out the <a href="/#docs/api/symbols/sap.f.DynamicPage.html" >API Reference</a>.
-	 *
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -92,16 +87,15 @@ sap.ui.define([
 				/**
 				 * Preserves the current header state when scrolling.
 				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
-				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
+				 * <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
 				 * when the control is rendered on tablet or mobile and the control`s title and header
 				 * are with height larger than the given threshold.
-				 * @since 1.42
 				 */
 				preserveHeaderStateOnScroll: {type: "boolean", group: "Behaviour", defaultValue: false},
 
 				/**
 				 * Determines whether the header is expanded.
-				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example
+				 * <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example
 				 * when the expanded header is larger than the available screen area. For those cases a warning is logged.
 				 * The header can be also expanded/collapsed by user interaction, which requires the property to be
 				 * internally mutated by the control to reflect the changed state.
@@ -115,27 +109,27 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Dynamic Page Layout Title managed internally by the <code>DynamicPage</code> control.
+				 * <code>DynamicPage</code> title.
 				 */
 				title: {type: "sap.f.DynamicPageTitle", multiple: false},
 
 				/**
-				 * Dynamic Page Layout Header.
+				 * <code>DynamicPage</code> header.
 				 */
 				header: {type: "sap.f.DynamicPageHeader", multiple: false},
 
 				/**
-				 * Dynamic Page Layout Content.
+				 * <code>DynamicPage</code> content.
 				 */
 				content: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
-				 * Dynamic Page Layout Floating Footer.
+				 * <code>DynamicPage</code> floating footer.
 				 */
 				footer: {type: "sap.m.IBar", multiple: false},
 
 				/**
-				 * Dynamic Page Layout Custom ScrollBar.
+				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
 			}
