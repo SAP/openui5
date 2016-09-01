@@ -8,29 +8,6 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	>
 	<Toolbar>
-		<dependents>
-			<Dialog id="CreateEmployeeDialog" title="Create New Employee">
-				<buttons>
-					<Button text="OK" press="onCloseEmployeeDialog" type="Accept"/>
-				</buttons>
-				<content>
-					<form:SimpleForm layout="ResponsiveGridLayout">
-						<form:content>
-							<Label text="Name"/>
-							<!-- TODO Q: derive maxLength from type's constraints?!
-							          A: SmartField?! -->
-							<Input maxLength="16" value="{Name}"/>
-							<Label text="Age"/>
-							<Input value="{AGE}"/>
-							<Label text="Entry Date"/>
-							<Input value="{ENTRYDATE}"/>
-							<Label text="Is Manager"/>
-							<CheckBox selected="{Is_Manager}"/>
-						</form:content>
-					</form:SimpleForm>
-				</content>
-			</Dialog>
-		</dependents>
 		<Label text="Teams" labelFor="TeamSelect"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{path: '/TEAMS',
@@ -118,8 +95,6 @@
 		<headerToolbar>
 			<Toolbar>
 				<content>
-					<Button enabled="false" icon="sap-icon://add" text="Create"
-						press="onCreateEmployee"/>
 					<Button icon="sap-icon://sys-cancel-2" text="Cancel"
 						press="onCancel"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
