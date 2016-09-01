@@ -1600,28 +1600,6 @@
 		assert.equal(oTable.getFirstVisibleRow(), 0, "refreshRows() executed with ChangeReason.Filter");
 	});
 
-	QUnit.test("test oncontextmenu function", function(assert) {
-		var bContextMenuOpened = false;
-		var oEvent = {
-			target: oTable.getDomRef().querySelector(".sapUiTableCol"),
-			preventDefault: function() {
-				return true;
-			}
-		};
-		assert.equal(document.getElementsByClassName("sapUiMnuLst").length, 0, "Column context menu not opened.");
-		oTable.oncontextmenu(oEvent);
-		assert.ok(document.getElementsByClassName("sapUiMnuLst").length > 0, "Column context menu opened.");
-	});
-
-	QUnit.test("test _oncellcontextmenu function", function(assert) {
-		oTable.setEnableCellFilter(true);
-		var mParam = {
-			columnId: oTable.getColumns()[0].getId(),
-			rowBindingContext: oTable.getRows()[0].getBindingContext()
-		};
-		assert.ok(oTable._oncellcontextmenu(mParam), "Cell context menu should be present");
-	});
-
 	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
 		var fnError = sinon.spy(jQuery.sap.log, "error");
 		assert.equal(oTable.getRows().length, 11, "Row count before row operations is 10");
@@ -1660,13 +1638,6 @@
 
 	QUnit.test("test _getColumnPercentageWidth function", function(assert) {
 		assert.equal(oTable._getColumnPercentageWidth(oTable.getColumns()[0]), 21, "Column percentage width calculated");
-	});
-
-	QUnit.test("test _onColumnSelect function", function(assert) {
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setResizable(true);
-		oTable._onColumnSelect(oColumn, oColumn.getDomRef(), true, true);
-		assert.ok(jQuery(oColumn.getDomRef()).find(".sapUiTableColCell").hide());
 	});
 
 	QUnit.test("Check for table focus", function(assert) {

@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.table.Table.
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool', 'sap/ui/core/Popup',
+		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
 		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
 		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
-		Control, Element, IconPool, Popup,
+		Control, Element, IconPool,
 		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter,
 		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
@@ -26,10 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		SharedDomRef = library.SharedDomRef,
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
-
-	// lazy dependencies
-	var Menu,
-		MenuItem;
 
 	/**
 	 * Constructor for a new Table.
@@ -2520,78 +2516,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * Handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header.
-	 * @private
-	 */
-	Table.prototype.oncontextmenu = function(oEvent) {
-		var $Target = jQuery(oEvent.target);
-		var $Header = $Target.closest('.sapUiTableCol');
-		if ($Header.length > 0) {
-			var oColumn = sap.ui.getCore().byId($Header.attr("data-sap-ui-colid"));
-			if (oColumn) {
-				oColumn._openMenu($Header[0], false);
-			}
-			oEvent.preventDefault();
-		} else {
-			if (this._findAndfireCellEvent(this.fireCellContextmenu, oEvent, this._oncellcontextmenu)) {
-				oEvent.preventDefault();
-			}
-		}
-	};
-
-	/**
-	 * Handles the default cell contextmenu.
-	 * @private
-	 */
-	Table.prototype._oncellcontextmenu = function(mParams) {
-		if (this.getEnableCellFilter()) {
-			// create the contextmenu instance the first time it is needed
-			if (!this._oContextMenu) {
-				if ( !Menu ) {
-					// retrieve lazy dependencies
-					// TODO consider to load them async (should be possible as this method ends with an "open" call which is async by nature
-					Menu = sap.ui.requireSync("sap/ui/unified/Menu");
-					MenuItem = sap.ui.requireSync("sap/ui/unified/MenuItem");
-				}
-				this._oContextMenu = new Menu(this.getId() + "-contextmenu");
-				this.addDependent(this._oContextMenu);
-			}
-
-			// does the column support filtering?
-			var oColumn = sap.ui.getCore().byId(mParams.columnId);
-			var sProperty = oColumn.getFilterProperty();
-			// currently only filter is possible by default cell context menu, if filtering is not allowed by
-			// menu, don't open the context menu at all.
-			if (oColumn && oColumn.isFilterableByMenu() && mParams.rowBindingContext) {
-				// destroy all items of the menu and recreate
-				this._oContextMenu.destroyItems();
-				this._oContextMenu.addItem(new MenuItem({
-					text: this._oResBundle.getText("TBL_FILTER"),
-					select: [function() {
-						var oContext = this.getContextByIndex(mParams.rowIndex);
-						var sValue = oContext.getProperty(sProperty);
-						if (this.getEnableCustomFilter()) {
-							// only fire custom filter event
-							this.fireCustomFilter({
-								column: oColumn,
-								value: sValue
-							});
-						} else {
-							this.filter(oColumn, sValue);
-						}
-
-					}, this]
-				}));
-
-				// open the popup below the cell
-				var eDock = Popup.Dock;
-				this._oContextMenu.open(false, mParams.cellDomRef, eDock.BeginTop, eDock.BeginBottom, mParams.cellDomRef, "none none");
-				return true;
-			}
-		}
-	};
-
-	/**
 	 * Finds the cell on which the click or contextmenu event is executed and
 	 * notifies the listener which control has been clicked or the contextmenu
 	 * should be openend.
@@ -2691,31 +2615,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// determine modifier keys
 		var bShift = oEvent.shiftKey;
 		var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
-
-		// column header?
-		var $col = $target.closest(".sapUiTableCol");
-		if (this._bShowMenu && $col.length === 1) {
-			var iIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
-			var oColumn = this.getColumns()[iIndex];
-
-			if ($target.hasClass("sapUiTableColDropDown")) {
-				var bExecuteDefault = this.fireColumnSelect({
-					column: oColumn
-				});
-
-				if (bExecuteDefault) {
-					oColumn._openMenu($col[0], oEvent.type == "keyup");
-				}
-			} else {
-				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent),
-					oEvent.type === "keydown" ||
-					oEvent.type === "keyup" ||
-					oEvent.type	=== "sapspace" ||
-					oEvent.type	=== "sapenter");
-			}
-
-			return;
-		}
 
 		// row header?
 		var $row = $target.closest(".sapUiTableRowHdr");
@@ -2850,57 +2749,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 	// COLUMN EVENT HANDLING
 	// =============================================================================
-
-	/**
-	 * Column select event => opens the column menu.
-	 * @private
-	 */
-	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode, bWithKeyboard) {
-		// On tablet open special column header menu
-		if (bIsTouchMode && (oColumn.getResizable() || oColumn._menuHasItems())) {
-			var $ColumnHeader = jQuery(oDomRef);
-			var $ColumnCell = $ColumnHeader.find(".sapUiTableColCell");
-
-			if ($ColumnHeader.find(".sapUiTableColCellMenu").length < 1) {
-				$ColumnCell.hide();
-
-				var sColumnDropDownButton = "";
-				if (oColumn._menuHasItems()) {
-					sColumnDropDownButton = "<div class='sapUiTableColDropDown'></div>";
-				}
-
-				var sColumnResizerButton = "";
-				if (oColumn.getResizable()) {
-					sColumnResizerButton = "<div class='sapUiTableColResizer''></div>";
-				}
-
-				var $ColumnHeaderMenu = jQuery("<div class='sapUiTableColCellMenu'>" + sColumnDropDownButton + sColumnResizerButton + "</div>");
-				$ColumnHeader.append($ColumnHeaderMenu);
-				$ColumnHeader.bind("focusout", function() {
-					this.cell.show();
-					this.menu.remove();
-					this.self.unbind("focusout");
-				}.bind({
-					cell: $ColumnCell,
-					menu: $ColumnHeaderMenu,
-					self: $ColumnHeader
-				}));
-			}
-
-			return;
-		}
-
-		// forward the event
-		var bExecuteDefault = this.fireColumnSelect({
-			column: oColumn
-		});
-
-		// if the default behavior should be prevented we suppress to open
-		// the column menu!
-		if (bExecuteDefault) {
-			oColumn._openMenu(oDomRef, bWithKeyboard);
-		}
-	};
 
 	/**
 	 *

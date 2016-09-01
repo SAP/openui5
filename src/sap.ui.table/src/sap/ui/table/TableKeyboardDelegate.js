@@ -307,9 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			return;
 		}
 
-		this._bShowMenu = true;
 		this._onSelect(oEvent);
-		this._bShowMenu = false;
 		oEvent.preventDefault();
 	};
 
@@ -391,7 +389,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			oEvent.stopImmediatePropagation(true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
 			// SHIFT + 10 should open the context menu
-			this.oncontextmenu(oEvent);
+			oEvent.preventDefault();
+			TableUtils.openContextMenu(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS) {
 			TableUtils.toggleGroupHeader(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {

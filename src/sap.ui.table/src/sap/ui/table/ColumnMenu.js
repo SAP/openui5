@@ -219,16 +219,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		if (oColumn.isSortableByMenu()) {
 			var sDir = bDesc ? "desc" : "asc";
 			var sIcon = bDesc ? "sort-descending" : "sort-ascending";
-			if (oColumn.getSortProperty() && oColumn.getShowSortMenuEntry()) {
-				this.addItem(this._createMenuItem(
-					sDir,
-						"TBL_SORT_" + sDir.toUpperCase(),
-					sIcon,
-					function (oEvent) {
-						oColumn.sort(bDesc, oEvent.getParameter("ctrlKey") === true);
-					}
-				));
-			}
+
+			this.addItem(this._createMenuItem(
+				sDir,
+					"TBL_SORT_" + sDir.toUpperCase(),
+				sIcon,
+				function (oEvent) {
+					oColumn.sort(bDesc, oEvent.getParameter("ctrlKey") === true);
+				}
+			));
 		}
 	};
 
@@ -239,15 +238,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 */
 	ColumnMenu.prototype._addFilterMenuItem = function() {
 		var oColumn = this._oColumn;
-		var oTable = oColumn.getParent();
-		var bEnableCustomFilter = false;
-
-		if (oTable) {
-			bEnableCustomFilter = oTable.getEnableCustomFilter();
-		}
 
 		if (oColumn.isFilterableByMenu()) {
-			if (bEnableCustomFilter) {
+			var oTable = oColumn.getParent();
+			var bCustomFilterEnabled = oTable && oTable.getEnableCustomFilter();
+
+			if (bCustomFilterEnabled) {
 				this.addItem(this._createMenuItem(
 					"filter",
 					"TBL_FILTER_ITEM",
@@ -279,18 +275,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 */
 	ColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn;
-		var oTable = this._oTable;
+
 		if (oColumn.isGroupableByMenu()) {
-			if (oTable && oTable.getEnableGrouping() && oColumn.getSortProperty()) {
-				this.addItem(this._createMenuItem(
-					"group",
-					"TBL_GROUP",
-					null,
-					jQuery.proxy(function() {
-						oTable.setGroupBy(oColumn);
-					},this)
-				));
-			}
+			var oTable = this._oTable;
+
+			this.addItem(this._createMenuItem(
+				"group",
+				"TBL_GROUP",
+				null,
+				function() {
+					oTable.setGroupBy(oColumn);
+				}
+			));
 		}
 	};
 
@@ -302,9 +298,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	ColumnMenu.prototype._addFreezeMenuItem = function() {
 		var oColumn = this._oColumn;
 		var oTable = this._oTable;
-		if (oTable && oTable.getEnableColumnFreeze()) {
+		var bColumnFreezeEnabled = oTable && oTable.getEnableColumnFreeze();
+
+		if (bColumnFreezeEnabled) {
 			var iColumnIndex = jQuery.inArray(oColumn, oTable.getColumns());
 			var bIsFixedColumn = iColumnIndex + 1 == oTable.getFixedColumnCount();
+
 			this.addItem(this._createMenuItem(
 				"freeze",
 				bIsFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE",
