@@ -182,14 +182,21 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._notifyObjectPageLayout = function () {
-		if (this.$().length && this._getObjectPageLayout()) {
+		if (this._getObjectPageLayout() && this._getObjectPageLayout().$().length){
 			this._getObjectPageLayout()._adjustLayoutAndUxRules();
 		}
 	};
 
 	// Generate proxies for aggregation mutators
 	["addAggregation", "insertAggregation", "removeAllAggregation", "removeAggregation", "destroyAggregation"].forEach(function (sMethod) {
-		ObjectPageSectionBase.prototype[sMethod] = function (sAggregationName, oObject, bSuppressInvalidate) {
+		ObjectPageSectionBase.prototype[sMethod] = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+
+			if (["addAggregation", "removeAggregation"].indexOf(sMethod) > -1) {
+				bSuppressInvalidate = iIndex; //shift argument
+			}
+			if (["removeAllAggregation", "destroyAggregation"].indexOf(sMethod) > -1) {
+				bSuppressInvalidate = oObject; //shift argument
+			}
 			var vResult = Control.prototype[sMethod].apply(this, arguments);
 
 			if (bSuppressInvalidate !== true){
