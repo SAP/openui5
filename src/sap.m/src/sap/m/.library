@@ -52,6 +52,7 @@
                 <module>sap/m/NewsContent</module>
                 <module>sap/m/NumericContent</module>
                 <module>sap/m/ImageContent</module>
+                <module>sap/m/HeaderContainer</module>
             </modules>
         </component>
         <component>
