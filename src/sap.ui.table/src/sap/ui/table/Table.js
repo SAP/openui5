@@ -776,7 +776,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * theme changed
+	 * Theme changed
 	 * @private
 	 */
 	Table.prototype.onThemeChanged = function() {
@@ -1490,7 +1490,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * handler for change events of the binding
+	 * Handler for change events of the binding.
 	 * @param {sap.ui.base.Event} oEvent change event
 	 * @private
 	 */
@@ -1827,7 +1827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * refresh rows
+	 * Refresh rows
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(vEvent) {
@@ -1871,7 +1871,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * updates the rows - called internally by the updateAggregation function when
+	 * Updates the rows - called internally by the updateAggregation function when
 	 * anything in the model has been changed.
 	 * @private
 	 */
@@ -1980,7 +1980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * attaches the required native event handlers
+	 * Attaches the required native event handlers.
 	 * @private
 	 */
 	Table.prototype._attachEvents = function() {
@@ -2057,7 +2057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * detaches the required native event handlers
+	 * Detaches the required native event handlers.
 	 * @private
 	 */
 	Table.prototype._detachEvents = function() {
@@ -2349,7 +2349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * show or hide the no data container
+	 * Show or hide the no data container.
 	 * @private
 	 */
 	Table.prototype._updateNoData = function() {
@@ -2364,8 +2364,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * determines the currently visible columns (used for simply updating only the
-	 * controls of the visible columns instead of the complete row!)
+	 * Determines the currently visible columns (used for simply updating only the
+	 * controls of the visible columns instead of the complete row!).
 	 * @private
 	 */
 	Table.prototype._determineVisibleCols = function(oTableSizes) {
@@ -2436,7 +2436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * returns the count of rows when bound or 0
+	 * Returns the count of rows when bound or 0.
 	 * @private
 	 */
 	Table.prototype._getRowCount = function() {
@@ -2444,7 +2444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * returns the count of rows which can ca selected when bound or 0
+	 * Returns the count of rows which can ca selected when bound or 0.
 	 * @private
 	 */
 	Table.prototype._getSelectableRowCount = function() {
@@ -2479,7 +2479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * returns the count of visible columns
+	 * Returns the count of visible columns.
 	 * @private
 	 */
 	Table.prototype._getVisibleColumns = function() {
@@ -2810,7 +2810,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * will be called by the vertical scrollbar. updates the visualized data by
+	 * Will be called by the vertical scrollbar. Updates the visualized data by
 	 * applying the first visible (scrollpos) row from the vertical scrollbar
 	 * @private
 	 */
@@ -2833,7 +2833,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * will be called by the paginator. updates the visualized data by
+	 * Will be called by the paginator. Updates the visualized data by
 	 * applying the first visible (scrollpos) row from the vertical scrollbar
 	 * @private
 	 */
@@ -2963,7 +2963,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header
+	 * Handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header.
 	 * @private
 	 */
 	Table.prototype.oncontextmenu = function(oEvent) {
@@ -2983,7 +2983,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * handles the default cell contextmenu
+	 * Handles the default cell contextmenu.
 	 * @private
 	 */
 	Table.prototype._oncellcontextmenu = function(mParams) {
@@ -3035,7 +3035,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * finds the cell on which the click or contextmenu event is executed and
+	 * Finds the cell on which the click or contextmenu event is executed and
 	 * notifies the listener which control has been clicked or the contextmenu
 	 * should be openend.
 	 * @param {function} fnFire function to fire the event
@@ -3088,8 +3088,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * handles the focus in to reposition the focus or prevent default handling for
-	 * column resizing
+	 * Handles the focus in to reposition the focus or prevent default handling for
+	 * column resizing.
 	 * @private
 	 */
 	Table.prototype.onfocusin = function(oEvent) {
@@ -3145,8 +3145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// SELECTION HANDLING
 	// =============================================================================
 
-		/**
-	 * handles the row selection and the column header menu
+	/**
+	 * Handles the row selection and the column header menu.
 	 * @private
 	 */
 	Table.prototype._onSelect = function(oEvent) {
@@ -3230,7 +3230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * handles the row selection (depending on the mode)
+	 * Handles the row selection (depending on the mode).
 	 * @private
 	 */
 	Table.prototype._onRowSelect = function(iRowIndex, bShift, bCtrl) {
@@ -3314,7 +3314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * column select event => opens the column menu
+	 * Column select event => opens the column menu.
 	 * @private
 	 */
 	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode, bWithKeyboard) {
@@ -3431,7 +3431,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * start column moving
+	 * Start column moving.
 	 * @private
 	 */
 	Table.prototype._onColumnMoveStart = function(oColumn, bIsTouchMode) {
@@ -3488,7 +3488,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * move the column position the ghost
+	 * Move the column position of the ghost.
 	 * @private
 	 */
 	Table.prototype._onColumnMove = function(oEvent) {
@@ -3579,7 +3579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * animates the column movement
+	 * Animates the column movement.
 	 */
 	Table.prototype._animateColumnMove = function(iColIndex, iOldPos, iNewPos) {
 
@@ -3622,7 +3622,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * columns is moved => update!
+	 * Columns is moved => update!
 	 * @private
 	 */
 	Table.prototype._onColumnMoved = function(oEvent) {
@@ -3854,7 +3854,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Check if at least one column has a percentage value
+	 * Check if at least one column has a percentage value.
 	 * @private
 	 */
 	Table.prototype._checkPercentageColumnWidth = function() {
@@ -3872,7 +3872,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Check if table has only non flexible columns with fixed widths and only then
 	 * the table adds a dummy column to fill the rest of the width instead of resizing
-	 * the columns to fit the complete table width
+	 * the columns to fit the complete table width.
 	 * @private
 	 */
 	Table.prototype._hasOnlyFixColumnWidths = function() {
@@ -3893,7 +3893,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * pushes the sorted column to array
+	 * Pushes the sorted column to array.
 	 *
 	 * @param {sap.ui.table.Column} oColumn
 	 *         column to be sorted
@@ -3914,7 +3914,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * gets sorted columns
+	 * Gets sorted columns.
 	 *
 	 * @return Array of sorted columns
 	 * @public
@@ -3927,7 +3927,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * sorts the given column ascending or descending
+	 * Sorts the given column ascending or descending.
 	 *
 	 * @param {sap.ui.table.Column} oColumn
 	 *         column to be sorted
@@ -3946,7 +3946,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * filter the given column by the given value
+	 * Filter the given column by the given value.
 	 *
 	 * @param {sap.ui.table.Column} oColumn
 	 *         column to be filtered
@@ -3968,7 +3968,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/**
-	 * updates the visual selection in the HTML markup
+	 * Updates the visual selection in the HTML markup.
 	 * @private
 	 */
 	Table.prototype._updateSelection = function() {
@@ -3996,7 +3996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * notifies the selection listeners about the changed rows
+	 * Notifies the selection listeners about the changed rows.
 	 * @private
 	 */
 	Table.prototype._onSelectionChanged = function(oEvent) {
@@ -4466,7 +4466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * creates the rows for the rows aggregation
+	 * Creates the rows for the rows aggregation.
 	 * @private
 	 */
 	Table.prototype._adjustRows = function(iNumberOfRows, bNoUpdate) {
@@ -5000,9 +5000,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Lets you control in which situation the <code>ScrollBar</code> fires scroll events.
 	 *
-	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>ScrollBar</code> only fires scroll events when
-	 * the scroll handle is released. No matter what the setting is, the <code>ScrollBar</code> keeps on fireing scroll events
-	 * when the user scroll with the mousewheel or using touch
+	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>ScrollBar</code> only fire scroll events when
+	 * the scroll handle is released. No matter what the setting is, the <code>ScrollBar</code> keeps on firing scroll events
+	 * when the user scrolls with the mouse wheel or using touch.
 	 * @private
 	 */
 	Table.prototype._setLargeDataScrolling = function(bLargeDataScrolling) {
