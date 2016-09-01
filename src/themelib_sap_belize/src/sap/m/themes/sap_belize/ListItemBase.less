@@ -15,6 +15,10 @@
 }
 
 /* IE ignores outline-offset. Use an overlay: */
+.sapMLIBFocusable.sapMLIBLegacyOutline:focus {
+	outline: none;
+}
+
 .sapMLIBLegacyOutline:focus::before {
 	border: 0.0625rem dotted @sapUiContentFocusColor;
 }
