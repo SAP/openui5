@@ -17,7 +17,7 @@ describe("sap.m.RatingIndicator", function() {
 	});
 
 	it('Should show medium active RatingIndicator', function() {
-		expect(takeScreenshot(element(by.id('mediumActiveRI')))).toLookAs('medium-inactive-RI');
+		expect(takeScreenshot(element(by.id('mediumActiveRI')))).toLookAs('medium-active-RI');
 	});
 
 	it('Should show large inactive RatingIndicator', function() {
