@@ -742,12 +742,14 @@ sap.ui.define([
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   The data to be sent with the POST request
+	 * @param {string} [sETag]
+	 *   The ETag to be sent as "If-Match" header with the POST request.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
 	 *   If the cache does not allow POST or another POST is still being processed.
 	 */
-	SingleCache.prototype.post = function (sGroupId, oData) {
+	SingleCache.prototype.post = function (sGroupId, oData, sETag) {
 		var that = this;
 
 		if (!this.bPost) {
@@ -760,15 +762,16 @@ sap.ui.define([
 			throw new Error("Parallel POST requests not allowed");
 		}
 		this.oPromise = _SyncPromise.resolve(
-				this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined, oData)
-					.then(function (oResult) {
-						that.bPosting = false;
-						return oResult;
-					}, function (oError) {
-						that.bPosting = false;
-						throw oError;
-					})
-			);
+			this.oRequestor
+				.request("POST", this.sResourcePath, sGroupId, {"If-Match" : sETag}, oData)
+				.then(function (oResult) {
+					that.bPosting = false;
+					return oResult;
+				}, function (oError) {
+					that.bPosting = false;
+					throw oError;
+				})
+		);
 		this.bPosting = true;
 		return this.oPromise;
 	};

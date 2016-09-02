@@ -4,16 +4,19 @@
 sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
+		'sap/m/MessageToast',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		'sap/ui/model/json/JSONModel'
-], function (Dialog, MessageBox, DateFormat, Item, Controller, Filter, FilterOperator, JSONModel) {
+], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
+		JSONModel) {
 	"use strict";
 
-	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
+	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
+		sServiceNamespace = "com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.";
 
 //	function onRejected(oError) {
 //		jQuery.sap.log.error(oError.message, oError.stack);
@@ -54,6 +57,29 @@ sap.ui.define([
 
 		onCancelSalesOrderList : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
+		},
+
+		onConfirmSalesOrder : function () {
+			var oModel = this.getView().getModel(),
+				oTable = this.getView().byId("SalesOrders"),
+				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
+				oAction = oModel.bindContext(sServiceNamespace + "SalesOrder_Confirm(...)",
+					oSalesOrderContext),
+				that = this;
+
+			oAction.execute().then(
+				function () {
+					MessageToast.show("Sales order "
+						+ oSalesOrderContext.getProperty("SalesOrderID") + " confirmed");
+					that.refresh(that.getView().byId("SalesOrders").getBinding("items"),
+						"all sales orders");
+				},
+				function (oError) {
+					MessageBox.alert(oError.message, {
+						icon : MessageBox.Icon.ERROR,
+						title : "Error"});
+				}
+			);
 		},
 
 		onCreateSalesOrderDialog : function (oEvent) {
@@ -245,24 +271,23 @@ sap.ui.define([
 		onRefreshAll : function () {
 			var oModel = this.getView().getModel();
 
-			this.refresh(oModel,
-				"There are pending changes. Do you really want to refresh everything?",
-				oModel.getUpdateGroupId() || "SalesOrderListUpdateGroup");
+			this.refresh(oModel, "everything",
+				["SalesOrderListUpdateGroup", "SalesOrderUpdateGroup"]);
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
 			this.refresh(this.getView().byId("FavoriteProduct").getBinding("value"),
-				"There are pending changes. Do you really want to refresh the favorite product?");
+				"the favorite product");
 		},
 
 //		onRefreshSalesOrderDetails : function (oEvent) {
 //			this.refresh(this.getView().byId("ObjectPage").getElementBinding(),
-//				"There are pending changes. Do you really want to refresh the sales order?");
+//				"the sales order");
 //		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
 			this.refresh(this.getView().byId("SalesOrders").getBinding("items"),
-				"There are pending changes. Do you really want to refresh all sales orders?");
+				"all sales orders");
 		},
 
 		onSalesOrderSchedules : function (oEvent) {
@@ -325,14 +350,37 @@ sap.ui.define([
 			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		},
 
-		refresh : function (oRefreshable, sMessage, sGroupId) {
+		/**
+		 * Refreshes (parts of) the UI. Offers to reset changes via two-way binding before, because
+		 * otherwise the refresh would fail.
+		 *
+		 * @param {object} oRefreshable
+		 *   The object to be refreshed, either the model or a binding
+		 * @param {string} sRefreshableText
+		 *   The text used for the refreshable in the confirmation dialog if there are pending
+		 *   changes
+		 * @param {string[]} [aUpdateGroupIds]
+		 *   A list of IDs of batch groups to reset. If not given, the refreshable's default group
+		 *   is reset.
+		 */
+		refresh : function (oRefreshable, sRefreshableText, aUpdateGroupIds) {
 			if (oRefreshable.hasPendingChanges()) {
-				MessageBox.confirm(sMessage, function onConfirm(sCode) {
-					if (sCode === "OK") {
-						oRefreshable.resetChanges(sGroupId);
-						oRefreshable.refresh();
-					}
-				}, "Refresh");
+				MessageBox.confirm(
+					"There are pending changes. Do you really want to refresh " + sRefreshableText
+						+ "?",
+					function onConfirm(sCode) {
+						if (sCode === "OK") {
+							if (aUpdateGroupIds) {
+								aUpdateGroupIds.forEach(function (sUpdateGroupId) {
+									oRefreshable.resetChanges(sUpdateGroupId);
+								});
+							} else {
+								oRefreshable.resetChanges();
+							}
+							oRefreshable.refresh();
+						}
+					},
+					"Refresh");
 			} else {
 				oRefreshable.refresh();
 			}
