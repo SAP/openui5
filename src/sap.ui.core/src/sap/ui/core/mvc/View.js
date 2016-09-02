@@ -604,7 +604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 */
 	View.prototype.runPreprocessor = function(sType, vSource, bSync) {
 
-		var oViewInfo = this.getPreprocessorInfo(this, bSync),
+		var oViewInfo = this.getPreprocessorInfo(bSync),
 			aPreprocessors = this.mPreprocessors && this.mPreprocessors[sType] || [],
 			mSettings,
 			fnProcess,
