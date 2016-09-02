@@ -1202,10 +1202,12 @@ sap.ui.require([
 			oResult2 = {};
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
+			.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : "etag"},
+				sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult1));
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
+			.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : undefined},
+				sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult2));
 
 		// code under test
@@ -1215,7 +1217,7 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.read();
 		}, /Read before a POST request/);
-		oPromise = oCache.post(sGroupId, oPostData).then(function (oPostResult1) {
+		oPromise = oCache.post(sGroupId, oPostData, "etag").then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
 				oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
@@ -1247,7 +1249,8 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
 
 		oRequestorMock.expects("request").twice()
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
+			.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : undefined},
+				sinon.match.same(oPostData))
 			.returns(Promise.reject(new Error(sMessage)));
 
 		// code under test
