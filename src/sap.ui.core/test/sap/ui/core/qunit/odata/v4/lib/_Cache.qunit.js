@@ -240,11 +240,13 @@ sap.ui.require([
 	}, {
 		title : "read more than available",
 		reads : [{index : 10, length : 90}, {index : 0, length : 100}],
-		expectedRequests : [{skip : 10, top : 90}, {skip : 0, top : 10}]
+		expectedRequests : [{skip : 10, top : 90}, {skip : 0, top : 10}],
+		expectedMaxElements : 26
 	}, {
 		title : "read exactly max available",
 		reads : [{index : 0, length : 26}, {index : 26, length : 26}, {index : 26, length : 26}],
-		expectedRequests : [{skip : 0, top : 26}, {skip : 26, top : 26}]
+		expectedRequests : [{skip : 0, top : 26}, {skip : 26, top : 26}],
+		expectedMaxElements : 26
 	}, {
 		title : "different ranges",
 		reads : [{index : 2, length : 5}, {index : 0, length : 2}, {index : 1, length : 2}],
@@ -277,6 +279,7 @@ sap.ui.require([
 				assert.strictEqual(iDataRequestedCount,
 					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
 					"data requested called");
+				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
 			});
 		});
 
@@ -305,6 +308,7 @@ sap.ui.require([
 				assert.strictEqual(iDataRequestedCount,
 					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
 					"data requested called");
+				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
 			});
 		});
 	});
@@ -527,10 +531,11 @@ sap.ui.require([
 			var sEtag = 'W/"19770724000000.0000000"',
 				oRequestor = _Requestor.create("/~/"),
 				oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+				iLength = iStatus === 404 ? 3 : 4,
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=3", "groupId")
+				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=" + iLength, "groupId")
 				.returns(Promise.resolve({
 					value : [{
 						"@odata.etag" : "before"
@@ -541,7 +546,7 @@ sap.ui.require([
 					}]
 				}));
 
-			return oCache.read(0, 3, "groupId").then(function () {
+			return oCache.read(0, iLength, "groupId").then(function () {
 				var fnCallback = sinon.spy(),
 					oError = new Error(""),
 					oPromise;
@@ -557,6 +562,7 @@ sap.ui.require([
 					.then(function (oResult) {
 						assert.ok(iStatus !== 500, "unexpected success");
 						assert.strictEqual(oResult, undefined);
+						assert.strictEqual(oCache.iMaxElements, iLength === 4 ? 2 : Infinity);
 						assert.deepEqual(oCache.aElements, [{
 							"@odata.etag" : "before"
 						}, {
@@ -1351,7 +1357,7 @@ sap.ui.require([
 
 			oCache.refresh();
 			assert.strictEqual(oCache.sContext, undefined, "sContext after refresh");
-			assert.strictEqual(oCache.iMaxElements, -1, "iMaxElements after refresh");
+			assert.strictEqual(oCache.iMaxElements, Infinity, "iMaxElements after refresh");
 			assert.strictEqual(oCache.aElements.length, 0, "aElements after refresh");
 			assert.notStrictEqual(oCache.aElements, aElements,
 				"different aElements arrays after refresh");

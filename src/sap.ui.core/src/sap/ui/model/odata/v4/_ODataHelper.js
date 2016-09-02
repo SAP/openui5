@@ -6,10 +6,11 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_Parser",
+	"./lib/_SyncPromise",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter"
-], function (_Cache, _Helper, _Parser, FilterOperator, OperationMode, Sorter) {
+], function (_Cache, _Helper, _Parser, _SyncPromise, FilterOperator, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -439,6 +440,94 @@ sap.ui.define([
 		},
 
 		/**
+		 * Computes the "diff" needed for extended change detection for the given list binding and
+		 * the given start index and length.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The list binding
+		 * @param {object[]} aData
+		 *   The array of OData entities read in the last request, can be undefined if no data is
+		 *   available e.g. in case of a missing $expand in the binding's parent binding
+		 * @param {number} iStart
+		 *   The start index of the range for which the OData entities have been read; must be 0 in
+		 *   case of extended change detection because in this case controls only get contexts with
+		 *   start index 0 and it is unclear how ECD is supposed to work with start index !== 0
+		 * @param {number} iLength
+		 *   The length of the range for which the OData entities have been read
+		 * @returns {_SyncPromise}
+		 *   A promise resolving with an object with the properties iLength echoing the parameter
+		 *   and aDiff with the array of differences in aData compared to data retrieved in
+		 *   previous requests. It resolves with undefined if the binding does not use extended
+		 *   change detection or if key properties are not available (for a collection valued
+		 *   structural property) or missing in the data so that the diff cannot be computed.
+		 */
+		fetchDiff : function (oBinding, aData, iStart, iLength) {
+			var oMetaModel,
+				oMetaContext,
+				aNewData,
+				sResolvedPath;
+
+			/**
+			 * Compares previous and new data; stores new data as previous data at the binding.
+			 *
+			 * @returns {object[]} The diff array
+			 */
+			function diff() {
+				var aDiff = jQuery.sap.arraySymbolDiff(oBinding.aPreviousData, aNewData);
+
+				oBinding.aPreviousData = aNewData;
+				return {aDiff : aDiff, iLength : iLength};
+			}
+
+			if (!oBinding.bUseExtendedChangeDetection) {
+				return _SyncPromise.resolve();
+			}
+
+			if (!aData) {
+				return _SyncPromise.resolve({aDiff : [], iLength : iLength});
+			}
+
+			if (oBinding.bDetectUpdates) {
+				// don't use function reference JSON.stringify in map: 2. and 3. parameter differ
+				aNewData = aData.map(function (oEntity) {
+					return JSON.stringify(oEntity);
+				});
+				return _SyncPromise.resolve(diff());
+			}
+
+			sResolvedPath = oBinding.oModel.resolve(oBinding.sPath, oBinding.oContext);
+			oMetaModel = oBinding.oModel.getMetaModel();
+			oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
+			return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
+				var mMissingKeys = {};
+
+				if (aKeys) {
+					aNewData = aData.map(function (oEntity) {
+						return aKeys.reduce(function (oPreviousData, sKey) {
+							oPreviousData[sKey] = oEntity[sKey];
+							if (oEntity[sKey] === undefined) {
+								mMissingKeys[sKey] = true;
+							}
+							return oPreviousData;
+						}, {} /*initial value oPreviousData*/);
+					});
+				}
+				if (Object.keys(mMissingKeys).length > 0 || !aKeys) {
+					oBinding.aPreviousData = [];
+					jQuery.sap.log.warning("Disable extended change detection as"
+							+ " diff computation failed: " + oBinding,
+						!aKeys
+							? "Type for path " + sResolvedPath + " has no keys"
+							: "Missing key(s): " + Object.keys(mMissingKeys),
+						"sap.ui.model.odata.v4.ODataListBinding");
+					return undefined;
+				}
+
+				return diff();
+			});
+		},
+
+		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
 		 * data and entity instance runtime data.
 		 *
@@ -517,8 +606,7 @@ sap.ui.define([
 		/**
 		 * Calculates the index range to be read for the given start, length and threshold.
 		 * Checks if <code>aContexts</code> entries are available for the given index range plus
-		 * half the threshold left and right to it. If this is not the case, returns the range
-		 * to be read; otherwise undefined.
+		 * half the threshold left and right to it.
 		 *
 		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
 		 *   The contexts to be checked for the requested data
@@ -528,47 +616,24 @@ sap.ui.define([
 		 *   The number of requested entries
 		 * @param {number} iMaximumPrefetchSize
 		 *   The number of entries to prefetch before and after the given range
-		 * @param {number} iMaxLength
-		 *   The upper boundary for the total number of entries
 		 * @returns {object}
-		 *   Returns <code>undefined</code> if all data is available and the prefetch cache is
-		 *   filled.
-		 *   Otherwise returns an object with a member <code>start</code> for the start index for
-		 *   the next read and <code>length</code> for the number of entries to be read.
+		 *   Returns an object with a member <code>start</code> for the start index for the next
+		 *   read and <code>length</code> for the number of entries to be read.
 		 */
-		getReadRange : function (aContexts, iStart, iLength, iMaximumPrefetchSize, iMaxLength) {
-			var bMissingDataLeft,
-				iMax = Math.min(iStart + iLength + iMaximumPrefetchSize / 2, iMaxLength),
-				iMin = Math.max(iStart - iMaximumPrefetchSize / 2, 0),
-				bMissingDataRight = isDataMissing(aContexts, iStart, iMax),
-				oResult;
-
-			if (iMaximumPrefetchSize === 0) {
-				return !bMissingDataRight || iStart >= iMaxLength
-					? undefined // all data available
-					: {length : iLength, start : iStart};
+		getReadRange : function (aContexts, iStart, iLength, iMaximumPrefetchSize) {
+			if (isDataMissing(aContexts, iStart + iLength,
+					iStart + iLength + iMaximumPrefetchSize / 2)) {
+				iLength += iMaximumPrefetchSize;
 			}
-			bMissingDataLeft = isDataMissing(aContexts, iMin, iStart);
-			if (bMissingDataLeft || bMissingDataRight) {
-				oResult = {
-					start : bMissingDataLeft ? iStart - iMaximumPrefetchSize : iStart,
-					length : iLength + iMaximumPrefetchSize
-				};
-				if (bMissingDataLeft && bMissingDataRight) {
-					oResult.length += iMaximumPrefetchSize;
-				}
-				if (oResult.start < 0) {
-					// reduce length to read at most iMaximumPrefetchSize elements after
-					// iStart + iLength
-					oResult.length += oResult.start;
-					oResult.start = 0;
-				}
-				if (oResult.start >= iMaxLength) {
-					// no read after iMaxLength
-					oResult = undefined;
+			if (isDataMissing(aContexts, Math.max(iStart - iMaximumPrefetchSize / 2, 0), iStart)) {
+				iLength += iMaximumPrefetchSize;
+				iStart -= iMaximumPrefetchSize;
+				if (iStart < 0) {
+					iLength += iStart;
+					iStart = 0;
 				}
 			}
-			return oResult;
+			return {length : iLength, start : iStart};
 		},
 
 		/**
@@ -648,89 +713,6 @@ sap.ui.define([
 			set("$orderby", sOrderby);
 			set("$filter", sFilter);
 			return mResult || mQueryOptions;
-		},
-
-		/**
-		 * Computes the "diff" needed for extended change detection for the given list binding and
-		 * the given start index and length.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
-		 *   The list binding
-		 * @param {object[]} aData
-		 *   The array of OData entities read in the last request, can be undefined if no data is
-		 *   available e.g. in case of a missing $expand in the binding's parent binding
-		 * @param {number} iStart
-		 *   The start index of the range for which the OData entities have been read; must be 0 as
-		 *   controls with extended change detection only get contexts with start index 0 and
-		 *   it is unclear how ECD is supposed to work with start index !== 0
-		 * @param {number} iLength
-		 *   The length of the range for which the OData entities have been read
-		 * @returns {Promise}
-		 *   A promise resolving with the array of differences in aData compared to data
-		 *   retrieved in previous requests or undefined if key properties are not available
-		 *   (for a collection valued structural property) or missing in the data so that the diff
-		 *   cannot be computed
-		 */
-		requestDiff : function (oBinding, aData, iStart, iLength) {
-			var oMetaModel,
-				oMetaContext,
-				aNewData,
-				sResolvedPath;
-
-			/**
-			 * Compares previous and new data; stores new data as previous data at the binding.
-			 *
-			 * @returns {object[]} The diff array
-			 */
-			function diff() {
-				var aDiff = jQuery.sap.arraySymbolDiff(oBinding.aPreviousData, aNewData);
-
-				oBinding.aPreviousData = aNewData;
-				return aDiff;
-			}
-
-			if (!aData) {
-				return Promise.resolve([]);
-			}
-
-			if (oBinding.bDetectUpdates) {
-				// don't use function reference JSON.stringify in map: 2. and 3. parameter differ
-				aNewData = aData.map(function (oEntity) {
-					return JSON.stringify(oEntity);
-				});
-				return Promise.resolve(diff());
-			}
-
-			sResolvedPath = oBinding.oModel.resolve(oBinding.sPath, oBinding.oContext);
-			oMetaModel = oBinding.oModel.getMetaModel();
-			oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
-			return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
-				var mMissingKeys = {};
-
-				if (aKeys) {
-					aNewData = aData.map(function (oEntity) {
-						return aKeys.reduce(function (oPreviousData, sKey) {
-							oPreviousData[sKey] = oEntity[sKey];
-							if (oEntity[sKey] === undefined) {
-								mMissingKeys[sKey] = true;
-							}
-							return oPreviousData;
-						}, {} /*initial value oPreviousData*/);
-					});
-				}
-				if (Object.keys(mMissingKeys).length > 0 || !aKeys) {
-					oBinding.aPreviousData = [];
-					jQuery.sap.log.warning("Disable extended change detection as"
-							+ " diff computation failed: " + oBinding,
-						!aKeys
-							? "Type for path " + sResolvedPath + " has no keys"
-							: "Missing key(s): " + Object.keys(mMissingKeys),
-						"sap.ui.model.odata.v4.ODataListBinding");
-					return undefined;
-				}
-
-				return diff();
-			});
 		},
 
 		/**
