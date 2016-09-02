@@ -618,6 +618,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._handleUserActivation(oEvent);
 	};
 
+	ListBox.prototype.ontouchmove = function (oEvent) {
+		oEvent.setMarked();
+	};
+
 	ListBox.prototype.onsapspace = function (oEvent) {
 		this._handleUserActivation(oEvent);
 	};
