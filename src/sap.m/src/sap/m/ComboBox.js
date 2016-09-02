@@ -842,22 +842,26 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
+			var bTablet, oPicker,
+				oRelatedControl, oFocusDomRef;
+
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 
 			if (this.getPickerType() === "Dialog") {
 				return;
 			}
 
-			var oPicker = this.getAggregation("picker");
+			oPicker = this.getAggregation("picker");
 
 			if (!oEvent.relatedControlId || !oPicker) {
 				return;
 			}
 
-			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId),
-				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
+			bTablet = sap.ui.Device.system.tablet;
+			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
 
 				// force the focus to stay in the input field
 				this.focus();
