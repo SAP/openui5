@@ -29,6 +29,8 @@
 	var oData = {
 		"scrollStep" : 200,
 		"scrollTime" : 500,
+		"height" : "100%",
+		"width" : "100%",
 		"items" : [{
 			"content" : [{
 				"type" : "numeric",
@@ -91,8 +93,9 @@
 	var oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
 		scrollStep : "{/scrollStep}",
 		scrollTime : "{/scrollTime}",
+		height : "{/height}",
+		width : "{/width}",
 		orientation : "Vertical",
-		height : "100%",
 		items : {
 			path : "/items",
 			factory : fnContentFactory
@@ -170,7 +173,7 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[scrollStep] = undefined;
+						oData.scrollStep = undefined;
 						oModel.checkUpdate();
 					}
 				}
@@ -193,7 +196,51 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[scrollTime] = undefined;
+						oData.scrollTime = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
+
+	var oWidthInput = new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Width",
+				labelFor : "width-input"
+			}), new sap.m.Input("width-input", {
+				placeholder : "Enter value ...",
+				value : {
+					path : "/width",
+					type : new sap.ui.model.type.String()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData.width = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
+
+	var oHeightInput = new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Height",
+				labelFor : "height-input"
+			}), new sap.m.Input("height-input", {
+				placeholder : "Enter value ...",
+				value : {
+					path : "/height",
+					type : new sap.ui.model.type.String()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData.height = undefined;
 						oModel.checkUpdate();
 					}
 				}
@@ -209,6 +256,8 @@
 			oRemoveButton,
 			oScrollStepInput,
 			oScrollTimeInput,
+			oWidthInput,
+			oHeightInput,
 			oDevidersControls
 		]
 	});
