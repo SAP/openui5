@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var sCloseBtnId = this.getId() + "-close";
 			if (oEvent.target.id === sCloseBtnId) {
 				this.close();
-				oEvent.preventDefault(); // avoid onbeforeunload event which happens at least in IE9 because of the javascript:void(0); link target
+				oEvent.preventDefault(); // avoid onbeforeunload event which happens at least in IE9 because of the "#" link target
 			}
 			return false;
 		};

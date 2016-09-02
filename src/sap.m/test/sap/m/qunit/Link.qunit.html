@@ -131,7 +131,7 @@
 		});
 
 		test("Disabled link should not have the preseted href", function() {
-			equal(oLink2.$().attr("href"), "javascript:void(0);", "oLink2 href should be 'javascript:void(0);'");
+			equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
 			oLink2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");

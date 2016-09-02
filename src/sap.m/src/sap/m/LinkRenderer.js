@@ -74,9 +74,7 @@
 		if (oControl.getHref() && oControl.getEnabled()) {
 			oRm.writeAttributeEscaped("href", oControl.getHref());
 		} else {
-			/*eslint-disable no-script-url */
-			oRm.writeAttribute("href", "javascript:void(0);");
-			/*eslint-enable no-script-url */
+			oRm.writeAttribute("href", "#");
 		}
 
 		if (oControl.getTarget()) {
