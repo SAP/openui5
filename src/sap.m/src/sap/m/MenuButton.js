@@ -88,13 +88,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Controls whether the default action handler is invoked always or it is invoked only until a menu item is selected.
 				 * Usable only if <code>buttonMode</code> is set to <code>Split</code>.
 				 */
-				useDefaultActionOnly : { type : "Boolean", group : "Behavior", defaultValue: false }
+				useDefaultActionOnly : { type : "boolean", group : "Behavior", defaultValue: false }
 			},
 			aggregations: {
 				/**
 				 * Defines the menu that opens for this button.
 				 */
-				menu: { type: "sap.m.Menu", multiple: false, singularName: "menu", bindable: "bindable" },
+				menu: { type: "sap.m.Menu", multiple: false, singularName: "menu" },
 
 				/**
 				 * Internal aggregation that contains the button part.
