@@ -328,7 +328,9 @@ sap.ui.define([
 		 * @returns {Promise} The request promise
 		 */
 		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
-			var aOperationParameters,
+			var sETag,
+				iIndex,
+				aOperationParameters,
 				aParameters,
 				sPath = (sPathPrefix + that.sPath).slice(1),
 				oPromise;
@@ -341,7 +343,14 @@ sap.ui.define([
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
 						that.mQueryOptions, false, true);
 				}
-				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
+				if (that.bRelative) {
+					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
+					// if no ETag is available
+					iIndex = that.sPath.lastIndexOf("/");
+					sETag = that.oContext.getObject(
+						iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")["@odata.etag"];
+				}
+				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters, sETag);
 			} else {
 				// the function must always recreate the cache because the parameters influence the
 				// resource path

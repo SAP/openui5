@@ -59,6 +59,11 @@
 							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
+						<Button
+							enabled="{=${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}}"
+							icon="sap-icon://accept"
+							press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
+						<ToolbarSeparator />
 						<Button icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
