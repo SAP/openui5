@@ -523,27 +523,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		switch (sType) {
 		case sap.m.ButtonType.Accept:
-			if (!sap.m.Button._oStaticAcceptText) {
+			if (!Button._oStaticAcceptText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_ACCEPT");
-				sap.m.Button._oStaticAcceptText = new sap.ui.core.InvisibleText({text: sTypeText});
-				sap.m.Button._oStaticAcceptText.toStatic(); //Put to Static UiArea
+				Button._oStaticAcceptText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticAcceptText.toStatic(); //Put to Static UiArea
 			}
 			break;
 		case sap.m.ButtonType.Reject:
-			if (!sap.m.Button._oStaticRejectText) {
+			if (!Button._oStaticRejectText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_REJECT");
-				sap.m.Button._oStaticRejectText = new sap.ui.core.InvisibleText({text: sTypeText});
-				sap.m.Button._oStaticRejectText.toStatic(); //Put to Static UiArea
+				Button._oStaticRejectText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticRejectText.toStatic(); //Put to Static UiArea
 			}
 			break;
 		case sap.m.ButtonType.Emphasized:
-			if (!sap.m.Button._oStaticEmphasizedText) {
+			if (!Button._oStaticEmphasizedText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				sap.m.Button._oStaticEmphasizedText = new sap.ui.core.InvisibleText({text: sTypeText});
-				sap.m.Button._oStaticEmphasizedText.toStatic(); //Put to Static UiArea
+				Button._oStaticEmphasizedText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticEmphasizedText.toStatic(); //Put to Static UiArea
 			}
 			break;
 		default: // No need to do anything for other button types

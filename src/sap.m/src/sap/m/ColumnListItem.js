@@ -213,12 +213,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	};
 
 	// Adds cloned header to the local collection
-	sap.m.ColumnListItem.prototype._addClonedHeader = function(oHeader) {
+	ColumnListItem.prototype._addClonedHeader = function(oHeader) {
 		return this._aClonedHeaders.push(oHeader);
 	};
 
 	// Destroys cloned headers that are generated for popin
-	sap.m.ColumnListItem.prototype._destroyClonedHeaders = function() {
+	ColumnListItem.prototype._destroyClonedHeaders = function() {
 		if (this._aClonedHeaders.length) {
 			this._aClonedHeaders.forEach(function(oClone) {
 				oClone.destroy("KeepDom");

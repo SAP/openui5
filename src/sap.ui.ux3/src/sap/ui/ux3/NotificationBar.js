@@ -1302,7 +1302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		 * @public
 		 * @since 1.22.11
 		 */
-		sap.ui.ux3.NotificationBar.prototype.setAlwaysShowToggler = function(bAlwaysShow) {
+		NotificationBar.prototype.setAlwaysShowToggler = function(bAlwaysShow) {
 			// set toggler always to visible if running on a mobile device
 			if (sap.ui.Device.browser.mobile) {
 				bAlwaysShow = true;
