@@ -397,7 +397,7 @@
 			iIndex = oElement.indexOfField(oTextField);
 			equal(iIndex, oElement.getFields().length - 1, "TextField is last field FormElement");
 
-			oLabel = new sap.ui.commons.Label("L-ZZ",{value:"Label ZZ"});
+			oLabel = new sap.ui.commons.Label("L-ZZ",{text:"Label ZZ"});
 			oSimpleForm2.insertContent(oLabel, 10); // insert before Toolbar
 			oElement = oLabel.getParent();
 			equal(oElement.getParent().getId(), aContainers[1].getId(), "new Label in container 1");
