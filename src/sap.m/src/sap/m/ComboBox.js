@@ -554,6 +554,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
 
 			if (this.getPickerType() === "Dialog") {
+				this.setSelection(oItem);
+				this.fireSelectionChange({
+					selectedItem: this.getSelectedItem()
+				});
+
 				this.onChange();
 			}
 		};
