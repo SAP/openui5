@@ -112,7 +112,6 @@
 
 	//test of overwritten method setPercentValue()
 	test("setPercentValue min and max value", function() {
-		debugger;
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 10
 		});
@@ -143,6 +142,29 @@
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
 		equal(iPercentAfter, 0, "the value should be set to the default one");
+	});
+
+
+	test("setPercentValue with various values", function() {
+		var aTestCases = [
+			{value: 100, expectedClass: "sapMPIValueMax"},
+			{value: 99, expectedClass: "sapMPIValueNormal"},
+			{value: 99.9952, expectedClass: "sapMPIValueNormal"},
+			{value: 70, expectedClass: "sapMPIValueNormal"},
+			{value: 1, expectedClass: "sapMPIValueNormal"},
+			{value: 0.1, expectedClass: "sapMPIValueNormal"},
+			{value: 0.255, expectedClass: "sapMPIValueNormal"},
+			{value: 0, expectedClass: "sapMPIValueMin"},
+			{value: -1, expectedClass: "sapMPIValueMin"}
+		], fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
+			oProgInd.setPercentValue(fPercentValueToSet);
+			ok(oProgInd.hasStyleClass(sExpectedClass),
+					"the progress indicator has the correct class for " + fPercentValueToSet + "%");
+		};
+
+		aTestCases.forEach(function (oTestCase){
+			fnTestForClassesToValuesMapping(oTestCase.value, oTestCase.expectedClass);
+		});
 	});
 
 	test("text should not be rendered when displayValue is not set", function() {
