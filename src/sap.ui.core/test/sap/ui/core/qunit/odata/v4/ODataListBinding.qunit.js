@@ -1055,7 +1055,7 @@ sap.ui.require([
 			}
 			assert.strictEqual(oListBinding.aContexts[n], undefined, "Expected context: " + n);
 
-			expectDebug(100, 15);
+			expectDebug(110, 15);
 			// default threshold to 0
 			oDataHelperMock.expects("getReadRange")
 				.withExactArgs(sinon.match.same(oListBinding.aContexts), 110, 15, 0)
@@ -1067,7 +1067,7 @@ sap.ui.require([
 			// code under test
 			oListBinding.getContexts(110, 15);
 
-			expectDebug(100, 15, -15);
+			expectDebug(120, 15, -15);
 			// default negative threshold to 0
 			oDataHelperMock.expects("getReadRange")
 				.withExactArgs(sinon.match.same(oListBinding.aContexts), 120, 15, 0)
