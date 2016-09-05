@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function() {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
+	function(jQuery, Orientation) {
 	"use strict";
 
 	/**
@@ -33,8 +33,14 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		if (oControl.getHeight()) {
 			oRm.addStyle("height", oControl.getHeight());
+		} else {
+			oRm.addStyle("height", (oControl.getOrientation() === Orientation.Horizontal) ? "auto" : "100%");
 		}
-		oRm.addStyle("width", oControl.getWidth());
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		} else {
+			oRm.addStyle("width", (oControl.getOrientation() === Orientation.Horizontal) ? "100%" : "auto");
+		}
 		oRm.writeStyles();
 		var sDesc = "";
 		var aContent = oControl.getContent();

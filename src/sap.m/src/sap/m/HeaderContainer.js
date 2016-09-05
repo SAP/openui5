@@ -98,11 +98,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Appearance"
 				},
 				/**
-				 * The width of the whole HeaderContainer.
+				 * The width of the whole HeaderContainer. If not specified, it is rendered as '100%' in horizontal orientation and as 'auto' in vertical orientation.
 				 */
-				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue : "100%"},
+				width: {type: "sap.ui.core.CSSSize", group: "Appearance"},
 				/**
-				 * The height of the whole HeaderContainer.
+				 * The height of the whole HeaderContainer. If not specified, it is rendered as 'auto' in horizontal orientation and as '100%' in vertical orientation.
 				 */
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance"}
 			},
@@ -217,7 +217,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
 		if (!this.getHeight()) {
-			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
+			jQuery.sap.log.warning("No height provided", this);
+		}
+		if (!this.getWidth()) {
+			jQuery.sap.log.warning("No width provided", this);
 		}
 		if (Device.system.desktop) {
 			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
@@ -282,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Public property getters/setters                             */
 	/* =========================================================== */
 	HeaderContainer.prototype.setOrientation = function(value) {
-	  this.setProperty("orientation", value, true);
+	  this.setProperty("orientation", value);
 		if (value === Orientation.Horizontal && !Device.system.desktop) {
 			// Needs to be done by setter. No re-rendering done.
 			this._oScrollCntr.setHorizontal(true);
