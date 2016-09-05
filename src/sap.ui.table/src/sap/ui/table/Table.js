@@ -7,12 +7,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/library', 'sap/ui/core/Popup',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
+		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
+		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool, IntervalTrigger, coreLibrary, Popup,
 		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension, TablePointerExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
+		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
 
 
@@ -747,6 +749,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 		TableExtension.enrich(this, TablePointerExtension);
+		TableExtension.enrich(this, TableScrollExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
 		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
 		this._bExtensionsInitialized = true;
@@ -781,13 +784,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._detachExtensions = function(){
-		if (!this._bExtensionsInitialized) {
-			return;
-		}
-		this._getPointerExtension().destroy();
-		this._getKeyboardExtension().destroy();
-		this._getAccExtension().destroy();
-		delete this._bExtensionsInitialized;
+		TableExtension.cleanup(this);
 	};
 
 
@@ -2069,21 +2066,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
 		});
 
-		this._getPointerExtension().initColumnResizeEvents();
-
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
 		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
 		$vsb.bind("scroll.sapUiTableVScroll", this.onvscroll.bind(this));
 		$hsb.bind("scroll.sapUiTableHScroll", this.onhscroll.bind(this));
-
-		// For preventing the ItemNavigation to re-apply focus to old position (table cell)
-		// when clicking on ScrollBar
-		$hsb.bind("mousedown.sapUiTableHScroll", function(oEvent) {
-			oEvent.preventDefault();
-		});
-		$vsb.bind("mousedown.sapUiTableVScroll", function(oEvent) {
-			oEvent.preventDefault();
-		});
 
 		if (Device.browser.firefox) {
 			this._getScrollTargets().bind("MozMousePixelScroll.sapUiTableMouseWheel", this._onMouseWheel.bind(this));
@@ -2100,6 +2086,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					}
 			}, this));
 		}
+
+		TableExtension.attachEvents(this);
 	};
 
 	/**
@@ -2112,7 +2100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableRowHdrScr").unbind();
 		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
 		$this.find(".sapUiTableRowHdr").unbind();
-		this._getPointerExtension().cleanupColumnResizeEvents();
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
@@ -2121,11 +2108,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
 		$vsb.unbind("scroll.sapUiTableVScroll");
-		$vsb.unbind("mousedown.sapUiTableVScroll");
 
 		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
 		$hsb.unbind("scroll.sapUiTableHScroll");
-		$hsb.unbind("mousedown.sapUiTableHScroll");
 
 		var $scrollTargets = this._getScrollTargets();
 		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
@@ -2135,6 +2120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$body.unbind('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
+		TableExtension.detachEvents(this);
 	};
 
 	/**
@@ -3008,51 +2994,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				oHsb.scrollLeft = oColHdrScr.scrollLeft;
 			}
 		}
-	};
-
-
-	/**
-	 * listens to the mousedown events for starting column drag & drop. therefore
-	 * we wait 200ms to make sure it is no click on the column to open the menu.
-	 * @private
-	 */
-	Table.prototype.onmousedown = function(oEvent) {
-		// only move on left click!
-		var bLeftButton = oEvent.button === 0;
-		var bIsTouchMode = this._isTouchMode(oEvent);
-
-		if (bLeftButton) {
-			var $target = jQuery(oEvent.target);
-
-			var $col = $target.closest(".sapUiTableCol");
-			if ($col.length === 1 && oEvent.target != this.getDomRef("sb")/*Not the interactive resize bar -> see PointerExtension*/) {
-
-				this._bShowMenu = true;
-				this._mTimeouts.delayedMenuTimer = jQuery.sap.delayedCall(200, this, function() {
-					this._bShowMenu = false;
-				});
-
-				var bIsColumnMenuTarget = this._isTouchMode(oEvent) && ($target.hasClass("sapUiTableColDropDown") || $target.hasClass("sapUiTableColResizer"));
-				if (this.getEnableColumnReordering() && !bIsColumnMenuTarget) {
-					var iIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
-					if (iIndex > this._iLastFixedColIndex) {
-						var oColumn = this.getColumns()[iIndex];
-
-						this._mTimeouts.delayedActionTimer = jQuery.sap.delayedCall(200, this, function() {
-							this._onColumnMoveStart(oColumn, bIsTouchMode);
-						});
-					}
-				}
-			}
-
-			// in case of FireFox and CTRL+CLICK it selects the target TD
-			//   => prevent the default behavior only in this case (to still allow text selection)
-			var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
-			if (!!Device.browser.firefox && bCtrl) {
-				oEvent.preventDefault();
-			}
-		}
-
 	};
 
 	/**
