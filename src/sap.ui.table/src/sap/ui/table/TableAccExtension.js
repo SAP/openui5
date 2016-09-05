@@ -135,9 +135,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Returns whether the given cell is hidden
 		 */
-		isHiddenCell : function($Cell) {
-			return $Cell.parent().hasClass("sapUiTableRowHidden") || $Cell.hasClass("sapUiTableCellHidden")
-					|| (TableUtils.isInGroupingRow($Cell) && $Cell.hasClass("sapUiTableTdFirst") && !$Cell.hasClass("sapUiTableMeasureCell"));
+		isHiddenCell : function($Cell, oCell) {
+			var bGroup = TableUtils.isInGroupingRow($Cell);
+			var bSum = TableUtils.isInSumRow($Cell);
+			var bSupportStyleClass = !!oCell && !!oCell.hasStyleClass;
+
+			var bIsRowHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
+			var bIsCellHidden = $Cell.hasClass("sapUiTableCellHidden");
+			var bNoMeasureInFirstCellInGroup = bGroup && $Cell.hasClass("sapUiTableTdFirst") && !$Cell.hasClass("sapUiTableMeasureCell");
+			var bGroupCellHiddenByApp = bGroup && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableGroupCellHidden");
+			var bSumCellHiddenByApp = bSum && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableSumCellHidden");
+
+			return bIsRowHidden || bIsCellHidden || bNoMeasureInFirstCellInGroup || bGroupCellHiddenByApp || bSumCellHiddenByApp;
 		},
 
 		/*
@@ -278,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				iCol = TableUtils.getColumnIndexOfFocusedCell(oTable),
 				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol),
 				oInfo = null,
-				bHidden = ExtensionHelper.isHiddenCell($Cell),
+				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
 				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.DATACELL, {
 					index: iCol,
