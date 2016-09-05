@@ -190,6 +190,13 @@ html[dir=rtl] {
 	display: none;
 }
 
+// sapUiAnalyticalTableGroupCellHidden and sapUiAnalyticalTableSumCellHidden provides the possibility for applications to hide
+// the cell content of a column on group headers and / or sums by using addStyleClass of the column template
+.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableCell > .sapUiAnalyticalTableGroupCellHidden,
+.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell > .sapUiAnalyticalTableSumCellHidden {
+	visibility: hidden; /* hidden cell content*/
+}
+
 // Shift last cell content to left, on the right edge the touch button is placed.
 .sapUiTableGroupMode.sapUiTableTouch .sapUiTableCtrlScroll .sapUiTableGroupHeader td:last-child {
 	padding-right: 3rem;
