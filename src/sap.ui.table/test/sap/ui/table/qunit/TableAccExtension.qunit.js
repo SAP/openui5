@@ -53,6 +53,15 @@ function _modifyTables() {
 }
 
 
+function checkAriaSelected(sPropertyValue, bExpectSelected, assert) {
+	if (bExpectSelected) {
+		assert.strictEqual(sPropertyValue, "true" , "aria-selected");
+	} else {
+		assert.ok(sPropertyValue === "false" || !sPropertyValue, "aria-selected");
+	}
+}
+
+
 
 //************************************************************************
 // Test Code
@@ -641,9 +650,9 @@ QUnit.asyncTest("Sum Row", function(assert) {
 QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 	var $Elem = oTable.$("rowsel0");
 	assert.strictEqual($Elem.attr("role"), "rowheader" , "role");
-	assert.strictEqual($Elem.attr("aria-selected"), "true" , "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 	$Elem = oTable.$("rowsel1");
-	assert.strictEqual($Elem.attr("aria-selected"), "false" , "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 });
 
 
@@ -756,16 +765,16 @@ QUnit.test("ARIA Attributes of TH Elements", function(assert) {
 QUnit.test("ARIA Attributes of TR Elements", function(assert) {
 	var $Elem = getCell(0, 0, false, assert).parent();
 	assert.strictEqual($Elem.attr("role"), "row" , "role");
-	assert.strictEqual($Elem.attr("aria-selected"), "true" , "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 	$Elem = getCell(0, 1, false, assert).parent();
 	assert.strictEqual($Elem.attr("role"), "row" , "role");
-	assert.strictEqual($Elem.attr("aria-selected"), "true" , "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 	$Elem = getCell(1, 0, false, assert).parent();
 	assert.strictEqual($Elem.attr("role"), "row" , "role");
-	assert.ok(!$Elem.attr("aria-selected"), "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	$Elem = getCell(1, 1, false, assert).parent();
 	assert.strictEqual($Elem.attr("role"), "row" , "role");
-	assert.ok(!$Elem.attr("aria-selected"), "aria-selected");
+	checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 });
 
 QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
@@ -775,7 +784,7 @@ QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
 		assert.strictEqual($TD.attr("role"), "rowheader" , "role");
 		var sOwns = $TD.attr("aria-owns");
 		assert.ok(jQuery.sap.startsWith(sOwns || "", oTable.getId() + "-rowsel"), "aria-owns: " + sOwns);
-		assert.strictEqual($TD.attr("aria-selected"), (sOwns == oTable.getId() + "-rowsel0") ? "true" : "false" , "aria-selected");
+		checkAriaSelected($TD.attr("aria-selected"), sOwns == oTable.getId() + "-rowsel0", assert);
 	});
 });
 
