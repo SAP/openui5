@@ -14,6 +14,7 @@
 		<content>
 			<ObjectHeader
 				title="{Name}"
+				backgroundDesign="Solid"
 				number="{
 					parts:[{path:'Price'},{path:'CurrencyCode'}],
 					type: 'sap.ui.model.type.Currency',
