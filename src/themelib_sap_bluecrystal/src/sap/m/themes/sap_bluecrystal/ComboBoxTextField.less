@@ -1,20 +1,11 @@
-/* ================================================================= */
-/* CSS for control sap.m/ComboBoxTextField BlueCrystal theme         */
-/* ================================================================= */
+/* ======================================== */
+/* CSS for control sap.m/ComboBoxTextField  */
+/* BlueCrystal theme                        */
+/* ======================================== */
 
 /* ------------------------------ */
 /* text field                     */
 /* ------------------------------ */
-
-.sapMComboBoxTextField {
-	border: 1px solid @sapUiFieldBorderColor;
-	margin: 0.25rem 0;
-	height: 2.5rem;
-}
-
-.sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
-	padding-right: 3rem;
-}
 
 /* states */
 
@@ -35,7 +26,7 @@
 }
 
 .sapMComboBoxTextFieldReadonly {
-	border-color: transparent;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 }
 
 /* focus and hover */
@@ -49,44 +40,15 @@
 /* arrow                          */
 /* ------------------------------ */
 
-.sapMComboBoxTextFieldArrow {
-	color: @sapUiElement;
-	width: 2.5rem;
-	line-height: 2.375rem;
-
-	/* add a non-transparent background because the input field text overflows arrow button in IE10 */
-	background: @sapUiFieldBackground;
-}
-
 .sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
 	line-height: 2.25rem;
 }
 
-/* ======================================================================= */
-/* CSS for control sap.m/ComboBoxTextField BlueCrystal theme compact size  */
-/* ======================================================================= */
-
-/* ------------------------------ */
-/* text field                     */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxTextField {
-	height: 1.625rem;
-	margin: 0.1875rem 0;
-}
-
-.sapUiSizeCompact .sapMComboBoxTextFieldInner:not(.sapMComboBoxTextFieldInnerReadonly) {
-	padding-right: 2.5rem;
-}
+/* compact size */
 
 /* ------------------------------ */
 /* arrow                          */
 /* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxTextFieldArrow {
-	width: 2rem;
-	line-height: 1.5rem;
-}
 
 .sapUiSizeCompact .sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
 	line-height: 1.375rem;

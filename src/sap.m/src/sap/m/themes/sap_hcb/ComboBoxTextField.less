@@ -1,16 +1,11 @@
-/* ========================================================= */
-/* CSS for control sap.m/ComboBoxTextField HCB theme         */
-/* ========================================================= */
+/* ======================================== */
+/* CSS for control sap.m/ComboBoxTextField  */
+/* High Contrast Black theme                */
+/* ======================================== */
 
 /* ------------------------------ */
 /* text field                     */
 /* ------------------------------ */
-
-.sapMComboBoxTextField {
-	border: 1px solid @sapHCStandardFG;
-	margin: 0.25rem 0;
-	height: 2.5rem;
-}
 
 /* states */
 
@@ -23,11 +18,7 @@
 
 .sapMComboBoxBaseDisabled,
 .sapMComboBoxTextFieldReadonly {
-	border-color: @sapHCReducedAltFG;
-}
-
-.sapMComboBoxTextFieldInnerExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
-	padding-right: 3rem;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 }
 
 /* focus */
@@ -52,40 +43,8 @@ html[data-sap-ui-browser^="ie"] {
 /* arrow                          */
 /* ------------------------------ */
 
-.sapMComboBoxTextFieldArrow {
-	color: @sapHCStandardFG;
-	width: 2.5rem;
-	line-height: 2.375rem;
-}
-
 /* disabled */
 
 .sapMComboBoxTextFieldDisabled .sapMComboBoxTextFieldArrow {
-	color: @sapHCReducedFG;
-}
-
-/* ===================================================================== */
-/* CSS for control sap.m/ComboBoxTextField HCB theme compact size        */
-/* ===================================================================== */
-
-/* ------------------------------ */
-/* text field                     */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxTextField {
-	height: 1.625rem;
-	margin: 0.1875rem 0;
-}
-
-.sapUiSizeCompact .sapMComboBoxTextFieldInner:not(.sapMComboBoxTextFieldInnerReadonly) {
-	padding-right: 2.5rem;
-}
-
-/* ------------------------------ */
-/* arrow                          */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxTextFieldArrow {
-	width: 2rem;
-	line-height: 1.5rem;
+	color: @sapUiContentDisabledTextColor;
 }
