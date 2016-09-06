@@ -829,6 +829,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.addClass("sapUiTableRowOdd");
 		}
 
+		var aRows = oTable.getRows();
+		var iRowCount = aRows.length;
+		if (iRowCount > 0 && aRows[iRowCount - 1] === oRow) {
+			rm.addClass("sapUiTableLastRow");
+		} else if (iRowCount > 0 && aRows[0] === oRow) {
+			rm.addClass("sapUiTableFirstRow");
+		}
+
 		this._addFixedRowCSSClasses(rm, oTable, iRowIndex);
 
 		rm.writeClasses();
@@ -874,6 +882,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			var sId = oRow.getId() + "-col" + iCellIndex;
 			rm.writeAttribute("id", sId);
 			rm.writeAttribute("tabindex", "-1");
+			rm.writeAttribute("data-sap-ui-colid", oColumn.getId());
 
 			var bIsFirstColumn = aVisibleColumns.length > 0 && aVisibleColumns[0] === oColumn;
 
