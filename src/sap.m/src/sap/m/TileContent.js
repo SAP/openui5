@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @returns {String} The AltText text
 	 */
-	sap.m.TileContent.prototype.getAltText = function() {
+	TileContent.prototype.getAltText = function() {
 		var sAltText = "";
 		var bIsFirst = true;
 		var oContent = this.getContent();

@@ -1193,7 +1193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Calculate height on the content
 	 * @private
 	 */
-	sap.m.IconTabHeader.prototype._fnResizeNoFlexboxSupport = function() {
+	IconTabHeader.prototype._fnResizeNoFlexboxSupport = function() {
 		var $content = this.getParent().$("containerContent"),
 			iDiffOuterInnerHeight = $content.outerHeight(true) - $content.height();
 
@@ -1201,7 +1201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$content.height(this.getParent().$().height() - $content.position().top - iDiffOuterInnerHeight);
 	};
 
-	sap.m.IconTabHeader.prototype.onExit = function() {
+	IconTabHeader.prototype.onExit = function() {
 		// Deregister resize event before re-rendering
 		if (this._sResizeListenerNoFlexboxSupportId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);

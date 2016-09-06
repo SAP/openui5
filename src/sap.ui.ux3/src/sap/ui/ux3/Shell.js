@@ -1205,7 +1205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	(function() {
 
 		Shell._SHELL_OFFSET_RIGHT = 0;   // can be changed during runtime
-	//	sap.ui.ux3.Shell._PANE_OUTER_DISTANCE = 40; //TODO: Theme Parameter?
+	//	Shell._PANE_OUTER_DISTANCE = 40; //TODO: Theme Parameter?
 
 		Shell.prototype._closePane = function(fCompleteCallback) {
 			if (!this._sOpenPaneId) {

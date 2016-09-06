@@ -259,11 +259,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._bRtl  = sap.ui.getCore().getConfiguration().getRTL();
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
-		if (!sap.ui.unified.CalendarRow._oStaticAppointmentText) {
-			sap.ui.unified.CalendarRow._oStaticAppointmentText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT")});
-			sap.ui.unified.CalendarRow._oStaticAppointmentText.toStatic(); //Put to Static UiArea
-			sap.ui.unified.CalendarRow._oStaticTentativeText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT_TENTATIVE")});
-			sap.ui.unified.CalendarRow._oStaticTentativeText.toStatic(); //Put to Static UiArea
+		if (!CalendarRow._oStaticAppointmentText) {
+			CalendarRow._oStaticAppointmentText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT")});
+			CalendarRow._oStaticAppointmentText.toStatic(); //Put to Static UiArea
+			CalendarRow._oStaticTentativeText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT_TENTATIVE")});
+			CalendarRow._oStaticTentativeText.toStatic(); //Put to Static UiArea
 		}
 
 		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});

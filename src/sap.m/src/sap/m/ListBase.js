@@ -762,7 +762,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 *
 	 * @protected
 	 */
-	sap.m.ListBase.prototype.getLastMode = function(sMode) {
+	ListBase.prototype.getLastMode = function(sMode) {
 		return this._sLastMode;
 	};
 
@@ -825,7 +825,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @since 1.26
 	 * @protected
 	 */
-	sap.m.ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
+	ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
 		this._aSelectedPaths = aSelectedPaths || [];
 	};
 
@@ -836,7 +836,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @since 1.26
 	 * @protected
 	 */
-	sap.m.ListBase.prototype.getSelectedContextPaths = function() {
+	ListBase.prototype.getSelectedContextPaths = function() {
 		return this._aSelectedPaths.slice(0);
 	};
 

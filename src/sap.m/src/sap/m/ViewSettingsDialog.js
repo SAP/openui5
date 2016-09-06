@@ -2040,7 +2040,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	};
 
 
-	sap.m.ViewSettingsDialog.prototype._pressBackButton = function() {
+	ViewSettingsDialog.prototype._pressBackButton = function() {
 		var that = this;
 		if (this._vContentPage === 3) {
 			this._updateFilterCounters();

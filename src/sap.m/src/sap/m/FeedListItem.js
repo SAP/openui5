@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @param {sap.m.ListType} type new value for property type
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
-	sap.m.FeedListItem.prototype.setType = function(type) {
+	FeedListItem.prototype.setType = function(type) {
 		if (type === sap.m.ListType.Navigation) {
 			this.setProperty("type", sap.m.ListType.Active);
 		} else {
