@@ -36,7 +36,7 @@
 						<Text text="@sap" />
 					</f:content>
 					<f:layoutData>
-						<FlexItemData shrinkFactor="0"/>
+						<FlexItemData shrinkFactor="0" backgroundDesign="Solid" styleClass="sapContrastPlus"/>
 					</f:layoutData>
 				</f:SimpleForm>
 				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
