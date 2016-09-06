@@ -132,6 +132,43 @@ QUnit.module("AnalyticalTable with ODataModel v2", {
 	}
 });
 
+QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
+	jQuery.sap.require("sap.ui.model.TreeAutoExpandMode");
+	var oExpandMode = sap.ui.model.TreeAutoExpandMode;
+
+	function checkMode(mode, text) {
+		assert.equal(mode.Bundled, "Bundled", text + " - Mode Bundled");
+		assert.equal(mode.Sequential, "Sequential", text + " - Mode Sequential");
+	}
+
+	sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function(oMode) {
+		checkMode(oMode, "Module sap/ui/table/TreeAutoExpandMode");
+		ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
+		ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
+		start();
+	});
+
+	this.oTable = new sap.ui.table.AnalyticalTable();
+	var oBindingInfo = {};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
+
+	oBindingInfo = {};
+	this.oTable.setAutoExpandMode(oExpandMode.Sequential);
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - Sequential");
+
+	oBindingInfo = {};
+	this.oTable.setAutoExpandMode(oExpandMode.Bundled);
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Bundled");
+
+	oBindingInfo = {};
+	this.oTable.setAutoExpandMode("DOES_NOT_EXIST");
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
+});
+
 QUnit.asyncTest("Simple expand/collapse", function (assert) {
 	this.oModel.attachMetadataLoaded(function() {
 		this.oTable = createTable.call(this);

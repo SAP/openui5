@@ -5,10 +5,10 @@
 /**
  * Initialization Code and shared classes of library sap.ui.table.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	'sap/ui/core/library', // library dependency
 	'sap/ui/unified/library'], // library dependency
-	function(jQuery, Core) {
+	function(jQuery, Core, TreeAutoExpandMode) {
 
 	"use strict";
 
@@ -23,7 +23,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.SharedDomRef"
+			"sap.ui.table.SharedDomRef",
+			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 		],
 		interfaces: [],
 		controls: [
@@ -294,6 +295,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	// map the new Column to the old ColumnHeader
 	thisLib.ColumnHeader = thisLib.Column;
 
+	// copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
+	/**
+	 * Different modes for setting the auto expand mode on tree or analytical bindings.
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @public
+	 * @borrows sap.ui.model.TreeAutoExpandMode.Sequential as Sequential
+	 * @borrows sap.ui.model.TreeAutoExpandMode.Bundled as Bundled
+	 */
+	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
 	//factory for table to create labels an textviews to be overwritten by commons and mobile library
 	if (!thisLib.TableHelper) {
