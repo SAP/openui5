@@ -27,67 +27,71 @@
 	jQuery.sap.initMobile();
 
 	var oData = {
-		"scrollStep" : 200,
-		"scrollTime" : 500,
-		"height" : "7.5rem",
-		"width" : "100%",
-		"items" : [{
-			"content" : [{
-				"type" : "numeric",
-				"value" : 125,
-				"scale" : "M",
-				"unit" : "EUR",
-				"size" : "M",
-				"valueColor" : "Error",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
+			"scrollStep": 200,
+			"scrollTime": 500,
+			"height": "",
+			"width": "100%",
+			"backgroundDesign": sap.m.BackgroundDesign.Transparent,
+			"header": "Comparative Annual Totals",
+			"subheader": "Expenses By Region",
+			"footer": "Actual and Target",
+			"items": [{
+				"content": [{
+					"type": "numeric",
+					"value": 125,
+					"scale": "M",
+					"unit": "EUR",
+					"size": "M",
+					"valueColor": "Error",
+					"indicator": "Up",
+					"isFormatterValue": false,
+					"truncateValueTo": 4
+				}, {
+					"value": "USD, Current"
+				}]
 			}, {
-				"value" : "USD, Current"
-			}]
-		}, {
-			"content" : [{
-				"type" : "numeric",
-				"value" : 15,
-				"scale" : "M",
-				"unit" : "EUR",
-				"size" : "M",
-				"valueColor" : "Good",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
+				"content": [{
+					"type": "numeric",
+					"value": 15,
+					"scale": "M",
+					"unit": "EUR",
+					"size": "M",
+					"valueColor": "Good",
+					"indicator": "Up",
+					"isFormatterValue": false,
+					"truncateValueTo": 4
+				}, {
+					"value": "USD, Current"
+				}]
 			}, {
-				"value" : "USD, Current"
-			}]
-		}, {
-			"content" : [{
-				"type" : "numeric",
-				"value" : 165,
-				"scale" : "M",
-				"unit" : "EUR",
-				"size" : "M",
-				"valueColor" : "Error",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
+				"content": [{
+					"type": "numeric",
+					"value": 165,
+					"scale": "M",
+					"unit": "EUR",
+					"size": "M",
+					"valueColor": "Error",
+					"indicator": "Up",
+					"isFormatterValue": false,
+					"truncateValueTo": 4
+				}, {
+					"value": "USD, Current"
+				}]
 			}, {
-				"value" : "USD, Current"
+				"content": [{
+					"type": "numeric",
+					"value": 11,
+					"scale": "M",
+					"unit": "USD",
+					"size": "M",
+					"valueColor": "Critical",
+					"indicator": "Up",
+					"isFormatterValue": false,
+					"truncateValueTo": 4
+				}, {
+					"value": "USD, Current"
+				}]
 			}]
-		}, {
-			"content" : [{
-				"type" : "numeric",
-				"value" : 11,
-				"scale" : "M",
-				"unit" : "USD",
-				"size" : "M",
-				"valueColor" : "Critical",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
-			}, {
-				"value" : "USD, Current"
-			}]
-		}]
 	};
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	var oModel = new sap.ui.model.json.JSONModel(oData);
@@ -119,9 +123,36 @@
 		return oLayout;
 	};
 
+	var fnGenericTileContentFactory = function(sId, oContext) {
+		var oTileContent = new sap.m.TileContent({
+			footer: "{/footer}"
+		});
+		var oGenericTile = new sap.m.GenericTile({
+			header: "{/header}",
+			subheader: "{/subheader}",
+			tileContent: [oTileContent],
+			press : function(oEvent) {
+				sap.m.MessageToast.show("GenericTile is pressed.");
+			}
+		});
+		var oNumericContent = new sap.m.NumericContent({
+			value : "{" + oContext.sPath + "/content/0/value}",
+			scale : "{" + oContext.sPath + "/content/0/scale}",
+			indicator : "{" + oContext.sPath + "/content/0/indicator}",
+			size : "{" + oContext.sPath + "/content/0/size}",
+			formatterValue : "{" + oContext.sPath + "/content/0/isFormatterValue}",
+			truncateValueTo : "{" + oContext.sPath + "/content/0/truncateValueTo}",
+			state : "Loaded",
+			valueColor : "{" + oContext.sPath + "/content/0/valueColor}"
+		});
+		oTileContent.setContent(oNumericContent);
+		return oGenericTile;
+	};
+
 	var oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
 		scrollStep : "{/scrollStep}",
 		scrollTime : "{/scrollTime}",
+		backgroundDesign : "{/backgroundDesign}",
 		height:"{/height}",
 		width:"{/width}",
 		items : {
@@ -129,12 +160,34 @@
 			factory : fnContentFactory
 		}
 	});
+
 	var oHeaderContainer2 = new sap.m.HeaderContainer("headerContainer2", {
+		scrollStep : "{/scrollStep}",
+		scrollTime : "{/scrollTime}",
+		backgroundDesign : "{/backgroundDesign}",
+		height:"{/height}",
+		width:"{/width}",
+		items : {
+			path : "/items",
+			factory : fnGenericTileContentFactory
+		}
+	});
+
+	var oHeaderContainer3 = new sap.m.HeaderContainer("headerContainer3", {
 		scrollStep : "{/scrollStep}",
 		scrollTime : "{/scrollTime}",
 		items : {
 			path : "/items",
 			factory : fnContentFactory
+		}
+	});
+
+	var oHeaderContainer4 = new sap.m.HeaderContainer("headerContainer4", {
+		scrollStep : "{/scrollStep}",
+		scrollTime : "{/scrollTime}",
+		items : {
+			path : "/items",
+			factory : fnGenericTileContentFactory
 		}
 	});
 
@@ -162,6 +215,7 @@
 			oModel.checkUpdate();
 		}
 	});
+
 	var oRemoveButton = new sap.m.Button("remove-button", {
 		width : "10rem",
 		text : "Remove last content",
@@ -174,6 +228,25 @@
 		}
 	});
 
+	var oBackgroundSelect = new sap.m.Select({
+		change: function(oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem");
+			oData.backgroundDesign = oSelectedItem.getKey();
+			oModel.checkUpdate();
+		},
+		items: [new sap.ui.core.Item("background-item-1", {
+			key : sap.m.BackgroundDesign.Transparent,
+			text : "Transparent"
+		}), new sap.ui.core.Item("background-item-2", {
+			key : sap.m.BackgroundDesign.Solid,
+			text : "Solid"
+		}), new sap.ui.core.Item("background-item-3", {
+			key : sap.m.BackgroundDesign.Translucent,
+			text : "Translucent"
+		})],
+		selectedItem : "background-item-1"
+	});
+
 	var oDevidersControls = new sap.m.HBox({
 		alignItems : sap.m.FlexAlignItems.Center,
 		items : [new sap.m.Label({
@@ -184,6 +257,7 @@
 			state : true,
 			change : function(oEvt) {
 				oHeaderContainer.setShowDividers(oEvt.getParameter("state"));
+				oHeaderContainer2.setShowDividers(oEvt.getParameter("state"));
 			}
 		})]
 	});
@@ -204,7 +278,7 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[scrollStep] = undefined;
+						oData.scrollStep = undefined;
 						oModel.checkUpdate();
 					}
 				}
@@ -227,13 +301,14 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[scrollTime] = undefined;
+						oData.scrollTime = undefined;
 						oModel.checkUpdate();
 					}
 				}
 			})
 		]
 	});
+
 	var oWidthInput =  new sap.m.HBox({
 		alignItems : sap.m.FlexAlignItems.Center,
 		items : [
@@ -248,7 +323,7 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[width] = undefined;
+						oData.width = undefined;
 						oModel.checkUpdate();
 					}
 				}
@@ -270,7 +345,7 @@
 				},
 				liveChange : function(oEvt) {
 					if (oEvt.getParameter("newValue") === "") {
-						oData[Height] = undefined;
+						oData.height = undefined;
 						oModel.checkUpdate();
 					}
 				}
@@ -284,6 +359,7 @@
 		content : [
 			oAddButton,
 			oRemoveButton,
+			oBackgroundSelect,
 			oScrollStepInput,
 			oScrollTimeInput,
 			oWidthInput,
@@ -291,9 +367,10 @@
 			oDevidersControls
 		]
 	});
+
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.HeaderContainer",
-		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm]
+		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm, oHeaderContainer3, oHeaderContainer4]
 	});
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]
