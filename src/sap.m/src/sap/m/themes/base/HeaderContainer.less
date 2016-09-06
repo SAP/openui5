@@ -65,6 +65,10 @@ html.sap-tablet .sapMHdrCntrBtnCntr.Vertical {
 	min-width: 1.375rem;
 }
 
+.sapUiSizeCompact .sapMHdrCntrBtnCntr.Horizontal > .sapMHdrCntrBtn {
+	margin-top: -1rem;
+}
+
 html.sap-phone .sapMHdrCntrBtnCntr.Horizontal > .sapMHdrCntrBtn,
 html.sap-tablet .sapMHdrCntrBtnCntr.Horizontal > .sapMHdrCntrBtn {
 	margin-top: -0.6rem;
@@ -94,12 +98,20 @@ html.sap-tablet .sapMHdrCntrBtnCntr.Vertical > .sapMHdrCntrBtn {
 	white-space: nowrap;
 }
 
-.sapMHrdrLeftPadding .sapMHdrCntrCntr.Horizontal {
+.sapUiSizeCompact .sapMHrdrLeftPadding .sapMHdrCntrCntr.Horizontal {
 	padding-left: 2.5rem;
 }
 
-.sapMHrdrRightPadding .sapMHdrCntrCntr.Horizontal {
+.sapMHrdrLeftPadding .sapMHdrCntrCntr.Horizontal {
+	padding-left: 3rem;
+}
+
+.sapUiSizeCompact .sapMHrdrRightPadding .sapMHdrCntrCntr.Horizontal {
 	padding-right: 2.5rem;
+}
+
+.sapMHrdrRightPadding .sapMHdrCntrCntr.Horizontal {
+	padding-right: 3rem;
 }
 
 html.sap-phone .sapMHrdrLeftPadding .sapMHdrCntrCntr.Horizontal,
@@ -119,10 +131,18 @@ html.sap-tablet .sapMHrdrLeftPadding .sapMHdrCntrCntr.Horizontal {
 }
 
 .sapMHrdrTopPadding .sapMHdrCntrCntr.Vertical {
+	padding-top: 3rem;
+}
+
+.sapUiSizeCompact .sapMHrdrTopPadding .sapMHdrCntrCntr.Vertical {
 	padding-top: 2.5rem;
 }
 
 .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertical {
+	padding-bottom: 3rem;
+}
+
+.sapUiSizeCompact .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertical {
 	padding-bottom: 2.5rem;
 }
 
