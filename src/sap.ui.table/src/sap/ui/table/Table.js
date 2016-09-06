@@ -869,8 +869,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			tableCtrlFixedWidth: 0,
 			tableCntHeight: 0,
 			tableCntWidth: 0,
-			columnRowHeight: 0,
-			columnRowOuterHeight: 0,
 			invisibleColWidth: 0
 		};
 
@@ -968,12 +966,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				oSizes.invisibleColWidth = oFirstInvisibleColumn.clientWidth;
 			}
 		}
-
-		function getColumnSize(oColumn) {
-			oSizes.columnRowHeight = Math.max(oColumn.clientHeight || 0, oSizes.columnRowHeight);
-			oSizes.columnRowOuterHeight = Math.max(oColumn.offsetHeight || 0, oSizes.columnRowOuterHeight);
-		}
-		Array.prototype.forEach.call(oDomRef.querySelectorAll(".sapUiTableCol"), getColumnSize);
 
 		if (!aTableRowHeights) {
 			oSizes.tableRowHeights = this._collectRowHeights();
@@ -2729,27 +2721,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		});
 
-		// Table Column Height Calculation
-		// we change the height of the cols, col header and the row header to auto to
-		// find out whether to use the height of a cell or the min height of the col header.
-		var bHasColHdrHeight = this.getColumnHeaderHeight() > 0;
-		if (!bHasColHdrHeight) {
-			// Height of one row within the header
-			// avoid half pixels
-			$cols.each(function(index, item) {
-				item.style.height = oTableSizes.columnRowOuterHeight + "px";
-			});
-
-			var oColHdrCnt = oDomRef.querySelector(".sapUiTableColHdrCnt");
-			if (oColHdrCnt) {
-				oColHdrCnt.style.height = Math.floor(oTableSizes.columnRowHeight * TableUtils.getHeaderRowCount(this)) + "px";
-			}
-		}
-
 		// Sync width of content scroll area to header scroll area
 		$colHdrScr.each(function(index, item) {
 			item.style.width = oTableSizes.tableCtrlScrWidth + "px";
 		});
+
+
+		// --------------------------------
+		// Table Column Height Calculation.
+		// --------------------------------
+		// Header row heights must be found after the cell width is set (due to contents wrapping),
+		// therefore this adjustment is done here and not in _collectTableSizes
+		//
+		// Find height of each column header row and set all containing header sells to be equally high
+		var headerHeight = 0;
+
+		// Set height of a specific column header
+		function setColumnHeaderHeight(index, columnHeaderElement) {
+			columnHeaderElement.style.height = headerHeight + "px";
+		}
+
+		// Fix column headers in a specific row
+		function fixHeaderRowHeight(index, headerRowElement) {
+			headerHeight = headerRowElement.clientHeight; // height of the row, as calculated by the browser
+			jQuery(headerRowElement).find(".sapUiTableCol").each(setColumnHeaderHeight);
+		}
+
+		if (!(this.getColumnHeaderHeight() > 0)) {
+			// Fix header rows:
+			$colHeaderContainer.each(fixHeaderRowHeight);
+			// Fix the selection column header:
+			$this.find(".sapUiTableColHdrCnt").height($colHdrScr.height());
+		}
 	};
 
 	/**
