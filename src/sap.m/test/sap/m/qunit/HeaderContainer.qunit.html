@@ -83,8 +83,8 @@ jQuery.sap.initMobile();
 		assert.deepEqual(this.oHeaderContainer.getBackgroundDesign(), sap.m.BackgroundDesign.Transparent);
 	});
 
-	QUnit.test("Items multiple should be set to true", function(assert) {
-		assert.ok(this.oHeaderContainer.getItems());
+	QUnit.test("Aggregation content exists", function(assert) {
+		assert.ok(this.oHeaderContainer.getContent());
 	});
 
 	QUnit.module("Basic Rendering", {
@@ -140,7 +140,7 @@ jQuery.sap.initMobile();
 	QUnit.module("Scrolling", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
-				items : [
+				content : [
 					new sap.m.FlexBox({
 						height : "120px",
 						width : "320px"
@@ -168,9 +168,9 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Test shifting items to left", function(assert) {
+	QUnit.test("Test shifting content to the left", function(assert) {
 		var done = assert.async();
-		assert.equal(jQuery.sap.byId("headerContainer-scrl-prev-button").css("display"), "none", "The items was shifted to left");
+		assert.equal(jQuery.sap.byId("headerContainer-scrl-prev-button").css("display"), "none", "The content was shifted to the left");
 		this.oHeaderContainer._scroll(200, 500);
 		setTimeout(function() {
 			assert.ok(jQuery.sap.byId("headerContainer-scrl-prev-button").css("visibility") !== "hidden", "Previous Button is visible after scrolling.");
@@ -178,7 +178,7 @@ jQuery.sap.initMobile();
 		}, 1000);
 	});
 
-	QUnit.test("Test shifting items to right", function(assert) {
+	QUnit.test("Test shifting content to the right", function(assert) {
 		var done = assert.async();
 		this.oHeaderContainer._scroll(-200, 500);
 		setTimeout(function() {
@@ -190,7 +190,7 @@ jQuery.sap.initMobile();
 	QUnit.module("Keyboard navigation focus issues", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
-				items : [
+				content : [
 					new sap.ui.layout.VerticalLayout(),
 					new sap.ui.layout.VerticalLayout(),
 					new sap.ui.layout.VerticalLayout()
@@ -205,21 +205,21 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("The item navigation includes all the items of header container", function(assert) {
-		assert.equal(this.oHeaderContainer._oItemNavigation.getItemDomRefs().length, this.oHeaderContainer.getItems().length, "Correct item received focus.");
+	QUnit.test("The item navigation includes all the content of the HeaderContainer", function(assert) {
+		assert.equal(this.oHeaderContainer._oItemNavigation.getItemDomRefs().length, this.oHeaderContainer.getContent().length, "Correct content received focus.");
 	});
 
 	QUnit.test("Surrogate div with tab index which is used to catch shift tab focus is rendered ", function(assert) {
-		assert.equal(this.oHeaderContainer.$("after").attr("tabindex"), "0", "Correct item received focus.");
+		assert.equal(this.oHeaderContainer.$("after").attr("tabindex"), "0", "Correct content received focus.");
 	});
 
-	QUnit.test("_restoreLastFocused method sets the focus on the item that was saved as focused before", function(assert) {
+	QUnit.test("_restoreLastFocused method sets the focus on the content that was saved as focused before", function(assert) {
 		//Arrange
 		this.oHeaderContainer._oItemNavigation.setFocusedIndex(1);
 		//Act
 		this.oHeaderContainer._restoreLastFocused();
 		//Assert
-		assert.deepEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], document.activeElement, "Correct item received focus.");
+		assert.deepEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], document.activeElement, "Correct content received focus.");
 	});
 
 	QUnit.test("When focusing from outside (through shift + tab) on the surrogate div element, the focus is set on the previous focused element of the itemnavigation", function(assert) {
@@ -232,7 +232,7 @@ jQuery.sap.initMobile();
 		var oEvt = {
 			preventDefault: function(){},
 			target: this.oHeaderContainer.$("after").get(0)
-		}
+		};
 		//Act
 		this.oHeaderContainer.onfocusin(oEvt);
 		//Assert
@@ -245,12 +245,12 @@ jQuery.sap.initMobile();
 		var oEvt = {
 			preventDefault: function(){},
 			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
-		}
+		};
 		//Act
 		this.oHeaderContainer.onsaptabnext(oEvt);
 		//Assert
 		assert.deepEqual(document.activeElement, this.oHeaderContainer.$("after").get(0), "Focus leaves away from the ScrollContainer");
-		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused item index is still correct after the focus leaves away from the ScrollContainer");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused content index is still correct after the focus leaves away from the ScrollContainer");
 	});
 
 	QUnit.test("Test shift Tab button click event", function(assert) {
@@ -259,41 +259,41 @@ jQuery.sap.initMobile();
 		var oEvt = {
 			preventDefault: function(){},
 			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
-		}
+		};
 		//Act
 		this.oHeaderContainer.onsaptabprevious(oEvt);
 		//Assert
 		assert.deepEqual(document.activeElement, this.oHeaderContainer.getDomRef(), "Focus leaves away from the ScrollContainer");
-		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused item index is still correct after the focus leaves away from the ScrollContainer");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused content index is still correct after the focus leaves away from the ScrollContainer");
 	});
 
-	QUnit.test("Focus is set to next item after right button on element of itemnavigation is clicked", function(assert) {
+	QUnit.test("Focus is set to next content after the button to the right of the element was clicked", function(assert) {
 		//Arrange
 		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
 		var oEvt = {
 			preventDefault: function(){},
 			stopPropagation: function(){},
 			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
-		}
+		};
 		//Act
 		this.oHeaderContainer._oItemNavigation.onsapnext(oEvt);
 		//Assert
-		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], "Focus is set to the next item");
+		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], "Focus is set to the next content");
 		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 1, "Focused index of itemnavigation is updated");
 	});
 
-	QUnit.test("Focus is set to previous item after left button on element of itemnavigation is clicked", function(assert) {
+	QUnit.test("Focus is set to previous content after the button to the left of the element was clicked", function(assert) {
 		//Arrange
 		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).focus();
 		var oEvt = {
 			preventDefault: function(){},
 			stopPropagation: function(){},
 			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1]
-		}
+		};
 		//Act
 		this.oHeaderContainer._oItemNavigation.onsapprevious(oEvt);
 		//Assert
-		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0], "Focus is set to the previous item");
+		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0], "Focus is set to the previous content");
 		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "Focused index of itemnavigation is updated");
 	});
 
@@ -305,7 +305,7 @@ jQuery.sap.initMobile();
 	QUnit.module("Aggregation Handling", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
-				items : [
+				content : [
 					new sap.m.FlexBox({
 						height : "120px",
 						width : "320px"
@@ -334,20 +334,20 @@ jQuery.sap.initMobile();
 	});
 
 	QUnit.test("Overall", function(assert) {
-		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "The function should return 12 items");
-		var aItems = this.oHeaderContainer.getAggregation("items");
-		assert.equal(this.oHeaderContainer.indexOfAggregation("items", aItems[0]), 0, "index of the first item in items aggregation should be 0");
-		this.oHeaderContainer.removeAggregation("items", aItems[0], true);
-		assert.equal(this.oHeaderContainer.getAggregation("items").length, 3, "There should be 11 items now");
-		this.oHeaderContainer.addAggregation("items", aItems[0], true);
-		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "There should be 12 items now");
-		this.oHeaderContainer.removeAggregation("items", aItems[0], true);
-		this.oHeaderContainer.insertAggregation("items", aItems[0], 1, true);
-		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "There should be 12 kpis now");
-		assert.equal(this.oHeaderContainer.indexOfAggregation("items", aItems[0]), 1, "The inserted item should be on second position now");
-		assert.equal(this.oHeaderContainer._callMethodInManagedObject("indexOfAggregation", "items", aItems[0]), 1, "The inserted kpi should be on second position now");
-		this.oHeaderContainer.removeAllAggregation("items", true);
-		assert.equal(this.oHeaderContainer.getAggregation("items"), undefined, "All items should be removed");
+		assert.equal(this.oHeaderContainer.getAggregation("content").length, 4, "The function should return 12 content");
+		var aContent = this.oHeaderContainer.getAggregation("content");
+		assert.equal(this.oHeaderContainer.indexOfAggregation("content", aContent[0]), 0, "Index of the first content aggregation should be 0");
+		this.oHeaderContainer.removeAggregation("content", aContent[0], true);
+		assert.equal(this.oHeaderContainer.getAggregation("content").length, 3, "There should be 11 contents now");
+		this.oHeaderContainer.addAggregation("content", aContent[0], true);
+		assert.equal(this.oHeaderContainer.getAggregation("content").length, 4, "There should be 12 contents now");
+		this.oHeaderContainer.removeAggregation("content", aContent[0], true);
+		this.oHeaderContainer.insertAggregation("content", aContent[0], 1, true);
+		assert.equal(this.oHeaderContainer.getAggregation("content").length, 4, "There should be 12 kpis now");
+		assert.equal(this.oHeaderContainer.indexOfAggregation("content", aContent[0]), 1, "The inserted content should be on second position now");
+		assert.equal(this.oHeaderContainer._callMethodInManagedObject("indexOfAggregation", "content", aContent[0]), 1, "The inserted kpi should be on second position now");
+		this.oHeaderContainer.removeAllAggregation("content", true);
+		assert.equal(this.oHeaderContainer.getAggregation("content"), undefined, "All content should be removed");
 	});
 
 	QUnit.module("Wrapping and unwrapping HeaderContainerItemContainer", {
@@ -357,7 +357,7 @@ jQuery.sap.initMobile();
 			this.oBox2 = new sap.m.FlexBox("box2");
 			this.oBox3 = new sap.m.FlexBox("box3");
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
-				items : [
+				content : [
 					this.oBox0
 				]
 			});
@@ -378,76 +378,74 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("HeaderContainer addItem is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer addContent is properly overwritten", function(assert) {
 		//Act
-		this.oHeaderContainer.addItem(this.oBox1);
+		this.oHeaderContainer.addContent(this.oBox1);
 		//Assert
-		assert.strictEqual(this.oHeaderContainer.getAggregation("items").length, 2, "HeaderContainer returns 2 items also if called via getAggregation");
-		assert.strictEqual(this.oHeaderContainer.getItems().length, 2, "HeaderContainer has 2 items");
-		assert.equal(this.oHeaderContainer.getAggregation("items")[0], this.oBox0, "Unwrapping has been done correctly");
-		assert.equal(this.oHeaderContainer.getItems()[1], this.oBox1, "Unwrapping has been done correctly");
+		assert.strictEqual(this.oHeaderContainer.getAggregation("content").length, 2, "HeaderContainer returns 2 contents also if called via getAggregation");
+		assert.strictEqual(this.oHeaderContainer.getContent().length, 2, "HeaderContainer has 2 contents");
+		assert.equal(this.oHeaderContainer.getAggregation("content")[0], this.oBox0, "Unwrapping has been done correctly");
+		assert.equal(this.oHeaderContainer.getContent()[1], this.oBox1, "Unwrapping has been done correctly");
 	});
 
-	QUnit.test("HeaderContainer destroyItems is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer destroyContent is properly overwritten", function(assert) {
 		//Arrange
-		var sItemId = this.oBox1.getId();
-		this.oHeaderContainer.addItem(this.oBox1);
+		var sContentId = this.oBox1.getId();
+		this.oHeaderContainer.addContent(this.oBox1);
 		//Act
-		this.oHeaderContainer.destroyItems();
+		this.oHeaderContainer.destroyContent();
 		//Assert
-		assert.strictEqual(this.oHeaderContainer.getItems().length, 0, "Items aggregation has been removed");
-		assert.notOk(sap.ui.getCore().byId(sItemId), "The item control has been destroyed");
+		assert.strictEqual(this.oHeaderContainer.getContent().length, 0, "Content aggregation has been removed");
+		assert.notOk(sap.ui.getCore().byId(sContentId), "The content control has been destroyed");
 	});
 
-	QUnit.test("HeaderContainer removeItem is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer removeContent is properly overwritten", function(assert) {
 		//Arrange
-		var sItemId = this.oBox1.getId();
-		this.oHeaderContainer.addItem(this.oBox1);
-		this.oHeaderContainer.addItem(this.oBox2);
+		this.oHeaderContainer.addContent(this.oBox1);
+		this.oHeaderContainer.addContent(this.oBox2);
 		//Act
-		var oRemovedItem = this.oHeaderContainer.removeItem(this.oBox1);
+		var oRemovedContent = this.oHeaderContainer.removeContent(this.oBox1);
 		//Assert
-		assert.strictEqual(this.oHeaderContainer.getItems().length, 2, "Items have been properly removed from the HeaderContainer");
-		assert.strictEqual(this.oBox1, oRemovedItem, "Correct item has been returned from the removeAggregation");
-		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox1), -1, "Item has been deleted from aggregation ");
+		assert.strictEqual(this.oHeaderContainer.getContent().length, 2, "Content has been properly removed from the HeaderContainer");
+		assert.strictEqual(this.oBox1, oRemovedContent, "Correct content has been returned from the removeAggregation");
+		assert.strictEqual(this.oHeaderContainer.indexOfContent(this.oBox1), -1, "Content has been deleted from aggregation ");
 	});
 
-	QUnit.test("HeaderContainer removeAllItems is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer removeAllContent is properly overwritten", function(assert) {
 		//Arrange
-		var sItemId = this.oBox1.getId();
-		this.oHeaderContainer.addItem(this.oBox1);
-		this.oHeaderContainer.addItem(this.oBox2);
+		this.oHeaderContainer.addContent(this.oBox1);
+		this.oHeaderContainer.addContent(this.oBox2);
 		sap.ui.getCore().applyChanges();
 		//Act
-		var aRemovedItems = this.oHeaderContainer.removeAllItems();
+		var aRemovedContent = this.oHeaderContainer.removeAllContent();
 		//Assert
-		assert.strictEqual(this.oHeaderContainer.getItems().length, 0, "Items aggregation has been removed from the HeaderContainer");
-		assert.strictEqual(aRemovedItems.length, 3, "Items aggregation has been removed from the HeaderContainer");
-		assert.strictEqual(this.oBox1, aRemovedItems[1], "Correct item has been returned from the removeAggregation");
-		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox1), -1, "Item has been deleted from aggregation ");
-		assert.strictEqual(this.oHeaderContainer.indexOfItem(this.oBox2), -1, "Item has been deleted from aggregation ");
+		assert.strictEqual(this.oHeaderContainer.getContent().length, 0, "Content aggregation has been removed from the HeaderContainer");
+		assert.strictEqual(aRemovedContent.length, 3, "Content aggregation has been removed from the HeaderContainer");
+		assert.strictEqual(this.oBox1, aRemovedContent[1], "Correct content has been returned from the removeAggregation");
+		assert.strictEqual(this.oHeaderContainer.indexOfContent(this.oBox1), -1, "Content has been deleted from aggregation ");
+		assert.strictEqual(this.oHeaderContainer.indexOfContent(this.oBox2), -1, "Content has been deleted from aggregation ");
 	});
 
-	QUnit.test("HeaderContainer insertItem is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer insertContent is properly overwritten", function(assert) {
 		//Arrange
-		var sItemId = this.oBox3.getId();
-		this.oHeaderContainer.addItem(this.oBox1);
-		this.oHeaderContainer.addItem(this.oBox2);
+		var sContentId = this.oBox3.getId();
+		this.oHeaderContainer.addContent(this.oBox1);
+		this.oHeaderContainer.addContent(this.oBox2);
 		//Act
-		this.oHeaderContainer.insertItem(this.oBox3, 1);
+		this.oHeaderContainer.insertContent(this.oBox3, 1);
 		//Assert
-		assert.strictEqual(this.oHeaderContainer.getItems()[1].getId(), sItemId, "The control has been inserted on correct place");
+		assert.strictEqual(this.oHeaderContainer.getContent()[1].getId(), sContentId, "The control has been inserted on correct place");
 	});
 
-	QUnit.test("HeaderContainer indexOfItem is properly overwritten", function(assert) {
+	QUnit.test("HeaderContainer indexOfContent is properly overwritten", function(assert) {
 		//Arrange
-		this.oHeaderContainer.addItem(this.oBox1);
-		this.oHeaderContainer.addItem(this.oBox2);
-		this.oHeaderContainer.addItem(this.oBox3);
+		this.oHeaderContainer.addContent(this.oBox1);
+		this.oHeaderContainer.addContent(this.oBox2);
+		this.oHeaderContainer.addContent(this.oBox3);
 		//Act
-		var iIndexOfItem = this.oHeaderContainer.indexOfItem(this.oBox3);
+		var iIndexOfContent = this.oHeaderContainer.indexOfContent(this.oBox3);
 		//Assert
-		assert.strictEqual(iIndexOfItem, 3, "Correct index of Item has been returned");
+		assert.strictEqual(iIndexOfContent, 3, "The correct index of the content has been returned");
 	});
 
 	QUnit.module("Left and right arrow indicators are created on mobile devices", {

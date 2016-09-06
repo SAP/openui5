@@ -1182,7 +1182,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
 					return !!oIconTabHeader.getItems().length;
 				}
-			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer" || oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer") {
+				return !!oHeaderContainer.getContent().length;
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
 				return !!oHeaderContainer.getItems().length;
 			}
 		}

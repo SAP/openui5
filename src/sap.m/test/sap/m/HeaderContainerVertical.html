@@ -82,7 +82,7 @@
 				oLayout.addContent(oNumericContent);
 			} else if (!aContent[i].type) {
 				var oLabel = new sap.m.Label({
-					text : "{" + oContext.sPath + "/content/" + i + "/value}",
+					text : "{" + oContext.sPath + "/content/" + i + "/value}"
 				});
 				oLayout.insertContent(oLabel, 0);
 			}
@@ -96,7 +96,7 @@
 		height : "{/height}",
 		width : "{/width}",
 		orientation : "Vertical",
-		items : {
+		content : {
 			path : "/items",
 			factory : fnContentFactory
 		}
