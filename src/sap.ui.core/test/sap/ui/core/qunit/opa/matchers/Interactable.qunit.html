@@ -37,7 +37,9 @@
 					'sap/m/Dialog',
 					'sap/m/Toolbar',
 					'sap/ui/test/opaQunit',
-					'sap/ui/test/Opa5'
+					'sap/ui/test/Opa5',
+					'sap/ui/test/launchers/iFrameLauncher',
+					'sap/ui/test/_LogCollector'
 				], function (Interactable,
 							 $,
 							 Button,
@@ -47,7 +49,9 @@
 							 Dialog,
 							 Toolbar,
 							 opaTest,
-			 				 Opa5) {
+			 				 Opa5,
+							 iFrameLauncher,
+							 _LogCollector) {
 					"use strict";
 
 					[NavContainer, App].forEach(function (fnConstructor) {
@@ -119,10 +123,13 @@
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
 							// Arrange
+							var oLogCollector = _LogCollector.getInstance();
 							var fnStart = assert.async();
 
+							oLogCollector.getAndClearLog();
 							this.oNavContainer.to(this.oSecondPage);
 							var bInitialPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oInitialPageButton);
+							var sLogs = oLogCollector.getAndClearLog();
 							var bSecondPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oSecondPageButton);
 
 							this.oNavContainer.attachAfterNavigate(function () {
@@ -134,8 +141,7 @@
 								assert.ok(!bInitialPageButtonResultAfterNavigationFinished, "Control is matching");
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
-
-								sinon.assert.calledWith(this.oSpy,  sinon.match(/that is currently navigating/));
+								assert.strictEqual(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test._autoWaiter");
 								fnStart();
 							}, this);
 						});
@@ -252,8 +258,11 @@
 						// Squeeze between the rendering and the invalidation
 						setTimeout(function () {
 							// Act
+							var oLogCollector = _LogCollector.getInstance();
+							oLogCollector.getAndClearLog();
 							assert.ok(!this.oInteractable.isMatching(oButton), "No match because the button was invalidated");
-							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/));
+							var sLog = oLogCollector.getAndClearLog();
+							assert.strictEqual(sLog, "The UI needs rerendering -  sap.ui.test._autoWaiter");
 							fnTimeoutDone();
 						}.bind(this), 0);
 
@@ -262,8 +271,11 @@
 
 						this.oButton.addEventDelegate({
 							onAfterRendering : function() {
-								assert.ok(this.oInteractable.isMatching(oButton), "Match because the button was rendered again");
-								fnAfterRenderingDone();
+								// the UI is ready immediately after rendering
+								setTimeout(function () {
+									assert.ok(this.oInteractable.isMatching(oButton), "Match because the button was rendered again");
+									fnAfterRenderingDone();
+								}.bind(this), 0);
 							}.bind(this)
 						})
 					});
@@ -399,13 +411,37 @@
 							}
 						});
 
-
 						oOpa.waitFor({
 							viewName: "myView",
 							id: "myButton",
 							actions: function () {
 								Opa5.assert.ok(true, "there was no open XHR");
 								oXHR.restore();
+							}
+						});
+					});
+
+					opaTest("Should wait for navigating NavContainers in an IFrame", function (oOpa) {
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myApp",
+							success: function (oApp) {
+								oOpa.waitFor({
+									viewName: "myView",
+									id: "buttonOutsideOfTheApp",
+									success: function (oButton) {
+										var oInteractable = new Interactable();
+										var bIsMatching = oInteractable.isMatching(oButton);
+										Opa5.assert.ok(bIsMatching, "there is no Navigation");
+
+										oApp.to(oApp.getPages()[1].getId());
+										bIsMatching = oInteractable.isMatching(oButton);
+										Opa5.assert.ok(!bIsMatching, "there is a Navigation");
+
+										var oAutoWaiter = iFrameLauncher._getAutoWaiter();
+										Opa5.assert.ok(oAutoWaiter.hasToWait(), "the auto waiter detected the navigation");
+									}
+								});
 							}
 						});
 
