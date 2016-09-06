@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Behavior"
 				},
 				/**
-				 * If set to true, shows dividers between scrollable items.
+				 * If set to true, it shows dividers between the different content controls.
 				 */
 				showDividers : {
 					type : "boolean",
@@ -80,7 +80,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Appearance"
 				},
 				/**
-				 * The orientation of the HeaderContainer.
+				 * The orientation of the HeaderContainer. There are two orientation modes: horizontal and vertical. In horizontal mode
+				 * the content controls are displayed next to each other, in vertical mode the content controls are displayed
+				 * on top of each other.
 				 */
 				orientation : {
 					type : "sap.ui.core.Orientation",
