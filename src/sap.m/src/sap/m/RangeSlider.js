@@ -676,31 +676,6 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
         };
 
-        /**
-         * @param {jQuery.Event} oEvent The event object.
-         * @override
-         */
-        RangeSlider.prototype.onfocusout = function (oEvent) {
-            var sCSSClass = this.getRenderer().CSS_CLASS,
-                bInputTooltips = this.getInputsAsTooltips();
-
-            if (bInputTooltips && jQuery.contains(this.getDomRef(),oEvent.relatedTarget)) {
-                return;
-            }
-
-            this.$("TooltipsContainer").removeClass(sCSSClass + "HandleTooltipsShow");
-        };
-
-
-        /**
-         * @param {Object} oParam The new value passed in the event.
-         * @override
-         */
-        RangeSlider.prototype._fireChangeAndLiveChange = function(oParam) {
-            this.fireChange(oParam);
-            this.fireLiveChange(oParam);
-        };
-
         /* ----------------------------------------------------------- */
         /* Keyboard handling                                           */
         /* ----------------------------------------------------------- */
