@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		title="Sorting and Filtering of Items"
+		confirm="onViewSettingsConfirm">
+		<sortItems>
+			<ViewSettingsItem text="File Name" key="fileName" />
+			<ViewSettingsItem text="Uploaded By" key="uploadedBy" />
+			<ViewSettingsItem text="File Size" key="fileSize" />
+			<ViewSettingsItem text="Status" key="status" />
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem
+				text="File Size"
+				key="fileSize"
+				multiSelect="true">
+				<items>
+					<ViewSettingsItem text="Less than 100 KB" key="fileSize___LT___102400___X" />
+					<ViewSettingsItem text="Between 100 KB and 1 MB" key="fileSize___BT___102400___1048576" />
+					<ViewSettingsItem text="More Than 1 MB" key="fileSize___GT___1048576___X" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem
+				text="Version"
+				key="version"
+				multiSelect="true">
+				<items>
+					<ViewSettingsItem text="1" key="version___EQ___1___X" />
+					<ViewSettingsItem text="2" key="version___EQ___2___X" />
+					<ViewSettingsItem text="Higher Than 2" key="version___GT___2___X" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem
+				text="Status"
+				key="status"
+				multiSelect="true">
+				<items>
+					<ViewSettingsItem text="None" key="status___EQ___None___X" />
+					<ViewSettingsItem text="Error" key="status___EQ___Error___X" />
+					<ViewSettingsItem text="Warning" key="status___EQ___Warning___X" />
+					<ViewSettingsItem text="Success" key="status___EQ___Success___X" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>
