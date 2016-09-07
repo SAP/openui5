@@ -727,6 +727,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		},
 
 		/*
+		 * Enables debugging for the extension
+		 */
+		_debug : function() {
+			this._ExtensionHelper = ExtensionHelper;
+			this._ACCInfoHelper = ACCInfoHelper;
+		},
+
+		/*
 		 * Provide protected access for TableACCRenderExtension
 		 * @see ExtensionHelper.getAriaAttributesFor
 		 */
