@@ -80,11 +80,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
 		var that = this;
 
+		["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal"].forEach(function (sClass){
+			that.removeStyleClass(sClass);
+		});
+
 		// validation of fPercentValue
 		if (!isValidPercentValue(fPercentValue)) {
 			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
 			fPercentValue = 0;
-			this.$().addClass("sapMPIValueMin");
+			this.addStyleClass("sapMPIValueMin");
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
@@ -93,14 +97,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// needed for the rounded shape at the end
 			if (fPercentValue === 100) {
-				this.$().addClass("sapMPIValueMax");
-				this.$().removeClass("sapMPIValueMin");
+				this.addStyleClass("sapMPIValueMax");
 			} else if (fPercentValue === 0) {
-				this.$().addClass("sapMPIValueMin");
-				this.$().removeClass("sapMPIValueMax");
+				this.addStyleClass("sapMPIValueMin");
 			} else {
-				this.$().removeClass("sapMPIValueMin");
-				this.$().removeClass("sapMPIValueMax");
+				this.addStyleClass("sapMPIValueNormal");
 			}
 
 			this.$().addClass("sapMPIAnimate")
