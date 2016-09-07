@@ -3,6 +3,23 @@
 /* Belize theme                       */
 /* ================================== */
 
+/*ToDo :The hover state change should have 200ms transition time*/
+.sapMGT.sapMGTLineMode:hover {
+	background-color: fade(@sapUiShellHoverBackground, 10);
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	color: @sapUiShellTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
 .sapMGTHdrTxt > .sapMText {
 	color: @sapUiTileTitleTextColor;
 	font-weight: normal;
