@@ -2632,9 +2632,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
-		var $colHeaderContainer = $this.find(".sapUiTableColHdr");
-		var $colHdrScr = $this.find(".sapUiTableColHdrScr");
-		var $cols = $colHeaderContainer.find(".sapUiTableCol");
+		var $columns = $this.find(".sapUiTableColHdr .sapUiTableCol");
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		this._aTableHeaders = $tableHeaders;
 
@@ -2702,7 +2700,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var that = this;
 		// Map target column header divs to corresponding source table header.
-		$cols.each(function(iIndex, oElement) {
+		$columns.each(function(iIndex, oElement) {
 			var iColIndex = parseInt(oElement.getAttribute("data-sap-ui-colindex"), 10);
 			var mHeader = mHeaders[iColIndex];
 			if (mHeader) {
@@ -2734,7 +2732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!bHasColHdrHeight) {
 			// Height of one row within the header
 			// avoid half pixels
-			$cols.each(function(index, item) {
+			$columns.each(function(index, item) {
 				item.style.height = oTableSizes.columnRowOuterHeight + "px";
 			});
 
@@ -2745,7 +2743,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Sync width of content scroll area to header scroll area
-		$colHdrScr.each(function(index, item) {
+		$this.find(".sapUiTableColHdrScr").each(function(index, item) {
 			item.style.width = oTableSizes.tableCtrlScrWidth + "px";
 		});
 	};
