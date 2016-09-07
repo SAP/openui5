@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
+	function(TileRenderer, LoadState) {
 	"use strict";
 
 	/**
@@ -18,12 +19,29 @@ sap.ui.define([], function() {
 	 * @param {sap.m.GenericTile} oControl the control to be rendered
 	 */
 	GenericTileLineModeRenderer.render = function(oRm, oControl) {
+		var sTooltipText = oControl._getTooltipText();
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMGT");
 		oRm.addClass("sapMGTLineMode");
+
+		if (oControl.getState() !== LoadState.Disabled) {
+			oRm.addClass("sapMPointer");
+			oRm.writeAttribute("tabindex", "0");
+		} else {
+			oRm.addClass("sapMGTDisabled");
+		}
+
 		oRm.writeClasses();
 		oRm.write(">");
+
+		if (oControl.getState() !== LoadState.Loaded) {
+			TileRenderer._renderStateOverlay(oRm, oControl, sTooltipText);
+		} else {
+			TileRenderer._renderHoverOverlay(oRm, oControl);
+		}
+		TileRenderer._renderFocusDiv(oRm, oControl);
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrTxt");
@@ -31,7 +49,7 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("id", oControl.getId() + "-hdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl._oTitle.getText());
-		oRm.write("</div>");
+		oRm.write("</div>"); //.sapMGTHdrTxt
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTSubHdrTxt");
@@ -39,9 +57,9 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getSubheader());
-		oRm.write("</div>");
+		oRm.write("</div>"); //.sapMGTSubHdrTxt
 
-		oRm.write("</div>");
+		oRm.write("</div>"); //.sapMGT
 	};
 
 	return GenericTileLineModeRenderer;

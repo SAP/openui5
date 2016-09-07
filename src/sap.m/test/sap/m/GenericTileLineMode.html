@@ -85,7 +85,8 @@
 						new sap.m.Button({
 							text: "Repeat Header",
 							press: function() {
-								oModel.setProperty(context.getPath("header"), context.getObject().header.repeat(parseInt(window.prompt("Times", 1), 10) || 1));
+							    var iRepeat = parseInt(window.prompt("Times", 1)) || 1;
+								oModel.setProperty(context.getPath("header"), (new Array(iRepeat).join(context.getObject().header)));
 								oModel.refresh(true);
 							}
 						}),

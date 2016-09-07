@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([ "sap/m/LoadState" ],
+	function(LoadState) {
 	"use strict";
 
 	/**
@@ -37,7 +38,7 @@ sap.ui.define([], function() {
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
-		if (oControl.getState() !== sap.m.LoadState.Disabled) {
+		if (oControl.getState() !== LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
@@ -53,7 +54,7 @@ sap.ui.define([], function() {
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (oControl.getState() !== sap.m.LoadState.Loaded) {
+		if (oControl.getState() !== LoadState.Loaded) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		} else {
 			this._renderHoverOverlay(oRm, oControl);
@@ -115,11 +116,11 @@ sap.ui.define([], function() {
 		}
 		oRm.write(">");
 		switch (sState) {
-			case sap.m.LoadState.Loading :
-				oControl._oBusy.setBusy(sState == sap.m.LoadState.Loading);
+			case LoadState.Loading :
+				oControl._oBusy.setBusy(sState == LoadState.Loading);
 				oRm.renderControl(oControl._oBusy);
 				break;
-			case sap.m.LoadState.Failed :
+			case LoadState.Failed :
 				oRm.write("<div");
 				oRm.writeAttribute("id", oControl.getId() + "-failed-ftr");
 				oRm.addClass("sapMGenericTileFtrFld");

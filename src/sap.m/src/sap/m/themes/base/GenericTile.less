@@ -13,7 +13,7 @@
 }
 
 .sapMGT.sapMGTLineMode {
-	height: 2.5rem;
+	min-height: 2.5rem;
 	min-width: 2rem;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
@@ -22,11 +22,14 @@
 	box-shadow: none;
 	background-color: transparent;
 }
-
+.sapMGTLineMode .sapMGTHdrTxt {
+	padding-right: 0.5rem;
+}
 .sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
 	word-break: normal;
 	display: inline;
 	line-height: 2.5rem;
+	max-height: none !important;
 }
 
 .sapMGT:focus {
@@ -160,7 +163,7 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 	max-height: 5rem;
 }
 
-.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2){
 	max-height: 2.5rem;
 }
 
