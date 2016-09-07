@@ -27,6 +27,13 @@ QUnit.test("init()", function(assert) {
 	assert.ok(iCount == 1, "Scroll Delegate registered");
 });
 
+QUnit.test("_debug()", function(assert) {
+	var oExtension = oTable._getKeyboardExtension();
+	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	oExtension._debug();
+	// TBD: assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+});
+
 
 QUnit.module("Destruction", {
 	setup: function() {
