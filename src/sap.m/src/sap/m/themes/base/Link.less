@@ -54,6 +54,12 @@
 	.sapUiCondensedTableCellContent; /* see shared.css */
 }
 
+/* Global focus offset */
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -1px;
+}
+
+/* Link focus offset in sap.ui.table.* tables */
 html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline-offset: -0.125rem;
 }
