@@ -1150,12 +1150,8 @@ sap.ui.define([
 		}
 
 		// In case null is passed as the value return the default value, either from the property or from the type
-		if (oValue === null || oValue === undefined) {
-			if (oProperty.defaultValue !== null) {
-				oValue = oProperty.defaultValue;
-			} else {
-				oValue = oType.getDefaultValue();
-			}
+		if (oValue == null /* null or undefined */ ) {
+			oValue = oProperty.getDefaultValue();
 		} else if (oType instanceof DataType) {
 			// Implicit casting for string only, other types are causing errors
 
