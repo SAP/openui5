@@ -1,0 +1,363 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides helper sap.ui.table.TableUtils.
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
+	function(jQuery, Element, library) {
+		"use strict";
+
+		/**
+		 * Static collection of utility functions related to column of sap.ui.table.Table, ...
+		 *
+		 * Note: Do not access the function of this helper directly but via <code>sap.ui.table.TableUtils.ColumnUtils...</code>
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 * @namespace
+		 * @name sap.ui.table.TableColumnUtils
+		 * @private
+		 */
+		var TableColumnUtils = {
+
+			TableUtils : null, // Avoid cyclic dependency. Will be filled by TableUtils
+
+			/**
+			 * Collects and updates the column info object when it's not yet defined
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 * @private
+			 */
+			initColumnUtils : function(oTable) {
+				if (!oTable._oColumnInfo) {
+					TableColumnUtils.updateColumnInfo(oTable, TableColumnUtils.collectColumnInfo(oTable));
+				}
+			},
+
+			/**
+			 * Updates the column info object
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 * @param {ColumnInfo} oColumnInfo column info object
+			 *
+			 * @type {Object} ColumnInfo
+			 * @type {int} ColumnInfo.columnCount Number of columns in the columns aggregation
+			 * @type {int} ColumnInfo.visibleColumnCount Number of columns which should be rendered
+			 * @type {ColumnMap} ColumnInfo.columnMap Map of detailed column information
+			 */
+			updateColumnInfo : function(oTable, oColumnInfo) {
+				oTable._oColumnInfo = oColumnInfo;
+			},
+
+			/**
+			 * Collects and returns column info
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 *
+			 * @returns {ColumnInfo} Map of detailed column information
+			 */
+			collectColumnInfo : function(oTable) {
+				return {
+					columnCount: oTable.getColumns().length,
+					visibleColumnCount: TableColumnUtils.TableUtils.getVisibleColumnCount(oTable),
+					columnMap : TableColumnUtils._getColumnMap(oTable)
+				};
+			},
+
+			/**
+			 * Collects and returns information about the current column configuration of the table
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 *
+			 * @type {Object} ColumnMapItemLevelInfo
+			 * @type {sap.ui.table.Column[]} ColumnMapItemLevelInfo.spannedColumns Array of columns which are spanned by the source column
+			 *
+			 * @type {Object} ColumnMapItemParents
+			 * @type {sap.ui.table.Column} ColumnMapItemParents.column Column reference
+			 * @type {int} ColumnMapItemParents.level Level as which the parent resides
+			 *
+			 * @type {Object} ColumnMapItem
+			 * @type {string} oColumnMapItem.id Column ID
+			 * @type {sap.ui.table.Column} oColumnManItem.column Column instance
+			 * @type {ColumnMapItemLevelInfo[]} oColumnMapItem.levelInfo Array of level information. Each index represents one level of headers
+			 * @type {ColumnMapItemParents[]} oColumnMapItem.parents Array of parents of the source column
+			 *
+			 * @type {Object.<string, ColumnMapItem>} ColumnMap
+			 * @type {ColumnMapItem} ColumnMap.<columnID> Object with information about column where the column ID is the key
+			 *
+			 * @returns {ColumnMap} Map of column information where the key is the column ID
+			 * @private
+			 */
+			_getColumnMap : function(oTable) {
+				var i;
+				var oColumn;
+				var oColumnMapItem = {};
+				var oColumnMap = {};
+				var aColumns = oTable.getColumns();
+
+				var iMaxLevel = TableColumnUtils.TableUtils.getHeaderRowCount(oTable);
+
+				var oParentReferences = {};
+
+				for (var iColumnIndex = 0; iColumnIndex < aColumns.length; iColumnIndex++) {
+					oColumn = aColumns[iColumnIndex];
+					oColumnMapItem = {};
+					oColumnMapItem.id = oColumn.getId();
+					oColumnMapItem.column = oColumn;
+					oColumnMapItem.levelInfo = [];
+					oColumnMapItem.parents = [];
+
+					for (var iLevel = 0; iLevel < iMaxLevel; iLevel++) {
+						oColumnMapItem.levelInfo[iLevel] = {};
+						oColumnMapItem.levelInfo[iLevel].spannedColumns = [];
+
+						var iHeaderSpan = TableColumnUtils.getHeaderSpan(oColumn, iLevel);
+						// collect columns which are spanned by the current column
+						for (i = 1; i < iHeaderSpan; i++) {
+							var oSpannedColumn = aColumns[iColumnIndex + i];
+							if (oSpannedColumn) {
+								var sPannedColumnId = oSpannedColumn.getId();
+								oColumnMapItem.levelInfo[iLevel].spannedColumns.push(aColumns[iColumnIndex + i]);
+								if (!oParentReferences[sPannedColumnId]) {
+									oParentReferences[sPannedColumnId] = [];
+								}
+								oParentReferences[sPannedColumnId].push({column: oColumn, level: iLevel});
+							}
+						}
+					}
+
+					oColumnMap[oColumnMapItem.id] = oColumnMapItem;
+				}
+
+				var aColumnIds = Object.keys(oParentReferences);
+				for (i = 0; i < aColumnIds.length; i++) {
+					var sColumnId = aColumnIds[i];
+					oColumnMap[sColumnId].parents = oParentReferences[sColumnId];
+				}
+
+				return oColumnMap;
+			},
+
+			/**
+			 * Get the column map item for the column identified by <code>sColumnId</code>
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 * @param {string} sColumnId ID of the column
+			 * @returns {ColumnMapItem|undefined} Column map item with detailed column information
+			 * @private
+			 */
+			_getColumnMapItem : function (oTable, sColumnId) {
+				TableColumnUtils.initColumnUtils(oTable);
+				var oSourceColumnMapItem = oTable._oColumnInfo.columnMap[sColumnId];
+				if (!oSourceColumnMapItem) {
+					jQuery.sap.log.error("Column with ID '" + sColumnId + "' not found", oTable);
+				} else {
+					return oSourceColumnMapItem;
+				}
+			},
+
+			/**
+			 * Returns an array of the column information about all columns which span the column identified by sColumnId.
+			 * If there is no "parent", it returns undefined
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
+			 * @param {int} [iLevel] level where the parent is looked up
+			 *
+			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @private
+			 */
+			getParentSpannedColumns : function(oTable, sColumnId, iLevel) {
+				var oColumnMapItem = TableColumnUtils._getColumnMapItem(oTable, sColumnId);
+				if (!oColumnMapItem) {
+					return undefined;
+				}
+
+				var aParents = [];
+				for (var i = 0; i < oColumnMapItem.parents.length; i++) {
+					var oParent = oColumnMapItem.parents[i];
+					if (iLevel === undefined || oParent.level === iLevel) {
+						aParents.push(oParent);
+					}
+				}
+
+				return aParents;
+			},
+
+			/**
+			 * Returns an array of the column information about all columns which are spanned by the column identified by sColumnId.
+			 * If there is no "parent", it returns undefined
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
+			 * @param {int} [iLevel] level where the parent is looked up
+			 *
+			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @private
+			 */
+			getChildrenSpannedColumns : function(oTable, sColumnId, iLevel) {
+				var oColumnMapItem = TableColumnUtils._getColumnMapItem(oTable, sColumnId);
+				if (!oColumnMapItem) {
+					return undefined;
+				}
+
+				var aChildren = [];
+				var iEnd;
+				if (iLevel === undefined) {
+					iEnd = oColumnMapItem.levelInfo.length;
+				} else {
+					iEnd = iLevel + 1;
+				}
+
+				for (var i = iLevel || 0; i < iEnd; i++) {
+					var oLevelInfo = oColumnMapItem.levelInfo[i];
+					for (var j = 0; j < oLevelInfo.spannedColumns.length; j++) {
+						aChildren.push({column: oLevelInfo.spannedColumns[j], level: i});
+					}
+				}
+
+				return aChildren;
+			},
+
+			/**
+			 * Returns the header span of a given column. If <code>iLevel</code> is passed, the header span of that
+			 * header row is returned if there is any defined, otherwise <code>iLevel</code> is defaulted by 0. If there is no header span for the passed level, the first
+			 * span is returned.
+			 *
+			 * @param {sap.ui.table.Column} oColumn Column of which the header span shall be returned
+			 * @param {int} [iLevel=0] Zero-based index of the header span for multi-labels
+			 * @returns {int} Single header span or array of header spans if no level provided
+			 * @private
+			 */
+			getHeaderSpan : function(oColumn, iLevel) {
+				var vHeaderSpans = oColumn.getHeaderSpan();
+				var iHeaderSpan;
+				iLevel = iLevel || 0;
+
+				if (jQuery.isArray(vHeaderSpans)) {
+					if (!vHeaderSpans[iLevel]) {
+						iLevel = 0;
+					}
+					iHeaderSpan = parseInt(vHeaderSpans[iLevel], 10);
+				} else {
+					iHeaderSpan = parseInt(vHeaderSpans, 10);
+				}
+
+				return Math.max(iHeaderSpan, 1);
+			},
+
+			/**
+			 * Returns the highest header span of a column across all header levels
+			 * @param {sap.ui.table.Column} oColumn column of which the max header span shall be determined
+			 * @returns {int} Highest header span
+			 * @private
+			 */
+			getMaxHeaderSpan : function(oColumn) {
+				var iMaxHeaderSpan = 1;
+				var vHeaderSpans = oColumn.getHeaderSpan();
+				if (!jQuery.isArray(vHeaderSpans)) {
+					vHeaderSpans = [vHeaderSpans];
+				}
+
+				for (var i = 0; i < vHeaderSpans.length; i++) {
+					iMaxHeaderSpan = Math.max(iMaxHeaderSpan, parseInt(vHeaderSpans[i], 10));
+				}
+
+				return iMaxHeaderSpan;
+			},
+
+			/**
+			 * Returns true if the column has a higher header span than 1
+			 * @param {sap.ui.table.Column} oColumn column of the table
+			 * @returns {boolean} True if the column has a higher header span than 1
+			 * @private
+			 */
+			hasHeaderSpan : function(oColumn) {
+				return TableColumnUtils.getMaxHeaderSpan(oColumn) > 1;
+			},
+
+			/**
+			 * Returns a map of the column boundaries for the column identified by <code>sColumnId</code>.
+			 * This function considers all overlapping spans of columns to determine the start and end indeces
+			 *
+			 * @param {sap.ui.table.Table} oTable Instance of the table
+			 * @param {string} sColumnId ID of the column
+			 * @returns {{startColumn: sap.ui.table.Column, startIndex: int, endColumn: sap.ui.table.Column, endIndex: int}|undefined} Map of column boundaries
+			 * @private
+			 */
+			getColumnBoundaries : function(oTable, sColumnId) {
+				var oColumnMapItem = TableColumnUtils._getColumnMapItem(oTable, sColumnId);
+				if (!oColumnMapItem) {
+					return undefined;
+				}
+
+				var mColumns = {};
+				if (sColumnId) {
+					// initialize the column map with the start column for which the boundaries shall be determined
+					mColumns[sColumnId] = oColumnMapItem.column;
+				}
+
+				var fnTraverseColumnRelations = function (mColumns, aNewRelations) {
+					var oColumn;
+					var i;
+					var aDirectRelations = [];
+					aNewRelations = aNewRelations || [];
+
+					// get the direct relations for all collected columns
+					// columns have a logical relation with each other, if they are spanned by other column headers or
+					// of they by itself are spanning other columns. Since those columns are logically tightly coupled,
+					// they can be seen as a immutable block of columns.
+					for (i = 0; i < aNewRelations.length; i++) {
+						oColumn = mColumns[aNewRelations[i]];
+						aDirectRelations = aDirectRelations.concat(TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));
+						aDirectRelations = aDirectRelations.concat(TableColumnUtils.getChildrenSpannedColumns(oTable, oColumn.getId()));
+					}
+
+					aNewRelations = [];
+					for (i = 0; i < aDirectRelations.length; i++) {
+						oColumn = aDirectRelations[i].column;
+						var sColumnId = oColumn.getId();
+						if (!mColumns[sColumnId]) {
+							// keep track about new found relations for later recursion to avoid collecting information about
+							// already known related columns again.
+							aNewRelations.push(sColumnId);
+							mColumns[sColumnId] = oColumn;
+						}
+					}
+
+					if (aNewRelations.length > 0) {
+						// if new relations where found, another round of recursion is required to get the related columns
+						// of the new relations. Afterwards merge the result with the already known related columns
+						return fnTraverseColumnRelations(mColumns, aNewRelations);
+					} else {
+						return mColumns;
+					}
+				};
+
+				mColumns = fnTraverseColumnRelations(mColumns, [sColumnId]);
+
+				// all columns which are somehow related to each other by spanning column headers are collected now.
+				// It is time to calculate the boundaries, which is the start index and the end index in the columns aggregation
+				// of the table
+				var iColumnIndex = oTable.indexOfColumn(oColumnMapItem.column);
+				var mBoundaries = {startColumn: oColumnMapItem.column, startIndex: iColumnIndex, endColumn: oColumnMapItem.column, endIndex: -1};
+				var aColumns = oTable.getColumns();
+				var aKeys = Object.getOwnPropertyNames(mColumns);
+				for (var i = 0; i < aKeys.length; i++) {
+					var oColumn = mColumns[aKeys[i]];
+					iColumnIndex = oTable.indexOfColumn(oColumn);
+					var iHeaderSpan = TableColumnUtils.getMaxHeaderSpan(oColumn);
+					// start
+					if (iColumnIndex < mBoundaries.startIndex) {
+						mBoundaries.startIndex = iColumnIndex;
+						mBoundaries.startColumn = oColumn;
+					}
+
+					var iEndIndex = iColumnIndex + iHeaderSpan - 1;
+					// end
+					if (iEndIndex > mBoundaries.endIndex) {
+						mBoundaries.endIndex = iEndIndex;
+						mBoundaries.endColumn = aColumns[iEndIndex];
+					}
+				}
+
+				return mBoundaries;
+			}
+		};
+
+		return TableColumnUtils;
+
+	}, /* bExport= */ true);

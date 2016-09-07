@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './library'],
+	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, library) {
 	"use strict";
 
 	// shortcuts
@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	var TableUtils = {
 
 		Grouping: TableGrouping, //Make grouping utils available here
+		ColumnUtils: TableColumnUtils, //Make column utils available here
 
 		/*
  		 * Known basic cell types in the table
@@ -178,11 +179,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (!oTable.getColumnHeaderVisible()) {
 				return 0;
 			}
-			var iHeaderRows = 0;
-			jQuery.each(oTable._getVisibleColumns(), function(iIndex, oColumn) {
-				iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
-			});
-			return iHeaderRows > 0 ? iHeaderRows : 1;
+
+			var iHeaderRows = 1;
+			var aColumns = oTable.getColumns();
+			for (var i = 0; i < aColumns.length; i++) {
+				if (aColumns[i].shouldRender()) {
+					// only visible columns need to be considered. We don't invoke getVisibleColumns due to
+					// performance considerations. With several dozens of columns, it's quite costy to loop them twice.
+					iHeaderRows = Math.max(iHeaderRows,  aColumns[i].getMultiLabels().length);
+				}
+			}
+			return iHeaderRows;
 		},
 
 		/**
@@ -853,6 +860,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	TableGrouping.TableUtils = TableUtils; // Avoid cyclic dependency
+	TableColumnUtils.TableUtils = TableUtils; // Avoid cyclic dependency
 
 	return TableUtils;
 
