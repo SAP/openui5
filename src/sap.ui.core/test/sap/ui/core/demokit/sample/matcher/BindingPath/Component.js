@@ -12,7 +12,7 @@ sap.ui.define([
 			},
 			config: {
 				sample: {
-					iframe: "Opa.html",
+					iframe: "Opa.html?opaExecutionDelay=700",
 					stretch: true,
 					files: [
 						"Opa.html",

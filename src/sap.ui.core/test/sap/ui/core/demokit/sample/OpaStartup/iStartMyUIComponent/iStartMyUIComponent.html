@@ -32,6 +32,10 @@
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/matchers/AggregationFilled'
 			], function (Opa5, opaTest, AggregationFilled) {
+				Opa5.extendConfig({
+					viewNamespace : "sap.ui.sample.appUnderTest.view.",
+					autoWait : true
+				});
 
 				QUnit.module("iStartMyUIComponent");
 
@@ -48,15 +52,15 @@
 
 					// execute your tests
 					Then.waitFor({
-						viewName: "sap.ui.sample.appUnderTest.view.Main",
+						viewName: "Main",
 						id: "productList",
 						matchers: new AggregationFilled({ name: "items" }),
 						success: function () {
 							Opa5.assert.ok(true, "The component was removed");
 						}
-					}).and
-						// Removes the component again
-						.iTeardownMyUIComponent();
+					}).
+					// Removes the component again
+					and.iTeardownMyApp();
 
 				});
 				QUnit.start();
