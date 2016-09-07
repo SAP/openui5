@@ -192,14 +192,12 @@
 		test("RequiredIndicatorOk", function() {
 			ok(!l1.$().hasClass("sapUiLblReq"), "l1 has no class 'sapUiLblReq'");
 			oTextField.setRequired(true);
-			l1.invalidate(); // can we somehow detect changes in the associated control?
 			sap.ui.getCore().applyChanges();
 			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
 			l1.setRequired(true);
 			sap.ui.getCore().applyChanges();
 			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
 			oTextField.setRequired(false);
-			l1.invalidate(); // can we somehow detect changes in the associated control?
 			sap.ui.getCore().applyChanges();
 			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
 			ok(l1.$().hasClass("sapUiLblReqEnd"), "l1 has class 'sapUiLblReqEnd'");
