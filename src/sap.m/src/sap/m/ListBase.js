@@ -946,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 */
 	ListBase.prototype.getMaxItemsCount = function() {
 		var oBinding = this.getBinding("items");
-		if (oBinding) {
+		if (oBinding && oBinding.getLength) {
 			return oBinding.getLength() || 0;
 		}
 		return this.getItems(true).length;
