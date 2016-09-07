@@ -11,6 +11,13 @@
 	}
 }
 
+.sapContrast .sapMCb.sapMCbWarn .sapMCbBg,
+.sapContrast.sapMCb.sapMCbWarn .sapMCbBg {
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldWarningColor;
+	}
+}
+
 .sapMCb.sapMCbErr .sapMCbBg {
 	background-color: @sapUiFieldInvalidBackground;
 	border-color: @sapUiFieldInvalidColor;
