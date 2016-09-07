@@ -6,6 +6,23 @@
 	display: block;
 }
 
+.sapMFeedListItem .sapUiSelectable > * {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+
+	&::selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+
+	&::-moz-selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+}
+
 .sapMFeedListItemImageInactive {
 	cursor: default;
 }

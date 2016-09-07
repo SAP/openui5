@@ -91,6 +91,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			 */
 			maxCharacters : {type : "int", group : "Behavior", defaultValue : null}
 		},
+		defaultAggregation : "_text",
 		aggregations : {
 			/**
 			 * Hidden aggregation which contains the text value
