@@ -6,8 +6,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/_XHRCounter",
 	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_timeoutCounter",
 	"sap/ui/test/_opaCorePlugin"
-], function ($, _XHRCounter, _LogCollector, _opaCorePlugin) {
+], function ($, _XHRCounter, _LogCollector, _timeoutCounter, _opaCorePlugin) {
 	"use strict";
 
 	var oLogger = $.sap.log.getLogger("sap.ui.test._autoWaiter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
@@ -39,7 +40,7 @@ sap.ui.define([
 
 	return {
 		hasToWait: function () {
-			return hasNavigatingNavContainers() || _XHRCounter.hasPendingRequests() || hasPendingUIUpdates();
+			return hasNavigatingNavContainers() || _XHRCounter.hasPendingRequests() || hasPendingUIUpdates() || _timeoutCounter.hasPendingTimeouts();
 		}
 	};
 }, true);

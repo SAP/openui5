@@ -31,6 +31,9 @@ sap.ui.require([
 ], function ($, loggerInterceptor, Device) {
 	"use strict";
 
+	QUnit.test("Should not execute the test in debug mode", function (assert) {
+		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+	});
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading

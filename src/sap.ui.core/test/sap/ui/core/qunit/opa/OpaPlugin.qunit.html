@@ -30,6 +30,7 @@ sap.ui.require([
 	"sap/ui/test/OpaPlugin",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
+	'sap/ui/test/_autoWaiter',
 	"sap/ui/commons/Button",
 	"sap/ui/commons/CheckBox",
 	"sap/m/Button",
@@ -37,6 +38,7 @@ sap.ui.require([
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
+			 _autoWaiter,
 			 Button,
 			 CheckBox,
 			 MButton,
@@ -669,21 +671,33 @@ sap.ui.require([
 		}
 	});
 
-
 	QUnit.test("Should invoke the interactable matcher if interactable is true", function() {
 		// Arrange
 		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
-			fnVisibleSpy = this.spy(Visible.prototype, "isMatching");
+			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
 
 		// Act
-		this.oPlugin.getMatchingControls({
+		this.oPlugin.getFilterdControls({
 			id: "foo",
 			interactable: true
 		});
 
 		// Assert
 		sinon.assert.calledOnce(fnInteractableSpy);
-		sinon.assert.calledOnce(fnVisibleSpy);
+		sinon.assert.calledOnce(fnWaitSpy);
+	});
+
+	QUnit.test("Should invoke the autowaiter when autowait is true", function (assert) {
+		// Arrange
+		var fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+
+		// Act
+		this.oPlugin.getFilterdControls({
+			autoWait: true
+		});
+
+		// Assert
+		sinon.assert.calledOnce(fnWaitSpy);
 	});
 
 	QUnit.module("Should know if it is looking for a Control", {
