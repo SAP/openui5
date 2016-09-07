@@ -190,11 +190,24 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 				oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
 			}
 		} else {
-			// jQuery removes 'null' styles
-			if (sValue !== 0 && !sValue) {
-				oLayoutData.$().css(sPropertyPrefix + sProperty, null);
+			// Set the property on the wrapper or the control root itself
+			if (oLayoutData.isActive()) {	// Does the layout data have a DOM representation?
+				// jQuery removes 'null' styles
+				if (sValue !== 0 && !sValue) {
+					oLayoutData.$().css(sPropertyPrefix + sProperty, null);
+				} else {
+					oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+				}
 			} else {
-				oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+				// Get control root for bare item
+				if (oLayoutData.getParent()) {
+					// jQuery removes 'null' styles
+					if (sValue !== 0 && !sValue) {
+						oLayoutData.getParent().$().css(sPropertyPrefix + sProperty, null);
+					} else {
+						oLayoutData.getParent().$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+					}
+				}
 			}
 		}
 	};
