@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		// text (starting with sender)
 
 		if (bIsPhone) {
-			rm.write('<div class= "sapMFeedListItemHeader ');
+			rm.write('<div class= "sapMFeedListItemHeader sapUiSelectable ');
 			if (!!oFeedListItem.getShowIcon()) {
 				rm.write('sapMFeedListItemHasFigure ');
 			}
@@ -62,20 +62,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			}
 			rm.write('" >');
 			if (!!oFeedListItem.getSender()) {
-				rm.write('<p id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
+				rm.write('<p id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
 				rm.renderControl(oFeedListItem._getLinkSender(false));
 				rm.write('</p>');
 			}
 			if (!!oFeedListItem.getTimestamp()) {
 				// write date
-				rm.write('<p class="sapMFeedListItemTimestamp">');
+				rm.write('<p class="sapMFeedListItemTimestamp sapUiSelectable">');
 				rm.writeEscaped(oFeedListItem.getTimestamp());
 				rm.write('</p>');
 			}
 
 			rm.write('</div>');
-			rm.write('<div class="sapMFeedListItemText">');
-			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemText">');
+			rm.write('<div class="sapMFeedListItemText sapUiSelectable">');
+			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemText sapUiSelectable">');
 			if (!!oFeedListItem._checkTextIsExpandable()) {
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
@@ -85,9 +85,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('</div>');
 			if (!!oFeedListItem.getInfo()) {
 				// info
-				rm.write('<p class="sapMFeedListItemFooter">');
+				rm.write('<p class="sapMFeedListItemFooter sapUiSelectable">');
 				if (!!oFeedListItem.getInfo()) {
-					rm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfo">');
+					rm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfo sapUiSelectable">');
 					rm.writeEscaped(oFeedListItem.getInfo());
 					rm.write('</span>');
 				}
@@ -99,16 +99,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.write('sapMFeedListItemHasFigure');
 			}
 			rm.write('" >');
-			rm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText"');
+			rm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText sapUiSelectable"');
 			rm.writeAttribute("aria-hidden", true);
 			rm.write('>');
 			if (!!oFeedListItem.getSender()) {
-				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
+				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
 				rm.renderControl(oFeedListItem._getLinkSender(true));
 				rm.write(' ');
 				rm.write('</span>');
 			}
-			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString">');
+			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString sapUiSelectable">');
 			if (!!oFeedListItem._checkTextIsExpandable()) {
 				this._writeCollapsedText(rm, oFeedListItem, sMyId);
 			} else {
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('</div>');
 			if (!!oFeedListItem.getInfo() || !!oFeedListItem.getTimestamp()) {
 				// info and date
-				rm.write('<p class="sapMFeedListItemFooter">');
+				rm.write('<p class="sapMFeedListItemFooter sapUiSelectable">');
 				if (!sap.ui.getCore().getConfiguration().getRTL()) {
 					if (!!oFeedListItem.getInfo()) {
 						this._writeInfo(rm, oFeedListItem, sMyId);
@@ -184,13 +184,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 
 	FeedListItemRenderer._writeTimestamp = function(rm, oFeedListItem, sMyId) {
-		rm.write('<span id="' + sMyId + '-timestamp" class="sapMFeedListItemTimestampText">');
+		rm.write('<span id="' + sMyId + '-timestamp" class="sapMFeedListItemTimestampText sapUiSelectable">');
 		rm.writeEscaped(oFeedListItem.getTimestamp());
 		rm.write('</span>');
 	};
 
 	FeedListItemRenderer._writeInfo = function(rm, oFeedListItem, sMyId) {
-		rm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfoText">');
+		rm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfoText sapUiSelectable">');
 		rm.writeEscaped(oFeedListItem.getInfo());
 		rm.write('</span>');
 	};
