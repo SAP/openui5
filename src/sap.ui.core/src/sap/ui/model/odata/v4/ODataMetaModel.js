@@ -1011,12 +1011,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the meta data value for the given path relative to the given context (see
-	 * {@link #resolve resolve} on how this resolution happens and how slashes are inserted as a
-	 * separator). Returns a <code>Promise</code> which is resolved with the requested meta data
-	 * value or rejected with an error (only in case meta data cannot be loaded). An invalid path
-	 * leads to an <code>undefined</code> result and a warning is logged. Use
-	 * {@link #getObject getObject} for synchronous access.
+	 * Requests the meta data value for the given path relative to the given context. Returns a
+	 * <code>Promise</code> which is resolved with the requested meta data value or rejected with
+	 * an error (only in case meta data cannot be loaded). An invalid path leads to an
+	 * <code>undefined</code> result and a warning is logged. Use {@link #getObject getObject} for
+	 * synchronous access.
+	 *
+	 * A relative path is appended to the context's path separated by a forward slash("/").
+	 * A relative path starting with "@" (that is, an annotation) is appended without a separator.
+	 * Use "./" as a prefix for such a relative path to enforce a separator.
+	 *
+	 * Example:
+	 * <pre>
+	 * &lt;template:with path="/EMPLOYEES/ENTRYDATE" var="property">
+	 *   &lt;!-- /EMPLOYEES/ENTRYDATE/$Type -->
+	 *   "{property>$Type}"
+	 *
+	 *   &lt;!-- /EMPLOYEES/ENTRYDATE@com.sap.vocabularies.Common.v1.Text -->
+	 *   "{property>@com.sap.vocabularies.Common.v1.Text}"
+	 *
+	 *   &lt;!-- /EMPLOYEES/ENTRYDATE/@com.sap.vocabularies.Common.v1.Text -->
+	 *   "{property>./@com.sap.vocabularies.Common.v1.Text}"
+	 * &lt;/template:with>
+	 * </pre>
 	 *
 	 * The basic idea is that every path described in "14.2.1 Attribute Target" in specification
 	 * "OData Version 4.0 Part 3: Common Schema Definition Language" is a valid absolute path
@@ -1148,8 +1165,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   A relative or absolute path within the meta data model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path, see
-	 *   {@link #resolve resolve}
+	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {Promise}
 	 *   A promise which is resolved with the requested meta data value as soon as it is
 	 *   available
