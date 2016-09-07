@@ -617,7 +617,7 @@
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() should be 1");
 
-		assert.equal(oVsb.scrollTop, 5262, "ScrollTop can be set and read.");
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
 		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
@@ -643,7 +643,7 @@
 	test("ScrollTop on init is as expected", function(assert) {
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
-		assert.equal(oVsb.scrollTop, 5262, "ScrollTop is correct");
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop is correct");
 	});
 
 	test("ScrollTop after scrolling to last row is as expected", function(assert) {
@@ -696,7 +696,8 @@
 			setTimeout(function() {
 				var sTransformCssValue = jQuery(".sapUiTableCtrl").css("transform");
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
-				assert.equal(oVsb.scrollTop, 1000000 - oVsb.clientHeight, "ScrollTop is correct");
+				var iScrollRange = oTable._getRowCount() * oTable._getDefaultRowHeight();
+				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
 				assert.ok(sTransformCssValue.indexOf("" + (iRowHeightsDelta * -1)) > -1, "Table Correction is equal to RowHeightsDelta");
 				done();
 			}, 500);

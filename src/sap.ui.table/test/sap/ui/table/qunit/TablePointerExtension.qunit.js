@@ -75,7 +75,7 @@ QUnit.test("resize", function(assert) {
 		}
 	}
 	qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
-	assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
+	assert.equal(oTable.getVisibleRowCount(), 12, "Visible rows after resize");
 	assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
 	testAdaptations(false);
 });

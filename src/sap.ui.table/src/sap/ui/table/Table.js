@@ -645,13 +645,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		this._lastCalledUpdateRows = 0;
 		this._iBindingTimerDelay = 50;
-		this._iMaxScrollbarHeight = 1000000; // maximum px height of an element in FF/IE/Chrome
+		this._iMaxScrollbarHeight = 1000000; // maximum px height of an DOM element in FF/IE/Chrome
 		this._aRowHeights = [];
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iRowHeightsDelta = 0;
-			this._iScrollTop = 0;
-			this._iRenderedFirstVisibleRow = 0;
-		}
+		this._iRowHeightsDelta = 0;
+		this._iRenderedFirstVisibleRow = 0;
 
 		var that = this;
 
@@ -682,7 +679,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._toggleVSb();
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._adjustTablePosition(that._iScrollTop, that._aRowHeights);
+						var iScrollTop = 0;
+						var oVSb = that.getDomRef(SharedDomRef.VerticalScrollBar);
+						if (oVSb) {
+							iScrollTop = oVSb.scrollTop;
+						}
+						that._adjustTablePosition(iScrollTop, that._aRowHeights);
 					}
 				}
 
@@ -1126,7 +1128,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._resetRowHeights();
 		this._aRowHeights = this._collectRowHeights();
-		this._getDefaultRowHeight(this._aRowHeights);
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			this._iRowHeightsDelta = this._getRowHeightsDelta(this._aRowHeights);
 		}
@@ -1323,7 +1324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._adjustTablePosition = function(iScrollTop, aRowHeights) {
-		var bScrollPositionAtVirtualRange = this.getFirstVisibleRow() < this._getMaxRowIndex();
+		var bScrollPositionAtVirtualRange = iScrollTop < this._getVirtualScrollRange();
 		var bVirtualScrollingNeeded = this._getRowCount() > this.getVisibleRowCount();
 
 		// Only update table scroll simulation when table is not waiting for an update of rows
@@ -1342,10 +1343,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			if (iRowCorrection > iFirstRowHeight) {
 				iRowCorrection = null;
 			}
-		} else if (this._iRowHeightsDelta > 0) {
+		} else if (this._iRowHeightsDelta >= 0) {
 			// Correct the total amount of RowHeightsDelta over the overflow scroll area.
-			var iScrollPositionAtOverflowRange = bVirtualScrollingNeeded ? iScrollTop - this._getMaxScrollRange() : iScrollTop;
-			iRowCorrection = (this._iRowHeightsDelta / this._getScrollOverflowRange()) * iScrollPositionAtOverflowRange;
+			var iScrollPositionAtOverflowRange = bVirtualScrollingNeeded ? iScrollTop - this._getVirtualScrollRange() : iScrollTop;
+			iRowCorrection = (this._iRowHeightsDelta / this._getRowCorrectionScrollRange()) * iScrollPositionAtOverflowRange;
 		}
 
 		if (iRowCorrection != null && iRowCorrection > -1) {
@@ -1777,6 +1778,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update visualization of fixed bottom row
 		this._updateFixedBottomRows();
 		this._toggleVSb();
+		this._updateVSbRange();
 		this._bBindingLengthChanged = true;
 		// show or hide the no data container
 		if (sReason != "skipNoDataUpdate") {
@@ -2156,6 +2158,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
+	 * Updates the vertical scroll bar range (inner element height)
+	 * @private
+	 */
+	Table.prototype._updateVSbRange = function() {
+		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+		if (!oVSb) {
+			return;
+		}
+
+		jQuery(this.getDomRef("vsb-content")).height(this._getTotalScrollRange());
+	};
+
+	/**
 	 * Toggles the visibility of the Vertical Scroll Bar/Paginator.
 	 * @private
 	 */
@@ -2187,7 +2202,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		} else if (this.getDomRef()) {
 			// in case of Scrollbar Mode show/hide the scrollbar depending whether it is needed.
-			$this.toggleClass("sapUiTableVScr", this._isVSbRequired());
+			var isVSbRequired = this._isVSbRequired();
+			if (!isVSbRequired) {
+				// reset scroll position to zero when Scroll Bar disappe
+				this._updateVSb(0);
+			}
+			$this.toggleClass("sapUiTableVScr", isVSbRequired);
 		}
 	};
 
@@ -2392,7 +2412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getScrollingPixelsForRow = function() {
-		return this._getMaxScrollRange() / Math.max(1, this._getMaxRowIndex());
+		return this._getVirtualScrollRange() / Math.max(1, this._getMaxRowIndex());
 	};
 
 	/**
@@ -2412,7 +2432,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Returns the delta height of the sum of the height of all rows, compared which the default row height
+	 * Returns the delta of the sum of the actual height of all rows, compared with sum of estimated row heights
 	 * @private
 	 */
 	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
@@ -2429,29 +2449,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Returns the delta height of the sum of the height of all rows, compared which the default row height
+	 * Calculates the total scroll range for the vertical scroll bar
 	 * @private
 	 */
-	Table.prototype._getMaxScrollRange = function() {
-		var iMaxScrollRange;
+	Table.prototype._getTotalScrollRange = function() {
+		var iRowCount = Math.max(this._getRowCount(), this.getVisibleRowCount() + 1);
+		var iScrollbarRange = this._getDefaultRowHeight() * iRowCount;
+		return Math.min(this._iMaxScrollbarHeight, iScrollbarRange);
+	};
+
+	/**
+	 * Returns the amount of pixels which are used for virtual scrolling (from the total scroll range)
+	 * @private
+	 */
+	Table.prototype._getVirtualScrollRange = function() {
+		var iMaxScrollRange = this._getTotalScrollRange() - this._getVSbHeight();
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxScrollRange = (this._iMaxScrollbarHeight - this._getVSbHeight()) * 0.95;
-		} else {
-			iMaxScrollRange = this._iMaxScrollbarHeight - this._getVSbHeight();
+			iMaxScrollRange = iMaxScrollRange - this._getDefaultRowHeight() * this.getVisibleRowCount();
 		}
 		return Math.max(1, iMaxScrollRange);
 	};
 
 	/**
-	 * Returns the value of pixel which are used for correcting the RowHeightDelta
+	 * Returns the amount of pixels which are used for the correction of the row heights delta (from total  scroll range)
 	 * @private
 	 */
-	Table.prototype._getScrollOverflowRange = function() {
-		if (this._getRowCount() <= this.getVisibleRowCount()) {
-			return Math.max(1, (this._iMaxScrollbarHeight - this._getVSbHeight()));
-		} else {
-			return Math.max(1, (this._iMaxScrollbarHeight - this._getVSbHeight()) - this._getMaxScrollRange());
+	Table.prototype._getRowCorrectionScrollRange = function() {
+		var iScrollOverflowRange = this._getTotalScrollRange() - this._getVSbHeight();
+		if (this._getRowCount() > this.getVisibleRowCount()) {
+			iScrollOverflowRange -= this._getVirtualScrollRange();
 		}
+		return Math.max(1, iScrollOverflowRange);
 	};
 
 	/**
@@ -4371,26 +4399,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Determines the default row height, based upon the height of the row template.
+	 * Determines the default row height.
 	 * @private
 	 */
-	Table.prototype._getDefaultRowHeight = function(aRowHeights) {
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iDefaultRowHeight = this.getRowHeight() || 28;
-		} else {
-			if (!this._iDefaultRowHeight && this.getDomRef()) {
-				aRowHeights = aRowHeights || this._collectRowHeights();
-				if (aRowHeights && aRowHeights.length > 0) {
-					this._iDefaultRowHeight = aRowHeights[0];
-				}
-			}
-
-			if (!this._iDefaultRowHeight) {
-				this._iDefaultRowHeight = 28;
-			}
-		}
-
-		return this._iDefaultRowHeight;
+	Table.prototype._getDefaultRowHeight = function() {
+		return this.getRowHeight() || 28;
 	};
 
 	/**
@@ -4432,7 +4445,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			jQuery(this.getDomRef("tableCCnt")).css("height", this._getDefaultRowHeight() * this.getVisibleRowCount() + "px");
+			jQuery(this.getDomRef("tableCCnt")).css("height", iDefaultRowHeight * this.getVisibleRowCount() + "px");
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
