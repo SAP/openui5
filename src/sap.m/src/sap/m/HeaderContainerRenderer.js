@@ -37,9 +37,9 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addStyle("width", oControl.getWidth());
 		oRm.writeStyles();
 		var sDesc = "";
-		var aItems = oControl.getItems();
-		for (var i = 0; aItems && i < aItems.length; i++) {
-			sDesc += aItems[i].getId() + " ";
+		var aContent = oControl.getContent();
+		for (var i = 0; aContent && i < aContent.length; i++) {
+			sDesc += aContent[i].getId() + " ";
 		}
 		oRm.writeAttribute("aria-labelledby", sDesc);
 		oRm.write(">");
