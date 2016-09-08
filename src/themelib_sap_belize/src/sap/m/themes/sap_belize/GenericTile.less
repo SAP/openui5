@@ -4,18 +4,19 @@
 /* ================================== */
 
 .sapMGT.sapMGTLineMode {
-	background: none;
+	background: transparent;
+	transition: background 0.2s;
+
+	&:hover{
+		background-color: fade(@sapUiShellHoverBackground, 10);
+	}
+	&:active {
+		background-color: fade(@sapUiShellHoverBackground, 12);
+	}
 }
 
 .sapMGTLineMode.sapMGTDisabled {
 	opacity: 0.5;
-}
-
-.sapMGTLineMode:hover .sapMGTWithoutImageHoverOverlay:not(.sapMGTWithoutImagePressActive) {
-	background-color: fade(@sapUiShellHoverBackground, 10);
-}
-.sapMGTLineMode .sapMGTWithoutImageHoverOverlay.sapMGTPressActive {
-	background-color: fade(@sapUiShellHoverBackground, 12);
 }
 
 .sapMGTLineMode .sapMGTHdrTxt {
@@ -120,15 +121,16 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
+.sapMGTLineMode:focus {
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
 html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	border-color: transparent;
 }
 
 .sapMGTOverlay {
 	background-color: @sapUiTileBackground;
-}
-.sapMGTLineMode .sapMGTOverlay {
-	background: none;
 }
 
 /* BREAKPOINT FOR SMALL PHONES */
