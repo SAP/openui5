@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.FileUploader.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, Control, library, LabelEnablement) {
 	"use strict";
 
 
@@ -583,6 +583,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if ((!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
 			this.oBrowse.$().attr("tabindex", "-1");
 		}
+
+		if (LabelEnablement.isRequired(this)) {
+			this.oBrowse.$().attr("aria-required", "true");
+		}
+
 		jQuery.sap.delayedCall(0, this, this._recalculateWidth);
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
