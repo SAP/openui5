@@ -2,7 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QUnitUtils', 'sap/ui/test/Opa5'], function ($, ManagedObject, QUnitUtils, Opa5) {
+/*global FocusEvent, document */
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/qunit/QUnitUtils',
+	'sap/ui/test/Opa5',
+	'sap/ui/Device'
+],
+function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 	"use strict";
 
 	/**
@@ -109,6 +117,47 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 			}
 
 			return null;
+		},
+
+		_tryOrSimulateFocusin: function ($DomRef, oControl) {
+			var oDomRef = $DomRef[0];
+			$DomRef.focus();
+			var bWasFocused = $DomRef.is(":focus");
+
+			if (!bWasFocused) {
+				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+			}
+
+			if (!bWasFocused) {
+				this._createAndDispatchFocusEvent("focusin", oDomRef);
+				this._createAndDispatchFocusEvent("focus", oDomRef);
+				this._createAndDispatchFocusEvent("activate", oDomRef);
+			}
+		},
+
+		_simulateFocusout: function (oDomRef) {
+			this._createAndDispatchFocusEvent("focusout", oDomRef);
+			this._createAndDispatchFocusEvent("blur", oDomRef);
+			this._createAndDispatchFocusEvent("deactivate", oDomRef);
+		},
+
+		_createAndDispatchFocusEvent: function (sName, oDomRef) {
+			var oFocusEvent;
+
+			// PhantomJS does not have a FocusEvent constructer and no InitFocusEvent function
+			if (Device.browser.phantomJS) {
+				oFocusEvent = document.createEvent("FocusEvent");
+				oFocusEvent.initEvent(sName, true, false);
+				// IE 11 and below don't really like the FocusEvent constructor - Fire it the IE way
+			} else if (Device.browser.msie && (Device.browser.version < 12)) {
+				oFocusEvent = document.createEvent("FocusEvent");
+				oFocusEvent.initFocusEvent(sName, true, false, window, 0, oDomRef);
+			} else {
+				oFocusEvent = new FocusEvent(sName);
+			}
+
+			oDomRef.dispatchEvent(oFocusEvent);
+			$.sap.log.info("Dispatched focus event: '" + sName + "'", this._sLogPrefix);
 		},
 
 		_sLogPrefix : "sap.ui.test.actions"

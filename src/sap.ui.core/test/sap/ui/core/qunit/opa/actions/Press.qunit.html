@@ -44,8 +44,7 @@
 			"sap/m/semantic/FullscreenPage",
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
-			"sap/ui/test/opaQunit",
-			"sap/ui/test/Opa5"
+			"sap/ui/test/opaQunit"
 		],
 		function(Press,
 				 Button,
@@ -68,8 +67,7 @@
 				 FullscreenPage,
 				 DetailPage,
 				 CheckBox,
-				 opaTest,
-				 Opa5){
+				 opaTest){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -114,7 +112,7 @@
 				event: "Select"
 			}].forEach(function (oTestCase) {
 						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
-							var done = assert.async();
+							var fnDone = assert.async();
 
 							// Arrange
 							var oControl = oTestCase.control;
@@ -128,11 +126,24 @@
 							var oPressAction = new Press();
 
 							oControl["attach" + oTestCase.event]( function () {
-								assert.ok(oPressAction.$(oControl).is(":focus"), "Control has focus");
-								sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
-								//Call 'done' to resume QUnit processing
-								done();
+								setTimeout(function () {
+									sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
+									sinon.assert.called(fnOnSapFocusInSpy);
+									sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
+									fnDone();
+								}.bind(this), 20);
 							}, this);
+
+							// if no focus functions are defined - define them to spy on them
+							if(!oControl.onfocusin) {
+								oControl.onfocusin = $.noop;
+							}
+							if(!oControl.onsapfocusleave) {
+								oControl.onsapfocusleave = $.noop;
+							}
+
+							var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
+							var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
 
 							// Act
 							oPressAction.executeOn(oControl);
@@ -363,7 +374,7 @@
 
 							MockServer.config({
 								autoRespond : true,
-								autoRespondAfter : 2000
+								autoRespondAfter : 200
 							});
 
 							oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
