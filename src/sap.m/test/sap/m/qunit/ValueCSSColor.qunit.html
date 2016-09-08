@@ -17,14 +17,11 @@
 
 <script type="text/javascript">
 
-	/* --------------------------------------- */
-	/* Test properties                         */
-	/* --------------------------------------- */
 	QUnit.module("RegEx check for additional sap.m.ValueColor enum type");
 
 	QUnit.test("All sap.m.ValueColors are supported.", function(assert) {
 		assert.expect(4);
-		for (var sValueColor in sap.m.ValueColor){
+		for (var sValueColor in sap.m.ValueColor) {
 			assert.ok(sap.m.ValueCSSColor.isValid(sValueColor));
 		}
 	});
@@ -35,6 +32,16 @@
 
 	QUnit.test("Validation of not in type fails", function(assert) {
 		assert.ok(!sap.m.ValueCSSColor.isValid(500));
+	});
+
+	QUnit.module("Less parameter support");
+
+	QUnit.test("Existing Less Parameter", function(assert) {
+		assert.ok(sap.m.ValueCSSColor.isValid("sapUiChoroplethRegionBG"));
+	});
+
+	QUnit.test("Non-existing Less Parameter", function(assert) {
+		assert.ok(!sap.m.ValueCSSColor.isValid("otto"));
 	});
 
 </script>
