@@ -173,24 +173,6 @@
 		}
 	});
 
-	var oHeaderContainer3 = new sap.m.HeaderContainer("headerContainer3", {
-		scrollStep : "{/scrollStep}",
-		scrollTime : "{/scrollTime}",
-		items : {
-			path : "/items",
-			factory : fnContentFactory
-		}
-	});
-
-	var oHeaderContainer4 = new sap.m.HeaderContainer("headerContainer4", {
-		scrollStep : "{/scrollStep}",
-		scrollTime : "{/scrollTime}",
-		items : {
-			path : "/items",
-			factory : fnGenericTileContentFactory
-		}
-	});
-
 	var oAddButton = new sap.m.Button("add-button", {
 		width : "10rem",
 		enabled : true,
@@ -370,7 +352,7 @@
 
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.HeaderContainer",
-		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm, oHeaderContainer3, oHeaderContainer4]
+		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm]
 	});
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]
