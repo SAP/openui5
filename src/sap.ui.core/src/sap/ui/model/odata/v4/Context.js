@@ -106,17 +106,16 @@ sap.ui.define([
 	 *   "$auto" or "$direct"
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not
-	 *   point to an entity, if it is not part of a list binding, if the resulting group ID is
-	 *   neither "$auto" nor "$direct", or if the deletion on the server fails.
+	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
+	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
+	 *   context's binding, if the resulting group ID is neither "$auto" nor "$direct", or if the
+	 *   deletion on the server fails.
 	 *   <p>
 	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
 	 *   concurrent modification (e.g. by another user) of the entity between loading and deletion
 	 *   has been detected; this should be shown to the user who needs to decide whether to try
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
-	 * @throws {Error}
-	 *   If there are pending changes for the context's binding.
 	 *
 	 * @public
 	 * @since 1.41.0

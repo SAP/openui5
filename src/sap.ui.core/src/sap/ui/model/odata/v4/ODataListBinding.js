@@ -324,7 +324,7 @@ sap.ui.define([
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
-	 * @param {string} sGroupId
+	 * @param {string} [sGroupId=getUpdateGroupId()]
 	 *   The group ID to be used for the DELETE request
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
