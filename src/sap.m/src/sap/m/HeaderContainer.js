@@ -348,24 +348,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	HeaderContainer.prototype._vScroll = function(iDelta, iDuration) {
-		var oDomRef = this._oScrollCntr.getDomRef();
-		var iScrollTop = oDomRef.scrollTop;
-		var iScrollTarget = iScrollTop + iDelta;
-		this._oScrollCntr.scrollTo(0, iScrollTarget, iDuration);
+	HeaderContainer.prototype._vScroll = function(delta, duration) {
+		var oDomRef = this._oScrollCntr.getDomRef(),
+		iScrollTop = oDomRef.scrollTop,
+		iScrollHeight = oDomRef.scrollHeight,
+		iScrollTarget = iScrollTop + delta,
+		iClientHeight = oDomRef.clientHeight,
+		iPaddingHeight = parseFloat(this.$("scroll-area").css("padding-top")),
+		iRemainingTime;
+
+		if (iScrollTarget <= 0) { // When the next scrolling will reach the top edge side
+			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollTop);
+			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+			this.$().removeClass("sapMHrdrTopPadding");
+		} else if (iScrollTarget + iClientHeight + iPaddingHeight >= iScrollHeight) { // When the next scrolling will reach the bottom edge side
+			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollHeight - iClientHeight - iScrollTop);
+			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+			this.$().removeClass("sapMHrdrBottomPadding");
+		} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
+			this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
+		}
+		this._oScrollCntr.scrollTo(0, iScrollTarget, duration);
 	};
 
-	HeaderContainer.prototype._hScroll = function(iDelta, iDuration) {
+	HeaderContainer.prototype._hScroll = function(delta, duration) {
 		var oDomRef = this._oScrollCntr.getDomRef();
-		var iScrollTarget;
+		var iScrollTarget, iScrollLeft, iClientWidth, iScrollWidth, iPaddingWidth, iRemainingTime;
 		if (!this._bRtl) {
-			var iScrollLeft = oDomRef.scrollLeft;
-			iScrollTarget = iScrollLeft + iDelta;
-			this._oScrollCntr.scrollTo(iScrollTarget, 0, iDuration);
+			iScrollLeft = oDomRef.scrollLeft;
+			iScrollWidth = oDomRef.scrollWidth;
+			iClientWidth = oDomRef.clientWidth;
+			iScrollTarget = iScrollLeft + delta;
+			iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
+
+			if (iScrollTarget <= 0) { // When the next scrolling will reach the left edge side
+				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollLeft);
+				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+				this.$().removeClass("sapMHrdrLeftPadding");
+			} else if (iScrollTarget + oDomRef.clientWidth + iPaddingWidth >= iScrollWidth) { // When the next scrolling will reach the right edge side
+				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollWidth - iClientWidth - iScrollLeft);
+				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+				this.$().removeClass("sapMHrdrRightPadding");
+			} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
+				this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
+			}
+			this._oScrollCntr.scrollTo(iScrollTarget, 0, duration);
 		} else {
-			iScrollTarget = jQuery(oDomRef).scrollRightRTL() + iDelta;
-			this._oScrollCntr.scrollTo((iScrollTarget > 0) ? iScrollTarget : 0, 0, iDuration);
+			iScrollTarget = jQuery(oDomRef).scrollRightRTL() + delta;
+			this._oScrollCntr.scrollTo((iScrollTarget > 0) ? iScrollTarget : 0, 0, duration);
 		}
+	};
+
+	HeaderContainer.prototype._calculateRemainingScrolling = function(delta, duration, distance) {
+		return Math.abs(distance * duration / (1000 * delta));
 	};
 
 	HeaderContainer.prototype._checkOverflow = function() {
@@ -377,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._checkVOverflow = function() {
-		var oBarHead = this._oScrollCntr.getDomRef();
+		var oBarHead = this._oScrollCntr.getDomRef(), oOldScrollBack;
 
 		if (oBarHead) {
 			var iScrollTop = Math.round(oBarHead.scrollTop);
@@ -400,17 +435,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				bScrollForward = true;
 			}
 
-			if (!bScrollBack) {
+			oOldScrollBack = this._oArrowPrev.$().is(":visible");
+			if (oOldScrollBack && !bScrollBack) {
 				this._oArrowPrev.$().hide();
 				this.$().removeClass("sapMHrdrTopPadding");
-			} else {
+			}
+			if (!oOldScrollBack && bScrollBack) {
 				this._oArrowPrev.$().show();
 				this.$().addClass("sapMHrdrTopPadding");
 			}
-			if (!bScrollForward) {
+			var oOldScrollForward = this._oArrowNext.$().is(":visible");
+			if (oOldScrollForward && !bScrollForward) {
 				this._oArrowNext.$().hide();
 				this.$().removeClass("sapMHrdrBottomPadding");
-			} else {
+			}
+			if (!oOldScrollForward && bScrollForward) {
 				this._oArrowNext.$().show();
 				this.$().addClass("sapMHrdrBottomPadding");
 			}

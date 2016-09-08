@@ -52,10 +52,6 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-after");
-		oRm.writeAttribute("tabindex", "0");
-		oRm.write("/>");
 		oRm.write("</div>");
 
 		var oButton = oControl.getAggregation("_prevButton");
@@ -81,6 +77,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(oButton);
 			oRm.write("</div>");
 		}
+
+		// A sentry of HeaderContainer to catch the focus and put the focus at the right element in HeaderContainer
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-after");
+		oRm.writeAttribute("tabindex", "0");
+		oRm.write("/>");
 		oRm.write("</div>");
 	};
 

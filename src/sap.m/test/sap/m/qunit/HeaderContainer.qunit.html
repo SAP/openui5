@@ -306,6 +306,83 @@ jQuery.sap.initMobile();
 
 	} //End of sap.ui.Device.system.desktop
 
+	QUnit.module("Padding removed when scrolling to begin and end", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				width: "400px",
+				height: "400px",
+				content : [
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					})
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Tests left padding is removed when scrolling to begin in horizontal layout", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oScrollCntr.scrollTo(200, 0, 0);
+		this.oHeaderContainer.$().addClass("sapMHrdrLeftPadding");
+		//Act
+		this.oHeaderContainer._hScroll(-200, 500);
+		//Assert
+		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrLeftPadding"), "The left padding is removed.");
+	});
+
+	QUnit.test("Tests right padding is removed when scrolling to end in horizontal layout", function(assert) {
+		//Arrange
+		this.oHeaderContainer.$().addClass("sapMHrdrRightPadding");
+		//Act
+		this.oHeaderContainer._hScroll(3000, 500); // a big scroll step to the end
+		//Assert
+		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrRightPadding", "The right padding is removed"));
+	});
+
+ 	QUnit.test("Tests top padding is removed when scrolling to top in vertical layout", function(assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Vertical");
+		this.oHeaderContainer.rerender();
+
+		this.oHeaderContainer._oScrollCntr.scrollTo(0, 200, 0);
+		this.oHeaderContainer.$().addClass("sapMHrdrTopPadding");
+		//Act
+		this.oHeaderContainer._vScroll(-200, 500);
+		//Assert
+		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrTopPadding"), "The top padding is removed");
+	});
+
+	QUnit.test("Tests bottom padding is removed when scrolling to bottom in vertical layout", function(assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation("Vertical");
+		this.oHeaderContainer.rerender();
+
+		this.oHeaderContainer.$().addClass("sapMHrdrBottomPadding");
+		//Act
+		this.oHeaderContainer._vScroll(3000, 500); // a big scroll step to the bottom
+		//Assert
+		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrBottomPadding"), "The bottom padding is removed");
+	});
+
 	QUnit.module("Aggregation Handling", {
 		beforeEach : function () {
 			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
