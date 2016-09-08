@@ -217,7 +217,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 					return !(markers.length);
 				};
 
-				statuses.push(markers);
+				if (!markers._isEmpty()) {// add markers only if the array is not empty, otherwise it brakes the layout BCP: 1670363254
+					statuses.push(markers);
+				}
+
 				statuses.push(oLI.getFirstStatus());
 				statuses.push(oLI.getSecondStatus());
 
