@@ -3677,6 +3677,37 @@ QUnit.test("removeAllItems()", function(assert) {
 	oSelect.destroy();
 });
 
+// BCP 1680168526
+QUnit.test("it should clear the label value when the items are removed and the control is invalidated", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.Item({
+				key: "li",
+				text: "lorem ipsum"
+			})
+		],
+		selectedKey: "li"
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oSelect.removeAllItems();
+	oSelect.invalidate();
+	sap.ui.getCore().applyChanges();
+
+	// assert
+	assert.strictEqual(oSelect.$("label").text(), "");
+	assert.strictEqual(oSelect.getSelectedKey(), "li");
+
+	// cleanup
+	oSelect.destroy();
+});
+
 QUnit.module("destroyItems()");
 
 QUnit.test("destroyItems()", function(assert) {
