@@ -13,23 +13,28 @@
 }
 
 .sapMGT.sapMGTLineMode {
+	display: inline;
 	min-height: 2.5rem;
 	min-width: 2rem;
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
 	border-color: transparent;
 	border-radius: 0.2rem;
 	box-shadow: none;
 	background-color: transparent;
+	position: relative;
+
+	line-height: 3rem;
+	padding-top: (2.5rem / 2) - (@sapMFontMediumSize / 2) - 0.125rem;
+	padding-bottom: (2.5rem / 2) - (@sapMFontMediumSize / 2) - 0.125rem;
 }
-.sapMGTLineMode .sapMGTHdrTxt {
-	padding-right: 0.5rem;
-}
+
 .sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
 	word-break: normal;
 	display: inline;
-	line-height: 2.5rem;
-	max-height: none !important;
+	position: relative;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	padding: 0 0.5rem;
 }
 
 .sapMGT:focus {

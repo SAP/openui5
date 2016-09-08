@@ -7,9 +7,9 @@
 	<title>sap.m.GenericTile LineMode</title>
 
 	<script src="../../../resources/sap-ui-core.js" type="text/javascript"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_belize">
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m, sap.ui.layout"
+	        data-sap-ui-theme="sap_belize">
 	</script>
 
 	<script type="text/javascript">
@@ -85,8 +85,8 @@
 						new sap.m.Button({
 							text: "Repeat Header",
 							press: function() {
-							    var iRepeat = parseInt(window.prompt("Times", 1)) || 1;
-								oModel.setProperty(context.getPath("header"), (new Array(iRepeat).join(context.getObject().header)));
+								var iRepeat = parseInt(window.prompt("Times", 1), 10) || 1;
+								oModel.setProperty(context.getPath("header"), (new Array(iRepeat + 1).join(context.getObject().header)));
 								oModel.refresh(true);
 							}
 						}),
@@ -143,10 +143,9 @@
 			});
 		};
 
-		var oTileContainer = new sap.m.HBox({
-			width: "100%",
-			height: "auto",
-			items: {
+		var oTileContainer = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true,
+			content: {
 				path: "/items",
 				factory: fnCreateTile
 			}
@@ -179,9 +178,14 @@
 		var oPage = new sap.m.Page("initial-page", {
 			showHeader: false,
 			content: [
-				oAddTileBtn,
-				oTileContainer,
-				oTileConfigContainer
+				new sap.m.VBox({
+					fitContainer: true,
+					items: [
+						oAddTileBtn,
+						oTileContainer,
+						oTileConfigContainer
+					]
+				})
 			]
 		}).addStyleClass("sapUiContentPadding sapUiSizeCompact").setModel(oModel);
 
