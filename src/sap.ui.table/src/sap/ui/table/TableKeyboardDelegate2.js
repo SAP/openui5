@@ -7,12 +7,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	function(jQuery, BaseObject, library, TableExtension, TableUtils) {
 	"use strict";
 
-	// shortcuts
+	// Shortcuts
 	var CellType = TableUtils.CELLTYPES;
 	var SelectionMode = library.SelectionMode;
 
-	// Workaround until (if ever) a horizontal page size can be set by applications
+	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
+	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
 
 	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
@@ -66,9 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		oTable._getKeyboardExtension()._setSilentFocus(oTable.$().find("." + sTabDummy));
 	};
 
-
 	//******************************************************************************************
-
 
 	TableKeyboardDelegate.prototype.onfocusin = function(oEvent) {
 		if (oEvent.isMarked("sapUiTableIgnoreFocusIn")) {
@@ -175,6 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
+
 		} else if (oCellInfo.type === CellType.COLUMNHEADER || oCellInfo.type === CellType.COLUMNROWHEADER) {
 			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 			if (TableUtils.isNoDataVisible(this)) {
@@ -232,6 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					// When moving back down to the row where the range selection started, the rows always get deselected.
 					this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
 				}
+
 			} else {
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -268,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				var iFocusedRowIndex = oFocusedItemInfo.row - TableUtils.getHeaderRowCount(this);
 				var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
 
-				// Do not move up to the header when performing a range (de)selection.
+				// Do not move up to the header when performing a range selection.
 				if (iDataRowIndex === 0) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 					return;
@@ -292,6 +293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					// When moving back up to the row where the range selection started, the rows always get deselected.
 					this.removeSelectionInterval(iDataRowIndex, iDataRowIndex);
 				}
+
 			} else {
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -304,6 +306,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
+			/* Range Selection */
+
 			if (oCellInfo.type === CellType.DATACELL) {
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
@@ -313,11 +317,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 
-				// If selection on row headers is not possible, then do not allow to move focus to them when performing a range (de)selection.
+				// If selection on row headers is not possible, then do not allow to move focus to them when performing a range selection.
 				if (TableUtils.hasRowHeader(this) && oFocusedItemInfo.cellInRow === 1 && !TableUtils.isRowSelectorSelectionAllowed(this)) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
+
+			/* Range Selection: Required for RTL mode. */
+
+			} else if (oCellInfo.type === CellType.ROWHEADER) {
+				// If selection on rows is not possible, then do not allow to move focus to them when performing a range selection.
+				if (!TableUtils.isRowSelectionAllowed(this)) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+
+			} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+			/* Column Resizing */
+
 			} else if (oCellInfo.type === CellType.COLUMNHEADER) {
+				var iResizeDelta = -this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					iResizeDelta = iResizeDelta * -1;
+				}
+
+				var oColumnHeaderInfo = TableUtils.getColumnHeaderCellInfo(oEvent.target);
+				var iColumnSpanWidth = 0;
+
+				for (var i = oColumnHeaderInfo.index; i < oColumnHeaderInfo.index + oColumnHeaderInfo.span; i++) {
+					iColumnSpanWidth += TableUtils.getColumnWidth(this, i);
+				}
+
+				TableUtils.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
+
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
 		}
@@ -329,15 +361,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-			if ((oCellInfo.type === CellType.ROWHEADER || oCellInfo.type === CellType.DATACELL) && !this._oRangeSelection) {
+			/* Range Selection */
+
+			if (oCellInfo.type === CellType.DATACELL && !this._oRangeSelection) {
 				// Navigation should not be possible if we are not in range selection mode.
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
-			} else if (oCellInfo.type === CellType.ROWHEADER) {
-				// If selection on rows is not possible, then do not allow to move focus to them when performing a range (de)selection.
-				if (!TableUtils.isRowSelectionAllowed(this)) {
-					oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+			} else if (oCellInfo.type === CellType.ROWHEADER && !TableUtils.isRowSelectionAllowed(this)) {
+				// If selection on data cells is not possible, then do not allow to move focus to the data cells.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+			/* Column Resizing */
+
+			} else if (oCellInfo.type === CellType.COLUMNHEADER) {
+				var iResizeDelta = this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					iResizeDelta = iResizeDelta * -1;
 				}
-			} else if (oCellInfo.type === CellType.COLUMNROWHEADER || oCellInfo.type === CellType.COLUMNHEADER) {
+
+				var oColumnHeaderInfo = TableUtils.getColumnHeaderCellInfo(oEvent.target);
+				var iColumnSpanWidth = 0;
+
+				for (var i = oColumnHeaderInfo.index; i < oColumnHeaderInfo.index + oColumnHeaderInfo.span; i++) {
+					iColumnSpanWidth += TableUtils.getColumnWidth(this, i);
+				}
+
+				TableUtils.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
+
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+			} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
 		}
@@ -729,9 +782,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 						// then set the focus to the first cell.
 						TableUtils.focusItem(this, iFocusedIndex + 1, null);
 
-					} else if (TableUtils.isInGroupingRow(oEvent.target)) {
-						return;
-
 					} else if (iColSpan > iPageSize) {
 						// If the focused cell is a column span bigger than a page size,
 						// then set the focus the the next column in the row.
@@ -742,7 +792,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 						// then scroll only the remaining cells (set the focus to the last cell).
 						TableUtils.focusItem(this, iFocusedIndex + iVisibleColumnCount - iFocusedCellInRow - 1 + iRowHeaderOffset, null);
 
-					} else {
+					} else if (!TableUtils.isInGroupingRow(oEvent.target)) {
 						// Scroll one page.
 						TableUtils.focusItem(this, iFocusedIndex + iPageSize, null);
 					}

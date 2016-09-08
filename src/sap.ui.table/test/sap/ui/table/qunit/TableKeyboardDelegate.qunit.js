@@ -719,29 +719,37 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate") && !sap.ui.getCore()
 		afterEach: teardownTest
 	});
 
-	QUnit.test("Inside Header (Range Selection)", function(assert) {
-		var oElem = checkFocus(getSelectAll(true), assert);
+	QUnit.test("Inside Header (Range Selection, Column Resizing)", function(assert) {
+		var oElem;
+
+		function test() {
+			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+			checkFocus(oElem, assert);
+			qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+			checkFocus(oElem, assert);
+			qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+			checkFocus(oElem, assert);
+			qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+			checkFocus(oElem, assert);
+		}
+
+		// Range Selection
+		oElem = checkFocus(getSelectAll(true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
-		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		checkFocus(oElem, assert);
+		test();
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 		oElem = checkFocus(getColumnHeader(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
-		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		checkFocus(oElem, assert);
+		test();
+		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
+
+		// Column Resizing
+		oElem = checkFocus(getSelectAll(true), assert);
+		test();
+
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+		test();
 	});
 
 	QUnit.test("Inside Row Header, Fixed Rows (Range Selection)", function(assert) {
@@ -1313,7 +1321,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate") && !sap.ui.getCore()
 		checkFocus(getColumnHeader(0), assert);
 	});
 
-	QUnit.test("Fixed Columns with Multi Column", function(assert) {
+	QUnit.test("Fixed Columns with Multi Header", function(assert) {
 		var iColSpan = 2;
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
@@ -1679,14 +1687,14 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate") && !sap.ui.getCore()
 
 	QUnit.test("Multi Header and Fixed Top/Bottom Rows", function(assert) {
 		oTable.setFixedColumnCount(0);
-		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
-		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
-		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_3_2"}));
-		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1"}));
-		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
 		oTable.setVisibleRowCount(6);
@@ -2688,6 +2696,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate") && !sap.ui.getCore()
 	 * A test for range selection and deselection.
 	 * Start from the middle of the table -> Move up to the top -> Move down to the bottom -> Move up to the starting row.
 	 * @private
+	 * @param assert
 	 */
 	function _testRangeSelection(assert) {
 		var iVisibleRowCount = oTable.getVisibleRowCount();
@@ -2907,7 +2916,183 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate") && !sap.ui.getCore()
 		oElem = getRowHeader(1);
 		this.assertSelection(assert, 2, false);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
-		oElem = getRowHeader(0);
 		this.assertSelection(assert, 1, false);
+	});
+
+	QUnit.module("Interaction > Shift+Left & Shift+Right (Column Resizing)", {
+		beforeEach: function() {
+			setupTest();
+			oTable._getVisibleColumns()[2].setResizable(false);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: teardownTest
+	});
+
+	QUnit.test("Default Test Table - Resize fixed column", function(assert) {
+		var iMinColumnWidth = oTable._iColMinWidth;
+		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+
+		var oElem = getColumnHeader(0, true);
+		for (var i = sap.ui.table.TableUtils.getColumnWidth(oTable, 0); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+			qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+			assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), i - iColumnResizeStep,
+				"Column width decreased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 0) + "px");
+		}
+
+		var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 0);
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
+			"Column width decreased by " + (iColumnWidthBefore - sap.ui.table.TableUtils.getColumnWidth(oTable, 0)) + "px to the minimum width of " + iMinColumnWidth + "px");
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
+			"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
+
+		for (var i = 0; i < 10; i++) {
+			var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 0);
+			qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+			assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iColumnWidthBefore + iColumnResizeStep,
+				"Column width increased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 0) + "px");
+		}
+	});
+
+	QUnit.test("Default Test Table - Resize column", function(assert) {
+		var iMinColumnWidth = oTable._iColMinWidth;
+		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+
+		var oElem = getColumnHeader(1, true);
+		for (var i = sap.ui.table.TableUtils.getColumnWidth(oTable, 1); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+			qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+			assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), i - iColumnResizeStep,
+				"Column width decreased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 1) + "px");
+		}
+
+		var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 1);
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
+			"Column width decreased by " + (iColumnWidthBefore - sap.ui.table.TableUtils.getColumnWidth(oTable, 1)) + "px to the minimum width of " + iMinColumnWidth + "px");
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
+			"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
+
+		for (var i = 0; i < 10; i++) {
+			var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 1);
+			qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+			assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iColumnWidthBefore + iColumnResizeStep,
+				"Column width increased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 1) + "px");
+		}
+	});
+
+	QUnit.test("Multi Header - Resize spans", function(assert) {
+		oTable.setFixedColumnCount(0);
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
+		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
+		sap.ui.getCore().applyChanges();
+
+		var aVisibleColumns = oTable._getVisibleColumns();
+		var iMinColumnWidth = oTable._iColMinWidth;
+		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+		var oElem;
+
+		function test(aResizingColumns, aNotResizingColumns) {
+			var iSharedColumnResizeStep = Math.round(iColumnResizeStep / aResizingColumns.length);
+			var iMaxColumnSize = 0;
+
+			var aOriginalNotResizingColumnWidths = [];
+			for (var i = 0; i < aNotResizingColumns.length; i++) {
+				aOriginalNotResizingColumnWidths.push(sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()));
+			}
+
+			for (var i = 0; i < aResizingColumns.length; i++) {
+				iMaxColumnSize = Math.max(iMaxColumnSize, sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()));
+			}
+
+			// Decrease the size to the minimum.
+			for (var i = iMaxColumnSize; i - iSharedColumnResizeStep > iMinColumnWidth; i -= iSharedColumnResizeStep) {
+				qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+
+				// Check resizable columns.
+				for (var j = 0; j < aResizingColumns.length; j++) {
+					var iNewColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
+					assert.strictEqual(iNewColumnWidth, Math.max(iMinColumnWidth, i - iSharedColumnResizeStep),
+						"Column " + (aResizingColumns[j].getIndex() + 1) + " width decreased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
+				}
+
+				// Check not resizable columns.
+				for (var j = 0; j < aNotResizingColumns.length; j++) {
+					assert.strictEqual(aOriginalNotResizingColumnWidths[j], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
+						"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
+				}
+			}
+
+			// Ensure that all resizable columns widths were resized to the minimum.
+			qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+
+			// Check resizable columns for minimum width.
+			for (var i = 0; i < aResizingColumns.length; i++) {
+				assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()), iMinColumnWidth,
+					"Column " + (aResizingColumns[i].getIndex() + 1) + " width decreased to the minimum width of " + iMinColumnWidth + "px");
+			}
+
+			// Check not resizable columns for unchanged width.
+			for (var i = 0; i < aNotResizingColumns.length; i++) {
+				assert.strictEqual(aOriginalNotResizingColumnWidths[i], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()),
+					"Column " + (aNotResizingColumns[i].getIndex() + 1) + " width did not change");
+			}
+
+			// Increase the size.
+			for (var i = 0; i < 10; i++) {
+				var aOriginalColumnWidths = [];
+				for (var j = 0; j < aResizingColumns.length; j++) {
+					aOriginalColumnWidths.push(sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex()));
+				}
+
+				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+
+				// Check resizable columns.
+				for (var j = 0; j < aResizingColumns.length; j++) {
+					var iNewColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
+					assert.strictEqual(iNewColumnWidth, aOriginalColumnWidths[j] + iSharedColumnResizeStep,
+						"Column " + (aResizingColumns[j].getIndex() + 1) + " width increased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
+				}
+
+				// Check not resizable columns.
+				for (var j = 0; j < aNotResizingColumns.length; j++) {
+					assert.strictEqual(aOriginalNotResizingColumnWidths[j], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
+						"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
+				}
+			}
+		}
+
+		// Top row - Span over all 3 columns (3rd. column is not resizable)
+		oElem = getColumnHeader(0, true);
+		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], [aVisibleColumns[2]]);
+
+		// Second row - First span over 2 columns
+		oElem = jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1");
+		oElem.focus();
+		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], aVisibleColumns[2]);
+
+		// Last row - Second column
+		oElem = jQuery.sap.domById(getColumnHeader(1).attr("id") + "_2");
+		oElem.focus();
+		test.call(this, [aVisibleColumns[1]], [aVisibleColumns[0], aVisibleColumns[2]]);
+	});
+
+	QUnit.test("Default Test Table - Resize not resizable column", function(assert) {
+		var iOriginalColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, 2);
+
+		var oElem = getColumnHeader(2, true);
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		assert.strictEqual(iOriginalColumnWidth, sap.ui.table.TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
+		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+		assert.strictEqual(iOriginalColumnWidth, sap.ui.table.TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
 	});
 }
