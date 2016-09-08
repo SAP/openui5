@@ -892,6 +892,21 @@
 		assert.equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
 	});
 
+	QUnit.test("Equal heights", 7, function(assert) {
+		var $Table = jQuery.sap.byId("table");
+
+		assert.equal($Table.find(".sapUiTableColHdrCnt").height(), $Table.find(".sapUiTableColHdrScr").height(), "Height of the select header is correct");
+
+		$Table.find(".sapUiTableColHdr").each(function(index, row) {
+			var rowIndex = index;
+			var $row = jQuery(row);
+			var rowHeight = $row.height() + "px";
+			$row.children().each(function(index, cell){
+				assert.equal(cell.style.height, rowHeight, "Cell [" + index + "," + rowIndex +"] has correct height");
+			});
+		});
+	});
+
 	QUnit.module("Table with extension", {
 		beforeEach: function() {
 			createTable({
