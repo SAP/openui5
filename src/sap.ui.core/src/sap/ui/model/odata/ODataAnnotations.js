@@ -305,55 +305,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			this.oAnnotations = {};
 		}
 
-		// Merge must be done on Term level, this is why the original line does not suffice any more:
-		//     jQuery.extend(true, this.oAnnotations, mAnnotations);
-		// Terms are defined on different levels, the main one is below the target level, which is directly
-		// added as property to the annotations object and then in the same way inside two special properties
-		// named "propertyAnnotations" and "EntityContainer"
-
-		function mergeAnnotation(sName, mSource, mTarget) {
-			// Everythin in here must be on Term level, so we overwrite the target with the data from the source
-
-			if (Array.isArray(mSource[sName])) {
-				// This is a collection - make sure it stays one
-				mTarget[sName] = mSource[sName].slice(0);
-			} else {
-				// Make sure the map exists in the target
-				mTarget[sName] = mTarget[sName] || {};
-
-				for (var sKey in mSource[sName]) {
-					mTarget[sName][sKey] = mSource[sName][sKey];
-				}
-			}
-		}
-
-		var sTarget, sTerm;
-		var aSpecialCases = ["propertyAnnotations", "EntityContainer", "annotationReferences"];
-
-		// First merge standard annotations
-		for (sTarget in mAnnotations) {
-			if (aSpecialCases.indexOf(sTarget) !== -1) {
-				// Skip these as they are special properties that contain Target level definitions
-				continue;
-			}
-
-			// ...all others contain Term level definitions
-			mergeAnnotation(sTarget, mAnnotations, this.oAnnotations);
-		}
-
-		// Now merge special cases
-		for (var i = 0; i < aSpecialCases.length; ++i) {
-			var sSpecialCase = aSpecialCases[i];
-
-			this.oAnnotations[sSpecialCase] = this.oAnnotations[sSpecialCase] || {}; // Make sure the the target namespace exists
-			for (sTarget in mAnnotations[sSpecialCase]) {
-				for (sTerm in mAnnotations[sSpecialCase][sTarget]) {
-					// Now merge every term
-					this.oAnnotations[sSpecialCase][sTarget] = this.oAnnotations[sSpecialCase][sTarget] || {};
-					mergeAnnotation(sTerm, mAnnotations[sSpecialCase][sTarget], this.oAnnotations[sSpecialCase][sTarget]);
-				}
-			}
-		}
+		AnnotationParser.merge(this.oAnnotations, mAnnotations);
 
 		this.bLoaded = true;
 
