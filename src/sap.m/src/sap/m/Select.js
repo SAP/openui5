@@ -2188,8 +2188,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this.setValue("");
 
-			this.clearSelection();
-
 			if (this._isShadowListRequired()) {
 				this.$().children(".sapMSelectListItemBase").remove();
 			}
