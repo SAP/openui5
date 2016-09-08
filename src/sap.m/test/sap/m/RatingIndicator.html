@@ -62,7 +62,7 @@
 			oRatingPage.addContent(oLabel);
 
 			var oLabel0 = new sap.m.Label({text:'Small inactive rating'});
-			var oRating0 = new sap.m.RatingIndicator({
+			var oRating0 = new sap.m.RatingIndicator("smallInactiveRI", {
 				iconSize: "1rem",
 				enabled: false,
 				value: 2.5,
@@ -70,38 +70,38 @@
 			});
 
 			var oLabel1 = new sap.m.Label({text:'Small active rating'});
-			var oRating1 = new sap.m.RatingIndicator({
+			var oRating1 = new sap.m.RatingIndicator("smallActiveRI", {
 				iconSize: "1rem",
 				value: 2.5,
 				tooltip: "This is a tooltip"
 			});
 
 			var oLabel2 = new sap.m.Label({text:'Medium inactive rating'});
-			var oRating2 = new sap.m.RatingIndicator({
+			var oRating2 = new sap.m.RatingIndicator("mediumInactiveRI", {
 				enabled: false,
 				value: 2.5
 			});
 
 			var oLabel3 = new sap.m.Label({text:'Medium active rating'});
-			var oRating3 = new sap.m.RatingIndicator({
+			var oRating3 = new sap.m.RatingIndicator("mediumActiveRI", {
 				value: 2.5
 			});
 
 			var oLabel4 = new sap.m.Label({text:'Large inactive rating'});
-			var oRating4 = new sap.m.RatingIndicator({
+			var oRating4 = new sap.m.RatingIndicator("largeInactiveRI", {
 				iconSize: "2rem",
 				enabled: false,
 				value: 2.5
 			});
 
 			var oLabel5 = new sap.m.Label({text:'Large active rating'});
-			var oRating5 = new sap.m.RatingIndicator({
+			var oRating5 = new sap.m.RatingIndicator("largeActiveRI", {
 				iconSize: "2rem",
 				value: 2.5
 			});
 
 			var oLabel6 = new sap.m.Label({text:'Default active rating'});
-			var oRating6 = new sap.m.RatingIndicator({
+			var oRating6 = new sap.m.RatingIndicator("defaultActiveRI", {
 				value: 2.5
 			});
 
@@ -199,7 +199,7 @@
 			oRatingTable.bindAggregation("items", "/items", oRatingTableTemplate);
 
 			// rating list
-			var oRatingList = new sap.m.List({
+			var oRatingList = new sap.m.List("ratingList", {
 				inset: true,
 				headerText : "Rating List",
 				swipeContent : new sap.m.Button({
@@ -251,7 +251,7 @@
 			oRatingPage.addContent(oLabel);
 
 			var oLabel3 = new sap.m.Label({text:' Rate me!'}).addStyleClass("descriptiveRatingLabel");;
-			var oRating3 = new sap.m.RatingIndicator({
+			var oRating3 = new sap.m.RatingIndicator("automaticRI", {
 				value: 2.5,
 				iconSize: "1.375rem",
 				liveChange: function(oControlEvent) {
@@ -266,7 +266,7 @@
 				}
 			});
 
-			var oHBoxLabeledRating = new sap.m.HBox({
+			var oHBoxLabeledRating = new sap.m.HBox("automaticRIwithLabel", {
 				items: [
 					oRating3,
 					oLabel3

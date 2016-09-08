@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject, Icon) {
 	"use strict";
 
 	var HeaderContainerItemContainer = Control.extend("HeaderContainerItemContainer", {
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Behavior"
 				},
 				/**
-				 * If set to true, shows dividers between scrollable items.
+				 * If set to true, it shows dividers between the different content controls.
 				 */
 				showDividers : {
 					type : "boolean",
@@ -80,7 +80,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Appearance"
 				},
 				/**
-				 * The orientation of the HeaderContainer.
+				 * The orientation of the HeaderContainer. There are two orientation modes: horizontal and vertical. In horizontal mode
+				 * the content controls are displayed next to each other, in vertical mode the content controls are displayed
+				 * on top of each other.
 				 */
 				orientation : {
 					type : "sap.ui.core.Orientation",
@@ -125,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * Button that allows to scroll to previous section.
 				 */
 				_prevButton : {
-					type : "sap.m.Button",
+					type : "sap.ui.core.Control",
 					multiple : false,
 					visibility : "hidden"
 				},
@@ -133,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * Button that allows to scroll to next section.
 				 */
 				_nextButton : {
-					type : "sap.m.Button",
+					type : "sap.ui.core.Control",
 					multiple : false,
 					visibility : "hidden"
 				}
@@ -158,8 +160,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setAggregation("_scrollContainer", this._oScrollCntr, true);
 
 		if (Device.system.desktop) {
-			this._oArrowPrev = new sap.m.Button({
+			this._oArrowPrev = new library.Button({
 				id : this.getId() + "-scrl-prev-button",
+				type : library.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_PREV_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
@@ -169,8 +172,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oArrowPrev._bExcludeFromTabChain = true;
 			this.setAggregation("_prevButton", this._oArrowPrev, true);
 
-			this._oArrowNext = new sap.m.Button({
+			this._oArrowNext = new library.Button({
 				id : this.getId() + "-scrl-next-button",
+				type : library.ButtonType.Transparent,
 				tooltip : this._oRb.getText("HEADERCONTAINER_BUTTON_NEXT_SECTION"),
 				press : function(oEvt) {
 					oEvt.cancelBubble();
@@ -179,40 +183,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
 			this._oArrowNext._bExcludeFromTabChain = true;
 			this.setAggregation("_nextButton", this._oArrowNext, true);
-
-			this._oScrollCntr.addDelegate({
-				onAfterRendering : function() {
-					if (Device.system.desktop) {
-						var oFocusRef = this._oScrollCntr.getDomRef("scroll");
-						var oFocusObj = this._oScrollCntr.$("scroll");
-						var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
-
-						if (!this._oItemNavigation) {
-							this._oItemNavigation = new ItemNavigation();
-							this.addDelegate(this._oItemNavigation);
-							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
-							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
-						}
-						this._oItemNavigation.setRootDomRef(oFocusRef);
-						this._oItemNavigation.setItemDomRefs(aDomRefs);
-						this._oItemNavigation.setTabIndex0();
-						this._oItemNavigation.setCycling(false);
-					}
-				}.bind(this),
-
-				onBeforeRendering : function() {
-					if (Device.system.desktop) {
-						this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
-							horizontal : true,
-							vertical : true,
-							zynga : false,
-							preventDefault : false,
-							nonTouchScrolling : true
-						});
-					}
-				}.bind(this)
-			});
+		} else if (Device.system.phone || Device.system.tablet) {
+			this._oArrowPrev = new Icon({
+				id : this.getId() + "-scrl-prev-button"
+			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+			this.setAggregation("_prevButton", this._oArrowPrev, true);
+			this._oArrowNext = new Icon({
+				id : this.getId() + "-scrl-next-button"
+			}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+			this.setAggregation("_nextButton", this._oArrowNext, true);
 		}
+
+		this._oScrollCntr.addDelegate({
+			onAfterRendering : function() {
+				if (Device.system.desktop) {
+					var oFocusRef = this._oScrollCntr.getDomRef("scroll");
+					var oFocusObj = this._oScrollCntr.$("scroll");
+					var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
+
+					if (!this._oItemNavigation) {
+						this._oItemNavigation = new ItemNavigation();
+						this.addDelegate(this._oItemNavigation);
+						this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
+						this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
+					}
+					this._oItemNavigation.setRootDomRef(oFocusRef);
+					this._oItemNavigation.setItemDomRefs(aDomRefs);
+					this._oItemNavigation.setTabIndex0();
+					this._oItemNavigation.setCycling(false);
+				}
+			}.bind(this),
+
+			onBeforeRendering : function() {
+				if (Device.system.desktop) {
+					this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
+						horizontal : true,
+						vertical : true,
+						zynga : false,
+						preventDefault : false,
+						nonTouchScrolling : true
+					});
+				}
+			}.bind(this)
+		});
 	};
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
@@ -220,11 +233,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
 		}
 		if (Device.system.desktop) {
-			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
-			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-left-arrow" : "sap-icon://navigation-up-arrow");
-			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://navigation-right-arrow" : "sap-icon://navigation-down-arrow");
-			this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
+			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
+			this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
+		} else if (Device.system.phone || Device.system.tablet) {
+			this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
+			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		}
+		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
+		this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
 		if (this._sScrollResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
 		}
@@ -440,13 +456,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (!bScrollBack) {
 				this._oArrowPrev.$().hide();
+				this.$().removeClass("sapMHrdrTopPadding");
 			} else {
 				this._oArrowPrev.$().show();
+				this.$().addClass("sapMHrdrTopPadding");
 			}
 			if (!bScrollForward) {
 				this._oArrowNext.$().hide();
+				this.$().removeClass("sapMHrdrBottomPadding");
 			} else {
 				this._oArrowNext.$().show();
+				this.$().addClass("sapMHrdrBottomPadding");
 			}
 		}
 	};
@@ -504,17 +524,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oOldScrollBack = this._oArrowPrev.$().is(":visible");
 			if (oOldScrollBack && !bScrollBack) {
 				this._oArrowPrev.$().hide();
+				this.$().removeClass("sapMHrdrLeftPadding");
 			}
 			if (!oOldScrollBack && bScrollBack) {
 				this._oArrowPrev.$().show();
+				this.$().addClass("sapMHrdrLeftPadding");
 			}
 
 			var oOldScrollForward = this._oArrowNext.$().is(":visible");
 			if (oOldScrollForward && !bScrollForward) {
 				this._oArrowNext.$().hide();
+				this.$().removeClass("sapMHrdrRightPadding");
 			}
 			if (!oOldScrollForward && bScrollForward) {
 				this._oArrowNext.$().show();
+				this.$().addClass("sapMHrdrRightPadding");
 			}
 		}
 	};

@@ -1,3 +1,33 @@
-/* ============================================= */
-/* CSS for control sap.m/ComboBoxBase.control    */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* Base theme                          */
+/* =================================== */
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+/* hover */
+html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
+	background: @sapUiButtonLiteHoverBackground;
+}
+
+/* pressed */
+/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
+.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
+html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
+	background: @sapUiButtonLiteActiveBackground;
+}
+
+/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
+.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
+	color: @sapUiButtonActiveTextColor;
+}
+
+/* ------------------------------ */
+/* dialog                         */
+/* ------------------------------ */
+
+div.sapMComboBoxBasePicker .sapMDialogScrollCont {
+	padding: 0;
+}

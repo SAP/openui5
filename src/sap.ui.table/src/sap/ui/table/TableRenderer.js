@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
-	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils, Renderer, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, Control, Parameters, Device, library, TableUtils, Renderer, IconPool) {
 	"use strict";
 
 
@@ -936,16 +936,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	};
 
 	TableRenderer.renderVSb = function(rm, oTable) {
+
 		rm.write("<div");
 		rm.addClass("sapUiTableVSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
+		rm.addStyle("height", oTable._getVSbHeight() + "px");
+
+		if (oTable.getFixedRowCount() > 0) {
+			rm.addStyle("top", (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1  + 'px');
+		}
+
+		rm.writeStyles();
 		rm.write(">");
 
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-vsb-content");
 		rm.addClass("sapUiTableVSbContent");
 		rm.writeClasses();
+		rm.addStyle("height", oTable._iMaxScrollbarHeight + "px");
+		rm.writeStyles();
 		rm.write(">");
 		rm.write("</div>");
 		rm.write("</div>");

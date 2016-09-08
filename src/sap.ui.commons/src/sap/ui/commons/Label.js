@@ -113,8 +113,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			// attach to change of required flag of labeled control
-			oFor.attachEvent("requiredChanged",this._handleRequiredChanged, this);
 			this._oFor = oFor;
 		}
 	};
@@ -127,7 +125,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this._oFor) {
-			this._oFor.detachEvent("requiredChanged",this._handleRequiredChanged, this);
 			this._oFor = undefined;
 		}
 	};
@@ -139,32 +136,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this._oFor) {
-			this._oFor.detachEvent("requiredChanged",this._handleRequiredChanged, this);
 			this._oFor = undefined;
 		}
-	};
-
-	/**
-	 * Checks whether the Label itself or the associated control is marked as required (they are mutually exclusive).
-	 *
-	 * @protected
-	 * @returns {Boolean} Returns if the Label or the labelled control are required
-	 */
-	Label.prototype.isRequired = function(){
-		// the value of the local required flag is ORed with the result of a "getRequired"
-		// method of the associated "labelFor" control. If the associated control doesn't
-		// have a getRequired method, this is treated like a return value of "false".
-		var oFor = this._getLabeledControl();
-		return this.getRequired() || (oFor && oFor.getRequired && oFor.getRequired() === true);
-
-	};
-
-	/**
-	 * If required flag of labeled control changes after Label is rendered, the Label must be rendered again.
-	 * @private
-	 */
-	Label.prototype._handleRequiredChanged = function(){
-		this.invalidate();
 	};
 
 	/**

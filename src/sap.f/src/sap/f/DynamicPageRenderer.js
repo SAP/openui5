@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oDynamicPageHeader = oDynamicPage.getHeader(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
 			oDynamicPageContent = oDynamicPage.getContent(),
-			bHeaderAlwaysExpanded = oDynamicPage._headerAlwaysExpanded();
+			bPreserveHeaderStateOnScroll = oDynamicPage._preserveHeaderStateOnScroll();
 
 		// Dynamic Page Layout Root DOM Element.
 		oRm.write("<article");
@@ -38,13 +38,13 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 		// Renders Dynamic Page Title.
 		oRm.write("<header");
-		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-header');
+		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-header");
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageTitleWrapper");
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitle);
-		if (bHeaderAlwaysExpanded) {
+		if (bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("</header>");
@@ -52,20 +52,20 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 		// Renders Dynamic Page Content
 		oRm.write("<div");
-		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-contentWrapper');
+		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-contentWrapper");
 		oRm.addClass("sapFDynamicPageContentWrapper");
 		oRm.writeClasses();
 		oRm.write(">");
-		if (!bHeaderAlwaysExpanded) {
+		if (!bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("<div");
-		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-content');
+		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-content");
 		oRm.addClass("sapFDynamicPageContent");
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.write('<div');
-		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-contentFitContainer');
+		oRm.write("<div");
+		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-contentFitContainer");
 		oRm.addClass("sapFDynamicPageContentFitContainer");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	DynamicPageRenderer.renderFooter = function (oRm, oDynamicPageFooter, oDynamicPage) {
 		if (oDynamicPageFooter) {
 			oRm.write("<footer");
-			oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-footerWrapper');
+			oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-footerWrapper");
 			oRm.addClass("sapContrast sapContrastPlus sapFDynamicPageFooter sapFFooter-CTX");
 			if (!oDynamicPage.getShowFooter()) {
 				oRm.addClass("sapUiHidden");
@@ -102,7 +102,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	DynamicPageRenderer.renderFooterSpacer = function (oRm, oDynamicPageFooter, oDynamicPage) {
 		if (oDynamicPageFooter) {
 			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-spacer');
+			oRm.writeAttributeEscaped("id", oDynamicPage.getId() + "-spacer");
 			if (oDynamicPage.getShowFooter()) {
 				oRm.addClass("sapFDynamicPageContentWrapperSpacer");
 			}

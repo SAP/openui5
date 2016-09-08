@@ -40,7 +40,8 @@
 				Opa5.extendConfig({
 					viewNamespace: "appUnderTest.view.",
 					// we only have one view
-					viewName : "Main"
+					viewName : "Main",
+					autoWait : true
 				});
 
 				opaTest("Should navigate to page 2", function(Given, When, Then) {

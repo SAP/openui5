@@ -3635,6 +3635,8 @@ QUnit.test("removeAllItems()", function(assert) {
 	assert.ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.Select.prototype.removeAllItems() method returns an array of the removed items");
 	assert.strictEqual(oSelect.$("label").text(), "");
 	assert.strictEqual(oSelect.$("select").children().length, 0);
+	assert.strictEqual(oSelect.getSelectedItem(), null);
+	assert.strictEqual(oSelect.getSelectedItemId(), "");
 
 	for (var i = 0; i < oRemovedItems.length; i++) {
 		assert.strictEqual(oRemovedItems[i].hasListeners("_change"), false);

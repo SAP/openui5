@@ -5,11 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(['jquery.sap.global',
-	'sap/ui/core/library', 'sap/m/library'], // library dependency
+sap.ui.define(["jquery.sap.global",
+	"sap/ui/core/library", "sap/m/library"], // library dependency
 	function() {
 
-	'use strict';
+	"use strict";
 
 	/**
 	 * SAPUI5 library with controls specialized for Fiori applications.
@@ -23,14 +23,11 @@ sap.ui.define(['jquery.sap.global',
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : 'sap.f',
-		version: '${version}',
-		dependencies : ['sap.ui.core','sap.m'],
+		name : "sap.f",
+		version: "${version}",
+		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
 			"sap.f.ThreeColumnLayoutType"
-		],
-		interfaces: [
-			"sap.f.ISnappable"
 		],
 		controls: [
 			"sap.f.DynamicPage",
@@ -40,18 +37,6 @@ sap.ui.define(['jquery.sap.global',
 		],
 		elements: []
 	});
-
-	/**
-	 *
-	 * Interface for controls which are suitable as a Header in sap.f.DynamicPage.
-	 * If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
-	 *
-	 * @since 1.42
-	 * @name sap.f.ISnappable
-	 * @interface
-	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
-	 */
 
 	/**
 	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control

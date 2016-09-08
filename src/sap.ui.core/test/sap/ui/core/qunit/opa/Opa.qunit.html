@@ -21,31 +21,42 @@ jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 sinon.config.useFakeTimers = true;
 QUnit.config.autostart = false;
+// needed for tests that unload OPA
+QUnit.config.reorder = false;
 
-sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerInterceptor) {
+sap.ui.require([
+	"jquery.sap.global",
+	"unitTests/utils/loggerInterceptor",
+	"sap/ui/Device"
+], function ($, loggerInterceptor, Device) {
 	"use strict";
+
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading
 	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
-	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
+	var iExecutionDelay = Opa.config.executionDelay;
 
 	QUnit.module("context");
 
-	test("Should have the same context", function() {
+	QUnit.test("Should have the same context", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 		var oOpa2 = new Opa();
 
 		// Act + Assert
-		strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
+		assert.strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
 	});
 
-	QUnit.module("waitFor");
+	QUnit.module("waitFor", {
+		afterEach: function () {
+			Opa.resetConfig();
+		}
+	});
 
-	test("Should wait for something", function() {
+	QUnit.test("Should wait for something", function(assert) {
 		// Arrange
 		var bFirstCheck = false,
 			oFirstSuccess = this.spy(),
@@ -70,33 +81,33 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 			},
 			success : oSecondSuccess
 		}).done(oDoneSpy);
-		sap.ui.test.Opa.emptyQueue();
+		Opa.emptyQueue();
 
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
-		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
-		strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
+		assert.strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
+		assert.strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+		assert.strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
 
 		bSecondCheck = true;
 		this.clock.tick(1000);
 
-		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
-		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
-		strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
+		assert.strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
+		assert.strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+		assert.strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
 
 		bFirstCheck = true;
 		this.clock.tick(1000);
 
 		ok(oFirstSuccess.calledBefore(oSecondSuccess), "Did call the first success first");
 
-		strictEqual(oFirstSuccess.callCount, 1, "First did succeed");
-		strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");
-		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
+		assert.strictEqual(oFirstSuccess.callCount, 1, "First did succeed");
+		assert.strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");
+		assert.strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
-	QUnit.test("Should resolve after 0ms if the conditions are met", function(asssert) {
+	QUnit.test("Should resolve after 0ms if the conditions are met", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 
@@ -106,15 +117,15 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 				return true;
 			},
 			success : function () {
-				asssert.ok(true, "Success is called synchronously");
+				assert.ok(true, "Success is called synchronously");
 			}
 		});
 
 		Opa.emptyQueue();
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
 	});
 
-	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
+	QUnit.test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 		oOpa.extendConfig({
@@ -157,29 +168,29 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 			success : oSuccess_2
 		}).done(oDoneSpy);
 
-		sap.ui.test.Opa.emptyQueue();
+		Opa.emptyQueue();
 
 		//Ensure all timers have been triggered
 		this.clock.tick(1000);
 
 		// Assert
-		//		Ensure Order
-		ok(fnSuccessSpy_1.calledBefore(oSuccess_1_1), "Success Handler Order: 1 before 1.1");
-		ok(oSuccess_1_1.calledBefore(fnSuccessSpy_1_2), "Success Handler Order: 1.1 before 1.2");
-		ok(fnSuccessSpy_1_2.calledBefore(oSuccess_1_2_1), "Success Handler Order: 1.2 before 1.2.1");
-		ok(oSuccess_1_2_1.calledBefore(oSuccess_1_3), "Success Handler Order: 1.2.1 before 1.3");
-		ok(oSuccess_1_3.calledBefore(oSuccess_2), "Success Handler Order: 1.3 before 2");
-		//		Ensure called once
-		strictEqual(fnSuccessSpy_1.callCount, 1, "Ensure Success Handler #1 called once");
-		strictEqual(oSuccess_1_1.callCount, 1, "Ensure Success Handler #1.1 called once");
-		strictEqual(fnSuccessSpy_1_2.callCount, 1, "Ensure Success Handler #1.2 called once");
-		strictEqual(oSuccess_1_2_1.callCount, 1, "Ensure Success Handler #1.2.1 called once");
-		strictEqual(oSuccess_1_3.callCount, 1, "Ensure Success Handler #1.3 called once");
-		strictEqual(oSuccess_2.callCount, 1, "Ensure Success Handler #2 called once");
-		strictEqual(oDoneSpy.callCount, 1, "Resolve the deferred");
+		// Ensure Order
+		assert.ok(fnSuccessSpy_1.calledBefore(oSuccess_1_1), "Success Handler Order: 1 before 1.1");
+		assert.ok(oSuccess_1_1.calledBefore(fnSuccessSpy_1_2), "Success Handler Order: 1.1 before 1.2");
+		assert.ok(fnSuccessSpy_1_2.calledBefore(oSuccess_1_2_1), "Success Handler Order: 1.2 before 1.2.1");
+		assert.ok(oSuccess_1_2_1.calledBefore(oSuccess_1_3), "Success Handler Order: 1.2.1 before 1.3");
+		assert.ok(oSuccess_1_3.calledBefore(oSuccess_2), "Success Handler Order: 1.3 before 2");
+		// Ensure called once
+		assert.strictEqual(fnSuccessSpy_1.callCount, 1, "Ensure Success Handler #1 called once");
+		assert.strictEqual(oSuccess_1_1.callCount, 1, "Ensure Success Handler #1.1 called once");
+		assert.strictEqual(fnSuccessSpy_1_2.callCount, 1, "Ensure Success Handler #1.2 called once");
+		assert.strictEqual(oSuccess_1_2_1.callCount, 1, "Ensure Success Handler #1.2.1 called once");
+		assert.strictEqual(oSuccess_1_3.callCount, 1, "Ensure Success Handler #1.3 called once");
+		assert.strictEqual(oSuccess_2.callCount, 1, "Ensure Success Handler #2 called once");
+		assert.strictEqual(oDoneSpy.callCount, 1, "Resolve the deferred");
 	});
 
-	test("Should modify the polling interval", function() {
+	QUnit.test("Should modify the polling interval", function(assert) {
 		// Arrange
 		var bFirstCheck = false,
 			bSecondCheck = false,
@@ -208,15 +219,15 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 			pollingInterval : 100
 		});
 
-		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
+		Opa.emptyQueue().done(oDoneSpy);
 
 		// 2 wait fors and an empty queue - 3 times initial delay
-		this.clock.tick(iInitialDelay);
-		this.clock.tick(iInitialDelay);
-		this.clock.tick(iInitialDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
 
 		this.clock.tick(1000);
-		strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
+		assert.strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
 
 		bFirstCheck = true;
 
@@ -225,18 +236,49 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 
 		//check for faster polling
 		this.clock.tick(1000);
-		strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
+		assert.strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
 
 		//clean the queue
 		this.clock.tick(100);
-		strictEqual(oDoneSpy.callCount, 1, "Did clear all waitFors");
+		assert.strictEqual(oDoneSpy.callCount, 1, "Did clear all waitFors");
+	});
+
+	QUnit.test("Should slow down the execution of OPA", function (assert) {
+		var oOpa = new Opa(),
+			fnFirstSuccessSpy = sinon.spy(),
+			fnSecondSuccessSpy = sinon.spy(),
+			fnDone = assert.async();
+
+		Opa.extendConfig({
+			executionDelay: 5000
+		});
+
+		oOpa.waitFor({
+			success: fnFirstSuccessSpy
+		});
+
+		oOpa.waitFor({
+			success: fnSecondSuccessSpy
+		});
+
+		sap.ui.test.Opa.emptyQueue().done(function () {
+			fnDone();
+		});
+
+		sinon.assert.notCalled(fnFirstSuccessSpy);
+		this.clock.tick(2000);
+		sinon.assert.notCalled(fnFirstSuccessSpy);
+		this.clock.tick(3000);
+		sinon.assert.calledOnce(fnFirstSuccessSpy);
+		sinon.assert.notCalled(fnSecondSuccessSpy);
+		this.clock.tick(5000);
 	});
 
 	module("Exception Handling");
 
-	test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
+	QUnit.test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
 		var sError = "OpaError",
 			fnFaultyFunction = function() {
@@ -244,7 +286,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 			},
 			fnClockTick = function() {
 				this.clock.tick(100);
-			},
+			}.bind(this),
 			oOpa = new Opa(),
 			oOpa1 = new Opa(),
 			fnSpy = this.spy();
@@ -260,7 +302,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 	});
 
 
-	test("Should empty the queue if the promise is rejected", function(assert) {
+	QUnit.test("Should empty the queue if the promise is rejected", function(assert) {
 
 		var sError = "OpaError",
 			fnFaultyFunction = function() {
@@ -268,7 +310,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 			},
 			fnClockTick = function() {
 				this.clock.tick(100);
-			},
+			}.bind(this),
 			oOpa = new Opa(),
 			fnCheck = this.spy( function() {
 				return false;
@@ -295,11 +337,11 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 
 
 	module("StopQueue", {
-		setup : function () {
+		beforeEach : function () {
 			this.fnErrorLogStub = sinon.stub(oLogger, "error", $.noop);
 			sinon.config.useFakeTimers = false;
 		},
-		teardown : function () {
+		afterEach : function () {
 			this.fnErrorLogStub.restore();
 			sinon.config.useFakeTimers = true;
 		}
@@ -400,21 +442,23 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		}.bind(this));
 	});
 
-	module("Timeouts", {
-		setup : function () {
+	QUnit.module("Timeouts", {
+		beforeEach : function () {
 			sinon.config.useFakeTimers = false;
 		},
-		teardown : function () {
+		afterEach : function () {
 			sinon.config.useFakeTimers = true;
+			Opa.resetConfig();
 		}
 	});
 
-	asyncTest("Should time out if check is returning false", function() {
+	QUnit.test("Should time out if check is returning false", function(assert) {
 		// Arrange
 		var oErrorSpy = sinon.spy(),
 			oWaitForDoneSpy = sinon.spy(),
 			oSuccessSpy = sinon.spy(),
 			oDoneSpy = sinon.spy(),
+			fnDone = assert.async(),
 			fnLogErrorSpy = sinon.spy(oLogger, "error");
 
 		// System under Test
@@ -431,33 +475,33 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		}).done(oWaitForDoneSpy);
 
 		oOpa.emptyQueue().fail(function () {
-			strictEqual(oWaitForDoneSpy.callCount, 0, "Done was not called");
-			strictEqual(oDoneSpy.callCount, 0, "Done was not called");
-			strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
-			strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
+			assert.strictEqual(oWaitForDoneSpy.callCount, 0, "Done was not called");
+			assert.strictEqual(oDoneSpy.callCount, 0, "Done was not called");
+			assert.strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
+			assert.strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
 			sinon.assert.calledOnce(fnLogErrorSpy);
 
 			fnLogErrorSpy.restore();
-			start();
+			fnDone();
 		}).done(oDoneSpy);
 
 	});
 
 	function theCurrentBrowserSupportsStacktraces () {
-		if (sap.ui.Device.browser.phantomJS) {
+		if (Device.browser.phantomJS) {
 			return false;
 		}
 
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			return false;
 		}
 
 		//Incident 1580223677: IOS does not support stacktraces
-		if (sap.ui.Device.os.ios) {
+		if (Device.os.ios) {
 			return false;
 		}
 
-		if(sap.ui.Device.browser.safari) {
+		if(Device.browser.safari) {
 			return false;
 		}
 
@@ -468,9 +512,10 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		return true;
 	}
 
-	asyncTest("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction() {
+	QUnit.test("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction (assert) {
 		// System under Test
 		var oOpa = new Opa();
+		var fnDone = assert.async();
 		sinon.spy(oLogger, "error");
 
 		// Act
@@ -482,25 +527,26 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		});
 
 		oOpa.emptyQueue().fail(function (oOptions) {
-			ok(true, 0, "Promise got rejected");
-			ok(oOptions, "Options are passed");
-			ok(oOptions.errorMessage, "Error message is there");
+			assert.ok(true, 0, "Promise got rejected");
+			assert.ok(oOptions, "Options are passed");
+			assert.ok(oOptions.errorMessage, "Error message is there");
 
 			if (theCurrentBrowserSupportsStacktraces()) {
-				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
+				assert.ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
-			strictEqual(oLogger.error.callCount, 1, "Error log spy got invoked");
-			ok(oLogger.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
+			assert.strictEqual(oLogger.error.callCount, 1, "Error log spy got invoked");
+			assert.ok(oLogger.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
 			oLogger.error.restore();
-			start();
+			fnDone();
 		});
 
 	});
 
-	asyncTest("Reject message stack for additional waitFor declared in the success handler contains original call", function thisIsTheMainTest() {
+	QUnit.test("Reject message stack for additional waitFor declared in the success handler contains original call", function thisIsTheMainTest(assert) {
 		// System under Test
 		var oOpa = new Opa();
+		var fnDone = assert.async();
 		oOpa.extendConfig({
 			pollingInterval : 1
 		});
@@ -523,16 +569,16 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		});
 
 		oOpa.emptyQueue().fail(function (oOptions) {
-			ok(true, 0, "Promise got rejected");
-			ok(oOptions, "Options are passed");
-			ok(oOptions.errorMessage, "Error message is there");
+			assert.ok(true, 0, "Promise got rejected");
+			assert.ok(oOptions, "Options are passed");
+			assert.ok(oOptions.errorMessage, "Error message is there");
 
 			if (theCurrentBrowserSupportsStacktraces()) {
-				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
-				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
+				assert.ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
+				assert.ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
 
-			start();
+			fnDone();
 		});
 	});
 
@@ -599,8 +645,8 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		setTimeout(function () {
 			oOpa.waitFor({});
 			assert.strictEqual(oCounter.get(), 2, "waitFors has been added after some time has passed");
-			fnTimeoutDone();
 			Opa.stopQueue();
+			fnTimeoutDone();
 		}, 50);
 	});
 
@@ -616,7 +662,7 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 
 	});
 
-	QUnit.module("waitFor counts", {
+	QUnit.module("Opa Config", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
 		},
@@ -625,37 +671,73 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 		}
 	});
 
-	QUnit.test("Should calculate how many waitFors have been added in a timeframe", function (assert) {
-		var fnTimeoutDone = assert.async(),
-			oCounter = Opa._getWaitForCounter();
+	function assertDefaults (assert) {
+		assert.strictEqual(Opa.config.timeout, 15);
+		assert.strictEqual(Opa.config.pollingInterval, 400);
+		assert.strictEqual(Opa.config._stackDropCount, 0);
+		assert.strictEqual(Opa.config.executionDelay, iExecutionDelay);
+		assert.ok(Opa.config.arrangements instanceof Opa);
+		assert.ok(Opa.config.actions instanceof Opa);
+		assert.ok(Opa.config.assertions instanceof Opa);
+	}
 
-		assert.strictEqual(oCounter.get(), 0, "initially no waitFors have been added");
-
-		var oOpa = new Opa();
-		oOpa.waitFor({});
-
-		assert.strictEqual(oCounter.get(), 1, "first waitFor added");
-
-		setTimeout(function () {
-			oOpa.waitFor({});
-			assert.strictEqual(oCounter.get(), 2, "waitFors has been added after some time has passed");
-			fnTimeoutDone();
-			Opa.stopQueue();
-		}, 50);
+	QUnit.test("Should have the correct defaults", function (assert) {
+		assertDefaults(assert);
 	});
 
-	QUnit.test("Should not return negative numbers", function (assert) {
+	QUnit.test("Should reset the config", function (assert) {
 		var oOpa = new Opa();
+		Opa.extendConfig({
+			arrangements : oOpa,
+			actions : oOpa,
+			assertions : oOpa,
+			timeout : 123,
+			pollingInterval : 123,
+			_stackDropCount : 123,
+			executionDelay: 9000
+		});
 
-		oOpa.waitFor({});
-		var oCounter = Opa._getWaitForCounter();
-
-		Opa.stopQueue();
-
-		assert.strictEqual(oCounter.get(), 0, "first waitFor added");
-
+		Opa.resetConfig();
+		assertDefaults(assert);
+		assert.notEqual(Opa.config.assertions, oOpa);
+		assert.notEqual(Opa.config.actions, oOpa);
+		assert.notEqual(Opa.config.assertions, oOpa);
 	});
 
+	[{
+		uriParameter: 2000,
+		expected: 2000
+	},
+	{
+		uriParameter: "2000",
+		expected: 2000
+	},
+	{
+		uriParameter: "foo",
+		expected: iExecutionDelay
+	},
+	{
+		uriParameter: null,
+		expected: iExecutionDelay
+	}].forEach(function (oTestCase) {
+		QUnit.test("Should set the executionDelay if a URL parameter is " + JSON.stringify(oTestCase), function (assert) {
+			var fnDone = assert.async();
+			var oStub = sinon.stub($.sap, "getUriParameters", function () {
+				return {
+					get: function () {
+						return oTestCase.uriParameter
+					}
+				}
+			});
+			$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+
+			sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+				assert.strictEqual(Opa.config.executionDelay, oTestCase.expected);
+				oStub.restore();
+				fnDone()
+			});
+		});
+	});
 	QUnit.start();
 });
 </script>

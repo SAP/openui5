@@ -731,6 +731,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oButton = this.getButtons()[sNewKey],
 			sButtonId = oButton.getId();
 
+		oButton.firePress();
 		this.setSelectedButton(sButtonId);
 		this.fireSelect({
 			button: oButton,

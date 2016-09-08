@@ -11,7 +11,7 @@
 
 	<script>
 		jQuery.sap.require("sap.ui.thirdparty.qunit");
-		QUnit.config.testTimeout = 2000;
+		QUnit.config.testTimeout = 4000;
 		QUnit.config.autostart = false;
 
 		/**
@@ -32,7 +32,9 @@
 				function (Opa5, Opa, opaTest, PropertyStrictEquals) {
 					"use strict";
 
-					opaTest("Should time out", function (oOpa) {
+					QUnit.module("Timeouts");
+
+					opaTest("Should hit a QUNit time out", function (oOpa) {
 						oOpa.waitFor({
 							check: function () {
 								return false;
@@ -87,7 +89,15 @@
 						});
 					});
 
-					QUnit.module("Exceptions in callbacks");
+					QUnit.module("Exceptions", {
+						beforeEach: function () {
+							this.fnOriginal = window.onerror;
+							window.onerror = $.noop();
+						},
+						afterEach: function () {
+							window.onerror = this.fnOriginal;
+						}
+					});
 
 					opaTest("Should show an error thrown by a check", function (oOpa) {
 						oOpa.waitFor({
@@ -130,19 +140,75 @@
 						})
 					});
 
+					QUnit.module("IFrame");
+
 					opaTest("Should start an IFrame and log something there", function (oOpa) {
-						// loading of an iframe takes quite some time
-						QUnit.config.testTimeout = 15000;
 						oOpa.iStartMyAppInAFrame("./miniUI5Site.html");
 
 						oOpa.waitFor({
 							viewName: "myView",
 							id: "myButton",
+							timeout: 1,
 							matchers: new PropertyStrictEquals({
 								name: "text",
 								value: "this text is not the text of the button"
 							})
 						});
+					});
+
+					opaTest("Sould enable autoWait for XHR when not searching for a control", function (oOpa) {
+						var oFakeXHR,
+							bLoaded = false;
+						Opa5.extendConfig({
+							autoWait: true
+						});
+
+						oOpa.waitFor({
+							success: function () {
+								Opa5.getWindow().sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {
+									oFakeXHR = sinon.useFakeXMLHttpRequest();
+									Opa5.getJQuery().ajax({url: "/foo"});
+									bLoaded = true;
+								});
+							}
+						});
+
+						oOpa.waitFor({
+							timeout: 2,
+							check: function () {
+								return bLoaded;
+							},
+							success: function () {
+								ok(false, "Should not happen");
+							},
+							error: function () {
+								Opa5.resetConfig();
+								oFakeXHR.restore();
+							}
+						});
+					});
+
+					opaTest("Should enable autoWait when searching for a control", function (oOpa) {
+						Opa5.extendConfig({
+							autoWait: true
+						});
+
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myButton",
+							success: function (oButton) {
+								oButton.setBusy(true);
+							}
+						});
+
+						oOpa.waitFor({
+							timeout: 2,
+							viewName: "myView",
+							id: "myButton",
+							success: function () {
+								ok(false, "Should not happen");
+							}
+						})
 					});
 
 					QUnit.start();

@@ -181,6 +181,20 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return this._oType || (this._oType = DataType.getType(this.type));
 	};
 
+	Property.prototype.getDefaultValue = function() {
+		var oDefaultValue = this.defaultValue,
+			oType;
+
+		if ( oDefaultValue === null ) {
+			oType = this.getType();
+			if ( oType instanceof DataType ) {
+				oDefaultValue = oType.getDefaultValue();
+			}
+		}
+
+		return oDefaultValue;
+	};
+
 	Property.prototype.get = function(instance) {
 		return instance[this._sGetter]();
 	};
@@ -982,27 +996,20 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 */
 	ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
 
-		var mDefaults = this._mDefaults,
-			oType;
+		var mDefaults = this._mDefaults;
+
 		if ( mDefaults ) {
 			return mDefaults;
 		}
 
 		if ( this.getParent() instanceof ManagedObjectMetadata ) {
-			mDefaults = jQuery.sap.newObject(this.getParent().getPropertyDefaults());
+			mDefaults = jQuery.extend({}, this.getParent().getPropertyDefaults());
 		} else {
 			mDefaults = {};
 		}
 
 		for (var s in this._mProperties) {
-			if ( this._mProperties[s].defaultValue !== null ) {
-				mDefaults[s] = this._mProperties[s].defaultValue;
-			} else {
-				oType = DataType.getType(this._mProperties[s].type);
-				if (oType instanceof DataType) {
-					mDefaults[s] = oType.getDefaultValue();
-				}
-			}
+			mDefaults[s] = this._mProperties[s].getDefaultValue();
 		}
 		this._mDefaults = mDefaults;
 		return mDefaults;

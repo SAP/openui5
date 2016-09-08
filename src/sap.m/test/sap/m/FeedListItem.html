@@ -6,7 +6,7 @@
 		<title>sap.m.FeedListItem Test</title>
 		<script id='sap-ui-bootstrap' type='text/javascript'
 			src='../../../resources/sap-ui-core.js'
-				data-sap-ui-theme='sap_bluecrystal'
+				data-sap-ui-theme='sap_belize'
 				data-sap-ui-libs='sap.m'>
 		</script>
 		<script type="text/javascript">
@@ -168,7 +168,7 @@
 		var feedData = {
 				chunks : [ {
 					icon: "images/Woman_04.png",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est.",
+					text: '<h3>subheader</h3>     <p>link: <a href="//www.sap.com">link to sap.com</a> - links open in a new window.</p>     <p>paragraph: <strong>strong</strong> and <em>emphasized</em>.</p>     <p>list:</p>     <ul><li>list item 1</li><li>list item 2<ul><li>sub item 1</li><li>sub item 2</li></ul></li></ul>     <p>pre:</p><pre>abc    def    ghi</pre>     <p>code: <code>var el = document.getElementById("myId");</code></p>     <p>cite: <cite>a reference to a source</cite></p>     <dl><dt>definition:</dt><dd>definition list of terms and descriptions</dd></dl>',
 					sender: "Jeremy Dash",
 					senderActive: true,
 					iconActive: true,
@@ -177,7 +177,7 @@
 					type: sap.m.ListType.Active,
 				}, {
 					icon: sURI,
-					text: "This FeedListItem displays an ImagePool image and it is clickable. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
+					text: "This FeedListItem displays an ImagePool image and it is clickable. <strong>Strong Text</strong> and another one <em>Italic text</em> metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
 					sender: "Christopher Kent",
 					senderActive: true,
 					iconActive: true,
@@ -186,7 +186,7 @@
 					type: sap.m.ListType.Detail,
 				}, {
 					icon: "images/female.jpg",
-					text: "This FeedListItem comes with senderActive = false and iconActive = false and it is not clickable. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
+					text: "This <em>FeedListItem</em> comes with <strong>senderActive</strong> = false and iconActive = false and it is not clickable. In hac habitasse <a href='//www.sap.com'>link</a> platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
 					sender: "Claire Jones",
 					senderActive: false,
 					iconActive: false,
@@ -194,7 +194,7 @@
 					info: "Waiting for Approval",
 					type: sap.m.ListType.DetailAndActive,
 				}, {
-					text: "This FeedListItem comes without an image, it is not clickable and has a very long info text",
+					text: "This <a href='//www.sap.com'>FeedListItem</a> comes without an image, it is not clickable and has a very long info text",
 					sender: "Christine Noah",
 					senderActive: true,
 					iconActive: false,

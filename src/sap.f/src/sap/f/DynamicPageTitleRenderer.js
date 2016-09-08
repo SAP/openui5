@@ -90,7 +90,7 @@ sap.ui.define([], function () {
 	DynamicPageTitleRenderer._renderExpandContent = function (oRm, oDynamicPageTitle, aExpandContent) {
 		if (aExpandContent.length > 0) {
 			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oDynamicPageTitle.getId() + '-expand-wrapper');
+			oRm.writeAttributeEscaped("id", oDynamicPageTitle.getId() + "-expand-wrapper");
 			oRm.writeClasses();
 			oRm.write(">");
 			aExpandContent.forEach(oRm.renderControl);
@@ -101,7 +101,7 @@ sap.ui.define([], function () {
 	DynamicPageTitleRenderer._renderSnappedContent = function (oRm, oDynamicPageTitle, aSnapContent) {
 		if (aSnapContent.length > 0) {
 			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oDynamicPageTitle.getId() + '-snapped-wrapper');
+			oRm.writeAttributeEscaped("id", oDynamicPageTitle.getId() + "-snapped-wrapper");
 			if (!oDynamicPageTitle._getShowSnapContent()) {
 				oRm.addClass("sapUiHidden");
 			}

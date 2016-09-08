@@ -2,3 +2,229 @@
 /* CSS for control sap.ui.layout/BlockLayout  */
 /* Belize theme                               */
 /* ========================================== */
+
+.setCellsColorDoubles (@evenCell, @oddCell) {
+	// Match every even cell
+	.sapUiBlockLayoutCell:nth-child(2n) {
+		background-color: @evenCell;
+	}
+
+	// Match every odd cell
+	.sapUiBlockLayoutCell:nth-child(2n+1) {
+		background-color: @oddCell;
+	}
+}
+
+.sapUiBlockCellContent {
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	font-size: 0.875rem;
+	color: @sapUiContentForegroundTextColor;
+	padding: 1rem 1rem 2rem 1rem;
+
+	> .sapUiIcon {
+		font-size: 2.25rem;
+	}
+}
+
+.sapUiBlockCellTitle {
+	font-size: 1.25rem;
+}
+
+// Styles & Sizes for Tablet
+.sapUiBlockLayoutSizeM {
+	.sapUiBlockCellContent {
+		padding: 2rem 2rem 3rem 2rem;
+
+		> .sapUiIcon {
+			font-size: 3rem;
+		}
+	}
+}
+
+// Styles & Sizes for Desktop
+.sapUiBlockLayoutSizeL {
+	.sapUiBlockCellContent {
+		padding: 3rem 3rem 4rem 3rem;
+		font-size: 1.125rem;
+
+		> .sapUiIcon {
+			font-size: 3.75rem;
+		}
+	}
+
+	.sapUiBlockCellTitle {
+		font-size: 1.75rem;
+	}
+}
+
+// Styles & Sizes for LargeDesktop
+.sapUiBlockLayoutSizeXL {
+	.sapUiBlockCellContent {
+		padding: 4rem 4rem 5rem 4rem;
+		font-size: 1.5rem;
+
+		> .sapUiIcon {
+			font-size: 4.5rem;
+		}
+	}
+
+	.sapUiBlockCellTitle {
+		font-size: 2.25rem;
+	}
+}
+
+/* ============ Background type: Light ============== */
+.sapUiBlockLayoutBackgroundLight {
+	.sapUiBlockCellContent,
+	.sapUiBlockCellTitle {
+		font-family: @sapUiFontFamily;
+		color: @sapUiContentForegroundTextColor;
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3 {
+		.setCellsColorDoubles(@sapUiGroupContentBackground, @sapUiBaseColor);
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1Inverted,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3Inverted {
+		.setCellsColorDoubles(@sapUiBaseColor, @sapUiGroupContentBackground);
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet4 {
+		.setCellsColorDoubles(darken(@sapUiBaseColor, 7), darken(@sapUiBaseColor, 14));
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2Inverted,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet4Inverted {
+		.setCellsColorDoubles(darken(@sapUiBaseColor, 14), darken(@sapUiBaseColor, 7));
+	}
+}
+
+/* ============ Background type: Mixed ============== */
+.sapUiBlockLayoutBackgroundMixed {
+	.sapUiBlockLayoutBackgroundLight; // Use the same rules as in sapUiBlockLayoutBackgroundLight
+
+	&.sapUiBlockLayoutSizeL, &.sapUiBlockLayoutSizeXL {
+		.sapUiBlockLayoutRow {
+
+			.sapContrast, .sapContrastPlus {
+				&.sapUiBlockLayoutCell {
+					background-color: darken(@sapUiBaseColor, 12);
+				}
+
+				&.sapUiBlockLayoutCell.sapUiBlockLayoutBackgroundContrast2 {
+					background-color: darken(@sapUiBaseColor, 4);
+				}
+			}
+		}
+	}
+}
+
+/* ============ Background type: Accent ============== */
+.sapUiBlockLayoutBackgroundAccent {
+	.sapUiBlockCellContent,
+	.sapUiBlockCellTitle,
+	.sapUiBlockCellContent .sapMText {
+		color: @sapUiContentContrastTextColor;
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1 {
+		.setCellsColorDoubles(darken(@sapUiAccent7, 5), darken(@sapUiAccent7, 12)); // Colors A & B
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1Inverted {
+		.setCellsColorDoubles(darken(@sapUiAccent7, 12), darken(@sapUiAccent7, 5)); // Colors B & A
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2 {
+		.setCellsColorDoubles(darken(@sapUiAccent6, 6), darken(@sapUiAccent6, 12)); // Colors C & D
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2Inverted {
+		.setCellsColorDoubles(darken(@sapUiAccent6, 12), darken(@sapUiAccent6, 6)); // Colors D & C
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3 {
+		.setCellsColorDoubles(darken(@sapUiAccent5, 8), darken(@sapUiAccent5, 16)); // Colors E & F
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3Inverted {
+		.setCellsColorDoubles(darken(@sapUiAccent5, 16), darken(@sapUiAccent5, 8)); // Colors F & E
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet4 {
+		.setCellsColorDoubles(darken(@sapUiGroupContentBackground, 2), darken(@sapUiGroupContentBackground, 8)); // Colors G & H
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet4Inverted {
+		.setCellsColorDoubles(darken(@sapUiGroupContentBackground, 8), darken(@sapUiGroupContentBackground, 2)); // Colors H & G
+	}
+
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3,
+	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet4 {
+		.sapUiBlockLayoutCell.sapUiBlockLayoutBackgroundColorSetGray1 {
+			background-color: darken(@sapUiGroupContentBackground, 8); //color: H
+		}
+
+		.sapUiBlockLayoutCell.sapUiBlockLayoutBackgroundColorSetGray2 {
+			background-color: darken(@sapUiGroupContentBackground, 2); //color: G
+		}
+	}
+
+	.sapUiBlockLayoutBackgroundColorSet4,
+	.sapUiBlockLayoutBackgroundColorSet4Inverted,
+	.sapUiBlockLayoutBackgroundColorSetGray1,
+	.sapUiBlockLayoutBackgroundColorSetGray2 {
+		.sapUiBlockCellContent,
+		.sapUiBlockCellTitle,
+		.sapUiBlockCellContent .sapMText {
+			color: @sapUiGroupTitleTextColor;
+		}
+	}
+}
+
+/* ============ Background type: Dashboard ============== */
+.sapUiBlockLayoutBackgroundDashboard {
+	.sapUiBlockLayoutCell {
+		background-color: @sapUiWhiteBG;
+		font-weight: normal;
+		color: @sapUiContentForegroundTextColor;
+		margin: 0.25rem; // Spacing between blocks: 0.5rem
+	}
+
+	.sapUiBlockLayoutCell:first-child {
+		margin-left: 0.5rem; // Adjust first cell in a row with 0.5rem on the left
+	}
+	.sapUiBlockLayoutCell:last-child {
+		margin-right: 0.5rem; // Adjust last cell in a row with 0.5rem on the right
+	}
+
+	.sapUiBlockLayoutRow:first-child .sapUiBlockLayoutCell {
+		margin-top: 0.5rem; // Adjust spacing at the top for all cells in the first row
+	}
+
+	.sapUiBlockLayoutRow:last-child .sapUiBlockLayoutCell {
+		margin-bottom: 0.5rem; // Adjust spacing at the bottom for all cells in the last row
+	}
+
+	// Block Layout with size S (Phone) puts every cell into a single row
+	// Therefore spacing should be altered in this case
+	&.sapUiBlockLayoutSizeS {
+		.sapUiBlockLayoutCell {
+			margin: 0 0.5rem 0.5rem 0.5rem; //Top: 0, Left: 0.5rem, Bottom: 0.5rem, Right: 0.5rem
+		}
+
+		.sapUiBlockLayoutRow:first-child .sapUiBlockLayoutCell:first-child {
+			margin-top: 0.5rem; // Add 0.5rem spacing for the first cell in the first row
+		}
+
+		.sapUiBlockLayoutRow:last-child .sapUiBlockLayoutCell:last-child {
+			margin-bottom: 0.5rem; // Add 0.5rem spacing for the last cell in the last row
+		}
+	}
+}

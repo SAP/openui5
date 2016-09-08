@@ -3,6 +3,33 @@
 /* Belize theme                       */
 /* ================================== */
 
+.sapMGT.sapMGTLineMode {
+	background: none;
+}
+
+.sapMGTLineMode.sapMGTDisabled {
+	opacity: 0.5;
+}
+
+.sapMGTLineMode:hover .sapMGTWithoutImageHoverOverlay:not(.sapMGTWithoutImagePressActive) {
+	background-color: fade(@sapUiShellHoverBackground, 10);
+}
+.sapMGTLineMode .sapMGTWithoutImageHoverOverlay.sapMGTPressActive {
+	background-color: fade(@sapUiShellHoverBackground, 12);
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	color: @sapUiShellTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
 .sapMGTHdrTxt > .sapMText {
 	color: @sapUiTileTitleTextColor;
 	font-weight: normal;
@@ -50,6 +77,13 @@ html.sap-desktop .sapMGTWithImageHoverOverlay {
 	transition: background 0.2s;
 }
 
+.sapMGTLineMode .sapMGTFocusDiv {
+	top: 1px;
+	right: 1px;
+	left: 1px;
+	bottom: 1px;
+}
+
 html.sap-phone .sapMGTWithoutImageHoverOverlay,
 html.sap-phone .sapMGTWithImageHoverOverlay,
 html.sap-tablet .sapMGTWithoutImageHoverOverlay,
@@ -83,11 +117,6 @@ html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTWithImage
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
-	border: 1px solid @sapUiTileBackground;
-}
-
-/* This part is used to achieve dotted white black interlace border*/
-html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
@@ -97,6 +126,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 .sapMGTOverlay {
 	background-color: @sapUiTileBackground;
+}
+.sapMGTLineMode .sapMGTOverlay {
+	background: none;
 }
 
 /* BREAKPOINT FOR SMALL PHONES */

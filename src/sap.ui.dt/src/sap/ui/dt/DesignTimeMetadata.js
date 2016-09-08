@@ -118,22 +118,21 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 		return this.getData().domRef;
 	};
 
-	DesignTimeMetadata.prototype.getAssociatedDomRef = function(sAction, oElement) {
-
+	DesignTimeMetadata.prototype.getAssociatedDomRef = function(oElement, vDomRef, sAggregationName) {
 		var oElementDomRef = ElementUtil.getDomRef(oElement);
-		var vAssociatedDomRef = this.getAction(sAction, oElement).domRef;
-
-		if (oElementDomRef) {
-			if (typeof vAssociatedDomRef === "string") {
-				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vAssociatedDomRef).get(0);
-			} else if (typeof vAssociatedDomRef === "function") {
-				return vAssociatedDomRef.call(this, oElement);
-			}
-		} else {
-			if (typeof vAssociatedDomRef === "function") {
-				return vAssociatedDomRef.call(this, oElement);
-			}
+		var aArguments = [];
+		aArguments.push(oElement);
+		if (sAggregationName) {
+			aArguments.push(sAggregationName);
 		}
+
+		if (typeof (vDomRef) === "function") {
+			return vDomRef.apply(null, aArguments);
+		} else if (oElementDomRef && typeof (vDomRef) === "string") {
+			return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef).get(0);
+		}
+
+		return undefined;
 	};
 
 	/**

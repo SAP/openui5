@@ -36,7 +36,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 	ResponsiveSplitterRenderer.renderPaginator = function (oRm, oControl) {
 		var bpCount = oControl._getMaxPageCount(),
 			aPages = oControl.getAggregation("_pages") || [],
-			oBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+			oBundle = sap.ui.getCore().getLibraryResourceBundle('sap.ui.layout');
 
 		oRm.write("<div ");
 		oRm.writeAttribute("role", "navigation");

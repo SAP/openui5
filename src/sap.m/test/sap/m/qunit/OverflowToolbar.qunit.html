@@ -1324,6 +1324,23 @@
 
 		});
 
+		test("Destroying a control that is in the overflow is possible", function () {
+
+			var btn = new sap.m.Button({
+						text: "Button in overflow",
+						layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})
+					}),
+					oOverflowTB = createOverflowToolbar({width: 'auto'}, [btn]);
+
+			sap.ui.getCore().applyChanges();
+
+			btn.destroy();
+
+			strictEqual(oOverflowTB.getContent().length, 0, "Button successfully removed from the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
 		module("Layout");
 		test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function () {
 			var aContent = getDefaultContent(),

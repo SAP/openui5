@@ -209,12 +209,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBinding = this.getBinding("rows");
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
-			// If this needs to be changed, remember to consider the related implementations in Table and TreeTable
-			if (sSelectionMode === SelectionMode.Multi) {
-				sSelectionMode = SelectionMode.MultiToggle;
-				jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
-			}
 		}
+
+		// Check for valid selection modes (e.g. change deprecated mode "Multi" to "MultiToggle")
+		sSelectionMode = TableUtils.sanitizeSelectionMode(this, sSelectionMode);
 
 		// set selection mode independent from clearing the selection
 		this.setProperty("selectionMode", sSelectionMode);
@@ -716,11 +714,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.getContextInfoByIndex = function(iIndex) {
 		var oBinding = this.getBinding("rows");
 		return iIndex >= 0 && oBinding ? oBinding.getNodeByIndex(iIndex) : null;
-	};
-
-	AnalyticalTable.prototype._onColumnMoved = function(oEvent) {
-		Table.prototype._onColumnMoved.apply(this, arguments);
-		this.updateAnalyticalInfo(true, true);
 	};
 
 	/**

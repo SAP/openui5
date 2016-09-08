@@ -287,6 +287,70 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 	}, 50);
 });
 
+QUnit.test("Skip trigger resize when resizing already started", function(assert) {
+	oTable._getPointerExtension()._debug();
+	var ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
+	oTable._bIsColumnResizerMoving = true;
+	ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
+	ColumnResizeHelper.initColumnResizing(oTable);
+	ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
+});
+
+
+
+QUnit.module("Mousedown", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
+
+QUnit.asyncTest("Columnheader", function(assert){
+	var oColumn = oTable._getVisibleColumns()[3];
+	var bColumnReorderingTriggered = false;
+
+	oTable._getPointerExtension().doReorderColumn = function() {
+		bColumnReorderingTriggered = true;
+	};
+
+	qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
+	assert.ok(!oColumn._bSkipOpen, "Menu not open -> no skipping needed");
+	assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+	setTimeout(function(){
+		assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
+		assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
+
+		oColumn.getMenu().bOpen = true;
+		oTable.setEnableColumnReordering(false);
+		sap.ui.getCore().applyChanges();
+		bColumnReorderingTriggered = false;
+
+		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
+		assert.ok(oColumn._bSkipOpen, "Menu open -> skipping needed");
+		assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+		setTimeout(function(){
+			assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
+			assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
+			start();
+		}, 250);
+	}, 250);
+});
+
+QUnit.test("Scrollbar", function(assert){
+	var oEvent = jQuery.Event({type : "mousedown"});
+	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+	oEvent.button = 0
+	jQuery(oEvent.target).trigger(oEvent);
+	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on horizontal scrollbar");
+	oEvent = jQuery.Event({type : "mousedown"});
+	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+	oEvent.button = 0
+	jQuery(oEvent.target).trigger(oEvent);
+	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on vertical scrollbar");
+});
+
 
 QUnit.module("Click", {
 	setup: function() {
@@ -444,6 +508,288 @@ QUnit.test("Cell + Cell Click Event", function(assert) {
 });
 
 
+QUnit.module("Column Reordering", {
+	setup: function() {
+		jQuery.sap.byId("content").toggleClass("StablePosition", true);
+		createTables(true);
+		oTable.placeAt("content");
+		oTreeTable.placeAt("content");
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function () {
+		destroyTables();
+		jQuery.sap.byId("content").toggleClass("StablePosition", false);
+	}
+});
+
+function computeSettingsForReordering(oTable, iIndex, bIncreaseIndex) {
+	var oSettings = {
+		column : oTable._getVisibleColumns()[iIndex],
+		relatedColumn : oTable._getVisibleColumns()[bIncreaseIndex ? iIndex + 1 : iIndex - 1],
+	};
+
+	var initialXPos = 2; //Move mouse 2px from left onto the column
+
+	oSettings.top = Math.floor(oSettings.column.getDomRef().getBoundingClientRect().top);
+	oSettings.left = Math.floor(oSettings.column.getDomRef().getBoundingClientRect().left) + initialXPos;
+	oSettings.breakeven = (bIncreaseIndex ? oSettings.column.$().outerWidth() : 0) - initialXPos + oSettings.relatedColumn.$().outerWidth() / 2;
+
+	return oSettings;
+}
+
+QUnit.asyncTest("Reordering via Drag&Drop - increase Index", function(assert) {
+	var oSettings = computeSettingsForReordering(oTable, 2, true);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left + oSettings.breakeven;
+	var iCount = 0;
+
+	oTable.updateAnalyticalInfo = function(bFirst, bSecond) {
+		ok(bFirst, "updateAnalyticalInfo with first parameter true");
+		ok(bSecond, "updateAnalyticalInfo with second parameter true");
+		iCount++;
+	};
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
+			assert.equal(iCount, 1, "updateAnalyticalInfo called");
+
+			qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+			setTimeout(function(){
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
+				setTimeout(function() {
+					sap.ui.getCore().applyChanges();
+					assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
+					assert.equal(iCount, 2, "updateAnalyticalInfo called");
+					start();
+				}, 100);
+			}, 250);
+
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
+	var oSettings = computeSettingsForReordering(oTable, 2, false);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left - oSettings.breakeven;
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
+
+			qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+			setTimeout(function(){
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
+				setTimeout(function() {
+					sap.ui.getCore().applyChanges();
+					assert.equal(oTable.indexOfColumn(oColumn), 1, "Index of column changed");
+					start();
+				}, 100);
+			}, 250);
+
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("No Reordering of fixed columns (within fixed)", function(assert) {
+	oTable.setFixedColumnCount(5);
+	sap.ui.getCore().applyChanges();
+
+	var oSettings = computeSettingsForReordering(oTable, 2, true);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left + oSettings.breakeven;
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
+			start();
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("No Reordering of fixed columns (fixed to not fixed)", function(assert) {
+	oTable.setFixedColumnCount(3);
+	sap.ui.getCore().applyChanges();
+
+	var oSettings = computeSettingsForReordering(oTable, 2, true);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left + oSettings.breakeven;
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
+			start();
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("No Reordering of fixed columns (not fixed to fixed)", function(assert) {
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	var oSettings = computeSettingsForReordering(oTable, 2, false);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left - oSettings.breakeven;
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
+			start();
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - increase index", function(assert) {
+	oTreeTable.setFixedColumnCount(0);
+	sap.ui.getCore().applyChanges();
+
+	var oSettings = computeSettingsForReordering(oTreeTable, 0, true);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left + oSettings.breakeven;
+
+	assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed because not dragged enough");
+
+			qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+			setTimeout(function(){
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
+				qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
+				setTimeout(function() {
+					sap.ui.getCore().applyChanges();
+					assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed");
+					start();
+				}, 100);
+			}, 250);
+
+		}, 100);
+	}, 250);
+});
+
+QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - decrease index", function(assert) {
+	oTreeTable.setFixedColumnCount(0);
+	sap.ui.getCore().applyChanges();
+
+	var oSettings = computeSettingsForReordering(oTreeTable, 1, false);
+	var oColumn = oSettings.column;
+	var iLeft = oSettings.left - oSettings.breakeven;
+
+	assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Initial index of column");
+
+	qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
+	setTimeout(function(){
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
+		qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
+		setTimeout(function() {
+			sap.ui.getCore().applyChanges();
+			assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Index of column not changed");
+			start();
+		}, 100);
+	}, 250);
+});
+
+
+
+QUnit.module("Helpers", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
+
+QUnit.test("_getEventPosition()", function(assert) {
+	oTable._getPointerExtension()._debug();
+	var oExtensionHelper = oTable._getPointerExtension()._ExtensionHelper;
+
+	var oEvent,
+		oPos,
+		x = 15,
+		y = 20,
+		oCoord = {pageX: x, pageY: y};
+
+	oEvent = jQuery.extend({originalEvent: {}}, oCoord);
+
+	oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
+	assert.equal(oPos.x, x, "MouseEvent - X");
+	assert.equal(oPos.y, y, "MouseEvent - Y");
+
+	oEvent = {
+		targetTouches: [oCoord],
+		originalEvent: {
+			touches: []
+		}
+	};
+
+	oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
+	assert.equal(oPos.x, x, "TouchEvent - X");
+	assert.equal(oPos.y, y, "TouchEvent - Y");
+
+	oEvent = {
+		touches: [oCoord],
+		originalEvent: {
+			touches: [],
+			targetTouches: [oCoord]
+		}
+	};
+
+	oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
+	assert.equal(oPos.x, x, "TouchEvent (wrapped) - X");
+	assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
+});
+
+
+
 QUnit.module("Destruction", {
 	setup: function() {
 		createTables();
@@ -457,7 +803,7 @@ QUnit.module("Destruction", {
 
 
 QUnit.test("destroy()", function(assert) {
-	var oExtension = oTable._getKeyboardExtension();
+	var oExtension = oTable._getPointerExtension();
 	oTable.destroy();
 	assert.ok(!oExtension.getTable(), "Table cleared");
 	assert.ok(!oExtension._delegate, "Delegate cleared");

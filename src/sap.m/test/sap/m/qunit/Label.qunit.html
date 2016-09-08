@@ -55,6 +55,17 @@
 		});
 		oLabel3.placeAt("uiArea3");
 
+		var oLabel4 = new sap.m.Label("l4", {
+			text : sText,
+			width : sWidth,
+			labelFor : "I1"
+		}).placeAt("uiArea4");
+
+		var oInput = new sap.m.Input("I1", {
+			required: true,
+			width : sWidth
+		}).placeAt("uiArea4");
+
 		var l1, l2;
 
 		module("Basic", {
@@ -186,6 +197,24 @@
 			oLabel.destroy();
 		});
 
+		test("Label should get required from labeled control", function() {
+
+			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+			oInput.setRequired(false);
+			sap.ui.getCore().applyChanges();
+			ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
+			oInput.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+			oLabel4.setLabelFor();
+			sap.ui.getCore().applyChanges();
+			ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
+			oLabel4.setLabelFor("I1");
+			sap.ui.getCore().applyChanges();
+			ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
+
+		});
+
 		module("Accessibility");
 		
 		test("getAccessibilityInfo", function() {
@@ -214,6 +243,7 @@
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
 		<div id="uiArea3"></div>
+		<div id="uiArea4"></div>
 
 	</body>
 </html>

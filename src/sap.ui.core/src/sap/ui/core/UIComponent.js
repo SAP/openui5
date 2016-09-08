@@ -189,9 +189,11 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 * <p>
 	 * Example usage:
 	 * <pre>
-	 * sap.ui.core.UIComponent._fnOnInstanceInitialized = function(oComponent) {
-	 *   // do some logic with the Component
-	 * }
+	 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
+	 *   UIComponent._fnOnInstanceInitialized = function(oComponent) {
+	 *     // do some logic with the Component
+	 *   }
+	 * });
 	 * </pre>
 	 * <p>
 	 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
@@ -208,9 +210,11 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 * <p>
 	 * Example usage:
 	 * <pre>
-	 * sap.ui.core.UIComponent._fnOnInstanceDestroy = function(oComponent) {
-	 *   // do some logic with the Component
-	 * }
+	 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
+	 *   UIComponent._fnOnInstanceDestroy = function(oComponent) {
+	 *     // do some logic with the Component
+	 *   }
+	 * });
 	 * </pre>
 	 * <p>
 	 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.

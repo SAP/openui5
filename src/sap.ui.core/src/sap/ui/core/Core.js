@@ -2274,7 +2274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * The 'themeChanged' event is fired when
+	 * The 'ThemeChanged' event is fired when
 	 * <ul>
 	 *   <li>the theme has been initially applied (only fired if theme is not already applied on core init)
 	 *   <li>the theme has been changed and is now applied (see {@link #applyTheme})
@@ -2291,7 +2291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 
 	 /**
-	 * Attach event-handler <code>fnFunction</code> to the 'themeChanged' event of this <code>sap.ui.core.Core</code>.
+	 * Attach event-handler <code>fnFunction</code> to the 'ThemeChanged' event of this <code>sap.ui.core.Core</code>.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
@@ -2305,14 +2305,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'themeChanged' event of this <code>sap.ui.core.Core</code>.
+	 * Detach event-handler <code>fnFunction</code> from the 'ThemeChanged' event of this <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs.
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
+	 *            [oListener] Object on which the given function had to be called.
 	 * @public
 	 */
 	Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
@@ -2320,9 +2320,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Fire event 'themeChanged' to attached listeners.
+	 * Fire event 'ThemeChanged' to attached listeners.
 	 *
-	 * @param {object} [mParameters] parameters to pass along with the event
+	 * @param {object} [mParameters] Parameters to pass along with the event
 	 * @param {object} [mParameters.theme] Theme name
 	 * @protected
 	 */
@@ -2362,12 +2362,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * <code>sap.ui.core.theming.Parameters</code> module has been loaded.
 	 * By default this is not the case.
 	 *
-	 * @name sap.ui.core.Core#ThemeScopingChanged
+	 * @name sap.ui.core.Core#themeScopingChanged
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
-	 * @param {string[]} oEvent.getParameters.scopes an array of the CSS scope classes
+	 * @param {string[]} oEvent.getParameters.scopes Array of the CSS scope classes
 	 * @param {boolean} oEvent.getParameters.added Whether the class has been added or removed
 	 * @param {sap.ui.core.Element} oEvent.getParameters.element Element instance on which the scope change happened
 	 */

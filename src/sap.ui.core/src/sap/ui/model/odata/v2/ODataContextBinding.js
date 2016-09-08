@@ -82,6 +82,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 	};
 
 	/**
+	 * @see sap.ui.model.ContextBinding.prototype.checkUpdate
+	 *
+	 * @param {boolean} bForceUpdate
+	 */
+	ODataContextBinding.prototype.checkUpdate = function(bForceUpdate) {
+		var oContext;
+		if (this.bInitial) {
+			return;
+		}
+		oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters);
+		if (oContext && oContext !== this.oElementContext) {
+			this.oElementContext = oContext;
+			this._fireChange({ reason: ChangeReason.Context });
+		}
+	};
+
+	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed

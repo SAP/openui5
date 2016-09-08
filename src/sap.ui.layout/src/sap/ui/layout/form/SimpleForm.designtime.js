@@ -67,18 +67,19 @@ sap.ui.define([], function() {
 								},
 								getState : function (oControl) {
 									var oState = {
+										oTitle : oControl.getTitle(),
 										oldValue : oControl.getTitle().getText()
 									};
 									return oState;
 								},
 								restoreState : function (oControl, oState) {
-									oControl.getTitle().setText(oState.oldValue);
+									oState.oTitle.setText(oState.oldValue);
 									var sBindingValue = "";
-									var oBindingInfo = oControl.getTitle().getBindingInfo("text");
+									var oBindingInfo = oState.oTitle.getBindingInfo("text");
 									if (oBindingInfo) {
 										sBindingValue = oBindingInfo.binding.getValue();
 										if (sBindingValue === oState.oldValue) {
-											var oBinding = oControl.getTitle().getBinding("text");
+											var oBinding = oState.oTitle.getBinding("text");
 											if (oBinding) {
 												oBinding.resume();
 											}
@@ -96,18 +97,19 @@ sap.ui.define([], function() {
 								},
 								getState : function (oControl) {
 									var oState = {
+										oLabel : oControl.getLabel(),
 										oldValue : oControl.getLabel().getText()
 									};
 									return oState;
 								},
 								restoreState : function (oControl, oState) {
-									oControl.getLabel().setText(oState.oldValue);
+									oState.oLabel.setText(oState.oldValue);
 									var sBindingValue = "";
-									var oBindingInfo = oControl.getLabel().getBindingInfo("text");
+									var oBindingInfo = oState.oLabel.getBindingInfo("text");
 									if (oBindingInfo) {
 										sBindingValue = oBindingInfo.binding.getValue();
 										if (sBindingValue === oState.oldValue) {
-											var oBinding = oControl.getLabel().getBinding("text");
+											var oBinding = oState.oLabel.getBinding("text");
 											if (oBinding) {
 												oBinding.resume();
 											}

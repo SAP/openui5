@@ -1297,9 +1297,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * <p>
 	 * Example usage:
 	 * <pre>
-	 * sap.ui.core.Component._fnLoadComponentCallback = function(oConfig, oManifest) {
-	 *   // do some logic with the config
-	 * }
+	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
+	 *   Component._fnLoadComponentCallback = function(oConfig, oManifest) {
+	 *     // do some logic with the config
+	 *   });
+	 * });
 	 * </pre>
 	 * <p>
 	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:

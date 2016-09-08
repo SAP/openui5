@@ -180,7 +180,7 @@ sap.ui.define([
 		});
 	};
 
-	sap.uxap.ObjectPageSubSection.prototype.clone = function () {
+	ObjectPageSubSection.prototype.clone = function () {
 		Object.keys(this._aAggregationProxy).forEach(function (sAggregationName){
 			var oAggregation = this.mAggregations[sAggregationName];
 

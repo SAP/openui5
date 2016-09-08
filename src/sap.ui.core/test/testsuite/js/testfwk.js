@@ -50,8 +50,7 @@ sap.ui.testfwk.TestFWK = {
 	bContrastMode: false,
 	bRTL : false,
 	bAccessibilityMode: true,
-	bSimulateTouch: false,
-	sJQueryVersion: jQuery.fn.jquery
+	bSimulateTouch: false
 
 };
 
@@ -70,10 +69,6 @@ sap.ui.testfwk.TestFWK.THEMES = {
 	"sap_platinum" : "Platinum",
 	"sap_ux" : "Ux Target Design",
 	"edding" : "Edding (EXPERIMENTAL!)"
-};
-
-sap.ui.testfwk.TestFWK.JQUERY_VERSIONS = {
-	"2.2.3" : "jQuery 2.2.3"
 };
 
 // the themes supported by each library
@@ -227,17 +222,6 @@ sap.ui.testfwk.TestFWK.setSimulateTouch = function(bSimulateTouch) {
 	}
 };
 
-sap.ui.testfwk.TestFWK.getJQueryVersion = function() {
-	return this.sJQueryVersion;
-};
-
-sap.ui.testfwk.TestFWK.setJQueryVersion = function(sJQueryVersion) {
-	if ( this.sJQueryVersion !== sJQueryVersion ) {
-		this.sJQueryVersion = sJQueryVersion;
-		this.applySettings();
-	}
-};
-
 sap.ui.testfwk.TestFWK.getContrastMode = function() {
 	return this.bContrastMode;
 };
@@ -322,9 +306,6 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 		add("sap-ui-xx-test-mobile", this.bSimulateTouch);
 	}
 	add("sap-ui-accessibility", this.bAccessibilityMode);
-	if ( this.sJQueryVersion ) {
-		add("sap-ui-jqueryversion", this.sJQueryVersion);
-	}
 
 	return sURL;
 };

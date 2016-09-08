@@ -141,7 +141,8 @@
 		  "since": "1.10",
 		  "samples": [
 			  "sap.m.sample.Carousel",
-			  "sap.m.sample.CarouselWithControls"
+			  "sap.m.sample.CarouselWithControls",
+			  "sap.m.sample.CarouselWithDisplayOptions"
 		  ]
 		},
 		{
@@ -344,7 +345,8 @@
 		  "samples": [
 			"sap.m.sample.UploadCollection",
 			"sap.m.sample.UploadCollectionForPendingUpload",
-			"sap.m.sample.UploadCollectionVersioning"
+			"sap.m.sample.UploadCollectionVersioning",
+			"sap.m.sample.UploadCollectionSortingFiltering"
 		  ]
 		},
 		{
@@ -359,6 +361,18 @@
 				"sap.m.sample.GenericTileAsFeedTile",
 				"sap.m.sample.SlideTile",
 				"sap.m.sample.GenericTileStates"
+			]
+		},
+		{
+			"id": "sap.m.HeaderContainer",
+			"name": "Header Container",
+			"category": "Container",
+			"since": "1.44",
+			"samples": [
+				"sap.m.sample.HeaderContainer",
+				"sap.m.sample.HeaderContainerNoDividers",
+				"sap.m.sample.HeaderContainerOH",
+				"sap.m.sample.HeaderContainerVM"
 			]
 		},
 		{
@@ -1046,6 +1060,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.Tree",
+		  "name": "Tree",
+		  "category": "Container",
+		  "since": "1.42",
+		  "samples": [
+			"sap.m.sample.Tree"
+		  ]
+		},
+		{
 		  "id": "sap.m.ViewSettingsDialog",
 		  "name": "View Settings Dialog",
 		  "category": "Popup",
@@ -1251,16 +1274,6 @@
           "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
         },
 		{
-		  "id": "sap.m.sample.DynamicPageListReport",
-		  "name": "Dynamic Page FIORI 2.0 List Report floor plan",
-		  "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
-		},
-        {
-          "id": "sap.m.sample.DynamicPageAnalyticalTable",
-          "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
-          "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
-        },
-		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
 		  "description": "The Date Range Selection is an extension of the Date Picker Control and enables the user to select range of dates."
@@ -1376,6 +1389,11 @@
 		  "description": "With the Carousel a user can browse through multi-page content by swiping left or right."
 		},
 		{
+		  "id": "sap.m.sample.CarouselWithDisplayOptions",
+		  "name": "Carousel With Display Options",
+		  "description": "The Carousel have options for the arrows placement, page indicator placement and page indicator visibility."
+		},
+		{
 		  "id": "sap.m.sample.NavContainer",
 		  "name": "Nav Container",
 		  "description": "The Nav Container stacks multiple pages and offers an API to switch between them with some animation. Typically application developers would use the App control which inherits from NavContainer."
@@ -1439,15 +1457,6 @@
 		  "id": "sap.m.sample.FormattedText",
 		  "name": "Formatted Text",
 		  "description": "The control can be used for embedding formatted HTML text into your application."
-		},
-		{  "id": "sap.m.sample.FlexibleColumnLayoutSimple",
-		  "name": "Flexible Column Layout basic sample",
-		  "description": "This sample demonstrates a Flexible Column Layout aggregating three pages. Additionally the option to switch between the two different types of three-column layout is enabled. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
-		},
-		{
-		  "id": "sap.m.sample.FlexibleColumnLayoutDynamicPage",
-		  "name": "Flexible Column Layout with Dynamic Pages",
-		  "description": "This sample demonstrates how to configure a Flexible Column Layout with three Dynamic Page instances, and additionally add a Fullscreen button to the page in the rightmost visible column. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
 		},
 		{
 		  "id": "sap.m.sample.Page",
@@ -1813,6 +1822,11 @@
 		  "id": "sap.m.sample.Tokenizer",
 		  "name": "Tokenizer",
 		  "description": "Tokenizer displays multiple tokens."
+		},
+		{
+		  "id": "sap.m.sample.Tree",
+		  "name": "Tree - Basic",
+		  "description": "Tree displays data in hierarchical structure."
 		},
 		{
 			"id": "sap.m.sample.RangeSlider",
@@ -2263,6 +2277,11 @@
 		  "id": "sap.m.sample.UploadCollectionVersioning",
 		  "name": "With Download and Update Feature",
 		  "description": "Shows the UploadCollection with a download and update version feature. If one item is selected, you can download it or update the item to a new version. Both features can only be used in the Instant Upload scenario."
+		},
+		{
+		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
+		  "name": "With Sorting and Filtering Feature",
+		  "description": "Shows the UploadCollection with sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

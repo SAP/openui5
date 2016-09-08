@@ -67,7 +67,7 @@ sap.ui.define([
 				try {
 					oOptions.error(oOptions, oResult.arguments);
 				} finally {
-					oDeferred.reject(oOptions, oResult.arguments);
+					oDeferred.reject(oOptions);
 				}
 				return;
 			}
@@ -78,7 +78,6 @@ sap.ui.define([
 	}
 
 	function internalEmpty (deferred) {
-		var iInitialDelay = Device.browser.msie ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
@@ -86,13 +85,9 @@ sap.ui.define([
 
 		var queueElement = queue.shift();
 
-		// TODO: this only affects IE with the IFrame startup without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
-		// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
-		// Therefore the core code throws exceptions, when functions like setTimeout are called.
-		// I don't have a proper explanation for this.
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
-		}, iInitialDelay);
+		}, Opa.config.executionDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
@@ -267,6 +262,29 @@ sap.ui.define([
 		Opa.config = $.extend(Opa.config, options);
 	};
 
+	var iExecutionDelay, sExecutionDelayFromUrl = $.sap.getUriParameters().get("opaExecutionDelay");
+
+	if (sExecutionDelayFromUrl){
+		iExecutionDelay = parseInt(sExecutionDelayFromUrl, 10);
+	}
+
+	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
+	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
+
+	// TODO: Workaround for IE with the IFrame startup. Without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
+	// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
+	// Therefore the core code throws exceptions, when functions like setTimeout are called.
+	// I don't have a proper explanation for this.
+	if (!iExecutionDelay) {
+		if (Device.browser.msie) {
+			iExecutionDelay = 50;
+		} else {
+			iExecutionDelay = 0;
+		}
+	}
+
+
+
 	/**
 	 * Reset Opa.config to its default values.
 	 * All of the global values can be overwritten in an individual waitFor call.
@@ -278,6 +296,14 @@ sap.ui.define([
 	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * 		<li>
+	 * 			executionDelay: 0 or 50 (depending on the browser) or coming from an URL parameter opaExecutionDelay.
+	 * 			The URL parameter takes priority over the browser value. The value is a number representing milliseconds.
+	 * 			The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
+	 * 			This does not effect the polling interval it just adds an initial pause.
+	 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
+	 * 			It is not recommended to use this parameter in any automated test executions.
+	 * 		</li>
 	 * </ul>
 	 *
 	 * @public
@@ -288,6 +314,7 @@ sap.ui.define([
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
+			executionDelay : iExecutionDelay,
 			timeout : 15,
 			pollingInterval : 400,
 			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging

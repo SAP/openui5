@@ -533,18 +533,13 @@ sap.ui.define([
 			}
 		}
 
+		function startApp (oOpa, sUrl) {
+			oOpa.iStartMyAppInAFrame(sUrl);
+		}
+
 
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
-
-			oOpa.waitFor({
-				success: function () {
-					// exceptions thrown by the OPA frame will be propagated to the executing window.
-					// in this case i provoke the exceptions intentionally so i overwite the onerror with a noop
-					// this stops the propagation of errors
-					Opa5.getWindow().onerror = $.noop;
-				}
-			});
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Timeouts");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
@@ -591,7 +586,7 @@ sap.ui.define([
 					QUnit.assert.strictEqual($Messages.eq(0).text(), "Test timed out");
 					var sOpaMessage = $Messages.eq(1).text();
 					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
-					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
 			});
 
@@ -606,7 +601,7 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
 					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
-					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
 			});
 
@@ -620,9 +615,16 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "Queue was stopped manually");
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
-					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
 			});
+
+			oOpa.iTeardownMyApp();
+		});
+
+		opaTest("Should log exceptions in callbacks currectly", function (oOpa) {
+
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Exceptions");
 
 			function assertException ($Messages, sCallbackName) {
 				var sOpaMessage = $Messages.eq(0).text();
@@ -684,17 +686,44 @@ sap.ui.define([
 		});
 
 		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
-			oOpa.iStartMyAppInAFrame("../testdata/failingIFrameOpaTest.html");
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=IFrame");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 1,
+					testIndex: 12,
 					passed: false
 				}),
 				success: function (aMessages) {
 					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
 					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 13,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "There are '0' open XHRs and '1' open FakeXHRs.");
+					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 14,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "The control Element sap.m.Button#__xmlview0--myButton is busy so it is filtered out -  sap.ui.test.matchers.Interactable");
+					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
+					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
 				}
 			});
 

@@ -8,55 +8,66 @@ sap.ui.define(['jquery.sap.global'],
 
 		var BlockLayoutRowRenderer = {};
 
-		BlockLayoutRowRenderer.render = function (rm, blockLayoutRow){
-			this.startRow(rm, blockLayoutRow);
-			this.renderContent(rm, blockLayoutRow);
-			this.endRow(rm, blockLayoutRow);
+		BlockLayoutRowRenderer.render = function (oRm, oBlockLayoutRow){
+			this.startRow(oRm, oBlockLayoutRow);
+			this.renderContent(oRm, oBlockLayoutRow);
+			this.endRow(oRm, oBlockLayoutRow);
 		};
 
-		BlockLayoutRowRenderer.startRow = function (rm, blockLayoutRow) {
-			rm.write("<div");
-			rm.writeControlData(blockLayoutRow);
-			rm.addClass("sapUiBlockLayoutRow");
-			this.addRowRenderingClass(rm, blockLayoutRow);
-			rm.writeStyles();
-			rm.writeClasses();
-			rm.write(">");
+		BlockLayoutRowRenderer.startRow = function (oRm, oBlockLayoutRow) {
+			oRm.write("<div");
+			oRm.writeControlData(oBlockLayoutRow);
+			oRm.addClass("sapUiBlockLayoutRow");
+			this.addRowRenderingClass(oRm, oBlockLayoutRow);
+			oRm.writeStyles();
+			oRm.writeClasses();
+			oRm.write(">");
 		};
 
-		BlockLayoutRowRenderer.addRowRenderingClass = function (rm, blockLayoutRow) {
-			if (blockLayoutRow.getScrollable()) {
-				rm.addClass("sapUiBlockScrollingRow");
-				if (blockLayoutRow.getContent().length >= 6) {
-					rm.addClass("sapUiBlockScrollingNarrowCells");
+		BlockLayoutRowRenderer.addRowRenderingClass = function (oRm, oBlockLayoutRow) {
+			if (oBlockLayoutRow.getScrollable()) {
+				oRm.addClass("sapUiBlockScrollingRow");
+				if (oBlockLayoutRow.getContent().length >= 6) {
+					oRm.addClass("sapUiBlockScrollingNarrowCells");
 				}
 			} else {
-				rm.addClass("sapUiBlockHorizontalCellsRow");
+				oRm.addClass("sapUiBlockHorizontalCellsRow");
 			}
 
-			if (blockLayoutRow._rowSCase) {
-				rm.addClass("sapUiBlockRowSCase");
+			if (oBlockLayoutRow._rowSCase) {
+				oRm.addClass("sapUiBlockRowSCase");
 			}
 		};
 
-		BlockLayoutRowRenderer.renderContent = function (rm, blockLayoutRow) {
-			var cell,
-				content = blockLayoutRow.getContent(),
-				scrollable = blockLayoutRow.getScrollable();
+		BlockLayoutRowRenderer.renderContent = function (oRm, oBlockLayoutRow) {
+			var aContent = oBlockLayoutRow.getContent(),
+				scrollable = oBlockLayoutRow.getScrollable(),
+				oBackgrounds = sap.ui.layout.BlockBackgroundType,
+				sLayoutBackground = oBlockLayoutRow.getParent().getBackground(),
+				aAccentedCells = oBlockLayoutRow.getAccentCells();
 
-			for (var i = 0 ; i < content.length; i++) {
-				cell = content[i];
+			aContent.forEach(function (cell) {
 				if (scrollable) {
 					cell.addStyleClass("sapUiBlockScrollableCell");
 				} else {
 					cell.addStyleClass("sapUiBlockHorizontalCell");
 				}
-				rm.renderControl(cell);
+			});
+
+			switch (sLayoutBackground) {
+				case oBackgrounds.Mixed:
+					oBlockLayoutRow._processMixedCellStyles(aAccentedCells[0], aContent);
+					break;
+				case oBackgrounds.Accent :
+					oBlockLayoutRow._processAccentCellStyles(aAccentedCells, aContent);
+					break;
 			}
+
+			aContent.forEach(oRm.renderControl);
 		};
 
-		BlockLayoutRowRenderer.endRow = function (rm) {
-			rm.write("</div>");
+		BlockLayoutRowRenderer.endRow = function (oRm) {
+			oRm.write("</div>");
 		};
 
 		return BlockLayoutRowRenderer;

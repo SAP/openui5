@@ -414,6 +414,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this._iconImage.destroy();
 				this._iconImage = null;
 			}
+
+			if (this._toolbarSpacer) {
+				this._toolbarSpacer.destroy();
+				this._toolbarSpacer = null;
+			}
 		};
 		/* =========================================================== */
 		/*                   end: Lifecycle functions                  */
@@ -1146,7 +1151,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			});
 
 			toolbar.removeAllContent();
-			toolbar.addContent(new ToolbarSpacer());
+			if (!("_toolbarSpacer" in this)) {
+				this._toolbarSpacer = new ToolbarSpacer();
+			}
+			toolbar.addContent(this._toolbarSpacer);
 			// attach handler which sets origin parameter only for begin and End buttons
 			aButtons.forEach(function(oBtn) {
 				that._attachHandler(oBtn);

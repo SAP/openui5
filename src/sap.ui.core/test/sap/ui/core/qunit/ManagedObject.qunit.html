@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
 		<title>ManagedObject - sap.ui.base</title>
 
 		<script id="sap-ui-bootstrap"
@@ -10,10 +11,10 @@
 			data-sap-ui-noConflict="true" >
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -21,6 +22,12 @@
 		<script>
 
 			var mObjects = {};
+
+			window.MyEnum = {
+				Good: 'Good', /* default */
+				Better: 'Better',
+				Best: 'Best'
+			};
 
 			// define new types for testing
 			sap.ui.base.ManagedObject.extend("sap.ui.core.TestManagedObject", {
@@ -33,11 +40,12 @@
 						floatValue : {type: "float", group: "Appearance", defaultValue: 0},
 						intValue : {type: "int", group: "Appearance", defaultValue: 0},
 						booleanValue : {type: "boolean", group: "Appearance", defaultValue: false},
+						enumValue : {type: "MyEnum", group: "Appearance", defaultValue: MyEnum.Good},
 						stringArray : {type: "string[]", group: "Appearance", defaultValue: []},
 						floatArray : {type: "float[]", group: "Appearance", defaultValue: []},
 						intArray : {type: "int[]", group: "Appearance", defaultValue: []},
 						booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
-						objectValue : {type: "object", group: "Misc", defaultValue: null}
+						objectValue : {type: "object", group: "Misc", defaultValue: null},
 					},
 					aggregations : {
 						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
@@ -93,6 +101,7 @@
 				}
 
 			});
+
 
 			//derive
 			sap.ui.core.TestManagedObject.extend("sap.ui.core.TestManagedObjectDerived", {});
@@ -179,84 +188,188 @@
 				equal(obj.getId(), "myObject", "ID must be 'myObject'");
 			});
 
-			module("Properties", {
-				setup: function() {
+			QUnit.module("Property Metadata", {
+				beforeEach: function() {
+					this.clazz = sap.ui.base.ManagedObject.extend("sap.test.MetadataTestClass", {
+						metadata : {
+							library : "sap.test",
+							properties : {
+								propWithoutOwnDefault: {type: "string", defaultValue: null},
+								propWithOwnDefault: {type: "string", defaultValue: "42"},
+								propWithSameDefaultAsType: {type: "string", defaultValue: ""},
+								propWithUndefinedDefault: {type: "string", defaultValue: undefined},
+								propWithNoDefault: {type: "string"},
+								enumValue: {type: "MyEnum", defaultValue: null},
+								noType : {type: "noType", defaultValue: 42},
+								noTypeNoDefault : {type: "noType", defaultValue: null},
+							}
+						}
+					});
+					this.metadata = this.clazz.getMetadata();
+				}
+			});
+
+			QUnit.test("Property default values", function(assert) {
+				var oMetadata = this.metadata; 
+				var obj = new (this.clazz)();
+				
+				// initial default values  (from default property bag)
+				assert.strictEqual(obj.getPropWithoutOwnDefault(), '', "a property without own default value should inherit the default value of the type");
+				assert.strictEqual(obj.getPropWithOwnDefault(), '42', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithSameDefaultAsType(), '', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithUndefinedDefault(), undefined, "a property with a default value 'undefined' should have that default value");
+				assert.strictEqual(obj.getPropWithNoDefault(), undefined, "a property with no default value should have 'undefined' as default value");
+				assert.strictEqual(obj.getEnumValue(), MyEnum.Good, "a property with enum type and no own default value should inherit a default from the enum");
+				assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
+				assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
+
+				// set 'other' values and restore default
+				obj.setPropWithoutOwnDefault('other').setPropWithoutOwnDefault();
+				obj.setPropWithOwnDefault('other').setPropWithOwnDefault();
+				obj.setPropWithSameDefaultAsType('other').setPropWithSameDefaultAsType();
+				obj.setPropWithUndefinedDefault('other').setPropWithUndefinedDefault();
+				obj.setPropWithNoDefault('other').setPropWithNoDefault();
+				obj.setEnumValue('Better').setEnumValue();
+				obj.setNoType('other').setNoType();
+				obj.setNoTypeNoDefault('other').setNoTypeNoDefault();
+
+				// restored default values
+				assert.strictEqual(obj.getPropWithoutOwnDefault(), '', "a property without own default value should inherit the default value of the type");
+				assert.strictEqual(obj.getPropWithOwnDefault(), '42', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithSameDefaultAsType(), '', "a property with own default value should have that default value");
+				assert.strictEqual(obj.getPropWithUndefinedDefault(), undefined, "a property with a default value 'undefined' should have that default value");
+				assert.strictEqual(obj.getPropWithNoDefault(), undefined, "a property with no default value should have 'undefined' as default value");
+				assert.strictEqual(obj.getEnumValue(), MyEnum.Good, "a property with enum type and no own default value should inherit a default from the enum");
+				assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
+				assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
+			});
+
+
+			QUnit.module("Properties", {
+				beforeEach: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
 					this.obj.setModel(oModel);
 				}
 			});
 
-			test("Set and get property", function() {
-				this.obj.setProperty("value", "testvalue");
-				equal(this.obj.getProperty("value"), "testvalue", "Getter must return set value");
-			});
-
-			test("Set unknown property", function() {
-				var bThrown = false;
-				try {
-					this.obj.setProperty("unknown", "testvalue");
-				} catch(e) {
-					bThrown = true;
-				}
-				ok(bThrown, "Must throw error on unknown property setter")
-			});
-
-			test("Set properties with different types", function() {
+			QUnit.test("Set properties with different types", function(assert) {
 				var that = this;
-				function test(name, value, shouldThrow) {
-					var bThrown = false,
-						sMessage = "Must " + (shouldThrow ? "throw" : "not throw") + " when setting " + value + " on " + name;
-					try {
-						that.obj.setProperty(name, value);
-					} catch(e) {
-						bThrown = true;
-					}
+				var oDate = new Date();
+				var SAME = {}; // special unique value 
+				var ERROR = new Error(); // special unique value
 
-					equal(bThrown, shouldThrow, sMessage)
+				function setAndTest(name, value, expected) {
+					if ( expected === ERROR ) {
+						assert['throws'](function() {
+						that.obj.setProperty(name, value);
+						}, function( err ) {
+							return err.message && err.message.indexOf(name) >= 0 && err.message.indexOf(that.obj.getMetadata().getName()) >= 0;
+						}, "setting '" + name + "' to <" + value + "> should throw an error that mentiones property and class name");
+					} else {
+						var actual = that.obj.setProperty(name, value).getProperty(name);
+						expected = expected === SAME ? value : expected;
+						if ( Array.isArray(actual) ) {
+							assert.notStrictEqual(actual, expected, "setting a value must not return the same array");
+							assert.deepEqual(actual, expected, "setting '" + name + "' to <" + value + "> should return <" + expected + ">");
+						} else {
+							assert.strictEqual(actual, expected, "setting '" + name + "' to <" + value + "> should return <" + expected + ">");
+						}
+					}
 				}
-				test("stringValue", "test", false);
-				test("stringValue", 23, false);
-				test("stringValue", 23.45, false);
-				test("stringValue", true, false);
-				test("intValue", 23, false);
-				test("intValue", "23", true);
-				test("intValue", 23.45, true);
-				test("intValue", true, true);
-				test("floatValue", 23.45, false);
-				test("floatValue", 23, false);
-				test("floatValue", "23", true);
-				test("floatValue", true, true);
-				test("booleanValue", true, false);
-				test("booleanValue", 23.45, true);
-				test("booleanValue", 23, true);
-				test("booleanValue", "true", true);
-				test("stringArray", ["a", "b", "c"], false);
-				test("stringArray", ["a", 10, true], false);
-				test("stringArray", "test", false);
-				test("stringArray", 23, true);
-				test("stringArray", 23.45, true);
-				test("stringArray", true, true);
-				test("intArray", [1, 2, 3], false);
-				test("intArray", [1, 2, 3.5], true);
-				test("intArray", ["a", 10, true], true);
-				test("intArray", "test", true);
-				test("intArray", 23, true);
-				test("intArray", 23.45, true);
-				test("intArray", true, true);
-				test("floatArray", [1.3, 2.5, 3.123], false);
-				test("floatArray", [1, 2, 3.5], false);
-				test("floatArray", ["a", 10, true], true);
-				test("floatArray", "test", true);
-				test("floatArray", 23, true);
-				test("floatArray", 23.45, true);
-				test("floatArray", true, true);
-				test("booleanArray", [true, false, true], false);
-				test("booleanArray", [true, false, 0], true);
-				test("booleanArray", ["a", 10, true], true);
-				test("booleanArray", "test", true);
-				test("booleanArray", 23, true);
-				test("booleanArray", 23.45, true);
-				test("booleanArray", true, true);
+
+				setAndTest("stringValue", "test", SAME);
+				setAndTest("stringValue", 23, "" + 23);
+				setAndTest("stringValue", 23.45, "" + 23.45);
+				setAndTest("stringValue", true, "" + true);
+				setAndTest("stringValue", oDate, "" + oDate);
+				setAndTest("stringValue", new String("0815"), "0815");
+				setAndTest("stringValue", null, '');
+				setAndTest("stringValue", undefined, '');
+				// no ERROR scenario for string types
+
+				setAndTest("intValue", 23, SAME);
+				setAndTest("intValue", null, 0);
+				setAndTest("intValue", undefined, 0);
+				setAndTest("intValue", "23", ERROR);
+				setAndTest("intValue", 23.45, ERROR);
+				setAndTest("intValue", true, ERROR);
+
+				setAndTest("floatValue", 23.45, SAME);
+				setAndTest("floatValue", 23, SAME);
+				setAndTest("floatValue", null, 0.0);
+				setAndTest("floatValue", undefined, 0.0);
+				setAndTest("floatValue", "23", ERROR);
+				setAndTest("floatValue", true, ERROR);
+				
+				setAndTest("booleanValue", false, SAME);
+				setAndTest("booleanValue", true, SAME);
+				setAndTest("booleanValue", null, false);
+				setAndTest("booleanValue", undefined, false);
+				setAndTest("booleanValue", 23.45, ERROR);
+				setAndTest("booleanValue", 23, ERROR);
+				setAndTest("booleanValue", "true", ERROR);
+				
+				setAndTest("objectValue", { a:1, b:'test', c:true}, SAME);
+				setAndTest("objectValue", function(){}, SAME); // function is allowed
+				setAndTest("objectValue", null, null);
+				setAndTest("objectValue", undefined, null);
+				setAndTest("objectValue", 23.45, ERROR);
+				setAndTest("objectValue", 23, ERROR);
+				setAndTest("objectValue", true, ERROR);
+				setAndTest("objectValue", "true", ERROR);
+				
+				setAndTest("enumValue", MyEnum.Better, SAME);
+				setAndTest("enumValue", 'Better', SAME);
+				setAndTest("enumValue", null, MyEnum.Good);
+				setAndTest("enumValue", undefined, MyEnum.Good);
+				setAndTest("enumValue", 23.45, ERROR);
+				setAndTest("enumValue", 23, ERROR);
+				setAndTest("enumValue", "true", ERROR);
+				
+				setAndTest("stringArray", ["a", "b", "c"], SAME);
+				setAndTest("stringArray", [], SAME);
+				setAndTest("stringArray", ["a", 10, true], ["a", 10, true]); // FIXME type should reject or convert to string
+				setAndTest("stringArray", "test", ["test"]);
+				setAndTest("stringArray", null, []);
+				setAndTest("stringArray", undefined, []);
+				setAndTest("stringArray", 23, ERROR);
+				setAndTest("stringArray", 23.45, ERROR);
+				setAndTest("stringArray", true, ERROR);
+				
+				setAndTest("intArray", [1, 2, 3], SAME);
+				setAndTest("intArray", [], SAME);
+				setAndTest("intArray", null, []);
+				setAndTest("intArray", undefined, []);
+				setAndTest("intArray", [1, 2, 3.5], ERROR);
+				setAndTest("intArray", ["a", 10, true], ERROR);
+				setAndTest("intArray", "test", ERROR);
+				setAndTest("intArray", 23, ERROR);
+				setAndTest("intArray", 23.45, ERROR);
+				setAndTest("intArray", true, ERROR);
+				
+				setAndTest("floatArray", [1.3, 2.5, 3.123], SAME);
+				setAndTest("floatArray", [1, 2, 3.5], SAME);
+				setAndTest("floatArray", [], SAME);
+				setAndTest("floatArray", null, []);
+				setAndTest("floatArray", undefined, []);
+				setAndTest("floatArray", ["a", 10, true], ERROR);
+				setAndTest("floatArray", "test", ERROR);
+				setAndTest("floatArray", 23, ERROR);
+				setAndTest("floatArray", 23.45, ERROR);
+				setAndTest("floatArray", true, ERROR);
+				
+				setAndTest("booleanArray", [true, false, true], SAME);
+				setAndTest("booleanArray", [], SAME);
+				setAndTest("booleanArray", [true, false, 0], ERROR);
+				setAndTest("booleanArray", null, []);
+				setAndTest("booleanArray", undefined, []);
+				setAndTest("booleanArray", ["a", 10, true], ERROR);
+				setAndTest("booleanArray", "test", ERROR);
+				setAndTest("booleanArray", 23, ERROR);
+				setAndTest("booleanArray", 23.45, ERROR);
+				setAndTest("booleanArray", true, ERROR);
+				
+				setAndTest("unknown", "testtest", ERROR);
 			});
 
 			test("Bind property", function() {
@@ -456,7 +569,7 @@
 			});
 
 
-			test("Bind unkown property", function() {
+			test("Bind unknown property", function() {
 				var bThrown = false;
 				try {
 					this.obj.bindProperty("unknown", "/testpath");

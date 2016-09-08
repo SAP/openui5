@@ -28,9 +28,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string} [sServiceUrl] base uri of the service to request data from; additional URL parameters appended here will be appended to every request
-	 * 								can be passed with the mParameters object as well: [mParameters.serviceUrl] A serviceURl is required!
-	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
+	 * @param {string|object} serviceUrl base uri of the service to request data from;
+	 * additional URL parameters appended here will be appended to every request.
+	 * If you pass an object it will be interpreted as the parameter object (second parameter).
+	 * Then mParameters.serviceUrl is a required parameter.
+	 * @param {object} [mParameters] a map which contains the following parameter properties:
 	 * @param {boolean} [mParameters.json] if set true request payloads will be JSON, XML for false (default = true),
 	 * @param {string} [mParameters.user] user for the service,
 	 * @param {string} [mParameters.password] password for service,
@@ -55,7 +57,6 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.sequentializeRequests=false] Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
 	 * @param {boolean} [mParameters.disableSoftStateHeader=false] Set this flag to true if don´t want to start a new soft state session with context id (SID) through header mechanism. This useful if you want to share a SID between different browser windows.
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null] Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
-	 	 *
 	 * @class
 	 * Model implementation for oData format
 	 *
@@ -736,9 +737,14 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed.
+	 * Note: Do not use refreshMetadata if the metadata is outdated or should be updated.
+	 * 	     This will lead to inconsistent data in the application.
+	 *
 	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
 	 *
 	 * @returns {Promise} returns a promise on metadata loaded state or null if metadata is not initialized or currently refreshed.
+	 *
+	 * @deprecated
 	 *
 	 * @public
 	 */
@@ -1773,6 +1779,8 @@ sap.ui.define([
 				for (sName in mCustomQueryOptions) {
 					if (sName.indexOf("$") === 0) {
 						jQuery.sap.log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
+					} else if (mCustomQueryOptions[sName] === undefined){
+						aCustomParams.push(sName);
 					} else {
 						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
 					}

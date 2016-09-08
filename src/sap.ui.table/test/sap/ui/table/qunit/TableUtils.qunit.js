@@ -612,6 +612,184 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 	}
 });
 
+QUnit.test("sanitizeSelectionMode", function(assert) {
+	var SM = sap.ui.table.SelectionMode;
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.None), SM.None, "SelectionMode None");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Single), SM.Single, "SelectionMode Single");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.MultiToggle), SM.MultiToggle, "SelectionMode MultiToggle");
+	assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Multi), SM.MultiToggle, "SelectionMode Multi");
+	assert.equal(TableUtils.sanitizeSelectionMode({_enableLegacyMultiSelection: true}, SM.Multi), SM.MultiToggle, "SelectionMode Multi (legacy)");
+});
+
+QUnit.test("resizeColumn", function(assert) {
+	oTable.setFixedColumnCount(0);
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
+	oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
+	sap.ui.getCore().applyChanges();
+
+	var aVisibleColumns = oTable._getVisibleColumns();
+
+	var aOriginalColumnWidths = [];
+	for (var i = 0; i < aVisibleColumns.length; i++) {
+		var oColumn = aVisibleColumns[i];
+		aOriginalColumnWidths.push(parseInt(oColumn.getWidth(), 10));
+	}
+
+	function assertUnchanged(aExcludedColumns) {
+		for (var i = 0; i < aVisibleColumns.length; i++) {
+			if (aExcludedColumns && aExcludedColumns.indexOf(i) !== -1) {
+				continue;
+			}
+			var oColumn = aVisibleColumns[i];
+			assert.strictEqual(parseInt(oColumn.getWidth(), 10), aOriginalColumnWidths[i],
+				"Column " + (i + 1) + " has its original width of " + aOriginalColumnWidths[i] + "px");
+		}
+	}
+
+	function assertColumnWidth(iColumnIndex, iWidth) {
+		var iActualColumnWidth = parseInt(aVisibleColumns[iColumnIndex].getWidth(), 10);
+		assert.strictEqual(iActualColumnWidth, iWidth,
+			"Column " + (iColumnIndex + 1) + " width is " + iActualColumnWidth + "px and should be " + iWidth + "px");
+	}
+
+	// Invalid input should not change the column widths.
+	TableUtils.resizeColumn();
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable);
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable, 1);
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable, aVisibleColumns.length, 1);
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable, -1, 1);
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable, 0, 0);
+	assertUnchanged();
+	TableUtils.resizeColumn(oTable, 0, -1);
+	assertUnchanged();
+
+	// Column 4
+	TableUtils.resizeColumn(oTable, 3, 150, false);
+	assertColumnWidth(3, 150);
+	assertUnchanged([3]);
+	TableUtils.resizeColumn(oTable, 3, aOriginalColumnWidths[3], false);
+	assertUnchanged();
+
+	// Column 1 to 3
+	TableUtils.resizeColumn(oTable, 0, 434, false, 3);
+	var iNewWidth = Math.round(434 / 3);
+	assertColumnWidth(0, iNewWidth);
+	assertColumnWidth(1, iNewWidth);
+	assertColumnWidth(2, iNewWidth);
+	assertUnchanged([0, 1, 2]);
+	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+	assertUnchanged();
+
+	// Column 1 to 3 - Column 2 not resizable
+	aVisibleColumns[1].setResizable(false);
+	TableUtils.resizeColumn(oTable, 0, 100, false, 3);
+	assertColumnWidth(0, oTable._iColMinWidth);
+	assertColumnWidth(2, oTable._iColMinWidth);
+	assertUnchanged([0, 2]);
+	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
+	TableUtils.resizeColumn(oTable, 2, aOriginalColumnWidths[2], false);
+	assertUnchanged();
+	aVisibleColumns[1].setResizable(true);
+
+	// Column 2 - Not resizable
+	aVisibleColumns[1].setResizable(false);
+	TableUtils.resizeColumn(oTable, 1, 50, false);
+	assertUnchanged();
+	aVisibleColumns[1].setResizable(true);
+
+	// Invalid span values default to 1
+	TableUtils.resizeColumn(oTable, iNumberOfCols - 1, 150, false, 2);
+	assertColumnWidth(iNumberOfCols - 1, 150);
+	assertUnchanged([iNumberOfCols - 1]);
+	TableUtils.resizeColumn(oTable, iNumberOfCols - 1, aOriginalColumnWidths[iNumberOfCols - 1], false, 0);
+	assertUnchanged();
+
+	// Do not decrease column width below the minimum column width value.
+	TableUtils.resizeColumn(oTable, 1, 1, false);
+	assertColumnWidth(1, oTable._iColMinWidth);
+	assertUnchanged([1]);
+	TableUtils.resizeColumn(oTable, 1, aOriginalColumnWidths[1], false);
+	assertUnchanged();
+
+	TableUtils.resizeColumn(oTable, 0, 1, false, 3);
+	assertColumnWidth(0, oTable._iColMinWidth);
+	assertColumnWidth(1, oTable._iColMinWidth);
+	assertColumnWidth(2, oTable._iColMinWidth);
+	assertUnchanged([0, 1, 2]);
+	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+	assertUnchanged();
+
+	// Fire the ColumnResize event.
+	var oColumnResizeHandler = this.spy();
+	oTable.attachColumnResize(oColumnResizeHandler);
+	TableUtils.resizeColumn(oTable, 0, 250);
+	assertColumnWidth(0, 250);
+	assertUnchanged([0]);
+	assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
+	oTable.detachColumnResize(oColumnResizeHandler);
+
+	// Fire the ColumnResize event and prevent execution of the default action.
+	oColumnResizeHandler = this.spy(function(oEvent) {
+		oEvent.preventDefault();
+	});
+	oTable.attachColumnResize(oColumnResizeHandler);
+	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0]);
+	assertColumnWidth(0, 250);
+	assertUnchanged([0]);
+	assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
+
+	// Do not fire the event.
+	oColumnResizeHandler.reset();
+	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
+	assertUnchanged();
+	assert.ok(oColumnResizeHandler.notCalled, "ColumnResize handler was not called");
+});
+
+QUnit.test("getColumnHeaderCellInfo", function(assert) {
+	assert.strictEqual(TableUtils.getColumnHeaderCellInfo(), null, "Returned null: Passed nothing");
+	assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getSelectAll()), null, "Returned null: Passed SelectAll Cell");
+	assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getRowHeader(0)), null, "Returned null: Passed Row Header Cell");
+	assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getCell(0, 0)), null, "Returned null: Passed Data Cell");
+
+	var oActualColumnHeaderInfo = TableUtils.getColumnHeaderCellInfo(getColumnHeader(1));
+	console.log("oActualColumnHeaderInfo", oActualColumnHeaderInfo);
+	assert.strictEqual(oActualColumnHeaderInfo.index, 1, "Correct index information returned");
+	assert.strictEqual(oActualColumnHeaderInfo.span, 1, "Correct span information returned");
+});
+
+QUnit.test("getColumnWidth", function(assert) {
+	assert.strictEqual(TableUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
+
+	var aVisibleColumns = oTable._getVisibleColumns();
+
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), 100, "Returned 100");
+
+	aVisibleColumns[1].setWidth("123px");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 1), 123, "Returned 123");
+
+	aVisibleColumns[2].setWidth("2em");
+	var i2emInPixel = oTable._CSSSizeToPixel("2em");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
+
+	aVisibleColumns[3].setVisible(false);
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column not visible");
+});
+
 QUnit.module("TableUtils", {
 	setup: function() {
 		jQuery(document.body).toggleClass("sapUiSizeCozy", true);

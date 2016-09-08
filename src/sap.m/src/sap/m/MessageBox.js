@@ -162,8 +162,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 						};
 
 				var _verifyBundle = function () {
-					if (sap.m.MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
-						sap.m.MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+					if (MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
+						MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 					}
 				};
 

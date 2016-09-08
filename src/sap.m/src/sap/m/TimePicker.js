@@ -157,6 +157,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype.exit = function () {
+			if (this._oTimeSemanticMaskHelper) {
+				this._oTimeSemanticMaskHelper.destroy();
+			}
+
 			MaskInput.prototype.exit.apply(this, arguments);
 
 			this._removePickerEvents();
@@ -942,9 +946,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			//because of the leading space in formats without a leading zero
 			if (bDisplayFormat) {
-				sValue = sValue.replace(/^\s+/gm, ''); //trim start
-			//if the user input is not full and there are placeholder symbols left, they need to be removed in order
-			//the value to be parsed to a valid fallback format
+				sValue = this._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces(sValue);
+				//if the user input is not full and there are placeholder symbols left, they need to be removed in order
+				//the value to be parsed to a valid fallback format
 				sValue = sValue.replace(this._rPlaceholderRegEx,'');
 			}
 
@@ -1164,10 +1168,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			} else {
 				sAllowedHourChars = "[" + this.sLeadingRegexChar + "1]";
 			}
-			oTimePicker.addRule(new MaskInputRule({
+
+			this._maskRuleHours = new MaskInputRule({
 				maskFormatSymbol: "h",
 				regex: sAllowedHourChars
-			}));
+			});
+			oTimePicker.addRule(this._maskRuleHours);
 			this.iHourNumber1Index = sMask.indexOf("h9");
 			this.iHourNumber2Index = this.iHourNumber1Index !== -1 ? this.iHourNumber1Index + 1 : -1;
 
@@ -1176,18 +1182,24 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			sMask = sMask.replace(/mm/g, "59");
 			this.iSecondNumber1Index = sMask.indexOf("ss");
 			sMask = sMask.replace(/ss/g, "59");
-			oTimePicker.addRule(new MaskInputRule({
+
+			this._maskRuleMinSec = new MaskInputRule({
 				maskFormatSymbol: "5",
 				regex: "[0-5]"
-			}));
+			});
+
+			oTimePicker.addRule(this._maskRuleMinSec);
 
 			this.aAllowedHours = genValidHourValues.call(this, this.b24H, this.sLeadingChar);
 			this.aAllowedMinutesAndSeconds = genValidMinutesAndSecondsValues.call(this);
 
 			this.iAmPmChar1Index = sMask.indexOf("a");
 			this.iAfterAmPmValueIndex = -1;
-			if (this.iAmPmChar1Index !== 1 && this.iAmPmChar1Index === sMask.length - 1) { //potential problem - if a is not last, breaks the other indexes
+
+			if (this.iAmPmChar1Index !== -1) {
 				this.iAfterAmPmValueIndex = this.iAmPmChar1Index + this.iAmPmValueMaxLength;
+				var iCorrectionIndexes = this.iAmPmValueMaxLength - "a".length;
+				this.shiftIndexes(iCorrectionIndexes);
 
 				//We start from capital A. Capital letters are not used to this point, so there should be enough of them
 				var currentDefinitionSymbolCharCode = 65;
@@ -1216,10 +1228,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 					currentDefinitionSymbol = String.fromCharCode(currentDefinitionSymbolCharCode++);
 					sAmPmRegex += currentDefinitionSymbol;
-					oTimePicker.addRule(new MaskInputRule({
+
+					this._maskRuleChars = new MaskInputRule({
 						maskFormatSymbol: currentDefinitionSymbol,
 						regex: currentAllowedChars
-					}));
+					});
+					oTimePicker.addRule(this._maskRuleChars);
 				}
 
 				sMask = sMask.replace(/a/g, sAmPmRegex);
@@ -1343,10 +1357,62 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			}
 
 			while (iMaskLength > value.length) {
-				value = " " + value;
+				//inserts space(s) before the hours position
+				value = [value.slice(0, this.iHourNumber1Index), " ", value.slice(this.iHourNumber1Index)].join('');
 			}
 
 			return value;
+		};
+
+		/**
+		 * Removes any whitespaces precedung the hours value (e.g. "<space>1:13:32" -> "1:13:32",
+		 * "PM<space>1:13:32" -> "PM1:13:32").
+		 * @param value
+		 * @returns {*} the stripped value
+		 */
+		TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces = function(value) {
+			if (value[this.iHourNumber1Index] === " ") {
+				value = [value.slice(0, this.iHourNumber1Index), value.slice(this.iHourNumber1Index + 1)].join('');
+			}
+			return value;
+		};
+
+		/**
+		 * Shifts hours, minutes and seconds indexes if period ("a", see http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table)
+		 * is before corresponding hours, minutes & seconds fields.
+		 * @param {Number} shiftValue the shift value
+		 */
+		TimeSemanticMaskHelper.prototype.shiftIndexes = function(shiftValue) {
+			if (this.iAmPmChar1Index < this.iHourNumber1Index) { //both a and h,hh,H,HH exist in this case
+				this.iHourNumber1Index += shiftValue;
+				this.iHourNumber2Index += shiftValue;
+			}
+			if (this.iAmPmChar1Index < this.iMinuteNumber1Index) { //both a and mm exist in this case
+				this.iMinuteNumber1Index += shiftValue;
+			}
+			if (this.iAmPmChar1Index < this.iSecondNumber1Index) { //both a and ss exist in this case
+				this.iSecondNumber1Index += shiftValue;
+			}
+		};
+
+		/**
+		 * Destroy internal data structures
+		 */
+		TimeSemanticMaskHelper.prototype.destroy = function() {
+			if (this._maskRuleHours) {
+				this._maskRuleHours.destroy();
+				this._maskRuleHours = null;
+			}
+
+			if (this._maskRuleMinSec) {
+				this._maskRuleMinSec.destroy();
+				this._maskRuleMinSec = null;
+			}
+
+			if (this._maskRuleChars) {
+				this._maskRuleChars.destroy();
+				this._maskRuleChars = null;
+			}
 		};
 
 		/**

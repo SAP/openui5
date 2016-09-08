@@ -13,7 +13,7 @@ sap.ui.define([
 			},
 			config: {
 				sample: {
-					iframe: "iStartMyAppInAFrame.html",
+					iframe: "iStartMyAppInAFrame.html?opaExecutionDelay=700",
 					stretch: true,
 					files: [
 						"iStartMyAppInAFrame.html",

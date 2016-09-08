@@ -278,8 +278,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			if (!sap.m.SplitButton._oStaticSplitButtonAriaLabel) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sText = oRb.getText("SPLIT_BUTTON_DESCRIPTION");
-				sap.m.SplitButton._oStaticSplitButtonAriaLabel = new sap.ui.core.InvisibleText({text: sText});
-				sap.m.SplitButton._oStaticSplitButtonAriaLabel.toStatic();
+				SplitButton._oStaticSplitButtonAriaLabel = new sap.ui.core.InvisibleText({text: sText});
+				SplitButton._oStaticSplitButtonAriaLabel.toStatic();
 			}
 
 			return sap.m.SplitButton._oStaticSplitButtonAriaLabel;
@@ -291,8 +291,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			if (!sap.m.SplitButton._oStaticSplitButtonDescription) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sText = oRb.getText("SPLIT_BUTTON_KEYBOARD_HINT");
-				sap.m.SplitButton._oStaticSplitButtonDescription = new sap.ui.core.InvisibleText({text: sText});
-				sap.m.SplitButton._oStaticSplitButtonDescription.toStatic();
+				SplitButton._oStaticSplitButtonDescription = new sap.ui.core.InvisibleText({text: sText});
+				SplitButton._oStaticSplitButtonDescription.toStatic();
 			}
 
 			return sap.m.SplitButton._oStaticSplitButtonDescription;

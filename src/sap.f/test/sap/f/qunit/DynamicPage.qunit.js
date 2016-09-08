@@ -29,9 +29,9 @@
 					footer: this.getFooter()
 				});
 			},
-			getDynamicPageWithHeaderAlwaysExpanded: function () {
+			getDynamicPageWithPreserveHeaderOnScroll: function () {
 				return new DynamicPage({
-					headerAlwaysExpanded: true,
+					preserveHeaderStateOnScroll: true,
 					title: this.getDynamicPageTitle(),
 					header: this.getDynamicPageHeader(),
 					content: this.getContent(100)
@@ -53,7 +53,7 @@
 				return new DynamicPage({
 					title: this.getDynamicPageTitleWithExpandSnapContent(),
 					header: this.getDynamicPageHeader(),
-					content: this.getContent(100)
+					content: this.getContent(200)
 				});
 			},
 			getDynamicPageNoTitleAndHeader: function () {
@@ -191,6 +191,17 @@
 		assert.ok(this.oDynamicPage.getHeader(), "The DynamicPage Header has instantiated successfully");
 	});
 
+	QUnit.test("Enabling preserveHeaderStateOnScroll should mutate headerExpanded", function (assert) {
+		this.oDynamicPage._snapHeader();
+
+		assert.ok(!this.oDynamicPage.getHeaderExpanded(), "The DynamicPage`s headerExpanded is false, header collapsed");
+		assert.ok(!this.oDynamicPage.getPreserveHeaderStateOnScroll(), "The DynamicPage preserveHeaderStateOnScroll is false");
+
+		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "The DynamicPage`s headerExpanded is true, mutated internally");
+		assert.ok(this.oDynamicPage.getPreserveHeaderStateOnScroll(), "The DynamicPage preserveHeaderStateOnScroll is true");
+	});
+
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
 		beforeEach: function () {
@@ -318,21 +329,22 @@
 	});
 
 	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
-		var oHeader = this.oDynamicPage.getHeader();
+		var oHeader = this.oDynamicPage.getHeader(),
+			oPinButton = oHeader.getAggregation("_pinButton");
 
 		oHeader.setPinnable(false);
 		core.applyChanges();
 
-		assert.ok(!this.oDynamicPage.getHeader().getAggregation("_pinButton").$()[0],
+		assert.ok(!oPinButton.$()[0],
 			"The DynamicPage Header Pin Button not rendered");
 
 		oHeader.setPinnable(true);
 		core.applyChanges();
 
-		assert.ok(this.oDynamicPage.getHeader().getAggregation("_pinButton").$()[0],
+		assert.ok(oPinButton.$()[0],
 			"The DynamicPage Header Pin Button rendered");
 
-		assert.equal(oHeader.getAggregation("_pinButton").$().hasClass("sapUiHidden"), false,
+		assert.equal(oPinButton.$().hasClass("sapUiHidden"), false,
 			"The DynamicPage Header Pin Button is visible");
 	});
 
@@ -431,26 +443,26 @@
 	});
 
 
-	QUnit.module("DynamicPage - Rendering - Header Always Expanded", {
+	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
 		beforeEach: function () {
-			this.oDynamicPageWithHeaderAlwaysExpanded = oFactory.getDynamicPageWithHeaderAlwaysExpanded();
-			oUtil.renderObject(this.oDynamicPageWithHeaderAlwaysExpanded);
+			this.oDynamicPageWithPreserveHeaderStateOnScroll = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
+			oUtil.renderObject(this.oDynamicPageWithPreserveHeaderStateOnScroll);
 		},
 		afterEach: function () {
-			this.oDynamicPageWithHeaderAlwaysExpanded.destroy();
-			this.oDynamicPageWithHeaderAlwaysExpanded = null;
+			this.oDynamicPageWithPreserveHeaderStateOnScroll.destroy();
+			this.oDynamicPageWithPreserveHeaderStateOnScroll = null;
 		}
 	});
 
 	QUnit.test("DynamicPage Header rendered within Header Wrapper", function (assert) {
-		var $headerWrapper = this.oDynamicPageWithHeaderAlwaysExpanded.$("header"),
-			sHeaderId = this.oDynamicPageWithHeaderAlwaysExpanded.getHeader().getId();
+		var $headerWrapper = this.oDynamicPageWithPreserveHeaderStateOnScroll.$("header"),
+			sHeaderId = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getId();
 
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The Header is in the Header Wrapper");
 	});
 
 	QUnit.test("DynamicPage Pin button is hidden", function (assert) {
-		var $pinButton = this.oDynamicPageWithHeaderAlwaysExpanded.getHeader().getAggregation("_pinButton").$();
+		var $pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
 
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button not rendered");
 	});
@@ -567,9 +579,9 @@
 		assert.ok(!this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar not rendered");
 	});
 
-	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'headerAlwaysExpanded' property", function (assert) {
+	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'preserveHeaderStateOnScroll' property", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
-		oDynamicPage.setHeaderAlwaysExpanded(true);
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
 		sap.ui.getCore().applyChanges();
@@ -580,14 +592,14 @@
 		oDynamicPage.getHeader().$().height(300);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(oDynamicPage._shouldOverrideHeaderAlwaysExpanded(), "headerAlwaysExpanded should be overridden with 60% or bigger height");
+		assert.ok(oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
 
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(200);
 		oDynamicPage.getHeader().$().height(200);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(!oDynamicPage._shouldOverrideHeaderAlwaysExpanded(), "headerAlwaysExpanded should NOT be overridden with less than 60% height");
+		assert.ok(!oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
 	});
 	/* --------------------------- DynamicPage Tablet Rendering ---------------------------------- */
 
@@ -605,9 +617,9 @@
 		}
 	});
 
-	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'headerAlwaysExpanded' property", function (assert) {
+	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'preserveHeaderStateOnScroll' property", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
-		oDynamicPage.setHeaderAlwaysExpanded(true);
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
 		sap.ui.getCore().applyChanges();
@@ -618,14 +630,14 @@
 		oDynamicPage.getHeader().$().height(300);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(oDynamicPage._shouldOverrideHeaderAlwaysExpanded(), "headerAlwaysExpanded should be overridden with 60% or bigger height");
+		assert.ok(oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
 
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(200);
 		oDynamicPage.getHeader().$().height(200);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(!oDynamicPage._shouldOverrideHeaderAlwaysExpanded(), "headerAlwaysExpanded should NOT be overridden with less than 60% height");
+		assert.ok(!oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
 	});
 
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */
@@ -671,9 +683,9 @@
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
-	QUnit.module("DynamicPage On Title Press when Header Always Expanded", {
+	QUnit.module("DynamicPage On Title Press when Header State Preserved On Scroll", {
 		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithHeaderAlwaysExpanded();
+			this.oDynamicPage = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -776,19 +788,21 @@
 	QUnit.test("DynamicPage _pin()/_unPin()", function (assert) {
 		var $headerWrapper = this.oDynamicPage.$("header"),
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
-			sHeaderId = this.oDynamicPage.getHeader().getId();
+			sHeaderId = this.oDynamicPage.getHeader().getId(),
+			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar");
 
 		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
 
 		this.oDynamicPage._pin();
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
+		assert.ok(oPinSpy.called, "The ScrollBar is updated");
 
 		this.oDynamicPage._unPin();
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header remains in the header wrapper when unpinned until scroll");
 	});
 
-	QUnit.test("DynamicPage _canSnap() should return the correct value", function (assert) {
-		assert.equal(this.oDynamicPage._canSnap(), true, "The header can snap");
+	QUnit.test("DynamicPage _canSnapHeaderOnScroll() should return the correct value", function (assert) {
+		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});
 
 	QUnit.test("DynamicPage _shouldExpand() returns false initially", function (assert) {
@@ -842,11 +856,11 @@
 		oDynamicPage._unPin();
 		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed after unpinning");
 
-		oDynamicPage.setHeaderAlwaysExpanded(true);
-		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because headerAlwaysExpanded is true");
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because preserveHeaderStateOnScroll is true");
 
-		oDynamicPage.setHeaderAlwaysExpanded(false);
-		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed because headerAlwaysExpanded is false");
+		oDynamicPage.setPreserveHeaderStateOnScroll(false);
+		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed because preserveHeaderStateOnScroll is false");
 
 		oDynamicPage._snapHeader(true);
 		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because header is snapped already");
@@ -998,4 +1012,35 @@
 			"DynamicPage Header  Pin button aria-pressed 'true'");
 	});
 
+	QUnit.test("DynamicPage Header Pin button has the correct tooltip when pin and unpin", function (assert) {
+		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
+			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+
+		this.oDynamicPage._pin();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip, "The tooltip is correct");
+
+		this.oDynamicPage._unPin();
+		assert.equal(oPinButton.getTooltip(), sPinTooltip, "The tooltip is correct");
+	});
+
+	QUnit.test("DynamicPage Header Pin button has the correct tooltip when changing preserveHeaderStateOnScroll", function (assert) {
+		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
+			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+
+		this.oDynamicPage._pin();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+			"The tooltip is correct");
+
+		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		core.applyChanges();
+		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+			"The tooltip is correct: unchanged when preserveHeaderStateOnScroll is true");
+
+		this.oDynamicPage.setPreserveHeaderStateOnScroll(false);
+		core.applyChanges();
+		assert.equal(oPinButton.getTooltip(), sPinTooltip,
+			"The tooltip is correct: resetted when preserveHeaderStateOnScroll is false");
+	});
 }(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader));

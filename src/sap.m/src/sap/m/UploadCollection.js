@@ -186,6 +186,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			toolbar : {type: "sap.m.OverflowToolbar", multiple : false},
 
 			/**
+			 * Specifies the info toolbar for filtering information. Sorting information will not displayed.
+			 * @since 1.44
+			 */
+			infoToolbar : {type: "sap.m.Toolbar", multiple : false},
+
+			/**
 			 * Internal aggregation to hold the list in controls tree.
 			 * @since 1.34
 			 */
@@ -631,6 +637,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		return this._oHeaderToolbar;
 	};
 
+	UploadCollection.prototype.getInfoToolbar = function() {
+		return this._oList.getAggregation("infoToolbar");
+	};
+
+	UploadCollection.prototype.setInfoToolbar = function(infoToolbar) {
+		if (this.getInfoToolbar() !== infoToolbar) {
+			this._oList.setAggregation("infoToolbar", infoToolbar, false);
+		}
+	};
+
 	UploadCollection.prototype.setUploadButtonInvisible = function(uploadButtonInvisible) {
 		if (this.getUploadButtonInvisible() === uploadButtonInvisible) {
 			return this;
@@ -847,7 +863,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._clearList();
 		this._fillList(this.aItems);
 		this._oList.setAggregation("headerToolbar", this._oHeaderToolbar, true); // note: suppress re-rendering
-
 		// FileUploader does not support parallel uploads in IE9
 		if ((Device.browser.msie && Device.browser.version <= 9) && this.aItems.length > 0 && this.aItems[0]._status === UploadCollection._uploadingStatus) {
 			this._oFileUploader.setEnabled(false);

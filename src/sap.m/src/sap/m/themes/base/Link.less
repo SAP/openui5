@@ -54,11 +54,12 @@
 	.sapUiCondensedTableCellContent; /* see shared.css */
 }
 
-html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline-offset: -0.125rem;
+/* Global focus offset */
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -1px;
 }
 
-/* Link in sap.ui.layout.Grid */
-html.sap-desktop .sapUiRespGrid .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline-offset: -0.0625rem;
+/* Link focus offset in sap.ui.table.* tables */
+html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -2px;
 }

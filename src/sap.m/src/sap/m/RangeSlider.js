@@ -45,7 +45,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             CHARACTER_WIDTH_PX = 8;
 
         RangeSlider.prototype.init = function () {
-            var aRange;
+            var aRange, oStartLabel, oEndLabel;
             Slider.prototype.init.call(this, arguments);
 
             /**
@@ -71,20 +71,52 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
             this._ariaUpdateDelay = [];
+
+
+            oStartLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_LEFT_HANDLE")});
+            oEndLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RIGHT_HANDLE")});
+            this._mHandleTooltip = {
+                start: {
+                    handle: null, // Handle is provided by the renderer, available onAfterRendering
+                    tooltip: null,
+                    label: oStartLabel
+                },
+                end: {
+                    handle: null, // Handle is provided by the renderer, available onAfterRendering
+                    tooltip: null,
+                    label: oEndLabel
+                }
+            };
         };
 
         RangeSlider.prototype.exit = function () {
             this._oResourceBundle = null;
             this._aInitialFocusRange = null;
-            this._oRangeLabel.destroy();
+
+            if (this._oRangeLabel) {
+                this._oRangeLabel.destroy();
+            }
+
             this._oRangeLabel = null;
 
             if (this.getInputsAsTooltips()) {
-                this._mHandleTooltip.start.tooltip.destroy();
-                this._mHandleTooltip.end.tooltip.destroy();
+
+                if (this._mHandleTooltip.start.tooltip) {
+                    this._mHandleTooltip.start.tooltip.destroy();
+                }
+
+                if (this._mHandleTooltip.end.tooltip) {
+                    this._mHandleTooltip.end.tooltip.destroy();
+                }
             }
-            this._mHandleTooltip.start.label.destroy();
-            this._mHandleTooltip.end.label.destroy();
+
+            if (this._mHandleTooltip.start.label) {
+                this._mHandleTooltip.start.label.destroy();
+            }
+
+            if (this._mHandleTooltip.end.label) {
+                this._mHandleTooltip.end.label.destroy();
+            }
 
             this._mHandleTooltip.start.handle = null;
             this._mHandleTooltip.start.tooltip = null;
@@ -98,9 +130,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
         RangeSlider.prototype.onBeforeRendering = function () {
             var aAbsRange = [Math.abs(this.getMin()), Math.abs(this.getMax())],
                 iRangeIndex = aAbsRange[0] > aAbsRange[1] ? 0 : 1,
-                bInputsAsTooltips = !!this.getInputsAsTooltips(),
-                oStartLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_LEFT_HANDLE")}),
-                oEndLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RIGHT_HANDLE")});
+                bInputsAsTooltips = !!this.getInputsAsTooltips();
 
             this._oRangeLabel = new InvisibleText({text: this._oResourceBundle.getText("RANGE_SLIDER_RANGE_HANDLE")});
 
@@ -109,18 +139,15 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             //TODO: find a better way to determine this
             this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length + 1) * CHARACTER_WIDTH_PX;
 
-            this._mHandleTooltip = {
-                start: {
-                    handle: null, // Handle is provided by the renderer, available onAfterRendering
-                    tooltip: bInputsAsTooltips ? this._createInputField("LeftTooltip", oStartLabel) : null,
-                    label: oStartLabel
-                },
-                end: {
-                    handle: null, // Handle is provided by the renderer, available onAfterRendering
-                    tooltip: bInputsAsTooltips ? this._createInputField("RightTooltip", oEndLabel) : null,
-                    label: oEndLabel
-                }
-            };
+            // Attach tooltips
+            if (!this._mHandleTooltip.start.tooltip) {
+                this._mHandleTooltip.start.tooltip = bInputsAsTooltips ?
+                    this._createInputField("LeftTooltip", this._mHandleTooltip.start.label) : null;
+            }
+            if (!this._mHandleTooltip.end.tooltip) {
+                this._mHandleTooltip.end.tooltip = bInputsAsTooltips ?
+                    this._createInputField("RightTooltip", this._mHandleTooltip.end.label) : null;
+            }
         };
 
         RangeSlider.prototype.onAfterRendering = function () {

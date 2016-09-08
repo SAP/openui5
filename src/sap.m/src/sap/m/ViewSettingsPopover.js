@@ -1651,20 +1651,20 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		ViewSettingsPopover.prototype._getToolbar = function () {
 			if (!this._toolbar) {
-				var oCloseBtn, sCloseBtnARIAHiddenDescr;
+				var oCloseBtn;
 
 				this._toolbar = new sap.m.Toolbar({
 					id: this.getId() + TOOLBAR_SUFFIX
 				});
 
-				sCloseBtnARIAHiddenDescr = new sap.ui.core.InvisibleText({
+				this._oCloseBtnARIAInvText = new sap.ui.core.InvisibleText({
 					text: this._getText("MESSAGEPOPOVER_CLOSE")
-				}).toStatic().getId();
+				});
 
 				// create close button
 				oCloseBtn = new Button({
 					icon: IconPool.getIconURI("decline"),
-					ariaLabelledBy: sCloseBtnARIAHiddenDescr,
+					ariaLabelledBy: this._oCloseBtnARIAInvText.toStatic().getId(),
 					press: this._cancel.bind(this)
 				}).addStyleClass('sapMVSPCloseBtn');
 
@@ -1754,12 +1754,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @override
 		 */
 		ViewSettingsPopover.prototype.getDomRef = function (sSuffix) {
-			return this._getPopover().getAggregation("_popup").getDomRef(sSuffix);
+			return this._popover && this._popover.getAggregation("_popup").getDomRef(sSuffix);
 		};
 
 		//ToDo: this is taken from MessagePopover, but those auto generated methods are not having doc blocks this way - check if it's ok
 		// proxy several methods to the inner popover instance
-		["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
+		["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "setBindingContext", "getBindingContext", "getBinding", "getBindingInfo", "getBindingPath", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
 			ViewSettingsPopover.prototype[sName] = function() {
 				if (this._getPopover()[sName]) {
 					var res = this._getPopover()[sName].apply(this._getPopover() ,arguments);
@@ -1789,16 +1789,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				this._groupList = null;
 			}
 
-			if (this._popover) {
-				this._popover.destroyAggregation("content", true);
-				this._popover.destroyAggregation("customHeader", true);
-				this._popover.destroyAggregation("subHeader", true);
-				this._popover.destroyAggregation("beginButton", true);
-				this._popover.destroyAggregation("endButton", true);
-				this._popover.destroyAggregation("_popup", true);
-				this._popover.destroy();
-				this._popover = null;
-			}
+			this._popover.destroy();
+			this._popover = null;
+
+			this._oCloseBtnARIAInvText.destroy();
+			this._oCloseBtnARIAInvText = null;
 
 			this._title = null;
 			this._navContainer = null;

@@ -224,14 +224,18 @@
 				});
 
 				QUnit.test("Shall match if loaded", function (assert) {
+					var that = this;
 					var fnDone = assert.async();
 					this.oModel.getResourceBundle().then(function () {
-						// Act
-						var bResult = this.oMatcher.isMatching(this.oButton);
-						// Assert
-						assert.ok(bResult, "Did match");
-						fnDone();
-					}.bind(this));
+						// in firefox the property of the control is set a bit later but the bundle is already ready
+						setTimeout(function () {
+							// Act
+							var bResult = that.oMatcher.isMatching(that.oButton);
+							// Assert
+							assert.ok(bResult, "Did match");
+							fnDone();
+						}, 0);
+					});
 				});
 
 

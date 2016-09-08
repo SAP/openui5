@@ -264,7 +264,7 @@ module.exports = function(grunt, config) {
 		    'cldr-generate'
 		],
 		'cldr-download': [
-		    'npm-install:cldr-core:cldr-dates-modern:cldr-numbers-modern:cldr-misc-modern:cldr-localenames-modern:cldr-cal-islamic-modern:cldr-cal-japanese-modern'
+		    'npm-install:cldr-core:cldr-dates-modern:cldr-numbers-modern:cldr-misc-modern:cldr-localenames-modern:cldr-cal-islamic-modern:cldr-cal-japanese-modern:cldr-cal-persian-modern'
 		],
 		'cldr-generate': function() {
 			var done = this.async();

@@ -4,7 +4,7 @@
 /* =========================== */
 
 .sapMLnk {
-	font-family: @sapUiFontFamily; 
+	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 }
 
@@ -21,21 +21,16 @@ html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
 
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: 1px;
 }
 
-html.sap-desktop .sapUiFormEdit .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.0625rem;
-}
-
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapMLnk:focus {
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMLnk:focus:not(.sapMLnkDsbl) {
 		outline: none;
 		position: relative;
 	}
-	.sapMLnk:focus:before {
+	.sapMLnk:focus:not(.sapMLnkDsbl):before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;

@@ -114,7 +114,7 @@
 
 			// create progressIndicator
 			var oProgInd8 = new sap.m.ProgressIndicator("pi8", {
-				width:"80%",
+				width:"10%",
 				percentValue:49,
 				displayValue:"49%",
 				state: sap.ui.core.ValueState.Success
@@ -124,7 +124,7 @@
 				text:"ChangePI",
 				press: function(){
 					var sPercent = sap.ui.getCore().byId("input").getValue();
-					oProgInd8.setPercentValue(parseInt(sPercent));
+					oProgInd8.setPercentValue(parseFloat(sPercent));
 					oProgInd8.setDisplayValue(sPercent + "%");
 				}
 			});
@@ -184,7 +184,7 @@
 					oButton3,
 					oButton4,
 					oButton5
-				],
+				]
 			});
 
 			app.addPage(page1);

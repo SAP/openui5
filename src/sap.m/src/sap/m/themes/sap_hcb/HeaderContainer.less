@@ -9,10 +9,6 @@
 	font-size: 22px;
 }
 
-html.sap-desktop .sapMHrdrCntrInner:focus {
-	outline: @sapHCStandardFG dotted 0.065rem;
-}
-
 .sapMHrdrCntrInner:focus:not ([tabindex]) {
 	outline: none;
 }
@@ -27,4 +23,9 @@ html.sap-desktop .sapMHrdrCntrInner:focus {
 
 .sapMHdrCntrBGTranslucent {
 	background-color: @sapHCStandardBG;
+}
+
+html.sap-desktop .sapMHrdrCntrInner:focus {
+	outline: none;
+	border: 1px dotted @sapHCStandardFG;
 }

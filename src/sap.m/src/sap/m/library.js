@@ -84,7 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
-			"sap.m.ISnappable",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -96,9 +95,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ActionSheet",
 			"sap.m.App",
 			"sap.m.Bar",
-			"sap.m.DynamicPage",
-			"sap.m.DynamicPageHeader",
-			"sap.m.DynamicPageTitle",
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
 			"sap.m.Button",
@@ -126,7 +122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
 			"sap.m.FormattedText",
-			"sap.m.FlexibleColumnLayout",
 			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
@@ -208,6 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SplitApp",
 			"sap.m.SplitContainer",
 			"sap.m.StandardListItem",
+			"sap.m.StandardTreeItem",
 			"sap.m.StandardTile",
 			"sap.m.Switch",
 			"sap.m.Table",
@@ -230,6 +226,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.Toolbar",
 			"sap.m.ToolbarSpacer",
 			"sap.m.ToolbarSeparator",
+			"sap.m.Tree",
+			"sap.m.TreeItemBase",
 			"sap.m.UploadCollection",
 			"sap.m.UploadCollectionToolbarPlaceholder",
 			"sap.m.VBox",
@@ -904,22 +902,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.FlexRendertype = {
 
 		/**
-		 * The UI5 controls are wrapped in DIV elements
+		 * The UI5 controls are wrapped in DIV elements.
 		 * @public
 		 */
 		Div : "Div",
 
 		/**
-		 * The UI5 controls are wrapped in LI elements, the entire Flex Box is an unordered list (UL)
+		 * The UI5 controls are wrapped in LI elements, the surrounding Flex Box is an unordered list (UL).
 		 * @public
 		 */
-		List : "List"
+		List : "List",
 
+		/**
+		 * The UI5 controls are not wrapped in an additional HTML element, the surrounding Flex Box is a DIV element.
+		 * @public
+		 * @since 1.42.1
+		 */
+		Bare : "Bare"
 	};
 
 
 		/**
-		 * Enum for possible frame size types for sap.m.DynamicContent and sap.m.GenricTile control.
+		 * Enum for possible frame size types for sap.m.DynamicContent and sap.m.GenericTile control.
 		 *
 		 * @enum {string}
 		 * @public
@@ -974,7 +978,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Header mode (Four lines for the header and one line for the subtitle).
 		 * @public
 		 */
-		HeaderMode : "HeaderMode"
+		HeaderMode : "HeaderMode",
+		/**
+		 * Line mode (Only header and subtitle is rendered in one line).
+		 * @since 1.44.0
+		 * @experimental since 1.44.0 LineMode is currently under development
+		 * @public
+		 */
+		LineMode : "LineMode"
 	};
 
 	/**
@@ -1039,18 +1050,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 
 	/**
-	 *
-	 *   Interface for controls which are suitable as a Header in sap.m.DynamicPage.
-	 *   If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
-	 *
-	 * @since 1.38
-	 * @name sap.m.ISnappable
-	 * @interface
-	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
 	 * Allowed tags for the implementation of the IBar interface.
 	 *
 	 * @enum {string}
@@ -1083,9 +1082,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	/**
 	 *
-	 *   Marker interface for controls which are suitable as items for the IconTabBar.
-	 *   These controls must implement a method isSelectable().
-	 *
+	 * Represents an interface for controls, which are suitable as items for the sap.m.IconTabBar.
+	 * The classes which implement this interface are:
+	 * - sap.m.IconTabFilter
+	 * - sap.m.IconTabSeparator
 	 *
 	 * @name sap.m.IconTab
 	 * @interface
@@ -2392,28 +2392,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
-	/**
-	 * Types of three-column layout for the sap.m.FlexibleColumnLayout control
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.38
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.ThreeColumnLayoutType = {
-
-		/**
-		 * Emphasized last column (endColumn) - column layout 25/25/50
-		 * @public
-		 */
-		EndColumnEmphasized : "EndColumnEmphasized",
-
-		/**
-		 * Emphasized middle column (midColumn) - column layout 25/50/25
-		 * @public
-		 */
-		MidColumnEmphasized : "MidColumnEmphasized"
-	};
 
 	/**
 	 * Types of the Toolbar Design.

@@ -418,9 +418,11 @@
 		var oLocaleEN = new sap.ui.core.Locale("en_US"),
 			oLocaleDE = new sap.ui.core.Locale("de_DE"),
 			oFormat,
-			iCompare = new Date(1975, 3, 16).getTime();
+			iCompare = new Date(1975, 3, 16).getTime(),
+			iFallbackOptionsLength = sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length;
 
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("April 16, 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
@@ -429,7 +431,18 @@
 		equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
 		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
 
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy"}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		equal(oFormat.parse("16041975").getTime(), iCompare, "Parse fallback from removing delimiters from given pattern");
+		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
+		equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
+		equal(oFormat.parse("04161975").getTime(), iCompare, "Parse fallback without separators");
+		equal(oFormat.parse("041675").getTime(), iCompare, "Parse fallback without separators, short year");
+		equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
+		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
+
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long", calendarType: sap.ui.core.CalendarType.Islamic}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("Rabiʻ II 4, 1395 AH").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Rab. II 4, 1395 AH").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("4/4/1395 AH").getTime(), iCompare, "Parse fallback short style");
@@ -439,6 +452,7 @@
 		equal(oFormat.parse("13950404").getTime(), iCompare, "Parse fallback ABAP");
 
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleDE);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("16. April 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("16.4.1975").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("16.4.75").getTime(), iCompare, "Parse fallback short style");
@@ -928,6 +942,77 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
+	module("Persian Date");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	test("format date to Persian type", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			}, new sap.ui.core.Locale("fa_IR"));
+
+		equal(oDateFormat.format(oDate), "13 تیر 1380 ه‍.ش.", "Date is formatted in Persian calendar");
+	});
+
+	test("format date to Persian type with relative", function() {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	test("parse date to Persian type", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			}, new sap.ui.core.Locale("fa_IR"));
+
+		var oDate = oDateFormat.parse("13 تیر 1380 ه‍.ش.");
+		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		equal(oDate.getFullYear(), 2001, "Year 2011");
+		equal(oDate.getMonth(), 6, "Month July");
+		equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	test("parse date to Persian type with relative", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	module("Persian Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	test("format date to Persian type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			});
+
+		equal(oDateFormat.format(oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
+	});
+
+	test("format date to Persian type with relative and locale en", function() {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	test("parse date to Persian type with locale en", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Persian
+			});
+
+		var oDate = oDateFormat.parse("Tir 13, 1380 AP");
+		ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		equal(oDate.getFullYear(), 2001, "Year 2001");
+		equal(oDate.getMonth(), 6, "Month July");
+		equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	test("parse date to Persian type with relative and locale en", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
+	});
 
 </script>
 

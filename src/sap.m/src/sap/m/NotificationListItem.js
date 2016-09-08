@@ -268,8 +268,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
                 // set the truncate button text && toggle 'collapse' class
                 if (this.getTruncate()) {
                     this.getAggregation('_collapseButton').setText(this._expandText);
-                    notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
                     notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
+
+                    if (this.getDescription()) {
+                        notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
+                    }
                 } else {
                     this.getAggregation('_collapseButton').setText(this._collapseText);
                     notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--is-expanded');
@@ -282,8 +285,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
             }
 
             // remove classes used only to calculate text size
-            if (this._getDescriptionText().getText()) {
+            if (this.getDescription()) {
                 notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--initial-overwrite');
+            }
+
+            if (this.getTitle()) {
                 notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
             }
         };

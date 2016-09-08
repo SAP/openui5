@@ -20,10 +20,9 @@
 	display: block;
 }
 
-.sapMITBFilterIcon,
-.sapMITBTextOnly .sapMITBFilter,
-.sapMITBTextOnly .sapMITBText,
-.sapMITBAll {
+.sapMITBFilter:not(.sapMITBDisabled) .sapMITBFilterIcon,
+.sapMITBTextOnly .sapMITBFilter:not(.sapMITBDisabled) .sapMITBText,
+.sapMITBAll:not(.sapMITBDisabled) {
 	cursor: pointer;
 }
 
@@ -40,7 +39,6 @@
 }
 
 .sapMITBStretch {
-	bottom: 0;
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
@@ -49,6 +47,9 @@
 	-webkit-flex-direction: column;
 	position: absolute;
 	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 .sapMITBStretch > .sapMITBContainerContent {
@@ -236,7 +237,7 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	vertical-align: top;
 }
 
-html.sap-desktop .sapMITBFilter {
+html.sap-desktop .sapMITBFilter:not(.sapMITBDisabled) {
 	cursor: pointer;
 }
 

@@ -20,6 +20,12 @@
 
 <script type="text/javascript">
 
+var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-newtablekeyboard');
+if (sKeyboard === "true") {
+	jQuery.sap.require("sap.ui.table.TableKeyboardExtension");
+	sap.ui.table.TableKeyboardExtension._enableNewDelegate();
+}
+
 var oButtonBefore = new sap.m.Button({
 	text: "Just a Button before"
 });

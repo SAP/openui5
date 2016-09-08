@@ -27,7 +27,6 @@
 <script type="text/javascript" src="resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -224,6 +223,10 @@ jQuery.sap.initMobile();
 	});
 
 	QUnit.test("When focusing from outside (through shift + tab) on the surrogate div element, the focus is set on the previous focused element of the itemnavigation", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		this.oHeaderContainer._oItemNavigation.setFocusedIndex(0);
 		var oEvt = {
@@ -292,6 +295,11 @@ jQuery.sap.initMobile();
 		//Assert
 		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0], "Focus is set to the previous item");
 		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "Focused index of itemnavigation is updated");
+	});
+
+	QUnit.test("Test transparency of button", function(assert) {
+		assert.equal(this.oHeaderContainer._oArrowPrev.getType(), "Transparent", "Previous button is transparent");
+		assert.equal(this.oHeaderContainer._oArrowNext.getType(), "Transparent", "Next button is transparent");
 	});
 
 	QUnit.module("Aggregation Handling", {
@@ -440,6 +448,52 @@ jQuery.sap.initMobile();
 		var iIndexOfItem = this.oHeaderContainer.indexOfItem(this.oBox3);
 		//Assert
 		assert.strictEqual(iIndexOfItem, 3, "Correct index of Item has been returned");
+	});
+
+	QUnit.module("Left and right arrow indicators are created on mobile devices", {
+		beforeEach : function () {
+			sap.ui.Device.system.phone = true;
+			sap.ui.Device.system.desktop = false;
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			sap.ui.Device.system.phone = false;
+			sap.ui.Device.system.desktop = true;
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Left and right indicators are created on mobile devices", function(assert) {
+		//Act
+		var bIsLeftIcon = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.ui.core.Icon;
+		var bIsRightIcon = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.ui.core.Icon;
+		//Assert
+		assert.ok(bIsLeftIcon, "Left arrow indicator is rendered on mobile devices");
+		assert.ok(bIsRightIcon, "Right arrow indicator is rendered on mobile devices");
+	});
+
+	QUnit.module("Left and right arrow buttons are created on desktop", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Left and right arrow buttons are created on desktop", function(assert) {
+		//Act
+		var bIsLeftButton = this.oHeaderContainer.getAggregation("_prevButton") instanceof sap.m.Button;
+		var bIsRightButton = this.oHeaderContainer.getAggregation("_nextButton") instanceof sap.m.Button;
+		//Assert
+		assert.ok(bIsLeftButton, "Arrow buttons are rendered on desktop");
+		assert.ok(bIsRightButton, "Arrow buttons are rendered on desktop");
 	});
 })();
 </script>

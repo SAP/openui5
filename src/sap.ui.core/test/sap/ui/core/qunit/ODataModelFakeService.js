@@ -190,6 +190,10 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "5"],
 			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?test":
+				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?hubel=dubel&test":
+				[200, oJSONHeaders, sCategory1JSON],
 			"ZeroTest(1)":
 				[200, oJSONHeaders, sZeroTest],
 			"Categories(3)":
@@ -270,9 +274,9 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sFaultTolerance2],
 			"Employees(2)/Employee1":
 				[204, oNodataHeaders, ""],
-			"SpecialHeaders": 
+			"SpecialHeaders":
 				[204, oSpecialHeaders, ""],
-			"SpecialHeadersError": 
+			"SpecialHeadersError":
 				[500, oSpecialHeaders, ""]
 		},
 		"POST":{
@@ -5333,6 +5337,7 @@ var sCategories2XML = "\
       <d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID>\
       <d:CategoryName>Condiments</d:CategoryName>\
       <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+      <d:Picture></d:Picture>\
     </m:properties>\
   </content>\
 </entry>\
@@ -5355,6 +5360,7 @@ var sCategories7XML = "\
       <d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\
       <d:CategoryName>Condiments</d:CategoryName>\
       <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+      <d:Picture></d:Picture>\
     </m:properties>\
   </content>\
 </entry>\

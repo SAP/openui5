@@ -27,6 +27,21 @@
 		assert.ok(this.contentView.$().find(".sapUxAPObjectPageHeaderIdentifierTitleInContent"), "Title is rendered inside the HeaderContent");
 	});
 
+	QUnit.test("showEditHeaderBtn", function (assert) {
+		var oPl = this.contentView.byId("ObjectPageLayout");
+		oPl.setShowEditHeaderButton(true);
+		sap.ui.getCore().applyChanges();
+
+		var aEditHeaderBtn = oPl._getHeaderContent().$().find('#__content2-editHeaderBtn');
+
+		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent");
+
+		oPl.rerender();
+		aEditHeaderBtn = oPl._getHeaderContent().$().find('#__content2-editHeaderBtn');
+
+		assert.ok(aEditHeaderBtn.length === 1, "button is rendered inside the HeaderContent after rerender");
+	});
+
 	module("ObjectPageHeaderContent integration inside ObjectPageLayout", {
     	beforeEach: function () {
     		this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {

@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * @namespace
 		 * @public
 		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
-		 * @type {{Default: string, Light: string}}
+		 * @type {{Default: string, Light: string, Mixed: string, Accent: string, Dashboard: string}}
 		 */
 	sap.ui.layout.BlockBackgroundType = {
 		/**
@@ -195,7 +195,70 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * Background is with predefined light colors
 		 * @public
 		 */
-		Light: "Light"
+		Light: "Light",
+		/**
+		 * Background with bright and dark background colors
+		 * @public
+		 */
+		Mixed: "Mixed",
+		/**
+		 * Background with pre-defined accent colors
+		 * @public
+		 */
+		Accent: "Accent",
+		/**
+		 * For applications that want to make use of e.g. charts in the Blocks, this layout type has spacings around the Blocks
+		 * @public
+		 */
+		Dashboard: "Dashboard"
+	};
+
+	/**
+	 * A string type that is used inside the BlockLayoutRow to set predefined set of colors the cells inside
+	 * the control. Color sets depend on sap.ui.layout.BlockBackgroundType
+	 *
+	 * @namespace
+	 * @public
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 * @type {{Type1: string, Type2: string, Type3: string, Type4: string}}
+	 */
+	sap.ui.layout.BlockRowColorSets = {
+		/**
+		 * sap.ui.layout.BlockBackgroundType.Default: N/A
+		 * sap.ui.layout.BlockBackgroundType.Light: Color Set 1
+		 * sap.ui.layout.BlockBackgroundType.Mixed: Color Set 1
+		 * sap.ui.layout.BlockBackgroundType.Accent: Color Set 1
+		 * sap.ui.layout.BlockBackgroundType.Dashboard: N/A
+		 * @public
+		 */
+		ColorSet1: "ColorSet1",
+		/**
+		 * sap.ui.layout.BlockBackgroundType.Default: N/A
+		 * sap.ui.layout.BlockBackgroundType.Light: Color Set 2
+		 * sap.ui.layout.BlockBackgroundType.Mixed: Color Set 2
+		 * sap.ui.layout.BlockBackgroundType.Accent: Color Set 2
+		 * sap.ui.layout.BlockBackgroundType.Dashboard: N/A
+		 * @public
+		 */
+		ColorSet2: "ColorSet2",
+		/**
+		 * sap.ui.layout.BlockBackgroundType.Default: N/A
+		 * sap.ui.layout.BlockBackgroundType.Light: Color Set 1
+		 * sap.ui.layout.BlockBackgroundType.Mixed: Color Set 1
+		 * sap.ui.layout.BlockBackgroundType.Accent: Color Set 3
+		 * sap.ui.layout.BlockBackgroundType.Dashboard: N/A
+		 * @public
+		 */
+		ColorSet3: "ColorSet3",
+		/**
+		 * sap.ui.layout.BlockBackgroundType.Default: N/A
+		 * sap.ui.layout.BlockBackgroundType.Light: Color Set 2
+		 * sap.ui.layout.BlockBackgroundType.Mixed: Color Set 2
+		 * sap.ui.layout.BlockBackgroundType.Accent: Color Set 4
+		 * sap.ui.layout.BlockBackgroundType.Dashboard: N/A
+		 * @public
+		 */
+		ColorSet4: "ColorSet4"
 	};
 
 	sap.ui.layout.form = sap.ui.layout.form || {};

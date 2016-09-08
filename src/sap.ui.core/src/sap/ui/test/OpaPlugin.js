@@ -22,8 +22,9 @@ sap.ui.define(['jquery.sap.global',
 				'./matchers/Ancestor',
 				'./matchers/Interactable',
 				'./matchers/Visible',
-				'./pipelines/MatcherPipeline'],
-	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline) {
+				'./pipelines/MatcherPipeline',
+				'./_XHRCounter'],
+	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline, _XHRCounter) {
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
 			oVisibleMatcher = new Visible(),
@@ -290,8 +291,8 @@ sap.ui.define(['jquery.sap.global',
 			 */
 			getFilterdControls : function(oOptions) {
 				var oPluginOptions = $.extend({}, oOptions, {
-						// only pass interactable if there are actions for backwards compatibility
-						interactable: !!oOptions.actions
+						// only pass interactable if there are actions for backwards compatibility or if the autoWait is set
+						interactable: !!oOptions.actions || oOptions.autoWait
 					}),
 					bPluginLooksForControls = this._isLookingForAControl(oPluginOptions);
 
@@ -300,7 +301,10 @@ sap.ui.define(['jquery.sap.global',
 
 				if (bPluginLooksForControls) {
 					// a range of controls or a single control
+					// this will also synchronize when autoWait is set to true
 					vControl = this.getMatchingControls(oPluginOptions);
+				} else if (oOptions.autoWait && _XHRCounter.hasPendingRequests()) {
+					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
 				}
 
 
