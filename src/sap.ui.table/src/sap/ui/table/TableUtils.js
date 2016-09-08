@@ -135,12 +135,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oNoData = oTable.getNoData();
 			if (oNoData instanceof Control) {
 				return null;
+			} else if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
+				return oNoData;
 			} else {
-				if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
-					return oNoData;
-				} else {
-					return oTable._oResBundle.getText("TBL_NO_DATA");
-				}
+				return oTable._oResBundle.getText("TBL_NO_DATA");
 			}
 		},
 
@@ -176,6 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {Object} oTable current table object
 		 * @param {int} iRowIndex the index of the row which height is needed
 		 * @private
+		 * @return {number}
 		 */
 		getRowHeightByIndex : function(oTable, iRowIndex) {
 			var iRowHeight = 0;
@@ -385,6 +384,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return {type: TableUtils.CELLTYPES.COLUMNROWHEADER, cell: $Cell};
 			}
 			return null;
+		},
+
+		/**
+		 * Returns the index and span information of a column header cell.
+		 * @param {jQuery|HtmlElement} oCell The column header cell.
+		 * @returns {{index: int, span: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table column header cell.
+		 */
+		getColumnHeaderCellInfo: function(oCell) {
+			if (oCell == null) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell);
+
+			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+				return {
+					index: parseInt($Cell.data("sap-ui-colindex"), 10),
+					span: parseInt($Cell.data("sap-ui-colspan"), 10)
+				};
+			} else {
+				return null;
+			}
 		},
 
 		/**
@@ -687,6 +709,134 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 			return sSelectionMode;
+		},
+
+		/**
+		 * Resizes one or more visible columns by the given amount of pixels.
+		 *
+		 * In case a column span is specified:
+		 * The span covers only visible columns. If columns directly after the column with index <code>iColumnIndex</code> are invisible they
+		 * will be skipped and not be considered for resizing.
+		 * The new width <code>iWidth</code> will be equally applied among all resizable columns in the span of visible columns,
+		 * considering the minimum column width. The actual resulting width might differ due to rounding errors and the minimum column width.
+		 *
+		 * Resizing of a column won't be performed if the ColumnResize event is fired
+		 * and execution of the default action is prevented in the event handler.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iColumnIndex The index of a column. Must the the index of a visible column.
+		 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
+		 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
+		 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.
+		 */
+		resizeColumn: function(oTable, iColumnIndex, iWidth, bFireEvent, iColumnSpan) {
+			if (oTable == null ||
+				iColumnIndex == null || iColumnIndex < 0 ||
+				iWidth == null || iWidth <= 0) {
+				return;
+			}
+			if (iColumnSpan == null || iColumnSpan <= 0) {
+				iColumnSpan = 1;
+			}
+			if (bFireEvent == null) {
+				bFireEvent = true;
+			}
+
+			var aColumns = oTable.getColumns();
+			if (iColumnIndex >= aColumns.length || !aColumns[iColumnIndex].getVisible()) {
+				return;
+			}
+
+			var aVisibleColumns = [];
+			for (var i = iColumnIndex; i < aColumns.length; i++) {
+				var oColumn = aColumns[i];
+
+				if (oColumn.getVisible()) {
+					aVisibleColumns.push(oColumn);
+
+					// Consider only the required amount of visible columns.
+					if (aVisibleColumns.length === iColumnSpan) {
+						break;
+					}
+				}
+			}
+
+			var aResizableColumns = [];
+			for (var i = 0; i < aVisibleColumns.length; i++) {
+				var oVisibleColumn = aVisibleColumns[i];
+				if (oVisibleColumn.getResizable()) {
+					aResizableColumns.push(oVisibleColumn);
+				}
+			}
+			if (aResizableColumns.length === 0) {
+				return;
+			}
+
+			var iSpanWidth = 0;
+			for (var i = 0; i < aVisibleColumns.length; i++) {
+				var oVisibleColumn = aVisibleColumns[i];
+				iSpanWidth += this.getColumnWidth(oTable, oVisibleColumn.getIndex());
+			}
+
+			var iPixelDelta = iWidth - iSpanWidth;
+			var iSharedPixelDelta = Math.round(iPixelDelta / aResizableColumns.length);
+
+			// Resize all resizable columns. Share the width change (pixel delta) between them.
+			for (var i = 0; i < aResizableColumns.length; i++) {
+				var oResizableColumn = aResizableColumns[i];
+				var iColumnWidth = this.getColumnWidth(oTable, oResizableColumn.getIndex());
+
+				var iNewWidth = iColumnWidth + iSharedPixelDelta;
+				if (iNewWidth < oTable._iColMinWidth) {
+					iNewWidth = oTable._iColMinWidth;
+				}
+
+				var iWidthChange = iNewWidth - iColumnWidth;
+
+				// Distribute any remaining delta to the remaining columns.
+				if (Math.abs(iWidthChange) < Math.abs(iSharedPixelDelta)) {
+					var iRemainingColumnCount = aResizableColumns.length - (i + 1);
+					iPixelDelta -= iWidthChange;
+					iSharedPixelDelta = Math.round(iPixelDelta / iRemainingColumnCount);
+				}
+
+				if (iWidthChange !== 0) {
+					var bExecuteDefault = true;
+
+					if (bFireEvent) {
+						bExecuteDefault = oTable.fireColumnResize({
+							column: oResizableColumn,
+							width: iNewWidth
+						});
+					}
+
+					if (bExecuteDefault) {
+						oResizableColumn.setWidth(iNewWidth + "px");
+					}
+				}
+			}
+		},
+
+		/**
+		 * Returns the width of a visible column in pixels.
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iColumnIndex The index of a column. Must be a visible column.
+		 * @returns {int|null} Returns <code>null</code> if <code>iColumnIndex</code> is out of bound.
+		 */
+		getColumnWidth: function(oTable, iColumnIndex) {
+			if (oTable == null ||
+				iColumnIndex == null || iColumnIndex < 0) {
+				return null;
+			}
+
+			var aColumns = oTable.getColumns();
+			if (iColumnIndex >= aColumns.length) {
+				return null;
+			}
+
+			var oColumn = aColumns[iColumnIndex];
+
+			return oTable._CSSSizeToPixel(oColumn.getWidth());
 		}
 	};
 
