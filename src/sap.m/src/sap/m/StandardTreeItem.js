@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './TreeItemBase', './library', 'sap/ui/core/
 	 *
 	 * @class
 	 * The <code>sap.m.StandardTreeItem</code> is a tree item providing a title, image, etc.
-	 * @extends sap.m.StandardTreeItem
+	 * @extends sap.m.TreeItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './TreeItemBase', './library', 'sap/ui/core/
 	 * @constructor
 	 * @public
 	 * @since 1.42.0
-	 * @alias sap.m.TreeItemBase
+	 * @alias sap.m.StandardTreeItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ { metadata : {

@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 *
 	 * @class
 	 * The <code>sap.m.TreeItemBase</code> contains the basic features of all specific tree items.
-	 * @extends sap.m.TreeItemBase
+	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 * @alias sap.m.TreeItemBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.StandardListItem.prototype */ { metadata : {
+	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ { metadata : {
 		library : "sap.m"
 	}});
 
