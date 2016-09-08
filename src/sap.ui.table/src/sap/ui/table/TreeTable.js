@@ -93,7 +93,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 */
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
-		this._iLastFixedColIndex = 0;
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, aSorters, aFilters) {
