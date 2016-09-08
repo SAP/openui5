@@ -11,6 +11,12 @@
 	border-bottom: 0.125rem solid @sapUiContentContrastShadowColor;
 }
 
+.sapContrast .sapMITH,
+.sapContrast.sapMITH {
+	box-shadow: inset 0 -0.25rem 0 -0.125rem lighten(@sapUiObjectHeaderBackground, 8);
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
+}
+
 .sapMITBHead {
 	font-size: @sapMFontSmallSize;
 	padding: 1px 1px 0 1px;
@@ -49,6 +55,11 @@
 .sapMITBContent {
 	background-color: @sapUiGroupContentBackground;
 	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
+}
+
+.sapContrast .sapMITBContent,
+.sapContrast.sapMITBContent {
+	border-bottom: 0.125rem solid lighten(@sapUiObjectHeaderBackground, 8);
 }
 
 /* Tab Item */
