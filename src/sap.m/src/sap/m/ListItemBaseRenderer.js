@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * Renders counter if it is not empty
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderCounter = function(rm, oLI) {
@@ -339,6 +339,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	ListItemBaseRenderer.renderLIAttributes = function(rm, oLI) {
 	};
 
+	/**
+	 * Renders the former part of the item.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderContentFormer = function(rm, oLI) {
+		this.renderMode(rm, oLI, -1);
+	};
+
+	/**
+	 * Renders the latter part of the item.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @protected
+	 */
+	ListItemBaseRenderer.renderContentLatter = function(rm, oLI) {
+		this.renderCounter(rm, oLI);
+		this.renderType(rm, oLI);
+		this.renderMode(rm, oLI, 1);
+	};
 
 	ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
 		rm.write('<div class="sapMLIBContent"');
@@ -422,15 +445,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		rm.writeStyles();
 		rm.write(">");
 
-		// mode for left hand side of the content
-		this.renderMode(rm, oLI, -1);
-
+		this.renderContentFormer(rm, oLI);
 		this.renderLIContentWrapper(rm, oLI);
-		this.renderCounter(rm, oLI);
-		this.renderType(rm, oLI);
-
-		// mode for right hand side of the content
-		this.renderMode(rm, oLI, 1);
+		this.renderContentLatter(rm, oLI);
 
 		this.closeItemTag(rm, oLI);
 	};
