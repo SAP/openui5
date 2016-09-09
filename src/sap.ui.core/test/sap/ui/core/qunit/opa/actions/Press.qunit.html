@@ -36,7 +36,9 @@
 			"sap/ui/core/util/MockServer",
 			"sap/ui/table/Table",
 			"sap/ui/table/Column",
+			"sap/ui/core/Item",
 			"sap/m/Label",
+			"sap/m/Input",
 			"sap/m/TileContainer",
 			"sap/m/StandardTile",
 			"sap/m/SearchField",
@@ -59,7 +61,9 @@
 				 MockServer,
 				 Table,
 				 Column,
+				 Item,
 				 Label,
+				 Input,
 				 TileContainer,
 				 StandardTile,
 				 SearchField,
@@ -110,6 +114,13 @@
 			},{
 				control: new CheckBox(),
 				event: "Select"
+			}, {
+				control: new Input({
+					showValueHelp: true
+				}),
+				// The Focusleave is fired on an icon not directly on the control
+				skipFocusLeaveCheck: true,
+				event: "ValueHelpRequest"
 			}].forEach(function (oTestCase) {
 						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
 							var fnDone = assert.async();
@@ -129,7 +140,9 @@
 								setTimeout(function () {
 									sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
 									sinon.assert.called(fnOnSapFocusInSpy);
-									sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
+									if (!oTestCase.skipFocusLeaveCheck) {
+										sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
+									}
 									fnDone();
 								}.bind(this), 20);
 							}, this);
