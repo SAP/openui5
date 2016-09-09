@@ -139,7 +139,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._applyContentMode(bSubheader);
 		}
 		var iTiles = this.getTileContent().length;
-
 		for (var i = 0; i < iTiles; i++) {
 			this.getTileContent()[i].setDisabled(this.getState() == sap.m.LoadState.Disabled);
 		}
@@ -151,6 +150,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.onAfterRendering = function() {
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
 		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
+
+		// Assign TileContent content again after rendering.
+		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
+			var aTileContent = this.getTileContent();
+			for (var i = 0; i < aTileContent.length; i++) {
+				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
+			}
+			delete this._aTileContentContent;
+		}
 	};
 
 	GenericTile.prototype.exit = function() {
@@ -290,6 +298,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		} else {
 			this._oTitle.setMaxLines(5);
 		}
+		// Handles the tile content in a way that it is not rendered, but still existing and assigned
+		// if switching between HeaderMode or LineMode and ContentMode.
+		var aTileContent = this.getTileContent();
+		if (aTileContent.length > 0) {
+			this._aTileContentContent = [];
+			for (var i = 0; i < aTileContent.length; i++) {
+				if (aTileContent[i].getContent()) {
+					this._aTileContentContent[i] = aTileContent[i].removeAllAggregation("content", true);
+					// Parent needs to be set manually to null, because removeAllAggregation does not handle this.
+					this._aTileContentContent[i].setParent(null);
+				}
+			}
+		}
 	};
 
 	/**
@@ -311,10 +332,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 	/**
-	 * Returns a text for the tooltip and ARIA label of the header
+	 * Gets the header, subheader and image description text of GenericTile
 	 *
 	 * @private
-	 * @returns {String} The tooltip and ARIA label text
+	 * @returns {String} The text
 	 */
 	GenericTile.prototype._getHeaderAriaAndTooltipText = function() {
 		var sText = "";
@@ -336,10 +357,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Returns a text for the tooltip and ARIA label of the content
+	 * Gets the ARIA label or tooltip text of the content in GenericTile
 	 *
 	 * @private
-	 * @returns {String} The tooltip and ARIA label text
+	 * @returns {String} The text
 	 */
 	GenericTile.prototype._getContentAriaAndTooltipText = function() {
 		var sText = "";
