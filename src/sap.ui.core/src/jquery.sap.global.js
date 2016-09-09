@@ -2643,7 +2643,7 @@
 		};
 
 		// predefine already loaded modules to avoid redundant loading
-		// Module.get("sap/ui/thirdparty/jquery/jquery.js").ready(_sBootstrapUrl, jQuery);
+		// Module.get("sap/ui/thirdparty/jquery.js").ready(_sBootstrapUrl, jQuery);
 		Module.get("sap/ui/thirdparty/URI.js").ready(_sBootstrapUrl, URI);
 		Module.get("sap/ui/Device.js").ready(_sBootstrapUrl, Device);
 		Module.get("jquery.sap.global.js").ready(_sBootstrapUrl, jQuery);
@@ -2653,9 +2653,7 @@
 		 * @private
 		 */
 		function ui5ToRJS(sName) {
-			if ( /^sap\.ui\.thirdparty\.jquery\.jquery-/.test(sName) ) {
-				return "sap/ui/thirdparty/jquery/jquery-" + sName.slice("sap.ui.thirdparty.jquery.jquery-".length);
-			} else if ( /^jquery\.sap\./.test(sName) ) {
+			if ( /^jquery\.sap\./.test(sName) ) {
 				return sName;
 			}
 			return sName.replace(/\./g, "/");
@@ -2674,9 +2672,7 @@
 			}
 
 			sName = sName.slice(0, -3);
-			if ( /^sap\/ui\/thirdparty\/jquery\/jquery-/.test(sName) ) {
-				return "sap.ui.thirdparty.jquery.jquery-" + sName.slice("sap/ui/thirdparty/jquery/jquery-".length);
-			} else if ( /^jquery\.sap\./.test(sName) ) {
+			if ( /^jquery\.sap\./.test(sName) ) {
 				return sName; // do nothing
 			}
 			return sName.replace(/\//g, ".");

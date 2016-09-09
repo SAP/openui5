@@ -104,8 +104,6 @@
         <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
         <exclude name="jquery-*.js" />
         <exclude name="sap-*" />
-        <!-- exclude all jQuery versions with an explicit version number -->
-        <exclude name="sap/ui/thirdparty/jquery/*" />
         <!-- CorePlugin, shouldn't be installed by default -->
         <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
         <exclude name="sap/ui/core/plugin/LessSupport.js" />
