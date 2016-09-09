@@ -1058,9 +1058,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Retrieves the parent node of a node.
 	 * Either the current parent or the original one set by initial the back-end request.
-	 * @param oNode
-	 * @param bOldParent if set to true, the original parent will be returned.
-	 * @returns
+	 * @param {object} oNode
+	 * @param {boolean} [bOldParent=false] if set to true, the original parent will be returned.
+	 * @returns {object} Parent node of the given node.
 	 */
 	ODataTreeBindingFlat.prototype._getParent = function(oNode, bOldParent) {
 		return bOldParent ? oNode.originalParent : oNode.parent;
