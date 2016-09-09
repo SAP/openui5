@@ -153,6 +153,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._generateFailedText();
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.$().unbind("mouseenter", this._updateHoverStyle);
+			this.$().unbind("mouseleave", this._removeHoverStyle);
+		}
 	};
 
 	GenericTile.prototype.onAfterRendering = function() {
@@ -161,6 +165,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
+
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.$().bind("mouseenter", this._updateHoverStyle.bind(this));
+			this.$().bind("mouseleave", this._removeHoverStyle.bind(this));
+		}
 
 		// Assign TileContent content again after rendering.
 		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
@@ -342,6 +351,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._oTitle.setMaxLines(3);
 		}
 	};
+
+	GenericTile.prototype._updateHoverStyle = function() {
+		var $this = this.$(),
+			$StyleHelper = $this.find(".sapMGTStyleHelper"),
+			$SizeHelper = $this.find(".sapMGTSizeHelper"),
+			iHeight = Math.floor($SizeHelper.height()),
+			iWidth = Math.floor($this.innerWidth()),
+			cLineHeight = 3 * 16,
+			cHeight = 2.5 * 16,
+			iLines = Math.ceil(iHeight / cLineHeight),
+			i = 0,
+			sRectTemplate = "<rect class='sapMGTStyleRect' x='0' y='$y' width='$w' height='" + cHeight + "' />",
+			sRect;
+
+		$StyleHelper.empty();
+		for (i; i < iLines; i++) {
+			sRect = sRectTemplate.replace("$y", i * cLineHeight);
+			if (i === iLines - 1) {
+				sRect = sRect.replace("$w", $SizeHelper.width() + "px");
+			} else {
+				sRect = sRect.replace("$w", "100%");
+			}
+
+			$StyleHelper.append("<svg>" + sRect + "</svg>");
+		}
+		$StyleHelper.css("width", iWidth + 16 + "px").css("height", iHeight + "px");
+		$StyleHelper.find("svg > .sapMGTStyleRect").unwrap();
+		$StyleHelper.find(".sapMGTStyleRect").width(); //enforce re-layouting to enable css transition
+		$StyleHelper.find(".sapMGTStyleRect").addClass("sapMGTStyleRectHover");
+	};
+
+	GenericTile.prototype._removeHoverStyle = function() {
+		var $this = this.$(),
+			$StyleHelper = $this.find(".sapMGTStyleHelper");
+
+		$StyleHelper.find(".sapMGTStyleRect").removeClass("sapMGTStyleRectHover");
+	};
+
 	/**
 	 * Gets the header, subheader and image description text of GenericTile
 	 *

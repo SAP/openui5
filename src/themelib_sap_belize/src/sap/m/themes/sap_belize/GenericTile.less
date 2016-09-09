@@ -4,14 +4,21 @@
 /* ================================== */
 
 .sapMGT.sapMGTLineMode {
-	background: transparent;
-	transition: background 0.2s;
-
-	&:hover{
-		background-color: fade(@sapUiShellHoverBackground, 10);
+	.sapMGTStyleRect {
+		transition: fill 0.2s;
+		fill: transparent;
 	}
-	&:active {
-		background-color: fade(@sapUiShellHoverBackground, 12);
+	.sapMGTStyleRectHover {
+		fill: fade(@sapUiShellHoverBackground, 10);
+	}
+
+	&:focus {
+		.sapMGTStyleRect {
+			stroke: @sapUiShellHoverBackground;
+			stroke-dasharray: 1px 2px;
+			stroke-linejoin: round;
+			stroke-width: 1px;
+		}
 	}
 }
 
@@ -118,10 +125,6 @@ html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTWithImage
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
-	border: 1px dotted @sapUiContentFocusColor;
-}
-
-.sapMGTLineMode:focus {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
