@@ -602,6 +602,22 @@
 			//Assert
 			strictEqual(fnDestroyTilesSpy.callCount, 1, "Tiles are destroyed when data model was updated");
 		});
+
+		test('Paging is updated, when model is changed', function (assert) {
+			var done = assert.async();
+
+			setTimeout(function(){
+				strictEqual(this.oTileContainer._iPages, 1, "There is one page");
+
+				newDataModel = new sap.ui.model.json.JSONModel({});
+
+				sap.ui.getCore().setModel(newDataModel);
+
+				strictEqual(this.oTileContainer._iPages, 0, "There are no pages after the model was updated with empty data");
+
+				done();
+			}.bind(this), delay);
+		});
 	</script>
 </head>
 
