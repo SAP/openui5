@@ -2772,10 +2772,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (!(this.getColumnHeaderHeight() > 0)) {
+			var iColHdrScrHeight = $this.find(".sapUiTableColHdrScr").height();
+
 			// Fix header rows:
 			$this.find(".sapUiTableColHdr").each(fixHeaderRowHeight);
+
 			// Fix the selection column header:
-			$this.find(".sapUiTableColHdrCnt").height($this.find(".sapUiTableColHdrScr").height());
+			$this.find(".sapUiTableColHdrCnt").height(iColHdrScrHeight);
 		}
 	};
 
