@@ -154,18 +154,14 @@ sap.ui.require([
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
+		aPromises.push(oCache.read(0, 1, undefined, "foo/null/anyPath").then(function (oResult) {
+			assert.strictEqual(oResult, undefined, "null stops drill-down without error");
+		}));
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar/invalid").then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-		}));
-		this.oLogMock.expects("error").withExactArgs(
-			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
-				+ " via foo/null/invalid, invalid segment: invalid",
-			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read(0, 1, undefined, "foo/null/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		this.oLogMock.expects("error").withExactArgs(
@@ -776,11 +772,8 @@ sap.ui.require([
 		aPromises.push(oCache.read(undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
-		this.oLogMock.expects("error").withExactArgs(
-			"Failed to drill-down into Employees('1')/foo/null/invalid, invalid segment: invalid",
-			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read(undefined, "foo/null/invalid").then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
+		aPromises.push(oCache.read(undefined, "foo/null/anyPath").then(function (oResult) {
+			assert.strictEqual(oResult, undefined, "null stops drill-down without error");
 		}));
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/baz, invalid segment: baz",
@@ -863,12 +856,6 @@ sap.ui.require([
 				+ "?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111&$skip=0&$top=1",
 				"groupId")
 			.returns(oPromise);
-		// "SO_2_SOITEM/0/SideEffect2/inner/property" is undefined initially (since
-		// "SO_2_SOITEM/0/SideEffect2" is null), but its value is requested
-		this.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
-				+ "/SalesOrderList(SalesOrderID='0')?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r"
-				+ "&sap-client=111&$skip=0&$top=1 via SO_2_SOITEM/0/SideEffect2/inner/property, "
-				+ "invalid segment: property", null, "sap.ui.model.odata.v4.lib._Cache");
 
 		// fill the cache and attach multiple listeners for the same path, one of them twice
 		return Promise.all([

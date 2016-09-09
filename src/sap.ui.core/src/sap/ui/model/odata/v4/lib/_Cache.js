@@ -108,7 +108,9 @@ sap.ui.define([
 		if (sPath) {
 			sPath.split("/").every(function (sSegment) {
 				if (!oResult || typeof oResult !== "object") {
-					fnLog(sSegment);
+					if (oResult !== null) {
+						fnLog(sSegment);
+					}
 					oResult = undefined;
 					return false;
 				}
