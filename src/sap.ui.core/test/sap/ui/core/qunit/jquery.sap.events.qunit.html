@@ -495,6 +495,21 @@
 		})
 	});
 
+	test("setMarked() on an event which has originalEvent point to itself", function() {
+		var oEvent = new jQuery.Event("mousedown"),
+			sMark = "mark";
+
+		// system under test + arrange
+		// make the oEvent self-contained in the originalEvent property
+		oEvent.originalEvent = oEvent;
+
+		// act
+		oEvent.setMarked(sMark);
+
+		// assertion
+		ok(oEvent.isMarked(sMark), "self-contained event is correctly marked");
+	});
+
 	/* ------------------------------ */
 	/* setMark() + isMarked           */
 	/* ------------------------------ */
