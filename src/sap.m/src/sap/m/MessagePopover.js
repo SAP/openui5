@@ -603,6 +603,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					description: oMessagePopoverItem.getSubtitle(),
 					counter: oMessagePopoverItem.getCounter(),
 					icon: this._mapIcon(sType),
+					infoState: this._mapInfoState(sType),
+					info: "\r", // There should be a content in the info property in order to use the info states
 					type:  listItemType
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
@@ -620,6 +622,36 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
 
 			return oListItem;
+		};
+
+		/**
+		 * Map ValueState according the MessageType of the message.
+		 *
+		 * @param {sap.ui.core.MessageType} sType Type of Message
+		 * @returns {sap.ui.core.ValueState | null} The ValueState
+		 * @private
+		 */
+		MessagePopover.prototype._mapInfoState = function (sType) {
+			if (!sType) {
+				return null;
+			}
+			var MessageType = sap.ui.core.MessageType,
+				ValueState = sap.ui.core.ValueState;
+
+			switch (sType) {
+				case MessageType.Warning:
+					return ValueState.Warning;
+				case MessageType.Error:
+					return ValueState.Error;
+				case MessageType.Success:
+					return ValueState.Success;
+				case MessageType.Information:
+				case MessageType.None:
+					return ValueState.None;
+				default:
+					jQuery.sap.log.warning("The provided MessageType is not mapped to a specific ValueState", sType);
+					return null;
+			}
 		};
 
 		/**
