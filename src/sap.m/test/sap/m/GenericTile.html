@@ -196,13 +196,6 @@
 	});
 
 	var oModeSelect = new sap.m.Select({
-		change : function(oEvent) {
-			var oSelectedItem = oEvent.getParameter("selectedItem");
-			if (oSelectedItem.getProperty("key") === "ContentMode") {
-				oGenericTile1.getTileContent()[0].mAggregations.content = oNVConfContS;
-				oGenericTile2.getTileContent()[0].mAggregations.content = oNumCnt2x1;
-			}
-		},
 		items: [
 			new sap.ui.core.Item({
 				key: "HeaderMode",

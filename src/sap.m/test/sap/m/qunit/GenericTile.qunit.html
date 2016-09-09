@@ -390,9 +390,27 @@
 		this.oGenericTile.setSubheader("");
 		sap.ui.getCore().applyChanges();
 		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
+	});
 
-		// Check if the cotent in TileContent is removed.
-		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed.");
+	QUnit.test("HeaderMode - Check if the content in TileContent is removed before rendering", function(assert) {
+		//Arrange
+		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+		//Act
+		this.oGenericTile.onBeforeRendering();
+		//Assert
+		assert.equal(this.oGenericTile._aTileContentContent.length, 1, "TileContent content is saved during rendering");
+		assert.ok(this.oGenericTile._aTileContentContent[0].getParent() === null, "TileContent content has no parent");
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed during rendering");
+	});
+
+	QUnit.test("HeaderMode - Check if the content in TileContent is added after rendering", function(assert) {
+		//Arrange
+		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+		//Act
+		this.oGenericTile.onAfterRendering();
+		//Assert
+		assert.ok(!this.oGenericTile._aTileContentContent, "TileContent content is no longer saved during rendering");
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent(), "The content aggregation in TileContent is back after rendering.");
 	});
 
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {

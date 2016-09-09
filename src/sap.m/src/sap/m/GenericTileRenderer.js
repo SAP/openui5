@@ -86,9 +86,6 @@ sap.ui.define([ "sap/m/LoadState" ],
 		var aTileContent = oControl.getTileContent();
 		var iLength = aTileContent.length;
 		for (var i = 0; i < iLength; i++) {
-			if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
-				aTileContent[i].removeAllAggregation("content", true);
-			}
 			oControl._checkFooter(aTileContent[i], oControl);
 			oRm.renderControl(aTileContent[i]);
 		}
