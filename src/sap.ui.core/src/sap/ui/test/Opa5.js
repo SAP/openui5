@@ -396,7 +396,7 @@ sap.ui.define([
 		 * </code>
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
-		 * @param {boolean=false} [options.autoWait] @since 1.42 Only has an effect if set to true.
+		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true.
 		 * The waitFor statement will not execute success callbacks as long as there are open XMLHTTPRequests (requests to a server).
 		 * It will only execute success if the control is {@link sap.ui.test.matchers.Interactable}
 		 * So success behaves like an action in terms of waiting.

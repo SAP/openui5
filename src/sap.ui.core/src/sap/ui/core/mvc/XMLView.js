@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @param {object} [vView.cache] Cache configuration, only for <code>async</code> views; caching gets active
 		 * when this object is provided with vView.cache.keys array; keys are used to store data in the cache and for
 		 * invalidation of the cache
-		 * @param {(string|Promise)[]} [vView.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {Array.<(string|Promise)>} [vView.cache.keys] Array with strings or Promises resolving with strings
 		 * @param {object} [vView.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
