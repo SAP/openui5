@@ -31,7 +31,9 @@ sap.ui.require([
 				properties : {
 					text : "string"
 				}
-			}
+			},
+			// @see sap.ui.model.DataState and sap.ui.base.ManagedObject#_bindProperty
+			refreshDataState : function () {}
 		});
 
 	//*********************************************************************************************
@@ -799,6 +801,8 @@ sap.ui.require([
 			.returns(oReturn);
 		oMock.expects("attachEvent").withExactArgs("dataRequested", mParams)
 			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("DataStateChange", mParams)
+			.returns(oReturn);
 
 		oPropertyBinding = this.oModel.bindProperty("Name");
 
@@ -810,10 +814,39 @@ sap.ui.require([
 			oReturn);
 		assert.strictEqual(oPropertyBinding.attachEvent("dataRequested", mParams),
 			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("DataStateChange", mParams),
+			oReturn);
 
 		assert.throws(function () {
-			oPropertyBinding.attachDataStateChange();
-		}, new Error("Unsupported event 'DataStateChange': v4.ODataPropertyBinding#attachEvent"));
+			oPropertyBinding.attachEvent("unsupportedEvent");
+		}, new Error("Unsupported event 'unsupportedEvent': v4.ODataPropertyBinding#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expression binding", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			oModel = new ODataModel({
+				serviceUrl : "/service/",
+				synchronizationMode : "None"
+			}),
+			oPromise = Promise.resolve("value"),
+			oTestControl = new TestControl({
+				text : "{= !${path:'@odata.etag',type:'sap.ui.model.odata.type.String'} }",
+				models : oModel
+			});
+
+		oCacheMock.expects("createSingle")
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {})
+			.returns({
+				read : function (sGroupId, sPath) {
+					return oPromise;
+				}
+			});
+
+		oTestControl.bindObject("/EntitySet('foo')");
+		assert.strictEqual(oTestControl.getText(), "true");
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************

@@ -18,7 +18,8 @@ sap.ui.define([
 			AggregatedDataStateChange : true,
 			change : true,
 			dataReceived : true,
-			dataRequested : true
+			dataRequested : true,
+			DataStateChange : true
 		};
 
 	/**
@@ -60,7 +61,7 @@ sap.ui.define([
 	 * @class Property binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', and 'dataRequested'.
-	 *   For other events, an error is thrown.
+	 *   For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
 	 * @public
 	 * @version ${version}
@@ -114,7 +115,7 @@ sap.ui.define([
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
-	 * @protected
+	 * @public
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
