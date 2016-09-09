@@ -78,7 +78,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Use sap.m.IconTabBar instead of the default Anchor bar
+				 * Use tab navigation mode instead of the default Anchor bar mode.
+				 * <br><b>Note: </b>Keep in mind that the <code>sap.m.IconTabBar</code> control is no longer used for the tab navigation mode.
 				 */
 				useIconTabBar: {type: "boolean", group: "Misc", defaultValue: false},
 
@@ -133,6 +134,14 @@ sap.ui.define([
 				 * Determines whether the footer is visible.
 				 */
 				showFooter: {type: "boolean", group: "Behaviour", defaultValue: false}
+			},
+			associations: {
+
+				/**
+				 * The section that is selected by default on load.
+				 * @since 1.44.0
+				 */
+				initiallySelectedSection: {type: "sap.uxap.ObjectPageSection", multiple: false}
 			},
 			defaultAggregation: "sections",
 			aggregations: {
@@ -308,7 +317,7 @@ sap.ui.define([
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {
 			// In case we are not lazy loaded make sure that we connect the blocks properly...
-			aToLoad = this.getUseIconTabBar() ? [this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
+			aToLoad = this.getUseIconTabBar() ? [this._oInitiallySelectedSection || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
 
 		} else { //lazy loading, so connect first visible subsections
 			var aSectionBasesToLoad = this.getUseIconTabBar() ? this._grepCurrentTabSectionBases() : this._aSectionBases;
@@ -320,7 +329,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-			oSectionToLoad = this._oCurrentTabSection || this._oFirstVisibleSection;
+			oSectionToLoad = this._oCurrentTabSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
 
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
@@ -355,7 +364,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || this._oFirstVisibleSection;
+		var oSectionToSelect = this._oStoredSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
 
 		this._bDomReady = true;
 
@@ -364,6 +373,8 @@ sap.ui.define([
 		if (this.getUseIconTabBar() && oSectionToSelect) {
 			this._setSelectedSectionId(oSectionToSelect.getId());
 			this._setCurrentTabSection(oSectionToSelect);
+		} else if (this._oInitiallySelectedSection) {
+			this.scrollToSection(this._oInitiallySelectedSection.getId());
 		}
 
 		this._initAnchorBarScroll();
@@ -603,7 +614,8 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection;
+			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
+			sInitiallySelectedSectionId = this.getInitiallySelectedSection();
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -619,6 +631,10 @@ sap.ui.define([
 			//ignore hidden sections
 			if (!oSection.getVisible()) {
 				return true;
+			}
+
+			if (oSection.getId() === sInitiallySelectedSectionId) {
+				this._oInitiallySelectedSection = oSection;
 			}
 
 			this._registerSectionBaseInfo(oSection);
@@ -916,6 +932,7 @@ sap.ui.define([
 
 		this._oSectionInfo = {};
 		this._aSectionBases = [];
+		this._oInitiallySelectedSection = null;
 	};
 
 	/**

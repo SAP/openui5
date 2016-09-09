@@ -42,6 +42,7 @@
 		"samples": [
 		  "sap.uxap.sample.ObjectPageOnJSON",
 		  "sap.uxap.sample.ObjectPageTabNavigationMode",
+		  "sap.uxap.sample.ObjectPageInitiallySelectedSection",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
 		  "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
 		  "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks",
@@ -134,6 +135,11 @@
 		"id": "sap.uxap.sample.ObjectPageTabNavigationMode",
 		"name": "Object Page using the Tab navigation mode",
 		"description": "Object Page sample showing a layout where the navigation is Tab based (one Tab per section) rather than having all of the sections visible at the same time."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageInitiallySelectedSection",
+		"name": "Object Page with initially selected section in Tab navigation mode",
+		"description": "Object Page sample showing a layout where the initially selected section is defined by the user."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageState",
