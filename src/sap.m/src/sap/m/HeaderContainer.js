@@ -211,18 +211,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._oItemNavigation.setTabIndex0();
 					this._oItemNavigation.setCycling(false);
 				}
-			}.bind(this),
-
-			onBeforeRendering : function() {
-				if (Device.system.desktop) {
-					this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
-						horizontal : true,
-						vertical : true,
-						zynga : false,
-						preventDefault : false,
-						nonTouchScrolling : true
-					});
-				}
 			}.bind(this)
 		});
 	};
@@ -239,16 +227,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		}
 		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
-		this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
-		if (this._sScrollResizeHandlerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
-		}
-	};
-
-	HeaderContainer.prototype.onAfterRendering = function() {
-		if (Device.system.desktop) {
-			this.$().bind("swipe", this._handleSwipe.bind(this)); // TODO: check why click is bind for desktop devices.
-		}
 	};
 
 	HeaderContainer.prototype.exit = function() {
@@ -256,26 +234,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
-		}
-		if (this._sScrollResizeHandlerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
-		}
-	};
-
-	/* =========================================================== */
-	/* Event Handling                                              */
-	/* =========================================================== */
-	HeaderContainer.prototype._handleSwipe = function(oEvt) {
-		oEvt.preventDefault();
-		oEvt.stopPropagation();
-		this._isDragEvent = true;
-	};
-
-	HeaderContainer.prototype.onclick = function(oEvt) {
-		if (this._isDragEvent) {
-			oEvt.preventDefault();
-			oEvt.stopPropagation();
-			this._isDragEvent = false;
 		}
 	};
 
