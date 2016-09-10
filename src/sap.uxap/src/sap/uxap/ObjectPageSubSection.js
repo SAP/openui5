@@ -515,7 +515,7 @@ sap.ui.define([
 
 		//empty real aggregations and feed internal ones at first rendering only
 		jQuery.each(this._aAggregationProxy, jQuery.proxy(function (sAggregationName, aValue) {
-			this._setAggregation(sAggregationName, this.removeAllAggregation(sAggregationName));
+			this._setAggregation(sAggregationName, this.removeAllAggregation(sAggregationName, true), true);
 		}, this));
 
 		this._bRenderedFirstTime = true;
