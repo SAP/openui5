@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"Page.controller.js",
 						"Change.fragment.xml",
 						"Display.fragment.xml",
-						"style.css"
+						"test/FormSampleJourney.qunit.html"
 					]
 				}
 			}
