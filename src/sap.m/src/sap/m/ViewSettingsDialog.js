@@ -16,7 +16,48 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The ViewSettingsDialog control provides functionality to easily select the options for sorting, grouping, and filtering data. It is a composite control, consisting of a modal popover and several internal lists. There are three different tabs (Sort, Group, Filter) in the dialog that can be activated by filling the respective associations. If only one association is filled, the other tabs are automatically hidden. The selected options can be used to create sorters and filters for the table.
+	 * * <strong><i>Overview</i></strong>
+	 * <br><br>
+	 * The {@link sap.m.ViewSettingsDialog} helps the user to sort, filter, or group data
+	 * within a (master) {@link sap.m.List List) or a {@link sap.m.Table Table). The dialog
+	 * is triggered by icon buttons in the table toolbar. Each button shows a dropdown
+	 * list icon.
+	 * <br><br>
+	 * The {@link sap.m.ViewSettingsDialog ViewSettingsDialog} is a composite control,
+	 * consisting of a modal {@link sap.m.Popover Popover} and several internal lists.
+	 * There are three different tabs (Sort, Group, Filter) in the dialog that can be
+	 * activated by filling the respective associations. If only one association is
+	 * filled, the other tabs are automatically hidden. The selected options can be used
+	 * to create sorters and filters for the table.
+	 * <br><br>
+	 * <b>Note: </b>If the app does not offer all three sorting, filtering, and grouping
+	 * functionalities, but only one of these (such as sort), we recommend placing the
+	 * icon button directly in the toolbar.
+	 * Do not place sort, filter, or group buttons in the footer toolbar if they refer to
+	 * a table.
+	 * Place group, sort, and filter buttons in the footer toolbar if they refer to a
+	 * master list.
+	 * <br><br>
+	 * <strong><i>Usage</i></strong>
+	 * <br><br>
+	 * <i>When to use?</i>
+	 * <ul><li>If you need to allow the user to sort line items in a manageable list or
+	 * table (up to 20 columns)</li>
+	 * <li>If you need to offer custom filter settings in a manageable list or table
+	 * (up to 20 columns)</li>
+	 * <li>If you need to allow the user to group line items in a manageable list or
+	 * table (up to 20 columns)</li></ul>
+	 * <i>When not to use?</i>
+	 * <ul><li>If you have complex tables (more than 20 columns)</li>
+	 * <li>If you need to rearrange columns within your table (use the
+	 * {@link sap.m.TablePersoDialog TablePersoDialog} instead)</li>
+	 * <li>If you need very specific sort, filter, or column sorting options within
+	 * complex tables (use the {@link sap.m.P13nDialog P13nDialog} instead)</li></ul>
+	 * <strong><i>Responsive behavior</i></strong>
+	 * <br><br>
+	 * The popover dialog appears as a modal window on desktop and tablet screen sizes,
+	 * but full screen on smartphones.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
