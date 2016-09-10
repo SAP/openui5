@@ -888,10 +888,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		setRTL : function(bRTL) {
 			check(bRTL === null || typeof bRTL === "boolean", "bRTL must be null or a boolean");
-			var mChanges;
-			if ( bRTL != this.rtl ) {
+
+			var oldRTL = this.getRTL(),
+				mChanges;
+			this.rtl = bRTL;
+			if ( oldRTL != this.getRTL() ) { // also take the derived RTL flag into account for the before/after comparison!
 				mChanges = this._collect();
-				this.rtl = mChanges.rtl = this.getRTL();
+				mChanges.rtl = this.getRTL();
 				this._endCollect();
 			}
 			return this;
