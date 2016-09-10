@@ -1550,7 +1550,7 @@
 		},
 		{
 		  "id": "sap.m.sample.Label",
-		  "name": "Label",
+		  "name": "Label with Inputs",
 		  "description": "Labels are helpful when you need to describe some other UI control."
 		},
 		{
