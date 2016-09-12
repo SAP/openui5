@@ -183,6 +183,10 @@ QUnit.module("Focus", {
 		this.$Ref = jQuery.sap.byId("popup");
 	},
 
+	afterEach : function() {
+		this.oPopup.destroy();
+	},
+
 	// checks three elements in question and returns the focused one, if any - using the CSS color!
 	getFocusedElementId : function() {
 		if (sap.ui.Device.browser.safari) {
@@ -382,6 +386,43 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 	this.oPopup.setModal(true);
 
 	oAutoClosePopup.open(0, sLeftTop, sRightTop, oOpenButton);
+});
+
+QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
+	var done = assert.async(),
+		oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1")),
+		fnAfterSecondPopupOpen = function() {
+			oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
+			oSecondPopup.attachClosed(fnAfterSecondPopupClosed);
+
+			oSecondPopup.close();
+		},
+		fnAfterSecondPopupClosed = function() {
+			oSecondPopup.destroy();
+			assert.ok(this.oPopup.isOpen(), "the first popup is still open");
+
+			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
+
+			jQuery.sap.focus($BlockLayer[0]);
+
+			jQuery.sap.delayedCall(0, this, function() {
+				assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+
+				this.oPopup.attachClosed(function() {
+					done();
+				});
+
+				this.oPopup.close();
+			});
+		}.bind(this);
+
+	this.oPopup.setModal(true);
+	oSecondPopup.setModal(true);
+
+	oSecondPopup.attachOpened(fnAfterSecondPopupOpen);
+	this.oPopup.open(0);
+	oSecondPopup.open(0);
 });
 
 QUnit.module("Animation", {

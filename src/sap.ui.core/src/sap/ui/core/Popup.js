@@ -924,17 +924,24 @@ sap.ui.define([
 				if (this._bModal && !bContains) { // case: modal popup and focus has gone somewhere else in the document
 					// The popup is modal, but the focus has moved to a part of the document that is NOT inside the popup
 					// check whether this modal popup is the topmost one
-					var bTopMost = (Popup.getLastZIndex() == this._iZIndex);
+					var bTopMost = Popup.blStack.length > 0 && Popup.blStack[Popup.blStack.length - 1].popup === this;
 
 					if (bTopMost) {
-
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
 						if (!Device.support.touch || jQuery(oEvent.target).is(":input")) {
-
-							// set the focus back to the last focused element inside the popup or at least to the popup root
-							var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
-							jQuery.sap.focus(oDomRefToFocus);
+							// The focus should be set after the current call stack is finished
+							// because the existing timer for autoclose popup is cancelled by
+							// setting the focus here.
+							//
+							// Suppose an autoclose popup is opened within a modal popup. Clicking
+							// on the blocklayer should wait the autoclose popup to first close then
+							// set the focus back to the lasted blurred element.
+							jQuery.sap.delayedCall(0, this, function() {
+								// set the focus back to the last focused element inside the popup or at least to the popup root
+								var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
+								jQuery.sap.focus(oDomRefToFocus);
+							});
 						}
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
@@ -2255,7 +2262,10 @@ sap.ui.define([
 		}
 
 		// push current z-index to stack
-		Popup.blStack.push(this._iZIndex - 2);
+		Popup.blStack.push({
+			zIndex: this._iZIndex - 2,
+			popup: this
+		});
 		$BlockRef.css({
 			"z-index" : this._iZIndex - 2,
 			"visibility" : "visible"
@@ -2280,7 +2290,7 @@ sap.ui.define([
 
 			if (Popup.blStack.length > 0) {
 				// set the blocklayer z-index to the last z-index in the stack and show it
-				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1];
+				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1].zIndex;
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
 			} else {
