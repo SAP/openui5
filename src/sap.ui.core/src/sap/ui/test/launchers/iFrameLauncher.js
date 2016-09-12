@@ -6,8 +6,8 @@ sap.ui.define([
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
 		'sap/ui/test/_LogCollector',
-		'sap/ui/test/_XHRCounter'
-	], function (jQuery, URI, Device, _LogCollector, _XHRCounter) {
+		'sap/ui/test/_autoWaiter'
+	], function (jQuery, URI, Device, _LogCollector, _autoWaiter) {
 	"use strict";
 	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
@@ -18,7 +18,7 @@ sap.ui.define([
 		oFrameJQuery = null,
 		bRegiesteredToUI5Init = false,
 		bUi5Loaded = false,
-		oXHRCounter = null,
+		oAutoWaiter = null,
 		FrameHashChanger = null;
 
 	/*
@@ -208,21 +208,21 @@ sap.ui.define([
 
 			oFrameWindow.sap.ui.require([
 				"sap/ui/test/OpaPlugin",
-				"sap/ui/test/_XHRCounter",
+				"sap/ui/test/_autoWaiter",
 				"sap/ui/qunit/QUnitUtils",
 				"sap/ui/thirdparty/hasher",
 				"sap/ui/core/routing/History",
 				"sap/ui/core/routing/HashChanger"
 			], function (
 				OpaPlugin,
-				_XHRCounter,
+				_autoWaiter,
 				QUnitUtils,
 				hasher,
 				History,
 				HashChanger
 			) {
 				oFramePlugin = new OpaPlugin(sLogPrefix);
-				oXHRCounter = _XHRCounter;
+				oAutoWaiter = _autoWaiter;
 				oFrameUtils = QUnitUtils;
 				modifyIFrameNavigation(hasher, History, HashChanger);
 				FrameHashChanger = HashChanger;
@@ -247,7 +247,7 @@ sap.ui.define([
 		oFrameWindow = null;
 		bUi5Loaded = false;
 		bRegiesteredToUI5Init = false;
-		oXHRCounter = null;
+		oAutoWaiter = null;
 		FrameHashChanger = null;
 	}
 
@@ -307,8 +307,8 @@ sap.ui.define([
 		getWindow: function () {
 			return oFrameWindow;
 		},
-		_getIXHRCounter:function () {
-			return oXHRCounter || _XHRCounter;
+		_getAutoWaiter:function () {
+			return  oAutoWaiter || _autoWaiter;
 		},
 		teardown: function () {
 			destroyFrame();

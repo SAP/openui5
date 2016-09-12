@@ -732,7 +732,6 @@ sap.ui.require([
 	});
 
 	["foo", null, undefined, true, 0, 1].forEach(function (value) {
-
 		QUnit.test("Should return false for an unknown property with the value " + value , function (assert) {
 			var oOpaPlugin = new OpaPlugin();
 			var bResult = oOpaPlugin._isLookingForAControl({
