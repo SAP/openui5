@@ -26,7 +26,6 @@
 				XHR.restore();
 			})();
 
-
 			sap.ui.require([
 					'sap/ui/test/matchers/Interactable',
 					'jquery.sap.global',
@@ -419,9 +418,12 @@
 								oXHR.restore();
 							}
 						});
+
+						oOpa.iTeardownMyApp();
 					});
 
 					opaTest("Should wait for navigating NavContainers in an IFrame", function (oOpa) {
+						oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
 						oOpa.waitFor({
 							viewName: "myView",
 							id: "myApp",
