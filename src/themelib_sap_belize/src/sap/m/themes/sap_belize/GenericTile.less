@@ -3,17 +3,30 @@
 /* Belize theme                       */
 /* ================================== */
 
+@keyframes ANIM_sapMGTStyleRect{
+	from { opacity: 0.0; }
+	to { opacity: 1.0; }
+}
+
+@keyframes ANIM_sapMGTStyleRect_out{
+	from { opacity: 1.0; }
+	to { opacity: 0.0; }
+}
+
 .sapMGT.sapMGTLineMode {
 	.sapMGTStyleRect {
-		transition: fill 0.2s;
-		fill: transparent;
+		animation: ANIM_sapMGTStyleRect_out 0.2s;
+		animation-fill-mode: both;
+		fill: fade(@sapUiShellHoverBackground, 10);
 	}
 	.sapMGTStyleRectHover {
-		fill: fade(@sapUiShellHoverBackground, 10);
+		animation: ANIM_sapMGTStyleRect 0.2s;
+		animation-fill-mode: both;
 	}
 
 	&:focus {
 		.sapMGTStyleRect {
+			opacity: 1.0;
 			stroke: @sapUiShellHoverBackground;
 			stroke-dasharray: 1px 2px;
 			stroke-linejoin: round;
@@ -24,18 +37,6 @@
 
 .sapMGTLineMode.sapMGTDisabled {
 	opacity: 0.5;
-}
-
-.sapMGTLineMode .sapMGTHdrTxt {
-	color: @sapUiShellTextColor;
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
-}
-
-.sapMGTLineMode .sapMGTSubHdrTxt {
-	color: @sapUiTileTextColor;
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTHdrTxt > .sapMText {
@@ -50,6 +51,18 @@
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
 	color: @sapUiTileTextColor;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	color: @sapUiShellTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTHdrIconImage {
