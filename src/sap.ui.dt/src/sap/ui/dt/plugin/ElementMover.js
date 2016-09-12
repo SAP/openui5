@@ -239,20 +239,14 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 	};
 
 	ElementMover.prototype._compareSourceAndTarget = function(oSource, oTarget) {
-		var property;
-		for (property in oSource) {
-			//Check property exists on both objects
-			if (oSource.hasOwnProperty(property) !== oTarget.hasOwnProperty(property)) {return false;}
-
-			switch (typeof (oSource[property])) {
+		var vProperty;
+		for (vProperty in oSource) {
+			switch (typeof (oSource[vProperty])) {
 				case 'object':
-					if (oSource[property].getId() !== oTarget[property].getId()) {return false;}
-					break;
-				case 'string':
-					if (oSource[property] !== oTarget[property]) {return false;}
+					if (oSource[vProperty].getId() !== oTarget[vProperty].getId()) {return false;}
 					break;
 				default:
-					if (oSource[property] !== oTarget[property]) {return false;}
+					if (oSource[vProperty] !== oTarget[vProperty]) {return false;}
 			}
 		}
 
