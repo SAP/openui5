@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function (jQuery) {
+sap.ui.define(['jquery.sap.global', './library'],
+	function (jQuery, library) {
 		"use strict";
 
 		var BlockLayoutRowRenderer = {};
