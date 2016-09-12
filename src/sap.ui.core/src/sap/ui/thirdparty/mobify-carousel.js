@@ -503,7 +503,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         $element.on('afterSlide', function(e, previousSlide, nextSlide) {
             // SAP MODIFICATION BEGIN
-            // due to https://sapjira.wdf.sap.corp/browse/BGSOFUIRODOPI-828
+            // due to JIRA BGSOFUIRODOPI-828
             // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
             var bActive = self._getClass('active'),
                 oItems = self.$items, iStart, iStop;
