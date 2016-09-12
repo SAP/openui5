@@ -56,14 +56,15 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 			var $ActionDomRef = this.$(oControl);
 
 			if ($ActionDomRef.length) {
-				$ActionDomRef.focus();
 				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
+				this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
 				this._triggerEvent("mousedown", $ActionDomRef);
 				this.getUtils().triggerEvent("selectstart", $ActionDomRef);
 				this._triggerEvent("mouseup", $ActionDomRef);
 				this._triggerEvent("click", $ActionDomRef);
+				this._simulateFocusout($ActionDomRef[0]);
 			}
 		},
 
