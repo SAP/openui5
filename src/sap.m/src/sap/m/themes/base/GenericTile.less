@@ -36,6 +36,10 @@
 .sapMGTLineMode .sapMGTSubHdrTxt {
 	padding: 0 0.5rem;
 }
+.sapMGTLineMode .sapMGTHdrTxt {
+	position: relative;
+	left: 0.5rem;
+}
 
 .sapMGT:focus {
 	outline: none;
@@ -126,6 +130,15 @@
 	right: 0px;
 	bottom: 0px;
 	border-radius: 0.25rem;
+}
+
+.sapMGTSizeHelper {
+	.sapMGTFocusDiv();
+	z-index: -100;
+}
+.sapMGTStyleHelper {
+	.sapMGTFocusDiv();
+	z-index: -100;
 }
 
 .sapMGenericTileLoading {

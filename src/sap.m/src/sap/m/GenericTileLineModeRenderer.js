@@ -34,6 +34,13 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.writeClasses();
 		oRm.write(">");
 
+		//rendering helper
+		oRm.write("<div");
+		oRm.addClass("sapMGTSizeHelper");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
+
 		oRm.write("<span");
 		oRm.addClass("sapMGTHdrTxt");
 		oRm.writeClasses();
@@ -49,6 +56,13 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getSubheader());
 		oRm.write("</span>"); //.sapMGTSubHdrTxt
+
+		//hover and press style helper
+		oRm.write("<svg");
+		oRm.addClass("sapMGTStyleHelper");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</svg>");
 
 		oRm.write("</span>"); //.sapMGT
 	};
