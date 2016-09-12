@@ -2,6 +2,18 @@ var fs = require('fs');
 
 module.exports = function(grunt, config) {
 
+	// determine the testsuite name and lookup the sap.ui.core library
+	// to be a bit more dynamic for the livereload middleware
+	var testsuiteName = config.testsuite && config.testsuite.name || testsuiteName;
+	var sapUiCoreBasePath = 'src/sap.ui.core';
+	config.allLibraries.forEach(function(oLib, i) {
+		if (oLib.name === 'sap.ui.core') {
+			sapUiCoreBasePath = oLib.path;
+		}
+	});
+	var sapUiTestsuiteBasePath = config.testsuite.path;
+	var sapUiBuildtime = config.buildtime;
+
 	// set default option
 	if (typeof grunt.option('hostname') !== 'string') {
 		grunt.option('hostname', '*');
@@ -34,17 +46,47 @@ module.exports = function(grunt, config) {
 				middleware: function(connect, options, middlewares) {
 					// make sure to put the middleware after "cors"
 					// if "watch" is enabled, there will be another livereload middleware in between
-					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
-						fs.readFile('src/sap.ui.core/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
+					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/' + testsuiteName + '/resources/sap/ui/Global.js', function(req, res, next) {
+						fs.readFile(sapUiCoreBasePath + '/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
 							if (err) {
 								res.writeHead(404);
 								res.end();
 							} else {
 								res.writeHead(200, { 'Content-Type': 'application/javascript' });
-								res.write(data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version")));
+								data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
+								data = data.replace(/(?:\$\{buildtime\}|@buildtime@)/g, sapUiBuildtime);
+								res.write(data);
 								res.end();
 							}
 						});
+
+					} ], [ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
+
+							var version = grunt.config('package.version');
+
+							var sapUiVersionJson = {
+								name: testsuiteName,
+								version: version,
+								buildTimestamp: sapUiBuildtime,
+								scmRevision: '',
+								gav: 'com.sap.openui5:testsuite:' + version,
+								libraries: config.allLibraries.map(function(library) {
+									return {
+										name: library.name,
+										version: version,
+										buildTimestamp: sapUiBuildtime,
+										scmRevision: ''
+									};
+								})
+							};
+
+							var data = JSON.stringify(sapUiVersionJson, null, "\t");
+
+							res.writeHead(200, {
+								'Content-Type': 'application/json'
+							});
+							res.write(data);
+							res.end();				
 					} ]);
 					return middlewares;
 				}
