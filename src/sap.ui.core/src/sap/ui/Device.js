@@ -1173,7 +1173,8 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	function windowSize(){
-		return [document.documentElement.clientWidth, document.documentElement.clientHeight];
+
+		return [window.innerWidth, window.innerHeight];
 	}
 
 	function convertToPx(val, unit){
