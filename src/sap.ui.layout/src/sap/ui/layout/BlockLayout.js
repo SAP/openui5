@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control'],
-	function(Control) {
+sap.ui.define(['sap/ui/core/Control', './library'],
+	function(Control, library) {
 		"use strict";
 
 		/**
