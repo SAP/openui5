@@ -611,7 +611,7 @@ QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
 });
 
 QUnit.asyncTest("No Reordering of fixed columns (within fixed)", function(assert) {
-	oTable.setFixedColumnCount(5);
+	oTable.setFixedColumnCount(4);
 	sap.ui.getCore().applyChanges();
 
 	var oSettings = computeSettingsForReordering(oTable, 2, true);
