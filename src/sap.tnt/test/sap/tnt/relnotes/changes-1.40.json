@@ -116,5 +116,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.7": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
+        "references": []
+      }
+    ]
   }
 }
