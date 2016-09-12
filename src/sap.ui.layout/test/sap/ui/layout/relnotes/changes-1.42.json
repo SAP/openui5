@@ -199,5 +199,31 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "2c80f87560b289c1608f8108a99eb67e8681f7b6",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Issues with translations in qunit are now resolved",
+        "references": []
+      },
+      {
+        "id": "7b1d4bf7d4fba7004da9333839e60b39122024a2",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it\u0027s content controls",
+        "references": []
+      }
+    ]
   }
 }

@@ -2046,5 +2046,136 @@
         "references": []
       }
     ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "1f0e1619dad5757be66fa3a86d9f47a224477e80",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "model.odata.AnnotationParser: Support Nested Annotations",
+        "references": []
+      },
+      {
+        "id": "534237b37fb3e111ec788360e9d87e11957bbf4b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Bindings: Remove Messages on Destroy and Rebind",
+        "references": []
+      },
+      {
+        "id": "b71efa383cc383afb4bcaf4850cf1d9ef7b5cecc",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Supress \u0027touchmove\u0027 on Control Level",
+        "references": []
+      },
+      {
+        "id": "f7780be7472c3c1be313e43f1f3f1f25909d239d",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
+        "references": []
+      },
+      {
+        "id": "1a6ca556b80d2c136fd1cc793268e6ff79d0c6fa",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Reset Cache",
+        "references": []
+      },
+      {
+        "id": "2523ec8d57179c3658b51004b9e07d06cc7b16a6",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "dcd893a830d002cf6435799a63e99f0039f4004a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Databinding tutorial: fix minor bugs in explored examples",
+        "references": []
+      },
+      {
+        "id": "de717fe1bc9cae538cdecffe646f08b8c75d9743",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Order of Functions During Opening Fixed",
+        "references": []
+      },
+      {
+        "id": "0912f287341691993b2db333a17050c534415f3a",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "Rendering: visible property should work with preserved controls",
+        "references": []
+      },
+      {
+        "id": "1eb9922fcb2acff24772e68f678e4adfd2bfc035",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Themeroots / preloadLibCss: Register correct module paths",
+        "references": []
+      },
+      {
+        "id": "f920115893cdf8b1bd8d514ffd2e3e3979dabf7e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "don\u0027t fail when access to local storage is disallowed",
+        "references": []
+      },
+      {
+        "id": "8b0884a197c29f0868478b63959bb108353afc36",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: fixed rendering of invisible child controls",
+        "references": []
+      },
+      {
+        "id": "13372c639694b301b98dadcffb13b7690e4fa757",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.LocaleData: correctly expand fields in custom date pattern",
+        "references": []
+      },
+      {
+        "id": "d8e57d2bae991eaeff615eadede846b5dfea95d8",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: fix scrolling in the ui.table.Table for FioriClient and Edge browser on Windows 10 and Windows 8.",
+        "references": []
+      },
+      {
+        "id": "b7722069ddf97b00acf6a0708b9f75f8525988f8",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      },
+      {
+        "id": "e304f9142490f62ba3d0e92547c1753582ba6285",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: make currency with negative number non breakable",
+        "references": []
+      },
+      {
+        "id": "b7c81878c1288d048ba445cd46f6a7f0fef090e9",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "7101949773c01968c30afe7d93aa8ab16abb08f8",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Set length to final in InlineRepeat mode",
+        "references": []
+      }
+    ]
   }
 }

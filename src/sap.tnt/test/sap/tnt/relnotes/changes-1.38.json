@@ -88,5 +88,29 @@
         "references": []
       }
     ]
+  },
+  "1.38.5": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "67acb598f648a9057238ef0f1de6538f5165d55d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.38.7": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "6e3f7978028daa401ce735279a91cf17dd02aa64",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
+        "references": []
+      }
+    ]
   }
 }

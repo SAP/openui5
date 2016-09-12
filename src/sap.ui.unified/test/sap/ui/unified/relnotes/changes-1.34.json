@@ -136,5 +136,234 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "d8d4b4ea83cd348c36a1930c36adc1d8dd592140",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: display 2 calendar types in calendar",
+        "references": []
+      },
+      {
+        "id": "94a7b91de6f7bae53f98f1527cc6cab80c96679c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: startDateChange event added",
+        "references": []
+      },
+      {
+        "id": "9cacefdfdc46d7473f296c4f75863be80aa8a584",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: IE and FF error if date \u003c 0100.01.01",
+        "references": []
+      },
+      {
+        "id": "b5cb5ee18e09a53f8eb6b0992ae2b7ee6ae034fa",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Aria Text enhanced",
+        "references": []
+      },
+      {
+        "id": "06d21124e214b1f37e21698b5ac2e726122449da",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.34.3": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "94b717e246c77cba92abac6dfd520bdcccebb2cd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: several issues",
+        "references": []
+      },
+      {
+        "id": "b4d20d157798b4dfbb72ddd9ae6f6cddd1888625",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellHeadItem: Provide API to differentiate between toggle button mode and action button mode.",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "4f965623a919afafc358e4b46f72d0d252a5a1f6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointment wrong positioned",
+        "references": []
+      },
+      {
+        "id": "276d916643cd7200247543416dd5be5a0e0c3713",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "65cb5bffe3dd5b14db744fef299f7da21cd4e6ba",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multi-month switch blocks",
+        "references": []
+      },
+      {
+        "id": "82dee423604cf3f9508574fb7191c6a765c55318",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: startDateChange event too early",
+        "references": []
+      },
+      {
+        "id": "54930664d3b7f5fbfc37362136bae800de8d13d3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: wrong weekday names",
+        "references": []
+      },
+      {
+        "id": "98a748611a5c8a6c85d4f5be8cee8fd9c43990c4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarLegend: rename \"normal Day\" to \"working day\"",
+        "references": []
+      },
+      {
+        "id": "d93aa41bc8b3e3dabf283ea00dd7343ae7f8036a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      },
+      {
+        "id": "494e2811a431fa628acba47bc76c4fccefc76a27",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.34.5": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "1c39cb501e8f43effef8340c829fa5fdf12f2729",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: HCB improvements",
+        "references": []
+      },
+      {
+        "id": "586a362e87021b9d09de22d9a614d0dbfe12c9a9",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: don\u0027t select row if in 1 row mode",
+        "references": []
+      },
+      {
+        "id": "c2054301e22940bdcfe6e804ffd220811d12ac20",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: error if secondaryCalendarType used",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "a5e07ddf46754e1bc3c2281d4a608ea72bb8ab96",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.SplitContainer: Left-to-right - Right-to-Left mode switch not recognized after control initialization",
+        "references": []
+      }
+    ]
+  },
+  "1.34.9": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "68c63457edb5c68dfb08892a692e761df14bf422",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: calendar loose focus by keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "5a6a7d73dfa587e910c65651310240acf92d6479",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified Explored Examples: Fix styling",
+        "references": []
+      },
+      {
+        "id": "1ab086eb8c2e79c36770c3fd030d6197587a90a5",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: improve sample pages - calendarType",
+        "references": []
+      },
+      {
+        "id": "8d00ffe5046e68509ad6a84bfcc4060f4642065e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c6b57231867d459e25e3c3a674c43348c6d6b8cd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Calendar on phone in landscape design issues",
+        "references": []
+      },
+      {
+        "id": "b275971af61f3b5878c32bcc0d46cb281c4ce17b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: click on appointment - no focus in IE",
+        "references": []
+      },
+      {
+        "id": "a1d7bde88d128d29ab892e73b7816c92ddf03387",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: upload of several files fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "d9e722b0520be9e9ebe648d11080dadc577e928a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: appointments wrong position if theme applied late",
+        "references": []
+      }
+    ]
   }
 }

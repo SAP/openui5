@@ -396,5 +396,186 @@
         "references": []
       }
     ]
+  },
+  "1.40.4": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "f3bf16b63a109def8d2073332f212c88de300d1b",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move between not identical SimpleForms",
+        "references": []
+      },
+      {
+        "id": "5ea0bacfe3278a0378955bcddc61989336c43d4d",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move in SimpleForm with sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "7d4e77a701953ec91f9bf1b2a88816d85d8f43c7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "289d419bcdcde9ed447eb4ed4ce6dcd85f3d3fdd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "f3bf16b63a109def8d2073332f212c88de300d1b",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move between not identical SimpleForms",
+        "references": []
+      },
+      {
+        "id": "5ea0bacfe3278a0378955bcddc61989336c43d4d",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move in SimpleForm with sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "5bd62cf2f04dac42746c1e0008932bf08a342dbb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "cf61ee024678fecfc9c4d26119bfe32ee6290b6a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      },
+      {
+        "id": "7d4e77a701953ec91f9bf1b2a88816d85d8f43c7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "289d419bcdcde9ed447eb4ed4ce6dcd85f3d3fdd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
+  },
+  "1.40.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "f3bf16b63a109def8d2073332f212c88de300d1b",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move between not identical SimpleForms",
+        "references": []
+      },
+      {
+        "id": "5ea0bacfe3278a0378955bcddc61989336c43d4d",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move in SimpleForm with sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "5bd62cf2f04dac42746c1e0008932bf08a342dbb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "cf61ee024678fecfc9c4d26119bfe32ee6290b6a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      },
+      {
+        "id": "7d4e77a701953ec91f9bf1b2a88816d85d8f43c7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "289d419bcdcde9ed447eb4ed4ce6dcd85f3d3fdd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
+  },
+  "1.40.7": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "f3bf16b63a109def8d2073332f212c88de300d1b",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move between not identical SimpleForms",
+        "references": []
+      },
+      {
+        "id": "5ea0bacfe3278a0378955bcddc61989336c43d4d",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes move in SimpleForm with sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "0d1cd01da94bc7d74cc7ed8d0072a874d1548eb4",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it\u0027s content controls",
+        "references": []
+      },
+      {
+        "id": "5bd62cf2f04dac42746c1e0008932bf08a342dbb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "cf61ee024678fecfc9c4d26119bfe32ee6290b6a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      },
+      {
+        "id": "7d4e77a701953ec91f9bf1b2a88816d85d8f43c7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "289d419bcdcde9ed447eb4ed4ce6dcd85f3d3fdd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
   }
 }

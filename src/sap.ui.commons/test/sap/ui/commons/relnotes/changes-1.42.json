@@ -1,0 +1,14 @@
+{
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "d8790b8b4ba2ab2757b34312842aee72f436dd2b",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
+        "references": []
+      }
+    ]
+  }
+}

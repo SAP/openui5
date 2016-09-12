@@ -278,5 +278,43 @@
         "references": []
       }
     ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "b438e9680c7984acd63f9adb17d738702248874b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified Explored Examples: Fix styling",
+        "references": []
+      },
+      {
+        "id": "f63223335600b9368d61197ebb502385d42ec192",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
+        "references": []
+      },
+      {
+        "id": "ae48202858c0e57923bcd678f8ed18187a57237b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.SplitContainer: Left-to-right - Right-to-Left mode switch not recognized after control initialization",
+        "references": []
+      }
+    ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "620bca7ee0cf85b029cda23119851b18d5fb790b",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: upload of several files fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -479,5 +479,59 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "ac6ce8587d8dbd72b925c084ed82603e4d425d4b",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Carousel: Bullets in the page indicator are replaced with numbers when there are more than 9 pages in the Carousel.",
+        "references": []
+      },
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "8afa4f66e9041b8fa07dd58898655b89616b0abc",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "402041e359d935b4db3f2b742267cb310dd49bb6",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Contrast ratio on selected filter is now correct",
+        "references": []
+      },
+      {
+        "id": "ebdb640f63725899b2486f3b0e1ae17024b7feb8",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "e6474ff23e7ab57230eb854d4571c6951e62a6a7",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: border values caused visual issues",
+        "references": []
+      },
+      {
+        "id": "9993fa35b83961e8d87a74b7f5694d2205e760f3",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage - outline in IE fixed",
+        "references": []
+      }
+    ]
   }
 }

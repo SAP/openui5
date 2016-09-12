@@ -157,5 +157,24 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "d9ff523d21f4b07c533cd96db2ef3f92fe1d6891",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Days are read",
+        "references": []
+      },
+      {
+        "id": "badd2e04d804cf99823703b13e59e6d4dc80aebd",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Interval header has default cursor",
+        "references": []
+      }
+    ]
   }
 }

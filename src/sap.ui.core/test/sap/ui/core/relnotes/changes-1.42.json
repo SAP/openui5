@@ -1137,5 +1137,59 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "dc9f94cb59d419175128122b17c299c09424b92e",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.test.Opa - slow OPA added a URL parameter \u0027opaExecutionDelay\u0027 to slow down OPA",
+        "references": []
+      },
+      {
+        "id": "53061ef22e1b6bb115ba8a21c6c57912b263adca",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.test.Opa5 - waitFors in actions",
+        "references": []
+      },
+      {
+        "id": "2b78082a43a0927526fd8d4e4f9ab704568da20e",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.test.Opa5#waitFor - autoWait a new Property to handle synchronization issues in OPA tests",
+        "references": []
+      },
+      {
+        "id": "d78200f9cd7a195c65c9a19b519f4edac2267fc9",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: avoid endless loop when setting mark on an event",
+        "references": []
+      },
+      {
+        "id": "d5e217f86f8fc223b996f57c1d54a744ec8beff8",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Nested carousels are now working correctly",
+        "references": []
+      },
+      {
+        "id": "0a8e8ae267bcaf0a52b04dbddf49063b7f26b88e",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding - Endless Change-Event Loop",
+        "references": []
+      },
+      {
+        "id": "580bb7dd9fc96963ff31ee3fe983dd3d0b9ea04d",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: error when customParam of a Binding is undefined",
+        "references": []
+      }
+    ]
   }
 }

@@ -1138,5 +1138,270 @@
         "references": []
       }
     ]
+  },
+  "1.40.4": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "3a43d9db1cea670dc89ca4ee3765e0c5aacc2722",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "305f5143d58a1d7fe064c7be5d60719297ac5a61",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "45a7416b30c6056ab6ded85bb84454c197e29467",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Bugfixes after grouping change",
+        "references": []
+      },
+      {
+        "id": "634a269c38a9dd28d90fc551dff8b70e10457699",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "3a43d9db1cea670dc89ca4ee3765e0c5aacc2722",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "305f5143d58a1d7fe064c7be5d60719297ac5a61",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "6da1c30182467eb05fceae4a1fb52976fa95132f",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.ClientTreeBindingAdapter: return the corrent length of binding",
+        "references": []
+      },
+      {
+        "id": "45a7416b30c6056ab6ded85bb84454c197e29467",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Bugfixes after grouping change",
+        "references": []
+      },
+      {
+        "id": "eb3bece0a7639fdba302bcf3ccffbb5af4b05b72",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Scrollbar Height",
+        "references": []
+      },
+      {
+        "id": "634a269c38a9dd28d90fc551dff8b70e10457699",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "3a43d9db1cea670dc89ca4ee3765e0c5aacc2722",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "305f5143d58a1d7fe064c7be5d60719297ac5a61",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "6da1c30182467eb05fceae4a1fb52976fa95132f",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.ClientTreeBindingAdapter: return the corrent length of binding",
+        "references": []
+      },
+      {
+        "id": "45a7416b30c6056ab6ded85bb84454c197e29467",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Bugfixes after grouping change",
+        "references": []
+      },
+      {
+        "id": "eb3bece0a7639fdba302bcf3ccffbb5af4b05b72",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Scrollbar Height",
+        "references": []
+      },
+      {
+        "id": "634a269c38a9dd28d90fc551dff8b70e10457699",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      },
+      {
+        "id": "f8e5660c1e0e5030ca7b6abb5680f3d13346c5eb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixedColumnCount calculation with hidden columns in aggregation",
+        "references": []
+      }
+    ]
+  },
+  "1.40.7": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "61803a15534029431e2cb5d09aed394efc62410c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix for problem on loading table when columns are not visible",
+        "references": []
+      },
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "3a43d9db1cea670dc89ca4ee3765e0c5aacc2722",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "4b28bc0bfc2f2a9813e1c692e73d8e864f533c57",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable/AnalyticalTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "305f5143d58a1d7fe064c7be5d60719297ac5a61",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "6da1c30182467eb05fceae4a1fb52976fa95132f",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.ClientTreeBindingAdapter: return the corrent length of binding",
+        "references": []
+      },
+      {
+        "id": "45a7416b30c6056ab6ded85bb84454c197e29467",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Bugfixes after grouping change",
+        "references": []
+      },
+      {
+        "id": "eb3bece0a7639fdba302bcf3ccffbb5af4b05b72",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Scrollbar Height",
+        "references": []
+      },
+      {
+        "id": "634a269c38a9dd28d90fc551dff8b70e10457699",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      },
+      {
+        "id": "f8e5660c1e0e5030ca7b6abb5680f3d13346c5eb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixedColumnCount calculation with hidden columns in aggregation",
+        "references": []
+      },
+      {
+        "id": "ca77bad4ccbd18e059e35cf6605792d8091d268d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect header height",
+        "references": []
+      }
+    ]
   }
 }

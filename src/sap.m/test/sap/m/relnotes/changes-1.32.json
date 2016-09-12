@@ -118,14 +118,14 @@
         "id": "d06b75b00f08e9f477afc0bdae46eb167c4755d2",
         "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.Popover: showArrow property added",
+        "text": "sap.m.Popover: ShowArrow property added",
         "references": []
       },
       {
         "id": "2b3e49d661b285449f08d26d6a35440c59f7c8f4",
         "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.QuickView:  Icons screen reader support is improved",
+        "text": "sap.m.QuickView: Icons screen reader support is improved",
         "references": []
       },
       {
@@ -244,7 +244,7 @@
         "id": "a4d0eea4a705e93c1d7dc8fa7a5726276532a1c2",
         "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.Wizard: new property introduced: finishButtonText",
+        "text": "sap.m.Wizard: New property introduced: finishButtonText",
         "references": []
       },
       {
@@ -419,7 +419,7 @@
         "id": "5b120898d8bfa5c46c0e09f8931e1a88999cd518",
         "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Fix custom placeholder alignment issue in IE10",
+        "text": "sap.m.ComboBox: Fix custom placeholder alignment issue in Internet Explorer 10",
         "references": []
       },
       {

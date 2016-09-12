@@ -269,5 +269,24 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "1daf24e1b3d5fca3776f981e349ed3bf4e5260e2",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix for problem on loading table when columns are not visible",
+        "references": []
+      },
+      {
+        "id": "9a94956a4fa0ecbf770c6cf536b25acc8e39d379",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect header height",
+        "references": []
+      }
+    ]
   }
 }

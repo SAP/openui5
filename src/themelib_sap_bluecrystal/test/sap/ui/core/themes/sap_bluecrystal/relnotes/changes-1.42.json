@@ -297,5 +297,59 @@
         "references": []
       }
     ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "10bb9f7d7c4773e1d1f934bef25bb0c2549aa7c9",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsPopover: Header items have correct focus outline",
+        "references": []
+      },
+      {
+        "id": "8afa4f66e9041b8fa07dd58898655b89616b0abc",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "a94f30b97d7e03cb3451faa4b63247a772367271",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Less parameters for Bluecrystal theme updated",
+        "references": []
+      },
+      {
+        "id": "ebdb640f63725899b2486f3b0e1ae17024b7feb8",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "fe267ac726c7ce8c4d7b97c2192919261f75fddd",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Last segmented button should have focus",
+        "references": []
+      },
+      {
+        "id": "75f1ef7c6bad16985f74d66d981ab0ad9ff53496",
+        "author": "Diana Shtilianova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover compact mode arrow style",
+        "references": []
+      }
+    ]
   }
 }

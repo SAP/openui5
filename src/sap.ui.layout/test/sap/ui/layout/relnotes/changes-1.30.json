@@ -80,5 +80,124 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "25605728396dbef80d7df8f639995e9631057872",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Correctly resize Splitter bars",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1a1e12e530326b98a6ffa6dfffb506ad09d3b800",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
+        "references": []
+      },
+      {
+        "id": "2dcce75a95ca28862a699d7b24635dce1e734eff",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: full size labels",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "81aeb1fa0b798a7d8f02f184792dd0b959c0bf3d",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Fixed layout issue",
+        "references": []
+      },
+      {
+        "id": "509dcb91dba81f2c4c6b2c64dfae3cd64ef0033c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form: adapt documentation for form controls",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "864a32250cf76e897111e45b6dfb2a471ec23068",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in libraries: sap.m, sap.ui.layout and sap.ui.unified",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "6a1a7f1859d0ab36eb21402498a2f253fb4348e6",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "339ed4f1ae302656c2e1ad05dfe691e8f4213ed2",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "d3f25d2b4d5b93a86cd2a6d7dcc6c6988d5350be",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "269a7a108b4ec5a01810aaaf9e5bf6bcbd7113a7",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
+        "references": []
+      },
+      {
+        "id": "763d5eb8f0db76eeed73882139ef8b4d7f38b325",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
   }
 }

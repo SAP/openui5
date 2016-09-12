@@ -312,5 +312,102 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "233285205eb0fa7b487a0fd9f85dbb2023794dc5",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "535c666c3f876a4e4e1ec12b730c049d89f14ec0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix positioning and focus visualization of No Data area",
+        "references": []
+      }
+    ]
+  },
+  "1.38.5": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "920e10e0071131969d733129ab6722cab6783965",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "7df7fe6f6fd9eef44f445373c0f8a458d0758d3e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "69144237c2a63c0e72027a0f5e7f618b0add8b35",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "992874ec89e55dc6d279252f2f078679613c1e37",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      },
+      {
+        "id": "f003efaf36887982ce609fa6e0c245866700504e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      }
+    ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "f25de706e10e015116a36cbac158f63de6ffb72d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      }
+    ]
+  },
+  "1.38.7": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "f25de706e10e015116a36cbac158f63de6ffb72d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      }
+    ]
   }
 }

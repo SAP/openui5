@@ -492,5 +492,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.16": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4fc36acf6d55a0039bdf849e1f2987ce1777ced8",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      }
+    ]
   }
 }

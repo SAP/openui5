@@ -2981,7 +2981,7 @@
         "id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
         "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
-        "text": "ComboBox: Arrow button height corrected (downport)",
+        "text": "ComboBox: Arrow button height corrected",
         "references": []
       },
       {
@@ -5010,6 +5010,18 @@
         "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.UploadCollectionItem: Documentation to url property added",
+        "references": []
+      }
+    ]
+  },
+  "1.28.38": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4dd4da027a450da8791d896f27c136eee4c49e26",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
         "references": []
       }
     ]
