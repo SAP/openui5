@@ -626,7 +626,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// If we are not rendered, we do not need to resize since resizing is done after rendering
 		if (this.getDomRef()) {
 			jQuery.sap.clearDelayedCall(this._resizeTimeout);
-			jQuery.sap.delayedCall(iDelay, this, this._resize, []);
+			jQuery.sap.delayedCall(iDelay, this, "_resize", []);
 		}
 	};
 
@@ -793,11 +793,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		this._calculatedSizes = [];
 
-		var iAvailableSize      = this._calculateAvailableContentSize(aSizes);
+		var iAvailableSize = this._calculateAvailableContentSize(aSizes);
 
 		var aAutosizeIdx = [];
 		var aAutoMinsizeIdx = [];
 		var aPercentsizeIdx = [];
+		var iRest = iAvailableSize;
 
 		// Remove fixed sizes from available size
 		for (i = 0; i < aSizes.length; ++i) {
@@ -807,7 +808,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			if (sSize.indexOf("px") > -1) {
 				// Pixel based Value - deduct it from available size
 				iSize = parseInt(sSize, 10);
-				iAvailableSize -= iSize;
+				iRest -= iSize;
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("%") > -1) {
 				aPercentsizeIdx.push(i);
@@ -827,16 +828,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		// If more than the available size if assigned to fixed width content, the rest will get no
 		// space at all
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+		if (iRest < 0) { bWarnSize = true; iRest = 0; }
 
 		// Now calculate % of the available space
-		var iRest = iAvailableSize;
 		var iPercentSizes = aPercentsizeIdx.length;
 		for (i = 0; i < iPercentSizes; ++i) {
 			idx = aPercentsizeIdx[i];
 			// Percent based Value - deduct it from available size
-			iColSize = Math.floor(parseFloat(aSizes[idx]) / 100 * iAvailableSize, 0);
-			iAvailableSize -= iColSize;
+			iColSize = Math.floor((parseFloat(aSizes[idx]) / 100) * iAvailableSize);
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
 		}
