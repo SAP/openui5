@@ -1,5 +1,5 @@
 <mvc:View
-	template:require="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper"
+	template:require="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper sap.ui.model.odata.v4.AnnotationHelper"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -10,6 +10,19 @@
 		<Panel expandable="true" headerText="(Technical Tests)">
 			<content>
 				<VBox>
+					<Title level="H1" text="isMultiple"/>
+					<template:repeat list="{meta>/}" var="topLevel">
+						<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">
+							<Label design="Bold" text="{topLevel>$Type}"/>
+							<template:with path="topLevel>./@com.sap.vocabularies.UI.v1.Facets"
+								var="facets">
+								<core:Fragment
+									fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Facets"
+									type="XML"/>
+							</template:with>
+						</template:if>
+					</template:repeat>
+					<Text text="----------"/>
 					<template:with path="meta>/$EntityContainer/" var="objectWithKind">
 						<core:Fragment
 							fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"

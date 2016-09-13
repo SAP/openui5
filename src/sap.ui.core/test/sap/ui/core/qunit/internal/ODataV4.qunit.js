@@ -15,6 +15,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/lib/_Requestor.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_SyncPromise.qunit",
 	"sap/ui/core/qunit/odata/v4/_ODataHelper.qunit",
+	"sap/ui/core/qunit/odata/v4/AnnotationHelper.qunit",
 	"sap/ui/core/qunit/odata/v4/Context.qunit",
 	"sap/ui/core/qunit/odata/v4/ODataContextBinding.qunit",
 	"sap/ui/core/qunit/odata/v4/ODataListBinding.qunit",
