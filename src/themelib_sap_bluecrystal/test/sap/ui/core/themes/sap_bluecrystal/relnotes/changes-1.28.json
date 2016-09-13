@@ -861,5 +861,29 @@
         "references": []
       }
     ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "4a077acfddbbdd576d9696339eb4161b1868fba4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "b3b32952d800fa148ce956d31593bfbe24be9a80",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.for.Form: expand button wrong displayed",
+        "references": []
+      }
+    ]
   }
 }

@@ -97,5 +97,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "ef64c1a4a6bece9d407d67ec7ddfa78ad7163071",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "demokit/Explored app: Resetting search field issue solved",
+        "references": []
+      }
+    ]
   }
 }

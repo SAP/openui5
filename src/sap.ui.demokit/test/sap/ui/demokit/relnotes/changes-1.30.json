@@ -52,5 +52,67 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "5604426a0e9f36e04a71b2423288fe9dce6c66e0",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit tree expand collapse buttons changed position",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "160d0ad43a53c3a5b98d6bbbb15463697c957ecd",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Api Reference Tree clipping issue",
+        "references": []
+      },
+      {
+        "id": "f244b1e51fae74ef7d06569698d3dff57a93e5eb",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit About dialog is all visible now in small resolutions",
+        "references": []
+      },
+      {
+        "id": "458fdaae9c6f3ac452258793ec88802d35663414",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Navigating back does not update the demokit tree",
+        "references": []
+      }
+    ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "dbdfa6ad351f83bd0cf8971047d459e3040d3079",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored App IconTabBar should ignore hover event",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "9412d487c3a6c24205c904365206e3aa4e8a99d4",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit missing tree due to node without ref",
+        "references": []
+      }
+    ]
   }
 }
