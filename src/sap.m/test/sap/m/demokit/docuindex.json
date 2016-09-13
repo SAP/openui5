@@ -1065,7 +1065,9 @@
 		  "category": "Container",
 		  "since": "1.42",
 		  "samples": [
-			"sap.m.sample.Tree"
+			"sap.m.sample.Tree",
+			"sap.m.sample.TreeIcon",
+			"sap.m.sample.TreeSelection"
 		  ]
 		},
 		{
@@ -1827,6 +1829,16 @@
 		  "id": "sap.m.sample.Tree",
 		  "name": "Tree - Basic",
 		  "description": "Tree displays data in hierarchical structure."
+		},
+		{
+		  "id": "sap.m.sample.TreeSelection",
+		  "name": "Tree - Selection",
+		  "description": "Different selection modes of Tree item."
+		},
+		{
+		  "id": "sap.m.sample.TreeIcon",
+		  "name": "Tree - Icon",
+		  "description": "Tree item with icon."
 		},
 		{
 			"id": "sap.m.sample.RangeSlider",
