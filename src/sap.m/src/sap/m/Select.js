@@ -1550,7 +1550,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * Gets the selectable items from the aggregation named <code>items</code>.
 		 *
-		 * @return {sap.ui.core.Item[]} An array containing the selectables items.
+		 * @return {sap.ui.core.Item[]} An array containing the selectable items.
 		 * @since 1.22.0
 		 */
 		Select.prototype.getSelectableItems = function() {
