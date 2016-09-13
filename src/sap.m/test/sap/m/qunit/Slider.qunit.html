@@ -1226,7 +1226,8 @@
 
 				// act
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				});
 
 				this.clock.tick(1);
@@ -1268,7 +1269,8 @@
 
 				// act
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				});
 
 				for (var i = 51; i <= 100; i++) {
@@ -1336,11 +1338,13 @@
 
 					// act
 					sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-						targetTouches: oTouches
+						targetTouches: oTouches,
+						srcControl: oSlider
 					});
 
 					sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-						targetTouches: oTouches
+						targetTouches: oTouches,
+						srcControl: oSlider
 					}, '_on');
 
 					// assert
@@ -1386,11 +1390,13 @@
 
 				// act
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				});
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				}, '_on');
 
 				// assert
@@ -1842,11 +1848,13 @@
 				};
 
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				});
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				}, '_on');
 
 				// post-assert
@@ -1887,11 +1895,13 @@
 				};
 
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				});
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches
+					targetTouches: oTouches,
+					srcControl: oSlider
 				}, '_on');
 
 				// pre-assert
