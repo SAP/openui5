@@ -34,6 +34,8 @@
 
 .sapMSelectListItemBaseSelected {
 	background: @sapHCHighlightAltBG;
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -3px;
 }
 
 /* hover */
@@ -64,23 +66,9 @@ html.sap-desktop li.sapMSelectListItemBase:focus {
 }
 
 /* FIX: IE and Edge do not support css outline-offset */
-
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-
-	li.sapMSelectListItemBase:focus {
-		outline: none;
-		position: relative;
-	}
-
-	li.sapMSelectListItemBase:focus::before {
-		content: "";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
 		border: 0.125rem dotted @sapHCStandardFG;
 	}
 }
