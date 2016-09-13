@@ -2,17 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ColumnMenuRenderer'],
-	function(jQuery, Renderer, ColumnMenuRenderer) {
+// Provides default renderer for control sap.ui.table.AnalyticalColumnMenu
+sap.ui.define(['sap/ui/table/AnalyticalColumnMenu'], function(Menu) {
 	"use strict";
-
-
-	/**
-	 * AnalyticalTable renderer.
-	 * @namespace
-	 */
-	var AnalyticalColumnMenuRenderer = Renderer.extend(ColumnMenuRenderer);
-
-	return AnalyticalColumnMenuRenderer;
-
+	// Renderer defined already in AnalyticalColumnMenu.js -> Keep this file for legacy purposes (e.g. AMD module dependencies)
+	return Menu.getMetadata().getRenderer();
 }, /* bExport= */ true);
