@@ -24,11 +24,10 @@ sap.ui.define([
 	/**
 	 * Changes the properties on the given control
 	 *
-	 * @param {sap.ui.fl.Change} oChangeWrapper - change object with instructions to be applied on the control
+	 * @param {sap.ui.fl.Change} oChange - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} oModifier - control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
-	 *                             sap.ui.fl.changeHandler.XmlTreeModifier)
-	 * @param {object} oView - view object where the controls are embedded
+	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
+	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
 	 * @name sap.ui.layout.changeHandler.RenameForm#applyChange
 	 */
@@ -53,7 +52,7 @@ sap.ui.define([
 
 			return true;
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChange.fileName + "." + oChange.fileType);
+			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 			//however subsequent changes should be applied
 		}
 	};
@@ -61,12 +60,13 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object to be completed
-	 * @param {object} oSpecificChangeInfo with attribute fieldLabel, the new field label to be included in the change
+	 * @param {sap.ui.fl.Change} oChange - change wrapper object to be completed
+	 * @param {object} oSpecificChangeInfo - with attribute fieldLabel, the new field label to be included in the change
+	 * @param {object} mPropertyBag - map containing the application component
 	 * @private
 	 */
-	RenameForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
-		var oChange = oChangeWrapper.getDefinition();
+	RenameForm.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
+		var oChangeDefinition = oChange.getDefinition();
 
 		if (!oSpecificChangeInfo.changeType) {
 			throw new Error("oSpecificChangeInfo.changeType attribute required");
@@ -75,16 +75,16 @@ sap.ui.define([
 		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
 			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
 			if (oSpecificChangeInfo.changeType === "renameLabel") {
-				oChange.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getLabel());
+				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getLabel(), mPropertyBag.appComponent);
 			} else if (oSpecificChangeInfo.changeType === "renameTitle") {
-				oChange.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getTitle());
+				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getTitle(), mPropertyBag.appComponent);
 			}
 		} else {
 			throw new Error("oSpecificChangeInfo.renamedElement attribute required");
 		}
 
 		if (this._isProvided(oSpecificChangeInfo.value)) {
-			BaseChangeHandler.setTextInChange(oChange, "formText", oSpecificChangeInfo.value, "XFLD");
+			BaseChangeHandler.setTextInChange(oChangeDefinition, "formText", oSpecificChangeInfo.value, "XFLD");
 		} else {
 			throw new Error("oSpecificChangeInfo.value attribute required");
 		}
