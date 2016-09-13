@@ -32,6 +32,13 @@ QUnit.test("init()", function(assert) {
 	setFocusOutsideOfTable();
 });
 
+QUnit.test("_debug()", function(assert) {
+	var oExtension = oTable._getKeyboardExtension();
+	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	oExtension._debug();
+	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+});
+
 
 QUnit.module("Item Navigation", {
 	setup: function() {

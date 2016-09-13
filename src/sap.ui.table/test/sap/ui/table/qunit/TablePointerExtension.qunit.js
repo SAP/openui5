@@ -748,6 +748,13 @@ QUnit.module("Helpers", {
 	}
 });
 
+QUnit.test("_debug()", function(assert) {
+	var oExtension = oTable._getPointerExtension();
+	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	oExtension._debug();
+	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+});
+
 QUnit.test("_getEventPosition()", function(assert) {
 	oTable._getPointerExtension()._debug();
 	var oExtensionHelper = oTable._getPointerExtension()._ExtensionHelper;
