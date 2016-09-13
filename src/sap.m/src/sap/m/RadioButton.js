@@ -149,6 +149,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	RadioButton.prototype._groupNames = {};
 
+	// Keyboard navigation variants
+	var KH_NAVIGATION = {
+		HOME: "first",
+		END: "last",
+		NEXT: "next",
+		PREV: "prev"
+	};
+
 	/**
 	 * Function is called when radiobutton is tapped.
 	 *
@@ -195,7 +203,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	RadioButton.prototype.onsapnext = function(oEvent) {
-		this._arrowsHandler("next");
+		this._keyboardHandler(KH_NAVIGATION.NEXT, true);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsapnextmodifiers = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.NEXT, !oEvent.ctrlKey);
 
 		// mark the event that it is handled by the control
 		oEvent.setMarked();
@@ -204,7 +221,52 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	RadioButton.prototype.onsapprevious = function(oEvent) {
-		this._arrowsHandler();
+		this._keyboardHandler(KH_NAVIGATION.PREV, true);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsappreviousmodifiers = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.PREV, !oEvent.ctrlKey);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsaphome = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.HOME, true);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsaphomemodifiers = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.HOME, !oEvent.ctrlKey);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsapend = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.END, true);
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
+		return this;
+	};
+
+	RadioButton.prototype.onsapendmodifiers = function(oEvent) {
+		this._keyboardHandler(KH_NAVIGATION.END, !oEvent.ctrlKey);
 
 		// mark the event that it is handled by the control
 		oEvent.setMarked();
@@ -214,28 +276,52 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Determines which button becomes focused after an arrow key is pressed.
-	 * @param {string} sPosition Button to be focused (next/previous)
+	 * @param {string} sPosition Button to be focused
+	 * @param {boolean} bSelect Determines if the button should be selected
 	 * @private
 	 */
-	RadioButton.prototype._arrowsHandler = function(sPosition) {
+	RadioButton.prototype._keyboardHandler = function(sPosition, bSelect) {
 		if (this.getParent() instanceof sap.m.RadioButtonGroup) {
 			return;
 		}
 
-		var aVisibleBtnsGroup = this._groupNames[this.getGroupName()].filter(function(oRB) {
+		var oNextItem = this._getNextFocusItem(sPosition);
+		oNextItem.focus();
+		bSelect && oNextItem.setSelected(true);
+	};
+
+	/**
+	 * Determines next focusable item
+	 *
+ 	 * @param {enum} sNavigation any item from KH_NAVIGATION
+	 * @returns {RadioButton}
+	 * @private
+	 */
+	RadioButton.prototype._getNextFocusItem = function(sNavigation) {
+		var aVisibleBtnsGroup = this._groupNames[this.getGroupName()].filter(function (oRB) {
 			return (oRB.getDomRef() && oRB.getEnabled());
 		});
 
-		var iButtonIndex = aVisibleBtnsGroup.indexOf(this);
+		var iButtonIndex = aVisibleBtnsGroup.indexOf(this),
+			iIndex = iButtonIndex,
+			iVisibleBtnsLength = aVisibleBtnsGroup.length;
 
-		if (sPosition === "next") {
-			var iNextPosition = (iButtonIndex + 1) % aVisibleBtnsGroup.length;
-			aVisibleBtnsGroup[iNextPosition].focus();
-		} else {
-			iButtonIndex = iButtonIndex - 1;
-			var iPreviousPosition = iButtonIndex < 0 ? aVisibleBtnsGroup.length - 1 : iButtonIndex;
-			aVisibleBtnsGroup[iPreviousPosition].focus();
+		switch (sNavigation) {
+			case KH_NAVIGATION.NEXT:
+				iIndex = iButtonIndex === iVisibleBtnsLength - 1 ? iButtonIndex : iButtonIndex + 1;
+				break;
+			case KH_NAVIGATION.PREV:
+				iIndex = iButtonIndex === 0 ? 0 : iIndex - 1;
+				break;
+			case KH_NAVIGATION.HOME:
+				iIndex = 0;
+				break;
+			case KH_NAVIGATION.END:
+				iIndex = iVisibleBtnsLength - 1;
+				break;
 		}
+
+		return aVisibleBtnsGroup[iIndex] || this;
 	};
 
 	// #############################################################################
@@ -396,6 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (iGroupNameIndex && iGroupNameIndex !== -1) {
 			aControlsInGroup.splice(iGroupNameIndex, 1);
 		}
+
 	};
 
 	/**
