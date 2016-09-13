@@ -417,6 +417,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// inform change detection
 			return true;
+		} else {
+			// same value as before --> ignore Dom update
+			this._bCheckDomValue = false;
 		}
 	};
 
