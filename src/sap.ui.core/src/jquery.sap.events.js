@@ -615,7 +615,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		/**
 		 * Pseudo event for pressing the '-' (minus) sign.
 		 * @since 1.25.0
-		 * @experimental Since 1.25.0 Implementation details can be changed in future.
 		 * @public
 		 */
 		sapminus: {sName: "sapminus", aTypes: ["keypress"], fnCheck: function(oEvent) {
@@ -646,7 +645,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		/**
 		 * Pseudo event for pressing the '+' (plus) sign.
 		 * @since 1.25.0
-		 * @experimental Since 1.25.0 Implementation details can be changed in future.
 		 * @public
 		 */
 		sapplus: {sName: "sapplus", aTypes: ["keypress"], fnCheck: function(oEvent) {
