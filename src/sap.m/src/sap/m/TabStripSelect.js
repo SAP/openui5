@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 				})
 					.addStyleClass(TabStripSelect.CSS_CLASS + "Bar")
 					.addStyleClass(CSS_CLASS_PARENT + "Bar")
-			});
+			}).addStyleClass(TabStripSelect.CSS_CLASS + "Dialog");
 
 			oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
 				oDialog.close();
