@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TreeSelection.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TreeIcon.Page",
+			rootView : "sap.m.sample.TreeSelection.Page",
 			dependencies : {
 				libs : [
 					"sap.m",
