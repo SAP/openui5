@@ -19,12 +19,26 @@
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: none;
 	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: 1px;
 }
 
-html.sap-desktop .sapUiFormEdit .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.0625rem;
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMLnk:focus:not(.sapMLnkDsbl) {
+		outline: none;
+		position: relative;
+	}
+	.sapMLnk:focus:not(.sapMLnkDsbl):before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapHCStandardFG;
+		pointer-events: none;
+	}
 }
 
 html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
