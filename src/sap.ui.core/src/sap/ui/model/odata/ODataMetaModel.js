@@ -59,7 +59,7 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel getMetaModel} instead!
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
-	 *   the OData model's meta data object
+	 *   the OData model's metadata object
 	 * @param {sap.ui.model.odata.ODataAnnotations} [oAnnotations]
 	 *   the OData model's annotations object
 	 * @param {object} [oODataModelInterface]
@@ -69,11 +69,11 @@ sap.ui.define([
 	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl addAnnotationUrl} method
 	 *   of the OData model, in case this feature is supported
 	 * @param {Promise} [oODataModelInterface.annotationsLoadedPromise]
-	 *   a promise which is resolved by the OData model once meta data and annotations have been
+	 *   a promise which is resolved by the OData model once metadata and annotations have been
 	 *   fully loaded
 	 *
 	 * @class Implementation of an OData meta model which offers a unified access to both OData V2
-	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * metadata and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
 	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
 	 *
@@ -349,7 +349,7 @@ sap.ui.define([
 			aSchemas = this.oModel.getObject("/dataServices/schema"),
 			that = this;
 
-		// merge meta data for entity sets/types
+		// merge metadata for entity sets/types
 		oResponse.entitySets.forEach(function (oEntitySet) {
 			var oEntityType,
 				oSchema,
@@ -456,7 +456,7 @@ sap.ui.define([
 	 *   <a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions#ResourcePath">
 	 *   resource path</a> component of a URI according to OData V2 URI conventions
 	 * @returns {sap.ui.model.Context}
-	 *   the context for the corresponding meta data object, i.e. an entity type or its property,
+	 *   the context for the corresponding metadata object, i.e. an entity type or its property,
 	 *   or <code>null</code> in case no path is given
 	 * @throws {Error} in case no context can be determined
 	 * @public

@@ -823,13 +823,12 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Merges the given annotation data into the given meta data and lifts SAPData
-		 * extensions.
+		 * Merges the given annotation data into the given metadata and lifts SAPData extensions.
 		 *
 		 * @param {object} oAnnotations
 		 *   annotations "JSON"
 		 * @param {object} oData
-		 *   meta data "JSON"
+		 *   metadata "JSON"
 		 */
 		merge : function (oAnnotations, oData) {
 			var aSchemas = oData.dataServices.schema;
@@ -947,7 +946,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oEntityContainer
 		 *   the entity container
 		 * @param {object} oFunctionImport
-		 *   a function import's V2 meta data object
+		 *   a function import's V2 metadata object
 		 */
 		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
 			var mAnnotations;

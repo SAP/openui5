@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	}
 
 	/**
-	 * Sets the constraints for Edm.Int. This is meta information used when validating the value.
+	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.Int} oType
 	 *   the type instance

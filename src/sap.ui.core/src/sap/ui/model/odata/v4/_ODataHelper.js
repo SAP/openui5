@@ -528,11 +528,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
-		 * data and entity instance runtime data.
+		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
+		 * and entity instance runtime data.
 		 *
 		 * @param {object} oEntityType
-		 *   Entity type meta data
+		 *   Entity type metadata
 		 * @param {object} oEntityInstance
 		 *   Entity instance runtime data
 		 * @returns {string}

@@ -1162,7 +1162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 				/**
 				 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
-				 * fragment configured as a replacement (via component meta data, "customizing" and
+				 * fragment configured as a replacement (via component metadata, "customizing" and
 				 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
 				 * currently configured.
 				 *
