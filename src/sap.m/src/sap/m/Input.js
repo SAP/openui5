@@ -857,6 +857,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 	Input.prototype.updateSuggestionItems = function() {
 		this.updateAggregation("suggestionItems");
+		this._bShouldRefreshListItems = true;
 		this._refreshItemsDelayed();
 		return this;
 	};
@@ -871,6 +872,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	Input.prototype._triggerSuggest = function(sValue) {
 
 		this.cancelPendingSuggest();
+		this._bShouldRefreshListItems = true;
 
 		if (!sValue) {
 			sValue = "";
@@ -1034,6 +1036,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		Input.prototype.addSuggestionItem = function(oItem) {
 			this.addAggregation("suggestionItems", oItem, true);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			createSuggestionPopupContent(this);
 			return this;
@@ -1041,6 +1044,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		Input.prototype.insertSuggestionItem = function(oItem, iIndex) {
 			this.insertAggregation("suggestionItems", iIndex, oItem, true);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			createSuggestionPopupContent(this);
 			return this;
@@ -1048,18 +1052,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		Input.prototype.removeSuggestionItem = function(oItem) {
 			var res = this.removeAggregation("suggestionItems", oItem, true);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return res;
 		};
 
 		Input.prototype.removeAllSuggestionItems = function() {
 			var res = this.removeAllAggregation("suggestionItems", true);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return res;
 		};
 
 		Input.prototype.destroySuggestionItems = function() {
 			this.destroyAggregation("suggestionItems", true);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return this;
 		};
@@ -1067,6 +1074,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype.addSuggestionRow = function(oItem) {
 			oItem.setType(sap.m.ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			createSuggestionPopupContent(this);
 			return this;
@@ -1075,6 +1083,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(sap.m.ListType.Active);
 			this.insertAggregation("suggestionRows", iIndex, oItem);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			createSuggestionPopupContent(this);
 			return this;
@@ -1082,18 +1091,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		Input.prototype.removeSuggestionRow = function(oItem) {
 			var res = this.removeAggregation("suggestionRows", oItem);
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return res;
 		};
 
 		Input.prototype.removeAllSuggestionRows = function() {
 			var res = this.removeAllAggregation("suggestionRows");
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return res;
 		};
 
 		Input.prototype.destroySuggestionRows = function() {
 			this.destroyAggregation("suggestionRows");
+			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			return this;
 		};
@@ -1128,6 +1140,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype._closeSuggestionPopup = function() {
 
 			if (this._oSuggestionPopup) {
+				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
 				this._oSuggestionPopup.close();
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
@@ -1403,10 +1416,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var bShowSuggestion = oInput.getShowSuggestion();
 			oInput._iPopupListSelectedIndex = -1;
 
-			if (!(bShowSuggestion
-					&& oInput.getDomRef()
-					&& (oInput._bUseDialog || oInput.$().hasClass("sapMInputFocused")))
-			) {
+			if (!bShowSuggestion ||
+				!oInput.getDomRef() ||
+				(!oInput._bUseDialog && oInput._bShouldRefreshListItems && !oInput.$().hasClass("sapMInputFocused"))) {
 				return false;
 			}
 
