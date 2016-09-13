@@ -45,20 +45,18 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Default value for width is defined", function(assert) {
-		assert.equal(this.oHeaderContainer.getWidth(), "100%");
-	});
-
-	QUnit.test("Warning is logged if no value for the mandatory height property is set", function(assert) {
+	QUnit.test("Warning is logged if no value for the mandatory width or height property is set", function(assert) {
 		//Arrange
 		sinon.spy(jQuery.sap.log, "warning");
 		//Act
 		this.oHeaderContainer.onBeforeRendering();
 		//Assert
-		assert.equal(this.oHeaderContainer.getHeight(), undefined);
-		assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning logged once");
-		assert.ok(jQuery.sap.log.warning.calledWith("No height provided for the sap.m.HeaderContainer control."),
-			"Warning logged with expected message");
+		assert.equal(this.oHeaderContainer.getWidth(), undefined);
+		assert.equal(jQuery.sap.log.warning.callCount, 2, "Warning logged twice");
+		assert.ok(jQuery.sap.log.warning.calledWith("No width provided", this.oHeaderContainer),
+			"Warning logged with expected message for width");
+		assert.ok(jQuery.sap.log.warning.calledWith("No height provided", this.oHeaderContainer),
+			"Warning logged with expected message for height");
 		// Restore
 		jQuery.sap.log.warning.restore();
 	});
@@ -109,6 +107,32 @@ jQuery.sap.initMobile();
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
 		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
+	});
+
+	QUnit.test("Default inline style for width and height in DOM structure", function(assert) {
+		assert.equal(jQuery.sap.domById("headerContainer").style.width, "100%");
+		assert.equal(jQuery.sap.domById("headerContainer").style.height, "auto");
+	});
+
+	QUnit.test("Default inline style for width and height in DOM structure (vertical mode)", function(assert) {
+		//Arrange
+		this.oHeaderContainer.setOrientation(sap.ui.core.Orientation.Vertical);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.domById("headerContainer").style.width, "auto");
+		assert.equal(jQuery.sap.domById("headerContainer").style.height, "100%");
+	});
+
+	QUnit.test("Inline style for width and height in DOM structure", function(assert) {
+		//Arrange
+		this.oHeaderContainer.setWidth("31%");
+		this.oHeaderContainer.setHeight("32%");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.domById("headerContainer").style.width, "31%");
+		assert.equal(jQuery.sap.domById("headerContainer").style.height, "32%");
 	});
 
 	QUnit.module("Background design", {
