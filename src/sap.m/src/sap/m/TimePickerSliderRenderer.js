@@ -38,10 +38,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			//WAI-ARIA region
 			oRm.writeAccessibilityState(oControl, {
-				role: "listbox",
-				multiSelectable: false,
-				live: "assertive",
-				owns: oControl.getId() + "-content",
+				role: "list",
 				labelledby: {
 					value: oControl.getId() + "-label",
 					append: true
@@ -59,12 +56,15 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttribute("id", oControl.getId() + "-label");
 			oRm.addClass("sapMTimePickerLabel");
 			oRm.writeClasses();
+			oRm.writeAttribute('aria-expanded', oControl.getIsExpanded());
 			oRm.write(">");
 			oRm.writeEscaped(sControlLabel);
 			oRm.write("</div>");
 
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-valDescription");
+			oRm.writeAttribute('aria-hidden', 'false');
+			oRm.writeAttribute('aria-live', 'assertive');
 			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write("></div>");
@@ -94,8 +94,7 @@ sap.ui.define(['jquery.sap.global'],
 					oRm.write("<li class=\"sapMTimePickerItem\" unselectable=\"on\"");
 					//WAI-ARIA region
 					oRm.writeAccessibilityState(oControl, {
-						role: "option",
-						selected: false
+						role: "listitem"
 					});
 					oRm.write(">");
 					oRm.writeEscaped(aItems[iIndex].getText());
