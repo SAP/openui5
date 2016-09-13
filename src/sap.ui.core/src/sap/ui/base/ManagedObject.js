@@ -176,8 +176,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
-	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
-	 * oScope in the constructor is still experimental and might change in future versions. Applications should not rely on it.
 	 */
 	var ManagedObject = EventProvider.extend("sap.ui.base.ManagedObject", {
 
@@ -681,6 +679,8 @@ sap.ui.define([
 	 * <b>'specialSettings'</b> : <i>object</i><br>
 	 * Special settings are an experimental feature and MUST NOT BE USED by controls or applications outside of the sap.ui.core project.
 	 *
+	 *
+	 *
 	 * @param {string} sClassName name of the class to be created
 	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ManagedObjectMetadata.
@@ -688,9 +688,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @experimental Since 1.27.0 Support for 'specialSettings' is experimental and might be modified or removed in future versions.
-	 *   They must not be used in any way outside of the sap.ui.core library. Code outside sap.ui.core must not declare special settings
-	 *   nor must it try to retrieve / evaluate metadata for such settings.
 	 * @name sap.ui.base.ManagedObject.extend
 	 * @function
 	 */
@@ -824,8 +821,6 @@ sap.ui.define([
 	 * @param {object} [oScope] Scope object to resolve types and formatters
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @experimental Since 1.11.2 support for the scope object for resolving string based type
-	 * and formatter references in bindings is still experimental
 	 */
 	ManagedObject.prototype.applySettings = function(mSettings, oScope) {
 
