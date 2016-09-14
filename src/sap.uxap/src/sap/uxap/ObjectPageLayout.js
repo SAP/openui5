@@ -355,12 +355,15 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
+		var oSectionToSelect = this._oStoredSection || this._oFirstVisibleSection;
+
 		this._bDomReady = true;
 
 		this._adjustHeaderHeights();
 
-		if (this.getUseIconTabBar()) {
-			this._setCurrentTabSection(this._oStoredSection || this._oFirstVisibleSection);
+		if (this.getUseIconTabBar() && oSectionToSelect) {
+			this._setSelectedSectionId(oSectionToSelect.getId());
+			this._setCurrentTabSection(oSectionToSelect);
 		}
 
 		this._initAnchorBarScroll();
@@ -855,6 +858,9 @@ sap.ui.define([
 
 		if (oSelectedSection) {
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar
+			if (this.getUseIconTabBar()) {
+				this._setCurrentTabSection(oSelectedSection);
+			}
 			this._adjustLayout(null, false, true /* requires a check on lazy loading */);
 
 			bKeepExpandedMode = !this._bStickyAnchorBar
