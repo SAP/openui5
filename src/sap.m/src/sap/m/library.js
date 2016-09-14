@@ -1231,10 +1231,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		L : "L",
 
 		/**
-		 * The size of the tile depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
+		 * The size depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
 		 * @public
 		 */
-		Auto : "Auto"
+		Auto : "Auto",
+
+		/**
+		 * The width and height of the control are determined by the width and height of the container the control is placed in.
+		 * Please note: it is decided by the control whether or not sap.m.Size.Responsive is supported.
+		 * @public
+		 * @since 1.44.0
+		 */
+		Responsive : "Responsive"
 	};
 
 	/**
