@@ -4230,6 +4230,38 @@
 		this.clock.reset();
 	});
 
+	test("method: _setContainerSizes() - Calculating correct sizes", function() {
+		// system under test
+		var oSystem = {
+			desktop : false,
+			phone : true,
+			tablet : false
+		};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			id : "MultiComboBox",
+			width : "400px",
+			placeholder : "Choose your country"
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+
+		// assertions
+		ok(oMultiComboBox.getDomRef().clientWidth >= jQuery.find(".sapMMultiComboBoxInputContainer")[0].clientWidth,
+			"Check if the size of the container is calculated correctly.");
+
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});	
+
 	module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
