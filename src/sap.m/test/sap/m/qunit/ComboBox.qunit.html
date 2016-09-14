@@ -2033,6 +2033,56 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("setSelectedKey() should be called on mobile with new value", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+			var oExpectedItem,
+				oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "0"
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
+				fnSetSelectedKeySpy = this.spy(oComboBox, "setSelectedKey");
+
+			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[1]});
+
+			assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+			assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oComboBox.getSelectedItemId(), "item-id");
+			assert.strictEqual(oComboBox.getSelectedKey(), "1");
+			assert.ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
+			assert.strictEqual(oComboBox.getValue(), "item 1");
+			assert.strictEqual(oComboBox.getProperty("value"), "item 1");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.test("setSelectedKey() no rendering", function(assert) {
 
 			// system under test
