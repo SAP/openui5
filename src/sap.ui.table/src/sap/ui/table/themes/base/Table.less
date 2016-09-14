@@ -128,13 +128,8 @@
 	background-color: @sapUiExtraLightBG;
 }
 
-.sapUiTableHdr {
-	font-weight: bold;
-}
-
 .sapUiTableHdrTitle {
-	font-size: @sapUiFontHeader2Size;
-	font-weight: bold;
+	font-size: @sapUiFontHeader3Size;
 	color: @sapUiTextTitle;
 }
 
@@ -284,7 +279,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 .sapUiTableColCell, .sapUiTableColRowHdrIco {
 	text-overflow: ellipsis;
 	overflow: hidden;
-	padding: 0 8px;
 	vertical-align: middle;
 	white-space: normal;
 }
@@ -642,6 +636,11 @@ html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 	}
 
 	/* Header */
+	.sapUiTableCol, .sapUiTableColRowHdr {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	
 	.sapUiTableColCell {
 		height: 3rem;
 	}
@@ -883,7 +882,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTable .sapUiTableHdrTitle {
 	font-size: @sapUiFontHeader3Size;
-	font-weight: bold;
 	height: 100%;
 	color: @sapUiGroupTitleTextColor;
 }
@@ -923,10 +921,12 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-bottom: 2px solid transparent;
 }
 
-.sapUiTableSelModeMulti .sapUiTableColRowHdr.sapUiTableSelAllEnabled .sapUiTableColRowHdrIco,
-.sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled .sapUiTableColRowHdrIco {
-	background-image: url('img/Select_All_Icon.png');
-	background-position: 50% 50%;
+.sapUiTableSelModeMulti .sapUiTableColRowHdr.sapUiTableSelAllEnabled .sapUiTableColRowHdrIco::after,
+.sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled .sapUiTableColRowHdrIco::after {
+	font-family: SAP-icons;
+	content: "\e224";
+	color: @sapUiContentIconColor; 
+	font-size: 1rem;
 }
 
 .sapUiTableRowHdr {
@@ -938,6 +938,12 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 .sapUiSizeCompact .sapUiTableColHdrCnt {
 	background-color: @sapUiListHeaderBackground;
 	color: @sapUiListTextColor;
+}
+
+.sapUiTableColRowHdr,
+.sapUiTableCol {
+	padding-top: 7px;
+	padding-bottom: 7px;
 }
 
 .sapUiTableColSF::after {

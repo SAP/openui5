@@ -2,3 +2,53 @@
 /* CSS for control sap.ui.table/Table  */
 /* High Contrast Black theme           */
 /* =================================== */
+
+.sapUiTableColHdrCnt {
+	border-bottom: 3px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTable > .sapUiTableHdr {
+	border-bottom: 3px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle {
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
+		.sapUiTableRowHdr::after {
+			color: @sapUiContentIconColor;
+		}
+	}
+}
+
+.sapUiTableRowHdr:hover:after {
+	background-color: @sapUiSelected;
+}
+
+/*
+ * Focus Outline for Table Cells
+ *
+ * IE, Edge : use native outline rendering. It has correct contrast and offset.
+ * Any attempt to specify another outline in CSS breaks it.
+ *
+ * Other browsers see below:
+ */
+
+/* WebKit */
+.sapUiTableTr > td:focus:not(*:root),
+.sapUiTableCol:focus:not(*:root),
+.sapUiTableRowHdr:focus:not(*:root),
+.sapUiTableColRowHdr:focus:not(*:root) {
+	outline-offset: -3px;
+	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+/* Firefox */
+@supports (-moz-appearance:meterbar) {
+.sapUiTableTr > td:focus,
+.sapUiTableCol:focus,
+.sapUiTableRowHdr:focus,
+.sapUiTableColRowHdr:focus {
+	outline-offset: -3px;
+	outline: 2px dotted @sapUiContentFocusColor;
+	}
+}
