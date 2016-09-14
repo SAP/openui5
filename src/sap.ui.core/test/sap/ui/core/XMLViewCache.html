@@ -123,7 +123,7 @@
 			jQuery.sap.measure.setActive(true, "view_cache");
 
 			createView("cached", {
-				key: "cachedView"
+				keys: ["staticCacheKeyForView"]
 			}).placeAt("cachedPanel");
 
 			createView("notCached").placeAt("notCachedPanel");
