@@ -85,12 +85,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 * @private
 		 */
 		FixFlex.prototype.init = function () {
-			this._scroller = new ScrollEnablement(this, this.getId(), {
+			this._scroller = new ScrollEnablement(this, null, {
+				scrollContainerId : this.getId(),
 				horizontal: false,
 				vertical: false
 			});
 
-			this._innerScroller = new ScrollEnablement(this, this.getId() + "-Flexible", {
+			this._innerScroller = new ScrollEnablement(this, this.getId() + "-FlexibleContainer", {
+				scrollContainerId: this.getId() + "-Flexible",
 				horizontal: false,
 				vertical: false
 			});
@@ -102,11 +104,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 * @private
 		 */
 		FixFlex.prototype.getScrollDelegate = function () {
-
-			if (this._scroller.getVertical() || this._scroller.getHorizontal()) {
-				return this._scroller;
-			}
-
 			return this._innerScroller;
 		};
 
@@ -204,11 +201,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				$this.removeClass("sapUiFixFlexInnerScrolling");
 
 				if (bIsVertical) {
-					this._scroller.setVertical(false);
-					this._innerScroller.setVertical(true);
+					this._scroller.setVertical(true);
+					this._innerScroller.setVertical(false);
 				} else {
-					this._scroller.setHorizontal(false);
-					this._innerScroller.setHorizontal(true);
+					this._scroller.setHorizontal(true);
+					this._innerScroller.setHorizontal(false);
 				}
 
 				// BCP Incident-ID: 1570246771
@@ -225,12 +222,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				$this.addClass("sapUiFixFlexInnerScrolling");
 				$this.removeClass("sapUiFixFlexScrolling");
 				if (bIsVertical) {
-					this._scroller.setVertical(true);
-					this._innerScroller.setVertical(false);
+					this._scroller.setVertical(false);
+					this._innerScroller.setVertical(true);
 
 				} else {
-					this._scroller.setHorizontal(true);
-					this._innerScroller.setHorizontal(false);
+					this._scroller.setHorizontal(false);
+					this._innerScroller.setHorizontal(true);
 				}
 
 				this.$("Flexible").removeAttr("style");
@@ -298,12 +295,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
 				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._changeScrolling, this));
 
-				if (sap.ui.Device.browser.edge === true) {
-					// In some cases the resize handlers are not triggered in "Edge" browser on initial render and
-					// a manual trigger is needed
-					// BCP: 1570807842
-					this._changeScrolling();
-				}
+				this._changeScrolling();
 			}
 		};
 
