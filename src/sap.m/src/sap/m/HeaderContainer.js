@@ -360,14 +360,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		iPaddingHeight = parseFloat(this.$("scroll-area").css("padding-top")),
 		iRemainingTime;
 
-		if (iScrollTarget <= 0) { // When the next scrolling will reach the top edge side
+		if (iScrollTarget <= 0) { // when the next scrolling will reach the top edge side
 			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollTop);
 			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
 			this.$().removeClass("sapMHrdrTopPadding");
-		} else if (iScrollTarget + iClientHeight + iPaddingHeight >= iScrollHeight) { // When the next scrolling will reach the bottom edge side
+		} else if (iScrollTarget + iClientHeight + iPaddingHeight >= iScrollHeight) { // when the next scrolling will reach the bottom edge side
 			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollHeight - iClientHeight - iScrollTop);
 			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
-			this.$().removeClass("sapMHrdrBottomPadding");
+			if (iClientHeight + delta > iScrollHeight) { // when scrolling from top edge direct to bottom edge
+				this.$().removeClass("sapMHrdrBottomPadding");
+				this.$().addClass("sapMHrdrTopPadding");
+			} else {
+				this.$().removeClass("sapMHrdrBottomPadding");
+			}
 		} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
 			this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
 		}
@@ -384,14 +389,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iScrollTarget = iScrollLeft + delta;
 			iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
 
-			if (iScrollTarget <= 0) { // When the next scrolling will reach the left edge side
+			if (iScrollTarget <= 0) { // when the next scrolling will reach the left edge side
 				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollLeft);
 				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
 				this.$().removeClass("sapMHrdrLeftPadding");
-			} else if (iScrollTarget + oDomRef.clientWidth + iPaddingWidth >= iScrollWidth) { // When the next scrolling will reach the right edge side
+			} else if (iScrollTarget + oDomRef.clientWidth + iPaddingWidth >= iScrollWidth) { // when the next scrolling will reach the right edge side
 				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollWidth - iClientWidth - iScrollLeft);
 				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
-				this.$().removeClass("sapMHrdrRightPadding");
+				if (iClientWidth + delta > iScrollWidth) { // when scrolling from left edge direct to right edge
+					this.$().removeClass("sapMHrdrRightPadding");
+					this.$().addClass("sapMHrdrLeftPadding");
+				} else {
+					this.$().removeClass("sapMHrdrRightPadding");
+				}
 			} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
 				this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
 			}

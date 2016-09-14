@@ -363,7 +363,7 @@ jQuery.sap.initMobile();
 		}
 	});
 
-	QUnit.test("Tests left padding is removed when scrolling to begin in horizontal layout", function(assert) {
+	QUnit.test("Left padding is removed when scrolling to left edge in horizontal layout", function(assert) {
 		//Arrange
 		this.oHeaderContainer._oScrollCntr.scrollTo(200, 0, 0);
 		this.oHeaderContainer.$().addClass("sapMHrdrLeftPadding");
@@ -373,16 +373,17 @@ jQuery.sap.initMobile();
 		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrLeftPadding"), "The left padding is removed.");
 	});
 
-	QUnit.test("Tests right padding is removed when scrolling to end in horizontal layout", function(assert) {
+	QUnit.test("Right padding is removed and left padding is added, when scrolling directly from the left edge to the right edge in horizontal layout", function(assert) {
 		//Arrange
 		this.oHeaderContainer.$().addClass("sapMHrdrRightPadding");
 		//Act
 		this.oHeaderContainer._hScroll(3000, 500); // a big scroll step to the end
 		//Assert
 		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrRightPadding", "The right padding is removed"));
+		assert.ok(this.oHeaderContainer.$().hasClass("sapMHrdrLeftPadding", "The left padding is added"));
 	});
 
- 	QUnit.test("Tests top padding is removed when scrolling to top in vertical layout", function(assert) {
+	QUnit.test("Top padding is removed when scrolling to top edge in vertical layout", function(assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
 		this.oHeaderContainer.rerender();
@@ -395,7 +396,7 @@ jQuery.sap.initMobile();
 		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrTopPadding"), "The top padding is removed");
 	});
 
-	QUnit.test("Tests bottom padding is removed when scrolling to bottom in vertical layout", function(assert) {
+	QUnit.test("Bottom padding is removed and top padding is added, when scrolling directly from top edge to the bottom edge in vertical layout", function(assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
 		this.oHeaderContainer.rerender();
@@ -405,6 +406,7 @@ jQuery.sap.initMobile();
 		this.oHeaderContainer._vScroll(3000, 500); // a big scroll step to the bottom
 		//Assert
 		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrBottomPadding"), "The bottom padding is removed");
+		assert.ok(this.oHeaderContainer.$().hasClass("sapMHrdrTopPadding"), "The top padding is added");
 	});
 
 	QUnit.module("Aggregation Handling", {
