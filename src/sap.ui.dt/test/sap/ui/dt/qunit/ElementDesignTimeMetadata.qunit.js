@@ -12,7 +12,16 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 			data : {
 				aggregations : {
 					testAggregation : {
-						testField : "testValue"
+						testField : "testValue",
+						actions : {
+							action1 : "firstChangeType",
+							action2 : {
+								changeType : "secondChangeType"
+							},
+							action3 : function(oElement) {
+								return {changeType: oElement.name};
+							}
+						}
 					}
 				}
 			}
@@ -58,4 +67,10 @@ QUnit.test("when asked for getRelevantContainer with function in ElementDesignTi
 	sinon.assert.calledWith(fnStubRelvantContainer, oControl);
 
 	oElementDesignTimeMetadata.destroy();
+});
+
+QUnit.test("when getAggregationAction is called", function(assert) {
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), {changeType : "firstChangeType", aggregation : "testAggregation"}, "for string action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), {changeType : "secondChangeType", aggregation : "testAggregation"}, "for object action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType", aggregation : "testAggregation"}, "for function action, the correct object is returned");
 });

@@ -89,6 +89,7 @@ sap.ui.define([
 			} else {
 				throw new Error("oSpecificChangeInfo.newControlId attribute required");
 			}
+
 			if (oSpecificChangeInfo.index === undefined) {
 				throw new Error("oSpecificChangeInfo.index attribute required");
 			} else {

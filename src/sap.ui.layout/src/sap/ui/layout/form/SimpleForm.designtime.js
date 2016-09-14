@@ -154,7 +154,6 @@ sap.ui.define([], function() {
 									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 								}
 							},
-
 							getState : function(oRemovedElement) {
 								var that = this;
 
@@ -194,6 +193,64 @@ sap.ui.define([], function() {
 										}
 									});
 								}
+							}
+						};
+					},
+					createContainer : function(oElement){
+						var sType = oElement.getMetadata().getName();
+			            if (sType !== "sap.ui.layout.form.SimpleForm") {
+							return;
+			            }
+
+			            var oAggregation = oElement.getAggregation("form");
+					    var aFormContainers = oAggregation.getFormContainers();
+
+						return {
+							changeType : "addSimpleFormGroup",
+							isEnabled : function (oElement) {
+								for (var i = 0; i < aFormContainers.length; i++) {
+									if (aFormContainers[i].getToolbar && aFormContainers[i].getToolbar()) {
+										return false;
+									}
+								}
+						        return true;
+							},
+							restoreState : function (oElement) {
+								oElement.destroy();
+								return true;
+							},
+							getState: function (oElement) {
+							},
+							rootControlName: "sap.ui.layout.form.SimpleForm",
+							getParentElementId : function(sNewControlID) {
+								var oTitle = sap.ui.getCore().byId(sNewControlID);
+								var sParentElementId = oTitle.getParent().getId();
+
+								return sParentElementId;
+							},
+							getGroupIndex : function(oElement) {
+								var iIndex = 0;
+								var oLastFormContainer = aFormContainers[aFormContainers.length - 1];
+								var aContent = oElement.getContent();
+
+								var iStart = -1;
+								var oTitle = oLastFormContainer.getTitle();
+								if (oTitle !== null) {
+									aContent.some(function(oField, index) {
+										if (oField === oTitle) {
+											iStart = index;
+										}
+										if (iStart >= 0 && index > iStart) {
+											if (oField instanceof sap.ui.core.Title) {
+												iIndex = index;
+												return true;
+											}
+										}
+									});
+									iIndex = (!iIndex) ? aContent.length : iIndex;
+								}
+
+								return iIndex;
 							}
 						};
 					}
