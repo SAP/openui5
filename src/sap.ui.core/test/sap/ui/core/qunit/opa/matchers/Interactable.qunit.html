@@ -206,7 +206,7 @@
 						this.oDialog.open();
 					});
 
-					QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening and no block layer is there", function (assert) {
+					QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening", function (assert) {
 						// Arrange
 						var fnStart = assert.async();
 
@@ -219,6 +219,9 @@
 						this.oDialog.attachAfterOpen(fnStart);
 
 						this.oDialog.open();
+
+						// close immediately
+						// sometimes opa tests close and open dialogs very fast so we need this check here
 						this.oDialog.close();
 
 						var bResultAfterOpening = oInteractable.isMatching(this.oButtonInPage);
@@ -226,7 +229,7 @@
 						// Assert
 						assert.ok(bResultBeforeOpening, "Control is matching");
 						assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-						sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind an Open dialog/), oInteractable._sLogPrefix);
+						sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/));
 					});
 
 
