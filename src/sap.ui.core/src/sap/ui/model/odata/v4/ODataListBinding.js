@@ -205,7 +205,7 @@ sap.ui.define([
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#change
-	 * @protected
+	 * @public
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
