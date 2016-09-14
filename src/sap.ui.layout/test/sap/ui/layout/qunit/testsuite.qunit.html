@@ -30,17 +30,10 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/Splitter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ResponsiveSplitter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
-
-                // due to changes in the sapui5.runtime these changes break - because this coding was not adapted in time
-
-                // change to fix coding & tests (https://git.wdf.sap.corp/#/c/1941763/)
-                //suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html");
-
+                suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html");
                 // change to fix coding & tests (https://git.wdf.sap.corp/#/c/1938484/)
 				//suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/HideSimpleForm.qunit.html");
-
-                // change to fix coding & tests (https://git.wdf.sap.corp/#/c/1941763/)
-				//suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/UnhideSimpleForm.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/UnhideSimpleForm.qunit.html");
 
                 // change to fix coding & tests (https://git.wdf.sap.corp/#/c/1938281/)
 				//suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormGroup.qunit.html");
