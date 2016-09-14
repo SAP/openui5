@@ -45,9 +45,10 @@ html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
 	border-color: @sapHCStandardFG;
 }
 
-/* FIX: IE does not support css outline-offset */
+/* FIX: IE and Edge do not support css outline-offset */
 
-html[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSlt:focus:not(.sapMSltPressed) {
 		outline: none;
 		position: relative;
@@ -59,8 +60,8 @@ html[data-sap-ui-browser^="ie"] {
 		width: 100%;
 		height: 100%;
 		position: absolute;
-		left: 0rem;
-		top: 0rem;
+		left: 0;
+		top: 0;
 		border: 0.125rem dotted @sapHCStandardFG;
 	}
 }
@@ -82,9 +83,10 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 	border-color: transparent;
 }
 
-/* IE does not support css outline-offset */
+/* FIX: IE and Edge do not support css outline-offset */
 
-html[data-sap-ui-browser^="ie"].sap-desktop {
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapMSlt:focus.sapMSltIconOnly {
 		outline:          none;
