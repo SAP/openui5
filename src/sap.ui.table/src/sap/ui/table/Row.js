@@ -291,6 +291,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 		}
 	};
 
+	Row.prototype.destroy = function() {
+		// when the row is destroyed, all its cell controls will be destroyed as well. Since
+		// they shall be reused, the destroy function is overridden in order to remove the controls from the cell
+		// aggregation. The column will take care to destroy all cell controls when the column is destroyed
+		this.removeAllCells();
+		return Element.prototype.destroy.apply(this, arguments);
+	};
+
 	return Row;
 
 });

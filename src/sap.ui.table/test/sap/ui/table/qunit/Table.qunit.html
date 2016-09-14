@@ -521,7 +521,7 @@
 		};
 
 		var fnTest2 = function() {
-			assert.equal(oTable.getVisibleRowCount(), 23, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
+			assert.equal(oTable.getVisibleRowCount(), 23, "Expected visibleRowCount: 23, Is: " + oTable.getVisibleRowCount());
 			QUnit.start();
 		};
 
@@ -1455,8 +1455,12 @@
 	QUnit.module("Function(public/private), mouse/touch event & property tests", {
 		beforeEach: function() {
 			createTable();
+			this.sinon = sinon.sandbox.create();
 		},
-		afterEach: destroyTable
+		afterEach: function() {
+			this.sinon.restore();
+			destroyTable();
+		}
 	});
 
 	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
@@ -1465,7 +1469,7 @@
 		var oEvent = jQuery.Event();
 		oTable.onBeforeRendering(oEvent);
 		assert.ok(fnCalculateRowsToDisplay.called, "_calcualteRowsToDisplay() called via onBeforeRendering()");
-		assert.ok(sinon.stub(sap.ui.table.TableUtils, "isVariableRowHeightEnabled").returns(true));
+		assert.ok(this.sinon.stub(sap.ui.table.TableUtils, "isVariableRowHeightEnabled").returns(true));
 	});
 
 	QUnit.test("test onThemeChanged function", function(assert) {
@@ -1602,22 +1606,22 @@
 
 	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
 		var fnError = sinon.spy(jQuery.sap.log, "error");
-		assert.equal(oTable.getRows().length, 11, "Row count before row operations is 10");
+		assert.equal(oTable.getRows().length, 10, "Row count before row operations is 10");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.insertRow();
-		assert.equal(oTable.getRows().length, 11, "insertRow() called, but it cannot be programmatically be used. No row inserted");
+		assert.equal(oTable.getRows().length, 10, "insertRow() called, but it cannot be programmatically be used. No row inserted");
 		assert.equal(fnError.args[0][0], 'The control manages the rows aggregation. The method "insertRow" cannot be used programmatically!', "Error message logged");
 		oTable.addRow();
-		assert.equal(oTable.getRows().length, 11, "addRow() called, but it cannot be programmatically be used. No row added");
+		assert.equal(oTable.getRows().length, 10, "addRow() called, but it cannot be programmatically be used. No row added");
 		assert.equal(fnError.args[1][0], 'The control manages the rows aggregation. The method "addRow" cannot be used programmatically!', "Error message logged");
 		oTable.removeRow();
-		assert.equal(oTable.getRows().length, 11, "removeRow() called, but it cannot be programmatically be used. No row removed");
+		assert.equal(oTable.getRows().length, 10, "removeRow() called, but it cannot be programmatically be used. No row removed");
 		assert.equal(fnError.args[2][0], 'The control manages the rows aggregation. The method "removeRow" cannot be used programmatically!', "Error message logged");
 		oTable.removeAllRows();
-		assert.equal(oTable.getRows().length, 11, "removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
+		assert.equal(oTable.getRows().length, 10, "removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
 		assert.equal(fnError.args[3][0], 'The control manages the rows aggregation. The method "removeAllRows" cannot be used programmatically!', "Error message logged");
 		oTable.destroyRows();
-		assert.equal(oTable.getRows().length, 11, "destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
+		assert.equal(oTable.getRows().length, 10, "destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
 		assert.equal(fnError.args[4][0], 'The control manages the rows aggregation. The method "destroyRows" cannot be used programmatically!', "Error message logged");
 		fnError.restore();
 	});
@@ -1645,11 +1649,6 @@
 		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
 		oTable.getFocusDomRef();
 		assert.equal(oTable._getItemNavigation().getFocusedDomRef(), oTable.getColumns()[0].getDomRef());
-	});
-
-	QUnit.test("test _determineParent function", function(assert) {
-		oTable._determineParent();
-		assert.equal(jQuery(oTable.getParent().getRootNode())[0].id, oTable._determineParent()[0].id, "table parent determined");
 	});
 
 	QUnit.test("Show no data test", function(assert) {
@@ -1786,7 +1785,7 @@
 		assert.equal(oTable._getContexts(1,4,4).length, 4, "Correct contexts must have been returned");
 		oTable.setFixedRowCount(6);
 		oTable.setFirstVisibleRow(2);
-		assert.equal(oTable._getRowContexts().length, 11, "Correct row contexts must have been returned");
+		assert.equal(oTable._getRowContexts().length, 10, "Correct row contexts must have been returned");
 		oTable.unbindRows();
 		assert.equal(oTable._getContexts(1,4,4).length, 0, "Empty contexts returned as row binding was destoryed");
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "Binding does not exist, hence empty context returned");
@@ -1832,6 +1831,60 @@
 
 	QUnit.test("test _getColumnsWidth function", function(assert) {
 		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
+	});
+
+	QUnit.module("Performance", {
+		beforeEach: function() {
+			createTable();
+		},
+		afterEach: destroyTable
+	});
+
+	QUnit.test("Column Object Pool", function(assert) {
+		var aRows = oTable.getRows();
+		var oLastRowFirstColumnCell = aRows[aRows.length - 1].getCells()[0];
+		var iVisibleRowCount = oTable.getVisibleRowCount();
+		oTable.setVisibleRowCount(iVisibleRowCount - 1);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oLastRowFirstColumnCell, "Control of removed row still exists");
+		assert.equal(oTable.getRows().length, iVisibleRowCount - 1, "Row removed");
+
+		assert.ok(oLastRowFirstColumnCell.getParent() === null, "Removed cell control has no parent");
+
+		oTable.setVisibleRowCount(iVisibleRowCount);
+		sap.ui.getCore().applyChanges();
+
+		aRows = oTable.getRows();
+		var oLastRowFirstColumnCellAfterCreate = aRows[aRows.length - 1].getCells()[0];
+		assert.ok(oLastRowFirstColumnCell === oLastRowFirstColumnCellAfterCreate, "Old control recycled");
+		assert.ok(oTable.getRows()[iVisibleRowCount - 1] !== undefined, "Row created");
+		assert.ok(oLastRowFirstColumnCell.getParent() === aRows[aRows.length - 1], "Recycled cell control has last row as parent");
+
+		var fnInvalidateRowsAggregation = sinon.spy(oTable, "invalidateRowsAggregation");
+		oTable.getColumns()[0].setFlexible(false);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 1, "invalidateRowsAggregation() called after changing the 'flexible' property");
+
+		oTable.getColumns()[0].setHeaderSpan(2);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 2, "invalidateRowsAggregation() called after changing the 'headerSpan' property");
+
+		oTable.getColumns()[0].setVisible(false);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() called after changing the 'visible' property");
+
+		oTable.getColumns()[0].setHeaderSpan(1);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() NOT called after changing the 'headerSpan' property for invisible column");
+
+		oTable.getColumns()[0].setFlexible(true);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() NOT called after changing the 'flexible' property for invisible column");
+
+		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
+		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() NOT called after changing the column template for invisible column");
+
+		oTable.getColumns()[0].setVisible(true);
+		assert.equal(fnInvalidateRowsAggregation.callCount, 4, "invalidateRowsAggregation() called after changing the 'visible' property");
+
+		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
+		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 
 	</script>
