@@ -116,13 +116,38 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 
 		if (oBindingInfo && oItem && oItem.getBindingContext(oBindingInfo.model)) {
 			if (bExpand == undefined) {
-				this.getBinding("items").toggleIndex(iIndex);
+				oBindingInfo.toggleIndex(iIndex);
 			} else if (bExpand) {
-				this.getBinding("items").expand(iIndex);
+				oBindingInfo.expand(iIndex);
 			} else {
-				this.getBinding("items").collapse(iIndex);
+				oBindingInfo.collapse(iIndex);
 			}
 		}
+	};
+
+	Tree.prototype.setGrowing = function() {
+		jQuery.sap.log.error("Growing feature of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingThreshold = function() {
+		jQuery.sap.log.error("GrowingThreshold of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingTriggerText = function() {
+		jQuery.sap.log.error("GrowingTriggerText of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingScrollToLoad = function() {
+		jQuery.sap.log.error("GrowingScrollToLoad of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingDirection = function() {
+		jQuery.sap.log.error("GrowingDirection of " + this + " is not supported!");
+		return this;
 	};
 
 	return Tree;
