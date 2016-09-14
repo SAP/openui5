@@ -901,6 +901,63 @@ QUnit.test("Check if the BlockLayer is displayed", function(assert) {
 	oPopup.open();
 });
 
+QUnit.test("Check when the layer is being removed", function(assert) {
+	var done = assert.async();
+
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+
+	var oSpyClose = sinon.spy(oPopup, "close");
+	var oSpyClosed = sinon.spy(oPopup, "_closed");
+	var oSpyHideBlocklayer = sinon.spy(oPopup, "_hideBlockLayer");
+
+	var fnOpened = function() {
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		assert.equal($oDomRefBL.length, 1, "BlockLayer added to DOM");
+
+		setTimeout(function() {
+			$oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+			assert.equal($oDomRefBL.length, 1, "BlockLayer still in DOM during close");
+
+			assert.equal(oSpyClose.callCount, 1, "'close' has been called");
+			assert.equal(oSpyClosed.callCount, 0, "'_closed' hasn't been called yet during closing");
+			assert.equal(oSpyHideBlocklayer.callCount, 0, "'_hideBlockLayer' hasn't been called yet during closing");
+		}.bind(this), 200);
+
+		oPopup.close();
+	}.bind(this);
+
+	var fnClosed = function() {
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+
+		assert.equal(oSpyClose.callCount, 1, "'close' has been called");
+		assert.equal(oSpyClosed.callCount, 1, "'_closed' has been called after closing");
+		assert.equal(oSpyHideBlocklayer.callCount, 1, "'_hideBlockLayer' has been called after closing");
+
+		assert.ok(oSpyHideBlocklayer.calledAfter(oSpyClosed), "'_hideBlockLayer' was called after '_closed'");
+
+		done();
+	}.bind(this);
+
+	oPopup.setDurations(0, 500);
+	oPopup.attachOpened(fnOpened, this);
+	oPopup.attachClosed(fnClosed, this);
+	oPopup.open();
+});
+
+QUnit.test("Destroy an opened modal popup should hide blocklayer synchronously", function(assert) {
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+
+	// act
+	oPopup.open();
+	oPopup.destroy();
+
+	// assert
+	assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "BlockLayer should be hidden");
+});
+
 QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(assert) {
 	var oPopup1DomRef = jQuery.sap.domById("popup1"),
 			oPopup2DomRef = jQuery.sap.domById("popup2"),
