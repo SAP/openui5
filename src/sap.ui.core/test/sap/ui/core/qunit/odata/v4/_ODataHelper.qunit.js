@@ -1451,7 +1451,20 @@ sap.ui.require([
 				"path=" + sPath);
 		});
 	});
-	// TODO return true if the binding has a transient context
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: with transient context", function (assert) {
+		var oBinding = {
+				aContexts : []
+			};
+
+			oBinding.aContexts[-1] = {
+				isTransient : function () {
+					return true;
+				}
+			};
+			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding), true);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): without cache", function (assert) {

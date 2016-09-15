@@ -35,22 +35,17 @@ sap.ui.require([
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
 		Then.onTheMainPage.checkNote(0);
-
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
 		Then.onTheMainPage.checkNote(0, sModifiedNote);
-
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		Then.onTheMainPage.checkID(0, "");
 		When.onTheMainPage.selectSalesOrderWithId("");
-
 		When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
 		Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
-
 		When.onTheMainPage.deleteSelectedSalesOrder();
 		When.onTheSalesOrderDeletionConfirmation.cancel();
 		Then.onTheMainPage.checkID(0, "");
-
 		When.onTheMainPage.deleteSelectedSalesOrder();
 		When.onTheSalesOrderDeletionConfirmation.confirm();
 		When.onTheSuccessInfo.confirm();
@@ -80,13 +75,26 @@ sap.ui.require([
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote + "_save");
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		Then.onTheMainPage.checkID(0, "");
-		//persist new created sales order
 		When.onTheMainPage.pressSaveSalesOrdersButton();
 		When.onTheSuccessInfo.confirm();
 		When.onTheMainPage.rememberCreatedSalesOrder();
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
-		// in the list we got again the first entity
 		Then.onTheMainPage.checkID(0);
+
+		// Create a sales order, refresh w/o saving -> expected "pending changes" message -> cancel
+		When.onTheMainPage.pressCreateSalesOrdersButton();
+		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		When.onTheMainPage.pressRefreshSalesOrdersButton();
+		When.onTheRefreshConfirmation.cancel();
+		Then.onTheMainPage.checkID(0, "");
+		When.onTheMainPage.pressRefreshAllButton();
+		When.onTheRefreshConfirmation.cancel();
+		Then.onTheMainPage.checkID(0, "");
+		if (bRealOData) {
+			When.onTheMainPage.filterGrossAmount("1000");
+			When.onTheErrorInfo.confirm();
+			Then.onTheMainPage.checkID(0, "");
+		}
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();

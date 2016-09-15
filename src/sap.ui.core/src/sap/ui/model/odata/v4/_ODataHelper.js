@@ -673,6 +673,12 @@ sap.ui.define([
 				}
 				return false;
 			}
+			// check if list binding has a transient context; do it here because this function does
+			// not call hasPendingChanges at the binding
+			if (oBinding.aContexts && oBinding.aContexts[-1]
+					&& oBinding.aContexts[-1].isTransient()) {
+				return true;
+			}
 			if (oBinding.oCache) {
 				bResult = oBinding.oCache.hasPendingChanges("");
 			} else if (oBinding.oContext && bAskParent) {

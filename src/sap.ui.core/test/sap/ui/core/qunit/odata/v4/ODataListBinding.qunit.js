@@ -2552,14 +2552,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_delete: pending changes", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = {isTransient : function () {return false;}};
 
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 		this.mock(oBinding).expects("deleteFromCache").never();
 		this.mock(oBinding).expects("_fireChange").never();
 
 		assert.throws(function () {
-			oBinding._delete("myGroup", "EMPLOYEES('1')", null);
+			oBinding._delete("myGroup", "EMPLOYEES('1')", oContext);
 		}, new Error("Cannot delete due to pending changes"));
 	});
 
@@ -2664,6 +2665,7 @@ sap.ui.require([
 			assert.strictEqual(oContext.getIndex(), -1);
 			assert.strictEqual(oContext.isTransient(), true);
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
 
 			assert.throws(function () {
 				//code under test

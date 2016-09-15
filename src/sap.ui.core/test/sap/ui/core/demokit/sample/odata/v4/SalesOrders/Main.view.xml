@@ -32,7 +32,7 @@
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
-				<Button press="onRefreshAll" text="Refresh all"/>
+				<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
 				<Button enabled="false"
 					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
 					tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
@@ -107,7 +107,7 @@
 						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
 							tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
-						<SearchField enabled="{ui>/bRealOData}"
+						<SearchField enabled="{ui>/bRealOData}" id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
 							value="{path : 'ui>/filterValue',
 								type:'sap.ui.model.odata.type.Decimal'}"
