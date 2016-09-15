@@ -416,6 +416,7 @@
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
 		// Arrange
 		var oSpy = sinon.spy(sap.m.GenericTileLineModeRenderer, "render");
+		this.oGenericTile.getParent().addStyleClass = function() {};
 		// Act
 		this.oGenericTile.setMode("LineMode");
 		sap.ui.getCore().applyChanges();
@@ -435,6 +436,26 @@
 		assert.ok(oSpy.calledOnce, "GenericTileRenderer called");
 		//Restore
 		oSpy.restore();
+	});
+
+	QUnit.test("Test content density class - cozy as default", function(assert) {
+		assert.notOk(this.oGenericTile._isCompact());
+	});
+
+	QUnit.test("Test content density class - compact from control", function(assert) {
+		//Arrange
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
+		//Act
+		//Assert
+		assert.ok(this.oGenericTile._isCompact());
+	});
+
+	QUnit.test("Test content density class - compact from parent", function(assert) {
+		//Arrange
+		jQuery("#qunit-fixture").addClass("sapUiSizeCompact");
+		//Act
+		//Assert
+		assert.ok(this.oGenericTile._isCompact());
 	});
 
 	/* --------------------------------------- */

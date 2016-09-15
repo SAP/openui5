@@ -153,9 +153,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._generateFailedText();
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
+
 		if (this.getMode() === library.GenericTileMode.LineMode) {
-			this.$().unbind("mouseenter", this._updateHoverStyle);
-			this.$().unbind("mouseleave", this._removeHoverStyle);
+			this.$().unbind("mouseenter", LineModeRenderer._updateHoverStyle);
+			this.$().unbind("mouseleave", LineModeRenderer._removeHoverStyle);
 		}
 	};
 
@@ -167,8 +168,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
 		if (this.getMode() === library.GenericTileMode.LineMode) {
-			this.$().bind("mouseenter", this._updateHoverStyle.bind(this));
-			this.$().bind("mouseleave", this._removeHoverStyle.bind(this));
+			this.getParent().addStyleClass("sapMGTLineModeContainer");
+
+			this.$().bind("mouseenter", LineModeRenderer._updateHoverStyle.bind(this));
+			this.$().bind("mouseleave", LineModeRenderer._removeHoverStyle.bind(this));
 		}
 
 		// Assign TileContent content again after rendering.
@@ -350,43 +353,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		} else {
 			this._oTitle.setMaxLines(3);
 		}
-	};
-
-	GenericTile.prototype._updateHoverStyle = function() {
-		var $this = this.$(),
-			$StyleHelper = $this.find(".sapMGTStyleHelper"),
-			$SizeHelper = $this.find(".sapMGTSizeHelper"),
-			iHeight = Math.floor($SizeHelper.height()),
-			iWidth = Math.floor($this.innerWidth()),
-			cLineHeight = 3 * 16,
-			cHeight = 2.5 * 16,
-			iLines = Math.ceil(iHeight / cLineHeight),
-			i = 0,
-			sRectTemplate = "<rect class='sapMGTStyleRect' x='0' y='$y' width='$w' height='" + cHeight + "' />",
-			sRect;
-
-		$StyleHelper.empty();
-		for (i; i < iLines; i++) {
-			sRect = sRectTemplate.replace("$y", i * cLineHeight);
-			if (i === iLines - 1) {
-				sRect = sRect.replace("$w", $SizeHelper.width() + "px");
-			} else {
-				sRect = sRect.replace("$w", "100%");
-			}
-
-			$StyleHelper.append("<svg>" + sRect + "</svg>");
-		}
-		$StyleHelper.css("width", iWidth + 16 + "px").css("height", iHeight + "px");
-		$StyleHelper.find("svg > .sapMGTStyleRect").unwrap();
-		$StyleHelper.find(".sapMGTStyleRect").width(); //enforce re-layouting to enable css transition
-		$StyleHelper.find(".sapMGTStyleRect").addClass("sapMGTStyleRectHover");
-	};
-
-	GenericTile.prototype._removeHoverStyle = function() {
-		var $this = this.$(),
-			$StyleHelper = $this.find(".sapMGTStyleHelper");
-
-		$StyleHelper.find(".sapMGTStyleRect").removeClass("sapMGTStyleRectHover");
 	};
 
 	/**
@@ -621,5 +587,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._bTooltipFromControl = false;
 		}
 	};
+
+	/**
+	 * Determines the content density mode.
+	 * @returns {boolean} Returns true, if the control or its parents have the class sapUiSizeCompact, otherwise false.
+	 * @private
+	 */
+	GenericTile.prototype._isCompact = function() {
+		return this.$().parents().andSelf().hasClass("sapUiSizeCompact");
+	};
+
 	return GenericTile;
 }, /* bExport= */ true);

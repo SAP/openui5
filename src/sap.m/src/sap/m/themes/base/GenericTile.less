@@ -12,35 +12,6 @@
 	background-position: 0px;
 }
 
-.sapMGT.sapMGTLineMode {
-	display: inline;
-	min-height: 2.5rem;
-	min-width: 2rem;
-	border-color: transparent;
-	border-radius: 0.2rem;
-	box-shadow: none;
-	background-color: transparent;
-	position: relative;
-
-	line-height: 3rem;
-	padding-top: (2.5rem / 2) - (@sapMFontMediumSize / 2) - 0.125rem;
-	padding-bottom: (2.5rem / 2) - (@sapMFontMediumSize / 2) - 0.125rem;
-}
-
-.sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
-	word-break: normal;
-	display: inline;
-	position: relative;
-}
-
-.sapMGTLineMode .sapMGTSubHdrTxt {
-	padding: 0 0.5rem;
-}
-.sapMGTLineMode .sapMGTHdrTxt {
-	position: relative;
-	left: 0.5rem;
-}
-
 .sapMGT:focus {
 	outline: none;
 }
@@ -93,7 +64,7 @@
 .sapMGTSubHdrTxt {
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space:nowrap;
+	white-space: nowrap;
 	line-height: 1.25rem;
 }
 
@@ -111,6 +82,61 @@
 	font-size: 2.5rem;
 }
 
+/************************ LINE MODE *************************/
+.sapMGTLineModeContainer{
+	padding-right: 1.5rem; //results in 0.5rem (1rem is used for tile spacing)
+}
+
+.sapUiSizeCompact {
+	.sapMGT.sapMGTLineMode {
+		display: inline;
+		min-width: 2rem;
+		border: none !important;
+		border-radius: 0;
+		box-shadow: none;
+		background-color: transparent;
+		position: relative;
+
+		@line-height: 1.875rem;
+		@padding-top: 0.125rem;
+		@padding-bottom: 0.125rem;
+		margin-top: @padding-top + @padding-bottom; /* used as hover-style bar-offset top, does not have an effect for inline elements */
+		min-height: @line-height - @padding-top - @padding-bottom; /* used as hover-style bar height */
+		line-height: @line-height !important;
+		padding-top: (@line-height / 2) - (@sapMFontMediumSize / 2);
+		padding-bottom: (@line-height / 2) - (@sapMFontMediumSize / 2);
+	}
+	.sapMGT.sapMGTLineMode:not(:first-child) {
+		margin-left: 0.5rem;
+	}
+
+	.sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
+		word-break: normal;
+		display: inline;
+		position: relative;
+		white-space: normal;
+		left: 0.5rem;
+		border-top: 2px solid transparent;
+		border-bottom: 2px solid transparent;
+	}
+
+	.sapMGTLineMode .sapMGTSubHdrTxt {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+
+		.sapMGTSubHdrEndMarker {
+			position: absolute;
+			right: 1rem;
+		}
+	}
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	max-height: none !important;
+}
+
+/******************* OVERLAYS AND HELPERS *******************/
+
 .sapMGTOverlay {
 	position: absolute !important;
 	pointer-events: none;
@@ -125,20 +151,25 @@
 .sapMGTFocusDiv {
 	position: absolute;
 	pointer-events: none;
-	left: 0px;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 	border-radius: 0.25rem;
 }
 
 .sapMGTSizeHelper {
-	.sapMGTFocusDiv();
+	.sapMGTFocusDiv;
 	z-index: -100;
+	border-radius: 0;
+	right: -0.5rem;
+	top: 0.125rem;
+	bottom: 0.125rem;
 }
 .sapMGTStyleHelper {
-	.sapMGTFocusDiv();
+	.sapMGTFocusDiv;
 	z-index: -100;
+	border-radius: 0;
 }
 
 .sapMGenericTileLoading {

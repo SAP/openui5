@@ -175,19 +175,33 @@
 			}
 		});
 
+		var oDensityModeSwitch = new sap.m.Switch({
+			state: true,
+			customTextOn: "COZ",
+			customTextOff: "COM",
+			change: function() {
+				if (oDensityModeSwitch.getState()) {
+					oTileContainer.removeStyleClass("sapUiSizeCompact");
+				} else {
+					oTileContainer.addStyleClass("sapUiSizeCompact");
+				}
+			}
+		});
+
 		var oPage = new sap.m.Page("initial-page", {
 			showHeader: false,
 			content: [
 				new sap.m.VBox({
 					fitContainer: true,
 					items: [
-						oAddTileBtn,
+						oDensityModeSwitch.addStyleClass("sapUiSizeCompact"),
+						oAddTileBtn.addStyleClass("sapUiSizeCompact"),
 						oTileContainer,
-						oTileConfigContainer
+						oTileConfigContainer.addStyleClass("sapUiSizeCompact")
 					]
 				})
 			]
-		}).addStyleClass("sapUiContentPadding sapUiSizeCompact").setModel(oModel);
+		}).addStyleClass("sapUiContentPadding").setModel(oModel);
 
 		//create a mobile App embedding the page and place the App into the HTML document
 		new sap.m.App("myApp", {
