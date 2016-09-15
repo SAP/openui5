@@ -107,7 +107,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Escape text for HTML and write it to the buffer
+		 * Escape text for HTML and write it to the buffer.
+		 *
+		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
+		 *
 		 * @param {string} sText
 		 * @param {boolean} bLineBreaks Whether to convert linebreaks into <br> tags
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
@@ -125,6 +128,8 @@ sap.ui.define([
 
 		/**
 		 * Writes the attribute and its value into the HTML.
+		 *
+		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {string | number | boolean} vValue Value of the attribute
