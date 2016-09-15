@@ -162,6 +162,14 @@
 			}
 			})).placeAt("databinding");
 
+			(new sap.ui.commons.DatePicker({
+				width: "15em",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({style: "long", strictParsing: true, calendarType: "Islamic"})
+			}
+			})).placeAt("databinding");
+
 			sap.ui.getCore().attachParseError(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");

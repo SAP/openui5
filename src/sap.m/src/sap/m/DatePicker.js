@@ -1152,8 +1152,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		if (oOldDate && this.getEditable() && this.getEnabled()) {
 			// use UniversalDate to calculate new date based on used calendar
-			var oDate = new UniversalDate(oOldDate.getTime());
-			oOldDate = new UniversalDate(oOldDate.getTime());
+			var sCalendarType;
+			var oBinding = this.getBinding("value");
+
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+			}
+			if (!sCalendarType) {
+				sCalendarType = this.getDisplayFormatType();
+			}
+
+			var oDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
+			oOldDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
 
 			switch (sUnit) {
 			case "day":
