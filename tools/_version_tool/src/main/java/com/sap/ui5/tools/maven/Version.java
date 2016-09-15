@@ -160,7 +160,14 @@ public class Version {
       newPatch++;
       newSuffix = SNAPSHOT_SUFFIX;
       break;
+      
+    case ChangeObjectId:
+    	newPatch++;
+        newSuffix = SNAPSHOT_SUFFIX;
+        break;    	
     }
+  
+	  
     
    return new Version(newMajor, newMinor, newPatch, newSuffix);
   }

@@ -24,10 +24,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sap.ui5.tools.maven.Version;
 
 public class MyReleaseButton {
 
@@ -35,7 +35,7 @@ public class MyReleaseButton {
 
   private static final String PROPERTY_PREFIX_OSGI_VERSION = "(phx|sap\\.(ui5|uxap))";
   public static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
-  private static final Pattern CORE_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)");
+  private static final Pattern CORE_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)");  
   private static final Pattern DOCUMENT_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5DocuVersion-->)");
   private static final Pattern VERSION_RANGE_PATTERN = Pattern.compile("(?:[\\[\\(])((?:[0-9]+)(?:\\.(?:[0-9]+)(?:\\.(?:[0-9]+))?)?(?:-[^,\\[\\]\\(\\)]+)?)(?:\\s)*,(?:\\s)*((?:[0-9]+)(?:\\.(?:[0-9]+)(?:\\.(?:[0-9]+))?)?(?:-[^,\\[\\]\\(\\)]+)?)(?:[\\]\\)])");
   private static final Pattern CONTRIBUTOR_VERSION_PATTERN = Pattern.compile("(?<=\\.version>)(.*)(?=</com.sap.*version>)");
@@ -44,6 +44,7 @@ public class MyReleaseButton {
   private static final String COM_SAP_UI5_CORE = "com.sap.ui5:core";
   public static final String ISO_8859_1 = "ISO-8859-1";
   public static final String UTF8 = "UTF-8";
+  private static File receivedFile;
   private static ReleaseOperation relOperation;
   private static  String jsonLocation;
   private static Map<String, UiLibrary> contributorsJsonData = new HashMap<String, UiLibrary>();
@@ -58,11 +59,15 @@ public class MyReleaseButton {
 
   public static boolean checkForMilestoneOrPatchDev(ReleaseOperation release){
 	  	return release == ReleaseOperation.MilestoneDevelopment || release == ReleaseOperation.PatchDevelopment;
+  }  
+
+  public static void setFile(File receivedF){
+	  receivedFile = receivedF;
   }
     
   public static void fromJSONtoMap(String fileName, String filePath) throws FileNotFoundException{	  
 	  String fName = filePath + File.separator + fileName + "_uilibCollectionData.json";
-
+	  
 	  JsonObject result = convertFileToJSON(fName);
 
 	  Set<Map.Entry<String, JsonElement>> entries = result.entrySet();
@@ -79,7 +84,7 @@ public class MyReleaseButton {
 		    	hasSnapshot = false;
 		    }
 		    
-		    contributorsJsonData.put(entry.getKey(), new UiLibrary(groupIdPatt, hasSnapshot));		    
+		    contributorsJsonData.put(entry.getKey(), new UiLibrary(groupIdPatt, hasSnapshot));	    
 		}
   }
   
@@ -202,7 +207,6 @@ public class MyReleaseButton {
       throw new RuntimeException(e);
     }
   }
-
   
   public enum ReleaseOperation {
 	  MilestoneRelease,
@@ -210,12 +214,13 @@ public class MyReleaseButton {
 	  MajorRelease,
 	  PatchRelease,
 	  MilestoneDevelopment,
-	  PatchDevelopment
+	  PatchDevelopment,
+	  ChangeObjectId
 	}
   
   public enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
-    ContributorsVersions, Sapui5CoreVersion, OnlyVersionWithSnapshot, SAPUI5DocuVersion
+    ContributorsVersions, Sapui5CoreVersion, OnlyVersionWithSnapshot, SAPUI5DocuVersion, UpdateObjectIdsJSONFile
   };
 
   public static class ProcessingFilter {
@@ -240,23 +245,27 @@ public class MyReleaseButton {
   private static String contributorsRange = null;
   private static boolean applyContributors;
   private static ProcessingFilter filter;
-
+  
   private static void processFile(File file, String path) throws IOException {
     String encoding = UTF8;
 
     EnumSet<ProcessingTypes> processingTypes = EnumSet.noneOf(ProcessingTypes.class);
 
-    if (file.getName().matches("pom(-[a-zA-Z0-9-_.]*)?.xml")) {
-      processingTypes.add(ProcessingTypes.VersionWithSnapshot);
-      processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
-      processingTypes.add(ProcessingTypes.VersionWithTimestamp);
-      if (coreVersion != null) {
-    	
-        processingTypes.add(ProcessingTypes.Sapui5CoreVersion);
-      }
-      if(checkForMilestoneOrPatchDev(relOperation)){
-    	  processingTypes.add(ProcessingTypes.SAPUI5DocuVersion);
-      }
+	if (file.getName().matches("pom(-[a-zA-Z0-9-_.]*)?.xml")) {    	
+		if (relOperation.equals(ReleaseOperation.ChangeObjectId)){
+			processingTypes.add(ProcessingTypes.OnlyVersionWithSnapshot);				
+		} else {
+		  processingTypes.add(ProcessingTypes.VersionWithSnapshot);
+	      processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
+	      processingTypes.add(ProcessingTypes.VersionWithTimestamp);
+	      
+	      if (coreVersion != null) {		    	
+	        processingTypes.add(ProcessingTypes.Sapui5CoreVersion);
+	      }
+	      if(checkForMilestoneOrPatchDev(relOperation)){
+	    	  processingTypes.add(ProcessingTypes.SAPUI5DocuVersion);
+	      }
+		}
     } else if (file.getName().endsWith(".library")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     } else if (file.getName().endsWith(".target")) {
@@ -282,19 +291,28 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     } else if ("sap-ui-version.json".equals(file.getName())) { // uxap release
         processingTypes.add(ProcessingTypes.VersionWithSnapshot);
-    }
+    } else if ("ObjectIds.json".equals(file.getName())){	    	  
+    	  if (relOperation.equals(ReleaseOperation.ChangeObjectId)){
+    		  processingTypes.add(ProcessingTypes.UpdateObjectIdsJSONFile);
+    	  }
+      }
     if (applyContributors && path.contains("uilib-collection")) {
       processingTypes.add(ProcessingTypes.ContributorsVersions);
       processingTypes.remove(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.OnlyVersionWithSnapshot);
-    }
-
+    }	
+    
     processingTypes.removeAll(EnumSet.complementOf(filter.processingTypes));
-
+    
     if ( !processingTypes.isEmpty() ) {
       CharSequence orig = readFile(file, encoding);
       CharSequence s = orig;
-
+      	    	  
+	  if (processingTypes.contains(ProcessingTypes.UpdateObjectIdsJSONFile)){
+		  CharSequence inputFile = readFile(receivedFile, encoding);
+		  s = inputFile;	    		  
+	  	}
+      
       // MUST RUN BEFORE VersionWithSnapshot!
       if (processingTypes.contains(ProcessingTypes.RepositoryPaths)) {
         s = fromR.matcher(s).replaceAll(toR);
@@ -325,7 +343,7 @@ public class MyReleaseButton {
       }      
       if(processingTypes.contains(ProcessingTypes.SAPUI5DocuVersion)){
     		  s =  DOCUMENT_VERSION.matcher(s).replaceAll(toD);
-      }
+      }	    
       
       if (s != orig) {
         String str = s.toString();
@@ -335,8 +353,8 @@ public class MyReleaseButton {
           countDiffs(path, orig, str);
         }
       }
-    }
   }
+}	
 
   private static void saveFile(File file, String encoding, String str) throws IOException {
     if (!file.canWrite()) {
@@ -380,7 +398,7 @@ public class MyReleaseButton {
     }
        
     MyReleaseButton.filter = filter;
-
+    
     // convert the versions to Maven versions (if required)
     String oldMavenVersion = Maven2OsgiConverter.isMavenVersion(oldVersion) ? oldVersion : Maven2OsgiConverter.getMavenVersion(oldVersion);
     String newMavenVersion = Maven2OsgiConverter.isMavenVersion(newVersion) ? newVersion : Maven2OsgiConverter.getMavenVersion(newVersion);
@@ -467,6 +485,7 @@ public class MyReleaseButton {
     System.out.println("             Repository Paths: '" + fromR.pattern() + "' --> '" + toR + "'");
     System.out.println();
     System.out.println("Scanning directory \"" + root + "\"");
+   
     scan(root, "");
 
     int diffdiffs = -1; // UNKNOWN
@@ -515,13 +534,13 @@ public class MyReleaseButton {
   }
 
   private static CharSequence processContributorsVersions(CharSequence s, File file, String encoding) throws IOException {
+	  if (contributorsRange != null){
 	  String replaceWith = contributorsRange;
 	 
 	  if(relOperation == ReleaseOperation.MinorRelease){		  
 		  s = CONTRIBUTOR_VERSION_AFTER_PATTERN.matcher(s).replaceAll(replaceWith);
 	  }
 	  
-    if (relOperation.equals(ReleaseOperation.PatchDevelopment)||relOperation.equals(ReleaseOperation.MilestoneDevelopment)){
        // identify the version range and replace the starting version with a
       // regex placeholder which will be used to insert the previous value:
       //  -> [1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT) => [$1, 1.23.0-SNAPSHOT)
@@ -530,11 +549,11 @@ public class MyReleaseButton {
       
       Matcher m = VERSION_RANGE_PATTERN.matcher(replaceWith);
       if (m.matches()) {
-    	  	replaceWith = replaceWith.replace(m.group(1), "$1");       
+    	  	replaceWith = replaceWith.replace(m.group(1), "$1");
       }
       
       s = CONTRIBUTOR_VERSION_PATTERN.matcher(s).replaceAll(replaceWith);
-      
+      if (relOperation.equals(ReleaseOperation.MilestoneDevelopment)){
       final String DOCU_UI5_VERSION = "com.sap.docu.ui5.version";
     	  for (Map.Entry<String, UiLibrary> contributor : contributorsJsonData.entrySet()) {
     		  UiLibrary library = contributorsJsonData.get(contributor.getKey());
@@ -543,7 +562,9 @@ public class MyReleaseButton {
       	  	if(library.getName().equals(DOCU_UI5_VERSION) && library.hasSnapshot() || !library.getName().equals(DOCU_UI5_VERSION)){
       	  	s = PROPERTY_VERSION_PATTERN.matcher(s).replaceFirst(contributorsRange);	
       	  	};
+    	  }
       }
+    
     } else {
       saveFile(file, encoding, (String) s);
       MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-U", "-DgenerateBackupPoms=false");
