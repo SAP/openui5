@@ -3,36 +3,34 @@
 /* Belize theme                       */
 /* ================================== */
 
-@keyframes ANIM_sapMGTStyleRect{
-	from { opacity: 0.0; }
-	to { opacity: 1.0; }
-}
-
-@keyframes ANIM_sapMGTStyleRect_out{
-	from { opacity: 1.0; }
-	to { opacity: 0.0; }
-}
-
 .sapMGT.sapMGTLineMode {
 	.sapMGTStyleRect {
-		animation: ANIM_sapMGTStyleRect_out 0.2s;
-		animation-fill-mode: both;
-		fill: fade(@sapUiShellHoverBackground, 10);
-	}
-	.sapMGTStyleRectHover {
-		animation: ANIM_sapMGTStyleRect 0.2s;
-		animation-fill-mode: both;
+		fill: transparent;
 	}
 
-	&:focus {
-		.sapMGTStyleRect {
-			opacity: 1.0;
-			stroke: @sapUiShellHoverBackground;
-			stroke-dasharray: 1px 2px;
-			stroke-linejoin: round;
-			stroke-width: 1px;
-		}
+	.sapMGTStyleRectHover {
+		fill: fade(@sapUiShellHoverBackground, 10);
 	}
+
+	&.sapMGTLineModePress .sapMGTStyleRect {
+		fill: fade(@sapUiShellHoverBackground, 12);
+	}
+
+	//&:focus {
+	//	.sapMGTStyleRect {
+	//		opacity: 1.0;
+	//		stroke: @sapUiShellHoverBackground;
+	//		stroke-dasharray: 1px 2px;
+	//		stroke-linejoin: round;
+	//		stroke-width: 1px;
+	//	}
+	//}
+}
+
+.sapMGTLineMode .sapMGTLineModeFailedIcon {
+	cursor: pointer;
+	color: @sapUiContentNonInteractiveIconColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTLineMode.sapMGTDisabled {

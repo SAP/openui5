@@ -40,6 +40,10 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.writeClasses();
 		oRm.write(">");
 
+		if (oControl.getState() === LoadState.Failed) {
+			oRm.renderControl(oControl._oWarningIcon.addStyleClass("sapMGTLineModeFailedIcon"));
+		}
+
 		oRm.write("<span");
 		oRm.addClass("sapMGTHdrTxt");
 		oRm.writeClasses();
@@ -142,11 +146,14 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			$StyleHelper.append("<svg>" + GenericTileLineModeRenderer._createRoundedRectPath(sRect, iRadiusLeft, iRadiusRight) + "</svg>"); //wrap element in svg tag to make the browser interpret it
 		}
 
-		$StyleHelper.find("svg > *").unwrap(); //remove svg tag from all rects
+		$StyleHelper.find("svg > *").unwrap(); //remove svg tag from all rects and force re-layouting for css-transition
 		$StyleHelper.css("left", -iLeftOffset + "px");
 		$StyleHelper.css("width", iParentWidth + "px").css("height", (iLines * cHeight) + "px");
-		$StyleHelper.find(".sapMGTStyleRect").width(); //enforce re-layouting to enable css transition
-		$StyleHelper.find(".sapMGTStyleRect").addClass("sapMGTStyleRectHover");
+		if (!(sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge)) { //only enable transition for non-IE browsers
+			$StyleHelper.children().css("transition", "fill 200ms");
+		}
+		$StyleHelper.children().css("fill");
+		$StyleHelper.children().addClass("sapMGTStyleRectHover");
 	};
 
 	/**
@@ -158,8 +165,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	GenericTileLineModeRenderer._removeHoverStyle = function(evt) {
 		var $this = this.$(),
 			$StyleHelper = $this.find(".sapMGTStyleHelper");
-
-		$StyleHelper.find(".sapMGTStyleRect").removeClass("sapMGTStyleRectHover");
+		$StyleHelper.children().removeClass("sapMGTStyleRectHover");
 	};
 
 	/**
