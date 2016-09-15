@@ -165,10 +165,14 @@ sap.ui.require([
 		assert.strictEqual(oType.formatValue(sValue, "string"), "1:53:49 PM");
 
 		assert.strictEqual(oType.formatValue("13:53:49", "string"), "1:53:49 PM");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue(sValue, "sap.ui.core.CSSSize"), "1:53:49 PM");
 	});
 
 	//*********************************************************************************************
-	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
+	["int", "boolean", "float"].forEach(function (sTargetType) {
 		QUnit.test("formatValue failure for target type " + sTargetType, function (assert) {
 			var oType = new TimeOfDay();
 
@@ -218,7 +222,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
+	QUnit.test("parse, get primitive type", function (assert) {
+		var oType = new TimeOfDay();
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("1:53:49 PM", "sap.ui.core.CSSSize"), "13:53:49");
+	});
+
+	//*********************************************************************************************
+	[[123, "int"], [true, "boolean"], [1.23, "float"]].forEach(
 		function (aFixture) {
 			QUnit.test("parse failure for source type " + aFixture[1], function (assert) {
 				var oType = new TimeOfDay();

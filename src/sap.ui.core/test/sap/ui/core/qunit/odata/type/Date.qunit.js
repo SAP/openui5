@@ -103,6 +103,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("format value, get primitive type", function (assert) {
+		var oType = new DateType();
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue("2014-11-27", "sap.ui.core.CSSSize"), "Nov 27, 2014");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("format value (error cases)", function (assert) {
 		var oType = new DateType();
 
@@ -171,6 +180,10 @@ sap.ui.require([
 
 		checkError(assert, oType, "foo", "not a date", "parseValue");
 		checkError(assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("Nov 27, 2014", "sap.ui.core.CSSSize"), "2014-11-27");
 	});
 
 	//*********************************************************************************************

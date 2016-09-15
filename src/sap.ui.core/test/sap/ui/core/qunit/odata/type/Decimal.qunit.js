@@ -101,6 +101,10 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to format sap.ui.model.odata.type.Decimal to boolean");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue("123456", "sap.ui.core.CSSSize"), "123,456.000");
 	});
 
 	//*********************************************************************************************
@@ -143,6 +147,10 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Decimal from boolean");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("123,456.000", "sap.ui.core.CSSSize"), "123456");
 	});
 
 	//*********************************************************************************************

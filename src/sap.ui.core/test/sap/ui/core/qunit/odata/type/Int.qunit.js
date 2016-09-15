@@ -93,16 +93,20 @@ sap.ui.require([
 				assert.ok(e instanceof FormatException);
 				assert.strictEqual(e.message, "Don't know how to format " + sName + " to unknown");
 			}
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.returns("string");
+			assert.strictEqual(oType.formatValue(123, "sap.ui.core.CSSSize"), "123");
 		});
 
 		QUnit.test("parseValue", function (assert) {
 			try {
-				oType.parseValue("123");
+				oType.parseValue(true, "boolean");
 				assert.ok(false, "Expected ParseException not thrown");
 			} catch (e) {
 				assert.ok(e instanceof ParseException);
 				assert.strictEqual(e.message,
-					"Don't know how to parse " + sName + " from undefined");
+					"Don't know how to parse " + sName + " from boolean");
 			}
 			assert.strictEqual(oType.parseValue("1,234", "string"), 1234,
 				"number parsed from string");
@@ -118,6 +122,10 @@ sap.ui.require([
 			oType = new (jQuery.sap.getObject(sName))();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.returns("string");
+			assert.strictEqual(oType.parseValue("1234", "sap.ui.core.CSSSize"), 1234);
 		});
 
 		["foo", "123.809"].forEach(function (oValue) {
