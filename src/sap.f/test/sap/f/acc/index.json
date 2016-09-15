@@ -1,0 +1,9 @@
+{
+	"tests": [
+		{
+			"control": "sap.f.DynamicPage",
+			"url": "DynamicPage.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		}
+	]
+}
