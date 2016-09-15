@@ -113,6 +113,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 */
 		XMLView.asyncSupport = true;
 
+		/**
+		 * Flag indicating whether to use the cache
+		 * @private
+		 * @experimental
+		 * @since 1.44
+		 */
+		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache();
+
 		function validatexContent(xContent) {
 			if (xContent.parseError.errorCode !== 0) {
 				var oParseError = xContent.parseError;
@@ -352,7 +360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
 					// in async mode we need to return here as processing takes place in Promise callbacks
-					if (mSettings.cache) {
+					if (mSettings.cache && XMLView._bUseCache) {
 						return processCache(sResourceName, mSettings.cache).then(processView);
 					} else {
 						return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);

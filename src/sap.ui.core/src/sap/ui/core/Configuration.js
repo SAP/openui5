@@ -111,6 +111,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
 					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
 					"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
@@ -1063,6 +1064,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getDisableCustomizing : function() {
 			return this["xx-disableCustomizing"];
+		},
+
+		/**
+		 * Flag, representing the status of the view cache
+		 * @see {sap.ui.xmlview}
+		 *
+		 * @returns {boolean} true if view cache is enabled
+		 * @private
+		 * @experimental Since 1.44
+		 */
+		getViewCache : function() {
+			return this["xx-viewCache"];
 		},
 
 		/**
