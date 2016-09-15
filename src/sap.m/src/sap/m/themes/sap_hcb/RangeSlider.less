@@ -26,8 +26,7 @@ span.sapMSliderHandleOverlap {
 }
 
 .sapMSliderHandleTooltip {
-	/*top: -3rem;*/
-	border: 0.625rem solid @sapHCStandardFG;
+	border: 0.1rem solid @sapHCStandardFG;
 	background: @sapHCStandardBG;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
@@ -47,8 +46,14 @@ span.sapMSliderHandleOverlap {
 
 .sapMSlider {
 	&:hover {
-		.sapMSliderHandleTooltip {
+		.sapMSliderHandleTooltip, .sapMSliderTooltipContainer {
 			visibility: visible;
 		}
+	}
+}
+
+.sapMSliderTooltipContainer {
+	.sapMInputBase, .sapMInputBaseInner {
+		height: inherit;
 	}
 }
