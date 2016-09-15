@@ -246,3 +246,17 @@ html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
 html.sap-desktop .sapMITBItem:focus.sapMITBAll {
 	outline: 1px dotted @sapUiContentFocusColor;
 }
+
+/* container background design */
+.sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
+	background-color: fade(@sapUiGroupContentBackground, 60);
+}
+
+/* header background design */
+.sapMITHBackgroundDesignTransparent {
+	background-color: transparent;
+}
+
+.sapMITHBackgroundDesignTranslucent {
+	background-color: fade(@sapUiGroupContentBackground, 60);
+}
