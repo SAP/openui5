@@ -179,6 +179,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		},
 
 		/**
+		 * Applies or removes the given indents on the given row elements.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {object} $Row jQuery representation of the row elements
+		 * @param {object} $RowHdr jQuery representation of the row header elements
+		 * @param {integer} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
+		 * @private
+		 */
+		_setIndent : function(oTable, $Row, $RowHdr, iIndent) {
+			var bRTL = oTable._bRtlMode,
+				$FirstCellContentInRow = $Row.find("td.sapUiTableTdFirst > .sapUiTableCell"),
+				$Shield = $RowHdr.find(".sapUiTableGroupShield");
+
+			if (iIndent <= 0) {
+				// No indent -> Remove custom manipulations (see else)
+				$RowHdr.css(bRTL ? "right" : "left", "");
+				$Shield.css("width", "").css(bRTL ? "margin-right" : "margin-left", "");
+				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", "");
+			} else {
+				// Apply indent on table row
+				$RowHdr.css(bRTL ? "right" : "left", iIndent + "px");
+				$Shield.css("width", iIndent + "px").css(bRTL ? "margin-right" : "margin-left", ((-1) * iIndent) + "px");
+				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCell */) + "px");
+			}
+		},
+
+		/**
 		 * Updates the dom of the given row depending on the given parameters.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {sap.ui.table.Row} oRow Instance of the row
@@ -215,11 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 					.attr("title", sGroupHeaderText || null)
 					.text(sGroupHeaderText || "");
 
-
-				var iIndent = TableGrouping._calcGroupIndent(oTable, iLevel, bChildren);
-				$RowHdr.css(oTable._bRtlMode ? "right" : "left", iIndent + "px");
-				var $FirstCellContentInRow = $Row.find("td.sapUiTableTdFirst > .sapUiTableCell");
-				$FirstCellContentInRow.css(oTable._bRtlMode ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCell */) + "px");
+				TableGrouping._setIndent(oTable, $Row, $RowHdr, TableGrouping._calcGroupIndent(oTable, iLevel, bChildren));
 			}
 
 			var $TreeIcon = null;
@@ -264,9 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 
 			if (TableGrouping.isGroupMode(oTable)) {
 				oDomRefs.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				oDomRefs.rowSelector.css(oTable._bRtlMode ? "right" : "left", "");
-				var $FirstCellContentInRow = oDomRefs.row.find("td.sapUiTableTdFirst > .sapUiTableCell");
-				$FirstCellContentInRow.css(oTable._bRtlMode ? "padding-right" : "padding-left", "");
+				TableGrouping._setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
 			}
 
 			var $TreeIcon = null;
