@@ -1001,13 +1001,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			var value = this._$input.val();
 
-			// add maxlength support for all types except for the type Number
-			// TODO: type number add min and max properties
-			if (this.getMaxLength() > 0 && this.getType() !== sap.m.InputType.Number && value.length > this.getMaxLength()) {
-				value = value.substring(0, this.getMaxLength());
-				this._$input.val(value);
-			}
-
 			if (this.getValueLiveUpdate()) {
 				this.setProperty("value",value, true);
 			}
