@@ -1373,6 +1373,49 @@
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
 	});
+	
+	
+	QUnit.module("Legacy Modules", {});
+	
+	QUnit.asyncTest("TreeAutoExpandMode", function(assert) {
+		sap.ui.require(['sap/ui/table/TreeAutoExpandMode', 'sap/ui/table/library'], function(oClass, oLib) {
+			assert.ok(oClass === sap.ui.table.TreeAutoExpandMode, "Global Namespace");
+			assert.ok(oClass === oLib.TreeAutoExpandMode, "Library");
+			start();
+		});
+	});
+	
+	QUnit.asyncTest("ColumnMenuRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/ColumnMenuRenderer', 'sap/ui/table/ColumnMenu'], function(oRenderer, oMenu) {
+			assert.ok(oRenderer === sap.ui.table.ColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+	
+	QUnit.asyncTest("AnalyticalColumnMenuRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/AnalyticalColumnMenuRenderer', 'sap/ui/table/AnalyticalColumnMenu'], function(oRenderer, oMenu) {
+			assert.ok(oRenderer === sap.ui.table.AnalyticalColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+	
+	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/TreeTableRenderer', 'sap/ui/table/TreeTable'], function(oRenderer, oTable) {
+			assert.ok(oRenderer === sap.ui.table.TreeTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+	
+	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/AnalyticalTableRenderer', 'sap/ui/table/AnalyticalTable'], function(oRenderer, oTable) {
+			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
 
 	</script>
 </head>
