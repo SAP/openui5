@@ -1597,7 +1597,7 @@ sap.ui.require([
 			} else {
 				assert.deepEqual(oObject, oFixture.result);
 			}
-			assert.deepEqual(mScope, oMetadataClone, "meta data unchanged");
+			assert.deepEqual(mScope, oMetadataClone, "metadata unchanged");
 		});
 	});
 

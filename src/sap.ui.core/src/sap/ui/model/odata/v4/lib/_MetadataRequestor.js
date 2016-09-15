@@ -12,7 +12,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Creates a requestor for meta data documents.
+		 * Creates a requestor for metadata documents.
 		 * @param {object} mHeaders
 		 *   A map of headers
 		 * @param {object} mQueryParams

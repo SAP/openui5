@@ -70,7 +70,7 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
-	 * @class Context binding implementation for the OData meta data model.
+	 * @class Context binding implementation for the OData metadata model.
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @private
@@ -107,7 +107,7 @@ sap.ui.define([
 		});
 
 	/**
-	 * @class List binding implementation for the OData meta data model which supports filtering on
+	 * @class List binding implementation for the OData metadata model which supports filtering on
 	 * the virtual property "@sapui.name" (which refers back to the name of the object in
 	 * question).
 	 *
@@ -144,7 +144,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @class Property binding implementation for the OData meta data model.
+	 * @class Property binding implementation for the OData metadata model.
 	 *
 	 * @extends sap.ui.model.PropertyBinding
 	 * @private
@@ -170,7 +170,7 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#getMetaModel getMetaModel} instead.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
-	 *   The meta data requestor
+	 *   The metadata requestor
 	 * @param {string} sUrl
 	 *   The URL to the $metadata document of the service
 	 * @param {string|string[]} [vAnnotationUri]
@@ -179,7 +179,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
-	 * @class Implementation of an OData meta data model which offers access to OData V4 meta data.
+	 * @class Implementation of an OData metadata model which offers access to OData V4 metadata.
 	 *   The meta model does not support any public events; attaching an event handler leads to an
 	 *   error.
 	 *
@@ -203,7 +203,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns the value of the object or property inside this model's meta data which can be
+	 * Returns the value of the object or property inside this model's metadata which can be
 	 * reached, starting at the given context, by following the given path. The resulting value is
 	 * suitable for a list binding, for example
 	 * <code>&lt;template:repeat list="{context>path}" ...></code>.
@@ -328,7 +328,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a list binding for this meta data model which iterates content from the given path
+	 * Creates a list binding for this metadata model which iterates content from the given path
 	 * (relative to the given context), sorted and filtered as indicated.
 	 *
 	 * By default, OData names are iterated and a trailing slash is implicitly added to the path
@@ -340,7 +340,7 @@ sap.ui.define([
 	 * names are filtered out.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES"
+	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
@@ -348,7 +348,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
 	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter filter}
 	 * @returns {sap.ui.model.ListBinding}
-	 *   A list binding for this meta data model
+	 *   A list binding for this metadata model
 	 *
 	 * @public
 	 * @see #requestObject
@@ -556,9 +556,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the single entity container for this meta data model's service by reading the
-	 * $metadata document via the meta data requestor. The resulting $metadata JSON object is a map
-	 * of qualified names to their corresponding meta data, with the special key "$EntityContainer"
+	 * Requests the single entity container for this metadata model's service by reading the
+	 * $metadata document via the metadata requestor. The resulting $metadata JSON object is a map
+	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
 	 * @returns {SyncPromise}
@@ -589,12 +589,11 @@ sap.ui.define([
 
 	/**
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES/ENTRYDATE"
+	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the requested meta data object as soon as it is
-	 *   available
+	 *   A promise which is resolved with the requested metadata object as soon as it is available
 	 *
 	 * @private
 	 * @see #requestObject
@@ -901,14 +900,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the OData meta data model context corresponding to the given OData data model path.
+	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
 	 *   An absolute data path within the OData data model, for example
 	 *   "/EMPLOYEES/0/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
-	 *   The corresponding meta data context within the OData meta data model, for example with
-	 *   meta data path "/EMPLOYEES/ENTRYDATE"
+	 *   The corresponding metadata context within the OData metadata model, for example with
+	 *   metadata path "/EMPLOYEES/ENTRYDATE"
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -932,16 +931,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the meta data object for the given path relative to the given context. Returns
-	 * <code>undefined</code> in case the meta data is not (yet) available. Use
+	 * Returns the metadata object for the given path relative to the given context. Returns
+	 * <code>undefined</code> in case the metadata is not (yet) available. Use
 	 * {@link #requestObject requestObject} for asynchronous access.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model
+	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
-	 *   The requested meta data object if it is already available, or <code>undefined</code>
+	 *   The requested metadata object if it is already available, or <code>undefined</code>
 	 *
 	 * @function
 	 * @public
@@ -969,11 +968,11 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {sap.ui.model.odata.type.ODataType}
-	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required meta
-	 *   data to calculate this type is already available; if no specific type can be determined, a
-	 *   warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
+	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required
+	 *   metadata to calculate this type is already available; if no specific type can be
+	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 * @throws {Error}
-	 *   If the UI5 type cannot be determined synchronously (due to a pending meta data request) or
+	 *   If the UI5 type cannot be determined synchronously (due to a pending metadata request) or
 	 *   cannot be determined at all (due to a wrong data path)
 	 *
 	 * @function
@@ -1011,9 +1010,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the meta data value for the given path relative to the given context. Returns a
-	 * <code>Promise</code> which is resolved with the requested meta data value or rejected with
-	 * an error (only in case meta data cannot be loaded). An invalid path leads to an
+	 * Requests the metadata value for the given path relative to the given context. Returns a
+	 * <code>Promise</code> which is resolved with the requested metadata value or rejected with
+	 * an error (only in case metadata cannot be loaded). An invalid path leads to an
 	 * <code>undefined</code> result and a warning is logged. Use {@link #getObject getObject} for
 	 * synchronous access.
 	 *
@@ -1037,11 +1036,11 @@ sap.ui.define([
 	 *
 	 * The basic idea is that every path described in "14.2.1 Attribute Target" in specification
 	 * "OData Version 4.0 Part 3: Common Schema Definition Language" is a valid absolute path
-	 * within the meta data model if a leading slash is added; for example
+	 * within the metadata model if a leading slash is added; for example
 	 * "/" + "MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyNavigationProperty". Also,
 	 * every path described in "14.5.2 Expression edm:AnnotationPath",
 	 * "14.5.11 Expression edm:NavigationPropertyPath", "14.5.12 Expression edm:Path", and
-	 * "14.5.13 Expression edm:PropertyPath" is a valid relative path within the meta data model
+	 * "14.5.13 Expression edm:PropertyPath" is a valid relative path within the metadata model
 	 * if a suitable prefix is added which addresses an entity container, entity set, singleton,
 	 * complex type, entity type, or property; for example
 	 * "/MySchema.MyEntityType/MyProperty" + "@vCard.Address#work/FullName".
@@ -1049,7 +1048,7 @@ sap.ui.define([
 	 * The absolute path is split into segments and followed step-by-step, starting at the global
 	 * scope of all known qualified OData names. There are two technical properties there:
 	 * "$Version" (typically "4.0") and "$EntityContainer" with the name of the single entity
-	 * container for this meta data model's service.
+	 * container for this metadata model's service.
 	 *
 	 * An empty segment in between is invalid. An empty segment at the end caused by a trailing
 	 * slash differentiates between a name and the object it refers to. This way,
@@ -1163,11 +1162,11 @@ sap.ui.define([
 	 * current object.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model
+	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {Promise}
-	 *   A promise which is resolved with the requested meta data value as soon as it is
+	 *   A promise which is resolved with the requested metadata value as soon as it is
 	 *   available
 	 *
 	 * @function
@@ -1216,7 +1215,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model
+	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {string}

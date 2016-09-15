@@ -577,7 +577,7 @@ sap.ui.require([
 			oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-			"GWSAMPLE_BASIC", "meta data available");
+			"GWSAMPLE_BASIC", "metadata available");
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 			"Bus. Part. ID", "SAPData is lifted");
@@ -610,7 +610,7 @@ sap.ui.require([
 			assert.deepEqual(arguments[0], undefined, "almost no args");
 
 			assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-				"GWSAMPLE_BASIC", "meta data available");
+				"GWSAMPLE_BASIC", "metadata available");
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 				"Bus. Part. ID", "SAPData is lifted");
@@ -644,7 +644,7 @@ sap.ui.require([
 
 				try {
 					assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-						"GWSAMPLE_BASIC", "meta data available");
+						"GWSAMPLE_BASIC", "metadata available");
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "sap:label"),
