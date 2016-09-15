@@ -204,7 +204,7 @@ html[dir=rtl] {
 
 .sapUiTableGroupMode .sapUiTableRowHdr::before {
 	content: '';
-	display:block;
+	display: block;
 	position: absolute;
 	top: -1px;
 	left: -1px;
@@ -212,6 +212,18 @@ html[dir=rtl] {
 	box-sizing: border-box;
 	border-top: 1px solid @sapUiListBorderColor;
 	height: 1px;
+}
+
+.sapUiTableGroupShield {
+	position: absolute;
+	top: 0px;
+	left: -1px;
+	bottom: -1px;
+	box-sizing: border-box;
+	width: 0px;
+	margin-left: -0px;
+	background-color: @sapUiListBackground;
+	pointer-events: none;
 }
 
 .sapUiTableGroupMode .sapUiTableRowHdr:focus:not(.sapUiTableGroupHeader)::before {
