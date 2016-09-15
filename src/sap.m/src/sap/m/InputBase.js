@@ -559,10 +559,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
-
 		// IE9 does not fire input event on BACKSPACE & DEL
 		var mKC = jQuery.sap.KeyCodes;
 		var mBrowser = sap.ui.Device.browser;
+
+		// mark the event as InputBase event
+		oEvent.setMark("inputBase");
 
 		if ((mBrowser.msie && mBrowser.version < 10) &&
 			(oEvent.which === mKC.DELETE || oEvent.which === mKC.BACKSPACE)) {
