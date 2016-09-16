@@ -224,8 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					return aKeys.join('_');
 				} else {
 					var e = new Error("Provided cache keys may not be empty or undefined.");
-					oView.oAsyncState.complete(e);
-					throw e;
+					return Promise.reject(e);
 				}
 			});
 		}
@@ -331,18 +330,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				});
 			}
 
+			function processResource(sResourceName, mCacheInput) {
+				return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(function(xContent) {
+					if (mCacheInput) {
+						writeCache(mCacheInput, xContent);
+					}
+					return xContent;
+				});
+			}
+
 			function processCache(sResourceName, mCacheSettings) {
 				return getCacheInput(that, mCacheSettings).then(function(mCacheInput) {
 					return readCache(mCacheInput).then(function(mCacheOutput) {
 						if (!mCacheOutput) {
-							return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(function(xContent) {
-								writeCache(mCacheInput, xContent);
-								return xContent;
-							});
+							return processResource(sResourceName, mCacheInput);
 						} else {
 							return mCacheOutput.xml;
 						}
 					});
+				}).catch(function(e) {
+					jQuery.sap.log.error(e);
+					return processResource(sResourceName);
 				});
 			}
 
