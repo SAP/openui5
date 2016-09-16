@@ -161,6 +161,38 @@
 		assert.ok(this.oObjectPage.$().find("#" + sSectionId + " *").length, "section is rendered");
 	});
 
+	module("IconTabBar initially selected section", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 3;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
+			this.oSecondSection = this.oObjectPage.getSections()[1];
+			this.oObjectPage.setInitiallySelectedSection(this.oSecondSection.getId());
+			this.iLoadingDelay = 500;
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oSecondSection = null;
+			this.iLoadingDelay = 0;
+		}
+	});
+
+	QUnit.test("test user defined section is initially selected", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		var oExpected = {
+			oSelectedSection: this.oSecondSection,
+			sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
+		};
+
+		//check
+		setTimeout(function () {
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		}, this.iLoadingDelay);
+	});
 
 	module("IconTabBar section selection", {
 		beforeEach: function () {
