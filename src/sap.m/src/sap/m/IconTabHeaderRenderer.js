@@ -49,6 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div role='tablist' ");
 		oRM.addClass("sapMITH");
 		oRM.addClass("sapContrastPlus");
+		oRM.addClass("sapMITHBackgroundDesign" + oControl.getBackgroundDesign());
 
 		if (bShowOverflowSelectList) {
 			oRM.addClass("sapMITHOverflowList");
