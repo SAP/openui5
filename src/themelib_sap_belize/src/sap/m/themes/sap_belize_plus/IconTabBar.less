@@ -4,14 +4,18 @@
 /* ================================= */
 
 .sapContrastPlus .sapMITH,
-.sapContrastPlus.sapMITH,
-.sapMITH {
+.sapContrastPlus.sapMITH {
     box-shadow: inset 0 -0.25rem 0 -0.125rem lighten(@sapUiObjectHeaderBackground, 8);
     border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
 }
 
 .sapMITBSelected .sapMITBFilterDefault {
     background: @sapUiHighlight;
+}
+
+.sapContrastPlus .sapMITBContent,
+.sapContrastPlus.sapMITBContent {
+    border-bottom: 0.125rem solid lighten(@sapUiObjectHeaderBackground, 8);
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault:hover > .sapMITBText {
