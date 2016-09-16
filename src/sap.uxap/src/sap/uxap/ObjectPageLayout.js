@@ -16,8 +16,9 @@ sap.ui.define([
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"sap/ui/core/ScrollBar",
+	"sap/ui/core/TitleLevel",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ScrollBar, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ScrollBar, TitleLevel, library) {
 	"use strict";
 
 	/**
@@ -76,6 +77,31 @@ sap.ui.define([
 					type: "sap.uxap.ObjectPageSubSectionLayout",
 					defaultValue: ObjectPageSubSectionLayout.TitleOnTop
 				},
+
+				/**
+				 * Determines the ARIA level of the <code>ObjectPageSection</code> and <code>ObjectPageSubSection</code> titles.
+				 * The ARIA level is used by assisting technologies, such as screen readers, to create a hierarchical site map for faster navigation.
+				 *
+				 * <br><b>Note:</b>
+				 * <ul>
+				 * <li>Defining a <code>sectionTitleLevel</code> will add <code>aria-level</code> attribute from 1 to 6
+				 * instead of changing the titles` HTML tag from H1 to H6.
+				 * <br>For example: if <code>sectionTitleLevel</code> is <code>TitleLevel.H1</code>,
+				 * it will result as aria-level of 1 added to the <code>ObjectPageSection</code> title.
+				 * </li>
+				 *
+				 * <li> The <code>ObjectPageSubSection</code> title
+				 * would have <code>aria-level</code> one level lower than the defined.
+				 * For example: if <code>sectionTitleLevel</code> is <code>TitleLevel.H1</code>,
+				 * it will result as aria-level of 2 added to the <code>ObjectPageSubSection</code> title.</li>
+				 *
+				 * <li> It is possible to define a <code>titleLevel</code> on <code>ObjectPageSection</code> or <code>ObjectPageSubSection</code> level.
+				 * In this case the value of this property will be ignored.
+				 * </li>
+				 * </ul>
+				 * @since 1.44.0
+				 */
+				sectionTitleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
 
 				/**
 				 * Use tab navigation mode instead of the default Anchor bar mode.
@@ -228,6 +254,30 @@ sap.ui.define([
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;			// ms.
 	ObjectPageLayout.DOM_CALC_DELAY = 200;				// ms.
 	ObjectPageLayout.FOOTER_ANIMATION_DURATION = 350;	// ms.
+	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
+
+	/**
+	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
+	 * <br><b>Note:</b>
+	 * <ul>
+	 * <li> If the provided starting entry is not found, the <code>sap.ui.core.TitleLevel.Auto</code> is returned.</li>
+	 * <li> If the provided starting entry is the last entry, the last entry is returned.</li>
+	 * </ul>
+	 * @param {String} sTitleLevel the <code>sap.ui.core.TitleLevel</code> entry to start from
+	 * @returns {String} <code>sap.ui.core.TitleLevel</code> entry
+	 * @since 1.44
+	 */
+	ObjectPageLayout._getNextTitleLevelEntry = function(sTitleLevel) {
+		var iCurrentTitleLevelIndex = ObjectPageLayout.TITLE_LEVEL_AS_ARRAY.indexOf(sTitleLevel),
+			bTitleLevelFound = iCurrentTitleLevelIndex !== -1,
+			bHasNextTitleLevel = bTitleLevelFound && (iCurrentTitleLevelIndex !== ObjectPageLayout.TITLE_LEVEL_AS_ARRAY.length - 1);
+
+		if (!bTitleLevelFound) {
+			return TitleLevel.Auto;
+		}
+
+		return ObjectPageLayout.TITLE_LEVEL_AS_ARRAY[bHasNextTitleLevel ? iCurrentTitleLevelIndex + 1 : iCurrentTitleLevelIndex];
+	};
 
 	/*************************************************************************************
 	 * life cycle management
@@ -664,6 +714,10 @@ sap.ui.define([
 					if (!oFirstVisibleSubSection) {
 						oFirstVisibleSubSection = oSubSection;
 					}
+
+					if (this._shouldApplySectionTitleLevel(oSubSection)) {
+						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection));
+					}
 				}
 
 			}, this);
@@ -687,6 +741,10 @@ sap.ui.define([
 					oFirstVisibleSubSection._setInternalTitleVisible(false, bInvalidate);
 				} else {
 					oSection._setInternalTitle("", bInvalidate);
+				}
+
+				if (this._shouldApplySectionTitleLevel(oSection)) {
+					oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection));
 				}
 
 				iVisibleSection++;
@@ -1357,6 +1415,40 @@ sap.ui.define([
 			iPosition += this.iAnchorBarHeight;
 		}
 		return iPosition;
+	};
+
+	/**
+	 * Determines thе <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * For <code>ObjectPageSection</code>, the internal <code>titleLevel</code> is the current <code>sectionTitleLevel</code>.
+	 * For <code>ObjectPageSubSection</code>, the internal <code>titleLevel</code> is one level lower than the current <code>sectionTitleLevel</code>.
+	 * If the <code>sectionTitleLevel</code> has value of <code>sap.ui.core.TitleLevel.Auto</code>,
+	 * <code>sap.ui.core.TitleLevel.H3</code> is returned for <code>ObjectPageSection</code> and
+	 * <code>sap.ui.core.TitleLevel.H4</code> for <code>ObjectPageSubSection</code>.
+	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {String} <code>sap.ui.core.TitleLevel</code>
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase) {
+		var sSectionBaseTitleLevel = this.getSectionTitleLevel(),
+			bIsSection = oSectionBase instanceof ObjectPageSection;
+
+		if (sSectionBaseTitleLevel === TitleLevel.Auto) {
+			return bIsSection ? TitleLevel.H3 : TitleLevel.H4;
+		}
+
+		return bIsSection ? sSectionBaseTitleLevel : ObjectPageLayout._getNextTitleLevelEntry(sSectionBaseTitleLevel);
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageLayout</code> should set <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {Boolean}
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageLayout.prototype._shouldApplySectionTitleLevel = function(oSectionBase) {
+		return oSectionBase.getTitleLevel() === TitleLevel.Auto;
 	};
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {

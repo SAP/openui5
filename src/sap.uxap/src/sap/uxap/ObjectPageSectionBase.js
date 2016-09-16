@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], function (jQuery, Control, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLevel", "./library"], function (jQuery, Control, TitleLevel, library) {
 	"use strict";
 
 	/**
@@ -35,6 +35,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 				title: {type: "string", group: "Appearance", defaultValue: null},
 
 				/**
+				 * Determines the ARIA level of the <code>ObjectPageSectionBase</code> title.
+				 * The ARIA level is used by assisting technologies, such as screen readers, to create a hierarchical site map for faster navigation.
+				 *
+				 * <br><b>Note:</b> Defining a <code>titleLevel</code> will add <code>aria-level</code> attribute from 1 to 6,
+				 * instead of changing the <code>ObjectPageSectionBase</code> title HTML tag from H1 to H6.
+				 * <br>For example: if <code>titleLevel</code> is <code>TitleLevel.H1</code>,
+				 * it will result as aria-level of 1 added to the <code>ObjectPageSectionBase</code> title.
+				 * @since 1.44.0
+				 */
+				titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+
+				/**
 				 * Invisible ObjectPageSectionBase are not rendered
 				 */
 				visible: {type: "boolean", group: "Appearance", defaultValue: true},
@@ -62,7 +74,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 		}
 	});
 
-
 	/**
 	 * Explicitly ask to connect to the UI5 model tree
 	 *
@@ -79,7 +90,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 		this._bInternalVisible = true;
 		this._bInternalTitleVisible = true;
 		this._sInternalTitle = "";
-
+		this._sInternalTitleLevel = TitleLevel.Auto;
 		//hidden status
 		this._isHidden = false;
 
@@ -164,12 +175,60 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 	};
 
 	/**
+	 * Returns the <code>aria-level</code>, matching to the <code>ObjectPageSectionBase</code> <code>titleLevel</code> or internal <code>titleLevel</code>.
+	 * If the <code>titleLevel</code> is <code>TitleLevel.H1</code>, the result would be "1".
+	 * If the <code>titleLevel</code> is <code>TitleLevel.Auto</code>,
+	 * the result would be "3" for <code>ObjectPageSection</code> and "4" for <code>ObjectPageSubSection</code>.
+	 * The method is used by <code>ObjectPageSectionRenderer</code> and <code>ObjectPageSubSectionRenderer</code>.
+	 * @returns {String} the <code>aria-level</code>
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getARIALevel = function () {
+		return this._getTitleLevel().slice(-1);
+	};
+
+	/**
+	 * Returns the <code>ObjectPageSectionBase</code> <code>titleLevel</code>
+	 * if explicitly defined and different from <code>sap.ui.core.TitleLevel.Auto</code>.
+	 * Otherwise, the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code> is returned.
+	 * @returns {String}
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getTitleLevel = function () {
+		var sTitleLevel = this.getTitleLevel();
+		return (sTitleLevel === TitleLevel.Auto) ? this._getInternalTitleLevel() : sTitleLevel;
+	};
+
+	/**
+	 * Sets the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * The method is used by the <code>ObjectPageLayout</code> to apply the <code>sectionTitleLevel</code> property.
+	 * @param {String} sTitleLevel
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel) {
+		this._sInternalTitleLevel = sTitleLevel;
+	};
+
+	/**
+	 * Returns the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * The internal <code>titleLevel</code> is set by the <code>ObjectPageLayout</code>.
+	 * @returns {String}
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getInternalTitleLevel = function () {
+		return this._sInternalTitleLevel;
+	};
+
+	/**
 	 * getter for the parent object page layout
 	 * @returns {*}
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._getObjectPageLayout = function () {
-
 		if (!this._oParentObjectPageLayout) {
 			this._oParentObjectPageLayout = library.Utilities.getClosestOPL(this);
 		}
