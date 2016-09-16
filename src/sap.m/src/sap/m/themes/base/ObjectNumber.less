@@ -1,7 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ObjectNumber.control */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/ObjectNumber  */
+/* Base theme                          */
+/* =================================== */
 
 .sapMObjectNumber {
 	display: block;
@@ -20,6 +20,7 @@
 	text-overflow: ellipsis;
 	max-width: 100%;
 	vertical-align: middle;
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMObjectNumberEmph > .sapMObjectNumberText {
@@ -34,6 +35,7 @@
 	max-width: 100%;
 	vertical-align: middle;
 	padding-top: 0.125rem;
+	font-size: @sapMFontSmallSize;
 }
 
 // Android fix
@@ -62,4 +64,24 @@ html[data-sap-ui-os^="Android"] {
 
 .sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjectNumber .sapMObjectNumberUnit {
 	line-height: 1.875rem;
+}
+
+.sapMLIBActive .sapMObjectNumber {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMObjectNumberStatusNone {
+	color: @sapUiNeutralText;
+}
+
+.sapMObjectNumberStatusError {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjectNumberStatusWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjectNumberStatusSuccess {
+	color: @sapUiPositiveText;
 }

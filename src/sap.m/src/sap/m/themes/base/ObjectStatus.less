@@ -1,15 +1,38 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ObjectStatus.control */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/ObjectStatus  */
+/* Base theme                          */
+/* =================================== */
 
 .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
 }
 
-.sapMObjStatusText {
+.sapMObjStatus {
+	color: @sapUiNeutralText;
 }
 
-.sapMObjStatusIcon {
+.sapMObjStatus > .sapMObjStatusTitle {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMObjStatusNone > .sapMObjStatusText
+.sapMObjStatusNone > .sapMObjStatusIcon {
+	color: @sapUiNeutralText;
+}
+
+.sapMObjStatusError > .sapMObjStatusText,
+.sapMObjStatusError > .sapMObjStatusIcon {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjStatusWarning > .sapMObjStatusText,
+.sapMObjStatusWarning > .sapMObjStatusIcon {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjStatusSuccess > .sapMObjStatusText,
+.sapMObjStatusSuccess > .sapMObjStatusIcon {
+	color: @sapUiPositiveText;
 }
 
 .sapMObjStatusIcon > .sapUiIcon {
@@ -25,6 +48,10 @@ html.sap-phone .sapMObjStatusIcon {
 
 .sapMObjStatus > .sapMObjStatusTitle {
 	padding-right: .25rem;
+}
+
+.sapUiTableCell .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
 }
 
 .sapUiTableCell .sapMObjStatusText,
@@ -63,4 +90,24 @@ html.sap-phone .sapMObjStatusIcon {
 .sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusTitle,
 .sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusText {
 	line-height: 2rem;
+}
+
+/* ============================================= */
+/* FIX: CSS 0120061532 0001316230 2014 */
+/* ============================================= */
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusIcon {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Condensed size */
+.sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText {
+	.sapUiCondensedTableCellContent; /* see shared.css */
+	font-size: @sapMFontMediumSize;
 }

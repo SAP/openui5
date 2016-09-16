@@ -3,58 +3,7 @@
 /* Belize theme                        */
 /* =================================== */
 
-.sapMObjStatus {
-	font-size: @sapMFontMediumSize;
-}
-
-.sapMObjStatus {
-	color: @sapUiNeutralText;
-}
-
-.sapMObjStatus > .sapMObjStatusTitle {
-	color: @sapUiContentLabelColor;
-}
-
-.sapMObjStatusNone > .sapMObjStatusText
-.sapMObjStatusNone > .sapMObjStatusIcon {
-	color: @sapUiNeutralText;
-}
-
-.sapMObjStatusError > .sapMObjStatusText,
-.sapMObjStatusError > .sapMObjStatusIcon {
-	color: @sapUiNegativeText;
-}
-
-.sapMObjStatusWarning > .sapMObjStatusText,
-.sapMObjStatusWarning > .sapMObjStatusIcon {
-	color: @sapUiCriticalText;
-}
-
-.sapMObjStatusSuccess > .sapMObjStatusText,
-.sapMObjStatusSuccess > .sapMObjStatusIcon {
-	color: @sapUiPositiveText;
-}
-
-.sapUiTableCell .sapMObjStatus {
-	font-size: @sapMFontMediumSize;
-}
-
-/* ============================================= */
-/* FIX: CSS 0120061532 0001316230 2014 */
-/* ============================================= */
-.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusError > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusError > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusIcon {
-	color: @sapUiContentContrastIconColor;
-}
-
-/* Condensed size */
-.sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText{
-	.sapUiCondensedTableCellContent; /* see shared.css */
-	font-size: @sapMFontMediumSize;
+.sapContrast .sapMObjStatus .sapMObjStatusText,
+.sapContrast.sapMObjStatus .sapMObjStatusIcon {
+	text-shadow: @sapUiShadowText;
 }
