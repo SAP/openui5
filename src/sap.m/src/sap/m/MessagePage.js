@@ -19,7 +19,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *		- The app contains no items
 		 *		- There are too many items
 		 *		- The application is loading
-		 *	The layout is unchanged but the text varies depending on the use case.
+		 * The layout is unchanged but the text varies depending on the use case.
+		 * <br><b>Note:</b> The <code>MessagePage</code> is not intended to be used as a top-level control,
+		 * but rather used within controls such as <code>NavContainer</code>, <code>App</code>, <code>Shell</code> or other container controls.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
 		 *
