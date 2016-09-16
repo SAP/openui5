@@ -332,9 +332,9 @@ sap.ui.require([
 		oPropertyBinding.attachChange(function () {});
 		oRelativeContextBinding.attachChange(function () {});
 		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
-		//check: only bindings with change event handler are refreshed
+		// check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
-		//check: no refresh on binding with relative path
+		// check: no refresh on binding with relative path
 		this.mock(oPropertyBinding).expects("refresh").never();
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
@@ -647,6 +647,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError on canceled error", function (assert) {
+		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"};
+
+		this.oLogMock.expects("debug")
+			.withExactArgs("Failure", "Canceled\n    at foo.bar", "class");
+		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+
+		// code under test
+		createModel().reportError("Failure", "class", oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
@@ -654,7 +666,7 @@ sap.ui.require([
 		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
 		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
 
-		//code under test
+		// code under test
 		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
 	});
 
@@ -665,7 +677,7 @@ sap.ui.require([
 
 		this.mock(oModel.oRequestor).expects("hasPendingChanges").withExactArgs().returns(oResult);
 
-		//code under test
+		// code under test
 		assert.strictEqual(oModel.hasPendingChanges(), oResult);
 	});
 
@@ -765,20 +777,20 @@ sap.ui.require([
 	});
 	// TODO allow v4.Context and return v4.Context
 });
-// TODO constructor: test that the service root URL is absolute?
-// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
-// TODO read etc.: provide access to "abort" functionality
+//TODO constructor: test that the service root URL is absolute?
+//TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
+//TODO read etc.: provide access to "abort" functionality
 
 // oResponse.headers look like this:
-//Content-Type:application/json; odata.metadata=minimal;charset=utf-8
-//etag:W/"20150915102433.7994750"
-//location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
+// Content-Type:application/json; odata.metadata=minimal;charset=utf-8
+// etag:W/"20150915102433.7994750"
+// location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
 //TODO can we make use of "location" header? relation to canonical URL?
 // oData looks like this:
-//{
-//	"@odata.context" : "$metadata#EMPLOYEES",
-//	"@odata.etag" : "W/\"20150915102433.7994750\"",
-//}
+// {
+//   "@odata.context" : "$metadata#EMPLOYEES",
+//   "@odata.etag" : "W/\"20150915102433.7994750\"",
+// }
 //TODO can we make use of @odata.context in response data?
 //TODO etag handling
 //TODO use 'sap/ui/thirdparty/URI' for URL handling?

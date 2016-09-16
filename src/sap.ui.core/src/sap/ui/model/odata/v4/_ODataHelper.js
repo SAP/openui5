@@ -312,9 +312,6 @@ sap.ui.define([
 
 					return this.promise.then(function (oCache) {
 						return oCache.read.apply(oCache, aReadArguments);
-					}, function (oError) {
-						throw new Error("Cannot read from cache, cache creation failed: "
-							+ oError);
 					});
 				},
 				refresh : function () {},
@@ -377,6 +374,8 @@ sap.ui.define([
 			oCacheProxy.promise.then(function (oCache) {
 				oBinding.oCache = oCache;
 			})["catch"](function (oError) {
+				//Note: this may also happen if the promise to read data for the canonical path's
+				// key predicate is rejected with a canceled error
 				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});
@@ -433,6 +432,8 @@ sap.ui.define([
 			oCacheProxy.promise.then(function (oCache) {
 				oBinding.oCache = oCache;
 			})["catch"](function (oError) {
+				//Note: this may also happen if the promise to read data for the canonical path's
+				// key predicate is rejected with a canceled error
 				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});

@@ -1380,9 +1380,12 @@ sap.ui.require([
 			oListBindingMock = this.mock(oListBinding),
 			oReadPromise = Promise.reject(oError);
 
+		this.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			sClassName, sinon.match({canceled : true}));
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange").never();
-		oListBindingMock.expects("fireDataReceived").withExactArgs();
+		oListBindingMock.expects("fireDataReceived").withExactArgs(undefined);
 		oError.canceled = true;
 		oCacheMock.expects("read").withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
 			.callsArg(4).returns(oReadPromise);

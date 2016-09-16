@@ -175,7 +175,8 @@ sap.ui.define([
 	/**
 	 * Updates the binding's value and sends a change event if necessary. A change event is sent
 	 * if the <code>bForceUpdate</code> parameter is set to <code>true</code> or if the value
-	 * has changed. If a relative binding has no context the <code>bForceUpdate</code> parameter
+	 * has changed unless the request to read the new value has been cancelled by a later request.
+	 * If a relative binding has no context the <code>bForceUpdate</code> parameter
 	 * is ignored and the change event is only fired if the old value was not
 	 * <code>undefined</code>.
 	 * If the binding has no type, the property's type is requested from the meta model and set.
@@ -250,23 +251,25 @@ sap.ui.define([
 		})["catch"](function (oError) {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
+			that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName, oError);
 			if (!oError.canceled) {
-				if (bDataRequested) {
-					that.oModel.reportError("Failed to read path " + sResolvedPath,
-						sClassName, oError);
-				}
 				// fire change event only if error was not caused by refresh
 				// and value was not undefined
 				bFire = that.vValue !== undefined;
 				mParametersForDataReceived = {error : oError};
+				that.vValue = undefined;
 			}
-			that.vValue = undefined;
+			return oError.canceled;
 		}));
 
-		return Promise.all(aPromises).then(function () {
-			that.bInitial = false;
-			if (bForceUpdate || bFire) {
-				that._fireChange(oChangeReason);
+		return Promise.all(aPromises).then(function (aResults) {
+			var bCanceled = aResults[aPromises.length - 1];
+
+			if (!bCanceled) {
+				that.bInitial = false;
+				if (bForceUpdate || bFire) {
+					that._fireChange(oChangeReason);
+				}
 			}
 			if (bDataRequested) {
 				that.fireDataReceived(mParametersForDataReceived);
@@ -523,11 +526,9 @@ sap.ui.define([
 				if (this.oContext) {
 					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						["catch"](function (oError) {
-							if (!oError.canceled) {
-								that.oModel.reportError("Failed to update path "
-										+ that.oModel.resolve(that.sPath, that.oContext),
-									sClassName, oError);
-							}
+							that.oModel.reportError("Failed to update path "
+									+ that.oModel.resolve(that.sPath, that.oContext),
+								sClassName, oError);
 						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",

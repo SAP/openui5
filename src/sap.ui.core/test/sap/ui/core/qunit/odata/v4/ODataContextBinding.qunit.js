@@ -416,9 +416,11 @@ sap.ui.require([
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext,
 			{$$groupId : "foo"}); // to prevent that the context is asked for the group ID
 
+		this.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_fireChange");
-		oBindingMock.expects("fireDataReceived").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs(undefined);
 
 		// trigger read before refresh
 		oPromise = oBinding.fetchValue("ID").then(function () {

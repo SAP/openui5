@@ -83,6 +83,9 @@ sap.ui.require([
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		Then.onTheMainPage.checkID(0);
 
+		When.onTheMainPage.doubleRefresh();
+		Then.onTheMainPage.checkID(0);
+
 		// Create a sales order, refresh/filter w/o saving -> expected "pending changes" message
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();

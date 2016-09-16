@@ -691,6 +691,8 @@ sap.ui.define([
 	/**
 	 * Reports a technical error by adding a message to the MessageManager and logging the error to
 	 * the console. Takes care that the error is only added once to the MessageManager.
+	 * Errors caused by cancellation of backend requests are not reported but just logged to the
+	 * console with level DEBUG.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -707,6 +709,12 @@ sap.ui.define([
 		if (sDetails.indexOf(oError.message) < 0) {
 			sDetails = oError.message + "\n" + oError.stack;
 		}
+
+		if (oError.canceled) {
+			jQuery.sap.log.debug(sLogMessage, sDetails, sReportingClassName);
+			return;
+		}
+
 		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
 		if (oError.$reported) {
 			return;

@@ -687,16 +687,12 @@ sap.ui.define([
 			}, function (oError) {
 				// cache shares promises for concurrent read
 				if (bDataRequested) {
-					if (oError.canceled) {
-						that.fireDataReceived();
-					} else {
-						that.oModel.reportError("Failed to get contexts for "
-								+ that.oModel.sServiceUrl
-								+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
-								+ " with start index " + iStart + " and length " + iLength,
-							sClassName, oError);
-						that.fireDataReceived({error : oError});
-					}
+					that.oModel.reportError("Failed to get contexts for "
+							+ that.oModel.sServiceUrl
+							+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
+							+ " with start index " + iStart + " and length " + iLength,
+						sClassName, oError);
+					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				}
 			})["catch"](function (oError) {
 				jQuery.sap.log.error(oError.message, oError.stack, sClassName);

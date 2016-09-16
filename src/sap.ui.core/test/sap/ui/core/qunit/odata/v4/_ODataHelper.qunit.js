@@ -498,8 +498,7 @@ sap.ui.require([
 
 		// code under test
 		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0.message,
-				"Cannot read from cache, cache creation failed: " + oError);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 
@@ -523,8 +522,7 @@ sap.ui.require([
 
 		// code under test
 		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0.message,
-				"Cannot read from cache, cache creation failed: " + oError);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 

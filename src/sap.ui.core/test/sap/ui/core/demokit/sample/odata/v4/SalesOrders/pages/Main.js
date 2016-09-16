@@ -132,6 +132,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				doubleRefresh : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							oSalesOrderTable.getBinding("items").refresh();
+							oSalesOrderTable.getBinding("items").refresh();
+						},
+						viewName : sViewName
+					});
+				},
 				filterGrossAmount : function (sFilterValue) {
 					return this.waitFor({
 						actions: new EnterText({clearTextFirst : true, text : sFilterValue}),

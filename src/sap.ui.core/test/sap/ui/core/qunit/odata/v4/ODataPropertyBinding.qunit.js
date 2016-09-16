@@ -269,6 +269,10 @@ sap.ui.require([
 	QUnit.test("checkUpdate(): read error", function (assert) {
 		var oError = new Error("Expected failure");
 
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /EntitySet('foo')/property", sClassName,
+			sinon.match.same(oError));
+
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var bChangeReceived = false;
 
@@ -293,6 +297,10 @@ sap.ui.require([
 	QUnit.test("checkUpdate(): read error with force update", function (assert) {
 		var oError = new Error("Expected failure");
 
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /EntitySet('foo')/property", sClassName,
+			sinon.match.same(oError));
+
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var done = assert.async();
 
@@ -302,6 +310,26 @@ sap.ui.require([
 
 			// code under test
 			oBinding.checkUpdate(true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate(): cancelled read", function (assert) {
+		var oError = {canceled : true},
+			that = this;
+
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /EntitySet('foo')/property", sClassName,
+			sinon.match.same(oError));
+
+		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
+			oBinding.bInitial = "foo";
+			that.mock(oBinding).expects("_fireChange").never();
+
+			// code under test
+			return oBinding.checkUpdate(true).then(function () {
+				assert.strictEqual(oBinding.bInitial, "foo", "bInitial unchanged");
+			});
 		});
 	});
 
@@ -1149,28 +1177,6 @@ sap.ui.require([
 		oPropertyBinding.setValue("foo");
 
 		return oPromise.catch(function () {}); // wait, but do not fail
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setValue (relative binding): canceled", function (assert) {
-		var oContext = {
-				getPath : function () { return "/ProductList('HT-1000')"; },
-				updateValue : function () {}
-			},
-			oError = new Error(),
-			oPromise = Promise.reject(oError),
-			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
-
-		oError.canceled = true;
-
-		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
-			.returns(oPromise);
-		this.oSandbox.mock(this.oModel).expects("reportError").never();
-
-		// code under test
-		oPropertyBinding.setValue("foo");
-
-		return oPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************

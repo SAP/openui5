@@ -560,14 +560,9 @@ sap.ui.define([
 				return vValue;
 			}, function (oError) {
 				if (bDataRequested) {
-					if (oError.canceled) {
-						that.fireDataReceived();
-					} else {
-						// log error only once when data request failed
-						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
-							oError);
-						that.fireDataReceived({error : oError});
-					}
+					that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+						oError);
+					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				}
 				throw oError;
 			});
