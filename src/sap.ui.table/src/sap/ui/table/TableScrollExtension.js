@@ -66,6 +66,15 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils'],
 		},
 
 		/*
+		 * Enables debugging for the extension
+		 */
+		_debug : function() {
+			this._ExtensionDelegate = ExtensionDelegate;
+			// this._ExtensionHelper = ExtensionHelper;
+			// ...
+		},
+
+		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {
