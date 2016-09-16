@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
 
-		if (this.getMode() === library.GenericTileMode.LineMode) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().unbind("mouseenter", LineModeRenderer._updateHoverStyle);
 			this.$().unbind("mouseleave", LineModeRenderer._removeHoverStyle);
 		}
@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
-		if (this.getMode() === library.GenericTileMode.LineMode) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled) {
 			this.getParent().addStyleClass("sapMGTLineModeContainer");
 
 			this.$().bind("mouseenter", LineModeRenderer._updateHoverStyle.bind(this));
@@ -200,6 +200,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
 		}
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.addStyleClass("sapMGTLineModePress");
+		}
 		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
 		}
@@ -220,6 +223,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.ontouchend = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
+		}
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.removeStyleClass("sapMGTLineModePress");
 		}
 		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
