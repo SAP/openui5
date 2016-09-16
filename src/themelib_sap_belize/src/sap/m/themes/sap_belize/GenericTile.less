@@ -4,27 +4,59 @@
 /* ================================== */
 
 .sapMGT.sapMGTLineMode {
-	.sapMGTStyleRect {
-		fill: transparent;
+	.sapMGTLineStyleHelper {
+		position: absolute;
+		box-sizing: border-box;
+
+		.sapMGTLineStyleHelperInner {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
+		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+			margin-right: 0.125rem;
+		}
+
+		&:not(:first-child) .sapMGTLineStyleHelperInner {
+			margin: 0 0.125rem;
+		}
+
+		&:first-child .sapMGTLineStyleHelperInner {
+			border-top-left-radius: 0.2rem;
+			border-bottom-left-radius: 0.2rem;
+		}
+
+		&:last-child .sapMGTLineStyleHelperInner {
+			border-top-right-radius: 0.2rem;
+			border-bottom-right-radius: 0.2rem;
+		}
 	}
 
-	.sapMGTStyleRectHover {
-		fill: fade(@sapUiShellHoverBackground, 10);
+	&:focus .sapMGTLineStyleHelperInner:before {
+		content: "";
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		box-sizing: border-box;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 
-	&.sapMGTLineModePress .sapMGTStyleRect {
-		fill: fade(@sapUiShellHoverBackground, 12);
+	.sapMGTLineStyleHelperInner {
+		transition: background 0.2s;
 	}
 
-	//&:focus {
-	//	.sapMGTStyleRect {
-	//		opacity: 1.0;
-	//		stroke: @sapUiShellHoverBackground;
-	//		stroke-dasharray: 1px 2px;
-	//		stroke-linejoin: round;
-	//		stroke-width: 1px;
-	//	}
-	//}
+	&:hover .sapMGTLineStyleHelperInner {
+		background: fade(@sapUiShellHoverBackground, 10);
+	}
+
+	&.sapMGTLineModePress .sapMGTLineStyleHelperInner {
+		background: fade(@sapUiShellHoverBackground, 12);
+	}
 }
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
