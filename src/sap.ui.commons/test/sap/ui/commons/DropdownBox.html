@@ -348,6 +348,23 @@
 
 			oLyt.createRow(oLabel, oDdB, oTextView);
 
+			oLabel = new sap.ui.commons.Label({text: "Dropdown with histroy of 5 elements", labelFor: "ddb-history"});
+			var ddbHistory = new sap.ui.commons.DropdownBox("ddb-history"),
+				oTextView = new sap.ui.commons.TextView("TV12"),
+				allScen = ['A','B','C','D','E','F0','F1','F3','G','H','I','J','K','L','M','N'],
+				aLBItems = [];
+
+			for (var i = 0; i < allScen.length; i++) {
+				var item = new sap.ui.core.ListItem();
+				item.setText(allScen[i]);
+				item.setKey(allScen[i]);
+				ddbHistory.addItem(item);
+			}
+			ddbHistory.setMaxHistoryItems(5);
+			ddbHistory.attachChange(function() {oTextView.setText("Event: Change, selected item [" + ddbHistory.getSelectedKey() + "]");});
+
+			oLyt.createRow(oLabel, ddbHistory, oTextView);
+
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
