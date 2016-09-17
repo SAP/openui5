@@ -1305,6 +1305,25 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	};
 
+	/**
+	 * Focuses the dropdown upon inner ListBox#click.
+	 * As there might be raise condition between the dropdown.focus and listbox.click events for some browsers.
+	 * this method makes sure the events are in the right order (listbox#click->dropdown#focus)
+	 * @private
+	 */
+	DropdownBox.prototype._focusAfterListBoxClick = function() {
+		if (!sap.ui.Device.browser.webkit) {
+			this.focus();
+		} else {
+			var oLB = this._getListBox();
+			oLB.addDelegate({
+				onclick: function() {//this will be executed after the ListBox#onclick handler
+					oLB.removeDelegate(this);
+					this.focus();
+				}.bind(this)});
+		}
+	};
+
 	/*
 	 * Handle the sapfocusleave pseudo event and ensure that when the focus moves to the list box,
 	 * the check change functionality (incl. fireChange) is not triggered.
@@ -1316,7 +1335,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 		var oLB = this._getListBox();
 		if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-			this.focus();
+			this._focusAfterListBoxClick();
 		} else {
 			// we left the DropdownBox to another (unrelated) control and thus have to fire the change (if needed).
 			if (this.oPopup && this.oPopup.isOpen()) {
