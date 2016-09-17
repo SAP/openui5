@@ -260,7 +260,8 @@
 		  "category": "List",
 		  "since": "1.34",
 		  "samples": [
-			"sap.m.sample.NotificationListGroup"
+		  	"sap.m.sample.NotificationListGroup",
+		  	"sap.m.sample.NotificationListGroupBindings"
 		  ]
 		},
 		{
@@ -2225,6 +2226,11 @@
 		  "name": "Notification List Group",
 		  "description": "A control suitable for grouping notifications."
 		},
+	    {
+		  "id": "sap.m.sample.NotificationListGroupBindings",
+		  "name": "Notification List Group with data bindings",
+		  "description": "A control suitable for grouping notifications. The sample uses JSON data bindings."
+	    },
 		{
 		  "id": "sap.m.sample.Dialog",
 		  "name": "Dialog",

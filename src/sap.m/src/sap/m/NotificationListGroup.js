@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				 */
 				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false}
 			},
+			defaultAggregation : "items",
 			aggregations: {
 
 				/**
