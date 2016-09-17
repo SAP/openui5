@@ -43,7 +43,7 @@
 			         new sap.m.Token({text: "Token 11", key: "0011"}),
 			         new sap.m.Token({text: "Token 12", key: "0012"})
 			         ],
-			         tokenChange: fEventWriter,
+			         tokenChange: fEventWriter
 		});
 		//*******************************
 		var oTokenizer2 = new sap.m.Tokenizer("notEditableTokenizer",{
@@ -62,7 +62,7 @@
 			         new sap.m.Token({text: "Token 12", key: "0012"})
 			         ],
 			         editable: false,
-			         tokenChange: fEventWriter,
+			         tokenChange: fEventWriter
 		});
 		//*******************************
 		oTokenizer3 = new sap.m.Tokenizer("editableAndNotEditable",{
@@ -113,7 +113,7 @@
 		padding: 1rem;
 	}
 	.sapMILI-CTX .sapMInputValHelp {
-		margin-right: 0rem;
+		margin-right: 0;
 	}
 	</style>
 
