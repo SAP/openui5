@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * <code>TabStripItem</code> states translations
 		 *
 		 * @enum
-		 * @type {{closable: sap.ui.core.InvisibleControl, modified: sap.ui.core.InvisibleControl, notModified: sap.ui.core.InvisibleControl}}
+		 * @type {{closable: sap.ui.core.InvisibleText, modified: sap.ui.core.InvisibleText, notModified: sap.ui.core.InvisibleText}}
 		 */
 		TabStrip.ARIA_STATIC_TEXTS = {
 			/**
@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Adds an entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation where the new entity is to be added
-		 * @param oObject {mixed} The value of the aggregation to be added
+		 * @param oObject {any} The value of the aggregation to be added
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
@@ -668,7 +668,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Inserts an entity to the aggregation named <code>sAggregationName</code> at position <code>iIndex</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {mixed} The value of the aggregation to be inserted
+		 * @param oObject {any} The value of the aggregation to be inserted
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
@@ -684,7 +684,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Removes an entity from the aggregation named <code>sAggregationName</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {mixed} The value of aggregation to be removed
+		 * @param oObject {any} The value of aggregation to be removed
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
@@ -758,7 +758,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Overrides the default method to make sure a <code>TabStripSelect</code> instance is created when needed.
 		 *
 		 * @param sPropertyName {string} The property name to be set
-		 * @param vValue {mixed} The property value to be set
+		 * @param vValue {any} The property value to be set
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
@@ -1089,7 +1089,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/**
 		 * Changes the visibility of the item "state" symbol.
-		 * @param {mixed} vItemId
+		 * @param {any} vItemId
 		 * @param {boolean} bShowState
 		 */
 		TabStrip.prototype.changeItemState = function(vItemId, bShowState) {

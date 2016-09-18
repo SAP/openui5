@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Adds one or several sources to the annotation loader. Sources will be loaded instantly but merged only after
-	 * the previousl added source has either been successfully merged or failed.
+	 * the previously added source has either been successfully merged or failed.
 	 *
 	 * @param {string|string[]|ODataAnnotations~Source|ODataAnnotations~Source[]} vSource One or several
 	 *        annotation source(s). Can be either a string or a map of the type <code>ODataAnnotations~Source</code> or an array
@@ -196,6 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *          with an array of maps containing properties <code>source</code> and <code>data</code>. See the parameters of the <code>success</code>
 	 *          event for more details. The promise fails in case at least one source could not be (loaded,) parsed or
 	 *          merged with an array of objects containing Errors and/or Success objects.
+	 * @public
 	 */
 	ODataAnnotations.prototype.addSource = function(vSource) {
 		if (!vSource || Array.isArray(vSource) && vSource.length === 0) {

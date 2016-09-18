@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * Performs vertical scroll.
 		 *
 		 * @param {number} iPageY The current y-coordinate of the target to scroll to
-		 * @param {date} dTimeStamp Timestamp of the event
+		 * @param {Date} dTimeStamp Timestamp of the event
 		 * @private
 		 */
 		TimePickerSlider.prototype._doDrag = function(iPageY, dTimeStamp) {
@@ -747,7 +747,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * Finishes scroll session.
 		 *
 		 * @param {number} iPageY The last y-coordinate of the target to scroll to
-		 * @param {date} dTimeStamp Timestamp of the event
+		 * @param {Date} dTimeStamp Timestamp of the event
 		 * @private
 		 */
 		TimePickerSlider.prototype._endDrag = function(iPageY, dTimeStamp) {

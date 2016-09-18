@@ -610,6 +610,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * Level of a title.
 	 * @since 1.9.1
 	 * @deprecated Since version 1.16.0. Moved to sap.ui.core library. Please use this one.
+	 * @public
 	 */
 	sap.ui.commons.TitleLevel = sap.ui.core.TitleLevel;
 
@@ -845,6 +846,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	/**
 	 * Available FormLayouts used for the SimpleForm.
 	 * @deprecated Since version 1.16.0. Moved to sap.ui.layout library. Please use this one.
+	 * @public
 	 */
 	sap.ui.commons.form.SimpleFormLayout = sap.ui.layout.form.SimpleFormLayout;
 

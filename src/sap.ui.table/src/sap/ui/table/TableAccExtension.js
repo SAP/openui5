@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 	/*
 	 * Provides utility functions to handle acc info objects.
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	var ACCInfoHelper = {
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Returns a flattened acc info object (infos of children are merged together)
 		 * Note: The info object does only contain a focusable flag (true if one of the children is focusable)
 		 *       and a combined description.
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 */
 		getAccInfoOfControl: function(oControl, oBundle) {
 			if (oControl && typeof oControl.getAccessibilityInfo === "function") {

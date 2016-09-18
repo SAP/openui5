@@ -53,7 +53,7 @@
  * All types handle <code>null</code> in the same way. When formatting to <code>string</code>, it
  * is simply passed through (and <code>undefined</code> becomes <code>null</code>, too). When
  * parsing from <code>string</code>, it is also passed through.  Additionally,
- * {@link sap.ui.model.type.odata.String String} and {@link sap.ui.model.type.odata.Guid Guid}
+ * {@link sap.ui.model.odata.type.String String} and {@link sap.ui.model.odata.type.Guid Guid}
  * convert the empty string to <code>null</code> when parsing. <code>validate</code> decides based
  * on the constraint <code>nullable</code>: If <code>false</code>, <code>null</code> is not
  * accepted and leads to a (locale-dependent) <code>ParseException</code>.

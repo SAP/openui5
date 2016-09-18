@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Sets the selected sap.m.RadioButton using index.
-			 * @param {sap.ui.core.Integer} iSelectedIndex The index of the radio button which has to be selected
+			 * @param {int} iSelectedIndex The index of the radio button which has to be selected
 			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining
 			 * @public
 			 */
@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Adds a new radio button to the group at a specified index.
 			 * @param {sap.m.RadioButton} oButton The radio button which will be added to the group
-			 * @param {sap.ui.core.Integer} iIndex The index, at which the radio button will be added
+			 * @param {int} iIndex The index, at which the radio button will be added
 			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining
 			 * @public
 			 */
@@ -348,7 +348,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Creates a copy of the sap.m.RadioButton passed as a first argument and
 			 * adds it to the RadioButtonGroup at the index specified in the second argument.
 			 * @param {sap.m.RadioButton} oButton The button from which a radio button will be created
-			 * @param {sap.ui.core.Integer} iIndex The index in the group at which the radio button will be placed
+			 * @param {int} iIndex The index in the group at which the radio button will be placed
 			 * @returns {sap.m.RadioButton} The created radio button
 			 * @private
 			 */
@@ -582,7 +582,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Sets ValueState of all radio buttons in the group.
-			 * @param {sap.ui.core.String} sValueState The value state of the radio group - none, success, warning, error.
+			 * @param {string} sValueState The value state of the radio group - none, success, warning, error.
 			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining
 			 * @public
 			 */

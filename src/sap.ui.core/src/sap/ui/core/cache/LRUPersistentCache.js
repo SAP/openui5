@@ -777,7 +777,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * Tries to free space until the given new item is successfully added.
 		 * @param {sap.ui.core.cache.LRUPersistentCache} self the instance of the Cache Manager
 		 * @param {ItemData} oItem the item to free space for
-		 * @returns {Window.Promise} a promise that will resolve if the given item is added, or reject - if not.
+		 * @returns {Promise} a promise that will resolve if the given item is added, or reject - if not.
 		 */
 		function cleanAndStore(self, key, value) {
 			return new Promise(function (resolve, reject) {

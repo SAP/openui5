@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * The general HOME key event of the tree
 	 * @private
-	 * @param {event} oEvent The saphome event object
+	 * @param {jQuery.Event} oEvent The saphome event object
 	 */
 	Tree.prototype.onsaphome = function(oEvent) {
 		this.placeFocus(this.getFirstSibling(oEvent.target));
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * The general CTRL+HOME key event of the tree
 	 * @private
-	 * @param {event} oEvent The saphome event object
+	 * @param {jQuery.Event} oEvent The saphome event object
 	 */
 	Tree.prototype.onsaphomemodifiers = function(oEvent) {
 		this.placeFocus(this.getFirst());
@@ -278,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * The general END key event of the tree
 	 * @private
-	 * @param {event} oEvent The sapend event object
+	 * @param {jQuery.Event} oEvent The sapend event object
 	 */
 	Tree.prototype.onsapend = function(oEvent) {
 		this.placeFocus(this.getLastSibling(oEvent.target));
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * The general CTRL+END key event of the tree
 	 * @private
-	 * @param {event} oEvent The sapend event object
+	 * @param {jQuery.Event} oEvent The sapend event object
 	 */
 	Tree.prototype.onsapendmodifiers = function(oEvent) {
 		this.placeFocus(this.getLast());
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * The numpad STAR(*) key event of the tree
 	 * @private
-	 * @param {event} oEvent The sapcollapseall event object
+	 * @param {jQuery.Event} oEvent The sapcollapseall event object
 	 */
 	Tree.prototype.onsapcollapseall = function(oEvent) {
 

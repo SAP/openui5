@@ -598,7 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 *   the view source as a JSON object, a raw text, an XML document element or a Promise resolving with those
 	 * @param {boolean} [bSync]
 	 *   describes the view execution, true if sync
-	 * @returns {Promise|object|string|element}
+	 * @returns {Promise|object|string|Element}
 	 *   a promise resolving with the processed source or an error | the source when bSync=true
 	 * @protected
 	 */

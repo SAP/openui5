@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				 * The IDs of a logical field group that this control belongs to. All fields in a logical field group should share the same <code>fieldGroupId</code>.
 				 * Once a logical field group is left, the validateFieldGroup event is raised.
 				 *
-				 * @see {sap.ui.core.Control.attachValidateFieldGroup}
+				 * See {@link sap.ui.core.Control#attachValidateFieldGroup}.
 				 * @since 1.31
 				 */
 				"fieldGroupIds" : { type: "string[]", defaultValue: [] }
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				/**
 				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left or the user explicitly pressed a validation key combination.
 				 * Use this event to validate data of the controls belonging to a field group.
-				 * @see {sap.ui.core.Control.setFieldGroupId}
+				 * See {@link sap.ui.core.Control#setFieldGroupIds}.
 				 */
 				validateFieldGroup : {
 					enableEventBubbling:true,
@@ -895,7 +895,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * Called by sap.ui.core.UIArea if a field group should be validated after is loses the focus or a validation key combibation was pressed.
 	 * The validation key is defined in the UI area <code>UIArea._oFieldGroupValidationKey</code>
 	 *
-	 * @see {sap.ui.core.Control.attachValidateFieldGroup}
+	 * See {@link sap.ui.core.Control#attachValidateFieldGroup}.
 	 *
 	 * @public
 	 */

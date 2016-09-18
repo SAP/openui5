@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	/**
 	 * Gets the node level in the hierarchy.
 	 *
-	 * @returns {Integer}
+	 * @returns {int}
 	 * @public
 	 * @since 1.42.0
 	 */

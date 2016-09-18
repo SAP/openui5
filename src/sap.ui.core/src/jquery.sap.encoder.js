@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * </pre>
 	 *
-	 * When a whitelist has been configured using {@link .addUrlWhitelist addUrlWhitelist},
+	 * When a whitelist has been configured using {@link #.addUrlWhitelist addUrlWhitelist},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
 	 * the content of the whitelist.
 	 *

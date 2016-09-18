@@ -693,7 +693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Focus the given <code>CalendarAppointment</code> in the <code>CalendarRow</code>.
 	 *
-	 * @param {CalendarAppointment} oAppointment Appointment to be focused.
+	 * @param {sap.ui.unified.CalendarAppointment} oAppointment Appointment to be focused.
 	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
 	 * @public
 	 */

@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		InPlaceEdit.prototype.getAccessibilityInfo = function() {

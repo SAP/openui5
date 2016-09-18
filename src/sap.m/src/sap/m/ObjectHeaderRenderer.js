@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * Gather all controls that should be rendered inside Object Header.
 	 *
 	 * @param {sap.m.ObjectHeader}
-	 *            oControl the ObjectHeader
+	 *            oOH the ObjectHeader
 	 * @private
 	 */
 	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 *
 	 * @param {sap.m.ObjectHeader}
-	 *            oControl the ObjectHeader
+	 *            oOH the ObjectHeader
 	 * @private
 	 */
 	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -420,7 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the ObjectHeader
 	 * @private
 	 */
@@ -458,7 +458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -542,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -559,7 +559,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -637,7 +637,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -670,7 +670,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 */
 	ObjectHeaderRenderer.render = function(oRM, oOH) {
@@ -737,9 +737,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
-	 * @param {sap.m.Control}
+	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the child control that should be rendered
 	 * @private
 	 **/
@@ -755,7 +755,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 **/
@@ -840,8 +840,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
@@ -913,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object to be rendered
+	 *            oControl an object to be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStates = function(oRM, oControl) {
@@ -931,7 +931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1003,7 +1003,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {iRenderCols}
 	 *            number of columns that should be rendered
@@ -1048,7 +1048,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {sap.m.ObjectAtribute}
 	 *            oAttr an object representation of the sap.m.ObjectAtribute that should be rendered
@@ -1068,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {sap.m.ObjectStatus}
 	 *            oStatus an object representation of the sap.m.ObjectStatus that should be rendered
@@ -1088,7 +1088,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	* @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1122,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1136,9 +1136,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	};
 
 	/**
-	 * helper function to determine wheter states need to be rendered or not
+	 * helper function to determine whether states need to be rendered or not
 	 *
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader} oControl
 	 *
 	 * @private
 	 */
@@ -1167,7 +1167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 	/**
 	 * helper function to determine whether tabs need to be rendered or not
-	 *  @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader} oControl
 	 *
 	 * @private
 	 */
@@ -1197,8 +1197,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveTabs = function(oRM, oControl) {
@@ -1228,7 +1228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */
@@ -1278,7 +1278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {nCutLen}
 	 *            number of chars to which the title should be cutted
@@ -1296,7 +1296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @param {nCutLen}
 	 *            number of chars to which the title should be cutted
@@ -1407,7 +1407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
 	 * @private
 	 */

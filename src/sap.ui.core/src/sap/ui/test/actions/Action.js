@@ -60,7 +60,7 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		 * This will check the following conditions in order:
 		 * <ol>
 		 *     <li>The user provided a idSuffix - return</li>
-		 *     <li>There is a control adapter for the action (most of them are provided out of the box) - use the adapter see {@link sap.ui.test.Press#.controlAdapters} for an example</li>
+		 *     <li>There is a control adapter for the action (most of them are provided out of the box) - use the adapter see {@link sap.ui.test.Press.controlAdapters} for an example</li>
 		 *     <li>The focusDomRef of the control is taken as fallback</li>
 		 * </ol>
 		 * @returns {jQuery} The jQuery object of the domref the Action is going to be executed on.

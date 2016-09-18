@@ -1697,7 +1697,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 * @param {string} sFunctionName the name of the function to be called
 	 * @param {string} sAggregationName the name of the aggregation asociated
-	 * @returns {mixed} the return type of the called function
+	 * @returns {any} the return type of the called function
 	 */
 	Input.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName) {
 		var aArgs = Array.prototype.slice.call(arguments),
@@ -1816,7 +1816,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	Input.prototype.getAccessibilityInfo = function() {

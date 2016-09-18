@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticConfiguration", "sap
 
 				/**
 				 * The internal control instance, that is abstracted by the semantic control.
-				 * Can be {@link sap.m.Button}, {@link sap.m.OverflowButton} or {@link sap.m.Select}
+				 * Can be {@link sap.m.Button}, {@link sap.m.semantic.SemanticOverflowToolbarButton} or {@link sap.m.Select}
 				 */
 				_control: {
 					type: "sap.ui.core.Control",

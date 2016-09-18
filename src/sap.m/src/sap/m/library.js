@@ -1604,7 +1604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Enables detail button of the list item that fires <code>detailPress</code> event.
-		 * Also see {@link sap.m.ListBase#attachDetailPress}.
+		 * Also see {@link sap.m.ListItemBase#attachDetailPress}.
 		 * @public
 		 */
 		Detail : "Detail",
@@ -1622,7 +1622,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Active : "Active",
 
 		/**
-		 * Enables {@link sap.m.ListType#Detail} and {@link sap.m.ListType#Active} enumerations together.
+		 * Enables {@link sap.m.ListType.Detail} and {@link sap.m.ListType.Active} enumerations together.
 		 * @public
 		 */
 		DetailAndActive : "DetailAndActive"
@@ -3286,7 +3286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * the model runs in "TwoWay" binding mode. Both features can be switched of via the bResolveInput/bResolveOutput parameter
 	 * of the suggest function:
 	 *
-	 * @param {event} oEvent
+	 * @param {sap.ui.base.Event} oEvent
 	 * @param {boolean} bResolveInput SuggestProvider resolves all input parameters for the data query
 	 * @param {boolean} bResolveOutput SuggestProvider writes back all output parameters.
 	 * @param {int} iLength If iLength is provided only these number of entries will be requested.

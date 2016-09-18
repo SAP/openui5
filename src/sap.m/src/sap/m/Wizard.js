@@ -392,7 +392,7 @@ sap.ui.define([
 
 		/**
 		 * Removes all steps from the Wizard.
-		 * @returns {sap.m.Control} Pointer to the Steps that were removed.
+		 * @returns {sap.m.WizardStep[]} Pointer to the Steps that were removed.
 		 * @public
 		 */
 		Wizard.prototype.removeAllSteps = function () {

@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Sets the <code>buttonМode</code> of the control.
 		 * @param {sap.m.MenuButtonMode} sMode The new button mode
-		 * @returns {MenuButton} This instance
+		 * @returns {sap.m.MenuButton} This instance
 		 * @public
 		 */
 		MenuButton.prototype.setButtonMode = function(sMode) {

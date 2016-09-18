@@ -10,7 +10,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	/**
 	 * Creates a new metadata object that describes a subclass of ManagedObject.
 	 *
-	 * Note: throughout this class documentation, the described subclass of ManagedObject
+	 * <b>Note:</b> Code outside the <code>sap.ui.base</code> namespace must not call this
+	 * constructor directly. Instances will be created automatically when a new class is
+	 * defined with one of the {@link sap.ui.base.ManagedObject.extend <i>SomeClass</i>.extend}
+	 * methods.
+	 *
+	 * <b>Note</b>: throughout this class documentation, the described subclass of ManagedObject
 	 * is referenced as <i>the described class</i>.
 	 *
 	 * @param {string} sClassName fully qualified name of the described class
@@ -51,6 +56,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
+	 * @public
 	 */
 	var ManagedObjectMetadata = function(sClassName, oClassInfo) {
 
@@ -550,7 +556,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Typically used to enrich UIElement classes in an aspect oriented manner.
 	 * @param {string} sName name of the property to add
 	 * @param {object} oInfo metadata for the property
-	 * @public
+	 * @private
+	 * @restricted sap.ui.core
 	 * @see sap.ui.core.EnabledPropagator
 	 */
 	ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
@@ -976,6 +983,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the setting
 	 * @param {object} oInfo metadata for the setting
 	 * @private
+	 * @restricted sap.ui.core
 	 */
 	ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
 		var oSS = new SpecialSetting(this, sName, oInfo);
@@ -1176,8 +1184,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	}
 
 	/**
-	 * Calculates a new id based on a prefix.
+	 * Calculates a new ID based on a prefix.
 	 *
+	 * To guarantee uniqueness of the generated IDs across all ID prefixes,
+	 * prefixes must not end with digits.
+	 *
+	 * @param {string} sIdPrefix prefix for the new ID
 	 * @return {string} A (hopefully unique) control id
 	 * @public
 	 * @function
@@ -1185,13 +1197,13 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	ManagedObjectMetadata.uid = uid;
 
 	/**
-	 * Calculates a new id for an instance of this class.
+	 * Calculates a new ID for an instance of this class.
 	 *
 	 * Note that the calculated short name part is usually not unique across
 	 * all classes, but doesn't have to be. It might even be empty when the
 	 * class name consists of invalid characters only.
 	 *
-	 * @return {string} A (hopefully unique) control id
+	 * @return {string} A (hopefully unique) control ID
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.uid = function() {
@@ -1228,9 +1240,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   "foo__bar04--baz"
 	 * </pre>
 	 *
-	 * @see ManagedObjectMetadata.prototype.uid for details on ID generation
+	 * See {@link sap.ui.base.ManagedObjectMetadata.prototype.uid} for details on ID generation.
+	 *
 	 * @param {string} sId the ID that should be tested
-	 * @return {boolean} whether the ID is llikely to be generated
+	 * @return {boolean} whether the ID is likely to be generated
 	 * @static
 	 * @public
 	 */

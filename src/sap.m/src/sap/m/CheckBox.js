@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	CheckBox.prototype.getAccessibilityInfo = function() {

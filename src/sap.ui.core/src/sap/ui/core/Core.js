@@ -2084,7 +2084,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Retrieves a resource bundle for the given library and locale.
 	 *
 	 * If only one argument is given, it is assumed to be the libraryName. The locale
-	 * then falls back to the current {@link sap.ui.core.Configuration.prototype.getLanguage session locale}.
+	 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
 	 * If no argument is given, the library also falls back to a default: "sap.ui.core".
 	 *
 	 * @param {string} [sLibraryName='sap.ui.core'] name of the library to retrieve the bundle for
@@ -3421,7 +3421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the parse error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the parse error occurred
-	 * @param {type} oControlEvent.getParameters.type The type of the property
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
 	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the parse error occurred
 	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the parse error)
 	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the parse error
@@ -3461,7 +3461,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the validation error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the validation error occurred
-	 * @param {type} oControlEvent.getParameters.type The type of the property
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
 	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation error occurred
 	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation error)
 	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the validation error
@@ -3501,7 +3501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the format error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the format error occurred
-	 * @param {type} oControlEvent.getParameters.type The type of the property
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
 	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the format error occurred
 	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the format error)
 	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the format error
@@ -3540,7 +3540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the successful validation occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the successfull validation occurred
-	 * @param {type} oControlEvent.getParameters.type The type of the property
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
 	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation occurred
 	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation)
 	 * @public

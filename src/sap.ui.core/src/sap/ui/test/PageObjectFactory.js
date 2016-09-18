@@ -23,7 +23,7 @@ sap.ui.define([
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
-		 * @see sap.ui.test.Opa5#createPageObjects
+		 * @see sap.ui.test.Opa5.createPageObjects
 		 * @protected
 		 * @function
 		 * @static
