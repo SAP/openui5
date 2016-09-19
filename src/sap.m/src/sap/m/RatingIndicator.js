@@ -590,6 +590,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.getEnabled()) {
 			var fValue = this._calculateSelectedValue(oEvent);
+
+			// When the value is 1 and the first star is pressed we should toggle to 0
+			if (this.getValue() === 1 && fValue === 1) {
+				fValue = 0;
+			}
+
 			this.setProperty("value", fValue, true);
 			this._updateUI(fValue, false);
 

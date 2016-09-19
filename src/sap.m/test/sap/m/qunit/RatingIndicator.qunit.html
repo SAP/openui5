@@ -295,7 +295,7 @@
 	module("Events");
 
 	test("Firing events", function() {
-		expect(12);
+		expect(13);
 		var touches = {
 				0: {
 						pageX: 150,
@@ -388,6 +388,14 @@
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
 		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
+
+		// special case - when the value is one and the first star is selected again the value should toggle to 0
+		setEventValue(20);
+		oRating4.setValue(1);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px and starting value 1 the rating value should be toggled to 0 on control " + oRating4);
 
 		setEventValue(202);
 		oRating4.ontouchstart(oEventTouchStart);
