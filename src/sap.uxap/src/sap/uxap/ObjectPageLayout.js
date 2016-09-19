@@ -159,7 +159,7 @@ sap.ui.define([
 				/**
 				 * Determines whether the footer is visible.
 				 */
-				showFooter: {type: "boolean", group: "Behaviour", defaultValue: false}
+				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
 			associations: {
 
