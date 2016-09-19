@@ -532,66 +532,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	padding: 2px;
 }
 
-.sapUiTableDragDrop {
-	cursor: move;
-
-	.sapUiTableCCnt, .sapUiTableColRsz {
-		pointer-events: none;
-	}
-
-	.sapUiTableCol {
-		cursor: move;
-
-		* {
-			cursor: move;
-		}
-	}
-}
-
-
-/*******************************************************************************
- * DND & RESIZE ELEMENTS
- ******************************************************************************/
-
-.sapUiTableColGhost {
-	position: absolute;
-	width: auto;
-	cursor: pointer;
-	padding: 0 8px;
-	background-color: @sapUiExtraLightBG;
-	border: 1px solid @sapUiListHighlightColor;
-	opacity: 0.5;
-}
-
-.sapUiTableColRsz {
-	position: absolute;
-	top: 0px;
-	width: 5px;
-	margin-left: -4px;
-	bottom: 0px;
-	cursor: col-resize;
-	z-index: 1;
-}
-
-html[dir=rtl] .sapUiTableColRsz {
-	margin-right: -3px;
-}
-
-.sapUiTableHScr .sapUiTableColRsz {
-	bottom: 18px;
-}
-
-html.sap-desktop .sapUiTableColRsz:hover {
-	background-color: @sapUiListHighlightColor;
-	opacity: 0.5;
-}
-
-.sapUiTableColRszActive,
-html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
-	background-color: @sapUiListHighlightColor;
-	opacity: 1;
-}
-
 
 /*******************************************************************************
  * VERTICAL SCROLLBAR
@@ -765,20 +705,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
 	padding-right: 18px;
 }
 
-.sapUiTableHeightResizer {
-	background-image: url(img/splitter_horiz_grip.gif);
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-color: #dbe5ec;
-	box-sizing: border-box;
-}
-
-.sapUiTableHeightResizer:hover {
-	background-color: @sapUiExtraLightBG;
-	cursor: n-resize;
-}
-
-
 .sapUiTableSelModeNone .sapUiTableRowHdr {
 	width: 0;
 	border-left: 0;
@@ -826,21 +752,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableColDropDown:active {
 	color: @sapUiTextInverted;
-}
-
-.sapUiTableColResizer {
-	right: 0;
-	width: 2rem;
-	padding-left: 0.25rem;
-	padding-right: 0.25rem;
-	cursor: default;
-}
-
-.sapUiTableInteractiveResizerGhost {
-	position: absolute;
-	background-color: @sapUiHighlight;
-	color: @sapUiTextInverted;
-	z-index:10000;
 }
 
 // Hide table during transition, because shrinked width causes growing rows
