@@ -89,12 +89,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
-		assert.strictEqual(
-			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
+		var oContext,
+			fnResolve;
+
+		assert.strictEqual(Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
 			"/Employees");
-		assert.strictEqual(
-			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees", 5).toString(),
-			"/Employees[5]");
+		assert.strictEqual(Context.create({}, {}, "/Employees", 5).toString(), "/Employees[5]");
+		oContext = Context.create({}, {}, "/Employees", -1,
+			new Promise(function (resolve) {
+				fnResolve = resolve;
+			}));
+		assert.strictEqual(oContext.toString(), "/Employees[-1|transient]");
+
+		fnResolve();
+		return oContext.created().then(function () {
+			assert.strictEqual(oContext.toString(), "/Employees[-1]");
+		});
 	});
 
 	//*********************************************************************************************

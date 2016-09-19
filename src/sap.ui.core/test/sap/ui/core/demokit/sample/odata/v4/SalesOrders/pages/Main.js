@@ -2,19 +2,23 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties"
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/TestUtils"
 ],
-function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
+function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties, TestUtils) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 		sLastNewNoteValue;
+
+	Opa5.extendConfig({autoWait : true});
 
 	Opa5.createPageObjects({
 		/*
@@ -24,7 +28,7 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 			actions : {
 				changeNote : function (sNewNoteValue) {
 					return this.waitFor({
-						actions: new EnterText({ clearTextFirst : true, text: sNewNoteValue }),
+						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
 						id : "NewNote",
 						success : function (oNewNoteInput) {
@@ -35,7 +39,7 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 				},
 				confirmDialog : function () {
 					return this.waitFor({
-						actions: new Press(),
+						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "confirmCreateSalesOrder",
 						success : function (oNewNoteInput) {
@@ -109,7 +113,7 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						matchers : new BindingPath({path: "/SalesOrderList/0"}),
+						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (oControl) {
 							var oCore = Opa5.getWindow().sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
@@ -149,21 +153,37 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 						viewName : sViewName
 					});
 				},
+				rememberCreatedSalesOrder : function () {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						matchers : new BindingPath({path : "/SalesOrderList/0"}),
+						success : function (oControl) {
+							var oCore = Opa5.getWindow().sap.ui.getCore(),
+								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
+									.getItems()[0].getCells()[0].getText();
+							if (!sap.ui.test.Opa.getContext().aOrderIds) {
+								sap.ui.test.Opa.getContext().aOrderIds = [];
+							}
+							sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
+
+							Opa5.assert.ok(true, "SalesOrderID remembered:" + sSalesOrderId);
+						}
+					});
+				},
 				selectSalesOrderWithId : function (sSalesOrderId) {
 					return this.waitFor({
 						id : /SalesOrders_ID/,
 						viewName : sViewName,
 						controlType : "sap.m.Text",
-						matchers : new Properties({text: sSalesOrderId}),
+						matchers : new Properties({text : sSalesOrderId}),
 						success : function (aControls) {
 							aControls[0].$().tap();
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
 						}
 					});
 				}
-
 			},
-			assertions: {
+			assertions : {
 				checkLog : function () {
 					return this.waitFor({
 						success : function (oControl) {
@@ -232,6 +252,7 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 				checkNote : function (iRow, sExpectedNote) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
+						autoWait : false,
 						id : "SalesOrders",
 						success : function (oSalesOrderTable) {
 							var oRow = oSalesOrderTable.getItems()[iRow];
@@ -240,6 +261,39 @@ function (Opa5, EnterText, Press, BindingPath, Interactable, Properties) {
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
+						},
+						viewName : sViewName
+					});
+				},
+				cleanUp : function() {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						autoWait : false,
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var aPromises = [],
+								bCleanUpFinished = false,
+								// use private requestor to prevent additional read requests(ETag)
+								// which need additional mockdata
+								oRequestor = oSalesOrderTable.getModel().oRequestor;
+							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
+								aPromises.push(oRequestor.request("DELETE",
+									"SalesOrderList('" + sOrderId + "')", "Cleanup",
+									{"If-Match" : "*"}));
+								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
+							});
+							oRequestor.submitBatch("Cleanup").then(function () {
+								Opa5.assert.ok(true, "Cleanup finished");
+								bCleanUpFinished = true;
+							}, function (oError) {
+								Opa5.assert.ok(false, "Cleanup failed: " + oError.message);
+								bCleanUpFinished = true;
+							});
+							return this.waitFor({
+								check : function() {
+									return bCleanUpFinished;
+								}
+							});
 						},
 						viewName : sViewName
 					});

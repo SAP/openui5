@@ -2180,11 +2180,15 @@ sap.ui.require([
 			oListBindingContext = {destroy : function () {}},
 			oListBindingContextMock = this.mock(oListBindingContext),
 			oListBindingMock = this.mock(ListBinding.prototype),
-			oModelMock = this.mock(this.oModel);
+			oModelMock = this.mock(this.oModel),
+			oTransientListBindingContext = {destroy : function () {}},
+			oTransientListBindingContextMock = this.mock(oTransientListBindingContext);
 
 		oBinding.setContext(oContext);
 		oBinding.aContexts = [oListBindingContext];
+		oBinding.aContexts[-1] = oTransientListBindingContext;
 		oListBindingContextMock.expects("destroy").withExactArgs();
+		oTransientListBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
 
@@ -2192,7 +2196,9 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oBinding.aContexts = [oListBindingContext];
+		oBinding.aContexts[-1] = oTransientListBindingContext;
 		oListBindingContextMock.expects("destroy").withExactArgs();
+		oTransientListBindingContextMock.expects("destroy").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
 
@@ -2806,4 +2812,6 @@ sap.ui.require([
 });
 //TODO integration: 2 entity sets with same $expand, but different $select
 //TODO support suspend/resume
+//TODO Provide "array" methods that can deal with -1 index (splice, forEach, length) and use it
+//     instead of if {} else {} code fragments
 

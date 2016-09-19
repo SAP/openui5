@@ -496,7 +496,12 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.toString = function () {
-		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
+		var sIndex = "";
+
+		if (this.iIndex !== undefined) {
+			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
+		}
+		return this.sPath + sIndex;
 	};
 
 	/**
