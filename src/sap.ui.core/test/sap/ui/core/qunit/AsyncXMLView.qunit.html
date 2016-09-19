@@ -143,10 +143,14 @@ sap.ui.require(["jquery.sap.global",
 			});
 
 			QUnit.test("no cache key - async", function(assert) {
-				var sError = "Provided cache keys may not be empty or undefined.";
-				assert.expect(1);
-			  return viewFactory({keys: [Promise.resolve()]}).loaded().then(jQuery.noop, function(e) {
-					assert.equal(e.message, sError, "error caught");
+				var error = new Error("Provided cache keys may not be empty or undefined."),
+					oSpy = this.oSpy,
+					oLogSpy = sinon.spy(jQuery.sap.log, "error");
+				assert.expect(2);
+			  return viewFactory({keys: [Promise.resolve()]}).loaded().then(function(oView) {
+					sinon.assert.calledWithExactly(oLogSpy, error);
+					sinon.assert.notCalled(oSpy);
+					oView.destroy();
 				});
 			});
 
