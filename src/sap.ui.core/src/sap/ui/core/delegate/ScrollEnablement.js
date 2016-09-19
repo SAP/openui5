@@ -28,7 +28,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * the current instance of this delegate object
 		 *
 		 * @extends sap.ui.base.Object
-		 * @experimental Since 1.5.2. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 *
 		 * @param {sap.ui.core.Control} oControl the Control of which this Scroller is the delegate
 		 * @param {string} sScrollContentDom the Id of the element within the DOM of the Control which should be scrollable

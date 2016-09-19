@@ -771,7 +771,6 @@ sap.ui.define([
 
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'annotationsLoaded' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
-	 * @experimental The API is NOT stable yet. Use at your own risk.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event.
@@ -791,7 +790,6 @@ sap.ui.define([
 
 	/**
 	 * Detach event-handler <code>fnFunction</code> from the 'annotationsLoaded' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
-	 * @experimental The API is NOT stable yet. Use at your own risk.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs.
@@ -4084,7 +4082,6 @@ sap.ui.define([
 	 *
 	 * @return {Object} metdata object
 	 * @public
-	 * @experimental This feature has not been tested due to the lack of OData testing infrastructure. The API is NOT stable yet. Use at your own risk.
 	 */
 	ODataModel.prototype.getServiceAnnotations = function() {
 		var mAnnotations = this.oAnnotations.getData();
