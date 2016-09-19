@@ -46,7 +46,7 @@ sap.ui.define([
    *        isMatch: true,                        // {boolean} true if the Gherkin scenario matched a step definition
    *        skip: false,                          // {boolean} true if the test step should not be executed
    *        text: "coffee costs $18 per cup",     // {string} the test step's text as defined in the Gherkin file
-   *        regex: /regex/,                       // {regexp} the matching regular expression from step definitions
+   *        regex: /regex/,                       // {RegExp} the matching regular expression from step definitions
    *        parameters: [],                       // {[object]} parameters derived from regular expression match
    *        func: function(){}                    // {function} the matching step definition function
    *      },{

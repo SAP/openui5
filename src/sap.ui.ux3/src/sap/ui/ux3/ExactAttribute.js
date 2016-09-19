@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @param {string} sPropertyName
 	 * @param {object} oValue
 	 * @param {boolean} bSuppressRerendering
-	 * @see sap.ui.core.Element.prototype.setProperty
+	 * @see sap.ui.base.ManagedObject.prototype.setProperty
 	 * @protected
 	 */
 	ExactAttribute.prototype.setProperty = function(sPropertyName, oValue, bSuppressRerendering) {

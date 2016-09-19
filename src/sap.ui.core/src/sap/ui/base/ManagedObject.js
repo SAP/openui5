@@ -75,7 +75,7 @@ sap.ui.define([
 	 *
 	 * @class Base Class that introduces some basic concepts like state management or databinding.
 	 *
-	 * New subclasses of ManagedObject are created with a call to {@link .extend ManagedObject.extend} and can make use
+	 * New subclasses of ManagedObject are created with a call to {@link #.extend ManagedObject.extend} and can make use
 	 * of the following managed features:
 	 *
 	 * <b>Properties</b><br>
@@ -111,7 +111,7 @@ sap.ui.define([
 	 * Details about the declaration of a managed aggregation, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
-	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link bindAggregation} (and unbound again
+	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link #bindAggregation} (and unbound again
 	 * using {@link #unbindAggregation}. For each context in the model collection, a corresponding object will be created in the
 	 * managed aggregation, either by cloning a template object or by calling a factory function.
 	 *

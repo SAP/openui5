@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * Eventhandler for the selection of an Item
 	 *
-	 * @param {event} oEvent SelectionChanged event
+	 * @param {sap.ui.base.Event} oEvent SelectionChanged event
 	 * @protected
 	 */
 	DataSetSimpleView.prototype.handleSelection = function(oEvent) {

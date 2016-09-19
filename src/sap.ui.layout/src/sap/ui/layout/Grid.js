@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		};
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		Grid.prototype.getAccessibilityInfo = function() {

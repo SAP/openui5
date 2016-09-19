@@ -879,7 +879,7 @@
 			 *
 			 * @param {jQuery.sap.log.Level} iLogLevel The new log level
 			 * @param {string} [sComponent] The log component to set the log level for
-			 * @return {jQuery.sap.log} This logger object to allow method chaining
+			 * @return {jQuery.sap.log.Logger} This logger object to allow method chaining
 			 * @public
 			 */
 			this.setLevel = function setLevel(iLogLevel, sComponent) {
@@ -948,7 +948,7 @@
 		 * retrieve such a logger once during startup and reuse it for the rest of its lifecycle.
 		 * Second, the {@link jQuery.sap.log.Logger#setLevel}(iLevel, sComponent) method allows to set the log level
 		 * for a specific component only. This allows a more fine granular control about the created logging entries.
-		 * {@link jQuery.sap.log.Logger.getLevel} allows to retrieve the currently effective log level for a given
+		 * {@link jQuery.sap.log.Logger#getLevel} allows to retrieve the currently effective log level for a given
 		 * component.
 		 *
 		 * {@link jQuery.sap.log#getLog} returns an array of the currently collected log entries.
@@ -1083,7 +1083,7 @@
 			 * The given object must provide method <code>onLogEntry</code> and can also be informed
 			 * about <code>onDetachFromLog</code> and <code>onAttachToLog</code>
 			 * @param {object} oListener The new listener object that should be informed
-			 * @return {jQuery.sap.log} The global logger
+			 * @return {jQuery.sap.log.Logger} The global logger
 			 * @public
 			 * @static
 			 */
@@ -1095,7 +1095,7 @@
 			/**
 			 * Allows to remove a registered LogListener.
 			 * @param {object} oListener The new listener object that should be removed
-			 * @return {jQuery.sap.log} The global logger
+			 * @return {jQuery.sap.log.Logger} The global logger
 			 * @public
 			 * @static
 			 */

@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * Sets the showSideContent property.
 		 * @param {boolean} bVisible Determines if the side content part is visible
 		 * @param {boolean} bSuppressVisualUpdate Determines if the visual state is updated
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -192,7 +192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * Sets the showMainContent property.
 		 * @param {boolean} bVisible Determines if the main content part is visible
 		 * @param {boolean} bSuppressVisualUpdate Determines if the visual state is updated
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -240,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		/**
 		 * Sets or unsets the page in equalSplit mode.
 		 * @param {boolean}[bState] Determines if the page is set to equalSplit mode
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * Adds a control to the side content area.
 		 * Only the side content part in the aggregation is re-rendered.
 		 * @param {object} oControl Object to be added in the aggregation
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * Adds a control to the main content area.
 		 * Only the main content part in the aggregation is re-rendered.
 		 * @param {object} oControl Object to be added in the aggregation
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * This helper method is used to implement a button/switch for changing
 		 * between the main and side content areas.
 		 * Only works if the current breakpoint is "S".
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @public
 		 */
 		DynamicSideContent.prototype.toggle = function () {
@@ -387,7 +387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * Re-renders only part of the control that is changed.
 		 * @param {object} aControls Array containing the passed aggregation controls
 		 * @param {object} $domElement DOM reference of the control to be re-rendered
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @private
 		 */
 		DynamicSideContent.prototype._rerenderControl = function (aControls, $domElement) {
@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * control mode.
 		 * @param {string} sSizeName Possible values S, M, L, XL
 		 * @param {boolean} bComparison Checks if the page is in equalSplit mode
-		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
+		 * @returns {sap.ui.layout.DynamicSideContent} this pointer for chaining
 		 * @private
 		 */
 		DynamicSideContent.prototype._setResizeData = function (sSizeName, bComparison) {

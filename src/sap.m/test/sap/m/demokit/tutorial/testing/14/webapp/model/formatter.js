@@ -42,7 +42,7 @@ sap.ui.define([
 		 * Creates a human readable date
 		 *
 		 * @public
-		 * @param {date} oDate the date of the property.
+		 * @param {Date} oDate the date of the property.
 		 * @returns {string} sValue the formatted date
 		 */
 		date: function(oDate) {

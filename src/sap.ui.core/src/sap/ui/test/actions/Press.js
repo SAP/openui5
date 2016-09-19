@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *
 	 * @public
 	 * @static
-	 * @name sap.ui.test.actions.Press#.controlAdapters
+	 * @name sap.ui.test.actions.Press.controlAdapters
 	 * @type map
 	 */
 	Press.controlAdapters = {};

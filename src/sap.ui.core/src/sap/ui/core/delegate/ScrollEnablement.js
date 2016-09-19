@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			 * Scrolls to an element within a container.
 			 * @param {HTMLElement} oElement A DOM element.
 			 * @param {int} [iTime=0] The duration of animated scrolling in milliseconds. To scroll immediately without animation, give 0 as value.
-			 * @returns {ScrollEnablement}
+			 * @returns {sap.ui.core.delegate.ScrollEnablement}
 			 * @protected
 			 */
 			scrollToElement: function(oElement, iTime) {

@@ -11,15 +11,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 
 	"use strict";
 
-	/**
-	 * Suite controls library.
-	 *
-	 * @namespace
-	 * @name sap.ui.suite
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
@@ -38,6 +29,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	});
 
 	/* eslint-disable no-undef */
+	/**
+	 * Suite controls library.
+	 *
+	 * @namespace
+	 * @alias sap.ui.suite
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
 	var thisLibrary = sap.ui.suite;
 	/* eslint-enable no-undef */
 

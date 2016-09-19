@@ -9,11 +9,11 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 	var _oLogger = $.sap.log.getLogger(sModuleName, iDefaultLogLevel);
 
 	/**
-	* @class A central place to collect all the logs during an OPA test
+	 * @class A central place to collect all the logs during an OPA test
 	 * listens to $.sap.log.* to collect the logs
 	 *
 	 * @private
-	 * @alias sap.ui.test.OpaPlugin
+	 * @alias sap.ui.test._LogCollector
 	 * @author SAP SE
 	 * @since 1.41
 	*/

@@ -317,19 +317,19 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	};
 
 	/**
-	 * Sets an XML document
+	 * Sets an XML document.
 	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
 	 * @param {map} [mOptions] Additional options
-	 * @param {fuction} [mOptions.success] Success callback gets an objec as argument with the
-	 *                  properties "annotations" containing the parsed annotations and "xmlDoc"
-	 *                  containing the XML-Document that was returned by the request.
-	 * @param {fuction} [mOptions.error] Error callback gets an objec as argument with the
-	 *                  property "xmlDoc" containing the XML-Document that was returned by the
-	 *                  request and could not be correctly parsed.
-	 * @param {boolean} [mOptions.fireEvents] If this option is set to true, events are fired as if the annotations
-	 *                  were loaded from a URL
+	 * @param {function} [mOptions.success] Success callback gets an objec as argument with the
+	 *                   properties "annotations" containing the parsed annotations and "xmlDoc"
+	 *                   containing the XML-Document that was returned by the request.
+	 * @param {function} [mOptions.error] Error callback gets an objec as argument with the
+	 *                   property "xmlDoc" containing the XML-Document that was returned by the
+	 *                   request and could not be correctly parsed.
+	 * @param {boolean}  [mOptions.fireEvents] If this option is set to true, events are fired as if the annotations
+	 *                   were loaded from a URL
 	 * @return {boolean} Whether or not parsing was successful
 	 * @public
 	 */
@@ -394,7 +394,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * Adds either one URL or an array of URLs to be loaded and parsed. The result will be merged into the annotations
 	 * data which can be retrieved using the getAnnotations-method.
 	 *
-	 * @param {string|sting[]} vUrl Either one URL as string or an array of URL strings
+	 * @param {string|string[]} vUrl Either one URL as string or an array of URL strings
 	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at
 	 *         least one failed to load. The argument is an object containing the annotations object, success (an array
 	 *         of sucessfully loaded URLs), fail (an array ob of failed URLs).

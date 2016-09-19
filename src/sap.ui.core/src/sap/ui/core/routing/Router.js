@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 *             target: "notFound"
 		 *         }
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -118,10 +118,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 * </pre>
 		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
-		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.<br/>
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
 		 * @param {object} [oTargetsConfig]
-		 * available @since 1.28 the target configuration, see {@link sap.ui.core.Targets#constructor} documentation (the options object).<br/>
+		 * available @since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets#constructor} documentation (the options object).<br/>
 		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
 		 * <b>Example:</b>
 		 * <pre>
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
 		 *     // Please use the metadata of a component to define your routes and targets.
-		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -513,10 +513,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 			/**
 			 * Returns a target by its name (if you pass myTarget: { view: "myView" }) in the config myTarget is the name.
-			 * See {@link sap.ui.core.Targets#getTarget}
+			 * See {@link sap.ui.core.routing.Targets#getTarget}
 			 *
 			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
-			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the coresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
+			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the corresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
 			 */
 			getTarget :  function(vName) {
 				return this._oTargets.getTarget(vName);

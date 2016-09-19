@@ -1246,7 +1246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 * equivalent to a mouseenter or mousleave event regarding the given DOM reference.
 	 *
 	 * @param {jQuery.Event} oEvent
-	 * @param {element} oDomRef
+	 * @param {Element} oDomRef
 	 * @public
 	 */
 	jQuery.sap.checkMouseEnterOrLeave = function checkMouseEnterOrLeave(oEvent, oDomRef) {
@@ -1392,7 +1392,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 
 	/**
 	 * Constructor for a jQuery.Event object.<br/>
-	 * @see "http://www.jquery.com" and "http://api.jquery.com/category/events/event-object/".
+	 * See "http://www.jquery.com" and "http://api.jquery.com/category/events/event-object/".
 	 *
 	 * @class Check the jQuery.Event class documentation available under "http://www.jquery.com"<br/>
 	 * and "http://api.jquery.com/category/events/event-object/" for details.

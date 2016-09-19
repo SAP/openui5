@@ -11,7 +11,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/semantic
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A semantic button is either a {@link sap.m.Button} or {@link sap.m.OverflowButton} ,
+	 * A semantic button is either a {@link sap.m.Button} or {@link sap.m.semantic.SemanticOverflowToolbarButton} ,
 	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
 	 * @extends sap.m.semantic.SemanticControl

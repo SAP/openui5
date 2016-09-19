@@ -145,7 +145,7 @@ sap.ui.define([
          * Sets the source of the image.
          * @public
          * @param {sap.ui.core.URI} sImageSrc The image URI
-         * @returns {LightBoxItem} Pointer to the control instance for chaining.
+         * @returns {sap.m.LightBoxItem} Pointer to the control instance for chaining.
          */
         LightBoxItem.prototype.setImageSrc = function(sImageSrc) {
             var oImage = this.getAggregation("_image"),
@@ -171,7 +171,7 @@ sap.ui.define([
          * Sets the alt text of the image.
          * @public
          * @param {string} sAlt The alt text
-         * @returns {LightBoxItem} Pointer to the control instance for chaining.
+         * @returns {sap.m.LightBoxItem} Pointer to the control instance for chaining.
          */
         LightBoxItem.prototype.setAlt = function (sAlt) {
             var oImage = this.getAggregation("_image");
@@ -186,7 +186,7 @@ sap.ui.define([
          * Sets the title of the image.
          * @public
          * @param {string} sTitle The image title
-         * @returns {LightBoxItem} Pointer to the control instance for chaining.
+         * @returns {sap.m.LightBoxItem} Pointer to the control instance for chaining.
          */
         LightBoxItem.prototype.setTitle = function (sTitle) {
             var oTitle = this.getAggregation("_title");
@@ -201,7 +201,7 @@ sap.ui.define([
          * Sets the subtitle of the image.
          * @public
          * @param {string} sSubtitle The image subtitle
-         * @returns {LightBoxItem} Pointer to the control instance for chaining.
+         * @returns {sap.m.LightBoxItem} Pointer to the control instance for chaining.
          */
         LightBoxItem.prototype.setSubtitle = function (sSubtitle) {
             var oSubtitle = this.getAggregation("_subtitle");

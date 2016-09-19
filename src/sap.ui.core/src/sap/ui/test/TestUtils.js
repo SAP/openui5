@@ -435,7 +435,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {map} mFixture
-		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}.
+		 *   the fixture for {@link sap.ui.test.TestUtils.useFakeServer}.
 		 * @param {string} [sSourceBase="sap/ui/core/qunit/odata/v4/data"]
 		 *   The base path for <code>source</code> values in the fixture. The path must be relative
 		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it

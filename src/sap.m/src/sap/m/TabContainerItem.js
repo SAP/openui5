@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Control'],
 						/**
 						 * The value of the property.
 						 */
-						propertyValue : {type : "mixed"}
+						propertyValue : {type : "any"}
 					}
 				}
 			}

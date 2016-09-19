@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 * @override
 		 * @param {string} sFunctionName The name of the called method
 		 * @param {array} aArgs The supplied arguments
-		 * @returns {mixed} The result of the called method
+		 * @returns {any} The result of the called method
 		 * @private
 		 */
 		TabStripSelect.prototype._callMethodInControl = function(sFunctionName, aArgs) {

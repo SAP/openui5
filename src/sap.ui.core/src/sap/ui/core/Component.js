@@ -442,9 +442,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time
 	 * when they are created. It is not checked or updated afterwards. And it can only be detected
-	 * while the {@link sap.ui.core.Component.runAsOwner Component.runAsOwner} function is executing.
+	 * while the {@link sap.ui.core.Component#runAsOwner Component.runAsOwner} function is executing.
 	 * Without further action, this is only the case while the content of an UIComponent is
-	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
+	 * {@link sap.ui.core.UIComponent#createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
 	 * <strong>Note</strong>: This method does not guarantee that the returned owner ID belongs

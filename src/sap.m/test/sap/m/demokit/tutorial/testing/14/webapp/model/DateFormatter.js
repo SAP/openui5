@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/format/DateFormat"],
 			 * day of the current week - eg: Wednesday
 			 * older dates - date formatted with the locale
 			 *
-			 * @param {date} oDate the date to be formatted
+			 * @param {Date} oDate the date to be formatted
 			 * @returns {string} The formatted date
 			 */
 			format: function(oDate) {

@@ -151,7 +151,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
      *                         assumed and should not be included.
      * @returns {object} the parsed Gherkin feature object
      * @see {@link #parse}
-     * @see {@link jQuery.sap#registerModulePath}
+     * @see {@link jQuery.sap.registerModulePath}
      * @public
      * @function
      * @static

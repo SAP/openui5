@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 
 
 	/**
-	 * Used to determine the {@link sap.ui.core.HistoryDirection} of the current or a future navigation,
+	 * Used to determine the {@link sap.ui.core.routing.HistoryDirection} of the current or a future navigation,
 	 * done with a {@link sap.ui.core.routing.Router} or {@link sap.ui.core.routing.HashChanger}.
 	 *
 	 * <strong>ATTENTION:</strong> this class will not be accurate if someone does hash-replacement without the named classes above

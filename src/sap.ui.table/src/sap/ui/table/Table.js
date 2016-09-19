@@ -4174,7 +4174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Checks whether the passed oEvent is a touch event.
 	 * @private
-	 * @param {event} oEvent The event to check
+	 * @param {jQuery.Event} oEvent The event to check
 	 * @return {boolean} false
 	 */
 	Table.prototype._isTouchMode = function(oEvent) {

@@ -70,7 +70,7 @@ sap.ui.define([
         /**
          * Registers a step definition.
          *
-         * @param {regexp} rRegex - the regular expression that matches the feature file step (with leading "Given", "When",
+         * @param {RegExp} rRegex - the regular expression that matches the feature file step (with leading "Given", "When",
          *                          "Then", "But" or "*" removed). E.g. if the feature file has the step
          *                          "Then I should be served a coffee" it will be truncated to "I should be served a coffee"
          *                          and tested against "rRegex" to check for a match. The simple regular expression
