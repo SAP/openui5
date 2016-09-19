@@ -539,7 +539,8 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string', 'boolean', 'int', 'float', 'object' or 'any', or a
 	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li>
-	 * <li><code>group: ...</code></li>
+	 * <li><code>group:<i>string</i></code> a semantic grouping of the properties, intended to be used in design time tools.
+	 *     Allowed values are (case sensitive): Accessibility, Appearance, Behavior, Data, Designtime, Dimension, Identification, Misc</li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
