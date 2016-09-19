@@ -2260,5 +2260,59 @@
         "references": []
       }
     ]
+  },
+  "1.32.17": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "b6e7a7a730ca739c16002d81cfa3eb5f0da7d416",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: fix rendering of invisible children after preserve",
+        "references": []
+      },
+      {
+        "id": "bf8b4f50897da39e565306f8b9a00deb57ae97fa",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.BusyIndicator: Removed Vendor-Prefixes for Animations",
+        "references": []
+      },
+      {
+        "id": "993da387c2eb55db240f35e8d92918fc9917e5d6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.isMouseEventDelayed: Include iOS WebView",
+        "references": []
+      },
+      {
+        "id": "3a5845ce3c727990b1eda889553903ed7a327c81",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: icon \u0027multi-select\u0027 shouldn\u0027t be mirrored in RTL",
+        "references": []
+      },
+      {
+        "id": "343497073d3efa6a6ab796fc9f141e0f9d42e178",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.XMLTemplateProcessor: add multiple style classes separately",
+        "references": []
+      },
+      {
+        "id": "380eb26f2f8be008c489b41fe16207c7dceffeb3",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Formatted Number is wrongly parsed with \u0027short\u0027 style in zh_CN locale",
+        "references": []
+      },
+      {
+        "id": "e24965fdd9aa3e1073f493bdcae3f556d19cda60",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty/es6-promise: Support Loading of require.js before core",
+        "references": []
+      }
+    ]
   }
 }

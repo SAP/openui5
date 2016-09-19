@@ -357,5 +357,38 @@
         "references": []
       }
     ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "89eec34c8788ca6932cd5fb08ebceb0ee0f0d74c",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: Secondary calendar type is read",
+        "references": []
+      },
+      {
+        "id": "d7322c1e53028e6d936b1f7f09f0d0d8b75199f2",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Days are read",
+        "references": []
+      },
+      {
+        "id": "33053712119d1750645103215636d9a3cb43aa35",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Interval header has default cursor",
+        "references": []
+      },
+      {
+        "id": "d8c0de541b37f9b3ef47c9b4cdd58ba35772370f",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setting content-type for edge browser fixed",
+        "references": []
+      }
+    ]
   }
 }

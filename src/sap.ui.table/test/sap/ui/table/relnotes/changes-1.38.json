@@ -836,5 +836,66 @@
         "references": []
       }
     ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "99d0d5e7ff3536449ddb6b0cfb152b7d12732c5f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix for problem on loading table when columns are not visible",
+        "references": []
+      },
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "e744b6cfdff23763c98368c23e2a8c6c0f08ade0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "d785b9f893fcdf6335f307efb2c0c0d736e44e2a",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable/AnalyticalTable: Correct overriding of selection mode",
+        "references": []
+      },
+      {
+        "id": "322970d26c4eb0241cc9c608996dd03f857fee0d",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.ClientTreeBindingAdapter: return the corrent length of binding",
+        "references": []
+      },
+      {
+        "id": "1becff06bc30e76999abb04e39286bfbce3e2680",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Scrollbar Height",
+        "references": []
+      },
+      {
+        "id": "e063b84387962c2dafb2d79c4893333741da19d8",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      },
+      {
+        "id": "295f37a02e9b93ad963a53b17e2a3cfc3214efe8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixedColumnCount calculation with hidden columns in aggregation",
+        "references": []
+      }
+    ]
   }
 }

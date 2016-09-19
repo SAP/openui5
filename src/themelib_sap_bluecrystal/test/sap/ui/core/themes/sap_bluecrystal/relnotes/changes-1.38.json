@@ -682,5 +682,73 @@
         "references": []
       }
     ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "3576ba4af625e84ad87bbc623f1f90143e8be4d8",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsPopover: Header items have correct focus outline",
+        "references": []
+      },
+      {
+        "id": "4ae56c5fc79f32f25eddbcbcc7a941ec2e1b9ba7",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Correct Icon color in footer context",
+        "references": []
+      },
+      {
+        "id": "2f826430f1c3a8103da38004db5269f2d8a4e253",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "ce92258f423ae4db7fda17ae24acd59534b8d1e8",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Less parameters for Bluecrystal theme updated",
+        "references": []
+      },
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "53ac308e464864c3da85790d8d1cbbfe359d6491",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Last segmented button should have focus",
+        "references": []
+      },
+      {
+        "id": "f25de706e10e015116a36cbac158f63de6ffb72d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "adb39e19c8716c69021f35b074a56b00b9331853",
+        "author": "Diana Shtilianova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover compact mode arrow style",
+        "references": []
+      },
+      {
+        "id": "0bb8788ad0806a783c1c864baa38d280af59be86",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      }
+    ]
   }
 }

@@ -3504,5 +3504,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.17": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "05731179678ac0ad7be420b92c3895666cfef7f7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: invalid input lost after rerendering",
+        "references": []
+      },
+      {
+        "id": "4ef073c58fb4b0f666464f65fa19d333d38c7011",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Disable Button when FeedInput is disabled",
+        "references": []
+      },
+      {
+        "id": "ca48c654773835d3ab4793f24d92ff7527cc3bad",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: calling getBegin/EndButton causes endless recursion",
+        "references": []
+      }
+    ]
   }
 }

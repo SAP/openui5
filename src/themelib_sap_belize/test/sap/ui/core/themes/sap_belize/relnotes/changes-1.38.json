@@ -409,5 +409,45 @@
         "references": []
       }
     ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "2f826430f1c3a8103da38004db5269f2d8a4e253",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "f25de706e10e015116a36cbac158f63de6ffb72d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "1ba15b7214e4c706b4dd0cb4700125fe9f79159f",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Overflowing label text now has proper ellipsis at the end",
+        "references": []
+      },
+      {
+        "id": "0bb8788ad0806a783c1c864baa38d280af59be86",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      }
+    ]
   }
 }
