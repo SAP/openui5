@@ -376,6 +376,7 @@ jQuery.sap.initMobile();
 	QUnit.test("Right padding is removed and left padding is added, when scrolling directly from the left edge to the right edge in horizontal layout", function(assert) {
 		//Arrange
 		this.oHeaderContainer.$().addClass("sapMHrdrRightPadding");
+		this.oHeaderContainer._oScrollCntr.getDomRef().style.width = "300px"; // set the client width smaller than scroll width so that HeaderContainer is scrollable
 		//Act
 		this.oHeaderContainer._hScroll(3000, 500); // a big scroll step to the end
 		//Assert
@@ -402,6 +403,7 @@ jQuery.sap.initMobile();
 		this.oHeaderContainer.rerender();
 
 		this.oHeaderContainer.$().addClass("sapMHrdrBottomPadding");
+		this.oHeaderContainer._oScrollCntr.getDomRef().style.height = "300px"; // set the client height smaller than scroll width so that HeaderContainer is scrollable
 		//Act
 		this.oHeaderContainer._vScroll(3000, 500); // a big scroll step to the bottom
 		//Assert

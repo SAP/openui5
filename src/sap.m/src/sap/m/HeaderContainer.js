@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else if (iScrollTarget + iClientHeight + iPaddingHeight >= iScrollHeight) { // when the next scrolling will reach the bottom edge side
 			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollHeight - iClientHeight - iScrollTop);
 			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
-			if (iClientHeight + delta > iScrollHeight) { // when scrolling from top edge direct to bottom edge
+			if (iClientHeight + delta > iScrollHeight && iClientHeight !== iScrollHeight) { // when scrolling from top edge direct to bottom edge
 				this.$().removeClass("sapMHrdrBottomPadding");
 				this.$().addClass("sapMHrdrTopPadding");
 			} else {
@@ -396,7 +396,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else if (iScrollTarget + oDomRef.clientWidth + iPaddingWidth >= iScrollWidth) { // when the next scrolling will reach the right edge side
 				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollWidth - iClientWidth - iScrollLeft);
 				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
-				if (iClientWidth + delta > iScrollWidth) { // when scrolling from left edge direct to right edge
+				if (iClientWidth + delta > iScrollWidth && iClientWidth !== iScrollWidth) { // when scrolling from left edge direct to right edge
 					this.$().removeClass("sapMHrdrRightPadding");
 					this.$().addClass("sapMHrdrLeftPadding");
 				} else {
@@ -471,7 +471,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype._checkHOverflow = function() {
 		var oBarHead = this._oScrollCntr.getDomRef();
-		var oBarHeadContainer = this.$("scroll-area");
 
 		if (oBarHead) {
 			var iScrollLeft = Math.floor(oBarHead.scrollLeft);
@@ -488,24 +487,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			if (this._bRtl) {
 				var iScrollLeftRTL = jQuery(oBarHead).scrollLeftRTL();
-				if (iScrollLeftRTL > (Device.browser.internet_explorer ? 1 : 0)) {
+				if (iScrollLeftRTL > ((Device.browser.internet_explorer || Device.browser.edge) ? 1 : 0)) {
 					bScrollForward = true;
 				}
 			} else if (iScrollLeft > 1) {
 				bScrollBack = true;
 			}
 
-			var fnRightMarginCalc = function() {
-				var iPadding = parseFloat(oBarHeadContainer.css("padding-right"));
-				return Device.browser.internet_explorer ? iPadding + 1 : iPadding;
-			};
-
 			if (realWidth - 5 > availableWidth) {
 				if (this._bRtl) {
 					if (jQuery(oBarHead).scrollRightRTL() > 1) {
 						bScrollBack = true;
 					}
-				} else if (Math.abs(iScrollLeft + availableWidth - realWidth) > fnRightMarginCalc()) {
+				} else if (iScrollLeft + availableWidth < realWidth) {
 						bScrollForward = true;
 				}
 			}
