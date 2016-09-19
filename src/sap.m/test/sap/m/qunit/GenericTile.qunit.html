@@ -859,6 +859,35 @@
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
 	});
 
+	QUnit.module("Hindi launguage in header and subheader tests", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "जर्नल प्रविष्टियों के लिए विकल्प संपादित करें",
+				subheader : "मेरी सेटिंग"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("The maximal number of lines in Hindi language in HeaderMode is four", function(assert) {
+		// arrange
+		this.oGenericTile.setMode("HeaderMode");
+		sap.ui.getCore().applyChanges();
+		// assert
+		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
+		assert.equal(nLines, 4, "The number of header lines is right");
+	});
+
+	QUnit.test("The maximal number of lines in Hindi language in ContentMode is two", function(assert) {
+		// assert
+		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
+		assert.equal(nLines, 2, "The number of header lines is right");
+	});
+
 	QUnit.module("Event Tests", {
 		beforeEach : function() {
 			this.ftnPressHandler = function() {
