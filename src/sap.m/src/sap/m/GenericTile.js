@@ -285,12 +285,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {boolean} bSubheader which indicates the existance of subheader
 	 */
 	GenericTile.prototype._applyHeaderMode = function(bSubheader) {
-		// Devanagari characters require additional vertical space to be displayed.
-		// Therefore, only the half number of lines containing such characters can be displayed in header of GenericTile.
-		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
-			this._oTitle.setMaxLines(2);
-			return;
-		}
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
 		if (bSubheader) {
@@ -319,10 +313,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {boolean} bSubheader which indicates the existance of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
-		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
-			this._oTitle.setMaxLines(1);
-			return;
-		}
 		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 3 lines
 		if (bSubheader) {
