@@ -12,6 +12,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 	function(jQuery, URI, Element) {
 	"use strict";
 
+	var oCfgData = window["sap-ui-config"] || {};
+
+	var syncCallBehavior = 0; // ignore
+	if (oCfgData['xx-nosync'] === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search)) {
+		syncCallBehavior = 1;
+	}
+	if (oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search)) {
+		syncCallBehavior = 2;
+	}
+
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
 		 *
@@ -141,6 +151,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			sUrl = sUrl.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0,$1,$2) {
 				return "/library-parameters.json" + ($2 ? $2 : "");
 			});
+
+			if (syncCallBehavior === 2) {
+				jQuery.sap.log.error("[nosync] Loading library-parameters.json ignored", sUrl, "sap.ui.core.theming.Parameters");
+				return;
+			} else if (syncCallBehavior === 1) {
+				jQuery.sap.log.error("[nosync] Loading library-parameters.json with sync XHR", sUrl, "sap.ui.core.theming.Parameters");
+			}
 
 			// load and evaluate parameter file
 			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
@@ -361,6 +378,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		 */
 		Parameters.get = function(vName, oElement) {
 			var sParam;
+
+			if (!sap.ui.getCore().isInitialized()) {
+				jQuery.sap.log.warning("Called sap.ui.core.theming.Parameters.get() before core has been initialized. " +
+					"This could lead to bad performance and sync XHR as inline parameters might not be available, yet. " +
+					"Consider using the API only when required, e.g. onBeforeRendering.");
+			}
 
 			// Parameters.get() without arugments returns
 			// copy of complete default parameter set
