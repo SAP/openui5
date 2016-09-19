@@ -1525,7 +1525,7 @@ sap.ui.define([
      *        a maxLength information
      * @param {object} oFieldInfo
      * @param {grid} oConditionGrid which should contain the new created field
-     * @returns {Control} the created control instance either Input or DatePicker
+     * @returns {sap.ui.core.Control} the created control instance either Input or DatePicker
      */
     P13nConditionPanel.prototype._createValueField = function(oCurrentKeyField, oFieldInfo, oConditionGrid) {
         var oControl;
@@ -2791,6 +2791,11 @@ sap.ui.define([
         }
     };
 
+    /**
+     * @enum {string}
+     * @public
+     * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
+     */
     sap.m.P13nConditionOperation = {
         // filter operations
         BT: "BT",
