@@ -422,7 +422,7 @@
 		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
 	});
 
-	test("Keyboard navigation", function() {
+	test("Keyboard navigation events", function() {
 		expect(5);
 		// default rating with no properties
 		var oRating = new sap.m.RatingIndicator({ visualMode: sap.m.RatingIndicatorVisualMode.Full }),
@@ -486,6 +486,22 @@
 		oRating.onsapdecrease();
 	});
 
+	test("Keyboard navigation events - boundary conditions", function() {
+		var oRating = new sap.m.RatingIndicator();
+
+		oRating.onsapdecrease();
+		strictEqual(oRating.getValue(), 0, "When value is 0 and onsapdecrease is invoked, Rating Indicator has value 0");
+
+		oRating.setValue(5);
+		oRating.onsapincrease();
+		strictEqual(oRating.getValue(), 5, "When value is 5 and onsapincrease is invoked, Rating Indicator has value 5");
+
+		oRating.onsapselect();
+		strictEqual(oRating.getValue(), 0, "When value is 5 and onsapselect is invoked, Rating Indicator has value 0");
+
+		// Clean up
+		oRating.destroy();
+	});
 
 	test("NUMBER keys", function() {
 
