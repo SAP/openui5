@@ -30,6 +30,8 @@
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 /* hover */
@@ -56,7 +58,14 @@
 
 /* focus */
 html.sap-desktop .sapMSelectListItemBase:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline-color: @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+		border: 1px dotted @sapUiContentFocusColor;
+	}
 }
 
 /* ------------------------------ */
