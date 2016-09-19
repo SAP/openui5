@@ -611,14 +611,15 @@ sap.ui.define([
 		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
 		 *   The contexts to be checked for the requested data
 		 * @param {number} iStart
-		 *   The start index for the data request
+		 *   The start index for the data request in model coordinates (starting with 0 or -1)
 		 * @param {number} iLength
 		 *   The number of requested entries
 		 * @param {number} iMaximumPrefetchSize
 		 *   The number of entries to prefetch before and after the given range
 		 * @returns {object}
 		 *   Returns an object with a member <code>start</code> for the start index for the next
-		 *   read and <code>length</code> for the number of entries to be read.
+		 *   read and <code>length</code> for the number of entries to be read. The output is in
+		 *   model coordinates (starting with 0 or -1).
 		 */
 		getReadRange : function (aContexts, iStart, iLength, iMaximumPrefetchSize) {
 			if (isDataMissing(aContexts, iStart + iLength,

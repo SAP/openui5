@@ -316,7 +316,7 @@ sap.ui.require([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : '{"TEAM_ID": "TEAM_03"}'
+				body : {"TEAM_ID": "TEAM_03"}
 			}, {
 				method : "PATCH",
 				url : "Employees('2')",
@@ -337,7 +337,7 @@ sap.ui.require([
 		"PATCH Employees('1') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
-		'{"TEAM_ID": "TEAM_03"}\r\n' +
+		'{"TEAM_ID":"TEAM_03"}\r\n' +
 		"--changeset_id-9876543210987-654\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -615,6 +615,7 @@ sap.ui.require([
 			});
 		}
 	);
+	// TODO do we still need the case that aRequests contains a request body as string?
 
 	//*********************************************************************************************
 	[{

@@ -63,6 +63,8 @@ sap.ui.define([
 	 * @param {number} [iIndex]
 	 *   Index of item (within the collection addressed by <code>sPath</code>) represented
 	 *   by this context; used by list bindings, not context bindings
+	 * @param {Promise} [oCreatePromise]
+	 *   Promise returned by {@link #created created}
 	 *
 	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
@@ -86,12 +88,33 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex) {
+			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
 				BaseContext.call(this, oModel, sPath);
 				this.oBinding = oBinding;
+				this.oCreatePromise = oCreatePromise
+					// ensure to return a promise that is resolved w/o data
+					&& Promise.resolve(oCreatePromise).then(function () {});
+				this.oSyncCreatePromise = oCreatePromise && _SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 			}
 		});
+
+	/**
+	 * Returns a promise that is resolved without data when the entity represented by this context
+	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
+	 * represented by this context is transient.
+	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved without data when the entity represented by this context has
+	 *   been created in the backend. Returns <code>undefined</code> if the context has not been
+	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}.
+	 *
+	 * @public
+	 * @since 1.43
+	 */
+	Context.prototype.created = function () {
+		return this.oCreatePromise;
+	};
 
 	/**
 	 * Deletes the OData entity this context points to. The context must be part of a context
@@ -123,6 +146,9 @@ sap.ui.define([
 	Context.prototype["delete"] = function (sGroupId) {
 		var that = this;
 
+		if (this.isTransient()) {
+			return that.oBinding._delete(sGroupId, "n/a", that);
+		}
 		return this.requestCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
 		});
@@ -374,6 +400,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if this context is transient, which means that the promise returned
+	 * by {@link sap.ui.model.odata.v4.ODataListBinding#create created} is not yet resolved or
+	 * rejected.
+	 *
+	 * @returns {boolean}
+	 *   Whether this context is transient
+	 *
+	 * @private
+	 */
+	Context.prototype.isTransient = function () {
+		var oSyncCreatePromise = this.oSyncCreatePromise;
+
+		return oSyncCreatePromise && (oSyncCreatePromise.getResult() === oSyncCreatePromise);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
 	 * Conventions", this is the "name of the entity set associated with the entity followed by the
@@ -481,6 +523,10 @@ sap.ui.define([
 
 		sPath = _Helper.buildPath(this.iIndex, sPath);
 
+		if (this.isTransient()) {
+			// Note: must not be falsy, otherwise a parent context would insert its own edit URL
+			sEditUrl = "n/a";
+		}
 		if (sEditUrl) {
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
@@ -503,6 +549,8 @@ sap.ui.define([
 		 *   An absolute path without trailing slash
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
+		 * @param {Promise} [oCreatePromise]
+		 *   Promise returned by {@link sap.ui.model.odata.v4.Context#created created}
 		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}
@@ -510,14 +558,14 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		create : function (oModel, oBinding, sPath, iIndex) {
+		create : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
 			if (sPath[0] !== "/") {
 				throw new Error("Not an absolute path: " + sPath);
 			}
 			if (sPath.slice(-1) === "/") {
 				throw new Error("Unsupported trailing slash: " + sPath);
 			}
-			return new Context(oModel, oBinding, sPath, iIndex);
+			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise);
 		}
 	};
 }, /* bExport= */ false);
