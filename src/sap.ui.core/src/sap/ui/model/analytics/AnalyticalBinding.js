@@ -4018,7 +4018,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		for (var l = 0; l < this.aAllDimensionSortedByName.length; l++) {
 			var sDimVal = oMultiUnitEntry[this.aAllDimensionSortedByName[l]];
-			sMultiUnitEntryKey += (sDimVal === undefined ? "" : sDimVal) + ",";
+			// if the value is an empty string, it should be treated as such in the generated key
+			var sSaveDimVal = sDimVal === "" ? '""' : sDimVal;
+			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
+			sMultiUnitEntryKey += (sSaveDimVal + ",");
 		}
 		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
 
