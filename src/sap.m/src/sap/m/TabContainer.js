@@ -220,7 +220,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 * @param {sap.m.TabContainerItem | string} vItem object or ID of the <code>TabContainerItem</code>
 		 * @returns {sap.m.TabStripItem | null} <code>TabStripItem</code> corresponding to a given <code>sap.m.TabContainerItem</code> (if any)
-		 * @protected
+		 * @private
 		 */
 		TabContainer.prototype._toTabStripItem = function(vItem) {
 			var iIndex = 0,
