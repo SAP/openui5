@@ -833,9 +833,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 				if (bShouldFireEvent) {
 					sDirection = History.getInstance().getDirection();
 
+					// when back navigation, the last history state should be removed
 					if (sDirection === HistoryDirection.Backwards) {
-						// when back navigation, the last history state should be removed
-						this._aHistory.pop();
+						// but only if the last history entrie´s title is not the same as the current one
+						if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
+							this._aHistory.pop();
+						}
 					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
 						// if no actual navigation took place, we only need to update the title
 						oLastHistoryEntry.title = mArguments.title;
