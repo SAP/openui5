@@ -448,6 +448,58 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return parseFloat(fValue);
 	};
 
+	/**
+	 * Gets the new value after a single value increase.
+	 *
+	 * @returns {float} The increased rating value.
+	 * @private
+	 */
+	RatingIndicator.prototype._getIncreasedValue = function () {
+		var iMaxValue = this.getMaxValue(),
+			fValue = this.getValue() + this._getValueChangeStep();
+
+		if (fValue > iMaxValue) {
+			fValue = iMaxValue;
+		}
+
+		return fValue;
+	};
+
+	/**
+	 * Gets the new value after a single value decrease.
+	 *
+	 * @returns {float} The decreased rating value.
+	 * @private
+	 */
+	RatingIndicator.prototype._getDecreasedValue = function () {
+		var fValue = this.getValue() - this._getValueChangeStep();
+
+		if (fValue < 0) {
+			fValue = 0;
+		}
+
+		return fValue;
+	};
+
+	/**
+	 * Gets the step that should be used for single keyboard value change operation.
+	 *
+	 * @returns {float} The value change step.
+	 * @private
+	 */
+	RatingIndicator.prototype._getValueChangeStep = function () {
+		var sVisualMode = this.getVisualMode();
+
+		switch (sVisualMode) {
+			case sap.m.RatingIndicatorVisualMode.Full:
+				return 1;
+			case sap.m.RatingIndicatorVisualMode.Half:
+				return 0.5;
+			default:
+				jQuery.sap.log.warning("VisualMode not supported", sVisualMode);
+		}
+	};
+
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
@@ -569,36 +621,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.onsapincrease = function (oEvent) {
-		var fValue = this.getValue(),
-			fOldValue = this.getValue(),
-			iMaxValue = this.getMaxValue();
-
-		if (!this.getEnabled()) {
-			return false;
-		}
-
-		if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
-			fValue += 1;
-		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
-			fValue += 0.5;
-		}
-
-		if (fValue > iMaxValue) {
-			fValue = iMaxValue;
-		}
-
-		this.setValue(fValue);
-
-		if (fValue !== fOldValue) {
-			this.fireLiveChange({ value: fValue });
-			this.fireChange({ value: fValue });
-		}
-
-		// stop browsers default behavior
-		if (oEvent) {
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
+		var fValue = this._getIncreasedValue();
+		this._handleKeyboardValueChange(oEvent, fValue);
 	};
 
 	/**
@@ -608,35 +632,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.onsapdecrease = function (oEvent) {
-		var fValue = this.getValue(),
-			fOldValue = this.getValue();
-
-		if (!this.getEnabled()) {
-			return false;
-		}
-
-		if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
-			fValue -= 1;
-		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
-			fValue -= 0.5;
-		}
-
-		if (fValue < 0) {
-			fValue = 0;
-		}
-
-		this.setValue(fValue);
-
-		if (fValue !== fOldValue) {
-			this.fireLiveChange({ value: fValue });
-			this.fireChange({ value: fValue });
-		}
-
-		// stop browsers default behavior
-		if (oEvent) {
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
+		var fValue = this._getDecreasedValue();
+		this._handleKeyboardValueChange(oEvent, fValue);
 	};
 
 	/**
@@ -646,25 +643,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	* @private
 	*/
 	RatingIndicator.prototype.onsaphome = function (oEvent) {
-		var fValue =  0,
-			fOldValue = this.getValue();
-
-		if (!this.getEnabled()) {
-			return false;
-		}
-
-		this.setValue(fValue);
-
-		if (fValue !== fOldValue) {
-			this.fireLiveChange({ value: fValue });
-			this.fireChange({ value: fValue });
-		}
-
-		// stop browsers default behavior
-		if (oEvent) {
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
+		var fValue = 0;
+		this._handleKeyboardValueChange(oEvent, fValue);
 	};
 
 	/**
@@ -674,25 +654,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.onsapend = function (oEvent) {
-		var fValue =  this.getMaxValue(),
-			fOldValue = this.getValue();
-
-		if (!this.getEnabled()) {
-			return false;
-		}
-
-		this.setValue(fValue);
-
-		if (fValue !== fOldValue) {
-			this.fireLiveChange({ value: fValue });
-			this.fireChange({ value: fValue });
-		}
-
-		// stop browsers default behavior
-		if (oEvent) {
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
+		var fValue = this.getMaxValue();
+		this._handleKeyboardValueChange(oEvent, fValue);
 	};
 
 	/**
@@ -702,38 +665,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.onsapselect = function (oEvent) {
-		var fValue = this.getValue(),
-			iMaxValue = this.getMaxValue(),
-			fOldValue = this.getValue();
+		var fValue;
 
-		if (!this.getEnabled()) {
-			return false;
+		if (this.getValue() === this.getMaxValue()) { // if the max value is reached, set to 0
+			fValue = 0;
+		} else {
+			fValue = this._getIncreasedValue();
 		}
 
-		if (fValue === iMaxValue) {
-			fValue = 0; // start with 0 if we are at maximum
-		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
-			fValue += 1;
-		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
-			fValue += 0.5;
-		}
-
-		if (fValue > iMaxValue) {
-			fValue = iMaxValue;
-		}
-
-		this.setValue(fValue);
-
-		if (fValue !== fOldValue) {
-			this.fireLiveChange({ value: fValue });
-			this.fireChange({ value: fValue });
-		}
-
-		// stop browsers default behavior
-		if (oEvent) {
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
+		this._handleKeyboardValueChange(oEvent, fValue);
 	};
 
 	/**
@@ -791,6 +731,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                 this.setValue(Math.min(9, iMaxValue));
                 break;
         }
+	};
+
+	/**
+	 * Handle the event and set the new value.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {float} fValue The new value that should be set.
+	 * @private
+	 */
+	RatingIndicator.prototype._handleKeyboardValueChange = function (oEvent, fValue) {
+		if (!this.getEnabled()) {
+			return;
+		}
+
+		if (fValue !== this.getValue()) {
+			this.setValue(fValue);
+			this.fireLiveChange({value: fValue});
+			this.fireChange({value: fValue});
+		}
+
+		// stop browsers default behavior
+		if (oEvent) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
 	};
 
 	/* =========================================================== */
