@@ -418,7 +418,7 @@ sap.ui.define([
 						target = target.slice(0, p);
 					}
 
-					return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+					return "<a class=\"jsdoclink\" href=\"#\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
 
 				}
 			}) + '</span>';

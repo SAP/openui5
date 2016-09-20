@@ -414,7 +414,7 @@ sap.ui.define([
 
 						rm.write('</td><td>');
 
-						rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oContext.location.name) + '" data-sap-ui-control-id="' + encode(oContext.location.id) + '" href="javascript:void(0);">' +
+						rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oContext.location.name) + '" data-sap-ui-control-id="' + encode(oContext.location.id) + '" href="#">' +
 								encode(basename(oContext.location.name)) +
 								' (' + encode(oContext.location.id) + ')</a></div>');
 
@@ -597,7 +597,7 @@ sap.ui.define([
 
 						if (oBinding.model && oBinding.model.location && oBinding.model.location.type) {
 							if (oBinding.model.location.type === 'control') {
-								rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oBinding.model.location.name) + '" data-sap-ui-control-id="' + encode(oBinding.model.location.id) + '" href="javascript:void(0);">' +
+								rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oBinding.model.location.name) + '" data-sap-ui-control-id="' + encode(oBinding.model.location.id) + '" href="#">' +
 										encode(basename(oBinding.model.location.name)) +
 										' (' + encode(oBinding.model.location.id) + ')</a></div>');
 							} else {

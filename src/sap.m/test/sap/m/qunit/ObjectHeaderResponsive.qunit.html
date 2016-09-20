@@ -194,11 +194,11 @@
 						title: "Full title test",
 						responsive: true
 					});
-	
+
 					// system under test
 					oObjectHeader.placeAt("qunit-fixture");
 					oCore.applyChanges();
-	
+
 					// Assert
 					var $objectHeader = oObjectHeader.$("titlediv");
 
@@ -314,7 +314,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					equal($sTitle.attr("href"), "javascript:void(0);", "Title attribute href is not a link.");
+					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
 
 					// Clean up
 					oObjectHeader.destroy();

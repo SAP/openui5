@@ -488,9 +488,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
 				} else {
-					/*eslint-disable no-script-url */
-					oRM.writeAttribute("href", "javascript:void(0);");
-					/*eslint-enable no-script-url */
+					oRM.writeAttribute("href", "#");
 				}
 
 				//ARIA attributes
@@ -516,6 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("<" + sTitleLevel + ">");
 			this._renderChildControl(oRM, oOH, oOH._titleText);
 			oRM.write("</" + sTitleLevel + ">");
+
 			if (oOH.getTitleActive()) {
 				oRM.write("</a>"); // End Title Text container
 			} else {
@@ -1324,9 +1323,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 				}
 			} else {
-				/*eslint-disable no-script-url */
-				oRM.writeAttribute("href", "javascript:void(0);");
-				/*eslint-enable no-script-url */
+				oRM.writeAttribute("href", "#");
 			}
 
 			oRM.writeAttribute("tabindex", "0");

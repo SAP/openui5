@@ -401,6 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Co
 			}
 		}
 
+		oEvent.preventDefault();
 		oEvent.stopPropagation(); //to prevent comment chunks to propagate event to parentChunk
 
 	};

@@ -135,9 +135,9 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<span id='" + oControl.getId() + "-hdrL'>");
 
 		if (oControl.getEnabled()) {
-			rm.write("<a id='" + oControl.getId() + "-minL' class='sapUiAcdSectionMinArrow' href='javascript:void(0)' title='Collapse/Expand'");
+			rm.write("<a id='" + oControl.getId() + "-minL' class='sapUiAcdSectionMinArrow' href='# title='Collapse/Expand'");
 		} else {
-			rm.write("<a id='" + oControl.getId() + "-minL' class='sapUiAcdSectionMinArrow sapUiAcdCursorText' href='javascript:void(0)' title='Collapse/Expand'");
+			rm.write("<a id='" + oControl.getId() + "-minL' class='sapUiAcdSectionMinArrow sapUiAcdCursorText' href='#' title='Collapse/Expand'");
 		}
 
 		rm.write(" tabindex='-1' ");
