@@ -643,7 +643,7 @@
 	test("ScrollTop on init is as expected", function(assert) {
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
-		assert.equal(oVsb.scrollTop, 28, "ScrollTop is correct");
+		assert.ok(oVsb.scrollTop > 25 && oVsb.scrollTop < 30, "ScrollTop is correct");
 	});
 
 	test("ScrollTop after scrolling to last row is as expected", function(assert) {
@@ -694,11 +694,11 @@
 		setTimeout(function() {
 			oVsb.scrollTop = 1000000;
 			setTimeout(function() {
-				var sTransformCssValue = jQuery(".sapUiTableCtrl").css("transform");
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
 				var iScrollRange = oTable._getRowCount() * oTable._getDefaultRowHeight();
 				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
-				assert.ok(sTransformCssValue.indexOf("" + (iRowHeightsDelta * -1)) > -1, "Table Correction is equal to RowHeightsDelta");
+				assert.equal(jQuery(".sapUiTableCtrlScr").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
+				assert.equal(jQuery(".sapUiTableRowHdrScr").scrollTop(), iRowHeightsDelta, "Row Header Correction is equal to RowHeightsDelta");
 				done();
 			}, 500);
 		}, 500);
@@ -1373,10 +1373,10 @@
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
 	});
-	
-	
+
+
 	QUnit.module("Legacy Modules", {});
-	
+
 	QUnit.asyncTest("TreeAutoExpandMode", function(assert) {
 		sap.ui.require(['sap/ui/table/TreeAutoExpandMode', 'sap/ui/table/library'], function(oClass, oLib) {
 			assert.ok(oClass === sap.ui.table.TreeAutoExpandMode, "Global Namespace");
@@ -1384,7 +1384,7 @@
 			start();
 		});
 	});
-	
+
 	QUnit.asyncTest("ColumnMenuRenderer", function(assert) {
 		sap.ui.require(['sap/ui/table/ColumnMenuRenderer', 'sap/ui/table/ColumnMenu'], function(oRenderer, oMenu) {
 			assert.ok(oRenderer === sap.ui.table.ColumnMenuRenderer, "Global Namespace");
@@ -1392,7 +1392,7 @@
 			start();
 		});
 	});
-	
+
 	QUnit.asyncTest("AnalyticalColumnMenuRenderer", function(assert) {
 		sap.ui.require(['sap/ui/table/AnalyticalColumnMenuRenderer', 'sap/ui/table/AnalyticalColumnMenu'], function(oRenderer, oMenu) {
 			assert.ok(oRenderer === sap.ui.table.AnalyticalColumnMenuRenderer, "Global Namespace");
@@ -1400,7 +1400,7 @@
 			start();
 		});
 	});
-	
+
 	QUnit.asyncTest("TreeTableRenderer", function(assert) {
 		sap.ui.require(['sap/ui/table/TreeTableRenderer', 'sap/ui/table/TreeTable'], function(oRenderer, oTable) {
 			assert.ok(oRenderer === sap.ui.table.TreeTableRenderer, "Global Namespace");
@@ -1408,7 +1408,7 @@
 			start();
 		});
 	});
-	
+
 	QUnit.asyncTest("TreeTableRenderer", function(assert) {
 		sap.ui.require(['sap/ui/table/AnalyticalTableRenderer', 'sap/ui/table/AnalyticalTable'], function(oRenderer, oTable) {
 			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");

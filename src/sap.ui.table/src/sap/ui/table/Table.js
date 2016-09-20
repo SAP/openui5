@@ -1350,8 +1350,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iRowCorrection != null && iRowCorrection > -1) {
-			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlRowScroll, .sapUiTableRowHdrScr");
-			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection ) + "px, 0px)"});
+			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
+			oInnerScrollContainer.scrollTop(iRowCorrection);
 		}
 	};
 
@@ -1956,7 +1956,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			$this.find(".sapUiTableCCnt").on("scroll.sapUiTablePreventCCntScroll", function(oEvent) {oEvent.target.scrollTop = 0;});
+			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
+			oInnerScrollContainer.on("scroll.sapUiTableSyncScrollPosition", function(oEvent) {
+				oInnerScrollContainer.scrollTop(oEvent.target.scrollTop);
+			});
 		}
 
 		// sync row header > content (hover effect)
@@ -2032,7 +2035,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			$this.find(".sapUiTableCCnt").unbind("scroll.sapUiTablePreventCCntScroll");
+			$this.find(".sapUiTableCCnt").unbind("scroll.sapUiTableSyncScrollPosition");
 		}
 
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
