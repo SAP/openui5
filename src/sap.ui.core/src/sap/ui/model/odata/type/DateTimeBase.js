@@ -156,8 +156,9 @@ sap.ui.define([
 	 *   The value to be formatted, which is represented in the model as a <code>Date</code>
 	 *   instance (OData V2)
 	 * @param {string} sTargetType
-	 *   The target type, may be "any" or "string"; see {@link sap.ui.model.odata.type} for more
-	 *   information
+	 *   The target type, may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
@@ -171,7 +172,7 @@ sap.ui.define([
 		if (oValue === null || oValue === undefined) {
 			return null;
 		}
-		switch (sTargetType) {
+		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return oValue;
 		case "string":
@@ -189,8 +190,9 @@ sap.ui.define([
 	 *   The value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   The source type (the expected type of <code>sValue</code>), must be "string"; see
-	 *   {@link sap.ui.model.odata.type} for more information
+	 *   The source type (the expected type of <code>sValue</code>), must be "string", or a type
+	 *   with "string" as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date}
 	 *   The parsed value
 	 * @throws {sap.ui.model.ParseException}
@@ -206,7 +208,7 @@ sap.ui.define([
 		if (sValue === null || sValue === "") {
 			return null;
 		}
-		switch (sSourceType) {
+		switch (this.getPrimitiveType(sSourceType)) {
 		case "string":
 			oResult = getFormatter(this).parse(sValue);
 			if (!oResult) {

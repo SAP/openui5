@@ -102,6 +102,10 @@ sap.ui.require([
 
 		assert.strictEqual(oType.formatValue(oTime, "any"), oTime, "null");
 		assert.strictEqual(oType.formatValue(oTime, "string"), "1:53:49 PM", "null");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue(oTime, "sap.ui.core.CSSSize"), "1:53:49 PM");
 	});
 
 	//*********************************************************************************************
@@ -158,6 +162,16 @@ sap.ui.require([
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 		oType = new Time();
 		parseError(assert, oType, "24:00:00", "beyond time of day");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse, get primitive type", function (assert) {
+		var oType = new Time();
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.deepEqual(oType.parseValue("1:45:33 PM", "sap.ui.core.CSSSize"),
+			createTime(13, 45, 33, 0));
 	});
 
 	//*********************************************************************************************

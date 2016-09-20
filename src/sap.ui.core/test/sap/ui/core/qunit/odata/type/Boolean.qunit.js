@@ -3,14 +3,16 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/model/FormatException",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, FormatException, ParseException, ValidateException, BooleanType, ODataType,
-		TestUtils) {
+], function (jQuery, ManagedObject, FormatException, JSONModel, ParseException, ValidateException,
+		BooleanType, ODataType, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -56,6 +58,31 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to format sap.ui.model.odata.type.Boolean to int");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue(true, "sap.ui.core.CSSSize"), "Yes");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: Integration test getPrimitiveType", function (assert) {
+		var oModel = new JSONModel({value : true}),
+			TestControl = ManagedObject.extend("test.sap.ui.model.odata.type.Boolean", {
+				metadata : {
+					properties : {
+						// use sap.ui.core.ID for testing as "Yes" needs to be a valid value
+						labelFor : "sap.ui.core.ID"
+					}
+				}
+			}),
+			oControl = new TestControl();
+
+		oControl.setModel(oModel);
+
+		oControl.bindProperty("labelFor", {path : "/value",
+			type : "sap.ui.model.odata.type.Boolean"});
+
+		assert.strictEqual(oControl.getProperty("labelFor"), "Yes");
 	});
 
 	//*********************************************************************************************
@@ -78,6 +105,10 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Boolean from int");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("Yes", "sap.ui.core.CSSSize"), true);
 	});
 
 	//*********************************************************************************************

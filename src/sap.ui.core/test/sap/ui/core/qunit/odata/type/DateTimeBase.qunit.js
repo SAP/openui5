@@ -182,6 +182,11 @@ sap.ui.require([
 						"Don't know how to format " + sTypeName + " to " + sType);
 				}
 			});
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.atLeast(1).returns("string");
+			assert.strictEqual(oType.formatValue(oDateTime, "sap.ui.core.CSSSize"),
+				sFormattedDateTime);
 		});
 
 		//*****************************************************************************************
@@ -207,6 +212,11 @@ sap.ui.require([
 			parseError(assert, oType, "foo", "EnterDateTime", "not a date");
 			parseError(assert, oType, "Feb 28, 2014, 11:69:30 AM", "EnterDateTime",
 				"invalid time");
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.returns("string");
+			assert.deepEqual(oType.parseValue(sFormattedDateTime, "sap.ui.core.CSSSize"),
+				oDateTime);
 		});
 
 		//*****************************************************************************************
@@ -442,6 +452,11 @@ sap.ui.require([
 		}, new FormatException(
 			"Illegal sap.ui.model.odata.type.DateTimeOffset value: 2000-02-30T00:00:00Z"));
 		// Note: We support duck typing! If it is not a string, it must have getTime()...
+
+		this.mock(oDateTimeOffset).expects("getPrimitiveType").twice().
+			withExactArgs("sap.ui.core.CSSSize").returns("string");
+		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "sap.ui.core.CSSSize"),
+				sFormattedDateTime);
 	});
 
 	//*********************************************************************************************

@@ -66,6 +66,11 @@ sap.ui.require([
 			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "target type string");
 		assert.strictEqual(oType.formatValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23", "any"),
 			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "target type any");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23",
+			"sap.ui.core.CSSSize"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23");
 	});
 
 	//*********************************************************************************************
@@ -106,6 +111,11 @@ sap.ui.require([
 			"0050568D-393C-1", "parse invalid GUID");
 		assert.strictEqual(oType.parseValue("005X568D-393C-1ED4-9D97-E65F0F3FCC23", "string"),
 			"005X568D-393C-1ED4-9D97-E65F0F3FCC23", "invalid character X");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23",
+			"sap.ui.core.CSSSize"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23");
 	});
 
 	//*********************************************************************************************

@@ -154,8 +154,9 @@ sap.ui.define([
 	 * @param {string} sValue
 	 *   The value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
-	 *   The target type, may be "any" or "string"; see {@link sap.ui.model.odata.type} for more
-	 *   information
+	 *   The target type, may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information
 	 * @returns {string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
@@ -174,7 +175,7 @@ sap.ui.define([
 			return null;
 		}
 
-		switch (sTargetType) {
+		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return sValue;
 		case "string":
@@ -213,8 +214,9 @@ sap.ui.define([
 	 * @param {string} sValue
 	 *   The value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   The source type (the expected type of <code>sValue</code>), must be "string"; see
-	 *   {@link sap.ui.model.odata.type} for more information.
+	 *   The source type (the expected type of <code>sValue</code>), must be "string", or a type
+	 *   with "string" as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   The parsed value
 	 * @throws {sap.ui.model.ParseException}
@@ -231,7 +233,7 @@ sap.ui.define([
 			return null;
 		}
 
-		if (sSourceType !== "string") {
+		if (this.getPrimitiveType(sSourceType) !== "string") {
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
