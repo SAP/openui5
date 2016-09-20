@@ -488,16 +488,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._getValueChangeStep = function () {
-		var sVisualMode = this.getVisualMode();
+		var sVisualMode = this.getVisualMode(),
+			fStep;
 
 		switch (sVisualMode) {
 			case sap.m.RatingIndicatorVisualMode.Full:
-				return 1;
+				fStep = 1;
+				break;
 			case sap.m.RatingIndicatorVisualMode.Half:
-				return 0.5;
+				// If the the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
+				if (this.getValue() % 1 === 0.5) {
+					fStep = 0.5;
+				} else {
+					fStep = 1;
+				}
+				break;
 			default:
 				jQuery.sap.log.warning("VisualMode not supported", sVisualMode);
 		}
+
+		return fStep;
 	};
 
 	/* =========================================================== */

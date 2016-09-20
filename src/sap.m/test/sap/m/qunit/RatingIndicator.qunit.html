@@ -541,6 +541,31 @@
 		oRating.destroy();
 	});
 
+	test("Keyboard handling events in half mode", function() {
+		expect(10);
+		var oRating = new sap.m.RatingIndicator("asd", {visualMode: sap.m.RatingIndicatorVisualMode.Half}),
+			fnTestIncreaseAndDecrease = function (fInitialRatingValue, fExpectedValueAfterDecrease, fExpectedValueAfterIncrease){
+				oRating.setValue(fInitialRatingValue);
+				oRating.onsapdecrease();
+				strictEqual(oRating.getValue(), fExpectedValueAfterDecrease,
+						"When arrow left is pressed and value is " + fInitialRatingValue +", Rating Indicator has value " + fExpectedValueAfterDecrease);
+
+				oRating.setValue(fInitialRatingValue);
+				oRating.onsapincrease();
+				strictEqual(oRating.getValue(), fExpectedValueAfterIncrease,
+						"When arrow right is pressed and value is" + fInitialRatingValue +", Rating Indicator has value " + fExpectedValueAfterDecrease);
+			};
+
+		fnTestIncreaseAndDecrease(2, 1, 3);
+		fnTestIncreaseAndDecrease(1.24, 0, 2); // 1.24 is rounded and visualized as 1
+		fnTestIncreaseAndDecrease(1.25, 1, 2); // 1.25 is rounded and visualized as 1.5
+		fnTestIncreaseAndDecrease(1.74, 1, 2); // 1.74 is rounded and visualized as 1.5
+		fnTestIncreaseAndDecrease(1.75, 1, 3); // 1.75 is rounded and visualized as 2
+
+		// Clean up
+		oRating.destroy();
+	});
+
 	module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
