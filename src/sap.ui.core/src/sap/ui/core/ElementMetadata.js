@@ -139,8 +139,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @return {map} The design time metadata
 	 * @since 1.30.0
+	 * @deprecated since 1.43
 	 */
 	ElementMetadata.prototype.getDesignTime = function() {
+		jQuery.sap.log.warning("Synchronous getDesignTime is not supported and will be removed in version 1.44. Please use loadDesignTime instead", this);
 		if (!this._oDesignTime && this._bHasDesignTime) {
 			// the synchronous loading would be only relevant during the
 			// development time - for productive usage the design time metadata should
