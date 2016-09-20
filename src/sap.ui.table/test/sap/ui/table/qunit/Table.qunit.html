@@ -1177,7 +1177,7 @@
 
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
-				oTable._iNewColPos = 0;
+				oTable._bReorderInProcess = true;
 				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
 
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
@@ -1186,8 +1186,8 @@
 
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
-			oTable.insertColumn(oRemovedColumn, oTable._iNewColPos);
-			delete oTable._iNewColPos;
+			oTable.insertColumn(oRemovedColumn, 0);
+			oTable._bReorderInProcess = false;
 			oTable.attachEvent("_rowsUpdated", fnHandler3);
 		};
 

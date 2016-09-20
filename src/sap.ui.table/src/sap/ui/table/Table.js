@@ -711,9 +711,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// columns to cells map
 		this._aIdxCols2Cells = [];
 
-		// visible columns
-		this._aVisibleColumns = [];
-
 		// flag whether the editable property should be inherited or not
 		this._bInheritEditableToControls = false;
 
@@ -1102,6 +1099,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!this._ignoreInvalidateOfChildControls) {
 			this._bInvalid = true;
 			var vReturn = Control.prototype.invalidate.call(this);
+			TableUtils.ColumnUtils.invalidateColumnUtils(this);
 		}
 
 		return vReturn;
@@ -2327,7 +2325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var iIndex = jQuery.inArray(oColumn, this._aSortedColumns);
-		if (this._iNewColPos === undefined && iIndex >= 0) {
+		if (!this._bReorderInProcess && iIndex >= 0) {
 			this._aSortedColumns.splice(iIndex, 1);
 		}
 		this._resetRowTemplate();

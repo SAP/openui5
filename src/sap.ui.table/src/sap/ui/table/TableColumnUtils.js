@@ -34,6 +34,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			},
 
 			/**
+			 * Invalidates the cached column utils information on changes.
+			 * @param {sap.ui.table.Table} oTable instance of the table
+			 * @private
+			 */
+			invalidateColumnUtils : function(oTable) {
+				oTable._oColumnInfo = null;
+			},
+
+			/**
 			 * Updates the column info object
 			 * @param {sap.ui.table.Table} oTable instance of the table
 			 * @param {ColumnInfo} oColumnInfo column info object
@@ -42,6 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 * @type {int} ColumnInfo.columnCount Number of columns in the columns aggregation
 			 * @type {int} ColumnInfo.visibleColumnCount Number of columns which should be rendered
 			 * @type {ColumnMap} ColumnInfo.columnMap Map of detailed column information
+			 * @private
 			 */
 			updateColumnInfo : function(oTable, oColumnInfo) {
 				oTable._oColumnInfo = oColumnInfo;
@@ -52,6 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 * @param {sap.ui.table.Table} oTable instance of the table
 			 *
 			 * @returns {ColumnInfo} Map of detailed column information
+			 * @private
 			 */
 			collectColumnInfo : function(oTable) {
 				return {
@@ -355,6 +366,148 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 				}
 
 				return mBoundaries;
+			},
+
+			/**
+			 * Returns true if the column can be moved to another position
+			 * @param {sap.ui.table.Column} oColumn column of the table
+			 * @returns {boolean} True if the column can be moved to another position
+			 * @private
+			 */
+			isColumnMovable : function(oColumn) {
+				var oTable = oColumn.getParent();
+				if (!oTable || !oTable.getEnableColumnReordering()) {
+					// Column reordering is not active at all
+					return false;
+				}
+
+				var iCurrentIndex = oTable.indexOfColumn(oColumn);
+
+				if (iCurrentIndex < oTable.getFixedColumnCount() || iCurrentIndex < oTable._iFirstReorderableIndex) {
+					// No movement of fixed columns or e.g. the first column in the TreeTable
+					return false;
+				}
+
+				if (TableColumnUtils.hasHeaderSpan(oColumn)
+					|| TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length != 0) {
+					// No movement if the column is spanned by an other column or itself defines a span
+					return false;
+				}
+				return true;
+			},
+
+			/**
+			 * Checks and adapts the given index if needed.
+			 * @param {sap.ui.table.Column} oColumn column of the table
+			 * @param {integer} iNewIndex the desired new index of the column in the CURRENT table setup
+			 * @returns {integer} the corrected index
+			 * @private
+			 */
+			_normalizeColumnMoveTargetIndex : function(oColumn, iNewIndex) {
+				var oTable = oColumn.getParent(),
+					iCurrentIndex = oTable.indexOfColumn(oColumn),
+					aColumns = oTable.getColumns();
+
+				if (iNewIndex > iCurrentIndex) {
+					// The index is always given for the current table setup
+					// -> A move consists of a remove and an insert, so if a column is moved to a higher index the index must be shifted
+					iNewIndex--;
+				}
+				if (iNewIndex < 0) {
+					iNewIndex = 0;
+				} else if (iNewIndex > aColumns.length) {
+					iNewIndex = aColumns.length;
+				}
+
+				return iNewIndex;
+			},
+
+			/**
+			 * Returns true if the column can be moved to the desired position.
+			 *
+			 * Note: The index must be given for the current table setup (which includes the column itself).
+			 *
+			 * @param {sap.ui.table.Column} oColumn column of the table
+			 * @param {integer} iNewIndex the desired new index of the column in the CURRENT table setup
+			 * @returns {boolean} True if the column can be moved to the desired position
+			 * @private
+			 */
+			isColumnMovableTo : function(oColumn, iNewIndex) {
+				var oTable = oColumn.getParent();
+
+				if (!oTable || iNewIndex === undefined || !TableColumnUtils.isColumnMovable(oColumn)) {
+					// Column is not movable at all
+					return false;
+				}
+
+				iNewIndex = TableColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+
+				if (iNewIndex < oTable.getFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
+					// No movement of fixed columns or e.g. the first column in the TreeTable
+					return false;
+				}
+
+				var iCurrentIndex = oTable.indexOfColumn(oColumn),
+					aColumns = oTable.getColumns();
+
+				if (iNewIndex > iCurrentIndex) { // Column moved to higher index
+					var oBeforeColumn = aColumns[iNewIndex >= aColumns.length ? aColumns.length - 1 : iNewIndex]; // The column to be moved will appear after this column.
+					var oTargetBoundaries = TableColumnUtils.getColumnBoundaries(oTable, oBeforeColumn.getId());
+					if (TableColumnUtils.hasHeaderSpan(oBeforeColumn) || oTargetBoundaries.endIndex > iNewIndex) {
+						return false;
+					}
+				} else {
+					var oAfterColumn = aColumns[iNewIndex]; // The column to be moved will appear before this column.
+					if (TableColumnUtils.getParentSpannedColumns(oTable, oAfterColumn.getId()).length != 0) {
+						// If column which is currently at the desired target position is spanned by previous columns
+						// also the column to reorder would be spanned after the move.
+						return false;
+					}
+				}
+
+				return true;
+			},
+
+			/**
+			 * Moves the column to the desired position.
+			 *
+			 * Note: The index must be given for the current table setup (which includes the column itself).
+			 *
+			 * @param {sap.ui.table.Column} oColumn column of the table
+			 * @param {sap.ui.table.Column} iNewIndex the desired new index of the column in the CURRENT table setup
+			 * @returns {boolean} True if the column was moved to the desired position
+			 * @private
+			 */
+			moveColumnTo : function(oColumn, iNewIndex) {
+				if (!TableColumnUtils.isColumnMovableTo(oColumn, iNewIndex)) {
+					return false;
+				}
+
+				var oTable = oColumn.getParent(),
+					iCurrentIndex = oTable.indexOfColumn(oColumn);
+
+				if (iNewIndex === iCurrentIndex) {
+					return false;
+				}
+
+				iNewIndex = TableColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+
+				var bExecuteDefault = oTable.fireColumnMove({
+					column: oColumn,
+					newPos: iNewIndex
+				});
+
+				if (!bExecuteDefault) {
+					// No execution of the movement when event default is prevented
+					return false;
+				}
+
+				oTable._bReorderInProcess = true;
+				oTable.removeColumn(oColumn);
+				oTable.insertColumn(oColumn, iNewIndex);
+				oTable._bReorderInProcess = false;
+
+				return true;
 			}
 		};
 
