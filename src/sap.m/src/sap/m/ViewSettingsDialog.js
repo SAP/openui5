@@ -16,10 +16,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * * <strong><i>Overview</i></strong>
+	 * <strong><i>Overview</i></strong>
 	 * <br><br>
 	 * The {@link sap.m.ViewSettingsDialog} helps the user to sort, filter, or group data
-	 * within a (master) {@link sap.m.List List) or a {@link sap.m.Table Table). The dialog
+	 * within a (master) {@link sap.m.List List} or a {@link sap.m.Table Table}. The dialog
 	 * is triggered by icon buttons in the table toolbar. Each button shows a dropdown
 	 * list icon.
 	 * <br><br>
