@@ -78,41 +78,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
-		var that = this;
+		var that = this,
+			$progressBar,
+			$progressIndicator = this.$(),
+			fAnimationDuration;
 
-		["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal"].forEach(function (sClass){
-			that.removeStyleClass(sClass);
-		});
-
-		// validation of fPercentValue
 		if (!isValidPercentValue(fPercentValue)) {
-			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
 			fPercentValue = 0;
-			this.addStyleClass("sapMPIValueMin");
+			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
-			// animation without rerendering
 			this.setProperty("percentValue", fPercentValue, true);
 
-			// needed for the rounded shape at the end
-			if (fPercentValue === 100) {
-				this.addStyleClass("sapMPIValueMax");
-			} else if (fPercentValue === 0) {
-				this.addStyleClass("sapMPIValueMin");
-			} else {
-				this.addStyleClass("sapMPIValueNormal");
+			if (!$progressIndicator.length) {
+				return this;
 			}
 
-			this.$().addClass("sapMPIAnimate")
+			["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal", "sapMPIValueGreaterHalf"].forEach(function (sClass){
+				$progressIndicator.removeClass(sClass);
+			});
+
+			$progressIndicator.addClass(this._getCSSClassByPercentValue(fPercentValue));
+			$progressIndicator.addClass("sapMPIAnimate")
 				.attr("aria-valuenow", fPercentValue)
 				.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
-			var time = Math.abs(that.getPercentValue() - fPercentValue) * 20;
-			var $Bar = this.$("bar");
-			$Bar.animate({
+			fAnimationDuration = Math.abs(that.getPercentValue() - fPercentValue) * 20;
+			$progressBar = this.$("bar");
+			$progressBar.animate({
 				width : fPercentValue + "%"
-			}, time, "linear", function() {
+			}, fAnimationDuration, "linear", function() {
 				that._setText.apply(that);
 				that.$().removeClass("sapMPIAnimate");
 			});
@@ -122,14 +118,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ProgressIndicator.prototype._setText = function() {
-
 		this.$().toggleClass("sapMPIValueGreaterHalf", this.getPercentValue() > 50);
-
 		return this;
 	};
 
 	ProgressIndicator.prototype.setDisplayValue = function(sDisplayValue) {
-
 		// change of value without rerendering
 		this.setProperty("displayValue", sDisplayValue, true);
 		var $textLeft = this.$("textLeft");
@@ -139,6 +132,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.$().attr("aria-valuetext", this._getAriaValueText({sText: sDisplayValue}));
 
 		return this;
+	};
+
+	/**
+	 * Determines the CSS class, which should be applied to the <code>ProgressIndicator</code>
+	 * for the given <code>percentValue</code>.
+	 * @param {Number} fPercentValue
+	 * @return {String} the CSS class
+	 * @since 1.44
+	 * @private
+	 */
+	ProgressIndicator.prototype._getCSSClassByPercentValue = function(fPercentValue) {
+		if (fPercentValue === 100) {
+			return "sapMPIValueMax";
+		}
+
+		if (fPercentValue === 0) {
+			return "sapMPIValueMin";
+		}
+
+		if (fPercentValue <= 50) {
+			return "sapMPIValueNormal";
+		}
+
+		return "sapMPIValueNormal sapMPIValueGreaterHalf";
 	};
 
 	ProgressIndicator.prototype._getAriaValueText = function (oParams) {
