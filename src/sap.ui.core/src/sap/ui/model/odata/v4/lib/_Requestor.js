@@ -81,7 +81,58 @@ sap.ui.define([
 	}
 
 	/**
-	 * Cancels all PATCH requests for a given group.
+	 * Cancels all change requests in the batch queue of the given group or in all batch queues,
+	 * if no <code>sGroupId</code> is given, for which the given filter function returns
+	 * <code>true</code>. For these change requests the <code>$cancel</code> callback is called and
+	 * the related promises are rejected with an error having property <code>canceled = true</code>.
+	 *
+	 * @param {function} fnFilter
+	 *   A filter function which gets a change request as parameter and determines whether it has
+	 *   to be canceled (returns <code>true</code>) or not.
+	 * @param {string} [sGroupId]
+	 *   The group the change request is related to
+	 *
+	 * @private
+	 */
+	Requestor.prototype.cancelChangeRequests = function (fnFilter, sGroupId) {
+		var that = this;
+
+		function cancelGroupChangeRequests(sGroupId0) {
+			var aBatchQueue = that.mBatchQueue[sGroupId0],
+				oChangeRequest,
+				aChangeSet,
+				oError,
+				i;
+
+			aChangeSet = aBatchQueue[0];
+			// restore changes in reverse order to get the same initial state
+			for (i = aChangeSet.length - 1; i >= 0; i--) {
+				oChangeRequest = aChangeSet[i];
+				if (fnFilter(oChangeRequest)) {
+					oChangeRequest.$cancel(); // all PATCH and POST have a $cancel
+					oError = new Error("Request canceled: " + oChangeRequest.method + " "
+						+ oChangeRequest.url + "; group: " + sGroupId0);
+					oError.canceled = true;
+					oChangeRequest.$reject(oError);
+					aChangeSet.splice(i, 1);
+				}
+			}
+			deleteEmptyGroup(that, sGroupId0);
+		}
+
+		if (sGroupId) {
+			if (this.mBatchQueue[sGroupId]) {
+				cancelGroupChangeRequests(sGroupId);
+			}
+		} else {
+			for (sGroupId in this.mBatchQueue) {
+				cancelGroupChangeRequests(sGroupId);
+			}
+		}
+	};
+
+	/**
+	 * Cancels all change requests (all PATCH and all POST requests) for a given group.
 	 * All pending requests are rejected with an error with property <code>canceled = true</code>.
 	 * PATCHes are canceled in reverse order to properly undo stacked changes.
 	 *
@@ -90,25 +141,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.cancelPatch = function (sGroupId) {
-		var aBatchQueue = this.mBatchQueue[sGroupId],
-			oError = new Error("Group '" + sGroupId + "' canceled"),
-			aChangeSet,
-			i;
-
-		if (!aBatchQueue) {
-			return;
-		}
-		oError.canceled = true;
-		aChangeSet = aBatchQueue[0];
-		for (i = aChangeSet.length - 1; i >= 0; i--) {
-			if (aChangeSet[i].method === "PATCH") {
-				aChangeSet[i].$cancel();
-				aChangeSet[i].$reject(oError);
-				aChangeSet.splice(i, 1);
-			}
-		}
-		deleteEmptyGroup(this, sGroupId);
+	Requestor.prototype.cancelChanges = function (sGroupId) {
+		this.cancelChangeRequests(function () {
+			// change set contains only PATCH and POST requests; cancel all
+			return true;
+		}, sGroupId);
 	};
 
 	/**
@@ -181,22 +218,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.removePatch = function (oPromise) {
-		var aBatchQueue, aChangeSet, oError, sGroupId, i;
-
-		for (sGroupId in this.mBatchQueue) {
-			aBatchQueue = this.mBatchQueue[sGroupId];
-			aChangeSet = aBatchQueue[0];
-			for (i = 0; i < aChangeSet.length; i++) {
-				if (aChangeSet[i].$promise === oPromise) {
-					oError = new Error();
-					oError.canceled = true;
-					aChangeSet[i].$reject(oError);
-					aChangeSet.splice(i, 1);
-					deleteEmptyGroup(this, sGroupId);
-					return;
-				}
-			}
-		}
+		this.cancelChangeRequests(function (oChangeRequest) {
+			return oChangeRequest.$promise === oPromise;
+		});
 	};
 
 	/**
@@ -208,20 +232,9 @@ sap.ui.define([
 	 *   The body of the request
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		var aBatchQueue, aChangeSet, oError, i;
-
-		aBatchQueue = this.mBatchQueue[sGroupId];
-		aChangeSet = aBatchQueue[0];
-		for (i = 0; i < aChangeSet.length; i++) {
-			if (aChangeSet[i].body === oBody) {
-				oError = new Error();
-				oError.canceled = true;
-				aChangeSet[i].$reject(oError);
-				aChangeSet.splice(i, 1);
-				deleteEmptyGroup(this, sGroupId);
-				return;
-			}
-		}
+		this.cancelChangeRequests(function (oChangeRequest) {
+			return oChangeRequest.body === oBody;
+		}, sGroupId);
 	};
 
 	/**
@@ -249,7 +262,7 @@ sap.ui.define([
 	 *   is really sent
 	 * @param {function} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
-	 *   queue
+	 *   queue; for <code>sMethod</code> === 'PATCH' or 'POST' the parameter is mandatory
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again

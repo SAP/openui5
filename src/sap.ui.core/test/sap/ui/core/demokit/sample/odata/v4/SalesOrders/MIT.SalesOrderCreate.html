@@ -100,21 +100,40 @@
 			<code>More</code> button of the <code>Sales Orders</code> table to see the new sales
 			order</li>
 		</ol>
-		<h3>Create a sales order, refresh/filter the sales orders without saving</h3>
+		<h3>Create a sales order, refresh/filter w/o saving -> expected "pending changes"
+			message</h3>
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog</li>
+		</ol>
+		<h4>Cancel refresh</h4>
+		<ol start="3">
 			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table</li>
-			<li><b>Check:</b> You get a Warning about pending changes</li>
+			<li><b>Check:</b> You get a warning about pending changes</li>
 			<li>Click on the <code>Cancel</code> button</li>
 			<li>Click on <code>Refresh all</code> button</li>
-			<li><b>Check:</b> You get a Warning about pending changes</li>
+			<li><b>Check:</b> You get a warning about pending changes</li>
 			<li>Click on the <code>Cancel</code> button</li>
 			<li>With backend only:<br><ol>
 			<li>Enter a numerical value in the <code>Filter by gross amount...</code> search field
 				above the <code>Sales Orders</code> table and press <code>Enter</code></li>
-			<li><b>Check:</b> You get a Error because of unsaved changes</li>
+			<li><b>Check:</b> You get a error because of unsaved changes</li>
 			<li>Click on the <code>Close</code> button</li></ol></li>
+		</ol>
+		<h4>Confirm refresh</h4>
+		<ol start="10">
+			<li>Click on <code>Refresh</code> or <code>Refresh all</code> button</li>
+			<li><b>Check:</b> You get a warning about pending changes</li>
+			<li>Click on the <code>Ok</code> button</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
+		</ol>
+		<h3>Create a sales order, press "cancel sales order changes" w/o saving</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table</li>
+			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog</li>
+			<li>Click on <code>Cancel sales orders changes</code> button in the
+				<code>Sales Orders</code> table</li>
+			<li><b>Check:</b> The newly created sales order is gone.</li>
 		</ol>
 	</body>
 </html>

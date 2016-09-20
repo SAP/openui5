@@ -713,7 +713,7 @@ sap.ui.require([
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match(transientCacheData))
+				sinon.match(transientCacheData), sinon.match.func)
 			.returns(Promise.resolve(oPostResult));
 		// called from update
 		oHelperMock.expects("updateCache")
@@ -775,7 +775,8 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object)
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object,
+				sinon.match.func)
 			.returns(new Promise(function () {})); // never resolve
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=2", "$direct")
@@ -810,7 +811,8 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object)
+			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object,
+				sinon.match.func)
 			.returns(Promise.reject(oError));
 
 		// code under test
@@ -827,54 +829,70 @@ sap.ui.require([
 	QUnit.test("delete transient", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
-			fnCallback = sinon.spy(),
+			fnCancelCallback = sinon.spy(),
 			oDeletePromise,
-			oEntityData = {},
-			oError = new Error(),
-			oPostPromise = Promise.reject(oError); // would be rejected by removePost
+			oEntityData = {};
 
-		oError.canceled = true;
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object)
-			.returns(oPostPromise);
+		sinon.spy(oRequestor, "request");
 
-		oCache.create("updateGroup", "Employees", "", oEntityData).catch(function () {});
-
-		this.mock(oRequestor).expects("removePost")
-			.withExactArgs("updateGroup", sinon.match(function (oBody) {
-				return oBody === oCache.aElements[-1];
-			}));
-
-		// code under test
-		oDeletePromise = oCache._delete("$auto", "n/a", "-1", fnCallback).then(function () {
-			assert.notOk(-1 in oCache.aElements);
-			sinon.assert.calledWith(fnCallback, -1);
-		});
+		oCache.create("updateGroup", "Employees", "", oEntityData, fnCancelCallback)
+			.catch(function (oError) {
+				assert.ok(oError.canceled);
+			});
 
 		assert.ok(-1 in oCache.aElements);
 
+		oRequestor.request.calledWithExactly("POST", "Employees?foo=bar", "updateGroup", null,
+			sinon.match.same(oEntityData), sinon.match.func);
+		sinon.spy(oRequestor, "removePost");
+
+		// code under test
+		oDeletePromise = oCache._delete("$auto", "n/a", "-1", function () {
+			throw new Error();
+		});
+
+		oRequestor.removePost.calledWithExactly("updateGroup", sinon.match.same(oEntityData));
+		sinon.assert.calledOnce(fnCancelCallback);
+		assert.notOk(-1 in oCache.aElements);
+
+		// wait for delete promise to see potential asynchronous errors
 		return oDeletePromise;
 	});
 
 	//*********************************************************************************************
 	QUnit.test("delete created entity", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
+		var oCreatedPromise,
+			fnCallback = sinon.spy(),
+			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
+			sGroupId = "updateGroup",
+			oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
-			oEntity = {"$odata.etag" : "anyEtag"};
+			that = this;
 
-		oCache.aElements[-1] = {"$odata.etag" : "anyEtag"};
-		this.mock(oCache).expects("read").withExactArgs(-1, 1, "groupId", "")
-			.returns(_SyncPromise.resolve(oEntity));
-		this.mock(oCache.oRequestor).expects("request")
-			.withExactArgs("DELETE", "Employees('4711')", "groupId",
-				{"If-Match" : oEntity["@odata.etag"]})
-			.returns(_SyncPromise.resolve(/*don't care*/));
 
-		// code under test
-		return oCache._delete("groupId", "Employees('4711')", "-1", sinon.spy())
-			.then(function () {
-				assert.notOk(-1 in oCache.aElements);
+		oCreatedPromise = oCache.create(sGroupId, "Employees", "", {}, function () {
+			throw new Error();
+		});
+
+		// simulate submitBatch
+		oRequestor.mBatchQueue[sGroupId][0][0].$resolve(oEntity);
+
+		return oCreatedPromise.then(function () {
+			that.mock(oCache).expects("read").withExactArgs(-1, 1, "$auto", "")
+				.returns(_SyncPromise.resolve(oEntity));
+
+			that.mock(oRequestor).expects("request")
+				.withExactArgs("DELETE", "/Employees('4711')", "$auto",
+					{"If-Match" : "anyEtag"})
+				.returns(Promise.resolve());
+
+			// code under test
+			return oCache._delete("$auto", "/Employees('4711')", "-1", fnCallback)
+				.then(function () {
+					sinon.assert.calledOnce(fnCallback);
+					assert.notOk(-1 in oCache.aElements, "ok");
 			});
+		});
 	});
 	//TODO: oCache._delete in resolve handler for that.oRequestor.request("DELETE"...
 	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
@@ -1380,11 +1398,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Cache: resetChanges", function (assert) {
-		var oRequestor = _Requestor.create("/"),
-			sResourcePath = "/SalesOrderList",
-			oCache = _Cache.create(oRequestor, sResourcePath);
+		var oCache = _Cache.create(_Requestor.create("/"), "/SalesOrderList");
 
+		// code under test
 		this.testResetChanges(assert, oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache: resetChanges - POST requests", function (assert) {
+		var oEntity = {"@$ui5.transient" : "groupId"},
+			oRequestor = _Requestor.create("/"),
+			oCache = _Cache.create(oRequestor, "/SalesOrderList"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oCache.aElements[-1] = oEntity;
+		oRequestorMock.expects("removePost").withExactArgs("groupId", oEntity);
+
+		// code under test
+		oCache.resetChanges("");
+
+		// element at index -1 is not transient (does not have @$ui5.transient property)
+		oCache.aElements[-1] = {};
+		oRequestorMock.expects("removePost").never();
+
+		// code under test
+		oCache.resetChanges("");
 	});
 
 	//*********************************************************************************************

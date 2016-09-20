@@ -72,7 +72,7 @@ sap.ui.require([
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkID(0);
 
-		// Create a sales order, save and refresh
+		// Create a sales order, save and refresh the sales orders
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote + "_save");
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
@@ -83,9 +83,10 @@ sap.ui.require([
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		Then.onTheMainPage.checkID(0);
 
-		// Create a sales order, refresh w/o saving -> expected "pending changes" message -> cancel
+		// Create a sales order, refresh/filter w/o saving -> expected "pending changes" message
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		// Cancel refresh
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		When.onTheRefreshConfirmation.cancel();
 		Then.onTheMainPage.checkID(0, "");
@@ -97,13 +98,22 @@ sap.ui.require([
 			When.onTheErrorInfo.confirm();
 			Then.onTheMainPage.checkID(0, "");
 		}
+		// Confirm refresh
+		When.onTheMainPage.pressRefreshSalesOrdersButton();
+		When.onTheRefreshConfirmation.confirm();
+		When.onTheMainPage.firstSalesOrderIsAtPos0();
+		Then.onTheMainPage.checkID(0);
+
+		// Create a sales order, press "cancel sales order changes" w/o saving
+		When.onTheMainPage.pressCreateSalesOrdersButton();
+		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+		When.onTheMainPage.firstSalesOrderIsAtPos0();
+		Then.onTheMainPage.checkID(0);
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-
-		// Check for console errors and warnings
 		Then.onTheMainPage.checkLog();
-
 		Then.iTeardownMyAppFrame();
 	});
 });

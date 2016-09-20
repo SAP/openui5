@@ -2634,6 +2634,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: cancel callback", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext,
+			oExpectation,
+			oInitialData = {};
+
+		oExpectation = this.mock(oBinding.oCache).expects("create")
+			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
+				sinon.match.func)
+			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
+			.returns(new Promise(function () {}));
+
+		// code under test
+		oContext = oBinding.create("update", oInitialData);
+
+		assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
+
+		this.mock(oContext).expects("destroy").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
+
+		// code under test
+		oExpectation.args[0][4](); // call fnCancelCallback to simulate cancellation
+
+		assert.notOk(-1 in oBinding.aContexts);
+	});
+
+	//*********************************************************************************************
 	[{
 	}, {
 		sGroupId : "update"
@@ -2649,7 +2676,8 @@ sap.ui.require([
 				this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 			}
 			this.mock(oBinding.oCache).expects("create")
-				.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oFixture.oInitialData))
+				.withExactArgs("update", "EMPLOYEES", "",
+					sinon.match.same(oFixture.oInitialData), sinon.match.func)
 				.returns(Promise.resolve());
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -2701,7 +2729,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3);
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", undefined)
+			.withExactArgs("$auto", "EMPLOYEES", "", undefined, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -2753,7 +2781,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3, "Reason");
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", undefined)
+			.withExactArgs("$auto", "EMPLOYEES", "", undefined, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 

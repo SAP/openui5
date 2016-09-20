@@ -517,7 +517,7 @@ sap.ui.require([
 		var oModel = createModel();
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
-		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("groupId");
+		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("groupId");
 
 		// code under test
 		oModel.resetChanges("groupId");
@@ -529,7 +529,7 @@ sap.ui.require([
 		var oModel = createModel("", {updateGroupId : "updateGroupId"});
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("updateGroupId", true);
-		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("updateGroupId");
+		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
 
 		// code under test
 		oModel.resetChanges();
@@ -542,7 +542,7 @@ sap.ui.require([
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
 			.throws(oError);
-		this.mock(oModel.oRequestor).expects("cancelPatch").never();
+		this.mock(oModel.oRequestor).expects("cancelChanges").never();
 
 		assert.throws(function () {
 			oModel.resetChanges();
