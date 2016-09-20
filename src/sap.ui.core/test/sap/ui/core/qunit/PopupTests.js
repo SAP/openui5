@@ -310,6 +310,59 @@ QUnit.asyncTest("Check if focus is inside the Popup", function(assert) {
 	oPopup.open();
 });
 
+QUnit.test("Check if focus is set back to the opener after closing", function(assert) {
+	var done = assert.async();
+	var sLeftTop = sap.ui.core.Popup.Dock.LeftTop;
+	var sRightTop = sap.ui.core.Popup.Dock.RightTop;
+
+	var oAutoCloseDOM = document.createElement("div");
+	oAutoCloseDOM.style.height = "100px";
+	oAutoCloseDOM.style.width = "100px";
+	oAutoCloseDOM.style.backgroundColor = "red";
+
+	var oAutoCloseButton = document.createElement("button");
+	oAutoCloseButton.id = "autocloseButton";
+	oAutoCloseDOM.appendChild(oAutoCloseButton);
+
+	var oAutoClosePopup = new sap.ui.core.Popup(
+		oAutoCloseDOM,
+		/*modal*/false,
+		/*shadow*/false,
+		/*autoclose*/true
+	);
+	var fnAutoCloseOpened = function() {
+		oAutoClosePopup.detachOpened(fnAutoCloseOpened, this);
+
+		this.oPopup.open(0);
+	};
+
+	var oOpenButton = jQuery("#popup1-btn");
+	jQuery.sap.focus(oOpenButton);
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened, this);
+		this.oPopup.close(0)
+	};
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed, this);
+
+		setTimeout(function() {
+			assert.equal(document.activeElement.id, oAutoCloseButton.id, "Focus is set back to button inside autoclose Popup");
+
+			oAutoClosePopup.destroy();
+			oAutoCloseDOM.parentNode.removeChild(oAutoCloseDOM);
+			done();
+		}.bind(this), 200);
+	};
+
+	oAutoClosePopup.attachOpened(fnAutoCloseOpened, this);
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.setModal(true);
+
+	oAutoClosePopup.open(0, sLeftTop, sRightTop, oOpenButton);
+});
+
 QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
 	var done = assert.async(),
 		oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1")),
@@ -1102,10 +1155,26 @@ QUnit.test("Creation And Destruction of ShieldLayer", function(assert) {
 			assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
 			assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
 
+			oSpyShieldBorrowObject.restore();
+			oSpyShieldReturnObject.restore();
+
 			done();
 		}.bind(this), 510);
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.open();
+});
+
+QUnit.test("Destroy popup during open/close should also clear the close timer of ShieldLayer", function(assert) {
+	var oSpyShieldBorrowObject = this.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
+		oSpyShieldReturnObject = this.spy(this.oPopup.oShieldLayerPool, "returnObject");
+
+	// act
+	this.oPopup.open();
+	this.oPopup.close();
+	this.oPopup.destroy();
+
+	assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
+	assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
 });
