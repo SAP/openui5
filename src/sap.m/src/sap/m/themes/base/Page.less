@@ -156,15 +156,16 @@ html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet) {
     width: ~"calc(100% - 1rem)";
     opacity: 0.9;
   }
+}
 
-  > section {
+.sapMPageFloatingFooter.sapMPageWithFooter {
+    > section {
     padding-bottom: 4rem;
     bottom: 0;
   }
 }
 
-.sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section,
-.sapUiSizeCompact .sapMPageFloatingFooter > section {
+.sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section {
   bottom: 0;
   padding-bottom: 3.5rem;
 }

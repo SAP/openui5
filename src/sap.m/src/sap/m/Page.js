@@ -317,7 +317,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		Page.prototype.setShowFooter = function (bShowFooter) {
-			(bShowFooter) ? this.addStyleClass("sapMPageWithFooter", true) : this.removeStyleClass("sapMPageWithFooter", true);
+			if (this.getDomRef()) {
+				(bShowFooter) ? this.$().addClass("sapMPageWithFooter") : this.$().removeClass("sapMPageWithFooter");
+			}
+
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
 			    useAnimation = sap.ui.getCore().getConfiguration().getAnimation();
 
@@ -325,8 +328,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				this.setProperty("showFooter", bShowFooter);
 				return this;
 			}
-
-			this.setProperty("showFooter", bShowFooter, true);
+			this.setProperty("showFooter", bShowFooter,true);
 
 			$footer.toggleClass("sapMPageFooterControlShow", bShowFooter);
 			$footer.toggleClass("sapMPageFooterControlHide", !bShowFooter);
