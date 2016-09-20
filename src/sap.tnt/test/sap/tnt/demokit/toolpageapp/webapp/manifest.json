@@ -1,0 +1,118 @@
+{
+  "_version": "1.1.0",
+  "sap.app": {
+    "_version": "1.1.0",
+    "id": "sap.ui.demo.toolpageapp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+  "sap.ui": {
+    "_version": "1.1.0",
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "supportedThemes": [
+      "sap_hcb",
+      "sap_bluecrystal",
+      "sap_belize"
+    ]
+  },
+  "sap.ui5": {
+    "_version": "1.1.0",
+    "rootView": {
+      "viewName": "sap.ui.demo.toolpageapp.view.rootApp",
+      "type": "XML",
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.30",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.tnt": {},
+        "sap.ui.layout": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "sap.ui.demo.toolpageapp.i18n.i18n"
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlId": "mainContents",
+        "viewType": "XML",
+        "controlAggregation": "pages",
+        "viewPath": "sap.ui.demo.toolpageapp.view",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "page1",
+          "target": "page1"
+        },
+        {
+          "pattern": "page1",
+          "name": "page1",
+          "target": "page1"
+        },
+        {
+          "pattern": "page2",
+          "name": "page2",
+          "target": "page2"
+        },
+        {
+          "pattern": "page3",
+          "name": "page3",
+          "target": "page3"
+        },
+        {
+          "pattern": "subpage1",
+          "name": "subpage1",
+          "target": "subpage1"
+        },
+        {
+          "pattern": "subpage2",
+          "name": "subpage2",
+          "target": "subpage2"
+        }
+      ],
+      "targets": {
+        "page1": {
+          "viewName": "Root1"
+        },
+        "subpage1": {
+          "viewName": "Root1Child1"
+        },
+        "subpage2": {
+          "viewName": "Root1Child2"
+        },
+        "page2": {
+          "viewName": "Root2"
+        },
+        "page3": {
+          "viewName": "Root3"
+        }
+      }
+    }
+  }
+}
