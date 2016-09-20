@@ -307,15 +307,17 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					var oTableHeaderRect = this._aTableHeaders[i].getBoundingClientRect();
 					if (this._bRtlMode) {
 						// 5px for resizer width
-						if (iPositionX < oTableHeaderRect.right - 5) {
+						if ((iPositionX < oTableHeaderRect.right - 5) && (iPositionX >= oTableHeaderRect.left)) {
 							iLastHoveredColumn = i;
 							iResizerPositionX = oTableHeaderRect.left - iTableRect.left;
+							break;
 						}
 					} else {
 						// 5px for resizer width
-						if (iPositionX > oTableHeaderRect.left + 5) {
+						if ((iPositionX > oTableHeaderRect.left + 5) && (iPositionX <= oTableHeaderRect.right)) {
 							iLastHoveredColumn = i;
 							iResizerPositionX = oTableHeaderRect.right - iTableRect.left;
+							break;
 						}
 					}
 				}
