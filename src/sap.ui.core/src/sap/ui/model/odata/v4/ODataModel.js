@@ -5,8 +5,8 @@
 /**
  * Model and related classes like bindings for OData V4.
  *
- * @namespace
  * @name sap.ui.model.odata.v4
+ * @namespace
  * @public
  */
 
@@ -103,7 +103,7 @@ sap.ui.define([
 	 * @public
 	 * @version ${version}
 	 */
-	var ODataModel = Model.extend(sClassName,
+	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (mParameters) {
@@ -247,10 +247,9 @@ sap.ui.define([
 	/**
 	 * Creates a new context binding for the given path, context and parameters.
 	 *
-	 * This binding is inactive and will not know the bound context initially.
-	 * You have to call {@link sap.ui.model.Binding#initialize initialize()} to get it updated
-	 * asynchronously and register a change listener at the binding to be informed when the bound
-	 * context is available.
+	 * This binding is inactive and will not know the bound context initially. You have to call
+	 * {@link sap.ui.model.Binding#initialize} to get it updated asynchronously and register a
+	 * change listener at the binding to be informed when the bound context is available.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
@@ -342,9 +341,9 @@ sap.ui.define([
 	 *   Supported since 1.39.0.
 	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic application filters to be used initially. Call
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters,
-	 *   as defined in the '$filter' binding parameter, are always combined with the dynamic
-	 *   filters using a logical <code>AND</code>.
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters, as
+	 *   defined in the '$filter' binding parameter, are always combined with the dynamic filters
+	 *   using a logical <code>AND</code>.
 	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -391,9 +390,9 @@ sap.ui.define([
 
 	/**
 	 * Creates a new property binding for the given path. This binding is inactive and will not
-	 * know the property value initially. You have to call {@link sap.ui.model.Binding#initialize
-	 * initialize()} to get it updated asynchronously and register a change listener at the binding
-	 * to be informed when the value is available.
+	 * know the property value initially. You have to call {@link sap.ui.model.Binding#initialize}
+	 * to get it updated asynchronously and register a change listener at the binding to be informed
+	 * when the value is available.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
@@ -649,9 +648,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *
-	 * @public
+	 * @private
 	 * @see sap.ui.model.Model#isList
-	 * @since 1.37.0
 	 */
 	ODataModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#isList");
@@ -661,9 +659,9 @@ sap.ui.define([
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached.
 	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the model's data; it is <b>independent</b>
-	 * of the order of calls to {@link #submitBatch} with the given group ID.
+	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * the last call determines the model's data; it is <b>independent</b> of the order of calls to
+	 * {@link #submitBatch} with the given group ID.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,

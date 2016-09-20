@@ -13,10 +13,10 @@ sap.ui.define([], function () {
 		 * OData V4 annotations</a> in XML template views. Every context argument must belong to a
 		 * {@link sap.ui.model.odata.v4.ODataMetaModel} instance.
 		 *
+		 * @alias sap.ui.model.odata.v4.AnnotationHelper
+		 * @namespace
 		 * @public
 		 * @since 1.43.0
-		 * @namespace
-		 * @alias sap.ui.model.odata.v4.AnnotationHelper
 		 */
 		AnnotationHelper = {
 			/**

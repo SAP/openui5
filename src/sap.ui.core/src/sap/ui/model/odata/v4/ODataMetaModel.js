@@ -166,10 +166,10 @@ sap.ui.define([
 		});
 
 	/**
-	 * Do <strong>NOT</strong> call this private constructor for a new <code>ODataMetaModel</code>,
-	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#getMetaModel getMetaModel} instead.
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v4.ODataModel#getMetaModel} instead.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
+	 * @param {object} oRequestor
 	 *   The metadata requestor
 	 * @param {string} sUrl
 	 *   The URL to the $metadata document of the service
@@ -190,6 +190,9 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
+		/*
+		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
+		 */
 		constructor : function (oRequestor, sUrl, vAnnotationUri) {
 			MetaModel.call(this);
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
@@ -332,8 +335,8 @@ sap.ui.define([
 	 * (relative to the given context), sorted and filtered as indicated.
 	 *
 	 * By default, OData names are iterated and a trailing slash is implicitly added to the path
-	 * (see {@link #requestObject requestObject} for the effects this has); technical properties
-	 * and inline annotations are filtered out.
+	 * (see {@link #requestObject} for the effects this has); technical properties and inline
+	 * annotations are filtered out.
 	 *
 	 * A path which ends with an "@" segment can be used to iterate all inline or external
 	 * targeting annotations; no trailing slash is added implicitly; technical properties and OData
@@ -344,9 +347,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
-	 *   Initial sort order, see {@link sap.ui.model.ListBinding#sort sort}
+	 *   Initial sort order, see {@link sap.ui.model.ListBinding#sort}
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
-	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter filter}
+	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter}
 	 * @returns {sap.ui.model.ListBinding}
 	 *   A list binding for this metadata model
 	 *
@@ -930,8 +933,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
-	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
+	 *   {@link sap.ui.model.odata.type} or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
 	 *
 	 * @private
 	 * @see #requestUI5Type
@@ -1021,7 +1024,7 @@ sap.ui.define([
 	/**
 	 * Returns the metadata object for the given path relative to the given context. Returns
 	 * <code>undefined</code> in case the metadata is not (yet) available. Use
-	 * {@link #requestObject requestObject} for asynchronous access.
+	 * {@link #requestObject} for asynchronous access.
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path within the metadata model
@@ -1044,7 +1047,7 @@ sap.ui.define([
 	ODataMetaModel.prototype.getObject = _SyncPromise.createGetMethod("fetchObject");
 
 	/**
-	 * @deprecated Use {@link #getObject getObject}.
+	 * @deprecated Use {@link #getObject}.
 	 * @function
 	 * @public
 	 * @see sap.ui.model.Model#getProperty
@@ -1055,14 +1058,14 @@ sap.ui.define([
 	/**
 	 * Returns the UI5 type for the given property path that formats and parses corresponding to
 	 * the property's EDM type and constraints. The property's type must be a primitive type. Use
-	 * {@link #requestUI5Type requestUI5Type} for asynchronous access.
+	 * {@link #requestUI5Type} for asynchronous access.
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {sap.ui.model.odata.type.ODataType}
-	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required
+	 *   The corresponding UI5 type from {@link sap.ui.model.odata.type}, if all required
 	 *   metadata to calculate this type is already available; if no specific type can be
-	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
+	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
 	 * @throws {Error}
 	 *   If the UI5 type cannot be determined synchronously (due to a pending metadata request) or
 	 *   cannot be determined at all (due to a wrong data path)
@@ -1079,9 +1082,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *
-	 * @public
+	 * @private
 	 * @see sap.ui.model.Model#isList
-	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#isList");
@@ -1105,7 +1107,7 @@ sap.ui.define([
 	 * Requests the metadata value for the given path relative to the given context. Returns a
 	 * <code>Promise</code> which is resolved with the requested metadata value or rejected with
 	 * an error (only in case metadata cannot be loaded). An invalid path leads to an
-	 * <code>undefined</code> result and a warning is logged. Use {@link #getObject getObject} for
+	 * <code>undefined</code> result and a warning is logged. Use {@link #getObject} for
 	 * synchronous access.
 	 *
 	 * A relative path is appended to the context's path separated by a forward slash("/").
@@ -1292,14 +1294,14 @@ sap.ui.define([
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
 	 * the property's EDM type and constraints. The property's type must be a primitive type. Use
-	 * {@link #getUI5Type getUI5Type} for synchronous access.
+	 * {@link #getUI5Type} for synchronous access.
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {Promise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
-	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
+	 *   {@link sap.ui.model.odata.type} or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
 	 *
 	 * @function
 	 * @public

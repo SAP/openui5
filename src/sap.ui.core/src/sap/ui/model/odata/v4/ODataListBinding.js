@@ -28,8 +28,8 @@ sap.ui.define([
 		};
 
 	/**
-	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
-	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData V4 model
@@ -204,9 +204,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
-	 *   when the binding is initialized and or a new context is created, or
-	 *   {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
+	 *   binding is initialized and or a new context is created, or
+	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#change
@@ -270,16 +270,16 @@ sap.ui.define([
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
-	 * possible after the POST request has been sent to the server and you have
-	 * {@link #refresh refreshed} the binding or the new entity is deleted in between.
+	 * possible after the POST request has been sent to the server and you have called
+	 * {@link #refresh} at the binding or the new entity is deleted in between.
 	 *
-	 * The created context can be {@link sap.ui.model.odata.v4.Context#delete deleted} again. In
-	 * this case, no request is sent and the pending POST is simply canceled.
+	 * You can {@link sap.ui.model.odata.v4.Context#delete} the created context again. In this case,
+	 * no request is sent and the pending POST is simply canceled.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the POST request; the default value is the binding's update
-	 *   group ID, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList binding parameter $$updateGroupId}
+	 *   group ID, see binding parameter $$updateGroupId of
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity. If the POST request is deferred and has not yet
 	 *   been sent to the server, user input via two-way binding modifies this data.
@@ -455,8 +455,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing the vKey
-	 * parameter.
+	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing
+	 * the <code>vKey</code> parameter.
 	 */
 	// @override
 	ODataListBinding.prototype.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
@@ -532,7 +532,7 @@ sap.ui.define([
 	 * there are pending changes. If there are changes, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
-	 * 'filter'.
+	 * {@link #filter}.
 	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic filters to be used; replaces the dynamic filters given in
@@ -540,8 +540,8 @@ sap.ui.define([
 	 *   The filter executed on the list is created from the following parts, which are combined
 	 *   with a logical 'and':
 	 *   <ul>
-	 *   <li> Dynamic filters of type sap.ui.model.FilterType.Application
-	 *   <li> Dynamic filters of type sap.ui.model.FilterType.Control
+	 *   <li> Dynamic filters of type {@link sap.ui.model.FilterType.Application}
+	 *   <li> Dynamic filters of type {@link sap.ui.model.FilterType.Control}
 	 *   <li> The static filters, as defined in the '$filter' binding parameter
 	 *   </ul>
 	 *
@@ -581,9 +581,9 @@ sap.ui.define([
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a
-	 * {@link sap.ui.model.Binding#attachChange 'change'} event on this list binding once these
-	 * entities have been loaded <b>asynchronously</b>. A further call to this method in the
-	 * 'change' event handler with the same index range then yields the updated array of contexts.
+	 * {@link #event:change} event on this list binding once these entities have been loaded
+	 * <b>asynchronously</b>. A further call to this method in the 'change' event handler with the
+	 * same index range then yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
 	 *   The index where to start the retrieval of contexts
@@ -599,9 +599,8 @@ sap.ui.define([
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	 *   If extended change detection is enabled (see
-	 *   {@link sap.ui.model.ListBinding#enableExtendedChangeDetection})
-	 *   and <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
+	 *   If extended change detection is enabled and <code>iMaximumPrefetchSize</code> is set or
+	 *   <code>iStart</code> is not 0
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -725,10 +724,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the contexts that were requested by a control last time. Does not trigger a
-	 * data request. In the time between the {@link #event:dataRequested dataRequested} event and
-	 * the {@link #event:dataReceived dataReceived} event, the resulting array contains
-	 * <code>undefined</code> at those indexes where the data is not yet available.
+	 * Returns the contexts that were requested by a control last time. Does not trigger a data
+	 * request. In the time between the {@link #event:dataRequested} event and the
+	 * {@link #event:dataReceived} event, the resulting array contains <code>undefined</code> at
+	 * those indexes where the data is not yet available.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The contexts
@@ -886,10 +885,9 @@ sap.ui.define([
 	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for absolute bindings.
 	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the binding's data; it is <b>independent</b>
-	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
-	 * group ID.
+	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
+	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
@@ -1036,7 +1034,7 @@ sap.ui.define([
 	 * there are pending changes. If there are changes, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
-	 * 'sort'.
+	 * {@link #sort}.
 	 *
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used; they replace the dynamic sorters given in
