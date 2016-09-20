@@ -390,7 +390,8 @@
 			"sap.m.sample.IconTabBarProcess",
 			"sap.m.sample.IconTabBarStretchContent",
 			"sap.m.sample.IconTabSeparator",
-			"sap.m.sample.IconTabBarOverflowSelectList"
+			"sap.m.sample.IconTabBarOverflowSelectList",
+			"sap.m.sample.IconTabBarBackgroundDesign"
 		  ]
 		},
 		{
@@ -1535,7 +1536,12 @@
 		  "id": "sap.m.sample.IconTabBarOverflowSelectList",
 		  "name": "Icon Tab - Overflow Select List",
 		  "description": "In this example when some of the tab items are not visible, they are displayed in an overflow select list for easier selection."
-	   },
+	    },
+		{
+		  "id": "sap.m.sample.IconTabBarBackgroundDesign",
+		  "name": "Icon Tab Bar - Background Design",
+		  "description": "In this example the backgroundDesign and headerBackgroundDesign properties are demonstrated."
+		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",
