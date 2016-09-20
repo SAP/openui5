@@ -245,27 +245,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		var sIcon, sIconHovered, sText, sTooltip;
 
 		if (oContainer.getExpanded()) {
-			sIcon = Parameters.get('sapUiFormContainerColImageURL');
-			sIconHovered = Parameters.get('sapUiFormContainerColImageDownURL');
+			sIcon = Parameters._getThemeImage('sapUiFormContainerColImageURL');
+			sIconHovered = Parameters._getThemeImage('sapUiFormContainerColImageDownURL');
 			sText = "-";
 			sTooltip = oContainer._rb.getText("FORM_COLLAPSE");
 		} else {
-			sIcon = Parameters.get('sapUiFormContainerExpImageURL');
-			sIconHovered = Parameters.get('sapUiFormContainerExpImageDownURL');
+			sIcon = Parameters._getThemeImage('sapUiFormContainerExpImageURL');
+			sIconHovered = Parameters._getThemeImage('sapUiFormContainerExpImageDownURL');
 			sText = "+";
 			sTooltip = oContainer._rb.getText("FORM_EXPAND");
 		}
 
-		var sModulePath = "sap.ui.layout.themes." + sap.ui.getCore().getConfiguration().getTheme();
 		if (sIcon) {
-			if (!sap.ui.core.IconPool.isIconURI(sIcon)) {
-				sIcon = jQuery.sap.getModulePath(sModulePath, sIcon);
-			}
 			sText = "";
 		}
-		if (sIconHovered && !sap.ui.core.IconPool.isIconURI(sIconHovered)) {
-			sIconHovered = jQuery.sap.getModulePath(sModulePath, sIconHovered);
-		}
+
 		sap.ui.layout.form.FormHelper.setButtonContent(oContainer._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
 
 	}
