@@ -375,7 +375,7 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 			assert.equal(document.activeElement.id, oAutoCloseButton.id, "Focus is set back to button inside autoclose Popup");
 
 			oAutoClosePopup.destroy();
-			oAutoCloseDOM.remove();
+			oAutoCloseDOM.parentNode.removeChild(oAutoCloseDOM);
 			done();
 		}.bind(this), 200);
 	};
@@ -1237,10 +1237,26 @@ QUnit.test("Creation And Destruction of ShieldLayer", function(assert) {
 			assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
 			assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
 
+			oSpyShieldBorrowObject.restore();
+			oSpyShieldReturnObject.restore();
+
 			done();
 		}.bind(this), 510);
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.open();
+});
+
+QUnit.test("Destroy popup during open/close should also clear the close timer of ShieldLayer", function(assert) {
+	var oSpyShieldBorrowObject = this.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
+		oSpyShieldReturnObject = this.spy(this.oPopup.oShieldLayerPool, "returnObject");
+
+	// act
+	this.oPopup.open();
+	this.oPopup.close();
+	this.oPopup.destroy();
+
+	assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
+	assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
 });
