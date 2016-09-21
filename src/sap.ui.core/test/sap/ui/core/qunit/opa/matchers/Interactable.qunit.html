@@ -38,7 +38,8 @@
 					'sap/ui/test/opaQunit',
 					'sap/ui/test/Opa5',
 					'sap/ui/test/launchers/iFrameLauncher',
-					'sap/ui/test/_LogCollector'
+					'sap/ui/test/_LogCollector',
+					'sap/ui/test/_timeoutCounter'
 				], function (Interactable,
 							 $,
 							 Button,
@@ -50,7 +51,8 @@
 							 opaTest,
 			 				 Opa5,
 							 iFrameLauncher,
-							 _LogCollector) {
+							 _LogCollector,
+							 _timeoutCounter) {
 					"use strict";
 
 					[NavContainer, App].forEach(function (fnConstructor) {
@@ -72,13 +74,16 @@
 
 								this.oInteractable = new Interactable();
 								this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+								this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 								sap.ui.getCore().applyChanges();
 							},
 
 							afterEach: function () {
 								this.oNavContainer.destroy();
+								this.oWaitStub.restore();
 							}
 						});
+
 						QUnit.test("Should match an interactable Button", function (assert) {
 							// Act
 							var bResult = this.oInteractable.isMatching(this.oInitialPageButton);
@@ -159,11 +164,13 @@
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oButtonInPage.destroy();
 							this.oDialog.destroy();
 							this.oSpy.restore();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -240,11 +247,13 @@
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oSpy.restore();
 							this.oButton.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -279,6 +288,34 @@
 						})
 					});
 
+					QUnit.module("Timeouts", {
+						beforeEach: function () {
+							this.oButton = new Button("myButton");
+							this.oButton.placeAt("qunit-fixture");
+							this.oInteractable = new Interactable();
+							sap.ui.getCore().applyChanges();
+						},
+						afterEach: function () {
+							this.oButton.destroy();
+							sap.ui.getCore().applyChanges();
+						}
+					});
+
+					QUnit.test("Should not match when there is a timeout running", function (assert) {
+						var fnDone = assert.async();
+
+						var oLogCollector = _LogCollector.getInstance();
+						// a lot of timeouts will be added from other tests - wait for them
+						setTimeout(function () {
+							// the actual blocking timeout
+							setTimeout(function () {});
+							var bMatching = new Interactable().isMatching(this.oButton);
+							assert.ok(!bMatching, "is not matching");
+							assert.strictEqual(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test._timeoutCounter");
+							fnDone();
+						}.bind(this), 500);
+					});
+
 					QUnit.module("Enabled", {
 						beforeEach: function () {
 							this.oButton = new Button("myButton");
@@ -290,11 +327,13 @@
 							this.oInteractable = new Interactable();
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oSpy.restore();
 							this.oToolbar.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -342,10 +381,12 @@
 							this.oButton.placeAt("qunit-fixture");
 							this.oInteractable = new Interactable();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oButton.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -385,7 +426,9 @@
 								Opa5.assert.ok(true, "there was no open XHR");
 
 								// prepare sinon and start an XHR
-								oXHR = Opa5.getWindow().sinon.useFakeXMLHttpRequest();
+								var oIFrameWindow = Opa5.getWindow();
+								oXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
+								oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
 
 								oXHR.onCreate = function (xhr) {
 									aRequests.push(xhr);
@@ -432,6 +475,8 @@
 									viewName: "myView",
 									id: "buttonOutsideOfTheApp",
 									success: function (oButton) {
+										var oIFrameWindow = Opa5.getWindow();
+										oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
 										var oInteractable = new Interactable();
 										var bIsMatching = oInteractable.isMatching(oButton);
 										Opa5.assert.ok(bIsMatching, "there is no Navigation");
