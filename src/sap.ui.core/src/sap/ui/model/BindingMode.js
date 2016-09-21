@@ -10,11 +10,11 @@ sap.ui.define(function() {
 	/**
 	* Binding type definitions.
 	*
-	* @namespace
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.BindingMode
 	*/
-	var BindingMode = /** @lends sap.ui.model.BindingMode */ {
+	var BindingMode = {
 
 			/**
 			 * BindingMode default means that the binding mode of the model is used

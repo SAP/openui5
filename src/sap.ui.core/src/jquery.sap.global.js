@@ -978,7 +978,7 @@
 			 * Only if the current LogLevel is higher than the level {@link jQuery.sap.log.Level} of the currently added log entry,
 			 * then this very entry is permanently added to the log. Otherwise it is ignored.
 			 * @see jQuery.sap.log.Logger#setLevel
-			 * @namespace
+			 * @enum {int}
 			 * @public
 			 */
 			Level : {
