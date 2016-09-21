@@ -125,5 +125,24 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		return fnGetRelevantContainer(oElement);
 	};
 
+	ElementDesignTimeMetadata.prototype.getAggregationAction = function(sAction, oElement) {
+		var vAction;
+		var oAggregations = this.getAggregations();
+
+		for (var sAggregation in oAggregations) {
+			if (oAggregations[sAggregation].actions && oAggregations[sAggregation].actions[sAction]) {
+				vAction = oAggregations[sAggregation].actions[sAction];
+				if (typeof vAction === "function") {
+					vAction = vAction.call(null, oElement);
+				} else if (typeof (vAction) === "string" ) {
+					vAction = { changeType : vAction };
+				}
+				vAction.aggregation = sAggregation;
+				break;
+			}
+		}
+		return vAction;
+	};
+
 	return ElementDesignTimeMetadata;
 }, /* bExport= */ true);
