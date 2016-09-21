@@ -516,20 +516,13 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				return;
 			}
 
-			// calculate the new position
-			var iSpan = ReorderHelper.getHeaderSpan(sap.ui.getCore().byId(oPos.id));
-
-			if (oPos.before) {
+			if (oPos.before || (oPos.after && oPos.index == this._iDnDColIndex)) {
 				this._iNewColPos = oPos.index;
-			} else if (oPos.after) {
-				this._iNewColPos = oPos.index + iSpan;
+			} else if (oPos.after && oPos.index != this._iDnDColIndex) {
+				this._iNewColPos = oPos.index + 1;
 			}
 
-			if (oPos.index > this._iDnDColIndex || (oPos.index == this._iDnDColIndex && oPos.after)) {
-				this._iNewColPos--;
-			}
-
-			if (!ReorderHelper.isColumnReorderable(this, this._iNewColPos)) { // prevent the reordering of the fixed columns
+			if (!TableUtils.ColumnUtils.isColumnMovableTo(this.getColumns()[this._iDnDColIndex], this._iNewColPos)) { // prevent the reordering of the fixed columns
 				this._iNewColPos = iOldColPos;
 			} else {
 				ReorderHelper.adaptReorderMarkerPosition(this, oPos, true);
@@ -566,62 +559,23 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			this._enableTextSelection();
 
 			// Perform Reordering
-			ReorderHelper.performReordering(this, iOldIndex, iNewIndex, oEvent);
+			TableUtils.ColumnUtils.moveColumnTo(this.getColumns()[iOldIndex], iNewIndex);
+
+			// Re-apply focus
+			if (this._mTimeouts.reApplyFocusTimer) {
+				window.clearTimeout(this._mTimeouts.reApplyFocusTimer);
+			}
+			var that = this;
+			this._mTimeouts.reApplyFocusTimer = window.setTimeout(function() {
+				var iOldFocusedIndex = TableUtils.getFocusedItemInfo(that).cell;
+				TableUtils.focusItem(that, 0, oEvent);
+				TableUtils.focusItem(that, iOldFocusedIndex, oEvent);
+			}, 0);
 
 			// For AnalyticalTable only
 			if (this.updateAnalyticalInfo) {
 				this.updateAnalyticalInfo(true, true);
 			}
-		},
-
-		/*
-		 * Does the column reordering.
-		 * TBD: Externalize this to be reusable (e.g. keyboard support)
-		 */
-		performReordering : function(oTable, iOldIndex, iNewIndex, oEvent) {
-			var oDnDCol = oTable.getColumns()[iOldIndex];
-
-			// forward the event
-			var bExecuteDefault = oTable.fireColumnMove({
-				column: oDnDCol,
-				newPos: iNewIndex
-			});
-
-			var bMoveRight = iOldIndex < iNewIndex;
-
-			if (bExecuteDefault && iNewIndex !== undefined && iNewIndex !== iOldIndex) {
-				oTable.removeColumn(oDnDCol);
-				oTable.insertColumn(oDnDCol, iNewIndex);
-				var iSpan = ReorderHelper.getHeaderSpan(oDnDCol);
-
-				if (iSpan > 1) {
-					if (!bMoveRight) {
-						iNewIndex++;
-					}
-					for (var i = 1; i < iSpan; i++) {
-						var oDependentCol = oTable.getColumns()[bMoveRight ? iOldIndex : iOldIndex + i];
-						oTable.removeColumn(oDependentCol);
-						oTable.insertColumn(oDependentCol, iNewIndex);
-						oTable.fireColumnMove({
-							column: oDependentCol,
-							newPos: iNewIndex
-						});
-						if (!bMoveRight) {
-							iNewIndex++;
-						}
-					}
-				}
-			}
-
-			// Re-apply focus
-			if (oTable._mTimeouts.reApplyFocusTimer) {
-				window.clearTimeout(oTable._mTimeouts.reApplyFocusTimer);
-			}
-			oTable._mTimeouts.reApplyFocusTimer = window.setTimeout(function() {
-				var iOldFocusedIndex = TableUtils.getFocusedItemInfo(oTable).cell;
-				TableUtils.focusItem(oTable, 0, oEvent);
-				TableUtils.focusItem(oTable, iOldFocusedIndex, oEvent);
-			}, 0);
 		},
 
 		/*
@@ -693,30 +647,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			jQuery(oTable._$ReorderIndicator).css({
 				"left" : iLeft + "px"
 			}).toggleClass("sapUiTableColReorderIndicatorActive", bShow);
-		},
-
-		/*
-		 * Computes the header span of the given column.
-		 */
-		getHeaderSpan : function(oColumn) {
-			var vHeaderSpan = oColumn.getHeaderSpan(),
-				iSpan = 1;
-
-			if (vHeaderSpan) {
-				iSpan = jQuery.isArray(vHeaderSpan) ? vHeaderSpan[0] : vHeaderSpan;
-			}
-
-			return iSpan;
-		},
-
-		/*
-		 * Checks whether the column with the given index can be reordered.
-		 */
-		isColumnReorderable: function(oTable, iIndex) {
-			if (iIndex < oTable.getFixedColumnCount() || iIndex < oTable._iFirstReorderableIndex) {
-				return false;
-			}
-			return true;
 		}
 
 	};
@@ -909,7 +839,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 */
 		doReorderColumn : function(iColIndex, oEvent) {
 			var oTable = this.getTable();
-			if (oTable && oTable.getEnableColumnReordering() && ReorderHelper.isColumnReorderable(oTable, iColIndex)) {
+			if (oTable && TableUtils.ColumnUtils.isColumnMovable(oTable.getColumns()[iColIndex])) {
 				// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
 				oTable._mTimeouts.delayedColumnReorderTimer = jQuery.sap.delayedCall(200, oTable, function() {
 					ReorderHelper.initReordering(oTable, iColIndex, oEvent);

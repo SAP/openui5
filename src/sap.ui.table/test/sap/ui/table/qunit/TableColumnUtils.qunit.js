@@ -314,3 +314,183 @@ QUnit.test("getHeaderSpan", function(assert) {
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[3]), 2, "Span OK for c4, level undefined");
 	assert.equal(ColumnUtils.getHeaderSpan(aColumns[3], 0), 2, "Span OK for c4, level 0");
 });
+
+
+
+QUnit.module("ColumnMove", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
+
+QUnit.test("isColumnMovable()", function(assert) {
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "Fixed Column");
+	assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Non-Fixed Column");
+	assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Non-Fixed Column");
+	assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0]), "First column in TreeTable");
+	assert.ok(ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2]), "Other column in TreeTable");
+
+	oTable.setEnableColumnReordering(false);
+	oTreeTable.setEnableColumnReordering(false);
+	sap.ui.getCore().applyChanges();
+
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "ColumnReordering Disabled: Fixed Column");
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "ColumnReordering Disabled: Non-Fixed Column");
+	assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0]), "ColumnReordering Disabled: First column in TreeTable");
+	assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2]), "ColumnReordering Disabled: Other column in TreeTable");
+
+	oTable.setEnableColumnReordering(true);
+	oTreeTable.setEnableColumnReordering(true);
+	oTable.getColumns()[1].setHeaderSpan(2);
+	sap.ui.getCore().applyChanges();
+
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column");
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column");
+
+	oTable.getColumns()[1].setHeaderSpan([2, 1]);
+	oTable.getColumns()[1].addMultiLabel(new TestControl());
+	oTable.getColumns()[1].addMultiLabel(new TestControl());
+	sap.ui.getCore().applyChanges();
+
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column (Multi Header)");
+	assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column (Multi Header)");
+});
+
+QUnit.test("isColumnMovableTo()", function(assert) {
+	var oColumn = oTable.getColumns()[2];
+	assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+
+	var bExpect;
+
+	oTable.setEnableColumnReordering(false);
+	sap.ui.getCore().applyChanges();
+
+	for (var i = -1; i <= oTable.getColumns().length + 2; i++) {
+		bExpect = false;
+		assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+	}
+
+	oTable.setEnableColumnReordering(true);
+	sap.ui.getCore().applyChanges();
+
+	for (var i = -1; i <= oTable.getColumns().length + 2; i++) {
+		bExpect = true;
+		if (i < 1) {
+			bExpect = false;
+		}
+		assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+	}
+
+	oTable.getColumns()[3].setHeaderSpan(2);
+	sap.ui.getCore().applyChanges();
+
+	for (var i = -1; i <= oTable.getColumns().length + 2; i++) {
+		bExpect = true;
+		if (i < 1 || i == 4) {
+			bExpect = false;
+		}
+		assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+	}
+
+	oTable.getColumns()[3].setHeaderSpan([2, 1]);
+	oTable.getColumns()[3].addMultiLabel(new TestControl());
+	oTable.getColumns()[3].addMultiLabel(new TestControl());
+	sap.ui.getCore().applyChanges();
+
+	for (var i = -1; i <= oTable.getColumns().length + 2; i++) {
+		bExpect = true;
+		if (i < 1 || i == 4) {
+			bExpect = false;
+		}
+		assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+	}
+
+	oTable.getColumns()[1].setHeaderSpan(2);
+	oTable.getColumns()[3].setHeaderSpan(1);
+	oTable.getColumns()[3].destroyMultiLabels();
+	sap.ui.getCore().applyChanges();
+
+	oColumn = oTable.getColumns()[4];
+
+	for (var i = -1; i <= oTable.getColumns().length + 2; i++) {
+		bExpect = true;
+		if (i < 1 || i == 2) {
+			bExpect = false;
+		}
+		assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+	}
+});
+
+QUnit.test("moveColumnTo() - Do a move", function(assert) {
+	assert.expect(4);
+
+	var oColumn = oTable.getColumns()[2];
+	assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+
+	oTable.attachColumnMove(function(oEvent){
+		assert.equal(oEvent.getParameter("newPos"), 3, "Correct Index in event parameter");
+		assert.ok(oEvent.getParameter("column") === oColumn, "Correct Column in event parameter");
+	});
+
+	ColumnUtils.moveColumnTo(oColumn, 4);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(oTable.indexOfColumn(oColumn), 3, "Correct Index after move.");
+});
+
+QUnit.test("moveColumnTo() - Column not movable", function(assert) {
+	assert.expect(2);
+
+	var oColumn = oTable.getColumns()[0];
+	assert.ok(!ColumnUtils.isColumnMovable(oColumn), "Ensure column is not movable");
+
+	oTable.attachColumnMove(function(oEvent){
+		assert.ok(false, "No event should be triggered");
+	});
+
+	ColumnUtils.moveColumnTo(oColumn, 4);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(oTable.indexOfColumn(oColumn), 0, "Correct Index after move.");
+});
+
+QUnit.test("moveColumnTo() - Move to current position", function(assert) {
+	assert.expect(2);
+
+	var oColumn = oTable.getColumns()[4];
+	assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+
+	oTable.attachColumnMove(function(oEvent){
+		assert.ok(false, "No event should be triggered");
+	});
+
+	ColumnUtils.moveColumnTo(oColumn, 4);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(oTable.indexOfColumn(oColumn), 4, "Correct Index after move.");
+});
+
+QUnit.test("moveColumnTo() - Prevent movement", function(assert) {
+	assert.expect(4);
+
+	var oColumn = oTable.getColumns()[2];
+	assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+
+	oTable.attachColumnMove(function(oEvent){
+		assert.equal(oEvent.getParameter("newPos"), 3, "Correct Index in event parameter");
+		assert.ok(oEvent.getParameter("column") === oColumn, "Correct Column in event parameter");
+		oEvent.preventDefault();
+	});
+
+	ColumnUtils.moveColumnTo(oColumn, 4);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
+});
+
+
+
+
