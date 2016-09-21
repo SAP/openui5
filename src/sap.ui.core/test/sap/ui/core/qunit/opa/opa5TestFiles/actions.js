@@ -1,9 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/Device",
-	"sap/m/Button"
-], function (Opa5, opaTest, Device, Button) {
+	"sap/m/Button",
+	"sap/ui/test/_autoWaiter"
+], function (Opa5, opaTest, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
 		setup: function () {
 			this.oButton = new Button("foo");
@@ -141,7 +141,7 @@ sap.ui.define([
 		}
 	});
 
-	opaTest("Should execute success of a waitFor added by an action before the success of waitFor", function (given, when) {
+	opaTest("Should execute success of a waitFor added by an action before the success of waitFor", function (oOpa, when) {
 		var fnSuccessSpy = sinon.spy(),
 			fnInnerSuccessSpy = sinon.spy(),
 			fnActionSpy = sinon.spy(function () {
@@ -150,21 +150,50 @@ sap.ui.define([
 				});
 			});
 
-		given.waitFor({
+		oOpa.waitFor({
 			id: this.oButton.getId(),
 			actions: fnActionSpy,
 			success: fnSuccessSpy
 		});
 
-		given.waitFor({
+		oOpa.waitFor({
 			success: function () {
 				sinon.assert.calledOnce(fnActionSpy);
 				sinon.assert.calledOnce(fnSuccessSpy);
-				sinon.assert.calledOn(fnSuccessSpy, given);
+				sinon.assert.calledOn(fnSuccessSpy, oOpa);
 				sinon.assert.calledOnce(fnInnerSuccessSpy);
 				sinon.assert.calledOn(fnInnerSuccessSpy, when);
 				sinon.assert.callOrder(fnActionSpy, fnInnerSuccessSpy, fnSuccessSpy);
 			}
+		});
+	});
+
+	[true, false].forEach(function (bAutoWait) {
+		QUnit.test("Should autowait again when a success gets delayed after an waitFor added by an action for autowait:" + bAutoWait, function () {
+			var oStub, fnDone = assert.async(), oOpa = new Opa5();
+			oOpa.waitFor({
+				actions: function () {
+					oOpa.waitFor({
+						success: function () {
+							// always skip the waiting just see if it is called, since the last success would be blocked
+							oStub = sinon.stub(_autoWaiter, "hasToWait").returns(false);
+						}
+					});
+				},
+				autoWait: bAutoWait,
+				success: function () {
+					if (bAutoWait) {
+						sinon.assert.called(oStub);
+					} else {
+						sinon.assert.notCalled(oStub);
+					}
+				}
+			});
+
+			Opa5.emptyQueue().always(function () {
+				oStub.restore();
+				fnDone();
+			});
 		});
 	});
 

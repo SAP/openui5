@@ -206,11 +206,12 @@ sap.ui.define([
 		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		function iTeardownMyAppFrame () {
-			return this.waitFor({
-				success : function () {
-					iFrameLauncher.teardown();
-				}
-			});
+			var oWaitForObject = createWaitForObjectWithoutDefaults();
+			oWaitForObject.success = function () {
+				iFrameLauncher.teardown();
+			};
+
+			return this.waitFor(oWaitForObject);
 		}
 
 		/**
@@ -516,6 +517,8 @@ sap.ui.define([
 				// Delay the current waitFor after a waitFor added by the actions.
 				// So waitFors added by an action will block the current execution of success
 				var oWaitForObject = createWaitForObjectWithoutDefaults();
+				// preserve the autoWaitFlag
+				oWaitForObject.autoWait = options.autoWait;
 				oWaitForObject.success = function () {
 					fnOriginalSuccess.apply(this, aArgs);
 				};
@@ -800,7 +803,8 @@ sap.ui.define([
 				viewName: null,
 				controlType: null,
 				id: null,
-				searchOpenDialogs: false
+				searchOpenDialogs: false,
+				autoWait: false
 			};
 		}
 
