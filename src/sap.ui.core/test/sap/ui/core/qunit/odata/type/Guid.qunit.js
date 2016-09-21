@@ -11,12 +11,21 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, FormatException, ParseException, ValidateException, Guid, ODataType,
 		TestUtils) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.type.Guid");
+	QUnit.module("sap.ui.model.odata.type.Guid", {
+		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			this.oLogMock.verify();
+		}
+	});
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
@@ -35,8 +44,6 @@ sap.ui.require([
 			function (assert) {
 				var oType;
 
-				this.mock(jQuery.sap.log).expects("warning").never();
-
 				oType = new Guid({}, {
 					foo : "a",
 					nullable : vNullable
@@ -49,7 +56,7 @@ sap.ui.require([
 	QUnit.test("default nullable is true", function (assert) {
 		var oType = new Guid({}, {nullable : false});
 
-		this.mock(jQuery.sap.log).expects("warning")
+		this.oLogMock.expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Guid");
 
 		oType = new Guid(null, {nullable : "foo"});
@@ -74,7 +81,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
+	["int", "boolean", "float", "object"].forEach(function (sTargetType) {
 		QUnit.test("format fail for target type " + sTargetType, function (assert) {
 			var oType = new Guid();
 
@@ -88,7 +95,6 @@ sap.ui.require([
 			}
 		});
 	});
-
 
 	//*********************************************************************************************
 	QUnit.test("parse success", function (assert) {
@@ -119,7 +125,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
+	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "object"]].forEach(
 		function (aFixture) {
 			QUnit.test("parse fail for source type " + aFixture[1], function (assert) {
 				var oType = new Guid();
@@ -144,7 +150,6 @@ sap.ui.require([
 		[null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
-		assert.expect(0);
 	});
 
 	//*********************************************************************************************
