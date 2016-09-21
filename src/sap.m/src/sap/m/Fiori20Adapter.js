@@ -463,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return [oControl.getAggregation("rootControl")];
 		}
 
-		return oControl.findAggregatedObjects(false);
+		return oControl.findAggregatedObjects(false, isNonDependentObject); /* skip objects added via Element.prototype.addDependent e.g. dialogs, since this is not nested content */
 	};
 
 	Fiori20Adapter._updateSearchDepth = function(iSearchDepth, oControl) {
@@ -629,6 +629,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	function isInstanceOf (oControl, sType) {
 		var oType = sap.ui.require(sType);
 		return oType && (oControl instanceof oType);
+	}
+
+	function isNonDependentObject(oObject) {
+		return oObject && (oObject.sParentAggregationName !== "dependents");
 	}
 
 	return Fiori20Adapter;
