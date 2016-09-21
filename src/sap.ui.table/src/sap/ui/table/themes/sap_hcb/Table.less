@@ -3,12 +3,35 @@
 /* High Contrast Black theme           */
 /* =================================== */
 
+.sapUiTable > .sapUiTableHdr {
+	height: auto;
+}
+
 .sapUiTableColHdrCnt {
 	border-bottom: 3px solid @sapUiListHeaderBorderColor;
 }
 
 .sapUiTable > .sapUiTableHdr {
 	border-bottom: 3px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTable > .sapUiTableTbr {
+	border: none;
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	height: 30px;
+	padding: 0.125rem;
+}
+
+.sapUiTableFtr {
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	border-left: 1px solid @sapUiListHeaderBorderColor;
+	border-right: 1px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTable > .sapUiTableExt {
+	border: none;
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	padding: 0.125rem;
 }
 
 .sapUiSizeCompact, .sapUiSizeCozy {
@@ -20,7 +43,8 @@
 	}
 }
 
-.sapUiTableRowHdr:hover:after {
+.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr:hover:after,
+.sapUiSizeCozy .sapUiTableSelModeMultiToggle .sapUiTableRowHdr:hover:after {
 	background-color: @sapUiSelected;
 }
 

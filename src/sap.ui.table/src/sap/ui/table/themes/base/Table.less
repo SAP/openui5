@@ -22,11 +22,6 @@
 @sapUiTableCozyRowHdrWidth: 3rem;
 @sapUiTableCozyRowHdrHeight: 3rem;
 
-.sapUiTable {
-	font-family: @sapUiDesktopFontFamily;
-	color: @sapUiListTextColor;
-}
-
 /*
  * BEHAVIOR CLASSES:
  * -----------------
@@ -99,7 +94,8 @@
  ******************************************************************************/
 
 .sapUiTable {
-	color: @sapUiBaseText;
+	font-family: @sapUiDesktopFontFamily;
+	color: @sapUiListTextColor;
 	position: relative;
 }
 
@@ -869,7 +865,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 .sapUiTableColRowHdr:hover {
-	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapUiTableSelModeSingle .sapUiTableRowHdr.sapUiTableRowSel,
@@ -878,7 +874,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 .sapUiTableRowHdr.sapUiTableRowHvr {
-	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapUiTableSelModeSingle .sapUiTableRowHdr.sapUiTableRowSel.sapUiTableRowHvr,
