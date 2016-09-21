@@ -9,18 +9,12 @@
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
-<style>
-.sapMList {
-	margin-top: 2rem;
-}
-</style>
-
 <script type="text/javascript">
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
-	var sServiceURI = "/service/" ;
-	var sMetaDataURI = "qunit/data/";
+	var sServiceURI = "/ProductSet/" ;
+	var sMetaDataURI = "mockdata/";
 
 	// configure respond to requests delay
 	sap.ui.core.util.MockServer.config({
@@ -39,25 +33,22 @@
 
 	// controls
 	var oTemplate = new sap.m.StandardListItem({
-		title : "{product>Name} {product>ProductId}",
-		description : "{product>ShortDescription}",
-		icon : "images/travel_expend.png",
-		activeIcon: "images/travel_expend_grey.png",
-		iconInset : false,
+		title : "{product>Name} {product>SalesOrderID}",
+		description : "{product>Description}",
+		info : "{product>Price} {product>CurrencyCode}",
 		type : "Navigation",
 		counter: {
-			path : "product>Weight",
+			path : "product>Price",
 			formatter : function(value) {
-				return +value;
+				return Math.ceil(Math.random() * 100);
 			}
 		},
 		selected : {
-			path : "product>status",
+			path : "product>Price",
 			formatter : function(value) {
-				return value === "O";
+				return value > 1300 ? true : false;
 			}
 		},
-		info : "{product>Price} EUR",
 		infoState : {
 			path : "product>Price",
 			formatter : function(value) {
@@ -67,8 +58,6 @@
 	});
 
 	var oList = new sap.m.List({
-		headerText : "Product List",
-		footerText : "List Footer",
 		growing : true,
 		busyIndicatorDelay : 400,
 		growingThreshold: {
@@ -89,7 +78,7 @@
 
 	// list properties
 	var oGrowingModel = new sap.ui.model.json.JSONModel();
-	oGrowingModel.setData({ threshold : 2, scrollToLoad : true });
+	oGrowingModel.setData({ threshold : 14, scrollToLoad : true });
 	oList.setModel(oGrowingModel, "growing");
 	oPage.setModel(oGrowingModel, "growing");
 
@@ -99,7 +88,7 @@
 
 	// bind Aggregation
 	oList.bindItems({
-		path : "product>/Products",
+		path : "product>/ProductSet",
 		template : oTemplate
 	});
 
@@ -118,6 +107,17 @@
 			new sap.m.CheckBox({
 				text : "ScrollToLoad More",
 				selected: "{growing>/scrollToLoad}"
+			}),
+			new sap.m.ToolbarSeparator(),
+			new sap.m.ToggleButton({
+				text: "Upwards Direction",
+				press: function(oEvent) {
+					var sDir = oEvent.getSource().getPressed() ? "Upwards" : "Downwards";
+					oList.setGrowingDirection(sDir).bindItems({
+						path : "product>/ProductSet",
+						template : oTemplate
+					});
+				}
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Button({
@@ -139,7 +139,7 @@
 		]
 	});
 
-	oPage.addContent(oToolbar);
+	oPage.setFooter(oToolbar);
 	oPage.addContent(oList);
 
 	var oApp = new sap.m.App({

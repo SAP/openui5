@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				var oScrollDelegate = this._oScrollDelegate;
 				this._oScrollPosition = {
 					left : oScrollDelegate.getScrollLeft(),
-					bottom : oScrollDelegate.getScrollHeight() - Math.max(oScrollDelegate.getScrollTop(), 0)
+					top : oScrollDelegate.getScrollHeight()
 				};
 			}
 
@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
 					this._oScrollPosition = {
 						left : 0,
-						bottom : 0
+						top : 0
 					};
 				}
 
@@ -615,7 +615,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					var oScrollDelegate = this._oScrollDelegate,
 						oScrollPosition = this._oScrollPosition;
 
-					oScrollDelegate.scrollTo(oScrollPosition.left, oScrollDelegate.getScrollHeight() - oScrollPosition.bottom);
+					oScrollDelegate.scrollTo(oScrollPosition.left, oScrollDelegate.getScrollHeight() - oScrollPosition.top);
 					this._oScrollPosition = null;
 				}
 			}
