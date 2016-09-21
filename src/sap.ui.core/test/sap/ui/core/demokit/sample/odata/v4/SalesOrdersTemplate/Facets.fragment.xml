@@ -19,7 +19,8 @@
 				<!-- if test="{:= ${facet>$Type} === 'com.sap.vocabularies.UI.v1.ReferenceFacet' }" -->
 				<Text text="Facet: {facet>Label},
 				 Target: {facet>Target/$AnnotationPath},
-				 isMultiple: {facet>Target/$AnnotationPath@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple}"/>
+				 isMultiple: {facet>Target/$AnnotationPath@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple},
+				 getNavigationPath: {facet>Target/$AnnotationPath@@sap.ui.model.odata.v4.AnnotationHelper.getNavigationPath}"/>
 			</template:else>
 		</template:if>
 	</template:repeat>
