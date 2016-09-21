@@ -95,7 +95,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 */
 					_verticalLayout: {type: 'sap.ui.layout.VerticalLayout', multiple: false, visibility: 'hidden'}
 				},
-				events: {}
+				events: {},
+				defaultAggregation: 'imageContent'
 			}
 		});
 

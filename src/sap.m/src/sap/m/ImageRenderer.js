@@ -26,12 +26,24 @@ sap.ui.define(['jquery.sap.global'],
 		var sMode = oImage.getMode(),
 			alt = oImage.getAlt(),
 			tooltip = oImage.getTooltip_AsString(),
-			bHasPressHandlers = oImage.hasListeners("press");
+			bHasPressHandlers = oImage.hasListeners("press"),
+			oLightBox = oImage.getDetailBox();
+
+		// Additional element for Image with LightBox
+		if (oLightBox) {
+			rm.write("<span class=\"sapMLightBoxImage\"");
+			rm.writeControlData(oImage);
+			rm.write(">");
+			rm.write("<span class=\"sapMLightBoxMagnifyingGlass\"></span>");
+		}
+
 
 		// Open the DOM element tag. The 'img' tag is used for mode sap.m.ImageMode.Image and 'span' tag is used for sap.m.ImageMode.Background
 		rm.write(sMode === sap.m.ImageMode.Image ? "<img" : "<span");
 
-		rm.writeControlData(oImage);
+		if (!oLightBox) {
+			rm.writeControlData(oImage);
+		}
 
 		if (sMode === sap.m.ImageMode.Image) {
 			rm.writeAttributeEscaped("src", oImage._getDensityAwareSrc());
@@ -97,6 +109,10 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeStyles();
 
 		rm.write(" />"); // close the <img> element
+
+		if (oLightBox) {
+			rm.write("</span>");
+		}
 	};
 
 	return ImageRenderer;
