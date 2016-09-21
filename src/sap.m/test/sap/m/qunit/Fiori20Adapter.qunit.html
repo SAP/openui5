@@ -1122,6 +1122,40 @@
                 Fiori20Adapter.detachViewChange(fnTitleListener);
             });
 
+            QUnit.test("Dependent non-adaptable content is skipped", function (assert) {
+
+                var oView = new sap.m.HBox({
+                            items: [
+                                new sap.m.Page({title: "Page Title"})
+                            ]
+                        }),
+                        oDialog = new sap.m.Dialog("TestDialog", {
+                            content: [new sap.m.Page({title: "Dialog Title"})]
+                        });
+
+                oView.addDependent(oDialog);
+
+                this.oApp.addPage(oView);
+
+                var oAdaptOptions = {bMoveTitle: true},
+                        oTitleInfo,
+                        fnTitleListener = function (oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                Fiori20Adapter.attachViewChange(oSpy);
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(oTitleInfo.text === "Page Title", "the correct title is shown");
+                ok(oSpy.calledOnce, "view change called once");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
 		</script>
 
 	<style>
