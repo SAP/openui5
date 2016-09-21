@@ -354,19 +354,12 @@
 		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
 		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
-		oMultiComboBox.setSelectedKeys([null]);
+		oMultiComboBox.setSelectedKeys(null); // enforce default value
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-
-		oMultiComboBox.setSelectedKeys(["2", null, "1"]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "1"]);
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem2, oItem1]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem2));
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys(["dummy"]);
@@ -1484,7 +1477,7 @@
 		var fnSetSelectedKeysSpy = this.spy(oMultiComboBox, "setSelectedKeys");
 
 		// act
-		oMultiComboBox.setSelectedKeys([null]);
+		oMultiComboBox.setSelectedKeys(null);
 
 		// assertions
 		strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
