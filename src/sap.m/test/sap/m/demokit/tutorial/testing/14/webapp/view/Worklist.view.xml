@@ -1,29 +1,31 @@
 <mvc:View
-	controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
-	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic">
+		controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
-		id="page"
-		title="{i18n>worklistViewTitle}">
+			id="page"
+			title="{i18n>worklistViewTitle}">
 		<semantic:content>
 			<Table
-				id="table"
-				width="auto"
-				class="sapUiResponsiveMargin"
-				growing="true"
-				items="{
+					id="table"
+					width="auto"
+					class="sapUiResponsiveMargin"
+					growing="true"
+					items="{
 					path: '/Posts',
 					sorter: {
 						path: 'Title',
 						descending: false
 						}
 					}"
-				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-				updateFinished="onUpdateFinished">
+					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+					updateFinished="onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+						<ToolbarSpacer />
+						<SearchField id="searchField" width="auto" search="onFilterPosts" />
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -40,33 +42,33 @@
 				</columns>
 				<items>
 					<ColumnListItem
-						vAlign="Middle"
-						type="Navigation"
-						press="onPress">
+							vAlign="Middle"
+							type="Navigation"
+							press="onPress">
 						<cells>
 							<ObjectIdentifier
-								title="{Title}"/>
+									title="{Title}"/>
 							<Text
-								text="{Category}"/>
+									text="{Category}"/>
 							<ObjectNumber
-								number="{
+									number="{
 										path: 'Price',
 										formatter: '.formatter.numberUnit'
 									}"
-								state="{
+									state="{
 										path: 'Price',
 										formatter: '.formatter.priceState'
 									}"
-								unit="{Currency}"/>
+									unit="{Currency}"/>
 							<ToggleButton
-								id="flaggedButton"
-								tooltip="{i18n>flaggedTooltip}"
-								icon="sap-icon://flag"
-								pressed="{
+									id="flaggedButton"
+									tooltip="{i18n>flaggedTooltip}"
+									icon="sap-icon://flag"
+									pressed="{
 										path: 'Flagged',
 										type: '.types.flagged'
 									}"
-								class="sapUiMediumMarginBeginEnd"/>
+									class="sapUiMediumMarginBeginEnd"/>
 						</cells>
 					</ColumnListItem>
 				</items>
