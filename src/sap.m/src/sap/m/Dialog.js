@@ -730,6 +730,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
 				this._applyCustomTranslate();
 			}
+
+			if (sap.ui.Device.browser.chrome) {
+				// Force repaint of footer to workaround Chrome issue -> 1670422577
+				var $Footer = this.$("footer");
+				$Footer.css("height", "auto");
+				setTimeout(function(){
+					$Footer.css("height", "");
+				}, 10);
+			}
 		};
 
 		/**
