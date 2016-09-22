@@ -140,7 +140,9 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 				} else if (typeof (vAction) === "string" ) {
 					vAction = { changeType : vAction };
 				}
-				vAction.aggregation = sAggregation;
+				if (vAction) {
+					vAction.aggregation = sAggregation;
+				}
 				break;
 			}
 		}
