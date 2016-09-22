@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @author SAP SE
 	 * @experimental This module is only for experimental use!
 	 * @namespace
-	 * @name sap.ui.model.analytics.odata4analytics
+	 * @alias sap.ui.model.analytics.odata4analytics
 	 * @protected
 	 */
 	var odata4analytics = odata4analytics || {};
@@ -3502,10 +3502,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	/** ******************************************************************** */
 
 	/**
-	 * @class Sort order of a property
-	 * @name sap.ui.model.analytics.odata4analytics.SortOrder
+	 * Sort order of a property.
 	 *
-	 * @static
+	 * @enum {string}
 	 * @public
 	 */
 	odata4analytics.SortOrder = {

@@ -8,9 +8,9 @@ sap.ui.define(function() {
 
 
 	/**
-	* Operators for the Filter.
+	* Types of Filters.
 	*
-	* @namespace
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.FilterType
 	*/

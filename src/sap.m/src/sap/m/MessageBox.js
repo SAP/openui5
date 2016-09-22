@@ -37,8 +37,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 			 *
 			 * Each action is represented as a button in the message box. The values of this enumeration are used for both,
 			 * specifying the set of allowed actions as well as reporting back the user choice.
-
-			 * @namespace
+			 * @enum {string}
 			 * @public
 			 */
 			MessageBox.Action = {
@@ -100,8 +99,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 
 			/**
 			 * Enumeration of the pre-defined icons that can be used in a MessageBox.
-
-			 * @namespace
+			 * @enum {string}
 			 * @public
 			 */
 			MessageBox.Icon = {
@@ -111,6 +109,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 				 * @public
 				 */
 				NONE: undefined,
+
 				/**
 				 * Shows the information icon in the message box.
 				 * @public
