@@ -116,11 +116,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 
 		if (oBindingInfo && oItem && oItem.getBindingContext(oBindingInfo.model)) {
 			if (bExpand == undefined) {
-				oBindingInfo.toggleIndex(iIndex);
+				this.getBinding("items").toggleIndex(iIndex);
 			} else if (bExpand) {
-				oBindingInfo.expand(iIndex);
+				this.getBinding("items").expand(iIndex);
 			} else {
-				oBindingInfo.collapse(iIndex);
+				this.getBinding("items").collapse(iIndex);
 			}
 		}
 	};
