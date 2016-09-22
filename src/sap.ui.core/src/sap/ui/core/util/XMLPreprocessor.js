@@ -521,7 +521,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 */
 			process : function (oRootElement, oViewInfo, mSettings) {
 				var sCaller = oViewInfo.caller,
-					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					bDebug
+						= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					sCurrentName = oViewInfo.name, // current view or fragment name
 					mFragmentCache = {},
@@ -529,7 +530,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					iNestingLevel = 0,
 					oScope = {}, // for BindingParser.complexParser()
 					fnSupportInfo = oViewInfo._supportInfo,
-					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
+					bWarning
+						= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sXMLPreprocessor);
 
 				/**
 				 * Returns a callback interface for visitor functions which provides access to

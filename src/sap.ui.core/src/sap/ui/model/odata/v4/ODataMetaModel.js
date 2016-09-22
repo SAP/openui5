@@ -633,7 +633,7 @@ sap.ui.define([
 			function log(iLevel) {
 				var sLocation;
 
-				if (jQuery.sap.log.isLoggable(iLevel)) {
+				if (jQuery.sap.log.isLoggable(iLevel, sODataMetaModel)) {
 					sLocation = Array.isArray(vLocation)
 						? vLocation.join("/")
 						: vLocation;

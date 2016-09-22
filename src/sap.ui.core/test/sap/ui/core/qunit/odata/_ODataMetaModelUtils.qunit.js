@@ -424,7 +424,8 @@ sap.ui.require([
 			"EntityContainer" : {
 				"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" : {}
 			}
-		};
+		},
+		sLoggingModule = "sap.ui.model.odata.ODataMetaModel";
 
 	// helper for cloning the given object
 	function clone(o) {
@@ -434,12 +435,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._ODataMetaModelUtils", {
 		beforeEach : function () {
-			this.iOldLogLevel = jQuery.sap.log.getLevel();
+			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
 		},
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel);
+			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
 		}
 	});
 	//*********************************************************************************************
@@ -557,13 +558,11 @@ sap.ui.require([
 				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
 
 			oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 				.returns(true);
 			oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
-				.withExactArgs("Unsupported type for sap:semantics: "
-						+ oFixture.oExpectedMessage,
-					"Foo.bar",
-					"sap.ui.model.odata.ODataMetaModel");
+				.withExactArgs("Unsupported type for sap:semantics: " + oFixture.oExpectedMessage,
+					"Foo.bar", sLoggingModule);
 
 			assert.strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
 				oProperty, oType), oFixture.sOutput, sSemanticsValue);
@@ -641,13 +640,12 @@ sap.ui.require([
 				});
 
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
-					.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
-						"sap.ui.model.odata.ODataMetaModel");
+					.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar", sLoggingModule);
 
 				// code under test
 				Utils.addSapSemantics(oType);
@@ -678,13 +676,13 @@ sap.ui.require([
 					Utils.liftSAPData(oProperty, "Property");
 				});
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
-						"sap.ui.model.odata.ODataMetaModel");
+						sLoggingModule);
 
 				// code under test
 				Utils.addSapSemantics(oType);
@@ -787,13 +785,13 @@ sap.ui.require([
 					};
 
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported sap:filter-restriction: " + "Bar", "Baz.Foo",
-						"sap.ui.model.odata.ODataMetaModel");
+						sLoggingModule);
 
 				// code under test
 				Utils.addFilterRestriction(oProperty, oEntitySet);
@@ -978,7 +976,7 @@ sap.ui.require([
 						.withExactArgs("Inconsistent service",
 							"Use either 'sap:creatable' or 'sap:creatable-path'"
 								+ " at navigation property 'mySchema.Type/inconsistent'",
-							"sap.ui.model.odata.ODataMetaModel");
+							sLoggingModule);
 				}
 
 				// code under test
@@ -1069,7 +1067,7 @@ sap.ui.require([
 		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs("Inconsistent service",
 				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'Foo.Bar'",
-				"sap.ui.model.odata.ODataMetaModel");
+				sLoggingModule);
 
 		// code under test
 		Utils.handleXableAndXablePath(oEntitySet, {}, "EntitySet", sTerm, "Deletable");
