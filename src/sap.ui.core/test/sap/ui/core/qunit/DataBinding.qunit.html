@@ -73,7 +73,92 @@
     var oModel5 = new sap.ui.model.odata.v2.ODataModel(sUri);
     
     var uiArea,ctrl,child;
+    module("Propagation listener", {
+		setup : function() {
+			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
+			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
 
+			mPropagationInfo = {};
+
+			fnChange = function(oEvent) {
+				mPropagationInfo[oEvent.getSource().getId()] ? mPropagationInfo[oEvent.getSource().getId()]++ : mPropagationInfo[oEvent.getSource().getId()] = 1;
+			};
+
+			uiArea.attachModelContextChange(fnChange);
+			sap.ui.getCore().setModel(oModel1);
+			child = new sap.ui.core.TestControl({
+				value : "{/value}"
+			});
+			child.attachModelContextChange(fnChange);
+			ctrl = new sap.ui.core.TestControl({
+				value : "{/value}",
+				children : [child]
+			});
+			ctrl.attachModelContextChange(fnChange);
+			ctrl.placeAt(uiArea.getId());
+		},
+
+		teardown : function() {
+			uiArea.detachModelContextChange(fnChange);
+			ctrl.destroy();
+			ctrl = null;
+			child = null;
+			iPropagationCounter = 0;
+			sap.ui.getCore().setModel();
+		}
+	});
+    
+    test("add Propagation Listener", function() {
+    	fnPropListener = function(data, object) {
+			ok(data, "data passed");
+			equals(data.myData, "myData", "data object passed with data");
+			ok(object instanceof sap.ui.base.ManagedObject, "ManagedObject passed");
+		}.bind(null,{myData:"myData"});
+		var spy = sinon.spy(window, "fnPropListener");
+    	ctrl.addPropagationListener(fnPropListener);
+    	ok(spy.callCount === 2, "Propagation listener called for every control");
+    	var oChild2 = new sap.ui.core.TestControl({
+			value : "{/value}",
+			children : [child]
+		});
+    	ctrl.addAggregation("children", oChild2);
+    	ok(spy.callCount === 4, "Propagation listener called for new control and its child");
+    	fnPropListener.restore();
+    });
+    
+    test("remove Propagation Listener", function() {
+    	fnPropListener = function(data, object) {
+    		ok(data, "data passed");
+			equals(data.myData, "myData", "data object passed with data");
+			ok(object instanceof sap.ui.base.ManagedObject, "ManagedObject passed");
+		}.bind(null,{myData:"myData"});
+    	ctrl.addPropagationListener(fnPropListener);
+		var spy = sinon.spy(window, "fnPropListener");
+    	ctrl.removePropagationListener(fnPropListener);
+    	ok(spy.callCount === 0, "Propagation listener not called");
+    	var oChild2 = new sap.ui.core.TestControl({
+			value : "{/value}",
+			children : [child]
+		});
+    	ctrl.addAggregation("children", oChild2);
+    	ok(spy.callCount === 0, "Propagation listener not called");
+    	fnPropListener.restore();
+    });
+    
+    test("propagation Listener and models/bindings", function() {
+    	fnPropListener = function(data, object) {
+		}.bind(null,{myData:"myData"});
+    	ctrl.addPropagationListener(fnPropListener);
+		var spy = sinon.spy(window, "fnPropListener");
+		ctrl.setModel(oModel2);
+    	ok(spy.callCount === 0, "Propagation listener not called on setModel");
+    	ctrl.setBindingContext(oModel2.createBindingContext("/value"));
+    	ok(spy.callCount === 0, "Propagation listener not called on setBindingContext");
+    	ctrl.bindElement("/value");
+    	ok(spy.callCount === 0, "Propagation listener not called on bindElement");
+    	fnPropListener.restore();
+    });
+    
 	module("Model propagation", {
 		setup : function() {
 			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
@@ -488,7 +573,7 @@
 			}, 0);
 		}, 0);
 	});
-
+	
 	module("More Complex Updates", {
 		setup : function() {
 			sap.ui.getCore().setModel(oModel1);
@@ -679,6 +764,7 @@
 			start();
 		});
 	});
+	
 	test("Context binding instance", function() {
 		mPropagationInfo = {};
 		ctrl.bindElement("/data");
@@ -724,6 +810,7 @@
 		ctrl.unbindElement();
 		ok(!child.getValue(), "Value should be cleared");
 	});
+	
 	</script>
 
 </head>
