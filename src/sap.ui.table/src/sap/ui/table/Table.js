@@ -1304,6 +1304,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			jQuery.proxy(function(oEvent) {
 				if (jQuery(oEvent.target).has($this).length > 0) {
 					this._handleResize();
+					if (this._oVSb && this._oVSb.getDomRef()) {
+						this._oVSb.rerender();
+					}
 				}
 			}, this));
 	};
