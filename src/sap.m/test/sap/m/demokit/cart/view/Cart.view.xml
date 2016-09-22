@@ -74,6 +74,8 @@
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute
+								active="{device>/safeForLater}"
+								press="onSafeForLater"
 								text="by {cartProducts>SupplierName}" />
 						</attributes>
 						<firstStatus>
