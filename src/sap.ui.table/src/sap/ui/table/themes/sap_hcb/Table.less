@@ -28,10 +28,30 @@
 	border-right: 1px solid @sapUiListHeaderBorderColor;
 }
 
+.sapUiTable > div {
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+}
+
 .sapUiTable > .sapUiTableExt {
 	border: none;
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 	padding: 0.125rem;
+}
+
+.sapUiTableCtrl tr.sapUiTableRowHvr,
+tr.sapUiTableRowHvr .sapMObjStatusText,
+tr.sapUiTableRowHvr .sapMObjStatusTitle,
+tr.sapUiTableRowHvr .sapMObjStatusIcon,
+.sapUiTableCol:hover .sapMObjStatusText,
+.sapUiTableCol:hover .sapMObjStatusTitle,
+.sapUiTableCol:hover .sapMObjStatusIcon {
+	color: @sapUiContentContrastTextColor;
+}
+
+
+
+.sapUiTableRowHdr.sapUiTableRowHvr {
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapUiSizeCompact, .sapUiSizeCozy {
