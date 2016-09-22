@@ -8,11 +8,13 @@
 }
 
 .sapMGT.sapMGTLineMode {
+	font-size: @sapMFontMediumSize;
+
 	.sapMGTHdrTxt {
 		color: @sapHCStandardFG;
 		font-weight: bold;
+		font-size: @sapMFontMediumSize;
 		font-family: @sapUiFontFamily;
-		font-size: @sapMFontHeader5Size;
 	}
 
 	.sapMGTLineModeFailedIcon {
@@ -28,6 +30,7 @@
 	.sapMGTLineStyleHelper {
 		.sapMGTLineStyleHelperInner {
 			box-shadow: 0 0 0 1px @sapHCStandardFG;
+			bottom: 1px;
 		}
 
 		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
@@ -36,6 +39,9 @@
 
 		&:not(:first-child) .sapMGTLineStyleHelperInner {
 			margin: 0 0.125rem;
+		}
+		&:last-child .sapMGTLineStyleHelperInner {
+			margin-right: 0;
 		}
 
 		&:first-child .sapMGTLineStyleHelperInner {
@@ -49,8 +55,7 @@
 		}
 	}
 
-	&:hover .sapMGTLineStyleHelperInner {
-		background: @sapHCHighlightBG;
+	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
 		box-shadow: 0 0 0 0.1875rem @sapHCStandardFG;
 	}
 
@@ -63,10 +68,6 @@
 		right: 1px;
 		box-sizing: border-box;
 		border: 2px dotted @sapHCStandardFG;
-	}
-
-	&.sapMGTLineModePress .sapMGTLineStyleHelper {
-		background: @sapHCHighlightBG;
 	}
 
 	&.sapMGTDisabled {

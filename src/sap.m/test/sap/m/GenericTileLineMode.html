@@ -17,7 +17,11 @@
 			padding-bottom: 1rem;
 			padding-top: 1rem;
 			width: 100%;
+			min-height: 200px;
 			box-sizing: border-box;
+		}
+		.sapUiTheme-sap_belize .TileContainer {
+			background-color: #ebf2f7;
 		}
 	</style>
 
@@ -176,25 +180,31 @@
 		var oAddTileBtn = new sap.m.Button({
 			text: "Add tile",
 			press: function() {
-				var aItems = oModel.getProperty("/items");
-
-				aItems.push(makeTileData());
-				oModel.setProperty("/items", aItems);
-				oModel.refresh(true);
+				oModel.oData.items.push(makeTileData());
+				oModel.refresh();
 			}
 		});
 
-		var oDensityModeSwitch = new sap.m.Switch({
-			state: true,
-			customTextOn: "COZ",
-			customTextOff: "COM",
-			change: function() {
-				if (oDensityModeSwitch.getState()) {
-					oTileContainer.removeStyleClass("sapUiSizeCompact");
-					oTileContainer.rerender();
-				} else {
+		var oRemoveAllBtn = new sap.m.Button({
+			text: "Remove all",
+			press: function() {
+				oModel.oData.items = [];
+				oModel.refresh();
+			}
+		});
+
+		var oDensityModeButton = new sap.m.ToggleButton({
+			pressed: false,
+			text: "Cozy",
+			press: function() {
+				if (oDensityModeButton.getPressed()) {
 					oTileContainer.addStyleClass("sapUiSizeCompact");
 					oTileContainer.rerender();
+					oDensityModeButton.setText("Compact");
+				} else {
+					oTileContainer.removeStyleClass("sapUiSizeCompact");
+					oTileContainer.rerender();
+					oDensityModeButton.setText("Cozy");
 				}
 			}
 		});
@@ -205,8 +215,13 @@
 				new sap.m.VBox({
 					fitContainer: true,
 					items: [
-						oDensityModeSwitch.addStyleClass("sapUiSizeCompact"),
-						oAddTileBtn.addStyleClass("sapUiSizeCompact"),
+						new sap.m.Toolbar({
+							content: [
+								oDensityModeButton,
+								oAddTileBtn,
+								oRemoveAllBtn
+							]
+						}).addStyleClass("sapUiSizeCompact"),
 						oTileContainer.addStyleClass("TileContainer"),
 						oTileConfigContainer.addStyleClass("sapUiSizeCompact")
 					]

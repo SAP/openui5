@@ -87,6 +87,12 @@
 	padding-right: 1.5rem; //results in 0.5rem (1rem is used for tile spacing)
 }
 
+.sapMGT.sapMGTLineMode {
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+}
+
 .sapUiSizeCompact {
 	.sapMGT.sapMGTLineMode {
 		display: inline;
@@ -102,29 +108,34 @@
 		margin-top: @padding-top + @padding-bottom; /* used as hover-style bar-offset top, does not have an effect for inline elements */
 		min-height: @line-height - @padding-top - @padding-bottom; /* used as hover-style bar height */
 		line-height: @line-height !important;
+		height: @line-height;
 		padding-top: (@line-height / 2) - (@sapMFontMediumSize / 2);
 		padding-bottom: (@line-height / 2) - (@sapMFontMediumSize / 2);
+		pointer-events: none;
 
 		&.sapMGTNewLine:before {
-			content: "\A"; //linebreak
-			white-space: pre-wrap;
+			content: "\A0\A"; //linebreak
+			white-space: pre;
 			display: inline;
+			pointer-events: none;
 		}
 	}
 
 	.sapMGTLineMode .sapMGTHdrTxt, .sapMGTLineMode .sapMGTSubHdrTxt {
 		word-break: normal;
 		display: inline;
-		position: relative;
 		white-space: normal;
+		position: relative;
 		left: 0.5rem;
 		border-top: 2px solid transparent;
 		border-bottom: 2px solid transparent;
+		z-index: 2;
 	}
 
 	.sapMGTLineMode .sapMGTSubHdrTxt {
 		padding-left: 0.5rem;
-		padding-right: 1rem;
+		padding-right: 0.5rem;
+		margin-right: 0.5rem;
 	}
 
 	.sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -132,15 +143,14 @@
 		line-height: 1.375rem;
 		vertical-align: top;
 		padding-top: 0.25rem;
-		border-left: 0.5rem solid transparent;
+
+		position: relative;
+		left: 0.5rem;
 		border-right: 0.375rem solid transparent;
 	}
 	.sapMGTLineMode .sapMGTHdrTxt {
 		border-left: 0.5rem solid transparent;
 		margin-left: -0.5rem;
-	}
-	.sapMGTLineModeFailedIcon + .sapMGTHdrTxt {
-		border-left: none;
 	}
 
 	.sapMGTStartMarker, .sapMGTEndMarker {
@@ -149,14 +159,16 @@
 
 	.sapMGTStyleHelper {
 		position: absolute;
-		pointer-events: none;
 		top: 0;
-		z-index: -1;
+	}
+
+	.sapMGTLineMode.sapMGTDisabled * {
+		pointer-events: none;
 	}
 
 	.sapMGTLineStyleHelper {
 		position: absolute;
-		box-sizing: border-box;
+		pointer-events: auto;
 
 		.sapMGTLineStyleHelperInner {
 			position: absolute;
@@ -164,6 +176,10 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
+		}
+
+		&:not(:last-child) {
+			border-bottom: 0.25rem solid transparent;
 		}
 	}
 }
