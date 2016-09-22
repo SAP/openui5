@@ -47,7 +47,7 @@ function(jQuery, Test, DesignTime, ElementTest) {
 					type : "function"
 				},
 				timeout : {
-					type : "integer",
+					type : "int",
 					defaultValue : 0
 				},
 				groupPostfix : {
