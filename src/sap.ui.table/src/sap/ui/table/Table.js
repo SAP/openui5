@@ -1348,7 +1348,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iRowCorrection != null && iRowCorrection > -1) {
-			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
+			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
 			oInnerScrollContainer.scrollTop(iRowCorrection);
 		}
 	};
@@ -1954,7 +1954,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
+			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
 			oInnerScrollContainer.on("scroll.sapUiTableSyncScrollPosition", function(oEvent) {
 				oInnerScrollContainer.scrollTop(oEvent.target.scrollTop);
 			});
