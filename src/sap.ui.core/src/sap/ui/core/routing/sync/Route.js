@@ -46,8 +46,6 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData.nestedRoute = oNestingChild;
 			}
 
-			oRouter._sActiveRouteName = oConfig.name;
-
 			// Route is defined without target in the config - use the internally created target to place the view
 			if (this._oTarget) {
 				oTarget = this._oTarget;

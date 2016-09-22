@@ -810,70 +810,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 			// private
 			fireTitleChanged : function(mArguments) {
-				var sDirection,
-					oActiveRoute,
-					vTargets,
-					sTitleTarget,
-					sCalcedTargetName,
+				var sDirection = History.getInstance().getDirection(),
 					sHash = this.oHashChanger.getHash(),
-					bShouldFireEvent = true,
 					HistoryDirection = library.routing.HistoryDirection,
 					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
 					oNewHistoryEntry;
 
-				if (this._sActiveRouteName && this._oTargets) {
-					oActiveRoute = this.getRoute(this._sActiveRouteName);
-					vTargets = oActiveRoute._oConfig.target;
-					sTitleTarget = oActiveRoute._oConfig.titleTarget;
-					sCalcedTargetName = this._oTargets._getTitleTargetName(vTargets, sTitleTarget);
-					// should fire the event only when the titleChanged event comes from the TitleTarget
-					bShouldFireEvent = (mArguments.name === sCalcedTargetName);
-				}
+				// when back navigation, the last history state should be removed
+				if (sDirection === HistoryDirection.Backwards) {
+					// but only if the last history entrie´s title is not the same as the current one
+					if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
+						this._aHistory.pop();
+					}
+				} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
+					// if no actual navigation took place, we only need to update the title
+					oLastHistoryEntry.title = mArguments.title;
 
-				if (bShouldFireEvent) {
-					sDirection = History.getInstance().getDirection();
-
-					// when back navigation, the last history state should be removed
-					if (sDirection === HistoryDirection.Backwards) {
-						// but only if the last history entrie´s title is not the same as the current one
-						if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
-							this._aHistory.pop();
+					// check whether there's a duplicate history entry with the last history entry and remove it if there is
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
+							return aHistory.splice(i, 1);
 						}
-					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
-						// if no actual navigation took place, we only need to update the title
-						oLastHistoryEntry.title = mArguments.title;
-
-						// check whether there's a duplicate history entry with the last history entry and remove it if there is
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-					} else {
-						if (this._bLastHashReplaced) {
-							// if the current hash change is done via replacement, the last history entry should be removed
-							this._aHistory.pop();
-						}
-
-						oNewHistoryEntry = {
-							hash: sHash,
-							title: mArguments.title
-						};
-						// Array.some is sufficient here, as we ensure there is only one occurence
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-
-						// push new history state into the stack
-						this._aHistory.push(oNewHistoryEntry);
+					});
+				} else {
+					if (this._bLastHashReplaced) {
+						// if the current hash change is done via replacement, the last history entry should be removed
+						this._aHistory.pop();
 					}
 
-					mArguments.history = this._aHistory.slice(0, -1);
+					oNewHistoryEntry = {
+						hash: sHash,
+						title: mArguments.title
+					};
+					// Array.some is sufficient here, as we ensure there is only one occurence
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
+							return aHistory.splice(i, 1);
+						}
+					});
 
-					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
+					// push new history state into the stack
+					this._aHistory.push(oNewHistoryEntry);
 				}
+
+				mArguments.history = this._aHistory.slice(0, -1);
+
+				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
 
 				this._bLastHashReplaced = false;
 
