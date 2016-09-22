@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 
 	// shortcuts
-	var NavigationMode = library.NavigationMode,
-		SelectionMode = library.SelectionMode,
+	var SelectionMode = library.SelectionMode,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
 	/**
@@ -123,20 +122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write("></div>");
 
 		rm.write("</div>");
-
-		if (oTable.getNavigationMode() === NavigationMode.Paginator) {
-			rm.write("<div");
-			rm.addClass("sapUiTablePaginator");
-			rm.writeClasses();
-			rm.write(">");
-			if (!oTable._oPaginator) {
-				var Paginator = sap.ui.requireSync("sap/ui/commons/Paginator");
-				oTable._oPaginator = new Paginator(oTable.getId() + "-paginator");
-				oTable._oPaginator.attachPage(jQuery.proxy(oTable.onpscroll, oTable));
-			}
-			rm.renderControl(oTable._oPaginator);
-			rm.write("</div>");
-		}
 
 		if (oTable.getFooter()) {
 			this.renderFooter(rm, oTable, oTable.getFooter());

@@ -481,32 +481,10 @@
 		assert.ok(oMenu._oTable instanceof sap.ui.table.Table, "Internal reference to table is set");
 	});
 
-	QUnit.module("Navigation Paginator", {
-		beforeEach: function() {
-			createTable({
-				navigationMode: sap.ui.table.NavigationMode.Paginator,
-				visibleRowCount: 13
-			});
-		},
-		afterEach: function() {
-			destroyTable();
-		}
-	});
-
 	QUnit.test("After initialization", function(assert) {
-		var $table = oTable.$();
-		assert.equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
-
 		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
 		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
 		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
-		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
-		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
-		sap.ui.getCore().applyChanges();
-		$table = oTable.$();
-		assert.equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
-		oTable._oPaginator.getDomRef("-lastPageLink").click();
-		assert.equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});
 
 	QUnit.module("VisibleRowcountMode Auto", {

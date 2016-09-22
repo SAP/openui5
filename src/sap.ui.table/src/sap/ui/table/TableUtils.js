@@ -9,7 +9,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	// shortcuts
 	var SelectionBehavior = library.SelectionBehavior,
-		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode;
 
 	/**
@@ -227,7 +226,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		isVariableRowHeightEnabled : function(oTable) {
 			return oTable._bVariableRowHeightEnabled
-				&& oTable.getNavigationMode() === NavigationMode.Scrollbar
 				&& oTable.getFixedRowCount() <= 0
 				&& oTable.getFixedBottomRowCount() <= 0;
 		},
@@ -599,7 +597,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		scroll : function(oTable, bDown, bPage) {
-			var bPage = oTable.getNavigationMode() === NavigationMode.Scrollbar ? bPage : true;
 			var bScrolled = false;
 			var iRowCount = oTable._getRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();

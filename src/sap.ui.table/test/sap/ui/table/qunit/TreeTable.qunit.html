@@ -221,30 +221,6 @@
 		equal(this.table.getBinding("rows").getLength(), 6, "Row count is correct!");
 	});
 
-	test("Paginator", function() {
-		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root[2], {
-			0: {
-				name: "new child item",
-				description: "new child item description"
-			}
-		});
-		this.table.getModel().setData(oData);
-		this.table.expand(2);
-		this.table.expand(0);
-
-		this.table.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
-		this.table.setVisibleRowCount(4);
-		sap.ui.getCore().applyChanges();
-
-		this.clock.tick(1000);
-		var $table = this.table.$();
-
-		equal($table.find('#' + this.table.getId() + '-paginator').length, 1, 'The paginator exists');
-		this.table._oPaginator.getDomRef("-forwardLink").click();
-		equal(this.table.getFirstVisibleRow(), 4, "Navigation to last page OK");
-	});
-
 	</script>
   </head>
   <body class="sapUiBody">
