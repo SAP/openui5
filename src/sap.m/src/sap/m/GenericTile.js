@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		this._oWarningIcon = new Icon(this.getId() + "-warn-icon", {
 			src : "sap-icon://notification",
-			size : "1.37rem"
+			size : "1.375rem"
 		});
 
 		this._oWarningIcon.addStyleClass("sapMGTFtrFldIcnMrk");
@@ -136,6 +136,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
+
+		this._bThemeApplied = true;
+		if (!sap.ui.getCore().isInitialized()) {
+			this._bThemeApplied = false;
+			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+		} else {
+			this._handleCoreInitialized();
+		}
 	};
 
 	GenericTile.prototype.onBeforeRendering = function() {
@@ -153,11 +161,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._generateFailedText();
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
-
-		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled) {
-			this.$().unbind("mouseenter", LineModeRenderer._updateHoverStyle);
-			this.$().unbind("mouseleave", LineModeRenderer._removeHoverStyle);
-		}
 	};
 
 	GenericTile.prototype.onAfterRendering = function() {
@@ -167,11 +170,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
-		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled && this._isCompact() && this._bThemeApplied) {
 			this.getParent().addStyleClass("sapMGTLineModeContainer");
+			LineModeRenderer._updateHoverStyle.call(this);
 
-			this.$().bind("mouseenter", LineModeRenderer._updateHoverStyle.bind(this));
-			this.$().bind("mouseleave", LineModeRenderer._removeHoverStyle.bind(this));
+			if (this._sResizeListenerId) { //in case the parent is changed, the handler is de-registered and re-registered
+				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+				this._sResizeListenerId = null;
+			}
+			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
 		}
 
 		// Assign TileContent content again after rendering.
@@ -181,6 +188,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
 			}
 			delete this._aTileContentContent;
+		}
+	};
+
+	GenericTile.prototype._handleCoreInitialized = function() {
+		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
+		if (!this._bThemeApplied) {
+			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
+		}
+	};
+
+	GenericTile.prototype._handleThemeApplied = function() {
+		this._bThemeApplied = true;
+		this.invalidate();
+		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
+	};
+
+	GenericTile.prototype._handleResize = function() {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+			LineModeRenderer._updateHoverStyle.call(this);
 		}
 	};
 

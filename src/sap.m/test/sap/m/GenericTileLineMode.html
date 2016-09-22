@@ -12,6 +12,15 @@
 	        data-sap-ui-theme="sap_belize">
 	</script>
 
+	<style>
+		.TileContainer {
+			padding-bottom: 1rem;
+			padding-top: 1rem;
+			width: 100%;
+			box-sizing: border-box;
+		}
+	</style>
+
 	<script type="text/javascript">
 		jQuery.sap.initMobile();
 
@@ -182,8 +191,10 @@
 			change: function() {
 				if (oDensityModeSwitch.getState()) {
 					oTileContainer.removeStyleClass("sapUiSizeCompact");
+					oTileContainer.rerender();
 				} else {
 					oTileContainer.addStyleClass("sapUiSizeCompact");
+					oTileContainer.rerender();
 				}
 			}
 		});
@@ -196,7 +207,7 @@
 					items: [
 						oDensityModeSwitch.addStyleClass("sapUiSizeCompact"),
 						oAddTileBtn.addStyleClass("sapUiSizeCompact"),
-						oTileContainer,
+						oTileContainer.addStyleClass("TileContainer"),
 						oTileConfigContainer.addStyleClass("sapUiSizeCompact")
 					]
 				})

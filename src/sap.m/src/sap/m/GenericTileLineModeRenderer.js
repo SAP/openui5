@@ -20,11 +20,13 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 */
 	GenericTileLineModeRenderer.render = function(oRm, oControl) {
 		var sTooltipText = oControl._getTooltipText();
+		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMGT");
 		oRm.addClass("sapMGTLineMode");
+		this._writeDirection(oRm);
 
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
@@ -40,178 +42,156 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.writeClasses();
 		oRm.write(">");
 
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-startMarker");
+		oRm.addClass("sapMGTStartMarker");
+		oRm.writeClasses();
+		oRm.write("/>");
+
+		this._renderFailedIcon(oRm, oControl);
+		this._renderHeader(oRm, oControl);
+		this._renderSubheader(oRm, oControl);
+
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-endMarker");
+		oRm.addClass("sapMGTEndMarker");
+		oRm.writeClasses();
+		oRm.write("/>");
+
+		//hover and press style helper
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-styleHelper");
+		oRm.addClass("sapMGTStyleHelper");
+		oRm.writeClasses();
+		oRm.write("/>");
+
+		oRm.write("</span>"); //.sapMGT
+	};
+
+	GenericTileLineModeRenderer._writeDirection = function(oRm) {
+		if (this._bRTL) {
+			oRm.writeAttribute("dir", "rtl");
+		}
+	};
+
+	GenericTileLineModeRenderer._renderFailedIcon = function(oRm, oControl) {
 		if (oControl.getState() === LoadState.Failed) {
 			oRm.renderControl(oControl._oWarningIcon.addStyleClass("sapMGTLineModeFailedIcon"));
 		}
+	};
 
+	GenericTileLineModeRenderer._renderHeader = function(oRm, oControl) {
 		oRm.write("<span");
+		this._writeDirection(oRm);
 		oRm.addClass("sapMGTHdrTxt");
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-hdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl._oTitle.getText());
-		oRm.write("</span>"); //.sapMGTHdrTxt
+		if (this._bRTL && sap.ui.Device.browser.mozilla) {
+			oRm.write(" ");
+		}
+		oRm.write("</span>");
+	};
 
+	GenericTileLineModeRenderer._renderSubheader = function(oRm, oControl) {
 		oRm.write("<span");
+		this._writeDirection(oRm);
 		oRm.addClass("sapMGTSubHdrTxt");
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getSubheader());
-
-		oRm.write("<span");
-		oRm.addClass("sapMGTSubHdrEndMarker");
-		oRm.writeClasses();
-		oRm.write(">");
 		oRm.write("</span>");
-
-		oRm.write("</span>"); //.sapMGTSubHdrTxt
-
-		//hover and press style helper
-		oRm.write("<svg");
-		oRm.addClass("sapMGTStyleHelper");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</svg>");
-
-		//rendering helper
-		oRm.write("<div");
-		oRm.addClass("sapMGTSizeHelper");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</div>");
-
-		oRm.write("</span>"); //.sapMGT
 	};
 
 	/**
-	 * Handles the mouseenter event and calculates and draws all hover rects.
-	 * These elements are then made visible in order to imitate a per-line box effect.
+	 * Renders the style helper elements for LineMode.
+	 * These elements are used in order to imitate a per-line box effect.
 	 *
 	 * @private
 	 */
 	GenericTileLineModeRenderer._updateHoverStyle = function() {
-		var $this = this.$(),
-			$StyleHelper = $this.find(".sapMGTStyleHelper"),
-			$SizeHelper = $this.find(".sapMGTSizeHelper"),
-			$SubHdr = this.$().find(".sapMGTSubHdrTxt"),
-			$SubHdrEnd = this.$().find(".sapMGTSubHdrEndMarker"),
-			iBarOffsetLeft,
+		var $StyleHelper = this.$("styleHelper"),
+			iBarOffsetX, iBarOffsetY,
 			iBarPaddingTop = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "margin-top")),
 			iBarWidth,
 			iParentWidth = this.getParent().$().outerWidth(),
+			iParentLeft = this.getParent().$().offset().left,
+			iParentRight = iParentLeft + iParentWidth,
 			iHeight = Math.floor(this.$().height()),
 			cHeight = GenericTileLineModeRenderer._getCSSHeight(this, "line-height"), //height including gap between lines
 			cLineHeight = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "min-height")), //line height
-			cWrappedLineIndent = 2, //0.5rem(padding-left) - 0.375rem(wrapped padding) = 0.125rem = 2px
 			iLines = Math.round(iHeight / cHeight),
 			i = 0,
-			sRectTemplate = "<rect class='sapMGTStyleRect' x='$x' y='$y' width='$w' height='" + cLineHeight + "' />",
-			sRect,
-			iLeftOffset = $SizeHelper.offset().left - this.getParent().$().offset().left, //get offset relative to parent
-			iSubhdrLeftOffset = $SubHdr.offset().left,
-			iSubhdrWidth = $SubHdr.width(),
-			iRadiusLeft, iRadiusRight;
+			sHelpers,
+			$Rect,
+			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			iPosEnd = this.$("endMarker").offset().left,
+			iOffset = this.$("startMarker").offset().left;
+
+		if (bRTL) {
+			iOffset = iParentRight - iOffset;
+			iPosEnd = iParentRight - iPosEnd;
+
+			if (sap.ui.Device.browser.mozilla) {
+				$StyleHelper.css("right", -iOffset + "px");
+			} else if (!(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+				$StyleHelper.css("right", -Math.min(iOffset, iPosEnd) + "px");
+			}
+		} else {
+			iOffset -= iParentLeft;
+			iPosEnd -= iParentLeft;
+		}
 
 		$StyleHelper.empty();
 
+		sHelpers = "";
 		for (i; i < iLines; i++) {
 			//set bar width
 			if (iLines === 1) { //first and only line
-				iBarOffsetLeft = iLeftOffset;
-				iBarWidth = (iSubhdrLeftOffset - iLeftOffset) + iSubhdrWidth;
+				iBarOffsetX = iOffset;
+				iBarWidth = iPosEnd - iBarOffsetX;
 			} else if (i === iLines - 1) { //last line
-				iBarOffsetLeft = cWrappedLineIndent;
-				iBarWidth = $SubHdrEnd.offset().left - iBarOffsetLeft;
+				iBarOffsetX = 0;
+				iBarWidth = iPosEnd - iBarOffsetX;
 			} else if (i === 0) { //first line
-				iBarOffsetLeft = iLeftOffset;
-				iBarWidth = iParentWidth - iLeftOffset - cWrappedLineIndent;
+				iBarOffsetX = iOffset;
+				iBarWidth = iParentWidth - iBarOffsetX;
 			} else {
-				iBarOffsetLeft = cWrappedLineIndent;
-				iBarWidth = iParentWidth - (cWrappedLineIndent * 2);
+				iBarOffsetX = 0;
+				iBarWidth = iParentWidth;
 			}
-			sRect = sRectTemplate.replace("$w", iBarWidth);
-			sRect = sRect.replace("$x", iBarOffsetLeft);
-			sRect = sRect.replace("$y", i * cHeight + iBarPaddingTop);
+			iBarOffsetY = i * cHeight + iBarPaddingTop;
 
-			//set rounded corner radii
-			iRadiusLeft = iRadiusRight = 0;
-			if (i === 0) { //first line
-				iRadiusLeft = 3; //3px
+			$Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner' /></div>");
+			if (bRTL) {
+				$Rect.css("right", iBarOffsetX + "px");
+			} else {
+				$Rect.css("left", iBarOffsetX + "px");
 			}
-			if (i === iLines - 1) { //last line
-				iRadiusRight = 3; //3px
-			}
-
-			$StyleHelper.append("<svg>" + GenericTileLineModeRenderer._createRoundedRectPath(sRect, iRadiusLeft, iRadiusRight) + "</svg>"); //wrap element in svg tag to make the browser interpret it
+			$Rect.css({
+				top: iBarOffsetY + "px",
+				width: iBarWidth + "px",
+				height: cLineHeight
+			});
+			sHelpers += $Rect.outerHTML();
 		}
-
-		$StyleHelper.find("svg > *").unwrap(); //remove svg tag from all rects and force re-layouting for css-transition
-		$StyleHelper.css("left", -iLeftOffset + "px");
-		$StyleHelper.css("width", iParentWidth + "px").css("height", (iLines * cHeight) + "px");
-		if (!(sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge)) { //only enable transition for non-IE browsers
-			$StyleHelper.children().css("transition", "fill 200ms");
-		}
-		$StyleHelper.children().css("fill");
-		$StyleHelper.children().addClass("sapMGTStyleRectHover");
+		$StyleHelper.html(sHelpers);
 	};
 
 	/**
-	 * Handles the mouseout event and removes the class sapMGTStyleRectHover from all hover rects.
+	 * Calculates the given property of the passed tile. If the property is retrieved in pixels, it is directly returned.
+	 * If the property is given as rem, it is converted to pixels.
 	 *
-	 * @param {jQuery.event} evt
-	 * @private
-	 */
-	GenericTileLineModeRenderer._removeHoverStyle = function(evt) {
-		var $this = this.$(),
-			$StyleHelper = $this.find(".sapMGTStyleHelper");
-		$StyleHelper.children().removeClass("sapMGTStyleRectHover");
-	};
-
-	/**
-	 * Converts a rect element to a path with rounded corners.
-	 *
-	 * @param {string} rect The rect element as an HTML string.
-	 * @param {int} rLeft The top-left and bottom-left radius for rounded corners.
-	 * @param {int} rRight The top-right and bottom-right radius for rounded corners.
-	 * @returns {string} The path element as an HTML string.
-	 * @private
-	 */
-	GenericTileLineModeRenderer._createRoundedRectPath = function(rect, rLeft, rRight) {
-		var $Rect = jQuery(rect),
-			$Path = jQuery("<path />"),
-			x = parseFloat($Rect.attr("x")),
-			y = parseFloat($Rect.attr("y")),
-			w = parseFloat($Rect.attr("width")),
-			h = parseFloat($Rect.attr("height"));
-		rLeft = rLeft || 0;
-		rRight = rRight || 0;
-
-		var sData = "M" + x + " " + (y + rLeft) + " ";
-		sData += "a" + rLeft + " " + rLeft + " 0, 0, 1, " + rLeft + "," + -rLeft + " ";
-		sData += "h " + (w - rLeft - rRight) + " ";
-		sData += "a" + rRight + " " + rRight + " 0, 0, 1, " + rRight + "," + rRight + " ";
-		sData += "v " + (h - (rRight * 2)) + " ";
-		sData += "a" + rRight + " " + rRight + " 0, 0, 1, " + -rRight + "," + rRight + " ";
-		sData += "h " + -(w - rLeft - rRight) + " ";
-		sData += "a" + rLeft + " " + rLeft + " 0, 0, 1, " + -rLeft + "," + -rLeft + " Z";
-
-		$Path.get(0).className = $Rect.get(0).className; //copy classes
-		$Path.attr("d", sData);
-		return $Path.outerHTML();
-	};
-
-	/**
-	 * Calculates the line-height of the passed tile from its css property. If the line-height is given in pixels, it is directly returned.
-	 * If the line-height is given as rem, it is converted to pixels.
-	 *
-	 * @param {sap.m.GenericTile} tile The tile the line-height is to be retrieved of.
+	 * @param {sap.m.GenericTile|jQuery} tile The tile the CSS property is to be retrieved of.
 	 * @param {string} property The CSS property to be read and converted.
-	 * @returns {float} The line-height in pixels.
+	 * @returns {float} The property value in pixels.
 	 * @private
 	 */
 	GenericTileLineModeRenderer._getCSSHeight = function(tile, property) {
-		var aMatch = tile.$().css(property).match(/([^a-zA-Z\%]*)(.*)/),
+		var $Obj = tile instanceof jQuery ? tile : tile.$(),
+			aMatch = ($Obj.css(property) || "").match(/([^a-zA-Z\%]*)(.*)/),
 			fValue = parseFloat(aMatch[1]),
 			sUnit = aMatch[2];
 		return (sUnit === "px") ? fValue : fValue * 16;
