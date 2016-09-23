@@ -320,11 +320,14 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 
 .sapUiTableRSel .sapUiTableRowHdrScr {
 	display: block;
+}
+
+.sapUiTable.sapUiTableRSel:not(.sapUiTableGroupMode) .sapUiTableRowHdrScr {
 	overflow:hidden;
 	height: 100%;
 }
 
-/* TABLE */
+	/* TABLE */
 .sapUiTableCtrlScr {
 	position: relative;
 	margin: 0;
