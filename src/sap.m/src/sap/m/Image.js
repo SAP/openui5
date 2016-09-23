@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// set the src to the real dom node
 		if (this.getMode() === sap.m.ImageMode.Background) {
 			// In Background mode, the src is applied to the output DOM element only when the source image is finally loaded to the client side
-			$DomNode.css("background-image", "url(" + this._oImage.src + ")");
+			$DomNode.css("background-image", "url(\"" + this._oImage.src + "\")");
 		}
 
 		if (!this._isWidthOrHeightSet()) {
