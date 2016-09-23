@@ -1203,3 +1203,44 @@ QUnit.test("Destroy popup during open/close should also clear the close timer of
 	assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
 	assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
 });
+
+QUnit.module("bug fixes", {
+	beforeEach: function() {
+		var oPopupDomRef = jQuery.sap.domById("popup1");
+		this.oPopup = new sap.ui.core.Popup(oPopupDomRef);
+	},
+	afterEach: function() {
+		this.oPopup.destroy();
+	}
+});
+
+QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after popup is opened should work", function(assert) {
+	var oStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getRTL", function() {
+		return true;
+	});
+
+	var done = assert.async();
+	var my = sap.ui.core.Popup.Dock.CenterBottom;
+	var at = sap.ui.core.Popup.Dock.LeftTop;
+	var of = document;
+	var iOffsetX = 300;
+	var iOffsetY = 300;
+	var iRight;
+	var fnOpened = function() {
+		// save the css 'right' before apply the new position
+		iRight = parseInt(this.oPopup.getContent().style.right, 10);
+
+		assert.ok(!isNaN(iRight));
+
+		// move the popup 10px to the right
+		this.oPopup.setPosition(my, at, of, (iOffsetX + 10) + " " + iOffsetY);
+
+		assert.notEqual(parseInt(this.oPopup.getContent().style.right, 10), iRight, "The position should be changed");
+		oStub.restore();
+		done();
+	};
+	this.oPopup.setPosition(my, at, of, iOffsetX + " " + iOffsetY);
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.open();
+});
