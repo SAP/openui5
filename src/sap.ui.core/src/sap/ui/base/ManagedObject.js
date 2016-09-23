@@ -1165,7 +1165,7 @@ sap.ui.define([
 							" for property \"" + sPropertyName + "\" of " + this);
 				}
 				for (var i = 0; i < oValue.length; i++) {
-					if (!typeof oValue[i] == "string") {
+					if (typeof oValue[i] !== "string") {
 						oValue[i] = "" + oValue[i];
 					}
 				}
