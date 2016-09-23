@@ -1,0 +1,14 @@
+{
+  "libs": [{
+	"name": "sap.ui.fl"
+  },
+  {
+	"name": "sap.ui.core"
+  }],
+  "requests": [{
+	"name": "sap.ui.fl.changes",
+	"url": "/sap/bc/lrep/flex/data/smartFormOData/~gbf0F6g5Ko4ow1jxp5op6P+q/Xo=~",
+	"reference": "smartFormOData",
+	"cachebusterToken": "gbf0F6g5Ko4ow1jxp5op6P+q/Xo="
+  }]
+}

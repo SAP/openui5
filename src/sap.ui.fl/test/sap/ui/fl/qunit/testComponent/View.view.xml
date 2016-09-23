@@ -1,0 +1,10 @@
+<mvc:View
+		xmlns:smartform="sap.ui.comp.smartform"
+		xmlns:mvc="sap.ui.core.mvc">
+	<smartform:SmartForm id="myForm">
+		<smartform:Group id="myGroup">
+			<smartform:GroupElement id="myGroupElement">
+			</smartform:GroupElement>
+		</smartform:Group>
+	</smartform:SmartForm>
+</mvc:View>
