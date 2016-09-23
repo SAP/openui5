@@ -157,14 +157,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @function
 	 * @public
 	 */
-	EdmString.prototype.formatValue = function(sValue, sTargetType) {
-		if (sValue === null && sTargetType === "string") {
+	EdmString.prototype.formatValue = function (sValue, sTargetType) {
+		if (sValue === null && this.getPrimitiveType(sTargetType) === "string") {
 			return "";
 		}
 		if (isDigitSequence(sValue, this.oConstraints)) {
 			sValue = sValue.replace(rLeadingZeros, "");
 		}
-		return StringType.prototype.formatValue(sValue, sTargetType);
+		return StringType.prototype.formatValue.call(this, sValue, sTargetType);
 	};
 
 	/**
