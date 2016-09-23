@@ -490,6 +490,11 @@
 		equal(oMS3.parse("0.123456", true).valueOf(), 123, "0.123456");
 	});
 
+	test("parse time format with am/pm appearing at the beginning", function() {
+		var oTimeStart = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "ah:mm:ss"});
+		notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
+	});
+
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
 	test("DateFormat.calculateWeekNumber", function() {
