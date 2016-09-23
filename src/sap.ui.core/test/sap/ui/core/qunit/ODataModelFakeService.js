@@ -120,7 +120,7 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProductsXML],
 			"Categories(7)/Products/$count":
 				[200, oCountHeaders, "5"],
-			"Categories(1)": 
+			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
 			"Categories(3)":
 				[200, oJSONHeaders, sCategory3JSON],
@@ -220,10 +220,10 @@ xhr.onCreate = function(request) {
 				[204, oNodataHeaders, ""]
 		},
 		"DELETE": {
-			
+
 		},
 		"HEAD": {
-			
+
 		}
 	};
 
@@ -238,7 +238,7 @@ xhr.onCreate = function(request) {
 		var vResponse = typeof(responses[method][url]) === "function"
 			? responses[method][url](url, headers)
 			: responses[method][url];
-		
+
 		switch (method) {
 			case "GET":
 				return vResponse || [404, oJSONHeaders, ""];
@@ -5589,7 +5589,7 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 		"</feed>";
 
 		var sProductsCategory =
-		{"odata.metadata":"http://veui5infra.dhcp.wdf.sap.corp:8080/databinding/proxy/http/services.odata.org/Northwind/Northwind.svc/$metadata#Categories/@Element","CategoryID":1,"CategoryName":"Beverages","Description":"Soft drinks, coffees, teas, beers, and ales","Picture":""}
+		{"odata.metadata":"http://services.odata.org/Northwind/Northwind.svc/$metadata#Categories/@Element","CategoryID":1,"CategoryName":"Beverages","Description":"Soft drinks, coffees, teas, beers, and ales","Picture":""}
 		var sRegionsJSON = "{\n" +
 		"\"d\" : {\n" +
 		"\"results\": [\n" +
