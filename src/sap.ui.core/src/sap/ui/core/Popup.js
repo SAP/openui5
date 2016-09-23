@@ -929,7 +929,7 @@ sap.ui.define([
 					if (bTopMost) {
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
-						if (!Device.support.touch || jQuery(oEvent.target).is(":input")) {
+						if (Device.system.desktop || jQuery(oEvent.target).is(":input")) {
 							// The focus should be set after the current call stack is finished
 							// because the existing timer for autoclose popup is cancelled by
 							// setting the focus here.
@@ -2028,6 +2028,22 @@ sap.ui.define([
 
 		if (this._bEventBusEventsRegistered) {
 			this._unregisterEventBusEvents();
+		}
+
+		// remove the top shield layer if the timer isn't done yet
+		if (this._iTopShieldRemoveTimer) {
+			jQuery.sap.clearDelayedCall(this._iTopShieldRemoveTimer);
+			this.oShieldLayerPool.returnObject(this._oTopShieldLayer);
+			this._oTopShieldLayer = null;
+			this._iTopShieldRemoveTimer = null;
+		}
+
+		// remove the bottom shield layer if the timer isn't done yet
+		if (this._iBottomShieldRemoveTimer) {
+			jQuery.sap.clearDelayedCall(this._iBottomShieldRemoveTimer);
+			this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
+			this._oBottomShieldLayer = null;
+			this._iBottomShieldRemoveTimer = null;
 		}
 	};
 
