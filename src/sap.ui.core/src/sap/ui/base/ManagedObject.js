@@ -3536,8 +3536,12 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		var oModel = this.getModel(sModelName);
+		if (oModel && oContext && oModel !== oContext.getModel()) {
+			jQuery.sap.log.fatal("BindingContext type does not match model type and can't be set");
+			return this;
+		}
 		var oOldContext = this.oBindingContexts[sModelName];
-
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
@@ -3675,13 +3679,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype._getBindingContext = function(sModelName){
-		var oModel = this.getModel(sModelName);
+		var oModel = this.getModel(sModelName),
+			oPropagatedContext = this.oPropagatedProperties.oBindingContexts[sModelName];
 		if (this.oBindingContexts[sModelName]) {
 			return this.oBindingContexts[sModelName];
-		} else if (oModel && this.oParent && this.oParent.getModel(sModelName) && oModel != this.oParent.getModel(sModelName)) {
+		} else if (oPropagatedContext && oModel && oPropagatedContext.getModel() !== oModel) {
 			return undefined;
 		} else {
-			return this.oPropagatedProperties.oBindingContexts[sModelName];
+			return oPropagatedContext;
 		}
 	};
 
