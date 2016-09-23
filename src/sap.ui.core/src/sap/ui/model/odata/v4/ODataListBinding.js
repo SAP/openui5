@@ -438,6 +438,9 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
+		if (this.aContexts[-1]) {
+			this.aContexts[-1].destroy();
+		}
 		this.oModel.bindingDestroyed(this);
 		ListBinding.prototype.destroy.apply(this);
 	};
@@ -614,8 +617,8 @@ sap.ui.define([
 
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
-					+ " first parameter must be 0 if extended change detection is enabled, but is "
-					+ iStart);
+				+ " first parameter must be 0 if extended change detection is enabled, but is "
+				+ iStart);
 		}
 
 		if (iMaximumPrefetchSize !== undefined && this.bUseExtendedChangeDetection) {

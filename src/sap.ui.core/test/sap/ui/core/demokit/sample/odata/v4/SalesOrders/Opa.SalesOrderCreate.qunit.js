@@ -27,7 +27,7 @@ sap.ui.require([
 				+ (bRealOData ? "&sap-server=test" : "")
 				+ "&realOData=" + encodeURIComponent(vRealOData)
 				// TestUtils.js does not support deletion via $batch
-				+ ((!bRealOData) ? "&$direct=true" : ""));
+				+ (bRealOData ? "" : "&$direct=true"));
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
@@ -83,15 +83,16 @@ sap.ui.require([
 		//persist new created sales order
 		When.onTheMainPage.pressSaveSalesOrdersButton();
 		When.onTheSuccessInfo.confirm();
+		When.onTheMainPage.rememberCreatedSalesOrder();
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		// in the list we got again the first entity
 		Then.onTheMainPage.checkID(0);
 
+		// delete the last created SalesOrder again
+		Then.onTheMainPage.cleanUp();
+
 		// Check for console errors and warnings
 		Then.onTheMainPage.checkLog();
-
-		// TODO: ensure that at the all created sales orders are deleted again (currently the last
-		// create after the refresh remains)
 
 		Then.iTeardownMyAppFrame();
 	});

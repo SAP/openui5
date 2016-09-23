@@ -53,11 +53,14 @@
 									maxLength="10"
 									placeholder="Enter Buyer ID starting with '0'..."
 									showSuggestion="true"
+									suggestionItems="{/BusinessPartnerList}"
 									type="Text"
 									value="{BuyerID}">
-<!-- 									<suggestionItems> -->
-<!-- 										<core:Item text="{/BusinessPartnerList/BusinessPartnerID}"/> -->
-<!-- 									</suggestionItems> -->
+									<!-- TODO: implement lazy loading of BusinessPartners -->
+									<suggestionItems>
+										<core:ListItem additionalText="{CompanyName}"
+											text="{BusinessPartnerID}"/>
+									</suggestionItems>
 								</Input>
 								<Label labelFor="NewNote" text="Note"/>
 								<Input id="NewNote" value="{Note}"/>

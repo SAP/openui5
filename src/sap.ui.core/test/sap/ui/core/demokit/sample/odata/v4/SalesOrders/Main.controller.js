@@ -98,7 +98,7 @@ sap.ui.define([
 						"Note" : new Date().toString(),
 						"NoteLanguage" : "E",
 						"BuyerID" : "0100000000",
-						"BuyerName" : "SAP",
+						"BuyerName" : "",
 						"CurrencyCode" : "EUR",
 						"GrossAmount" : "0.00",
 						"NetAmount" : "0.00",
@@ -122,6 +122,7 @@ sap.ui.define([
 
 			oCreateSalesOrderDialog.setBindingContext(oContext);
 			this._setSalesOrderBindingContext(oContext);
+
 			oCreateSalesOrderDialog.open();
 
 			// Note: this promise fails only if the transient entity is deleted
