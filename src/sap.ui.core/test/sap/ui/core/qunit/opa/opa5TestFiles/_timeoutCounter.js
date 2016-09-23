@@ -16,132 +16,141 @@ sap.ui.define([
 		sinon.assert.calledWith(oDebugSpy, "There are '" + iNumberBlocking + "' open blocking Timeouts. And " + iNumberNonBlocking + " non blocking timeouts")
 	}
 
-	QUnit.module("timeoutCounter - no timeouts");
+	["Timeout", "Immediate"].forEach(function (sFunctionUnderTest) {
+		var fnSetFunction = window["set" + sFunctionUnderTest];
+		var fnClearFunction = window["clear" + sFunctionUnderTest];
+		if (!fnSetFunction) {
+			$.sap.log.debug("Skipped tests because" + sFunctionUnderTest + " is not defined in this browser");
+			return;
+		}
 
-	QUnit.test("Should return that there are no pending timeouts", function (assert) {
-		assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-		sinon.assert.notCalled(oDebugSpy);
-	});
+		QUnit.module("timeoutCounter - no " + sFunctionUnderTest);
 
-	QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
-		var fnDone = assert.async();
-		setTimeout(function () {
+		QUnit.test("Should return that there are no pending timeouts", function (assert) {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
 			sinon.assert.notCalled(oDebugSpy);
-			fnDone();
 		});
-	});
 
-	QUnit.test("Should ignore long runners", function (assert) {
-		var iID = setTimeout(function () {}, 1001);
+		QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
+			var fnDone = assert.async();
+			fnSetFunction(function () {
+				assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+				sinon.assert.notCalled(oDebugSpy);
+				fnDone();
+			});
+		});
 
-		assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-		sinon.assert.notCalled(oDebugSpy);
-		// do not interfere with other tests
-		clearTimeout(iID);
-	});
+		QUnit.test("Should ignore long runners", function (assert) {
+			var iID = setTimeout(function () {}, 1001);
 
-	QUnit.module("timeoutCounter - single timeout");
+			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+			sinon.assert.notCalled(oDebugSpy);
+			// do not interfere with other tests
+			clearTimeout(iID);
+		});
 
-	QUnit.test("Should respect the this pointer", function (assert) {
-		var oThis = {},
-			fnDone = assert.async(),
-			fnSpy = sinon.spy(function () {
-				sinon.assert.calledOn(fnSpy, oThis);
+		QUnit.module("timeoutCounter - single " + sFunctionUnderTest);
+
+		QUnit.test("Should respect the this pointer", function (assert) {
+			var oThis = {},
+				fnDone = assert.async(),
+				fnSpy = sinon.spy(function () {
+					sinon.assert.calledOn(fnSpy, oThis);
+					fnDone();
+				});
+
+			fnSetFunction($.proxy(fnSpy, oThis));
+		});
+
+		QUnit.test("Should handle a single timeout", function (assert) {
+			var fnDone = assert.async();
+
+			fnSetFunction(function () {
+				assertLog(1);
 				fnDone();
 			});
 
-		setTimeout($.proxy(fnSpy, oThis));
-	});
-
-	QUnit.test("Should handle a single timeout", function (assert) {
-		var fnDone = assert.async();
-
-		setTimeout(function () {
-			assertLog(1);
-			fnDone();
-		});
-
-		assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
-	});
-
-
-	QUnit.module("timeoutCounter - multiple timeouts", {
-		afterEach: function () {
-			oDebugSpy.reset();
-		}
-	});
-
-	QUnit.test("Should handle a 2 timeouts", function (assert) {
-		var fnFirstTimeoutDone = assert.async();
-		var fnSecondTimeoutDone = assert.async();
-
-		setTimeout(function () {
 			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
-			assertLog(1);
-			oDebugSpy.reset();
-			fnFirstTimeoutDone();
 		});
 
-		setTimeout(function () {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
-			sinon.assert.notCalled(oDebugSpy);
-			fnSecondTimeoutDone();
-		}, 20);
 
-		assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
-		assertLog(2);
-		oDebugSpy.reset();
-	});
+		QUnit.module("timeoutCounter - multiple " + sFunctionUnderTest, {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
+		});
 
-	QUnit.test("Should handle a timeout that adds a timeout", function (assert) {
-		var fnDone = assert.async();
+		QUnit.test("Should handle a 2 timeouts", function (assert) {
+			var fnFirstTimeoutDone = assert.async();
+			var fnSecondTimeoutDone = assert.async();
 
-		setTimeout(function () {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
-			setTimeout(function () {
+			fnSetFunction(function () {
+				assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+				assertLog(1);
+				oDebugSpy.reset();
+				fnFirstTimeoutDone();
+			});
+
+			fnSetFunction(function () {
 				assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
-				fnDone();
+				sinon.assert.notCalled(oDebugSpy);
+				fnSecondTimeoutDone();
+			}, 20);
+
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assertLog(2);
+			oDebugSpy.reset();
+		});
+
+		QUnit.test("Should handle a timeout that adds a timeout", function (assert) {
+			var fnDone = assert.async();
+
+			fnSetFunction(function () {
+				assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
+				fnSetFunction(function () {
+					assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
+					fnDone();
+				});
+				assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
 			});
+
 			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
 		});
 
-		assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
-	});
-
-	QUnit.module("timeoutCounter - clear timeout", {
-		afterEach: function () {
-			oDebugSpy.reset();
-		}
-	});
-
-	QUnit.test("Should clear a timeout", function (assert) {
-		var iId = setTimeout(function () {
+		QUnit.module("timeoutCounter - clear " + sFunctionUnderTest, {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
 		});
-		clearTimeout(iId);
-		assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-		sinon.assert.notCalled(oDebugSpy);
-	});
 
-
-	QUnit.test("Should clear 1 of 2 timeouts", function (assert) {
-		var fnDone = assert.async();
-		setTimeout(function () {
+		QUnit.test("Should clear a timeout", function (assert) {
+			var iId = fnSetFunction(function () {
+			});
+			fnClearFunction(iId);
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-			sinon.assert.notCalled(fnSecondTimeoutSpy);
-			fnDone();
-		},20);
-		var fnSecondTimeoutSpy = sinon.spy();
-		var iId = setTimeout(fnSecondTimeoutSpy);
-		clearTimeout(iId);
-		assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
-		assertLog(1);
-	});
+			sinon.assert.notCalled(oDebugSpy);
+		});
 
-	QUnit.module("timeoutCounter - infinite timeout loops", {
-		afterEach: function () {
-			oDebugSpy.reset();
-		}
+
+		QUnit.test("Should clear 1 of 2 timeouts", function (assert) {
+			var fnDone = assert.async();
+			fnSetFunction(function () {
+				assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+				sinon.assert.notCalled(fnSecondTimeoutSpy);
+				fnDone();
+			},20);
+			var fnSecondTimeoutSpy = sinon.spy();
+			var iId = fnSetFunction(fnSecondTimeoutSpy);
+			fnClearFunction(iId);
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assertLog(1);
+		});
+
+		QUnit.module("timeoutCounter - infinite timeout loops", {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
+		});
 	});
 
 	QUnit.test("Should detect a infinite timeout loop", function (assert) {
@@ -149,7 +158,7 @@ sap.ui.define([
 		var aTimeouts = [];
 
 		function addTimeout () {
-			aTimeouts.push(setTimeout(addTimeout, 20));
+			aTimeouts.push(setTimeout(addTimeout, 30));
 		}
 
 		setTimeout(function () {
@@ -159,7 +168,7 @@ sap.ui.define([
 				clearTimeout(iID);
 			});
 			fnDone();
-		}, 400);
+		}, 600);
 		addTimeout();
 	});
 
@@ -168,8 +177,8 @@ sap.ui.define([
 		var aTimeouts = [];
 
 		function addTimeout () {
-			aTimeouts.push(setTimeout(addTimeout, 20));
-			aTimeouts.push(setTimeout(addTimeout, 20));
+			aTimeouts.push(setTimeout(addTimeout, 40));
+			aTimeouts.push(setTimeout(addTimeout, 40));
 		}
 
 		setTimeout(function () {
@@ -179,7 +188,32 @@ sap.ui.define([
 				clearTimeout(iID);
 			});
 			fnDone();
-		}, 200);
+		}, 600);
 		addTimeout();
+	});
+
+	QUnit.module("timeout Microtasks", {
+		afterEach: function () {
+			oDebugSpy.reset();
+		}
+	});
+
+	["resolve", "reject"].forEach(function (sPromiseFunction) {
+		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
+			var fnDone = assert.async();
+			Promise[sPromiseFunction]().then(fnDone, fnDone);
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
+			sinon.assert.calledWith(oDebugSpy, "There are 1 pending microtasks");
+		});
+	});
+
+	["all", "race"].forEach(function (sPromiseFunction) {
+		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
+			var fnDone = assert.async();
+			Promise[sPromiseFunction]([Promise.resolve(), Promise.reject(), new Promise(function (fnResolve) { fnResolve(); })]).then(fnDone, fnDone);
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
+			// Promise might be wrapped twice or there are still pending ones - 3 to 6 are ok
+			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [3-6] pending microtasks/));
+		});
 	});
 });

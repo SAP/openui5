@@ -276,7 +276,10 @@ sap.ui.define([
 	// Therefore the core code throws exceptions, when functions like setTimeout are called.
 	// I don't have a proper explanation for this.
 	if (!iExecutionDelay) {
-		if (Device.browser.msie) {
+		// phantom is flagged as safari but actually we do not want to set the tiemout higher in phantomjs
+		var bIsSafariButNotPhantom = Device.browser.safari && !Device.browser.phantomJS;
+
+		if (Device.browser.msie || Device.browser.edge || bIsSafariButNotPhantom) {
 			iExecutionDelay = 50;
 		} else {
 			iExecutionDelay = 0;

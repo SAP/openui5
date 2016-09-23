@@ -1,19 +1,23 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
+	"sap/ui/test/_timeoutCounter",
+	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/ui/test/_autoWaiter"
-], function (Opa5, opaTest, Button, _autoWaiter) {
+], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
 		setup: function () {
 			this.oButton = new Button("foo");
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.config.useFakeTimers = true;
+			this.fnTimeoutStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts");
 		},
 		teardown: function () {
 			this.oButton.destroy();
 			sinon.config.useFakeTimers = false;
+			this.fnTimeoutStub.restore();
 		}
 	});
 
@@ -36,7 +40,7 @@ sap.ui.define([
 		});
 
 		// empty the queue
-		this.clock.tick(100);
+		this.clock.tick(200);
 	});
 
 	QUnit.test("Should not execute an action on a busy button", function(assert) {
