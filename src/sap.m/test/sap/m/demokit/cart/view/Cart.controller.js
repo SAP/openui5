@@ -75,6 +75,10 @@ sap.ui.define([
 			this._showProduct(oEvent.getParameter("listItem"));
 		},
 
+		onSafeForLater: function (oEvent) {
+			MessageToast.show("Safed '" + oEvent.getSource().getText() + "' for later");
+		},
+
 		_showProduct: function (item) {
 			// send event to refresh
 			var sPath = item.getBindingContext("cartProducts").getPath();
