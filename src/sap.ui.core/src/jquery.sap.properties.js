@@ -3,8 +3,8 @@
  */
 
 // Provides access to Java-like properties files
-sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
-	function(jQuery/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.sjax'],
+	function(jQuery, Device/* , jQuerySap1 */) {
 	"use strict";
 
 	// Javadoc for private inner class "Properties" - this list of comments is intentional!
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 */
 	var Properties = function() {
 		this.mProperties = {};
-		this.aKeys = [];
+		this.aKeys = null;
 	};
 
 	/*
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * Implements jQuery.sap.util.Properties.prototype.getKeys
 	 */
 	Properties.prototype.getKeys = function() {
-		return this.aKeys;
+		return this.aKeys || (this.aKeys = Object.keys(this.mProperties));
 	};
 
 	/*
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 		if (typeof (sValue) != "string") {
 			return;
 		}
-		if (typeof (this.mProperties[sKey]) != "string") {
+		if (typeof (this.mProperties[sKey]) != "string" && this.aKeys ) {
 			this.aKeys.push(sKey);
 		}
 		this.mProperties[sKey] = sValue;
@@ -107,16 +107,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	Properties.prototype.clone = function() {
 		var oClone = new Properties();
 		oClone.mProperties = jQuery.extend({}, this.mProperties);
-		oClone.aKeys = jQuery.merge([], this.aKeys);
 		return oClone;
 	};
 
-	/*
-	 * Saves the property list to a given URL using a POST request.
-	 */
-	//sap.ui.resource.Properties.prototype.save = function(sUrl) {
-	//	return jQuery.sap.syncPost(sUrl, this.mProperties);
-	//};
+	// helper to create a memory-optimized version of the given string, depending on the number of concat operations (V8 only)
+	var flatstr = Device.browser.chrome ? function (s, iConcatOps) {
+		if ( iConcatOps > 2 && 40 * iConcatOps > s.length ) {
+			Number(s); // cast to number on V8 has the side effect of creating a flat version of concat strings
+		}
+		return s;
+	} : function(s) { return s; };
 
 	/**
 	 * RegExp used to split file into lines, also removes leading whitespace.
@@ -125,14 +125,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	var rLines = /(?:\r\n|\r|\n|^)[ \t\f]*/;
 
 	/**
-	 * RegExp that handles escapes, continuation line markers and key/value separators
+	 * Regular expressions to detect escape sequences (unicode or special) and continuation line markers
+	 * in a single line of a properties file. The first expression also detects key/value separators and is used
+	 * as long as no key has been found. The second one is used for the remainder of the line.
 	 *
-	 *              [---unicode escape--] [esc] [cnt] [---key/value separator---]
+	 *                         [---unicode escape--] [esc] [cnt] [---key/value separator---]
 	 */
-	var rEscapes = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)|([ \t\f]*[ \t\f:=][ \t\f]*)/g;
+	var rEscapesOrSeparator = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)|([ \t\f]*[ \t\f:=][ \t\f]*)/g;
+	var rEscapes            = /(\\u[0-9a-fA-F]{0,4})|(\\.)|(\\$)/g;
 
 	/**
-	 * Special escape characters as supported by properties format
+	 * Special escape characters as supported by properties format.
 	 * @see JDK API doc for java.util.Properties
 	 */
 	var mEscapes = {
@@ -152,10 +155,19 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	function parse(sText, oProp) {
 
 		var aLines = sText.split(rLines), // split file into lines
-			sLine,sKey,sValue,bKey,i,m,iLastIndex;
+			sLine,rMatcher,sKey,sValue,i,m,iLastIndex,iConcatOps;
+
+		function append(s) {
+			if ( sValue ) {
+				sValue = sValue + s;
+				iConcatOps++;
+			} else {
+				sValue = s;
+				iConcatOps = 0;
+			}
+		}
 
 		oProp.mProperties = {};
-		oProp.aKeys = [];
 
 		for (i = 0; i < aLines.length; i++) {
 			sLine = aLines[i];
@@ -164,53 +176,52 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 				continue;
 			}
 
-			rEscapes.lastIndex = iLastIndex = 0;
+			// start with the full regexp incl. key/value separator
+			rMatcher = rEscapesOrSeparator;
+			rMatcher.lastIndex = iLastIndex = 0;
+			sKey = null;
 			sValue = "";
-			bKey = true;
 
-			while ( (m = rEscapes.exec(sLine)) !== null ) {
+			while ( (m = rMatcher.exec(sLine)) !== null ) {
 				// handle any raw, unmatched input
 				if ( iLastIndex < m.index ) {
-					sValue += sLine.slice(iLastIndex, m.index);
+					append(sLine.slice(iLastIndex, m.index));
 				}
-				iLastIndex = rEscapes.lastIndex;
+				iLastIndex = rMatcher.lastIndex;
 				if ( m[1] ) {
 					// unicode escape
 					if ( m[1].length !== 6 ) {
 						throw new Error("Incomplete Unicode Escape '" + m[1] + "'");
 					}
-					sValue += String.fromCharCode(parseInt(m[1].slice(2), 16));
+					append(String.fromCharCode(parseInt(m[1].slice(2), 16)));
 				} else if ( m[2] ) {
 					// special or simple escape
-					sValue += mEscapes[m[2]] || m[2].slice(1);
+					append(mEscapes[m[2]] || m[2].slice(1));
 				} else if ( m[3] ) {
 					// continuation line marker
 					sLine = aLines[++i];
-					rEscapes.lastIndex = iLastIndex = 0;
-				} else if ( m[4] ) {
-					// key/value separator
-					if ( bKey ) {
-						bKey = false;
-						sKey = sValue;
-						sValue = "";
-					} else {
-						sValue += m[4];
-					}
+					rMatcher.lastIndex = iLastIndex = 0;
+				} else if ( m[4] ) { // only occurs in full regexp
+					// key/value separator detected
+					// -> remember key and switch to simplified regexp
+					sKey = sValue;
+					sValue = "";
+					rMatcher = rEscapes;
+					rMatcher.lastIndex = iLastIndex;
 				}
 			}
 			if ( iLastIndex < sLine.length ) {
-				sValue += sLine.slice(iLastIndex);
+				append(sLine.slice(iLastIndex));
 			}
-			if ( bKey ) {
+			if ( sKey == null ) {
 				sKey = sValue;
 				sValue = "";
 			}
-			oProp.aKeys.push(sKey);
-			oProp.mProperties[sKey] = sValue;
+
+			oProp.mProperties[sKey] = flatstr(sValue, sValue ? iConcatOps : 0); // Note: empty sValue implies iConcatOps == 0
+
 		}
 
-		// remove duplicates from keyset (sideeffect:sort)
-		jQuery.sap.unique(oProp.aKeys);
 	}
 
 	/**
@@ -276,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 		}
 
 		if (bAsync) {
-			return new window.Promise(function(resolve, reject){
+			return new Promise(function(resolve, reject){
 				var oRes = _load();
 				if (!oRes) {
 					resolve(oProp);
