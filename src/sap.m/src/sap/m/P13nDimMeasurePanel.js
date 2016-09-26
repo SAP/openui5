@@ -1024,6 +1024,7 @@ sap.ui.define([
 			],
 			items: {
 				path: "/items",
+				templateShareable: false,
 				template: new sap.m.ColumnListItem({
 					cells: [
 						new sap.m.Text({
