@@ -1830,5 +1830,220 @@
         "references": []
       }
     ]
+  },
+  "1.38.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "fe672b58637445ead20920142d7277dadcb63d51",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Added Loaded Version to Support-Info",
+        "references": []
+      },
+      {
+        "id": "1f424861597024f8b480476a069a2375c041d0a3",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jquery.sap.interaction: identify loading component",
+        "references": []
+      },
+      {
+        "id": "9c526d1c226d2249cc2c30f0af19646e46e427e8",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator - Resolve timing issue with show/hide calls",
+        "references": []
+      },
+      {
+        "id": "4814f97092e01e351048eaa81a57665fc086f088",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Configuration: fix getSAPLogonLanguage",
+        "references": []
+      },
+      {
+        "id": "d52bb8563e46a115447db885431984c83ae3d1cc",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Configuration: setRTL must not ignore the new value",
+        "references": []
+      },
+      {
+        "id": "eaf3926fb0a9b511fc1da2603e36dfc202fd6dc1",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Control: properly (de)register listeners for local busy indicator",
+        "references": []
+      },
+      {
+        "id": "5d098ee9ad3c1719c11fa35442216c0405b9f334",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core.events: always set event marks on the native browser event",
+        "references": []
+      },
+      {
+        "id": "615c51a80cf5b10215e335e6e617ea9db3512ef4",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSONModel: if loadData fails no further loading possible",
+        "references": []
+      },
+      {
+        "id": "d1397997d6b4afcc002eb438cd2bddf285b4ffef",
+        "author": "Elina Visoki \u003celina.visoki@sap.com\u003e",
+        "type": "FIX",
+        "text": "Mock Server: fix encoding of datetime key",
+        "references": []
+      },
+      {
+        "id": "a2db6ba1f6a8f0c48183c40045ec2bd2a6a788a2",
+        "author": "Elina Visoki \u003celina.visoki@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: encode key of type string in URI",
+        "references": []
+      },
+      {
+        "id": "1263a1fcdb9e61c46572dae31030ef1dfbf87a68",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Provide ChangeReason for ODataContextBinding Changes",
+        "references": []
+      },
+      {
+        "id": "25869dd6b78e8567d15ec721cf6f144610fcce7b",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
+        "references": []
+      },
+      {
+        "id": "2122e13ad55f37109d21dbc7844a57dd2096794f",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: avoid endless loop when setting mark on an event",
+        "references": []
+      },
+      {
+        "id": "a1f066b8508698bbddd5cfada2a30499c995a109",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Nested carousels are now working correctly",
+        "references": []
+      },
+      {
+        "id": "f3ab7d8f523a4dd1470a6b56c97e66c5e145f357",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
+        "references": []
+      },
+      {
+        "id": "7bd9c64e5bf65c0d7c80e78576876e4e69ebe59d",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: output icon text with aria-labelledby when association \u0027ariaLabelledBy\u0027 isn\u0027t empty",
+        "references": []
+      },
+      {
+        "id": "24b15e7c19d67967ef63646cbb70db6e571d4670",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ItemNavigation: Fix navigation with arrow keys in table mode when direction is RTL.",
+        "references": []
+      },
+      {
+        "id": "f4a8b522f4745804664c3fccb6e3788038aa1b08",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ItemNavigation: Fix navigation with arrow keys in table mode when direction is RTL. (change 2)",
+        "references": []
+      },
+      {
+        "id": "8a0960133612bb9f5c64e00bd1ae8890a70a0e91",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: fallback format by using given pattern without delimiters",
+        "references": []
+      },
+      {
+        "id": "ba210506e68e9f92be8c102eab4a53c730304f8f",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing: complete API Doc for events",
+        "references": []
+      },
+      {
+        "id": "f1c838ae36a83a1b7e3fb5ab449dcb28601ae26e",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.ExportTypeCSV: Escape formulas",
+        "references": []
+      },
+      {
+        "id": "c95e9a23240ad4152292fc3dc49f5177ed1c7913",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.ExportTypeCSV: Properly handle line breaks",
+        "references": []
+      },
+      {
+        "id": "322970d26c4eb0241cc9c608996dd03f857fee0d",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.ClientTreeBindingAdapter: return the corrent length of binding",
+        "references": []
+      },
+      {
+        "id": "325b8e451048bafff3b8207f3010e0e5fae80f54",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.actions.EnterText - Event simulation succeeds if an element is not focusable",
+        "references": []
+      },
+      {
+        "id": "7f7b0d2d5052b9809478ff31bb7b28492e4f5127",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.matchers.Interactable - waits until all open XHR requests are finished",
+        "references": []
+      },
+      {
+        "id": "b2a8583a317459b7ab889bb4bf078de376de6255",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty/crossroads: shouldn\u0027t require the non slash chars after the slash",
+        "references": []
+      },
+      {
+        "id": "ed669083708042e086b59f9bbe7df6dc77c90987",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "tutorial.Navigation: add the missing \u0027[\u0027 to Resume.json",
+        "references": []
+      },
+      {
+        "id": "e2d8d76a153b31b4c0b04a2d7e75a96e3c437857",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding - Endless Change-Event Loop",
+        "references": []
+      },
+      {
+        "id": "9226cf26b40ff2e16345964f2e344de4ea3c13e1",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: eTag missing for function calls",
+        "references": []
+      },
+      {
+        "id": "dd90d56f0857a5292da6e2c09c9b2be5fcd871b6",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: error when customParam of a Binding is undefined",
+        "references": []
+      }
+    ]
   }
 }

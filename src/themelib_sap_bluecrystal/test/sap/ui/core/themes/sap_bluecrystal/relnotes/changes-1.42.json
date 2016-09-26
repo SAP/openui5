@@ -1,208 +1,220 @@
 {
-	"1.42.0": {
-		"date": "August 2016",
-		"notes": [
-			{
-				"id": "d569426171ae7686f508834e1816d72889d95421",
-				"author": "Marin Parushev <marin.parushev@sap.com>",
-				"type": "FEATURE",
-				"text": "sap.m.Carousel: New property for arrows position",
-				"references": []
-			},
-			{
-				"id": "6cff123a1d91fdcca8ac533978e427ffa420d857",
-				"author": "Hristo Petrov <h.petrov@sap.com>",
-				"type": "FEATURE",
-				"text": "sap.m.RangeSlider Input fields in the handle tooltips",
-				"references": []
-			},
-			{
-				"id": "2a675c335cac11a405be5d40c50549a98480aa27",
-				"author": "Arley Triana Morin <arley.triana.morin@sap.com>",
-				"type": "FEATURE",
-				"text": "sap.m.Select: add \"valueState\" property",
-				"references": []
-			},
-			{
-				"id": "512d462875e920abf2f6a951b6d34a5bf06db11c",
-				"author": "Arley Triana Morin <arley.triana.morin@sap.com>",
-				"type": "FEATURE",
-				"text": "sap.m.Select: redesign for mobile devices",
-				"references": []
-			},
-			{
-				"id": "15f128a5ce73d873e431aa4c70b2b835a6f6b267",
-				"author": "Thomas Koetter <thomas.koetter@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Button: Adjust CSS selector specificity",
-				"references": []
-			},
-			{
-				"id": "d929bf5ec632b8e0653db60828ee4cea55a0d289",
-				"author": "Gergana Marcheva <gergana.marcheva@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button colors in bar",
-				"references": []
-			},
-			{
-				"id": "999b4119d5bd7b51bfb3526428c570e16ceb101f",
-				"author": "Gergana Marcheva <gergana.marcheva@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
-				"references": []
-			},
-			{
-				"id": "8cd4f0d1d381c86929c5214796db623dfe195519",
-				"author": "Gergana Marcheva <gergana.marcheva@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Button: Has correct colors in footer context",
-				"references": []
-			},
-			{
-				"id": "27666887b63ae8b0dd99779e589f44ebdceb5b8b",
-				"author": "Petrov <dimo.petrov@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
-				"references": []
-			},
-			{
-				"id": "39f23e8f9441b9af7e295fb7e6a41ea95dc91780",
-				"author": "Dominic Holzwarth <dominic.holzwarth@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.GenericTile: Add solid border to GenericTile",
-				"references": []
-			},
-			{
-				"id": "aac19ec7b79d583de8ad690b4af8c8aa2e3fbea1",
-				"author": "I312031 <teodor.taushanov@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
-				"references": []
-			},
-			{
-				"id": "951f10bfd69aef6902571092378d7570f81906f4",
-				"author": "Jens Pflueger <jens.pflueger@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.InputBase: Fix error state visualization in table cell",
-				"references": []
-			},
-			{
-				"id": "db70485c8148ab534339505073fe80e57dfeed90",
-				"author": "Jens Pflueger <jens.pflueger@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Link: Focus visualization within table cell",
-				"references": []
-			},
-			{
-				"id": "83b7af2571cc4bb4d731ca2459770abf4760e664",
-				"author": "Martin R. Hristov <martin.r.hristov@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.MessagePopover: Styles for markup description improved",
-				"references": []
-			},
-			{
-				"id": "ab2077c796c2ade3152ed990d3e855737c55ae7d",
-				"author": "Lidiya Georgieva <lidiya.georgieva@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.MultiInput: hover disabled multi input blue border removed",
-				"references": []
-			},
-			{
-				"id": "774e62b0348c6fe6ff1a5e853b391cb760f52dde",
-				"author": "Gergana Marcheva <gergana.marcheva@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
-				"references": []
-			},
-			{
-				"id": "31143985440c0f8820add8b9b89fe1f8cc37a0cd",
-				"author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Table - focus outline in IE",
-				"references": []
-			},
-			{
-				"id": "9be9dd2232de301cdbbd5776a8ba28843458f7cb",
-				"author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Table: insufficient contrast of focus outline",
-				"references": []
-			},
-			{
-				"id": "fa32019f794c4d078552e82dd7cd1b1c33d696f6",
-				"author": "Yavor Ivanov <yavor.ivanov@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.TextArea: State outline now has proper offsets/paddings",
-				"references": []
-			},
-			{
-				"id": "08c5c55ad341017a16e58967f4d690973506396a",
-				"author": "Jens Pflueger <jens.pflueger@sap.com>",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
-				"references": []
-			},
-			{
-				"id": "3b0a501165212f65041f99f02b192f0ae67faa4f",
-				"author": "Petrov <dimo.petrov@sap.com>",
-				"type": "FIX",
-				"text": "sap.uxap.ObjectPageSubSection: focus in IE was broken",
-				"references": []
-			}
-		]
-	},
-	"1.42.1": {
-		"date": "September 2016",
-		"notes": [
-			{
-				"id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
-				"author": "Yavor Ivanov <yavor.ivanov@sap.com>",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.BlockLayout: Belize enhancements",
-				"references": []
-			},
-			{
-				"id": "10bb9f7d7c4773e1d1f934bef25bb0c2549aa7c9",
-				"author": "Alexander Ivanov <alexander.ivanov01@sap.com>",
-				"type": "FIX",
-				"text": "m.ViewSettingsPopover: Header items have correct focus outline",
-				"references": []
-			},
-			{
-				"id": "8afa4f66e9041b8fa07dd58898655b89616b0abc",
-				"author": "Jiawei <jiawei.cao@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
-				"references": []
-			},
-			{
-				"id": "a94f30b97d7e03cb3451faa4b63247a772367271",
-				"author": "Pia Kinkel <pia.kinkel@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.GenericTile: Less parameters for Bluecrystal theme updated",
-				"references": []
-			},
-			{
-				"id": "ebdb640f63725899b2486f3b0e1ae17024b7feb8",
-				"author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.ListBase - double focus outline in IE",
-				"references": []
-			},
-			{
-				"id": "fe267ac726c7ce8c4d7b97c2192919261f75fddd",
-				"author": "Martin R. Hristov <martin.r.hristov@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.MessagePopover: Last segmented button should have focus",
-				"references": []
-			},
-			{
-				"id": "75f1ef7c6bad16985f74d66d981ab0ad9ff53496",
-				"author": "Diana Shtilianova <diana.shtilianova@sap.com>",
-				"type": "FIX",
-				"text": "sap.m.Popover compact mode arrow style",
-				"references": []
-			}
-		]
-	}
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "d569426171ae7686f508834e1816d72889d95421",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Carousel: New property for arrows position",
+        "references": []
+      },
+      {
+        "id": "6cff123a1d91fdcca8ac533978e427ffa420d857",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider Input fields in the handle tooltips",
+        "references": []
+      },
+      {
+        "id": "2a675c335cac11a405be5d40c50549a98480aa27",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add \"valueState\" property",
+        "references": []
+      },
+      {
+        "id": "512d462875e920abf2f6a951b6d34a5bf06db11c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "15f128a5ce73d873e431aa4c70b2b835a6f6b267",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Adjust CSS selector specificity",
+        "references": []
+      },
+      {
+        "id": "d929bf5ec632b8e0653db60828ee4cea55a0d289",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button colors in bar",
+        "references": []
+      },
+      {
+        "id": "999b4119d5bd7b51bfb3526428c570e16ceb101f",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "8cd4f0d1d381c86929c5214796db623dfe195519",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Has correct colors in footer context",
+        "references": []
+      },
+      {
+        "id": "27666887b63ae8b0dd99779e589f44ebdceb5b8b",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "39f23e8f9441b9af7e295fb7e6a41ea95dc91780",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "aac19ec7b79d583de8ad690b4af8c8aa2e3fbea1",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "951f10bfd69aef6902571092378d7570f81906f4",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "db70485c8148ab534339505073fe80e57dfeed90",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "83b7af2571cc4bb4d731ca2459770abf4760e664",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      },
+      {
+        "id": "ab2077c796c2ade3152ed990d3e855737c55ae7d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "774e62b0348c6fe6ff1a5e853b391cb760f52dde",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "31143985440c0f8820add8b9b89fe1f8cc37a0cd",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table - focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "9be9dd2232de301cdbbd5776a8ba28843458f7cb",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      },
+      {
+        "id": "fa32019f794c4d078552e82dd7cd1b1c33d696f6",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      },
+      {
+        "id": "08c5c55ad341017a16e58967f4d690973506396a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      },
+      {
+        "id": "3b0a501165212f65041f99f02b192f0ae67faa4f",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: focus in IE was broken",
+        "references": []
+      }
+    ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "10bb9f7d7c4773e1d1f934bef25bb0c2549aa7c9",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsPopover: Header items have correct focus outline",
+        "references": []
+      },
+      {
+        "id": "8afa4f66e9041b8fa07dd58898655b89616b0abc",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "a94f30b97d7e03cb3451faa4b63247a772367271",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Less parameters for Bluecrystal theme updated",
+        "references": []
+      },
+      {
+        "id": "ebdb640f63725899b2486f3b0e1ae17024b7feb8",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "fe267ac726c7ce8c4d7b97c2192919261f75fddd",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Last segmented button should have focus",
+        "references": []
+      },
+      {
+        "id": "75f1ef7c6bad16985f74d66d981ab0ad9ff53496",
+        "author": "Diana Shtilianova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover compact mode arrow style",
+        "references": []
+      }
+    ]
+  },
+  "1.42.2": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  }
 }
