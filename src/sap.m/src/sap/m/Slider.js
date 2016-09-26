@@ -484,7 +484,9 @@ sap.ui.define([
 
 			oInput.addEventDelegate({
 				onfocusout: function (oEvent) {
-					oEvent.srcControl.fireChange({value: oEvent.target.value});
+					if (oEvent.target.value !== undefined) {
+						oEvent.srcControl.fireChange({value: oEvent.target.value});
+					}
 				}
 			});
 
