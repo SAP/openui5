@@ -221,165 +221,193 @@
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
 				// Simple RadioButtonGroup
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG1");
-				oRBGroup.setTooltip("Group 1");
+				var oRBGroupRBG1 = new sap.m.RadioButtonGroup("RBG1");
+				oRBGroupRBG1.setTooltip("Group 1");
 
 				var oButton = new sap.m.RadioButton("RB1-1");
 				oButton.setText("Option 1");
 				oButton.setEditable(false);
 				oButton.setTooltip("Tooltip 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG1.addButton(oButton);
 
 				oButton = new sap.m.RadioButton("RB1-2");
 				oButton.setText("Option 2");
 				oButton.setTooltip("Tooltip 2");
 				oButton.setEditable(false);
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG1.addButton(oButton);
 
 				oButton = new sap.m.RadioButton("RB1-3");
 				oButton.setText("Option 3");
 				oButton.setTooltip("Tooltip 3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG1.addButton(oButton);
 
-				oRBGroup.placeAt("target1");
+				var oLabeloRBGroupRBG1 = new sap.m.Label({ text: "Simple group: ", labelFor: oRBGroupRBG1});
 
-				var oLabel = new sap.m.Label({ text: "Simple group: ", labelFor: oRBGroup});
-				oLabel.placeAt("label1");
+				var flexBoxRBG1 = new sap.m.FlexBox("rbg1", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG1, oRBGroupRBG1
+				]});
 
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG1a");
-				oRBGroup.setTooltip("Group 1a");
-				oRBGroup.setColumns(2);
+				var oRBGroupRBG1a = new sap.m.RadioButtonGroup("RBG1a");
+				oRBGroupRBG1a.setTooltip("Group 1a");
+				oRBGroupRBG1a.setColumns(2);
 
 				var oButton = new sap.m.RadioButton("RB1a-1");
 				oButton.setText("Option 1");
 				oButton.setTooltip("Tooltip 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG1a.addButton(oButton);
 
 				oButton = new sap.m.RadioButton("RB1a-2");
 				oButton.setText("Option 2");
 				oButton.setTooltip("Tooltip 2");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG1a.addButton(oButton);
 
-				oRBGroup.placeAt("target1a");
+				var oLabeloRBGroupRBG1a = new sap.m.Label({ text: "Simple group 2: ", labelFor: oRBGroupRBG1a});
 
-				var oLabel = new sap.m.Label({ text: "Simple group 2: ", labelFor: oRBGroup});
-				oLabel.placeAt("label1a");
+				var flexBoxRBG1a = new sap.m.FlexBox("rbg1a", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG1a, oRBGroupRBG1a
+				]});
 
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG2");
-				oRBGroup.setColumns(2);
-				oRBGroup.setValueState(sap.ui.core.ValueState.Warning);
+				var oRBGroupRBG2 = new sap.m.RadioButtonGroup("RBG2");
+				oRBGroupRBG2.setColumns(2);
+				oRBGroupRBG2.setValueState(sap.ui.core.ValueState.Warning);
 
 				var oButton = new sap.m.RadioButton("RB2-1");
 				oButton.setText("Option 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG2.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB2-2");
 				oButton.setText("Option 2");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG2.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB2-3");
 				oButton.setText("Option 3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG2.addButton(oButton);
 
-				oRBGroup.placeAt("target2");
-				var oLabel = new sap.m.Label({ text: "Group with 2 colums: ", labelFor: oRBGroup});
-				oLabel.placeAt("label2");
+				var oLabeloRBGroupRBG2 = new sap.m.Label({ text: "Group with 2 colums: ", labelFor: oRBGroupRBG2});
+
+				var flexBoxRBG2 = new sap.m.FlexBox("rbg2", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG2, oRBGroupRBG2
+				]});
 
 				// RadioButtonGroup with 3 columns and different length but given width
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG3");
-				oRBGroup.setColumns(3);
-				oRBGroup.setWidth("100%");
+				var oRBGroupRBG3 = new sap.m.RadioButtonGroup("RBG3");
+				oRBGroupRBG3.setColumns(3);
+				oRBGroupRBG3.setWidth("350px");
 
 				var oButton = new sap.m.RadioButton("RB3-1");
 				oButton.setText("Long Option Number 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3-2");
 				oButton.setText("Option 2");
 				oButton.setEnabled(false);
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3-3");
 				oButton.setText("Nr.3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 				var oButton = new sap.m.RadioButton("RB3-4");
 				oButton.setText("Long Option 4");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3-5");
 				oButton.setText("Option 5");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3-6");
 				oButton.setText("Nr.6");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3.addButton(oButton);
 
-				oRBGroup.placeAt("target3");
-				var oLabel = new sap.m.Label({ text: "Group with 3 colums and width 100% in container of 350px - test for cutting: ", labelFor: oRBGroup});
-				oLabel.placeAt("label3");
+				var oLabeloRBGroupRBG3 = new sap.m.Label({ text: "Group with 3 colums and width 100% in container of 350px - test for cutting: ", labelFor: oRBGroupRBG3});
+
+				var flexBoxRBG3 = new sap.m.FlexBox("rbg3", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG3, oRBGroupRBG3
+				]});
 
 				// RadioButtonGroup with 2 columns and different length but given width 2
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG3a");
-				oRBGroup.setColumns(2);
-				oRBGroup.setWidth("200px");
+				var oRBGroupRBG3a = new sap.m.RadioButtonGroup("RBG3a");
+				oRBGroupRBG3a.setColumns(2);
+				oRBGroupRBG3a.setWidth("200px");
 
 				var oButton = new sap.m.RadioButton("RB3a-1");
 				oButton.setText("Long Option Number 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3a.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3a-2");
 				oButton.setText("Option 2");
 				oButton.setEnabled(false);
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3a.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB3a-3");
 				oButton.setText("Nr.3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG3a.addButton(oButton);
 
-				oRBGroup.placeAt("target3a");
-				var oLabel = new sap.m.Label({ text: "Group with 2 colums and width 200px - test for cutting: ", labelFor: oRBGroup});
-				oLabel.placeAt("label3a");
+				var oLabeloRBGroupRBG3a = new sap.m.Label({ text: "Group with 2 colums and width 200px - test for cutting: ", labelFor: oRBGroupRBG3a});
+
+				var flexBoxRBG3a = new sap.m.FlexBox("rbg3a", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG3a, oRBGroupRBG3a
+				]});
 
 				// RadioButtonGroup with 3 colums ans 1 row
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG4", {
+				var oRBGroupRBG4 = new sap.m.RadioButtonGroup("RBG4", {
 					columns : 4,
 					valueState : sap.ui.core.ValueState.Error
 				});
-				oRBGroup.setColumns(4);
+				oRBGroupRBG4.setColumns(4);
 
 				var oButton = new sap.m.RadioButton("RB4-1");
 				oButton.setText("Option 1");
 				oButton.setTooltip("Tooltip 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG4.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB4-2");
 				oButton.setText("Option 2");
 				oButton.setTooltip("Tooltip 2");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG4.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB4-3");
 				oButton.setText("Option 3");
 				oButton.setTooltip("Tooltip 3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG4.addButton(oButton);
 
-				oRBGroup.placeAt("target4");
-				var oLabel = new sap.m.Label({ text: "Group with 3 RadioButtons in 1 Row: ", labelFor: oRBGroup});
-				oLabel.placeAt("label4");
+				var oLabeloRBGroupRBG4 = new sap.m.Label({ text: "Group with 3 RadioButtons in 1 Row: ", labelFor: oRBGroupRBG4});
+
+				var flexBoxRBG4 = new sap.m.FlexBox("rbg4", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG4, oRBGroupRBG4
+				]});
 
 				// test for methods
 				var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
 				oLyt.setLayoutFixed(false);
 				oLyt.setColumns(4);
 
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG5");
-				oRBGroup.setColumns(2);
-				oRBGroup.setSelectedIndex(-1);
-				oRBGroup.attachSelect(handleSelect);
+				var oRBGroupRBG5 = new sap.m.RadioButtonGroup("RBG5");
+				oRBGroupRBG5.setColumns(2);
+				oRBGroupRBG5.setSelectedIndex(-1);
+				oRBGroupRBG5.attachSelect(handleSelect);
 				oButton = new sap.m.RadioButton("RB5-1");
 				oButton.setText("Option 1");
 				oButton.setTooltip("Tooltip 1");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG5.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB5-2");
 				oButton.setText("Option 2");
 				oButton.setTooltip("Tooltip 2");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG5.addButton(oButton);
 				oButton = new sap.m.RadioButton("RB5-3");
 				oButton.setText("Option 3");
 				oButton.setTooltip("Tooltip 3");
-				oRBGroup.addButton(oButton);
+				oRBGroupRBG5.addButton(oButton);
 
 				var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell("Cell1");
-				oCell1.addContent(oRBGroup);
+				oCell1.addContent(oRBGroupRBG5);
 				oCell1.setVAlign(sap.ui.commons.layout.VAlign.Top);
 				oCell1.setColSpan(2);
 				oCell1.setRowSpan(5);
@@ -447,7 +475,7 @@
 				var oText2 = new sap.ui.commons.TextField("TF2");
 				oText2.setEditable(false);
 				oText2.setWidth("5em");
-				oText2.setValue(oRBGroup.getSelectedIndex());
+				oText2.setValue(oRBGroupRBG5.getSelectedIndex());
 				oLabel2.setLabelFor(oText2);
 				oLyt.createRow(oLabel, oText, oLabel2, oText2);
 
@@ -465,8 +493,8 @@
 				var oText2 = new sap.ui.commons.TextField("TF4");
 				oText2.setEditable(false);
 				oText2.setWidth("5em");
-				if (oRBGroup.getSelectedButton()) {
-					oText2.setValue(oRBGroup.getSelectedButton().getId());
+				if (oRBGroupRBG5.getSelectedButton()) {
+					oText2.setValue(oRBGroupRBG5.getSelectedButton().getId());
 				} else {
 					oText2.setValue("");
 				}
@@ -489,11 +517,16 @@
 				oCheckBox.attachSelect(handleToggleEnabled);
 				oLyt.createRow(oLabel, oText, oCheckBox);
 
-				oLyt.placeAt("target5");
-				var oLabel = new sap.m.Label({ text: "Test for interaction: ", labelFor: oRBGroup});
-				oLabel.placeAt("label5");
+				var oLabeloRBGroupRBG5 = new sap.m.Label({ text: "Test for interaction: ", labelFor: oRBGroupRBG5});
 
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG6", {
+				var flexBoxRBG5 = new sap.m.FlexBox("rbg5", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG5, oLyt
+				]});
+
+				var oRBGroupRBG6 = new sap.m.RadioButtonGroup("RBG6", {
 					textDirection: sap.ui.core.TextDirection.RTL,
 					width: "400px",
 					columns: 2,
@@ -513,40 +546,29 @@
 					]
 				});
 
-				oRBGroup.placeAt("target6");
+				var oLabeloRBGroupRBG6 = new sap.m.Label({ text: "Group with 2 colums, width 400px, RTL: ", labelFor: oRBGroupRBG6});
 
-				var oLabel = new sap.m.Label({ text: "Group with 2 colums, width 400px, RTL: ", labelFor: oRBGroup});
-				oLabel.placeAt("label6");
+				var flexBoxRBG6 = new sap.m.FlexBox("rbg6", {
+				alignItems: "Start",
+				direction: "Column",
+				items: [
+					oLabeloRBGroupRBG6, oRBGroupRBG6
+				]});
+
+				var app = new sap.m.App("myApp", {initialPage:"rbg", autoFocus: false});
+
+				var page = new sap.m.Page("rbg", {
+				title:"Test Page for sap.m.RadioButtonGroup",
+				content : [
+					flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4,flexBoxRBG6,flexBoxRBG5
+				]});
+
+				app.addPage(page);
+				app.placeAt("body");
 			});
 		</script>
 	</head>
 
-	<body class="sapUiBody" role="application">
-		<h1>Test Page for sap.m.RadioButtonGroup</h1>
-
-		<br> <!-- Simple group: -->
-		<div id="label1"></div>
-		<div id="target1"></div>
-		<br> <!-- Simple group 2: -->
-		<div id="label1a"></div>
-		<div id="target1a"></div>
-		<br> <!-- Group with 2 colums: -->
-		<div id="label2"></div>
-		<div id="target2"></div>
-		<br> <!-- Group with 3 colums and width 350px - test for cutting: -->
-		<div id="label3"></div>
-		<div id="target3" style="width: 350px;"></div>
-		<br> <!-- Group with 2 colums and width 200px - test for cutting: -->
-		<div id="label3a"></div>
-		<div id="target3a"></div>
-		<br> <!-- Group with 3 RadioButtons in 1 Row: -->
-		<div id="label4"></div>
-		<div id="target4"></div>
-		<br><!-- Group with 2 columns Right-to-Left -->
-		<div id="label6"></div>
-		<div id="target6"></div>
-		<br> <!-- Test for interaction: -->
-		<div id="label5"></div>
-		<div id="target5"></div>
+	<body class="sapUiBody" role="application" id="body" >
 	</body>
 </html>
