@@ -248,6 +248,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			oDesignTimeMetada = vDesignTimeMetada;
 		} else {
 			oDesignTimeMetada = new ElementDesignTimeMetadata({
+				libraryName : this.getElementInstance().getMetadata().getLibraryName(),
 				data : vDesignTimeMetada
 			});
 		}

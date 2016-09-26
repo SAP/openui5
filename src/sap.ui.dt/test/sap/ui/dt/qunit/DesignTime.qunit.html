@@ -63,8 +63,11 @@
 
 				this.oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(bSyncingCalled, "then syncing event was called initially");
-					assert.strictEqual(isOverlayForElementInDesignTime(that.oButton, that.oDesignTime), true, "overlay for button exists");
 					assert.ok("and synced event was called");
+
+					assert.strictEqual(isOverlayForElementInDesignTime(that.oButton, that.oDesignTime), true, "overlay for button exists");
+					var oButtonDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton).getDesignTimeMetadata();
+					assert.equal(oButtonDTMetadata.getLibraryName(), "sap.m", "the DesignTimeMetadata containing the libraryName");
 
 					done();
 				});
@@ -190,7 +193,7 @@
 			QUnit.test("... and the control is moved inside of root element", function(assert) {
 				var oOldButtonOverlay = isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime);
 				this.oOuterLayout.addContent(this.oButton1);
-				oNewButtonOverlay = isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime);
+				var oNewButtonOverlay = isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime);
 				assert.strictEqual(oOldButtonOverlay, oNewButtonOverlay, "overlay for button1 is not changed");
 			});
 
@@ -258,7 +261,7 @@
 				sap.ui.getCore().applyChanges();
 
 				assert.ok(oOverlay.getDomRef(), "then a created overlay is also visible");
-				
+
 				oOverlay.destroy();
 			});
 
