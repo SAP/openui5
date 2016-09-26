@@ -714,8 +714,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
 
-		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
-		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
 		this._iDataRequestedCounter = 0;
 
 		this._iBindingLength = 0;
@@ -2041,11 +2039,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (!!Device.browser.safari) {
 					var $sapUiTableColHdr = $this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
 					// min-width on table elements does not work for safari
-					if (this._bjQueryLess18) {
-						$sapUiTableColHdr.width(iColsWidth);
-					} else {
-						$sapUiTableColHdr.outerWidth(iColsWidth);
-					}
+					$sapUiTableColHdr.outerWidth(iColsWidth);
 				}
 			}
 
