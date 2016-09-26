@@ -40,9 +40,13 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
         });
 
-        // Defines threshold for entire range movement (px)
-        var RANGE_MOVEMENT_THRESHOLD = 32,
-            CHARACTER_WIDTH_PX = 8;
+        //Defines object which contains constants used by the control.
+        var _CONSTANTS = {
+            RANGE_MOVEMENT_THRESHOLD : 32, // Defines threshold for entire range movement (px)
+            CHARACTER_WIDTH_PX : 8,
+            INPUT_STATE_NONE: "None",
+            INPUT_STATE_ERROR: "Error"
+        };
 
         RangeSlider.prototype.init = function () {
             var aRange, oStartLabel, oEndLabel;
@@ -138,7 +142,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
 
             //TODO: find a better way to determine this
             this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
-                + this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * CHARACTER_WIDTH_PX;
+                + this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * _CONSTANTS.CHARACTER_WIDTH_PX;
 
             // Attach tooltips
             if (!this._mHandleTooltip.start.tooltip) {
@@ -343,6 +347,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             if (!bInputTooltips) {
                 oTooltip.text(sNewValue);
             } else if (bInputTooltips && oTooltip.getValue() !== sNewValue) {
+                oTooltip.setValueState(_CONSTANTS.INPUT_STATE_NONE);
                 oTooltip.setValue(sNewValue);
                 oTooltip.$("inner").attr("value", sNewValue);
             }
@@ -409,13 +414,13 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                 newValue = Number(oEvent.getParameter("value"));
 
             if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
-                oInput.setValueState("Error");
+                oInput.setValueState(_CONSTANTS.INPUT_STATE_ERROR);
                 return;
             }
 
             newValue = this._adjustRangeValue(newValue);
 
-            oInput.setValueState("None");
+            oInput.setValueState(_CONSTANTS.INPUT_STATE_NONE);
 
             oHandle = this._mHandleTooltip.start.tooltip === oInput ?
                 this._mHandleTooltip.start.handle : this._mHandleTooltip.end.handle;
@@ -563,7 +568,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }, 0);
 
             // if the click is outside the range or distance between handles is below the threshold - update the closest slider handle
-            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange) || fHandlesDistance <= RANGE_MOVEMENT_THRESHOLD) {
+            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange) || fHandlesDistance <= _CONSTANTS.RANGE_MOVEMENT_THRESHOLD) {
                 aHandles = [this.getClosestHandleDomRef(oTouch)];
                 this._updateHandle(aHandles[0], fValue);
             } else if (iHandleIndex !== -1) { // Determine if the press event is on certain handle
