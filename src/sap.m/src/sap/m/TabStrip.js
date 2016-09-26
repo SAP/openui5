@@ -50,7 +50,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					/**
 					 * Holds the instance of the select when <code>hasSelect</code> is set to <code>true</code>.
 					 */
-					_select : {type: 'sap.m.TabStripSelect', multiple : false, visibility : "hidden"}
+					_select : {type: 'sap.m.TabStripSelect', multiple : false, visibility : "hidden"},
+
+					/**
+					 * Holds the right arrow scrolling button.
+					 */
+					_rightArrowButton : {type: 'sap.m.AccButton', multiple : false, visibility : "hidden"},
+
+					/**
+					 * Holds the right arrow scrolling button.
+					 */
+					_leftArrowButton : {type: 'sap.m.AccButton', multiple : false, visibility : "hidden"}
 				},
 				associations: {
 
@@ -205,8 +215,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			this._iCurrentScrollLeft = 0;
 			this._iMaxOffsetLeft = null;
 			this._scrollable = null;
-			this._oLeftArrowButton = null;
-			this._oRightArrowButton = null;
 			this._oTouchStartX = null;
 
 			if (!sap.ui.Device.system.phone) {
@@ -230,14 +238,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			this._iMaxOffsetLeft = null;
 			this._scrollable = null;
 			this._oTouchStartX = null;
-			if (this._oLeftArrowButton) {
-				this._oLeftArrowButton.destroy();
-				this._oLeftArrowButton = null;
-			}
-			if (this._oRightArrowButton) {
-				this._oRightArrowButton.destroy();
-				this._oRightArrowButton = null;
-			}
 			if (this._oScroller) {
 				this._oScroller.destroy();
 				this._oScroller = null;
@@ -260,9 +260,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 				this._sResizeListenerId = null;
 			}
-
-			//Create overflow buttons
-			this._generateButtons();
 		};
 
 		/**
@@ -273,14 +270,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype.onAfterRendering = function () {
 			if (this._oScroller) {
-				this._oScroller.setIconTabBar(this, jQuery.proxy(this._checkOverflow, this), null);
+				this._oScroller.setIconTabBar(this, jQuery.proxy(this._handleOverflowButtons, this), null);
 			}
 			//use ItemNavigation for keyboardHandling
 			this._addItemNavigation();
 
-			this._adjustScrolling();
+			if (!sap.ui.Device.system.phone) {
+				this._adjustScrolling();
 
-			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._adjustScrolling, this));
+				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._adjustScrolling, this));
+			}
 		};
 
 		/**
@@ -358,16 +357,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return bScrollNeeded;
 		};
 
-		TabStrip.prototype._checkOverflow = function() {
+		TabStrip.prototype._handleOverflowButtons = function() {
 			var oTabsDomRef = this.getDomRef("tabs"),
 				oTabsContainerDomRef = this.getDomRef("tabsContainer"),
 				iScrollLeft,
 				realWidth,
 				availableWidth,
 				bScrollBack = false,
-				bScrollForward = false;
+				bScrollForward = false,
+				bScrollNeeded = this._checkScrolling();
 
-			if (this._checkScrolling() && oTabsDomRef && oTabsContainerDomRef) {
+			// in case there is something to be scrolled and the left and right "scrolling" buttons are not initialized
+			// we should initialize and render them
+			if (bScrollNeeded && !this.getAggregation("_rightArrowButton") && !this.getAggregation("_leftArrowButton")) {
+				this._getLeftArrowButton();
+				this._getRightArrowButton();
+				var oRm = sap.ui.getCore().createRenderManager();
+				this.getRenderer().renderRightOverflowButtons(oRm, this, true);
+				this.getRenderer().renderLeftOverflowButtons(oRm, this, true);
+				oRm.destroy();
+			}
+
+			if (bScrollNeeded && oTabsDomRef && oTabsContainerDomRef) {
 				if (this._bRtl && Device.browser.firefox) {
 					iScrollLeft = -oTabsContainerDomRef.scrollLeft;
 				} else {
@@ -412,37 +423,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			this._iMaxOffsetLeft = Math.abs(this.$("tabsContainer").width() - this.$("tabs").width());
 
-			this._checkOverflow();
+			this._handleOverflowButtons();
 		};
 
 		/**
-		 * Generates all buttons related with the <code>TabStrip</code>.
-		 *
+		 * Lazily initializes the <code>_leftArrowButton</code> aggregation.
 		 * @private
+		 * @returns {sap.m.AccButton} The newly created control
 		 */
-		TabStrip.prototype._generateButtons = function () {
-			var that = this;
+		TabStrip.prototype._getLeftArrowButton = function () {
+			return this._getArrowButton("_leftArrowButton", oRb.getText("TABSTRIP_SCROLL_BACK"), TabStrip.ICON_BUTTONS.LeftArrowButton, -TabStrip.SCROLL_SIZE);
+		};
 
-			this._oLeftArrowButton = new AccButton({
-				type: sap.m.ButtonType.Transparent,
-				icon: IconPool.getIconURI(TabStrip.ICON_BUTTONS.LeftArrowButton),
-				tooltip: oRb.getText("TABSTRIP_SCROLL_BACK"),
-				tabIndex: "-1",
-				ariaHidden: "true",
-				press: function (oEvent) {
-					that._scroll(-TabStrip.SCROLL_SIZE, TabStrip.SCROLL_ANIMATION_DURATION);
-				}
-			});
-			this._oRightArrowButton = new AccButton({
-				type: sap.m.ButtonType.Transparent,
-				icon: IconPool.getIconURI(TabStrip.ICON_BUTTONS.RightArrowButton),
-				tooltip: oRb.getText("TABSTRIP_SCROLL_FORWARD"),
-				tabIndex: "-1",
-				ariaHidden: "true",
-				press: function (oEvent) {
-					that._scroll(TabStrip.SCROLL_SIZE, TabStrip.SCROLL_ANIMATION_DURATION);
-				}
-			});
+		/**
+		 * Lazily initializes the <code>_leftArrowButton</code> aggregation.
+		 * @private
+		 * @returns {sap.m.AccButton} The newly created control
+		 */
+		TabStrip.prototype._getRightArrowButton = function () {
+			return this._getArrowButton("_rightArrowButton", oRb.getText("TABSTRIP_SCROLL_FORWARD"), TabStrip.ICON_BUTTONS.RightArrowButton, TabStrip.SCROLL_SIZE);
+		};
+
+		/**
+		 * Lazily initializes the left or right arrows aggregation.
+		 * @private
+		 * @returns {sap.m.AccButton} The newly created control
+		 */
+		TabStrip.prototype._getArrowButton = function (sButton, sTooltip, sIcon, iDelta) {
+			var oControl = this.getAggregation(sButton),
+				that = this;
+
+			if (!oControl) {
+				oControl = new AccButton({
+					type: sap.m.ButtonType.Transparent,
+					icon: IconPool.getIconURI(sIcon),
+					tooltip: sTooltip,
+					tabIndex: "-1",
+					ariaHidden: "true",
+					press: function (oEvent) {
+						that._scroll(iDelta, TabStrip.SCROLL_ANIMATION_DURATION);
+					}
+				});
+
+				this.setAggregation(sButton, oControl, true);
+			}
+			return oControl;
 		};
 
 		/**
