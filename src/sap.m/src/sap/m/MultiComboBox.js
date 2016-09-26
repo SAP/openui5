@@ -1071,7 +1071,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded,
 			iIconWidth = jQuery(this.getOpenArea()).outerWidth(true),
 			sTokenizerScrollWidth = (this._oTokenizer.getScrollWidth() / parseFloat(sap.m.BaseFontSize)) + "rem",
-			sInputWidth = ((iAvailableInnerSpace > 0 ? iInputWidthMinimalNeeded : iAvailableWidth ) / parseFloat(sap.m.BaseFontSize)) + "rem";
+			sDesktopInputWidth = ((iAvailableInnerSpace > 0 ? iInputWidthMinimalNeeded : iAvailableWidth ) / parseFloat(sap.m.BaseFontSize)) + "rem",
+			sInputWidth = this.isPickerDialog() ? "3rem" : sDesktopInputWidth;
 
 		this._oTokenizer.$().css("width","calc(100% - " + sInputWidth + ")");
 		$InputContainer.css("width", "calc(100% - " + (bHasTokens ? sTokenizerScrollWidth : "0px") + ")");
