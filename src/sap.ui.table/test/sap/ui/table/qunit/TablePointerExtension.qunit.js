@@ -75,11 +75,11 @@ QUnit.test("resize", function(assert) {
 		}
 	}
 	qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
-	assert.equal(oTable.getVisibleRowCount(), 12, "Visible rows after resize");
+	// resized table by 110px, in cozy mode this allows 2 rows to be added
+	assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
 	assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
 	testAdaptations(false);
 });
-
 
 QUnit.module("Column Resizing", {
 	setup: function() {

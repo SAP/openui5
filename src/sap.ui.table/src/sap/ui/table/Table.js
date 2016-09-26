@@ -1045,7 +1045,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
-		this._iDefaultRowHeight = undefined;
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
 		var $this = this.$();
@@ -2059,11 +2058,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._updateVSb = function(iScrollTop) {
 		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
 		if (!oVSb) {
-            return;
+			return;
 		}
-        if (iScrollTop === undefined) {
-            iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
-        }
+		if (iScrollTop === undefined) {
+			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
+		}
 
 		oVSb.scrollTop = iScrollTop;
 	};
@@ -4003,7 +4002,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oRM = new sap.ui.getCore().createRenderManager(),
 				oRenderer = this.getRenderer();
 
-			this._iDefaultRowHeight = undefined;
 			oRenderer.renderTableCCnt(oRM, this);
 			oRM.flush(oTBody, false, false);
 			oRM.destroy();
@@ -4053,7 +4051,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function() {
-		return this.getRowHeight() || 28;
+		var sContentDensity = TableUtils.getContentDensity(this);
+		// +1 for the border
+		return this.getRowHeight() || TableUtils.CONTENT_DENSITY_ROW_HEIGHTS[sContentDensity] + 1;
 	};
 
 	/**

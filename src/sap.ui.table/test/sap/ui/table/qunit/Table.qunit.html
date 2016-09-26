@@ -663,7 +663,7 @@
 		var iRowHeightsDelta = oTable._iRowHeightsDelta;
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
-		assert.ok(iRowHeightsDelta > 9460 && iRowHeightsDelta < 9470, "RowHeightsDelta is in expected range");
+		assert.ok(iRowHeightsDelta > 9430 && iRowHeightsDelta < 9440, "RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
 
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
@@ -741,7 +741,7 @@
 		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
 		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
 		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
-		assert.equal($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+		assert.equal($table.find('.sapUiTableVSb').css('height'), (oTable.getDomRef("table").offsetHeight) + "px", "Vertical scrollbar has correct height");
 	});
 
 	QUnit.test("Sanity check for fixed rows", function(assert) {
