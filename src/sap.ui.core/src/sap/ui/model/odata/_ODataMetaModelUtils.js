@@ -136,6 +136,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			"sap:sortable" : [ "Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties" ]
 		},
+		iWARNING = jQuery.sap.log.Level.WARNING,
 		Utils;
 
 
@@ -189,7 +190,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
 
 			if (!sFilterRestrictionValue) {
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+				if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
 					jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
 							+ oProperty["sap:filter-restriction"],
 						oEntitySet.entityType + "." + oProperty.name, sLoggingModule);
@@ -259,7 +260,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
 					if (!aMatches) {
-						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+						if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
 							jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
 								oType.name + "." + oProperty.name, sLoggingModule);
 						}
@@ -650,7 +651,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					var sTargetType = oV4TypeInfo.typeMapping[sType];
 					if (sTargetType) {
 						aResult.push(oV4TypeInfo.v4EnumType + "/" + sTargetType);
-					} else if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+					} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
 						jQuery.sap.log.warning("Unsupported type for sap:semantics: " + sType,
 							oType.name + "." + oProperty.name, sLoggingModule);
 					}
@@ -707,7 +708,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				jQuery.sap.log.warning("Inconsistent service",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property "
 						+ "'" + oEntitySet.entityType + "/" + oNavigationProperty.name + "'",
-					"sap.ui.model.odata.ODataMetaModel");
+					sLoggingModule);
 				sCreatable = "false";
 				sCreatablePath = undefined;
 			}

@@ -339,6 +339,7 @@ sap.ui.require([
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
+		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		oTeamData = mScope["tea_busi.TEAM"],
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"];
@@ -857,7 +858,7 @@ sap.ui.require([
 			oSyncPromise;
 
 		this.oLogMock.expects("error").withExactArgs("Invalid relative path w/o context", sMetaPath,
-			"sap.ui.model.odata.v4.ODataMetaModel");
+			sODataMetaModel);
 
 		oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, null);
 
@@ -934,9 +935,9 @@ sap.ui.require([
 				this.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(_SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
 				this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-					.withExactArgs(sWarning, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+					.withExactArgs(sWarning, sPath, sODataMetaModel);
 
 				oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
@@ -963,9 +964,9 @@ sap.ui.require([
 				this.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(_SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.DEBUG).returns(bDebug);
+					.withExactArgs(jQuery.sap.log.Level.DEBUG, sODataMetaModel).returns(bDebug);
 				this.oLogMock.expects("debug").exactly(bDebug ? 1 : 0)
-					.withExactArgs(sMessage, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+					.withExactArgs(sMessage, sPath, sODataMetaModel);
 
 				oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
@@ -1089,7 +1090,7 @@ sap.ui.require([
 			}));
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
-			sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+			sPath, sODataMetaModel);
 
 		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 
@@ -1112,7 +1113,7 @@ sap.ui.require([
 				}));
 			this.oLogMock.expects("warning").withExactArgs(
 				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
-				sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+				sPath, sODataMetaModel);
 
 			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 
@@ -1318,7 +1319,7 @@ sap.ui.require([
 				oPromise;
 
 			this.oLogMock.expects("error").withExactArgs(oFixture.message, oFixture.dataPath,
-				"sap.ui.model.odata.v4.ODataMetaModel");
+				sODataMetaModel);
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {

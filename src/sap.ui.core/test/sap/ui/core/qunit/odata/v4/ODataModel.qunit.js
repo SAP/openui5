@@ -292,13 +292,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
+	QUnit.skip("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
 			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42");
 
 		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
 			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
+		//TODO this check cannot reliably detect whether assert() is active in our code
 		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
 			this.mock(jQuery.sap).expects("assert")
 				.withExactArgs(false, "oEntityContext must belong to this model");
