@@ -863,6 +863,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			},
 
 			/**
+			 * Returns the title history.
+			 *
+			 * History entry example:
+			 * <code>
+			 *	{
+			 *		title: "TITLE", // The displayed title
+			 *		hash: "HASH" // The url hash
+			 *	}
+			 * </code>
+			 *
+			 * @return {array} An array which contains the history entries.
+			 * @public
+			 */
+			getTitleHistory: function() {
+				return this._aHistory || [];
+			},
+
+			/**
 			 * Registers the router to access it from another context. Use sap.ui.routing.Router.getRouter() to receive the instance
 			 *
 			 * @param {string} sName Name of the router

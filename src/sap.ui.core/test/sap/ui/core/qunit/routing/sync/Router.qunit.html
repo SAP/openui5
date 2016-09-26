@@ -1661,6 +1661,36 @@
 			});
 		});
 
+		QUnit.test("getTitleHistory", function(assert) {
+			// Arrange
+			var sHomeTitle = "HOME";
+
+			this.oRouterConfig = {
+				home: {
+					pattern: "",
+					target: "home"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: sHomeTitle
+				}
+			};
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+			// Act
+			this.oRouter.initialize();
+
+			// Assert
+			var aHistoryRef = {
+				hash: "",
+				title: "HOME"
+			};
+			assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef);
+
+		});
+
 		module("component");
 
 		test("Should create a view with an component", function () {
