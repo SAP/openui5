@@ -116,6 +116,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.uxap'
 			},
 			{
+					name: 'sap.ui.fl',
+					path: 'src/sap.ui.fl'
+			},
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'
