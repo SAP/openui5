@@ -534,5 +534,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.17": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "0f891ee54c99a8601a0923ce181394e63ec67a96",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: set size of cursor and colorBox inline",
+        "references": []
+      }
+    ]
   }
 }
