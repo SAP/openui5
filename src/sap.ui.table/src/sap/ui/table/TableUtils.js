@@ -140,25 +140,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		toggleGroupHeader : function(oTable, oRef, bExpand) {
-			var $Ref = jQuery(oRef),
-				$GroupRef;
+			var $Ref = jQuery(oRef);
+			var $GroupRef;
 
-			if ($Ref.hasClass("sapUiTableTreeIcon")) {
-				$GroupRef = $Ref.closest("tr");
+			if ($Ref.hasClass("sapUiTableTreeIcon") || (this.Grouping.isTreeMode(oTable) && $Ref.hasClass("sapUiTableTdFirst"))) {
+				$GroupRef = $Ref.closest("tr", oTable.getDomRef());
 			} else {
-				$GroupRef = $Ref.closest(".sapUiTableGroupHeader");
+				$GroupRef = $Ref.closest(".sapUiTableGroupHeader", oTable.getDomRef());
 			}
 
 			var oBinding = oTable.getBinding("rows");
 			if ($GroupRef.length > 0 && oBinding) {
-				var iRowIndex = oTable.getFirstVisibleRow() + parseInt($GroupRef.data("sap-ui-rowindex"), 10);
-				var bIsExpanded = TableGrouping.toggleGroupHeader(oTable, iRowIndex, bExpand);
-				var bChanged = bIsExpanded === true || bIsExpanded === false;
-				if (bChanged && oTable._onGroupHeaderChanged) {
-					oTable._onGroupHeaderChanged(iRowIndex, bIsExpanded);
+				var iGroupHeaderRowIndex = $GroupRef.data("sap-ui-rowindex");
+				var oRow = oTable.getRows()[iGroupHeaderRowIndex];
+
+				if (oRow != null) {
+					var iAbsoluteRowIndex = oRow.getIndex();
+					var bIsExpanded = TableGrouping.toggleGroupHeader(oTable, iAbsoluteRowIndex, bExpand);
+					var bChanged = bIsExpanded === true || bIsExpanded === false;
+
+					if (bChanged && oTable._onGroupHeaderChanged) {
+						oTable._onGroupHeaderChanged(iAbsoluteRowIndex, bIsExpanded);
+					}
+
+					return bChanged;
 				}
-				return bChanged;
 			}
+
 			return false;
 		},
 
@@ -417,6 +425,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns whether the passed row is a group header row.
+		 *
+		 * @param {jQuery|HTMLElement} oRow The row to check.
+		 * @returns {boolean} Returns <code>true</code>, if <code>oRow</code> is a group header row.
+		 */
+		isGroupingRow: function(oRow) {
+			if (oRow == null) {
+				return false;
+			}
+
+			var $Row = jQuery(oRow);
+			return $Row.hasClass("sapUiTableGroupHeader");
+		},
+
+		/**
 		 * Returns whether the given cell is located in a analytical summary row.
 		 * @param {Object} oCellRef DOM reference of table cell
 		 * @return {boolean}
@@ -499,6 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		/**
 		 * Returns the index and span information of a column header cell.
+		 *
 		 * @param {jQuery|HtmlElement} oCell The column header cell.
 		 * @returns {{index: int, span: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table column header cell.
 		 * @private
@@ -515,6 +539,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return {
 					index: parseInt($Cell.data("sap-ui-colindex"), 10),
 					span: parseInt($Cell.attr("colspan") || 1, 10)
+				};
+			} else {
+				return null;
+			}
+		},
+
+		/**
+		 * Returns the row index and column index of a data cell.
+		 *
+		 * @param {jQuery|HtmlElement} oCell The data cell.
+		 * @returns {{rowIndex: int, columnIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table data cell.
+		 */
+		getDataCellInfo: function(oCell) {
+			if (oCell == null) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell);
+
+			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+				var sCellId = $Cell.prop("id"); // Example: __table0-rows-row3-col2
+				var aCellIdAreas = sCellId.split("-");
+
+				return {
+					rowIndex: parseInt(aCellIdAreas[2].slice(3), 10),
+					columnIndex: parseInt(aCellIdAreas[3].slice(3), 10)
 				};
 			} else {
 				return null;
@@ -554,12 +605,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Returns all interactive elements in a data cell.
-		 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
-		 * @returns {jQuery|null} Returns null if the passed cell is not a cell or does not contain any interactive elements.
+		 * Find out if an element is interactive.
+		 *
+		 * @param {jQuery|HTMLElement} oElement The element to check.
+		 * @returns {boolean|null} Returns <code>true</code>, if the passed element is interactive.
 		 * @private
 		 */
-		getInteractiveElements : function(oCell) {
+		isElementInteractive: function(oElement) {
+			if (oElement == null) {
+				return false;
+			}
+
+			return jQuery(oElement).is(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
+		},
+
+		/**
+		 * Returns all interactive elements in a data cell.
+		 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
+		 * @private
+		 */
+		getInteractiveElements: function(oCell) {
 			if (oCell == null) {
 				return null;
 			}
@@ -568,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oCellInfo = this.getCellInfo($Cell);
 
 			if (oCellInfo !== null && oCellInfo.type === this.CELLTYPES.DATACELL) {
-				var $InteractiveElements = $Cell.find(":sapFocusable");
+				var $InteractiveElements = $Cell.find(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
 				if ($InteractiveElements.length > 0) {
 					return $InteractiveElements;
 				}
@@ -578,10 +644,155 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns the first interactive element in a row.
+		 *
+		 * @param {sap.ui.table.Row} oRow The row from which to get the interactive element.
+		 * @returns {jQuery|null} Returns <code>null</code> if the passed row does not contain any interactive elements.
+		 * @private
+		 */
+		getFirstInteractiveElement: function(oRow) {
+			if (oRow == null) {
+				return null;
+			}
+
+			var oTable = oRow.getParent();
+			var aCells = oRow.getCells();
+
+			for (var i = 0; i < aCells.length; i++) {
+				var oCellDomRef = aCells[i].getDomRef();
+				var $Cell = this.getParentDataCell(oTable, oCellDomRef);
+				var $InteractiveElements = this.getInteractiveElements($Cell);
+
+				if ($InteractiveElements !== null) {
+					return $InteractiveElements.first();
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns the last interactive element in a row.
+		 *
+		 * @param {sap.ui.table.Row} oRow The row from which to get the interactive element.
+		 * @returns {jQuery|null} Returns <code>null</code> if the passed row does not contain any interactive elements.
+		 * @private
+		 */
+		getLastInteractiveElement: function(oRow) {
+			if (oRow == null) {
+				return null;
+			}
+
+			var oTable = oRow.getParent();
+			var aCells = oRow.getCells();
+
+			for (var i = aCells.length - 1; i >= 0; i--) {
+				var oCellDomRef = aCells[i].getDomRef();
+				var $Cell = this.getParentDataCell(oTable, oCellDomRef);
+				var $InteractiveElements = this.getInteractiveElements($Cell);
+
+				if ($InteractiveElements !== null) {
+					return $InteractiveElements.last();
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns the interactive element before the passed interactive element in the same row.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
+		 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the first interactive element in the row.
+		 * @private
+		 */
+		getPreviousInteractiveElement: function(oTable, oElement) {
+			if (oTable == null || oElement == null) {
+				return null;
+			}
+
+			var $Element = jQuery(oElement);
+			if (!this.isElementInteractive($Element)) {
+				return null;
+			}
+
+			var $Cell = this.getParentDataCell(oTable, oElement);
+			var oDataCellInfo = this.getDataCellInfo($Cell);
+			var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
+			var aCells = oRow.getCells();
+			var $InteractiveElements;
+
+			// First search for the previous interactive element in the current cell.
+			$InteractiveElements = this.getInteractiveElements($Cell);
+			if ($InteractiveElements[0] !== $Element[0]) {
+				return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
+			}
+
+			// Search in the previous cells.
+			for (var i = oDataCellInfo.columnIndex - 1; i >= 0; i--) {
+				var oCellDomRef = aCells[i].getDomRef();
+				$Cell = this.getParentDataCell(oTable, oCellDomRef);
+				$InteractiveElements = this.getInteractiveElements($Cell);
+
+				if ($InteractiveElements !== null) {
+					return $InteractiveElements.last();
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns the interactive element after the passed interactive element in the same row.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
+		 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the last interactive element in the row.
+		 * @private
+		 */
+		getNextInteractiveElement: function(oTable, oElement) {
+			if (oTable == null || oElement == null) {
+				return null;
+			}
+
+			var $Element = jQuery(oElement);
+			if (!this.isElementInteractive($Element)) {
+				return null;
+			}
+
+			var $Cell = this.getParentDataCell(oTable, oElement);
+			var oDataCellInfo = this.getDataCellInfo($Cell);
+			var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
+			var aCells = oRow.getCells();
+			var $InteractiveElements;
+
+			// First search for the next interactive element in the current cell.
+			$InteractiveElements = this.getInteractiveElements($Cell);
+			if ($InteractiveElements.get(-1) !== $Element[0]) {
+				return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
+			}
+
+			// Search in the next cells.
+			for (var i = oDataCellInfo.columnIndex + 1; i < aCells.length; i++) {
+				var oCellDomRef = aCells[i].getDomRef();
+				$Cell = this.getParentDataCell(oTable, oCellDomRef);
+				$InteractiveElements = this.getInteractiveElements($Cell);
+
+				if ($InteractiveElements !== null) {
+					return $InteractiveElements.first();
+				}
+			}
+
+			return null;
+		},
+
+		/**
 		 * Returns the data cell which is the parent of the specified element.
+		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
 		 * @param {jQuery|HTMLElement} oElement An element inside a table data cell.
-		 * @returns {jQuery|null} Returns null if the passed element is not inside a data cell.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the passed element is not inside a data cell.
 		 * @private
 		 */
 		getParentDataCell: function(oTable, oElement) {
@@ -718,63 +929,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					oTable._mResizeHandlerIds[sIdSuffix] = undefined;
 				}
 			}
-		},
-
-		/**
-		 * Scrolls the data in the table forward or backward by manipulating the property <code>firstVisibleRow</code>.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {boolean} bDown Whether to scroll down or up
-		 * @param {boolean} bPage Whether scrolling should be page wise or a single step (only possibe with navigation mode <code>Scrollbar</code>)
-		 * @private
-		 */
-		scroll : function(oTable, bDown, bPage) {
-			var bScrolled = false;
-			var iRowCount = oTable._getRowCount();
-			var iVisibleRowCount = oTable.getVisibleRowCount();
-			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
-			var iSize = bPage ? iScrollableRowCount : 1;
-
-			if (bDown) {
-				if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
-					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
-					bScrolled = true;
-				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
-					bScrolled = true;
-				}
-			}
-
-			return bScrolled;
-		},
-
-		/**
-		 * Scrolls the data in the table to the end or to the beginning by manipulating the property <code>firstVisibleRow</code>.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {boolean} bDown Whether to scroll down or up
-		 * @returns {boolean} True if scrolling was actually performed
-		 * @private
-		 */
-		scrollMax : function(oTable, bDown) {
-			var bScrolled = false;
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
-
-			if (bDown) {
-				var iFirstVisibleRow = oTable._getRowCount() - this.getNonEmptyVisibleRowCount(oTable);
-				if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
-					oTable.setFirstVisibleRow(iFirstVisibleRow);
-					bScrolled = true;
-				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(0);
-					bScrolled = true;
-				}
-			}
-
-			return bScrolled;
 		},
 
 		/**
@@ -1339,15 +1493,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				var $Cell =  TableUtils.getParentDataCell(oTable, oCell.getDomRef());
 
 				if ($Cell !== null && !TableUtils.isInGroupingRow($Cell)) {
-					var eCell = $Cell[0];
+					var oCell = $Cell[0];
 					var Dock = oTable._Popup.Dock;
 
-					var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== eCell;
+					var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 					if (bMenuOpenAtAnotherDataCell) {
 						this.closeDataCellContextMenu(oTable);
 					}
 
-					oTable._oCellContextMenu.open(bHoverFirstMenuItem, eCell, Dock.BeginTop, Dock.BeginBottom, eCell, "none none");
+					oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Dock.BeginTop, Dock.BeginBottom, oCell, "none none");
 				}
 			}
 		},

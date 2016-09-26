@@ -1,3 +1,7 @@
+// Shortcuts
+jQuery.sap.require("sap.ui.table.TableUtils");
+var TableUtils = sap.ui.table.TableUtils;
+
 //************************************************************************
 // Helper Functions
 //************************************************************************
@@ -41,7 +45,7 @@ function findTabbables(oRef, aScopes, bNext) {
 
 function simulateTabEvent(oTarget, bBackward) {
 	var oParams = {};
-	oParams.keyCode = jQuery.sap.KeyCodes["TAB"];
+	oParams.keyCode = jQuery.sap.KeyCodes.TAB;
 	oParams.which = oParams.keyCode;
 	oParams.shiftKey = !!bBackward;
 	oParams.altKey = false;
@@ -120,7 +124,6 @@ var Key = {
 //************************************************************************
 // Test Code
 //************************************************************************
-
 
 QUnit.module("KeyboardDelegate", {
 	beforeEach: function() {
@@ -1509,7 +1512,7 @@ QUnit.test("Less data rows than visible rows", function(assert) {
 	oTable.setVisibleRowCount(10);
 	sap.ui.getCore().applyChanges();
 
-	var iNonEmptyVisibleRowCount = sap.ui.table.TableUtils.getNonEmptyVisibleRowCount(oTable);
+	var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(oTable);
 
 	/* Test on row header */
 
@@ -1576,7 +1579,7 @@ QUnit.test("Less data rows than visible rows and Fixed Top/Bottom Rows", functio
 	oTable.setFixedBottomRowCount(2);
 	sap.ui.getCore().applyChanges();
 
-	var iNonEmptyVisibleRowCount = sap.ui.table.TableUtils.getNonEmptyVisibleRowCount(oTable);
+	var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(oTable);
 
 	/* Test on row header */
 
@@ -1864,10 +1867,10 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > Page Up & Page Down", {
 });
 
 function _testPageKeys(assert) {
-	var iNonEmptyVisibleRowCount = sap.ui.table.TableUtils.getNonEmptyVisibleRowCount(oTable);
+	var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(oTable);
 	var iPageSize = iNonEmptyVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
 	var iLastScrollableRowIndex = iNonEmptyVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
-	var iHeaderRowCount = sap.ui.table.TableUtils.getHeaderRowCount(oTable);
+	var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
 
 	/* Test on row header */
 
@@ -2970,25 +2973,25 @@ QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(0, true);
-	for (var i = sap.ui.table.TableUtils.getColumnWidth(oTable, 0); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+	for (var i = TableUtils.getColumnWidth(oTable, 0); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), i - iColumnResizeStep,
-			"Column width decreased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 0) + "px");
+		assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), i - iColumnResizeStep,
+			"Column width decreased by " + iColumnResizeStep + "px to " + TableUtils.getColumnWidth(oTable, 0) + "px");
 	}
 
-	var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 0);
+	var iColumnWidthBefore = TableUtils.getColumnWidth(oTable, 0);
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-	assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
-		"Column width decreased by " + (iColumnWidthBefore - sap.ui.table.TableUtils.getColumnWidth(oTable, 0)) + "px to the minimum width of " + iMinColumnWidth + "px");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
+		"Column width decreased by " + (iColumnWidthBefore - TableUtils.getColumnWidth(oTable, 0)) + "px to the minimum width of " + iMinColumnWidth + "px");
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-	assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), iMinColumnWidth,
 		"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
 
 	for (var i = 0; i < 10; i++) {
-		iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 0);
+		iColumnWidthBefore = TableUtils.getColumnWidth(oTable, 0);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 0), iColumnWidthBefore + iColumnResizeStep,
-			"Column width increased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 0) + "px");
+		assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), iColumnWidthBefore + iColumnResizeStep,
+			"Column width increased by " + iColumnResizeStep + "px to " + TableUtils.getColumnWidth(oTable, 0) + "px");
 	}
 });
 
@@ -2997,25 +3000,25 @@ QUnit.test("Default Test Table - Resize column", function(assert) {
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(1, true);
-	for (var i = sap.ui.table.TableUtils.getColumnWidth(oTable, 1); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+	for (var i = TableUtils.getColumnWidth(oTable, 1); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), i - iColumnResizeStep,
-			"Column width decreased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 1) + "px");
+		assert.strictEqual(TableUtils.getColumnWidth(oTable, 1), i - iColumnResizeStep,
+			"Column width decreased by " + iColumnResizeStep + "px to " + TableUtils.getColumnWidth(oTable, 1) + "px");
 	}
 
-	var iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 1);
+	var iColumnWidthBefore = TableUtils.getColumnWidth(oTable, 1);
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-	assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
-		"Column width decreased by " + (iColumnWidthBefore - sap.ui.table.TableUtils.getColumnWidth(oTable, 1)) + "px to the minimum width of " + iMinColumnWidth + "px");
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
+		"Column width decreased by " + (iColumnWidthBefore - TableUtils.getColumnWidth(oTable, 1)) + "px to the minimum width of " + iMinColumnWidth + "px");
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-	assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 1), iMinColumnWidth,
 		"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
 
 	for (var i = 0; i < 10; i++) {
-		iColumnWidthBefore = sap.ui.table.TableUtils.getColumnWidth(oTable, 1);
+		iColumnWidthBefore = TableUtils.getColumnWidth(oTable, 1);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, 1), iColumnWidthBefore + iColumnResizeStep,
-			"Column width increased by " + iColumnResizeStep + "px to " + sap.ui.table.TableUtils.getColumnWidth(oTable, 1) + "px");
+		assert.strictEqual(TableUtils.getColumnWidth(oTable, 1), iColumnWidthBefore + iColumnResizeStep,
+			"Column width increased by " + iColumnResizeStep + "px to " + TableUtils.getColumnWidth(oTable, 1) + "px");
 	}
 });
 
@@ -3045,11 +3048,11 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 
 		var aOriginalNotResizingColumnWidths = [];
 		for (var i = 0; i < aNotResizingColumns.length; i++) {
-			aOriginalNotResizingColumnWidths.push(sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()));
+			aOriginalNotResizingColumnWidths.push(TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()));
 		}
 
 		for (var i = 0; i < aResizingColumns.length; i++) {
-			iMaxColumnSize = Math.max(iMaxColumnSize, sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()));
+			iMaxColumnSize = Math.max(iMaxColumnSize, TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()));
 		}
 
 		// Decrease the size to the minimum.
@@ -3058,14 +3061,14 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 
 			// Check resizable columns.
 			for (var j = 0; j < aResizingColumns.length; j++) {
-				iNewColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
+				iNewColumnWidth = TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
 				assert.strictEqual(iNewColumnWidth, Math.max(iMinColumnWidth, i - iSharedColumnResizeStep),
 					"Column " + (aResizingColumns[j].getIndex() + 1) + " width decreased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
 			}
 
 			// Check not resizable columns.
 			for (var j = 0; j < aNotResizingColumns.length; j++) {
-				assert.strictEqual(aOriginalNotResizingColumnWidths[j], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
+				assert.strictEqual(aOriginalNotResizingColumnWidths[j], TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
 					"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
 			}
 		}
@@ -3075,13 +3078,13 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 
 		// Check resizable columns for minimum width.
 		for (var i = 0; i < aResizingColumns.length; i++) {
-			assert.strictEqual(sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()), iMinColumnWidth,
+			assert.strictEqual(TableUtils.getColumnWidth(oTable, aResizingColumns[i].getIndex()), iMinColumnWidth,
 				"Column " + (aResizingColumns[i].getIndex() + 1) + " width decreased to the minimum width of " + iMinColumnWidth + "px");
 		}
 
 		// Check not resizable columns for unchanged width.
 		for (var i = 0; i < aNotResizingColumns.length; i++) {
-			assert.strictEqual(aOriginalNotResizingColumnWidths[i], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()),
+			assert.strictEqual(aOriginalNotResizingColumnWidths[i], TableUtils.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()),
 				"Column " + (aNotResizingColumns[i].getIndex() + 1) + " width did not change");
 		}
 
@@ -3089,21 +3092,21 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 		for (var i = 0; i < 10; i++) {
 			var aOriginalColumnWidths = [];
 			for (var j = 0; j < aResizingColumns.length; j++) {
-				aOriginalColumnWidths.push(sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex()));
+				aOriginalColumnWidths.push(TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex()));
 			}
 
 			qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 
 			// Check resizable columns.
 			for (var j = 0; j < aResizingColumns.length; j++) {
-				iNewColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
+				iNewColumnWidth = TableUtils.getColumnWidth(oTable, aResizingColumns[j].getIndex());
 				assert.strictEqual(iNewColumnWidth, aOriginalColumnWidths[j] + iSharedColumnResizeStep,
 					"Column " + (aResizingColumns[j].getIndex() + 1) + " width increased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
 			}
 
 			// Check not resizable columns.
 			for (var j = 0; j < aNotResizingColumns.length; j++) {
-				assert.strictEqual(aOriginalNotResizingColumnWidths[j], sap.ui.table.TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
+				assert.strictEqual(aOriginalNotResizingColumnWidths[j], TableUtils.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
 					"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
 			}
 		}
@@ -3125,13 +3128,13 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 });
 
 QUnit.test("Default Test Table - Resize not resizable column", function(assert) {
-	var iOriginalColumnWidth = sap.ui.table.TableUtils.getColumnWidth(oTable, 2);
+	var iOriginalColumnWidth = TableUtils.getColumnWidth(oTable, 2);
 
 	var oElem = getColumnHeader(2, true);
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-	assert.strictEqual(iOriginalColumnWidth, sap.ui.table.TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
+	assert.strictEqual(iOriginalColumnWidth, TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
 	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-	assert.strictEqual(iOriginalColumnWidth, sap.ui.table.TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
+	assert.strictEqual(iOriginalColumnWidth, TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
 });
 
 QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+Left & Ctrl+Right (Column Reordering)", {
@@ -3417,13 +3420,13 @@ QUnit.test("On SelectAll", function(assert) {
 	// Space
 	assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "All rows are selected");
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows are selected");
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 	assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
 
 	// Enter
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "All rows are selected");
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows are selected");
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 	assert.ok(oTable._oSelection.aSelectedIndices.length === 0, "No rows are selected");
 });
@@ -3572,21 +3575,21 @@ QUnit.test("(De)SelectAll possible", function(assert) {
 
 	var oElem = checkFocus(getSelectAll(true), assert);
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows selected");
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows selected");
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows deselected");
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows deselected");
 
 	oElem = checkFocus(getRowHeader(0, true), assert);
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows selected");
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows selected");
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows deselected");
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows deselected");
 
 	oElem = checkFocus(getCell(0, 0, true), assert);
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows selected");
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows selected");
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
-	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows deselected");
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows deselected");
 });
 
 QUnit.test("(De)SelectAll not possible", function(assert) {
@@ -3602,7 +3605,7 @@ QUnit.test("(De)SelectAll not possible", function(assert) {
 
 		var oElem = checkFocus(getColumnHeader(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		// Setting the selection mode to "Single" or "None" clears the selection.
@@ -3616,22 +3619,22 @@ QUnit.test("(De)SelectAll not possible", function(assert) {
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		oElem = checkFocus(getSelectAll(true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		oElem = checkFocus(getRowHeader(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		oElem = checkFocus(getCell(0, 0, true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		// Mass (De)Selection is not allowed in selection mode "None".
@@ -3639,12 +3642,12 @@ QUnit.test("(De)SelectAll not possible", function(assert) {
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 		oElem = checkFocus(getCell(0, 0, true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
-		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+		assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 	}
 
@@ -3777,20 +3780,20 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 
 		function addColumn(sTitle, sText, bFocusable, bTabbable) {
 			var oControlTemplate;
-			if (!bFocusable) {
-				oControlTemplate = new TestControl({
-					text: "{" + sText + "}",
-					index: iNumberOfCols,
-					visible: true,
-					tabbable: bTabbable
-				})
-			} else {
+			if (bFocusable) {
 				oControlTemplate = new TestInputControl({
 					text: "{" + sText + "}",
 					index: iNumberOfCols,
 					visible: true,
 					tabbable: bTabbable
-				})
+				});
+			} else {
+				oControlTemplate = new TestControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: bTabbable
+				});
 			}
 
 			oTable.addColumn(new sap.ui.table.Column({
@@ -3805,9 +3808,9 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 			}
 		}
 
-		addColumn("Not Focusable & Not Tabbable", "NoFocusNoTab", false, false);
-		addColumn("Focusable & Tabbable", "FocusTab", true, true);
-		addColumn("Focusable & Not Tabbable", "NoTab", true, false);
+		addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTab", false, false);
+		addColumn("Focusable & Tabbable", "Focus&Tab", true, true);
+		addColumn("Focusable & Not Tabbable", "Focus&NoTab", true, false);
 
 		sap.ui.getCore().applyChanges();
 	},
@@ -3821,9 +3824,9 @@ QUnit.test("Focus", function(assert) {
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 	// Enter Action Mode: Focus a tabbable text control inside a data cell.
-	var $Element = sap.ui.table.TableUtils.getInteractiveElements(getCell(0, 0))[0];
-	$Element.focus();
-	assert.strictEqual(document.activeElement, $Element, "Text element in the cell is focused");
+	var oElement = TableUtils.getInteractiveElements(getCell(0, 0))[0];
+	oElement.focus();
+	assert.strictEqual(document.activeElement, oElement, "Text element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 	// Enter Navigation Mode: Focus a data cell.
@@ -3831,80 +3834,135 @@ QUnit.test("Focus", function(assert) {
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 	// Enter Action Mode: Focus tabbable input control inside a data cell.
-	$Element = sap.ui.table.TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2))[0];
-	$Element.focus();
-	assert.strictEqual(document.activeElement, $Element, "Input element in the cell is focused");
+	oElement = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2))[0];
+	oElement.focus();
+	assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 	// Stay in Action Mode: Focus a non-tabbable input control inside a data cell.
-	$Element = getCell(0, iNumberOfCols - 1).find("input")[0];
-	$Element.focus();
-	assert.strictEqual(document.activeElement, $Element, "Non-Tabbable input element in the cell is focused");
+	oElement = getCell(0, iNumberOfCols - 1).find("input")[0];
+	oElement.focus();
+	assert.strictEqual(document.activeElement, oElement, "Non-Tabbable input element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+	// Stay in Action Mode: Focus a row selector cell.
+	checkFocus(getRowHeader(0, true), assert);
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Focus row selector cell: Table is in Action Mode");
+
+	// Stay in Action Mode: Focus a group header icon cell.
+	oTable.setEnableGrouping(true);
+	oTable.setGroupBy(oTable.getColumns()[0]);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 0);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 7);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 8);
+	sap.ui.getCore().applyChanges();
+
+	oElement = checkFocus(getRowHeader(0, true), assert)[0];
+	assert.ok(TableUtils.isInGroupingRow(oElement), "Cell to be tested is in a group header row");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Action Mode");
+
+	// Enter Navigation Mode: Focus the SelectAll cell.
+	getSelectAll(true);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus SelectAll cell: Table is in Navigation Mode");
+
+	// Remove row selectors.
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+	sap.ui.getCore().applyChanges();
+
+	// Enter Action Mode: Focus tabbable input control inside a data cell.
+	oElement = TableUtils.getInteractiveElements(getCell(2, iNumberOfCols - 2))[0];
+	oElement.focus();
+	assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+	// Enter Navigation Mode: Focus a row header cell which is no group header icon cell or row selector cell.
+	getRowHeader(2, true);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
+		"Focus row header cell which is no group header icon cell or row selector cell: Table is in Navigation Mode");
 });
 
-QUnit.test("F2 - On Column/Row/SelectAll Header Cells", function(assert) {
+QUnit.test("F2 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
 	// Column header cell
 	var oElem = checkFocus(getColumnHeader(0, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus column header cell: Table is in Navigation Mode");
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getColumnHeader(0), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
 
 	// Row header cell
 	oElem = checkFocus(getRowHeader(0, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row header cell: Table is in Navigation Mode");
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getRowHeader(0), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
+	oTable._getKeyboardExtension()._actionMode = true;
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table was programmatically set to Action Mode");
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
 
 	// SelectAll cell
 	oElem = checkFocus(getSelectAll(true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus SelectAll cell: Table is in Navigation Mode");
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getSelectAll(), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
+
+	// Group header icon cell
+	oTable.setEnableGrouping(true);
+	oTable.setGroupBy(oTable.getColumns()[0]);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 0);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 7);
+	TableUtils.Grouping.toggleGroupHeader(oTable, 8);
+	sap.ui.getCore().applyChanges();
+
+	oElem = checkFocus(getRowHeader(0, true), assert);
+	assert.ok(TableUtils.isInGroupingRow(oElem), "Cell to be tested is in a group header row");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Navigation Mode");
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+	checkFocus(getRowHeader(0), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
+	oTable._getKeyboardExtension()._actionMode = true;
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table was programmatically set to Action Mode");
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
 });
 
 QUnit.test("F2 - On a Data Cell", function(assert) {
-	/* Data cell with interactive controls */
-
 	// Focus cell with a focusable & tabbable element inside.
 	var oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
 
 	// Enter action mode.
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	var $Element = sap.ui.table.TableUtils.getInteractiveElements(oElem);
+	var $Element = TableUtils.getInteractiveElements(oElem);
 	oElem = $Element[0];
-	assert.strictEqual(oElem, document.activeElement, "First interactive element in the cell is focused");
-	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
-	// Focus cell with a focusable & non-tabbable element inside.
-	oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
-
-	// Enter action mode.
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	$Element = sap.ui.table.TableUtils.getInteractiveElements(oElem);
-	oElem = $Element[0];
-	assert.strictEqual(oElem, document.activeElement, "First interactive element in the cell is focused");
+	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 	// Leave action mode.
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(getCell(0, iNumberOfCols - 1), assert);
+	oElem = getCell(0, iNumberOfCols - 2);
+	assert.strictEqual(document.activeElement, oElem[0], "F2: Cell is focused");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-	/* Data cell without interactive controls */
+	// Focus cell with a focusable & non-tabbable element inside.
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and non-tabbable input element: Table is in Navigation Mode");
+
+	// Enter action mode.
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+	var $Element = TableUtils.getInteractiveElements(oElem);
+	oElem = $Element[0];
+	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the cell is focused");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 	// Focus cell with a non-focusable & non-tabbable element inside.
 	oElem = checkFocus(getCell(0, iNumberOfCols - 3, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a non-focusable and non-tabbable element: Table is in Navigation Mode");
 
 	// Stay in navigation mode.
 	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(oElem, assert);
+	assert.strictEqual(document.activeElement, oElem[0], "F2: Cell is focused");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 });
 
@@ -3926,7 +3984,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	/* Test on a data cell with an interactive control inside */
 
 	var oElem = checkFocus(getCell(0, 0, true), assert);
-	var $Element = sap.ui.table.TableUtils.getInteractiveElements(getCell(0, 0))[0];
+	var $Element = TableUtils.getInteractiveElements(getCell(0, 0))[0];
 
 	// Space
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
@@ -3935,6 +3993,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.strictEqual(document.activeElement, $Element, "First interactive element in the cell is focused");
+	oTable._getKeyboardExtension().setActionMode(false);
 
 	// Enter
 	oElem = checkFocus(getCell(0, 0, true), assert);
@@ -3943,6 +4002,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.strictEqual(document.activeElement, $Element, "First interactive element in the cell is focused");
+	oTable._getKeyboardExtension().setActionMode(false);
 
 	/* Test on a data cell without an interactive control inside */
 
@@ -3965,4 +4025,395 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	checkFocus(oElem, assert);
 
 	iNumberOfCols--;
+});
+
+QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
+	beforeEach: function() {
+		setupTest();
+
+		function addColumn(sTitle, sText, bFocusable, bTabbable) {
+			var oControlTemplate;
+			if (bFocusable) {
+				oControlTemplate = new TestInputControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: bTabbable
+				});
+			} else {
+				oControlTemplate = new TestControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: bTabbable
+				});
+			}
+
+			oTable.addColumn(new sap.ui.table.Column({
+				label: sTitle,
+				width: "100px",
+				template: oControlTemplate
+			}));
+			iNumberOfCols++;
+
+			for (var i = 0; i < iNumberOfRows; i++) {
+				oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+			}
+		}
+
+		addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTab", false, false);
+		addColumn("Focusable & Tabbable", "Focus&Tab", true, true);
+		addColumn("Focusable & Not Tabbable", "Focus&NoTab", true, false);
+
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: function() {
+		teardownTest();
+		iNumberOfCols -= 3;
+	},
+
+	setupGrouping: function() {
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		TableUtils.Grouping.toggleGroupHeader(oTable, 0);
+		TableUtils.Grouping.toggleGroupHeader(oTable, 7);
+		TableUtils.Grouping.toggleGroupHeader(oTable, 8);
+		sap.ui.getCore().applyChanges();
+	}
+});
+
+function _testActionModeTabNavigation(assert, bShowInfo) {
+	var done = assert.async();
+	var iVisibleRowCount = oTable.getVisibleRowCount();
+	var iFixedRowCount = oTable.getFixedRowCount();
+	var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
+	var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(oTable);
+	var bTableIsInGroupMode = TableUtils.Grouping.isGroupMode(oTable);
+	var bTableHasRowHeader = bTableHasRowSelectors || bTableIsInGroupMode;
+	var oKeyboardExtension = oTable._getKeyboardExtension();
+	var iRowCount = oTable._getRowCount();
+	var iDelayAfterInRowTabbing = 0;
+	var iDelayAfterScrollTabbing = 100;
+	var oElem, i, j;
+
+	if (bShowInfo == null) {
+		bShowInfo = false;
+	}
+
+	/* Table Grouping Setup:
+	 *
+	 * [G] = Group header row
+	 * [ ] = Normal row
+	 *
+	 * Row  1: [G]
+	 * Row  2: [G]
+	 * Row  3: [ ]
+	 * Row  4: [G]
+	 * Row  5: [ ]
+	 * Row  6: [G]
+	 * Row  7: [ ]
+	 * Row  8: [G]
+	 * Row  9: [G]
+	 * Row 10: [G]
+	 * Row 11: [ ]
+	 * Row 12: [G]
+	 * Row 13: [ ]
+	 */
+
+	if (bTableHasRowHeader) {
+		// Focus the first row header cell and enter the action mode programmatically.
+		checkFocus(getRowHeader(0, true), assert);
+		oKeyboardExtension._actionMode = true;
+		assert.ok(oKeyboardExtension.isInActionMode(), "Action mode entered programmatically: Table is in Action Mode");
+	} else {
+		checkFocus(getCell(0, 0, true), assert);
+		oKeyboardExtension.setActionMode(true);
+	}
+
+	// Tab to the last interactive control of the table. Then tab again to leave the action mode.
+	var sequence = Promise.resolve();
+	for (i = 0; i < iRowCount; i++) {
+		for (j = -1; j < iNumberOfCols; j++) {
+			(function() {
+				var iAbsoluteRowIndex = i;
+				var iColumnIndex = j;
+				var iRowIndex = i;
+
+				if (iRowIndex >= iVisibleRowCount - iFixedBottomRowCount && iRowIndex < iRowCount - iFixedBottomRowCount) {
+					iRowIndex = iVisibleRowCount - iFixedBottomRowCount - 1;
+				} else if (iRowIndex >= iRowCount - iFixedBottomRowCount) {
+					iRowIndex = iRowIndex - (iRowCount - iVisibleRowCount);
+				}
+
+				sequence = sequence.then(function() {
+					return new Promise(function(resolve) {
+						if (iColumnIndex === -1) { // Row Header
+							if (bTableHasRowHeader) {
+								oElem = getRowHeader(iRowIndex);
+
+								if (TableUtils.isInGroupingRow(oElem)) {
+									assert.strictEqual(document.activeElement, oElem[0],
+										"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Group Header Icon focused");
+									resolve();
+									return; // The TAB event will be simulated after the last cell in this row has been reached.
+
+								} else if (bTableHasRowSelectors) {
+									assert.strictEqual(document.activeElement, oElem[0],
+										"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Row Selector focused");
+
+								} else {
+									if (bShowInfo) {
+										assert.ok(true,
+											"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Skipped, is an empty row header (Grouping without Row Selectors)");
+									}
+									resolve();
+									return;
+								}
+							} else {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Skipped, table has no row header");
+								}
+								resolve();
+								return;
+							}
+
+						} else {
+							var $Cell = getCell(iRowIndex, iColumnIndex);
+							var $InteractiveElement = TableUtils.getInteractiveElements($Cell);
+
+							if ($InteractiveElement === null) {
+								var bIsLastCellInGroupHeaderRow = iColumnIndex === iNumberOfCols - 1 && TableUtils.isInGroupingRow(oElem);
+
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Skipped, no interactive elements");
+								}
+
+								if (!bIsLastCellInGroupHeaderRow) {
+									resolve();
+									return;
+								}
+
+							} else {
+								oElem = $InteractiveElement[0];
+								assert.strictEqual(document.activeElement, oElem,
+									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+							}
+						}
+
+						if (bShowInfo) {
+							assert.ok(true, "[INFO] Simulating TAB event on: " + document.activeElement.id);
+						}
+
+						simulateTabEvent(document.activeElement);
+
+						var bScrolled = iColumnIndex === iNumberOfCols - 1 && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
+
+						if (bShowInfo) {
+							assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
+						}
+
+						setTimeout(function() {
+							if (iAbsoluteRowIndex === iRowCount - 1 && iColumnIndex === iNumberOfCols - 1) {
+								checkFocus(getCell(iVisibleRowCount - 1, iNumberOfCols - 1), assert);
+								assert.ok(!oKeyboardExtension.isInActionMode(), "Table is in Navigation Mode");
+							} else {
+								assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
+							}
+							resolve();
+						}, bScrolled ? iDelayAfterScrollTabbing : iDelayAfterInRowTabbing);
+					});
+				});
+			}())
+		}
+	}
+
+	sequence = sequence.then(function() {
+		return new Promise(function(resolve) {
+			// Focus the interactive element in the last cell in the last row.
+			oElem = TableUtils.getInteractiveElements(document.activeElement)[0];
+			oKeyboardExtension.setActionMode(true);
+			assert.strictEqual(document.activeElement, oElem, "Last interactive element in the table focused");
+			assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
+			resolve();
+		});
+	});
+
+	// Tab back to the first interactive control of the table. Then tab back again to leave the action mode.
+	for (i = iRowCount - 1; i >= 0; i--) {
+		for (j = iNumberOfCols - 1; j >= -1; j--) {
+			(function() {
+				var iAbsoluteRowIndex = i;
+				var iColumnIndex = j;
+				var iRowIndex = i;
+
+				if (iRowIndex >= iFixedRowCount && iRowIndex < iRowCount - iVisibleRowCount + iFixedRowCount + 1) {
+					iRowIndex = iFixedRowCount;
+				} else if (iRowIndex >= iRowCount - iVisibleRowCount + iFixedRowCount + 1) {
+					iRowIndex = iRowIndex - (iRowCount - iVisibleRowCount);
+				}
+
+				sequence = sequence.then(function() {
+					return new Promise(function(resolve) {
+						if (iColumnIndex === -1) { // Row Header
+							if (bTableHasRowHeader) {
+								oElem = getRowHeader(iRowIndex);
+
+								if (TableUtils.isInGroupingRow(oElem)) {
+									assert.strictEqual(document.activeElement, oElem[0],
+										"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Group Header Icon focused");
+
+								} else if (bTableHasRowSelectors) {
+									assert.strictEqual(document.activeElement, oElem[0],
+										"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Row Selector focused");
+
+								} else {
+									if (bShowInfo) {
+										assert.ok(true,
+											"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Skipped, is an empty row header (Grouping without Row Selectors)");
+									}
+								}
+							} else {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Skipped, table has no row header");
+								}
+								resolve();
+								return;
+							}
+
+						} else {
+							var $Cell = getCell(iRowIndex, iColumnIndex);
+							var $InteractiveElement = TableUtils.getInteractiveElements($Cell);
+
+							if ($InteractiveElement === null) {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Skipped, no interactive elements");
+								}
+								resolve();
+								return;
+							}
+
+							oElem = $InteractiveElement[0];
+							assert.strictEqual(document.activeElement, oElem,
+								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+
+							var bIsFirstInteractiveElementInRow = TableUtils.getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
+							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.isInGroupingRow(TableUtils.getCell(oTable, oElem));
+
+							if (bIsFirstInteractiveElementInRow && iColumnIndex > 0 && !bRowHasInteractiveRowHeader) {
+								resolve();
+								return;
+							}
+						}
+
+						if (bShowInfo) {
+							assert.ok(true, "[INFO] Simulating Shift+TAB event on: " + document.activeElement.id);
+						}
+
+						simulateTabEvent(document.activeElement, true);
+
+						var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
+						var bScrolled = iColumnIndex === (bTableHasRowHeader ? -1 : 0) && bIsFirstScrollableRow;
+
+						if (bShowInfo) {
+							assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
+						}
+
+						setTimeout(function() {
+							if (iAbsoluteRowIndex === 0 && iColumnIndex === (bTableHasRowHeader ? -1 : 0)) {
+								if (bTableHasRowHeader) {
+									checkFocus(getRowHeader(0), assert);
+								} else {
+									checkFocus(getCell(0, 0), assert);
+								}
+								assert.ok(!oKeyboardExtension.isInActionMode(), "Table is in Navigation Mode");
+							} else {
+								assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
+							}
+							resolve();
+						}, bScrolled ? iDelayAfterScrollTabbing : iDelayAfterInRowTabbing);
+					});
+				});
+			}())
+		}
+	}
+
+	sequence.then(function() {
+		done();
+	});
+}
+
+QUnit.test("TAB & Shift+TAB - Default Test Table", function(assert) {
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows", function(assert) {
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows, Fixed Columns", function(assert) {
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows, Fixed Columns, No Row Headers", function(assert) {
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	oTable.setFixedColumnCount(2);
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Grouping", function(assert) {
+	this.setupGrouping();
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows", function(assert) {
+	this.setupGrouping();
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows, Fixed Columns", function(assert) {
+	this.setupGrouping();
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows, Fixed Columns, No Row Headers", function(assert) {
+	this.setupGrouping();
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	oTable.setFixedColumnCount(2);
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
 });

@@ -452,3 +452,137 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 		QUnit.start();
 	});
 });
+
+QUnit.test("scroll", function(assert) {
+	var oScrollExtension = oTable._getScrollExtension();
+	var iVisibleRowCount = 5;
+	var iFixedTop = 2;
+	var iFixedBottom = 1;
+	var iNotVisibleRows = iNumberOfRows - iVisibleRowCount;
+	var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
+	var iPages = Math.ceil((iNumberOfRows - iFixedTop - iFixedBottom) / iPageSize);
+
+	oTable.setVisibleRowCount(iVisibleRowCount);
+	oTable.setFixedRowCount(iFixedTop);
+	oTable.setFixedBottomRowCount(iFixedBottom);
+	sap.ui.getCore().applyChanges();
+
+	var bScrolled = false;
+
+	for (var i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(true, false);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(true, false);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	for (var i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(false, false);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(false, false);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+
+	var iPos = 0;
+	for (var i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(true, true);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos + iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.min(iPos, iNotVisibleRows), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(true, true);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	iPos = iNotVisibleRows;
+	for (var i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(false, true);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos - iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.max(iPos, 0), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = oScrollExtension.scroll(false, true);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+});
+
+QUnit.test("scrollMax", function(assert) {
+	var oScrollExtension = oTable._getScrollExtension();
+	var bScrolled = false;
+
+	/* More data rows than visible rows */
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = oScrollExtension.scrollMax(true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = oScrollExtension.scrollMax(false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = oScrollExtension.scrollMax(true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = oScrollExtension.scrollMax(false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* More data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = oScrollExtension.scrollMax(true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = oScrollExtension.scrollMax(false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = oScrollExtension.scrollMax(true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = oScrollExtension.scrollMax(false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+});
