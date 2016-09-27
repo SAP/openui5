@@ -3484,6 +3484,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				} else {
 					iTotalPercentage += iNewWidth;
 				}
+				// foolproof the above calculation logic
+				if (!isFinite(iNewWidth) || iNewWidth <= 0) {
+					iNewWidth = 1;
+				}
 				that._updateColumnWidth(oCurrentColumn, iNewWidth + "%");
 			});
 		} else if (!this._hasOnlyFixColumnWidths()) {
