@@ -116,4 +116,44 @@ describe("sap.m.IconTabBar", function() {
 		element(by.id("overFlowTab--header-overflow")).click();
 		expect(takeScreenshot()).toLookAs("13_opened_overflow_tab");
 	});
+
+	// backgroundDesign property tests
+	var itbBackgroundDesign = element(by.id("backgroundDesignIconTabBar"));
+
+	it("should change IconTabBar container background design to Transparent", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB1-Transparent")).click();
+		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Transparent");
+	});
+
+	it("should change IconTabBar container background design to Translucent", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB1-Translucent")).click();
+		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Translucent");
+	});
+
+	it("should change IconTabBar container background design to Solid", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB1-Solid")).click();
+		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Solid");
+	});
+
+	// headerBackgroundDesign property tests
+	it("should change IconTabBar header background design to Transparent", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB2-Transparent")).click();
+		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Transparent");
+	});
+
+	it("should change IconTabBar header background design to Translucent", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB2-Translucent")).click();
+		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Translucent");
+	});
+
+	it("should change IconTabBar header background design to Solid", function () {
+		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
+		element(by.id("RB2-Solid")).click();
+		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Solid");
+	});
 });
