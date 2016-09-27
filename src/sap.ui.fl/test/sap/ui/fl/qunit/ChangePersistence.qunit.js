@@ -34,7 +34,7 @@ jQuery.sap.require("sap.m.Button");
 		assert.ok(this.oChangePersistence, "Shall create a new instance");
 	});
 
-	QUnit.test("the cacke key is returned asynchronous", function (assert) {
+	QUnit.test("the cache key is returned asynchronous", function (assert) {
 		var sChacheKey = "abc123";
 
 		var oMockedWrappedContent = {
@@ -133,6 +133,41 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
+	QUnit.test("getChangesMapForComponent shall return the a map of changes for the component", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		    {
+		    	fileName:"change1",
+		    	fileType: "change",
+		    	selector: { id: "controlId" }
+			},
+			{
+				fileName:"change2",
+				fileType: "change",
+				selector: { id: "controlId" }
+			},
+			{
+				fileName:"change3",
+				fileType: "change",
+				selector: { id: "anotherControlId" }
+			}
+			]}}));
+
+		return this.oChangePersistence.getChangesMapForComponent().then(function(mChanges) {
+			assert.ok(mChanges);
+			assert.ok(mChanges["controlId"]);
+			assert.ok(mChanges["anotherControlId"]);
+			assert.strictEqual(mChanges["controlId"].length, 2);
+			assert.strictEqual(mChanges["anotherControlId"].length, 1);
+			assert.ok(mChanges["controlId"][0] instanceof Change, "Change is instanceof Change" );
+			assert.ok(mChanges["controlId"][1] instanceof Change, "Change is instanceof Change" );
+			assert.ok(mChanges["anotherControlId"][0] instanceof Change, "Change is instanceof Change" );
+			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change1";}));
+			assert.ok(mChanges["controlId"].some(function(oChange){return oChange.getId() === "change2";}));
+			assert.ok(mChanges["anotherControlId"].some(function(oChange){return oChange.getId() === "change3";}));
+		});
+	});
+
 	QUnit.test("getChangesForView shall return the changes that are prefixed with the same view", function(assert) {
 
 		var change1Button1 = {
@@ -165,7 +200,9 @@ jQuery.sap.require("sap.m.Button");
 			}
 		}));
 
-		return this.oChangePersistence.getChangesForView("view1--view2").then(function(changes) {
+		var mPropertyBag = {viewId: "view1--view2"};
+
+		return this.oChangePersistence.getChangesForView("view1--view2", mPropertyBag).then(function(changes) {
 			assert.strictEqual(changes.length, 1);
 			assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
 			assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button2";}), false);
@@ -173,7 +210,7 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
-	QUnit.test("getUnmergedChangesForView shall return the changes that are prefixed with the same view but not already mereged", function(assert) {
+	QUnit.test("getUnmergedChangesForView shall return the changes that are prefixed with the same view but not already merged", function(assert) {
 		var change1Button1 = new Change({
 			fileName:"change1Button1",
 			fileType: "change",
@@ -210,7 +247,9 @@ jQuery.sap.require("sap.m.Button");
 
 		this.oChangePersistence.setMergedChanges(["VENDOR/bNamespace/change2Button1.change"]);
 
-		return this.oChangePersistence.getUnmergedChangesForView("view1--view2").then(function(changes) {
+		var mPropertyBag = {viewId: "view1--view2"};
+
+		return this.oChangePersistence.getUnmergedChangesForView("view1--view2", mPropertyBag).then(function(changes) {
 			assert.equal(changes.length, 1);
 			assert.equal(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
 		});
