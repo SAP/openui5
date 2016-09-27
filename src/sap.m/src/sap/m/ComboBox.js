@@ -543,6 +543,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
+
+			if (this.getPickerType() === "Dialog") {
+				this.onChange();
+			}
 		};
 
 		/**
@@ -560,10 +564,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			// deselect the text and move the text cursor at the endmost position
 			setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
-
-			if (this.getPickerType() === "Dialog") {
-				this.onChange();
-			}
 		};
 
 		/* ----------------------------------------------------------- */
