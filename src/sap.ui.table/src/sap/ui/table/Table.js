@@ -762,6 +762,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
+
+		// selection model
+		if (this._oSelection) {
+			this._oSelection.destroy(); // deregisters all the handler(s)
+			//Note: _oSelection is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
+		}
 	};
 
 
