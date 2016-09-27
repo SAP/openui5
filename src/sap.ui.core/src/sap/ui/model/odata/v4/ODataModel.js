@@ -540,7 +540,9 @@ sap.ui.define([
 		return this.aAllBindings.filter(function (oBinding) {
 			return oBinding.isRelative()
 				&& (oBinding.getContext() === oParent
-				|| oBinding.getContext() && oBinding.getContext().getBinding() === oParent);
+						|| oBinding.getContext() && oBinding.getContext().fetchValue
+							&& oBinding.getContext().getBinding() === oParent
+					);
 		});
 	};
 

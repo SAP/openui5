@@ -70,25 +70,18 @@ sap.ui.define([
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				var oBindingParameters;
 
-				PropertyBinding.call(this, oModel, sPath, oContext);
+				PropertyBinding.call(this, oModel, sPath);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				this.oCache = undefined;
-				this.sGroupId = undefined;
-				this.sUpdateGroupId = undefined;
-				if (!this.bRelative) {
-					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
-						["$$groupId", "$$updateGroupId"]);
-					this.sGroupId = oBindingParameters.$$groupId;
-					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-				} else if (mParameters) {
-					throw new Error("Bindings with a relative path do not support parameters");
-				}
-
+				oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+					["$$groupId", "$$updateGroupId"]);
+				this.sGroupId = oBindingParameters.$$groupId;
+				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+				this.mQueryOptions = _ODataHelper.buildQueryOptions(this.oModel.mUriParameters,
+					mParameters);
+				this.setContextOnConstruction(oContext);
 				this.bInitial = true;
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
@@ -232,14 +225,14 @@ sap.ui.define([
 				})
 			);
 		}
-		if (this.isRelative()) {
-			oReadPromise = this.oContext.fetchValue(this.sPath, this);
-		} else {
+		if (this.oCache) {
 			sGroupId = sGroupId || this.getGroupId();
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 			}, this);
+		} else {
+			oReadPromise = this.oContext.fetchValue(this.sPath, this);
 		}
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
@@ -287,6 +280,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.destroy = function() {
 		if (this.oCache) {
 			this.oCache.deregisterChange(undefined, this);
+			this.oCache = null;
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(this.sPath, this);
 		}
@@ -303,7 +297,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.getGroupId = function() {
-		return this.sGroupId || (this.bRelative && this.oContext && this.oContext.getGroupId())
+		return this.sGroupId
+			|| (this.bRelative && this.oContext && this.oContext.getGroupId
+					&& this.oContext.getGroupId())
 			|| this.oModel.getGroupId();
 	};
 
@@ -317,7 +313,8 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.getUpdateGroupId = function() {
 		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId())
+			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
+					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
 	};
 
@@ -367,6 +364,26 @@ sap.ui.define([
 	// @override
 	ODataPropertyBinding.prototype.isInitial = function () {
 		throw new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial");
+	};
+
+	/**
+	 * Creates the cache for absolute binding and bindings with a base context.
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.makeCache = function () {
+		var sResolvedPath = this.sPath,
+			oContext = this.oContext;
+
+		if (oContext && !(oContext.fetchValue)) {
+			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
+		}
+		if (sResolvedPath[0] === "/") {
+			this.oCache = _Cache.createSingle(this.oModel.oRequestor, sResolvedPath.slice(1),
+				this.mQueryOptions, true);
+		} else {
+			this.oCache = undefined;
+		}
 	};
 
 	/**
@@ -445,11 +462,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context if the binding path is relative and triggers a
-	 * {@link #checkUpdate} to check for the current value if the context has changed.
-	 * In case of absolute bindings nothing is done.
+	 * Sets the (base) context if the binding path is relative. Triggers (@link #makeCache) to check
+	 * if a cache needs to be created and {@link #checkUpdate} to check for the current value if the
+	 * context has changed. In case of absolute bindings nothing is done.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -458,15 +475,32 @@ sap.ui.define([
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			if (this.oContext && this.bRelative) {
+			if (!this.oCache && this.oContext) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 			this.oContext = oContext;
 			if (this.bRelative) {
+				this.makeCache();
 				this.checkUpdate(false, ChangeReason.Context);
 			}
 		}
 	};
+
+
+	/**
+	 * Sets the context for the binding instance. Triggers (@link #makeCache) to check if a cache
+	 * needs to be created.
+	 *
+	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} oContext
+	 *   The context which is required as base for a relative path
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.setContextOnConstruction = function (oContext) {
+		this.oContext = oContext;
+		this.makeCache();
+	};
+
 
 	/**
 	 * Sets the optional type and internal type for this binding; used for formatting and parsing.
@@ -522,23 +556,23 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
-			if (this.bRelative) {
-				if (this.oContext) {
-					this.oContext.updateValue(sGroupId, this.sPath, vValue)
-						["catch"](function (oError) {
+			if (this.oCache) {
+				jQuery.sap.log.error("Cannot set value on this binding",
+					this.oModel.resolve(this.sPath, this.oContext), sClassName);
+				// do not update this.vValue!
+			} else if (this.oContext) {
+				this.oContext.updateValue(sGroupId, this.sPath, vValue)
+					["catch"](function (oError) {
+						if (!oError.canceled) {
 							that.oModel.reportError("Failed to update path "
-									+ that.oModel.resolve(that.sPath, that.oContext),
+								+ that.oModel.resolve(that.sPath, that.oContext),
 								sClassName, oError);
-						});
-				} else {
-					jQuery.sap.log.warning("Cannot set value on relative binding without context",
-						this.sPath, sClassName);
-					return; // do not update this.vValue!
-				}
+						}
+					});
 			} else {
-				jQuery.sap.log.error("Cannot set value on absolute binding", this.sPath,
-					sClassName);
-				return; // do not update this.vValue!
+				jQuery.sap.log.warning("Cannot set value on relative binding without context",
+					this.sPath, sClassName);
+				// do not update this.vValue!
 			}
 		}
 	};
@@ -566,7 +600,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.toString = function () {
-		return sClassName + ": " + (this.bRelative  ? this.oContext + "|" : "") + this.sPath;
+		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
 	};
 
 	return ODataPropertyBinding;

@@ -246,6 +246,14 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				pressSetBindingContextButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "setBindingContext",
+						viewName : sViewName
+					});
+				},
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -310,6 +318,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 							Opa5.assert.notStrictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
 								sExpectedID,
 								"ID of row " + iRow + " is not \"" + sExpectedID + "\"");
+						},
+						viewName : sViewName
+					});
+				},
+				checkFavoriteProductID : function () {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : "FavoriteProductID",
+						matchers : new Properties({text : "HT-1000"}),
+						success : function (oText) {
+							Opa5.assert.ok(true, "Product ID 'HT-1000' found");
 						},
 						viewName : sViewName
 					});

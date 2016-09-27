@@ -374,6 +374,14 @@ sap.ui.define([
 			this.getView().getModel().submitBatch("SalesOrderListUpdateGroup");
 		},
 
+		onSetBindingContext : function () {
+			var oText = this.getView().byId("FavoriteProductID"),
+				oBindingContext = oText.getModel().createBindingContext("/ProductList('HT-1000')");
+
+			oText.setBindingContext(oBindingContext);
+			oText.bindProperty("text", "ProductID");
+		},
+
 		/**
 		 * Update the favorite product's name by replacing it with the current time (hour/minute).
 		 * This shows a somehow useful update, you should be able to see changes on the UI quite

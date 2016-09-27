@@ -66,6 +66,9 @@ sap.ui.define([
 					"ProductList('HT-1000')/Name?custom-option=value" : {
 						source : "ProductList.json"
 					},
+					"ProductList('HT-1000')/ProductID?custom-option=value" : {
+						source : "ProductListId.json"
+					},
 					"SalesOrderList?custom-option=value&$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$skip=0&$top=5" : {
 						source : "SalesOrderList_skip0.json"
 					},
