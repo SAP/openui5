@@ -98,7 +98,10 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 */
 	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata  = function(sAggregationName) {
 		var oData =  this.getAggregation(sAggregationName);
-		return new AggregationDesignTimeMetadata({data : oData});
+		return new AggregationDesignTimeMetadata({
+			libraryName : this.getLibraryName(),
+			data : oData
+		});
 	};
 
 	/**
