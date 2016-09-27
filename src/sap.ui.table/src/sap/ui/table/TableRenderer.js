@@ -789,6 +789,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 		if (TableUtils.Grouping.isGroupMode(oTable)) {
 			rm.write("<div");
+			rm.writeAttribute("class", "sapUiTableGroupShield");
+			rm.write("></div>");
+			rm.write("<div");
 			rm.writeAttribute("id", oRow.getId() + "-groupHeader");
 			rm.writeAttribute("class", "sapUiTableGroupIcon");
 			rm.write("></div>");
