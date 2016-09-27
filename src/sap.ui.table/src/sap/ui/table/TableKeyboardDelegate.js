@@ -121,6 +121,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		}
 	};
 
+	/*
+	 * Moves the given column to the next or previous position (based on the visible columns).
+	 */
+	TableKeyboardDelegate._moveColumn = function(oColumn, bNext) {
+		var oTable = oColumn.getParent(),
+			aVisibleColumns = oTable._getVisibleColumns(),
+			iIndexInVisibleColumns = aVisibleColumns.indexOf(oColumn),
+			iTargetIndex;
+
+		if (bNext && iIndexInVisibleColumns < aVisibleColumns.length - 1) {
+			iTargetIndex = oTable.indexOfColumn(aVisibleColumns[iIndexInVisibleColumns + 1]);
+		} else if (!bNext && iIndexInVisibleColumns > 0) {
+			iTargetIndex = oTable.indexOfColumn(aVisibleColumns[iIndexInVisibleColumns - 1]);
+		}
+
+		if (iTargetIndex != undefined) {
+			oTable.removeColumn(oColumn);
+			oTable.insertColumn(oColumn, iTargetIndex);
+		}
+	};
+
 
 	/*
 	 * NOTE: "this" in the function context is the table instance
@@ -621,16 +642,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			if (iCol == 0 && bRowHeader) {
 				iNewCol = 1;
 			} else {
-				var iVisibleColumns = this._aVisibleColumns.length;
 				var iMaxIndex = this._getVisibleColumns().length;
 				if (!bRowHeader) {
 					iMaxIndex--;
 				}
-				if (iVisibleColumns === 0) {
-					iNewCol = iMaxIndex;
-				} else {
-					iNewCol = Math.min(iMaxIndex, iCol + iVisibleColumns);
-				}
+				iNewCol = iMaxIndex;
 			}
 			TableUtils.focusItem(this, oInfo.cell - (iCol - iNewCol), oEvent);
 			oEvent.stopImmediatePropagation(true);
@@ -696,19 +712,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 				if (iCol == 1 && bRowHeader) {
 					iNewCol = 0;
 				} else {
-					var iVisibleColumns = this._aVisibleColumns.length;
-					if (iVisibleColumns === 0) {
-						if (bRowHeader) {
-							iNewCol = 1;
-						} else {
-							iNewCol = 0;
-						}
+					if (bRowHeader) {
+						iNewCol = 1;
 					} else {
-						var iMin = 1;
-						if (!bRowHeader) {
-							iMin = 0;
-						}
-						iNewCol = Math.max(iMin, iCol - iVisibleColumns);
+						iNewCol = 0;
 					}
 				}
 				TableUtils.focusItem(this, oInfo.cell - (iCol - iNewCol), oEvent);
@@ -879,38 +886,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		var $Target = jQuery(oEvent.target);
 		if ($Target.hasClass('sapUiTableCol')) {
 			var iColIndex = parseInt($Target.attr('data-sap-ui-colindex'), 10),
-				aVisibleColumns = this._getVisibleColumns(),
-				oColumn = aVisibleColumns[this._aVisibleColumns.indexOf(iColIndex)];
+				oColumn = this.getColumns()[iColIndex];
 
 			 if (oEvent.shiftKey) {
-				 var iNewWidth = parseInt(oColumn.getWidth(), 10) - 16;
+				var iNewWidth = parseInt(oColumn.getWidth(), 10) - 16;
 				oColumn.setWidth((iNewWidth > 20 ? iNewWidth : 20) + "px");
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			} else if (oEvent.ctrlKey || oEvent.metaKey) {
-				if (iColIndex - 1 >= 0) {
-					// check whether preceding column is part of column span
-					var iNewIndex = 0;
-
-					for (var iPointer = this._aVisibleColumns.indexOf(iColIndex) - 1; iPointer >= 0; iPointer--) {
-						iNewIndex = this._aVisibleColumns[iPointer];
-						if (aVisibleColumns[iPointer].$().css("display") !== "none") {
-							break;
-						}
-					}
-					this.removeColumn(oColumn);
-					this.insertColumn(oColumn, iNewIndex);
-
-					// also move spanned columns
-					var iHeaderSpan = oColumn.getHeaderSpan();
-					if (iHeaderSpan > 1) {
-						for (var i = 1; i < iHeaderSpan; i++) {
-							oColumn = aVisibleColumns[iColIndex + i];
-							this.removeColumn(oColumn);
-							this.insertColumn(oColumn, iNewIndex + i);
-						}
-					}
-				}
+				TableKeyboardDelegate._moveColumn(oColumn, this._bRtlMode);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			}
@@ -923,28 +907,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	TableKeyboardDelegate.prototype.onsaprightmodifiers = function(oEvent) {
 		var $Target = jQuery(oEvent.target);
 		if ($Target.hasClass('sapUiTableCol')) {
-			var iColIndex = parseInt($Target.attr('data-sap-ui-colindex'), 10);
-			var aVisibleColumns = this._getVisibleColumns();
-			var iPointer = this._aVisibleColumns.indexOf(iColIndex);
-			var oColumn = aVisibleColumns[iPointer];
+			var iColIndex = parseInt($Target.attr('data-sap-ui-colindex'), 10),
+				oColumn = this.getColumns()[iColIndex];
 			 if (oEvent.shiftKey) {
 				oColumn.setWidth(parseInt(oColumn.getWidth(), 10) + 16 + "px");
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			} else if (oEvent.ctrlKey || oEvent.metaKey) {
-				var iHeaderSpan = oColumn.getHeaderSpan();
-				if (iPointer < aVisibleColumns.length - iHeaderSpan) {
-					// Depending on the header span of the column to be moved, several
-					// columns might need to be moved to the right
-					var iNextHeaderSpan = aVisibleColumns[iPointer + 1].getHeaderSpan(),
-						iNewIndex = this._aVisibleColumns[iPointer + iNextHeaderSpan];
-					//iPointer = this._aVisibleColumns[iPointer];
-					for (var i = iHeaderSpan - 1; i >= 0; i--) {
-						oColumn = aVisibleColumns[iPointer + i];
-						this.removeColumn(oColumn);
-						this.insertColumn(oColumn, iNewIndex + i);
-					}
-				}
+				TableKeyboardDelegate._moveColumn(oColumn, !this._bRtlMode);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			}
