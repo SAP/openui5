@@ -59,11 +59,6 @@ sap.ui.define([],
 				rm.addClass("sapMRbG1Row");
 			} else {
 				rm.addClass("sapMRbGTab");
-				if (oRBGroup.getWidth() && oRBGroup.getWidth() != "") {
-					rm.addClass("sapMRbGTabFlex");
-					// as in Firefox -moz-box-flex > 0 brings ellipsis even if no width is given
-					// therefore flexible columns should be only used if a width is given.
-				}
 			}
 		}
 
