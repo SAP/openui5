@@ -88,13 +88,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * Sets the minutes slider step.
 					 * The minutes slider is populated only by multiples of the step.
 					 */
-					minutesStep: {type: "integer", group: "Misc", defaultValue: 1},
+					minutesStep: {type: "int", group: "Misc", defaultValue: 1},
 
 					/**
 					 * Sets the seconds slider step.
 					 * The seconds slider is populated only by multiples of the step.
 					 */
-					secondsStep: {type: "integer", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
 				},
 				aggregations: {
 					/**
