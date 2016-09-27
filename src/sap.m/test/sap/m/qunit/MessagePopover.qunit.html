@@ -549,6 +549,22 @@
 			assert.strictEqual($Content.height(), 440, "height should be 440px");
 		});
 
+		QUnit.test("The items in the list should have info state set according to the message type", function(assert) {
+			var ValueState = sap.ui.core.ValueState,
+				aItems;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			aItems = this.oMessagePopover._oLists.all.getItems();
+
+			assert.strictEqual(aItems[0].getInfoState(), ValueState.Error, "The value state should be Error in case of error message.");
+			assert.strictEqual(aItems[1].getInfoState(), ValueState.Warning, "The value state should be Warning in case of warning message.");
+			assert.strictEqual(aItems[2].getInfoState(), ValueState.Success, "The value state should be Success in case of success message.");
+			assert.strictEqual(aItems[4].getInfoState(), ValueState.None, "The value state should be None in case of information message.");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
