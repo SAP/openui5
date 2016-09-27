@@ -153,17 +153,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		rm.write("</li>");
 	};
 
-	/**
-	 * Determines whether flex box wrapper is necessary or not.
-	 *
-	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
-	 * @protected
-	 */
-	ListItemBaseRenderer.handleNoFlex = function(rm, oLI) {
-		return !jQuery.support.hasFlexBoxSupport;
-	};
-
 	ListItemBaseRenderer.renderTabIndex = function(rm, oLI) {
 		rm.writeAttribute("tabindex", "-1");
 	};
@@ -367,18 +356,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		rm.write('<div class="sapMLIBContent"');
 		rm.writeAttribute("id", oLI.getId() + "-content");
 		rm.write(">");
-
-		// additional content with class for no-flex case
-		if (this.handleNoFlex()) {
-			rm.write('<div class="sapMLIBContentNF">');
-		}
-
 		this.renderLIContent(rm, oLI);
-
-		if (this.handleNoFlex()) {
-			rm.write('</div>');
-		}
-
 		rm.write('</div>');
 	};
 
@@ -417,10 +395,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 
 		if (oLI.getSelected()) {
 			rm.addClass("sapMLIBSelected");
-		}
-
-		if (this.handleNoFlex()) {
-			rm.addClass("sapMLIBNoFlex");
 		}
 
 		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
