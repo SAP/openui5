@@ -7,7 +7,6 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-
 			<List class="sapContrast sapContrastPlus">
 				<NotificationListGroup
 						title="Orders"
@@ -15,8 +14,7 @@
 						showCloseButton="true"
 						authorName="Michael Muller"
 						authorPicture="sap-icon://person-placeholder"
-						close="onItemClose"
-						>
+						close="onItemClose">
 					<items>
 						<NotificationListItem
 								title="New order (#2525)"
@@ -27,9 +25,7 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
-								authorPicture="sap-icon://car-rental"
-								/>
-
+								authorPicture="sap-icon://car-rental"/>
 						<NotificationListItem
 								title="New order (#2524)"
 								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
@@ -38,14 +34,12 @@
 								unread="true"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress"
-								>
+								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-								<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+								<Button text="Accept" type="Accept" press="onAcceptPress"/>
+								<Button text="Reject" type="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
-
 						<NotificationListItem
 								title="New order (#2523)"
 								description="Aliquam quis varius ligula.."
@@ -54,17 +48,16 @@
 								datetime="3 days"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress"
-								>
+								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-								<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+								<Button text="Accept" type="Accept" press="onAcceptPress"/>
+								<Button text="Reject" type="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"></Button>
-						<Button text="Reject All" type="Reject" press="onRejectPress"></Button>
+						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
+						<Button text="Reject All" type="Reject" press="onRejectPress"/>
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
@@ -72,8 +65,7 @@
 						datetime="1 hour"
 						showCloseButton="true"
 						collapsed="true"
-						close="onItemClose"
-						>
+						close="onItemClose">
 					<items>
 						<NotificationListItem
 								title="New order (#2525)"
@@ -83,9 +75,7 @@
 								unread="true"
 								priority="None"
 								close="onItemClose"
-								press="onListItemPress"
-								/>
-
+								press="onListItemPress"/>
 						<NotificationListItem
 								title="New order (#2524)"
 								description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
@@ -94,14 +84,12 @@
 								unread="true"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress"
-								>
+								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-								<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+								<Button text="Accept" type="Accept" press="onAcceptPress"/>
+								<Button text="Reject" type="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
-
 						<NotificationListItem
 								title="New order (#2523)"
 								description="Aliquam quis varius ligula.."
@@ -110,19 +98,70 @@
 								datetime="3 days"
 								priority="High"
 								close="onItemClose"
-								press="onListItemPress"
-								>
+								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-								<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+								<Button text="Accept" type="Accept" press="onAcceptPress"/>
+								<Button text="Reject" type="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"></Button>
-						<Button text="Reject All" type="Reject" press="onRejectPress"></Button>
+						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
+						<Button text="Reject All" type="Reject" press="onRejectPress"/>
 					</buttons>
 				</NotificationListGroup>
+                <NotificationListGroup
+                        title="When 'Accept All' is pressed some of the notifications will show an error"
+                        datetime="1 hour"
+                        showCloseButton="true"
+                        authorName="Michael Muller"
+                        authorPicture="sap-icon://person-placeholder"
+                        close="onItemClose">
+                    <items>
+                        <NotificationListItem
+                                title="New order (#2525)"
+                                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc. "
+                                showCloseButton="true"
+                                datetime="1 hour"
+                                unread="true"
+                                priority="None"
+                                close="onItemClose"
+                                press="onListItemPress"
+                                authorPicture="sap-icon://car-rental"/>
+                        <NotificationListItem
+                                title="New order (#2524)"
+                                description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+                                showCloseButton="true"
+                                datetime="3 days"
+                                unread="true"
+                                priority="High"
+                                close="onItemClose"
+                                press="onListItemPress">
+                            <buttons>
+                                <Button text="Accept" type="Accept" press="onAcceptPress"/>
+                                <Button text="Reject" type="Reject" press="onRejectPress"/>
+                            </buttons>
+                        </NotificationListItem>
+                        <NotificationListItem
+                                title="New order (#2523)"
+                                description="Aliquam quis varius ligula.."
+                                showCloseButton="falseue"
+                                unread="false"
+                                datetime="3 days"
+                                priority="High"
+                                close="onItemClose"
+                                press="onListItemPress">
+                            <buttons>
+                                <Button text="Accept" type="Accept" press="onAcceptPress"/>
+                                <Button text="Reject" type="Reject" press="onRejectPress"/>
+                            </buttons>
+                        </NotificationListItem>
+                    </items>
+                    <buttons>
+                        <Button text="Accept All" type="Accept" press="onAcceptErrors"/>
+                        <Button text="Reject All" type="Reject" press="onRejectPress"/>
+                    </buttons>
+                </NotificationListGroup>
 			</List>
 		</l:content>
 	</l:VerticalLayout>
