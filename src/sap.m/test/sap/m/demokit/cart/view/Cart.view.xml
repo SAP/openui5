@@ -1,9 +1,7 @@
 <mvc:View controllerName="sap.ui.demo.cart.view.Cart"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:control="control"
-	xmlns:h="http://www.w3.org/1999/xhtml">
+	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
 		title="{cfg>/pageTitle}"
@@ -20,9 +18,15 @@
 		</headerContent>
 		<footer>
 			<Toolbar>
+				<Text
+					text="{
+					path : 'cartProducts>/totalPrice',
+					formatter : '.formatter.totalPrice'
+					} EUR" />
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
+					type="Accept"
 					text="{i18n>CART_PROCEED_BUTTON_TEXT}"
 					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
 					enabled="{cartProducts>/showEditAndProceedButton}"
@@ -41,10 +45,6 @@
 		<content>
 			<List
 				id="entryList"
-				footerText="{
-					path : 'cartProducts>/totalPrice',
-					formatter : '.formatter.totalPrice'
-				} EUR"
 				mode="{cfg>/listMode}"
 				delete="handleEntryListDelete"
 				select="handleEntryListSelect"
