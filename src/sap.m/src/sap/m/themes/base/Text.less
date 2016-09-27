@@ -4,7 +4,6 @@
 /* =========================== */
 
 .sapMText {
-	display: inline-block;
 	box-sizing: border-box;
 	white-space: pre-line;
 	word-wrap: break-word; /* works only if browser knows the width */
@@ -13,6 +12,10 @@
 	font-family: @sapUiFontFamily;
 	line-height: normal;
 	color: @sapUiBaseText;
+}
+
+.sapMTextInlineBlock {
+	display: inline-block;
 }
 
 .sapMTextNoWrap,
