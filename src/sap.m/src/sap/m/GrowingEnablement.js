@@ -375,7 +375,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			this.destroyListItems(bSuppressInvalidate);
 			this.addListItems(aContexts, oBindingInfo, bSuppressInvalidate);
 			if (bSuppressInvalidate) {
+				var bHasFocus = this._oContainerDomRef.contains(document.activeElement);
 				this.applyChunk(false);
+				bHasFocus && this._oControl.focus();
 			} else {
 				this.applyPendingGroupItem();
 			}
