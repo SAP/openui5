@@ -10051,6 +10051,41 @@
 			oForm = null;
 			oComboBox = null;
 		});
+
+		QUnit.test("Keep the focus on the input", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: false,
+				tablet: true,
+				combi: false
+			});
+			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", false);
+
+			var oCB = new sap.m.ComboBox();
+			var aValues = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00"];
+			for (var i = 0; i < aValues.length; i++) {
+				var oItem = new sap.ui.core.ListItem();
+				oItem.setKey(i);
+				oItem.setText(aValues[i]);
+
+				oCB.addItem(oItem);
+			}
+			oCB.placeAt('content');
+			sap.ui.getCore().applyChanges();
+
+			oCB.open();
+			this.clock.tick(500);
+
+			var spy = this.spy(document.activeElement, "blur");
+
+			oCB.close();
+			this.clock.tick(500);
+
+			assert.ok(!spy.callCount, "Blur shouldn't be called");
+
+			spy.restore();
+			oCB.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
