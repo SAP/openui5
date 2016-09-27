@@ -474,6 +474,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		var oAggregationOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		this.onAggregationDrop(oAggregationOverlay, oEvent);
 
+		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
 
