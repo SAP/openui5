@@ -161,7 +161,7 @@ sap.ui.define([
 	ODataListBinding.prototype._delete = function (sGroupId, sEditUrl, oContext) {
 		var that = this;
 
-		if (this.hasPendingChanges()) {
+		if (!oContext.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
 		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()),
@@ -818,7 +818,7 @@ sap.ui.define([
 
 	/**
 	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
-	 * binding that have not yet been sent to the server.
+	 * bindings or created entities (see {@link #create}) that have not yet been sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes

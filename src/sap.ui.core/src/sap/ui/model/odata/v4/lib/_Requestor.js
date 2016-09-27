@@ -127,15 +127,11 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if there are pending changes
 	 */
 	Requestor.prototype.hasPendingChanges = function () {
-		var aBatchQueue, aChangeSet, sGroupId, i;
+		var sGroupId;
 
 		for (sGroupId in this.mBatchQueue) {
-			aBatchQueue = this.mBatchQueue[sGroupId];
-			aChangeSet = aBatchQueue[0];
-			for (i = 0; i < aChangeSet.length; i++) {
-				if (aChangeSet[i].method === "PATCH") {
-					return true;
-				}
+			if (this.mBatchQueue[sGroupId][0].length > 0) {
+				return true;
 			}
 		}
 		return false;

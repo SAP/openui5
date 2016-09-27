@@ -857,6 +857,7 @@ sap.ui.require([
 			fnCancel2 = sinon.spy(),
 			fnCancel3 = sinon.spy(),
 			iCount = 1,
+			oPostData = {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
@@ -879,7 +880,11 @@ sap.ui.require([
 			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
-			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId"),
+			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
+				oPostData).then(unexpected, function (oError) {
+					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError.message, "");
+				}),
 			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
@@ -888,10 +893,6 @@ sap.ui.require([
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
-				sinon.match({
-					method : "POST",
-					url : "LeaveRequests('42')/name.space.Submit"
-				}),
 				sinon.match({
 					method : "GET",
 					url : "Employees"
@@ -908,8 +909,10 @@ sap.ui.require([
 		sinon.assert.calledWithExactly(fnCancel1);
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
-		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
+		oRequestor.removePost("groupId", oPostData);
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 		oRequestor.submitBatch("groupId");
 
 		return oPromise;

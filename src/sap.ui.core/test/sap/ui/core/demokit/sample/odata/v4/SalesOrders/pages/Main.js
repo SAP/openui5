@@ -15,8 +15,19 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
-		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-		sLastNewNoteValue;
+		sLastNewNoteValue,
+		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
+	function handleMessageBox(oOpa, sTitle, bConfirm, sLog) {
+		return oOpa.waitFor({
+			controlType : "sap.m.Dialog",
+			matchers : new Properties({title : sTitle}),
+			success : function (aControls) {
+				aControls[0].getButtons()[bConfirm ? 0 : 1].$().tap();
+				Opa5.assert.ok(true, sLog || (bConfirm ? 'Confirm ' : 'Cancel ') + sTitle);
+			}
+		});
+	}
 
 	Opa5.extendConfig({autoWait : true});
 
@@ -84,6 +95,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 			}
 		},
 		/*
+		 * Actions and assertions for the "Error" information dialog
+		 */
+		onTheErrorInfo : {
+			actions : {
+				confirm : function () {
+					return handleMessageBox(this, "Error", true, "Confirm 'Error'");
+				}
+			},
+			assertions : {}
+		},
+		/*
 		 * Actions and assertions for the main view of the Sales Orders application
 		 */
 		onTheMainPage : {
@@ -110,6 +132,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				filterGrossAmount : function (sFilterValue) {
+					return this.waitFor({
+						actions: new EnterText({clearTextFirst : true, text : sFilterValue}),
+						controlType : "sap.m.SearchField",
+						id : "filterGrossAmount",
+						success : function (oSearchField) {
+							Opa5.assert.ok(true, "Filter by GrossAmount:" + sFilterValue);
+						},
+						viewName : sViewName
+					});
+				},
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -126,10 +159,22 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 				},
 				pressCreateSalesOrdersButton : function () {
 					return this.waitFor({
+						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "createSalesOrder",
 						success : function (oCreateSalesOrderButton) {
-							oCreateSalesOrderButton.$().trigger("tap");
+							Opa5.assert.ok(true, "Create Sales Order button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressRefreshAllButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "refreshAll",
+						success : function (aControls) {
+							Opa5.assert.ok(true, "Refresh All pressed");
 						},
 						viewName : sViewName
 					});
@@ -139,10 +184,10 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "refreshSalesOrders",
-						viewName : sViewName,
 						success : function (aControls) {
-							Opa5.assert.ok(true, "Sales Orders refreshed");
-						}
+							Opa5.assert.ok(true, "Refresh Sales Orders pressed");
+						},
+						viewName : sViewName
 					});
 				},
 				pressSaveSalesOrdersButton : function () {
@@ -172,38 +217,18 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 				},
 				selectSalesOrderWithId : function (sSalesOrderId) {
 					return this.waitFor({
-						id : /SalesOrders_ID/,
-						viewName : sViewName,
 						controlType : "sap.m.Text",
-						matchers : new Properties({text : sSalesOrderId}),
+						id : /--SalesOrders_ID-/,
+						matchers : new Properties({text: sSalesOrderId}),
 						success : function (aControls) {
 							aControls[0].$().tap();
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
-						}
+						},
+						viewName : sViewName
 					});
 				}
 			},
-			assertions : {
-				checkLog : function () {
-					return this.waitFor({
-						success : function (oControl) {
-							Opa5.getWindow().jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
-
-									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-										Opa5.assert.ok(false,
-												"Warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-									}
-								});
-							Opa5.assert.ok(true, "Log checked");
-						}
-					});
-				},
+			assertions: {
 				checkDifferentID : function (iRow, sExpectedID) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -222,10 +247,10 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 					var that = this;
 					return this.waitFor({
 						controlType : "sap.m.Button",
+						id : "refreshSalesOrders",
 						// we wait for the refresh button becomes interactable before checking the
 						// Sales Orders list
 						matchers : new Interactable(),
-						id : "refreshSalesOrders",
 						success : function (oSalesOrderTable) {
 							return that.waitFor({
 								controlType : "sap.m.Table",
@@ -247,6 +272,26 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 							});
 						},
 						viewName : sViewName
+					});
+				},
+				checkLog : function () {
+					return this.waitFor({
+						success : function (oControl) {
+							Opa5.getWindow().jQuery.sap.log.getLogEntries()
+								.forEach(function (oLog) {
+									var sComponent = oLog.component || "";
+
+									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
+											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
+											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+										Opa5.assert.ok(false,
+												"Warning or error found: " + sComponent
+												+ " Level: " + oLog.level
+												+ " Message: " + oLog.message );
+									}
+								});
+							Opa5.assert.ok(true, "Log checked");
+						}
 					});
 				},
 				checkNote : function (iRow, sExpectedNote) {
@@ -301,19 +346,26 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 			}
 		},
 		/*
+		 * Actions and assertions for the "Refresh" confirmation dialog
+		 */
+		onTheRefreshConfirmation : {
+			actions : {
+				cancel : function() {
+					return handleMessageBox(this, "Refresh", false, "Cancel 'pending changes'");
+				},
+				confirm : function() {
+					return handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
+				}
+			},
+			assertions : {}
+		},
+		/*
 		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
 		 */
 		onTheSalesOrderDeletionConfirmation : {
 			actions : {
 				cancel : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({title : "Sales Order Deletion"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[1].$().tap(); // cancel deletion
-							Opa5.assert.ok(true, "Cancel Delete Sales Order");
-						}
-					});
+					return handleMessageBox(this, "Sales Order Deletion", false);
 				},
 				confirm : function () {
 					return this.waitFor({
@@ -334,14 +386,7 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 		onTheSuccessInfo : {
 			actions : {
 				confirm : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({title : "Success"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap(); // confirm info
-							Opa5.assert.ok(true, "Success Info");
-						}
-					});
+					return handleMessageBox(this, "Success", true, "Confirm 'Success'");
 				}
 			},
 			assertions : {}
