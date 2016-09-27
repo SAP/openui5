@@ -773,30 +773,27 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return this;
 		}
 
-		// update property with invalidate
-		this.setProperty("mode", sMode);
-
 		// determine the selection mode
 		this._bSelectionMode = sMode.indexOf("Select") > -1;
 
 		// remove selections if mode is not a selection mode
 		if (!this._bSelectionMode) {
 			this.removeSelections(true);
-			return this;
+		} else {
+			// update selection status of items
+			var aSelecteds = this.getSelectedItems();
+			if (aSelecteds.length > 1) {
+				// remove selection if there are more than one item is selected
+				this.removeSelections(true);
+			} else if (sOldMode === sap.m.ListMode.MultiSelect) {
+				// if old mode is multi select then we need to remember selected item
+				// in case of new item selection right after setMode call
+				this._oSelectedItem = aSelecteds[0];
+			}
 		}
 
-		// update selection status of items
-		var aSelecteds = this.getSelectedItems();
-		if (aSelecteds.length > 1) {
-			// remove selection if there are more than one item is selected
-			this.removeSelections(true);
-		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
-			// if old mode is multi select then we need to remember selected item
-			// in case of new item selection right after setMode call
-			this._oSelectedItem = aSelecteds[0];
-		}
-
-		return this;
+		// update property with invalidate
+		return this.setProperty("mode", sMode);
 	};
 
 

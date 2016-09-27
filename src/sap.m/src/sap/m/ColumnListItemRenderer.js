@@ -222,24 +222,32 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 			rm.writeClasses();
 			rm.write(">");
+
 			if (bRenderCell) {
-
-				/* add the header as a aria-labelled by association for the cells */
-				if (oHeader &&
-					oCell.getAriaLabelledBy &&
-					this.isTextualControl(oHeader) &&
-					oCell.getAriaLabelledBy().indexOf(oHeader.getId()) == -1) {
-
-					// suppress the invalidation during the rendering
-					oCell.addAssociation("ariaLabelledBy", oHeader, true);
-				}
-
+				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oColumn.applyAlignTo(oCell));
 			}
+
 			rm.write("</td>");
 		}, this);
 	};
 
+	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell) {
+		if (oCell) {
+			oCell.removeAssociation("ariaLabelledBy", oCell.data("ariaLabelledBy") || undefined, true);
+		}
+
+		/* add the header as a aria-labelled by association for the cells */
+		if (oHeader &&
+			oCell.getAriaLabelledBy &&
+			this.isTextualControl(oHeader) &&
+			oCell.getAriaLabelledBy().indexOf(oHeader.getId()) == -1) {
+
+			// suppress the invalidation during the rendering
+			oCell.addAssociation("ariaLabelledBy", oHeader, true);
+			oCell.data("ariaLabelledBy", oHeader.getId());
+		}
+	};
 
 	/**
 	 * Renders pop-ins for Table Rows
@@ -335,13 +343,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 				rm.writeClasses();
 				rm.write(">");
 				oColumn.applyAlignTo(oCell, "Begin");
+				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oCell);
 				rm.write("</div>");
 			}
 
 			/* row end */
 			rm.write("</div>");
-		});
+		}, this);
 
 		rm.write("</div></td></tr>");
 	};
@@ -351,7 +360,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 * Does not render the classes for legacy outlines. Instead use the normal outlines in all cases.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm RenderManager
-	 * @param {sap.m.ListItemBase} oLI List item
+	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
 		if (sap.ui.Device.browser.msie) {
