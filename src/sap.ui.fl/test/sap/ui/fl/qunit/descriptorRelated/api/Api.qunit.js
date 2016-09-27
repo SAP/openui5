@@ -26,6 +26,54 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			delete this._oSandbox;
 		}
 	});
+	
+	QUnit.test("createDescriptorInlineChange", function(assert) {
+		return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
+			"card" : {
+				"customer.acard" : {
+					"model" : "customer.boring_model",
+					"template" : "sap.ovp.cards.list",
+					"settings" : {
+						"category" : "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
+						"title" : "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
+						"description" : "extended",
+						"entitySet" : "Zme_Overdue",
+						"sortBy" : "OverdueTime",
+						"sortOrder" : "desc",
+						"listType" : "extended"
+					}
+				}
+			}
+		},{
+			"customer.newid_sap.app.ovp.cards.customer.acard.category": {
+				"type": "XTIT",
+				"maxLength": 20,
+				"comment": "example",
+				"value": {
+					"": "Category example default text",
+					"en": "Category example text in en",
+					"de": "Kategorie Beispieltext in de",
+					"en_US": "Category example text in en_US"
+				}
+			},
+			"customer.newid_sap.app.ovp.cards.customer.acard.title": {
+				"type": "XTIT",
+				"maxLength": 20,
+				"comment": "example",
+				"value": {
+					"": "Title example default text",
+					"en": "Title example text in en",
+					"de": "Titel Beispieltext in de",
+					"en_US": "Title example text in en_US"
+				}
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, 'appdescr_ovp_addNewCard');
+			assert.notEqual(oDescriptorInlineChange.getMap().content, null);
+			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+		});
+	});
 
 	QUnit.test("create_ovp_addNewCard", function(assert) {
 		return DescriptorInlineChangeFactory.create_ovp_addNewCard({
