@@ -37,6 +37,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.addClass("sapMText");
 		oRm.addClass("sapUiSelectable");
 
+		if (sWidth || oText.hasMaxLines()) {
+			oRm.addClass("sapMTextInlineBlock");
+		}
+
 		// set classes for wrapping
 		if (!bWrapping || nMaxLines == 1) {
 			oRm.addClass("sapMTextNoWrap");
