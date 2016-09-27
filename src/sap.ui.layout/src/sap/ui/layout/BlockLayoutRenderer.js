@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(['./library'],
+	function (library) {
 		"use strict";
 
 		var BlockLayoutRenderer = {};
