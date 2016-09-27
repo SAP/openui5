@@ -20,6 +20,10 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils;
 
+	// This is required so that unit tests find their fake data via useFakeServer
+	jQuery.sap.registerResourcePath("sap/ui/core/qunit",
+		"/" + window.location.pathname.split("/")[1] + "/test-resources/sap/ui/core/qunit");
+
 	/**
 	 * Checks that the actual value deeply contains the expected value, ignoring additional
 	 * properties.
