@@ -156,6 +156,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		return this._oDesignTime;
 	};
 
+
+	/**
+	 * Returns a promise that resolves with the own, unmerged designtime data.
+	 * If the class is marked as having no designtime data, the promise will resolve with null.
+	 */
+	function loadOwnDesignTime(oElementMetadata) {
+		if (oElementMetadata._oDesignTime || !oElementMetadata._bHasDesignTime) {
+			return Promise.resolve(oElementMetadata._oDesignTime || null);
+		}
+		return new Promise(function(fnResolve) {
+			var sModule = jQuery.sap.getResourceName(oElementMetadata.getElementName(), ".designtime");
+			sap.ui.require([sModule], function(oDesignTime) {
+				oElementMetadata._oDesignTime = oDesignTime;
+				fnResolve(oDesignTime);
+			});
+		});
+	}
+
 	/**
 	 * Load and returns the design time metadata asynchronously. The design time metadata contains all relevant information to support the control
 	 * in the UI5 design time.
@@ -164,18 +182,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @since 1.28.0
 	 */
 	ElementMetadata.prototype.loadDesignTime = function() {
-		var that = this;
-		return new Promise(function(fnResolve, fnReject) {
-			if (!that._oDesignTime && that._bHasDesignTime) {
-				var sModule = jQuery.sap.getResourceName(that.getElementName(), ".designtime");
-				sap.ui.require([sModule], function(oDesignTime) {
-					that._oDesignTime = oDesignTime;
-					fnResolve(oDesignTime);
-				});
+		if (!this._oDesignTimePromise) {
+
+			// Note: parent takes care of merging its ancestors
+			var oWhenParentLoaded;
+			var oParent = this.getParent();
+			if (oParent instanceof ElementMetadata) {
+				oWhenParentLoaded = oParent.loadDesignTime();
 			} else {
-				fnResolve(that._oDesignTime);
+				oWhenParentLoaded = Promise.resolve(null);
 			}
-		});
+
+			// Note that the ancestor designtimes and the own designtime will be loaded 'in parallel',
+			// only the merge is done in sequence by chaining promises
+			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(oOwnDesignTime) {
+				return oWhenParentLoaded.then(function(oParentDesignTime) {
+					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
+					return jQuery.sap.extend({}, oParentDesignTime, oOwnDesignTime);
+				});
+			});
+		}
+
+		return this._oDesignTimePromise;
 	};
 
 	return ElementMetadata;
