@@ -92,16 +92,16 @@ sap.ui.define([
 
 				/**
 				 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
-				 * will automatically set <code>showHandleTooltips</code> to <code>false</code>.
-				 * @since 1.31
+				 * will ignore the value set in <code>showHandleTooltips</code>. This will cause only the advanced tooltip to be shown.
+				 * @since 1.42
 				 *
 				 */
 				showAdvancedTooltip: { type: "boolean", group: "Appearance", defaultValue: false},
 
 				/**
 				 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
-				 * will automatically set <code>showAdvancedTooltips</code> to <code>false</code>
-				 * and <code>showHandleTooltips</code> to <code>false</code>.
+				 * will only work if <code>showAdvancedTooltips</code> is set to <code>true</code>.
+				 * @since 1.42
 				 */
 				inputsAsTooltips : {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -352,7 +352,7 @@ sap.ui.define([
 				this._updateAdvancedTooltipDom(sNewValue);
 			}
 
-			if (this.getShowHandleTooltip()) {
+			if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
 
 				// update the tooltip
 				oHandleDomRef.title = sNewValue;
