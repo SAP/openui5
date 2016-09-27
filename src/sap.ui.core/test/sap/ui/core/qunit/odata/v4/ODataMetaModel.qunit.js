@@ -1035,6 +1035,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchObject: ...@@.isMultiple", function (assert) {
+		var oContext,
+			fnIsMultiple,
+			sPath = "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
+			oResult = {},
+			oScope = {
+				isMultiple : function () {}
+			},
+			oSyncPromise;
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.returns(_SyncPromise.resolve(mScope));
+		fnIsMultiple = this.mock(oScope).expects("isMultiple");
+		fnIsMultiple
+			.withExactArgs(
+				this.oMetaModel.getObject(sPath),
+				sinon.match({
+					context : sinon.match.object,
+					schemaChildName : "tea_busi.Worker"
+				}))
+			.returns(oResult);
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@.isMultiple", null, {scope : oScope});
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), oResult);
+		oContext = fnIsMultiple.args[0][1].context;
+		assert.ok(oContext instanceof BaseContext);
+		assert.strictEqual(oContext.getModel(), this.oMetaModel);
+		assert.strictEqual(oContext.getPath(), sPath);
+		assert.strictEqual(oContext.getObject(), this.oMetaModel.getObject(sPath));
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("fetchObject: " + "...@@... throws", function (assert) {
 			var oError = new Error("This call failed intentionally"),
@@ -1430,20 +1465,23 @@ sap.ui.require([
 	QUnit.test("bindProperty", function (assert) {
 		var oBinding,
 			oContext = {},
+			mParameters = {},
 			sPath = "foo",
 			oValue = {};
 
+		//TODO call fetchObject instead once lazy loading is implemented
 		this.mock(this.oMetaModel).expects("getProperty")
-			.withExactArgs(sPath, sinon.match.same(oContext))
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(oValue);
 
 		// code under test
-		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
 		assert.ok(oBinding instanceof PropertyBinding);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
+		assert.strictEqual(oBinding.mParameters, mParameters, "mParameters available internally");
 		assert.strictEqual(oBinding.getValue(), oValue);
 
 		// code under test: must not call getProperty() again!

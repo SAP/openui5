@@ -153,7 +153,7 @@ sap.ui.define([
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
 				PropertyBinding.apply(this, arguments);
-				this.vValue = this.oModel.getProperty(this.sPath, this.oContext);
+				this.vValue = this.oModel.getProperty(this.sPath, this.oContext, this.mParameters);
 			},
 			// @see sap.ui.model.PropertyBinding#getValue
 			getValue : function () {
@@ -359,11 +359,28 @@ sap.ui.define([
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters);
 	};
 
-	// @public
-	// @see sap.ui.model.Model#bindProperty
-	// @since 1.37.0
-	ODataMetaModel.prototype.bindProperty = function (sPath, oContext) {
-		return new ODataMetaPropertyBinding(this, sPath, oContext);
+	/**
+	 * Creates a property binding for this meta data model which refers to the content from the
+	 * given path (relative to the given context).
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES/ENTRYDATE"
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @param {object} [mParameters]
+	 *   Optional binding parameters that are passed to {@link #getObject} to compute the binding's
+	 *   value; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {object} [mParameters.scope]
+	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
+	 * @returns {sap.ui.model.PropertyBinding}
+	 *   A property binding for this meta data model
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#bindProperty
+	 * @since 1.37.0
+	 */
+	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
+		return new ODataMetaPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
 	/**
@@ -592,13 +609,17 @@ sap.ui.define([
 	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
+	 * @param {object} [mParameters]
+	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {object} [mParameters.scope]
+	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the requested metadata object as soon as it is available
 	 *
 	 * @private
 	 * @see #requestObject
 	 */
-	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
+	ODataMetaModel.prototype.fetchObject = function (sPath, oContext, mParameters) {
 		var sResolvedPath = this.resolve(sPath, oContext),
 			that = this;
 
@@ -640,7 +661,9 @@ sap.ui.define([
 				}
 
 				sSegment = sSegment.slice(2);
-				fnAnnotation = jQuery.sap.getObject(sSegment);
+				fnAnnotation = sSegment[0] === "."
+					? jQuery.sap.getObject(sSegment.slice(1), undefined, mParameters.scope)
+					: jQuery.sap.getObject(sSegment);
 				if (typeof fnAnnotation !== "function") {
 					// Note: "varargs" syntax does not help because Array#join ignores undefined
 					return log(WARNING, sSegment, " is not a function but: " + fnAnnotation);
@@ -991,6 +1014,10 @@ sap.ui.define([
 	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
+	 * @param {object} [mParameters]
+	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {object} [mParameters.scope]
+	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {any}
 	 *   The requested metadata object if it is already available, or <code>undefined</code>
 	 *
@@ -1168,11 +1195,14 @@ sap.ui.define([
 	 * Language").
 	 *
 	 * Annotations starting with "@@", for example
-	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple", represent computed annotations. Their
-	 * name without the "@@" prefix must refer to a function in the global namespace. This function
-	 * is called with the current object (or primitive value) and additional details and returns the
-	 * result of this {@link #requestObject} call. The additional details are given as an object
-	 * with the following properties:
+	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple" or "@@.AH.isMultiple" or
+	 * "@@.isMultiple", represent computed annotations. Their name without the "@@" prefix must
+	 * refer to a function either in the global namespace (in case of an absolute name) or in
+	 * <code>mParameters.scope</code> (in case of a relative name starting with a dot, which is
+	 * stripped before lookup; see the <code>&lt;template:alias></code> instruction for XML
+	 * Templating). This function is called with the current object (or primitive value) and
+	 * additional details and returns the result of this {@link #requestObject} call. The additional
+	 * details are given as an object with the following properties:
 	 * <ul>
 	 * <li><code>{@link sap.ui.model.Context} context</code> Points to the current object
 	 * <li><code>{string} schemaChildName</code> The qualified name of the schema child where the
@@ -1231,6 +1261,10 @@ sap.ui.define([
 	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
+	 * @param {object} [mParameters]
+	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {object} [mParameters.scope]
+	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {Promise}
 	 *   A promise which is resolved with the requested metadata value as soon as it is
 	 *   available
