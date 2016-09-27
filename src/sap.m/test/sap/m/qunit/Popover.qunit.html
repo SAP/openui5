@@ -1875,6 +1875,43 @@
 			oPopover.destroy();
 			oButton.destroy();
 		});
+
+		QUnit.module("Integration");
+
+		QUnit.test("Don't call a blur on tablet", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: false,
+				tablet: true,
+				combi: false
+			});
+			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", false);
+
+			var oPopover = new sap.m.Popover({
+				title: "Title text"
+			});
+			var oButton = new sap.m.Button({
+				text: "Open Popover"
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oPopover.openBy(oButton);
+			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
+
+			var spy = this.spy(document.activeElement, "blur");
+
+			oPopover.close();
+			this.clock.tick(500);
+
+
+			assert.ok(!spy.callCount, "Blur shouldn't be called");
+
+			spy.restore();
+			oPopover.destroy();
+			oButton.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
