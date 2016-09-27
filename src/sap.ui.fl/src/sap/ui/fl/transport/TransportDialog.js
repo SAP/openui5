@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.fl.transport.TransportDialog.
-sap.ui.define(['jquery.sap.global', "sap/m/List", "sap/m/InputListItem", 'sap/m/Button', 'sap/m/ComboBox', 'sap/m/Dialog', 'sap/m/DialogRenderer', 'sap/m/Input', 'sap/m/Label', 'sap/m/MessageToast', 'sap/ui/comp/library', 'sap/ui/core/ListItem', 'sap/ui/fl/transport/Transports'],
-	function(jQuery, List, InputListItem, Button, ComboBox, Dialog, DialogRenderer, Input, Label, MessageToast, library, ListItem, Transports) {
+sap.ui.define(['jquery.sap.global', "sap/m/List", "sap/m/InputListItem", 'sap/m/Button', 'sap/m/ComboBox', 'sap/m/Dialog', 'sap/m/DialogRenderer', 'sap/m/Input', 'sap/m/Label', 'sap/m/MessageToast', 'sap/ui/core/ListItem', 'sap/ui/fl/transport/Transports'],
+	function(jQuery, List, InputListItem, Button, ComboBox, Dialog, DialogRenderer, Input, Label, MessageToast, ListItem, Transports) {
 	"use strict";
 
 
