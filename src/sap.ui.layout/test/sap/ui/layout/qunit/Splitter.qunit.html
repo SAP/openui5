@@ -124,6 +124,68 @@
 			oSplitter.rerender();
 		});
 
+		QUnit.test("Should calculate properly percentage containers", function (assert) {
+			// Arrange
+			var i, oCurContainer,
+					aSizes = [],
+					aWidths = [];
+
+			// System under Test
+			var oContainer1 = new sap.ui.commons.Button({
+						text: "Content 1",
+						width: "100%",
+						height: '100%',
+						layoutData: new sap.ui.layout.SplitterLayoutData({size: "33.33%"})
+					}),
+					oContainer2 = new sap.ui.commons.Button({
+						text: "Content 2",
+						width: "100%",
+						height: '100%',
+						layoutData: new sap.ui.layout.SplitterLayoutData({size: "33.33%"})
+					}),
+					oContainer3 = new sap.ui.commons.Button({
+						text: "Content 3",
+						width: "100%",
+						height: '100%',
+						layoutData: new sap.ui.layout.SplitterLayoutData({size: "33.33%"})
+					}),
+
+					oSplitter = new sap.ui.layout.Splitter({
+						height: "500px",
+						width: "500px",
+						contentAreas: [oContainer1, oContainer2, oContainer3]
+					}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Act- don't use loops in unit tests- anti-pattern
+			oCurContainer = oSplitter.getContentAreas()[0];
+			aSizes.push(oCurContainer.getLayoutData().getSize());
+			aWidths.push(oCurContainer.$().parent(".sapUiLoSplitterContent").width());
+
+			oCurContainer = oSplitter.getContentAreas()[1];
+			aSizes.push(oCurContainer.getLayoutData().getSize());
+			aWidths.push(oCurContainer.$().parent(".sapUiLoSplitterContent").width());
+
+			oCurContainer = oSplitter.getContentAreas()[2];
+			aSizes.push(oCurContainer.getLayoutData().getSize());
+			aWidths.push(oCurContainer.$().parent(".sapUiLoSplitterContent").width());
+
+			// Assert
+			assert.strictEqual(aSizes[0], aSizes[1], "Container sizes should be equal");
+			assert.strictEqual(aSizes[1], aSizes[2], "Container sizes should be equal");
+			assert.strictEqual(aSizes[2], aSizes[0], "Container sizes should be equal");
+
+			assert.strictEqual(aWidths[0], aWidths[1], "Container widths should be equal");
+			assert.strictEqual(aWidths[1], aWidths[2], "Container widths should be equal");
+			assert.strictEqual(aWidths[2], aWidths[0], "Container widths should be equal");
+
+			// Cleanup
+			oContainer1 = null;
+			oContainer2 = null;
+			oContainer3 = null;
+			oSplitter.destroy();
+		});
 
 		module("Automatic Area Sizes");
 
