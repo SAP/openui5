@@ -48,8 +48,23 @@ tr.sapUiTableRowHvr .sapMObjStatusIcon,
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapUiTableCCnt {
+	background-color: @sapUiListBackground;
+}
+
+.sapUiTable > div.sapUiTableCnt {
+	border: 1px solid @sapUiListBorderColor;
+}
+
 .sapUiTableRowHdr.sapUiTableRowHvr {
 	color: @sapUiContentContrastTextColor;
+}
+
+.sapUiTableCol:hover,
+.sapUiTableColRowHdr:hover,
+.sapUiSizeCompact .sapUiTableCol:hover,
+.sapUiSizeCompact .sapUiTableColRowHdr:hover {
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapUiSizeCompact, .sapUiSizeCozy {
@@ -93,4 +108,25 @@ tr.sapUiTableRowHvr .sapMObjStatusIcon,
 	outline-offset: -3px;
 	outline: 2px dotted @sapUiContentFocusColor;
 	}
+}
+
+// Scrollbar adjustments
+
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar-thumb {
+	border-right: 4px solid @sapUiScrollBarTrackColor;
+	border-top: 2px solid @sapUiScrollBarTrackColor;
+	border-bottom: 2px solid @sapUiScrollBarTrackColor;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar-thumb {
+	border-bottom: 4px solid @sapUiScrollBarTrackColor;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar,
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar-thumb,
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar,
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar-thumb {
+	border-left: none;
 }
