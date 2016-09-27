@@ -158,6 +158,7 @@
 	position: relative;
 	overflow: hidden;
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	background-color: @sapUiListBorderColor;
 }
 
 /* Since in visibleRowCountMode=Auto, the table has no height, the overlay must be applied to every child div
@@ -802,6 +803,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	background-color: @sapUiListBackground;
 	border-top: 1px solid @sapUiListBorderColor;
 	padding-top: 4px;
+	font-weight: bold;
 }
 
 .sapUiTableHScr > .sapUiTableFtr {
@@ -1086,11 +1088,8 @@ div.sapUiTable .sapUiTableCtrl .sapUiTableRowHvr.sapUiTableRowSel > td {
 
 
 /* Table Column */
-.sapUiTableCol:hover,.sapUiTableColRowHdr:hover {
-	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
-	color: @sapUiListTextColor;
-}
-
+.sapUiTableCol:hover,
+.sapUiTableColRowHdr:hover,
 .sapUiSizeCompact .sapUiTableCol:hover,
 .sapUiSizeCompact .sapUiTableColRowHdr:hover {
 	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
@@ -1255,7 +1254,6 @@ div.sapUiTable {
 }
 
 .sapUiTableHSb,
-.sapUiTableCCnt,
 .sapUiTableCtrlEmpty {
 	background-color: @sapUiListBackground;
 }
