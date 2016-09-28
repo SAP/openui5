@@ -271,14 +271,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Co
 			}).setParent(this);
 			this.oToolsButton.attachEvent('itemSelected', this.handleToolsButtonSelected, this); // attach event this way to have the right this-reference in handler
 
-			var sIcon = Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconUrl');
-			var sIconHover = Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconHoverUrl');
-			var sThemeModulePath = "sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme();
+			var sIcon = Parameters._getThemeImage('ssapUiFeedToolsIconUrl');
+			var sIconHover = Parameters._getThemeImage('sapUiFeedToolsIconHoverUrl');
 			if (sIcon) {
-				this.oToolsButton.setProperty('icon', jQuery.sap.getModulePath(sThemeModulePath, sIcon), true);
+				this.oToolsButton.setProperty('icon', sIcon, true);
 			}
 			if (sIconHover) {
-				this.oToolsButton.setProperty('iconHovered', jQuery.sap.getModulePath(sThemeModulePath, sIconHover), true);
+				this.oToolsButton.setProperty('iconHovered', sIconHover, true);
 			}
 		}
 
