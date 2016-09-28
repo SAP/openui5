@@ -35,6 +35,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
 		},
 
+		CONTENT_DENSITY_ROW_HEIGHTS : {
+			sapUiSizeCondensed : 24,
+			sapUiSizeCompact : 32,
+			sapUiSizeCozy : 48,
+			undefined : 27
+		},
+
 		/**
 		 * Returns whether the table has a row header or not
 		 * @param {sap.ui.table.Table} oTable Instance of the table
