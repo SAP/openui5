@@ -159,6 +159,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		this._generateFailedText();
+
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
 	};
@@ -170,15 +171,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
-		if (this.getMode() === library.GenericTileMode.LineMode && this.getState() !== sap.m.LoadState.Disabled && this._isCompact() && this._bThemeApplied) {
-			this.getParent().addStyleClass("sapMGTLineModeContainer");
+		if (this._sParentResizeListenerId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			this._sParentResizeListenerId = null;
+		}
+
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this._bThemeApplied) {
+			this.$().parent().addClass("sapMGTLineModeContainer");
 			LineModeRenderer._updateHoverStyle.call(this);
 
-			if (this._sResizeListenerId) { //in case the parent is changed, the handler is de-registered and re-registered
-				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
-				this._sResizeListenerId = null;
-			}
-			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
+			this._sParentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
+		}
+
+		if (this._bUpdateLineTileSiblings) {
+			this._updateLineTileSiblings();
+			this._bUpdateLineTileSiblings = false;
 		}
 
 		// Assign TileContent content again after rendering.
@@ -204,9 +211,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
 	};
 
+	/**
+	 * Updates the tile's hover style in LineMode if the parent control is resized.
+	 * This is needed for correct hover style and line-break calculations.
+	 *
+	 * @private
+	 */
 	GenericTile.prototype._handleResize = function() {
 		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
 			LineModeRenderer._updateHoverStyle.call(this);
+		}
+	};
+
+	/**
+	 * Updates the hover style of all siblings that are tiles in LineMode.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._updateLineTileSiblings = function() {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+			var i = this.getParent().indexOfAggregation(this.sParentAggregationName, this);
+			var aSiblings = this.getParent().getAggregation(this.sParentAggregationName).splice(i + 1);
+
+			for (i = 0; i < aSiblings.length; i++) {
+				if (aSiblings[i] instanceof sap.m.GenericTile && aSiblings[i].getMode() === library.GenericTileMode.LineMode) {
+					LineModeRenderer._updateHoverStyle.call(aSiblings[i]);
+				}
+			}
 		}
 	};
 
@@ -303,6 +334,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/* --- Getters and Setters --- */
+
+	GenericTile.prototype.setProperty = function() {
+		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
+		this._bUpdateLineTileSiblings = true;
+		return this;
+	};
 
 	GenericTile.prototype.getHeader = function() {
 		return this._oTitle.getText();

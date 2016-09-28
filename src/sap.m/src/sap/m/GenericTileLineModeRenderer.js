@@ -19,11 +19,19 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 * @param {sap.m.GenericTile} oControl the control to be rendered
 	 */
 	GenericTileLineModeRenderer.render = function(oRm, oControl) {
-		var sTooltipText = oControl._getTooltipText();
+		var sTooltipText = oControl._getTooltipText(),
+			sAriaText = oControl._getAriaText(),
+			bHasPress = oControl.hasListeners("press");
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
+		oRm.writeAttributeEscaped("aria-label", sAriaText);
+		if (bHasPress) {
+			oRm.writeAttribute("role", "button");
+		} else {
+			oRm.writeAttribute("role", "presentation");
+		}
 		oRm.addClass("sapMGT");
 		oRm.addClass("sapMGTLineMode");
 		this._writeDirection(oRm);
@@ -76,6 +84,11 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 
 	GenericTileLineModeRenderer._renderFailedIcon = function(oRm, oControl) {
 		if (oControl.getState() === LoadState.Failed) {
+			if (oControl._isCompact()) {
+				oControl._oWarningIcon.setSize("1.25rem");
+			} else {
+				oControl._oWarningIcon.setSize("1.375rem");
+			}
 			oRm.renderControl(oControl._oWarningIcon.addStyleClass("sapMGTLineModeFailedIcon"));
 		}
 	};
@@ -112,23 +125,35 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 * @private
 	 */
 	GenericTileLineModeRenderer._updateHoverStyle = function() {
+		this.removeStyleClass("sapMGTNewLine"); //remove this class before the new calculation begins in order to have the "default state" of tile-breaks
+
 		var $StyleHelper = this.$("styleHelper"),
+			$End = this.$("endMarker"),
+			$Start =  this.$("startMarker"),
 			iBarOffsetX, iBarOffsetY,
 			iBarPaddingTop = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "margin-top")),
 			iBarWidth,
 			iParentWidth = this.getParent().$().outerWidth(),
 			iParentLeft = this.getParent().$().offset().left,
 			iParentRight = iParentLeft + iParentWidth,
-			iHeight = Math.floor(this.$().height()),
+			iHeight = Math.round($End.offset().top - $Start.offset().top),
 			cHeight = GenericTileLineModeRenderer._getCSSHeight(this, "line-height"), //height including gap between lines
 			cLineHeight = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "min-height")), //line height
-			iLines = Math.round(iHeight / cHeight),
+			iLines = Math.round(iHeight / cHeight) + 1,
+			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
 			i = 0,
 			sHelpers,
 			$Rect,
 			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iPosEnd = this.$("endMarker").offset().left,
-			iOffset = this.$("startMarker").offset().left;
+			iPosEnd = $End.offset().left,
+			iOffset = $Start.offset().left;
+
+		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile
+			this.addStyleClass("sapMGTNewLine");
+			iPosEnd = $End.offset().left;
+			iHeight = $End.offset().top - $Start.offset().top;
+			iLines = Math.round(iHeight / cHeight) + 2; //+ first empty line
+		}
 
 		if (bRTL) {
 			iOffset = iParentRight - iOffset;
@@ -148,6 +173,10 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 
 		sHelpers = "";
 		for (i; i < iLines; i++) {
+			if (bLineBreak && i === 0) {
+				continue;
+			}
+
 			//set bar width
 			if (iLines === 1) { //first and only line
 				iBarOffsetX = iOffset;
@@ -155,8 +184,11 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			} else if (i === iLines - 1) { //last line
 				iBarOffsetX = 0;
 				iBarWidth = iPosEnd - iBarOffsetX;
-			} else if (i === 0) { //first line
+			} else if (i === 0) { //first line for non-wrapped tile
 				iBarOffsetX = iOffset;
+				iBarWidth = iParentWidth - iBarOffsetX;
+			} else if (bLineBreak && i === 1) { //first line for wrapped tile
+				iBarOffsetX = 0;
 				iBarWidth = iParentWidth - iBarOffsetX;
 			} else {
 				iBarOffsetX = 0;

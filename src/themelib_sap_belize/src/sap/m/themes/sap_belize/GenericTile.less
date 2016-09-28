@@ -4,24 +4,21 @@
 /* ================================== */
 
 .sapMGT.sapMGTLineMode {
+	font-size: @sapMFontMediumSize;
+	& * {
+		font-size: @sapMFontMediumSize;
+	}
+
 	.sapMGTLineStyleHelper {
-		position: absolute;
-		box-sizing: border-box;
-
-		.sapMGTLineStyleHelperInner {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-		}
-
 		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
 			margin-right: 0.125rem;
 		}
 
 		&:not(:first-child) .sapMGTLineStyleHelperInner {
 			margin: 0 0.125rem;
+		}
+		&:last-child .sapMGTLineStyleHelperInner {
+			margin-right: 0;
 		}
 
 		&:first-child .sapMGTLineStyleHelperInner {
@@ -50,11 +47,11 @@
 		transition: background 0.2s;
 	}
 
-	&:hover .sapMGTLineStyleHelperInner {
+	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
 		background: fade(@sapUiShellHoverBackground, 10);
 	}
 
-	&.sapMGTLineModePress .sapMGTLineStyleHelperInner {
+	&.sapMGTLineModePress:not(.sapMGTDisabled) .sapMGTLineStyleHelperInner {
 		background: fade(@sapUiShellHoverBackground, 12);
 	}
 }
