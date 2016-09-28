@@ -96,7 +96,9 @@
 							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
 							id="deleteSalesOrder" press="onDeleteSalesOrder"/>
 						<Button
-							enabled="{=${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}}"
+							enabled="{=${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
+								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+							id="confirmSalesOrder"
 							icon="sap-icon://accept"
 							press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
 						<ToolbarSeparator />

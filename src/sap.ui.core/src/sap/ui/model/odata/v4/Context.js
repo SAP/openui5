@@ -110,7 +110,7 @@ sap.ui.define([
 	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public
-	 * @since 1.43
+	 * @since 1.43.0
 	 */
 	Context.prototype.created = function () {
 		return this.oCreatePromise;
@@ -254,6 +254,8 @@ sap.ui.define([
 	 * key predicate identifying the entity within the collection".
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
+	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
+	 * key properties are available within the initial data.
 	 *
 	 * @returns {string}
 	 *   The canonical path (e.g. "/EMPLOYEES(ID='1')")
@@ -401,13 +403,13 @@ sap.ui.define([
 
 	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
-	 * by {@link sap.ui.model.odata.v4.ODataListBinding#create created} is not yet resolved or
-	 * rejected.
+	 * by {@link #created} is not yet resolved or rejected.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient
 	 *
-	 * @private
+	 * @public
+	 * @since 1.43.0
 	 */
 	Context.prototype.isTransient = function () {
 		var oSyncCreatePromise = this.oSyncCreatePromise;
@@ -422,6 +424,8 @@ sap.ui.define([
 	 * key predicate identifying the entity within the collection".
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
+	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
+	 * key properties are available within the initial data.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
