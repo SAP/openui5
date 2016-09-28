@@ -362,7 +362,8 @@
 				"sap.m.sample.GenericTileAsKPITile",
 				"sap.m.sample.GenericTileAsFeedTile",
 				"sap.m.sample.SlideTile",
-				"sap.m.sample.GenericTileStates"
+				"sap.m.sample.GenericTileStates",
+				"sap.m.sample.GenericTileLineMode"
 			]
 		},
 		{
@@ -2444,6 +2445,11 @@
 		  "id": "sap.m.sample.GenericTileAsFeedTile",
 		  "name": "Feed and News Tile",
 		  "description": "Shows Feed Tile and News Tile samples that can contain feed content, news content, and a footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileLineMode",
+		  "name": "Generic Tile in Line Mode",
+		  "description": "Shows how Generic Tile is displayed in the Line Mode."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
