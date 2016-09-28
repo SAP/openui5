@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"./_ODataHelper",
 	"./lib/_SyncPromise"
-], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
+], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
 		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
 	"use strict";
 
@@ -599,7 +599,8 @@ sap.ui.define([
 	 * @see #requestObject
 	 */
 	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
-		var sResolvedPath = this.resolve(sPath, oContext);
+		var sResolvedPath = this.resolve(sPath, oContext),
+			that = this;
 
 		if (!sResolvedPath) {
 			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
@@ -618,6 +619,44 @@ sap.ui.define([
 				// (schema child's qualified name plus optional segments)
 				sTarget,
 				vResult = mScope; // current object
+
+			/*
+			 * Calls a computed annotation according to the given segment which was found at the
+			 * given path; changes <code>vResult</code> accordingly.
+			 *
+			 * @param {string} sSegment
+			 *   Contains the name of the computed annotation as "@@..."
+			 * @param {string} sPath
+			 *   Path where the segment was found
+			 * @returns {boolean}
+			 *   <code>false</code>
+			 */
+			function computedAnnotation(sSegment, sPath) {
+				var fnAnnotation,
+					iThirdAt = sSegment.indexOf("@", 2);
+
+				if (iThirdAt > -1) {
+					return log(WARNING, "Unsupported path after ", sSegment.slice(0, iThirdAt));
+				}
+
+				sSegment = sSegment.slice(2);
+				fnAnnotation = jQuery.sap.getObject(sSegment);
+				if (typeof fnAnnotation !== "function") {
+					// Note: "varargs" syntax does not help because Array#join ignores undefined
+					return log(WARNING, sSegment, " is not a function but: " + fnAnnotation);
+				}
+
+				try {
+					vResult = fnAnnotation(vResult, {
+						context : new BaseContext(that, sPath),
+						schemaChildName : sSchemaChildName
+					});
+				} catch (e) {
+					log(WARNING, "Error calling ", sSegment, ": ", e);
+				}
+
+				return false;
+			}
 
 			/*
 			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result.
@@ -703,8 +742,11 @@ sap.ui.define([
 					bSplitSegment = true;
 				}
 
-				if (!(bSplitSegment && sSegment === "@sapui.name") && typeof vResult === "string"
-					// indirection: treat string content as a meta model path
+				if (typeof vResult === "string"
+					&& !(bSplitSegment && sSegment[0] === "@"
+						&& (sSegment === "@sapui.name" || sSegment[1] === "@"))
+					// indirection: treat string content as a meta model path unless followed by a
+					// computed annotation
 					&& !steps(vResult, aSegments.slice(0, i))) {
 					return false;
 				}
@@ -768,14 +810,24 @@ sap.ui.define([
 				if (!sSegment) { // empty segment is at end or else...
 					return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
 				}
-				if (sSegment === "@sapui.name") {
-					vResult = sName;
-					if (vResult === undefined) {
-						log(WARNING, "Unsupported path before @sapui.name");
-					} else if (i + 1 < aSegments.length) {
-						log(WARNING, "Unsupported path after @sapui.name");
+				if (sSegment[0] === "@") {
+					if (sSegment === "@sapui.name") {
+						vResult = sName;
+						if (vResult === undefined) {
+							log(WARNING, "Unsupported path before @sapui.name");
+						} else if (i + 1 < aSegments.length) {
+							log(WARNING, "Unsupported path after @sapui.name");
+						}
+						return false;
 					}
-					return false;
+					if (sSegment[1] === "@") {
+						// computed annotation
+						if (i + 1 < aSegments.length) {
+							return log(WARNING, "Unsupported path after ", sSegment);
+						}
+						return computedAnnotation(sSegment, "/" + aSegments.slice(0, i).join("/")
+							+ "/" + aSegments[i].slice(0, iIndexOfAt));
+					}
 				}
 				if (!vResult || typeof vResult !== "object") {
 					// Note: even an OData path cannot continue here (e.g. by type cast)
@@ -913,7 +965,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		return new Context(this, sPath.replace(rNotMetaContext, ""));
+		return new BaseContext(this, sPath.replace(rNotMetaContext, ""));
 	};
 
 	/**
@@ -1114,6 +1166,20 @@ sap.ui.define([
 	 * "&lt;14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
 	 * sections refer to specification "OData Version 4.0 Part 3: Common Schema Definition
 	 * Language").
+	 *
+	 * Annotations starting with "@@", for example
+	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple", represent computed annotations. Their
+	 * name without the "@@" prefix must refer to a function in the global namespace. This function
+	 * is called with the current object (or primitive value) and additional details and returns the
+	 * result of this {@link #requestObject} call. The additional details are given as an object
+	 * with the following properties:
+	 * <ul>
+	 * <li><code>{@link sap.ui.model.Context} context</code> Points to the current object
+	 * <li><code>{string} schemaChildName</code> The qualified name of the schema child where the
+	 *   computed annotation has been found
+	 * </ul>
+	 * Computed annotations cannot be iterated by "@". The path must not continue after a computed
+	 * annotation.
 	 *
 	 * A segment which represents an OData qualified name is looked up in the global scope ("scope
 	 * lookup") and thus determines a schema child which is used later on. Unknown qualified names
