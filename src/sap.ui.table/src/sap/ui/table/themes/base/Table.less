@@ -25,8 +25,6 @@
 /*
  * BEHAVIOR CLASSES:
  * -----------------
- * sapUiTableVScr   - display vertical scrollbar
- * sapUiTableHScr   - display horizontal scrollbar
  * sapUiTableRSel   - display row selector column
  * sapUiTableCHdr   - display column header row
  * sapUiTableEmpty  - display the empty table message
@@ -63,30 +61,8 @@
 .sapUiTableTr > td,
 .sapUiTableCtrlEmpty,
 .sapUiTableOverlayArea,
-.sapUiTableCell,
-
-.sapUiTableVSb,
-.sapUiTableHSb {
+.sapUiTableCell {
 	box-sizing: border-box;
-}
-
-.sapUiTableVSb {
-	overflow-x: hidden;
-	overflow-y: scroll;
-	width: 16px;
-}
-
-.sapUiTableHSb {
-	overflow-x: scroll;
-	overflow-y: hidden;
-}
-
-.sapUiTableHSbContent {
-	height: 1px;
-}
-
-.sapUiTableVSbContent {
-	width: 1px;
 }
 
 /*******************************************************************************
@@ -97,10 +73,6 @@
 	font-family: @sapUiDesktopFontFamily;
 	color: @sapUiListTextColor;
 	position: relative;
-}
-
-.sapUiTableHScr .sapUiTableFtr {
-	border-top: 1px solid @sapUiListHeaderBorderColor;
 }
 
 .sapUiTableFtr {
@@ -238,24 +210,6 @@
 .sapUiTableColHdrFixed {
 	display: inline-block;
 	vertical-align: top;
-}
-
-.sapUiTableVScr .sapUiTableCtrlScr {
-	margin-right: 16px;
-}
-
-html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
-	margin-right: 12px;
-}
-
-/* Hide last border right of column header
-	and cell when no vertical scroll is available */
-.sapUiTable:not(.sapUiTableVScr) {
-	.sapUiTableColHdrScr .sapUiTableCol:last-child,
-	.sapUiTableCtrlScroll .sapUiTableTr > td:last-child
-	{
-		border-right: none;
-	}
 }
 
 .sapUiTableColHdr {
@@ -533,28 +487,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 }
 
 
-/*******************************************************************************
- * VERTICAL SCROLLBAR
- ******************************************************************************/
-
-.sapUiTableVSb {
-	display: none;
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	width: 16px;
-	bottom: 0px;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
-	width: 18px;
-	right: -1px;
-}
-
-.sapUiTableVScr .sapUiTableVSb {
-	display: block;
-}
-
 /* Cozy Mode when sap.m. library is loaded */
 .sapUiSizeCozy .sapUiTable {
 
@@ -602,37 +534,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 	}
 }
 
-
-/*******************************************************************************
- * HORIZONTAL SCROLLBAR
- ******************************************************************************/
-
-.sapUiTableHSb {
-	display: none;
-	position: relative;
-	height: 16px;
-	margin: 0;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiTableHSb {
-	height: 18px;
-}
-
-html[data-sap-ui-browser^="ed"] .sapUiTableHSb {
-	height: 12px;
-}
-
-.sapUiTableHScr .sapUiTableHSb {
-	display: block;
-}
-
-.sapUiTableVScr .sapUiTableHSb {
-	margin-right: 16px; /* 17px */
-}
-
-html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
-	margin-right: 12px;
-}
 /*******************************************************************************
  * CHILD CONTROL STYLES
  ******************************************************************************/
@@ -804,10 +705,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-top: 1px solid @sapUiListBorderColor;
 	padding-top: 4px;
 	font-weight: bold;
-}
-
-.sapUiTableHScr > .sapUiTableFtr {
-	border-top: 2px solid @sapUiListBorderColor;
 }
 
 .sapUiTable > .sapUiTableTbr {
@@ -1253,44 +1150,12 @@ div.sapUiTable {
 	}
 }
 
-.sapUiTableHSb,
 .sapUiTableCtrlEmpty {
 	background-color: @sapUiListBackground;
 }
 
 .sapUiTableCtrlEmptyMsg {
 	font-size: @sapUiFontSize;
-}
-
-.sapUiTableM.sapUiTableTouch .sapUiScrollBar {
-	::-webkit-scrollbar-thumb {
-		background-color: @sapUiScrollBarFaceColor;
-		border-top: 0.125rem solid @sapUiScrollBarBorderColor;
-		border-left: 0.125rem solid @sapUiScrollBarBorderColor;
-		border-right: 0.125rem solid @sapUiScrollBarBorderColor;
-		border-bottom: 0.125rem solid @sapUiScrollBarBorderColor;
-		width: 0.25rem;
-		height: 0.25rem;
-	}
-
-	::-webkit-scrollbar {
-		background-color: @sapUiScrollBarTrackColor;
-	}
-
-	&.sapUiTableVScr {
-		.sapUiTableHSb {
-			padding-right: 0.5rem;
-			height: 0.5rem;
-		}
-
-		.sapUiTableVSb {
-			width: 0.45rem;
-		}
-
-		.sapUiTableCtrlScr, .sapUiTableColHdrScr {
-			margin-right: 0.45rem;
-		}
-	}
 }
 
 .sapUiSizeCozy .sapUiTable {
