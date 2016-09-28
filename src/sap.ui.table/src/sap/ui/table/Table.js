@@ -698,9 +698,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// columns to cells map
 		this._aIdxCols2Cells = [];
 
-		// visible columns
-		this._aVisibleColumns = [];
-
 		// flag whether the editable property should be inherited or not
 		this._bInheritEditableToControls = false;
 
