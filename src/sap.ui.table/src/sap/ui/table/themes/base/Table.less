@@ -1184,32 +1184,3 @@ div.sapUiTable {
 .sapUiTableColCellMenu div {
 	color: @sapUiContentIconColor;
 }
-
-.sapUiTableM {
-	.sapUiTableHeightResizer {
-		box-sizing: border-box;
-		-moz-box-sizing: border-box;
-		-webkit-box-sizing: border-box;
-		height: 5px;
-		width: 100%;
-		position: relative;
-		text-align:center;
-	}
-	.sapUiTableHeightResizer::before {
-		font-family: SAP-icons;
-		content: "\e1fb";
-		position: absolute;
-		top: 0px;
-		line-height: 5px;
-	}
-
-	.sapUiTableHeightResizer:focus {
-		outline: 0;
-	}
-
-	.sapUiTableHeightResizer:hover {
-		cursor: n-resize;
-		background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
-		color: @sapUiContentContrastTextColor;
-	}
-}
