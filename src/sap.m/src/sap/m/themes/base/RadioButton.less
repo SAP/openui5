@@ -13,7 +13,8 @@
 	max-width: 100%;
 
 	> .sapMLabel {
-		max-width: calc(~"100% - 3rem");
+		// Safari rounds CSS subpixels with about 1px mistake
+		max-width: calc(~"100% - 3rem + 1px");
 	}
 }
 
@@ -27,7 +28,6 @@
 
 .sapMRbB {
 	display: inline-block; /* for ie*/
-	display: -webkit-inline-box;
 	font-size: 1rem; /* override font size of the message dialog */
 }
 
