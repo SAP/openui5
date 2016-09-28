@@ -862,5 +862,108 @@
         "references": []
       }
     ]
+  },
+  "1.40.9": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "21cbf3aa9a97493f9e77aae698fecb3d2661a181",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: focus didn\u0027t have enough contrast in active toolbar contest",
+        "references": []
+      },
+      {
+        "id": "031595ed64d29b20a51fd71c727ec5fd77d62928",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "4c28ba2b135a8cae87362aa9421b6a54cf86c853",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "5cbcbffb0d03c45457dc417cf9c4b7d9d4ebfa69",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Disabled filters doesn\u0027t have \"pointer\" cursor any more",
+        "references": []
+      },
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "d71a4e52e06c47e0cd3dc5651d43221930e22c92",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "4f2cde3db32ed6c2dd4d1e17c66414a8f79cd64a",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "4c95bcde66c068bb130752b90c69bd135219cf87",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page Fix position of footer in Belize",
+        "references": []
+      },
+      {
+        "id": "c26869ae1bf92beb88faa764c4e2b638e695e261",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: border values caused visual issues",
+        "references": []
+      },
+      {
+        "id": "74e3fa0f5e02186aa012fac1f9eb1d7c7c31d747",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Overflowing label text now has proper ellipsis at the end",
+        "references": []
+      },
+      {
+        "id": "9d1bee4e8ef53e88ec0e79d93a2d2cbe7983ab57",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table - focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "1229904c2bd7797565f5adfa927db46f521a3cfe",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      },
+      {
+        "id": "1bc36bb94056d37a5730d8f874b3b2060c7b3697",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage - outline in IE fixed",
+        "references": []
+      }
+    ]
   }
 }
