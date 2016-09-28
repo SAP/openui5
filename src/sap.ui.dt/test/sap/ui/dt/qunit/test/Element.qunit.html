@@ -56,9 +56,7 @@
 			QUnit.test("when the getInfo is called", function(assert) {
 				var oElementTestInfo = ElementTest.getInfo(this.oButton);
 				assert.ok(oElementTestInfo.metadata, "metadata is retrieved");
-				assert.ok(!oElementTestInfo.designTimeMetadata, "designtime metadata is retrieved");
 				assert.ok(oElementTestInfo.overlay, "overlay is retrieved");
-				assert.ok(oElementTestInfo.overlayDesignTimeMetadata, "overlay designtime metadata is retrieved");
 			});
 
 			QUnit.test("when the getAggregationsInfo is called for layout without content", function(assert) {
