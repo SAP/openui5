@@ -180,10 +180,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		/**
 		 * A string type that is used inside the BlockLayout to set predefined background color to the cells inside
 		 * the control.
-		 * @namespace
+		 * @enum {string}
 		 * @public
 		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
-		 * @type {{Default: string, Light: string, Mixed: string, Accent: string, Dashboard: string}}
 		 */
 	sap.ui.layout.BlockBackgroundType = {
 		/**
@@ -217,10 +216,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * A string type that is used inside the BlockLayoutRow to set predefined set of colors the cells inside
 	 * the control. Color sets depend on sap.ui.layout.BlockBackgroundType
 	 *
-	 * @namespace
+	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
-	 * @type {{Type1: string, Type2: string, Type3: string, Type4: string}}
 	 */
 	sap.ui.layout.BlockRowColorSets = {
 		/**
