@@ -1215,6 +1215,7 @@ sap.ui.define([
 			ariaLabelledBy: oInvisibleChartTypeText,
 			items: {
 				path: '/availableChartTypes',
+				templateShareable: false,
 				template: new sap.ui.core.Item({
 					key: "{key}",
 					text: "{text}"
