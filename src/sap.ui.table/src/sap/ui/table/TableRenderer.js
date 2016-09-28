@@ -206,6 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		this.renderTableCCnt(rm, oTable);
 		rm.write("</div>");
+		this.renderVSb(rm, oTable);
 		this.renderHSb(rm, oTable);
 	};
 
@@ -213,7 +214,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
-		this.renderVSb(rm, oTable);
 		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 
 		rm.write("<div");

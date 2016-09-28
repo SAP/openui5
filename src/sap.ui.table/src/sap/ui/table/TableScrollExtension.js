@@ -18,10 +18,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			oEvent.target.scrollLeft = 0;
 		},
 
-		onContentAndRowHeaderVerticalScrolling: function(oEvent) {
-			oEvent.target.scrollTop = 0;
-		},
-
 		/**
 		 * Will be called when scrolled horizontally. Because the table does not render/update the data of all columns (only the visible ones),
 		 * we need to update the content of the columns which became visible.
@@ -283,12 +279,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			// Vertical scrolling
 			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
-			var $ContentAndRowHeaderScroll = jQuery(oTable.getDomRef("tableCCnt"));
-
 			$VSb.on("scroll.sapUiTableVScroll", ExtensionHelper.onVerticalScrolling.bind(oTable));
-			if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-				$ContentAndRowHeaderScroll.on("scroll.sapUiTableContentAndRowHeaderVScroll", ExtensionHelper.onContentAndRowHeaderVerticalScrolling);
-			}
 
 			// Mouse wheel
 			oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
@@ -317,12 +308,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			// Vertical scrolling
 			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
-			var $ContentAndRowHeaderScroll = jQuery(oTable.getDomRef("tableCCnt"));
 
 			$VSb.off("scroll.sapUiTableVScroll");
-			if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-				$ContentAndRowHeaderScroll.off("scroll.sapUiTableContentAndRowHeaderVScroll");
-			}
 
 			// Mouse wheel
 			oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
