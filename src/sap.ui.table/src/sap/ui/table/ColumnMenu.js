@@ -341,7 +341,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			this.addItem(oColumnVisibiltyMenuItem);
 
 			var oColumnVisibiltyMenu = new Menu(oColumnVisibiltyMenuItem.getId() + "-menu");
-			oColumnVisibiltyMenu.addStyleClass("sapUiTableColumnVisibilityMenu");
 			oColumnVisibiltyMenuItem.setSubmenu(oColumnVisibiltyMenu);
 
 			var aColumns = oTable.getColumns();
