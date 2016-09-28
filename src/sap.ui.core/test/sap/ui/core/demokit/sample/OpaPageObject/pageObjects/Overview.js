@@ -12,6 +12,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function(Opa5, 
 	Opa5.createPageObjects({
 
 		onTheOverview : {
+			viewName: "Main",
 			actions : {
 				iPressOnGoToPage1 : function () {
 					//ensure to pass the correct 'this' scope

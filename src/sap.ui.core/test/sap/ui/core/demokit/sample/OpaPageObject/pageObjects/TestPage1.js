@@ -5,6 +5,7 @@ sap.ui.define(["sap/ui/test/Opa5","./Common"], function(Opa5,Common){
 		onPage1 : {
 			baseClass : Common,
 
+			viewName: "Main",
 			assertions : {
 				iShouldSeeThePage1Text : function () {
 					//I can call some utility functionality from my common page object, serving as base class

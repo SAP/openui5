@@ -4,6 +4,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function(Opa5, 
 	Opa5.createPageObjects({
 
 		onTheIntro : {
+			viewName: "Main",
 			actions : {
 				iPressOnGoToOverview : function () {
 					return this.waitFor({
