@@ -1170,6 +1170,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._closed = function() {
+		if (this._bModal) {
+			this._hideBlockLayer();
+		}
+
 		var $Ref = this._$(/* force rendering */false, /* getter only */true);
 		if ($Ref.length) {
 			var oDomRef = $Ref.get(0);
@@ -1228,10 +1232,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._duringClose = function() {
-		if (this._bModal) {
-			this._hideBlockLayer();
-		}
-
 		//deregister resize handler
 		if (this._resizeListenerId) {
 			ResizeHandler.deregister(this._resizeListenerId);
@@ -2018,6 +2018,11 @@ sap.ui.define([
 		this.close();
 		this.oContent = null;
 
+		// also hide the blocklayer synchronously instead of waiting for the closing animation
+		if (this._bModal) {
+			this._hideBlockLayer();
+		}
+
 		if (this._bFollowOf) {
 			this.setFollowOf(null);
 		}
@@ -2317,8 +2322,6 @@ sap.ui.define([
 
 				// Allow scrolling again in HTML page only if there is no BlockLayer left
 				jQuery("html").removeClass("sapUiBLyBack");
-
-
 			}
 		}
 	};
