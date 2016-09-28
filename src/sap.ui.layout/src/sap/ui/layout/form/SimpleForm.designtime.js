@@ -221,7 +221,7 @@ sap.ui.define([], function() {
 								},
 								getState: function (oElement) {
 								},
-								containerTitle : "GROUP",
+								containerTitle : "GROUP_CONTROL_NAME",
 								mapToRelevantControlID : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
@@ -270,7 +270,7 @@ sap.ui.define([], function() {
 								},
 								getState: function (oElement) {
 								},
-								containerTitle : "GROUP",
+								containerTitle : "GROUP_CONTROL_NAME",
 								mapToRelevantControlID : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
