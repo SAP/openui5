@@ -1046,10 +1046,10 @@ sap.ui.require([
 			this.mock(AnnotationHelper).expects("isMultiple")
 				.throws(oError);
 			this.oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel).returns(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0).withExactArgs(
 				"Error calling sap.ui.model.odata.v4.AnnotationHelper.isMultiple: " + oError,
-				sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+				sPath, sODataMetaModel);
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
