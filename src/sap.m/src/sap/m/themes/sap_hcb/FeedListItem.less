@@ -112,18 +112,6 @@ html.sap-desktop .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl:hover {
 	border-bottom: 0.063rem solid @sapHCReducedAltFG;
 }
 
-/* special rendering for browsers without flex support (IE9) */
-li.sapMLIB.sapMFeedListItemTitleDiv.sapMLIBNoFlex>.sapMLIBContent>.sapMLIBContentNF {
-	&{
-		table-layout: fixed;
-		width: 100%;
-	}
-	article.sapMFeedListItem {
-		display: table-cell;
-		overflow: hidden;
-	}
-}
-
 html.sap-phone .sapMFeedListItemTextName a {
 	line-height: normal;
 	font-size: @sapMFontLargeSize;

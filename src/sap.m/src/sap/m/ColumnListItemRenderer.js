@@ -42,9 +42,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("</tr>");
 	};
 
-	ColumnListItemRenderer.handleNoFlex = function(rm, oLI) {
-	};
-
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
 		rm.write('<td role="gridcell" class="sapMListTblNavCol"');
