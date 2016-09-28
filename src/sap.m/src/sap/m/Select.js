@@ -2274,6 +2274,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oInfo;
 		};
 
+		Select.prototype.propagateMessages = function(sName, aMessages) {
+			if (aMessages && aMessages.length > 0) {
+				this.setValueState(aMessages[0].type);
+				this.setValueStateText(aMessages[0].message);
+			} else {
+				this.setValueState(sap.ui.core.ValueState.None);
+				this.setValueStateText("");
+			}
+		};
+
+		Select.prototype.refreshDataState = function(sName, oDataState) {
+			if (oDataState.getChanges().messages) {
+				this.propagateMessages(sName, oDataState.getMessages());
+			}
+		};
+
 		return Select;
 
 }, /* bExport= */ true);
