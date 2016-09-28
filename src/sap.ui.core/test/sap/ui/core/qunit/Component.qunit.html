@@ -502,6 +502,148 @@
 
 	});
 
+	QUnit.test("On instance created callback / hook (sync)", function(assert) {
+
+		var oCallbackComponent;
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			oCallbackComponent = oComponent;
+
+			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+
+			// Promise should be ignored in sync case
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve(true);
+				}, 0);
+			});
+		};
+
+		var oConfig = {
+			manifestUrl: "/anylocation/manifest.json"
+		};
+
+		var oComponent = sap.ui.component(oConfig);
+
+		assert.equal(oComponent, oCallbackComponent, "Returned component instances should be the same as within callback.");
+
+	});
+
+	QUnit.test("On instance created callback / hook (sync, error)", function(assert) {
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			throw new Error("Error from _fnOnInstanceCreated");
+		};
+
+		assert.throws(
+			function() {
+				sap.ui.component({
+					manifestUrl: "/anylocation/manifest.json"
+				});
+			},
+			/Error from _fnOnInstanceCreated/,
+			"Error from hook should not be caught internally"
+		);
+	});
+
+	QUnit.test("On instance created callback / hook (async, no promise)", function(assert) {
+
+		var oCallbackComponent;
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			oCallbackComponent = oComponent;
+
+			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+
+			// All return values other than promises should be ignored
+			return 123;
+		};
+
+		var oConfig = {
+			manifestUrl: "/anylocation/manifest.json",
+			async: true
+		};
+
+		return sap.ui.component(oConfig).then(function(oComponent) {
+			assert.equal(oComponent, oCallbackComponent, "Returned component instances should be the same as within callback.");
+		});
+	});
+
+	QUnit.test("On instance created callback / hook (async, no promise, error)", function(assert) {
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			throw new Error("Error from _fnOnInstanceCreated");
+		};
+
+		return sap.ui.component({
+			manifestUrl: "/anylocation/manifest.json",
+			async: true
+		}).then(function(oComponent) {
+			assert.ok(false, "Promise should not resolve");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
+		});
+	});
+
+	QUnit.test("On instance created callback / hook (async, with promise)", function(assert) {
+
+		var oCallbackComponent;
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+
+			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					// Delay setting reference to test is provided promise gets chained
+					oCallbackComponent = oComponent;
+					resolve();
+				}, 0);
+			});
+		};
+
+		var oConfig = {
+			manifestUrl: "/anylocation/manifest.json",
+			async: true
+		};
+
+		return sap.ui.component(oConfig).then(function(oComponent) {
+			assert.equal(oCallbackComponent, oComponent, "Returned component instances should be the same as within callback.");
+		});
+	});
+
+	QUnit.test("On instance created callback / hook (async, with promise, error)", function(assert) {
+
+		// set the instance created callback hook
+		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					reject(new Error("Error from _fnOnInstanceCreated"));
+				}, 0);
+			});
+		};
+
+		return sap.ui.component({
+			manifestUrl: "/anylocation/manifest.json",
+			async: true
+		}).then(function(oComponent) {
+			assert.ok(false, "Promise should not resolve");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
+		});
+	});
+
 	</script>
 	</head>
 	<body><h1 id="qunit-header">QUnit tests: Components</h1>
