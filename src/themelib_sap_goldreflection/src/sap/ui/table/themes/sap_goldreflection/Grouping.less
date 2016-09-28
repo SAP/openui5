@@ -1,3 +1,14 @@
+/*******************************************************************************
+/* Due to deprecation of sap_goldreflection with SAPUI5 version 1.38
+/* the less file of base is directly at the top section of this file
+/* and no longer imported within the library.source.less file. This decoupling
+/* of the base theme is introduced with SAPUI5 version 1.44.
+*******************************************************************************/
+
+/*******************************************************************************
+/* Start of base section
+*******************************************************************************/
+
 @_sapUiTableGroupIconHeightDefault: 32px; /*2rem*/
 @_sapUiTableGroupIconHeightCondensed: 24px; /*1.5rem*/
 @_sapUiTableGroupIconHeightCozy: 48px; /*3rem*/
@@ -259,6 +270,11 @@ html[dir=rtl] {
 	color: @sapUiContentIconColor;
 	display: block;
 }
+
+/*******************************************************************************
+/* End of base section
+/* Start of sap_goldreflection less section
+*******************************************************************************/
 
 @_sapUiTableGroupIconHeightDefault: 28px;
 @_sapUiTableGroupIconHeightCondensed: 28px;
