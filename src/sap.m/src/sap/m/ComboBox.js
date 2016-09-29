@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './ComboBoxRenderer', './Popover', './SelectList', './Dialog', './Toolbar', './Button', './library'],
-	function(jQuery, ComboBoxTextField, ComboBoxBase, ComboBoxRenderer, Popover, SelectList, Dialog, Toolbar, Button, library) {
+sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './ComboBoxRenderer', './Popover', './SelectList', './Dialog', './Toolbar', './Button', './library', 'sap/ui/Device'],
+	function(jQuery, ComboBoxTextField, ComboBoxBase, ComboBoxRenderer, Popover, SelectList, Dialog, Toolbar, Button, library, Device) {
 		"use strict";
 
 		/**
@@ -535,6 +535,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
+
+			if (this.getPickerType() === "Dialog") {
+				this.onChange();
+			}
 		};
 
 		/**
@@ -547,15 +551,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			var oItem = oControlEvent.getParameter("item");
 			this.close();
 			this.updateDomValue(oItem.getText());
-
 			this.setProperty("value", oItem.getText(), true);
 
 			// deselect the text and move the text cursor at the endmost position
 			setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
-
-			if (this.getPickerType() === "Dialog") {
-				this.onChange();
-			}
 		};
 
 		/* ----------------------------------------------------------- */
@@ -849,7 +848,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				return;
 			}
 
-			bTablet = sap.ui.Device.system.tablet;
+			bTablet = Device.system.tablet;
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 

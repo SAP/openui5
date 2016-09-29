@@ -72,6 +72,44 @@
 		oApp.to(oPage1); //back page1
     });
 
+
+	module("Sections invalidation", {
+		beforeEach: function () {
+			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
+				viewName: "view.UxAP-ObjectPageState"
+			});
+			this.oObjectPage = this.oView.byId("ObjectPageLayout");
+
+			this.oView.placeAt('content');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("changes to hidden sections update the anchor bar", function (assert) {
+		//setup
+		var oPage = this.oObjectPage;
+		oPage.setUseIconTabBar(true);
+		var done = assert.async();
+
+		setTimeout(function() {
+
+			//act
+			oPage.getSections()[1].setTitle("Changed");
+
+			setTimeout(function() {
+
+				var oTabButton = oPage.getAggregation("_anchorBar").getContent()[1];
+				assert.ok(oTabButton.getText() === "Changed", "section title is updated in the anchorBar");
+				done();
+			}, 1000); //calc delay
+
+		}, 1000); //dom calc delay
+	});
+
 	function runParameterizedTests (bUseIconTabBar) {
 
 		var sModulePrefix = bUseIconTabBar ? "IconTabBar": "AnchorBar"

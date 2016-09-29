@@ -12,16 +12,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/core/Core', './js/h
 
 	"use strict";
 
-	/**
-	 * SAPUI5 library with non-public controls, used in the UI5 demokit (SDK)
-	 *
-	 * @namespace
-	 * @name sap.ui.demokit
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
@@ -51,11 +41,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/core/Core', './js/h
 	});
 
 	/* eslint-disable no-undef */
+	/**
+	 * SAPUI5 library with non-public controls, used in the UI5 demokit (SDK)
+	 *
+	 * @namespace
+	 * @alias sap.ui.demokit
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
 	var thisLibrary = sap.ui.demokit;
 	/* eslint-enable no-undef */
 
 	/**
-	 * different styles for an entity cue card.
+	 * Different styles for an entity cue card.
 	 *
 	 * @enum {string}
 	 * @public

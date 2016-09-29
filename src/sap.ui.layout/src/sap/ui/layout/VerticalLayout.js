@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	VerticalLayout.prototype.getAccessibilityInfo = function() {

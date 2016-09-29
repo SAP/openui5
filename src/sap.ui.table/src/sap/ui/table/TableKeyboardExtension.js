@@ -216,6 +216,15 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		},
 
 		/*
+		 * Enables debugging for the extension
+		 */
+		_debug : function() {
+			this._ExtensionHelper = ExtensionHelper;
+			this._ItemNavigationDelegate = ItemNavigationDelegate;
+			this._ExtensionDelegate = ExtensionDelegate;
+		},
+
+		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {

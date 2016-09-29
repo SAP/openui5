@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	//***********************************************************************************
 
 	/** The mouse click event, which will expand/collapse the node
-	 * @param {event} oEvent The click event object
+	 * @param {jQuery.Event} oEvent The click event object
 	 * @private
 	 */
 	TreeNode.prototype.onclick = function(oEvent){
@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	//* KEYBOARD NAVIGATION
 	//***********************************************************************************
 	/** The generic selection event (ENTER or SPACE)
-	* @param {event} oEvent The sapselect event object
+	* @param {jQuery.Event} oEvent The sapselect event object
 	 * @private
 	 */
 	TreeNode.prototype.onsapselect = function(oEvent){
@@ -431,7 +431,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 
 	/**
 	 * The numpad + key event, which will expand the current node
-	 * @param {event} oEvent The sapexpand event object
+	 * @param {jQuery.Event} oEvent The sapexpand event object
 	 * @private
 	 */
 	TreeNode.prototype.onsapexpand = function(oEvent) {
@@ -441,7 +441,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	/**
 	 * The numpad - key event, which will expand the current node
 	 * @private
-	 * @param {event} oEvent The sapcollapse event object
+	 * @param {jQuery.Event} oEvent The sapcollapse event object
 	 */
 	TreeNode.prototype.onsapcollapse = function(oEvent) {
 		this.collapse();

@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils', 'sap/ui/model/odata/OperationMode'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils', 'sap/ui/model/odata/OperationMode'],
 	function(jQuery, TreeBinding, ClientTreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils, OperationMode) {
 		"use strict";
 

@@ -412,7 +412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
 		 *
-		 * @see sap.ui.controller for an overview of the available functions for controllers
+		 * See {@link sap.ui.controller} for an overview of the available functions for controllers.
 		 * @since 1.34.0
 		 * @public
 		 */

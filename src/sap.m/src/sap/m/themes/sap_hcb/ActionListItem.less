@@ -39,18 +39,18 @@
 }
 
 /* active */
-.sapMLIBActive.sapMLIB.sapMALI .sapMLIBContent {
+.sapMLIBActive.sapMLIB.sapMALI > .sapMLIBContent {
 	background: @sapHCHighlightBG;
 }
 
 /* focus */
-.sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
+.sapMList .sapMLIB.sapMALI:focus > .sapMLIBContent {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 	border: none;
 }
 /* focus in IE (outline-offset is ignored in IE) */
-html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
+html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus > .sapMLIBContent {
 	outline: none;
 	border-width: 0.125rem;
 	border-style: dotted;
@@ -58,7 +58,7 @@ html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus .sapMLIBContent
 }
 
 /* hover */
-html.sap-desktop .sapMList .sapMLIB.sapMALI:hover .sapMLIBContent {
+html.sap-desktop .sapMList .sapMLIB.sapMALI:hover > .sapMLIBContent {
 	background: @sapHCHighlightBG;
 }
 

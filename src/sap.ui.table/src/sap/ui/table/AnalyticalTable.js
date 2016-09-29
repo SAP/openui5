@@ -11,7 +11,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	var GroupEventType = library.GroupEventType,
 		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
-		SortOrder = library.SortOrder;
+		SortOrder = library.SortOrder,
+		TreeAutoExpandMode = library.TreeAutoExpandMode;
 
 	/**
 	 * Constructor for a new AnalyticalTable.
@@ -49,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			/**
 			 * The kind of auto expansion algorithm, e.g. optimised filter conditions, per level requests, ...
-			 * sap.ui.table.TreeAutoExpandMode
+			 * Must be a value of <code>sap.ui.table.TreeAutoExpandMode</code>.
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled" },
 
@@ -274,7 +275,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		oBindingInfo.parameters.analyticalInfo = this._getColumnInformation();
 		oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
-		oBindingInfo.parameters.autoExpandMode = this.getAutoExpandMode();
+
+		var sExpandMode = this.getAutoExpandMode();
+		if (sExpandMode != TreeAutoExpandMode.Bundled && sExpandMode != TreeAutoExpandMode.Sequential) {
+			sExpandMode = TreeAutoExpandMode.Bundled;
+		}
+		oBindingInfo.parameters.autoExpandMode = sExpandMode;
 
 		// This may fail, in case the model is not yet set.
 		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
@@ -763,9 +769,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
 		var oResult = Table.prototype.removeColumn.apply(this, arguments);
 
-		// only remove from grouped columns if not caused by column move. If this._iNewColPos
-		// is set, the column was moved by user.-
-		if (!this._iNewColPos) {
+		// only remove from grouped columns if not caused by column move.
+		if (!this._bReorderInProcess) {
 			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
 				//check if vColum is an object with getId function
 				if (vColumn.getId) {

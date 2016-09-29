@@ -463,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return [oControl.getAggregation("rootControl")];
 		}
 
-		return oControl.findAggregatedObjects(false);
+		return oControl.findAggregatedObjects(false, isNonDependentObject); /* skip objects added via Element.prototype.addDependent e.g. dialogs, since this is not nested content */
 	};
 
 	Fiori20Adapter._updateSearchDepth = function(iSearchDepth, oControl) {
@@ -498,7 +498,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 			var bIsPhone = sap.ui.Device.system.phone,
 				bMoveTitle = oAdaptOptions.bMoveTitle,
-				bAdaptChildBackButton;
+				bAdaptChildBackButton = oAdaptOptions.bHideBackButton;
 			/**
 			 * Rule1: In split-screen, adapt title only on phone
 			 */
@@ -510,7 +510,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			 * 2.1. - on phone
 			 * 2.2. - on the desktop initial page of either master/detail part
 			 */
-			var bAdaptChildBackButton = oAdaptOptions.bHideBackButton;
 			if (bAdaptChildBackButton && !sap.ui.Device.system.phone) {
 				bAdaptChildBackButton = 'initialPage';
 			}
@@ -629,6 +628,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	function isInstanceOf (oControl, sType) {
 		var oType = sap.ui.require(sType);
 		return oType && (oControl instanceof oType);
+	}
+
+	function isNonDependentObject(oObject) {
+		return oObject && (oObject.sParentAggregationName !== "dependents");
 	}
 
 	return Fiori20Adapter;

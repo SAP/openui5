@@ -28,7 +28,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * the current instance of this delegate object
 		 *
 		 * @extends sap.ui.base.Object
-		 * @experimental Since 1.5.2. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 *
 		 * @param {sap.ui.core.Control} oControl the Control of which this Scroller is the delegate
 		 * @param {string} sScrollContentDom the Id of the element within the DOM of the Control which should be scrollable
@@ -202,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			 * Scrolls to an element within a container.
 			 * @param {HTMLElement} oElement A DOM element.
 			 * @param {int} [iTime=0] The duration of animated scrolling in milliseconds. To scroll immediately without animation, give 0 as value.
-			 * @returns {ScrollEnablement}
+			 * @returns {sap.ui.core.delegate.ScrollEnablement}
 			 * @protected
 			 */
 			scrollToElement: function(oElement, iTime) {
@@ -336,10 +335,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			_customScrollTo : function(left, top, oEvent) {
-				oEvent.preventDefault();
-				oEvent.setMarked();
+				// do not prevent events coming from input controls
+				if (!oEvent.isMarked("inputBase")) {
+					oEvent.preventDefault();
+					oEvent.setMarked();
 
-				this._scrollTo(left, top);
+					this._scrollTo(left, top);
+				}
 			}
 
 		});
@@ -436,7 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				// Growing List/Table
 				if (this._fnScrollLoadCallback) {
 					if (this._sScrollLoadDirection == "Upwards") {
-						if (fVerticalMove < 0 && fScrollTop < 100) {
+						if (fVerticalMove < 0 && fScrollTop < 10) {
 							this._fnScrollLoadCallback();
 						}
 					} else if (fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {

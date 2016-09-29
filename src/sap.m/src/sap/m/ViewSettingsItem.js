@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 					/**
 					 * Value of the changed property.
 					 */
-					propertyValue:  {type: "mixed"}
+					propertyValue:  {type: "any"}
 				}
 			}
 		}

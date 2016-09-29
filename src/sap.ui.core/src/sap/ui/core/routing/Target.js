@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			 * @param {object} oEvent.getParameters
 			 * @param {object} oEvent.getParameters.view The view that got displayed.
 			 * @param {object} oEvent.getParameters.control The control that now contains the view in the controlAggregation
-			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Target#constuctor}
+			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Target#constructor}
 			 * @param {object} oEvent.getParameters.data The data passed into the {@link sap.ui.core.routing.Target#display} function
 			 * @public
 			 */

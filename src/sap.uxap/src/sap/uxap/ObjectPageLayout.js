@@ -16,8 +16,9 @@ sap.ui.define([
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"sap/ui/core/ScrollBar",
+	"sap/ui/core/TitleLevel",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ScrollBar, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ScrollBar, TitleLevel, library) {
 	"use strict";
 
 	/**
@@ -78,7 +79,33 @@ sap.ui.define([
 				},
 
 				/**
-				 * Use sap.m.IconTabBar instead of the default Anchor bar
+				 * Determines the ARIA level of the <code>ObjectPageSection</code> and <code>ObjectPageSubSection</code> titles.
+				 * The ARIA level is used by assisting technologies, such as screen readers, to create a hierarchical site map for faster navigation.
+				 *
+				 * <br><b>Note:</b>
+				 * <ul>
+				 * <li>Defining a <code>sectionTitleLevel</code> will add <code>aria-level</code> attribute from 1 to 6
+				 * instead of changing the titles` HTML tag from H1 to H6.
+				 * <br>For example: if <code>sectionTitleLevel</code> is <code>TitleLevel.H1</code>,
+				 * it will result as aria-level of 1 added to the <code>ObjectPageSection</code> title.
+				 * </li>
+				 *
+				 * <li> The <code>ObjectPageSubSection</code> title
+				 * would have <code>aria-level</code> one level lower than the defined.
+				 * For example: if <code>sectionTitleLevel</code> is <code>TitleLevel.H1</code>,
+				 * it will result as aria-level of 2 added to the <code>ObjectPageSubSection</code> title.</li>
+				 *
+				 * <li> It is possible to define a <code>titleLevel</code> on <code>ObjectPageSection</code> or <code>ObjectPageSubSection</code> level.
+				 * In this case the value of this property will be ignored.
+				 * </li>
+				 * </ul>
+				 * @since 1.44.0
+				 */
+				sectionTitleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+
+				/**
+				 * Use tab navigation mode instead of the default Anchor bar mode.
+				 * <br><b>Note: </b>Keep in mind that the <code>sap.m.IconTabBar</code> control is no longer used for the tab navigation mode.
 				 */
 				useIconTabBar: {type: "boolean", group: "Misc", defaultValue: false},
 
@@ -132,7 +159,15 @@ sap.ui.define([
 				/**
 				 * Determines whether the footer is visible.
 				 */
-				showFooter: {type: "boolean", group: "Behaviour", defaultValue: false}
+				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
+			},
+			associations: {
+
+				/**
+				 * The section that is selected by default on load.
+				 * @since 1.44.0
+				 */
+				initiallySelectedSection: {type: "sap.uxap.ObjectPageSection", multiple: false}
 			},
 			defaultAggregation: "sections",
 			aggregations: {
@@ -219,6 +254,30 @@ sap.ui.define([
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;			// ms.
 	ObjectPageLayout.DOM_CALC_DELAY = 200;				// ms.
 	ObjectPageLayout.FOOTER_ANIMATION_DURATION = 350;	// ms.
+	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
+
+	/**
+	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
+	 * <br><b>Note:</b>
+	 * <ul>
+	 * <li> If the provided starting entry is not found, the <code>sap.ui.core.TitleLevel.Auto</code> is returned.</li>
+	 * <li> If the provided starting entry is the last entry, the last entry is returned.</li>
+	 * </ul>
+	 * @param {String} sTitleLevel the <code>sap.ui.core.TitleLevel</code> entry to start from
+	 * @returns {String} <code>sap.ui.core.TitleLevel</code> entry
+	 * @since 1.44
+	 */
+	ObjectPageLayout._getNextTitleLevelEntry = function(sTitleLevel) {
+		var iCurrentTitleLevelIndex = ObjectPageLayout.TITLE_LEVEL_AS_ARRAY.indexOf(sTitleLevel),
+			bTitleLevelFound = iCurrentTitleLevelIndex !== -1,
+			bHasNextTitleLevel = bTitleLevelFound && (iCurrentTitleLevelIndex !== ObjectPageLayout.TITLE_LEVEL_AS_ARRAY.length - 1);
+
+		if (!bTitleLevelFound) {
+			return TitleLevel.Auto;
+		}
+
+		return ObjectPageLayout.TITLE_LEVEL_AS_ARRAY[bHasNextTitleLevel ? iCurrentTitleLevelIndex + 1 : iCurrentTitleLevelIndex];
+	};
 
 	/*************************************************************************************
 	 * life cycle management
@@ -308,7 +367,7 @@ sap.ui.define([
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {
 			// In case we are not lazy loaded make sure that we connect the blocks properly...
-			aToLoad = this.getUseIconTabBar() ? [this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
+			aToLoad = this.getUseIconTabBar() ? [this._oInitiallySelectedSection || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
 
 		} else { //lazy loading, so connect first visible subsections
 			var aSectionBasesToLoad = this.getUseIconTabBar() ? this._grepCurrentTabSectionBases() : this._aSectionBases;
@@ -320,7 +379,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-			oSectionToLoad = this._oCurrentTabSection || this._oFirstVisibleSection;
+			oSectionToLoad = this._oCurrentTabSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
 
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
@@ -355,12 +414,17 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
+		var oSectionToSelect = this._oStoredSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
+
 		this._bDomReady = true;
 
 		this._adjustHeaderHeights();
 
-		if (this.getUseIconTabBar()) {
-			this._setCurrentTabSection(this._oStoredSection || this._oFirstVisibleSection);
+		if (this.getUseIconTabBar() && oSectionToSelect) {
+			this._setSelectedSectionId(oSectionToSelect.getId());
+			this._setCurrentTabSection(oSectionToSelect);
+		} else if (this._oInitiallySelectedSection) {
+			this.scrollToSection(this._oInitiallySelectedSection.getId());
 		}
 
 		this._initAnchorBarScroll();
@@ -600,7 +664,8 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection;
+			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
+			sInitiallySelectedSectionId = this.getInitiallySelectedSection();
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -616,6 +681,10 @@ sap.ui.define([
 			//ignore hidden sections
 			if (!oSection.getVisible()) {
 				return true;
+			}
+
+			if (oSection.getId() === sInitiallySelectedSectionId) {
+				this._oInitiallySelectedSection = oSection;
 			}
 
 			this._registerSectionBaseInfo(oSection);
@@ -645,6 +714,10 @@ sap.ui.define([
 					if (!oFirstVisibleSubSection) {
 						oFirstVisibleSubSection = oSubSection;
 					}
+
+					if (this._shouldApplySectionTitleLevel(oSubSection)) {
+						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection));
+					}
 				}
 
 			}, this);
@@ -668,6 +741,10 @@ sap.ui.define([
 					oFirstVisibleSubSection._setInternalTitleVisible(false, bInvalidate);
 				} else {
 					oSection._setInternalTitle("", bInvalidate);
+				}
+
+				if (this._shouldApplySectionTitleLevel(oSection)) {
+					oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection));
 				}
 
 				iVisibleSection++;
@@ -848,6 +925,9 @@ sap.ui.define([
 
 		if (oSelectedSection) {
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar
+			if (this.getUseIconTabBar()) {
+				this._setCurrentTabSection(oSelectedSection);
+			}
 			this._adjustLayout(null, false, true /* requires a check on lazy loading */);
 
 			bKeepExpandedMode = !this._bStickyAnchorBar
@@ -910,6 +990,7 @@ sap.ui.define([
 
 		this._oSectionInfo = {};
 		this._aSectionBases = [];
+		this._oInitiallySelectedSection = null;
 	};
 
 	/**
@@ -1226,11 +1307,17 @@ sap.ui.define([
 			iLastVisibleHeight = this._computeLastVisibleHeight(oLastVisibleSubSection);
 
 			//on desktop we need to set the bottom of the last section as well
-			if (this._bMobileScenario) {
+			if (this._bMobileScenario && sPreviousSectionId) {
 				this._oSectionInfo[sPreviousSectionId].positionBottom = this._oSectionInfo[sPreviousSectionId].positionTop + iLastVisibleHeight;
-			} else { //update the position bottom for the last subsection
-				this._oSectionInfo[sPreviousSubSectionId].positionBottom = this._oSectionInfo[sPreviousSubSectionId].positionTop + iLastVisibleHeight;
-				this._oSectionInfo[sPreviousSectionId].positionBottom = this._oSectionInfo[sPreviousSubSectionId].positionTop + iLastVisibleHeight;
+			} else {
+				// BCP: 1670390469 - for both variables here there are cases in which there's unsafe member access.
+				// This is an uncommon case and it's not really how do you get here
+				if (sPreviousSubSectionId) {
+					this._oSectionInfo[sPreviousSubSectionId].positionBottom = this._oSectionInfo[sPreviousSubSectionId].positionTop + iLastVisibleHeight;
+				}
+				if (sPreviousSectionId && sPreviousSubSectionId){
+					this._oSectionInfo[sPreviousSectionId].positionBottom = this._oSectionInfo[sPreviousSubSectionId].positionTop + iLastVisibleHeight;
+				}
 			}
 
 			bAllowSnap = this._bStickyAnchorBar /* if already in sticky mode, then preserve it, even if the section does not require snap for its display */
@@ -1328,6 +1415,40 @@ sap.ui.define([
 			iPosition += this.iAnchorBarHeight;
 		}
 		return iPosition;
+	};
+
+	/**
+	 * Determines thе <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * For <code>ObjectPageSection</code>, the internal <code>titleLevel</code> is the current <code>sectionTitleLevel</code>.
+	 * For <code>ObjectPageSubSection</code>, the internal <code>titleLevel</code> is one level lower than the current <code>sectionTitleLevel</code>.
+	 * If the <code>sectionTitleLevel</code> has value of <code>sap.ui.core.TitleLevel.Auto</code>,
+	 * <code>sap.ui.core.TitleLevel.H3</code> is returned for <code>ObjectPageSection</code> and
+	 * <code>sap.ui.core.TitleLevel.H4</code> for <code>ObjectPageSubSection</code>.
+	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {String} <code>sap.ui.core.TitleLevel</code>
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase) {
+		var sSectionBaseTitleLevel = this.getSectionTitleLevel(),
+			bIsSection = oSectionBase instanceof ObjectPageSection;
+
+		if (sSectionBaseTitleLevel === TitleLevel.Auto) {
+			return bIsSection ? TitleLevel.H3 : TitleLevel.H4;
+		}
+
+		return bIsSection ? sSectionBaseTitleLevel : ObjectPageLayout._getNextTitleLevelEntry(sSectionBaseTitleLevel);
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageLayout</code> should set <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {Boolean}
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageLayout.prototype._shouldApplySectionTitleLevel = function(oSectionBase) {
+		return oSectionBase.getTitleLevel() === TitleLevel.Auto;
 	};
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {

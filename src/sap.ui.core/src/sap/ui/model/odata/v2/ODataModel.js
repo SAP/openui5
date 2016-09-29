@@ -771,7 +771,6 @@ sap.ui.define([
 
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'annotationsLoaded' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
-	 * @experimental The API is NOT stable yet. Use at your own risk.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event.
@@ -791,7 +790,6 @@ sap.ui.define([
 
 	/**
 	 * Detach event-handler <code>fnFunction</code> from the 'annotationsLoaded' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
-	 * @experimental The API is NOT stable yet. Use at your own risk.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs.
@@ -4084,7 +4082,6 @@ sap.ui.define([
 	 *
 	 * @return {Object} metdata object
 	 * @public
-	 * @experimental This feature has not been tested due to the lack of OData testing infrastructure. The API is NOT stable yet. Use at your own risk.
 	 */
 	ODataModel.prototype.getServiceAnnotations = function() {
 		var mAnnotations = this.oAnnotations.getData();
@@ -4104,7 +4101,7 @@ sap.ui.define([
 	 * which can be retrieved by calling the getServiceAnnotations()-method. If a $metadata url is passed the data will
 	 * also be merged into the metadata object, which can be reached by calling the getServiceMetadata() method.
 	 *
-	 * @param {string|sting[]} vUrl - Either one URL as string or an array or URL strings
+	 * @param {string|string[]} vUrl - Either one URL as string or an array or URL strings
 	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load.
 	 * 					 If this promise resolves it returns the following parameters:
 	 * 					 annotations: The annotation object

@@ -34,8 +34,8 @@ sap.ui.ux3.DataSetSimpleView</title>
 	jQuery.sap.registerModulePath("dataset","../resources/dataset");
 
 	var oDataSet,oDataSetItem, oDataSetItem2 ,oView, oDataSetSimpleView, oDataSetSimpleView2, oButton,
-	 	oModel = new sap.ui.model.json.JSONModel(),
-	 	data = { test : [] };
+		oModel = new sap.ui.model.json.JSONModel(),
+		data = { test : [] };
 
 	function selection(oEvent) {
 		window.selectionCalled = true;
@@ -82,7 +82,6 @@ sap.ui.ux3.DataSetSimpleView</title>
 	oDataSet = new sap.ui.ux3.DataSet();
 	oDataSet.setModel(oModel);
 
-
 	sap.ui.core.Control.extend("TestItem", {
 		renderer: function(rm, ctrl){
 			rm.write("<div");
@@ -91,13 +90,19 @@ sap.ui.ux3.DataSetSimpleView</title>
 			rm.write("><div");
 			rm.writeAttribute("style", "background-color:red;height:100%;");
 			rm.write("></div></div>");
-	    }
+		}
 	});
 	var oModel2 = new sap.ui.model.json.JSONModel();
 	var data2 = {items: []};
 	for(var i=0; i<10; i++){
 		data2.items.push({key:""+i});
 	}
+
+	var data3 = {items: []};
+	for(var i=0; i<2; i++){
+		data3.items.push({key:""+i});
+	}
+
 	oModel2.setData(data2);
 	var oDataSetLayout = new sap.ui.ux3.DataSetSimpleView({
 		floating: true,
@@ -171,7 +176,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 	test("LeadSelection", 3,
 			function() {
 				//add some items again
-		 		oDataSet.bindItems("/test",oDataSetItem);
+				oDataSet.bindItems("/test",oDataSetItem);
 
 				equal(oDataSet.getLeadSelection(), -1,
 						"LeadSelection: initial selection");
@@ -335,6 +340,26 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVSingleRow"), "class 'sapUiUx3DSSVSingleRow' is set");
 		equal(getNumberOfItemsPerRow(), 1, "one item per row");
 		ok(Math.abs(oDataSetLayout.$().width() - jQuery(oDataSetLayout.$().children()[0]).outerWidth()) <= 10 /*just some tolerance*/, "item occupies the whole row");
+	});
+
+	test("If the view is invisible, items will be destroyed on updateView", function() {
+		oDataSetLayout.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		var sItemId = oDataSet2.getItems()[3].getId();
+
+		ok(sap.ui.getCore().byId(sItemId), "element is presented before updating view");
+
+		// update model so the updateItems function from the DataSet can be triggered
+		// it will then trigger updateView function in DataSetSimpleView
+		// since the view is not visible and doesn't have DOM ref, before the function was simply returning
+		// without doing anything, now it should destroy unused items
+		oModel2.setData(data3);
+		oDataSet2.setModel(oModel2);
+		sap.ui.getCore().applyChanges();
+
+		ok(!oDataSetLayout.getDomRef(), "View is not presented in the DOM");
+		ok(!sap.ui.getCore().byId(sItemId), "element is destroyed after updating the View");
 	});
 
 </script>

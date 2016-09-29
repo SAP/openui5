@@ -497,7 +497,7 @@
 
 		var oVBox = new sap.m.VBox({
 			items: [
-				new sap.m.Button({
+				new sap.m.Button("with-h-with-f", {
 					text: "WithH WithF",
 					press: function () {
 						oPopover.setShowHeader(true);
@@ -506,7 +506,7 @@
 						oPopover.openBy(this);
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("no-h-with-f", {
 					text: "NoH WithF",
 					press: function () {
 						oPopover.setShowHeader(false);
@@ -515,7 +515,7 @@
 						oPopover.openBy(this);
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("with-h-no-f", {
 					text: "WithH NoF",
 					press: function () {
 						oPopover.setShowHeader(true);
@@ -524,7 +524,7 @@
 						oPopover.openBy(this);
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("no-h-no-f", {
 					text: "NoH NoF",
 					press: function () {
 						oPopover.setShowHeader(false);

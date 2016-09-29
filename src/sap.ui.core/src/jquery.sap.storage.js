@@ -341,8 +341,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Enumeration of the storage types supported by {@link jQuery.sap.storage.Storage}
-	 * @class
-	 * @static
+	 * @enum {string}
 	 * @public
 	 * @version ${version}
 	 * @since 0.11.0

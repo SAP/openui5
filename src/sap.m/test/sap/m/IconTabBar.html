@@ -6,7 +6,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
@@ -17,8 +17,11 @@
 				width: auto;
 				white-space: normal;
 			}
-			.ITBContainer{
+			.ITBContainer {
 				border: 1px solid #0F5D94;
+			}
+			.iconTabBarContainer {
+				background-color: #a9c6de;
 			}
 		</style>
 		<script>
@@ -111,6 +114,12 @@
 			});
 			label13.addStyleClass("label");
 
+			var label14 = new sap.m.Label({
+				text: "IconTabBar with a simple form to control backgroundDesign and headerBackgroundDesign properties. " +
+				"There is also a panel with dark color which wraps the tab bar."
+			});
+			label14.addStyleClass("label");
+
 			var tabItems = [];
 			for (var i = 1; i <= 30; i++) {
 				tabItems.push(new sap.m.IconTabFilter({
@@ -125,6 +134,172 @@
 				showOverflowSelectList: true,
 				items: tabItems
 			});
+
+			// backgroundDesign Panel
+			var panelBackgroundDesign = new sap.m.Panel();
+			panelBackgroundDesign.addStyleClass("iconTabBarContainer");
+
+			var iconTabBarBackgroundDesign = new sap.m.IconTabBar("backgroundDesignIconTabBar", {
+				expandable: false,
+				items: [
+					new sap.m.IconTabFilter({
+						showAll: true,
+						count: "8",
+						text: "Orders Productive",
+						key: "All",
+						iconColor: sap.ui.core.IconColor.Neutral
+					}),
+					new sap.m.IconTabSeparator(),
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://task",
+						iconColor: sap.ui.core.IconColor.Critical,
+						count: "3",
+						text: "Open",
+						key: "Open"
+					}),
+					new sap.m.IconTabFilter("itfBackgroundDesign", {
+						icon: "sap-icon://instance",
+						iconColor: sap.ui.core.IconColor.Negative,
+						count: "2",
+						text: "In Process",
+						key: "In Process"
+					}),
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://shipping-status",
+						iconColor: sap.ui.core.IconColor.Positive,
+						count: "3",
+						text: "Shipped",
+						key: "Shipped"
+					})
+				],
+				select: function(oEvent) {
+					var oBinding = this.getContent()[0].getBinding("items"),
+							sKey = oEvent.getParameter("key"),
+							oFilter;
+					if (sKey == "All") {
+						oBinding.filter([]);
+					}
+					else {
+						oFilter = new sap.ui.model.Filter("status", "EQ", sKey);
+						oBinding.filter([oFilter]);
+					}
+				},
+				content: new sap.m.Table("listBackgroundDesign", {
+					growing: true,
+					growingThreshold: 200,
+					columns: [
+						new sap.m.Column({
+							width: "2em",
+							header: new sap.m.Label({text: "ID"})
+						}),
+						new sap.m.Column({
+							width: "7em",
+							header: new sap.m.Label({text: "Name"})
+						}),
+						new sap.m.Column({
+							width: "3em",
+							header: new sap.m.Label({text: "Status"})
+						}),
+						new sap.m.Column({
+							width: "2em",
+							minScreenWidth: "Tablet",
+							hAlign: "Right",
+							header: new sap.m.Label({text: "Amount"})
+						}),
+						new sap.m.Column({
+							width: "3em",
+							hAlign: "Right",
+							minScreenWidth: "Tablet",
+							header: new sap.m.Label({text: "Price"})
+						})
+					],
+					items: {
+						path: "/items",
+						template: new sap.m.ColumnListItem({
+							cells: [
+								new sap.m.Text({text: "{id}"}),
+								new sap.m.Text({text: "{name}"}),
+								new sap.m.ObjectStatus({
+									text: "{status}",
+									state: {
+										path: "status",
+										formatter: function(value) {
+											switch(value) {
+												case "Open": return "Warning";
+												case "In Process": return "Error";
+												case "Shipped": return "Success";
+											}
+										}
+									}
+								}),
+								new sap.m.Text({text: "{amount}"}),
+								new sap.m.Text({text: {
+									path: "price",
+									formatter: function(value) {
+										if (value !== undefined) {
+											return "$ " + oFloat.format(value);
+										}
+									}
+								}})
+							]
+						})
+					}
+				})
+			});
+
+			// Radio button group background design
+			var rbBackgroundDesign = new sap.m.RadioButtonGroup("RBBackgroundDesign", {
+				columns: 3,
+				select: function (oEvent) {
+					var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
+					iconTabBarBackgroundDesign.setBackgroundDesign(sSelectedValue);
+				}
+			});
+			var oLabelBackgroundDesign = new sap.m.Label({
+				text: "Background Design",
+				labelFor: rbBackgroundDesign
+			});
+			var rb1 = new sap.m.RadioButton("RB1-Solid", { text: "Solid" });
+			var rb2 = new sap.m.RadioButton("RB1-Transparent", { text: "Transparent" });
+			var rb3 = new sap.m.RadioButton("RB1-Translucent", { text: "Translucent" });
+			rbBackgroundDesign.addButton(rb1);
+			rbBackgroundDesign.addButton(rb2);
+			rbBackgroundDesign.addButton(rb3);
+
+			// Radio button group header background design
+			var rbHeaderBackgroundDesign = new sap.m.RadioButtonGroup("RBHeaderBackgroundDesign", {
+				columns: 3,
+				select: function (oEvent) {
+					var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
+					iconTabBarBackgroundDesign.setHeaderBackgroundDesign(sSelectedValue);
+				}
+			});
+			var oLabelHeaderBackgroundDesign = new sap.m.Label({
+				text: "Header Background Design",
+				labelFor: rbHeaderBackgroundDesign
+			});
+			var rb4 = new sap.m.RadioButton("RB2-Solid", { text: "Solid" });
+			var rb5 = new sap.m.RadioButton("RB2-Transparent", { text: "Transparent" });
+			var rb6 = new sap.m.RadioButton("RB2-Translucent", { text: "Translucent" });
+			rbHeaderBackgroundDesign.addButton(rb4);
+			rbHeaderBackgroundDesign.addButton(rb5);
+			rbHeaderBackgroundDesign.addButton(rb6);
+
+			var appearanceFormBackgroundDesign = new sap.ui.layout.form.SimpleForm({
+				labelSpanL : 6,
+				labelSpanM : 6,
+				editable : true,
+				layout : "ResponsiveGridLayout",
+				content : [
+					oLabelBackgroundDesign,
+					rbBackgroundDesign,
+					oLabelHeaderBackgroundDesign,
+					rbHeaderBackgroundDesign
+				]
+			});
+
+			panelBackgroundDesign.addContent(appearanceFormBackgroundDesign);
+			panelBackgroundDesign.addContent(iconTabBarBackgroundDesign);
 
 			// create and add a page with icon tab bar
 			var page = new sap.m.Page("tabBarPage", {
@@ -1073,7 +1248,9 @@
 							}).addStyleClass("ITBContainer"),
 							new sap.m.Label({text: " "}), // placeholder to see content below
 					label13,
-					iconTabBarOverflowSelectList
+					iconTabBarOverflowSelectList,
+					label14,
+					panelBackgroundDesign
 				]
 			});
 			app.addPage(page);

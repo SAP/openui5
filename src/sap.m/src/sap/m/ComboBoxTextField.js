@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		};
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		ComboBoxTextField.prototype.getAccessibilityInfo = function() {

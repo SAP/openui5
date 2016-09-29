@@ -179,20 +179,20 @@ sap.ui.define([
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
 	 * </ul>
-	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa#.extendConfig}
+	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}
 	 * @public
 	 */
 	Opa.config = {};
 
 	/**
-	 * Extends and overwrites default values of the {@link sap.ui.test.Opa#.config}.
+	 * Extends and overwrites default values of the {@link sap.ui.test.Opa.config}.
 	 * Sample usage:
 	 * <pre>
 	 *     <code>
 	 *         var oOpa = new Opa();
 	 *
 	 *         // this statement will  will time out after 15 seconds and poll every 400ms.
-	 *         // those two values come from the defaults of {@link sap.ui.test.Opa#.config}.
+	 *         // those two values come from the defaults of {@link sap.ui.test.Opa.config}.
 	 *         oOpa.waitFor({
 	 *         });
 	 *
@@ -276,7 +276,10 @@ sap.ui.define([
 	// Therefore the core code throws exceptions, when functions like setTimeout are called.
 	// I don't have a proper explanation for this.
 	if (!iExecutionDelay) {
-		if (Device.browser.msie) {
+		// phantom is flagged as safari but actually we do not want to set the tiemout higher in phantomjs
+		var bIsSafariButNotPhantom = Device.browser.safari && !Device.browser.phantomJS;
+
+		if (Device.browser.msie || Device.browser.edge || bIsSafariButNotPhantom) {
 			iExecutionDelay = 50;
 		} else {
 			iExecutionDelay = 0;
@@ -390,7 +393,7 @@ sap.ui.define([
 	/**
 	 * Clears the queue and stops running tests so that new tests can be run.
 	 * This means all waitFor statements registered by {@link sap.ui.test.Opa#waitFor} will not be invoked anymore and
-	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue}
+	 * the promise returned by {@link sap.ui.test.Opa.emptyQueue}
 	 * will be rejected or resolved depending on the failTest parameter.
 	 * When its called inside of a check in {@link sap.ui.test.Opa#waitFor}
 	 * the success function of this waitFor will not be called.
@@ -437,7 +440,7 @@ sap.ui.define([
 
 		/**
 		 * Queues up a waitFor command for Opa.
-		 * The Queue will not be emptied until {@link sap.ui.test.Opa#.emptyQueue} is called.
+		 * The Queue will not be emptied until {@link sap.ui.test.Opa.emptyQueue} is called.
 		 * If you are using {@link sap.ui.test.opaQunit}, emptyQueue will be called by the wrapped tests.
 		 *
 		 * If you are using Opa5, waitFor takes additional parameters.
@@ -517,14 +520,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Calls the static extendConfig function in the Opa namespace {@link sap.ui.test.Opa#.extendConfig}
+		 * Calls the static extendConfig function in the Opa namespace {@link sap.ui.test.Opa.extendConfig}
 		 * @public
 		 * @function
 		 */
 		extendConfig : Opa.extendConfig,
 
 		/**
-		 * Calls the static emptyQueue function in the Opa namespace {@link sap.ui.test.Opa#.emptyQueue}
+		 * Calls the static emptyQueue function in the Opa namespace {@link sap.ui.test.Opa.emptyQueue}
 		 * @public
 		 * @function
 		 */

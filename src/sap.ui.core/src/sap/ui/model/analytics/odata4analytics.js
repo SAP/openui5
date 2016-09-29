@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @author SAP SE
 	 * @experimental This module is only for experimental use!
 	 * @namespace
-	 * @name sap.ui.model.analytics.odata4analytics
+	 * @alias sap.ui.model.analytics.odata4analytics
 	 * @protected
 	 */
 	var odata4analytics = odata4analytics || {};
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * workaround is an implementation that changes the standard behavior of the API
 	 * to overcome some gap or limitation in the OData provider. The workaround
 	 * implementation can be conditionally activated by passing the identifier in
-	 * the contructor.
+	 * the constructor.
 	 *
 	 * Known workaround identifiers are:
 	 *
@@ -714,7 +714,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all query results (entity sets) offered by the model
 		 *
-		 * @returns {array(string)} List of all query result names
+		 * @returns {string[]} List of all query result names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Model#getAllQueryResultNames
@@ -959,7 +959,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all dimensions included in the query result
 		 *
-		 * @returns {array(string)} List of all dimension names
+		 * @returns {string[]} List of all dimension names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResult#getAllDimensionNames
@@ -997,7 +997,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all measures included in the query result
 		 *
-		 * @returns {array(string)} List of all measure names
+		 * @returns {string[]} List of all measure names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResult#getAllMeasureNames
@@ -1287,7 +1287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all parameters part of the parameterization
 		 *
-		 * @returns {array(string)} List of all parameter names
+		 * @returns {string[]} List of all parameter names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Parameterization#getAllParameterNames
@@ -1795,7 +1795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all attributes included in this dimension
 		 *
-		 * @returns {array(string)} List of all attribute names
+		 * @returns {string[]} List of all attribute names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.Dimension#getAllAttributeNames
@@ -2546,7 +2546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get key properties of this type
 		 *
-		 * @returns {array(string)} The list of key property names
+		 * @returns {string[]} The list of key property names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.EntityType#getKeyProperties
@@ -2715,7 +2715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Get names of properties that can be filtered, that is they can be used in
 		 * $filter expressions
 		 *
-		 * @returns {array(string)} Array with names of properties that can be
+		 * @returns {string[]} Array with names of properties that can be
 		 *          filtered.
 		 * @public
 		 * @function
@@ -2729,7 +2729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Get names of properties that can be sorted, that is they can be used in
 		 * $orderby expressions
 		 *
-		 * @returns {array(string)} Array with names of properties that can be
+		 * @returns {string[]} Array with names of properties that can be
 		 *          sorted.
 		 * @public
 		 * @function
@@ -2743,7 +2743,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Get names of properties that must be filtered, that is they must appear
 		 * in every $filter expression
 		 *
-		 * @returns {array(string)} Array with names of properties that must be
+		 * @returns {string[]} Array with names of properties that must be
 		 *          filtered.
 		 * @public
 		 * @function
@@ -2771,7 +2771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get the names of all properties with an associated hierarchy
 		 *
-		 * @returns {array(string)} List of all property names
+		 * @returns {string[]} List of all property names
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.EntityType#getAllHierarchyPropertyNames
@@ -2868,7 +2868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * Create a representation of a recursive hierarchy defined on one multiple
 	 * properties in an OData entity type query. Do not create your own instances.
 	 *
-	 * @param {EntityType}
+	 * @param {sap.ui.model.analytics.odata4analytics.EntityType}
 	 *            oEntityType object for the entity type
 	 * @param {object}
 	 *            oNodeIDProperty DataJS object for the property holding the
@@ -3175,7 +3175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * The UI5 filter condition is combined with the other given conditions using a logical AND. This method
 		 * is particularly useful for passing forward already created UI5 filter arrays.
 		 *
-		 * @param {array(sap.ui.model.Filter)}
+		 * @param {sap.ui.model.Filter[]}
 		 *            aUI5Filter Array of UI5 filter objects
 		 * @returns {sap.ui.model.analytics.odata4analytics.FilterExpression} This object for method chaining
 		 * @public
@@ -3212,7 +3212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get an array of SAPUI5 Filter objects corresponding to this expression.
 		 *
-		 * @returns {array(sap.ui.model.Filter)} List of filter objects representing this expression
+		 * @returns {sap.ui.model.Filter[]} List of filter objects representing this expression
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#getExpressionAsUI5FilterArray
@@ -3502,10 +3502,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	/** ******************************************************************** */
 
 	/**
-	 * @class Sort order of a property
-	 * @name sap.ui.model.analytics.odata4analytics.SortOrder
+	 * Sort order of a property.
 	 *
-	 * @static
+	 * @enum {string}
 	 * @public
 	 */
 	odata4analytics.SortOrder = {
@@ -3671,7 +3670,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Get an array of SAPUI5 Sorter objects corresponding to this expression.
 		 *
-		 * @returns {array(sap.ui.model.Sorter)} List of sorter objects representing
+		 * @returns {sap.ui.model.Sorter[]} List of sorter objects representing
 		 *          this expression
 		 * @public
 		 * @function
@@ -4035,7 +4034,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Retrieves the current parametrization request
 		 *
-		 * @returns {sap.ui.model.analytics.odata4analytics.ParametrizationRequest}
+		 * @returns {sap.ui.model.analytics.odata4analytics.ParameterizationRequest}
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#getParameterizationRequest

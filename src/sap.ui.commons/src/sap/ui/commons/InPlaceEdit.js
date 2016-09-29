@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		InPlaceEdit.prototype.getAccessibilityInfo = function() {
@@ -805,16 +805,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForUndoButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oUndoButton) {
-				var sIcon = Parameters.get('sapUiIpeUndoImageURL');
-				var sIconHovered = Parameters.get('sapUiIpeUndoImageDownURL');
-				var sThemeModuleName = "sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme();
-				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
-				} else {
+				var sIcon = Parameters._getThemeImage('sapUiIpeUndoImageURL');
+				var sIconHovered = Parameters._getThemeImage('sapUiIpeUndoImageDownURL');
+				if (!sIcon) {
 					sIcon = "sap-icon://decline";
-				}
-				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath(sThemeModuleName, sIconHovered);
 				}
 				oInPlaceEdit._oUndoButton.setIcon(sIcon);
 				oInPlaceEdit._oUndoButton.setIconHovered(sIconHovered);
@@ -884,16 +878,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForEditButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oEditButton) {
-				var sIcon = Parameters.get('sapUiIpeEditImageURL');
-				var sIconHovered = Parameters.get('sapUiIpeEditImageDownURL');
-				var sThemeModuleName = "sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme();
-				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
-				} else {
+				var sIcon = Parameters._getThemeImage('sapUiIpeEditImageURL');
+				var sIconHovered = Parameters._getThemeImage('sapUiIpeEditImageDownURL');
+				if (!sIcon) {
 					sIcon = "sap-icon://edit";
-				}
-				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath(sThemeModuleName, sIconHovered);
 				}
 				oInPlaceEdit._oEditButton.setIcon(sIcon);
 				oInPlaceEdit._oEditButton.setIconHovered(sIconHovered);

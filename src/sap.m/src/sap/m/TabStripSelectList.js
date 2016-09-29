@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 
 		/**
 		 * Changes the visibility of the item's state symbol (*).
-		 * @param {mixed} vItemId
+		 * @param {any} vItemId
 		 * @param {boolean} bShowState
 		 */
 		TabStripSelectList.prototype.changeItemState = function(vItemId, bShowState) {

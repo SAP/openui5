@@ -1024,6 +1024,7 @@ sap.ui.define([
 			],
 			items: {
 				path: "/items",
+				templateShareable: false,
 				template: new sap.m.ColumnListItem({
 					cells: [
 						new sap.m.Text({
@@ -1214,6 +1215,7 @@ sap.ui.define([
 			ariaLabelledBy: oInvisibleChartTypeText,
 			items: {
 				path: '/availableChartTypes',
+				templateShareable: false,
 				template: new sap.ui.core.Item({
 					key: "{key}",
 					text: "{text}"

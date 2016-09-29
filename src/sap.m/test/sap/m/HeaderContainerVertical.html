@@ -1,75 +1,101 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="UTF-8">
 
 <title>Test page: HeaderContainer in Vertical Mode - sap.m</title>
-
-<base href="../../../">
-<!--[if lte IE 9]>
-	<script>
-		(function() {
-			var baseTag = document.getElementsByTagName('base')[0];
-			baseTag.href = baseTag.href;
-	})();
-	</script>
-<![endif]-->
 
 <script id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m, sap.ui.layout"
 	data-sap-ui-theme="sap_belize"
 	data-sap-ui-noConflict="true"
-	src="resources/sap-ui-core.js">
+	src="../../../resources/sap-ui-core.js">
 </script>
 
 <script type="text/javascript">
 	jQuery.sap.initMobile();
 
 	var oData = {
-		"scrollStep" : 200,
-		"scrollTime" : 500,
-		"height" : "100%",
-		"width" : "100%",
-		"items" : [{
-			"content" : [{
-				"type" : "numeric",
-				"value" : 125,
-				"scale" : "M",
-				"unit" : "EUR",
-				"size" : "M",
-				"valueColor" : "Error",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
+		"scrollStep": 200,
+		"scrollTime": 500,
+		"height": "100%",
+		"width": "auto",
+		"backgroundDesign": sap.m.BackgroundDesign.Transparent,
+		"orientation": sap.ui.core.Orientation.Vertical,
+		"header": "Comparative Annual Totals",
+		"subheader": "Expenses By Region",
+		"footer": "Actual and Target",
+		"items": [{
+			"content": [{
+				"type": "numeric",
+				"value": 125,
+				"scale": "M",
+				"unit": "EUR",
+				"size": "M",
+				"valueColor": "Error",
+				"indicator": "Up",
+				"isFormatterValue": false,
+				"truncateValueTo": 4
 			}, {
-				"value" : "USD, Current"
+				"value": "USD, Current"
 			}]
 		}, {
-			"content" : [{
-				"type" : "numeric",
-				"value" : 1115,
-				"scale" : "M",
-				"unit" : "USD",
-				"size" : "M",
-				"valueColor" : "Critical",
-				"indicator" : "Up",
-				"isFormatterValue" : false,
-				"truncateValueTo" : 4
+			"content": [{
+				"type": "numeric",
+				"value": 15,
+				"scale": "M",
+				"unit": "EUR",
+				"size": "M",
+				"valueColor": "Good",
+				"indicator": "Up",
+				"isFormatterValue": false,
+				"truncateValueTo": 4
 			}, {
-				"value" : "USD, Current"
+				"value": "USD, Current"
+			}]
+		}, {
+			"content": [{
+				"type": "numeric",
+				"value": 165,
+				"scale": "M",
+				"unit": "EUR",
+				"size": "M",
+				"valueColor": "Error",
+				"indicator": "Up",
+				"isFormatterValue": false,
+				"truncateValueTo": 4
+			}, {
+				"value": "USD, Current"
+			}]
+		}, {
+			"content": [{
+				"type": "numeric",
+				"value": 11,
+				"scale": "M",
+				"unit": "USD",
+				"size": "M",
+				"valueColor": "Critical",
+				"indicator": "Up",
+				"isFormatterValue": false,
+				"truncateValueTo": 4
+			}, {
+				"value": "USD, Current"
 			}]
 		}]
 	};
+
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	var oModel = new sap.ui.model.json.JSONModel(oData);
 
 	var fnContentFactory = function(sId, oContext) {
 		var aContent = oContext.getProperty("content");
-		var oLayout = new sap.ui.layout.VerticalLayout();
+		var oLayout = new sap.m.VBox();
+		var oNumericContent;
+		var oLabel;
 		for (var i = 0; i < aContent.length; i++) {
 			if (aContent[i].type === "numeric") {
-				var oNumericContent = new sap.m.NumericContent({
+				oNumericContent = new sap.m.NumericContent({
 					value : "{" + oContext.sPath + "/content/" + i + "/value}",
 					scale : "{" + oContext.sPath + "/content/" + i + "/scale}",
 					indicator : "{" + oContext.sPath + "/content/" + i + "/indicator}",
@@ -77,35 +103,71 @@
 					formatterValue : "{" + oContext.sPath + "/content/" + i + "/isFormatterValue}",
 					truncateValueTo : "{" + oContext.sPath + "/content/" + i + "/truncateValueTo}",
 					state : "Loaded",
-					valueColor : "{" + oContext.sPath + "/content/" + i + "/valueColor}"
+					valueColor : "{" + oContext.sPath + "/content/" + i + "/valueColor}",
+					press : function() {}
 				});
-				oLayout.addContent(oNumericContent);
+				oLayout.addItem(oNumericContent);
 			} else if (!aContent[i].type) {
-				var oLabel = new sap.m.Label({
-					text : "{" + oContext.sPath + "/content/" + i + "/value}",
+				oLabel = new sap.m.Label({
+					text : "{" + oContext.sPath + "/content/" + i + "/value}"
 				});
-				oLayout.insertContent(oLabel, 0);
+				oLayout.addItem(oLabel, 0);
 			}
 		}
 		return oLayout;
 	};
 
+	var fnGenericTileContentFactory = function(sId, oContext) {
+		var oTileContent = new sap.m.TileContent({
+			footer: "{/footer}"
+		});
+		var oGenericTile = new sap.m.GenericTile({
+			header: "{/header}",
+			subheader: "{/subheader}",
+			tileContent: [oTileContent],
+			press : function(oEvent) {
+				sap.m.MessageToast.show("GenericTile is pressed.");
+			}
+		});
+		var oNumericContent = new sap.m.NumericContent({
+			value : "{" + oContext.sPath + "/content/0/value}",
+			scale : "{" + oContext.sPath + "/content/0/scale}",
+			indicator : "{" + oContext.sPath + "/content/0/indicator}",
+			size : "{" + oContext.sPath + "/content/0/size}",
+			formatterValue : "{" + oContext.sPath + "/content/0/isFormatterValue}",
+			truncateValueTo : "{" + oContext.sPath + "/content/0/truncateValueTo}",
+			state : "Loaded",
+			valueColor : "{" + oContext.sPath + "/content/0/valueColor}"
+		});
+		oTileContent.setContent(oNumericContent);
+		return oGenericTile;
+	};
+
 	var oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
 		scrollStep : "{/scrollStep}",
 		scrollTime : "{/scrollTime}",
+		orientation : "{/orientation}",
+		backgroundDesign : "{/backgroundDesign}",
 		height : "{/height}",
 		width : "{/width}",
-		orientation : "Vertical",
-		items : {
+		content : {
 			path : "/items",
 			factory : fnContentFactory
 		}
 	});
 
-	var oFlexBox = new sap.m.FlexBox({
-		height : "200px",
-		items : oHeaderContainer
-	}).addStyleClass("sapUiLargeMarginTopBottom");
+	var oHeaderContainer2 = new sap.m.HeaderContainer("headerContainer2", {
+		scrollStep : "{/scrollStep}",
+		scrollTime : "{/scrollTime}",
+		orientation : "{/orientation}",
+		backgroundDesign : "{/backgroundDesign}",
+		height : "{/height}",
+		width : "{/width}",
+		content : {
+			path : "/items",
+			factory : fnGenericTileContentFactory
+		}
+	});
 
 	var oAddButton = new sap.m.Button("add-button", {
 		width : "10rem",
@@ -131,6 +193,7 @@
 			oModel.checkUpdate();
 		}
 	});
+
 	var oRemoveButton = new sap.m.Button("remove-button", {
 		width : "10rem",
 		text : "Remove last content",
@@ -143,22 +206,67 @@
 		}
 	});
 
-	var oDevidersControls = new sap.m.HBox({
+	var oBackgroundSelect = new sap.m.Select({
+		change: function(oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem");
+			oData.backgroundDesign = oSelectedItem.getKey();
+			oModel.checkUpdate();
+		},
+		items: [
+			new sap.ui.core.Item("background-item-1", {
+				key : sap.m.BackgroundDesign.Transparent,
+				text : "Transparent"
+			}), new sap.ui.core.Item("background-item-2", {
+				key : sap.m.BackgroundDesign.Solid,
+				text : "Solid"
+			}), new sap.ui.core.Item("background-item-3", {
+				key : sap.m.BackgroundDesign.Translucent,
+				text : "Translucent"
+			})
+		],
+		selectedItem : "background-item-1"
+	});
+
+	var oOrientationSelect = new sap.m.Select({
+		change: function(oEvent) {
+			var sInitialHeight = oData.height;
+			var oSelectedItem = oEvent.getParameter("selectedItem");
+			oData.orientation = oSelectedItem.getKey();
+			oData.height = oData.width;
+			oData.width = sInitialHeight;
+			oModel.checkUpdate();
+		},
+		items: [
+			new sap.ui.core.Item("orientation-item-1", {
+				key : sap.ui.core.Orientation.Horizontal,
+				text : "Horizontal"
+			}), new sap.ui.core.Item("orientation-item-2", {
+				key : sap.ui.core.Orientation.Vertical,
+				text : "Vertical"
+			})
+		],
+		selectedItem : (oData.orientation === sap.ui.core.Orientation.Horizontal) ? "orientation-item-1" : "orientation-item-2"
+	});
+
+	var oDividersSwitch = new sap.m.HBox({
 		alignItems : sap.m.FlexAlignItems.Center,
-		items : [new sap.m.Label({
-			text : "Show dividers",
-			labelFor : "show-deviders-switch"
-		}), new sap.m.Switch("show-deviders-switch", {
-			type : "AcceptReject",
-			state : true,
-			change : function(oEvt) {
-				oHeaderContainer.setShowDividers(oEvt.getParameter("state"));
-			}
-		})]
+		items : [
+			new sap.m.Label({
+				text : "Show dividers",
+				labelFor : "show-dividers-switch"
+			}), new sap.m.Switch("show-dividers-switch", {
+				type : "AcceptReject",
+				state : true,
+				change : function(oEvt) {
+					oHeaderContainer.setShowDividers(oEvt.getParameter("state"));
+					oHeaderContainer2.setShowDividers(oEvt.getParameter("state"));
+				}
+			})
+		]
 	});
 
 	jQuery.sap.require("sap.ui.model.type.Integer");
-	var oScrollStepInput =  new sap.m.HBox({
+	var oScrollStepInput = new sap.m.HBox({
 		alignItems : sap.m.FlexAlignItems.Center,
 		items : [
 			new sap.m.Label({
@@ -181,7 +289,7 @@
 		]
 	});
 
-	var oScrollTimeInput =  new sap.m.HBox({
+	var oScrollTimeInput = new sap.m.HBox({
 		alignItems : sap.m.FlexAlignItems.Center,
 		items : [
 			new sap.m.Label({
@@ -254,16 +362,19 @@
 		content : [
 			oAddButton,
 			oRemoveButton,
+			oBackgroundSelect,
+			oOrientationSelect,
 			oScrollStepInput,
 			oScrollTimeInput,
 			oWidthInput,
 			oHeightInput,
-			oDevidersControls
+			oDividersSwitch
 		]
 	});
+
 	var oPage = new sap.m.Page("page", {
 		title : "Test Page for sap.m.HeaderContainer",
-		content : [oFlexBox, oAdjustForm]
+		content : [oHeaderContainer, oHeaderContainer2, oAdjustForm]
 	});
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]

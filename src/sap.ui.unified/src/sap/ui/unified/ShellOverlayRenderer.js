@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sCloseTxt = rb.getText("SHELL_OVERLAY_CLOSE");
-		rm.write("<a tabindex='0' href='javascript:void(0);' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
+		rm.write("<a tabindex='0' href='#' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
 		rm.writeAttributeEscaped("title", sCloseTxt);
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			rm.writeAttribute("role", "button");

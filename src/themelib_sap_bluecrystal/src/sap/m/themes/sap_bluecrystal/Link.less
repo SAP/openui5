@@ -1,11 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/Link.control */
-/* ============================================= */
-
-.sapMLnk {
-	font-size: 0.875rem;
-}
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* BlueCrystal theme           */
+/* =========================== */
 
 .sapMLnkDsbl {
 	opacity: 0.5;
@@ -13,42 +9,9 @@
 	cursor: default;
 }
 
-/* Hover Decoration only for desktop clients*/
-html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
-	text-decoration: underline;
-}
-
-html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 1px dotted @sapUiFocus;
-}
-
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMLnk:focus:not(.sapMLnkDsbl) {
-		outline: none;
-		position: relative;
-	}
-	.sapMLnk:focus:not(.sapMLnkDsbl):before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.0625rem dotted @sapUiFocus;
-		pointer-events: none;
-	}
-}
-
 .sapMLIBActive .sapMLnk {
 	color: @sapUiListActiveTextColor;
 	text-decoration: underline;
-}
-
-.sapUiFormEdit .sapMLnk {
-	line-height: 3rem;
 }
 
 .sapMLnkSubtle {
@@ -57,13 +20,4 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 .sapMLnkSubtle:focus {
 	color: @sapUiFocus;
-}
-
-.sapMLnkEmphasized {
-	font-weight: bold;
-}
-
-/* Compact size */
-.sapUiSizeCompact .sapUiFormEdit .sapMLnk {
-	line-height: 2rem;
 }

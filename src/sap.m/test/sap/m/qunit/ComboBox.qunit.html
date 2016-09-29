@@ -2794,7 +2794,7 @@
 			oTarget.value = sExpectedValue;
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
 			oComboBox.open();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
 			// assert
 			assert.strictEqual(oComboBox.getPickerTextField().getValue(), sExpectedValue);
@@ -2828,7 +2828,7 @@
 
 			// act
 			oComboBox.open();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
 			// assert
 			assert.ok(oPicker.getShowHeader());
@@ -2862,10 +2862,10 @@
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
 			oComboBox.open();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 			oComboBox.close();
 			oLabel.destroy();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the close animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the close animation is completed
 
 			// act
 			oComboBox.open();
@@ -8581,7 +8581,7 @@
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
 			oComboBox.open();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 			var oPickerTextField = oComboBox.getPickerTextField();
 			oPickerTextField.focus();
 			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
@@ -9679,7 +9679,7 @@
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
 			oComboBox.open();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 			var oPickerTextField = oComboBox.getPickerTextField();
 			oPickerTextField.focus();
 			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
@@ -9689,7 +9689,7 @@
 			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
 			oComboBox.getPicker().getButtons()[0].firePress();
-			this.clock.tick(1000); // tick the clock ahead some 1 second, after the close animation is completed
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the close animation is completed
 
 			// assert
 			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
@@ -9717,7 +9717,7 @@
 			oComboBox.focus();
 			oComboBox.open();
 
-			// tick the clock ahead some 1 second, after the open animation is completed
+			// tick the clock ahead 1 second, after the open animation is completed
 			this.clock.tick(1000);
 			var oPickerTextField = oComboBox.getPickerTextField();
 			oPickerTextField.focus();
@@ -9737,6 +9737,83 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		// BCP 1680061025
+		QUnit.test("it should fire the change event after the selection is updated on mobile devices", function(assert) {
+			var done = assert.async();
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oItem = new sap.ui.core.Item({
+				key: "li",
+				text: "lorem ipsum"
+			});
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					oItem
+				],
+				change: function() {
+
+					// assert
+					assert.strictEqual(oComboBox.getSelectedKey(), "li");
+
+					// cleanup
+					oComboBox.destroy();
+					done();
+				}
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+
+			// tick the clock ahead 1 second, after the open animation is completed
+			this.clock.tick(1000);
+
+			var oListDomRef = oComboBox.getList().getDomRef();
+			var oTouches = {
+				0: {
+					pageX: 1,
+					pageY: 1,
+					identifier: 0,
+					target: oItem.getDomRef()
+				},
+
+				length: 1
+			};
+
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oListDomRef, {
+				srcControl: oItem,
+				touches: oTouches,
+				targetTouches: oTouches
+			});
+
+			sap.ui.test.qunit.triggerTouchEvent("touchend", oListDomRef, {
+				srcControl: oItem,
+				changedTouches: oTouches,
+				touches: {
+					length: 0
+				}
+			});
+
+			sap.ui.test.qunit.triggerTouchEvent("tap", oListDomRef, {
+				srcControl: oItem,
+				changedTouches: oTouches,
+				touches: {
+					length: 0
+				}
+			});
+
+			// tick the clock ahead 1 second, after the close animation is completed
+			this.clock.tick(1000);
 		});
 
 		QUnit.test("it should close the dialog when the close button is pressed", function(assert) {
@@ -9973,6 +10050,41 @@
 			oForm.destroy();
 			oForm = null;
 			oComboBox = null;
+		});
+
+		QUnit.test("Keep the focus on the input", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: false,
+				tablet: true,
+				combi: false
+			});
+			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", false);
+
+			var oCB = new sap.m.ComboBox();
+			var aValues = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00"];
+			for (var i = 0; i < aValues.length; i++) {
+				var oItem = new sap.ui.core.ListItem();
+				oItem.setKey(i);
+				oItem.setText(aValues[i]);
+
+				oCB.addItem(oItem);
+			}
+			oCB.placeAt('content');
+			sap.ui.getCore().applyChanges();
+
+			oCB.open();
+			this.clock.tick(500);
+
+			var spy = this.spy(document.activeElement, "blur");
+
+			oCB.close();
+			this.clock.tick(500);
+
+			assert.ok(!spy.callCount, "Blur shouldn't be called");
+
+			spy.restore();
+			oCB.destroy();
 		});
 		</script>
 	</head>

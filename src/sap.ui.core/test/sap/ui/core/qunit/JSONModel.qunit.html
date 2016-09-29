@@ -392,7 +392,7 @@
 		oLabel.bindProperty("text", "/pets/0/type");
 		oLayout.addContent(oLabel);
 		ok(oLabel.getBindingContext() == undefined, "context undefined");
-		oContext = oModel.createBindingContext("/pets");
+		oContext = oModelChild.createBindingContext("/pets");
 		oLabel.setBindingContext(oContext);
 		equal(oLabel.getBindingContext().getPath(), "/pets", "context set correctly");
 		oModelChild.setProperty("0/type", "rat",oLabel.getBindingContext());

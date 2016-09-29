@@ -1,16 +1,16 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/table/sample/TableExampleUtils",
 	"sap/m/MessageToast",
-	"sap/ui/model/json/JSONModel"
-], function(Controller, TableExampleUtils, MessageToast,JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/format/DateFormat"
+], function(Controller, MessageToast, JSONModel, DateFormat) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Selection.Controller", {
 
 		onInit : function () {
 			// set explored app's demo model on this sample
-			var oJSONModel = TableExampleUtils.initSampleDataModel();
+			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
 			oView.setModel(oJSONModel);
 			var oTable = oView.byId("table1");
@@ -34,6 +34,47 @@ sap.ui.define([
 			});
 
 			oView.setModel(oModel, "selectionmodel");
+		},
+
+		initSampleDataModel : function() {
+			var oModel = new JSONModel();
+
+			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+
+			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+				dataType: "json",
+				success: function (oData) {
+					var aTemp1 = [];
+					var aTemp2 = [];
+					var aSuppliersData = [];
+					var aCategoryData = [];
+					for (var i=0; i<oData.ProductCollection.length; i++) {
+						var oProduct = oData.ProductCollection[i];
+						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+							aTemp1.push(oProduct.SupplierName);
+							aSuppliersData.push({Name: oProduct.SupplierName});
+						}
+						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+							aTemp2.push(oProduct.Category);
+							aCategoryData.push({Name: oProduct.Category});
+						}
+						oProduct.DeliveryDate = (new Date()).getTime() - (i%10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
+						oProduct.Available = oProduct.Status == "Available" ? true : false;
+					}
+
+					oData.Suppliers = aSuppliersData;
+					oData.Categories = aCategoryData;
+
+					oModel.setData(oData);
+				}.bind(this),
+				error: function () {
+					jQuery.sap.log.error("failed to load json");
+				}
+			});
+
+			return oModel;
 		},
 
 		onSelectionModeChange: function(oEvent) {
@@ -80,6 +121,14 @@ sap.ui.define([
 
 		clearSelection: function (evt) {
 			this.getView().byId("table1").clearSelection();
+		},
+
+		formatAvailableToObjectState : function (bAvailable) {
+			return bAvailable ? "Success" : "Error";
+		},
+
+		formatAvailableToIcon : function(bAvailable) {
+			return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 		},
 
 		handleDetailsPress : function(oEvent) {

@@ -41,9 +41,10 @@
 	display: flex;
 
 	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
-	flex-grow: 1;
+	-moz-box-flex: 1;
+	-webkit-flex: 1;
+	-ms-flex: 1;
+	flex: 1;
 
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
@@ -116,15 +117,14 @@
    ========================================================================== */
 .sapUiFixFlexInnerScrolling {
 	& > .sapUiFixFlexFlexible {
-		// The change from overflow-y to overflow is needed due to a bug in "Edge" browser
-		// BCP: 1570807842
+		-webkit-overflow-scrolling: touch;
 		overflow: auto;
 
-		-webkit-overflow-scrolling: touch;
-
-		// BCP: 1570807842
 		.sapUiFixFlexFlexibleContainer {
 			overflow-x: hidden;
+			overflow-y: visible;
+			position: static;
+			width: 100%;
 		}
 	}
 
@@ -136,7 +136,6 @@
 }
 
 .sapUiFixFlexScrolling {
-	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	display: block;
 
@@ -150,8 +149,6 @@
 	}
 
 	&.sapUiFixFlexRow {
-		overflow-x: auto;
-		overflow-y: hidden;
 		white-space: nowrap;
 		& > .sapUiFixFlexFlexible,
 		& > .sapUiFixFlexFixed {

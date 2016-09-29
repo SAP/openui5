@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @param {object} [vView.cache] Cache configuration, only for <code>async</code> views; caching gets active
 		 * when this object is provided with vView.cache.keys array; keys are used to store data in the cache and for
 		 * invalidation of the cache
-		 * @param {(string|Promise)[]} [vView.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {Array.<(string|Promise)>} [vView.cache.keys] Array with strings or Promises resolving with strings
 		 * @param {object} [vView.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
@@ -112,6 +112,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @since 1.30
 		 */
 		XMLView.asyncSupport = true;
+
+		/**
+		 * Flag indicating whether to use the cache
+		 * @private
+		 * @experimental
+		 * @since 1.44
+		 */
+		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache();
 
 		function validatexContent(xContent) {
 			if (xContent.parseError.errorCode !== 0) {
@@ -216,8 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					return aKeys.join('_');
 				} else {
 					var e = new Error("Provided cache keys may not be empty or undefined.");
-					oView.oAsyncState.complete(e);
-					throw e;
+					return Promise.reject(e);
 				}
 			});
 		}
@@ -323,18 +330,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				});
 			}
 
+			function processResource(sResourceName, mCacheInput) {
+				return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(function(xContent) {
+					if (mCacheInput) {
+						writeCache(mCacheInput, xContent);
+					}
+					return xContent;
+				});
+			}
+
 			function processCache(sResourceName, mCacheSettings) {
 				return getCacheInput(that, mCacheSettings).then(function(mCacheInput) {
 					return readCache(mCacheInput).then(function(mCacheOutput) {
 						if (!mCacheOutput) {
-							return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(function(xContent) {
-								writeCache(mCacheInput, xContent);
-								return xContent;
-							});
+							return processResource(sResourceName, mCacheInput);
 						} else {
 							return mCacheOutput.xml;
 						}
 					});
+				}).catch(function(e) {
+					jQuery.sap.log.error(e);
+					return processResource(sResourceName);
 				});
 			}
 
@@ -352,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
 					// in async mode we need to return here as processing takes place in Promise callbacks
-					if (mSettings.cache) {
+					if (mSettings.cache && XMLView._bUseCache) {
 						return processCache(sResourceName, mSettings.cache).then(processView);
 					} else {
 						return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);

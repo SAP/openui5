@@ -446,7 +446,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * Delegates to {@link ListBinding#enableExtendedChangeDetection} while disallowing the vKey
+	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing the vKey
 	 * parameter.
 	 */
 	// @override
@@ -591,8 +591,8 @@ sap.ui.define([
 	 *   <code>iStart</code>
 	 * @throws {Error}
 	 *   If extended change detection is enabled (see
-	 *   {@link ListBinding#enableExtendedChangeDetection}) and <code>iMaximumPrefetchSize</code>
-	 *   is set or <code>iStart</code> is not 0
+	 *   {@link sap.ui.model.ListBinding#enableExtendedChangeDetection})
+	 *   and <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -1029,7 +1029,7 @@ sap.ui.define([
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
 	 * there are pending changes. If there are changes, call
-	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch) to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * 'sort'.
 	 *

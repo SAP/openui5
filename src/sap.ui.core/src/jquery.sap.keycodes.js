@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Enumeration of key codes.
 	 *
-	 * @namespace
+	 * @enum {number}
 	 * @public
 	 * @since 0.9.0
 	 */

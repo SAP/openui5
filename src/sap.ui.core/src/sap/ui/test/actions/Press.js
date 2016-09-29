@@ -16,6 +16,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *     <li>sap.m.Link</li>
 	 *     <li>sap.m.StandardListItem</li>
 	 *     <li>sap.m.IconTabFilter</li>
+	 *     <li>sap.m.Input - Value help</li>
 	 *     <li>sap.m.SearchField - Search Button</li>
 	 *     <li>sap.m.Page - Back Button</li>
 	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
@@ -56,14 +57,15 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 			var $ActionDomRef = this.$(oControl);
 
 			if ($ActionDomRef.length) {
-				$ActionDomRef.focus();
 				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
+				this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
 				this._triggerEvent("mousedown", $ActionDomRef);
 				this.getUtils().triggerEvent("selectstart", $ActionDomRef);
 				this._triggerEvent("mouseup", $ActionDomRef);
 				this._triggerEvent("click", $ActionDomRef);
+				this._simulateFocusout($ActionDomRef[0]);
 			}
 		},
 
@@ -121,10 +123,10 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *
 	 * <pre>
 	 * <code>
-	 *     <div id="myId">
-	 *         <button id="myId-firstButton"/>
-	 *         <button id="myId-secondButton"/>
-	 *     </div>
+	 *     &lt;div id="myId"&gt;
+	 *         &lt;button id="myId-firstButton"/&gt;
+	 *         &lt;button id="myId-secondButton"/&gt;
+	 *     &lt;/div&gt;
 	 * </code>
 	 * </pre>
 	 *
@@ -132,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *
 	 * <pre>
 	 * <code>
-	 *     Press.controlAdapters["my.control"] = "secondButton" //This can be used by setting the Target Property of an action
+	 *     Press.controlAdapters["my.control"] = "secondButton"; //This can be used by setting the Target Property of an action
 	 *
 	 *     // Example usage
 	 *     new Press(); // executes on second Button since it is set as default
@@ -143,10 +145,11 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *
 	 * @public
 	 * @static
-	 * @name sap.ui.test.actions.Press#.controlAdapters
+	 * @name sap.ui.test.actions.Press.controlAdapters
 	 * @type map
 	 */
 	Press.controlAdapters = {};
+	Press.controlAdapters["sap.m.Input"] = "vhi";
 	Press.controlAdapters["sap.m.SearchField"] = "search";
 	Press.controlAdapters["sap.m.ListBase"] = "trigger";
 	Press.controlAdapters["sap.m.Page"] = "navButton";

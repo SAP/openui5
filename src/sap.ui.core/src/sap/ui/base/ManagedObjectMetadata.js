@@ -10,7 +10,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	/**
 	 * Creates a new metadata object that describes a subclass of ManagedObject.
 	 *
-	 * Note: throughout this class documentation, the described subclass of ManagedObject
+	 * <b>Note:</b> Code outside the <code>sap.ui.base</code> namespace must not call this
+	 * constructor directly. Instances will be created automatically when a new class is
+	 * defined with one of the {@link sap.ui.base.ManagedObject.extend <i>SomeClass</i>.extend}
+	 * methods.
+	 *
+	 * <b>Note</b>: throughout this class documentation, the described subclass of ManagedObject
 	 * is referenced as <i>the described class</i>.
 	 *
 	 * @param {string} sClassName fully qualified name of the described class
@@ -46,10 +51,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * </ul>
 	 *
+	 *
 	 * @author Frank Weigel
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
+	 * @public
 	 */
 	var ManagedObjectMetadata = function(sClassName, oClassInfo) {
 
@@ -549,7 +556,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Typically used to enrich UIElement classes in an aspect oriented manner.
 	 * @param {string} sName name of the property to add
 	 * @param {object} oInfo metadata for the property
-	 * @public
+	 * @private
+	 * @restricted sap.ui.core
 	 * @see sap.ui.core.EnabledPropagator
 	 */
 	ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
@@ -578,13 +586,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If neither the described class nor its ancestor classes define a property with the
 	 * given name, <code>undefined</code> is returned.
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} sName name of the property
 	 * @returns {Object} An info object describing the property or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
-	 * @experimental Type, structure and behavior of the returned info object is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getProperty = function(sName) {
 		var oProp = this._mAllProperties[sName];
@@ -598,11 +607,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * The returned map keys the property info objects by their name.
 	 *
-	 * @return {map} Map of property info objects keyed by the property names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of property info objects keyed by the property names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
 		return this._mProperties;
@@ -614,11 +624,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * The returned map keys the property info objects by their name.
 	 *
-	 * @return {map} Map of property info objects keyed by the property names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of property info objects keyed by the property names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
 		return this._mAllProperties;
@@ -647,13 +658,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If the name is not given (or has a falsy value), then it is substituted by the
 	 * name of the default aggregation of the 'described class' (if any).
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} [sName] name of the aggregation or empty
 	 * @returns {Object} An info object describing the aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
-	 * @experimental Type, structure and behavior of the returned info object is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAggregation = function(sName) {
 		sName = sName || this._sDefaultAggregation;
@@ -669,11 +681,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * The returned map keys the aggregation info objects by their name.
 	 * In case of 0..1 aggregations this is the singular name, otherwise it is the plural name.
 	 *
-	 * @return {map} Map of aggregation info objects keyed by aggregation names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of aggregation info objects keyed by aggregation names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
 		return this._mAggregations;
@@ -687,11 +700,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * In case of 0..1 aggregations this is the singular name, otherwise it is the plural
 	 * name.
 	 *
-	 * @return {map} Map of aggregation info objects keyed by aggregation names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of aggregation info objects keyed by aggregation names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
 		return this._mAllAggregations;
@@ -704,11 +718,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * The returned map contains aggregation info objects keyed by the aggregation name.
 	 * In case of 0..1 aggregations this is the singular name, otherwise it is the plural name.
 	 *
-	 * @return {map} Map of aggregation infos keyed by aggregation names
-	 * @protected
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of aggregation infos keyed by aggregation names
+	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
 		return this._mAllPrivateAggregations;
@@ -721,12 +736,13 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If the name is not given (or has a falsy value), then it is substituted by the
 	 * name of the default aggregation of the described class (if it is defined).
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} sAggregationName name of the aggregation to be retrieved or empty
 	 * @return {object} aggregation info object or undefined
 	 * @protected
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
 		sAggregationName = sAggregationName || this._sDefaultAggregation;
@@ -794,13 +810,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If neither the described class nor its ancestor classes define a suitable setting
 	 * with the given name, <code>undefined</code> is returned.
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} sName name of the property like setting
 	 * @returns {Object} An info object describing the property or aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
-	 * @experimental Type, structure and behavior of the returned info object is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getPropertyLikeSetting = function(sName) {
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
@@ -833,13 +850,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If neither the described class nor its ancestor classes define an association with
 	 * the given name, <code>undefined</code> is returned.
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} sName name of the association
 	 * @returns {Object} An info object describing the association or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
-	 * @experimental Type, structure and behavior of the returned info object is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAssociation = function(sName) {
 		var oAssoc = this._mAllAssociations[sName];
@@ -854,11 +872,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * The returned map keys the association info objects by their name.
 	 * In case of 0..1 associations this is the singular name, otherwise it is the plural name.
 	 *
-	 * @return {map} Map of association info objects keyed by association names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of association info objects keyed by association names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
 		return this._mAssociations;
@@ -871,11 +890,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * The returned map keys the association info objects by their name.
 	 * In case of 0..1 associations this is the singular name, otherwise it is the plural name.
 	 *
-	 * @return {map} Map of association info objects keyed by association names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of association info objects keyed by association names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
 		return this._mAllAssociations;
@@ -902,13 +922,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * If neither the described class nor its ancestor classes define an event with the
 	 * given name, <code>undefined</code> is returned.
 	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
 	 * @param {string} sName name of the event
 	 * @returns {Object} An info object describing the event or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
-	 * @experimental Type, structure and behavior of the returned info object is not documented
-	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
-	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getEvent = function(sName) {
 		var oEvent = this._mAllEvents[sName];
@@ -922,11 +943,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * The returned map keys the event info objects by their name.
 	 *
-	 * @return {map} Map of event info objects keyed by event names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of event info objects keyed by event names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
 		return this._mEvents;
@@ -938,11 +960,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * The returned map keys the event info objects by their name.
 	 *
-	 * @return {map} Map of event info objects keyed by event names
-	 * @public
-	 * @experimental Type, structure and behavior of the returned info objects is not documented
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of event info objects keyed by event names
+	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
 		return this._mAllEvents;
@@ -960,7 +983,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the setting
 	 * @param {object} oInfo metadata for the setting
 	 * @private
-	 * @experimental since 1.35.0
+	 * @restricted sap.ui.core
 	 */
 	ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
 		var oSS = new SpecialSetting(this, sName, oInfo);
@@ -979,7 +1002,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the settings
 	 * @return {boolean} true, if the special setting exists
 	 * @private
-	 * @experimental Since 1.27.0
 	 */
 	ManagedObjectMetadata.prototype.hasSpecialSetting = function (sName) {
 		return !!this._mAllSpecialSettings[sName];
@@ -1162,8 +1184,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	}
 
 	/**
-	 * Calculates a new id based on a prefix.
+	 * Calculates a new ID based on a prefix.
 	 *
+	 * To guarantee uniqueness of the generated IDs across all ID prefixes,
+	 * prefixes must not end with digits.
+	 *
+	 * @param {string} sIdPrefix prefix for the new ID
 	 * @return {string} A (hopefully unique) control id
 	 * @public
 	 * @function
@@ -1171,13 +1197,13 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	ManagedObjectMetadata.uid = uid;
 
 	/**
-	 * Calculates a new id for an instance of this class.
+	 * Calculates a new ID for an instance of this class.
 	 *
 	 * Note that the calculated short name part is usually not unique across
 	 * all classes, but doesn't have to be. It might even be empty when the
 	 * class name consists of invalid characters only.
 	 *
-	 * @return {string} A (hopefully unique) control id
+	 * @return {string} A (hopefully unique) control ID
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.uid = function() {
@@ -1214,9 +1240,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   "foo__bar04--baz"
 	 * </pre>
 	 *
-	 * @see ManagedObjectMetadata.prototype.uid for details on ID generation
+	 * See {@link sap.ui.base.ManagedObjectMetadata.prototype.uid} for details on ID generation.
+	 *
 	 * @param {string} sId the ID that should be tested
-	 * @return {boolean} whether the ID is llikely to be generated
+	 * @return {boolean} whether the ID is likely to be generated
 	 * @static
 	 * @public
 	 */

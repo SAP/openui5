@@ -26,8 +26,20 @@
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- This test is not running against the real Northwind service, but a fake service based on
+     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
+<script type="text/javascript" src="ODataModelFakeService.js"></script>
+
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
+	var sUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+	sUri = "../../../../../proxy/http/" + sUri.replace("http://","");
 
 	sap.ui.core.Control.extend("sap.ui.core.TestControl", {
 		metadata : {
@@ -58,6 +70,8 @@
     var oModel4 = new sap.ui.model.json.JSONModel({
     	data: ["0","1","2"]
     });
+    var oModel5 = new sap.ui.model.odata.v2.ODataModel(sUri);
+    
     var uiArea,ctrl,child;
 
 	module("Model propagation", {
@@ -617,6 +631,53 @@
 			ctrl = null;
 			child = null;
 		}
+	});
+	
+	asyncTest("Binding/Model types", function() {
+		oModel5.metadataLoaded().then(function(){
+			var child = new sap.ui.core.TestControl({
+				objectBindings: "Suppliers(1)",
+				value: "{CompanyName}"
+				
+			});
+			var ctrl = new sap.ui.core.TestControl({
+				children : [child]
+			});
+			var spy = sinon.spy(oModel5, "read");
+			ctrl.setModel(oModel4);
+			child.setModel(oModel5);
+			ok(!child.getValue(), "Value should not be resolved");
+			var oJSONContext = oModel4.createBindingContext("/");
+			child.setBindingContext(oJSONContext);
+			ok(spy.callCount === 0, "no request should be sent");
+			oModel5.read.restore();
+			start();
+		});
+	});
+	
+	asyncTest("Binding/Model types 2", function() {
+		oModel5.metadataLoaded().then(function(){
+			var ctrl3 = new sap.ui.core.TestControl({
+				objectBindings: "Suppliers(1)",
+				value: "{CompanyName}"
+			});
+			var ctrl2 = new sap.ui.core.TestControl({
+				models: oModel5,
+				children: [ctrl3]
+			});
+			var ctrl = new sap.ui.core.TestControl({
+				children : [ctrl2]
+			});
+			
+			var spy = sinon.spy(oModel5, "read");
+			ctrl.setModel(oModel4);
+			ok(!ctrl3.getValue(), "Value should not be resolved");
+			var oJSONContext = oModel4.createBindingContext("/");
+			ctrl.setBindingContext(oJSONContext);
+			ok(spy.callCount === 0, "no request should be sent");
+			oModel5.read.restore();
+			start();
+		});
 	});
 	test("Context binding instance", function() {
 		mPropagationInfo = {};

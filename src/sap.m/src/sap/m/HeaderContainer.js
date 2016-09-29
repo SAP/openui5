@@ -98,20 +98,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					group : "Appearance"
 				},
 				/**
-				 * The width of the whole HeaderContainer.
+				 * The width of the whole HeaderContainer. If not specified, it is rendered as '100%' in horizontal orientation and as 'auto' in vertical orientation.
 				 */
-				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue : "100%"},
+				width: {type: "sap.ui.core.CSSSize", group: "Appearance"},
 				/**
-				 * The height of the whole HeaderContainer.
+				 * The height of the whole HeaderContainer. If not specified, it is rendered as 'auto' in horizontal orientation and as '100%' in vertical orientation.
 				 */
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance"}
 			},
-			defaultAggregation : "items",
+			defaultAggregation : "content",
 			aggregations : {
 				/**
-				 * Items to add to HeaderContainer.
+				 * Content to add to HeaderContainer.
 				 */
-				items : {
+				content : {
 					type : "sap.ui.core.Control",
 					multiple : true
 				},
@@ -148,7 +148,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* ============================================================ */
 
 	HeaderContainer.prototype.init = function() {
-		this._iSelectedCell = 0;
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oScrollCntr = new library.ScrollContainer(this.getId() + "-scrl-cntnr", {
@@ -212,25 +211,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this._oItemNavigation.setTabIndex0();
 					this._oItemNavigation.setCycling(false);
 				}
-			}.bind(this),
-
-			onBeforeRendering : function() {
-				if (Device.system.desktop) {
-					this._oScrollCntr._oScroller = new ScrollEnablement(this._oScrollCntr, this._oScrollCntr.getId() + "-scroll", {
-						horizontal : true,
-						vertical : true,
-						zynga : false,
-						preventDefault : false,
-						nonTouchScrolling : true
-					});
-				}
 			}.bind(this)
 		});
 	};
 
 	HeaderContainer.prototype.onBeforeRendering = function() {
 		if (!this.getHeight()) {
-			jQuery.sap.log.warning("No height provided for the sap.m.HeaderContainer control.");
+			jQuery.sap.log.warning("No height provided", this);
+		}
+		if (!this.getWidth()) {
+			jQuery.sap.log.warning("No width provided", this);
 		}
 		if (Device.system.desktop) {
 			this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
@@ -240,16 +230,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 		}
 		sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this);
-		this.$().unbind("click", this._handleSwipe); // TODO: check why click is unbinded.
-		if (this._sScrollResizeHandlerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
-		}
-	};
-
-	HeaderContainer.prototype.onAfterRendering = function() {
-		if (Device.system.desktop) {
-			this.$().bind("swipe", this._handleSwipe.bind(this)); // TODO: check why click is bind for desktop devices.
-		}
 	};
 
 	HeaderContainer.prototype.exit = function() {
@@ -258,30 +238,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
 		}
-		if (this._sScrollResizeHandlerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sScrollResizeHandlerId);
-		}
-	};
-
-	/* =========================================================== */
-	/* Event Handling                                              */
-	/* =========================================================== */
-	HeaderContainer.prototype._handleSwipe = function(oEvt) {
-		oEvt.preventDefault();
-		oEvt.stopPropagation();
-		this._isDragEvent = true;
-	};
-
-	HeaderContainer.prototype.onclick = function(oEvt) {
-		if (this._isDragEvent) {
-			oEvt.preventDefault();
-			oEvt.stopPropagation();
-			this._isDragEvent = false;
-		}
 	};
 
 	HeaderContainer.prototype.onsaptabnext = function(oEvt) {
-		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
 		var oFocusables = this.$().find(":focusable"); // all tabstops in the control
 		var iThis = oFocusables.index(oEvt.target); // focused element index
 		var oNext = oFocusables.eq(iThis + 1).get(0); // next tab stop element
@@ -305,7 +264,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iThis = oFocusables.index(oEvt.target); // focused element index
 		var oPrev = oFocusables.eq(iThis - 1).get(0); // previous tab stop element
 		var oFromCell = this._getParentCell(oEvt.target);
-		this._iSelectedCell = this._oItemNavigation.getFocusedIndex();
 		var oToCell;
 		if (oPrev) {
 			oToCell = this._getParentCell(oPrev);
@@ -327,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Public property getters/setters                             */
 	/* =========================================================== */
 	HeaderContainer.prototype.setOrientation = function(value) {
-	  this.setProperty("orientation", value, true);
+	  this.setProperty("orientation", value);
 		if (value === Orientation.Horizontal && !Device.system.desktop) {
 			// Needs to be done by setter. No re-rendering done.
 			this._oScrollCntr.setHorizontal(true);
@@ -393,24 +351,69 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	HeaderContainer.prototype._vScroll = function(iDelta, iDuration) {
-		var oDomRef = this._oScrollCntr.getDomRef();
-		var iScrollTop = oDomRef.scrollTop;
-		var iScrollTarget = iScrollTop + iDelta;
-		this._oScrollCntr.scrollTo(0, iScrollTarget, iDuration);
+	HeaderContainer.prototype._vScroll = function(delta, duration) {
+		var oDomRef = this._oScrollCntr.getDomRef(),
+		iScrollTop = oDomRef.scrollTop,
+		iScrollHeight = oDomRef.scrollHeight,
+		iScrollTarget = iScrollTop + delta,
+		iClientHeight = oDomRef.clientHeight,
+		iPaddingHeight = parseFloat(this.$("scroll-area").css("padding-top")),
+		iRemainingTime;
+
+		if (iScrollTarget <= 0) { // when the next scrolling will reach the top edge side
+			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollTop);
+			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+			this.$().removeClass("sapMHrdrTopPadding");
+		} else if (iScrollTarget + iClientHeight + iPaddingHeight >= iScrollHeight) { // when the next scrolling will reach the bottom edge side
+			iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollHeight - iClientHeight - iScrollTop);
+			this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+			if (iClientHeight + delta > iScrollHeight && iClientHeight !== iScrollHeight) { // when scrolling from top edge direct to bottom edge
+				this.$().removeClass("sapMHrdrBottomPadding");
+				this.$().addClass("sapMHrdrTopPadding");
+			} else {
+				this.$().removeClass("sapMHrdrBottomPadding");
+			}
+		} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
+			this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
+		}
+		this._oScrollCntr.scrollTo(0, iScrollTarget, duration);
 	};
 
-	HeaderContainer.prototype._hScroll = function(iDelta, iDuration) {
+	HeaderContainer.prototype._hScroll = function(delta, duration) {
 		var oDomRef = this._oScrollCntr.getDomRef();
-		var iScrollTarget;
+		var iScrollTarget, iScrollLeft, iClientWidth, iScrollWidth, iPaddingWidth, iRemainingTime;
 		if (!this._bRtl) {
-			var iScrollLeft = oDomRef.scrollLeft;
-			iScrollTarget = iScrollLeft + iDelta;
-			this._oScrollCntr.scrollTo(iScrollTarget, 0, iDuration);
+			iScrollLeft = oDomRef.scrollLeft;
+			iScrollWidth = oDomRef.scrollWidth;
+			iClientWidth = oDomRef.clientWidth;
+			iScrollTarget = iScrollLeft + delta;
+			iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
+
+			if (iScrollTarget <= 0) { // when the next scrolling will reach the left edge side
+				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollLeft);
+				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+				this.$().removeClass("sapMHrdrLeftPadding");
+			} else if (iScrollTarget + oDomRef.clientWidth + iPaddingWidth >= iScrollWidth) { // when the next scrolling will reach the right edge side
+				iRemainingTime = this._calculateRemainingScrolling(delta, duration, iScrollWidth - iClientWidth - iScrollLeft);
+				this.$("scroll-area").css("transition", "padding " + iRemainingTime + "s");
+				if (iClientWidth + delta > iScrollWidth && iClientWidth !== iScrollWidth) { // when scrolling from left edge direct to right edge
+					this.$().removeClass("sapMHrdrRightPadding");
+					this.$().addClass("sapMHrdrLeftPadding");
+				} else {
+					this.$().removeClass("sapMHrdrRightPadding");
+				}
+			} else { // transition time is reset to the scrolling speed when scrolling does not reach the edge
+				this.$("scroll-area").css("transition", "padding " + duration / 1000 + "s");
+			}
+			this._oScrollCntr.scrollTo(iScrollTarget, 0, duration);
 		} else {
-			iScrollTarget = jQuery(oDomRef).scrollRightRTL() + iDelta;
-			this._oScrollCntr.scrollTo((iScrollTarget > 0) ? iScrollTarget : 0, 0, iDuration);
+			iScrollTarget = jQuery(oDomRef).scrollRightRTL() + delta;
+			this._oScrollCntr.scrollTo((iScrollTarget > 0) ? iScrollTarget : 0, 0, duration);
 		}
+	};
+
+	HeaderContainer.prototype._calculateRemainingScrolling = function(delta, duration, distance) {
+		return Math.abs(distance * duration / (1000 * delta));
 	};
 
 	HeaderContainer.prototype._checkOverflow = function() {
@@ -422,17 +425,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._checkVOverflow = function() {
-		var oBarHead = this._oScrollCntr.getDomRef();
-		var bScrolling = false;
+		var oBarHead = this._oScrollCntr.getDomRef(), oOldScrollBack;
 
-		if (oBarHead) {
-			if (oBarHead.scrollHeight > oBarHead.clientHeight) {
-				// scrolling possible
-				bScrolling = true;
-			}
-		}
-
-		this._lastVScrolling = bScrolling;
 		if (oBarHead) {
 			var iScrollTop = Math.round(oBarHead.scrollTop);
 
@@ -454,17 +448,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				bScrollForward = true;
 			}
 
-			if (!bScrollBack) {
+			oOldScrollBack = this._oArrowPrev.$().is(":visible");
+			if (oOldScrollBack && !bScrollBack) {
 				this._oArrowPrev.$().hide();
 				this.$().removeClass("sapMHrdrTopPadding");
-			} else {
+			}
+			if (!oOldScrollBack && bScrollBack) {
 				this._oArrowPrev.$().show();
 				this.$().addClass("sapMHrdrTopPadding");
 			}
-			if (!bScrollForward) {
+			var oOldScrollForward = this._oArrowNext.$().is(":visible");
+			if (oOldScrollForward && !bScrollForward) {
 				this._oArrowNext.$().hide();
 				this.$().removeClass("sapMHrdrBottomPadding");
-			} else {
+			}
+			if (!oOldScrollForward && bScrollForward) {
 				this._oArrowNext.$().show();
 				this.$().addClass("sapMHrdrBottomPadding");
 			}
@@ -473,17 +471,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype._checkHOverflow = function() {
 		var oBarHead = this._oScrollCntr.getDomRef();
-		var oBarHeadContainer = this.$("scroll-area");
-		var bScrolling = false;
 
-		if (oBarHead) {
-			if (oBarHead.scrollWidth - 5 > oBarHead.clientWidth) {
-				// scrolling possible
-				bScrolling = true;
-			}
-		}
-
-		this._lastScrolling = bScrolling;
 		if (oBarHead) {
 			var iScrollLeft = Math.floor(oBarHead.scrollLeft);
 
@@ -499,24 +487,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			if (this._bRtl) {
 				var iScrollLeftRTL = jQuery(oBarHead).scrollLeftRTL();
-				if (iScrollLeftRTL > (Device.browser.internet_explorer ? 1 : 0)) {
+				if (iScrollLeftRTL > ((Device.browser.internet_explorer || Device.browser.edge) ? 1 : 0)) {
 					bScrollForward = true;
 				}
 			} else if (iScrollLeft > 1) {
 				bScrollBack = true;
 			}
 
-			var fnRightMarginCalc = function() {
-				var iPadding = parseFloat(oBarHeadContainer.css("padding-right"));
-				return Device.browser.internet_explorer ? iPadding + 1 : iPadding;
-			};
-
 			if (realWidth - 5 > availableWidth) {
 				if (this._bRtl) {
 					if (jQuery(oBarHead).scrollRightRTL() > 1) {
 						bScrollBack = true;
 					}
-				} else if (Math.abs(iScrollLeft + availableWidth - realWidth) > fnRightMarginCalc()) {
+				} else if (iScrollLeft + availableWidth < realWidth) {
 						bScrollForward = true;
 				}
 			}
@@ -550,14 +533,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iIndex = oEvt.getParameter("index");
 		if (iIndex === 0) {
 			this._scroll(-this.getScrollStep(), this.getScrollTime());
-		} else if (iIndex === this.getItems().length - 1){
+		} else if (iIndex === this.getContent().length - 1){
 			this._scroll(this.getScrollStep(), this.getScrollTime());
 		}
 	};
 
 	/**
-	 * @description Unwraps the content of HeaderContainerItemContainer. Ignores elements that are not HeaderContainerItemContainer (allowing the proper behavior if used with indexOf).
+	 * @description Unwraps the content of HeaderContainerItemContainer. Ignores elements that are not
+	 * HeaderContainerItemContainer (allowing the proper behavior if used with indexOf).
 	 * Works on single elements and arrays.
+	 *
+	 * @param {Object} wrapped The wrapped object
+	 * @returns {Object} The wrapped content, if wrapped has originally been a HeaderContainerItemContainer
+	 * or an array containing HeaderContainerItemContainer. Otherwise the parameter wrapped will be returned.
 	 * @private
 	 */
 	HeaderContainer.prototype._unWrapHeaderContainerItemContainer = function(wrapped) {
@@ -577,15 +565,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT = ["insertAggregation", "addAggregation"];
 	HeaderContainer.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName) {
 		var args = Array.prototype.slice.call(arguments);
-		if (sAggregationName === "items") {
-			var oItem = args[2];
+		if (sAggregationName === "content") {
+			var oContent = args[2];
 			args[1] = "content";
-			if (oItem instanceof Control) {
-				if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS) > -1 && oItem.getParent() instanceof HeaderContainerItemContainer) {
-					args[2] = oItem.getParent();
+			if (oContent instanceof Control) {
+				if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS) > -1 && oContent.getParent() instanceof HeaderContainerItemContainer) {
+					args[2] = oContent.getParent();
 				} else if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT) > -1) {
 					args[2] = new HeaderContainerItemContainer({
-						item: oItem
+						item: oContent
 					});
 				}
 			}
@@ -607,8 +595,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		if (oEvt.target.id === this.getId() + "-after") {
 			this._restoreLastFocused();
-		} else {
-			return;
 		}
 	};
 

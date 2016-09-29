@@ -27,8 +27,8 @@
 .sapMSliderTooltipContainer {
   display: flex;
   position: absolute;
-  top: -2.75rem;
-  height: 1.5rem;
+  top: -3rem;
+  height: 2rem;
   width: auto;
   justify-content: space-between;
   transition-property: left, right;
@@ -40,10 +40,26 @@
   padding: 0;
 }
 
-.sapMSliderTooltipContainer .sapMInputBaseInner {
-  height: 26px;
-  font-size: 0.75rem;
-  position: relative;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.sapMSliderTooltipContainer {
+  .sapMInputBase {
+    height: inherit;
+  }
+  .sapMInputBaseInner {
+    height: inherit;
+    font-size: 0.75rem;
+    position: relative;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+.sapUiSizeCozy .sapMSliderTooltipContainer {
+  .sapMInputBase {
+    height: 3rem;
+    top: -1rem;
+    padding: 0.25rem 0;
+  }
+  .sapMInputBaseInner {
+    height: 2.5rem;
+  }
 }

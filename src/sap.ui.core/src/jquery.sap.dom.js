@@ -966,8 +966,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * If the class name is not found, it is also removed from the target DOM element.
 	 *
 	 * @param {string} sStyleClass CSS class name
-	 * @param {jQuery|Control|string} vSource jQuery object, control or an id of the source element.
-	 * @param {jQuery|Control} vDestination target jQuery object or a control.
+	 * @param {jQuery|sap.ui.core.Control|string} vSource jQuery object, control or an id of the source element.
+	 * @param {jQuery|sap.ui.core.Control} vDestination target jQuery object or a control.
 	 * @return {jQuery|Element} Target element
 	 * @public
 	 * @since 1.22

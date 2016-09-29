@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.ValueState} sState The state to be set to
-	 * @returns {ObjectNumber} this pointer for chaining
+	 * @returns {sap.m.ObjectNumber} this pointer for chaining
 	 */
 	ObjectNumber.prototype.setState = function(sState) {
 		//remove the current value state css class

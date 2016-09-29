@@ -98,7 +98,10 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 */
 	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata  = function(sAggregationName) {
 		var oData =  this.getAggregation(sAggregationName);
-		return new AggregationDesignTimeMetadata({data : oData});
+		return new AggregationDesignTimeMetadata({
+			libraryName : this.getLibraryName(),
+			data : oData
+		});
 	};
 
 	/**
@@ -123,6 +126,28 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 			return oElement.getParent();
 		}
 		return fnGetRelevantContainer(oElement);
+	};
+
+	ElementDesignTimeMetadata.prototype.getAggregationAction = function(sAction, oElement) {
+		var vAction;
+		var oAggregations = this.getAggregations();
+		var aActions = [];
+
+		for (var sAggregation in oAggregations) {
+			if (oAggregations[sAggregation].actions && oAggregations[sAggregation].actions[sAction]) {
+				vAction = oAggregations[sAggregation].actions[sAction];
+				if (typeof vAction === "function") {
+					vAction = vAction.call(null, oElement);
+				} else if (typeof (vAction) === "string" ) {
+					vAction = { changeType : vAction };
+				}
+				if (vAction) {
+					vAction.aggregation = sAggregation;
+				}
+				aActions.push(vAction);
+			}
+		}
+		return aActions;
 	};
 
 	return ElementDesignTimeMetadata;

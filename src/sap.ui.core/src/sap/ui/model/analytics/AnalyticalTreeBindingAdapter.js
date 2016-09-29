@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeBindingUtils'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeBindingUtils'],
 	function(jQuery, TreeBinding, AnalyticalBinding, TreeAutoExpandMode, ChangeReason, ODataTreeBindingAdapter, TreeBindingAdapter, TreeBindingUtils) {
 	"use strict";
 
@@ -739,12 +739,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * This is NOT the same as AnalyticalTreeBindingAdapter#collapse or AnalyticalTreeBindingAdapter#expand.
 	 * Setting the number of expanded levels leads to different requests.
 	 * This function is used by the AnalyticalTable for the ungroup/ungroup-all feature.
-	 * @see sap.ui.table.AnalyticalTable#_getGroupHeaderMenu
 	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
 	 * @protected
 	 * @name sap.ui.model.analytics.AnalyticalTreeBindingAdapter#setNumberOfExpandedLevels
 	 * @function
 	 */
+	// @see sap.ui.table.AnalyticalTable#_getGroupHeaderMenu
 	AnalyticalTreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels, bSupressResetData) {
 		iLevels = iLevels || 0;
 		if (iLevels < 0) {

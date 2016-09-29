@@ -57,8 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			// 1. Input type="search".
 			//    Enclose input into a <form> to show a correct keyboard
-			//    method="post" to prevent unneeded "?" at the end of URL
-			rm.write('<form method="post" action="javascript:void(0);"');
+			rm.write('<form');
 			rm.writeAttribute("id", sId + "-F");
 			rm.addClass('sapMSFF');
 			if (!bShowSearchBtn) {

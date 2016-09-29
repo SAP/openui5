@@ -442,9 +442,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time
 	 * when they are created. It is not checked or updated afterwards. And it can only be detected
-	 * while the {@link sap.ui.core.Component.runAsOwner Component.runAsOwner} function is executing.
+	 * while the {@link sap.ui.core.Component#runAsOwner Component.runAsOwner} function is executing.
 	 * Without further action, this is only the case while the content of an UIComponent is
-	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
+	 * {@link sap.ui.core.UIComponent#createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
 	 * <strong>Note</strong>: This method does not guarantee that the returned owner ID belongs
@@ -1300,7 +1300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
 	 *   Component._fnLoadComponentCallback = function(oConfig, oManifest) {
 	 *     // do some logic with the config
-	 *   });
+	 *   };
 	 * });
 	 * </pre>
 	 * <p>
@@ -1312,6 +1312,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @since 1.37.0
 	 */
 	Component._fnLoadComponentCallback = null;
+
+	/**
+	 * Callback handler which will be executed once a component instance has
+	 * been created by {#link sap.ui.component}. The component instance and the
+	 * configuration object will be passed into the registered function.
+	 * For async scenarios (vConfig.async = true) a Promise can be provided as
+	 * return value from the callback handler to delay resolving the Promise
+	 * returned by {@link sap.ui.component}.
+	 * In synchronous scenarios the return value will be ignored.
+	 *
+	 * Example usage:
+	 * <pre>
+	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
+	 *   Component._fnOnInstanceCreated = function(oComponent, oConfig) {
+	 *     // do some logic with the config
+	 *
+	 *     // optionally return a Promise
+	 *     return doAsyncStuff();
+	 *   };
+	 * });
+	 * </pre>
+	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
+	 * sap.ui.fl) and will be replaced with a more generic solution!
+	 *
+	 * @private
+	 * @sap-restricted sap.ui.fl
+	 * @since 1.43.0
+	 */
+	Component._fnOnInstanceCreated = null;
 
 	/**
 	 * Creates a new instance of a <code>Component</code> or returns the instance
@@ -1404,6 +1433,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					bHandleValidation = vConfig.handleValidation;
 				}
 				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation);
+			}
+
+			if (typeof Component._fnOnInstanceCreated === "function") {
+
+				// In async mode the hook can provide a promise which will be added to the promise chain
+				var oPromise = Component._fnOnInstanceCreated(oInstance, vConfig);
+				if (vConfig.async && oPromise instanceof Promise) {
+					return oPromise.then(function() {
+						// Make sure that the promise returned by the hook can not modify the resolve value
+						return oInstance;
+					});
+				}
+
 			}
 
 			return oInstance;

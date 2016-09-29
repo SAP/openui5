@@ -205,7 +205,7 @@
 
 			var fnOpened = function() {
 
-				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition of the popup as setting Title after ' +
+				assert.ok(popupPositionSpy.callCount === 2, 'should call setPosition of the popup as setting Title after ' +
 						'Dialog opening triggers resize handler');
 				assert.ok(!!that.oDialog._sContentResizeListenerId, '_sContentResizeListenerId is not null as setting Title after ' +
 						'Dialog opening triggers resize handler');
@@ -243,7 +243,7 @@
 
 				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousemove');
 				assert.strictEqual(mouseMoveSpy.callCount, 1,'The dialog should be moved');
-				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition on the popup once as drag calls setPosition internally');
+				assert.ok(popupPositionSpy.callCount === 2, 'should call setPosition on the popup 2 times as drag calls setPosition internally. Open dialog also calls it.');
 				assert.strictEqual(mouseMoveSpy.returnValues[0], false, 'handleMove should return false');
 				assert.ok(deregisterSpy.callCount === 1, "move/resize dialog triggers deregister method of sap.ui.core.ResizeHandler");
 
@@ -287,7 +287,7 @@
 				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousemove');
 				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the begining and once after resize is finished');
 				assert.strictEqual(invalidateSpy.callCount, 0, 'should not cause rerendering');
-				assert.strictEqual(popupPositionSpy.callCount, 0,'The popup setPosition is not called as handler is deregistered');
+				assert.strictEqual(popupPositionSpy.callCount, 1,'The popup setPosition is not called as handler is deregistered, but Dialog.open calls it');
 
 
 				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mouseup');
@@ -412,7 +412,7 @@
 
 				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousemove');
 				assert.strictEqual(mouseMoveSpy.callCount, 1,'The dialog should be moved');
-				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition on the popup');
+				assert.ok(popupPositionSpy.callCount === 2, 'should call setPosition on the popup');
 				assert.strictEqual(mouseMoveSpy.returnValues[0], false, 'handleMove should return false')
 
 				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mouseup');

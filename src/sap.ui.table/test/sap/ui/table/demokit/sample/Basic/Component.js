@@ -19,8 +19,7 @@ sap.ui.define([
 					stretch : true,
 					files : [
 						"View.view.xml",
-						"Controller.controller.js",
-						"../TableExampleUtils.js"
+						"Controller.controller.js"
 					]
 				}
 			}

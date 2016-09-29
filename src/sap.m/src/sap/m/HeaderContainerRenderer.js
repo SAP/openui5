@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function() {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
+	function(jQuery, Orientation) {
 	"use strict";
 
 	/**
@@ -33,13 +33,19 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		if (oControl.getHeight()) {
 			oRm.addStyle("height", oControl.getHeight());
+		} else {
+			oRm.addStyle("height", (oControl.getOrientation() === Orientation.Horizontal) ? "auto" : "100%");
 		}
-		oRm.addStyle("width", oControl.getWidth());
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		} else {
+			oRm.addStyle("width", (oControl.getOrientation() === Orientation.Horizontal) ? "100%" : "auto");
+		}
 		oRm.writeStyles();
 		var sDesc = "";
-		var aItems = oControl.getItems();
-		for (var i = 0; aItems && i < aItems.length; i++) {
-			sDesc += aItems[i].getId() + " ";
+		var aContent = oControl.getContent();
+		for (var i = 0; aContent && i < aContent.length; i++) {
+			sDesc += aContent[i].getId() + " ";
 		}
 		oRm.writeAttribute("aria-labelledby", sDesc);
 		oRm.write(">");
@@ -52,10 +58,6 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-after");
-		oRm.writeAttribute("tabindex", "0");
-		oRm.write("/>");
 		oRm.write("</div>");
 
 		var oButton = oControl.getAggregation("_prevButton");
@@ -81,6 +83,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(oButton);
 			oRm.write("</div>");
 		}
+
+		// A sentry of HeaderContainer to catch the focus and put the focus at the right element in HeaderContainer
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-after");
+		oRm.writeAttribute("tabindex", "0");
+		oRm.write("/>");
 		oRm.write("</div>");
 	};
 

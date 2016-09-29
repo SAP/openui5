@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * The selectstart event triggered in IE to select the text.
 	 * @private
-	 * @param {event} oEvent The splitterselectstart event
+	 * @param {jQuery.Event} oEvent The splitterselectstart event
 	 * @return {boolean} false
 	 */
 	Splitter.prototype.splitterSelectStart = function(oEvent){

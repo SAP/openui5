@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 				var aItems = begin ? oHeader.getHeadItems() : oHeader.getHeadEndItems();
 
 				for (var i = 0; i < aItems.length; i++) {
-					rm.write("<a tabindex='0' href='javascript:void(0);'");
+					rm.write("<a tabindex='0' href='#'");
 					rm.writeElementData(aItems[i]);
 					rm.addClass("sapUiUfdShellHeadItm");
 					if (aItems[i].getStartsSection()) {
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 
 				var oUser = oHeader.getUser();
 				if (!begin && oUser) {
-					rm.write("<a tabindex='0' href='javascript:void(0);'");
+					rm.write("<a tabindex='0' href='#'");
 					rm.writeElementData(oUser);
 					rm.addClass("sapUiUfdShellHeadUsrItm");
 					if (!oUser.getShowPopupIndicator()) {

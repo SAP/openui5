@@ -258,14 +258,16 @@
 
 	QUnit.test("When 'pageChanged' event is fired the numeric value of the page indicator should change", function (assert) {
 
+		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
+
 		// Assert
-		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML,"2 of 9", "Page indicator should show '2 of 9'");
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, "2 " + sTextBetweenNumbers + " 9", "Page indicator should show '2 " + sTextBetweenNumbers + " 9'");
 
 		// Act
 		this.oCarousel.next();
 
 		// Assert
-		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML,"3 of 9", "Page indicator should show '3 of 9'");
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, "3 " + sTextBetweenNumbers + " 9", "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
 	});
 
 	//================================================================================

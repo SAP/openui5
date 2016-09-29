@@ -1,0 +1,15 @@
+{
+  "cwd": "test-resources/sap/tnt/demokit/toolpageapp/",
+  "files": [
+    "webapp/Component.js",
+    "webapp/index.html",
+    "webapp/manifest.json",
+    "webapp/controller/rootApp.controller.js",
+    "webapp/view/rootApp.view.xml",
+    "webapp/view/Root1.view.xml",
+    "webapp/view/Root1Child1.view.xml",
+    "webapp/view/Root1Child2.view.xml",
+    "webapp/view/Root2.view.xml",
+    "webapp/view/Root3.view.xml"
+  ]
+}

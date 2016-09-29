@@ -146,7 +146,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View', 'sap/ui/bas
 		 * prefixing.
 		 *
 		 * @since 1.15.1
-		 * @experimental Since 1.15.1. This feature might be changed in future.
 		 * @return {boolean} true, if the controls IDs should be prefixed automatically
 		 * @protected
 		 */

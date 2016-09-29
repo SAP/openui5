@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		this._oWarningIcon = new Icon(this.getId() + "-warn-icon", {
 			src : "sap-icon://notification",
-			size : "1.37rem"
+			size : "1.375rem"
 		});
 
 		this._oWarningIcon.addStyleClass("sapMGTFtrFldIcnMrk");
@@ -136,6 +136,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
+
+		this._bThemeApplied = true;
+		if (!sap.ui.getCore().isInitialized()) {
+			this._bThemeApplied = false;
+			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+		} else {
+			this._handleCoreInitialized();
+		}
 	};
 
 	GenericTile.prototype.onBeforeRendering = function() {
@@ -146,12 +154,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._applyContentMode(bSubheader);
 		}
 		var iTiles = this.getTileContent().length;
-
 		for (var i = 0; i < iTiles; i++) {
 			this.getTileContent()[i].setDisabled(this.getState() == sap.m.LoadState.Disabled);
 		}
 
 		this._generateFailedText();
+
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
 	};
@@ -162,6 +170,75 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
+
+		if (this._sParentResizeListenerId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			this._sParentResizeListenerId = null;
+		}
+
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this._bThemeApplied) {
+			this.$().parent().addClass("sapMGTLineModeContainer");
+			LineModeRenderer._updateHoverStyle.call(this);
+
+			this._sParentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
+		}
+
+		if (this._bUpdateLineTileSiblings) {
+			this._updateLineTileSiblings();
+			this._bUpdateLineTileSiblings = false;
+		}
+
+		// Assign TileContent content again after rendering.
+		if (this.getMode() === library.GenericTileMode.HeaderMode && this._aTileContentContent) {
+			var aTileContent = this.getTileContent();
+			for (var i = 0; i < aTileContent.length; i++) {
+				aTileContent[i].setAggregation("content", this._aTileContentContent[i], true);
+			}
+			delete this._aTileContentContent;
+		}
+	};
+
+	GenericTile.prototype._handleCoreInitialized = function() {
+		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
+		if (!this._bThemeApplied) {
+			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
+		}
+	};
+
+	GenericTile.prototype._handleThemeApplied = function() {
+		this._bThemeApplied = true;
+		this.invalidate();
+		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
+	};
+
+	/**
+	 * Updates the tile's hover style in LineMode if the parent control is resized.
+	 * This is needed for correct hover style and line-break calculations.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._handleResize = function() {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+			LineModeRenderer._updateHoverStyle.call(this);
+		}
+	};
+
+	/**
+	 * Updates the hover style of all siblings that are tiles in LineMode.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._updateLineTileSiblings = function() {
+		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+			var i = this.getParent().indexOfAggregation(this.sParentAggregationName, this);
+			var aSiblings = this.getParent().getAggregation(this.sParentAggregationName).splice(i + 1);
+
+			for (i = 0; i < aSiblings.length; i++) {
+				if (aSiblings[i] instanceof sap.m.GenericTile && aSiblings[i].getMode() === library.GenericTileMode.LineMode) {
+					LineModeRenderer._updateHoverStyle.call(aSiblings[i]);
+				}
+			}
+		}
 	};
 
 	GenericTile.prototype.exit = function() {
@@ -179,6 +256,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.ontouchstart = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
+		}
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.addStyleClass("sapMGTLineModePress");
 		}
 		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
@@ -200,6 +280,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.ontouchend = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
+		}
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			this.removeStyleClass("sapMGTLineModePress");
 		}
 		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
@@ -252,6 +335,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 	/* --- Getters and Setters --- */
 
+	GenericTile.prototype.setProperty = function() {
+		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
+		this._bUpdateLineTileSiblings = true;
+		return this;
+	};
+
 	GenericTile.prototype.getHeader = function() {
 		return this._oTitle.getText();
 	};
@@ -288,18 +377,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {boolean} bSubheader which indicates the existance of subheader
 	 */
 	GenericTile.prototype._applyHeaderMode = function(bSubheader) {
-		// Devanagari characters require additional vertical space to be displayed.
-		// Therefore, only the half number of lines containing such characters can be displayed in header of GenericTile.
-		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
-			this._oTitle.setMaxLines(2);
-			return;
-		}
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
 		if (bSubheader) {
 			this._oTitle.setMaxLines(4);
 		} else {
 			this._oTitle.setMaxLines(5);
+		}
+		// Handles the tile content in a way that it is not rendered, but still existing and assigned
+		// if switching between HeaderMode or LineMode and ContentMode.
+		var aTileContent = this.getTileContent();
+		if (aTileContent.length > 0) {
+			this._aTileContentContent = [];
+			for (var i = 0; i < aTileContent.length; i++) {
+				if (aTileContent[i].getContent()) {
+					this._aTileContentContent[i] = aTileContent[i].removeAllAggregation("content", true);
+					// Parent needs to be set manually to null, because removeAllAggregation does not handle this.
+					this._aTileContentContent[i].setParent(null);
+				}
+			}
 		}
 	};
 
@@ -309,10 +405,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {boolean} bSubheader which indicates the existance of subheader
 	 */
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
-		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
-			this._oTitle.setMaxLines(1);
-			return;
-		}
 		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 3 lines
 		if (bSubheader) {
@@ -321,6 +413,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._oTitle.setMaxLines(3);
 		}
 	};
+
 	/**
 	 * Gets the header, subheader and image description text of GenericTile
 	 *
@@ -553,5 +646,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._bTooltipFromControl = false;
 		}
 	};
+
+	/**
+	 * Determines the content density mode.
+	 * @returns {boolean} Returns true, if the control or its parents have the class sapUiSizeCompact, otherwise false.
+	 * @private
+	 */
+	GenericTile.prototype._isCompact = function() {
+		return this.$().parents().andSelf().hasClass("sapUiSizeCompact");
+	};
+
 	return GenericTile;
 }, /* bExport= */ true);

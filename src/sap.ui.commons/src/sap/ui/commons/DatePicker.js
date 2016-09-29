@@ -505,7 +505,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 		};
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		DatePicker.prototype.getAccessibilityInfo = function() {
@@ -611,6 +611,16 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 				oThis._checkChange(); // to prove is something was typed in manually
 			}
 
+			var sCalendarType;
+			var oBinding = oThis.getBinding("value");
+
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+			}
+			if (sCalendarType) {
+				oThis._oCalendar.setPrimaryCalendarType(sCalendarType);
+			}
+
 			var oDate = oThis._oDate;
 
 			if (oDate) {
@@ -704,8 +714,16 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 
 			if (oOldDate && oThis.getEditable() && oThis.getEnabled()) {
 				// use a new date object to have a real updated property
-				var oDate = new UniversalDate(oOldDate.getTime());
-				oOldDate = new UniversalDate(oOldDate.getTime());
+				var oBinding = oThis.getBinding("value");
+				var sCalendarType;
+
+				if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
+					sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+				} else {
+					sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+				}
+				var oDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
+				oOldDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
 				var $Input = jQuery(oThis.getInputDomRef());
 				var iPos = $Input.cursorPos();
 

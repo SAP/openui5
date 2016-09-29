@@ -17,6 +17,14 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ControlDefinition.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CoreLock.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:none,testlibs.scenario8.lib3:none");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json,testlibs.scenario7.lib2:none,testlibs.scenario8.lib2:none,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib4:none,testlibs.scenario8.lib4:none,testlibs.scenario7.lib5:none,testlibs.scenario8.lib5:none");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CustomStyleClassSupport.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Declarative.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DuplicateIds.qunit.html");
@@ -24,6 +32,7 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_sourceInfo.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_data.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Element_delegates.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ElementMetadata.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Fragment.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IconPool.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/IntervalTrigger.qunit.html");
@@ -47,6 +56,7 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/StashedControlSupport.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ThemeCheck.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ThemeParameters.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/TooltipBase.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UIArea.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UniversalDate.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Islamic.qunit.html");

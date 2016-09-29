@@ -210,3 +210,16 @@ scenario("scenario6");
 makeLibWith("lib1", {json:true});
 makeLibWith("lib2", {json:true});
 
+scenario("scenario7");
+makeLibWith("lib1", {js:true,json:true});
+makeLibWith("lib2", {json:true});
+makeLibWith("lib3", {js:true});
+makeLibWith("lib4", {json:true});
+makeLibWith("lib5", {js:true});
+
+scenario("scenario8");
+makeLibWith("lib1", {js:true,json:true});
+makeLibWith("lib2", {json:true});
+makeLibWith("lib3", {js:true});
+makeLibWith("lib4", {json:true});
+makeLibWith("lib5", {js:true});

@@ -30,10 +30,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		oTable && rm.write('</td>');
 	};
 
-	// it is not necessary to handle non flex case
-	GroupHeaderListItemRenderer.handleNoFlex = function(rm, oLI) {
-	};
-
 	// GroupHeaderListItem does not respect counter property of the LIB
 	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
 	};

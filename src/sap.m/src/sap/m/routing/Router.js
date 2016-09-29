@@ -98,7 +98,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *             target: "notFound"
 		 *         }
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -113,7 +113,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * </pre>
 		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
-		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.<br/>
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.<br/>
 		 * @param {object} [oTargetsConfig]
 		 * the target configuration, see {@link sap.m.routing.Targets#constructor} documentation (the options object).<br/>
@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
 		 *     // Please use the metadata of a component to define your routes and targets.
-		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {

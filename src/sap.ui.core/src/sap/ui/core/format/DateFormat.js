@@ -677,7 +677,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iSeconds = null,
 			iMilliseconds = null,
 			iQuarter = null,
-			bPM = false,
+			bPM,
 			oPart,
 			sPart,
 			iTZDiff = null,
@@ -912,8 +912,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					iHours = parseInt(sPart, 10);
 					if (iHours == 12) {
 						iHours = 0;
+						// change the PM only when it's not yet parsed
 						// 12:00 defaults to 12:00 PM
-						bPM = true;
+						bPM = (bPM === undefined) ? true : bPM;
 					}
 					if (bStrict && iHours > 11) {
 						bValid = false;

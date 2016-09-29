@@ -403,6 +403,7 @@
 		});
 
 		var oSelect0 = new sap.m.Select({
+			id: "select_regular",
 			items: {
 				path: "/items",
 				template: oItemTemplate
@@ -485,6 +486,7 @@
 		});
 
 		var oSelect2 = new sap.m.Select({
+			id: "select_disabled",
 			items: [
 				new sap.ui.core.Item({
 					key: "0",
@@ -567,6 +569,7 @@
 		});
 
 		var oSelect8 = new sap.m.Select({
+			id: "select_footer",
 			items: [
 				new sap.ui.core.Item({
 					key: "0",
@@ -694,6 +697,7 @@
 		});
 
 		var oSelect12 = new sap.m.Select({
+			id: "select_icon",
 			type: sap.m.SelectType.IconOnly,
 			autoAdjustWidth: true,
 			icon: sap.ui.core.IconPool.getIconURI("add"),
@@ -1080,6 +1084,7 @@
 		}).addStyleClass("labelSelectTestPageHeader");
 
 		new sap.m.App().addPage(oPage = new sap.m.Page({
+			id: "select_page",
 			customHeader: oBar0 = new sap.m.Bar({
 
 				contentLeft: oSelect14,

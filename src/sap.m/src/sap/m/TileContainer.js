@@ -429,13 +429,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// init the dimensions to the container scoll area
 		this._applyDimension();
 		this.$().toggleClass("sapMTCEditable",this.getEditable() === true);
-		var that = this;
 
-		that._update(true);
+		this._update(true);
 
 		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
-			var aTiles = this.getAggregation("tiles");
-			aTiles = this._getVisibleTiles();
+			var aTiles = this._getVisibleTiles();
 
 			if (aTiles.length > 0 && this._mFocusables && this._mFocusables[aTiles[0].getId()]) {
 				this._mFocusables[aTiles[0].getId()].eq(0).attr('tabindex', '0');
@@ -911,6 +909,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this._getVisibleTiles().length === 0) {	// no tiles
+			this._iPages = 0; // no tiles no pages
+			this._updatePager();
 			return;
 		}
 

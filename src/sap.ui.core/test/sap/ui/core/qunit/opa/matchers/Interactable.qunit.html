@@ -26,7 +26,6 @@
 				XHR.restore();
 			})();
 
-
 			sap.ui.require([
 					'sap/ui/test/matchers/Interactable',
 					'jquery.sap.global',
@@ -37,7 +36,10 @@
 					'sap/m/Dialog',
 					'sap/m/Toolbar',
 					'sap/ui/test/opaQunit',
-					'sap/ui/test/Opa5'
+					'sap/ui/test/Opa5',
+					'sap/ui/test/launchers/iFrameLauncher',
+					'sap/ui/test/_LogCollector',
+					'sap/ui/test/_timeoutCounter'
 				], function (Interactable,
 							 $,
 							 Button,
@@ -47,7 +49,10 @@
 							 Dialog,
 							 Toolbar,
 							 opaTest,
-			 				 Opa5) {
+			 				 Opa5,
+							 iFrameLauncher,
+							 _LogCollector,
+							 _timeoutCounter) {
 					"use strict";
 
 					[NavContainer, App].forEach(function (fnConstructor) {
@@ -69,13 +74,16 @@
 
 								this.oInteractable = new Interactable();
 								this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+								this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 								sap.ui.getCore().applyChanges();
 							},
 
 							afterEach: function () {
 								this.oNavContainer.destroy();
+								this.oWaitStub.restore();
 							}
 						});
+
 						QUnit.test("Should match an interactable Button", function (assert) {
 							// Act
 							var bResult = this.oInteractable.isMatching(this.oInitialPageButton);
@@ -119,10 +127,13 @@
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
 							// Arrange
+							var oLogCollector = _LogCollector.getInstance();
 							var fnStart = assert.async();
 
+							oLogCollector.getAndClearLog();
 							this.oNavContainer.to(this.oSecondPage);
 							var bInitialPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oInitialPageButton);
+							var sLogs = oLogCollector.getAndClearLog();
 							var bSecondPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oSecondPageButton);
 
 							this.oNavContainer.attachAfterNavigate(function () {
@@ -134,8 +145,7 @@
 								assert.ok(!bInitialPageButtonResultAfterNavigationFinished, "Control is matching");
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
-
-								sinon.assert.calledWith(this.oSpy,  sinon.match(/that is currently navigating/));
+								assert.strictEqual(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test._autoWaiter");
 								fnStart();
 							}, this);
 						});
@@ -154,11 +164,13 @@
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oButtonInPage.destroy();
 							this.oDialog.destroy();
 							this.oSpy.restore();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -183,7 +195,7 @@
 						this.oDialog.open();
 					});
 
-					QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening and no block layer is there", function (assert) {
+					QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening", function (assert) {
 						// Arrange
 						var fnStart = assert.async();
 
@@ -193,7 +205,7 @@
 						this.oDialog.attachAfterOpen(fnStart);
 
 						this.oDialog.open();
-						// close immediately removes the blocklayer
+						// close immediately
 						// sometimes opa tests close and open dialogs very fast so we need this check here
 						this.oDialog.close();
 
@@ -202,7 +214,7 @@
 					// Assert
 					assert.ok(bResultBeforeOpening, "Control is matching");
 					assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-					sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind an Open dialog/));
+					sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/));
 				});
 
 
@@ -235,11 +247,13 @@
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oSpy.restore();
 							this.oButton.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -252,8 +266,11 @@
 						// Squeeze between the rendering and the invalidation
 						setTimeout(function () {
 							// Act
+							var oLogCollector = _LogCollector.getInstance();
+							oLogCollector.getAndClearLog();
 							assert.ok(!this.oInteractable.isMatching(oButton), "No match because the button was invalidated");
-							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/));
+							var sLog = oLogCollector.getAndClearLog();
+							assert.strictEqual(sLog, "The UI needs rerendering -  sap.ui.test._autoWaiter");
 							fnTimeoutDone();
 						}.bind(this), 0);
 
@@ -262,10 +279,41 @@
 
 						this.oButton.addEventDelegate({
 							onAfterRendering : function() {
-								assert.ok(this.oInteractable.isMatching(oButton), "Match because the button was rendered again");
-								fnAfterRenderingDone();
+								// the UI is ready immediately after rendering
+								setTimeout(function () {
+									assert.ok(this.oInteractable.isMatching(oButton), "Match because the button was rendered again");
+									fnAfterRenderingDone();
+								}.bind(this), 0);
 							}.bind(this)
 						})
+					});
+
+					QUnit.module("Timeouts", {
+						beforeEach: function () {
+							this.oButton = new Button("myButton");
+							this.oButton.placeAt("qunit-fixture");
+							this.oInteractable = new Interactable();
+							sap.ui.getCore().applyChanges();
+						},
+						afterEach: function () {
+							this.oButton.destroy();
+							sap.ui.getCore().applyChanges();
+						}
+					});
+
+					QUnit.test("Should not match when there is a timeout running", function (assert) {
+						var fnDone = assert.async();
+
+						var oLogCollector = _LogCollector.getInstance();
+						// a lot of timeouts will be added from other tests - wait for them
+						setTimeout(function () {
+							// the actual blocking timeout
+							setTimeout(function () {});
+							var bMatching = new Interactable().isMatching(this.oButton);
+							assert.ok(!bMatching, "is not matching");
+							assert.strictEqual(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test._timeoutCounter");
+							fnDone();
+						}.bind(this), 500);
 					});
 
 					QUnit.module("Enabled", {
@@ -279,11 +327,13 @@
 							this.oInteractable = new Interactable();
 							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oSpy.restore();
 							this.oToolbar.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -331,10 +381,12 @@
 							this.oButton.placeAt("qunit-fixture");
 							this.oInteractable = new Interactable();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts").returns(false);
 						},
 						afterEach: function () {
 							this.oButton.destroy();
 							sap.ui.getCore().applyChanges();
+							this.oWaitStub.restore();
 						}
 					});
 
@@ -374,7 +426,9 @@
 								Opa5.assert.ok(true, "there was no open XHR");
 
 								// prepare sinon and start an XHR
-								oXHR = Opa5.getWindow().sinon.useFakeXMLHttpRequest();
+								var oIFrameWindow = Opa5.getWindow();
+								oXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
+								oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
 
 								oXHR.onCreate = function (xhr) {
 									aRequests.push(xhr);
@@ -399,13 +453,42 @@
 							}
 						});
 
-
 						oOpa.waitFor({
 							viewName: "myView",
 							id: "myButton",
 							actions: function () {
 								Opa5.assert.ok(true, "there was no open XHR");
 								oXHR.restore();
+							}
+						});
+
+						oOpa.iTeardownMyApp();
+					});
+
+					opaTest("Should wait for navigating NavContainers in an IFrame", function (oOpa) {
+						oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myApp",
+							success: function (oApp) {
+								oOpa.waitFor({
+									viewName: "myView",
+									id: "buttonOutsideOfTheApp",
+									success: function (oButton) {
+										var oIFrameWindow = Opa5.getWindow();
+										oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
+										var oInteractable = new Interactable();
+										var bIsMatching = oInteractable.isMatching(oButton);
+										Opa5.assert.ok(bIsMatching, "there is no Navigation");
+
+										oApp.to(oApp.getPages()[1].getId());
+										bIsMatching = oInteractable.isMatching(oButton);
+										Opa5.assert.ok(!bIsMatching, "there is a Navigation");
+
+										var oAutoWaiter = iFrameLauncher._getAutoWaiter();
+										Opa5.assert.ok(oAutoWaiter.hasToWait(), "the auto waiter detected the navigation");
+									}
+								});
 							}
 						});
 

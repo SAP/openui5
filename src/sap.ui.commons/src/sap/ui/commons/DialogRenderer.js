@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global'],
 		// Example for an additional button:   rm.write("<a class='sapUiDlgOptBtn'></a>");
 
 		if (oControl.getShowCloseButton()) {
-			rm.write("<a id='", oControl.getId(), "-close' class='sapUiDlgCloseBtn' href='javascript:void(0)'");
+			rm.write("<a id='", oControl.getId(), "-close' class='sapUiDlgCloseBtn' href='#'");
 			rm.write(" tabIndex='-1'"); // according to accessibility experts (O.K. and M.J.), the 'x' should not be tab-able
 			rm.writeAttribute("role","button");
 			rm.writeAttributeEscaped("aria-label", rb.getText("DIALOG_CLOSE_HELP"));

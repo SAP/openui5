@@ -1110,7 +1110,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Adds an entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation where the new entity is to be added
-		 * @param oObject {mixed} The value of the aggregation to be added
+		 * @param oObject {any} The value of the aggregation to be added
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.ViewSettingsPopover} <code>this</code> pointer for chaining
 		 * @override
@@ -1127,7 +1127,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Inserts an entity to the aggregation named <code>sAggregationName</code> at position <code>iIndex</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {mixed} The value of the aggregation to be inserted
+		 * @param oObject {any} The value of the aggregation to be inserted
 		 * @param iIndex {int} Where to insert
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.ViewSettingsPopover} <code>this</code> pointer for chaining
@@ -1145,7 +1145,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Removes an entity from the aggregation named <code>sAggregationName</code>.
 		 *
 		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {mixed} The value of aggregation to be removed
+		 * @param oObject {any} The value of aggregation to be removed
 		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
 		 * @returns {sap.m.ViewSettingsPopover} <code>this</code> pointer for chaining
 		 * @override

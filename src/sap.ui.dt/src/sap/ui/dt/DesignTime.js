@@ -389,7 +389,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				// merge the DTMetadata from the DesignTime and from UI5
 				var oMergedDesignTimeMetadata = oDesignTimeMetadata || {};
 				jQuery.extend(true, oMergedDesignTimeMetadata, that.getDesignTimeMetadataFor(oElement));
-				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({data : oMergedDesignTimeMetadata});
+				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
+					libraryName : oElement.getMetadata().getLibraryName(),
+					data : oMergedDesignTimeMetadata});
 
 				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
 				that.fireElementOverlayCreated({elementOverlay : oElementOverlay});

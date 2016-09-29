@@ -1550,7 +1550,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * Gets the selectable items from the aggregation named <code>items</code>.
 		 *
-		 * @return {sap.ui.core.Item[]} An array containing the selectables items.
+		 * @return {sap.ui.core.Item[]} An array containing the selectable items.
 		 * @since 1.22.0
 		 */
 		Select.prototype.getSelectableItems = function() {
@@ -2188,8 +2188,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this.setValue("");
 
-			this.clearSelection();
-
 			if (this._isShadowListRequired()) {
 				this.$().children(".sapMSelectListItemBase").remove();
 			}
@@ -2263,7 +2261,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
@@ -2288,6 +2286,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			return oInfo;
+		};
+
+		Select.prototype.propagateMessages = function(sName, aMessages) {
+			if (aMessages && aMessages.length > 0) {
+				this.setValueState(aMessages[0].type);
+				this.setValueStateText(aMessages[0].message);
+			} else {
+				this.setValueState(sap.ui.core.ValueState.None);
+				this.setValueStateText("");
+			}
+		};
+
+		Select.prototype.refreshDataState = function(sName, oDataState) {
+			if (oDataState.getChanges().messages) {
+				this.propagateMessages(sName, oDataState.getMessages());
+			}
 		};
 
 		return Select;

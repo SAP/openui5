@@ -229,7 +229,99 @@
 
 			});
 
-		</script>
+			//****************************************************
+			// XHR tests
+			//****************************************************
+
+			QUnit.module("XHR");
+
+			QUnit.test("sync/async", function(assert) {
+				var bSyncOngoing = false,
+					done = assert.async();
+				jQuery.ajax({
+					url: "",
+					async: true,
+					cache: false
+				}).then(function() {
+					assert.ok(!bSyncOngoing, "Sync request is no longer running, when callback is called.");
+					done();
+				});
+				bSyncOngoing = true;
+				jQuery.ajax({
+					url: "",
+					async: false,
+					cache: false
+				});
+				bSyncOngoing = false;
+			});
+
+			QUnit.test("events", function(assert) {
+				var bSyncOngoing = false,
+					done = assert.async();
+
+				var asyncXHR = new XMLHttpRequest();
+				function asyncListener1(oEvent) {
+					assert.equal(bSyncOngoing, false, "Handler must not be called while synchronous request is ongoing");
+					assert.equal(oEvent.type, "readystatechange", "Event object exists and has the expected type");
+					assert.ok(this === asyncXHR, "this-reference points to XHR object")
+				}
+				function asyncListener2(oEvent) {
+					assert.equal(bSyncOngoing, false, "Handler must not be called while synchronous request is ongoing");
+					assert.equal(oEvent.type, "readystatechange", "Event object exists and has the expected type");
+					assert.ok(this === asyncXHR, "this-reference points to XHR object")
+					if (asyncXHR.readyState === 4) {
+						done();
+					}
+				}
+				asyncXHR.addEventListener("readystatechange", asyncListener1);
+				asyncXHR.onreadystatechange = asyncListener2;
+				asyncXHR.open("GET", "", true);
+				assert.equal(asyncXHR.readyState, 1, "After open, readyState should be 1");
+				asyncXHR.send();
+				assert.equal(asyncXHR.readyState, 1, "After send, readyState should still be 1");
+
+				var syncXHR = new XMLHttpRequest();
+				syncXHR.open("GET", "", false);
+				assert.equal(syncXHR.readyState, 1, "After open, readyState should be 1");
+				bSyncOngoing = true;
+				syncXHR.send();
+				bSyncOngoing = false;
+				assert.equal(syncXHR.readyState, 4, "After send for sync requests, readyState should be 4");
+			});
+
+			QUnit.test("events removed", function(assert) {
+				var bSyncOngoing = false,
+					done = assert.async();
+
+				var asyncXHR = new XMLHttpRequest();
+				function asyncListener1() {
+					assert.equal(bSyncOngoing, false, "Handler must not be called while synchronous request is ongoing");
+					assert.equal(asyncXHR.readyState, 1, "As events are removed synchronously, only readyState 1 should be fired")
+				}
+				function asyncListener2() {
+					assert.equal(bSyncOngoing, false, "Handler must not be called while synchronous request is ongoing");
+					assert.equal(asyncXHR.readyState, 1, "As events are removed synchronously, only readyState 1 should be fired")
+				}
+				asyncXHR.addEventListener("readystatechange", asyncListener1);
+				asyncXHR.onreadystatechange = asyncListener2;
+				asyncXHR.open("GET", "", true);
+				asyncXHR.send();
+
+				var syncXHR = new XMLHttpRequest();
+				syncXHR.open("GET", "", false);
+				bSyncOngoing = true;
+				syncXHR.send();
+				bSyncOngoing = false;
+
+				asyncXHR.onreadystatechange = null;
+				asyncXHR.removeEventListener("readystatechange", asyncListener1);
+
+				setTimeout(function() {
+					done()
+				}, 0);
+			});
+
+</script>
 
 	</head>
 	<body>

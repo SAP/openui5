@@ -17,7 +17,7 @@ sap.ui.define(function() {
 	 * Merges together oNewSection into a set of other sections (aSections)
 	 * The array/objects are not modified, the function returns a new section array.
 	 * @param {object[]} aSections the sections into which oNewSection will be merged
-	 * @param {objec} oNewSection the section which should be merged into aNewSections
+	 * @param {object} oNewSection the section which should be merged into aNewSections
 	 * @return {object[]} a new array containing all sections from aSections merged with oNewSection
 	 * @public
 	 */

@@ -15,14 +15,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"Page.view.xml",
 						"Page.controller.js",
-						"uploadCollection.json",
-						"UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
-						"UploadCollection/LinkedDocuments/Business Plan Topics.xls",
-						"UploadCollection/LinkedDocuments/Document.txt",
-						"UploadCollection/LinkedDocuments/Instructions.pdf",
-						"UploadCollection/LinkedDocuments/Notes.txt",
-						"UploadCollection/LinkedDocuments/Screenshot.jpg",
-						"UploadCollection/LinkedDocuments/Third Quarter Results.ppt"
+						"uploadCollection.json"
 					]
 				}
 			}

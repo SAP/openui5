@@ -72,7 +72,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * so the user can select specific tab filter easier.
 			 * @since 1.42
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false}
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Specifies the background color of the header.
+			 *
+			 * Depending on the theme, you can change the state of
+			 * the background color to "Solid", "Translucent", or "Transparent".
+			 * Default is "Solid".
+			 * @since 1.44
+			 */
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
 		},
 		aggregations : {
 

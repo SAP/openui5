@@ -328,9 +328,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			}
 		},
 
-		onclick : function() {
+		onclick : function(oEvent) {
 			if (!this.getHref()) {
 				this.firePress();
+
+				oEvent.preventDefault();
 			}
 		},
 
@@ -345,9 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 					oRm.writeAttributeEscaped("target", oControl.getTarget());
 				}
 			}	else {
-				/* eslint-disable no-script-url */
-				oRm.writeAttribute("href", "javascript:void(0);");
-				/* eslint-enable no-script-url */
+				oRm.writeAttribute("href", "#");
 			}
 			oRm.writeAttributeEscaped("title", oControl.getDescription());
 			oRm.write(">");

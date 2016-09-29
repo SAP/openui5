@@ -6,8 +6,8 @@ sap.ui.define([
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
 		'sap/ui/test/_LogCollector',
-		'sap/ui/test/_XHRCounter'
-	], function (jQuery, URI, Device, _LogCollector, _XHRCounter) {
+		'sap/ui/test/_autoWaiter'
+	], function (jQuery, URI, Device, _LogCollector, _autoWaiter) {
 	"use strict";
 	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
@@ -16,9 +16,9 @@ sap.ui.define([
 		oFramePlugin = null,
 		oFrameUtils = null,
 		oFrameJQuery = null,
-		bRegiesteredToUI5Init = false,
+		bRegisteredToUI5Init = false,
 		bUi5Loaded = false,
-		oXHRCounter = null,
+		oAutoWaiter = null,
 		FrameHashChanger = null;
 
 	/*
@@ -67,24 +67,60 @@ sap.ui.define([
 		}
 
 		if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.getCore) {
-			if (!bRegiesteredToUI5Init) {
+			if (!bRegisteredToUI5Init) {
 				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
 			}
 
-			bRegiesteredToUI5Init = true;
+			bRegisteredToUI5Init = true;
 		}
 
 		return bUi5Loaded;
 	}
 
+	/**
+	 * Firefox only function - load sinon as often as needed until it is defined.
+	 * @param fnDone executed when sinon is loaded
+	 */
+	function loadSinon(fnDone) {
+		oFrameWindow.sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {
+			if (!sinon) {
+				setTimeout(function () {
+					loadSinon(fnDone);
+				}, 50);
+			} else {
+				fnDone();
+			}
+		});
+	}
 
 	function handleUi5Loaded () {
-		setFrameVariables().then(function () {
-			// forward OPA log messages from the inner iframe to the Log listener of the outer frame
-			oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
+		registerFrameModulePaths();
 
-			bUi5Loaded = true;
-		});
+		if (Device.browser.firefox) {
+			// In Firefox there is a bug when the app loads sinon and OPA loads it from outside.
+			// sinon might be undefined in a module requiring it. So the workaround comes here:
+			// trigger the load of sinon - wait until it is defined. Only when it is defined continue loading other modules
+			loadSinon(loadFrameModules);
+		} else {
+			// no workaround - directly load all other modules
+			loadFrameModules();
+		}
+	}
+
+	function afterModulesLoaded () {
+		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
+		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
+
+		bUi5Loaded = true;
+	}
+
+	function registerFrameModulePaths () {
+		oFrameJQuery = oFrameWindow.jQuery;
+		//All Opa related resources in the iframe should be the same version
+		//that is running in the test and not the (evtl. not available) version of Opa of the running App.
+		registerAbsoluteModulePathInIframe("sap.ui.test");
+		registerAbsoluteModulePathInIframe("sap.ui.qunit");
+		registerAbsoluteModulePathInIframe("sap.ui.thirdparty");
 	}
 
 	/**
@@ -197,37 +233,28 @@ sap.ui.define([
 		};
 	}
 
-	function setFrameVariables() {
-		return new Promise(function (fnResolve) {
-			oFrameJQuery = oFrameWindow.jQuery;
-			//All Opa related resources in the iframe should be the same version
-			//that is running in the test and not the (evtl. not available) version of Opa of the running App.
-			registerAbsoluteModulePathInIframe("sap.ui.test");
-			registerAbsoluteModulePathInIframe("sap.ui.qunit");
-			registerAbsoluteModulePathInIframe("sap.ui.thirdparty");
-
-			oFrameWindow.sap.ui.require([
-				"sap/ui/test/OpaPlugin",
-				"sap/ui/test/_XHRCounter",
-				"sap/ui/qunit/QUnitUtils",
-				"sap/ui/thirdparty/hasher",
-				"sap/ui/core/routing/History",
-				"sap/ui/core/routing/HashChanger"
-			], function (
-				OpaPlugin,
-				_XHRCounter,
-				QUnitUtils,
-				hasher,
-				History,
-				HashChanger
-			) {
-				oFramePlugin = new OpaPlugin(sLogPrefix);
-				oXHRCounter = _XHRCounter;
-				oFrameUtils = QUnitUtils;
-				modifyIFrameNavigation(hasher, History, HashChanger);
-				FrameHashChanger = HashChanger;
-				fnResolve();
-			});
+	function loadFrameModules() {
+		oFrameWindow.sap.ui.require([
+			"sap/ui/test/OpaPlugin",
+			"sap/ui/test/_autoWaiter",
+			"sap/ui/qunit/QUnitUtils",
+			"sap/ui/thirdparty/hasher",
+			"sap/ui/core/routing/History",
+			"sap/ui/core/routing/HashChanger"
+		], function (
+			OpaPlugin,
+			_autoWaiter,
+			QUnitUtils,
+			hasher,
+			History,
+			HashChanger
+		) {
+			oFramePlugin = new OpaPlugin(sLogPrefix);
+			oAutoWaiter = _autoWaiter;
+			oFrameUtils = QUnitUtils;
+			modifyIFrameNavigation(hasher, History, HashChanger);
+			FrameHashChanger = HashChanger;
+			afterModulesLoaded();
 		});
 	}
 
@@ -246,8 +273,8 @@ sap.ui.define([
 		oFrameUtils = null;
 		oFrameWindow = null;
 		bUi5Loaded = false;
-		bRegiesteredToUI5Init = false;
-		oXHRCounter = null;
+		bRegisteredToUI5Init = false;
+		oAutoWaiter = null;
 		FrameHashChanger = null;
 	}
 
@@ -307,8 +334,8 @@ sap.ui.define([
 		getWindow: function () {
 			return oFrameWindow;
 		},
-		_getIXHRCounter:function () {
-			return oXHRCounter || _XHRCounter;
+		_getAutoWaiter:function () {
+			return  oAutoWaiter || _autoWaiter;
 		},
 		teardown: function () {
 			destroyFrame();

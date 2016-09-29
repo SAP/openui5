@@ -1,0 +1,13 @@
+<core:View
+        xmlns="sap.m"
+        xmlns:tnt="sap.tnt"
+        xmlns:l="sap.ui.layout"
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc">
+            <ScrollContainer id="page3"
+                             horizontal="false"
+                             vertical="true"
+                             height="100%">
+                <Text text="This is the root page 3"></Text>
+            </ScrollContainer>
+</core:View>

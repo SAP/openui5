@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 *
 	 * @param {string} sName the Fragment name
 	 * @param {string} sType the Fragment type, e.g. "XML", "JS", or "HTML"
-	 * @param {sap.ui.core.Controller} [oController] the Controller which should be used by the controls in the Fragment. Note that some Fragments may not need a Controller and other may need one - and even rely on certain methods implemented in the Controller.
+	 * @param {sap.ui.core.mvc.Controller} [oController] the Controller which should be used by the controls in the Fragment. Note that some Fragments may not need a Controller and other may need one - and even rely on certain methods implemented in the Controller.
 	 * @public
 	 * @static
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} the root Control(s) of the Fragment content

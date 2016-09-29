@@ -13,15 +13,43 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		"use strict";
 
 		/**
-		 * Constructor for a new MessagePopover
+		 * Constructor for a new MessagePopover.
 		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A MessagePopover is a Popover containing a summarized list with messages.
-		 * @extends sap.ui.core.Control
-		 *
+		 * <strong><i>Overview</i></strong>
+		 * <br><br>
+		 * A {@link sap.m.MessagePopover} is used to display a summarized list of different types of messages (errors, warnings, success and information).
+		 * It provides a handy and systemized way to navigate and explore details for every message.
+		 * <br><br>
+		 * <strong>Notes:</strong>
+		 * <ul>
+		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>. </li>
+		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description. </li>
+		 * </ul>
+		 * <strong><i>Structure</i></strong>
+		 * <br><br>
+		 * The message popover stores all messages in an association of type {@link sap.m.MessagePopoverItem} named <code>items</code>.
+		 * <br>
+		 * A set of properties determines how the items are rendered:
+		 * <ul>
+		 * <li> counter - An integer that is used to indicate the number of errors for each type </li>
+		 * <li> type - The type of message </li>
+		 * <li> title/subtitle - The title and subtitle of the message</li>
+		 * <li> description - The long text description of the message</li>
+		 * </ul>
+		 * <strong><i>Usage</i></strong>
+		 * <br><br>
+		 * With the message concept, MessagePopover provides a way to centrally manage messages and show them to the user without additional work for the developer.
+		 * The message popover is triggered from a messaging button in the footer toolbar. If an error has occurred at any validation point,
+		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
+		 * <br><br>
+		 * <strong><i>Responsive Behavior</i></strong>
+		 * <br><br>
+		 * On mobile phones, the message popover is automatically shown in full screen mode.
+		 * <br><br>
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -29,7 +57,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
-		 * @ui5-metamodel This control also will be described in the legacy UI5 design-time metamodel
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {
 			metadata: {
@@ -603,6 +631,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					description: oMessagePopoverItem.getSubtitle(),
 					counter: oMessagePopoverItem.getCounter(),
 					icon: this._mapIcon(sType),
+					infoState: this._mapInfoState(sType),
+					info: "\r", // There should be a content in the info property in order to use the info states
 					type:  listItemType
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
@@ -620,6 +650,36 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
 
 			return oListItem;
+		};
+
+		/**
+		 * Map ValueState according the MessageType of the message.
+		 *
+		 * @param {sap.ui.core.MessageType} sType Type of Message
+		 * @returns {sap.ui.core.ValueState | null} The ValueState
+		 * @private
+		 */
+		MessagePopover.prototype._mapInfoState = function (sType) {
+			if (!sType) {
+				return null;
+			}
+			var MessageType = sap.ui.core.MessageType,
+				ValueState = sap.ui.core.ValueState;
+
+			switch (sType) {
+				case MessageType.Warning:
+					return ValueState.Warning;
+				case MessageType.Error:
+					return ValueState.Error;
+				case MessageType.Success:
+					return ValueState.Success;
+				case MessageType.Information:
+				case MessageType.None:
+					return ValueState.None;
+				default:
+					jQuery.sap.log.warning("The provided MessageType is not mapped to a specific ValueState", sType);
+					return null;
+			}
 		};
 
 		/**

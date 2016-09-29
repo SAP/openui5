@@ -4,14 +4,17 @@
 	jQuery.sap.registerModulePath("view", "view");
 
 	var oFactory = {
-			getSection: function (iNumber) {
+			getSection: function (iNumber, sTitleLevel, aSubSections) {
 				return new sap.uxap.ObjectPageSection({
-					title: "Section" + iNumber
+					title: "Section" + iNumber,
+					titleLevel: sTitleLevel,
+					subSections: aSubSections || []
 				});
 			},
-			getSubSection: function (iNumber, aBlocks) {
+			getSubSection: function (iNumber, aBlocks, sTitleLevel) {
 				return new sap.uxap.ObjectPageSubSection({
 					title: "SubSection " + iNumber,
+					titleLevel: sTitleLevel,
 					blocks: aBlocks || []
 				});
 			},
@@ -27,8 +30,21 @@
 				return new sap.uxap.ObjectPageLayout({
 					useIconTabBar: true
 				});
+			},
+			getObjectPageLayoutWithSectionTitleLevel: function (sSectionTitleLevel) {
+				return new sap.uxap.ObjectPageLayout({
+					sectionTitleLevel: sSectionTitleLevel,
+					sections:
+						oFactory.getSection(1, null, [
+							oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(3, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(4, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+						])
+
+				});
 			}
-		},
+	},
 
 		helpers = {
 			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
@@ -161,6 +177,38 @@
 		assert.ok(this.oObjectPage.$().find("#" + sSectionId + " *").length, "section is rendered");
 	});
 
+	module("IconTabBar initially selected section", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 3;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
+			this.oSecondSection = this.oObjectPage.getSections()[1];
+			this.oObjectPage.setInitiallySelectedSection(this.oSecondSection.getId());
+			this.iLoadingDelay = 500;
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oSecondSection = null;
+			this.iLoadingDelay = 0;
+		}
+	});
+
+	QUnit.test("test user defined section is initially selected", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		var oExpected = {
+			oSelectedSection: this.oSecondSection,
+			sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
+		};
+
+		//check
+		setTimeout(function () {
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		}, this.iLoadingDelay);
+	});
 
 	module("IconTabBar section selection", {
 		beforeEach: function () {
@@ -297,6 +345,134 @@
 		}, this.iLoadingDelay);
 	});
 
+	module("ObjectPage API: sectionTitleLevel");
+
+	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
+		var oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(null),
+			oSection,
+			$sectionHeader,
+			oSubSection,
+			$subSectionTitle,
+			sSectionAriaLevelDefault = "3",
+			sSubSectionAriaLevelDefault = "4";
+
+		helpers.renderObject(oObjectPage);
+
+		oSection = oObjectPage.getSections()[0];
+		$sectionHeader = oSection.$("header");
+		oSubSection = oSection.getSubSections()[0];
+		$subSectionTitle = oSubSection.$("headerTitle");
+
+		assert.equal($sectionHeader.attr("aria-level"), sSectionAriaLevelDefault, "The section has the correct aria-level");
+		assert.equal($subSectionTitle.attr("aria-level"), sSubSectionAriaLevelDefault, "The subSection has the correct aria-level");
+	});
+
+	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", function (assert) {
+		var oObjectPageSectionTitleLevel = sap.ui.core.TitleLevel.H1,
+			oObjectPageMinimumSectionTitleLevel= sap.ui.core.TitleLevel.H6,
+			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
+			oSection,
+			$sectionHeader,
+			oSubSection,
+			$subSectionTitle,
+			sSectionExpectedAriaLevel = "1", // equal to the  sectionTitleLevel(H1)
+			sSubSectionExpectedAriaLevel = "2", // lower than sectionTitleLevel(H1) by 1
+			sMinimumAriaLevel = "6";
+
+		helpers.renderObject(oObjectPage);
+
+		oSection = oObjectPage.getSections()[0];
+		$sectionHeader = oSection.$("header");
+		oSubSection = oSection.getSubSections()[0];
+		$subSectionTitle = oSubSection.$("headerTitle");
+
+		assert.equal($sectionHeader.attr("aria-level"), sSectionExpectedAriaLevel, "The section has the correct aria-level");
+		assert.equal($subSectionTitle.attr("aria-level"), sSubSectionExpectedAriaLevel, "The subSection has the correct aria-level");
+
+		oObjectPage.setSectionTitleLevel(oObjectPageMinimumSectionTitleLevel);
+		sap.ui.getCore().applyChanges();
+		$sectionHeader = oSection.$("header");
+		$subSectionTitle = oSubSection.$("headerTitle");
+
+		assert.equal($sectionHeader.attr("aria-level"), sMinimumAriaLevel, "The section has the correct aria-level");
+		assert.equal($subSectionTitle.attr("aria-level"), sMinimumAriaLevel, "The subSection has the correct aria-level");
+
+	});
+
+	QUnit.test("test sections/subsections aria-level when sectionTitleLevel and titleLevel are defined", function (assert) {
+		var oObjectPageSectionTitleLevel = sap.ui.core.TitleLevel.H4,
+			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
+			aSections = oObjectPage.getSections(),
+			oSection = aSections[0],
+			aSubSections = oSection.getSubSections(),
+			oFirstSubSection = aSubSections[0],
+			oSecondSubSection  = aSubSections[1],
+			oThirdSubSection = aSubSections[2],
+			$firstSubSectionTitle,
+			$secondSubSectionTitle,
+			$thirdSubSectionTitle,
+			sSubSectionDefaultAriaLevel = "5", // lower than sectionTitleLevel(H4) by 1
+			sFirstSubSectionExpectedAriaLevel = "1", // titleLevel(H1) is set explicitly
+			sSecondSubSectionExpectedAriaLevel = "2"; // titleLevel(H2) is set explicitly
+
+		oFirstSubSection.setTitleLevel(sap.ui.core.TitleLevel.H1);
+		oSecondSubSection.setTitleLevel(sap.ui.core.TitleLevel.H2);
+
+		helpers.renderObject(oObjectPage);
+		$firstSubSectionTitle = oFirstSubSection.$("headerTitle");
+		$secondSubSectionTitle = oSecondSubSection.$("headerTitle");
+		$thirdSubSectionTitle = oThirdSubSection.$("headerTitle");
+
+		assert.equal($firstSubSectionTitle.attr("aria-level"), sFirstSubSectionExpectedAriaLevel,
+			"SubSection aria-level " + sFirstSubSectionExpectedAriaLevel + ", although op sectionTitleLevel is " + oObjectPageSectionTitleLevel);
+
+		assert.equal($secondSubSectionTitle.attr("aria-level"), sSecondSubSectionExpectedAriaLevel,
+			"SubSection aria-level " + sSecondSubSectionExpectedAriaLevel + ", although op sectionTitleLevel is " + oObjectPageSectionTitleLevel);
+
+		assert.equal($thirdSubSectionTitle.attr("aria-level"), sSubSectionDefaultAriaLevel,
+			"SubSection aria-level " + sSubSectionDefaultAriaLevel + ", lower than sectionTitleLevel:" + oObjectPageSectionTitleLevel + " by 1");
+	});
+
+	module("ObjectPage API: sectionTitleLevel - private methods");
+
+	QUnit.test("test _determineSectionBaseInternalTitleLevel and _shouldApplySectionTitleLevel", function (assert) {
+		var oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(sap.ui.core.TitleLevel.H2),
+			oSection = oObjectPage.getSections()[0],
+			aSubSections = oSection.getSubSections(),
+			oFirstSubSection = aSubSections[0],
+			oThirdSubSection = aSubSections[2];
+
+		oFirstSubSection.setTitleLevel(sap.ui.core.TitleLevel.H1);
+		helpers.renderObject(oObjectPage);
+
+		assert.equal(oObjectPage._shouldApplySectionTitleLevel(oFirstSubSection), false,
+			"OP should not apply sectionTitleLevel as the subSection has titleLevel, explicitly defined and different from TitleLevel.Auto: " + oFirstSubSection.getTitleLevel());
+
+		assert.equal(oObjectPage._shouldApplySectionTitleLevel(oThirdSubSection), true,
+			"OP should apply sectionTitleLevel as the subSection has no titleLevel, explicitly defined");
+		assert.equal(oObjectPage._determineSectionBaseInternalTitleLevel(oThirdSubSection), sap.ui.core.TitleLevel.H3,
+			"SubSection internal titleLevel is: " + sap.ui.core.TitleLevel.H3 + ", lower than sectionTitleLevel:" + oObjectPage.getSectionTitleLevel() + " by 1");
+	});
+
+	QUnit.test("test _getNextTitleLevelEntry", function (assert) {
+		var ObjectPageLayout = sap.uxap.ObjectPageLayout,
+			sCurrentTitleLevel = sap.ui.core.TitleLevel.H1;
+
+		assert.equal(ObjectPageLayout._getNextTitleLevelEntry(sCurrentTitleLevel), sap.ui.core.TitleLevel.H2,
+			"Correct, next TitleLevel is: " + sap.ui.core.TitleLevel.H2 + " one level lower than: " + sCurrentTitleLevel);
+
+		sCurrentTitleLevel = sap.ui.core.TitleLevel.H4;
+		assert.equal(ObjectPageLayout._getNextTitleLevelEntry(sCurrentTitleLevel), sap.ui.core.TitleLevel.H5,
+			"Correct, next TitleLevel is: " + sap.ui.core.TitleLevel.H5 + " one level lower than: " + sCurrentTitleLevel);
+
+		sCurrentTitleLevel = sap.ui.core.TitleLevel.H6;
+		assert.equal(ObjectPageLayout._getNextTitleLevelEntry(sCurrentTitleLevel), sap.ui.core.TitleLevel.H6,
+			"Correct, starting from the last entry should return the last entry itself: " + sCurrentTitleLevel);
+
+		sCurrentTitleLevel = sap.ui.core.TitleLevel.H7;
+		assert.equal(ObjectPageLayout._getNextTitleLevelEntry(sCurrentTitleLevel), sap.ui.core.TitleLevel.Auto,
+			"Correct, if the provided TitleLevel is not valid, TitleLevel.Auto should be returned " + sap.ui.core.TitleLevel.Auto);
+	});
 
 	module("ObjectPage API: AnchorBar", {
 		beforeEach: function () {

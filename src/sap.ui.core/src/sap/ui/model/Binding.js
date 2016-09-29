@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Getter for model
-	 * @return {sap.ui.core.Model} the model
+	 * @return {sap.ui.model.Model} the model
 	 */
 	Binding.prototype.getModel = function() {
 		return this.oModel;

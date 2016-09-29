@@ -4,30 +4,66 @@
 /* ================================== */
 
 .sapMGT.sapMGTLineMode {
-	background: none;
+	font-size: @sapMFontMediumSize;
+	& * {
+		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMGTLineStyleHelper {
+		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+			margin-right: 0.125rem;
+		}
+
+		&:not(:first-child) .sapMGTLineStyleHelperInner {
+			margin: 0 0.125rem;
+		}
+		&:last-child .sapMGTLineStyleHelperInner {
+			margin-right: 0;
+		}
+
+		&:first-child .sapMGTLineStyleHelperInner {
+			border-top-left-radius: 0.2rem;
+			border-bottom-left-radius: 0.2rem;
+		}
+
+		&:last-child .sapMGTLineStyleHelperInner {
+			border-top-right-radius: 0.2rem;
+			border-bottom-right-radius: 0.2rem;
+		}
+	}
+
+	&:focus .sapMGTLineStyleHelperInner:before {
+		content: "";
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		box-sizing: border-box;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+
+	.sapMGTLineStyleHelperInner {
+		transition: background 0.2s;
+	}
+
+	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
+		background: fade(@sapUiShellHoverBackground, 10);
+	}
+
+	&.sapMGTLineModePress:not(.sapMGTDisabled) .sapMGTLineStyleHelperInner {
+		background: fade(@sapUiShellHoverBackground, 12);
+	}
+}
+
+.sapMGTLineMode .sapMGTLineModeFailedIcon {
+	cursor: pointer;
+	color: @sapUiContentNonInteractiveIconColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTLineMode.sapMGTDisabled {
 	opacity: 0.5;
-}
-
-.sapMGTLineMode:hover .sapMGTWithoutImageHoverOverlay:not(.sapMGTWithoutImagePressActive) {
-	background-color: fade(@sapUiShellHoverBackground, 10);
-}
-.sapMGTLineMode .sapMGTWithoutImageHoverOverlay.sapMGTPressActive {
-	background-color: fade(@sapUiShellHoverBackground, 12);
-}
-
-.sapMGTLineMode .sapMGTHdrTxt {
-	color: @sapUiShellTextColor;
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
-}
-
-.sapMGTLineMode .sapMGTSubHdrTxt {
-	color: @sapUiTileTextColor;
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTHdrTxt > .sapMText {
@@ -42,6 +78,18 @@
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
 	color: @sapUiTileTextColor;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	color: @sapUiShellTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTHdrIconImage {
@@ -126,9 +174,6 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 .sapMGTOverlay {
 	background-color: @sapUiTileBackground;
-}
-.sapMGTLineMode .sapMGTOverlay {
-	background: none;
 }
 
 /* BREAKPOINT FOR SMALL PHONES */

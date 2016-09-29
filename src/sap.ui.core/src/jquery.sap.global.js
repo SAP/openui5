@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest */
+/*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest, Proxy */
 
 /**
  * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -296,6 +296,152 @@
 				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
 			};
 		}
+
+	}
+
+	// XHR proxy for Firefox
+	if ( Device.browser.firefox && window.Proxy ) {
+
+		// Firefox has an issue with synchronous and asynchronous requests running in parallel,
+		// where callbacks of the asynchronous call are executed while waiting on the synchronous
+		// response, see https://bugzilla.mozilla.org/show_bug.cgi?id=697151
+		// In UI5 in some cases it happens that application code is running, while the class loading
+		// is still in process, so classes cannot be found. To overcome this issue we create a proxy
+		// of the XHR object, which delays execution of the asynchronous event handlers, until
+		// the synchronous request is completed.
+		(function() {
+			var bSyncRequestOngoing = false;
+
+			// Replace the XMLHttpRequest object with a proxy, that overrides the constructor to
+			// return a proxy of the XHR instance
+			window.XMLHttpRequest = new Proxy(window.XMLHttpRequest, {
+				construct: function(oTargetClass, aArguments, oNewTarget) {
+					var oXHR = new oTargetClass(),
+						bSync = false,
+						bDelay = false,
+						iReadyState = 0,
+						oProxy;
+
+					// Return a wrapped handler function for the given function, which checks
+					// whether a synchronous request is currently in progress.
+					function wrapHandler(fnHandler) {
+						var fnWrappedHandler = function(oEvent) {
+							// The ready state at the time the event is occurring needs to
+							// be preserved, to restore it when the handler is called delayed
+							var iCurrentState = oXHR.readyState;
+							function callHandler() {
+								iReadyState = iCurrentState;
+								// Only if the event has not been removed in the meantime
+								// the handler needs to be called after the timeout
+								if (fnWrappedHandler.active) {
+									return fnHandler.call(oProxy, oEvent);
+								}
+							}
+							// If this is a asynchronous request and a sync request is ongoing,
+							// the execution of all following handler calls needs to be delayed
+							if (!bSync && bSyncRequestOngoing) {
+								bDelay = true;
+							}
+							if (bDelay) {
+								setTimeout(callHandler, 0);
+								return true;
+							}
+							return callHandler();
+						};
+						fnHandler.wrappedHandler = fnWrappedHandler;
+						fnWrappedHandler.active = true;
+						return fnWrappedHandler;
+					}
+
+					// To be able to remove an event listener, we need to get access to the
+					// wrapped handler, which has been used to add the listener internally
+					// in the XHR.
+					function unwrapHandler(fnHandler) {
+						return deactivate(fnHandler.wrappedHandler);
+					}
+
+					// When a event handler is removed synchronously, it needs to be deactivated
+					// to avoid the situation, where the handler has been triggered while
+					// the sync request was ongoing, but removed afterwards.
+					function deactivate(fnWrappedHandler) {
+						if (typeof fnWrappedHandler === "function") {
+							fnWrappedHandler.active = false;
+						}
+						return fnWrappedHandler;
+					}
+
+					// Create a proxy of the XHR instance, which overrides the necessary functions
+					// to deal with event handlers and readyState
+					oProxy = new Proxy(oXHR, {
+						get: function(oTarget, sPropName, oReceiver) {
+							var vProp = oTarget[sPropName];
+							switch (sPropName) {
+								// When an event handler is called with setTimeout, the readyState
+								// of the internal XHR is already completed, but we need to have
+								// have the readyState at the time the event was fired.
+								case "readyState":
+									return iReadyState;
+								// When events are added, the handler function needs to be wrapped
+								case "addEventListener":
+									return function(sName, fnHandler, bCapture) {
+										vProp.call(oTarget, sName, wrapHandler(fnHandler), bCapture);
+									};
+								// When events are removed, the wrapped handler function must be used,
+								// to remove it on the internal XHR object
+								case "removeEventListener":
+									return function(sName, fnHandler, bCapture) {
+										vProp.call(oTarget, sName, unwrapHandler(fnHandler), bCapture);
+									};
+								// Whether a request is asynchronous or synchronous is defined when
+								// calling the open method.
+								case "open":
+									return function(sMethod, sUrl, bAsync) {
+										bSync = bAsync === false;
+										vProp.apply(oTarget, arguments);
+										iReadyState = oTarget.readyState;
+									};
+								// The send method is where the actual request is triggered. For sync
+								// requests we set a boolean flag to detect a request is in progress
+								// in the wrapped handlers.
+								case "send":
+									return function() {
+										bSyncRequestOngoing = bSync;
+										vProp.apply(oTarget, arguments);
+										iReadyState = oTarget.readyState;
+										bSyncRequestOngoing = false;
+									};
+							}
+							// All functions need to be wrapped, so they are called on the correct object
+							// instance
+							if (typeof vProp === "function") {
+								return function() {
+									return vProp.apply(oTarget, arguments);
+								};
+							}
+							// All other properties can just be returned
+							return vProp;
+						},
+						set: function(oTarget, sPropName, vValue) {
+							// All properties starting with "on" (event handler functions) need to be wrapped
+							// when they are set
+							if (sPropName.indexOf("on") === 0) {
+								// In case there already is a function set on this property, it needs to be
+								// deactivated
+								deactivate(oTarget[sPropName]);
+								if (typeof vValue === "function") {
+									oTarget[sPropName] = wrapHandler(vValue);
+									return true;
+								}
+							}
+							// All other properties can just be set on the inner XHR object
+							oTarget[sPropName] = vValue;
+							return true;
+						}
+					});
+					return oProxy;
+				}
+			});
+		})();
 
 	}
 
@@ -879,7 +1025,7 @@
 			 *
 			 * @param {jQuery.sap.log.Level} iLogLevel The new log level
 			 * @param {string} [sComponent] The log component to set the log level for
-			 * @return {jQuery.sap.log} This logger object to allow method chaining
+			 * @return {jQuery.sap.log.Logger} This logger object to allow method chaining
 			 * @public
 			 */
 			this.setLevel = function setLevel(iLogLevel, sComponent) {
@@ -948,7 +1094,7 @@
 		 * retrieve such a logger once during startup and reuse it for the rest of its lifecycle.
 		 * Second, the {@link jQuery.sap.log.Logger#setLevel}(iLevel, sComponent) method allows to set the log level
 		 * for a specific component only. This allows a more fine granular control about the created logging entries.
-		 * {@link jQuery.sap.log.Logger.getLevel} allows to retrieve the currently effective log level for a given
+		 * {@link jQuery.sap.log.Logger#getLevel} allows to retrieve the currently effective log level for a given
 		 * component.
 		 *
 		 * {@link jQuery.sap.log#getLog} returns an array of the currently collected log entries.
@@ -978,7 +1124,7 @@
 			 * Only if the current LogLevel is higher than the level {@link jQuery.sap.log.Level} of the currently added log entry,
 			 * then this very entry is permanently added to the log. Otherwise it is ignored.
 			 * @see jQuery.sap.log.Logger#setLevel
-			 * @namespace
+			 * @enum {int}
 			 * @public
 			 */
 			Level : {
@@ -1083,7 +1229,7 @@
 			 * The given object must provide method <code>onLogEntry</code> and can also be informed
 			 * about <code>onDetachFromLog</code> and <code>onAttachToLog</code>
 			 * @param {object} oListener The new listener object that should be informed
-			 * @return {jQuery.sap.log} The global logger
+			 * @return {jQuery.sap.log.Logger} The global logger
 			 * @public
 			 * @static
 			 */
@@ -1095,7 +1241,7 @@
 			/**
 			 * Allows to remove a registered LogListener.
 			 * @param {object} oListener The new listener object that should be removed
-			 * @return {jQuery.sap.log} The global logger
+			 * @return {jQuery.sap.log.Logger} The global logger
 			 * @public
 			 * @static
 			 */
@@ -2643,7 +2789,7 @@
 		};
 
 		// predefine already loaded modules to avoid redundant loading
-		// Module.get("sap/ui/thirdparty/jquery/jquery.js").ready(_sBootstrapUrl, jQuery);
+		// Module.get("sap/ui/thirdparty/jquery.js").ready(_sBootstrapUrl, jQuery);
 		Module.get("sap/ui/thirdparty/URI.js").ready(_sBootstrapUrl, URI);
 		Module.get("sap/ui/Device.js").ready(_sBootstrapUrl, Device);
 		Module.get("jquery.sap.global.js").ready(_sBootstrapUrl, jQuery);
@@ -2653,9 +2799,7 @@
 		 * @private
 		 */
 		function ui5ToRJS(sName) {
-			if ( /^sap\.ui\.thirdparty\.jquery\.jquery-/.test(sName) ) {
-				return "sap/ui/thirdparty/jquery/jquery-" + sName.slice("sap.ui.thirdparty.jquery.jquery-".length);
-			} else if ( /^jquery\.sap\./.test(sName) ) {
+			if ( /^jquery\.sap\./.test(sName) ) {
 				return sName;
 			}
 			return sName.replace(/\./g, "/");
@@ -2674,9 +2818,7 @@
 			}
 
 			sName = sName.slice(0, -3);
-			if ( /^sap\/ui\/thirdparty\/jquery\/jquery-/.test(sName) ) {
-				return "sap.ui.thirdparty.jquery.jquery-" + sName.slice("sap/ui/thirdparty/jquery/jquery-".length);
-			} else if ( /^jquery\.sap\./.test(sName) ) {
+			if ( /^jquery\.sap\./.test(sName) ) {
 				return sName; // do nothing
 			}
 			return sName.replace(/\//g, ".");

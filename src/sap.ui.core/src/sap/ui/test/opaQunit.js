@@ -47,17 +47,17 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	 * @function
 	 * @static
 	 * @param {string} testName The name of the created QUnit test.
-	 * @param {integer|function} expected Integer showing how many QUnit assertions are expected by the test. If a function is passed, it is interpreted as callback and the expected is skipped.
+	 * @param {int|function} expected Integer showing how many QUnit assertions are expected by the test. If a function is passed, it is interpreted as callback and the expected is skipped.
 	 * @param {function} callback The test function. It will get 3 arguments passed to it.
 	 * <ol>
 	 *     <li>
-	 *         Will be {@link sap.ui.test.Opa#.config} .arrangements.
+	 *         Will be {@link sap.ui.test.Opa.config} .arrangements.
 	 *     </li>
 	 *     <li>
-	 *        Will be {@link sap.ui.test.Opa#.config} .actions.
+	 *        Will be {@link sap.ui.test.Opa.config} .actions.
 	 *     </li>
 	 *     <li>
-	 *         Will be {@link sap.ui.test.Opa#.config} .assertions.
+	 *         Will be {@link sap.ui.test.Opa.config} .assertions.
 	 *     </li>
 	 * </ol>
 	 * @returns {QUnit.test} A function to register opaTests

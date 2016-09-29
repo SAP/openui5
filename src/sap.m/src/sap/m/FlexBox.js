@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	FlexBox.prototype.getAccessibilityInfo = function() {
