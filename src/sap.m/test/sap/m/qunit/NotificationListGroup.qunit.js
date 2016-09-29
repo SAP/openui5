@@ -180,6 +180,7 @@
         var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
         var secondNotification = new sap.m.NotificationListItem({title: 'Second Notification'});
         var fnEventSpy = sinon.spy(this.NotificationListGroup, 'setCollapsed');
+        var fnCollapseEventSpy = sinon.spy(this.NotificationListGroup, 'fireOnCollapse');
 
         this.NotificationListGroup.addItem(firstNotification);
         this.NotificationListGroup.addItem(secondNotification);
@@ -192,6 +193,7 @@
         // assert
         assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the button should trigger collapse/expand of the group.');
         assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'Pressing the button should expand the collapsed group.');
+        assert.strictEqual(fnCollapseEventSpy.callCount, 1, 'onCollapse should be called');
     });
 
     QUnit.test('Priority must be set to the highest if there are more than two notifications', function(assert) {

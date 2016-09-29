@@ -53,6 +53,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				 * The NotificationListItems inside the group.
 				 */
 				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'}
+			},
+			events: {
+				/**
+				 * This event is called when collapse property value is changed
+				 * @since 1.44
+				 */
+				onCollapse: {
+					parameters: {
+						/**
+						 * Indicates exact collapse direction
+						 */
+						collapsed: {type: "boolean"}
+					}
+				}
 			}
 		}
 	});
@@ -99,7 +113,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	NotificationListGroup.prototype.setCollapsed = function (collapsed) {
 		this._toggleCollapsed();
 		//Setter overwritten to suppress invalidation
-		return this.setProperty('collapsed', collapsed, true);
+
+		this.setProperty('collapsed', collapsed, true);
+		this.fireOnCollapse({collapsed: collapsed});
+
+		return this;
 	};
 
 	NotificationListGroup.prototype.getPriority = function () {
