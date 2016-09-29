@@ -97,6 +97,21 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 
 
 //public static factory methods
+	/**
+	 * Creates an inline change
+	 *
+	 * @param {string} sDescriptorChangeType the change type
+	 * @param {object} mParameters parameters of the changed type
+	 * @param {object} [mTexts] texts for the inline change
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.createDescriptorInlineChange = function( sDescriptorChangeType,mParameters,mTexts ){
+		return this._createDescriptorInlineChange( sDescriptorChangeType,mParameters,mTexts );
+	};
 
 	/**
 	 * Creates an inline change of change type appdescr_ovp_addNewCard
