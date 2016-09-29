@@ -42,12 +42,12 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderContentWrapper = function (rm, control) {
-			var isScreenSizeForTablet = sap.ui.Device.system.tablet;
-			var isScreenSizeForPhone = sap.ui.Device.system.phone;
+			var isTablet = sap.ui.Device.system.tablet;
+			var isPhone = sap.ui.Device.system.phone;
 
 			rm.write('<div class="sapTntToolPageContentWrapper');
 
-			if (isScreenSizeForPhone || isScreenSizeForTablet || !control.getSideExpanded()) {
+			if (isPhone || isTablet || !control.getSideExpanded()) {
 				rm.write(' sapTntToolPageAsideCollapsed');
 			}
 
@@ -58,8 +58,7 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderAsideContent = function (rm, control) {
-			var isScreenSizeForTablet = sap.ui.Device.system.tablet;
-			var isScreenSizeForPhone = sap.ui.Device.system.phone;
+			var isDesktop = sap.ui.Device.system.desktop;
 			var sideContentAggregation = control.getAggregation('sideContent');
 			var isSideExpanded = control.getSideExpanded();
 
@@ -71,7 +70,7 @@ sap.ui.define([],
 				sideContentAggregation.setExpanded(isSideExpanded);
 			}
 
-			if (isScreenSizeForTablet || isScreenSizeForPhone) {
+			if (!isDesktop) {
 				control.setSideExpanded(false);
 			}
 
