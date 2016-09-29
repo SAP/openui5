@@ -16,6 +16,7 @@ sap.ui.define([
 	MessageToast,
 	Dialog,
 	Button) {
+	var sCartModelName = "cartProducts";
 	return Controller.extend("sap.ui.demo.cart.view.Cart", {
 		formatter: formatter,
 
@@ -76,13 +77,33 @@ sap.ui.define([
 		},
 
 		onSafeForLater: function (oEvent) {
-			MessageToast.show("Safed '" + oEvent.getSource().getText() + "' for later");
+			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
+			var oProduct = oBindingContext.getObject();
+
+			//Move Products from cart to saveList
+			var oCartModel =oBindingContext.getModel();
+			var oCartData = oCartModel.getData();
+			var oSavedForLaterEntries = oCartData.savedForLaterEntries;
+			var oCartEntries = oCartData.cartEntries;
+
+			// find existing entry for product
+			var sProductId = oProduct.ProductId;
+
+			if (oSavedForLaterEntries[sProductId] === undefined) {
+				// copy new entry
+				oSavedForLaterEntries[sProductId] = oProduct;
+			}
+
+			//Delete the saved Product from cart
+			delete oCartEntries[sProductId];
+			// update model
+			oCartModel.setData(oCartData);
 		},
 
 		_showProduct: function (item) {
 			// send event to refresh
-			var sPath = item.getBindingContext("cartProducts").getPath();
-			var oEntry = this.getView().getModel("cartProducts").getProperty(sPath);
+			var sPath = item.getBindingContext(sCartModelName).getPath();
+			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
 			var sId = oEntry.ProductId;
 			if (!sap.ui.Device.system.phone) {
 				this._router.getTargets().display("productView");
@@ -95,7 +116,7 @@ sap.ui.define([
 
 		handleEntryListDelete: function (oEvent) {
 			// show confirmation dialog
-			var sEntryId = oEvent.getParameter("listItem").getBindingContext("cartProducts").getObject().Id;
+			var sEntryId = oEvent.getParameter("listItem").getBindingContext(sCartModelName).getObject().Id;
 			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			MessageBox.show(
 				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
@@ -103,16 +124,16 @@ sap.ui.define([
 					actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
 					onClose: jQuery.proxy(function (oAction) {
 						if (MessageBox.Action.DELETE === oAction) {
-							var oModel = this.getView().getModel("cartProducts");
+							var oModel = this.getView().getModel(sCartModelName);
 							var oData = oModel.getData();
-							var aNewEntries = jQuery.grep(oData.entries, function (oEntry) {
+							var aNewEntries = jQuery.grep(oData.cartEntries, function (oEntry) {
 								var keep = (oEntry.Id !== sEntryId);
 								if (!keep) {
 									oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
 								}
 								return keep;
 							});
-							oData.entries = aNewEntries;
+							oData.cartEntries = aNewEntries;
 							oData.showEditAndProceedButton = aNewEntries.length > 0;
 							oModel.setData(oData);
 						}
@@ -180,9 +201,9 @@ sap.ui.define([
 
 		_resetCart: function () {
 			//delete cart content
-			var oCartProductsModel = this.getView().getModel("cartProducts");
+			var oCartProductsModel = this.getView().getModel(sCartModelName);
 			var oCartProductsModelData = oCartProductsModel.getData();
-			oCartProductsModelData.entries = [];
+			oCartProductsModelData.cartEntries = {};
 			oCartProductsModelData.totalPrice = "0";
 			oCartProductsModelData.showEditAndProceedButton = false;
 			oCartProductsModel.setData(oCartProductsModelData);

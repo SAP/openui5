@@ -1,9 +1,10 @@
 sap.ui.define([
+	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/demo/cart/model/formatter',
 	'sap/m/MessageToast',
 	'sap/m/MessageBox'
-], function (Controller, formatter, MessageToast, MessageBox) {
+], function ($, Controller, formatter, MessageToast, MessageBox) {
 	return Controller.extend("sap.ui.demo.cart.view.Product", {
 		formatter : formatter,
 
@@ -104,46 +105,31 @@ sap.ui.define([
 			}
 		},
 
-		_addProduct: function(oProduct) {
+		_addProduct: function(oProductToBeAdded) {
 			var oCartModel = this.getView().getModel("cartProducts");
 			var oCartData = oCartModel.getData();
-			var aCartEntries = oCartData.entries;
+			var oCartEntries = oCartData.cartEntries;
 
 			// find existing entry for product
-			var oEntry = null;
-			for (var i = 0 ; i < aCartEntries.length ; i ++) {
-				if (aCartEntries[i].ProductId === oProduct.ProductId) {
-					oEntry = aCartEntries[i];
-					break;
-				}
-			}
+			var sProductIdToBeAdded = oProductToBeAdded.ProductId;
+			var oCartEntry = oCartEntries[sProductIdToBeAdded];
 
-			if (oEntry === null) {
+			if (oCartEntry === undefined) {
 				// create new entry
-				oEntry = {
-					Id : jQuery.sap.uid(),
-					Quantity : 1,
-					Name : oProduct.Name,
-					ProductId : oProduct.ProductId,
-					ProductName : oProduct.Name,
-					Price : oProduct.Price,
-					SupplierName : oProduct.SupplierName,
-					Status : oProduct.status,
-					Weight : oProduct.Weight,
-					PictureUrl : oProduct.PictureUrl
-				};
-				oCartData.entries[oCartData.entries.length] = oEntry;
-
+				oCartEntry = $.extend({}, oProductToBeAdded);
+				oCartEntry.Quantity = 1;
+				oCartEntries[sProductIdToBeAdded] = oCartEntry;
 			} else {
 				// update existing entry
-				oEntry.Quantity += 1;
+				oCartEntry.Quantity += 1;
 			}
 
 			// recalculate total price
 			oCartData.totalPrice = 0;
-			for (var j = 0 ; j < oCartData.entries.length ; j ++) {
-				oCartData.totalPrice += parseFloat(oCartData.entries[j].Price) * oCartData.entries[j].Quantity;
-			}
+			Object.keys(oCartEntries).forEach(function (sProductId) {
+				var oProduct = oCartEntries[sProductId];
+				oCartData.totalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
+			});
 
 			//if there is at least one entry, the edit button is shown
 			oCartData.showEditAndProceedButton = true;

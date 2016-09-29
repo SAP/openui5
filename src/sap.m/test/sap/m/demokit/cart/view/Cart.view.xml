@@ -20,9 +20,9 @@
 			<Toolbar>
 				<Text
 					text="{
-					path : 'cartProducts>/totalPrice',
-					formatter : '.formatter.totalPrice'
-					} EUR" />
+						path : 'cartProducts>/totalPrice',
+						formatter : '.formatter.totalPrice'
+						} EUR" />
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
@@ -45,12 +45,13 @@
 		<content>
 			<List
 				id="entryList"
+				footerText="{i18n>CART_SAVED_FOR_LATER_FOOTER_TEXT}"
 				mode="{cfg>/listMode}"
 				delete="handleEntryListDelete"
 				select="handleEntryListSelect"
 				noDataText="{i18n>CART_NO_DATA}"
 				items="{
-					path : 'cartProducts>/entries',
+					path : 'cartProducts>/cartEntries',
 					sorter : {
 						path : 'Name',
 						descending : false
@@ -76,24 +77,68 @@
 							<ObjectAttribute
 								active="{device>/safeForLater}"
 								press="onSafeForLater"
-								text="by {cartProducts>SupplierName}" />
+								text="{i18n>CART_SAVE_FOR_LATER_LINK_TEXT}" />
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
 								text="{
-									path : 'cartProducts>Status',
+									path : 'cartProducts>status',
 									formatter : '.formatter.statusText'
 								}"
 								state="{
-									path : 'cartProducts>Status',
+									path : 'cartProducts>status',
 									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>
-						<customData>
-							<core:CustomData
-								key="productId"
-								value="{cartProducts>ProductId}" />
-						</customData>
+					</ObjectListItem>
+				</items>
+			</List>
+			<List
+				id="savedForLaterList"
+				mode="{cfg>/listMode}"
+				showNoData="false"
+				delete="handleEntryListDelete"
+				select="handleEntryListSelect"
+				items="{
+					path : 'cartProducts>/savedForLaterEntries',
+					sorter : {
+						path : 'Name',
+						descending : false
+					}
+				}">
+				<items>
+					<ObjectListItem
+						intro="{cartProducts>Quantity} x"
+						type="{cfg>/listItemType}"
+						icon="{
+							path : 'cartProducts>PictureUrl',
+							formatter : '.formatter.pictureUrl'
+						}"
+						title="{cartProducts>Name}"
+						number="{
+							path : 'cartProducts>Price',
+							formatter : '.formatter.price'
+						}"
+						numberUnit="EUR"
+						press="handleEntryListPress"
+						iconDensityAware="false" >
+						<attributes>
+							<ObjectAttribute
+								active="{device>/safeForLater}"
+								press="onAddBackToCart"
+								text="{i18n>CART_ADD_TO_CART_LINK_TEXT}" />
+						</attributes>
+						<firstStatus>
+							<ObjectStatus
+								text="{
+									path : 'cartProducts>status',
+									formatter : '.formatter.statusText'
+								}"
+								state="{
+									path : 'cartProducts>status',
+									formatter : '.formatter.statusState'
+								}" />
+						</firstStatus>
 					</ObjectListItem>
 				</items>
 			</List>
