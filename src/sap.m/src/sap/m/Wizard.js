@@ -237,7 +237,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Goes to the given step.
+		 * Goes to the given step. The step must already be activated and visible. You can't use this method on steps
+		 * that haven't been reached yet.
 		 * @param {sap.m.WizardStep} step The step to go to.
 		 * @param {boolean} focusFirstStepElement Defines whether the focus should be changed to the first element.
 		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
