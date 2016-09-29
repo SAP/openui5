@@ -37,6 +37,20 @@ sap.ui.define([], function() {
 			},
 			form : {
 				ignore : false,
+				childNames : function (oElement){
+					var sType = oElement.getMetadata().getName();
+					if (sType === "sap.ui.layout.form.SimpleForm") {
+						return {
+							singular : "GROUP_CONTROL_NAME",
+							plural : "GROUP_CONTROL_NAME_PLURAL"
+						};
+					} else if (sType === "sap.ui.layout.form.FormContainer"){
+						return {
+							singular : "FIELD_CONTROL_NAME",
+							plural : "FIELD_CONTROL_NAME_PLURAL"
+						};
+					}
+				},
 				actions : {
 					move : function(oMovedElement){
 						var sType = oMovedElement.getMetadata().getName();
@@ -306,7 +320,8 @@ sap.ui.define([], function() {
 					},
 					reveal : function(oRemovedElement) {
 						var sType = oRemovedElement.getMetadata().getName();
-						if (sType === "sap.ui.layout.form.SimpleForm") {
+						//fix after runtime build
+						if ((sType === "sap.ui.layout.form.SimpleForm") || (sType === "sap.ui.layout.form.FormContainer")) {
 							return {
 								changeType : "unhideSimpleFormField",
 								getInvisibleElements : function(oSimpleForm) {
