@@ -15,6 +15,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
@@ -25,7 +26,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Message, BindingMode, Model, OperationMode, URI, _ODataHelper,
+], function(jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
 		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataPropertyBinding) {
 
@@ -446,18 +447,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cannot create contexts at this model at will; retrieve them from a binding instead.
+	 * Creates a binding context for the given path. A relative path can only be resolved if a
+	 * context is provided.
+	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
+	 * <code>bReload</code> from {@link sap.ui.model.Model#createBindingContext} are not supported.
 	 *
+	 * @param {string} sPath
+	 *   The binding path, may be relative to the provided context
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context which is required as base for a relative path
+	 * @returns {sap.ui.model.Context}
+	 *   The binding context with the resolved path and the model instance
 	 * @throws {Error}
+	 *   If a relative path is provided without a context or in case of unsupported parameters or
+	 *   if the given context is a {@link sap.ui.model.odata.v4.Context}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#createBindingContext
-	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
-	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.createBindingContext = function () {
-		throw new Error("Unsupported operation: v4.ODataModel#createBindingContext");
+	ODataModel.prototype.createBindingContext = function (sPath, oContext) {
+		var sResolvedPath;
+
+		if (arguments.length > 2) {
+			throw new Error("Only the parameters sPath and oContext are supported");
+		}
+		if (oContext instanceof sap.ui.model.odata.v4.Context) {
+			throw new Error("Unsupported type: oContext must be of type sap.ui.model.Context, "
+				+ "but was sap.ui.model.odata.v4.Context");
+		}
+		sResolvedPath = this.resolve(sPath, oContext);
+		if (sResolvedPath === undefined) {
+			throw new Error("Cannot create binding context from relative path '" + sPath
+				+ "' without context");
+		}
+
+		return new BaseContext(this, sResolvedPath);
 	};
 
 	/**
