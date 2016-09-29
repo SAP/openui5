@@ -160,9 +160,10 @@ sap.ui.define([
 				this._sId = sNewId;
 
 			} else {
-
+				var oModel = this.getView().getModel();
+				oModel.refresh(true);
 				// get existing data model
-				oData = this.getView().getModel().getData();
+				oData = oModel.getData();
 			}
 
 			// handle unknown tab
