@@ -400,6 +400,36 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "setting it to true again does nothing");
 	});
 
+
+	QUnit.test("DynamicPage Header - expanding/collapsing by clicking the title", function (assert) {
+
+		var oDynamicPage = this.oDynamicPage,
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oFakeEvent = {
+				srcControl: oDynamicPageTitle
+			};
+
+		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(false);
+		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
+
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Initially the header is expanded");
+		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
+
+		oDynamicPageTitle.ontap(oFakeEvent);
+
+		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed");
+
+		oDynamicPage.setToggleHeaderOnTitleClick(false);
+
+		oDynamicPageTitle.ontap(oFakeEvent);
+		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
+
+		oDynamicPage.setToggleHeaderOnTitleClick(true);
+
+		oDynamicPageTitle.ontap(oFakeEvent);
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+	});
+
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering", {
 		beforeEach: function () {
