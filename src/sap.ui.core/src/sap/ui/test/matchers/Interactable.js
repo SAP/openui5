@@ -109,14 +109,6 @@ sap.ui.define([
 					$.sap.log.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup", this._sLogPrefix);
 					return false;
 				}
-
-				// Whan a Dialog was opened and is in the closing phase the blocklayer is gone already therefore ask the instance manager
-				var oInstanceManager = $.sap.getObject("sap.m.InstanceManager");
-				if (oInstanceManager && oInstanceManager.getOpenDialogs().length) {
-					$.sap.log.debug("The control " + oControl + " is hidden behind an Open dialog", this._sLogPrefix);
-					return false;
-				}
-
 			}
 
 
