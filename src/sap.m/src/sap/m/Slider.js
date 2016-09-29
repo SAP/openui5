@@ -144,8 +144,10 @@ sap.ui.define([
 		}});
 
 		//Defines object which contains constants used by the control.
-		Slider.prototype._CONSTANTS = {
-			CHARACTER_WIDTH_PX : 8
+		var _CONSTANTS = {
+			CHARACTER_WIDTH_PX : 8,
+			INPUT_STATE_NONE: "None",
+			INPUT_STATE_ERROR: "Error"
 		};
 
 		EnabledPropagator.apply(Slider.prototype, [true]);
@@ -182,7 +184,7 @@ sap.ui.define([
 			this._fHandleWidth = this.$("handle").width();
 
 			this._fTooltipHalfWidthPercent =
-				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + _CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
 		};
 
 		/**
@@ -372,6 +374,7 @@ sap.ui.define([
 			if (!bInputTooltips) {
 				oTooltip.innerHTML = sNewValue;
 			} else if (bInputTooltips && oTooltip.getValue() !== sNewValue) {
+				oTooltip.setValueState(_CONSTANTS.INPUT_STATE_NONE);
 				oTooltip.setValue(sNewValue);
 				oTooltip.$("inner").attr("value", sNewValue);
 			}
@@ -474,7 +477,7 @@ sap.ui.define([
 		Slider.prototype._createInputField = function (sSuffix, oAriaLabel) {
 			var oInput = new Input(this.getId() + "-" + sSuffix, {
 				value: this.getMin(),
-				width: this._iLongestRangeTextWidth + (2 * this._CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
+				width: this._iLongestRangeTextWidth + (2 * _CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
 				type: "Number",
 				textAlign: sap.ui.core.TextAlign.Center,
 				ariaLabelledBy: oAriaLabel
@@ -497,11 +500,11 @@ sap.ui.define([
 			var newValue = parseFloat(oEvent.getParameter("value"));
 
 			if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
-				oInput.setValueState("Error");
+				oInput.setValueState(_CONSTANTS.INPUT_STATE_ERROR);
 				return;
 			}
 
-			oInput.setValueState("None");
+			oInput.setValueState(_CONSTANTS.INPUT_STATE_NONE);
 
 			this.setValue(newValue);
 
@@ -566,7 +569,7 @@ sap.ui.define([
 
 			if (this.getShowAdvancedTooltip()) {
 				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
-					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
+					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * _CONSTANTS.CHARACTER_WIDTH_PX;
 			}
 
 			if (this.getInputsAsTooltips() && !this._oInputTooltip) {
