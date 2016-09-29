@@ -1,8 +1,7 @@
 sap.ui.define([
-		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/PropertyStrictEquals'
+		'sap/ui/test/Opa5'
 	],
-	function (Opa5, PropertyStrictEquals) {
+	function (Opa5) {
 		"use strict";
 
 		function getFrameUrl(sHash, sUrlParameters) {
