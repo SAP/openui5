@@ -86,7 +86,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this._oData.fileName = sFileName;
 			}
 			// set model
-			this.getView().setModel(new JSONModel(this._oData));
+			var oJSONModel = new JSONModel(this._oData);
+			this.getView().setModel(oJSONModel);
+			oJSONModel.refresh(true);
 
 			// scroll to top of page
 			var page = this.getView().byId("page");
