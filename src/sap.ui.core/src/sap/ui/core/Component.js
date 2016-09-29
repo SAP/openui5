@@ -857,6 +857,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 	};
 
+	/**
+	 * Internal activation function for non lazy services which should be started immediately
+	 *
+	 * @param {sap.ui.core.Component} oComponent The Component instance
+	 *
+	 * @private
+	*/
+	function activateServices(oComponent) {
+		var oServices = oComponent.getManifestEntry("/sap.ui5/services");
+		for (var sService in oServices) {
+			if (oServices[sService].lazy === false) {
+				oComponent.getService(sService);
+			}
+		}
+	}
+
+
 
 	/**
 	 * Initializes the Component instance after creation.
@@ -1435,6 +1452,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation);
 			}
 
+			// Some services may demand immediate startup
+			activateServices(oInstance);
+
 			if (typeof Component._fnOnInstanceCreated === "function") {
 
 				// In async mode the hook can provide a promise which will be added to the promise chain
@@ -1963,6 +1983,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			preloadDependencies(sName, oManifest);
 		}
 		preload(sName);
+
 		return getControllerClass();
 	}
 
