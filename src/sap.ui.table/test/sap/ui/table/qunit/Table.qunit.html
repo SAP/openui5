@@ -878,9 +878,9 @@
 		$Table.find(".sapUiTableColHdr").each(function(index, row) {
 			var rowIndex = index;
 			var $row = jQuery(row);
-			var rowHeight = $row.height() + "px";
+			var rowHeight = $row.height();
 			$row.children().each(function(index, cell){
-				assert.equal(cell.style.height, rowHeight, "Cell [" + index + "," + rowIndex +"] has correct height");
+				assert.equal(cell.offsetHeight, rowHeight, "Cell [" + index + "," + rowIndex +"] has correct height");
 			});
 		});
 	});
