@@ -77,7 +77,7 @@ sap.ui.define([
 					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
 						source : "Team3.json"
 					}
-				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data",
+				}, "sap/ui/core/sample/odata/v4/ListBinding/data",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			}
 
