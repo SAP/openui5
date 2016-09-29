@@ -48,7 +48,7 @@ sap.ui.define([
 				sUriV4 = this.proxy(sUriV4);
 			} else {
 				TestUtils.useFakeServer(this.oSandbox,
-					"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+					"sap/ui/core/sample/ViewTemplate/types/data", {
 					"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
 						source : "metadataV2.xml"
 					},
