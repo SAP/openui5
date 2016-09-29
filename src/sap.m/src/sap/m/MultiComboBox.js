@@ -719,23 +719,37 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._createDialog = function() {
-		var CSS_CLASS_COMBOBOXBASE = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
-
-		var oDialog = new Dialog({
-			stretch: true,
-			customHeader: new Bar({
-				contentLeft: new sap.m.InputBase({
-					width: "100%",
-					editable: false
-				}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Input")
-			}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Bar")
-		});
-
-		oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
-			oDialog.close();
-		}, this);
+		var that = this,
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sMultiComboBoxTitle = oResourceBundle.getText("MULTICOMBOBOX_PICKER_TITLE"),
+			oDialog = new Dialog({
+				stretch: true,
+				showHeader: true,
+				title: sMultiComboBoxTitle,
+				endButton: that._createDialogFooterButton(this)
+			});
 
 		return oDialog;
+	};
+
+	/**
+	 * Creates an instance type of <code>sap.m.Dialog</code>.
+	 *
+	 * @param {sap.m.Dialog} oDialog an Instance of a Dialog which will be clicked on button press
+	 * @returns {sap.m.Button}
+	 * @private
+	 */
+	MultiComboBox.prototype._createDialogFooterButton = function(oDialog) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sCloseButtonText = oResourceBundle.getText("MULTICOMBOBOX_CLOSE_BUTTON"),
+			oCloseButton = new sap.m.Button({
+				text: sCloseButtonText,
+				press: function() {
+					oDialog.close();
+				}
+			});
+
+		return oCloseButton;
 	};
 
 	/**
