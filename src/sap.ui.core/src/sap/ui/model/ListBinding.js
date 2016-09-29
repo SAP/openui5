@@ -252,17 +252,48 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 		this.bUseExtendedChangeDetection = true;
 		this.bDetectUpdates = bDetectUpdates;
 		if (typeof vKey === "string") {
-			this.fnGetEntryKey = function(oContext) {
+			this.getEntryKey = function(oContext) {
 				return oContext.getProperty(vKey);
 			};
 		} else if (typeof vKey === "function") {
-			this.fnGetEntryKey = vKey;
+			this.getEntryKey = vKey;
 		}
 		if (this.update) {
 			this.update();
 		}
 	};
 
+	/**
+	 * Return the data used for the extended change detection. Dependent on the configuration this can either be a
+	 * serialization of the complete data, or just a unique key identifying the entry. If grouping is enabled, the
+	 * grouping key will also be included, to detect grouping changes.
+	 *
+	 * @param {sap.ui.model.Context} oContext the context object
+	 * @returns {string} A string which is used for diff comparison
+	 */
+	ListBinding.prototype.getContextData = function(oContext) {
+		var sContextData;
+		if (this.getEntryKey && !this.bDetectUpdates) {
+			sContextData = this.getEntryKey(oContext);
+			if (this.isGrouped()) {
+				sContextData += "-" + this.getGroup(oContext).key;
+			}
+		} else {
+			sContextData = this.getEntryData(oContext);
+		}
+		return sContextData;
+	};
+
+	/**
+	 * Return the entry data serialized as a string. The default implementation assumes a JS object and uses
+	 * JSON.stringify to serialize it, subclasses may override as needed.
+	 *
+	 * @param {sap.ui.model.Context} oContext the context object
+	 * @returns {string} The serialized object data
+	 */
+	ListBinding.prototype.getEntryData = function(oContext) {
+		return JSON.stringify(oContext.getObject());
+	};
 
 	return ListBinding;
 
