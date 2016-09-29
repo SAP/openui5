@@ -131,6 +131,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	ElementDesignTimeMetadata.prototype.getAggregationAction = function(sAction, oElement) {
 		var vAction;
 		var oAggregations = this.getAggregations();
+		var aActions = [];
 
 		for (var sAggregation in oAggregations) {
 			if (oAggregations[sAggregation].actions && oAggregations[sAggregation].actions[sAction]) {
@@ -143,10 +144,10 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 				if (vAction) {
 					vAction.aggregation = sAggregation;
 				}
-				break;
+				aActions.push(vAction);
 			}
 		}
-		return vAction;
+		return aActions;
 	};
 
 	return ElementDesignTimeMetadata;

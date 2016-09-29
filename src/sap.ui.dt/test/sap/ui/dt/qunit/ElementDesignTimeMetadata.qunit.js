@@ -72,7 +72,7 @@ QUnit.test("when asked for getRelevantContainer with function in ElementDesignTi
 });
 
 QUnit.test("when getAggregationAction is called", function(assert) {
-	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), {changeType : "firstChangeType", aggregation : "testAggregation"}, "for string action, the correct object is returned");
-	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), {changeType : "secondChangeType", aggregation : "testAggregation"}, "for object action, the correct object is returned");
-	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType", aggregation : "testAggregation"}, "for function action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), [{changeType : "firstChangeType", aggregation : "testAggregation"}], "for string action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
+	assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
 });

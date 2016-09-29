@@ -154,7 +154,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 							var oAggregation = oAggregations[sName];
 							if (oAggregation) {
 								if (oAggregation.multiple) {
-									var iInsertIndex = iIndex || oAggregations.length || 0;
+									var iInsertIndex = iIndex || 0;
 									oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
 								} else {
 									oParent[oAggregation._sMutator](oObject);
