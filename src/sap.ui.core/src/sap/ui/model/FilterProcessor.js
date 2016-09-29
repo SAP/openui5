@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global'],
 				};
 				break;
 			default:
-				oFilter.fnTest = function(value) { return true; };
+				oFilter.fnTest = function(value) { return false; };
 		}
 		return oFilter.fnTest;
 	};
