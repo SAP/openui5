@@ -1,9 +1,6 @@
 /*globals QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.FlexController");
 jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.AddGroup");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.AddField");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.RenameField");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.core.Control");
@@ -15,7 +12,7 @@ jQuery.sap.require('sap.ui.fl.changeHandler.JsControlTreeModifier');
 jQuery.sap.require('sap.ui.fl.changeHandler.XmlTreeModifier');
 jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
-(function (FlexController, Change, AddGroup, AddField, RenameField, ChangeRegistry, Persistence, Control, FlexSettings, HideControl, ChangePersistenceFactory, Utils, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
+(function (FlexController, Change, ChangeRegistry, Persistence, Control, FlexSettings, HideControl, ChangePersistenceFactory, Utils, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 
@@ -195,7 +192,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		var oControl = new sap.ui.core.Control("testComponent---localeId");
 
 		var mPropertyBagStub = {
-		    view: oControl,
+			view: oControl,
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent
 		};
