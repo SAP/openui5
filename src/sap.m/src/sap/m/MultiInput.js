@@ -581,60 +581,86 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 *
 	 */
 	MultiInput.prototype._setContainerSizes = function() {
+		var thisDomRef = this.getDomRef(),
+			$this = this.$(),
+			$border = this.$().find(".sapMMultiInputBorder"),
+			availableWidth,
+			shadowDiv,
+			$indicator,
+			inputWidthMinimalNeeded,
+			iIndicatorWidth,
+			tokenizerWidth,
+			iconWidth,
+			totalNeededWidth,
+			inputWidth,
+			additionalWidth,
+			tokens = this.getTokens(), i;
 
-		var thisDomRef = this.getDomRef();
 		if (!thisDomRef) {
 			return;
 		}
-		var $this = this.$();
 
 		if (this.getTokens().length > 0) {
-			$this.find(".sapMMultiInputBorder").addClass("sapMMultiInputNarrowBorder");
+			$border.addClass("sapMMultiInputNarrowBorder");
 		} else {
-			$this.find(".sapMMultiInputBorder").removeClass("sapMMultiInputNarrowBorder");
+			$border.removeClass("sapMMultiInputNarrowBorder");
 		}
 
 		this.$("inner").css("width", "");
 
 		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
-		var availableWidth = $this.find(".sapMMultiInputBorder").width();
+		availableWidth = $border.width();
 
 		// calculate minimal needed width for input field
-		var shadowDiv = $this.children(".sapMMultiInputShadowDiv")[0];
-		var $indicator = $this.find(".sapMMultiInputBorder").find(".sapMMultiInputIndicator");
+		shadowDiv = $this.children(".sapMMultiInputShadowDiv")[0];
+		$indicator = $border.find(".sapMMultiInputIndicator");
 
 		jQuery(shadowDiv).text(this.getValue());
 
-		var inputWidthMinimalNeeded = jQuery(shadowDiv).width();
-		var iIndicatorWidth = jQuery($indicator).width();
-
-		var tokenizerWidth = this._tokenizer.getScrollWidth();
-
+		inputWidthMinimalNeeded = jQuery(shadowDiv).width();
+		iIndicatorWidth = $indicator.width();
+		tokenizerWidth = this._tokenizer.getScrollWidth();
 
 		// the icon
-		var iconWidth = $this.find(".sapMInputValHelp").outerWidth(true);
+		iconWidth = $this.find(".sapMInputValHelp").outerWidth(true);
 
 		if (iIndicatorWidth !== null && this._isMultiLineMode && this._bShowIndicator) {
 			inputWidthMinimalNeeded = iIndicatorWidth;
 		}
 
-		var totalNeededWidth = tokenizerWidth + inputWidthMinimalNeeded + iconWidth;
-		var inputWidth;
-		var additionalWidth = 1;
+		totalNeededWidth = tokenizerWidth + inputWidthMinimalNeeded + iconWidth;
+		additionalWidth = 1;
 
-		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator && this.$().find(".sapMMultiInputBorder").length > 0) {
-
-			var $border = this.$().find(".sapMMultiInputBorder"),
-				iMaxHeight = parseInt(($border.css("max-height") || 0), 10),
+		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator && $border.length > 0) {
+			var iMaxHeight = parseInt(($border.css("max-height") || 0), 10),
 				iScrollHeight = $border[0].scrollHeight,
 				iTokenizerWidth = availableWidth - iconWidth;
 
 			if (iMaxHeight < iScrollHeight) {
 				//if scroll height exceeds maxHeight, scroll bar also takes width
-				iTokenizerWidth = iTokenizerWidth - 17; // 17px is scroll bar width
+				//iTokenizerWidth = iTokenizerWidth - 17; // 17px is scroll bar width
 			}
 
-			this._tokenizer.setPixelWidth(iTokenizerWidth); // 17px is scroll bar width
+			//this._tokenizer.setPixelWidth(iTokenizerWidth);
+
+			if (tokens.length === 0) {
+				this._tokenizer.$().css("width", 0);
+			} else {
+				this._tokenizer.$().css("width", iTokenizerWidth + "px");
+			}
+
+			if (this._tokenizer._oScroller) {
+				this._tokenizer._oScroller.refresh();
+			}
+
+			for (i = 0; i < tokens.length; i++) {
+				var tokenDomRef = tokens[i].getDomRef();
+				if (tokenDomRef && tokenDomRef.offsetWidth > iTokenizerWidth) {
+					tokenDomRef.style.width = iTokenizerWidth + "px";
+					tokenDomRef.classList.add("sapMTokenTruncate");
+				}
+			}
+
 			this.$("inner").css("width", iTokenizerWidth + "px");
 
 		} else {
@@ -650,7 +676,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				}
 
 			}
-
 
 			jQuery($this.find(".sapMInputBaseInner")[0]).css("width", inputWidth + "px");
 
@@ -1076,57 +1101,57 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype._processMultiLine = function(oEvent) {
-			if ( this._bUseDialog ) {
+		if ( this._bUseDialog ) {
 
-				if ( oEvent.target === this._$input[0]
-					||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
-						||  oEvent.target.className.indexOf("sapMTokenText") > -1) {
+			if ( oEvent.target === this._$input[0]
+				||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
+					||  oEvent.target.className.indexOf("sapMTokenText") > -1) {
 
-					this._removeIndicator();
-					this._oSuggestionPopup.open();
-					this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
-					var sValue = this._oPopupInput.getValue();
+				this._removeIndicator();
+				this._oSuggestionPopup.open();
+				this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
+				var sValue = this._oPopupInput.getValue();
 
-					// keep input value in input field in popup.
-					// do not show token and suggestion table at same time, which is the same logic as live change.
-					if ( this._oSuggestionPopup && this._oSuggestionPopup.getContent().length > 0 && sValue.length > 0) {
-						this._tokenizerInPopup.setVisible(false);
-					} else {
-						this._tokenizerInPopup.setVisible(true);
-						this._setAllTokenVisible(this._tokenizerInPopup);
-					}
-
-					this._tokenizerInPopup._oScroller.setHorizontal(false);
-					this._tokenizerInPopup.addStyleClass("sapMTokenizerMultiLine");
-
-					//add token when no suggestion item
-					if (this._oSuggestionTable.getItems().length === 0) {
-						var that = this;
-						this._oPopupInput.onsapenter = function(oEvent){
-								that._validateCurrentText();
-								that._setValueInvisible();
-						};
-					}
-
-					this._oSuggestionPopup.insertContent(this._tokenizerInPopup, 0);
+				// keep input value in input field in popup.
+				// do not show token and suggestion table at same time, which is the same logic as live change.
+				if ( this._oSuggestionPopup && this._oSuggestionPopup.getContent().length > 0 && sValue.length > 0) {
+					this._tokenizerInPopup.setVisible(false);
+				} else {
+					this._tokenizerInPopup.setVisible(true);
+					this._setAllTokenVisible(this._tokenizerInPopup);
 				}
 
-			} else {
-					//desktop and click on input field
-					if ( oEvent.target === this._$input[0]
-							||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
-								||  oEvent.target.className.indexOf("sapMTokenText") > -1){
+				this._tokenizerInPopup._oScroller.setHorizontal(false);
+				this._tokenizerInPopup.addStyleClass("sapMTokenizerMultiLine");
 
-						this.openMultiLine();
-						this._showAllTokens(this._tokenizer);
+				//add token when no suggestion item
+				if (this._oSuggestionTable.getItems().length === 0) {
+					var that = this;
+					this._oPopupInput.onsapenter = function(oEvent){
+							that._validateCurrentText();
+							that._setValueInvisible();
+					};
+				}
 
-						var that = this;
-						setTimeout(function() {
-							that._setContainerSizes();
-							that._tokenizer.scrollToStart();
-						}, 0);
-					}
+				this._oSuggestionPopup.insertContent(this._tokenizerInPopup, 0);
 			}
+
+		} else {
+			//desktop and click on input field
+			if ( oEvent.target === this._$input[0]
+					||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
+						||  oEvent.target.className.indexOf("sapMTokenText") > -1){
+
+				this.openMultiLine();
+				this._showAllTokens(this._tokenizer);
+
+				var that = this;
+				setTimeout(function() {
+					that._setContainerSizes();
+					that._tokenizer.scrollToStart();
+				}, 0);
+			}
+		}
 	};
 
 
