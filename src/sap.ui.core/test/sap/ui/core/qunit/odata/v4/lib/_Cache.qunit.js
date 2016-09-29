@@ -678,32 +678,39 @@ sap.ui.require([
 	QUnit.test("create entity", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {},
+			oEntityData = {name : "John Doe"},
 			oHelperMock = this.mock(_Helper),
 			oPatchPromise1,
 			oPatchPromise2,
 			oPostResult = {},
 			oPostPromise;
 
+		function transientCacheData(oCacheValue) {
+			return oCache.aElements[-1] === oCacheValue;
+		}
+
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
+				sinon.match(transientCacheData))
 			.returns(Promise.resolve(oPostResult));
 		// called from update
 		oHelperMock.expects("updateCache")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				{bar : "baz"});
 		// called from the POST's success handler
 		oHelperMock.expects("updateCache")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				sinon.match.same(oPostResult));
 
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
 
-		assert.strictEqual(oCache.aElements[-1], oEntityData);
-		assert.strictEqual(oEntityData["@$ui5.transient"], "updateGroup");
-		assert.ok("@odata.etag" in oEntityData, "@odata.etag available");
+		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
+		assert.deepEqual(oCache.aElements[-1], {
+			name : "John Doe",
+			"@$ui5.transient" : "updateGroup",
+			"@odata.etag" : undefined
+		});
 
 		// code under test
 		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", "n/a", "-1");
@@ -718,22 +725,35 @@ sap.ui.require([
 					+ "'updateGroup'. Cannot patch via group 'anotherGroup'");
 			}),
 			oPostPromise.then(function () {
-				assert.notOk("@$ui5.transient" in oEntityData);
+				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
 			})
 		]);
 	});
 	//TODO: reject PATCH if POST has been sent but not finished
 
 	//*********************************************************************************************
+	QUnit.test("create entity without initial data", function (assert) {
+		var oCache = _Cache.create(_Requestor.create("/~/"), "Employees");
+
+		// code under test
+		oCache.create("updateGroup", "Employees", "");
+
+		assert.deepEqual(oCache.aElements[-1], {
+			"@$ui5.transient" : "updateGroup",
+			"@odata.etag" : undefined
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("read w/ transient context", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {foo : "bar"},
+			oEntityData = {name : "John Doe"},
 			oReadResult = {value : [{}, {}]},
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, oEntityData)
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object)
 			.returns(new Promise(function () {})); // never resolve
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=2", "$direct")
@@ -751,32 +771,31 @@ sap.ui.require([
 			// code under test
 			oResult = oCache.read(-1, 1, "$direct").getResult();
 			assert.strictEqual(oResult.value.length, 1);
-			assert.strictEqual(oResult.value[0].foo, "bar");
+			assert.strictEqual(oResult.value[0].name, "John Doe");
 
 			// code under test
-			oResult = oCache.read(-1, 1, "$direct", "foo").getResult();
-			assert.strictEqual(oResult, "bar");
+			oResult = oCache.read(-1, 1, "$direct", "name").getResult();
+			assert.strictEqual(oResult, "John Doe");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create failure", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {},
+			oCache = _Cache.create(oRequestor, "Employees"),
+			oEntityData = {foo : "bar"},
 			oError = new Error("POST failed"),
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
+			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object)
 			.returns(Promise.reject(oError));
 
 		// code under test
 		return oCache.create("updateGroup", "Employees", "", oEntityData).then(function () {
 			assert.ok(false);
 		}, function (oError0) {
-			assert.strictEqual(oCache.aElements[-1], oEntityData);
+			assert.strictEqual(oCache.aElements[-1].foo, "bar");
 			assert.strictEqual(oError0, oError);
 		});
 	});
@@ -785,7 +804,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("delete transient", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = sinon.spy(),
 			oDeletePromise,
 			oEntityData = {},
@@ -794,14 +813,15 @@ sap.ui.require([
 
 		oError.canceled = true;
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
+			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object)
 			.returns(oPostPromise);
 
 		oCache.create("updateGroup", "Employees", "", oEntityData).catch(function () {});
 
 		this.mock(oRequestor).expects("removePost")
-			.withExactArgs("updateGroup", oEntityData);
+			.withExactArgs("updateGroup", sinon.match(function (oBody) {
+				return oBody === oCache.aElements[-1];
+			}));
 
 		// code under test
 		oDeletePromise = oCache._delete("$auto", "n/a", "-1", fnCallback).then(function () {

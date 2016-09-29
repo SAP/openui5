@@ -132,6 +132,8 @@ sap.ui.require([
 	 *
 	 * @param {number} iIndex
 	 *   The index of the context
+	 * @returns {object}
+	 *   An object with a function <code>getIndex</code> which returns the given <code>iIndex</code>
 	 */
 	function getContextMock(iIndex) {
 		return {
@@ -2647,8 +2649,7 @@ sap.ui.require([
 				this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 			}
 			this.mock(oBinding.oCache).expects("create")
-				.withExactArgs("update", "EMPLOYEES", "",
-					oFixture.oInitialData ? sinon.match.same(oFixture.oInitialData) : {})
+				.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oFixture.oInitialData))
 				.returns(Promise.resolve());
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -2700,7 +2701,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3);
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", {})
+			.withExactArgs("$auto", "EMPLOYEES", "", undefined)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -2752,7 +2753,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3, "Reason");
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", {})
+			.withExactArgs("$auto", "EMPLOYEES", "", undefined)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
