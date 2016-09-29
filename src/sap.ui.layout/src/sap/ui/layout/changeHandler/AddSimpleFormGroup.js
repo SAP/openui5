@@ -73,8 +73,8 @@ sap.ui.define([
 			var oChange = oChangeWrapper.getDefinition();
 			var oAppComponent = mPropertyBag.appComponent;
 
-			if (oSpecificChangeInfo.groupLabel) {
-				Base.setTextInChange(oChange, "groupLabel", oSpecificChangeInfo.groupLabel, "XFLD");
+			if (oSpecificChangeInfo.newLabel) {
+				Base.setTextInChange(oChange, "groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
 			} else {
 				throw new Error("oSpecificChangeInfo.groupLabel attribute required");
 			}
