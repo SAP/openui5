@@ -207,13 +207,46 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should ignore long runners for resolve", function () {
+		var oPromiseAfter2Sec = new Promise(function (fnResolve) {
+			setTimeout(fnResolve, 2000);
+		});
+
+		Promise.resolve(oPromiseAfter2Sec);
+
+		assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
+		sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
+		setTimeout(function () {
+			assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
+		}, 1400);
+
+		return oPromiseAfter2Sec;
+	});
+
 	["all", "race"].forEach(function (sPromiseFunction) {
 		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
 			var fnDone = assert.async();
 			Promise[sPromiseFunction]([Promise.resolve(), Promise.reject(), new Promise(function (fnResolve) { fnResolve(); })]).then(fnDone, fnDone);
 			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
-			// Promise might be wrapped twice or there are still pending ones - 3 to 6 are ok
-			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [3-6] pending microtasks/));
+			// Promise might be wrapped twice or there are still pending ones
+			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 		});
+
+		QUnit.test("Should ignore long runners for " + sPromiseFunction, function () {
+			var oPromiseAfter2Sec = new Promise(function (fnResolve) {
+				setTimeout(fnResolve, 2000);
+			});
+
+			Promise[sPromiseFunction]([oPromiseAfter2Sec, oPromiseAfter2Sec]);
+
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
+			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
+			setTimeout(function () {
+				assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
+			}, 1400);
+
+			return oPromiseAfter2Sec;
+		});
+
 	});
 });

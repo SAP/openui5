@@ -37,7 +37,7 @@ sap.ui.define([
 			};
 
 			// do not track long runners and call the original directly
-			if (iDelay > MAX_TIMEOUT_DELAY) {
+			if (iDelay >= MAX_TIMEOUT_DELAY) {
 				return fnOriginal.apply(this, arguments);
 			}
 
@@ -59,13 +59,28 @@ sap.ui.define([
 
 	var iPendingPromises = 0;
 
-	function fnCountDownPromises() {
-		iPendingPromises--;
-	}
-
 	function wrapPromiseFunction (sOriginalFunctionName) {
 		var fnOriginal = Promise[sOriginalFunctionName];
 		Promise[sOriginalFunctionName] = function () {
+
+			var bTooLate = false;
+
+			// Timeout to detect long runners
+			var iTimeout = setTimeout(function () {
+				bTooLate = true;
+				iPendingPromises--;
+			}, MAX_TIMEOUT_DELAY);
+
+			var fnCountDownPromises = function () {
+				if (bTooLate) {
+					// the timeout already counted down - do nothing
+					return;
+				}
+				// count down and clear the timeout to make sure it is only counted down once
+				iPendingPromises--;
+				clearTimeout(iTimeout);
+			};
+
 			iPendingPromises++;
 			var oPromise = fnOriginal.apply(this, arguments);
 			oPromise.then(fnCountDownPromises, fnCountDownPromises);
