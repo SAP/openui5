@@ -303,6 +303,27 @@ sap.ui.define([], function() {
 							};
 			            }
 						return oCreateContainerMetadata;
+					},
+					reveal : function(oRemovedElement) {
+						var sType = oRemovedElement.getMetadata().getName();
+						if (sType === "sap.ui.layout.form.SimpleForm") {
+							return {
+								changeType : "unhideSimpleFormField",
+								getInvisibleElements : function(oSimpleForm) {
+									var aInvisibleLabels = [];
+									var aContent = oSimpleForm.getContent();
+									aContent.forEach(function(oField) {
+										if (oField instanceof sap.m.Label && !oField.getDomRef()) {
+											aInvisibleLabels.push({
+												id : oField.getId(),
+												label : oField.getText()
+											});
+										}
+									});
+									return aInvisibleLabels;
+								}
+							};
+						}
 					}
 				},
 				getStableElements : function(oElement) {
