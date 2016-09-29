@@ -63,6 +63,7 @@ sap.ui.testfwk.TestFWK.THEMES = {
 	"base" : "Base",
 	"sap_belize" : "Belize",
 	"sap_belize_plus" : "Belize Plus",
+	"sap_belize_hcb" : "Belize High Contrast Black",
 	"sap_bluecrystal" : "Blue Crystal",
 	"sap_goldreflection" : "Gold Reflection",
 	"sap_hcb" : "High Contrast Black",
@@ -73,7 +74,7 @@ sap.ui.testfwk.TestFWK.THEMES = {
 
 // the themes supported by each library
 sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
-	"sap.m" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_hcb"]},
+	"sap.m" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_belize_hcb","sap_hcb"]},
 	"sap.me" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_hcb"]},
 	"sap.service.visualization" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum"]},
 	"sap.ui.commons" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
@@ -82,7 +83,7 @@ sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
 	"sap.ui.richtexteditor" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.suite" : {"default":"sap_goldreflection", "supports":["sap_goldreflection","sap_hcb","sap_bluecrystal"]},
 	"sap.ui.ux3" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_goldreflection","sap_hcb"]},
-	"all" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
+	"all" : {"default":"sap_belize", "supports":["sap_bluecrystal","sap_belize","sap_belize_plus","sap_belize_hcb","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
 };
 
 sap.ui.testfwk.TestFWK.init = function(oContentWindow) {
