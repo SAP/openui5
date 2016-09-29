@@ -562,7 +562,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             fValue = this._calculateHandlePosition(oTouch.pageX);
             aRange = this.getRange();
             aHandles = [this._mHandleTooltip.start.handle, this._mHandleTooltip.end.handle];
-            iHandleIndex = aRange.indexOf(fValue);
+            iHandleIndex = this._getIndexOfHandle(oEvent.target);
             fHandlesDistance = aHandles.reduce(function (fAccumulation, oHandle) {
                 return Math.abs(fAccumulation - oHandle.offsetLeft);
             }, 0);
