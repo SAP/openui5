@@ -86,15 +86,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 */
 		FixFlex.prototype.init = function () {
 			this._scroller = new ScrollEnablement(this, null, {
-				scrollContainerId : this.getId(),
-				horizontal: false,
-				vertical: false
+				scrollContainerId : this.getId()
 			});
 
 			this._innerScroller = new ScrollEnablement(this, this.getId() + "-FlexibleContainer", {
-				scrollContainerId: this.getId() + "-Flexible",
-				horizontal: false,
-				vertical: false
+				scrollContainerId: this.getId() + "-Flexible"
 			});
 		};
 
@@ -257,25 +253,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 * @private
 		 */
 		FixFlex.prototype.onBeforeRendering = function () {
-			var bIsVertical = this.getVertical(),
-				oScroller = this._scroller,
+			var oScroller = this._scroller,
 				oInnerScroller = this._innerScroller;
 
 			this._deregisterControl();
 
-			if (bIsVertical) {
-				oScroller.setVertical(false);
-				oScroller.setHorizontal(false);
+			oScroller.setVertical(false);
+			oScroller.setHorizontal(false);
 
-				oInnerScroller.setVertical(true);
-				oInnerScroller.setHorizontal(false);
-			} else {
-				oScroller.setVertical(false);
-				oScroller.setHorizontal(false);
-
-				oInnerScroller.setVertical(false);
-				oInnerScroller.setHorizontal(true);
-			}
+			oInnerScroller.setVertical(true);
+			oInnerScroller.setHorizontal(true);
 		};
 
 		/**
