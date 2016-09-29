@@ -1369,6 +1369,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("execute, relative binding on transient context", function (assert) {
+		var oContextBinding,
+			oContext = {
+				isTransient : function () { return true;},
+				getPath: function () { return "/Employees/-1";}
+			};
+
+		oContextBinding = this.oModel.bindContext("schema.Action(...)", oContext);
+
+		assert.throws(function () {
+			// code under test
+			oContextBinding.execute();
+		}, new Error("Execute for transient context not allowed: "
+				+ "/Employees/-1/schema.Action(...)"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("execute: collection parameter", function (assert) {
 		var sPath = "/FunctionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),

@@ -477,6 +477,10 @@ sap.ui.define([
 			if (!this.oContext) {
 				throw new Error("Unresolved binding: " + this.sPath);
 			}
+			if (this.oContext.isTransient()) {
+				throw new Error("Execute for transient context not allowed: "
+					+ this.oModel.resolve(this.sPath, this.oContext));
+			}
 			if (this.oContext.getPath().indexOf("(...)") >= 0) {
 				throw new Error("Nested deferred operation bindings not supported: "
 					+ this.oModel.resolve(this.sPath, this.oContext));

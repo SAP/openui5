@@ -167,7 +167,8 @@ sap.ui.define([
 							bLineItemSelected : false,
 							bRealOData : bRealOData,
 							bSalesOrderSelected : false,
-							bScheduleSelected : false
+							bScheduleSelected : false,
+							bSelectedSalesOrderTransient : false
 						}
 				)},
 				type : ViewType.XML,

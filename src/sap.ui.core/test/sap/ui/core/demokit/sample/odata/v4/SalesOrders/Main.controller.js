@@ -32,9 +32,12 @@ sap.ui.define([
 				oUIModel = oView.getModel("ui");
 
 			oUIModel.setProperty("/bSalesOrderSelected", !!oSalesOrderContext);
+			oUIModel.setProperty("/bSelectedSalesOrderTransient",
+				oSalesOrderContext && oSalesOrderContext.isTransient());
+
 			if (!oSalesOrderContext) {
 				oSalesOrdersTable.removeSelections();
-			} else if (oSalesOrderContext.getIndex() === -1 && this.bTransient) {
+			} else if (oSalesOrderContext.isTransient()) {
 				// TODO: eliminate this workaround:
 				// to ensure that no dependent data for the newly created SO is fetched
 				// unless it is persisted in backend
@@ -117,7 +120,6 @@ sap.ui.define([
 				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
 				that = this;
 
-			this.bTransient = true; //TODO: workaround see above
 			oView.getModel("ui").setProperty("/bCreateSalesOrderPending", true);
 
 			oCreateSalesOrderDialog.setBindingContext(oContext);
@@ -127,7 +129,6 @@ sap.ui.define([
 
 			// Note: this promise fails only if the transient entity is deleted
 			oContext.created().then(function () {
-				that.bTransient = false;
 				that._setSalesOrderBindingContext(oContext);
 				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
 				MessageBox.alert("SalesOrder created: " + oContext.getProperty("SalesOrderID"), {

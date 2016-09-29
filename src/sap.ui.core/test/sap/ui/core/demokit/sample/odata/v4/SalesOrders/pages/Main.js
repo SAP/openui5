@@ -157,6 +157,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						}
 					});
 				},
+				pressConfirmSalesOrdersButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "confirmSalesOrder",
+						success : function (oCreateSalesOrderButton) {
+							Opa5.assert.ok(true, "Confirm Sales Order button pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				pressCreateSalesOrdersButton : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -229,6 +240,29 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 				}
 			},
 			assertions: {
+				checkButtonDisabled : function (sButtonId) {
+					return this.waitFor({
+						autoWait : false,
+						controlType : "sap.m.Button",
+						id : sButtonId,
+						success : function (oButton) {
+							Opa5.assert.ok(oButton.getEnabled() === false,
+								"Button is disabled: " + sButtonId);
+						},
+						viewName : sViewName
+					});
+				},
+				checkButtonEnabled : function (sButtonId) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						id : sButtonId,
+						matchers : new Interactable(),
+						success : function (oButton) {
+							Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
+						},
+						viewName : sViewName
+					});
+				},
 				checkDifferentID : function (iRow, sExpectedID) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
