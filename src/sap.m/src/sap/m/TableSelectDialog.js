@@ -953,11 +953,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			// detach this function
 			that._oDialog.detachAfterClose(fnAfterClose);
 
-			// fire cancel event
-			that.fireCancel();
-
 			// reset selection
 			that._resetSelection();
+
+			// fire cancel event
+			that.fireCancel();
 		};
 
 		// attach the reset function to afterClose to hide the dialog changes from the end user
