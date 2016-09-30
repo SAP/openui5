@@ -103,29 +103,30 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	CarouselRenderer._renderInnerDiv = function (rm, oCarousel, aPages, sPageIndicatorPlacement) {
-		rm.write("<div class='sapMCrslInner'>");
+		rm.write("<div class='sapMCrslInner");
 		//do housekeeping
 		oCarousel._cleanUpScrollContainer();
+
+		if (aPages.length > 1 && (oCarousel.getShowPageIndicator() || oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator)) {
+			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
+				rm.write(" sapMCrslBottomOffset");
+
+				if (oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator) {
+					rm.write(" sapMCrslBottomArrowsOffset");
+				}
+			} else {
+				rm.write(" sapMCrslTopOffset");
+				if (oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator) {
+					rm.write(" sapMCrslTopArrowsOffset");
+				}
+			}
+		}
+
+		rm.write("'>");
 
 		var fnRenderPage = function(oPage, iIndex, aArray) {
 			//item div
 			rm.write("<div class='sapMCrslItem");
-			if (aArray.length > 1 && oCarousel.getShowPageIndicator()) {
-				if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
-					rm.write(" sapMCrslBottomOffset");
-				} else {
-					rm.write(" sapMCrslTopOffset");
-				}
-			}
-
-			if (aArray.length > 1 && sap.ui.Device.system.desktop &&
-				oCarousel.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator) {
-				if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
-					rm.write(" sapMCrslBottomArrowsOffset");
-				} else {
-					rm.write(" sapMCrslTopArrowsOffset");
-				}
-			}
 
 			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
 
@@ -196,8 +197,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			rm.write('>');
 			rm.write('<div class="sapMCrslControlsContainer' + sOffsetCSSClass + '">');
-		}
-		if (!bShowIndicatorArrows) {
+		} else {
 			rm.write('<div class="sapMCrslControlsNoArrows' + sOffsetCSSClass + '">');
 		}
 		// left arrow
@@ -233,8 +233,20 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	CarouselRenderer._renderHudArrows = function(rm, oCarousel) {
+		var arrowPositionHudClass;
+		if (oCarousel.getShowPageIndicator()) {
+
+			if (oCarousel.getPageIndicatorPlacement() === sap.m.PlacementType.Top) {
+				arrowPositionHudClass = "sapMCrslHudTop";
+			} else if (oCarousel.getPageIndicatorPlacement() === sap.m.PlacementType.Bottom) {
+				arrowPositionHudClass = "sapMCrslHudBottom";
+			}
+
+		} else {
+			arrowPositionHudClass = "sapMCrslHudMiddle";
+		}
 		//heads up controls for desktop browsers
-		rm.write('<div class="sapMCrslHud">');
+		rm.write('<div class="sapMCrslHud ' + arrowPositionHudClass + '">');
 
 		this._renderPrevArrow(rm, oCarousel);
 
