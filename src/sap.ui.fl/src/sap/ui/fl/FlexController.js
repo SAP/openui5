@@ -393,11 +393,7 @@ sap.ui.define([
 			throw (new Error("A change handler for the given change type does not exist."));
 		}
 
-		var bWasMerged = oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
-
-		if (bWasMerged) {
-			this._oChangePersistence.addMergedChange(oChange.getFullFileIdentifier());
-		}
+		oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
 	};
 
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
@@ -587,6 +583,39 @@ sap.ui.define([
 		return FlexSettings.getInstance(this.getComponentName()).then(function (oSettings) {
 			oSettings.setMergeErrorOccured(true);
 		});
+	};
+
+	/**
+	 * Apply the changes on the control. This function is called just before the end of the
+	 * creation process.
+	 *
+	 * @param {array} mChanges Changes belonging to the app component
+	 * @param {object} oControl Control instance that is being created
+	 * @public
+	 */
+	FlexController.applyChangesOnControl = function (mChanges, oControl) {
+		var aChangesForControl = mChanges[oControl.getId()] || [];
+		aChangesForControl.forEach(function (oChange) {
+			FlexController.prototype._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier});
+		});
+	};
+
+	/**
+	 * Get the changes and in case of existing changes, prepare the applyChanges function already with the changes.
+	 *
+	 * @param {object} oComponent Component instance that is currently loading
+	 * @param {object} vConfig configuration of loaded component
+	 * @public
+	 */
+	FlexController.getChangesAndPropagate = function (oComponent, vConfig) {
+		var oManifest = oComponent.getManifestObject();
+		sap.ui.fl.ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
+			.then(function(mChanges) {
+				if (Object.keys(mChanges).length !== 0) {
+					oComponent.addPropagationListener(FlexController.applyChangesOnControl.bind(this,mChanges));
+				}
+			}
+		);
 	};
 
 	return FlexController;
