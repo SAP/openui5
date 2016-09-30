@@ -275,13 +275,13 @@
 				}
 				asyncXHR.addEventListener("readystatechange", asyncListener1);
 				asyncXHR.onreadystatechange = asyncListener2;
-				asyncXHR.open("GET", "", true);
+				asyncXHR.open("GET", "#", true);
 				assert.equal(asyncXHR.readyState, 1, "After open, readyState should be 1");
 				asyncXHR.send();
 				assert.equal(asyncXHR.readyState, 1, "After send, readyState should still be 1");
 
 				var syncXHR = new XMLHttpRequest();
-				syncXHR.open("GET", "", false);
+				syncXHR.open("GET", "#", false);
 				assert.equal(syncXHR.readyState, 1, "After open, readyState should be 1");
 				bSyncOngoing = true;
 				syncXHR.send();
@@ -304,11 +304,11 @@
 				}
 				asyncXHR.addEventListener("readystatechange", asyncListener1);
 				asyncXHR.onreadystatechange = asyncListener2;
-				asyncXHR.open("GET", "", true);
+				asyncXHR.open("GET", "#", true);
 				asyncXHR.send();
 
 				var syncXHR = new XMLHttpRequest();
-				syncXHR.open("GET", "", false);
+				syncXHR.open("GET", "#", false);
 				bSyncOngoing = true;
 				syncXHR.send();
 				bSyncOngoing = false;
