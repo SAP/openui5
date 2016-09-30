@@ -304,7 +304,7 @@ sap.ui.define([
 		sGroupId = sGroupId || this.getUpdateGroupId();
 		oContext = Context.create(this.oModel, this,
 			this.oModel.resolve(this.sPath, this.oContext) + "/-1", -1,
-			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData || {}));
+			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData));
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});

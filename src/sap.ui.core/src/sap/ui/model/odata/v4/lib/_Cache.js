@@ -484,7 +484,7 @@ sap.ui.define([
 	 *   The path for the POST request
 	 * @param {string} sPath
 	 *   The entity's path within the cache
-	 * @param {string} oEntityData
+	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
 	 * @returns {Promise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
@@ -492,6 +492,9 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData) {
 		var that = this;
+
+		// clone data to avoid modifications outside the cache
+		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
 
 		this.aElements[-1] = oEntityData;
 		oEntityData["@$ui5.transient"] = sGroupId;
