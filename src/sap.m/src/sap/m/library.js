@@ -1293,22 +1293,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.ValueCSSColor = DataType.createType('sap.m.ValueCSSColor', {
 		isValid : function (vValue) {
-				var bResult = /Neutral|Good|Critical|Error/.test(vValue);
+			var bResult = sap.m.ValueColor.hasOwnProperty(vValue);
+			if (bResult) {
+				return bResult;
+			} else { // seems to be a less parameter or sap.ui.core.CSSColor
+				bResult = CoreLibrary.CSSColor.isValid(vValue);
 				if (bResult) {
 					return bResult;
-				} else { // seems to be a less parameter or sap.ui.core.CSSColor
-					bResult = CoreLibrary.CSSColor.isValid(vValue);
-					if (bResult) {
-						return bResult;
-					} else {
-						jQuery.sap.require("sap.ui.core.theming.Parameters");
-						return CoreLibrary.CSSColor.isValid(sap.ui.core.theming.Parameters.get(vValue));
-					}
+				} else {
+					jQuery.sap.require("sap.ui.core.theming.Parameters");
+					return CoreLibrary.CSSColor.isValid(sap.ui.core.theming.Parameters.get(vValue));
 				}
 			}
-		},
-		DataType.getType('string')
-	);
+		}
+	}, DataType.getType('string'));
 
 	/**
 	 * A subset of input types that fits to a simple API returning one string.
