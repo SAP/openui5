@@ -2404,6 +2404,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Abort internal requests such as created via TwoWay changes or created entries
+	 * @private
+	 */
+	ODataModel.prototype.abortInternalRequest = function(sKey, sGroupId) {
+		var mRequests = this.mRequests;
+
+		if (sGroupId in this.mDeferredGroups) {
+			mRequests = this.mDeferredRequests;
+		}
+
+		var oRequestGroup = mRequests[sGroupId];
+
+		if (oRequestGroup && sKey in oRequestGroup.map) {
+			this.mChangeHandles[sKey].abort();
+			delete this.mChangeHandles[sKey];
+		}
+	};
+
+	/**
 	 * push request to internal request queue
 	 *
 	 * @param {map} mRequests Request queue
@@ -3964,10 +3983,7 @@ sap.ui.define([
 
 				if (jQuery.isEmptyObject(oChangedEntry)) {
 					delete that.mChangedEntities[sKey];
-					if (that.mChangeHandles[sKey]) {
-						that.mChangeHandles[sKey].abort();
-						delete that.mChangeHandles[sKey];
-					}
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				} else {
 					that.mChangedEntities[sKey] = oChangedEntry;
 					oChangedEntry.__metadata = {};
@@ -4013,8 +4029,7 @@ sap.ui.define([
 					delete that.mChangedEntities[sKey].__metadata;
 					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
 						that.oMetadata.loaded().then(function() {
-							that.mChangeHandles[sKey].abort();
-							delete that.mChangeHandles[sKey];
+							that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 						});
 						delete that.mChangedEntities[sKey];
 					} else {
@@ -4027,8 +4042,7 @@ sap.ui.define([
 		} else {
 			jQuery.each(this.mChangedEntities, function(sKey, oObject) {
 				that.oMetadata.loaded().then(function() {
-					that.mChangeHandles[sKey].abort();
-					delete that.mChangeHandles[sKey];
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				});
 				delete that.mChangedEntities[sKey];
 			});
@@ -4095,16 +4109,13 @@ sap.ui.define([
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
-				that.oMetadata.loaded().then(function() {
-					//setProperty with no change does not create a request the first time so no handle exists
-					if (that.mChangeHandles[sKey]) {
-						that.mChangeHandles[sKey].abort();
-						delete that.mChangeHandles[sKey];
-					}
-				});
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
 				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
+				that.oMetadata.loaded().then(function() {
+					//setProperty with no change does not create a request the first time so no handle exists
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
+				});
 				return true;
 			}
 			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
@@ -4127,14 +4138,15 @@ sap.ui.define([
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 
 		this.oMetadata.loaded().then(function() {
-			if (!that.mChangeHandles[sKey]) {
-				oRequestHandle = {
-						abort: function() {
-							oRequest._aborted = true;
-						}
-				};
-				that.mChangeHandles[sKey] = oRequestHandle;
+			oRequestHandle = {
+					abort: function() {
+						oRequest._aborted = true;
+					}
+			};
+			if (that.mChangeHandles[sKey]) {
+				that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 			}
+			that.mChangeHandles[sKey] = oRequestHandle;
 			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
 			that._processRequestQueueAsync(that.mRequests);
 		});
@@ -4304,7 +4316,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
-		var that = this;
+		var that = this, sGroupId;
 		if (oContext) {
 			var sPath = oContext.getPath();
 			delete this.mContexts[sPath]; // contexts are stored starting with /
@@ -4312,9 +4324,9 @@ sap.ui.define([
 			if (jQuery.sap.startsWith(sPath, "/")) {
 				sPath = sPath.substr(1);
 			}
+			sGroupId = this._resolveGroup(sPath).groupId;
 			that.oMetadata.loaded().then(function() {
-				that.mChangeHandles[sPath].abort();
-				delete that.mChangeHandles[sPath];
+				that.abortInternalRequest(sPath, sGroupId);
 			});
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];

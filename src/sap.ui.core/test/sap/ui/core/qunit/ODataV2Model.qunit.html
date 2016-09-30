@@ -1924,7 +1924,6 @@
 				oModel.deleteCreatedEntry(oContext);
 				setTimeout(function() {
 					ok(!oModel.hasPendingChanges(),"model should not have pending changes");
-					ok(jQuery.isEmptyObject(oModel.mChangeHandles),"model should not have a change handle");
 					start();
 				},0);
 			});
