@@ -3,8 +3,8 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType', './CompositeDataState'],
-	function(jQuery, BindingMode, ChangeReason, PropertyBinding, CompositeType, CompositeDataState) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType', './CompositeDataState'],
+	function(jQuery, DataType, BindingMode, ChangeReason, PropertyBinding, CompositeType, CompositeDataState) {
 	"use strict";
 
 
@@ -162,7 +162,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 * @public
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
-		var aValues, aCurrentValues;
+		var aValues, aCurrentValues,
+			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
 
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
@@ -191,13 +192,13 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				this.checkDataState(); //data ui state is dirty inform the control
 				throw oException;
 			}
-		} else {
+		} else if (Array.isArray(oValue) && oInternalType instanceof DataType && oInternalType.isArrayType()) {
+			aValues = oValue;
+		} else if (typeof oValue == "string") {
 			// default: multiple values are split by space character together if no formatter or type specified
-			if (typeof oValue == "string") {
-				aValues = oValue.split(" ");
-			} else {
-				aValues = [oValue];
-			}
+			aValues = oValue.split(" ");
+		} else {
+			aValues = [oValue];
 		}
 
 		if (this.bRawValues) {
@@ -246,11 +247,14 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 * @private
 	 */
 	CompositeBinding.prototype._toExternalValue = function(aValues) {
-		var oValue;
+		var oValue,
+			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
 		if (this.fnFormatter) {
 			oValue = this.fnFormatter.apply(this, aValues);
 		} else if (this.oType) {
 			oValue = this.oType.formatValue(aValues, this.sInternalType);
+		} else if (oInternalType instanceof DataType && oInternalType.isArrayType()) {
+			oValue = aValues;
 		} else if (aValues.length > 1) {
 			// default: multiple values are joined together as space separated list if no formatter or type specified
 			oValue = aValues.join(" ");

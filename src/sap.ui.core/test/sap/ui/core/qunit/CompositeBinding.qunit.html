@@ -119,6 +119,13 @@ test("composite type", function() {
 		sap.ui.model.ValidateException, "validation throws ValidateExpception for invalid values")
 });
 
+test("array type", function() {
+	this.composite.setType(null, "int[]");
+	deepEqual(this.composite.getExternalValue(), [1,2,3]);
+	this.composite.setExternalValue([3,2,1]);
+	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
+});
+
 test("simple type", function() {
 	raises(function(){this.composite.setType(new sap.ui.model.type.Float());}.bind(this),
 		Error, "setting a simple type on a composite binding throws")
@@ -212,6 +219,7 @@ test("with bUseRawValues and formatter", function() {
 	equal(this.compositeraw.getExternalValue(), 6, "getExternalValue() returns calculated value");
 });
 
+
 module("Unresolved inner bindings", {
 	setup: function() {
 		this.model = new sap.ui.model.json.JSONModel({
@@ -241,6 +249,7 @@ test("isResolved", function() {
 	this.composite.setContext(context);
 	equal(this.composite.isResolved(), true, "Resolved after binding context has been set");
 });
+
 
 </script>
 
