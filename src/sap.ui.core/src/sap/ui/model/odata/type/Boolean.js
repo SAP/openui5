@@ -106,8 +106,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	 * @param {boolean} bValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type; may be "any", "boolean" or "string". If it is "string", the result is
-	 *   "Yes" or "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
+	 *   the target type; may be "any", "boolean", "string", or a type with one of these types as
+	 *   its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   If the target type (or its primitive type) is "string", the result is "Yes" or "No" in the
+	 *   current {@link sap.ui.core.Configuration#getLanguage language}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -120,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 		if (bValue === null || bValue === undefined) {
 			return null;
 		}
-		switch (sTargetType) {
+		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 		case "boolean":
 			return bValue;
@@ -139,7 +141,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 * 	 the source type (the expected type of <code>vValue</code>); may be "boolean" or "string".
+	 *   the source type (the expected type of <code>vValue</code>); may be "boolean", "string", or
+	 *   a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean}
 	 *   the parsed value
@@ -154,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 		if (vValue === null || vValue === "") {
 			return null;
 		}
-		switch (sSourceType) {
+		switch (this.getPrimitiveType(sSourceType)) {
 			case "boolean":
 				return vValue;
 			case "string":

@@ -235,8 +235,7 @@ sap.ui.define([
 	 * @returns {object}
 	 *   The $batch request object with the following structure
 	 *   <ul>
-	 *     <li><code>body</code>: {object[]} Array of strings representing batch request
-	 *      body
+	 *     <li><code>body</code>: {string[]} Array of strings representing batch request body
 	 *     <li><code>batchBoundary</code>: {string} Batch boundary value
 	 *   </ul>
 	 */
@@ -274,6 +273,9 @@ sap.ui.define([
 				// adjust URL if it contains Content-ID reference by adding the change set index
 				oRequest.url = oRequest.url.replace(rContentIdReference, "$&." + iChangeSetIndex);
 
+				if (typeof oRequest.body === "object") {
+					oRequest.body = JSON.stringify(oRequest.body);
+				}
 				aRequestBody = aRequestBody.concat(
 					"Content-Type:application/http\r\n",
 					"Content-Transfer-Encoding:binary\r\n",
@@ -339,9 +341,10 @@ sap.ui.define([
 		 * @param {object} oRequest.headers
 		 *   Map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
 		 *   US-ASCII values can be used.
-		 * @param {string} oRequest.body
+		 * @param {string|object} oRequest.body
 		 *   Request body. If specified, oRequest.headers map must contain "Content-Type" header
 		 *   either without "charset" parameter or with "charset" parameter having value "UTF-8".
+		 *   If oRequest.body is of type object the value is stringified.
 		 * @returns {object} Object containing the following properties:
 		 *   <ul>
 		 *     <li><code>body</code>: Batch request body

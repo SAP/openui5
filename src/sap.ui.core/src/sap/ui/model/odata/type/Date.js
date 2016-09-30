@@ -129,7 +129,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type; may be "any" or "string".
+	 *   the target type; may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -144,15 +145,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 		if (sValue === undefined || sValue === null) {
 			return null;
 		}
-		if (sTargetType === "any") {
+		switch (this.getPrimitiveType(sTargetType)) {
+		case "any":
 			return sValue;
-		}
-		if (sTargetType === "string") {
+		case "string":
 			oDate = getModelFormatter().parse(sValue);
 			return oDate ? getFormatter(this).format(oDate) : sValue;
+		default:
+			throw new FormatException("Don't know how to format " + this.getName() + " to "
+				+ sTargetType);
 		}
-		throw new FormatException("Don't know how to format " + this.getName() + " to "
-			+ sTargetType);
 	};
 
 	/**
@@ -172,7 +174,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @param {string} sValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>); must be "string"
+	 *   the source type (the expected type of <code>sValue</code>); must be "string", or a type
+	 *   with "string" as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
@@ -185,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 		if (sValue === "" || sValue === null) {
 			return null;
 		}
-		switch (sSourceType) {
+		switch (this.getPrimitiveType(sSourceType)) {
 		case "string":
 			oResult = getFormatter(this).parse(sValue);
 			if (!oResult) {

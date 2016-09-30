@@ -103,6 +103,10 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to format sap.ui.model.odata.type.Single to boolean");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue(9999999, "sap.ui.core.CSSSize"), "9,999,999");
 	});
 
 	//*********************************************************************************************
@@ -130,6 +134,11 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Single from boolean");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue(" 1,000.234", "sap.ui.core.CSSSize"),
+			Math.fround(1000.234));
 	});
 
 	//*********************************************************************************************

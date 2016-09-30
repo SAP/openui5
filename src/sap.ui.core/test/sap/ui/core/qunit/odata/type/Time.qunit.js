@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType, Time, TestUtils) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -48,9 +48,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Time", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -71,8 +75,6 @@ sap.ui.require([
 		QUnit.test("with nullable=" + JSON.stringify(vNullable), function (assert) {
 			var oType;
 
-			this.mock(jQuery.sap.log).expects("warning").never();
-
 			oType = new Time({}, {
 				foo : "a",
 				nullable : vNullable
@@ -85,7 +87,7 @@ sap.ui.require([
 	QUnit.test("illegal value for nullable", function (assert) {
 		var oType = new Time({}, {nullable : false});
 
-		this.mock(jQuery.sap.log).expects("warning")
+		this.oLogMock.expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Time");
 
 		oType = new Time(null, {nullable : "foo"});
@@ -102,10 +104,14 @@ sap.ui.require([
 
 		assert.strictEqual(oType.formatValue(oTime, "any"), oTime, "null");
 		assert.strictEqual(oType.formatValue(oTime, "string"), "1:53:49 PM", "null");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue(oTime, "sap.ui.core.CSSSize"), "1:53:49 PM");
 	});
 
 	//*********************************************************************************************
-	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
+	["int", "boolean", "float", "object"].forEach(function (sTargetType) {
 		QUnit.test("format failure for target type " + sTargetType, function (assert) {
 			var oType = new Time();
 
@@ -161,7 +167,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
+	QUnit.test("parse, get primitive type", function (assert) {
+		var oType = new Time();
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.deepEqual(oType.parseValue("1:45:33 PM", "sap.ui.core.CSSSize"),
+			createTime(13, 45, 33, 0));
+	});
+
+	//*********************************************************************************************
+	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "object"]].forEach(
 		function (aFixture) {
 			QUnit.test("parse failure for source type " + aFixture[1], function (assert) {
 				var oType = new Time();
@@ -186,7 +202,6 @@ sap.ui.require([
 		[null, {__edmType : "Edm.Time", ms : 4711}].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
-		assert.expect(0);
 	});
 
 	//*********************************************************************************************

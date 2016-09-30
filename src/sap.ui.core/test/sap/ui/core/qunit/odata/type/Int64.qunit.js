@@ -83,6 +83,10 @@ sap.ui.require([
 			NUMBER_MAX_SAFE_INTEGER, "MAX_SAFE_INTEGER to float");
 		assert.strictEqual(oType.formatValue("+" + String(NUMBER_MAX_SAFE_INTEGER), "float"),
 			NUMBER_MAX_SAFE_INTEGER, "MAX_SAFE_INTEGER to float");
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.formatValue("1234", "sap.ui.core.CSSSize"), "1,234");
 	});
 
 	//*********************************************************************************************
@@ -138,6 +142,10 @@ sap.ui.require([
 			assert.strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Int64 from boolean");
 		}
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+			.returns("string");
+		assert.strictEqual(oType.parseValue("1,234,567", "sap.ui.core.CSSSize"), "1234567");
 	});
 
 	//*********************************************************************************************

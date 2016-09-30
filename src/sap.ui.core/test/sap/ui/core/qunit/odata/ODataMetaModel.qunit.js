@@ -19,7 +19,8 @@ sap.ui.require([
 	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 	sinon.xhr.supportsCORS = true;
 
-	var sMetadata = '\
+	var sComponent = "sap.ui.model.odata.ODataMetaModel",
+		sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
@@ -535,12 +536,12 @@ sap.ui.require([
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
 			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.iOldLogLevel = jQuery.sap.log.getLevel();
+			this.iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 		},
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel);
+			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
 			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
@@ -577,7 +578,7 @@ sap.ui.require([
 			oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-			"GWSAMPLE_BASIC", "meta data available");
+			"GWSAMPLE_BASIC", "metadata available");
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 			"Bus. Part. ID", "SAPData is lifted");
@@ -610,7 +611,7 @@ sap.ui.require([
 			assert.deepEqual(arguments[0], undefined, "almost no args");
 
 			assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-				"GWSAMPLE_BASIC", "meta data available");
+				"GWSAMPLE_BASIC", "metadata available");
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 				"Bus. Part. ID", "SAPData is lifted");
@@ -644,7 +645,7 @@ sap.ui.require([
 
 				try {
 					assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
-						"GWSAMPLE_BASIC", "meta data available");
+						"GWSAMPLE_BASIC", "metadata available");
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "sap:label"),
@@ -919,16 +920,15 @@ sap.ui.require([
 
 			jQuery.sap.log.setLevel(bIsLoggable
 				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR);
+				: jQuery.sap.log.Level.ERROR,
+				sComponent);
 
 			oLogMock.expects("error")
 				.withExactArgs("A query is not allowed when an object context has been given",
-					"entityType/[$\{name}==='BusinessPartner']",
-					"sap.ui.model.odata.ODataMetaModel");
+					"entityType/[$\{name}==='BusinessPartner']", sComponent);
 			oLogMock.expects("error")
 				.withExactArgs("Invalid query: '/dataServices/' does not point to an array",
-					"/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
-					"sap.ui.model.odata.ODataMetaModel");
+					"/dataServices/[${namespace}==='GWSAMPLE_BASIC']", sComponent);
 			oLogMock.expects("error")
 				.withExactArgs("no closing braces found in '[${namespace==='GWSAMPLE_BASIC']/"
 					+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
@@ -1005,7 +1005,7 @@ sap.ui.require([
 							// do not construct arguments in vain!
 							.exactly(bIsLoggable ? 1 : 0)
 							.withExactArgs(oFixture.m, "path: " + oFixture.i
-								+ ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
+								+ ", context: undefined", sComponent);
 					}
 					oMetaModel.mQueryCache = {};
 					if (oMetaModel.oResolver) {
@@ -1103,12 +1103,12 @@ sap.ui.require([
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 				.withExactArgs("Invalid part: bar", "path: /foo/bar, context: undefined",
-					"sap.ui.model.odata.ODataMetaModel");
+					sComponent);
 
 			return withMetaModel(assert, function (oMetaModel) {
 				assert.strictEqual(oMetaModel._getObject("/foo/bar"), undefined);
@@ -1120,13 +1120,13 @@ sap.ui.require([
 				var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
 					.returns(bWarn);
 				oLogMock.expects("warning")
 					.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 					.withExactArgs("Invalid part: relative",
 						"path: some/relative/path, context: /dataServices/schema/0/entityType/0",
-						"sap.ui.model.odata.ODataMetaModel");
+						sComponent);
 
 				return withMetaModel(assert, function (oMetaModel) {
 					var oContext = oMetaModel.getContext("/dataServices/schema/0/entityType/0");
@@ -1139,13 +1139,12 @@ sap.ui.require([
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 				.withExactArgs("Invalid part: relative",
-					"path: some/relative/path, context: [object Object]",
-					"sap.ui.model.odata.ODataMetaModel");
+					"path: some/relative/path, context: [object Object]", sComponent);
 
 			return withMetaModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
@@ -1158,9 +1157,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("_getObject: Invalid relative path w/o context", function (assert) {
 		oGlobalSandbox.mock(jQuery.sap.log).expects("error").withExactArgs(
-			"Invalid relative path w/o context",
-			"some/relative/path",
-			"sap.ui.model.odata.ODataMetaModel");
+			"Invalid relative path w/o context", "some/relative/path", sComponent);
 
 		return withMetaModel(assert, function (oMetaModel) {
 			assert.strictEqual(oMetaModel._getObject("some/relative/path"), null);
@@ -2598,8 +2595,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("load: Performance measurement points", function (assert) {
 		var oAverageSpy = oGlobalSandbox.spy(jQuery.sap.measure, "average")
-				.withArgs("sap.ui.model.odata.ODataMetaModel/load", "",
-					["sap.ui.model.odata.ODataMetaModel"]),
+				.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]),
 			oEndSpy = oGlobalSandbox.spy(jQuery.sap.measure, "end")
 				.withArgs("sap.ui.model.odata.ODataMetaModel/load"),
 			oModel = new ODataModel1("/GWSAMPLE_BASIC", {

@@ -265,7 +265,7 @@ sap.ui.define([
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
-	 * @protected
+	 * @public
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
@@ -375,6 +375,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.destroy = function () {
+		if (this.oElementContext) {
+			this.oElementContext.destroy();
+		}
 		this.oModel.bindingDestroyed(this);
 		ContextBinding.prototype.destroy.apply(this);
 	};
@@ -416,7 +419,9 @@ sap.ui.define([
 		 * @returns {Promise} The request promise
 		 */
 		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
-			var aOperationParameters,
+			var sETag,
+				iIndex,
+				aOperationParameters,
 				aParameters,
 				sPath = (sPathPrefix + that.sPath).slice(1),
 				oPromise;
@@ -429,7 +434,14 @@ sap.ui.define([
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
 						that.mQueryOptions, false, true);
 				}
-				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
+				if (that.bRelative) {
+					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
+					// if no ETag is available
+					iIndex = that.sPath.lastIndexOf("/");
+					sETag = that.oContext.getObject(
+						iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")["@odata.etag"];
+				}
+				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters, sETag);
 			} else {
 				// the function must always recreate the cache because the parameters influence the
 				// resource path
@@ -464,6 +476,10 @@ sap.ui.define([
 		if (this.bRelative) {
 			if (!this.oContext) {
 				throw new Error("Unresolved binding: " + this.sPath);
+			}
+			if (this.oContext.isTransient()) {
+				throw new Error("Execute for transient context not allowed: "
+					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
 			if (this.oContext.getPath().indexOf("(...)") >= 0) {
 				throw new Error("Nested deferred operation bindings not supported: "
@@ -703,7 +719,6 @@ sap.ui.define([
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
 				if (this.bRelative) {
-					this.oCache.deregisterChange();
 					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
 					this.mCacheByContext = undefined;
 				} else {
@@ -757,23 +772,20 @@ sap.ui.define([
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			if (this.bRelative) {
-				if (this.oCache) {
-					this.oCache.deregisterChange();
-					this.oCache = undefined;
+			if (this.bRelative && (this.oContext || oContext)) {
+				if (this.oElementContext) {
+					this.oElementContext.destroy();
+					this.oElementContext = null;
 				}
-			}
-			if (this.bRelative && (this.oElementContext || oContext)) {
-				// fire "change" iff. this.oElementContext changes
-				// do not call Model#resolve in vain
+				// no deregisterChange because all property bindings deregistered due to
+				// oElementContext.destroy()
+				this.oCache = undefined;
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && this.mQueryOptions) {
 						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
 					}
-				} else {
-					this.oElementContext = null;
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

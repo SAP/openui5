@@ -40,10 +40,14 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.module(sName, {
 			beforeEach : function () {
+				this.oLogMock = sinon.mock(jQuery.sap.log);
+				this.oLogMock.expects("warning").never();
+				this.oLogMock.expects("error").never();
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
 			afterEach : function () {
+				this.oLogMock.verify();
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});
@@ -87,22 +91,26 @@ sap.ui.require([
 			assert.strictEqual(oType.formatValue(123, "any"), 123, "decimal number as any");
 
 			try {
-				oType.formatValue(123, "unknown");
+				oType.formatValue(123, "object");
 				assert.ok(false, "Expected FormatException not thrown");
 			} catch (e) {
 				assert.ok(e instanceof FormatException);
-				assert.strictEqual(e.message, "Don't know how to format " + sName + " to unknown");
+				assert.strictEqual(e.message, "Don't know how to format " + sName + " to object");
 			}
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.returns("string");
+			assert.strictEqual(oType.formatValue(123, "sap.ui.core.CSSSize"), "123");
 		});
 
 		QUnit.test("parseValue", function (assert) {
 			try {
-				oType.parseValue("123");
+				oType.parseValue(true, "boolean");
 				assert.ok(false, "Expected ParseException not thrown");
 			} catch (e) {
 				assert.ok(e instanceof ParseException);
 				assert.strictEqual(e.message,
-					"Don't know how to parse " + sName + " from undefined");
+					"Don't know how to parse " + sName + " from boolean");
 			}
 			assert.strictEqual(oType.parseValue("1,234", "string"), 1234,
 				"number parsed from string");
@@ -118,6 +126,10 @@ sap.ui.require([
 			oType = new (jQuery.sap.getObject(sName))();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");
+
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
+				.returns("string");
+			assert.strictEqual(oType.parseValue("1234", "sap.ui.core.CSSSize"), 1234);
 		});
 
 		["foo", "123.809"].forEach(function (oValue) {
@@ -163,7 +175,6 @@ sap.ui.require([
 			[iMin, iMax].forEach(function (iValue) {
 				oType.validateValue(iValue);
 			});
-			assert.expect(0);
 		});
 
 		QUnit.test("validate w/ decimal", function (assert) {
@@ -193,7 +204,7 @@ sap.ui.require([
 		QUnit.test("nullable", function (assert) {
 			oType.validateValue(null);
 
-			this.mock(jQuery.sap.log).expects("warning")
+			this.oLogMock.expects("warning")
 				.withExactArgs("Illegal nullable: 42", null, sName);
 
 			oType = new (jQuery.sap.getObject(sName))({});

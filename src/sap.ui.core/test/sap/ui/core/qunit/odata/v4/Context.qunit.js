@@ -28,12 +28,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("create", function (assert) {
-		var oContext,
+		var oBinding = {},
+			oContext,
+			oCreatedPromise,
+			bCreatedPromisePending = true,
 			oModel = {},
-			oBinding = {},
-			sPath = "/foo";
+			sPath = "/foo",
+			fnResolve;
 
 		// see below for tests with oBinding parameter
+		// no createdPromise
 		oContext = Context.create(oModel, oBinding, sPath, 42);
 
 		assert.ok(oContext instanceof BaseContext);
@@ -41,6 +45,29 @@ sap.ui.require([
 		assert.strictEqual(oContext.getBinding(), oBinding);
 		assert.strictEqual(oContext.getPath(), sPath);
 		assert.strictEqual(oContext.getIndex(), 42);
+		assert.strictEqual(oContext.created(), undefined);
+
+		// code under test
+		oContext = Context.create(oModel, oBinding, sPath, 42,
+			new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}));
+		// code under test
+		oCreatedPromise = oContext.created();
+
+		assert.ok(oCreatedPromise instanceof Promise, "Instance of Promise");
+		oCreatedPromise.then(function (oResult) {
+				bCreatedPromisePending = false;
+				assert.strictEqual(oResult, undefined, "create promise resolves w/o data ('bar')");
+			}, function () {
+				bCreatedPromisePending = false;
+			});
+		assert.ok(bCreatedPromisePending, "Created Promise still pending");
+
+		fnResolve("bar");
+		return oCreatedPromise.then(function () {
+			assert.strictEqual(bCreatedPromisePending, false, "Created Promise resolved");
+		});
 	});
 
 	//*********************************************************************************************
@@ -62,12 +89,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
-		assert.strictEqual(
-			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
+		var oContext,
+			fnResolve;
+
+		assert.strictEqual(Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
 			"/Employees");
-		assert.strictEqual(
-			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees", 5).toString(),
-			"/Employees[5]");
+		assert.strictEqual(Context.create({}, {}, "/Employees", 5).toString(), "/Employees[5]");
+		oContext = Context.create({}, {}, "/Employees", -1,
+			new Promise(function (resolve) {
+				fnResolve = resolve;
+			}));
+		assert.strictEqual(oContext.toString(), "/Employees[-1|transient]");
+
+		fnResolve();
+		return oContext.created().then(function () {
+			assert.strictEqual(oContext.toString(), "/Employees[-1]");
+		});
 	});
 
 	//*********************************************************************************************
@@ -128,6 +165,30 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oBinding), undefined, "~bar~").returns(oResult);
 
 		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isTransient", function (assert) {
+		var oBinding = {},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			fnResolve;
+
+		// code under test
+		assert.notOk(oContext.isTransient(), "no created Promise -> not transient");
+
+		oContext = Context.create(null, oBinding, "/foo", 42,
+			new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}));
+
+		// code under test
+		assert.ok(oContext.isTransient(), "unresolved created Promise -> transient");
+
+		fnResolve();
+		oContext.created().then(function () {
+			// code under test
+			assert.notOk(oContext.isTransient(), "resolved -> not transient");
+		});
 	});
 
 	//*********************************************************************************************
@@ -384,6 +445,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateValue: transient context", function (assert) {
+		var oBinding = {
+				updateValue : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/-1", -1,
+				new Promise(function () {})),
+			sPropertyName = "bar",
+			oResult = {},
+			vValue = Math.PI;
+
+		assert.ok(oContext.isTransient());
+
+		this.mock(oBinding).expects("updateValue")
+			.withExactArgs("up", sPropertyName, vValue, "n/a", "-1/SO_2_SOITEM/42")
+			.returns(Promise.resolve(oResult));
+
+		return oContext.updateValue("up", sPropertyName, vValue, undefined, "SO_2_SOITEM/42")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateValue: error handling", function (assert) {
 		var oBinding = {
 				updateValue : function () {}
@@ -538,6 +622,27 @@ sap.ui.require([
 			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", oContext)
+			.returns(Promise.resolve());
+
+		// code under test
+		return oContext["delete"]("myGroup").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(oContext.oBinding, oBinding);
+			assert.strictEqual(oContext.oModel, oModel);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: transient", function (assert) {
+		var oBinding = {
+				_delete : function () {}
+			},
+			oModel = {},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/-1", -1,
+				new Promise(function () {}));
+
+		this.mock(oBinding).expects("_delete")
+			.withExactArgs("myGroup", "n/a", oContext)
 			.returns(Promise.resolve());
 
 		// code under test

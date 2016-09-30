@@ -229,7 +229,7 @@ sap.ui.define([
 			 *   <code>null</code> value. In <code>odata.concat</code> it is ignored.
 			 *   <li> the dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
 			 *   edm:PropertyPath": This is turned into a data binding relative to an entity,
-			 *   including type information and constraints as available from meta data,
+			 *   including type information and constraints as available from metadata,
 			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String',
 			 *   constraints : {'maxLength':'255'}}"</code>.
 			 *   Depending on the used type, some additional constraints of this type are set:
