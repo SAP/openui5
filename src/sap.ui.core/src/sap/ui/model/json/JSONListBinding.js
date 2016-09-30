@@ -82,20 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	};
 
 	/**
-	 * Returns the context data as required for change detection/diff. This may not contain
-	 * all of the data, but just the key property
-	 *
-	 * @private
-	 */
-	JSONListBinding.prototype.getContextData = function(oContext) {
-		if (this.fnGetEntryKey && !this.bDetectUpdates) {
-			return this.fnGetEntryKey(oContext);
-		} else {
-			return JSON.stringify(oContext.getObject());
-		}
-	};
-
-	/**
 	 * Get indices of the list
 	 */
 	JSONListBinding.prototype.updateIndices = function() {
