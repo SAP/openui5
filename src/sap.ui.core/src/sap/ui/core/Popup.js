@@ -1490,9 +1490,14 @@ sap.ui.define([
 
 		if ($Ref.length) {
 			var oAt = oPosition.at;
+			var oDomRef = $Ref.get(0);
 
 			if (typeof (oAt) === "string") {
-				$Ref.get(0).style.display = "block";
+				oDomRef.style.display = "block";
+
+				// reset the 'left' and 'right' position CSS to avoid changing the DOM size by setting both 'left' and 'right'.
+				oDomRef.style.left = "";
+				oDomRef.style.right = "";
 				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
 				this._fixPositioning(oPosition, bRtl);
 			} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
