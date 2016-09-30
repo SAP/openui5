@@ -31,7 +31,9 @@ sap.ui.require([
 				properties : {
 					text : "string"
 				}
-			}
+			},
+			// @see sap.ui.model.DataState and sap.ui.base.ManagedObject#_bindProperty
+			refreshDataState : function () {}
 		});
 
 	//*********************************************************************************************
@@ -753,6 +755,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal", function (assert) {
+		var oBinding = this.oModel.bindProperty("PRODUCT_2_BP", {/*oContext*/});
+
+		this.oSandbox.mock(oBinding).expects("checkUpdate")
+			.withExactArgs(true, ChangeReason.Refresh, "groupId");
+
+		// code under test
+		oBinding.refreshInternal("groupId");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("Name");
 
@@ -788,6 +801,8 @@ sap.ui.require([
 			.returns(oReturn);
 		oMock.expects("attachEvent").withExactArgs("dataRequested", mParams)
 			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("DataStateChange", mParams)
+			.returns(oReturn);
 
 		oPropertyBinding = this.oModel.bindProperty("Name");
 
@@ -799,10 +814,39 @@ sap.ui.require([
 			oReturn);
 		assert.strictEqual(oPropertyBinding.attachEvent("dataRequested", mParams),
 			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("DataStateChange", mParams),
+			oReturn);
 
 		assert.throws(function () {
-			oPropertyBinding.attachDataStateChange();
-		}, new Error("Unsupported event 'DataStateChange': v4.ODataPropertyBinding#attachEvent"));
+			oPropertyBinding.attachEvent("unsupportedEvent");
+		}, new Error("Unsupported event 'unsupportedEvent': v4.ODataPropertyBinding#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expression binding", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			oModel = new ODataModel({
+				serviceUrl : "/service/",
+				synchronizationMode : "None"
+			}),
+			oPromise = Promise.resolve("value"),
+			oTestControl = new TestControl({
+				text : "{= !${path:'@odata.etag',type:'sap.ui.model.odata.type.String'} }",
+				models : oModel
+			});
+
+		oCacheMock.expects("createSingle")
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {})
+			.returns({
+				read : function (sGroupId, sPath) {
+					return oPromise;
+				}
+			});
+
+		oTestControl.bindObject("/EntitySet('foo')");
+		assert.strictEqual(oTestControl.getText(), "true");
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -1266,45 +1310,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate and listener: absolute", function (assert) {
-	});
-
-	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
-			var done = assert.async(),
-				oModel = new ODataModel({
+			var oModel = new ODataModel({
 					serviceUrl : TestUtils.proxy(sServiceUrl),
-					synchronizationMode : "None",
-					updateGroupId : "deferred"
+					synchronizationMode : "None"
 				}),
 				oControl = new TestControl({
 					models : oModel,
 					objectBindings : "/BusinessPartnerList('0100000000')",
 					text : "{path : 'PhoneNumber', type : 'sap.ui.model.odata.type.String'}"
+				}),
+				oBinding = oControl.getBinding("text"),
+				oSandbox = this.oSandbox;
+
+			return new Promise(function (resolve, reject) {
+				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
+				oBinding.attachEventOnce("change", function () {
+					var sPhoneNumber = oControl.getText().indexOf("/") < 0
+							? "06227/34567"
+							: "0622734567",
+						fnSpy = oSandbox.spy(oBinding.getContext(), "updateValue");
+
+					// code under test
+					oControl.setText(sPhoneNumber);
+
+					// wait for Context#updateValue to finish (then the response has been processed)
+					// assertion is only that no error/warning logs happen
+					resolve(fnSpy.returnValues[0]);
 				});
-
-			//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
-			oControl.getBinding("text").attachEventOnce("change", function () {
-				var sPhoneNumber = oControl.getText().indexOf("/") < 0
-					? "06227/34567"
-					: "0622734567";
-
-				// in the change event resulting from the setText, submit the batch asychronously
-				// The event itself is fired before the PATCH is in the queue.
-				oControl.getBinding("text").attachEventOnce("change", function () {
-					Promise.resolve().then(function () {
-						oModel.submitBatch("deferred").then(function () {
-							done();
-						});
-					});
-				});
-
-				// code under test
-				oControl.setText(sPhoneNumber);
-
-				// assertion is only that no error/warning logs happen
 			});
 		});
 	}

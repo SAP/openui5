@@ -4,16 +4,19 @@
 sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
+		'sap/m/MessageToast',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		'sap/ui/model/json/JSONModel'
-], function (Dialog, MessageBox, DateFormat, Item, Controller, Filter, FilterOperator, JSONModel) {
+], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
+		JSONModel) {
 	"use strict";
 
-	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
+	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
+		sServiceNamespace = "com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.";
 
 //	function onRejected(oError) {
 //		jQuery.sap.log.error(oError.message, oError.stack);
@@ -25,11 +28,21 @@ sap.ui.define([
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		_setSalesOrderBindingContext : function (oSalesOrderContext) {
 			var oView = this.getView(),
+				oSalesOrdersTable = oView.byId("SalesOrders"),
 				oUIModel = oView.getModel("ui");
 
 			oUIModel.setProperty("/bSalesOrderSelected", !!oSalesOrderContext);
+			oUIModel.setProperty("/bSelectedSalesOrderTransient",
+				oSalesOrderContext && oSalesOrderContext.isTransient());
+
 			if (!oSalesOrderContext) {
-				oView.byId("SalesOrders").removeSelections();
+				oSalesOrdersTable.removeSelections();
+			} else if (oSalesOrderContext.isTransient()) {
+				// TODO: eliminate this workaround:
+				// to ensure that no dependent data for the newly created SO is fetched
+				// unless it is persisted in backend
+				oSalesOrderContext = undefined;
+				oSalesOrdersTable.setSelectedItem(oSalesOrdersTable.getItems()[0]);
 			}
 			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
 
@@ -42,12 +55,6 @@ sap.ui.define([
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
 		},
 
-		onCancelSalesOrderCreate : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
-
-			oCreateSalesOrderDialog.close();
-		},
-
 		onCancelSalesOrderSchedules : function (oEvent) {
 			this.getView().byId("SalesOrderSchedulesDialog").close();
 		},
@@ -56,33 +63,93 @@ sap.ui.define([
 			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
 		},
 
-		onCreateSalesOrderDialog : function (oEvent) {
-			var oView = this.getView(),
-				oBuyerIdInput = oView.byId("BuyerID"),
-				oCreateSalesOrderDialog = oView.byId("createSalesOrderDialog");
+		onConfirmSalesOrder : function () {
+			var oModel = this.getView().getModel(),
+				oTable = this.getView().byId("SalesOrders"),
+				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
+				oAction = oModel.bindContext(sServiceNamespace + "SalesOrder_Confirm(...)",
+					oSalesOrderContext),
+				that = this;
 
-			oCreateSalesOrderDialog.setModel(new JSONModel({}), "new");
-			if (!oBuyerIdInput.getBinding("suggestionItems")) {
-				oBuyerIdInput.bindAggregation("suggestionItems", {
-					path : '/BusinessPartnerList',
-					parameters : {'$$groupId' : '$direct'},
-					template : new Item({text : "{BusinessPartnerID}"})
-				});
-			}
-			oCreateSalesOrderDialog.open();
+			oAction.execute().then(
+				function () {
+					MessageToast.show("Sales order "
+						+ oSalesOrderContext.getProperty("SalesOrderID") + " confirmed");
+					that.refresh(that.getView().byId("SalesOrders").getBinding("items"),
+						"all sales orders");
+				},
+				function (oError) {
+					MessageBox.alert(oError.message, {
+						icon : MessageBox.Icon.ERROR,
+						title : "Error"});
+				}
+			);
+		},
+
+		onCloseSalesOrderDialog : function (oEvent) {
+			this.getView().byId("CreateSalesOrderDialog").close();
 		},
 
 		onCreateSalesOrder : function (oEvent) {
-//			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
-//				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
-//				that = this;
+			var oView = this.getView(),
+				oContext = oView.byId("SalesOrders").getBinding("items")
+					.create(undefined, {
+						// TODO where to get initial values from to avoid "failed to drill-down"
+						// and "Not all properties provided while creation or update was executed."
+						// $select?
+						"SalesOrderID" : "",
+						"Note" : new Date().toString(),
+						"NoteLanguage" : "E",
+						"BuyerID" : "0100000000",
+						"BuyerName" : "",
+						"CurrencyCode" : "EUR",
+						"GrossAmount" : "0.00",
+						"NetAmount" : "0.00",
+						"TaxAmount" : "0.00",
+						"LifecycleStatus" : "N",
+						"LifecycleStatusDesc" : "New",
+						"BillingStatus" : "",
+						"BillingStatusDesc" : "",
+						"DeliveryStatus" : "",
+						"DeliveryStatusDesc" : "",
+						"CreatedAt" : "",
+						"ChangedAt" : "",
+						"SOItemCount" : 0,
+						"SO_2_BP" : null
+					}),
+				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
+				that = this;
 
-			//TODO validate oSalesOrderData according to types
-			//TODO deep create incl. LOCATION etc.
-//				TODO the code will be needed when "create" is implemented
-//				MessageBox.alert(JSON.stringify(oData),
-//					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-//				that.onCancelSalesOrder();
+			oView.getModel("ui").setProperty("/bCreateSalesOrderPending", true);
+
+			oCreateSalesOrderDialog.setBindingContext(oContext);
+			this._setSalesOrderBindingContext(oContext);
+
+			oCreateSalesOrderDialog.open();
+
+			// Note: this promise fails only if the transient entity is deleted
+			oContext.created().then(function () {
+				that._setSalesOrderBindingContext(oContext);
+				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
+				MessageBox.alert("SalesOrder created: " + oContext.getProperty("SalesOrderID"), {
+					icon : MessageBox.Icon.SUCCESS,
+					title : "Success"
+				});
+			}, function (oError) {
+				// TODO:
+				// As for now create cancelation AND backend errors both result in
+				// a rejected created Promise; differentiation is possible with the canceled flag.
+				// Later on only cancelation is rejected, backend errors will be passed to the
+				// message manager and the POST request will be sent again after new user input
+				if (oError.canceled) {
+					oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
+					return; // delete of transient entity
+				}
+				MessageBox.alert(oError.message, {
+					icon : MessageBox.Icon.ERROR,
+					title : "Unexpected Error"
+				});
+			});
 		},
 
 		onDataEvents : function (oEvent) {
@@ -245,24 +312,23 @@ sap.ui.define([
 		onRefreshAll : function () {
 			var oModel = this.getView().getModel();
 
-			this.refresh(oModel,
-				"There are pending changes. Do you really want to refresh everything?",
-				oModel.getUpdateGroupId() || "SalesOrderListUpdateGroup");
+			this.refresh(oModel, "everything",
+				["SalesOrderListUpdateGroup", "SalesOrderUpdateGroup"]);
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
 			this.refresh(this.getView().byId("FavoriteProduct").getBinding("value"),
-				"There are pending changes. Do you really want to refresh the favorite product?");
+				"the favorite product");
 		},
 
 //		onRefreshSalesOrderDetails : function (oEvent) {
 //			this.refresh(this.getView().byId("ObjectPage").getElementBinding(),
-//				"There are pending changes. Do you really want to refresh the sales order?");
+//				"the sales order");
 //		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
 			this.refresh(this.getView().byId("SalesOrders").getBinding("items"),
-				"There are pending changes. Do you really want to refresh all sales orders?");
+				"all sales orders");
 		},
 
 		onSalesOrderSchedules : function (oEvent) {
@@ -325,14 +391,37 @@ sap.ui.define([
 			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		},
 
-		refresh : function (oRefreshable, sMessage, sGroupId) {
+		/**
+		 * Refreshes (parts of) the UI. Offers to reset changes via two-way binding before, because
+		 * otherwise the refresh would fail.
+		 *
+		 * @param {object} oRefreshable
+		 *   The object to be refreshed, either the model or a binding
+		 * @param {string} sRefreshableText
+		 *   The text used for the refreshable in the confirmation dialog if there are pending
+		 *   changes
+		 * @param {string[]} [aUpdateGroupIds]
+		 *   A list of IDs of batch groups to reset. If not given, the refreshable's default group
+		 *   is reset.
+		 */
+		refresh : function (oRefreshable, sRefreshableText, aUpdateGroupIds) {
 			if (oRefreshable.hasPendingChanges()) {
-				MessageBox.confirm(sMessage, function onConfirm(sCode) {
-					if (sCode === "OK") {
-						oRefreshable.resetChanges(sGroupId);
-						oRefreshable.refresh();
-					}
-				}, "Refresh");
+				MessageBox.confirm(
+					"There are pending changes. Do you really want to refresh " + sRefreshableText
+						+ "?",
+					function onConfirm(sCode) {
+						if (sCode === "OK") {
+							if (aUpdateGroupIds) {
+								aUpdateGroupIds.forEach(function (sUpdateGroupId) {
+									oRefreshable.resetChanges(sUpdateGroupId);
+								});
+							} else {
+								oRefreshable.resetChanges();
+							}
+							oRefreshable.refresh();
+						}
+					},
+					"Refresh");
 			} else {
 				oRefreshable.refresh();
 			}

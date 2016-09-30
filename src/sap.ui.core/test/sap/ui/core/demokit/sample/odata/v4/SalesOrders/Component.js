@@ -149,8 +149,14 @@ sap.ui.define([
 					},
 					"SalesOrderList('0500000009')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_9.json"
+					},
+					"SalesOrderList('')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+						source : "SalesOrderList_new.json"
+					},
+					"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_new.json"
 					}
-				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data",
+				}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}
 
@@ -161,7 +167,8 @@ sap.ui.define([
 							bLineItemSelected : false,
 							bRealOData : bRealOData,
 							bSalesOrderSelected : false,
-							bScheduleSelected : false
+							bScheduleSelected : false,
+							bSelectedSalesOrderTransient : false
 						}
 				)},
 				type : ViewType.XML,

@@ -63,6 +63,8 @@ sap.ui.define([
 	 * @param {number} [iIndex]
 	 *   Index of item (within the collection addressed by <code>sPath</code>) represented
 	 *   by this context; used by list bindings, not context bindings
+	 * @param {Promise} [oCreatePromise]
+	 *   Promise returned by {@link #created created}
 	 *
 	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
@@ -86,12 +88,33 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex) {
+			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
 				BaseContext.call(this, oModel, sPath);
 				this.oBinding = oBinding;
+				this.oCreatePromise = oCreatePromise
+					// ensure to return a promise that is resolved w/o data
+					&& Promise.resolve(oCreatePromise).then(function () {});
+				this.oSyncCreatePromise = oCreatePromise && _SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 			}
 		});
+
+	/**
+	 * Returns a promise that is resolved without data when the entity represented by this context
+	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
+	 * represented by this context is transient.
+	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved without data when the entity represented by this context has
+	 *   been created in the backend. Returns <code>undefined</code> if the context has not been
+	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}.
+	 *
+	 * @public
+	 * @since 1.43.0
+	 */
+	Context.prototype.created = function () {
+		return this.oCreatePromise;
+	};
 
 	/**
 	 * Deletes the OData entity this context points to. The context must be part of a context
@@ -106,17 +129,16 @@ sap.ui.define([
 	 *   "$auto" or "$direct"
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not
-	 *   point to an entity, if it is not part of a list binding, if the resulting group ID is
-	 *   neither "$auto" nor "$direct", or if the deletion on the server fails.
+	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
+	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
+	 *   context's binding, if the resulting group ID is neither "$auto" nor "$direct", or if the
+	 *   deletion on the server fails.
 	 *   <p>
 	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
 	 *   concurrent modification (e.g. by another user) of the entity between loading and deletion
 	 *   has been detected; this should be shown to the user who needs to decide whether to try
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
-	 * @throws {Error}
-	 *   If there are pending changes for the context's binding.
 	 *
 	 * @public
 	 * @since 1.41.0
@@ -124,6 +146,9 @@ sap.ui.define([
 	Context.prototype["delete"] = function (sGroupId) {
 		var that = this;
 
+		if (this.isTransient()) {
+			return that.oBinding._delete(sGroupId, "n/a", that);
+		}
 		return this.requestCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
 		});
@@ -229,6 +254,8 @@ sap.ui.define([
 	 * key predicate identifying the entity within the collection".
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
+	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
+	 * key properties are available within the initial data.
 	 *
 	 * @returns {string}
 	 *   The canonical path (e.g. "/EMPLOYEES(ID='1')")
@@ -375,12 +402,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if this context is transient, which means that the promise returned
+	 * by {@link #created} is not yet resolved or rejected.
+	 *
+	 * @returns {boolean}
+	 *   Whether this context is transient
+	 *
+	 * @public
+	 * @since 1.43.0
+	 */
+	Context.prototype.isTransient = function () {
+		var oSyncCreatePromise = this.oSyncCreatePromise;
+
+		return oSyncCreatePromise && (oSyncCreatePromise.getResult() === oSyncCreatePromise);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
 	 * Conventions", this is the "name of the entity set associated with the entity followed by the
 	 * key predicate identifying the entity within the collection".
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
+	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
+	 * key properties are available within the initial data.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
@@ -455,7 +500,12 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.toString = function () {
-		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
+		var sIndex = "";
+
+		if (this.iIndex !== undefined) {
+			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
+		}
+		return this.sPath + sIndex;
 	};
 
 	/**
@@ -482,6 +532,10 @@ sap.ui.define([
 
 		sPath = _Helper.buildPath(this.iIndex, sPath);
 
+		if (this.isTransient()) {
+			// Note: must not be falsy, otherwise a parent context would insert its own edit URL
+			sEditUrl = "n/a";
+		}
 		if (sEditUrl) {
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
@@ -504,6 +558,8 @@ sap.ui.define([
 		 *   An absolute path without trailing slash
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
+		 * @param {Promise} [oCreatePromise]
+		 *   Promise returned by {@link sap.ui.model.odata.v4.Context#created created}
 		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}
@@ -511,14 +567,14 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		create : function (oModel, oBinding, sPath, iIndex) {
+		create : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
 			if (sPath[0] !== "/") {
 				throw new Error("Not an absolute path: " + sPath);
 			}
 			if (sPath.slice(-1) === "/") {
 				throw new Error("Unsupported trailing slash: " + sPath);
 			}
-			return new Context(oModel, oBinding, sPath, iIndex);
+			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise);
 		}
 	};
 }, /* bExport= */ false);

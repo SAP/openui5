@@ -20,7 +20,7 @@ sap.ui.require([
 	"use strict";
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
-		iOldLogLevel = jQuery.sap.log.getLevel();
+		iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
 
 	//---------------------------------------------------------------------------------------------
 	// "public" methods to be used directly in test functions
@@ -54,7 +54,9 @@ sap.ui.require([
 		var oViewInfo = {
 				caller : "qux",
 				componentId : "this._sOwnerId",
-				name : "this.sViewName"
+				name : "this.sViewName",
+				//TODO TDD is missing for support info calls!
+				_supportInfo : function () {} // Note: FAKE support info handler
 			};
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
@@ -74,7 +76,7 @@ sap.ui.require([
 	function warn(oLogMock, sExpectedWarning, vDetails) {
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
-			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING) ? 1 : 0)
+			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sComponent) ? 1 : 0)
 			.withExactArgs(_matchArg(sExpectedWarning), _matchArg(vDetails), sComponent);
 	}
 
@@ -211,18 +213,19 @@ sap.ui.require([
 			this.oLogMock.verify();
 
 			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
-			jQuery.sap.log.setLevel(iOldLogLevel);
+			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
 		},
 
 		beforeEach : function () {
 			this.oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration;
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
 
 			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("debug").atLeast(0); // do not flood the console ;-)
 		},
 
 		/**
@@ -355,7 +358,7 @@ sap.ui.require([
 
 			this.oLogMock.expects("debug").never();
 			if (!bDebug) {
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, sComponent);
 			} else {
 				aExpectedMessages.forEach(function (oExpectedMessage) {
 					var vExpectedDetail = oExpectedMessage.d;
@@ -419,7 +422,7 @@ sap.ui.require([
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 				}
 
 				this.check(assert, aViewContent);
@@ -446,7 +449,8 @@ sap.ui.require([
 			// no debug output --> caller information should be logged once
 			jQuery.sap.log.setLevel(bWarn
 				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR);
+				: jQuery.sap.log.Level.ERROR,
+				sComponent);
 			warn(this.oLogMock, "Warning(s) during processing of qux", null)
 				.exactly(bWarn ? 1 : 0);
 
@@ -622,7 +626,7 @@ sap.ui.require([
 						.never();
 					this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 					if (!bWarn) {
-						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 					}
 					warn(this.oLogMock,
 							sinon.match(/\[ \d\] Error in formatter: Error: deliberate failure/),
@@ -715,7 +719,7 @@ sap.ui.require([
 					.never();
 				this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 				}
 				warn(this.oLogMock,
 						oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
@@ -2542,7 +2546,7 @@ sap.ui.require([
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
-					"with" : sinon.match.func,
+					"with" : sinon.match.func
 				})); // does not work in IE: fnVisitor.printf("%C")
 		});
 	});
@@ -2656,8 +2660,7 @@ sap.ui.require([
 				nestedObject : {
 					foo : "bar"
 				}
-			},
-			that = this;
+			};
 
 		try {
 			XMLPreprocessor.plugIn(function (oElement, oInterface) {

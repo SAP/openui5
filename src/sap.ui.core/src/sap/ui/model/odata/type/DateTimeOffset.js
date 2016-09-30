@@ -93,8 +93,9 @@ sap.ui.define([
 	 *   instance (OData V2) or as a string like "2014-11-27T13:47:26Z" (OData V4); both
 	 *   representations are accepted independent of the model's OData version
 	 * @param {string} sTargetType
-	 *   The target type, may be "any" or "string"; see {@link sap.ui.model.odata.type} for more
-	 *   information
+	 *   The target type, may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
@@ -107,7 +108,7 @@ sap.ui.define([
 	DateTimeOffset.prototype.formatValue = function (vValue, sTargetType) {
 		var oDateValue;
 
-		if (sTargetType === "string" && typeof vValue === "string") {
+		if (typeof vValue === "string" && this.getPrimitiveType(sTargetType) === "string") {
 			oDateValue = getModelFormat().parse(vValue);
 			if (!oDateValue) {
 				throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
@@ -136,8 +137,9 @@ sap.ui.define([
 	 *   The value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   The source type (the expected type of <code>sValue</code>), must be "string"; see
-	 *   {@link sap.ui.model.odata.type} for more information
+	 *   The source type (the expected type of <code>sValue</code>), must be "string", or a type
+	 *   with "string" as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date|string}
 	 *   The parsed value
 	 * @throws {sap.ui.model.ParseException}

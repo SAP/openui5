@@ -521,7 +521,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 */
 			process : function (oRootElement, oViewInfo, mSettings) {
 				var sCaller = oViewInfo.caller,
-					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					bDebug
+						= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					sCurrentName = oViewInfo.name, // current view or fragment name
 					mFragmentCache = {},
@@ -529,7 +530,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					iNestingLevel = 0,
 					oScope = {}, // for BindingParser.complexParser()
 					fnSupportInfo = oViewInfo._supportInfo,
-					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
+					bWarning
+						= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sXMLPreprocessor);
 
 				/**
 				 * Returns a callback interface for visitor functions which provides access to
@@ -1162,7 +1164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 				/**
 				 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
-				 * fragment configured as a replacement (via component meta data, "customizing" and
+				 * fragment configured as a replacement (via component metadata, "customizing" and
 				 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
 				 * currently configured.
 				 *
@@ -1424,16 +1426,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function visitAttributes(oElement, oWithControl) {
 					var i,
+						oAttribute,
 						oAttributesList = oElement.attributes;
 
 					// Note: iterate backwards to account for removal of attributes!
 					for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
+						oAttribute = oAttributesList.item(i);
 						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttribute.name, value: oAttribute.value}}});
 						}
-						resolveAttributeBinding(oElement, oAttributesList.item(i), oWithControl);
+						resolveAttributeBinding(oElement, oAttribute, oWithControl);
 						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttributesList.item(i).name, value: oAttributesList.item(i).value}}});
+							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttribute.name, value: oAttribute.value}}});
 						}
 					}
 				}

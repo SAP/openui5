@@ -172,7 +172,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @param {number} oValue.ms
 	 *   the time in milliseconds
 	 * @param {string} sTargetType
-	 *   the target type; may be "any" or "string".
+	 *   the target type; may be "any", "string", or a type with one of these types as its
+	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -185,7 +186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 		if (oValue === undefined || oValue === null) {
 			return null;
 		}
-		switch (sTargetType) {
+		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return oValue;
 		case "string":
@@ -213,7 +214,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @param {string} sValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   the source type (the expected type of <code>sValue</code>); must be "string", or a type
+	 *   with "string" as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {object}
 	 *   the parsed value as described in {@link #formatValue formatValue}
@@ -227,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 		if (sValue === "" || sValue === null) {
 			return null;
 		}
-		if (sSourceType !== "string") {
+		if (this.getPrimitiveType(sSourceType) !== "string") {
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}

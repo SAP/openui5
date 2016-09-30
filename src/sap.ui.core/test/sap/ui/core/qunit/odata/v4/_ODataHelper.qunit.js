@@ -10,9 +10,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/Sorter"
 ], function (jQuery, Context, Filter, FilterOperator, _ODataHelper, _Cache, _Helper, _Parser,
-		Sorter) {
+		_SyncPromise, Sorter) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -1363,136 +1364,73 @@ sap.ui.require([
 	//TODO handle encoding in getQueryOptions
 
 	//*********************************************************************************************
-	[
-		{ // no threshold
-			iStart : 0, iLength : 10, iThreshold : 0,
-			oExpected : {start : 0, length : 10}
-		}, {
-			iStart : 40, iLength : 10, iThreshold : 0,
-			oExpected : {start : 40, length : 10}
-		}, {
-			iStart : 40, iLength : 10, iThreshold : 0,
-			aPreread : [{iReadStart : 40, iReadLength : 10}]
-		}, {
-			iStart : 100, iLength : 20, iThreshold : 0,
-			aPreread : [{
-				iReadStart : 50, iReadLength : 60
-			}],
-			oExpected : {start : 100, length : 20}
-		}, {
-			iStart : 800, iLength : 10, iThreshold : 0, iMaxLength : 700 // no read after iMaxLength
-		}, {
-			iStart : 100, iLength : 20, iThreshold : 0, iMaxLength : 120,
-			oExpected : {start : 100, length : 20}
-		}, {
-			iStart : 33, iLength : 10, iThreshold : 0, iMaxLength : 34, // last element missing
-			aPreread : [{
-				iReadStart : 0, iReadLength : 33
-			}],
-			oExpected : {start : 33, length : 10}
-		}, { // with threshold
-			iStart : 0, iLength : 10, iThreshold : 100, // initial read
-			oExpected : {start : 0, length : 110}
-		}, {
-			iStart : 1, iLength : 10, iThreshold : 100,
-			aPreread : [{iReadStart : 0, iReadLength : 110}]
-		}, {
-			iStart : 50, iLength : 10, iThreshold : 100,
-			aPreread : [{iReadStart : 0, iReadLength : 110}]
-		}, {
-			iStart : 51, iLength : 10, iThreshold : 100, // missing data above iStart
-			aPreread : [{iReadStart : 0, iReadLength : 110}],
-			oExpected : {start : 51, length : 110}
-		}, {
-			iStart : 52, iLength : 10, iThreshold : 100,
-			aPreread : [{iReadStart : 0, iReadLength : 161}]
-		}, {
-			iStart : 430, iLength : 10, iThreshold : 100, // no buffer below and above iStart
-			aPreread : [{iReadStart : 0, iReadLength : 161}],
-			oExpected : {start : 330, length : 210}
-		}, {
-			iStart : 431, iLength : 10, iThreshold : 100,
-			aPreread : [{
-				iReadStart : 0, iReadLength : 161
-			}, {
-				iReadStart : 330, iReadLength : 210
-			}]
-		}, {
-			iStart : 429, iLength : 10, iThreshold : 100,
-			aPreread : [{
-				iReadStart : 0, iReadLength : 161
-			}, {
-				iReadStart : 330, iReadLength : 210
-			}]
-		}, {
-			iStart : 380, iLength : 10, iThreshold : 100,
-			aPreread : [{
-				iReadStart : 0, iReadLength : 161
-			}, {
-				iReadStart : 330, iReadLength : 210
-			}]
-		}, {
-			iStart : 379, iLength : 10, iThreshold : 100, // missing data below iStart
-			aPreread : [{
-				iReadStart : 0, iReadLength : 161
-			}, {
-				iReadStart : 330, iReadLength : 210
-			}],
-			oExpected : {start : 279, length : 110}
-		}, {
-			iStart : 161, iLength : 10, iThreshold : 100, // only iStart is missing
-			aPreread : [{
-				iReadStart : 0, iReadLength : 161
-			}, {
-				iReadStart : 162, iReadLength : 110
-			}],
-			oExpected : {start : 161, length : 110}
-		}, { // all data read, no further call to fill prefetched data
-			iStart : 50, iLength : 10, iThreshold : 100, iMaxLength : 80,
-			aPreread : [{
-				iReadStart : 0, iReadLength : 80
-			}]
-		}, { // outside range
-			iStart : 910, iLength : 10, iThreshold : 100, iMaxLength : 800
-		}, { // start index >= maxLength but missing data < iStart
-			iStart : 800, iLength : 10, iThreshold : 100, iMaxLength : 800,
-			oExpected : {start : 700, length : 110}
-		}, { // start index just before maxLength
-			iStart : 799, iLength : 10, iThreshold : 100, iMaxLength : 800,
-			oExpected : {start : 699, length : 210}
-		}, { // last element missing
-			iStart : 44, iLength : 10, iThreshold : 100, iMaxLength : 45,
-			aPreread : [{
-				iReadStart : 0, iReadLength : 44
-			}],
-			oExpected : {start : 44, length : 110}
-		}, { // start index near 0 but greater than 0
-			iStart : 5, iLength : 10, iThreshold : 100,
-			oExpected : {start : 0, length : 115}
-		}
-	].forEach(function (oFixture) {
-		QUnit.test("threshold: iStart = " + oFixture.iStart, function (assert) {
+	[{ // no threshold
+		range : [0, 10, 0],
+		expected : {start : 0, length : 10}
+	}, {
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[40, 50]],
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[50, 110]],
+		range : [100, 20, 0],
+		expected : {start : 100, length : 20}
+	}, { // initial read with threshold
+		range : [0, 10, 100],
+		expected : {start : 0, length : 110}
+	}, { // iPrefetchSize / 2 available on both sides
+		current : [[0, 110]],
+		range : [50, 10, 100],
+		expected : {start : 50, length : 10}
+	}, { // missing a row at the end
+		current : [[0, 110]],
+		range : [51, 10, 100],
+		expected : {start : 51, length : 110}
+	}, { // missing a row before the start
+		current : [[100, 260]],
+		range : [149, 10, 100],
+		expected : {start : 49, length : 110}
+	}, { // missing a row before the start, do not read beyond 0
+		current : [[40, 200]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 99}
+	}, { // missing data on both sides, do not read beyond 0
+		range : [430, 10, 100],
+		expected : {start : 330, length : 210}
+	}, { // missing data on both sides, do not read beyond 0
+		current : [[40, 100]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 199}
+	}, { // transient context
+		range : [-1, 10, 1],
+		bTransient : true,
+		expected : {start : -1, length : 11}
+	}].forEach(function (oFixture) {
+		QUnit.test("getReadRange: " + oFixture.range, function (assert) {
 			var aContexts = [],
-				aPreread = oFixture.aPreread,
 				oResult;
 
 			// prepare contexts array
-			if (aPreread) {
-				aPreread.forEach(function (oInfo) {
-					var i = oInfo.iReadStart,
-						max = i + oInfo.iReadLength;
+			if (oFixture.current) {
+				oFixture.current.forEach(function (aRange) {
+					var i, n;
 
-					while (i < max) {
+					for (i = aRange[0], n = aRange[1]; i < n; i++) {
 						aContexts[i] = i;
-						i++;
 					}
 				});
 			}
+			if (oFixture.bTransient) {
+				aContexts[-1] = -1;
+			}
 
-			oResult = _ODataHelper.getReadRange(aContexts, oFixture.iStart, oFixture.iLength,
-				oFixture.iThreshold, oFixture.iMaxLength || Infinity);
+			oResult = _ODataHelper.getReadRange(aContexts, oFixture.range[0], oFixture.range[1],
+				oFixture.range[2]);
 
-			assert.deepEqual(oResult, oFixture.oExpected);
+			assert.deepEqual(oResult, oFixture.expected);
 		});
 	});
 
@@ -1512,6 +1450,20 @@ sap.ui.require([
 			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding, undefined, sPath), oResult,
 				"path=" + sPath);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: with transient context", function (assert) {
+		var oBinding = {
+				aContexts : []
+			};
+
+			oBinding.aContexts[-1] = {
+				isTransient : function () {
+					return true;
+				}
+			};
+			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding), true);
 	});
 
 	//*********************************************************************************************
@@ -1729,65 +1681,87 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDiff", function (assert) {
-		var oBinding = {
-				oContext : {},
-				oModel : {
-					getMetaModel : function () {},
-					resolve : function () {}
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("fetchDiff, " + (bAsync ? "a" : "") + "synchronous", function (assert) {
+			var oBinding = {
+					oContext : {},
+					oModel : {
+						getMetaModel : function () {},
+						resolve : function () {}
+					},
+					sPath : "EMPLOYEE_2_EQUIPMENTS",
+					aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
+						{"Category" : "C1", "ID" : "ID1"}],
+					bUseExtendedChangeDetection : true
 				},
-				sPath : "EMPLOYEE_2_EQUIPMENTS",
-				aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
-					{"Category" : "C1a", "ID" : "ID1a"}]
-			},
-			aDiff = [/*some diff*/],
-			oKeyPromise = Promise.resolve(["Category", "ID"]),
-			oMetaContext = {},
-			oMetaModel = {
-				fetchObject : function () {},
-				getMetaContext : function () {}
-			},
-			oMetaModelMock = this.mock(oMetaModel),
-			aNewData = [{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}],
-			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
-				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+				aDiff = [/*some diff*/],
+				oDiffPromise,
+				aKeys = ["Category", "ID"],
+				oKeyPromise = _SyncPromise.resolve(bAsync ? Promise.resolve(aKeys) : aKeys),
+				oMetaContext = {},
+				oMetaModel = {
+					fetchObject : function () {},
+					getMetaContext : function () {}
+				},
+				oMetaModelMock = this.mock(oMetaModel),
+				aNewData = [{"Category" : "C0", "ID" : "ID0"}, {"Category" : "C2", "ID" : "ID2"}],
+				aResult = [{"Category" : "C0", "ID" : "ID0", "Name" : "Name0"},
+					{"Category" : "C2", "ID" : "ID2", "Name" : "Name2"}];
 
-		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("~");
-		oMetaModelMock.expects("getMetaContext").withExactArgs("~")
-			.returns(oMetaContext);
-		oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
-			.returns(oKeyPromise);
-		this.mock(jQuery.sap).expects("arraySymbolDiff")
-			.withExactArgs([{"Category" : "C1a", "ID" : "ID1a"}], aNewData)
-			.returns(aDiff);
+			this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				.returns("~");
+			oMetaModelMock.expects("getMetaContext").withExactArgs("~")
+				.returns(oMetaContext);
+			oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
+				.returns(oKeyPromise);
+			this.mock(jQuery.sap).expects("arraySymbolDiff")
+				.withExactArgs(sinon.match.same(oBinding.aPreviousData), aNewData)
+				.returns(aDiff);
 
-		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
-			assert.deepEqual(oBinding.aPreviousData, [{"Category" : "C0", "ID" : "ID0"},
-				{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}]);
-			assert.strictEqual(aDiff0, aDiff);
+			// code under test
+			oDiffPromise = _ODataHelper.fetchDiff(oBinding, aResult, 0, 2);
+
+			assert.strictEqual(oDiffPromise.isFulfilled(), !bAsync);
+			return oDiffPromise.then(function (oResult) {
+				assert.deepEqual(oBinding.aPreviousData, aNewData);
+				assert.deepEqual(oResult, {aDiff : aDiff, iLength : 2});
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDiff, no data available", function (assert) {
+	QUnit.test("fetchDiff, no data available", function (assert) {
 		var aPreviousData = [],
 			oBinding = {
-				aPreviousData : aPreviousData
-			};
+				aPreviousData : aPreviousData,
+				bUseExtendedChangeDetection : true
+			},
+			oDiffPromise;
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, undefined, 0, 100).then(function (aDiff0) {
-			assert.strictEqual(oBinding.aPreviousData, aPreviousData);
-			assert.deepEqual(aDiff0, []);
-		});
+		oDiffPromise = _ODataHelper.fetchDiff(oBinding, undefined, 0, 100);
+
+		assert.strictEqual(oBinding.aPreviousData, aPreviousData);
+		assert.deepEqual(oDiffPromise.getResult(), {iLength : 100, aDiff : []});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDiff, result is shorter", function (assert) {
+	QUnit.test("fetchDiff, no extended change detection", function (assert) {
+		var oBinding = {
+				bUseExtendedChangeDetection : false
+			},
+			oDiffPromise;
+
+		// code under test
+		oDiffPromise = _ODataHelper.fetchDiff(oBinding, [], 23, 42);
+
+		assert.deepEqual(oDiffPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDiff, result is shorter", function (assert) {
 		var aPreviousData = [{"ID" : "ID0a"}, {"ID" : "ID1a"}],
 			oBinding = {
 				oContext : {},
@@ -1796,10 +1770,11 @@ sap.ui.require([
 					resolve : function () {}
 				},
 				sPath : "EMPLOYEE_2_EQUIPMENTS",
-				aPreviousData : aPreviousData.slice()
+				aPreviousData : aPreviousData.slice(),
+				bUseExtendedChangeDetection : true
 			},
 			aDiff = [/*some diff*/],
-			oKeyPromise = Promise.resolve(["ID"]),
+			oKeyPromise = _SyncPromise.resolve(["ID"]),
 			oMetaContext = {},
 			oMetaModel = {
 				fetchObject : function () {},
@@ -1822,9 +1797,9 @@ sap.ui.require([
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 0, 2).then(function (aDiff0) {
+		return _ODataHelper.fetchDiff(oBinding, aResult, 0, 2).then(function (oResult) {
 			assert.deepEqual(oBinding.aPreviousData, [{"ID" : "ID0"}]);
-			assert.strictEqual(aDiff0, aDiff);
+			assert.deepEqual(oResult, {aDiff : aDiff, iLength : 2});
 		});
 	});
 
@@ -1833,7 +1808,7 @@ sap.ui.require([
 		{keys : ["Category", "ID", "OtherID"], logDetails : "Missing key(s): ID,OtherID"},
 		{keys : undefined, logDetails : "Type for path ~ has no keys"}
 	].forEach(function (oFixture) {
-		QUnit.test("requestDiff, error: keys missing", function (assert) {
+		QUnit.test("fetchDiff, error: keys missing", function (assert) {
 			var oBinding = {
 					oContext : {},
 					oModel : {
@@ -1843,7 +1818,8 @@ sap.ui.require([
 					sPath : "EMPLOYEE_2_EQUIPMENTS",
 					aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
 						{"Category" : "C1a", "ID" : "ID1a"}],
-					toString : function () { return "~B~"; }
+					toString : function () { return "~B~"; },
+					bUseExtendedChangeDetection : true
 				},
 				oKeyPromise = Promise.resolve(oFixture.keys),
 				oMetaContext = {},
@@ -1868,34 +1844,35 @@ sap.ui.require([
 					oFixture.logDetails, "sap.ui.model.odata.v4.ODataListBinding");
 
 			// code under test
-			return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
+			return _ODataHelper.fetchDiff(oBinding, aResult, 0, 2).then(function (oResult) {
 				assert.deepEqual(oBinding.aPreviousData, []);
-				assert.strictEqual(aDiff0, undefined);
+				assert.strictEqual(oResult, undefined);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDiff, bDetectUpdates=true", function (assert) {
+	QUnit.test("fetchDiff, bDetectUpdates=true", function (assert) {
 		var oBinding = {
 				bDetectUpdates : true,
-				aPreviousData : ["s0 previous", "s1 previous"]
+				aPreviousData : ["s0 previous", "s1 previous"],
+				bUseExtendedChangeDetection : true
 			},
 			aDiff = [/*some diff*/],
+			oDiffPromise,
 			oJSONMock = this.mock(JSON),
-			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
-				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+			aResult = [{}, {}];
 
-		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s1 new");
-		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s2 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s0 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s1 new");
 		this.mock(jQuery.sap).expects("arraySymbolDiff")
-			.withExactArgs(["s1 previous"], ["s1 new", "s2 new"])
+			.withExactArgs(sinon.match.same(oBinding.aPreviousData), ["s0 new", "s1 new"])
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
-			assert.deepEqual(oBinding.aPreviousData, ["s0 previous", "s1 new", "s2 new"]);
-			assert.strictEqual(aDiff0, aDiff);
-		});
+		oDiffPromise = _ODataHelper.fetchDiff(oBinding, aResult, 0, 2);
+
+		assert.deepEqual(oBinding.aPreviousData, ["s0 new", "s1 new"]);
+		assert.deepEqual(oDiffPromise.getResult(), {aDiff : aDiff, iLength : 2});
 	});
 });

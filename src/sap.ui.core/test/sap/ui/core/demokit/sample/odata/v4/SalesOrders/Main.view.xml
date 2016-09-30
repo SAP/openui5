@@ -32,12 +32,43 @@
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
-				<Button press="onRefreshAll" text="Refresh all"/>
+				<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
 				<Button enabled="false"
 					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
 					tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
 					type="Transparent"/>
 			</content>
+			<dependents>
+				<Dialog id="CreateSalesOrderDialog" title="Create New Sales Order">
+					<buttons>
+						<Button id="confirmCreateSalesOrder" text="OK"
+							press="onCloseSalesOrderDialog" type="Accept"/>
+					</buttons>
+					<content>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+							<form:content>
+								<Label labelFor="NewBuyerID" text="Buyer ID"/>
+								<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
+								<Input id="NewBuyerID"
+									maxLength="10"
+									placeholder="Enter Buyer ID starting with '0'..."
+									showSuggestion="true"
+									suggestionItems="{/BusinessPartnerList}"
+									type="Text"
+									value="{BuyerID}">
+									<!-- TODO: implement lazy loading of BusinessPartners -->
+									<suggestionItems>
+										<core:ListItem additionalText="{CompanyName}"
+											text="{BusinessPartnerID}"/>
+									</suggestionItems>
+								</Input>
+								<Label labelFor="NewNote" text="Note"/>
+								<Input id="NewNote" value="{Note}"/>
+							</form:content>
+						</form:SimpleForm>
+					</content>
+				</Dialog>
+			</dependents>
 		</Toolbar>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{
@@ -59,56 +90,31 @@
 				<Toolbar>
 					<content>
 						<Title text="Sales Orders" titleStyle="H2"/>
-						<Button enabled="false" icon="sap-icon://add"
-							press="onCreateSalesOrderDialog"/>
+						<Button enabled="{= !${ui>/bCreateSalesOrderPending}}"
+							icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"/>
 						<Button
 							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
 							id="deleteSalesOrder" press="onDeleteSalesOrder"/>
-						<Button icon="sap-icon://refresh"
+						<Button
+							enabled="{=${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
+								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+							id="confirmSalesOrder"
+							icon="sap-icon://accept"
+							press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
+						<ToolbarSeparator />
+						<Button icon="sap-icon://refresh" id="refreshSalesOrders"
 							press="onRefreshSalesOrdersList"/>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+						<Button icon="sap-icon://save" id="saveSalesOrders"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
 						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
 							tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
-						<SearchField enabled="{ui>/bRealOData}"
+						<SearchField enabled="{ui>/bRealOData}" id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
 							value="{path : 'ui>/filterValue',
 								type:'sap.ui.model.odata.type.Decimal'}"
 							width="50%" search="onFilter"/>
 					</content>
-					<dependents>
-						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
-							<buttons>
-								<Button icon="sap-icon://create" press="onCreateSalesOrder"
-									text="Create" type="Accept"/>
-								<Button icon="sap-icon://sys-cancel-2"
-									press="onCancelSalesOrderCreate" text="Cancel" type="Reject"/>
-							</buttons>
-							<content>
-								<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
-									<form:content>
-										<!-- TODO types should be determined automatically from OData $metadata -->
-										<Label labelFor="BuyerID" text="Buyer ID"/>
-										<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-										<Input id="BuyerID"
-											maxLength="10"
-											placeholder="Enter Buyer ID starting with '0'..."
-											showSuggestion="true"
-											type="Text"
-											value="{
-												path: 'new>/BuyerID',
-												type: 'sap.ui.model.odata.type.String',
-												constraints: {maxLength: 10, nullable: false}}">
-											<suggestionItems>
-												<core:Item text="{BusinessPartnerID}"/>
-											</suggestionItems>
-										</Input>
-									</form:content>
-								</form:SimpleForm>
-							</content>
-						</Dialog>
-					</dependents>
 				</Toolbar>
 			</headerToolbar>
 			<columns>
@@ -155,7 +161,7 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Input value="{Note}"/>
+						<Input id="SalesOrders_Note" value="{Note}"/>
 					</cells>
 					<cells>
 						<Text text="{LifecycleStatusDesc}"/>

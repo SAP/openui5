@@ -6,6 +6,7 @@ sap.ui.require([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
@@ -20,8 +21,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, Binding, BindingMode, Model, TypeString, ODataUtils, OperationMode,
-		_ODataHelper, Context, _MetadataRequestor, _Requestor, ODataContextBinding,
+], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString, ODataUtils,
+		OperationMode, _ODataHelper, Context, _MetadataRequestor, _Requestor, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -292,13 +293,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
+	QUnit.skip("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
 			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42");
 
 		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
 			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
+		//TODO this check cannot reliably detect whether assert() is active in our code
 		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
 			this.mock(jQuery.sap).expects("assert")
 				.withExactArgs(false, "oEntityContext must belong to this model");
@@ -520,6 +522,7 @@ sap.ui.require([
 		// code under test
 		oModel.resetChanges("groupId");
 	});
+	// TODO reset the POST requests in this group
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
@@ -553,10 +556,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();
 		}, new Error("Unsupported operation: v4.ODataModel#bindTree"));
-
-		assert.throws(function () {
-			oModel.createBindingContext();
-		}, new Error("Unsupported operation: v4.ODataModel#createBindingContext"));
 
 		assert.throws(function () {
 			oModel.destroyBindingContext();
@@ -717,6 +716,54 @@ sap.ui.require([
 
 		assert.deepEqual(oModel.getDependentBindings(oParentContext), []);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext - absolute path, no context", function (assert) {
+		var oBindingContext,
+			oModel = createModel();
+
+		// code under test
+		oBindingContext = oModel.createBindingContext("/foo");
+
+		assert.deepEqual(oBindingContext, new BaseContext(oModel, "/foo"));
+		assert.ok(oBindingContext instanceof BaseContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext - relative path and context", function (assert) {
+		var oBindingContext,
+		oModel = createModel(),
+		oModelMock = this.mock(oModel),
+		oContext = new BaseContext(oModel, "/foo");
+
+		oModelMock.expects("resolve").withExactArgs("bar", oContext).returns("/foo/bar");
+
+		// code under test
+		oBindingContext = oModel.createBindingContext("bar", oContext);
+
+		assert.deepEqual(oBindingContext, new BaseContext(oModel, "/foo/bar"));
+		assert.ok(oBindingContext instanceof BaseContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext - error cases", function (assert) {
+		var oModel = createModel(),
+			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
+
+		assert.throws(function () {
+			oModel.createBindingContext("bar");
+		}, new Error("Cannot create binding context from relative path 'bar' without context"),
+			"relative path, no context");
+		assert.throws(function () {
+			oModel.createBindingContext("/foo", undefined, {"param" : "bar"});
+		}, new Error("Only the parameters sPath and oContext are supported"),
+			"more than two parameters not allowed");
+		assert.throws(function () {
+			oModel.createBindingContext("foo", oEntityContext);
+		}, new Error("Unsupported type: oContext must be of type sap.ui.model.Context, but was "
+				+ "sap.ui.model.odata.v4.Context"), "sap.ui.model.odata.v4.Context not allowed");
+	});
+	// TODO allow v4.Context and return v4.Context
 });
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

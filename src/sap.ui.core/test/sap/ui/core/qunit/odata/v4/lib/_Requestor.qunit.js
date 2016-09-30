@@ -475,7 +475,8 @@ sap.ui.require([
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "baz"
 				},
-				body: '{"ID":1}',
+				body: {"ID" : 1},
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -488,6 +489,7 @@ sap.ui.require([
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
 				body : undefined,
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -501,6 +503,7 @@ sap.ui.require([
 					"Foo" : "bar"
 				},
 				body: undefined,
+				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
 				$resolve: sinon.match.func
@@ -612,28 +615,27 @@ sap.ui.require([
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				[
 					sinon.match({
-						body : JSON.stringify({Name : "bar", Note : "hello, world"}),
+						body : {Name : "bar", Note : "hello, world"},
 						method : "PATCH",
 						url : "Products('0')"
 					}),
 					sinon.match({
-						body : JSON.stringify({Note : "no merge!"}),
+						body : {Note : "no merge!"},
 						method : "PATCH",
 						url : "Products('0')"
 					}),
 					sinon.match({
-						body : JSON.stringify({Name : "baz"}),
+						body : {Name : "baz"},
 						method : "POST",
 						url : "Products"
 					}),
 					sinon.match({
-						body : JSON.stringify({Address : null}),
+						body : {Address : null},
 						method : "PATCH",
 						url : "BusinessPartners('42')"
 					}),
 					sinon.match({
-						body :
-							JSON.stringify({Address : {City : "Walldorf", PostalCode : "69190"}}),
+						body : {Address : {City : "Walldorf", PostalCode : "69190"}},
 						method : "PATCH",
 						url : "BusinessPartners('42')"
 					})
@@ -786,14 +788,14 @@ sap.ui.require([
 					headers: {
 						"foo": "bar"
 					},
-					body: JSON.stringify({"a": "b"})
+					body: {"a": "b"}
 				}, {
 					method: "PATCH",
 					url: "EntitySet2",
 					headers: {
 						"bar": "baz"
 					},
-					body: JSON.stringify({"c": "d"})
+					body: {"c": "d"}
 				}]
 			],
 			"$auto": [
@@ -803,7 +805,7 @@ sap.ui.require([
 					headers: {
 						"header": "value"
 					},
-					body: JSON.stringify({"e": "f"})
+					body: {"e": "f"}
 				}]
 			]
 		});
@@ -851,7 +853,11 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelPatch: various requests", function (assert) {
-		var iCount = 1,
+		var fnCancel1 = sinon.spy(),
+			fnCancel2 = sinon.spy(),
+			fnCancel3 = sinon.spy(),
+			iCount = 1,
+			oPostData = {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
@@ -869,13 +875,17 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel1)
 				.then(unexpected, rejected.bind(null, 3)),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
-			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId"),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
+				oPostData).then(unexpected, function (oError) {
+					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError.message, "");
+				}),
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
@@ -883,10 +893,6 @@ sap.ui.require([
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
-				sinon.match({
-					method : "POST",
-					url : "LeaveRequests('42')/name.space.Submit"
-				}),
 				sinon.match({
 					method : "GET",
 					url : "Employees"
@@ -898,22 +904,41 @@ sap.ui.require([
 
 		// code under test
 		oRequestor.cancelPatch("groupId");
+
+		sinon.assert.calledOnce(fnCancel1);
+		sinon.assert.calledWithExactly(fnCancel1);
+		sinon.assert.calledOnce(fnCancel2);
+		sinon.assert.calledOnce(fnCancel3);
+		assert.strictEqual(oRequestor.hasPendingChanges(), true);
+
+		oRequestor.removePost("groupId", oPostData);
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 		oRequestor.submitBatch("groupId");
 
-		return oPromise.then(function () {
-			assert.strictEqual(oRequestor.hasPendingChanges(), false);
-		});
+		return oPromise;
 	});
 
 	//*****************************************************************************************
 	QUnit.test("cancelPatch: only PATCH", function (assert) {
-		var oPromise,
+		var fnCancel = function() {},
+			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected (oError) {
+			assert.strictEqual(oError.canceled, true);
+		}
+
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel)
+				.then(unexpected, rejected),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel)
+				.then(unexpected, rejected),
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel)
+				.then(unexpected, rejected)
 		]);
 
 		this.mock(oRequestor).expects("request").never();
@@ -922,7 +947,7 @@ sap.ui.require([
 		oRequestor.cancelPatch("groupId");
 		oRequestor.submitBatch("groupId");
 
-		return oPromise.catch(function () {});
+		return oPromise;
 	});
 
 	//*****************************************************************************************
@@ -933,20 +958,22 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
 		var oPromise,
-			oRequestor = _Requestor.create("/Service/");
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+		oTestPromise = oPromise.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			});
 
 		// code under test
 		oRequestor.removePatch(oPromise);
 
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
-		return oPromise.then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.canceled, true);
-		});
+		return oTestPromise;
 	});
 
 	//*****************************************************************************************
@@ -971,13 +998,12 @@ sap.ui.require([
 			oRequestor.request("GET", "Employees", "groupId")
 		];
 
-
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				sinon.match({
 					method : "PATCH",
 					url : "Products('0')",
-					body: JSON.stringify({Name : "bar"})
+					body: {Name : "bar"}
 				}),
 				sinon.match({
 					method : "GET",
@@ -993,6 +1019,60 @@ sap.ui.require([
 		oRequestor.submitBatch("groupId");
 
 		return Promise.all(aPromises);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost", function (assert) {
+		var oBody = {},
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
+
+		oTestPromise = Promise.all([
+			oRequestor.request("POST", "Products", "groupId", {}, oBody).then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			}),
+			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"})
+		]);
+
+		// code under test
+		oRequestor.removePost("groupId", oBody);
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "POST",
+					url : "Products",
+					body: {Name : "bar"}
+				})
+			]).returns(Promise.resolve([
+				{responseText : "{}"}
+			]));
+		oRequestor.submitBatch("groupId");
+		return oTestPromise;
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost with only one POST", function (assert) {
+		var oBody = {},
+			oRequestor = _Requestor.create("/Service/"),
+			oTestPromise;
+
+		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody).then(
+			function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			}
+		);
+
+		// code under test
+		oRequestor.removePost("groupId", oBody);
+
+		this.mock(oRequestor).expects("request").never();
+		oRequestor.submitBatch("groupId");
+		return oTestPromise;
 	});
 
 	//*********************************************************************************************
@@ -1076,3 +1156,4 @@ sap.ui.require([
 // TODO: provide test that checks that .request() does not serialize twice in case of
 // 		 refreshSecurityToken and repeated request
 // TODO: cancelPatch: what about existing GET requests in deferred queue (delete or not)?
+// TODO: cancelPatch/removePatch/removePost are very similar, merge using a filter function?
