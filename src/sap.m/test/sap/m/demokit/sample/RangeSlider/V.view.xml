@@ -16,6 +16,6 @@
 		<RangeSlider range="{/RS5}" min="0" max="500" width="400px" class="sapUiSmallMarginBottom" />
 		<Text text="" />
 		<Text text="RangeSlider with Inputs" />
-		<RangeSlider range="[0,100]" min="0" max="500" width="400px" showHandleTooltip="false" inputsAsTooltips="true" class="sapUiSmallMarginBottom" />
+		<RangeSlider range="0,100" min="0" max="500" width="400px" showHandleTooltip="false" inputsAsTooltips="true" class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>
