@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			}
 		} else {
 			// Set the property on the wrapper or the control root itself
-			if (oLayoutData.isActive()) {	// Does the layout data have a DOM representation?
+			if (oLayoutData.$().length) {	// Does the layout data have a DOM representation?
 				// jQuery removes 'null' styles
 				if (sValue !== 0 && !sValue) {
 					oLayoutData.$().css(sPropertyPrefix + sProperty, null);

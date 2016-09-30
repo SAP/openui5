@@ -28,14 +28,14 @@
 			var oButton1 = new sap.m.Button({
 				text: "Change Visibility",
 				press: function(){
-					var bIsVisible = oItem2.getVisible();
+					var bIsVisible = sap.ui.getCore().byId("__image1-__clone1").getVisible();
 					bIsVisible = !bIsVisible;
-					oItem2.setVisible(bIsVisible);
+					sap.ui.getCore().byId("__image1-__clone1").setVisible(bIsVisible);
 				}
 			});
 
 			// Create items
-			var oItem1 = new sap.m.Image({
+			var oImage1 = new sap.m.Image({
 				src: "images/mark1.png",
 				alt: "test image",
 				decorative: false,
@@ -43,155 +43,20 @@
 				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
 			});
 
-			var oItem2 = new sap.m.Image({
+			var oImage2 = new sap.m.Image({
 				src: "images/mark2.png",
 				alt: "test image",
 				decorative: false,
 				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
-				visible: false
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
 			});
 
-			var oItem3 = new sap.m.Image({
+			var oImage3 = new sap.m.Image({
 				src: "images/mark3.png",
 				alt: "test image",
 				decorative: false,
 				densityAware: false,
 				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
-			});
-
-			var oItem4 = new sap.m.Image({
-				src: "images/mark1.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
-			});
-
-			var oItem5 = new sap.m.Image({
-				src: "images/mark2.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
-				visible: true
-			});
-
-			var oItem6 = new sap.m.Image({
-				src: "images/mark3.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
-			});
-
-			var oItem7 = new sap.m.Image({
-				src: "images/mark1.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
-			});
-
-			var oItem8 = new sap.m.Image({
-				src: "images/mark2.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
-				visible: true
-			});
-
-			var oItem9 = new sap.m.Image({
-				src: "images/mark3.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
-			});
-
-			var oItem10 = new sap.m.Image({
-				src: "images/mark1.png",
-				width: "100%",
-				height: "44px",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem11 = new sap.m.Input({
-				placeholder: "Some input",
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem12 = new sap.m.Button({
-				text: "Button",
-				width: "100%",
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem13 = new sap.m.Image({
-				src: "images/mark1.png",
-				width: "100%",
-				height: "44px",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem14 = new sap.m.Input({
-				placeholder: "Some input",
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem15 = new sap.m.Button({
-				text: "Button",
-				width: "100%",
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem16 = new sap.m.Image({
-				src: "images/mark1.png",
-				width: "100%",
-				height: "44px",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem17 = new sap.m.Input({
-				placeholder: "Some input",
-				layoutData: new sap.m.FlexItemData({growFactor: 2, shrinkFactor: 2, baseSize: "0%"})
-			});
-
-			var oItem18 = new sap.m.Button({
-				text: "Button",
-				width: "100%",
-				layoutData: new sap.m.FlexItemData({growFactor: 3, shrinkFactor: 3, baseSize: "0%"})
-			});
-
-			var oItem19 = new sap.m.Image({
-				src: "images/mark1.png",
-				width: "100%",
-				height: "44px",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
-			});
-
-			var oItem20 = new sap.m.Input({
-				placeholder: "Some input",
-				layoutData: new sap.m.FlexItemData({growFactor: 2, shrinkFactor: 2, baseSize: "0%"})
-			});
-
-			var oItem21 = new sap.m.Button({
-				text: "Button",
-				width: "100%",
-				layoutData: new sap.m.FlexItemData({growFactor: 3, shrinkFactor: 3, baseSize: "0%"})
 			});
 
 			// Create a vertical flexbox with items
@@ -201,16 +66,43 @@
 				alignContent: "Stretch",
 				justifyContent: "Start",
 				items: [
-					oItem1,
-					oItem2,
-					oItem3,
-					oItem4,
-					oItem5,
-					oItem6,
-					oItem7,
-					oItem8,
-					oItem9
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone(),
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone(),
+					oImage1.clone(),
+					oImage2.clone(),
+					oImage3.clone()
 				]
+			});
+
+			var oLayout1 = new sap.ui.layout.VerticalLayout("layout", {
+				content: [
+							oButton1,
+							oFlexBox1
+						]
+			});
+
+			var oImage4 = new sap.m.Image({
+				src: "images/action.png",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oInput1 = new sap.m.Input({
+				placeholder: "Some input",
+				width: "auto",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oButton2 = new sap.m.Button({
+				text: "Button",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
 			});
 
 			// Create a flexbox with wrapped items
@@ -218,9 +110,9 @@
 				renderType: "Div",
 				width: "100%",
 				items: [
-					oItem10,
-					oItem11,
-					oItem12
+					oImage4.clone(),
+					oInput1.clone(),
+					oButton2.clone()
 				]
 			});
 
@@ -229,119 +121,49 @@
 				renderType: "Bare",
 				width: "100%",
 				items: [
-					oItem13,
-					oItem14,
-					oItem15
+					oImage4.clone(),
+					oInput1.clone(),
+					oButton2.clone()
 				]
 			});
 
-			// Create a flexbox with wrapped items
-			var oFlexBox4 = new sap.m.FlexBox("flexbox4", {
-				renderType: "Div",
-				width: "100%",
-				items: [
-					oItem16,
-					oItem17,
-					oItem18
-				]
-			});
-
-			// Create a flexbox with bare items
-			var oFlexBox5 = new sap.m.FlexBox("flexbox5", {
-				renderType: "Bare",
-				width: "100%",
-				items: [
-					oItem19,
-					oItem20,
-					oItem21
-				]
-			});
-
-			oItem22 = new sap.m.Button({
-				text: "1",
+			oButton3 = new sap.m.Button({
 				width: "200px",
 				type: "Emphasized",
 				layoutData: new sap.m.FlexItemData({
 					shrinkFactor: 1
 				})
 			});
-			oItem22.addStyleClass("sapUiSmallMarginEnd");
 
-			oItem23 = new sap.m.Button({
-				text: "2",
-				width: "200px",
-				type: "Emphasized",
-				layoutData: new sap.m.FlexItemData({
-					shrinkFactor: 1
-				})
-			});
-			oItem23.addStyleClass("sapUiSmallMarginEnd");
-
-			oItem24 = new sap.m.Button({
-				text: "3",
-				width: "200px",
-				type: "Emphasized",
-				layoutData: new sap.m.FlexItemData({
-					shrinkFactor: 1
-				})
-			});
-			oItem24.addStyleClass("sapUiSmallMarginEnd");
-
-			oItem25 = new sap.m.Button({
-				text: "4",
-				width: "200px",
-				type: "Emphasized",
-				layoutData: new sap.m.FlexItemData({
-					shrinkFactor: 0
-				})
-			});
-			oItem25.addStyleClass("sapUiSmallMarginEnd");
-
-			oItem26 = new sap.m.Button({
-				text: "5",
+			oButton4 = new sap.m.Button({
 				width: "200px",
 				type: "Emphasized",
 				layoutData: new sap.m.FlexItemData({
 					shrinkFactor: 0,
-					growFactor: 3,
-					alignSelf: "Center"
+					growFactor: 3
 				})
 			});
-			oItem26.addStyleClass("sapUiSmallMarginEnd");
 
-			var oFlexBox6 = new sap.m.FlexBox({
+			var oFlexBox4 = new sap.m.FlexBox({
 				renderType: "Bare",
 				alignItems: "Center",
 				justifyContent: "Center",
 				items: [
-							oItem22,
-							oItem23,
-							oItem24,
-							oItem25,
-							oItem26
+							oButton3.clone().setText("1").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("2").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("3").addStyleClass("sapUiSmallMarginEnd"),
+							oButton4.clone().setText("4").addStyleClass("sapUiSmallMarginEnd"),
+							oButton3.clone().setText("5")
 				]
-			});
-
-			var oScrollContainer = new sap.m.ScrollContainer({
-				content: oFlexBox6
-			});
-
-			var oLayout = new sap.ui.layout.VerticalLayout("layout", {
-				content: [
-							oButton1,
-							oFlexBox1
-						]
 			});
 
 			var page1 = new sap.m.Page("page1", {
 				title:"FlexBox Test Page",
 				content:[
-					oLayout,
+					oLayout1,
 					oFlexBox2,
 					oFlexBox3,
-					oFlexBox4,
-					oFlexBox5,
-					oScrollContainer
+					oFlexBox4
 				]
 			});
 
