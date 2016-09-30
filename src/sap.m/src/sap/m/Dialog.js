@@ -118,7 +118,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					 * Indicates whether the dialog is draggable. If this property is set to true, the dialog will be draggable by it's header. This property has a default value false. The Dialog can be draggable only in desktop mode.
 					 * @since 1.30
 					 */
-					draggable: {type: "boolean", group: "Behavior", defaultValue: false}
+					draggable: {type: "boolean", group: "Behavior", defaultValue: false},
+
+					/**
+					 * This property expects a function with one parameter of type <code>Promise</code>. In the function you should call either <code>resolve()</code> or <code>reject()</code> on the <code>Promise</code> object.<br/>
+					 * The function allows you to define custom behaviour which will be executed when the ESCAPE key is pressed. By default when the ESCAPE key is pressed the Dialog is immediately closed.
+					 * @since 1.44
+					 */
+					escapeHandler : {type: "any", group: "Behavior", defaultValue: null}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -296,19 +303,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
-
-			//keyboard support for desktop environments
-			//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
-			//had to implement this on the popup instance because it did not work on the dialog prototype
-			this.oPopup.onsapescape = jQuery.proxy(function (oEvent) {
-				// when the escape is already handled by inner control, nothing should happen inside dialog
-				if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
-					return;
-				}
-				this.close();
-				//event should not trigger any further actions
-				oEvent.stopPropagation();
-			}, this);
 
 			/**
 			 *
@@ -576,6 +570,67 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					jQuery.sap.focus(oFirstFocusableDomRef);
 				}
 			}
+		};
+
+		/**
+		 * Makes sure app developer will always have access to the last created promise
+		 * @returns {{reject: reject, resolve: resolve}}
+		 * @private
+		 */
+		Dialog.prototype._getPromiseWrapper = function () {
+			var that = this;
+
+			return {
+				reject: function () {
+					that.currentPromise.reject();
+				},
+				resolve: function () {
+					that.currentPromise.resolve();
+				}
+			};
+		};
+
+
+		/**
+		 * Event handler for the escape key pressed event.
+		 * If it occurs and the developer hasn't defined the escapeHandler property, the Dialog is immediately closed.
+		 * Else the escapeHandler is executed and the developer may prevent the closing of the Dialog.
+		 * @param {jQuery.EventObject} oEvent The event object
+		 * @private
+		 */
+		Dialog.prototype.onsapescape = function(oEvent) {
+			var oEscapeHandler = this.getEscapeHandler(),
+				oPromiseArgument = {},
+				that = this;
+
+			if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
+				return;
+			}
+
+			if (typeof oEscapeHandler === 'function') {
+				// create a Promise to allow app developers to hook to the 'escape' event
+				// and prevent the closing of the dialog by executing the escape handler function they defined
+				new window.Promise(function (resolve, reject) {
+					oPromiseArgument.resolve = resolve;
+					oPromiseArgument.reject = reject;
+
+					that.currentPromise = oPromiseArgument;
+
+					oEscapeHandler(that._getPromiseWrapper());
+				})
+					.then(function (result) {
+						that.close();
+					})
+					.catch(function () {
+						jQuery.sap.log.info("Disallow dialog closing");
+					});
+			} else {
+
+				this.close();
+			}
+
+			//event should not trigger any further actions
+			oEvent.stopPropagation();
 		};
 
 		/* =========================================================== */

@@ -790,6 +790,44 @@
 				})
 			});
 
+			var confirmDialog;
+			var oEscapePreventDialog = new sap.m.Dialog({
+				title : "Try closing me with escape",
+				escapeHandler : function(oPromise) {
+					console.log(oPromise);
+					if (!confirmDialog) {
+						confirmDialog = new sap.m.Dialog({
+							icon : sap.ui.core.IconPool.getIconURI("message-information"),
+							title : "Are you sure?",
+							content : [
+								new sap.m.Text({
+									text : "Your unsaved changes will be lost"
+								})
+							],
+							type : sap.m.DialogType.Message,
+							buttons : [
+								new sap.m.Button({
+									text : "Yes",
+									press : function() {
+										confirmDialog.close();
+										oPromise.resolve();
+									}
+								}),
+								new sap.m.Button({
+									text : "No",
+									press : function() {
+										confirmDialog.close();
+										oPromise.reject();
+									}
+								})
+							]
+						});
+					}
+
+					confirmDialog.open();
+				}
+			});
+
 			//=================================================================
 			// Real use cases
 			//=================================================================
@@ -1399,6 +1437,13 @@
 							});
 							oDialog.toggleStyleClass("sapUiSizeCompact", true);
 							oDialog.open();
+						}
+					}),
+					new sap.m.Button({
+						width: _buttonWidth,
+						text: "Escape Handler",
+						press: function () {
+							oEscapePreventDialog.open();
 						}
 					}),
 					new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),
