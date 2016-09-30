@@ -3622,6 +3622,104 @@
 			}, 500);
 		});
 
+		module('Group Headers', {
+			beforeEach: function () {
+				oFF = new sap.m.FacetFilter({
+					showPersonalization: true
+				});
+				oFFL = new sap.m.FacetFilterList({
+					title: "Group List Sample",
+					showRemoveFacetIcon:false,
+					items: {
+						path: "/values",
+						templateShareable : true,
+						template: new sap.m.FacetFilterItem( {
+							text: "{text}",
+							key: "{key}"
+						}),
+						sorter: [new sap.ui.model.Sorter({
+							path: 'group',
+							descending: false,
+							group: true
+						})],
+						groupHeaderFactory: getGroupHeader
+					},
+					key:"FilterListWithGroupsKey"
+				});
+
+				oFFL.setModel(new sap.ui.model.json.JSONModel({
+					values: [
+						{key : "A01", text : "A1", selected : true, group: "A"},
+						{key : "A02", text : "A2", selected : true, group: "A"},
+						{key : "B01", text : "B1", selected : true, group: "B"},
+						{key : "B02", text : "B2", selected : true, group: "B"}
+					]
+				}));
+				oFF.addList(oFFL);
+				oFF.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				oFF.destroy();
+				oFFL.destroy();
+			}
+		});
+
+		asyncTest("if _updateSelectAllCheckBox is checked, all items must be selected, but not the headers", function() {
+			//prepare
+			var oPopover, oCheckbox, oSpy;
+
+			//act
+			oPopover = oFF._getPopover();
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+
+				start();
+				oCheckbox = getPopoverSelectAllCheckBox(oPopover);
+				//assert
+				ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked");
+
+				//act
+				oSpy = sinon.spy(oCheckbox,"setSelected");
+				oFFL._updateSelectAllCheckBox();
+
+				//assert
+				ok(oSpy.calledWith(false),
+						"oCheckbox is called with setSelected(false) because the selected items < items.length");
+
+				//act
+				oCheckbox.ontap(new jQuery.Event());
+				//assert
+				equal(oCheckbox.getSelected(), true, "Select all checkbox should be checked");
+				equal(oFFL.getSelectedItems().length, 4, "All items are selected also");
+
+				//act
+				oFFL._updateSelectAllCheckBox();
+
+				//assert
+				equal(oSpy.calledWith(true), true,
+						"oCheckbox is called with setSelected(true) because the selected items = items.length");
+			});
+			openPopover(oFF, 0);
+		});
+
+		test("Only items could be selected, not headers", function () {
+			//prepare
+			var oSpy, counter = 0;
+
+			//act
+			oSpy = sinon.spy(oFFL, "_isItemSelected");
+			oFFL._selectItemsByKeys();
+			for (var i = 0; i < oFFL.getAggregation("items").length; i++){
+				if (!oFFL.getAggregation("items")[i]._bGroupHeader){
+					counter++;
+				}
+			}
+			// Assert
+			equal(oSpy.callCount, counter,
+					"Group headers have '_bGroupHeader' property set to true and they don't have to be selected");
+
+		});
+
 		module('Overflow Arrows', {
 			beforeEach: function () {
 				this.oFacetFilter = new sap.m.FacetFilter({
@@ -3854,6 +3952,13 @@
 				equal(oSummaryBar.getContent().length, 1,
 						"The summary bar should have 1 control in its content when the reset button is not displayed");
 			}
+		}
+
+		function getGroupHeader(oGroup) {
+			return new sap.m.GroupHeaderListItem( {
+				title: "Group: " + oGroup.key,
+				upperCase: false
+			} );
 		}
 
 		/*
