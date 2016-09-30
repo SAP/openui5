@@ -2728,30 +2728,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 		// --------------------------------
-		// Table Column Height Calculation.
+		//  Adjust column header heights.
 		// --------------------------------
-		// Header row heights must be found after the cell width is set (due to contents wrapping),
-		// therefore this adjustment is done here and not in _collectTableSizes
+		// Ensure that all header cells in each header row are equally high
+		// Header row heights must be determined after the cell width is set (due to contents wrapping)
 		//
-		// Find height of each column header row and set all containing header sells to be equally high
-		var headerHeight = 0;
+		var totalHeight;
+		var headerRows = []; // two dimensional array of header cells
 
-		// Set height of a specific column header
-		function setColumnHeaderHeight(index, columnHeaderElement) {
-			columnHeaderElement.style.height = headerHeight + "px";
+		// Collect headers from fixed and scrollable areas into array of rows
+		function collectHeaderRows(rowIndex, headerRowElement){
+			var cols = [].slice.call(headerRowElement.getElementsByClassName("sapUiTableCol"));
+			headerRows[rowIndex] = (headerRows[rowIndex] || []).concat(cols);
 		}
 
-		// Fix column headers in a specific row
-		function fixHeaderRowHeight(index, headerRowElement) {
-			headerHeight = headerRowElement.clientHeight; // height of the row, as calculated by the browser
-			jQuery(headerRowElement).find(".sapUiTableCol").each(setColumnHeaderHeight);
+		// Process each header row separately. Add row height to total height.
+		function processRow(total, row) {
+
+			var maxHeight = 0,
+				cellHeight,
+				bDoFix = false, // in many cases, all cells have equal height and no adjustment is needed
+				l = row.length,
+				i;
+
+			// If, after resize, the cell contents requires less vertical space, the old
+			// css height would keep it too high, clear it
+			for (i = 0; i < l; i++) {
+				row[i].style.height = null;
+			}
+
+			// Find maximum cell height in the current row and check if all cells are equally high
+			for (i = 0; i < l; i++) {
+				cellHeight = row[i].offsetHeight;
+				if (maxHeight > 0 && cellHeight > 0 && cellHeight != maxHeight) {
+					bDoFix = true; // at least two cells in a row have different heights
+				}
+				maxHeight = Math.max(cellHeight, maxHeight);
+			}
+
+			// Fix column heights
+			if (bDoFix) {
+				for (i = 0; i < l; i++) {
+					row[i].style.height = maxHeight + "px";
+				}
+			}
+			return total + maxHeight;
 		}
 
 		if (!(this.getColumnHeaderHeight() > 0)) {
-			// Fix header rows:
-			$colHeaderContainer.each(fixHeaderRowHeight);
-			// Fix the selection column header:
-			$this.find(".sapUiTableColHdrCnt").height($colHdrScr.height());
+			// Select header rows in each header area separately and collect into rows
+			$this.find(".sapUiTableColHdrFixed").find(".sapUiTableColHdr").each(collectHeaderRows);
+			$this.find(".sapUiTableColHdrScr").find(".sapUiTableColHdr").each(collectHeaderRows);
+
+			totalHeight = headerRows.reduce(processRow, 0);
+
+			// Fix the whole column header area (to adjust the select all column header)
+			$this.find(".sapUiTableColHdrCnt").height(totalHeight);
 		}
 	};
 
