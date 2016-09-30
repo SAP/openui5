@@ -530,13 +530,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {sap.ui.base.Event} oControlEvent
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem");
+			var oItem = oControlEvent.getParameter("selectedItem"),
+				bTablet = Device.system.tablet;
+
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
 
-			if (this.getPickerType() === "Dialog") {
+			if (this.getPickerType() === "Dialog" || bTablet) {
 				this.onChange();
 			}
 		};
@@ -834,7 +836,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var bTablet, oPicker,
-				oRelatedControl, oFocusDomRef;
+				oRelatedControl, oFocusDomRef, bNotCombi;
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 
@@ -848,7 +850,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				return;
 			}
 
-			bTablet = Device.system.tablet;
+			bNotCombi = !Device.system.combi;
+			bTablet = Device.system.tablet && bNotCombi;
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
