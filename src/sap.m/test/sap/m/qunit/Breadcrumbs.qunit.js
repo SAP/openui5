@@ -46,6 +46,12 @@
 			sap.ui.test.qunit.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
 		},
+		waitForUIUpdates: function (){
+			core.applyChanges();
+		},
+		countChildren: function (oControl){
+			return oControl.$().children().length;
+		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -55,15 +61,16 @@
 			var $object = $(sSelector);
 			return $object.length > 0;
 		},
+		controlIsInTheDom: function (oControl){
+			return !!oControl.getDomRef();
+		},
 		setMobile: function () {
-			jQuery("html").removeClass("sapUiMedia-Std-Desktop");
-			jQuery("html").addClass("sapUiMedia-Std-Phone");
+			jQuery("html").removeClass("sapUiMedia-Std-Desktop").addClass("sapUiMedia-Std-Phone");
 			sap.ui.Device.system.desktop = false;
 			sap.ui.Device.system.phone = true;
 		},
 		resetMobile: function () {
-			jQuery("html").addClass("sapUiMedia-Std-Desktop");
-			jQuery("html").removeClass("sapUiMedia-Std-Phone");
+			jQuery("html").addClass("sapUiMedia-Std-Desktop").removeClass("sapUiMedia-Std-Phone");
 			sap.ui.Device.system.desktop = true;
 			sap.ui.Device.system.phone = false;
 		},
@@ -110,7 +117,7 @@
 		iExpectedLinkCount++;
 
 		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
-				"the link is inserted correctly");
+			"the link is inserted correctly");
 
 		assert.strictEqual(oStandardBreadCrumbsControl.getLinks()[2], oNewLink,
 			"the link is correctly inserted at position 2");
@@ -120,10 +127,10 @@
 		iExpectedLinkCount++;
 
 		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
-				"the link is inserted correctly");
+			"the link is inserted correctly");
 
 		assert.strictEqual(oStandardBreadCrumbsControl.getLinks()[0], oNewLink,
-				"the link is correctly inserted at the beginning of the array");
+			"the link is correctly inserted at the beginning of the array");
 
 		oStandardBreadCrumbsControl.removeLink(oStandardBreadCrumbsControl.getLinks()[0]);
 		iExpectedLinkCount--;
@@ -143,6 +150,28 @@
 		assert.throws(function () {
 			oStandardBreadCrumbsControl.addLink(oFactory.getText());
 		}, "an exception is thrown when trying to add an incorrect type to the links aggregation");
+	});
+
+	QUnit.test("Toggling the links' visibility", function (assert) {
+		var oBreadcrumbsControl = this.oStandardBreadCrumbsControl,
+			oSecondLink = oBreadcrumbsControl.getLinks()[1];
+
+		helpers.renderObject(oBreadcrumbsControl);
+
+		assert.ok(helpers.objectIsInTheDom(oSecondLink), "Initially the link is visible and it's in the dom");
+		assert.strictEqual(helpers.countChildren(oBreadcrumbsControl), 5);
+
+		oSecondLink.setVisible(false);
+		helpers.waitForUIUpdates();
+
+		assert.ok(!helpers.controlIsInTheDom(oSecondLink), "The link is not visible and not in the dom");
+		assert.strictEqual(helpers.countChildren(oBreadcrumbsControl), 4);
+
+		oSecondLink.setVisible(true);
+		helpers.waitForUIUpdates();
+
+		assert.ok(helpers.objectIsInTheDom(oSecondLink), "The link is visible again and it's in the dom");
+		assert.strictEqual(helpers.countChildren(oBreadcrumbsControl), 5);
 	});
 
 	QUnit.test("Current location setter", function (assert) {
