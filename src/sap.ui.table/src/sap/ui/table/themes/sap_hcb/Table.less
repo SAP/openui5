@@ -21,23 +21,31 @@
 	border: 1px solid @sapUiListBorderColor;
 }
 
-
-
-
-
-
-
 .sapUiTableColHdrCnt {
-	border-bottom: 3px solid @sapUiListHeaderBorderColor;
+	border-bottom-width: 3px;
 }
+
+.sapUiTableCol:hover,
+.sapUiTableColRowHdr:hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiTableColRowHdrIco::after {
+	color: @sapUiContentIconColor;
+}
+
+
+
+
+
+
+
+
 
 .sapUiTableCtrl tr.sapUiTableRowHvr,
 tr.sapUiTableRowHvr .sapMObjStatusText,
 tr.sapUiTableRowHvr .sapMObjStatusTitle,
-tr.sapUiTableRowHvr .sapMObjStatusIcon,
-.sapUiTableCol:hover .sapMObjStatusText,
-.sapUiTableCol:hover .sapMObjStatusTitle,
-.sapUiTableCol:hover .sapMObjStatusIcon {
+tr.sapUiTableRowHvr .sapMObjStatusIcon {
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -49,16 +57,8 @@ tr.sapUiTableRowHvr .sapMObjStatusIcon,
 	color: @sapUiContentContrastTextColor;
 }
 
-.sapUiTableCol:hover,
-.sapUiTableColRowHdr:hover,
-.sapUiSizeCompact .sapUiTableCol:hover,
-.sapUiSizeCompact .sapUiTableColRowHdr:hover {
-	background-color: @sapUiListHoverBackground;
-}
-
 .sapUiSizeCompact, .sapUiSizeCozy {
 	.sapUiTableSelModeMultiToggle {
-		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
 		.sapUiTableRowHdr::after {
 			color: @sapUiContentIconColor;
 		}
