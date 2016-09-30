@@ -237,25 +237,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	};
 
 	/**
-	 * Returns the context data as required for change detection/diff. This may not contain
-	 * all of the data, but just the key property
+	 * Returns the entry key. As in OData all entities have a unique ID in the URL, the path of the
+	 * context is suitable here
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.getContextData = function(oContext) {
-		// if no updates need to be detected and no custom key method was defined,
-		// just return the context path as unique key
-		if (!this.bDetectUpdates && !this.fnGetEntryKey) {
-			return oContext.getPath();
-		}
-
-		if (!this.bDetectUpdates) {
-			return this.fnGetEntryKey(oContext);
-		} else {
-			return JSON.stringify(oContext.getObject());
-		}
+	ODataListBinding.prototype.getEntryKey = function(oContext) {
+		return oContext.getPath();
 	};
 
+	/**
+	 * Returns the entry data as required for change detection/diff. This is a JSON serialization of
+	 * the entity, in case select/expand were used with only the selected/expanded parts.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getEntryData = function(oContext) {
+		return JSON.stringify(oContext.getObject());
+	};
 
 	/**
 	 * Return contexts for the list

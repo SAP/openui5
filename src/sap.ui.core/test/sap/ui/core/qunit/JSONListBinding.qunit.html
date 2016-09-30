@@ -197,6 +197,33 @@
 		equal(contexts.diff.length, 2, "Delta information is available");
 	});
 
+	test("extended change detection with grouping", function(){
+		var listBinding = bindings[0];
+		listBinding.sort([
+			new sap.ui.model.Sorter("gender", false, true),
+			new sap.ui.model.Sorter("lastName")
+		]);
+		listBinding.enableExtendedChangeDetection(false, "lastName");
+
+		var	contexts = listBinding.getContexts(),
+			newContexts;
+
+		equal(contexts.length, 7, "Current contexts should contain 7 items");
+
+		// Change the gender in a way that the sort order is not affected
+		testData.teamMembers[4].gender = null;
+		testData.teamMembers[6].firstName = "Paul";
+		listBinding.checkUpdate();
+
+		newContexts = listBinding.getContexts();
+		equal(newContexts.length, 7, "Current contexts should contain 7 items");
+		ok(jQuery.sap.equal(contexts, newContexts), "Old and new contexts array is equal");
+
+		// Although a key is used with extended change detection, the diff must contain
+		// an update, as grouping is enabled on this binding.
+		equal(newContexts.diff.length, 2, "Delta information is available");
+	});
+
 	module("Listbinding refresh", {
 		beforeEach: function() {
 			setup();
