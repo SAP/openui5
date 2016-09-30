@@ -736,6 +736,42 @@ sap.ui.define([
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help to structure your tests.
 		 * @param {map} mPageObjects
 		 * @param {map} mPageObjects.&lt;your-page-object-name&gt; Multiple page objects are possible, provide at least actions or assertions
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.viewName] When a viewName is given, all waitFors inside of the page object will get a viewName parameter.
+		 * Here is an example:
+		 * <pre>
+		 * 		<code>
+		 * 			Opa5.createPageObjects({
+		 * 				viewName: "myView",
+		 * 				onMyPageWithViewName: {
+		 * 					assertions: {
+		 * 						iWaitForAButtonInMyView: function () {
+		 * 							this.waitFor({
+		 * 								id: "myButton",
+		 * 								success: function (oButton) {
+		 * 									// the button is defined in the view myView
+		 * 								}
+		 * 							});
+		 * 						}
+		 * 					}
+		 * 				}
+		 *     </code>
+		 * </pre>
+		 * This saves you repeating the viewName in every waitFor statement of the page object.
+		 * It is possible to overwrite the viewName of the page object in a specific waitFor.
+		 * So if you have specified a <code>viewName: "myView"</code> in your page object
+		 * and you want to look for a control with a global id you may use <code>viewName: ""</code> in a waitFor
+		 * to overwrite the viewName of the page Object. Example:
+		 * <pre>
+		 * 		<code>
+		 * 			this.waitFor({
+		 * 				id: "myButton",
+		 * 				viewName: "",
+		 * 				success: function (oButton) {
+		 * 					// now a button with the global id "myButton" will be searched
+		 * 				}
+		 * 			});
+		 * 		</code>
+		 * </pre>
 		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
 		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] Can be used as an arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
