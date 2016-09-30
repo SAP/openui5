@@ -253,12 +253,12 @@ sap.ui.define([
 					throw oError;
 				}
 				oCache.sContext = oResult["@odata.context"];
-				if (iResultLength < iExpectedLength) {
-					oCache.iMaxElements = iStart + iResultLength;
-					oCache.aElements.splice(oCache.iMaxElements, iExpectedLength - iResultLength);
-				}
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
+				}
+				if (iResultLength < iExpectedLength) {
+					oCache.iMaxElements = Math.min(oCache.iMaxElements, iStart + iResultLength);
+					oCache.aElements.length = oCache.iMaxElements;
 				}
 			})["catch"](function (oError) {
 				if (aElements === oCache.aElements) {
