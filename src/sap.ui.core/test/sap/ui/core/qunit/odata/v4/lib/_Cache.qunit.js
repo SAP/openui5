@@ -317,6 +317,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("parallel reads beyond length", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oRequestorMock = this.mock(oRequestor);
+
+		mockRequest(oRequestorMock, sResourcePath, 0, 30);
+		mockRequest(oRequestorMock, sResourcePath, 30, 1);
+
+		return Promise.all([
+			oCache.read(0, 30).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(0, 26));
+				assert.strictEqual(oCache.iMaxElements, 26);
+			}),
+			oCache.read(30, 1).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(0, 0));
+				assert.strictEqual(oCache.iMaxElements, 26);
+			})
+		]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			oExpand = {};
