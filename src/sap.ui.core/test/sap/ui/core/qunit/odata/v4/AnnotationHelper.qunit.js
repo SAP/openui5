@@ -145,5 +145,61 @@ sap.ui.require([
 	//TODO error handling? if path is wrong in annotation, a warning might be helpful --> later!
 	//TODO multi-valued structural or navigation property "in between" are not recognized; maybe
 	// add such checks only in case warnings would be logged?
+
+	//*********************************************************************************************
+	QUnit.test("getNavigationPath", function (assert) {
+		var mFixture = {
+				"" : "",
+				"@UI.LineItem" : "",
+				"EMPLOYEE_2_TEAM@Common.Label" : "EMPLOYEE_2_TEAM",
+				"EMPLOYEE_2_TEAM/@UI.LineItem" : "EMPLOYEE_2_TEAM",
+				"EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES" : "EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES",
+				"EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/$count" : "EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES",
+				"EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/@UI.LineItem"
+					: "EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES",
+				"EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES@Common.Label"
+					: "EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES",
+				"tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
+					: "TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM",
+				"tea_busi.TEAM/TEAM_2_EMPLOYEES/tea_busi.WORKER/EMPLOYEE_2_TEAM/@UI.LineItem"
+					: "TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM"
+			},
+			sPath;
+
+		for (sPath in mFixture) {
+			assert.strictEqual(AnnotationHelper.getNavigationPath(sPath), mFixture[sPath], sPath);
+		}
+
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getNavigationBinding", function (assert) {
+		var oAnnotationHelperMock = this.mock(AnnotationHelper),
+			mFixture = {
+				"" : "",
+				"EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES" : "{EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES}",
+				"foo\\bar" : Error,
+				"foo{bar" : Error,
+				"foo}bar" : Error,
+				"foo:bar" : Error
+			},
+			sPath;
+
+		// Note: avoids "Don't make functions within a loop"
+		function codeUnderTest() {
+			return AnnotationHelper.getNavigationBinding("foo/bar");
+		}
+
+		for (sPath in mFixture) {
+			oAnnotationHelperMock.expects("getNavigationPath")
+				.withExactArgs("foo/bar")
+				.returns(sPath);
+
+			if (mFixture[sPath] === Error) {
+				assert.throws(codeUnderTest, new Error("Invalid OData identifier: " + sPath));
+			} else {
+				assert.strictEqual(codeUnderTest(), mFixture[sPath], sPath);
+			}
+		}
+	});
 });
-//TODO can we avoid the export to the global namespace? ODataMetaModel needs jQuery.sap.getObject()!
