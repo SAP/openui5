@@ -799,13 +799,36 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			// if popup is open the text-selection is made by doTypeAhead
 			// do not select all text in this case
 			var $Ref = jQuery(this.getInputDomRef()),
-			l = $Ref.val().length;
+				l = $Ref.val().length;
 			if (l > 0 && !this.mobile) {
-				this._doSelect(0, l);
+				this._callDoSelectAfterFocusIn(0, l);
 			}
 			this._bFocusByOpen = undefined;
 		}
 		ComboBox.prototype.onfocusin.apply(this, arguments);
+	};
+
+	/**
+	 * For IE selecting text by #setSelectedRange method (this is what function _doSelect does)
+	 * provokes focus, so this function makes sure we were not called because of "_doSelect" more than once.
+	 * Edge does not have such behavior.
+	 * @param iStart the 0-based start position for the selection
+	 * @param iEnd the 0-based end position for the selection
+	 * @private
+	 */
+	DropdownBox.prototype._callDoSelectAfterFocusIn = function(iStart, iEnd) {
+		if (!sap.ui.Device.browser.internet_explorer) {
+			this._doSelect(iStart, iEnd);
+		} else {
+			// Enum _eDoSelectAfterFocusIn as well describes the IE flow:  undefined -> "onfocusin" -> "_doSelect",
+			// so make sure we are not called due to _doSelect.
+			if (!this._eDoSelectAfterFocusIn || this._eDoSelectAfterFocusIn !== "_doSelect") {
+				this._eDoSelectAfterFocusIn = "onfocusin";
+				this._doSelect(iStart, iEnd);
+			} else {
+				this._eDoSelectAfterFocusIn = undefined;
+			}
+		}
 	};
 
 
