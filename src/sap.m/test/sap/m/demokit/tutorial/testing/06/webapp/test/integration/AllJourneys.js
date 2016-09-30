@@ -12,7 +12,8 @@ sap.ui.require([
 	"use strict";
 	Opa5.extendConfig({
 		arrangements: new Common(),
-		viewNamespace: "sap.ui.demo.bulletinboard.view."
+		viewNamespace: "sap.ui.demo.bulletinboard.view.",
+		autoWait: true
 	});
 
 	sap.ui.require([
