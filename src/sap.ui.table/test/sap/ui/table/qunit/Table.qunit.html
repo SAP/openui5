@@ -675,8 +675,7 @@
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
 				var iScrollRange = oTable._getRowCount() * oTable._getDefaultRowHeight();
 				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
-				assert.equal(jQuery(".sapUiTableCtrlScr").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
-				assert.equal(jQuery(".sapUiTableRowHdrScr").scrollTop(), iRowHeightsDelta, "Row Header Correction is equal to RowHeightsDelta");
+				assert.equal(jQuery(".sapUiTableCCnt").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
 				done();
 			}, 500);
 		}, 500);

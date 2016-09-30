@@ -1348,8 +1348,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iRowCorrection != null && iRowCorrection > -1) {
-			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
-			oInnerScrollContainer.scrollTop(iRowCorrection);
+			this.$().find(".sapUiTableCCnt").scrollTop(iRowCorrection);
 		}
 	};
 
@@ -2064,8 +2063,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!oVSb) {
 			return;
 		}
+
 		if (iScrollTop === undefined) {
 			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
+		}
+
+		var oTableCCnt = this.getDomRef("tableCCnt");
+		if (oTableCCnt) {
+			if (this.getFixedRowCount() > 0) {
+				oVSb.style.top += oTableCCnt.offsetTop + "px";
+			} else {
+				oVSb.style.top = oTableCCnt.offsetTop + "px";
+			}
 		}
 
 		oVSb.scrollTop = iScrollTop;
