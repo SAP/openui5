@@ -186,70 +186,73 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	* @private
 	 */
 	TooltipBase.prototype.onmouseover = function(oEvent) {
-		// The Element or Control that initiated the event.
-		var oEventSource = jQuery(oEvent.target).control(0);
-		//jQuery.sap.log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0));
-		if ( oEventSource != null) {
 
+		var oEventSource = jQuery(oEvent.target).control(0), // The Element or Control that initiated the event.
+			oCurrentElement = jQuery(oEvent.currentTarget).control(0), // The current Element or Control within the event bubbling phase.
+			oLeftElement = jQuery(oEvent.relatedTarget).control(0); // Indicates the element being exited.
+		//jQuery.sap.log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0) + "   " + this._currentControl.getId());
+
+		if (!oEventSource) {
+			return;
+		}
+
+		if (oEventSource === this) {
 			// If we move in the tooltip itself then do not close the tooltip.
-			if ( oEventSource === this) {
-				if (this.sCloseNowTimeout) {
-						jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
-						this.sCloseNowTimeout = null;
-					}
-					oEvent.stopPropagation();
-					oEvent.preventDefault();
-					return;
+			// Since the focus goes into the tooltip which means the tooltip is already open,
+			// we don't need to execute the opening logic and simply return.
+			if (this.sCloseNowTimeout) {
+				jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
+				this.sCloseNowTimeout = null;
 			}
-			// The current Element or Control within the event bubbling phase.
-			var oCurrentElement = jQuery(oEvent.currentTarget).control(0);
-			// Cancel close event if we move from parent with extended tooltip to child without own tooltip
-			if ( oCurrentElement !== oEventSource &&  !this.isStandardTooltip(oEventSource.getTooltip()))  {
-				if (this.sCloseNowTimeout) {
-					jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
-					this.sCloseNowTimeout = null;
-					oEvent.stopPropagation();
-					oEvent.preventDefault();
-					return;
-				}
-			}
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+			return;
+		}
 
-			// Indicates the element being exited.
-			var oLeftElement = jQuery(oEvent.relatedTarget).control(0);
-			if (oLeftElement) {
-
-				// Cancel close event if we move from child without own tooltip to the parent with rtt - current element has to have rtt.
-				if (oLeftElement.getParent()) {
-					if (oLeftElement.getParent() === oCurrentElement && oCurrentElement === oEventSource) {
-						// It is a child of the current element and has no tooltip
-						var oLeftElementTooltip = oLeftElement.getTooltip();
-						if ( !this.isStandardTooltip(oLeftElementTooltip) && (!oLeftElementTooltip || !(oLeftElementTooltip instanceof TooltipBase))) {
-							if (this.sCloseNowTimeout) {
-								jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
-								this.sCloseNowTimeout = null;
-									oEvent.stopPropagation();
-									oEvent.preventDefault();
-								return;
-							}
-						}
-					}
-				}
-			}
-
-			// Open the popup
-			if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
-				// Set all standard tooltips to empty string
-				this.removeStandardTooltips(oEventSource);
-				// Open with delay 0,5 sec.
-				if (TooltipBase.sOpenTimeout) {
-					jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
-				}
-				TooltipBase.sOpenTimeout = jQuery.sap.delayedCall(this.getOpenDelay(), this, "openPopup", [this._currentControl]);
-				// We need this for the scenario if the both a child and his parent have an RichTooltip
+		if (oCurrentElement === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
+			// if the same element is reached from both oEvent.currentTarget and oEvent.target or the oEventSource
+			// doesn't have a tooltip set, it means that there's no new control between the oEvent.target and
+			// oEvent.currentTarget and the mouse moves within the same control, the close should be cancelled.
+			if (this.sCloseNowTimeout) {
+				jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
+				this.sCloseNowTimeout = null;
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
 		}
+
+		if (oLeftElement) {
+			// Cancel close event if we move from child without own tooltip to the parent with rtt - current element has to have rtt.
+			if (oLeftElement.getParent()) {
+				if (oLeftElement.getParent() === oCurrentElement && oCurrentElement === oEventSource) {
+					// It is a child of the current element and has no tooltip
+					var oLeftElementTooltip = oLeftElement.getTooltip();
+					if ( !this.isStandardTooltip(oLeftElementTooltip) && (!oLeftElementTooltip || !(oLeftElementTooltip instanceof TooltipBase))) {
+						if (this.sCloseNowTimeout) {
+							jQuery.sap.clearDelayedCall(this.sCloseNowTimeout);
+							this.sCloseNowTimeout = null;
+							oEvent.stopPropagation();
+							oEvent.preventDefault();
+						}
+					}
+				}
+			}
+		}
+
+		// Open the popup
+		if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {
+			// Set all standard tooltips to empty string
+			this.removeStandardTooltips(oEventSource);
+			// Open with delay 0,5 sec.
+			if (TooltipBase.sOpenTimeout) {
+				jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
+			}
+			TooltipBase.sOpenTimeout = jQuery.sap.delayedCall(this.getOpenDelay(), this, "openPopup", [this._currentControl]);
+			// We need this for the scenario if the both a child and his parent have an RichTooltip
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+		}
+
 	};
 
 	/**
