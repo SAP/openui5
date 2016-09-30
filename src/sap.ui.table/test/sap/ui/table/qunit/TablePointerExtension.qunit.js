@@ -75,11 +75,11 @@ QUnit.test("resize", function(assert) {
 		}
 	}
 	qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
+	// resized table by 110px, in cozy mode this allows 2 rows to be added
 	assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
 	assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
 	testAdaptations(false);
 });
-
 
 QUnit.module("Column Resizing", {
 	setup: function() {
@@ -611,7 +611,7 @@ QUnit.asyncTest("Reordering via Drag&Drop - decrease Index", function(assert) {
 });
 
 QUnit.asyncTest("No Reordering of fixed columns (within fixed)", function(assert) {
-	oTable.setFixedColumnCount(5);
+	oTable.setFixedColumnCount(4);
 	sap.ui.getCore().applyChanges();
 
 	var oSettings = computeSettingsForReordering(oTable, 2, true);
@@ -746,6 +746,13 @@ QUnit.module("Helpers", {
 	teardown: function () {
 		destroyTables();
 	}
+});
+
+QUnit.test("_debug()", function(assert) {
+	var oExtension = oTable._getPointerExtension();
+	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	oExtension._debug();
+	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
 });
 
 QUnit.test("_getEventPosition()", function(assert) {

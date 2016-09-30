@@ -23,8 +23,9 @@ sap.ui.define(['jquery.sap.global',
 				'./matchers/Interactable',
 				'./matchers/Visible',
 				'./pipelines/MatcherPipeline',
-				'./_XHRCounter'],
-	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline, _XHRCounter) {
+				'./_autoWaiter',
+				'sap/ui/test/_opaCorePlugin'],
+	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline, _autoWaiter, _opaCorePlugin) {
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
 			oVisibleMatcher = new Visible(),
@@ -46,18 +47,8 @@ sap.ui.define(['jquery.sap.global',
 		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
 			constructor : function(sLogPrefix) {
-				var that = this;
 				sLogPrefix = sLogPrefix || "sap.ui.test.OpaPlugin";
 				this._oLogger = $.sap.log.getLogger(sLogPrefix);
-
-				sap.ui.getCore().registerPlugin({
-					startPlugin: function(oCore) {
-						that.oCore = oCore;
-					},
-					stopPlugin: function() {
-						that.oCore = undefined;
-					}
-				});
 			},
 
 			/**
@@ -69,25 +60,7 @@ sap.ui.define(['jquery.sap.global',
 			 * @public
 			 */
 			getAllControls : function (fnConstructorType) {
-				var oControl,
-					sPropertyName,
-					aResult = [],
-					oCoreElements = this._getCoreElements();
-
-				//Performance critical
-				for (sPropertyName in oCoreElements) {
-					if (!oCoreElements.hasOwnProperty(sPropertyName)) {
-						continue;
-					}
-
-					oControl = oCoreElements[sPropertyName];
-
-					if (this._checkControlType(oControl, fnConstructorType)) {
-						aResult.push(oControl);
-					}
-				}
-
-				return aResult;
+				return _opaCorePlugin.getAllControls(fnConstructorType);
 			},
 
 			/**
@@ -178,8 +151,8 @@ sap.ui.define(['jquery.sap.global',
 
 			getAllControlsInContainer : function ($Container, fnControlType) {
 				return this._filterUniqueControlsByCondition($Container.find("*").control(),function (oControl) {
-					return this._checkControlType(oControl, fnControlType);
-				}.bind(this));
+					return _opaCorePlugin.checkControlType(oControl, fnControlType);
+				});
 			},
 
 			/**
@@ -303,7 +276,7 @@ sap.ui.define(['jquery.sap.global',
 					// a range of controls or a single control
 					// this will also synchronize when autoWait is set to true
 					vControl = this.getMatchingControls(oPluginOptions);
-				} else if (oOptions.autoWait && _XHRCounter.hasPendingRequests()) {
+				} else if (oOptions.autoWait && _autoWaiter.hasToWait()) {
 					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
 				}
 
@@ -382,11 +355,10 @@ sap.ui.define(['jquery.sap.global',
 			 * @public
 			 */
 			getControlByGlobalId : function (oOptions) {
-				var that = this,
-					vStringOrArrayOrRegex = oOptions.id,
+				var vStringOrArrayOrRegex = oOptions.id,
 					vControl = [],
 					aIds = [],
-					oCoreElements = this._getCoreElements();
+					oCoreElements = _opaCorePlugin.getCoreElements();
 
 				if (typeof vStringOrArrayOrRegex === "string") {
 					vControl = oCoreElements[vStringOrArrayOrRegex];
@@ -396,7 +368,7 @@ sap.ui.define(['jquery.sap.global',
 						return null;
 					}
 
-					if (!this._checkControlType(vControl, oOptions.controlType)) {
+					if (!_opaCorePlugin.checkControlType(vControl, oOptions.controlType)) {
 						this._oLogger.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
 							"' but the type does not match the control retrieved: '" + vControl + "' - null is returned");
 						return null;
@@ -427,7 +399,7 @@ sap.ui.define(['jquery.sap.global',
 					return oCoreElements[sId];
 				}).filter(function (oControl) {
 					//only return defined controls
-					return that._checkControlType(oControl, oOptions.controlType) && oControl && !oControl.bIsDestroyed;
+					return _opaCorePlugin.checkControlType(oControl, oOptions.controlType) && oControl && !oControl.bIsDestroyed;
 				});
 			},
 
@@ -475,24 +447,6 @@ sap.ui.define(['jquery.sap.global',
 				});
 			},
 
-			_getCoreElements : function () {
-				var oElements = {};
-
-				if (!this.oCore) {
-					return oElements;
-				}
-
-				return this.oCore.mElements || oElements;
-			},
-
-			_checkControlType : function(oControl, fnControlType) {
-				if (fnControlType) {
-					return oControl instanceof fnControlType;
-				} else {
-					return true;
-				}
-			},
-
 			_modifyControlType : function (oOptions) {
 				var vControlType = oOptions.controlType;
 				//retrieve the constructor instance
@@ -518,6 +472,16 @@ sap.ui.define(['jquery.sap.global',
 				return true;
 			}
 		});
+
+		var oSingleton;
+
+		OpaPlugin.getInstance = function () {
+			if (!oSingleton) {
+				oSingleton = new OpaPlugin("sap.ui.test.Opa5");
+			}
+
+			return oSingleton;
+		};
 
 		/**
 		 * marker for a return type

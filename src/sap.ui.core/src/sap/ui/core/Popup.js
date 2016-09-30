@@ -924,17 +924,24 @@ sap.ui.define([
 				if (this._bModal && !bContains) { // case: modal popup and focus has gone somewhere else in the document
 					// The popup is modal, but the focus has moved to a part of the document that is NOT inside the popup
 					// check whether this modal popup is the topmost one
-					var bTopMost = (Popup.getLastZIndex() == this._iZIndex);
+					var bTopMost = Popup.blStack.length > 0 && Popup.blStack[Popup.blStack.length - 1].popup === this;
 
 					if (bTopMost) {
-
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
-						if (!Device.support.touch || jQuery(oEvent.target).is(":input")) {
-
-							// set the focus back to the last focused element inside the popup or at least to the popup root
-							var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
-							jQuery.sap.focus(oDomRefToFocus);
+						if (Device.system.desktop || jQuery(oEvent.target).is(":input")) {
+							// The focus should be set after the current call stack is finished
+							// because the existing timer for autoclose popup is cancelled by
+							// setting the focus here.
+							//
+							// Suppose an autoclose popup is opened within a modal popup. Clicking
+							// on the blocklayer should wait the autoclose popup to first close then
+							// set the focus back to the lasted blurred element.
+							jQuery.sap.delayedCall(0, this, function() {
+								// set the focus back to the last focused element inside the popup or at least to the popup root
+								var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
+								jQuery.sap.focus(oDomRefToFocus);
+							});
 						}
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
@@ -1162,6 +1169,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._closed = function() {
+		if (this._bModal) {
+			this._hideBlockLayer();
+		}
+
 		var $Ref = this._$(/* force rendering */false, /* getter only */true);
 		if ($Ref.length) {
 			var oDomRef = $Ref.get(0);
@@ -1220,10 +1231,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._duringClose = function() {
-		if (this._bModal) {
-			this._hideBlockLayer();
-		}
-
 		//deregister resize handler
 		if (this._resizeListenerId) {
 			ResizeHandler.deregister(this._resizeListenerId);
@@ -1483,9 +1490,14 @@ sap.ui.define([
 
 		if ($Ref.length) {
 			var oAt = oPosition.at;
+			var oDomRef = $Ref.get(0);
 
 			if (typeof (oAt) === "string") {
-				$Ref.get(0).style.display = "block";
+				oDomRef.style.display = "block";
+
+				// reset the 'left' and 'right' position CSS to avoid changing the DOM size by setting both 'left' and 'right'.
+				oDomRef.style.left = "";
+				oDomRef.style.right = "";
 				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
 				this._fixPositioning(oPosition, bRtl);
 			} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
@@ -2010,12 +2022,33 @@ sap.ui.define([
 		this.close();
 		this.oContent = null;
 
+		// also hide the blocklayer synchronously instead of waiting for the closing animation
+		if (this._bModal) {
+			this._hideBlockLayer();
+		}
+
 		if (this._bFollowOf) {
 			this.setFollowOf(null);
 		}
 
 		if (this._bEventBusEventsRegistered) {
 			this._unregisterEventBusEvents();
+		}
+
+		// remove the top shield layer if the timer isn't done yet
+		if (this._iTopShieldRemoveTimer) {
+			jQuery.sap.clearDelayedCall(this._iTopShieldRemoveTimer);
+			this.oShieldLayerPool.returnObject(this._oTopShieldLayer);
+			this._oTopShieldLayer = null;
+			this._iTopShieldRemoveTimer = null;
+		}
+
+		// remove the bottom shield layer if the timer isn't done yet
+		if (this._iBottomShieldRemoveTimer) {
+			jQuery.sap.clearDelayedCall(this._iBottomShieldRemoveTimer);
+			this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
+			this._oBottomShieldLayer = null;
+			this._iBottomShieldRemoveTimer = null;
 		}
 	};
 
@@ -2255,7 +2288,10 @@ sap.ui.define([
 		}
 
 		// push current z-index to stack
-		Popup.blStack.push(this._iZIndex - 2);
+		Popup.blStack.push({
+			zIndex: this._iZIndex - 2,
+			popup: this
+		});
 		$BlockRef.css({
 			"z-index" : this._iZIndex - 2,
 			"visibility" : "visible"
@@ -2280,7 +2316,7 @@ sap.ui.define([
 
 			if (Popup.blStack.length > 0) {
 				// set the blocklayer z-index to the last z-index in the stack and show it
-				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1];
+				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1].zIndex;
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
 			} else {
@@ -2290,8 +2326,6 @@ sap.ui.define([
 
 				// Allow scrolling again in HTML page only if there is no BlockLayer left
 				jQuery("html").removeClass("sapUiBLyBack");
-
-
 			}
 		}
 	};

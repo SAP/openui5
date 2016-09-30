@@ -103,7 +103,7 @@ sap.ui.define([
 		 * Starts a UIComponent.
 		 * @param {object} oOptions An Object that contains the configuration for starting up a UIComponent.
 		 * @param {object} oOptions.componentConfig Will be passed to {@link sap.ui.component component}, please read the respective documentation.
-		 * @param {string} [oOptions.hash] Sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
+		 * @param {string} [oOptions.hash] Sets the hash {@link sap.ui.core.routing.HashChanger#setHash} to the given value.
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
 		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
@@ -206,11 +206,12 @@ sap.ui.define([
 		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		function iTeardownMyAppFrame () {
-			return this.waitFor({
-				success : function () {
-					iFrameLauncher.teardown();
-				}
-			});
+			var oWaitForObject = createWaitForObjectWithoutDefaults();
+			oWaitForObject.success = function () {
+				iFrameLauncher.teardown();
+			};
+
+			return this.waitFor(oWaitForObject);
 		}
 
 		/**
@@ -233,7 +234,7 @@ sap.ui.define([
 		 * Takes the same parameters as {@link sap.ui.test.Opa#waitFor}. Also allows you to specify additional parameters:
 		 *
 		 * @param {object} options An Object containing conditions for waiting and callbacks
-		 * @param {string|regexp} [options.id] The global ID of a control, or the ID of a control inside a view.
+		 * @param {string|RegExp} [options.id] The global ID of a control, or the ID of a control inside a view.
 		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching ID.<br/>
 		 * Example of a waitFor:
 		 * <pre>
@@ -263,7 +264,7 @@ sap.ui.define([
 		 * they will not be matched since only the part you really write in your views will be matched.
 		 * @param {string} [options.viewName] The name of a view.
 		 * If this is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
-		 * @param {string} [options.viewNamespace] This string gets appended before the viewName - should probably be set to the {@link sap.ui.test.Opa5#extendConfig}.
+		 * @param {string} [options.viewNamespace] This string gets appended before the viewName - should probably be set to the {@link sap.ui.test.Opa5.extendConfig}.
 		 * @param {function|array|sap.ui.test.matchers.Matcher} [options.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
 		 * Matchers will be applied to an every control found by the waitFor function.
 		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
@@ -396,7 +397,7 @@ sap.ui.define([
 		 * </code>
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
-		 * @param {boolean=false} [options.autoWait] @since 1.42 Only has an effect if set to true.
+		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true.
 		 * The waitFor statement will not execute success callbacks as long as there are open XMLHTTPRequests (requests to a server).
 		 * It will only execute success if the control is {@link sap.ui.test.matchers.Interactable}
 		 * So success behaves like an action in terms of waiting.
@@ -516,6 +517,8 @@ sap.ui.define([
 				// Delay the current waitFor after a waitFor added by the actions.
 				// So waitFors added by an action will block the current execution of success
 				var oWaitForObject = createWaitForObjectWithoutDefaults();
+				// preserve the autoWaitFlag
+				oWaitForObject.autoWait = options.autoWait;
 				oWaitForObject.success = function () {
 					fnOriginalSuccess.apply(this, aArgs);
 				};
@@ -547,7 +550,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the window object of the IFrame or the current window. If the IFrame is not loaded it will return null.
-		 * @returns {oWindow} The window of the IFrame
+		 * @returns {Window} The window of the IFrame
 		 * @public
 		 */
 		Opa5.getWindow = function () {
@@ -575,7 +578,7 @@ sap.ui.define([
 
 		/**
 		 *
-		 * Extends and overwrites default values of the {@link sap.ui.test.Opa#.config}.
+		 * Extends and overwrites default values of the {@link sap.ui.test.Opa.config}.
 		 * Most frequent usecase:
 		 * <pre>
 		 *     <code>
@@ -606,7 +609,7 @@ sap.ui.define([
 		 *         var oOpa = new Opa5();
 		 *
 		 *         // this statement will  will time out after 15 seconds and poll every 400ms.
-		 *         // those two values come from the defaults of {@link sap.ui.test.Opa#.config}.
+		 *         // those two values come from the defaults of {@link sap.ui.test.Opa.config}.
 		 *         oOpa.waitFor({
 		 *         });
 		 *
@@ -694,7 +697,7 @@ sap.ui.define([
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * See {@link sap.ui.test.Opa#.emptyQueue} for the description
+		 * See {@link sap.ui.test.Opa.emptyQueue} for the description
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
 		 * @function
@@ -704,7 +707,7 @@ sap.ui.define([
 		/**
 		 * Clears the queue and stops running tests so that new tests can be run.
 		 * This means all waitFor statements registered by {@link sap.ui.test.Opa5#waitFor} will not be invoked anymore and
-		 * the promise returned by {@link sap.ui.test.Opa5#.emptyQueue} will be rejected.
+		 * the promise returned by {@link sap.ui.test.Opa5.emptyQueue} will be rejected.
 		 * When its called inside of a check in {@link sap.ui.test.Opa5#waitFor}
 		 * the success function of this waitFor will not be called.
 		 * @public
@@ -714,7 +717,7 @@ sap.ui.define([
 
 		/**
 		 * Gives access to a singleton object you can save values in.
-		 * See {@link sap.ui.test.Opa#.getContext} for the description
+		 * See {@link sap.ui.test.Opa.getContext} for the description
 		 * @since 1.29.0
 		 * @returns {object} the context object
 		 * @public
@@ -800,7 +803,8 @@ sap.ui.define([
 				viewName: null,
 				controlType: null,
 				id: null,
-				searchOpenDialogs: false
+				searchOpenDialogs: false,
+				autoWait: false
 			};
 		}
 

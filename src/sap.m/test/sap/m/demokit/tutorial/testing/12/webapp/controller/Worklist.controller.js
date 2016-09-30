@@ -4,8 +4,10 @@ sap.ui.define([
 	'sap/ui/demo/bulletinboard/controller/BaseController',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/demo/bulletinboard/model/formatter',
-	'sap/ui/demo/bulletinboard/model/FlaggedType'
-], function (BaseController, JSONModel, formatter, FlaggedType) {
+	'sap/ui/demo/bulletinboard/model/FlaggedType',
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (BaseController, JSONModel, formatter, FlaggedType, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
@@ -79,6 +81,27 @@ sap.ui.define([
 			}
 			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
+
+		/**
+		 * Triggered by the SearchFields's 'search' event
+		 * @param {sap.ui.base.Event} oEvent SearchFields's search event
+		 * @public
+		 */
+		onFilterPosts: function (oEvent) {
+
+			// build filter array
+			var aFilter = [];
+			var sQuery = oEvent.getParameter("query");
+			if (sQuery) {
+				aFilter.push(new Filter("Title", FilterOperator.Contains, sQuery));
+			}
+
+			// filter binding
+			var oTable = this.getView().byId("table");
+			var oBinding = oTable.getBinding("items");
+			oBinding.filter(aFilter);
+		},
+
 
 		/**
 		 * Event handler when a table item gets pressed

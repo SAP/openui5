@@ -534,7 +534,7 @@
 
 		// Input for setting the number of images to show in the carousel
 
-		var oNumberOfImagesInput = new sap.m.Input({
+		var oNumberOfImagesInput = new sap.m.Input("input-slides-number", {
 			type: "Number",
 			value: "5",
 			width: "320px",
@@ -683,9 +683,54 @@
 			enableScrolling: true }
 		);
 
+
+		var buttonChangeHeightTo50Percents = new sap.m.Button("btnHeight50", {
+			text: "change height to 50%",
+			press: function () {
+				carousel.setHeight("50%")
+			}
+		});
+
+		var buttonChangeHeightTo600px = new sap.m.Button("btnHeight600px", {
+			text: "change height to 600 px",
+			press: function () {
+				carousel.setHeight("600px");
+			}
+		});
+
+		var buttonChangeWidthTo60Percents = new sap.m.Button("btnWidth60", {
+			text: "change width to 60%",
+			press: function () {
+				carousel.setWidth("60%");
+				carousel.rerender();
+			}
+		});
+
+		var buttonChangeWidthTo400px = new sap.m.Button("btnWidth400px", {
+			text: "change width to 400 px",
+			press: function () {
+				carousel.setWidth("400px");
+				carousel.rerender();
+			}
+		});
+
+		var buttonResetCarousel = new sap.m.Button("btnReset", {
+			text: "Reset",
+			press: function () {
+				carousel.setWidth("100%");
+				carousel.setHeight("100%");
+				carousel.rerender();
+			}
+		});
+
 		carouselPage.addContent(appearanceForm1);
 		carouselPage.addContent(toolbar);
 		carouselPage.addContent(appearanceForm2);
+		carouselPage.addContent(buttonChangeHeightTo50Percents);
+		carouselPage.addContent(buttonChangeHeightTo600px);
+		carouselPage.addContent(buttonChangeWidthTo60Percents);
+		carouselPage.addContent(buttonChangeWidthTo400px);
+		carouselPage.addContent(buttonResetCarousel);
 		appCarousel.addPage(carouselPage);
 		appCarousel.placeAt("body");
 

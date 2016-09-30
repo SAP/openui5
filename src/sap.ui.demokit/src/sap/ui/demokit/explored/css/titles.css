@@ -23,9 +23,8 @@
 }
 
 .titlesIntro {
-	position: absolute;
-	top: 10rem;
-	left: 5rem;
+	margin-top: 5rem;
+    text-align: center;
 	opacity: 0;
 	color: rgb(74,214,236);
 	font-size: 1.25em;
@@ -84,15 +83,15 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 
 .titlesText {
 	position: absolute;
-	margin: 0 7em 0 7em;
+	margin:0 4em 0 4em;
 	color: #ff6;
 	text-align: center;
 	font-size: 1.6em;
 	font-weight: bold;
 	opacity: 0;
-	-webkit-animation: text 120s linear 11s 1 normal forwards;
-	-moz-animation: text 120s linear 11s 1 normal forwards;
-	animation: text 120s linear 11s 1 normal forwards;
+	-webkit-animation: text 100s linear 11s 1 normal forwards;
+	-moz-animation: text 100s linear 11s 1 normal forwards;
+	animation: text 100s linear 11s 1 normal forwards;
 	-webkit-transform-style: preserve-3d;
 	-moz-transform-style: preserve-3d;
 	transform-style: preserve-3d;

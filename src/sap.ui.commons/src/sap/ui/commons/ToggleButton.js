@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './Button'],
 
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	ToggleButton.prototype.getAccessibilityInfo = function() {

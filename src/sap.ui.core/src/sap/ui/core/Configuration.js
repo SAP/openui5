@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"trace"                 : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
 					"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
-					// "libs"                  : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
+					// "libs"               : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
 					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true },
 					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
 					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
@@ -108,11 +108,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
-					"xx-appCacheBusterHooks" : { type : "object",  defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
+					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
+					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
 					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
+					"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
 					"xx-designMode"         : { type : "boolean",  defaultValue : false },
 					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
@@ -339,6 +341,16 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 						//sets the value (null or empty value ignored)
 						setValue(n, sValue);
 					}
+				}
+				// handle legacy URL params through format settings
+				if (oUriParams.mParams['sap-ui-legacy-date-format']) {
+					this.oFormatSettings.setLegacyDateFormat(oUriParams.mParams['sap-ui-legacy-date-format']);
+				}
+				if (oUriParams.mParams['sap-ui-legacy-time-format']) {
+					this.oFormatSettings.setLegacyTimeFormat(oUriParams.mParams['sap-ui-legacy-time-format']);
+				}
+				if (oUriParams.mParams['sap-ui-legacy-number-format']) {
+					this.oFormatSettings.setLegacyNumberFormat(oUriParams.mParams['sap-ui-legacy-number-format']);
 				}
 			}
 
@@ -890,10 +902,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		setRTL : function(bRTL) {
 			check(bRTL === null || typeof bRTL === "boolean", "bRTL must be null or a boolean");
-			var mChanges;
-			if ( bRTL != this.rtl ) {
+
+			var oldRTL = this.getRTL(),
+				mChanges;
+			this.rtl = bRTL;
+			if ( oldRTL != this.getRTL() ) { // also take the derived RTL flag into account for the before/after comparison!
 				mChanges = this._collect();
-				this.rtl = mChanges.rtl = this.getRTL();
+				mChanges.rtl = this.getRTL();
 				this._endCollect();
 			}
 			return this;
@@ -1059,6 +1074,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getDisableCustomizing : function() {
 			return this["xx-disableCustomizing"];
+		},
+
+		/**
+		 * Flag, representing the status of the view cache
+		 * @see {sap.ui.xmlview}
+		 *
+		 * @returns {boolean} true if view cache is enabled
+		 * @private
+		 * @experimental Since 1.44
+		 */
+		getViewCache : function() {
+			return this["xx-viewCache"];
 		},
 
 		/**

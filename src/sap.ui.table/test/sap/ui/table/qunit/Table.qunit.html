@@ -481,32 +481,10 @@
 		assert.ok(oMenu._oTable instanceof sap.ui.table.Table, "Internal reference to table is set");
 	});
 
-	QUnit.module("Navigation Paginator", {
-		beforeEach: function() {
-			createTable({
-				navigationMode: sap.ui.table.NavigationMode.Paginator,
-				visibleRowCount: 13
-			});
-		},
-		afterEach: function() {
-			destroyTable();
-		}
-	});
-
 	QUnit.test("After initialization", function(assert) {
-		var $table = oTable.$();
-		assert.equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
-
 		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
 		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
 		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
-		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
-		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
-		sap.ui.getCore().applyChanges();
-		$table = oTable.$();
-		assert.equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
-		oTable._oPaginator.getDomRef("-lastPageLink").click();
-		assert.equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});
 
 	QUnit.module("VisibleRowcountMode Auto", {
@@ -617,7 +595,7 @@
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() should be 1");
 
-		assert.equal(oVsb.scrollTop, 5262, "ScrollTop can be set and read.");
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
 		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
@@ -643,7 +621,7 @@
 	test("ScrollTop on init is as expected", function(assert) {
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
-		assert.equal(oVsb.scrollTop, 5262, "ScrollTop is correct");
+		assert.ok(oVsb.scrollTop > 25 && oVsb.scrollTop < 30, "ScrollTop is correct");
 	});
 
 	test("ScrollTop after scrolling to last row is as expected", function(assert) {
@@ -685,7 +663,7 @@
 		var iRowHeightsDelta = oTable._iRowHeightsDelta;
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
-		assert.ok(iRowHeightsDelta > 9460 && iRowHeightsDelta < 9470, "RowHeightsDelta is in expected range");
+		assert.ok(iRowHeightsDelta > 9430 && iRowHeightsDelta < 9440, "RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
 
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
@@ -694,10 +672,11 @@
 		setTimeout(function() {
 			oVsb.scrollTop = 1000000;
 			setTimeout(function() {
-				var sTransformCssValue = jQuery(".sapUiTableCtrl").css("transform");
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
-				assert.equal(oVsb.scrollTop, 1000000 - oVsb.clientHeight, "ScrollTop is correct");
-				assert.ok(sTransformCssValue.indexOf("" + (iRowHeightsDelta * -1)) > -1, "Table Correction is equal to RowHeightsDelta");
+				var iScrollRange = oTable._getRowCount() * oTable._getDefaultRowHeight();
+				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
+				assert.equal(jQuery(".sapUiTableCtrlScr").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
+				assert.equal(jQuery(".sapUiTableRowHdrScr").scrollTop(), iRowHeightsDelta, "Row Header Correction is equal to RowHeightsDelta");
 				done();
 			}, 500);
 		}, 500);
@@ -762,7 +741,7 @@
 		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
 		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
 		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
-		assert.equal($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+		assert.equal($table.find('.sapUiTableVSb').css('height'), (oTable.getDomRef("table").offsetHeight) + "px", "Vertical scrollbar has correct height");
 	});
 
 	QUnit.test("Sanity check for fixed rows", function(assert) {
@@ -890,6 +869,21 @@
 		assert.equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(), "First column headers have equal width");
 		assert.equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(), "Second column headers have equal width");
 		assert.equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
+	});
+
+	QUnit.test("Equal heights", 7, function(assert) {
+		var $Table = jQuery.sap.byId("table");
+
+		assert.equal($Table.find(".sapUiTableColHdrCnt").height(), $Table.find(".sapUiTableColHdrScr").height(), "Height of the select header is correct");
+
+		$Table.find(".sapUiTableColHdr").each(function(index, row) {
+			var rowIndex = index;
+			var $row = jQuery(row);
+			var rowHeight = $row.height() + "px";
+			$row.children().each(function(index, cell){
+				assert.equal(cell.style.height, rowHeight, "Cell [" + index + "," + rowIndex +"] has correct height");
+			});
+		});
 	});
 
 	QUnit.module("Table with extension", {
@@ -1161,7 +1155,7 @@
 
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
-				oTable._iNewColPos = 0;
+				oTable._bReorderInProcess = true;
 				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
 
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
@@ -1170,8 +1164,8 @@
 
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
-			oTable.insertColumn(oRemovedColumn, oTable._iNewColPos);
-			delete oTable._iNewColPos;
+			oTable.insertColumn(oRemovedColumn, 0);
+			oTable._bReorderInProcess = false;
 			oTable.attachEvent("_rowsUpdated", fnHandler3);
 		};
 
@@ -1356,6 +1350,49 @@
 
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
+	});
+
+
+	QUnit.module("Legacy Modules", {});
+
+	QUnit.asyncTest("TreeAutoExpandMode", function(assert) {
+		sap.ui.require(['sap/ui/table/TreeAutoExpandMode', 'sap/ui/table/library'], function(oClass, oLib) {
+			assert.ok(oClass === sap.ui.table.TreeAutoExpandMode, "Global Namespace");
+			assert.ok(oClass === oLib.TreeAutoExpandMode, "Library");
+			start();
+		});
+	});
+
+	QUnit.asyncTest("ColumnMenuRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/ColumnMenuRenderer', 'sap/ui/table/ColumnMenu'], function(oRenderer, oMenu) {
+			assert.ok(oRenderer === sap.ui.table.ColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+
+	QUnit.asyncTest("AnalyticalColumnMenuRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/AnalyticalColumnMenuRenderer', 'sap/ui/table/AnalyticalColumnMenu'], function(oRenderer, oMenu) {
+			assert.ok(oRenderer === sap.ui.table.AnalyticalColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+
+	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/TreeTableRenderer', 'sap/ui/table/TreeTable'], function(oRenderer, oTable) {
+			assert.ok(oRenderer === sap.ui.table.TreeTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
+	});
+
+	QUnit.asyncTest("TreeTableRenderer", function(assert) {
+		sap.ui.require(['sap/ui/table/AnalyticalTableRenderer', 'sap/ui/table/AnalyticalTable'], function(oRenderer, oTable) {
+			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
+			start();
+		});
 	});
 
 	</script>

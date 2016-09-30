@@ -29,15 +29,7 @@ sap.ui.require(
 			When.onTheBrowser.iPressOnTheForwardButton();
 
 			// Assertions
-			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans");
-		});
-
-		opaTest("Should select the statistics tab", function (Given, When, Then) {
-			// Actions
-			When.onThePostPage.iPressOnTheTabWithTheKey("statistics");
-
-			// Assertions
-			Then.onThePostPage.iShouldSeeTheViewCounter()
+			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans")
 				.and.iTeardownMyAppFrame();
 		});
 	}

@@ -11,25 +11,26 @@
 	<Panel headerText="{i18n>panel2HeaderText}" class="sapUiResponsiveMargin"
 		width="auto">
 		<content>
-			<l:VerticalLayout>
-				<Label class="sapUiSmallMargin" text="{i18n>address}:" />
-				<Text class="sapUiSmallMargin" text="{/address/street}\n{/address/zip} {/address/city}\n{/address/country}" width="200px" />
-								<Image 	class="sapUiSmallMargin" width="500px" height="300px"
-						src="{
+			<l:HorizontalLayout>
+				<l:VerticalLayout>
+					<Label class="sapUiSmallMargin" text="{i18n>address}:" />
+					<Text class="sapUiSmallMarginBegin sapUiSmallMarginBottom" text="{/address/street}\n{/address/zip} {/address/city}\n{/address/country}" width="200px" />
+					<Link class="sapUiSmallMarginBegin"
+						  href="{
 								parts: [
-										'/address/street',
-										'/address/zip',
-										'/address/city',
-										'/address/country'
-										],
-								formatter: '.formatMapUrl'
-							}" />
-			</l:VerticalLayout>
-			<l:VerticalLayout>
-				<Label text="{i18n>salesToDate}" class="sapUiSmallMargin" />
-				<Input width="200px" enabled="{/enabled}" description="{/currencyCode}"
-						value="{ parts: [{path: '/salesToDate'}, {path: '/currencyCode'}], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false } }"/>
-			</l:VerticalLayout>
+									'/firstName',
+									'/lastName'
+								],
+								formatter: '.formatMail'
+							}"
+						  text="{i18n>sendEmail}"/>
+				</l:VerticalLayout>
+				<l:VerticalLayout>
+					<Label text="{i18n>salesToDate}:" class="sapUiSmallMargin" />
+					<Input width="200px" enabled="{/enabled}" description="{/currencyCode}"
+						   value="{ parts: [{path: '/salesToDate'}, {path: '/currencyCode'}], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false } }"/>
+				</l:VerticalLayout>
+			</l:HorizontalLayout>
 		</content>
 	</Panel>
 </mvc:View>

@@ -44,7 +44,11 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 				 */
 				data : {
 					type : "object"
-				}
+				},
+				/**
+				* Name of the library the control belongs to
+				*/
+				libraryName : "string"
 			}
 		}
 	});
@@ -157,6 +161,27 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 			}
 		}
 	};
-
+	/**
+	 * Returns a locale-specific string value for the given key sKey.
+	 *
+	 * The text is searched in this resource bundle according to the fallback chain described in
+	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
+	 *
+	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer
+	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key).
+	 * For more details on this replacement mechanism refer also:
+	 * @see jQuery.sap.formatMessage
+	 *
+	 * @param {string} sKey
+	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
+	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
+	 *
+	 * @function
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getLibraryText = function(sKey, aArgs) {
+		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName());
+		return oLibResourceBundle.getText(sKey, aArgs);
+	};
 	return DesignTimeMetadata;
 }, /* bExport= */ true);

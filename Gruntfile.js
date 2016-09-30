@@ -116,6 +116,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.uxap'
 			},
 			{
+					name: 'sap.ui.fl',
+					path: 'src/sap.ui.fl'
+			},
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'
@@ -138,6 +142,12 @@ module.exports = function(grunt) {
 		]
 
 	};
+
+	// Load config extension script to allow overrides to "grunt" and "gruntData"
+	var configExtensionFile = grunt.option("config-extension");
+	if (configExtensionFile) {
+		require(__dirname + "/" + configExtensionFile)(grunt, gruntData);
+	}
 
 	// determine set of libraries to use (specified by --libs option)
 	gruntData.libraries = !libs ? gruntData.allLibraries : gruntData.allLibraries.filter(function(library) {

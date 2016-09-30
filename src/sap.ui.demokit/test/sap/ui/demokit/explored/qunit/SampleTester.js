@@ -57,6 +57,7 @@ sap.ui.define([
 		var iTimeout = this._iTimeout;
 		var oApp = this._oApp;
 		var oPage = this._oPage;
+		var sLibraryName = this._sLibraryName;
 
 		oLog.info("starting to define tests for the samples of '" + this._sLibraryName + "'");
 
@@ -72,9 +73,13 @@ sap.ui.define([
  			}
 		});
 
+		function shorten(id) {
+			return id.replace(sLibraryName + ".", "");
+		}
+
 		function makeTest(sampleConfig) {
 
-			QUnit.test(sampleConfig.name, function(assert) {
+			QUnit.test(sampleConfig.name + " (" + shorten(sampleConfig.id) + ")", function(assert) {
 
 				// clear metadata cache
 				ODataModel.mServiceData = {};
@@ -82,12 +87,14 @@ sap.ui.define([
 				// display the sample name
 				oPage.setTitle(sampleConfig.name);
 
+				var oComponent = sap.ui.component({
+					name: sampleConfig.id
+				});
+				
 				// load and create content
 				oPage.addContent(
 					new ComponentContainer({
-						component: sap.ui.component({
-							name: sampleConfig.id
-						})
+						component: oComponent
 					})
 				);
 
@@ -98,6 +105,15 @@ sap.ui.define([
 					done();
 				}, iTimeout);
 
+				var oConfig = oComponent.getMetadata().getConfig();
+				if ( oConfig && oConfig.sample && oConfig.sample.files ) {
+					var sRef = jQuery.sap.getModulePath(sampleConfig.id);
+					for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
+						var sFile = oConfig.sample.files[i];
+						var sUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + oConfig.sample.files[i]);
+						assert.ok(jQuery.sap.syncHead(sUrl), "listed source file '" + sFile + "' should be downloadable");
+					}
+				}
 			});
 
 		}

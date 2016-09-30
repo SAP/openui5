@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sCollapseTooltip = oControl._rb.getText(oControl.getCollapsed() ? "PANEL_EXPAND" : "PANEL_COLLAPSE");
 		if (oControl.getShowCollapseIcon()) { /* TODO: remove this one and rearrange the other in CSS */
-			rm.write("<a id='" + id + "-collArrow' class='sapUiPanelHdrItem sapUiPanelCollArrow' href='javascript:void(0)' tabindex='0' title='" + sCollapseTooltip + "'");
+			rm.write("<a id='" + id + "-collArrow' class='sapUiPanelHdrItem sapUiPanelCollArrow' href='#' tabindex='0' title='" + sCollapseTooltip + "'");
 			if (accessibility) {
 				//rm.writeAttribute("aria-labelledby", id + "-title");
 				rm.writeAttribute("role", "button");
@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	  // collapse icon
 	  if (oControl.getShowCollapseIcon()) {
-			rm.write("<a id='" + id + "-collIco' class='sapUiPanelHdrRightItem sapUiPanelCollIco' href='javascript:void(0)' tabindex='0' title='" + sCollapseTooltip + "'");
+			rm.write("<a id='" + id + "-collIco' class='sapUiPanelHdrRightItem sapUiPanelCollIco' href='#' tabindex='0' title='" + sCollapseTooltip + "'");
 			if (accessibility) {
 				//rm.writeAttribute("aria-labelledby", id + "-title");
 				rm.writeAttribute("role", "button");

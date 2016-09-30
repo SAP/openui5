@@ -75,7 +75,7 @@ sap.ui.define([
 	 *
 	 * @class Base Class that introduces some basic concepts like state management or databinding.
 	 *
-	 * New subclasses of ManagedObject are created with a call to {@link .extend ManagedObject.extend} and can make use
+	 * New subclasses of ManagedObject are created with a call to {@link #.extend ManagedObject.extend} and can make use
 	 * of the following managed features:
 	 *
 	 * <b>Properties</b><br>
@@ -111,7 +111,7 @@ sap.ui.define([
 	 * Details about the declaration of a managed aggregation, the metadata that describes it and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
-	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link bindAggregation} (and unbound again
+	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link #bindAggregation} (and unbound again
 	 * using {@link #unbindAggregation}. For each context in the model collection, a corresponding object will be created in the
 	 * managed aggregation, either by cloning a template object or by calling a factory function.
 	 *
@@ -176,8 +176,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
-	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
-	 * oScope in the constructor is still experimental and might change in future versions. Applications should not rely on it.
 	 */
 	var ManagedObject = EventProvider.extend("sap.ui.base.ManagedObject", {
 
@@ -541,7 +539,8 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string', 'boolean', 'int', 'float', 'object' or 'any', or a
 	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li>
-	 * <li><code>group: ...</code></li>
+	 * <li><code>group:<i>string</i></code> a semantic grouping of the properties, intended to be used in design time tools.
+	 *     Allowed values are (case sensitive): Accessibility, Appearance, Behavior, Data, Designtime, Dimension, Identification, Misc</li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
@@ -681,6 +680,8 @@ sap.ui.define([
 	 * <b>'specialSettings'</b> : <i>object</i><br>
 	 * Special settings are an experimental feature and MUST NOT BE USED by controls or applications outside of the sap.ui.core project.
 	 *
+	 *
+	 *
 	 * @param {string} sClassName name of the class to be created
 	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ManagedObjectMetadata.
@@ -688,9 +689,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @experimental Since 1.27.0 Support for 'specialSettings' is experimental and might be modified or removed in future versions.
-	 *   They must not be used in any way outside of the sap.ui.core library. Code outside sap.ui.core must not declare special settings
-	 *   nor must it try to retrieve / evaluate metadata for such settings.
 	 * @name sap.ui.base.ManagedObject.extend
 	 * @function
 	 */
@@ -824,8 +822,6 @@ sap.ui.define([
 	 * @param {object} [oScope] Scope object to resolve types and formatters
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @experimental Since 1.11.2 support for the scope object for resolving string based type
-	 * and formatter references in bindings is still experimental
 	 */
 	ManagedObject.prototype.applySettings = function(mSettings, oScope) {
 
@@ -1169,7 +1165,7 @@ sap.ui.define([
 							" for property \"" + sPropertyName + "\" of " + this);
 				}
 				for (var i = 0; i < oValue.length; i++) {
-					if (!typeof oValue[i] == "string") {
+					if (typeof oValue[i] !== "string") {
 						oValue[i] = "" + oValue[i];
 					}
 				}
@@ -2198,7 +2194,44 @@ sap.ui.define([
 	/**
 	 * Returns the parent managed object or <code>null</code> if this object hasn't been added to a parent yet.
 	 *
-	 * @return {sap.ui.base.ManagedObject} The parent managed object or <code>null</code>
+	 * The parent returned by this method is the technical parent used for data binding, invalidation,
+	 * rendering etc. It might differ from the object on which the application originally added this object
+	 * (the so called 'API parent'): some composite controls internally use hidden controls or containers
+	 * to store their children. This method will return the innermost container that technically contains this
+	 * object as a child.
+	 *
+	 * <b>Example:</b>
+	 *
+	 * Assume that a <code>Dialog</code> internally uses a (hidden) <code>VerticalLayout</code> to store its content:
+	 *
+	 * <pre>
+	 *   Dialog (API parent)
+	 *    \__ VerticalLayout (hidden composite part)
+	 *       \__ Text (API child)
+	 * </pre>
+	 *
+	 * If you add some content by calling the <code>Dialog.prototype.addContent</code> API, this will lead
+	 * to the following observations:
+	 *
+	 * <pre>
+	 *   oDialog.addContent(oText);
+	 *   console.log(oText.getParent() === oDialog);  // false
+	 *   console.log(oText.getParent() instanceof VerticalLayout); // true
+	 *   console.log(oText.getParent().getParent() === oDialog); // true now, but might fail with later versions
+	 * </pre>
+	 *
+	 * Technically, from API perspective, <code>oText</code> is added as a child to <code>Dialog</code>.
+	 * But internally, the <code>Dialog</code> adds the child to the hidden <code>VerticalLayout</code> container.
+	 * If you now call the <code>getParent</code> method of the child, you will get the internal
+	 * <code>VerticalLayout</code> object and not the <code>Dialog</code> API parent.
+	 *
+	 * <b>Note: </b> The internal (hidden) structure of a composite control is not fixed and may be changed
+	 * (see also our "Compatibility Rules"). Therefore, you should <b>never</b> rely on a specific structure or
+	 * object being returned by <code>getParent</code>.
+	 *
+	 * <b>Note: </b> There is no API to determine the original API parent.
+	 *
+	 * @return {sap.ui.base.ManagedObject} The technical parent managed object or <code>null</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getParent = function() {
@@ -2389,6 +2422,7 @@ sap.ui.define([
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
+	 * There is no difference between {@link sap.ui.core.Element#bindElement} and {@link sap.ui.base.ManagedObject#bindObject}.
 	 * @param {string|object} vPath the binding path or an object with more detailed binding options
 	 * @param {string} vPath.path the binding path
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
@@ -3502,8 +3536,12 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		var oModel = this.getModel(sModelName);
+		if (oModel && oContext && oModel !== oContext.getModel()) {
+			jQuery.sap.log.fatal("BindingContext type does not match model type and can't be set");
+			return this;
+		}
 		var oOldContext = this.oBindingContexts[sModelName];
-
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
@@ -3641,13 +3679,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype._getBindingContext = function(sModelName){
-		var oModel = this.getModel(sModelName);
+		var oModel = this.getModel(sModelName),
+			oPropagatedContext = this.oPropagatedProperties.oBindingContexts[sModelName];
 		if (this.oBindingContexts[sModelName]) {
 			return this.oBindingContexts[sModelName];
-		} else if (oModel && this.oParent && this.oParent.getModel(sModelName) && oModel != this.oParent.getModel(sModelName)) {
+		} else if (oPropagatedContext && oModel && oPropagatedContext.getModel() !== oModel) {
 			return undefined;
 		} else {
-			return this.oPropagatedProperties.oBindingContexts[sModelName];
+			return oPropagatedContext;
 		}
 	};
 

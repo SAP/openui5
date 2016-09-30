@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 *
 			 * Depending on the theme, you can change the state of
 			 * the background color to "Solid", "Translucent", or "Transparent".
-			 *
+			 * Default is "Solid".
 			 * @since 1.26
 			 */
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid},
@@ -117,7 +117,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * so the user can select specific tab filter easier.
 			 * @since 1.42
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false}
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Specifies the background color of the header.
+			 *
+			 * Depending on the theme, you can change the state of
+			 * the background color to "Solid", "Translucent", or "Transparent".
+			 * Default is "Solid".
+			 * @since 1.44
+			 */
+			headerBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
 		},
 		aggregations : {
 
@@ -248,6 +258,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setProperty("headerMode", mode, true);
 
 		this._getIconTabHeader().setMode(mode);
+
+		return this;
+	};
+
+
+	/**
+	 * Sets the header background design.
+	 * @overwrite
+	 * @public
+	 * @param {sap.m.BackgroundDesign} headerBackgroundDesign New parameter value
+	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 */
+	IconTabBar.prototype.setHeaderBackgroundDesign = function (headerBackgroundDesign) {
+		// set internal property
+		this.setProperty("headerBackgroundDesign", headerBackgroundDesign, true);
+
+		this._getIconTabHeader().setBackgroundDesign(headerBackgroundDesign);
 
 		return this;
 	};
@@ -473,7 +500,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 * @param {string} sFunctionName The name of the function to be called
 	 * @param {string} sAggregationName The name of the aggregation asociated
-	 * @returns {mixed} The return type of the called function
+	 * @returns {any} The return type of the called function
 	 */
 	IconTabBar.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
 		var aArgs = Array.prototype.slice.call(arguments),

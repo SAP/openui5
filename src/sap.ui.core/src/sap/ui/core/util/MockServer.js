@@ -3195,7 +3195,7 @@ sap.ui
 			 *
 			 * @param {string}
 			 *          sMethod HTTP verb to use for this method (e.g. GET, POST, PUT, DELETE...)
-			 * @param {string|regexp}
+			 * @param {string|RegExp}
 			 *          sPath the path of the URI (will be concatenated with the rootUri)
 			 * @param {function}
 			 *          fnResponse the response function to call when the request occurs

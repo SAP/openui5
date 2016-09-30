@@ -6,7 +6,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.demo.wt.controller.HelloPanel", {
 
-		onShowHello: function () {
+		onShowHello : function () {
 
 			// read msg from i18n model
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -17,8 +17,8 @@ sap.ui.define([
 			MessageToast.show(sMsg);
 		},
 
-		onOpenDialog: function () {
-			this.getOwnerComponent().helloDialog.open(this.getView());
+		onOpenDialog : function () {
+			this.getOwnerComponent().openHelloDialog();
 		}
 	});
 

@@ -238,6 +238,21 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		}
 	};
 
+	ElementMover.prototype._compareSourceAndTarget = function(oSource, oTarget) {
+		var vProperty;
+		for (vProperty in oSource) {
+			switch (typeof (oSource[vProperty])) {
+				case 'object':
+					if (oSource[vProperty].getId() !== oTarget[vProperty].getId()) {return false;}
+					break;
+				default:
+					if (oSource[vProperty] !== oTarget[vProperty]) {return false;}
+			}
+		}
+
+		return true;
+	};
+
 	ElementMover.prototype.buildMoveEvent = function() {
 
 		var oMovedOverlay = this.getMovedOverlay();
@@ -248,6 +263,12 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oTarget = OverlayUtil.getParentInformation(oMovedOverlay);
 		var iSourceIndex = oSource.index;
 		var iTargetIndex = oTarget.index;
+
+		var bSourceAndTargetAreSame = this._compareSourceAndTarget(oSource, oTarget);
+
+		if (bSourceAndTargetAreSame) {
+			return undefined;
+		}
 		delete oSource.index;
 		delete oTarget.index;
 

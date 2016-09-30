@@ -28,10 +28,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @alias sap.ui.table.ColumnMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
-	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ { metadata : {
-
-		library : "sap.ui.table"
-	}});
+	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
+		metadata : {
+			library : "sap.ui.table"
+		},
+		renderer: "sap.ui.unified.MenuRenderer"
+	});
 
 
 	/**
@@ -339,7 +341,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			this.addItem(oColumnVisibiltyMenuItem);
 
 			var oColumnVisibiltyMenu = new Menu(oColumnVisibiltyMenuItem.getId() + "-menu");
-			oColumnVisibiltyMenu.addStyleClass("sapUiTableColumnVisibilityMenu");
 			oColumnVisibiltyMenuItem.setSubmenu(oColumnVisibiltyMenu);
 
 			var aColumns = oTable.getColumns();

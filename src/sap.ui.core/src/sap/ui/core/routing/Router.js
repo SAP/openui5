@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 *             target: "notFound"
 		 *         }
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -118,10 +118,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 * </pre>
 		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
-		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.<br/>
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
 		 * @param {object} [oTargetsConfig]
-		 * available @since 1.28 the target configuration, see {@link sap.ui.core.Targets#constructor} documentation (the options object).<br/>
+		 * available @since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets#constructor} documentation (the options object).<br/>
 		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
 		 * <b>Example:</b>
 		 * <pre>
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
 		 *     // Please use the metadata of a component to define your routes and targets.
-		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
@@ -513,10 +513,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 			/**
 			 * Returns a target by its name (if you pass myTarget: { view: "myView" }) in the config myTarget is the name.
-			 * See {@link sap.ui.core.Targets#getTarget}
+			 * See {@link sap.ui.core.routing.Targets#getTarget}
 			 *
 			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
-			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the coresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
+			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the corresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
 			 */
 			getTarget :  function(vName) {
 				return this._oTargets.getTarget(vName);
@@ -810,71 +810,74 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 			// private
 			fireTitleChanged : function(mArguments) {
-				var sDirection,
-					oActiveRoute,
-					vTargets,
-					sTitleTarget,
-					sCalcedTargetName,
+				var sDirection = History.getInstance().getDirection(),
 					sHash = this.oHashChanger.getHash(),
-					bShouldFireEvent = true,
 					HistoryDirection = library.routing.HistoryDirection,
 					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
 					oNewHistoryEntry;
 
-				if (this._sActiveRouteName && this._oTargets) {
-					oActiveRoute = this.getRoute(this._sActiveRouteName);
-					vTargets = oActiveRoute._oConfig.target;
-					sTitleTarget = oActiveRoute._oConfig.titleTarget;
-					sCalcedTargetName = this._oTargets._getTitleTargetName(vTargets, sTitleTarget);
-					// should fire the event only when the titleChanged event comes from the TitleTarget
-					bShouldFireEvent = (mArguments.name === sCalcedTargetName);
-				}
-
-				if (bShouldFireEvent) {
-					sDirection = History.getInstance().getDirection();
-
-					if (sDirection === HistoryDirection.Backwards) {
-						// when back navigation, the last history state should be removed
+				// when back navigation, the last history state should be removed
+				if (sDirection === HistoryDirection.Backwards) {
+					// but only if the last history entrie´s title is not the same as the current one
+					if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
 						this._aHistory.pop();
-					} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
-						// if no actual navigation took place, we only need to update the title
-						oLastHistoryEntry.title = mArguments.title;
+					}
+				} else if (oLastHistoryEntry && oLastHistoryEntry.hash == sHash) {
+					// if no actual navigation took place, we only need to update the title
+					oLastHistoryEntry.title = mArguments.title;
 
-						// check whether there's a duplicate history entry with the last history entry and remove it if there is
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-					} else {
-						if (this._bLastHashReplaced) {
-							// if the current hash change is done via replacement, the last history entry should be removed
-							this._aHistory.pop();
+					// check whether there's a duplicate history entry with the last history entry and remove it if there is
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
+							return aHistory.splice(i, 1);
 						}
-
-						oNewHistoryEntry = {
-							hash: sHash,
-							title: mArguments.title
-						};
-						// Array.some is sufficient here, as we ensure there is only one occurence
-						this._aHistory.some(function(oEntry, i, aHistory) {
-							if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
-								return aHistory.splice(i, 1);
-							}
-						});
-
-						// push new history state into the stack
-						this._aHistory.push(oNewHistoryEntry);
+					});
+				} else {
+					if (this._bLastHashReplaced) {
+						// if the current hash change is done via replacement, the last history entry should be removed
+						this._aHistory.pop();
 					}
 
-					mArguments.history = this._aHistory.slice(0, -1);
+					oNewHistoryEntry = {
+						hash: sHash,
+						title: mArguments.title
+					};
+					// Array.some is sufficient here, as we ensure there is only one occurence
+					this._aHistory.some(function(oEntry, i, aHistory) {
+						if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
+							return aHistory.splice(i, 1);
+						}
+					});
 
-					this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
+					// push new history state into the stack
+					this._aHistory.push(oNewHistoryEntry);
 				}
+
+				mArguments.history = this._aHistory.slice(0, -1);
+
+				this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mArguments);
 
 				this._bLastHashReplaced = false;
 
 				return this;
+			},
+
+			/**
+			 * Returns the title history.
+			 *
+			 * History entry example:
+			 * <code>
+			 *	{
+			 *		title: "TITLE", // The displayed title
+			 *		hash: "HASH" // The url hash
+			 *	}
+			 * </code>
+			 *
+			 * @return {array} An array which contains the history entries.
+			 * @public
+			 */
+			getTitleHistory: function() {
+				return this._aHistory || [];
 			},
 
 			/**

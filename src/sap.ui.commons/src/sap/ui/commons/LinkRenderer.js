@@ -43,9 +43,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (oLink.getHref()) {
 			rm.writeAttributeEscaped("href", oLink.getHref());
 		}	else {
-			/*eslint-disable no-script-url */
-			rm.writeAttribute("href", "javascript:void(0);");
-			/*eslint-enable no-script-url */
+			rm.writeAttribute("href", "#");
 		}
 
 		if (oLink.getTarget()) {

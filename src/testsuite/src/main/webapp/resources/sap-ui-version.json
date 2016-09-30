@@ -97,6 +97,13 @@
 			"gav": "com.sap.openui5:sap.uxap:${version}:jar"
 		},
 		{
+			"name": "sap.ui.fl",
+			"version": "${version}",
+			"buildTimestamp": "${buildtimestamp}",
+			"scmRevision": "${lastchange}",
+			"gav": "com.sap.openui5:sap.ui.fl:${version}:jar"
+		},
+		{
 			"name": "themelib_sap_bluecrystal",
 			"version": "${version}",
 			"buildTimestamp": "${buildtimestamp}",

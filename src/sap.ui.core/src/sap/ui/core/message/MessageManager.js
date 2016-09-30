@@ -332,7 +332,7 @@ sap.ui.define([
 	/**
 	 * Register ManagedObject: Validation and Parse errors are handled by the MessageManager for this object
 	 *
-	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
+	 * @param {sap.ui.base.ManagedObject} oObject The sap.ui.base.ManagedObject
 	 * @param {boolean} bHandleValidation Handle validation for this object. If set to true validation/parse events creates Messages and cancel event.
 	 * 					If set to false only the event will be canceled, but no messages will be created
 	 * @public
@@ -351,7 +351,7 @@ sap.ui.define([
 	/**
 	 * Unregister ManagedObject
 	 *
-	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
+	 * @param {sap.ui.base.ManagedObject} oObject The sap.ui.base.ManagedObject
 	 * @public
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
@@ -377,7 +377,7 @@ sap.ui.define([
 
 	/**
 	 * Get the MessageModel
-	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model
+	 * @return {sap.ui.model.message.MessageModel} oMessageModel The Message Model
 	 * @public
 	 */
 	MessageManager.prototype.getMessageModel = function() {

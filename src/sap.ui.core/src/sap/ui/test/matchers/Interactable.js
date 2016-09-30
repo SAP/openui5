@@ -49,8 +49,8 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Interactable", {
 		isMatching:  function(oControl) {
-			var bHasPendingXhrs = iFrameLauncher._getIXHRCounter().hasPendingRequests();
-			if (bHasPendingXhrs) {
+			var bHasToWait = iFrameLauncher._getAutoWaiter().hasToWait();
+			if (bHasToWait) {
 				// There are open requests - the XHR counter will log if there are open XHRs
 				return false;
 			}
@@ -86,14 +86,8 @@ sap.ui.define([
 					return false;
 				}
 
-				// Check for navigating nav containers
+				// Check for rendering updates
 				var sName = oParent.getMetadata().getName();
-				// Split container and splitapp use navcontainers in the control tree
-				if ((sName === "sap.m.App" || sName === "sap.m.NavContainer") && oParent._bNavigating) {
-					this._oLogger.debug("The control " + oControl + " has a parent NavContainer " + oParent + " that is currently navigating");
-					return false;
-				}
-
 				if (sName === "sap.ui.core.UIArea" && oParent.bNeedsRerendering) {
 					this._oLogger.debug("The control " + oControl + " is currently in an ui area that needs a new rendering");
 					return false;
@@ -109,14 +103,6 @@ sap.ui.define([
 					this._oLogger.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup");
 					return false;
 				}
-
-				// Whan a Dialog was opened and is in the closing phase the blocklayer is gone already therefore ask the instance manager
-				var oInstanceManager = $.sap.getObject("sap.m.InstanceManager");
-				if (oInstanceManager && oInstanceManager.getOpenDialogs().length) {
-					this._oLogger.debug("The control " + oControl + " is hidden behind an Open dialog");
-					return false;
-				}
-
 			}
 
 

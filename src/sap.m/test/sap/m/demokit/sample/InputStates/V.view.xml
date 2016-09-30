@@ -8,7 +8,7 @@
 		width="100%">
 		<l:content>
 
-			<Label text="Product not editable" />
+			<Label text="Product not editable" labelFor="InputNoEdit"/>
 			<Input
 				id="InputNoEdit"
 				class="sapUiSmallMarginBottom"
@@ -18,7 +18,7 @@
 				editable="false"
 			/>
 
-			<Label text="Product not enabled" />
+			<Label text="Product not enabled" labelFor="InputDisabled"/>
 			<Input
 				id="InputDisabled"
 				class="sapUiSmallMarginBottom"
@@ -27,7 +27,7 @@
 				enabled="false"
 			/>
 
-			<Label text="Product editable" />
+			<Label text="Product editable" labelFor="InputEdit"/>
 			<Input
 				id="InputEdit"
 				class="sapUiSmallMarginBottom"
@@ -37,7 +37,7 @@
 				editable="true"
 			/>
 
-			<Label text="Product with Value Help" />
+			<Label text="Product with Value Help" labelFor="InputValueHelp"/>
 			<Input
 				id="InputValueHelp"
 				class="sapUiSmallMarginBottom"
@@ -49,7 +49,7 @@
 				valueHelpRequest="handleValueHelp"
 			/>
 
-			<Label text="Product with Value Help Only" />
+			<Label text="Product with Value Help Only" labelFor="productInputVHO"/>
 			<Input
 				id="productInputVHO"
 				class="sapUiSmallMarginBottom"

@@ -6,7 +6,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demo.wt.controller.App", {
 
 		onOpenDialog : function () {
-			this.getOwnerComponent().helloDialog.open(this.getView());
+			this.getOwnerComponent().openHelloDialog();
 		}
 	});
 

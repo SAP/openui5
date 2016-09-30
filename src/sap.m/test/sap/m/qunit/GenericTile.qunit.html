@@ -259,6 +259,271 @@
 		}.bind(this));
 	});
 
+	QUnit.module("sap.m.GenericTileMode.LineMode", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				subheader: "Expenses By Region",
+				header: "Comparative Annual Totals",
+				mode: sap.m.GenericTileMode.LineMode
+			});
+			sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+
+			this.oParent = new sap.m.FlexBox({
+				width: "100px",
+				items: [ this.oGenericTile ]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+			this.oParent.destroy();
+			this.oParent = null;
+		}
+	});
+
+	QUnit.test("All elements found", function(assert) {
+		assert.ok(this.oGenericTile.$().hasClass("sapMGT"));
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"));
+		assert.ok(this.oGenericTile.$("startMarker").length > 0, "StartMarker was found.");
+		assert.ok(this.oGenericTile.$("endMarker").length > 0, "EndMarker was found.");
+		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found.");
+		assert.equal(this.oGenericTile.$("hdr-text").text(), "Comparative Annual Totals", "Header was correct.");
+		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found.");
+		assert.equal(this.oGenericTile.$("subHdr-text").text(), "Expenses By Region", "SubHeader was correct.");
+		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+	});
+
+	QUnit.test("All elements found in failed state", function(assert) {
+		//Arrange
+		this.oGenericTile.setState("Failed");
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(this.oGenericTile.$("warn-icon").length > 0, "Warning icon was found.");
+	});
+
+	QUnit.test("Attributes written in RTL", function(assert) {
+		//Arrange
+		sap.ui.getCore().getConfiguration().setRTL(true);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("dir"), "rtl");
+		assert.equal(this.oGenericTile.$("hdr-text").attr("dir"), "rtl");
+		assert.equal(this.oGenericTile.$("subHdr-text").attr("dir"), "rtl");
+
+		//Cleanup
+		sap.ui.getCore().getConfiguration().setRTL(false);
+	});
+
+	QUnit.test("Hover style update on rendering", function(assert) {
+		//Arrange
+		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOnce);
+
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+	});
+
+	QUnit.test("Hover style update on resize", function(assert) {
+		//Arrange
+		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
+
+		//Act
+		this.oParent.setWidth("500px");
+		this.oParent.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1);
+
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+	});
+
+	QUnit.test("Hover style update of siblings on state change", function(assert) {
+		//Arrange
+		sinon.spy(this.oGenericTile, "_updateLineTileSiblings");
+		var oSiblingTile = new sap.m.GenericTile({
+			state: sap.m.LoadState.Loaded,
+			subheader: "Expenses By Region",
+			header: "Comparative Annual Totals",
+			mode: sap.m.GenericTileMode.LineMode
+		});
+		this.oParent.addItem(oSiblingTile);
+		sap.ui.getCore().applyChanges();
+		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
+
+		//Act
+		this.oGenericTile.setState("Failed");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile._updateLineTileSiblings.callCount, 1, "Function _updateLineTileSiblings has been called on changed Tile.");
+		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 2, "Function _updateHoverStyle has been called twice. (Tile + Sibling)");
+		assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledAfter(this.oGenericTile._updateLineTileSiblings), "Function _updateHoverStyle has been called after _updateLineTileSiblings.");
+		assert.deepEqual(sap.m.GenericTileLineModeRenderer._updateHoverStyle.thisValues[1], oSiblingTile, "Function _updateHoverStyle has been called on sibling Tile.");
+
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+	});
+
+	QUnit.test("No hover style update of non-GenericTile siblings", function(assert) {
+		//Arrange
+		sinon.spy(this.oGenericTile, "_updateLineTileSiblings");
+		var oSibling = new sap.m.Text();
+		this.oParent.addItem(oSibling);
+		sap.ui.getCore().applyChanges();
+		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
+
+		//Act
+		this.oGenericTile.setState("Failed");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile._updateLineTileSiblings.callCount, 1, "Function _updateLineTileSiblings has been called on changed Tile.");
+		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "Function _updateHoverStyle has been called once.");
+		assert.deepEqual(sap.m.GenericTileLineModeRenderer._updateHoverStyle.thisValues[0], this.oGenericTile, "Function _updateHoverStyle has been called on sibling Tile.");
+
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+	});
+
+	QUnit.test("Resize Handler attached to parent, no deregister", function(assert) {
+		//Arrange
+		sinon.spy(sap.ui.core.ResizeHandler, "deregister");
+		sinon.spy(sap.ui.core.ResizeHandler, "register");
+		this.oGenericTile._sParentResizeListenerId = null;
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(sap.ui.core.ResizeHandler.deregister.notCalled);
+		assert.ok(sap.ui.core.ResizeHandler.register.calledOnce);
+
+		//Cleanup
+		sap.ui.core.ResizeHandler.deregister.restore();
+		sap.ui.core.ResizeHandler.register.restore();
+	});
+
+	QUnit.test("Resize Handler attached to parent, with deregister", function(assert) {
+		//Arrange
+		sinon.spy(sap.ui.core.ResizeHandler, "deregister");
+		sinon.spy(sap.ui.core.ResizeHandler, "register");
+		this.oGenericTile._sParentResizeListenerId = "SomeListener";
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(sap.ui.core.ResizeHandler.deregister.calledOnce);
+		assert.ok(sap.ui.core.ResizeHandler.register.calledOnce);
+
+		//Cleanup
+		sap.ui.core.ResizeHandler.deregister.restore();
+		sap.ui.core.ResizeHandler.register.restore();
+	});
+
+	QUnit.module("Control initialization core and theme checks", {
+		beforeEach: function() {
+			this.fnStubIsInitialized = sinon.stub(sap.ui.getCore(), "isInitialized");
+			this.fnSpyAttachInit = sinon.spy(sap.ui.getCore(), "attachInit");
+			this.fnSpyHandleCoreInitialized = sinon.spy(sap.m.GenericTile.prototype, "_handleCoreInitialized");
+			this.fnStubThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied");
+			this.fnStubAttachThemeApplied = sinon.stub(sap.ui.getCore(), "attachThemeChanged", function(fn, context) {
+				fn.call(context); //simulate immediate theme change
+			});
+			this.fnSpyHandleThemeApplied = sinon.spy(sap.m.GenericTile.prototype, "_handleThemeApplied");
+		},
+		afterEach: function() {
+			this.fnStubIsInitialized.restore();
+			this.fnSpyAttachInit.restore();
+			this.fnSpyHandleCoreInitialized.restore();
+			this.fnStubThemeApplied.restore();
+			this.fnStubAttachThemeApplied.restore();
+			this.fnSpyHandleThemeApplied.restore();
+		}
+	});
+
+	QUnit.test("Core initialization check - no core, no theme", function(assert) {
+		//Arrange
+		this.fnStubIsInitialized.returns(false);
+		this.fnStubThemeApplied.returns(false);
+
+		//Act
+		var oGenericTile = new sap.m.GenericTile();
+
+		//Assert
+		assert.ok(oGenericTile._bThemeApplied, "Rendering variable has been correctly set.");
+		assert.ok(this.fnSpyAttachInit.calledOnce, "Method Core.attachInit has been called once.");
+		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
+		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
+		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
+	});
+
+	QUnit.test("Core initialization check - no core, but theme", function(assert) {
+		//Arrange
+		this.fnStubIsInitialized.returns(false);
+		this.fnStubThemeApplied.returns(true);
+
+		//Act
+		var oGenericTile = new sap.m.GenericTile();
+
+		//Assert
+		assert.ok(oGenericTile._bThemeApplied, "Rendering variable has been correctly set.");
+		assert.ok(this.fnSpyAttachInit.calledOnce, "Method Core.attachInit has been called once.");
+		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
+		assert.ok(this.fnStubAttachThemeApplied.notCalled, "Method Core.attachThemeChanged has not been called.");
+		assert.ok(this.fnSpyHandleThemeApplied.notCalled, "Method _handleThemeApplied has not been called.");
+	});
+
+	QUnit.test("Core initialization check - core, but no theme", function(assert) {
+		//Arrange
+		this.fnStubIsInitialized.returns(true);
+		this.fnStubThemeApplied.returns(false);
+
+		//Act
+		var oGenericTile = new sap.m.GenericTile();
+
+		//Assert
+		assert.ok(oGenericTile._bThemeApplied, "Rendering variable has been correctly set.");
+		assert.ok(this.fnSpyAttachInit.notCalled, "Method Core.attachInit has not been called.");
+		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
+		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
+		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
+	});
+
+	QUnit.test("Core initialization check - core and theme", function(assert) {
+		//Arrange
+		this.fnStubIsInitialized.returns(true);
+		this.fnStubThemeApplied.returns(true);
+
+		//Act
+		var oGenericTile = new sap.m.GenericTile();
+
+		//Assert
+		assert.ok(oGenericTile._bThemeApplied, "Rendering variable has been correctly set.");
+		assert.ok(this.fnSpyAttachInit.notCalled, "Method Core.attachInit has not been called.");
+		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
+		assert.ok(this.fnStubAttachThemeApplied.notCalled, "Method Core.attachThemeChanged has not been called.");
+		assert.ok(this.fnSpyHandleThemeApplied.notCalled, "Method _handleThemeApplied has not been called.");
+	});
+
 	QUnit.module("Rendering tests for failing state", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile-failed", {
@@ -390,14 +655,33 @@
 		this.oGenericTile.setSubheader("");
 		sap.ui.getCore().applyChanges();
 		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
+	});
 
-		// Check if the cotent in TileContent is removed.
-		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed.");
+	QUnit.test("HeaderMode - Check if the content in TileContent is removed before rendering", function(assert) {
+		//Arrange
+		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+		//Act
+		this.oGenericTile.onBeforeRendering();
+		//Assert
+		assert.equal(this.oGenericTile._aTileContentContent.length, 1, "TileContent content is saved during rendering");
+		assert.ok(this.oGenericTile._aTileContentContent[0].getParent() === null, "TileContent content has no parent");
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed during rendering");
+	});
+
+	QUnit.test("HeaderMode - Check if the content in TileContent is added after rendering", function(assert) {
+		//Arrange
+		this.oGenericTile.setProperty("mode", "HeaderMode", true);
+		//Act
+		this.oGenericTile.onAfterRendering();
+		//Assert
+		assert.ok(!this.oGenericTile._aTileContentContent, "TileContent content is no longer saved during rendering");
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent(), "The content aggregation in TileContent is back after rendering.");
 	});
 
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
 		// Arrange
 		var oSpy = sinon.spy(sap.m.GenericTileLineModeRenderer, "render");
+		this.oGenericTile.getParent().addStyleClass = function() {};
 		// Act
 		this.oGenericTile.setMode("LineMode");
 		sap.ui.getCore().applyChanges();
@@ -417,6 +701,26 @@
 		assert.ok(oSpy.calledOnce, "GenericTileRenderer called");
 		//Restore
 		oSpy.restore();
+	});
+
+	QUnit.test("Test content density class - cozy as default", function(assert) {
+		assert.notOk(this.oGenericTile._isCompact());
+	});
+
+	QUnit.test("Test content density class - compact from control", function(assert) {
+		//Arrange
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
+		//Act
+		//Assert
+		assert.ok(this.oGenericTile._isCompact());
+	});
+
+	QUnit.test("Test content density class - compact from parent", function(assert) {
+		//Arrange
+		jQuery("#qunit-fixture").addClass("sapUiSizeCompact");
+		//Act
+		//Assert
+		assert.ok(this.oGenericTile._isCompact());
 	});
 
 	/* --------------------------------------- */
@@ -718,9 +1022,8 @@
 
 	QUnit.test("Tooltip set by user for GenericTile with short header text", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setTooltip("tooltip");
-		$Tile.trigger("mouseenter");
+		this.oGenericTile.$().trigger("mouseenter");
 		sap.ui.getCore().applyChanges();
 		//Act
 		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
@@ -730,22 +1033,22 @@
 
 	QUnit.test("Tooltip for GenericTile with long(truncated) header text", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
-		$Tile.trigger("mouseenter");
-		sap.ui.getCore().applyChanges();
+
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		this.oGenericTile.$().trigger("mouseenter");
+		var sTooltip = this.oGenericTile.$().attr("title");
+		sap.ui.getCore().applyChanges();
+
 		//Assert
-		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
+		assert.equal(sTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
 	});
 
 	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
 		this.oGenericTile.setTooltip("tooltip");
-		$Tile.trigger("mouseenter");
+		this.oGenericTile.$().trigger("mouseenter");
 		sap.ui.getCore().applyChanges();
 		//Act
 		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
@@ -773,6 +1076,121 @@
 		//Act
 		//Assert
 		assert.ok(oDom, "The span with suffix 'inner' exists");
+	});
+
+	QUnit.module("Tooltip handling in LineMode", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header text of GenericTile",
+				subheader : "subheader text of GenericTile",
+				mode: "LineMode",
+				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
+			});
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 1";
+			};
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[1]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 2";
+			};
+
+			this.oParent = new sap.m.FlexBox({
+				width: "100px",
+				items: [ this.oGenericTile ]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oParent.destroy();
+			this.oParent = null;
+		}
+	});
+
+	QUnit.test("GenericTile no tooltip provided by the control", function(assert) {
+		//Arrange
+		var sAriaLabel = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+
+		//Act
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), null, "Tooltip of GenericTile is consistent");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
+	});
+
+	QUnit.test("GenericTile with an explicit tooltip set by user", function(assert) {
+		//Arrange
+		this.oGenericTile.setTooltip("tooltip");
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip of GenericTile is consistent");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), this.oGenericTile.$().attr("title"), "Explicit tooltip of GenericTile is identical with ARIA-label");
+	});
+
+	QUnit.test("GenericTile with space tooltip set by user", function(assert) {
+		//Arrange
+		this.oGenericTile.setTooltip(" ");
+		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), null, "GenericTile rendered without tooltip");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sConsistentTooltip, "GenericTile has correct ARIA-label");
+	});
+
+	QUnit.test("Tooltip for GenericTile with short header text", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+
+		//Act
+		$Tile.trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), null, "No truncated text, no tooltip");
+	});
+
+	QUnit.test("Tooltip set by user for GenericTile with short header text", function(assert) {
+		//Arrange
+		this.oGenericTile.setTooltip("tooltip");
+
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip set by user is applied");
+	});
+
+	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		this.oGenericTile.setTooltip("tooltip");
+
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "User tooltip overwrites the header text");
+	});
+
+	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+
+		//Act
+		$Tile.trigger("mouseenter");
+		$Tile.trigger("mouseleave");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(null, this.oGenericTile.$().attr("title"), "Truncated text tooltip is removed");
 	});
 
 	QUnit.module("Tooltip handling on content elements", {
@@ -863,6 +1281,35 @@
 		//Assert
 		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain ARIA-label attribute after content changed");
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
+	});
+
+	QUnit.module("Hindi launguage in header and subheader tests", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "जर्नल प्रविष्टियों के लिए विकल्प संपादित करें",
+				subheader : "मेरी सेटिंग"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("The maximal number of lines in Hindi language in HeaderMode is four", function(assert) {
+		// arrange
+		this.oGenericTile.setMode("HeaderMode");
+		sap.ui.getCore().applyChanges();
+		// assert
+		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
+		assert.equal(nLines, 4, "The number of header lines is right");
+	});
+
+	QUnit.test("The maximal number of lines in Hindi language in ContentMode is two", function(assert) {
+		// assert
+		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
+		assert.equal(nLines, 2, "The number of header lines is right");
 	});
 
 	QUnit.module("Event Tests", {

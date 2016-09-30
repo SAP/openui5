@@ -273,9 +273,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				$this.attr("disabled", true);
 				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
-				/*eslint-disable no-script-url */
-				$this.attr("href", "javascript:void(0);");
-				/*eslint-disable no-script-url */
+				$this.attr("href", "#");
 			}
 		}
 		return this;
@@ -360,7 +358,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	Link.prototype.getAccessibilityInfo = function() {

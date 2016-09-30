@@ -111,6 +111,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			*/
 			backgroundRepeat : {type : "string", group : "Appearance", defaultValue : "no-repeat"}
 		},
+		aggregations : {
+			/**
+			 * Aggregation which holds data about the LightBox's image and its description. Although multiple LightBoxItems
+			 * may be added to this aggregation only the first one in the list will be taken into account.
+			 * @public
+			 */
+			detailBox: {type: 'sap.m.LightBox', multiple: false, bindable: "bindable"}
+		},
 		events : {
 
 			/**
@@ -186,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// set the src to the real dom node
 		if (this.getMode() === sap.m.ImageMode.Background) {
 			// In Background mode, the src is applied to the output DOM element only when the source image is finally loaded to the client side
-			$DomNode.css("background-image", "url(" + this._oImage.src + ")");
+			$DomNode.css("background-image", "url(\"" + this._oImage.src + "\")");
 		}
 
 		if (!this._isWidthOrHeightSet()) {
@@ -266,6 +274,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Image.prototype.onBeforeRendering = function() {
 		this._defaultEventTriggered = false;
+
+		if (!this._fnLightBoxOpen) {
+			var oLightBox = this.getDetailBox();
+
+			if (oLightBox) {
+				this._fnLightBoxOpen = oLightBox.open;
+
+				this.attachPress(this._fnLightBoxOpen.bind(oLightBox));
+			}
+		}
 	};
 
 	/**
@@ -305,6 +323,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this._oImage = null;
 		} else {
 			this.$().off("load", this.onload).off("error", this.onerror);
+		}
+
+		if (this._fnLightBoxOpen) {
+			this._fnLightBoxOpen = null;
 		}
 	};
 
@@ -572,7 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	Image.prototype.getAccessibilityInfo = function() {

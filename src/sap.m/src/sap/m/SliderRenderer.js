@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * This hook method is reserved for derived classes to render more handles.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
 		 */
 		SliderRenderer.renderHandles = function(oRm, oSlider) {
 			this.renderHandle(oRm, oSlider,  {
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("id", mOptions.id);
 			}
 
-			if (oSlider.getShowHandleTooltip()) {
+			if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
 				this.writeHandleTooltip(oRm, oSlider);
 			}
 
@@ -131,22 +131,21 @@ sap.ui.define(['jquery.sap.global'],
 		 * This hook method is reserved for derived classes to render more tooltips.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
 		 */
 		SliderRenderer.renderTooltips = function(oRm, oSlider) {
-			// The tooltips container
+
+			// the tooltips container
 			oRm.write("<div");
 			oRm.writeAttribute("id", oSlider.getId() + "-TooltipsContainer");
 			oRm.addClass(SliderRenderer.CSS_CLASS + "TooltipContainer");
-			oRm.addStyle("left","0%");
-			oRm.addStyle("right","0%");
+			oRm.addStyle("left", "0%");
+			oRm.addStyle("right", "0%");
 			oRm.addStyle("min-width", "0%");
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
-
 			this.renderTooltip(oRm, oSlider, oSlider.getInputsAsTooltips());
-
 			oRm.write("</div>");
 		};
 

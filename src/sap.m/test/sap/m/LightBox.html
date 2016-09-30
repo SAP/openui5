@@ -3,8 +3,8 @@
 <head>
 	<title>LightBox - sap.m</title>
 <style>
-	.imagesTiles {
-		margin:20px 0 0 20px;
+	.sapMFlexItem {
+		margin:0 0 0 2rem;
 	}
 </style>
 	<script src="../../../resources/sap-ui-core.js"
@@ -86,96 +86,103 @@
 			})
 		});
 
+		var oLightBoxInvalidImage2 = new sap.m.LightBox('lB9', {
+			imageContent : new sap.m.LightBoxItem({
+				title: 'Light box with invalid image',
+				subtitle: 'Second line',
+				imageSrc: 'invalidSource'
+			})
+		});
+
 		var oImage = new sap.m.Image('image1', {
 			src: 'images/demo/nature/elephant.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBox.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBox
+		});
 
 		var oImageBigPicture = new sap.m.Image('image2', {
 			src: 'images/demo/nature/ALotOfElephants_small.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxBig.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxBig
+		});
 
 		var oImageHorizontal = new sap.m.Image('image3', {
 			src: 'images/demo/nature/horses.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxHorizontal.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxHorizontal
+		});
 
 		var oImageVertical = new sap.m.Image('image4', {
 			src: 'images/demo/nature/flatFish.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxVertical.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxVertical
+		});
 
 		var oImageSquare = new sap.m.Image('image5', {
 			src: 'images/demo/smallImgs/150x150.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxSquare.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxSquare
+		});
 
 		var oImageVerticalMin = new sap.m.Image('image6', {
 			src: 'images/demo/smallImgs/150x288.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxVerticalMin.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxVerticalMin
+		});
 
 		var oImageHorizontalMin = new sap.m.Image('image7', {
 			src: 'images/demo/smallImgs/320x150.jpg',
 			alt: 'click to open the lightbox',
 			decorative: false,
 			width: '100px',
-			press: function () {
-				oLightBoxHorizontalMin.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxHorizontalMin
+		});
 
 		var oInvalidImage = new sap.m.Image('image8', {
 			src : 'images/demo/nature/elephant.jpg',
 			alt : 'opens light box with wrong image source',
 			decorative : false,
 			width : '100px',
-			press: function () {
-				oLightBoxInvalidImage.open();
-			}
-		}).addStyleClass('imagesTiles');
+			detailBox: oLightBoxInvalidImage
+		});
 
-		oImage.placeAt("content");
+        var oInvalidImage2 = new sap.m.Image('image9', {
+            src : 'images/SAPUI5Icon.png',
+            alt : 'opens light box with wrong image source',
+            decorative : false,
+            width: "88px",
+            height: "68px",
+            backgroundPosition: "-74px -14px",
+            mode: sap.m.ImageMode.Background,
+            detailBox: oLightBoxInvalidImage2
+        });
 
-		oImageBigPicture.placeAt("content");
-		oImageHorizontal.placeAt("content");
-		oImageVertical.placeAt("content");
-		oImageSquare.placeAt("content");
-		oImageVerticalMin.placeAt("content");
-		oImageHorizontalMin.placeAt("content");
-		oInvalidImage.placeAt("content")
-
+        var HBox = new sap.m.HBox("vbox1", {
+            alignItems: sap.m.FlexAlignItems.Baseline,
+            items:[
+                oImage,
+                oImageBigPicture,
+                oImageHorizontal,
+                oImageVertical,
+                oImageSquare,
+                oImageVerticalMin,
+                oImageHorizontalMin,
+                oInvalidImage,
+                oInvalidImage2
+            ]
+        }).placeAt("content");
 
 		var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
 			text : 'Toggle Compact mode',

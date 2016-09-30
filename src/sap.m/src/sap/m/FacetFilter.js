@@ -16,7 +16,54 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The FacetFilter control is used to provide filtering functionality with multiple parameters.
+	 * <strong><i>Overview</i></strong>
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter} control is used to provide filtering functionality
+	 * with multiple parameters and supports the users in finding the information they
+	 * need from potentially very large data sets.
+	 * <br>
+	 * Your app can have dependencies between facets where selection of filter items in
+	 * one facet list limits the list of valid filters in another facet list.
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter FacetFilter} uses
+	 * {@link sap.m.FacetFilterList FacetFilterList} and
+	 * {@link sap.m.FacetFilterItem FacetFilterItem} to model facets and their associated
+	 * filters.
+	 * <br><br>
+	 * <b>Note: </b>{@link sap.m.FacetFilterList FacetFilterList} is a subclass of
+	 * {@link sap.m.List} and supports growing enablement feature via the property
+	 * <code>growing</code>. When you use this feature, be aware that it only works with
+	 * one-way data binding.
+	 * Having growing feature enabled when the <code>items</code> aggregation is bound to
+	 * a model with two-way data binding, may lead to unexpected and/or inconsistent
+	 * behavior across browsers, such as unexpected closing of the list.
+	 * <br><br>
+	 * <strong><i>Usage</i></strong>
+	 * <br><br>
+	 * Use the {@link sap.m.FacetFilter FacetFilter} if your app displays a large list of
+	 * items that can be grouped by multiple parameters, for example products by category
+	 * and supplier. With the {@link sap.m.FacetFilter FacetFilter}, you allow the users
+	 * to dynamically filter the list so it only displays products from the categories and
+	 * suppliers they want to see.
+	 * <br><br>
+	 * <strong><i>Responsive behavior</i></strong>
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter FacetFilter} supports the following two types, which
+	 * can be configured using the control's <code>type</code> property:
+	 * <ul>
+	 * <li>Simple type (default) - only available for desktop and tablet screen sizes.
+	 * The active facets are displayed as individually selectable buttons on the toolbar.</li>
+	 * <li>Light type - automatically enabled on smart phone sized devices, but also
+	 * available for desktop and tablets. The active facets and selected filter items are
+	 * displayed in the summary bar. When the user selects the summary bar, a navigable
+	 * dialog list of all facets is displayed. When the user selects a facet, the dialog
+	 * scrolls to show the list of filters that are available for the selected facet.</li>
+	 * </ul>
+	 * <strong><i>Additional Information</i></strong>
+	 * <br><br>
+	 * For more information, go to <b>Developer Guide</b> section in the Demo Kit and navigate to
+	 * <b>More&nbsp;About&nbsp;Controls</b>&nbsp;>&nbsp;<b>sap.m</b>&nbsp;>&nbsp;<b>Facet&nbsp;Filter</b>
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 * @version ${version}

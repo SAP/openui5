@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Adds one or several sources to the annotation loader. Sources will be loaded instantly but merged only after
-	 * the previousl added source has either been successfully merged or failed.
+	 * the previously added source has either been successfully merged or failed.
 	 *
 	 * @param {string|string[]|ODataAnnotations~Source|ODataAnnotations~Source[]} vSource One or several
 	 *        annotation source(s). Can be either a string or a map of the type <code>ODataAnnotations~Source</code> or an array
@@ -196,6 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *          with an array of maps containing properties <code>source</code> and <code>data</code>. See the parameters of the <code>success</code>
 	 *          event for more details. The promise fails in case at least one source could not be (loaded,) parsed or
 	 *          merged with an array of objects containing Errors and/or Success objects.
+	 * @public
 	 */
 	ODataAnnotations.prototype.addSource = function(vSource) {
 		if (!vSource || Array.isArray(vSource) && vSource.length === 0) {
@@ -726,55 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	ODataAnnotations.prototype._mergeSource = function(mSource) {
 		jQuery.sap.assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
 
-		// Merge must be done on Term level, this is why the original line does not suffice any more:
-		//     jQuery.extend(true, this.oAnnotations, mAnnotations);
-		// Terms are defined on different levels, the main one is below the target level, which is directly
-		// added as property to the annotations object and then in the same way inside two special properties
-		// named "propertyAnnotations" and "EntityContainer"
-
-		function mergeAnnotation(sName, mAnnotations, mTarget) {
-			// Everythin in here must be on Term level, so we overwrite the target with the data from the source
-
-			if (Array.isArray(mAnnotations[sName])) {
-				// This is a collection - make sure it stays one
-				mTarget[sName] = mAnnotations[sName].slice(0);
-			} else {
-				// Make sure the map exists in the target
-				mTarget[sName] = mTarget[sName] || {};
-
-				for (var sKey in mAnnotations[sName]) {
-					mTarget[sName][sKey] = mAnnotations[sName][sKey];
-				}
-			}
-		}
-
-		var sTarget, sTerm;
-		var aSpecialCases = ["propertyAnnotations", "EntityContainer", "annotationReferences"];
-
-		// First merge standard annotations
-		for (sTarget in mSource.annotations) {
-			if (aSpecialCases.indexOf(sTarget) !== -1) {
-				// Skip these as they are special properties that contain Target level definitions
-				continue;
-			}
-
-			// ...all others contain Term level definitions
-			mergeAnnotation(sTarget, mSource.annotations, this._mAnnotations);
-		}
-
-		// Now merge special cases
-		for (var i = 0; i < aSpecialCases.length; ++i) {
-			var sSpecialCase = aSpecialCases[i];
-
-			this._mAnnotations[sSpecialCase] = this._mAnnotations[sSpecialCase] || {}; // Make sure the the target namespace exists
-			for (sTarget in mSource.annotations[sSpecialCase]) {
-				for (sTerm in mSource.annotations[sSpecialCase][sTarget]) {
-					// Now merge every term
-					this._mAnnotations[sSpecialCase][sTarget] = this._mAnnotations[sSpecialCase][sTarget] || {};
-					mergeAnnotation(sTerm, mSource.annotations[sSpecialCase][sTarget], this._mAnnotations[sSpecialCase][sTarget]);
-				}
-			}
-		}
+		AnnotationParser.merge(this._mAnnotations, mSource.annotations);
 
 		return Promise.resolve(mSource);
 	};

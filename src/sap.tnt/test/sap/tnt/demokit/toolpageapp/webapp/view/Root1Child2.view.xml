@@ -1,0 +1,27 @@
+<core:View
+        xmlns="sap.m"
+        xmlns:tnt="sap.tnt"
+        xmlns:l="sap.ui.layout"
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc">
+
+        <ScrollContainer id="subpage2"
+                             horizontal="false"
+                             vertical="true"
+                             height="100%">
+                <Label text="URL"/>
+                <Input></Input>
+                <Label text="Pass"/>
+                <Input></Input>
+                <Label text="User"/>
+                <Input></Input>
+                <Label text="Language"/>
+                <Select width="100%">
+                    <items>
+                        <core:Item text="English"/>
+                        <core:Item text="German"/>
+                        <core:Item text="French"/>
+                    </items>
+                </Select>
+            </ScrollContainer>
+</core:View>

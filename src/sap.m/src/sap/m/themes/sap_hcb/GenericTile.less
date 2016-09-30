@@ -6,6 +6,83 @@
 	box-shadow: 0 0 0 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
 	background: @sapHCStandardBG;
 }
+
+.sapMGT.sapMGTLineMode {
+	font-size: @sapMFontMediumSize;
+
+	.sapMGTHdrTxt {
+		color: @sapHCStandardFG;
+		font-weight: bold;
+		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
+	}
+
+	.sapMGTLineModeFailedIcon {
+		cursor: pointer;
+		color: @sapHCStandardFG;
+		border-right: 0.25rem solid transparent; //padding-right
+	}
+
+	&:hover {
+		box-shadow: none !important;
+	}
+
+	.sapMGTLineStyleHelper {
+		.sapMGTLineStyleHelperInner {
+			box-shadow: 0 0 0 1px @sapHCStandardFG;
+			bottom: 1px;
+		}
+
+		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+			margin-right: 0.125rem;
+		}
+
+		&:not(:first-child) .sapMGTLineStyleHelperInner {
+			margin: 0 0.125rem;
+		}
+		&:last-child .sapMGTLineStyleHelperInner {
+			margin-right: 0;
+		}
+
+		&:first-child .sapMGTLineStyleHelperInner {
+			border-top-left-radius: 0.375rem;
+			border-bottom-left-radius: 0.375rem;
+		}
+
+		&:last-child .sapMGTLineStyleHelperInner {
+			border-top-right-radius: 0.375rem;
+			border-bottom-right-radius: 0.375rem;
+		}
+	}
+
+	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
+		box-shadow: 0 0 0 0.1875rem @sapHCStandardFG;
+	}
+
+	&:focus .sapMGTLineStyleHelperInner:before {
+		content: "";
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		box-sizing: border-box;
+		border: 2px dotted @sapHCStandardFG;
+	}
+
+	&.sapMGTDisabled {
+		.sapMGTLineStyleHelperInner {
+			border: 1px solid @sapHCReducedFG;
+		}
+		.sapMGTHdrTxt {
+			color: @sapHCReducedFG;
+		}
+		.sapMGTSubHdrTxt {
+			color: @sapHCReducedFG;
+		}
+	}
+}
+
 .sapMGTHdrContent {
 	color: @sapHCStandardFG;
 }

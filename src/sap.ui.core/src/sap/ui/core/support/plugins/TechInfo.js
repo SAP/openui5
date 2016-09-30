@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			oData.modules.sort();
 			this.e2eTraceStarted = oData["e2e-trace"].isStarted;
 			var html = ["<div class='sapUiSupportToolbar'>",
-						"<a href='javascript:void(0);' id='", that.getId(), "-Refresh' class='sapUiSupportLink'>Refresh</a>",
+						"<a href='#' id='", that.getId(), "-Refresh' class='sapUiSupportLink'>Refresh</a>",
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
 						"<table border='0' cellpadding='3'>"];
 			line(html, true, true, "SAPUI5 Version", function(buffer){
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 				return oData.useragent + (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : "");
 			});
 			line(html, true, true, "Debug Sources", function(buffer){
-				buffer.push((oData.debug ? "ON" : "OFF"), "<a href='javascript:void(0);' id='", that.getId(), "-tggleDbgSrc' class='sapUiSupportLink'>Toggle</a>");
+				buffer.push((oData.debug ? "ON" : "OFF"), "<a href='#' id='", that.getId(), "-tggleDbgSrc' class='sapUiSupportLink'>Toggle</a>");
 			});
 			line(html, true, true, "Application", oData.appurl);
 			multiline(html, true, true, "Configuration (bootstrap)", oData.bootconfig);
@@ -116,10 +116,12 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			html.push("</table></div>");
 			this.$().html(html.join(""));
 
-			this.$("tggleDbgSrc").bind("click", function(){
+			this.$("tggleDbgSrc").bind("click", function(oEvent) {
+				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "ToggleDebug", {});
 			});
-			this.$("Refresh").bind("click", function(){
+			this.$("Refresh").bind("click", function(oEvent) {
+				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "Refresh", {});
 			});
 

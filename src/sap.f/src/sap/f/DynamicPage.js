@@ -91,7 +91,7 @@ sap.ui.define([
 				 * when the control is rendered on tablet or mobile and the control`s title and header
 				 * are with height larger than the given threshold.
 				 */
-				preserveHeaderStateOnScroll: {type: "boolean", group: "Behaviour", defaultValue: false},
+				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
 				 * Determines whether the header is expanded.
@@ -100,12 +100,12 @@ sap.ui.define([
 				 * The header can be also expanded/collapsed by user interaction, which requires the property to be
 				 * internally mutated by the control to reflect the changed state.
 				 */
-				headerExpanded: {type: "boolean", group: "Behaviour", defaultValue: true},
+				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
 				 * Determines whether the footer is visible.
 				 */
-				showFooter: {type: "boolean", group: "Behaviour", defaultValue: false}
+				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
 			aggregations: {
 				/**
@@ -330,7 +330,10 @@ sap.ui.define([
 
 		if (exists($footerSpacer)) {
 			$footerSpacer.toggleClass("sapFDynamicPageContentWrapperSpacer", bToggle);
-			this.$("contentFitContainer").css("bottom", bToggle ? "4rem" : 0);
+		}
+
+		if (exists(this.$contentFitContainer)) {
+			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bToggle);
 		}
 	};
 

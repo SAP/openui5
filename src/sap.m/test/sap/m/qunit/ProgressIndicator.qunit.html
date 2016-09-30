@@ -146,7 +146,11 @@
 
 
 	test("setPercentValue with various values", function() {
-		var aTestCases = [
+		var oProgressIndicator = new sap.m.ProgressIndicator({
+			percentValue: 0
+		}),
+		$progressIndicator,
+		aTestCases = [
 			{value: 100, expectedClass: "sapMPIValueMax"},
 			{value: 99, expectedClass: "sapMPIValueNormal"},
 			{value: 99.9952, expectedClass: "sapMPIValueNormal"},
@@ -154,17 +158,25 @@
 			{value: 1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.255, expectedClass: "sapMPIValueNormal"},
+			{value: 101, expectedClass: "sapMPIValueMin"},
 			{value: 0, expectedClass: "sapMPIValueMin"},
 			{value: -1, expectedClass: "sapMPIValueMin"}
-		], fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
-			oProgInd.setPercentValue(fPercentValueToSet);
-			ok(oProgInd.hasStyleClass(sExpectedClass),
-					"the progress indicator has the correct class for " + fPercentValueToSet + "%");
+		],
+		fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
+			oProgressIndicator.setPercentValue(fPercentValueToSet);
+			ok($progressIndicator.hasClass(sExpectedClass),
+					"the progress indicator has the correct class: " + sExpectedClass + " for " + fPercentValueToSet + "%");
 		};
+
+		oProgressIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$progressIndicator = oProgressIndicator.$();
 
 		aTestCases.forEach(function (oTestCase){
 			fnTestForClassesToValuesMapping(oTestCase.value, oTestCase.expectedClass);
 		});
+
+		oProgressIndicator.destroy();
 	});
 
 	test("text should not be rendered when displayValue is not set", function() {

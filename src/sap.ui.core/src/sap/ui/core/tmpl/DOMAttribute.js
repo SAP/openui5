@@ -22,8 +22,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.15.
-	 * The templating might be changed in future versions.
+	 * @since 1.15
 	 * @alias sap.ui.core.tmpl.DOMAttribute
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

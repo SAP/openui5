@@ -40,7 +40,54 @@
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
-	border-color: @sapUiFieldFocusBorderColor;
+	.sapMSltLabel, .sapMSltIcon {
+		outline-offset: -3px;
+		outline: @sapUiContentFocusColor dotted 1px;
+	}
+
+	&.sapMSltPressed > .sapMSltIcon {
+		outline-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
+		.sapMSltLabel {
+			&:before {
+				content: " ";
+				position: absolute;
+				border: 1px dotted @sapUiContentFocusColor;
+				top: 2px;
+				right: 2px;
+				bottom: 2px;
+				left: 2px;
+				pointer-events: none;
+			}
+		}
+
+		&.sapMSltIconOnly:before {
+			content: " ";
+			position: absolute;
+			border: 1px dotted @sapUiContentFocusColor;
+			top: 2px;
+			right: 2px;
+			bottom: 2px;
+			left: 2px;
+			pointer-events: none;
+		}
+
+		&.sapMSltPressed.sapMSltIconOnly:before {
+			content: " ";
+			position: absolute;
+			border: 1px dotted @sapUiContentContrastFocusColor;
+			top: 2px;
+			right: 2px;
+			bottom: 2px;
+			left: 2px;
+			pointer-events: none;
+		}
+	}
 }
 
 .sapMSltHoverable:not(.sapMSltState):hover {
@@ -125,16 +172,15 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 	text-align: center;
 	width: 2.5rem;
 	line-height: 2.5rem;
-  	top: 0;
+	top: 0;
 	right: 0;
-	background: @sapUiFieldBackground;
 	color: @sapUiContentIconColor;
 }
 
 /* hover */
 
 .sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 /* pressed */
@@ -154,25 +200,6 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 .sapMSltLabelState,
 .sapMSltArrowState {
 	line-height: 2.25rem;
-}
-
-/* ====================================================== */
-/* Select inside a Bar: all contexts                      */
-/* ====================================================== */
-
-/* focus: in the footer all of the selects should get the outline */
-
-html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
-html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
-html.sap-desktop .sapMFooter-CTX .sapMSlt:not(.sapMSltPressed):focus {
-	outline: 0.0625rem dotted;
-	outline-offset: -0.0625rem;
-}
-
-html.sap-desktop .sapMHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
-html.sap-desktop .sapMSubHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
-html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
-	outline-color: @sapUiContentContrastFocusColor;
 }
 
 /* ====================================================== */

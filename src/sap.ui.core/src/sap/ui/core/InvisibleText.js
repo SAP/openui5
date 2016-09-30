@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	});
 
 	/**
-	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Local BusyIndicator is not supported by control.
 	 */
@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	};
 
 	/**
-	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Local BusyIndicator is not supported by control.
 	 */
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	};
 
 	/**
-	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Property visible is not supported by control.
 	 */
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	};
 
 	/**
-	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Tooltip is not supported by control.
 	 */
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * Adds <code>this</code> control into the static, hidden area UI area container.
 	 *
-	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @see sap.ui.core.Control#placeAt
 	 */

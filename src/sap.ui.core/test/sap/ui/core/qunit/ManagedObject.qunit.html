@@ -328,7 +328,7 @@
 				
 				setAndTest("stringArray", ["a", "b", "c"], SAME);
 				setAndTest("stringArray", [], SAME);
-				setAndTest("stringArray", ["a", 10, true], ["a", 10, true]); // FIXME type should reject or convert to string
+				setAndTest("stringArray", ["a", 10, true], ["a", "10", "true"]);
 				setAndTest("stringArray", "test", ["test"]);
 				setAndTest("stringArray", null, []);
 				setAndTest("stringArray", undefined, []);

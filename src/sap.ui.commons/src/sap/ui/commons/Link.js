@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Link.prototype.onclick = function(oEvent) {
 		if (this.getEnabled()) {
 			// the default behavior will be supressed, when oEvent.preventDefault() is
-			// called or when the link doesn't contain a valid href (javascript:void(0)).
+			// called or when the link doesn't contain a valid href (#)).
 			// The last thing will trigger the onbeforeunload event in IE when not
 			// preventing the default behavior
 			if (!this.firePress() || !this.getHref()) {
@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	Link.prototype.getAccessibilityInfo = function() {

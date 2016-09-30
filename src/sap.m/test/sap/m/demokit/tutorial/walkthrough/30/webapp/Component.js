@@ -26,7 +26,7 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set dialog
-			this.helloDialog = new HelloDialog();
+			this._helloDialog = new HelloDialog(this.getAggregation("rootControl"));
 
 			// open support window (only for demonstration purpose)
 			if (sap.ui.Device.system.desktop) {
@@ -37,6 +37,10 @@ sap.ui.define([
 					oSupport.openSupportTool();
 				}, 3000);
 			}
+		},
+
+		openHelloDialog : function () {
+			this._helloDialog.open();
 		}
 	});
 

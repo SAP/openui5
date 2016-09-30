@@ -92,16 +92,16 @@ sap.ui.define([
 
 				/**
 				 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
-				 * will automatically set <code>showHandleTooltips</code> to <code>false</code>.
-				 * @since 1.31
+				 * will ignore the value set in <code>showHandleTooltips</code>. This will cause only the advanced tooltip to be shown.
+				 * @since 1.42
 				 *
 				 */
 				showAdvancedTooltip: { type: "boolean", group: "Appearance", defaultValue: false},
 
 				/**
 				 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
-				 * will automatically set <code>showAdvancedTooltips</code> to <code>false</code>
-				 * and <code>showHandleTooltips</code> to <code>false</code>.
+				 * will only work if <code>showAdvancedTooltips</code> is set to <code>true</code>.
+				 * @since 1.42
 				 */
 				inputsAsTooltips : {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -144,8 +144,10 @@ sap.ui.define([
 		}});
 
 		//Defines object which contains constants used by the control.
-		Slider.prototype._CONSTANTS = {
-			CHARACTER_WIDTH_PX : 8
+		var _CONSTANTS = {
+			CHARACTER_WIDTH_PX : 8,
+			INPUT_STATE_NONE: "None",
+			INPUT_STATE_ERROR: "Error"
 		};
 
 		EnabledPropagator.apply(Slider.prototype, [true]);
@@ -182,7 +184,7 @@ sap.ui.define([
 			this._fHandleWidth = this.$("handle").width();
 
 			this._fTooltipHalfWidthPercent =
-				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + _CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
 		};
 
 		/**
@@ -345,14 +347,14 @@ sap.ui.define([
 			}
 
 			// update the position of the handle
-			oHandleDomRef.style[this._bRTL ? "right" : "left"] = sPerValue;
+			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the position of the advanced tooltip
 			if (this.getShowAdvancedTooltip()) {
 				this._updateAdvancedTooltipDom(sNewValue);
 			}
 
-			if (this.getShowHandleTooltip()) {
+			if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
 
 				// update the tooltip
 				oHandleDomRef.title = sNewValue;
@@ -367,11 +369,12 @@ sap.ui.define([
 				oTooltipsContainer = this.getDomRef("TooltipsContainer"),
 				oTooltip = bInputTooltips && this._oInputTooltip ?
 					this._oInputTooltip.tooltip : this.getDomRef("Tooltip"),
-				sAdjustProperty = this._bRTL ? "right" : "left";
+				sAdjustProperty = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
 			if (!bInputTooltips) {
 				oTooltip.innerHTML = sNewValue;
 			} else if (bInputTooltips && oTooltip.getValue() !== sNewValue) {
+				oTooltip.setValueState(_CONSTANTS.INPUT_STATE_NONE);
 				oTooltip.setValue(sNewValue);
 				oTooltip.$("inner").attr("value", sNewValue);
 			}
@@ -474,7 +477,7 @@ sap.ui.define([
 		Slider.prototype._createInputField = function (sSuffix, oAriaLabel) {
 			var oInput = new Input(this.getId() + "-" + sSuffix, {
 				value: this.getMin(),
-				width: this._iLongestRangeTextWidth + (2 * this._CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
+				width: this._iLongestRangeTextWidth + (2 * _CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
 				type: "Number",
 				textAlign: sap.ui.core.TextAlign.Center,
 				ariaLabelledBy: oAriaLabel
@@ -484,7 +487,9 @@ sap.ui.define([
 
 			oInput.addEventDelegate({
 				onfocusout: function (oEvent) {
-					oEvent.srcControl.fireChange({value: oEvent.target.value});
+					if (oEvent.target.value !== undefined) {
+						oEvent.srcControl.fireChange({value: oEvent.target.value});
+					}
 				}
 			});
 
@@ -492,14 +497,14 @@ sap.ui.define([
 		};
 
 		Slider.prototype._handleInputChange = function (oInput, oEvent) {
-			var newValue = parseFloat(oEvent.getParameter("value"), 10);
+			var newValue = parseFloat(oEvent.getParameter("value"));
 
 			if (isNaN(newValue) || newValue < this.getMin() || newValue > this.getMax()) {
-				oInput.setValueState("Error");
+				oInput.setValueState(_CONSTANTS.INPUT_STATE_ERROR);
 				return;
 			}
 
-			oInput.setValueState("None");
+			oInput.setValueState(_CONSTANTS.INPUT_STATE_NONE);
 
 			this.setValue(newValue);
 
@@ -519,17 +524,13 @@ sap.ui.define([
 
 			this._bSetValueFirstCall = true;
 
-			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
 			// the width of the longest range value, which determines the width of the tooltips shown above the handles
 			this._iLongestRangeTextWidth = 0;
 
-			// half the width of the tooltip in percent of the total RangeSlider width
+			// half the width of the tooltip in percent of the total slider width
 			this._fTooltipHalfWidthPercent = 0;
 
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-
-			this._ariaUpdateDelay = [];
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		};
 
 		Slider.prototype.exit = function () {
@@ -541,6 +542,10 @@ sap.ui.define([
 				this._oInputTooltip.tooltip = null;
 
 				this._oInputTooltip = null;
+			}
+
+			if (this._oResourceBundle) {
+				this._oResourceBundle = null;
 			}
 		};
 
@@ -563,7 +568,8 @@ sap.ui.define([
 			}
 
 			if (this.getShowAdvancedTooltip()) {
-				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length + 1) * this._CONSTANTS.CHARACTER_WIDTH_PX;
+				this._iLongestRangeTextWidth = ((aAbsRange[iRangeIndex].toString()).length
+					+ this.getDecimalPrecisionOfNumber(this.getStep()) + 1) * _CONSTANTS.CHARACTER_WIDTH_PX;
 			}
 
 			if (this.getInputsAsTooltips() && !this._oInputTooltip) {
@@ -601,10 +607,6 @@ sap.ui.define([
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-				return;
-			}
-
 			// only process single touches
 			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
 				!this.getEnabled() ||
@@ -612,7 +614,10 @@ sap.ui.define([
 				// detect which mouse button caused the event and only process the standard click
 				// (this is usually the left button, oEvent.button === 0 for standard click)
 				// note: if the current event is a touch event oEvent.button property will be not defined
-				oEvent.button) {
+				oEvent.button ||
+
+				// process the event if the target is not a composite control e.g.: a tooltip
+				(oEvent.srcControl !== this)) {
 
 				return;
 			}
@@ -652,7 +657,7 @@ sap.ui.define([
 
 				fNewValue = (((oTouch.pageX - this._fSliderPaddingLeft - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
-				if (this._bRTL) {
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
 					fNewValue = this._convertValueToRtlMode(fNewValue);
 				}
 
@@ -701,7 +706,7 @@ sap.ui.define([
 				fNewValue = (((iPageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 			// RTL mirror
-			if (this._bRTL) {
+			if (sap.ui.getCore().getConfiguration().getRTL()) {
 				fNewValue = this._convertValueToRtlMode(fNewValue);
 			}
 
@@ -753,10 +758,13 @@ sap.ui.define([
 			}
 		};
 
-		Slider.prototype.onfocusin = function (oEvent) {
-			var sCSSClass = this.getRenderer().CSS_CLASS;
-
-			this.$("TooltipsContainer").addClass(sCSSClass + "HandleTooltipsShow");
+		/**
+		 * Handles the <code>focusin</code> event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		Slider.prototype.onfocusin = function(oEvent) {
+			this.$("TooltipsContainer").addClass(this.getRenderer().CSS_CLASS + "HandleTooltipsShow");
 
 			// remember the initial focus range so when esc key is pressed we can return to it
 			if (!this._hasFocus()) {
@@ -764,15 +772,18 @@ sap.ui.define([
 			}
 		};
 
-		Slider.prototype.onfocusout = function (oEvent) {
-			var sCSSClass = this.getRenderer().CSS_CLASS,
-				bInputTooltips = this.getInputsAsTooltips();
+		/**
+		 * Handles the <code>focusout</code> event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		Slider.prototype.onfocusout = function(oEvent) {
 
-			if (bInputTooltips && jQuery.contains(this.getDomRef(),oEvent.relatedTarget)) {
+			if (this.getInputsAsTooltips() && jQuery.contains(this.getDomRef(), oEvent.relatedTarget)) {
 				return;
 			}
 
-			this.$("TooltipsContainer").removeClass(sCSSClass + "HandleTooltipsShow");
+			this.$("TooltipsContainer").removeClass(this.getRenderer().CSS_CLASS + "HandleTooltipsShow");
 		};
 
 		/* ----------------------------------------------------------- */
@@ -788,7 +799,8 @@ sap.ui.define([
 			var fValue,
 				fNewValue;
 
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -815,7 +827,9 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapincreasemodifiers = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -837,7 +851,8 @@ sap.ui.define([
 			var fValue,
 				fNewValue;
 
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -864,9 +879,12 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapdecreasemodifiers = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
+
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 
@@ -885,7 +903,8 @@ sap.ui.define([
 			var fValue,
 				fNewValue;
 
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -913,7 +932,8 @@ sap.ui.define([
 			var fValue,
 				fNewValue;
 
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -952,7 +972,9 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsaphome = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 
@@ -976,7 +998,9 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapend = function(oEvent) {
-			if (["number", "text"].indexOf(oEvent.target.type) > -1) {
+
+			// process the event if the target is not a composite control e.g.: a tooltip
+			if (oEvent.srcControl !== this) {
 				return;
 			}
 

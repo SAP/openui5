@@ -1296,8 +1296,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		};
 
 		/**
-		 * @param [boolean]
-		 *            {bAlwaysShow} if the toggler should be visible all the time
+		 * @param {boolean}
+		 *            bAlwaysShow if the toggler should be visible all the time
 		 *            set this parameter to <b>true</b>
 		 * @public
 		 * @since 1.22.11

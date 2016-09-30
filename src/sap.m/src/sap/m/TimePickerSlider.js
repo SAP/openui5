@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * Performs vertical scroll.
 		 *
 		 * @param {number} iPageY The current y-coordinate of the target to scroll to
-		 * @param {date} dTimeStamp Timestamp of the event
+		 * @param {Date} dTimeStamp Timestamp of the event
 		 * @private
 		 */
 		TimePickerSlider.prototype._doDrag = function(iPageY, dTimeStamp) {
@@ -747,7 +747,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * Finishes scroll session.
 		 *
 		 * @param {number} iPageY The last y-coordinate of the target to scroll to
-		 * @param {date} dTimeStamp Timestamp of the event
+		 * @param {Date} dTimeStamp Timestamp of the event
 		 * @private
 		 */
 		TimePickerSlider.prototype._endDrag = function(iPageY, dTimeStamp) {
@@ -829,6 +829,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			if (!this.getIsExpanded()) {
 				this._selectionOffset = 0;
 			}
+
+			//WAI-ARIA region
+			this.$().attr('aria-expanded', this.getIsExpanded());
 
 			this.setSelectedValue(sSelectedValue);
 		};
@@ -913,9 +916,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 			sAriaLabel = fnFindKeyByText.call(this, sSelectedItemText);
 
-			$aItems.eq(this._iSelectedItemIndex).addClass("sapMTimePickerItemSelected").attr("aria-selected", "true");
+			$aItems.eq(this._iSelectedItemIndex).addClass("sapMTimePickerItemSelected");
 			//WAI-ARIA region
-			document.getElementById(this.getId() + "-valDescription").setAttribute("aria-label", sAriaLabel);
+			document.getElementById(this.getId() + "-valDescription").innerHTML = sAriaLabel;
 		};
 
 		/**

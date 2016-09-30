@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	/**
 	* Operators for the Filter.
 	*
-	* @namespace
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.FilterOperator
 	*/

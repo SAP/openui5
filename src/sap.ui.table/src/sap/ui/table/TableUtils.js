@@ -3,13 +3,12 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './library'],
+	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, library) {
 	"use strict";
 
 	// shortcuts
 	var SelectionBehavior = library.SelectionBehavior,
-		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode;
 
 	/**
@@ -24,6 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	var TableUtils = {
 
 		Grouping: TableGrouping, //Make grouping utils available here
+		ColumnUtils: TableColumnUtils, //Make column utils available here
 
 		/*
  		 * Known basic cell types in the table
@@ -33,6 +33,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			COLUMNHEADER : "COLUMNHEADER", // column header
 			ROWHEADER : "ROWHEADER", // row header (standard, group or sum)
 			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
+		},
+
+		CONTENT_DENSITY_ROW_HEIGHTS : {
+			sapUiSizeCondensed : 24,
+			sapUiSizeCompact : 32,
+			sapUiSizeCozy : 48,
+			undefined : 27
 		},
 
 		/**
@@ -178,11 +185,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (!oTable.getColumnHeaderVisible()) {
 				return 0;
 			}
-			var iHeaderRows = 0;
-			jQuery.each(oTable._getVisibleColumns(), function(iIndex, oColumn) {
-				iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
-			});
-			return iHeaderRows > 0 ? iHeaderRows : 1;
+
+			var iHeaderRows = 1;
+			var aColumns = oTable.getColumns();
+			for (var i = 0; i < aColumns.length; i++) {
+				if (aColumns[i].shouldRender()) {
+					// only visible columns need to be considered. We don't invoke getVisibleColumns due to
+					// performance considerations. With several dozens of columns, it's quite costy to loop them twice.
+					iHeaderRows = Math.max(iHeaderRows,  aColumns[i].getMultiLabels().length);
+				}
+			}
+			return iHeaderRows;
 		},
 
 		/**
@@ -220,7 +233,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		isVariableRowHeightEnabled : function(oTable) {
 			return oTable._bVariableRowHeightEnabled
-				&& oTable.getNavigationMode() === NavigationMode.Scrollbar
 				&& oTable.getFixedRowCount() <= 0
 				&& oTable.getFixedBottomRowCount() <= 0;
 		},
@@ -458,6 +470,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns a jQuery object containing all interactive elements in data cell.
+		 * @param {Object|Element} oCell The data cell from which to get the interactive elements. Can be a jQuery object or a DOM Element.
+		 * @returns {Object|null} Returns null if the passed cell is not a cell or does not contain any interactive elements.
+		 * @private
+		 */
+		getInteractiveElements : function(oCell) {
+			if (!oCell) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell[0]);
+
+			if (oCellInfo !== null && oCellInfo.type === this.CELLTYPES.DATACELL) {
+				var $InteractiveElements = $Cell.find(":sapFocusable");
+				if ($InteractiveElements.length > 0) {
+					return $InteractiveElements;
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns a jQuery object containing the data cell which is the parent of the specified element.
+		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
+		 * @param {Object|Element} oElement An element inside a table data cell. Can be a jQuery object or a DOM Element.
+		 * @returns {Object|null} Returns null if the passed element is not inside a data cell.
+		 * @private
+		 */
+		getParentDataCell: function(oTable, oElement) {
+			if (!oElement) {
+				return null;
+			}
+
+			var $Element = jQuery(oElement);
+			var $ParentCell = $Element.parent().closest(".sapUiTableTd", oTable.getDomRef());
+
+			if ($ParentCell.length > 0) {
+				return $ParentCell;
+			}
+
+			return null;
+		},
+
+		/**
 		 * Registers a ResizeHandler for a DOM reference identified by its ID suffix. The ResizeHandler ID is tracked
 		 * in _mResizeHandlerIds of the table instance. The sIdSuffix is used as key.
 		 * Existing ResizeHandlers will be de-registered before the new one is registered.
@@ -546,7 +604,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		scroll : function(oTable, bDown, bPage) {
-			var bPage = oTable.getNavigationMode() === NavigationMode.Scrollbar ? bPage : true;
 			var bScrolled = false;
 			var iRowCount = oTable._getRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();
@@ -853,6 +910,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	TableGrouping.TableUtils = TableUtils; // Avoid cyclic dependency
+	TableColumnUtils.TableUtils = TableUtils; // Avoid cyclic dependency
 
 	return TableUtils;
 

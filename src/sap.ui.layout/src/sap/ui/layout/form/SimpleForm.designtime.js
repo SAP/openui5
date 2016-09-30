@@ -154,7 +154,6 @@ sap.ui.define([], function() {
 									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 								}
 							},
-
 							getState : function(oRemovedElement) {
 								var that = this;
 
@@ -196,6 +195,135 @@ sap.ui.define([], function() {
 								}
 							}
 						};
+					},
+					createContainer : function(oElement){
+						var sType = oElement.getMetadata().getName();
+						var oCreateContainerMetadata;
+			            if (sType === "sap.ui.layout.form.FormElement"){
+							return;
+			            } else if (sType === "sap.ui.layout.form.SimpleForm") {
+							oCreateContainerMetadata = {
+								changeType : "addSimpleFormGroup",
+								isEnabled : function (oSimpleForm) {
+									var oForm = oSimpleForm.getAggregation("form");
+									var aFormContainers = oForm.getFormContainers();
+
+									for (var i = 0; i < aFormContainers.length; i++) {
+										if (aFormContainers[i].getToolbar && aFormContainers[i].getToolbar()) {
+											return false;
+										}
+									}
+							        return true;
+								},
+								restoreState : function (oElement) {
+									oElement.destroy();
+									return true;
+								},
+								getState: function (oElement) {
+								},
+								containerTitle : "GROUP_CONTROL_NAME",
+								mapToRelevantControlID : function(sNewControlID) {
+									var oTitle = sap.ui.getCore().byId(sNewControlID);
+									var sParentElementId = oTitle.getParent().getId();
+
+									return sParentElementId;
+								},
+								getContainerIndex : function(oSimpleForm, oFormContainer) {
+									var oForm = oSimpleForm.getAggregation("form");
+									var aFormContainers = oForm.getFormContainers();
+									var iIndex = 0;
+									var oLastFormContainer = aFormContainers[aFormContainers.length - 1];
+									var aContent = oSimpleForm.getContent();
+
+									var iStart = -1;
+									var oTitle = oLastFormContainer.getTitle();
+									if (oTitle !== null) {
+										aContent.some(function(oField, index) {
+											if (oField === oTitle) {
+												iStart = index;
+											}
+											if (iStart >= 0 && index > iStart) {
+												if (oField instanceof sap.ui.core.Title) {
+													iIndex = index;
+													return true;
+												}
+											}
+										});
+										iIndex = (!iIndex) ? aContent.length : iIndex;
+									}
+
+									return iIndex;
+								}
+							};
+			            } else if (sType === "sap.ui.layout.form.FormContainer") {
+							oCreateContainerMetadata = {
+								changeType : "addSimpleFormGroup",
+								isEnabled : function (oFormContainer) {
+									if (oFormContainer.getToolbar && oFormContainer.getToolbar()) {
+										return false;
+									}
+									return true;
+								},
+								restoreState : function (oElement) {
+									oElement.destroy();
+									return true;
+								},
+								getState: function (oElement) {
+								},
+								containerTitle : "GROUP_CONTROL_NAME",
+								mapToRelevantControlID : function(sNewControlID) {
+									var oTitle = sap.ui.getCore().byId(sNewControlID);
+									var sParentElementId = oTitle.getParent().getId();
+
+									return sParentElementId;
+								},
+								getContainerIndex : function(oSimpleForm, oFormContainer) {
+									var iIndex = 0;
+									var aContent = oFormContainer.getParent().getParent().getContent();
+
+									var iStart = -1;
+									var oTitle = oFormContainer.getTitle();
+									if (oTitle !== null) {
+										aContent.some(function(oField, index) {
+											if (oField === oTitle) {
+												iStart = index;
+											}
+											if (iStart >= 0 && index > iStart) {
+												if (oField instanceof sap.ui.core.Title) {
+													iIndex = index;
+													return true;
+												}
+											}
+										});
+										iIndex = (!iIndex) ? aContent.length : iIndex;
+									}
+
+									return iIndex;
+								}
+							};
+			            }
+						return oCreateContainerMetadata;
+					},
+					reveal : function(oRemovedElement) {
+						var sType = oRemovedElement.getMetadata().getName();
+						if (sType === "sap.ui.layout.form.SimpleForm") {
+							return {
+								changeType : "unhideSimpleFormField",
+								getInvisibleElements : function(oSimpleForm) {
+									var aInvisibleLabels = [];
+									var aContent = oSimpleForm.getContent();
+									aContent.forEach(function(oField) {
+										if (oField instanceof sap.m.Label && !oField.getDomRef()) {
+											aInvisibleLabels.push({
+												id : oField.getId(),
+												label : oField.getText()
+											});
+										}
+									});
+									return aInvisibleLabels;
+								}
+							};
+						}
 					}
 				},
 				getStableElements : function(oElement) {

@@ -827,7 +827,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
 		if (jQuery.sap.equal(this._aLastChangedAnalyticalInfo, aColumns)) {
 			if (bForceChange) {
-				this._fireChange({reason: ChangeReason.Change});
+				setTimeout(function () {
+					this._fireChange({reason: ChangeReason.Change});
+				}.bind(this), 0);
 			}
 			return;
 		}
@@ -4016,7 +4018,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		for (var l = 0; l < this.aAllDimensionSortedByName.length; l++) {
 			var sDimVal = oMultiUnitEntry[this.aAllDimensionSortedByName[l]];
-			sMultiUnitEntryKey += (sDimVal === undefined ? "" : sDimVal) + ",";
+			// if the value is an empty string, it should be treated as such in the generated key
+			var sSaveDimVal = sDimVal === "" ? '""' : sDimVal;
+			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
+			sMultiUnitEntryKey += (sSaveDimVal + ",");
 		}
 		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
 

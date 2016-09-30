@@ -334,50 +334,43 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'],
 		};
 
 		/**
+		 * @enum {string}
 		 * @public
-		 * @name jQuery.sap.history.NavType
-		 * @namespace
-		 * @static
+		 * @alias jQuery.sap.history.NavType
 		 */
-		$.sap.history.NavType = {};
+		$.sap.history.NavType = {
 
-		/**
-		 * This indicates that the new hash is achieved by pressing the back button.
-		 * @type {string}
-		 * @public
-		 * @constant
-		 * @name jQuery.sap.history.NavType.Back
-		 */
-		$.sap.history.NavType.Back = "_back";
+			/**
+			 * This indicates that the new hash is achieved by pressing the back button.
+			 * @public
+			 * @constant
+			 */
+			Back: "_back",
 
-		/**
-		 * This indicates that the new hash is achieved by pressing the forward button.
-		 * @type {string}
-		 * @public
-		 * @constant
-		 * @name jQuery.sap.history.NavType.Forward
-		 */
-		$.sap.history.NavType.Forward = "_forward";
+			/**
+			 * This indicates that the new hash is achieved by pressing the forward button.
+			 * @public
+			 * @constant
+			 */
+			Forward: "_forward",
 
-		/**
-		 * This indicates that the new hash is restored from the bookmark.
-		 * @type {string}
-		 * @public
-		 * @constant
-		 * @name jQuery.sap.history.NavType.Bookmark
-		 */
-		$.sap.history.NavType.Bookmark = "_bookmark";
+			/**
+			 * This indicates that the new hash is restored from the bookmark.
+			 * @public
+			 * @constant
+			 */
+			Bookmark: "_bookmark",
 
-		/**
-		 * This indicates that the new hash is achieved by some unknown direction.
-		 * This happens when the user navigates out of the application and then click on the forward button
-		 * in the browser to navigate back to the application.
-		 * @type {string}
-		 * @public
-		 * @constant
-		 * @name jQuery.sap.history.NavType.Unknown
-		 */
-		$.sap.history.NavType.Unknown = "_unknown";
+			/**
+			 * This indicates that the new hash is achieved by some unknown direction.
+			 * This happens when the user navigates out of the application and then click on the forward button
+			 * in the browser to navigate back to the application.
+			 * @public
+			 * @constant
+			 */
+			Unknown: "_unknown"
+
+		};
 
 		/**
 		 * This function calculates the number of steps from the sCurrentHash to sToHash. If the sCurrentHash or the sToHash is not in the history stack, it returns 0.

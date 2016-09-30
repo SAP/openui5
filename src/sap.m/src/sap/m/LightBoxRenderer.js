@@ -33,17 +33,20 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	LightBoxRenderer.render = function (oRm, oControl) {
-		var oLightBoxItem = oControl._getImageContent();
+		/** @type {sap.m.LightBoxItem} */
+		var lightBoxItem = oControl._getImageContent();
+		/** @type {sap.m.LightBoxLoadingStates} */
+		var imageState = lightBoxItem._getImageState();
 
 		oRm.write('<div');
 		oRm.writeControlData(oControl);
 		oRm.addClass(className);
 
-		if (oLightBoxItem.getSubtitle()) {
+		if (lightBoxItem.getSubtitle()) {
 			oRm.addClass(classNameTwoLines);
 		}
 
-		if (oLightBoxItem._getImageState() !== sap.m.LightBoxLoadingStates.Error) {
+		if (imageState !== sap.m.LightBoxLoadingStates.Error) {
 			oRm.addStyle('width', oControl._width + 'px');
 			oRm.addStyle('height', oControl._height + 'px');
 		} else {
@@ -55,15 +58,16 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 		oRm.write('>');
 
 		//if control is busy render busyIndicator instead
-		if (oLightBoxItem._getImageState() === sap.m.LightBoxLoadingStates.Loading) {
+		if (imageState === sap.m.LightBoxLoadingStates.Loading) {
 			this.renderBusyState(oRm, oControl);
-		} else if (oLightBoxItem._getImageState() === sap.m.LightBoxLoadingStates.TimeOutError) {
+		} else if (imageState === sap.m.LightBoxLoadingStates.TimeOutError ||
+			imageState === sap.m.LightBoxLoadingStates.Error) {
 			this.renderError(oRm, oControl);
 		} else {
 			this.renderImage(oRm, oControl);
 		}
 
-		this.renderFooter(oRm, oControl, oLightBoxItem);
+		this.renderFooter(oRm, oControl, lightBoxItem);
 
 		oRm.write('</div>');
 

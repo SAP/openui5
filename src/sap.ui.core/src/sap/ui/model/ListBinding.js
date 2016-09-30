@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {sap.ui.model.Context} oContext the binding context
 	 * @public
 	 * @returns {object} the group object containing a key property and optional custom properties
-	 * @see sap.ui.model.Sorter.getGroup
+	 * @see sap.ui.model.Sorter#getGroup
 	 */
 	ListBinding.prototype.getGroup = function(oContext) {
 		return this.aSorters[0].getGroup(oContext);

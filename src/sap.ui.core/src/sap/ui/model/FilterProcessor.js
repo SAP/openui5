@@ -210,6 +210,7 @@ sap.ui.define(['jquery.sap.global'],
 				};
 				break;
 			default:
+				jQuery.sap.log.error("The filter operator \"" + oFilter.sOperator + "\" is unknown, filter will be ignored.");
 				oFilter.fnTest = function(value) { return true; };
 		}
 		return oFilter.fnTest;

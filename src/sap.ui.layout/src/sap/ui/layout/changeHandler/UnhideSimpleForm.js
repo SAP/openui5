@@ -19,16 +19,18 @@ sap.ui.define([
 	/**
 	 * Unhides a control.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
-	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
+	 * @param {sap.ui.fl.Change} oChangeWrapper - change object with instructions to be applied on the control map
+	 * @param {sap.ui.core.Control} oControl - control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
+	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @public
 	 */
-	UnhideForm.applyChange = function(oChange, oControl, mPropertyBag) {
+	UnhideForm.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
 
-		var oChangeDefinition = oChange.getDefinition();
+		var oChangeDefinition = oChangeWrapper.getDefinition();
 
 		// !important : sUnhideId was used in 1.40, do not remove for compatibility!
 		var oControlToUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
@@ -57,14 +59,16 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object to be completed
-	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
+	 * @param {sap.ui.fl.Change} oChangeWrapper - change object to be completed
+	 * @param {object} - oSpecificChangeInfo with attribute sUnhideId, the id of the control to unhide
+	 * @param {object} mPropertyBag - map containing the application component
 	 * @public
 	 */
-	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
-		var oChange = oChangeWrapper.getDefinition();
+	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
+		var oChangeDefinition = oChangeWrapper.getDefinition();
 		if (oSpecificChangeInfo.sUnhideId) {
-			oChange.content.elementSelector = JsControlTreeModifier.getSelector(sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId));
+			var oUnhideElement = sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId);
+			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oUnhideElement, mPropertyBag.appComponent);
 		} else {
 			throw new Error("oSpecificChangeInfo.sUnhideId attribute required");
 		}

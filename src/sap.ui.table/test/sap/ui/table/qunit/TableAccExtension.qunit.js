@@ -895,6 +895,13 @@ QUnit.asyncTest("Scrolling", function(assert) {
 	}, iDelay + 50);
 });
 
+QUnit.test("_debug()", function(assert) {
+	var oExtension = oTable._getAccExtension();
+	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	oExtension._debug();
+	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+});
+
 
 
 QUnit.module("No Acc Mode", {

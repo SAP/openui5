@@ -3635,12 +3635,41 @@ QUnit.test("removeAllItems()", function(assert) {
 	assert.ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.Select.prototype.removeAllItems() method returns an array of the removed items");
 	assert.strictEqual(oSelect.$("label").text(), "");
 	assert.strictEqual(oSelect.$("select").children().length, 0);
-	assert.strictEqual(oSelect.getSelectedItem(), null);
-	assert.strictEqual(oSelect.getSelectedItemId(), "");
 
 	for (var i = 0; i < oRemovedItems.length; i++) {
 		assert.strictEqual(oRemovedItems[i].hasListeners("_change"), false);
 	}
+
+	// cleanup
+	oSelect.destroy();
+});
+
+// BCP 1680168526
+QUnit.test("it should clear the label value when the items are removed and the control is invalidated", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.Item({
+				key: "li",
+				text: "lorem ipsum"
+			})
+		],
+		selectedKey: "li"
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oSelect.removeAllItems();
+	oSelect.invalidate();
+	sap.ui.getCore().applyChanges();
+
+	// assert
+	assert.strictEqual(oSelect.$("label").text(), "");
+	assert.strictEqual(oSelect.getSelectedKey(), "li");
 
 	// cleanup
 	oSelect.destroy();

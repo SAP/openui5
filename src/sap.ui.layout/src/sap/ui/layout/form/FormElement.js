@@ -295,6 +295,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	 */
 	function _labelIsRequired(){
 
+		if (this.getRequired && this.getRequired()) {
+			return true;
+		}
+
 		var oFormElement = this.getParent();
 		var aFields = oFormElement.getFields();
 

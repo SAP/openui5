@@ -16,7 +16,7 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"Opa.html",
-						"i18n/i18n.properties",
+						"webapp/i18n/i18n.properties",
 						"webapp/view/Main.view.xml",
 						"webapp/controller/Main.controller.js",
 						"webapp/index.html"

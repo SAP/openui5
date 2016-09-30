@@ -65,7 +65,7 @@
 						<template>
 							<m:ObjectStatus text="{Status}" state="{
 								path: 'Available',
-								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToObjectState'
+								formatter: '.formatAvailableToObjectState'
 							}"/>
 						</template>
 					</Column>
@@ -117,7 +117,7 @@
 						<template>
 							<c:Icon src="{
 								path: 'Available',
-								formatter: 'sap.ui.table.sample.TableExampleUtils.formatAvailableToIcon'
+								formatter: '.formatAvailableToIcon'
 							}"/>
 						</template>
 					</Column>

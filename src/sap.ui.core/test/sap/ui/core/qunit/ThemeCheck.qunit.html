@@ -6,6 +6,9 @@
 		<script>
 			window["sap-ui-config"] = {
 				themeRoots: {
+					"legacy": {
+						"sap.ui.core": "./testdata/customcss/"
+					},
 					"customcss": {
 						"sap.ui.core": "./testdata/customcss/"
 					}
@@ -66,6 +69,32 @@
 
 				done();
 			});
+		});
+
+		QUnit.test("After theme change with legacy custom.css", function(assert) {
+			var done = assert.async();
+
+			 themeChanged().then(function() {
+
+				// Check if the declared stylesheet has been fully loaded
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sSheetHref = getSheetHref(oLibraryCss);
+
+				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+
+				// Check if the custom.css has been included
+				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+				if (!oCustomCss) {
+					assert.ok(false, "Custom CSS file hasn't been included");
+					return;
+				}
+				var oCustomCssHref = oCustomCss.getAttribute("href");
+				var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/legacy/custom.css";
+				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
+
+				done();
+			});
+			sap.ui.getCore().applyTheme("legacy");
 		});
 
 		QUnit.test("After theme change with custom.css", function(assert) {

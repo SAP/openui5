@@ -183,6 +183,10 @@ QUnit.module("Focus", {
 		this.$Ref = jQuery.sap.byId("popup");
 	},
 
+	afterEach : function() {
+		this.oPopup.destroy();
+	},
+
 	// checks three elements in question and returns the focused one, if any - using the CSS color!
 	getFocusedElementId : function() {
 		if (sap.ui.Device.browser.safari) {
@@ -371,7 +375,7 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 			assert.equal(document.activeElement.id, oAutoCloseButton.id, "Focus is set back to button inside autoclose Popup");
 
 			oAutoClosePopup.destroy();
-			oAutoCloseDOM.remove();
+			oAutoCloseDOM.parentNode.removeChild(oAutoCloseDOM);
 			done();
 		}.bind(this), 200);
 	};
@@ -382,6 +386,43 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 	this.oPopup.setModal(true);
 
 	oAutoClosePopup.open(0, sLeftTop, sRightTop, oOpenButton);
+});
+
+QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
+	var done = assert.async(),
+		oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1")),
+		fnAfterSecondPopupOpen = function() {
+			oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
+			oSecondPopup.attachClosed(fnAfterSecondPopupClosed);
+
+			oSecondPopup.close();
+		},
+		fnAfterSecondPopupClosed = function() {
+			oSecondPopup.destroy();
+			assert.ok(this.oPopup.isOpen(), "the first popup is still open");
+
+			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
+
+			jQuery.sap.focus($BlockLayer[0]);
+
+			jQuery.sap.delayedCall(0, this, function() {
+				assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+
+				this.oPopup.attachClosed(function() {
+					done();
+				});
+
+				this.oPopup.close();
+			});
+		}.bind(this);
+
+	this.oPopup.setModal(true);
+	oSecondPopup.setModal(true);
+
+	oSecondPopup.attachOpened(fnAfterSecondPopupOpen);
+	this.oPopup.open(0);
+	oSecondPopup.open(0);
 });
 
 QUnit.module("Animation", {
@@ -979,6 +1020,63 @@ QUnit.test("Check if the BlockLayer is displayed", function(assert) {
 	oPopup.open();
 });
 
+QUnit.test("Check when the layer is being removed", function(assert) {
+	var done = assert.async();
+
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+
+	var oSpyClose = sinon.spy(oPopup, "close");
+	var oSpyClosed = sinon.spy(oPopup, "_closed");
+	var oSpyHideBlocklayer = sinon.spy(oPopup, "_hideBlockLayer");
+
+	var fnOpened = function() {
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		assert.equal($oDomRefBL.length, 1, "BlockLayer added to DOM");
+
+		setTimeout(function() {
+			$oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+			assert.equal($oDomRefBL.length, 1, "BlockLayer still in DOM during close");
+
+			assert.equal(oSpyClose.callCount, 1, "'close' has been called");
+			assert.equal(oSpyClosed.callCount, 0, "'_closed' hasn't been called yet during closing");
+			assert.equal(oSpyHideBlocklayer.callCount, 0, "'_hideBlockLayer' hasn't been called yet during closing");
+		}.bind(this), 200);
+
+		oPopup.close();
+	}.bind(this);
+
+	var fnClosed = function() {
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+
+		assert.equal(oSpyClose.callCount, 1, "'close' has been called");
+		assert.equal(oSpyClosed.callCount, 1, "'_closed' has been called after closing");
+		assert.equal(oSpyHideBlocklayer.callCount, 1, "'_hideBlockLayer' has been called after closing");
+
+		assert.ok(oSpyHideBlocklayer.calledAfter(oSpyClosed), "'_hideBlockLayer' was called after '_closed'");
+
+		done();
+	}.bind(this);
+
+	oPopup.setDurations(0, 500);
+	oPopup.attachOpened(fnOpened, this);
+	oPopup.attachClosed(fnClosed, this);
+	oPopup.open();
+});
+
+QUnit.test("Destroy an opened modal popup should hide blocklayer synchronously", function(assert) {
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+
+	// act
+	oPopup.open();
+	oPopup.destroy();
+
+	// assert
+	assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "BlockLayer should be hidden");
+});
+
 QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(assert) {
 	var oPopup1DomRef = jQuery.sap.domById("popup1"),
 			oPopup2DomRef = jQuery.sap.domById("popup2"),
@@ -1139,9 +1237,66 @@ QUnit.test("Creation And Destruction of ShieldLayer", function(assert) {
 			assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
 			assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
 
+			oSpyShieldBorrowObject.restore();
+			oSpyShieldReturnObject.restore();
+
 			done();
 		}.bind(this), 510);
 	};
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.open();
+});
+
+QUnit.test("Destroy popup during open/close should also clear the close timer of ShieldLayer", function(assert) {
+	var oSpyShieldBorrowObject = this.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
+		oSpyShieldReturnObject = this.spy(this.oPopup.oShieldLayerPool, "returnObject");
+
+	// act
+	this.oPopup.open();
+	this.oPopup.close();
+	this.oPopup.destroy();
+
+	assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
+	assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
+});
+
+QUnit.module("bug fixes", {
+	beforeEach: function() {
+		var oPopupDomRef = jQuery.sap.domById("popup1");
+		this.oPopup = new sap.ui.core.Popup(oPopupDomRef);
+	},
+	afterEach: function() {
+		this.oPopup.destroy();
+	}
+});
+
+QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after popup is opened should work", function(assert) {
+	var oStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getRTL", function() {
+		return true;
+	});
+
+	var done = assert.async();
+	var my = sap.ui.core.Popup.Dock.CenterBottom;
+	var at = sap.ui.core.Popup.Dock.LeftTop;
+	var of = document;
+	var iOffsetX = 300;
+	var iOffsetY = 300;
+	var iRight;
+	var fnOpened = function() {
+		// save the css 'right' before apply the new position
+		iRight = parseInt(this.oPopup.getContent().style.right, 10);
+
+		assert.ok(!isNaN(iRight));
+
+		// move the popup 10px to the right
+		this.oPopup.setPosition(my, at, of, (iOffsetX + 10) + " " + iOffsetY);
+
+		assert.notEqual(parseInt(this.oPopup.getContent().style.right, 10), iRight, "The position should be changed");
+		oStub.restore();
+		done();
+	};
+	this.oPopup.setPosition(my, at, of, iOffsetX + " " + iOffsetY);
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.open();

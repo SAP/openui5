@@ -66,8 +66,8 @@
 			var $items = jQuery(".sapUiUx3NavBarItem");
 			equal($items.length, 4, "3 items plus the dummy should be in the page");
 
-			equal($items[2].href, "http://item2.org/", "item 2 should have a URL set as href");
-			equal($items[3].href, "javascript:void(0);", "item 3 should have no URL set as href");
+			equal($items[2].getAttribute("href"), "http://item2.org/", "item 2 should have a URL set as href");
+			equal($items[3].getAttribute("href"), "#", "item 3 should have no URL set as href");
 		});
 
 		test("Select Item", function() {

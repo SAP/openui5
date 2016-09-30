@@ -125,6 +125,31 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		}
 	};
 
+	Tree.prototype.setGrowing = function() {
+		jQuery.sap.log.error("Growing feature of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingThreshold = function() {
+		jQuery.sap.log.error("GrowingThreshold of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingTriggerText = function() {
+		jQuery.sap.log.error("GrowingTriggerText of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingScrollToLoad = function() {
+		jQuery.sap.log.error("GrowingScrollToLoad of " + this + " is not supported!");
+		return this;
+	};
+
+	Tree.prototype.setGrowingDirection = function() {
+		jQuery.sap.log.error("GrowingDirection of " + this + " is not supported!");
+		return this;
+	};
+
 	return Tree;
 
 }, /* bExport= */ true);

@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
 	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
-	 * 										Also see API documentation for {@link sap.ui.model.OperationMode.Auto}.
+	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
 	 * @param {boolean} [mParameters.useServersideApplicationFilters] set this flag if $filter statements should be used for the $count/$inlinecount and data-retrieval in the OperationMode.Auto.
 	 * 													 Only use this if your backend supports prefiltering the tree and is capable of responding a complete tree hierarchy,
 	 * 													 including all inner nodes. To construct the hierarchy on the client, it is mandatory that all filter-matches include their complete

@@ -417,6 +417,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// inform change detection
 			return true;
+		} else {
+			// same value as before --> ignore Dom update
+			this._bCheckDomValue = false;
 		}
 	};
 
@@ -553,10 +556,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
-
 		// IE9 does not fire input event on BACKSPACE & DEL
 		var mKC = jQuery.sap.KeyCodes;
 		var mBrowser = sap.ui.Device.browser;
+
+		// mark the event as InputBase event
+		oEvent.setMark("inputBase");
 
 		if ((mBrowser.msie && mBrowser.version < 10) &&
 			(oEvent.which === mKC.DELETE || oEvent.which === mKC.BACKSPACE)) {
@@ -993,7 +998,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	InputBase.prototype.getAccessibilityInfo = function() {

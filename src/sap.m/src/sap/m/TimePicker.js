@@ -88,13 +88,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * Sets the minutes slider step.
 					 * The minutes slider is populated only by multiples of the step.
 					 */
-					minutesStep: {type: "integer", group: "Misc", defaultValue: 1},
+					minutesStep: {type: "int", group: "Misc", defaultValue: 1},
 
 					/**
 					 * Sets the seconds slider step.
 					 * The seconds slider is populated only by multiples of the step.
 					 */
-					secondsStep: {type: "integer", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
 				},
 				aggregations: {
 					/**
@@ -527,7 +527,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * Recommended usage is when <code>value</code> is not set, as they are mutually exclusive.
 		 *
 		 * @override
-		 * @param {date} oDate New date object
+		 * @param {Date} oDate New date object
 		 * @returns {sap.m.TimePicker|Error} this instance, used for chaining
 		 * @public
 		 */
@@ -961,7 +961,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 *
 		 * If bValueFormat is set, it converts it to the <code>valueFormat</code>.
 		 *
-		 * @param {date} oDate A JavaScript date object
+		 * @param {Date} oDate A JavaScript date object
 		 * @param {boolean} bValueFormat Defines whether the result is in <code>valueFormat</code> or <code>displayFormat</code>
 		 * @returns {string} Formatted value
 		 * @private
@@ -1425,7 +1425,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 
 		/**
-		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {

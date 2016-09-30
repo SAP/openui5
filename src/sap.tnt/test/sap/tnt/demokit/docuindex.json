@@ -1,4 +1,23 @@
 {
+  "demo": {
+    "text": "sap.tnt",
+    "customIcons" : {
+      "file" : "test-resources/sap/tnt/demokit/docuIcons",
+      "namespace" : "saptntdemo",
+      "icons" : [
+        { "name": "app", "id": "e003" }
+      ]
+    },
+    "links": [
+      {
+        "text": "ToolPage",
+        "ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html",
+        "config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json",
+        "icon": "saptntdemo/app",
+        "desc": "This is where it all starts when developing with sap.tnt.ToolPage"
+      }
+    ]
+  },
   "explored": {
     "entitiesDefaults": {
       "appComponent": "CA-UI5-CTR",

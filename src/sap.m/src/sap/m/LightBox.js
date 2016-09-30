@@ -10,29 +10,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		'use strict';
 
 		/**
-		 * Constructor for a new LightBox control.
+		 * Constructor for a new Lightbox.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The control represents a popup containing an image and a footer. The footer consists of two description texts
-		 * (title and subtitle) and a close button. The purpose of the control is to display an image in its original size
-		 * as long as this is possible (e.g. if the screen is 1000px wide but the image is 2000px wide the image will
-		 * not be displayed in its full size). The most common usecase is to click on an image thumbnail to view it in bigger size.
-		 * When the image that should be displayed in the control cannot be loaded an error is displayed in the popup.
-		 * <br/><b>Note:</b> If the image doesn't load in 10 seconds an error is displayed.
-		 * <br/><b>Note:</b> Setting the imageContent aggregation of the control as well as the source of the image and
-		 * the title of the image is mandatory. If the image source is not set the control will not open.
-		 * @extends sap.ui.core.Control
-		 * @implements sap.ui.core.PopupInterface
-		 *
+		 * <strong><i>Overview</i></strong>
+		 * <br><br>
+		 * A {@link sap.m.LightBox} control represents a popup containing an image and a footer.
+		 * The purpose of the control is to display an image in its original size as long as this is possible. On smaller screens, images are scaled down to fit.
+		 * <br><br>
+		 * <strong>Notes:</strong>
+		 * <ul>
+		 *     <li>If the image doesn't load in 10 seconds an error is displayed. </li>
+		 *     <li>Setting the <code>imageContent</code> aggregation of the control as well as the source of the image and the title of the image is <u>mandatory</u>.
+		 *          If the image source is not set, the control will not open.</li>
+		 * </ul>
+		 * <strong><i>Structure</i></strong>
+		 * <br><br>
+		 * Each LightBox holds a {@link sap.m.LightBoxItem LightBoxItem} which keeps the properties of the image:
+		 * <ul>
+		 *     <li> imageSrc - The source URI of the image </li>
+		 *     <li> title - The title of the image </li>
+		 *     <li> subtitle - The subtitle of the image </li>
+		 *     <li> alt - The alt text of the image </li>
+		 * </ul>
+		 * <strong><i>Usage</i></strong>
+		 * <br><br>
+		 * The most common usecase is to click on an image thumbnail to view it in bigger size.
+		 * When the image that should be displayed in the control cannot be loaded, an error is displayed in the popup.
+		 * <br><br>
+		 * <strong><i>Responsive Behavior</i></strong>
+		 * <br><br>
+		 * On a mobile device, flipping the device to landscape will flip the lightbox and the image will be adjusted to fit the new dimensions.
+		 * <br><br>
+		 * <strong><i>Additional Information</i></strong>
+		 * <br><br>
+		 * Check out the <a href="/#docs/api/symbols/sap.m.LightBox.html" >API Reference</a>.
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
 		 * @public
-		 * @since 1.42
 		 * @alias sap.m.LightBox
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -75,7 +95,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 */
 					_verticalLayout: {type: 'sap.ui.layout.VerticalLayout', multiple: false, visibility: 'hidden'}
 				},
-				events: {}
+				events: {},
+				defaultAggregation: 'imageContent'
 			}
 		});
 

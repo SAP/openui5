@@ -925,7 +925,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 	/**
 	 * Checks whether the passed oEvent is a touch event.
 	 * @private
-	 * @param {event} oEvent The event to check
+	 * @param {jQuery.Event} oEvent The event to check
 	 * @return {boolean} false
 	 */
 	TabStrip.prototype._isTouchMode = function(oEvent) {

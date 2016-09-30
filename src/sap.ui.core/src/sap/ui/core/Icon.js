@@ -514,7 +514,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	};
 
 	/**
-	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
 	Icon.prototype.getAccessibilityInfo = function() {

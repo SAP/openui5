@@ -20,7 +20,6 @@ sap.ui.define([
 					files : [
 						"View.view.xml",
 						"Controller.controller.js",
-						"../TableExampleUtils.js",
 						"metadata.xml",
 						"ProductSet.json"
 					]

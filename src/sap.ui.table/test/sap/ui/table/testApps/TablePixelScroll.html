@@ -24,7 +24,7 @@
             var oDataSetA = {lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"};
 
             // TABLE TEST DATA
-            var aData = [jQuery.extend(true, [], oDataSetA)];
+            var aData = [jQuery.extend(true, {}, oDataSetA)];
 
             var sTextWrapper = "";
             for (var i = 0; i < iRowHeight; i++) {
@@ -32,7 +32,7 @@
             }
 
             var oDataSetB = {lastName: "Sum " + sTextWrapper + " mer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"};
-            aData.push(jQuery.extend(true, [], oDataSetB));
+            aData.push(jQuery.extend(true, {}, oDataSetB));
 
             // enhance test data
             var aOrgData = jQuery.extend(true, [], aData);
@@ -71,7 +71,7 @@
         var iDataRows = 100;
         var iRowHeight = 0;
 
-        oTable.setToolbar(new sap.m.Toolbar({content: [
+        oTable.setToolbar(new sap.m.OverflowToolbar({content: [
             new sap.m.Button({
                 text: "Start/Stop Scroll Simulation",
                 press: function(oEvent) {
@@ -84,8 +84,7 @@
                     } else {
                         iScrollAutomationIntervalId = window.setInterval(function() {
                             var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
-                            var iScrollSteps = iScrollSpeed * (oTable._getScrollingPixelsForRow() / oTable._getDefaultRowHeight());
-                            oVsb.scrollTop = oVsb.scrollTop + iScrollSteps;
+                            oVsb.scrollTop = oVsb.scrollTop + iScrollSpeed;
                         }, 50);
                     }
                 }
@@ -102,8 +101,7 @@
                     } else {
                         iReverseScrollAutomationIntervalId = window.setInterval(function() {
                             var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
-                            var iScrollSteps = iScrollSpeed * (oTable._getScrollingPixelsForRow() / oTable._getDefaultRowHeight());
-                            oVsb.scrollTop = oVsb.scrollTop - iScrollSteps;
+                            oVsb.scrollTop = oVsb.scrollTop - iScrollSpeed;
                         }, 50);
                     }
                 }
@@ -139,15 +137,13 @@
                     oTable._bLargeDataScrolling = !oTable._bLargeDataScrolling;
                 }
             }),
-            new sap.m.Slider({
-                value: 1,
-                min: 1,
-                max: 5,
-                change: function() {
-                    iScrollSpeed = this.getValue();
-                }
+            new sap.m.Label({
+                id: "data-rows-label",
+                text: "Row Count"
             }),
             new sap.m.Slider({
+                ariaLabelledBy: "data-rows-label",
+                width: "100px",
                 value: 100,
                 min: 1,
                 max: 200,
@@ -156,13 +152,20 @@
                     oModel.setData({modelData: createData()});
                 }
             }),
+            new sap.m.Label({
+                id: "row-height",
+                text: "Row Height"
+            }),
             new sap.m.Slider({
+                ariaLabelledBy: "row-height",
+                width: "100px",
                 value: 0,
                 min: 0,
                 max: 50,
                 change: function() {
                     iRowHeight = this.getValue();
-                    oModel.setData({modelData: createData()});
+                    var data = createData();
+                    oModel.setData({modelData: data});
                 }
             })
         ]}));

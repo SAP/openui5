@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Getter for model
 	 * @public
-	 * @return {sap.ui.core.Model} the model
+	 * @return {sap.ui.model.Model} the model
 	 */
 	Context.prototype.getModel = function() {
 		return this.oModel;

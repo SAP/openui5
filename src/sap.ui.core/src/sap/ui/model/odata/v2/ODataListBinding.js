@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
 	 * @param {int} [mParameters.threshold] a threshold which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
-	 * 										Also see API documentation for {@link sap.ui.model.OperationMode.Auto}.
+	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
@@ -830,7 +830,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * If metadata is not yet available, do nothing, method will be called again when
 	 * metadata is loaded.
 	 *
-	 * @returns {sap.ui.model.odata.OdataListBinding} oBinding The binding instance
+	 * @returns {sap.ui.model.odata.v2.ODataListBinding} oBinding The binding instance
 	 * @public
 	 */
 	ODataListBinding.prototype.initialize = function() {

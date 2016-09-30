@@ -3,8 +3,11 @@ sap.ui.define([
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
 		'sap/ui/test/matchers/AggregationContainsPropertyEqual',
+		'sap/ui/test/matchers/BindingPath',
+		'sap/ui/test/matchers/Ancestor',
 		'sap/ui/test/actions/Press'
-	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual, Press) {
+	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual, BindingPath, Ancestor, Press) {
+		var CART_VIEW_NAME = "Cart";
 
 		Opa5.createPageObjects({
 			onTheCart : {
@@ -12,8 +15,9 @@ sap.ui.define([
 				actions : {
 
 					iPressOnTheEditButton : function () {
+
 						return this.waitFor({
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://edit"}),
 							actions : new Press(),
@@ -24,7 +28,7 @@ sap.ui.define([
 					iPressOnTheDeleteButton : function () {
 						return this.waitFor({
 							id : "entryList",
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							matchers : new PropertyStrictEquals({name : "mode", value : "Delete"}),
 							actions : function (oList) {
 								oList.fireDelete({listItem : oList.getItems()[0]});
@@ -35,11 +39,26 @@ sap.ui.define([
 
 					iPressOnTheAcceptButton : function () {
 						return this.waitFor({
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://accept"}),
 							actions : new Press(),
 							errorMessage : "The accept button could not be pressed"
+						});
+					},
+
+					iPressOnSafeForLaterForTheFirstProduct : function () {
+						return this.waitFor({
+							controlType : "sap.m.ObjectAttribute",
+							viewName : CART_VIEW_NAME,
+							matchers : new BindingPath({path : "/entries/0", modelName: "cartProducts"}),
+							success: function (aObjectAttributes) {
+								this.waitFor({
+									controlType : "sap.m.Text",
+									matchers: new Ancestor(aObjectAttributes[0], true),
+									actions : new Press()
+								});
+							}
 						});
 					}
 				},
@@ -49,7 +68,7 @@ sap.ui.define([
 					iShouldSeeTheProductInMyCart : function () {
 						return this.waitFor({
 							id : "entryList",
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							matchers : new AggregationFilled({name : "items"}),
 							success : function () {
 								Opa5.assert.ok(true, "The cart has entries");
@@ -103,7 +122,7 @@ sap.ui.define([
 					iShouldNotSeeTheDeletedItemInTheCart : function () {
 						return this.waitFor({
 							id : "entryList",
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							check : function (oList) {
 								var bExist =  new AggregationContainsPropertyEqual({
 									aggregationName : "items",
@@ -126,12 +145,27 @@ sap.ui.define([
 					iShouldBeTakenToTheCart : function () {
 						return this.waitFor({
 							id : "entryList",
-							viewName : "Cart",
+							viewName : CART_VIEW_NAME,
 							success : function (oList) {
 								Opa5.assert.ok(
 									oList,
 									"The cart was found"
 								);
+							},
+							errorMessage : "The cart was not found"
+						});
+					},
+
+					iShouldSeeOneProductInMySafeForLaterList: function () {
+						return this.waitFor({
+							id : "entryList",
+							viewName : CART_VIEW_NAME,
+							check: function () {
+								var sMessageToastText = Opa5.getJQuery()(".sapMMessageToast:visible").text();
+                                return sMessageToastText === "Safed 'by Very Best Screens' for later";
+							},
+							success : function () {
+								Opa5.assert.ok(true, "Product safed for later");
 							},
 							errorMessage : "The cart was not found"
 						});
