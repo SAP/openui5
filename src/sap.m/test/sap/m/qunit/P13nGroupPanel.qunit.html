@@ -295,13 +295,13 @@
 			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 				items: [
 					new sap.m.P13nItem({
-						key: "c0",
+						columnKey: "c0",
 						text: "Name"
 					}), new sap.m.P13nItem({
-						key: "c1",
+						columnKey: "c1",
 						text: "Color"
 					}), new sap.m.P13nItem({
-						key: "c2",
+						columnKey: "c2",
 						text: "Number"
 					})
 				],
@@ -341,15 +341,15 @@
 			sap.ui.getCore().applyChanges();
 
 			oP13nGroupPanel.addItem(new sap.m.P13nItem({
-				key: "c0",
+				columnKey: "c0",
 				text: "Name"
 			}));
 			oP13nGroupPanel.addItem(new sap.m.P13nItem({
-				key: "c1",
+				columnKey: "c1",
 				text: "Color"
 			}));
 			oP13nGroupPanel.addItem(new sap.m.P13nItem({
-				key: "c2",
+				columnKey: "c2",
 				text: "Number"
 			}));
 

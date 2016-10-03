@@ -247,7 +247,7 @@
 
 		test("RenderManager.writeControlData", function() {
 			checkRMWriter(" id=\"TestElem1\" data-sap-ui=\"TestElem1\"", true, 0, function(rm){
-				return rm.writeControlData(new sap.ui.core.Element("TestElem1"));
+				return rm.writeControlData(new sap.ui.core.Control("TestElem1"));
 			});
 		});
 

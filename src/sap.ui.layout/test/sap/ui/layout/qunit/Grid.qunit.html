@@ -32,7 +32,7 @@
 					layoutData : new sap.ui.layout.GridData({
 						indent : "L1",
 						visibleOnSmall : false,
-						moveBwd : "l1 m2" // test if still works correctly with lower case
+						moveBackwards : "l1 m2" // test if still works correctly with lower case
 					})
 				}),
 				new sap.ui.commons.TextField("tf1", {
@@ -58,7 +58,7 @@
 					width : "100%",
 					layoutData : new sap.ui.layout.GridData({
 						indent : "L1",
-						moveFwd : "L1 M2 S1"
+						moveForward : "L1 M2 S1"
 					})
 				}),
 				new sap.ui.commons.TextField("tf3", {
@@ -102,8 +102,8 @@
 					ok(!!jQuery("#label2").parent("sapUiGridIndentL0.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for default indent 0");
 				});
 				test("moveOK", function(){
-					ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBwd parameters");
-					ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveFwd parameters");
+					ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBackwards parameters");
+					ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveForward parameters");
 				});
 				test("visibilityOK", function(){
 					ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");

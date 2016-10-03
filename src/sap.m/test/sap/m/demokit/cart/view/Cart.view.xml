@@ -52,7 +52,7 @@
 				items="{
 					path : 'cartProducts>/entries',
 					sorter : {
-						path : 'cartProducts>Name',
+						path : 'Name',
 						descending : false
 					}
 				}">

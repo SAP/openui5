@@ -42,7 +42,7 @@
 			var oLd = new sap.ui.layout.SplitterLayoutData({
 				resizable : true,
 				size      : Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
-				maxSize   : Math.random() > 0.5 ? "0" : Math.floor(Math.random() * 100) + "px"
+				minSize   : Math.random() > 0.5 ? 0 : Math.floor(Math.random() * 100)
 			});
 
 			if (sSize !== undefined) {

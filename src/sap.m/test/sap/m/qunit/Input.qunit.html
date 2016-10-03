@@ -568,9 +568,10 @@
 		$Input = oInput.$();
 
 		var oValueHelpIcon = oInput._oValueHelpIcon;
+		var sValueHelpIconId = oValueHelpIcon.getId(); 
 		strictEqual(oValueHelpIcon instanceof sap.ui.core.Icon, true, "Value Help Indicator icon is set before destroy call");
 		oInput.destroy();
-		strictEqual(sap.ui.getCore().byId(oValueHelpIcon), undefined, "Value Help Indicator icon is also destroyed");
+		strictEqual(sap.ui.getCore().byId(sValueHelpIconId), undefined, "Value Help Indicator icon is also destroyed");
 	});
 
 	test("Destroy Suggestion List and Popup", function() {
@@ -1351,7 +1352,7 @@
 				var sValue = oEvent.getParameter("suggestValue");
 				if (sValue) {
 					this.addSuggestionItem(new sap.ui.core.Item({
-						value: sValue
+						text: sValue
 					}));
 				}
 			}
