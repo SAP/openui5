@@ -610,14 +610,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var bShowIndicatorArrows = sap.ui.Device.system.desktop && this.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator;
 		if (bShowIndicatorArrows) {
 			imgClass = "sapMCrslImg";
-			if (this.getPageIndicatorPlacement() === sap.m.PlacementType.Top) {
-				imgClass += " sapMCrslImgTop";
-			}
 		} else {
 			imgClass = "sapMCrslImgNoArrows";
-			if (this.getPageIndicatorPlacement() === sap.m.PlacementType.Top) {
-				imgClass += " sapMCrslImgNoArrowsTop";
-			}
 		}
 
 

@@ -85,22 +85,10 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 .sapMCrslImg {
   text-align: center;
-  height: calc(~"100% - 3.5rem");
 }
 
 .sapMCrslImgNoArrows {
   text-align: center;
-  height: calc(~"100% - 2rem");
-}
-
-.sapMCrslImgNoArrowsTop {
-  position: relative;
-  top: 2rem;
-}
-
-.sapMCrslImgTop {
-  position: relative;
-  top: 3.5rem;
 }
 
 .sapMCrslImgNoArrows:before,
@@ -172,7 +160,6 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   opacity: 0;
   display: none;
   position: absolute;
-  top: calc(50% - 3.875rem);
   width: 2rem;
   height: 2rem;
   margin: -1.5625px 0 0 0;
@@ -184,6 +171,19 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   transition: opacity 0.1s ease-in;
   box-sizing: border-box;
 }
+
+.sapMCrslHudMiddle a {
+  top:  calc(~"50% - 1rem");
+}
+
+.sapMCrslHudTop a {
+  top: 50%;
+}
+
+.sapMCrslHudBottom a {
+  top: calc(~"50% - 2rem");
+}
+
 .sapMCrslControls a,
 .sapMCrslHud a {
   padding: 0;
@@ -214,15 +214,24 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
   box-sizing: border-box;
 }
 
-.sapMCrslBulleted.sapMCrslTopOffset,
-.sapMCrslNumeric.sapMCrslTopOffset {
-  position: absolute;
-  padding-bottom: 0.125rem;
-  width: 100%;
-  z-index: 10;
-  padding-top: 0.1875rem;
+// 2rem indicator height + 1px border
+.sapMCrslTopOffset .sapMCrslItem {
+  padding-top: calc(~"2rem + 1px");
 }
 
+// 3.5rem indicator height + 1px border
+.sapMCrslTopOffset.sapMCrslTopArrowsOffset .sapMCrslItem
+{
+  padding-top: calc(~"3.5rem + 1px");
+}
+
+.sapMCrslBottomOffset .sapMCrslItem {
+  padding-bottom: calc(~"2rem + 1px");
+}
+
+.sapMCrslBottomOffset.sapMCrslBottomArrowsOffset .sapMCrslItem {
+  padding-bottom: calc(~"3.5rem + 1px");
+}
 
 .sapMCrslControlsContainer {
   width: 100%;
