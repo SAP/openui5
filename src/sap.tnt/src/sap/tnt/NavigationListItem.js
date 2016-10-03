@@ -669,6 +669,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				$this.attr('aria-selected', true);
 			} else {
 				$this.attr('aria-pressed', true);
+
+				navList._closePopover();
 			}
 		};
 
