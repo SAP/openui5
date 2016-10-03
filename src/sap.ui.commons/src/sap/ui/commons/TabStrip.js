@@ -598,39 +598,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 	 */
 	TabStrip.prototype.toggleTabClasses = function(iOldIndex, iNewIndex) {
 
+		var aTabs = this.getTabs();
+
 		// change visualization of selected tab and old tab
-		this.getTabs()[iOldIndex].$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected",false);
+		var oTab = aTabs[iOldIndex];
+		if (oTab) {
+			oTab.$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected", false);
+		}
 		var iBeforeIndex = iOldIndex - 1;
-		while (iBeforeIndex >= 0 && !this.getTabs()[iBeforeIndex].getVisible()) {
+		while (iBeforeIndex >= 0 && !aTabs[iBeforeIndex].getVisible()) {
 			iBeforeIndex--;
 		}
 		if (iBeforeIndex >= 0) {
-			this.getTabs()[iBeforeIndex].$().removeClass("sapUiTabBeforeSel");
+			aTabs[iBeforeIndex].$().removeClass("sapUiTabBeforeSel");
 		}
 
 		var iAfterIndex = iOldIndex + 1;
-		while (iAfterIndex < this.getTabs().length && !this.getTabs()[iAfterIndex].getVisible()) {
+		while (iAfterIndex < aTabs.length && !aTabs[iAfterIndex].getVisible()) {
 			iAfterIndex++;
 		}
-		if (iAfterIndex < this.getTabs().length) {
-			this.getTabs()[iAfterIndex].$().removeClass("sapUiTabAfterSel");
+		if (iAfterIndex < aTabs.length) {
+			aTabs[iAfterIndex].$().removeClass("sapUiTabAfterSel");
 		}
 
-		this.getTabs()[iNewIndex].$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected",true);
+		oTab = aTabs[iNewIndex];
+		if (oTab) {
+			oTab.$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected", true);
+		}
+
 		iBeforeIndex = iNewIndex - 1;
-		while (iBeforeIndex >= 0 && !this.getTabs()[iBeforeIndex].getVisible()) {
+		while (iBeforeIndex >= 0 && !aTabs[iBeforeIndex].getVisible()) {
 			iBeforeIndex--;
 		}
 		if (iBeforeIndex >= 0) {
-			this.getTabs()[iBeforeIndex].$().addClass("sapUiTabBeforeSel");
+			aTabs[iBeforeIndex].$().addClass("sapUiTabBeforeSel");
 		}
 
 		iAfterIndex = iNewIndex + 1;
-		while (iAfterIndex < this.getTabs().length && !this.getTabs()[iAfterIndex].getVisible()) {
+		while (iAfterIndex < aTabs.length && !aTabs[iAfterIndex].getVisible()) {
 			iAfterIndex++;
 		}
-		if (iAfterIndex < this.getTabs().length) {
-			this.getTabs()[iAfterIndex].$().addClass("sapUiTabAfterSel");
+		if (iAfterIndex < aTabs.length) {
+			aTabs[iAfterIndex].$().addClass("sapUiTabAfterSel");
 		}
 	};
 
