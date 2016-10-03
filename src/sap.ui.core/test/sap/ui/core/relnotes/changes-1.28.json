@@ -3040,5 +3040,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.39": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "b64554f0391952be550e842f6dba3e4d9f8d186b",
+        "author": "Alex Avizov \u003calex.avizov@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: encode key of type string in URI",
+        "references": []
+      },
+      {
+        "id": "28f1b086e87632be6571221a695de98defeee115",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: fallback format by using given pattern without delimiters",
+        "references": []
+      },
+      {
+        "id": "891c8e28ec260c19bff2c27641e4deb41d3c834e",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.ExportTypeCSV: Escape formulas",
+        "references": []
+      },
+      {
+        "id": "ae2a0681a4c4f39933a0f0e6104ccea6e8d27779",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.ExportTypeCSV: Properly handle line breaks",
+        "references": []
+      },
+      {
+        "id": "2705ddd6e5cc4b059736cf019ed1a9c7825e2ff7",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty/es6-promise: Support Loading of require.js before core",
+        "references": []
+      }
+    ]
   }
 }
