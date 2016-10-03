@@ -171,15 +171,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		Switch.prototype.getInvisibleElementText = function() {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
 				case sap.m.SwitchType.Default:
-					sText = this.getCustomTextOn() || "SWITCH_ON";
+					sText = this.getCustomTextOn() || oBundle.getText("SWITCH_ON");
 					break;
 
 				case sap.m.SwitchType.AcceptReject:
-					sText = "SWITCH_ARIA_ACCEPT";
+					sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
 					break;
 
 				// no default
@@ -440,7 +441,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var sDesc = "";
 			if (this.getState()) {
-				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText(this.getInvisibleElementText());
+				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText();
 			}
 
 			return {
