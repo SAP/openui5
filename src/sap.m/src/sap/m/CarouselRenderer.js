@@ -206,7 +206,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// page indicator
-		rm.write('<div style="' + sPageIndicatorDisplayStyle + '"');
+		var sPageIndicatorId = sId + '-pageIndicator';
+		rm.write('<div id="' + sPageIndicatorId + '" style="' + sPageIndicatorDisplayStyle + '"');
 		if (iPageCount < iBulletsToNumbersThreshold) {
 			rm.write(' class="sapMCrslBulleted">');
 			for ( var i = 1; i <= iPageCount; i++) {
@@ -246,7 +247,8 @@ sap.ui.define(['jquery.sap.global'],
 			arrowPositionHudClass = "sapMCrslHudMiddle";
 		}
 		//heads up controls for desktop browsers
-		rm.write('<div class="sapMCrslHud ' + arrowPositionHudClass + '">');
+		var sHudId = oCarousel.getId() + '-hud';
+		rm.write('<div id="' + sHudId + '" class="sapMCrslHud ' + arrowPositionHudClass + '">');
 
 		this._renderPrevArrow(rm, oCarousel);
 
