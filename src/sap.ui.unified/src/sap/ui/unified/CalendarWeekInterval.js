@@ -187,6 +187,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		};
 
+		CalendarWeekInterval.prototype._dateMatchesVisibleRange = function(oDate) {
+			var iIntervals = this.getDays(),
+				oUniversalDate = CalendarUtils._createUniversalUTCDate(oDate),
+				oUniversalStartDate =  CalendarUtils._createUniversalUTCDate(this.getStartDate()),
+				oUniversalEndDate = CalendarUtils._createUniversalUTCDate(this.getStartDate());
+
+			oUniversalEndDate.setUTCDate(oUniversalEndDate.getUTCDate() + iIntervals);
+
+			return oUniversalDate.getTime() >= oUniversalStartDate && oUniversalDate.getTime() < oUniversalEndDate;
+		};
+
 		return CalendarWeekInterval;
 
 	}, /* bExport= */ true);

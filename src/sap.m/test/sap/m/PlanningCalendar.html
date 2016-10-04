@@ -14,8 +14,6 @@
 		</script>
 
 		<script>
-		jQuery.sap.require("sap.m.MessageBox");
-
 		var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 			items: [
 			        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
@@ -52,7 +50,40 @@
 						app.to("page1");
 					}
 				})],
-				contentRight: [oEventLabel]
+				contentRight: [
+					oEventLabel,
+					new sap.m.Button({
+						text: "Show empty interval headers",
+						press: function() {
+							var bSEIH = oPC1.getShowEmptyIntervalHeaders();
+							oPC1.setShowEmptyIntervalHeaders(!bSEIH);
+						}
+					}),
+					new sap.m.Select('select_width', {
+						items: [
+							new sap.ui.core.Item('select_width_item_0', {
+								text: '100%',
+								key: '100%'
+							}),
+							new sap.ui.core.Item('select_width_item_1', {
+								text: 'x < 600px',
+								key: '500px'
+							}),
+							new sap.ui.core.Item('select_width_item_2', {
+								text: '600px < x < 1024px',
+								key: '700px'
+							}),
+							new sap.ui.core.Item('select_width_item_3', {
+								text: '1024px < x',
+								key: '1200px'
+							})
+						],
+						change: function(oEvent) {
+							var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
+							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
+						}
+					})
+				]
 			});
 		};
 
@@ -150,7 +181,7 @@
 				});
 				oRow.addAppointment(oAppointment);
 			}else {
-				alert("No row selected");
+				jQuery.sap.log.warning("No row selected");
 			}
 
 		};
@@ -170,7 +201,6 @@
 		function setEventLog(sMessage) {
 			oEventLabel.setText(sMessage);
 			oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + ");");
-			sap.m.MessageBox.show(sMessage);
 		}
 
 		var handleRowHeaderClick = function(oEvent) {
@@ -373,16 +403,16 @@
 			        	                 ],
 			        	appointments: [ new sap.ui.unified.CalendarAppointment("R1A1", {
 			        	                	startDate: new Date("2015", "0", "1", "08", "00"),
-			        	                	endDate: new Date("2015", "0", "1", "09", "00"),
+			        	                	endDate: new Date("2015", "0", "2", "09", "00"),
 			        	                	type: sap.ui.unified.CalendarDayType.Type01,
-			        	                	title: "Meeting 1",
+			        	                	title: "2 days meeting",
 			        	                	icon: "../ui/unified/images/m_01.png",
-			        	                	tooltip: "Tooltip 1",
+			        	                	tooltip: "2 days meeting",
 			        	                	text: "Room 1"
 			        	                }),
 			        	                new sap.ui.unified.CalendarAppointment("R1A2", {
-			        	                	startDate: new Date("2015", "0", "1", "08", "15"),
-			        	                	endDate: new Date("2015", "0", "1", "09", "00"),
+			        	                	startDate: new Date("2014", "11", "31", "10", "45"),
+			        	                	endDate: new Date("2015", "0", "3", "09", "00"),
 			        	                	type: sap.ui.unified.CalendarDayType.Type02,
 			        	                	title: "Appointment 2",
 			        	                	icon: "sap-icon://home",
@@ -391,7 +421,7 @@
 			        	                	tentative: true
 			        	                }),
 			        	                new sap.ui.unified.CalendarAppointment("R1A3", {
-			        	                	startDate: new Date("2015", "0", "1", "08", "30"),
+			        	                	startDate: new Date("2014", "11", "31", "08", "30"),
 			        	                	endDate: new Date("2015", "0", "1", "09", "30"),
 			        	                	type: sap.ui.unified.CalendarDayType.Type03,
 			        	                	title: "Blocker 3",
@@ -779,7 +809,6 @@
 			                 oVisSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
-			intervalSelect: handleAddAppointment,
 			startDateChange: handleStartDateChange,
 			rowHeaderClick: handleRowHeaderClick,
 			rowSelectionChange: handleRowSelectionChange
