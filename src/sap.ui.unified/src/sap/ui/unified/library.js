@@ -179,7 +179,12 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * one <code>CalendarRow</code> interval has the size of one Week
 		 */
-		Week : "Week"
+		Week : "Week",
+
+		/**
+		 * one code>CalendarRow</code> interval has the size of whole one month
+		 */
+		OneMonth : "One Month"
 
 	};
 

@@ -120,6 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		case sap.ui.unified.CalendarIntervalType.Day:
 		case sap.ui.unified.CalendarIntervalType.Week:
+		case sap.ui.unified.CalendarIntervalType.OneMonth:
 			aNonWorkingItems = oRow._getNonWorkingDays();
 			iStartOffset = oStartDate.getUTCDay();
 			iNonWorkingMax = 7;
@@ -156,6 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 			case sap.ui.unified.CalendarIntervalType.Day:
 			case sap.ui.unified.CalendarIntervalType.Week:
+			case sap.ui.unified.CalendarIntervalType.OneMonth:
 				oIntervalNextStartDate.setUTCDate(oIntervalNextStartDate.getUTCDate() + 1);
 				if (oIntervalNextStartDate.getUTCDate() == 1) {
 					bLastOfType = true;
@@ -196,11 +198,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i = 0;
 		var bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0);
+		var iMonth = oRow.getStartDate().getMonth();
+		var iDaysLength = new Date(oRow.getStartDate().getFullYear(), iMonth + 1, 0).getDate();
 
 		oRm.write("<div id=\"" + sId + "\"");
 		oRm.addClass("sapUiCalendarRowAppsInt");
 		oRm.addStyle("width", iWidth + "%");
 
+		if (iInterval >= iDaysLength && oRow.getIntervalType() === sap.ui.unified.CalendarIntervalType.OneMonth){
+			oRm.addClass("sapUiCalDayFromNextMonth");
+		}
 		for (i = 0; i < aNonWorkingItems.length; i++) {
 			if ((iInterval + iStartOffset) % iNonWorkingMax == aNonWorkingItems[i]) {
 				oRm.addClass("sapUiCalendarRowAppsNoWork");
@@ -243,6 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 			case sap.ui.unified.CalendarIntervalType.Day:
 			case sap.ui.unified.CalendarIntervalType.Week:
+			case sap.ui.unified.CalendarIntervalType.OneMonth:
 				iSubIntervals = 24;
 				break;
 
