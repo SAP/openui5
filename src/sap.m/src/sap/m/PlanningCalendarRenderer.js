@@ -25,6 +25,9 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div");
 		oRm.writeControlData(oPC);
 		oRm.addClass("sapMPlanCal");
+		if (oPC._iSize !== undefined && oPC._iSize !== null) {
+			oRm.addClass("sapMSize" + oPC._iSize);
+		}
 
 		if (!oPC.getSingleSelection()) {
 			oRm.addClass("sapMPlanCalMultiSel");

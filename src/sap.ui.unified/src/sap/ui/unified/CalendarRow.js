@@ -945,7 +945,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
 			oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 			oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-			var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true);
+			var oAppointmentEndDate = oAppointment.getEndDate()
+				? CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true)
+				: CalendarUtils._createUniversalUTCDate(new Date(864000000000000), undefined, true); //max date
 			oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 			oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 
@@ -1243,7 +1245,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
 				oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-				var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true);
+				var oAppointmentEndDate = oAppointment.getEndDate()
+					? CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true)
+					: CalendarUtils._createUniversalUTCDate(new Date(864000000000000), undefined, true); //max date;
 				oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 
@@ -1312,6 +1316,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	// as the top position of the appointments depends on the rendered height it must be calculated after rendering
 	function _positionAppointments() {
+
+		var iIntervals = this.getIntervals();
+		var sIntervalType = this.getIntervalType();
+		if (sIntervalType === sap.ui.unified.CalendarIntervalType.OneMonth && iIntervals === 1) {
+			return;
+		}
 
 		var $Apps = this.$("Apps");
 		var iRowWidth = $Apps.innerWidth();
