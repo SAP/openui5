@@ -201,18 +201,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
 
-		// resource bundle
-		Switch._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
 		Switch.prototype.onBeforeRendering = function() {
-			var Swt = Switch;
-
-			this._sOn = this.getCustomTextOn() || Swt._oRb.getText("SWITCH_ON");
-			this._sOff = this.getCustomTextOff() || Swt._oRb.getText("SWITCH_OFF");
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._sOn = this.getCustomTextOn() || oRb.getText("SWITCH_ON");
+			this._sOff = this.getCustomTextOff() || oRb.getText("SWITCH_OFF");
 		};
 
 		/* =========================================================== */
@@ -432,14 +428,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		};
 
-		/**
-		 * @see sap.ui.core.Control#getAccessibilityInfo
-		 * @protected
-		 */
 		Switch.prototype.getAccessibilityInfo = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			var sDesc = "";
+
 			if (this.getState()) {
 				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText();
 			}
