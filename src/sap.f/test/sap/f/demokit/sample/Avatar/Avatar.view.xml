@@ -1,0 +1,52 @@
+<mvc:View
+		controllerName="sap.f.sample.Avatar.Avatar"
+		xmlns:mvc="sap.ui.mvc"
+		xmlns:f="sap.f"
+		height="100%">
+	<f:Avatar
+			displaySize="XS"
+			displayShape="Square">
+		<!-- Square avatar of size XS -->
+	</f:Avatar>
+	<f:Avatar>
+		<!-- The default avatar -->
+	</f:Avatar>
+	<f:Avatar
+			initials="SL"
+			displaySize="M">
+		<!-- Avatar of size M containing initials -->
+	</f:Avatar>
+	<f:Avatar
+			src="sap-icon://lab"
+			displaySize="L">
+		<!-- Avatar of size L with src leading to an icon -->
+	</f:Avatar>
+	<f:Avatar
+			src="./test-resources/sap/f/images/Woman_avatar_01.png"
+			displaySize="XL">
+		<!-- Avatar of size XL with src leading to an image -->
+	</f:Avatar>
+	<f:Avatar
+			src="./test-resources/sap/f/images/Car_avatar_01.jpg"
+			displaySize="XL"
+			displayShape="Square"
+			imageFitType="Cover"
+			press="onPress">
+		<!-- Avatar of size XL with src leading to an image, image fit type set to Cover, square shape and a press event -->
+	</f:Avatar>
+	<f:Avatar
+			src="./test-resources/sap/f/images/Car_avatar_01.jpg"
+			displaySize="XL"
+			displayShape="Square"
+			imageFitType="Contain"
+			press="onPress">
+		<!-- Avatar of size XL with src leading to an image, image fit type set to Contain, square shape and a press event -->
+	</f:Avatar>
+	<f:Avatar
+			initials="SL"
+			displaySize="Custom"
+			customDisplaySize="10rem"
+			customFontSize="2rem">
+		<!-- Avatar with custom display size, custom font size and containing initials -->
+	</f:Avatar>
+</mvc:View>

@@ -17,6 +17,7 @@
 			var suite = new parent.jsUnitTestSuite(),
 				contextPath = "/" + window.location.pathname.split("/")[1];
 
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/Avatar.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/DynamicPage.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/ExploredSamples.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/FlexibleColumnLayout.qunit.html");
