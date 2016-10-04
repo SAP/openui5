@@ -1172,5 +1172,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.40": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "8b88846289d80088a2bf7fe5e191d1e93dda35a4",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "fe2ca8efe7bed24c3a74f04bb2adaa8bfb6e9cc7",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selecting text and focusing does not cycle anymore.",
+        "references": []
+      }
+    ]
   }
 }
