@@ -269,6 +269,7 @@
 
 			var oSpy = sinon.spy(oRow, "_processMixedCellStyles");
 
+			oBlockLayout.addStyleClass("sapUiBlockLayoutSizeL"); //Mock the screen size
 			sap.ui.getCore().applyChanges();
 
 			// Assert
@@ -279,6 +280,7 @@
 
 			// Act
 			oRow.addAccentCell(oCell2);
+			oBlockLayout.addStyleClass("sapUiBlockLayoutSizeL"); //Mock the screen size
 			sap.ui.getCore().applyChanges();
 
 			// Assert
