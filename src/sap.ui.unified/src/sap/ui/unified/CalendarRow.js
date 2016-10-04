@@ -987,14 +987,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (aGropAppointments.length > 0) {
 			for (i = 0; i < aVisibleAppointments.length; i++) {
 				oAppointment = aVisibleAppointments[i];
-				if (oAppointment.appointment._aAppointments && oAppointment.appointment._aAppointments.length == 1) {
+				if (oAppointment.appointment._aAppointments && oAppointment.appointment._aAppointments.length <= 1) {
 					oGroupAppointment = oAppointment.appointment;
 					// check if already shown
 					var bFound = false;
-					for (j = 0; j < aVisibleAppointments.length; j++) {
-						if (aVisibleAppointments[j].appointment == oGroupAppointment._aAppointments[0]) {
-							bFound = true;
-							break;
+					if (oGroupAppointment._aAppointments.length == 0) {
+						// group has no appointment - removed before -> remove from visible appointments
+						bFound = true;
+					} else {
+						for (j = 0; j < aVisibleAppointments.length; j++) {
+							if (aVisibleAppointments[j].appointment == oGroupAppointment._aAppointments[0]) {
+								bFound = true;
+								break;
+							}
 						}
 					}
 					if (!bFound) {
@@ -1005,7 +1010,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 								for (var k = 0; k < oGroupAppointment2._aAppointments.length; k++) {
 									if (oGroupAppointment._aAppointments[0] == oGroupAppointment2._aAppointments[k]) {
 										oGroupAppointment2._aAppointments.splice(k, 1);
-										oGroupAppointment2.setProperty("title", oGroupAppointment2._aAppointments.length, true);
+										if (oGroupAppointment2._aAppointments.length == 1) {
+											// no appointments left -> delete group
+											this.removeAggregation("groupAppointments", oGroupAppointment2);
+											oGroupAppointment2.destroy();
+											aGropAppointments = this.getAggregation("groupAppointments", []);
+										} else {
+											oGroupAppointment2.setProperty("title", oGroupAppointment2._aAppointments.length, true);
+										}
 										break;
 									}
 								}
@@ -1021,7 +1033,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						aVisibleAppointments.splice(i, 1);
 						i--;
 					}
+					this.removeAggregation("groupAppointments", oGroupAppointment);
 					oGroupAppointment.destroy();
+					aGropAppointments = this.getAggregation("groupAppointments", []);
 				}
 			}
 		}
