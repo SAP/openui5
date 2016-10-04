@@ -121,7 +121,7 @@ sap.ui.define([
 
 	/**
 	 * Adds registration for a control and a simple change
-	 * @param {String} sControlType - Name of the control, for example "sap.ui.comp.smartfilterbar.SmartFilterBar"
+	 * @param {String} sControlType - Name of the control
 	 * @param {sap.ui.fl.registry.SimpleChange.member} oSimpleChange - One of the simple changes
 	 *
 	 * @public
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	/**
 	 * Adds registration for a control and a simple change
-	 * @param {String} sControlType - Name of the control, for example "sap.ui.comp.smartfilterbar.SmartFilterBar"
+	 * @param {String} sControlType - Name of the control
 	 * @param {sap.ui.fl.registry.SimpleChange.member} oSimpleChange - One of the simple changes
 	 * @returns {sap.ui.fl.registry.ChangeRegistryItem} the registry item
 	 *
