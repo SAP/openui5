@@ -516,7 +516,7 @@
 		};
 
 		var fnTest2 = function() {
-			assert.equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
+			assert.equal(oTable.getVisibleRowCount(), 23, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
 			QUnit.start();
 		};
 
@@ -610,7 +610,7 @@
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() should be 1");
 
-		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
+		assert.equal(oVsb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
 		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
@@ -636,7 +636,8 @@
 	QUnit.test("ScrollTop on init is as expected", function(assert) {
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
-		assert.ok(oVsb.scrollTop > 25 && oVsb.scrollTop < 30, "ScrollTop is correct");
+		var iDefaultHeight = oTable._getDefaultRowHeight();
+		assert.ok(oVsb.scrollTop > iDefaultHeight - 2 && oVsb.scrollTop < iDefaultHeight + 2, "ScrollTop is correct: " + oVsb.scrollTop);
 	});
 
 	QUnit.test("ScrollTop after scrolling to last row is as expected", function(assert) {
@@ -649,7 +650,7 @@
 		var iVSbHeight = oVsb.clientHeight;
 		var oVSbScrollHeight = oVsb.scrollHeight;
 
-		assert.equal(iVSbHeight, 280, "iVSbHeight is correct");
+		assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
 		assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
 	});
 
@@ -676,9 +677,11 @@
 		oTable.setFirstVisibleRow(1);
 
 		var iRowHeightsDelta = oTable._iRowHeightsDelta;
+		
+		var iHeight = 9735 - 10 * oTable._getDefaultRowHeight();
 
 		assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
-		assert.ok(iRowHeightsDelta > 9430 && iRowHeightsDelta < 9480, "RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
+		assert.ok(iRowHeightsDelta > iHeight - 25 && iRowHeightsDelta < iHeight + 25, "RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
 
 		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		assert.ok(oVsb);
@@ -720,7 +723,7 @@
 		assert.equal($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom left tabled has 6 rows");
 		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top right tabled has 2 rows");
 		assert.equal($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom right tabled has 6 rows");
-		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableRowHdr').filter(':eq(2)')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+		assert.equal($table.find('.sapUiTableVSb').css('top'), ((oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) + $table.find('.sapUiTableCCnt')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
 	});
 
 	QUnit.module("Fixed top and bottom rows and columns", {
@@ -754,7 +757,7 @@
 		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll tbody tr').length, 4, "Right scroll table has 4 rows");
 		assert.equal($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
 		assert.equal($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
-		assert.equal($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+		assert.equal($table.find('.sapUiTableVSb').css('top'), ((oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) + $table.find('.sapUiTableCCnt')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
 		assert.equal($table.find('.sapUiTableVSb').css('height'), (oTable.getDomRef("table").offsetHeight) + "px", "Vertical scrollbar has correct height");
 	});
 

@@ -2,50 +2,94 @@
  * STYLE ADAPTATIONS OF FOREIGN CONTROLS
  ******************************************************************************/
 
-.sapUiTableCol .sapUiLbl {
-	border: none;
-	background: none;
-	padding: 0;
-	margin: 0;
-	width: 100%;
+
+
+/*******************************************************************************
+ * COMMONS
+ ******************************************************************************/
+
+.sapUiTableCell > {
+
+	.sapUiTv,
+	.sapUiLbl,
+	.sapUiLnk {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.sapUiTv {
+		font-weight: normal;
+		font-size: 12px;
+	}
+	
+	.sapUiTf,
+	.sapUiSearchField,
+	.sapUiSearchField > .sapUiTfCombo,
+	.sapUiTfCombo {
+		border: none;
+		background: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+	}
+
+	.sapUiTf.sapUiTfErr.sapUiTfStd,
+	.sapUiTfCombo.sapUiTfErr.sapUiTfStd {
+		background-color: @sapUiFieldInvalidBackground;
+	}
+
+	.sapUiTf.sapUiTfWarn.sapUiTfStd,
+	.sapUiTfCombo.sapUiTfWarn.sapUiTfStd {
+		background-color: @sapUiFieldWarningBackground;
+	}
+
+	.sapUiTf.sapUiTfSucc.sapUiTfStd,
+	.sapUiTfCombo.sapUiTfSucc.sapUiTfStd {
+		background-color: @sapUiFieldSuccessBackground;
+	}
+
+	.sapUiTfCombo {
+		padding: 0 8px 0 0;
+	}
+
+	.sapUiImg {
+		margin-top: 1px;
+	}
+
+	.sapUiRating {
+		display: block;
+	}
+
+	.sapUiLnk {
+		vertical-align: middle;
+	}
+
 }
 
-.sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
-	font-weight: bold;
+.sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
 	font-size: 0.875rem;
-	color: @sapUiListTextColor;
 }
 
-.sapUiTableCol:hover .sapUiLbl,
-.sapUiTableCol:hover .sapUiTf,
-.sapUiTableCol:hover .sapUiLnk,
-.sapUiTableCol:hover .sapUiLnk:visited,
-.sapUiTableCol:hover .sapUiLnk:hover {
-	color: @sapUiListTextColor;
+.sapUiTableRowHidden .sapUiTableCell > .sapUiImg {
+	display: none; /* images will be removed to avoid pushing the height of the line */
 }
 
-.sapUiAnalyticalTable .sapUiTableCol .sapMLabel {
-	width: 100%;
+tr.sapUiTableRowHvr {
+
+	.sapUiLbl,
+	.sapUiTf,
+	.sapUiLnk,
+	.sapUiLnk:visited,
+	.sapUiLnk:hover {
+		color: @sapUiListTextColor;
+		background-color: @sapUiListHoverBackground;
+	}
+
 }
 
-.sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
-	font-weight: bold;
-	font-size: 0.875rem;
-	color: @sapUiListTextColor;
-}
-
-.sapUiSizeCompact .sapUiTableColCell > .sapUiLbl,
-.sapUiSizeCompact .sapUiTableColCell > .sapMLabel,
-.sapUiTableColCell > .sapUiLbl {
-	font-weight: normal;
-	font-size: 0.875rem;
-	color: @sapUiListTextColor;
-}
-
-
-.sapUiSizeCozy .sapUiTableFtr > .sapMLabel {
-	height: 3rem;
-	line-height: 3rem;
+.sapUiAnalyticalTableSum .sapUiTv {
+	font-weight: bold !important;
 }
 
 .sapUiTableTbr .sapUiTb,
@@ -57,55 +101,93 @@
 	background-color: @sapUiListBackground;
 }
 
-.sapUiTableCell > .sapUiTf,
-.sapUiTableCell > .sapUiSearchField,
-.sapUiTableCell > .sapUiSearchField > .sapUiTfCombo,
-.sapUiTableCell > .sapUiTfCombo {
-	border: none;
-	background: none;
-	padding: 0;
-	margin: 0;
+.sapUiTableColCell {
+
+	.sapUiLbl {
+		border: none;
+		background: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		font-weight: normal;
+		font-size: 0.875rem;
+		color: @sapUiListTextColor;
+	}
+
+	.sapUiImg {
+		vertical-align: middle;
+	}
+}
+
+.sapUiAnalyticalTable .sapUiTableColCell .sapUiLbl {
+	font-weight: bold;
+}
+
+.sapUiTableCol:hover {
+
+	.sapUiLbl,
+	.sapUiTf,
+	.sapUiLnk,
+	.sapUiLnk:visited,
+	.sapUiLnk:hover {
+		color: @sapUiListTextColor;
+	}
+
+}
+
+
+
+
+
+/*******************************************************************************
+ * UNIFIED
+ ******************************************************************************/
+
+.sapUiAnalyticalTableSum .sapUiUfdCurrency {
+	font-weight: bold !important;
+}
+
+
+
+
+
+/*******************************************************************************
+ * M
+ ******************************************************************************/
+
+.sapUiAnalyticalTableSum .sapUiTableCell > .sapMLabel {
+	font-weight: bold !important;
+}
+
+.sapUiAnalyticalTable .sapUiTableCell > .sapMLabel,
+.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
 	width: 100%;
 }
 
-.sapUiTableCell > .sapUiTf.sapUiTfErr.sapUiTfStd,
-.sapUiTableCell > .sapUiTfCombo.sapUiTfErr.sapUiTfStd {
-	background-color: @sapUiFieldInvalidBackground;
-}
-.sapUiTableCell > .sapUiTf.sapUiTfWarn.sapUiTfStd,
-.sapUiTableCell > .sapUiTfCombo.sapUiTfWarn.sapUiTfStd {
-	background-color: @sapUiFieldWarningBackground;
-}
-.sapUiTableCell > .sapUiTf.sapUiTfSucc.sapUiTfStd,
-.sapUiTableCell > .sapUiTfCombo.sapUiTfSucc.sapUiTfStd {
-	background-color: @sapUiFieldSuccessBackground;
+.sapUiAnalyticalTable .sapUiTableCol .sapMLabel {
+	width: 100%;
 }
 
-.sapUiTableCell > .sapUiTfCombo {
-	padding: 0 8px 0 0;
+.sapUiSizeCompact .sapUiTableColCell > .sapMLabel {
+	font-weight: normal;
+	font-size: 0.875rem;
+	color: @sapUiListTextColor;
 }
 
-.sapUiTableCell > .sapUiTv,
-.sapUiTableCell > .sapUiLbl,
-.sapUiTableCell > .sapUiLnk {
-	display: block;
-	overflow: hidden;
-	text-overflow: ellipsis;
+
+.sapUiSizeCozy .sapUiTableFtr > .sapMLabel {
+	height: 3rem;
+	line-height: 3rem;
 }
 
-/* Keep sure that sap.m.Link is vertically aligned inside a table cell */
-.sapUiTableCell .sapUiLnk, .sapUiTableColCell .sapUiImg {
-	vertical-align: middle;
+.sapUiSizeCondensed .sapUiTableCell .sapMDP > .sapUiIcon,
+.sapUiSizeCondensed .sapUiTableCell .sapMDP.sapMInputIE9 > .sapUiIcon {
+	height: 1.5rem;
+	line-height: 1.5rem;
 }
 
-.sapUiTableCell > .sapUiImg {
-	margin-top: 1px;
-}
-
-.sapUiTableRowHidden .sapUiTableCell > .sapUiImg {
-	display: none; /* images will be removed to avoid pushing the height of the line */
-}
-
-.sapUiTableCell > .sapUiRating {
-	display: block;
+.sapUiSizeCompact .sapUiTableCell > .sapMLabel {
+	font-weight: normal;
+	font-size: 0.875rem;
+	color: @sapUiListTextColor;
 }

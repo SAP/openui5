@@ -798,15 +798,17 @@ QUnit.module("TableUtils", {
 });
 
 QUnit.test("getRowHeightByIndex", function(assert) {
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48");
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), 48, "Last Row Height is 48");
+	var iDefaultRowHeight = oTable._getDefaultRowHeight();
+
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), iDefaultRowHeight, "First Row Height is 48");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), iDefaultRowHeight, "Last Row Height is 48");
 	assert.equal(TableUtils.getRowHeightByIndex(oTable, 50), 0, "Invalid Row Height is 0");
 	assert.equal(TableUtils.getRowHeightByIndex(null, 0), 0, "No Table available returns 0px as row height");
 
 	oTable.setFixedColumnCount(0);
 	sap.ui.getCore().applyChanges();
 
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48, with Table with no fixed columns");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), iDefaultRowHeight, "First Row Height is 48, with Table with no fixed columns");
 	jQuery(document.body).toggleClass("sapUiSizeCozy", false);
 });
 
