@@ -2,21 +2,32 @@
 /* CSS for control sap.ui.analytics/AnalyticalTable.control */
 /* ======================================================== */
 
+.sapUiAnalyticalTable .sapUiTableRowHdr {
+
+	&.sapUiAnalyticalTableSum {
+		border-left: 0;
+		border-right: 0;
+		background-color: @sapUiListBackground;
+	}
+
+	&.sapUiAnalyticalTableDummy {
+		font-size: 14px;
+		line-height: 28px;
+		color: @sapUiContentLabelColor;
+	}
+
+}
+
+
+
+
+
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td {
 	border-right-width: 0;
 }
 
 .sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td:last-child {
 	border-right-width: 1px;
-}
-
-.sapUiAnalyticalTable .sapUiAnalyticalTableLoading {
-	margin-left: 40px;
-}
-
-.sapUiAnalyticalTable .sapUiTableRowHdr.sapUiAnalyticalTableSum {
-	border-left: 0;
-	border-right: 0;
 }
 
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum td {
@@ -28,23 +39,13 @@
 	height: @sapUiTableRowHeight;
 }
 
-.sapUiAnalyticalTable .sapUiTableRowHdrScr {
-	width: @sapUiTableRowHdrWidth;
-}
-
-.sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScr,
-.sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScrFixed {
-	margin-left: @sapUiTableRowHdrWidth;
-}
-
 .sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
 	font-size: 0.875rem;
 }
 
 /* Hierarchical Support */
 
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum,
-.sapUiAnalyticalTable .sapUiTableRowHdr.sapUiAnalyticalTableSum {
+.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum {
 	background-color: @sapUiListBackground;
 }
 
@@ -52,12 +53,6 @@
 .sapUiAnalyticalTableSum .sapUiUfdCurrency,
 .sapUiAnalyticalTableSum .sapUiTableCell > .sapMLabel {
 	font-weight: bold !important;
-}
-
-.sapUiAnalyticalTable .sapUiTableRowHdr.sapUiAnalyticalTableDummy {
-	font-size: 14px;
-	line-height: 28px;
-	color: @sapUiContentLabelColor;
 }
 
 .sapUiAnalyticalTable .sapUiTableCtrl tr.sapUiTableRowHvr,
@@ -68,18 +63,6 @@
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:hover {
 	color: @sapUiListTextColor;
 	background-color: @sapUiListHoverBackground;
-}
-
-// No checkboxes should be shown in group header of Analytical Table
-.sapUiSizeCompact, .sapUiSizeCozy {
-	.sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableRowHidden::after,
-	.sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
-		display: none;
-	}
-}
-
-.sapUiAnalyticalTable .sapUiTableRowHdr {
-	position: relative;
 }
 
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum td:last-child {
