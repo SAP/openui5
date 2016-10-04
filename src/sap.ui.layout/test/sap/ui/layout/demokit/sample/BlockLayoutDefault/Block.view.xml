@@ -94,7 +94,8 @@
 						title="75% width cell"
 						width="3">
 					<form:SimpleForm
-							editable="true">
+							editable="true"
+							backgroundDesign="Transparent">
 						<Label text="Name on card" required="true" />
 						<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
 						<Label text="Card number"/>
