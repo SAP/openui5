@@ -535,13 +535,18 @@
 			destroyTable();
 		}
 	});
+	
+	function getExpectedHScrollLeftMargin(iNumberOfFixedCols) {
+		var iWidth = iNumberOfFixedCols * 100 /* Columns */ + 32 /* Default Row Header Width */;
+		return iWidth + "px";
+	}
 
 	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
 		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("Hide one column in fixed area", function(assert) {
@@ -551,7 +556,7 @@
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
 		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "225px", "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(2), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("Hide one column in scroll area", function(assert) {
@@ -561,7 +566,7 @@
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
 		assert.equal($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
