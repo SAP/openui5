@@ -20,6 +20,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 *
 	 * @class
 	 * A View defined using (P)XML and HTML markup.
+	 *
+	 * <strong>Note:</strong><br>
+	 * Be aware that modifications of the content aggregation of this control are not supported due to technical reasons.
+	 * This includes calls to all content modifying methods like <code>addContent></code> etc., but also the implicit
+	 * removal of controls contained by the content aggregation. For example the destruction of a Control via the <code>
+	 * destroy</code> method. All functions can be called but may not work properly or lead to unexpected side effects.
+	 *
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
