@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
 
 	 * @function
-	 * @name sap.ui.comp.smartform.flexibility.changes.hideControl#buildStableChangeInfo
+	 * @name sap.ui.fl.changeHandler.HideControl#buildStableChangeInfo
 	 */
 	HideControl.buildStableChangeInfo = function(mRemoveActionParameter){
 		return mRemoveActionParameter;

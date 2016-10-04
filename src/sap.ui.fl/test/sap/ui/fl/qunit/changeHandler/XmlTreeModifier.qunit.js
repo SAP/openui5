@@ -30,12 +30,11 @@
 
 			this.oDOMParser = new DOMParser();
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.comp.smartform">' +
-				'<SmartForm id="testComponent---myView--myForm">' +
-				'<SmartGroup id="testComponent---myView--myGroup">' +
-				'<SmartGroupElement id="testComponent---myView--myGroupElement" />' +
-				'</SmartGroup>' +
-				'</SmartForm>' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
+				'<form:SimpleForm id="testComponent---myView--myForm">' +
+				'<Title id="testComponent---myView--myGroup" />' +
+				'<Input id="testComponent---myView--myGroupElement" />' +
+				'</form:SimpleForm>' +
 				'</mvc:View>';
 			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 			return this.oXmlView;
