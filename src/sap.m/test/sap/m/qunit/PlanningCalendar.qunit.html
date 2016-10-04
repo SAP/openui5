@@ -222,6 +222,222 @@
 
 		};
 
+		var _switchToView = function(sViewName, oPC) {
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				mIntervalStringsMap = {},
+				i = 0,
+				sIntervalTypeDropdownId,
+				sIntervalTypeDropdownLabelId,
+				sViewI18Name,
+				sErrMsg;
+
+			mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Hour] = "PLANNINGCALENDAR_HOURS";
+			mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Day] = "PLANNINGCALENDAR_DAYS";
+			mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Month] = "PLANNINGCALENDAR_MONTHS";
+			mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Week] = "PLANNINGCALENDAR_WEEK";
+			mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.OneMonth] = "PLANNINGCALENDAR_ONE_MONTH";
+
+			sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
+			ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
+
+			sIntervalTypeDropdownId = oPC.getId() + "-IntType",
+				sIntervalTypeDropdownLabelId = sIntervalTypeDropdownId + "-label";
+
+			if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() === sViewI18Name.toLowerCase()) {
+				return;
+			}
+			qutils.triggerKeydown(sIntervalTypeDropdownId, "HOME");
+
+			do {
+				i++;
+				if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() == sViewI18Name.toLowerCase()) {
+					qutils.triggerKeydown(sIntervalTypeDropdownId, "ENTER");
+					return;
+				}
+				qutils.triggerKeydown(sIntervalTypeDropdownId, "ARROW_DOWN");
+			} while (i < 5);
+
+			sErrMsg = "Cannot switch to view " + sViewName;
+			ok(false, sErrMsg);
+			throw sErrMsg;
+		};
+
+		var _switchToMonth = function(oPC, iMonth) {
+			var oMonthPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("monthPicker");
+			oMonthPicker.setMonth(iMonth);
+			oMonthPicker.fireSelect();
+		};
+
+		var _switchToYear = function(oPC, iYear) {
+			var oYearPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("yearPicker");
+			oYearPicker.setYear(iYear);
+			oYearPicker.fireSelect();
+		};
+
+		var _clickTodayButton = function(oPC) {
+			var sTodayButtonId = _getTodayButton.call(this, oPC).getId();
+			qutils.triggerEvent("tap", sTodayButtonId);
+		};
+
+		var _getTodayButton = function(oPC) {
+			return sap.ui.getCore().byId(oPC.getId() + "-Today");
+		};
+
+		var _getChangeMonthButtonText = function(oPC) {
+			return jQuery("#" + oPC.getId() + "-" + _getIntervalPrefix.call(this, oPC) + "--Head-B1").text();
+		};
+
+		//Verifies that given dates are "displayed" in the Planning Calendar
+		//and month name(s) in the button is as expected
+		var _assertDatesAreVisible = function(aDates, oPC, sMessagePrefix) {
+			var sDaysSelector = oPC.getId() + "-" + _getIntervalId.call(this, oPC) + "-days",
+				iAvailableDays = jQuery('#' + sDaysSelector).children().length,
+				oFirstDate = aDates[0],
+				oLastDate = aDates[aDates.length - 1],
+				sExpectedDateRange = _formatDate.call(this, oFirstDate) + "-" + _formatDate.call(this, oLastDate),
+				oMonthDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "MMMM"}),
+				oLocaleData = new sap.ui.core.LocaleData(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+				sIntervalPattern = oLocaleData.getIntervalPattern(),
+				sExpectedMonthName;
+
+			sMessagePrefix+= ": expected dates: " + sExpectedDateRange;
+
+			equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
+			if (aDates.length >= 2 && oFirstDate.getMonth() !== oLastDate.getMonth()) {
+				sExpectedMonthName =  sIntervalPattern.replace(/\{0\}/, oMonthDateFormat.format(oFirstDate)).replace(/\{1\}/, oMonthDateFormat.format(oLastDate));
+			} else {
+				sExpectedMonthName = oMonthDateFormat.format(oFirstDate);
+			}
+			equals(_getChangeMonthButtonText.call(this, oPC), sExpectedMonthName, sMessagePrefix + ": Change month button should have certain text of " +
+				sExpectedMonthName + ", current text: " + _getChangeMonthButtonText.call(this, oPC));
+
+			aDates.forEach(function (oDate) {
+				_assertDateIsVisible.call(this, oDate, oPC, sMessagePrefix);
+			}.bind(this));
+		};
+
+		//Verifies that given Date is "displayed" in the Planning Calendar
+		var _assertDateIsVisible = function(oDate, oPC, sMessagePrefix) {
+			var that = this;
+
+			function convertDate2DomId(oDate, sPrefix) {
+				return sPrefix + "-" + oDate.getFullYear() + _padTo10.call(that, oDate.getMonth() + 1) + _padTo10.call(that, oDate.getDate());
+			}
+
+			var sDayId = convertDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
+			equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
+		};
+
+		//Verifies that given hour for given date is "displayed" in the Planning Calendar
+		var _assertHourIsVisible = function(oDate, oPC, sMessagePrefix) {
+			var that = this;
+
+			function convertHourInDate2DomId(oDate, sPrefix) {
+				return sPrefix + "-" + oDate.getFullYear() + _padTo10.call(that, oDate.getMonth() + 1) + _padTo10.call(that, oDate.getDate()) + _padTo10.call(that, oDate.getHours()) + "00";
+			}
+
+			var sHourInDayId = convertHourInDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
+			equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + _formatDateHour.call(this, oDate) + " should be visible (" + sHourInDayId + ")");
+		};
+
+		var _assertHoursAreVisible = function(aDates, oPC, sMessagePrefix) {
+			var iAvailableDays = jQuery('#' + oPC.getId() + "-"+ _getIntervalId.call(this, oPC) + "-times").children().length,
+				sExpectedDateRange = _formatDateHour.call(this, aDates[0]) + "-" + _formatDateHour.call(this, aDates[aDates.length-1]);
+
+			sMessagePrefix+= ": expected hours: " + sExpectedDateRange;
+			equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
+
+			aDates.forEach(function (oDate) {
+				_assertHourIsVisible.call(this, oDate, oPC, sMessagePrefix);
+			}.bind(this));
+		};
+
+		var _assertFocus = function(oTarget) {
+			strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
+		};
+
+		var _formatDate = function(oDate) {
+			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY"}).format(oDate);
+		};
+
+		var _formatDateHour = function(oDate) {
+			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY hh:mm"}).format(oDate);
+		};
+
+		var _padTo10 = function(i) {
+			return (i > 9 ? i : "0" + i);
+		};
+
+		var _getIntervalId = function(oPC) {
+			return _getIntervalPrefix.call(this, oPC) + "--" + _getIntervalSuffix.call(this, oPC);
+		};
+
+		var _getIntervalPrefix = function(oPC) {
+			switch (oPC.getViewKey()) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					return "TimeInt";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Day:
+					return "DateInt";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Week:
+					return "WeekInt";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Month:
+					return "MonthInt";
+					break;
+				case sap.ui.unified.CalendarIntervalType.OneMonth:
+					return "OneMonthInt";
+					break;
+				default:
+					throw "Unknown viewKey:" + oPC.getViewKey();
+			}
+		};
+
+		var _getIntervalSuffix = function(oPC) {
+			switch (oPC.getViewKey()) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					return "TimesRow";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Day:
+					return "Month0";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Week:
+					return "Month0";
+					break;
+				case sap.ui.unified.CalendarIntervalType.Month:
+					return "MonthsRow";
+					break;
+				case sap.ui.unified.CalendarIntervalType.OneMonth:
+					return "Month0";
+					break;
+				default:
+					throw "Unknown viewKey:" + oPC.getViewKey();
+			}
+		};
+
+		var _navBackward = function(oPC) {
+			var sIdBackButton = oPC.getId() + "-" +  _getIntervalPrefix.call(this, oPC) + "--Head-prev";
+			qutils.triggerEvent("click", sIdBackButton);
+		};
+
+		var _navForward = function(oPC) {
+			var  sIdForwardButton = oPC.getId() + "-" +  _getIntervalPrefix.call(this, oPC) + "--Head-next";
+			qutils.triggerEvent("click", sIdForwardButton);
+		};
+
+		var _navFocusPrev = function(oTarget) {
+			qutils.triggerKeydown(oTarget.id, "ARROW_LEFT");
+			sap.ui.getCore().applyChanges();
+			return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
+		};
+
+		var _navFocusNext = function(oTarget) {
+			qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
+		};
+
 		var oSearchField1, oButton1;
 		createToolbarContent("SF1", "B1");
 		var oPC1 = createPlanningCalendar("PC1", oSearchField1, oButton1);
@@ -302,6 +518,124 @@
 			ok(jQuery("#PC1-IntType").get(0), "IntervalType select rendered");
 			ok(jQuery("#PC1-Today").get(0), "Today button rendered");
 			ok(jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval rendered");
+		});
+
+		test("TimesRow cells width and table columns width should be equal", function (assert) {
+			var sut = createPlanningCalendar("widthExample", new sap.m.SearchField(), new sap.m.Button(), new Date()),
+					sutTimeInterval,
+					fnWaitPCRendering,
+					oRenderingInfo = {iItems: 12, iTimeout: 1000, iSpendTime: 0},
+					oTestCompletedPromise;
+
+			sut.placeAt('uiArea4');
+			sap.ui.getCore().applyChanges();
+
+			sutTimeInterval = sut._oTimeInterval;
+			//checks the size of the hours cells and corresponding cells in the table
+			function check(sPlanningCalendarWidth) {
+				var $timeIntervalChildren = jQuery("#" + sutTimeInterval.getId() + "--TimesRow-times").children(),
+						$tableRow0Cells = jQuery("#widthExample-Row1-CalRow-Apps.sapUiCalendarRowApps .sapUiCalendarRowAppsInt").children(),
+						sMsgPrefix = "PC width = " + sPlanningCalendarWidth + ": ",
+						iDeltaTolerance = 1,
+						sTimeCellWidth,
+						sTableCellWidth,
+						iDelta = 0;
+
+				equal($timeIntervalChildren.size(), sutTimeInterval.getItems(), sMsgPrefix + "Time cells count (" +
+						$timeIntervalChildren.size() + ") in the DOM should be the same as the TimeInterval items count");
+				equal($timeIntervalChildren.size(), $tableRow0Cells.size(), sMsgPrefix + "Time cells count in the DOM " +
+						"should be the same as the CalendarRow cells count");
+
+				//check items width
+				for (var i = 0; i < sutTimeInterval.getItems(); i++) {
+					sTimeCellWidth = Math.round($timeIntervalChildren[i].clientWidth),
+							sTableCellWidth = Math.round($tableRow0Cells[i].clientWidth),
+							iDelta = Math.abs(sTimeCellWidth - sTableCellWidth);
+					ok(iDelta >= 0 && iDelta <= iDeltaTolerance, sMsgPrefix + "\t\tThe width of Time cell [" + i + "] should " +
+							"equal to the corresponding cell in the 1st table row: " + sTimeCellWidth + " vs " + sTableCellWidth);
+				}
+			}
+
+			//Returns a promise that is resolved when the PlanningCalendar and its childs is rerendered
+			fnWaitPCRendering = function (resolve, reject) {
+				if (sutTimeInterval.getItems() === oRenderingInfo.iItems) {
+					setTimeout(function () {
+						resolve();
+					}, 0);//because column resizing in the table comes later, take a look at Column.prototype._notifyResize
+				} else {
+					if (oRenderingInfo.iSpendTime > oRenderingInfo.iTimeout) {
+						reject("After " + oRenderingInfo.iTimeout + " ms of waiting the PlanningCalendar didn't change " +
+								"its intervals to " + oRenderingInfo.iItems + " items");
+					} else {
+						setTimeout(function () {
+							fnWaitPCRendering(resolve, reject)
+						}, 10);
+						oRenderingInfo.iSpendTime += 10;
+					}
+				}
+			};
+
+			//Act
+			jQuery("#uiArea4").css("width", "1024px");
+			sap.ui.getCore().applyChanges();
+
+			oTestCompletedPromise = new Promise(fnWaitPCRendering).then(function () {
+				jQuery.sap.log.info("Planning Calendar Resized to 1024px");
+
+				//Assert
+				check("1024px");
+
+				//Prepare
+				oRenderingInfo.iItems = 6;
+				oRenderingInfo.iSpendTime = 0;
+
+				//Act
+				jQuery("#uiArea4").css("width", "1023px");
+				sap.ui.getCore().applyChanges();
+
+				return new Promise(fnWaitPCRendering);
+			}).then(function () {
+				jQuery.sap.log.info("Planning Calendar Resized to 1023px");
+
+				//Assert
+				check("1023px");
+
+				//Prepare
+				oRenderingInfo.iSpendTime = 0;
+
+				//Act
+				jQuery("#uiArea4").css("width", "600px");
+				sap.ui.getCore().applyChanges();
+
+				return new Promise(fnWaitPCRendering);
+			}).then(function () {
+				jQuery.sap.log.info("Planning Calendar Resized to 600px");
+
+				//Assert
+				check("600px");
+
+				//Prepare
+				oRenderingInfo.iSpendTime = 0;
+
+				//Act
+				jQuery("#uiArea4").css("width", "599px");
+				sap.ui.getCore().applyChanges();
+
+				return new Promise(fnWaitPCRendering);
+			}).then(function () {
+				jQuery.sap.log.info("Planning Calendar Resized to 599px");
+
+				//Assert
+				check("599px");
+
+				//Clean
+				sut.destroy();
+			}).catch(function (reason) {
+				//Clean
+				sut.destroy();
+				throw "Cannot wait for PlanningCalendar resizing, due to: " + reason;
+			});
+			return oTestCompletedPromise;
 		});
 
 		test("Appointments", function() {
@@ -1187,6 +1521,20 @@
 			strictEqual(_dateMatchesVisibleRangeSpy.callCount, 1, "'_dateMatchesVisibleRangeSpy()' was called once");
 		});
 
+		test("today button enabled state is updated when the view is changed", function() {
+			//arrange
+			this.sut.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			this.sut.setStartDate(new Date());
+			var oEnabledSpy = this.spy(this.sut._oTodayButton, 'setEnabled');
+
+			//act
+			this.sut.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
+
+			//assert
+			strictEqual(oEnabledSpy.called, true, 'today button state is updated');
+			strictEqual(oEnabledSpy.lastCall.args[0], false, 'today button state is updated correctly');
+		});
+
 		test("'_dateMatchesVisibleRange()' has correct output" , function () {
 			//prepare
 			var sViewKey = this.sut.getViewKey(),
@@ -1213,7 +1561,7 @@
 				oWeekView = this.sut._getView(sViewKey);
 			//The act of this test is done in the module beforeEach
 			//assert
-			strictEqual(this.sut._aViews.length, 4, "Correct number (4) of views assigned to PlanningCalendar");
+			strictEqual(this.sut._aViews.length, 5, "Correct number (5) of views assigned to PlanningCalendar");
 			strictEqual(oWeekView.getIntervalsS(), 7, "Correct number (7) intervals for S screen sizes");
 			strictEqual(oWeekView.getIntervalsM(), 7, "Correct number (7) intervals for M screen sizes");
 			strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
@@ -1237,215 +1585,6 @@
 				if (!bSkipDestroy) {
 					this.oPC2.destroy();
 				}
-			},
-
-			_switchToView: function (sViewName, oPC) {
-				var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-						mIntervalStringsMap = {},
-						i = 0,
-						sIntervalTypeDropdownId,
-						sIntervalTypeDropdownLabelId,
-						sViewI18Name,
-						sErrMsg;
-
-				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Hour] = "PLANNINGCALENDAR_HOURS";
-				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Day] = "PLANNINGCALENDAR_DAYS";
-				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Month] = "PLANNINGCALENDAR_MONTHS";
-				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Week] = "PLANNINGCALENDAR_WEEK";
-
-				sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
-				ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
-
-				sIntervalTypeDropdownId = oPC.getId() + "-IntType",
-				sIntervalTypeDropdownLabelId = sIntervalTypeDropdownId + "-label";
-
-				if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() === sViewI18Name.toLowerCase()) {
-					return;
-				}
-				qutils.triggerKeydown(sIntervalTypeDropdownId, "HOME");
-
-				do {
-					i++;
-					if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() == sViewI18Name.toLowerCase()) {
-						qutils.triggerKeydown(sIntervalTypeDropdownId, "ENTER");
-						return;
-					}
-					qutils.triggerKeydown(sIntervalTypeDropdownId, "ARROW_DOWN");
-				} while (i < 4);
-
-				sErrMsg = "Cannot switch to view " + sViewName;
-				ok(false, sErrMsg);
-				throw sErrMsg;
-			},
-
-			_switchToMonth: function (oPC, iMonth) {
-				var oMonthPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("monthPicker");
-				oMonthPicker.setMonth(iMonth);
-				oMonthPicker.fireSelect();
-			},
-
-			_switchToYear: function (oPC, iYear) {
-				var oYearPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("yearPicker");
-				oYearPicker.setYear(iYear);
-				oYearPicker.fireSelect();
-			},
-
-			_clickTodayButton: function(oPC) {
-				var sTodayButtonId = this._getTodayButton(oPC).getId();
-				qutils.triggerEvent("tap", sTodayButtonId);
-			},
-
-			_getTodayButton: function(oPC) {
-				return sap.ui.getCore().byId(oPC.getId() + "-Today");
-			},
-
-			_getChangeMonthButtonText: function(oPC) {
-				return jQuery("#" + oPC.getId() + "-" + this._getIntervalPrefix(oPC) + "--Head-B1").text();
-			},
-
-			//Verifies that given dates are "displayed" in the Planning Calendar
-			//and month name(s) in the button is as expected
-			_assertDatesAreVisible: function (aDates, oPC, sMessagePrefix) {
-				var sDaysSelector = oPC.getId() + "-" + this._getIntervalId(oPC) + "-days",
-						iAvailableDays = jQuery('#' + sDaysSelector).children().length,
-						oFirstDate = aDates[0],
-						oLastDate = aDates[aDates.length - 1],
-						sExpectedDateRange = this._formatDate(oFirstDate) + "-" + this._formatDate(oLastDate),
-						oMonthDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "MMMM"}),
-						oLocaleData = new sap.ui.core.LocaleData(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
-						sIntervalPattern = oLocaleData.getIntervalPattern(),
-						sExpectedMonthName;
-
-				sMessagePrefix+= ": expected dates: " + sExpectedDateRange;
-
-				equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
-				if (aDates.length >= 2 && oFirstDate.getMonth() !== oLastDate.getMonth()) {
-					sExpectedMonthName =  sIntervalPattern.replace(/\{0\}/, oMonthDateFormat.format(oFirstDate)).replace(/\{1\}/, oMonthDateFormat.format(oLastDate));
-				} else {
-					sExpectedMonthName = oMonthDateFormat.format(oFirstDate);
-				}
-				equals(this._getChangeMonthButtonText(oPC), sExpectedMonthName, sMessagePrefix + ": Change month button should have certain text of " +
-						sExpectedMonthName + ", current text: " + this._getChangeMonthButtonText(oPC));
-
-				aDates.forEach(function (oDate) {
-					this._assertDateIsVisible(oDate, oPC, sMessagePrefix);
-				}.bind(this));
-			},
-
-			//Verifies that given Date is "displayed" in the Planning Calendar
-			_assertDateIsVisible: function (oDate, oPC, sMessagePrefix) {
-				var that = this;
-
-				function convertDate2DomId(oDate, sPrefix) {
-					return sPrefix + "-" + oDate.getFullYear() + that._padTo10(oDate.getMonth() + 1) + that._padTo10(oDate.getDate());
-				}
-
-				var sDayId = convertDate2DomId(oDate, oPC.getId() + "-" + this._getIntervalId(oPC));
-				equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + this._formatDate(oDate) + " should be visible (" + sDayId + ")");
-			},
-
-			//Verifies that given hour for given date is "displayed" in the Planning Calendar
-			_assertHourIsVisible: function(oDate, oPC, sMessagePrefix) {
-				var that = this;
-
-				function convertHourInDate2DomId(oDate, sPrefix) {
-					return sPrefix + "-" + oDate.getFullYear() + that._padTo10(oDate.getMonth() + 1) + that._padTo10(oDate.getDate()) + that._padTo10(oDate.getHours()) + "00";
-				}
-
-				var sHourInDayId = convertHourInDate2DomId(oDate, oPC.getId() + "-" + this._getIntervalId(oPC));
-				equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + this._formatDateHour(oDate) + " should be visible (" + sHourInDayId + ")");
-			},
-
-			_assertHoursAreVisible: function(aDates, oPC, sMessagePrefix) {
-				var iAvailableDays = jQuery('#' + oPC.getId() + "-"+ this._getIntervalId(oPC) + "-times").children().length,
-						sExpectedDateRange = this._formatDateHour(aDates[0]) + "-" + this._formatDateHour(aDates[aDates.length-1]);
-
-				sMessagePrefix+= ": expected hours: " + sExpectedDateRange;
-				equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
-
-				aDates.forEach(function (oDate) {
-					this._assertHourIsVisible(oDate, oPC, sMessagePrefix);
-				}.bind(this));
-			},
-
-			_assertFocus: function (oTarget) {
-				strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
-			},
-
-			_formatDate: function(oDate) {
-				return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY"}).format(oDate);
-			},
-
-			_formatDateHour: function(oDate) {
-				return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY hh:mm"}).format(oDate);
-			},
-
-			_padTo10: function(i) {
-				return (i > 9 ? i : "0" + i);
-			},
-
-			_getIntervalId: function (oPC) {
-				return this._getIntervalPrefix(oPC) + "--" + this._getIntervalSuffix(oPC);
-			},
-
-			_getIntervalPrefix: function(oPC) {
-				switch (oPC.getViewKey()) {
-					case sap.ui.unified.CalendarIntervalType.Hour:
-						return "TimeInt";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Day:
-						return "DateInt";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Week:
-						return "WeekInt";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Month:
-						return "MonthInt";
-						break;
-					default:
-						throw "Unknown viewKey:" + oPC.getViewKey();
-				}
-			},
-
-			_getIntervalSuffix: function(oPC) {
-				switch (oPC.getViewKey()) {
-					case sap.ui.unified.CalendarIntervalType.Hour:
-						return "TimesRow";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Day:
-						return "Month0";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Week:
-						return "Month0";
-						break;
-					case sap.ui.unified.CalendarIntervalType.Month:
-						return "MonthsRow";
-						break;
-					default:
-						throw "Unknown viewKey:" + oPC.getViewKey();
-				}
-			},
-
-			_navBackward: function(oPC) {
-				var sIdBackButton = oPC.getId() + "-" +  this._getIntervalPrefix(oPC) + "--Head-prev";
-				qutils.triggerEvent("click", sIdBackButton);
-			},
-
-			_navForward: function(oPC) {
-				var sIdBackButton = oPC.getId() + "-" +  this._getIntervalPrefix(oPC) + "--Head-next";
-				qutils.triggerEvent("click", sIdBackButton);
-			},
-
-			_navFocusPrev: function (oTarget) {
-				qutils.triggerKeydown(oTarget.id, "ARROW_LEFT");
-				sap.ui.getCore().applyChanges();
-				return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
-			},
-
-			_navFocusNext: function (oTarget) {
-				qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
-				sap.ui.getCore().applyChanges();
-				return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
 			}
 		});
 
@@ -1473,9 +1612,35 @@
 
 		});
 
+
+		test("keyboard navigation HOME & END for 1 Month view", function() {
+			_switchToView(sap.ui.unified.CalendarIntervalType.OneMonth, this.oPC2);
+			this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
+			this.oPC2.rerender();
+			var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthInt--Month0-";
+
+			jQuery("#" +  sMonthIdPrefix + "20160901").focus();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160901", "END");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160930", "HOME");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
+
+			jQuery("#" +  sMonthIdPrefix + "20160910").focus();
+			equal(document.activeElement.id, sMonthIdPrefix + "20160910", "10th of September focused");
+
+			qutils.triggerKeydown(sMonthIdPrefix + "20160910", "END");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
+		});
+
 		test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function() {
 			//assert initial state
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 29),
 						new Date(2016, 7, 30),
 						new Date(2016, 7, 31),
@@ -1489,7 +1654,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 8, 5),
 						new Date(2016, 8, 6),
 						new Date(2016, 8, 7),
@@ -1502,10 +1667,10 @@
 
 		test("Navigation backward via back button", function() {
 			//act
-			this._navBackward(this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
+			_navBackward.call(this, this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 22),
 						new Date(2016, 7, 23),
 						new Date(2016, 7, 24),
@@ -1516,10 +1681,10 @@
 					this.oPC2, "Initially navigating back once");
 
 			//act
-			this._navBackward(this.oPC2);//two weeks before
+			_navBackward.call(this, this.oPC2);//two weeks before
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 15),
 						new Date(2016, 7, 16),
 						new Date(2016, 7, 17),
@@ -1542,19 +1707,19 @@
 			aDays.eq(0).focus();
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				oNextTarget = oSelf._navFocusPrev(oNextTarget);
-				oSelf._assertFocus(oNextTarget);
+				oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
+				_assertFocus.call(oSelf, oNextTarget);
 				setTimeout(function () {
-					oNextTarget = oSelf._navFocusPrev(oNextTarget);
-					oSelf._assertFocus(oNextTarget);
+					oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
+					_assertFocus.call(oSelf, oNextTarget);
 					setTimeout(function () {
-						oNextTarget = oSelf._navFocusPrev(oNextTarget);
-						oSelf._assertFocus(oNextTarget);
+						oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
+						_assertFocus.call(oSelf, oNextTarget);
 						setTimeout(function () {
-							oNextTarget = oSelf._navFocusPrev(oNextTarget);
-							oSelf._assertFocus(oNextTarget);
+							oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
+							_assertFocus.call(oSelf, oNextTarget);
 							setTimeout(function () {
-								oSelf._assertDatesAreVisible([
+								_assertDatesAreVisible.call(oSelf, [
 									new Date(2016, 7, 22),
 									new Date(2016, 7, 23),
 									new Date(2016, 7, 24),
@@ -1593,9 +1758,9 @@
 			aDays.eq(0).focus();
 			sap.ui.getCore().applyChanges();
 			setTimeout(function() {
-				oNextTarget = oSelf._navFocusPrev(oNextTarget);
-				oSelf._assertFocus(oNextTarget);
-					oSelf._assertDatesAreVisible([
+				oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
+				_assertFocus.call(oSelf, oNextTarget);
+				    _assertDatesAreVisible.call(oSelf, [
 						new Date(2014, 9, 26),
 						new Date(2014, 9, 27),
 						new Date(2014, 9, 28),
@@ -1611,10 +1776,10 @@
 
 		test("Navigation forward via forward button", function() {
 			//act
-			this._navForward(this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
+			_navForward.call(this, this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 8, 5),
 						new Date(2016, 8, 6),
 						new Date(2016, 8, 7),
@@ -1625,10 +1790,10 @@
 					this.oPC2, "Navigating forward once");
 
 			//act
-			this._navForward(this.oPC2);//two weeks after
+			_navForward.call(this, this.oPC2);//two weeks after
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 8, 12),
 						new Date(2016, 8, 13),
 						new Date(2016, 8, 14),
@@ -1651,19 +1816,19 @@
 			sap.ui.getCore().applyChanges();
 
 			setTimeout(function() {
-				oNextTarget = oSelf._navFocusNext(oNextTarget);
-				oSelf._assertFocus(oNextTarget);
+				oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
+				_assertFocus.call(oSelf, oNextTarget);
 				setTimeout(function () {
-					oNextTarget = oSelf._navFocusNext(oNextTarget);
-					oSelf._assertFocus(oNextTarget);
+					oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
+					_assertFocus.call(oSelf, oNextTarget);
 					setTimeout(function () {
-						oNextTarget = oSelf._navFocusNext(oNextTarget);
-						oSelf._assertFocus(oNextTarget);
+						oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
+						_assertFocus.call(oSelf, oNextTarget);
 						setTimeout(function () {
-							oNextTarget = oSelf._navFocusNext(oNextTarget);
-							oSelf._assertFocus(oNextTarget);
+							oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
+							_assertFocus.call(oSelf, oNextTarget);
 							setTimeout(function () {
-								oSelf._assertDatesAreVisible([
+								_assertDatesAreVisible.call(oSelf, [
 									new Date(2016, 8, 5),
 									new Date(2016, 8, 6),
 									new Date(2016, 8, 7),
@@ -1684,15 +1849,15 @@
 			var i;
 			//act
 			for (i = 0; i < 10; i++) {
-				this._navForward(this.oPC2);
+				_navForward.call(this, this.oPC2);
 			}
 			for (i = 0; i < 9; i++) {
-				this._navBackward(this.oPC2);
+				_navBackward.call(this, this.oPC2);
 			}
 			//Expected is one week after the initial - Sep 5th, 2016 - Sep 11th, 2016
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 8, 5),
 						new Date(2016, 8, 6),
 						new Date(2016, 8, 7),
@@ -1706,9 +1871,9 @@
 		test("Navigation (month picker) - switch month and shift the planning calendar to the week of the month containing the first day of the month", function(){
 			//act
 			//November 2016. This leads to week 31 Oct - 6 Nov
-			this._switchToMonth(this.oPC2, 10);
+			_switchToMonth.call(this, this.oPC2, 10);
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 9, 31),
 						new Date(2016, 10, 1),
 						new Date(2016, 10, 2),
@@ -1719,9 +1884,9 @@
 					this.oPC2, "Month September->November");
 
 			//March 2016. This leads to week 29 Feb - 06 Mar
-			this._switchToMonth(this.oPC2, 2);
+			_switchToMonth.call(this, this.oPC2, 2);
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 1, 29),
 						new Date(2016, 2, 1),
 						new Date(2016, 2, 2),
@@ -1732,9 +1897,9 @@
 					this.oPC2, "Month November->March");
 
 			//March 2016. This leads to no change in the visible
-			this._switchToMonth(this.oPC2, 2);
+			_switchToMonth.call(this, this.oPC2, 2);
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 1, 29),
 						new Date(2016, 2, 1),
 						new Date(2016, 2, 2),
@@ -1745,9 +1910,9 @@
 					this.oPC2, "Month March->March should keep the same week");
 
 			//February 2016. This leads to week 1 Feb - 7 Feb
-			this._switchToMonth(this.oPC2, 1);
+			_switchToMonth.call(this, this.oPC2, 1);
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 1, 1),
 						new Date(2016, 1, 2),
 						new Date(2016, 1, 3),
@@ -1764,9 +1929,9 @@
 			 */
 
 			//act
-			this._switchToYear(this.oPC2, 2017); //CW#35 28 August 2017 - 3 September 2017
+			_switchToYear.call(this, this.oPC2, 2017); //CW#35 28 August 2017 - 3 September 2017
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2017, 7, 28),
 						new Date(2017, 7, 29),
 						new Date(2017, 7, 30),
@@ -1778,9 +1943,9 @@
 
 			return;
 			//act
-			this._switchToYear(this.oPC2, 2015); //CW#35 24 August 2015 - 30 August 2015
+			_switchToYear.call(this, this.oPC2, 2015); //CW#35 24 August 2015 - 30 August 2015
 			//aseert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2015, 7, 24),
 						new Date(2015, 7, 25),
 						new Date(2015, 7, 26),
@@ -1822,7 +1987,7 @@
 			this.oPC2.setStartDate(new Date(2007, 11, 30)); //CW#52 24 December 2007 - 30 December 2007
 			sap.ui.getCore().applyChanges();
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2007, 11, 24),
 						new Date(2007, 11, 25),
 						new Date(2007, 11, 26),
@@ -1832,10 +1997,10 @@
 						new Date(2007, 11, 30)],
 					this.oPC2, "Year 2015->2007 (setter)");
 			//act
-			this._switchToYear(this.oPC2, 2006); //CW#52 25 December 2006 - 31 December 2006
+			_switchToYear.call(this, this.oPC2, 2006); //CW#52 25 December 2006 - 31 December 2006
 			sap.ui.getCore().applyChanges();
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2006, 11, 25),
 						new Date(2006, 11, 26),
 						new Date(2006, 11, 27),
@@ -1846,9 +2011,9 @@
 					this.oPC2, "Year 2007->2006");
 
 			//act
-			this._switchToYear(this.oPC2, 2010); //CW#52 27 December 2010 - 2 January 2011
+			_switchToYear.call(this, this.oPC2, 2010); //CW#52 27 December 2010 - 2 January 2011
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2010, 11, 27),
 						new Date(2010, 11, 28),
 						new Date(2010, 11, 29),
@@ -1859,9 +2024,9 @@
 					this.oPC2, "Year 2006->2010");
 
 			//act
-			this._switchToYear(this.oPC2, 2008); //CW#52 22 December 2008 - 28 December 2008
+			_switchToYear.call(this, this.oPC2, 2008); //CW#52 22 December 2008 - 28 December 2008
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2008, 11, 22),
 						new Date(2008, 11, 23),
 						new Date(2008, 11, 24),
@@ -1872,9 +2037,9 @@
 					this.oPC2, "Year 2010->2008");
 
 			//act
-			this._switchToYear(this.oPC2, 2007); //CW#52 24 December 2007 - 30 December 2007
+			_switchToYear.call(this, this.oPC2, 2007); //CW#52 24 December 2007 - 30 December 2007
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2007, 11, 24),
 						new Date(2007, 11, 25),
 						new Date(2007, 11, 26),
@@ -1888,7 +2053,7 @@
 			this.oPC2.setStartDate(new Date(2015, 11, 30)); //CW#53 28 December 2015 - 3 January 2016
 			sap.ui.getCore().applyChanges();
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2015, 11, 28),
 						new Date(2015, 11, 29),
 						new Date(2015, 11, 30),
@@ -1899,9 +2064,9 @@
 					this.oPC2, "Year 2007->2015 (setter): Navigate to CW53 of 2015");
 
 			//act
-			this._switchToYear(this.oPC2, 2009); //CW#53 28 December 2009 - 3 January 2010
+			_switchToYear.call(this, this.oPC2, 2009); //CW#53 28 December 2009 - 3 January 2010
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2009, 11, 28),
 						new Date(2009, 11, 29),
 						new Date(2009, 11, 30),
@@ -1912,9 +2077,9 @@
 					this.oPC2, "Year 2015->2009");
 
 			//act
-			this._switchToYear(this.oPC2, 2004); //CW#53 27 December 2004 - 2 January 2005
+			_switchToYear.call(this, this.oPC2, 2004); //CW#53 27 December 2004 - 2 January 2005
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2004, 11, 27),
 						new Date(2004, 11, 28),
 						new Date(2004, 11, 29),
@@ -1925,9 +2090,9 @@
 					this.oPC2, "Year 2009->2004");
 
 			//Switch from 53rd week to a year that don't have 53rd week in it
-			this._switchToYear(this.oPC2, 1999); //CW#52 27 December 1999 - 2 January 2000
+			_switchToYear.call(this, this.oPC2, 1999); //CW#52 27 December 1999 - 2 January 2000
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(1999, 11, 27),
 						new Date(1999, 11, 28),
 						new Date(1999, 11, 29),
@@ -1946,9 +2111,9 @@
 			this.oPC2.setStartDate(new Date(this.oPC2.getStartDate().setDate(25)));
 			sap.ui.getCore().applyChanges();
 			//act
-			this._switchToYear(this.oPC2, 2008); //CW#52 21 December 2008 - 27 December 2008
+			_switchToYear.call(this, this.oPC2, 2008); //CW#52 21 December 2008 - 27 December 2008
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2008, 11, 21),
 						new Date(2008, 11, 22),
 						new Date(2008, 11, 23),
@@ -1959,9 +2124,9 @@
 					this.oPC2, "Year 2007->2008 (en-US)");
 
 			//act
-			this._switchToYear(this.oPC2, 2006); //CW#52 24 December 2006 - 30 December 2006
+			_switchToYear.call(this, this.oPC2, 2006); //CW#52 24 December 2006 - 30 December 2006
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2006, 11, 24),
 						new Date(2006, 11, 25),
 						new Date(2006, 11, 26),
@@ -1972,9 +2137,9 @@
 					this.oPC2, "Year 2008->2006 (en-US)");
 
 			//act
-			this._switchToYear(this.oPC2, 2011); //CW#52 18 December 2011 - 24 December 2011
+			_switchToYear.call(this, this.oPC2, 2011); //CW#52 18 December 2011 - 24 December 2011
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2011, 11, 18),
 						new Date(2011, 11, 19),
 						new Date(2011, 11, 20),
@@ -1985,9 +2150,9 @@
 					this.oPC2, "Year 2006->2011 (en-US)");
 
 			//act
-			this._switchToYear(this.oPC2, 2007); //CW#52 23 December 2007 - 29 December 2007
+			_switchToYear.call(this, this.oPC2, 2007); //CW#52 23 December 2007 - 29 December 2007
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2007, 11, 23),
 						new Date(2007, 11, 24),
 						new Date(2007, 11, 25),
@@ -2001,7 +2166,7 @@
 			this.oPC2.setStartDate(new Date(2011, 11, 27)); //CW#53 25 December 2011 - 31 December 2011
 			sap.ui.getCore().applyChanges();
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2011, 11, 25),
 						new Date(2011, 11, 26),
 						new Date(2011, 11, 27),
@@ -2012,9 +2177,9 @@
 					this.oPC2, "Year 2007->2011 (en-US) (setter): Navigate to CW53 of 2011");
 
 			//act
-			this._switchToYear(this.oPC2, 2005); //CW#53 25 December 2005 - 31 December 2005
+			_switchToYear.call(this, this.oPC2, 2005); //CW#53 25 December 2005 - 31 December 2005
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2005, 11, 25),
 						new Date(2005, 11, 26),
 						new Date(2005, 11, 27),
@@ -2025,9 +2190,9 @@
 					this.oPC2, "Year 2011->2005 (en-US)");
 
 			//act
-			this._switchToYear(this.oPC2, 2000); //CW#53 24 December 2000 - 30 December 2000
+			_switchToYear.call(this, this.oPC2, 2000); //CW#53 24 December 2000 - 30 December 2000
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2000, 11, 24),
 						new Date(2000, 11, 25),
 						new Date(2000, 11, 26),
@@ -2038,9 +2203,9 @@
 					this.oPC2, "Year 2005->2000 (en-US)");
 
 			//Switch from 53rd week to a year that don't have 53rd week in it
-			this._switchToYear(this.oPC2, 2002); //CW#52 22 December 2002 - 28 December 2002
+			_switchToYear.call(this, this.oPC2, 2002); //CW#52 22 December 2002 - 28 December 2002
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2002, 11, 22),
 						new Date(2002, 11, 23),
 						new Date(2002, 11, 24),
@@ -2055,12 +2220,12 @@
 
 		test("'Today' button should be disabled when current day is visible", function() {
 			//assert
-			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 
 			//act
 			this.oPC2.setStartDate(new Date());
 			//assert
-			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
 		});
 
 		test("Clicking 'Today' button navigates to the week of the current day", function () {
@@ -2069,12 +2234,12 @@
 					clock = sinon.useFakeTimers(oFakeNow.getTime());
 			this.oPC2.rerender(); //start date is 1st of September 2016
 
-			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 			//act
-			this._clickTodayButton(this.oPC2);
-			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
+			_clickTodayButton.call(this, this.oPC2);
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
 
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 8, 5),
 						new Date(2016, 8, 6),
 						new Date(2016, 8, 7),
@@ -2084,7 +2249,7 @@
 						new Date(2016, 8, 11)],
 					this.oPC2, "StartDate modified afterwards");
 			//assert
-			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
 			//cleanup
 			clock.restore();
 
@@ -2099,10 +2264,10 @@
 			clock.tick(10); //start date is 10st of September 2016 09:00
 
 			//act
-			this._clickTodayButton(this.oPC2);
+			_clickTodayButton.call(this, this.oPC2);
 			clock.tick(10);
 
-			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
 			clock.tick(10);
 
 			//assert
@@ -2133,7 +2298,7 @@
 							new Date(2016, 7, 29, 14)];
 			}
 
-			this._assertHoursAreVisible(aExpectedVisibleHours, this.oPC2,
+			_assertHoursAreVisible.call(this, aExpectedVisibleHours, this.oPC2,
 					"10 Sept 2016, 09:00: Weeks->Today(01 Sep, 00:00)->Hours");
 
 			//cleanup
@@ -2147,20 +2312,20 @@
 			this.oPC2.rerender(); //start date is 1st of September 2016
 
 			//act
-			this._clickTodayButton(this.oPC2);
+			_clickTodayButton.call(this, this.oPC2);
 			clock.tick(10);
-			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
 			clock.tick(10);
 
 			//assert
-			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled for non 'week' views although 'today' is in visible area");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled for non 'week' views although 'today' is in visible area");
 
 			//act
-			this._switchToView(sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
 			clock.tick(10);
 
 			//assert
-			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled for non 'week' views when switched back from hours view");
+			equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled for non 'week' views when switched back from hours view");
 
 			//cleanup
 			clock.restore();
@@ -2170,14 +2335,14 @@
 			var iInterval;
 			//startDate 1st of september 2016(Thursday)->show hours for the 1st day of week 29 Aug 2016 (Monday)
 			 //prepare
-			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
 			sap.ui.getCore().applyChanges();
 
 			iInterval = jQuery("#" + this.oPC2.getId()).outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1] ? 6 : 12;
 
 			//assert
 			if (iInterval === 12) { //Hours View large
-				this._assertHoursAreVisible([
+				_assertHoursAreVisible.call(this, [
 							new Date(2016, 7, 29, 1),
 							new Date(2016, 7, 29, 2),
 							new Date(2016, 7, 29, 3),
@@ -2192,7 +2357,7 @@
 							new Date(2016, 7, 29, 12)],
 						this.oPC2, "1 Sept 2016, 01:00: Weeks->Hours");
 			} else { //6, Hours View small - 6
-				this._assertHoursAreVisible([
+				_assertHoursAreVisible.call(this, [
 					new Date(2016, 7, 29, 1),
 					new Date(2016, 7, 29, 2),
 					new Date(2016, 7, 29, 3),
@@ -2206,19 +2371,19 @@
 
 		test("Navigation (month picker) - click today then switch month to the same", function() {
 			//prepare
-			this._switchToView(sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
 
 			//prepare
 			var oFakeNow = this.o10Sep2016,
 					oClock = sinon.useFakeTimers(oFakeNow.getTime());
 			//act
-			this._clickTodayButton(this.oPC2);
+			_clickTodayButton.call(this, this.oPC2);
 			oClock.tick(10);
-			this._switchToMonth(this.oPC2, 8);
+			_switchToMonth.call(this, this.oPC2, 8);
 			oClock.tick(10);
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 29),
 						new Date(2016, 7, 30),
 						new Date(2016, 7, 31),
@@ -2232,13 +2397,13 @@
 			oClock.restore();
 			oClock = sinon.useFakeTimers(new Date(2016, 4, 10).getTime());//chosen because 1st of May is sunday (border case)
 			//act
-			this._clickTodayButton(this.oPC2);
+			_clickTodayButton.call(this, this.oPC2);
 			oClock.tick(10);
-			this._switchToMonth(this.oPC2, 4);
+			_switchToMonth.call(this, this.oPC2, 4);
 			oClock.tick(10);
 
 			//assert
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 3, 25),
 						new Date(2016, 3, 26),
 						new Date(2016, 3, 27),
@@ -2265,9 +2430,9 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			this._assertFocus(aWeekDays[3]);
+			_assertFocus.call(this, aWeekDays[3]);
 			//assert initial state
-			this._assertDatesAreVisible([
+			_assertDatesAreVisible.call(this, [
 						new Date(2016, 7, 29),
 						new Date(2016, 7, 30),
 						new Date(2016, 7, 31),
@@ -2276,6 +2441,467 @@
 						new Date(2016, 8, 3),
 						new Date(2016, 8, 4)],
 					this.oPC2, "Initial week should not be changed");
+		});
+
+		module("OneMonth view", {
+			beforeEach: function() {
+				var oSearchField = new sap.m.SearchField(),
+						oButton = new sap.m.Button();
+				this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
+				this.o10Feb2016 = new Date(2016, 1, 10);
+				this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
+						sap.ui.unified.CalendarIntervalType.OneMonth);
+				this.oPC.placeAt("uiArea1");
+				sap.ui.getCore().applyChanges();
+				this.oPCInterval = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+			},
+
+			afterEach: function() {
+				if (!bSkipDestroy) {
+					this.oPC.destroy();
+				}
+			},
+
+			_assertIntervalHasClass: function (iInterval, oPC, sCSSClass) {
+				var iIntervalIndex = iInterval - 1;
+				var oFirstCalendarRow = this._getFirstRow(oPC);
+				var sIntervalId = oFirstCalendarRow.getId() + "-AppsInt" + iIntervalIndex.toString();
+
+				ok(jQuery("#" + sIntervalId).hasClass(sCSSClass), "Interval " + iInterval + " should have class " + sCSSClass + " applied");
+			},
+
+			_getFirstRow: function(oPC) {
+				return oPC.getAggregation("table").getItems()[0].getCells()[1];
+			},
+
+			_get1stInNextMonth: function(oDate) {
+				if (oDate.getMonth() == 11) {
+					var oNext = new Date(oDate.getFullYear() + 1, 0, 1);
+				} else {
+					var oNext = new Date(oDate.getFullYear(), oDate.getMonth() + 1, 1);
+				}
+
+				return oNext;
+			},
+
+			_getNextDay: function(oDate) {
+				var oNext = new Date(oDate);
+				oNext.setDate(oNext.getDate()+1);
+
+				return oNext;
+			},
+
+			_getIntervalDom: function(oRow, iInterval) {
+				var iIntervalIndex = iInterval - 1;
+				var sIntervalId = oRow.getId() + "-AppsInt" + iIntervalIndex.toString();
+
+				return document.getElementById(sIntervalId);
+			},
+
+			_clickInterval: function(oRow, iInterval) {
+				jQuery(this._getIntervalDom(oRow, iInterval)).trigger('tap');
+			},
+
+			_clickAppointment: function(oAppointment) {
+				oAppointment.$().trigger('tap');
+			}
+		});
+
+		test('OneMonth item is in the select', function() {
+			//act and assert
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.OneMonth, this.oPC);
+		});
+
+		test('interval shows 31 days', function() {
+			//assert
+			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
+			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in september');
+
+			//act - change to february
+			_switchToMonth.call(this, this.oPC, 1);
+
+			//assert
+			equals(this.oPCInterval.getStartDate().getMonth(), 1, 'it is february');
+			equals(this.oPCInterval.getDays(), 31, 'interval has 31 days in february');
+		});
+
+		test('start day is the first day of the month', function() {
+			//assert
+			equals(this.oPCInterval.getStartDate().getMonth(), 8, 'it is september');
+			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of september');
+
+			//act - change to june
+			_switchToMonth.call(this, this.oPC, 5);
+
+			//assert
+			equals(this.oPCInterval.getStartDate().getMonth(), 5, 'it is june');
+			equals(this.oPCInterval.getStartDate().getDate(), 1, 'interval starts at 1st of june');
+		});
+
+		test('last days belong to the next month', function() {
+			//assert
+			var o1Oct2016 = this._get1stInNextMonth(this.o14Sep2016MidOfMonth);
+			var o1Mar2016 = this._get1stInNextMonth(this.o10Feb2016);
+			var o2Mar2016 = this._getNextDay(o1Mar2016);
+
+			_assertDateIsVisible.call(this, o1Oct2016, this.oPC, '');
+
+			//act - change to february
+			_switchToMonth.call(this, this.oPC, 1);
+
+			//assert
+			_assertDateIsVisible.call(this, o1Mar2016, this.oPC, '');
+			_assertDateIsVisible.call(this, o2Mar2016, this.oPC, '');
+		});
+
+		test('last days look different', function() {
+			//assert
+			this._assertIntervalHasClass(31, this.oPC, 'sapUiCalItemOtherMonth'); //check that Oct 1 is disabled
+		});
+
+		test('last days display appointments', function() {
+			var oAppointment1July2014 = sap.ui.getCore().byId(this.oPC.getId() + "-R1A4");
+
+			//act
+			_switchToYear.call(this, this.oPC, 2014);
+			_switchToMonth.call(this, this.oPC, 5);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			ok(oAppointment1July2014.getDomRef(), "appointment is rendered");
+		});
+
+		test('intervalSelect fires correctly', function() {
+			var oRow = this._getFirstRow(this.oPC);
+			var eventParams = {};
+            bIntervalSelect = false;
+
+			oRow.attachIntervalSelect(function(oEvent) {
+				eventParams = oEvent.getParameters();
+			});
+
+			//act
+			this._clickInterval(oRow, 31); //click first row of next month's first day - 1 Oct 2016
+
+			//assert
+			equals(eventParams.startDate.getMonth(), 9, 'start date is in october');
+			equals(eventParams.startDate.getDate(), 1, 'start date is 1st day of the month');
+
+			equals(eventParams.endDate.getMonth(), 9, 'end date is in october');
+			equals(eventParams.endDate.getDate(), 1, 'end date is 1st day of the month');
+
+			equals(eventParams.subInterval, false, 'selected interval is not a sub-interval');
+			ok(!bIntervalSelect,
+					"intervalSelect was not fired because the click was on the next month's first days and this serves as navigation, not selection");
+		});
+
+		test('select fires correctly', function() {
+			var oRow = this._getFirstRow(this.oPC);
+			var eventParams = {};
+			oRow.attachSelect(function(oEvent) {
+				eventParams = oEvent.getParameters();
+			});
+			var oAppointment1July2014 = sap.ui.getCore().byId(this.oPC.getId() + "-R1A4");
+
+			//act
+			_switchToYear.call(this, this.oPC, 2014);
+			_switchToMonth.call(this, this.oPC, 5); //go to june
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._clickAppointment(oAppointment1July2014);
+
+			//assert
+			equals(eventParams.appointment, oAppointment1July2014, 'appointment is the same that was clicked');
+			equals(eventParams.multiSelect, false, 'multiSelect is correct');
+		});
+
+		test('last days intervals navigate to the next month', function() {
+			//act
+			this._clickInterval(this._getFirstRow(this.oPC), 31); //click first row of next month's first day - 1 Oct 2016
+
+			//assert
+			equals(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
+		});
+
+		test('navigate backward with the arrows', function() {
+			//act
+			_navBackward.call(this, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getMonth(), 7, 'month changed to august');
+			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+		});
+
+		test('navigate forward with the arrows', function() {
+			//act
+			_navForward.call(this, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getMonth(), 9, 'month changed to october');
+			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+		});
+
+		test('change of year keeps month', function() {
+			//act
+			_switchToYear.call(this, this.oPC, 2017);
+
+			//assert
+			equals(this.oPC.getStartDate().getMonth(), 8, 'month is unchanged');
+			equals(this.oPC.getStartDate().getDate(), 1, 'start date is 1st');
+		});
+
+		test('today button is disabled when today is visible', function() {
+			var oToday = new Date();
+			var oTodayBtn = _getTodayButton.call(this, this.oPC);
+
+			//assert
+			equals(oTodayBtn.getEnabled(), true, 'today button is enabled');
+
+			//act
+			_switchToYear.call(this, this.oPC, oToday.getFullYear());
+			_switchToMonth.call(this, this.oPC, oToday.getMonth());
+
+			//assert
+			equals(oTodayBtn.getEnabled(), false, 'today button is disabled when today is visible');
+		});
+
+		test('clicking today navigates to todays month', function() {
+			var oToday = new Date();
+
+			//act
+			_clickTodayButton.call(this, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getFullYear(), oToday.getFullYear(), 'year is correct');
+			equals(this.oPC.getStartDate().getMonth(), oToday.getMonth(), 'month is correct');
+			equals(this.oPC.getStartDate().getDate(), 1, 'date is correct');
+		});
+
+		test('switch to hours view shows the first hours of the month', function() {
+			//act
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Hour, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+			equals(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
+			equals(this.oPC.getStartDate().getHours(), 0, 'starts from midnight');
+		});
+
+		test('switch to days view starts from 1st', function() {
+			//act
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Day, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+			equals(this.oPC.getStartDate().getDate(), 1, 'date is 1st');
+		});
+
+		test('switch to month view starts from the same month', function() {
+			//act
+			_switchToView.call(this, sap.ui.unified.CalendarIntervalType.Month, this.oPC);
+
+			//assert
+			equals(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
+			equals(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+		});
+
+		module("OneMonth view (size S)", {
+			beforeEach: function () {
+				this._simulateMobileEnvironment();
+				this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
+			},
+			afterEach: function () {
+				this._restoreDesktopEnvironment();
+				this._destroyCalendar();
+				this.o14Sep2016MidOfMonth = undefined;
+			},
+			_simulateMobileEnvironment: function () {
+				this.oDeviceJsStub = sinon.sandbox.stub(sap.ui.Device, "system", {phone: true});
+				jQuery("html").addClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
+			},
+			_restoreDesktopEnvironment: function () {
+				this.oDeviceJsStub.restore();
+				jQuery("html").addClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
+			},
+			_createCalendar: function (oStartDate) {
+				this._oPC = createPlanningCalendar("_oPC", new sap.m.SearchField(), new sap.m.Button(), (oStartDate || this.o14Sep2016MidOfMonth), sap.ui.unified.CalendarIntervalType.OneMonth);
+				this._oPC.placeAt('uiArea3');
+				this._oPCOneMonthInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
+				sap.ui.getCore().applyChanges();
+			},
+			_destroyCalendar: function () {
+				if (this._oPC) {
+					this._oPC.destroy();
+					this._oPC = undefined;
+				}
+			}
+		});
+
+		test("'setViewKeys()' setter calls 'OneMonthInterval._setDisplayMode()' with correct 'iSize' parameter", function () {
+			//arrange
+			var oSetDisplayModeSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_setDisplayMode"),
+				iPhoneSize = 0;
+
+			this._createCalendar();
+			//assert
+			strictEqual(oSetDisplayModeSpy.callCount, 3, "'_setDisplayMode()' is called correct number of times"); //viewKey setter + onBeforeRendering + resizeHandler
+			strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
+		});
+
+		test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function () {
+			//arrange
+			var oStartDateSetterSpy = this.spy(sap.m.PlanningCalendar.prototype, "setStartDate");
+			this._createCalendar();
+			//assert
+			strictEqual(oStartDateSetterSpy.callCount, 3, "'setStartDate()' setter is called correct number of times"); //init + startDate setter + OneMonth adjustment.
+			strictEqual(oStartDateSetterSpy.getCall(1).args[0].getTime(), this.o14Sep2016MidOfMonth.getTime(), "The correct date is auto adjusted for the first day of month");
+			strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
+		});
+
+		test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function () {
+			//arrange
+			this._createCalendar();
+			var oSetRowsStartDateSpy = this.spy(this._oPC, "_setRowsStartDate");
+
+			//act
+			this._oPC.setStartDate(new Date(2015, 3, 5));
+
+			//assert
+			strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
+			strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
+		});
+
+		test("_setRowsStartDate", function() {
+			var oTestDate = new Date(5, 5, 5);
+			this._createCalendar();
+			this._oPC._setRowsStartDate(oTestDate);
+			equal(this._oPC.getRows()[0].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 1 start date');
+			equal(this._oPC.getRows()[1].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 2 start date');
+		});
+
+		test("'_handleTodayPress()' event handler adjust the startDate to the 1st day of month", function () {
+			//arrange
+			var oHandleTodayPressSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleTodayPress"),
+				oSetStartDateSpy;
+
+			this._createCalendar();
+			//set date outside the current month
+			this._oPC.setStartDate(new Date(2000, 0, 1));
+			oSetStartDateSpy = this.spy(this._oPC, "setStartDate");
+			qutils.triggerEvent('tap', this._oPC._oTodayButton.getDomRef());
+			//assert
+			strictEqual(oHandleTodayPressSpy.callCount, 1, "'_handleTodayPress()' handler is called once");
+			strictEqual(oSetStartDateSpy.callCount, 1, "'setStartDate()' setter is called once");
+			//clear
+			oHandleTodayPressSpy.restore();
+			oSetStartDateSpy.restore();
+		});
+
+		test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function () {
+			//arrange
+			var oHandleCalendarSelectSpy = this.spy(sap.m.PlanningCalendar.prototype, "_handleCalendarSelect"),
+				oPCInterval,
+				oPCIntervalMonth;
+
+			this._createCalendar();
+			oPCInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
+			oPCIntervalMonth = oPCInterval.getAggregation('month')[0];
+			//Calendar selection is implemented on 'mouseup' event so to test this you have to simulate 'mousedown' + 'mouseup' event sequence
+			oPCIntervalMonth.$('days').children().eq(0).trigger('mousedown');
+			oPCIntervalMonth.$('days').children().eq(0).trigger('mouseup');
+			//assert
+			strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
+			//clean
+			oHandleCalendarSelectSpy.restore();
+		});
+
+		test("'CalendarOneMonthInterval._createMonth()'", function () {
+			//arrange
+			var oOneMonthIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarOneMonthInterval.prototype, "_createMonth"),
+				oDateIntervalCreateMonthSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_createMonth"),
+				fnGetFullMonthId = function (oPC) {
+					return oPC.getId() + "-" + _getIntervalId(oPC);
+				};
+
+			this._createCalendar();
+			//assert
+			strictEqual(oDateIntervalCreateMonthSpy.callCount, 0, "'CalendarDateInterval._createMonth()' method was NOT called");
+			strictEqual(oOneMonthIntervalCreateMonthSpy.callCount, 1, "'CalendarOneMonthInterval._createMonth()' method was overridden and called");
+			strictEqual(oOneMonthIntervalCreateMonthSpy.getCall(0).args[0], fnGetFullMonthId(this._oPC), "'CalendarOneMonthInterval._createMonth()' was called with correct parameters");
+			//clean
+			oOneMonthIntervalCreateMonthSpy.restore();
+		});
+
+		test("'OneMonthDatesRow.init()' calls its super class 'init()' and sets its internal private property 'iMode' to the default value '2'", function () {
+			//arrange
+			var oOneMonthDatesRow = sap.ui.unified.calendar.OneMonthDatesRow,
+				oOneMonthDatesRowSpy = this.spy(oOneMonthDatesRow.prototype, "init"),
+				oDatesRowSpy = this.spy(sap.ui.unified.calendar.DatesRow.prototype, "init");
+
+			this._createCalendar();
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+			ok(oOneMonthDatesRowSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly set the internal 'iMode' property to its default value");
+			//clean
+			oOneMonthDatesRowSpy.restore();
+			oDatesRowSpy.restore();
+		});
+
+		test("'OneMonthDatesRow.setMode()' updates the iMode property", function () {
+			//arrange
+			this._createCalendar();
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly sets the internal 'iMode' property to its default value");
+			//arrange
+			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(0);
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 0, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+			//arrange
+			this._oPCOneMonthInterval.getAggregation("month")[0].setMode(1);
+			//assert
+			strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+		});
+
+		test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function () {
+			//arrange
+			var oOneMonthDatesRowSpy = this.spy(sap.ui.unified.calendar.OneMonthDatesRow.prototype, "setDate"),
+				oDatesRowSpy = this.spy(sap.ui.unified.calendar.DatesRow.prototype, "setDate"),
+				oVisibleDate = new sap.ui.core.date.UniversalDate(2016, 8, 10),
+				oOutsideVisibleRangeDate = new sap.ui.core.date.UniversalDate(2015, 3, 20);
+
+			this._createCalendar();
+			this._oPCOneMonthInterval._bNoRangeCheck = false;
+			this._oPCOneMonthInterval._setStartDate(oVisibleDate, true, false);
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.setDate()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 1, "'DatesRow.setDate()' method was called once");
+			//arrange
+			this._oPCOneMonthInterval._setStartDate(oOutsideVisibleRangeDate, true, false);
+			//assert
+			strictEqual(oOneMonthDatesRowSpy.callCount, 2, "'OneMonthDatesRow.setDate()' method was called once");
+			strictEqual(oDatesRowSpy.callCount, 2, "'DatesRow.setDate()' method was called once");
+			//clean
+			oOneMonthDatesRowSpy.restore();
+			oDatesRowSpy.restore();
+		});
+
+		test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function () {
+			//arrange
+			var oCalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
+				oCalendarRowRendererSpy = this.spy(oCalendarRowRenderer, "renderSingleDayInterval");
+
+			this._createCalendar();
+			//assert
+			strictEqual(oCalendarRowRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+			//clean
+			oCalendarRowRendererSpy.restore();
 		});
 
 		module("ARIA");
@@ -2294,6 +2920,103 @@
 			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
 		});
 
+		module("views", {
+			beforeEach: function () {
+				this.oPC = new sap.m.PlanningCalendar();
+			},
+			afterEach: function () {
+				this.oPC.destroy();
+				this.oPC = null;
+			}
+		});
+
+		test('_isNextMonth', function() {
+			this.oPC.setStartDate(new Date(2011, 10, 11));
+			ok(this.oPC._isNextMonth(new Date(2012, 10, 11)), 'month from the next year is some next month date');
+			ok(this.oPC._isNextMonth(new Date(2012, 9, 11)), 'previous month from the next year is some next month date');
+			ok(!this.oPC._isNextMonth(new Date(2011, 10, 30)), 'date from the same month is not a next month date');
+			ok(!this.oPC._isNextMonth(new Date(2011, 9, 30)), 'date from the prev month is not a next month date');
+		});
+
+		module('CalendarAppointment');
+
+		test('_getComparer', function() {
+			var aAppInfos = [
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 8, 0),
+					endDate: new Date(2015, 0, 2, 10, 0),
+					title: "3"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 1, 8, 0),
+					endDate: new Date(2015, 0, 3, 10, 0),
+					title: "1"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2014, 11, 31, 8, 0),
+					endDate: new Date(2015, 0, 2, 11, 0),
+					title: "2"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 2, 9, 0),
+					endDate: new Date(2015, 0, 2, 12, 0),
+					title: "4"
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					startDate: new Date(2015, 0, 1, 7, 0),
+					endDate: new Date(2015, 0, 3, 5, 0),
+					title: "0"
+				})
+			].map(function(appointment) {
+				return { appointment: appointment };
+			});
+
+			var aSortedInfos = aAppInfos.sort(sap.ui.unified.CalendarAppointment._getComparer(new Date(2015, 0, 2)));
+			equal(aSortedInfos[0].appointment.getTitle(), "0", 'item sorted correctly');
+			equal(aSortedInfos[1].appointment.getTitle(), "1", 'item sorted correctly');
+			equal(aSortedInfos[2].appointment.getTitle(), "2", 'item sorted correctly');
+			equal(aSortedInfos[3].appointment.getTitle(), "3", 'item sorted correctly');
+		});
+
+		test('_getDateRangeIntersectionText', function() {
+			var aAppInfos = [
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 3, 8, 0),
+						endDate: new Date(2015, 0, 3, 10, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 1, 8, 0),
+						endDate: new Date(2015, 0, 3, 10, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2014, 11, 31, 8, 0),
+						endDate: new Date(2015, 0, 2, 11, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 2, 9, 0),
+						endDate: new Date(2015, 0, 4, 12, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						startDate: new Date(2015, 0, 2, 7, 0),
+						endDate: new Date(2015, 0, 2, 15, 0)
+					})
+				],
+				oCurrentlyDisplayedDate = new Date(2015, 0, 2),
+				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: 'HH:mm'}),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate), '');
+			equal(aAppInfos[1]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oResourceBundle.getText('PLANNINGCALENDAR_ALLDAY'));
+			equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oResourceBundle.getText('PLANNINGCALENDAR_UNTIL', [oTimeFormat.format(aAppInfos[2].getEndDate())]));
+			equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oTimeFormat.format(aAppInfos[3].getStartDate()));
+			equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate),
+				oTimeFormat.format(aAppInfos[4].getStartDate()) + ' - ' + oTimeFormat.format(aAppInfos[4].getEndDate()));
+
+		});
+
 	</script>
 
 </head>
@@ -2306,5 +3029,7 @@
 <br>
 <div id="uiArea1"></div>
 <div id="uiArea2"></div>
+<div id="uiArea3"></div>
+<div id="uiArea4"></div>
 </body>
 </html>

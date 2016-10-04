@@ -740,7 +740,7 @@
 		},
 		{
 		  "id": "sap.m.PlanningCalendar",
-		  "name": "PlanningCalendar",
+		  "name": "Planning Calendar",
 		  "category": "User Input",
 		  "since": "1.34",
 		  "formFactors": "L",
@@ -1151,7 +1151,7 @@
 		},
 		{
 		  "id" : "sap.m.SplitApp",
-		  "name" : "SplitApp",
+		  "name" : "Split App",
 		  "category" : "Container",
 		  "since" : "1.11",
 		  "samples" : [
@@ -1160,7 +1160,7 @@
 		},
 		{
 		  "id" : "sap.m.SplitContainer",
-		  "name" : "SplitContainer",
+		  "name" : "Split Container",
 		  "category" : "Container",
 		  "since" : "1.11",
 		  "samples" : [
@@ -2529,32 +2529,32 @@
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendar",
-		  "name": "simple PlanningCalendar",
+		  "name": "simple Planning Calendar",
 		  "description": "PlanningCalendar with single row selection."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
-		  "name": "PlanningCalendar - multiple selection",
+		  "name": "Planning Calendar - multiple selection",
 		  "description": "PlanningCalendar with multiple row selection. No interval headers are displayed. On click on an interval a new appointment is created."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarSingle",
-		  "name": "PlanningCalendar - for one person",
+		  "name": "Planning Calendar - for one person",
 		  "description": "PlanningCalendar with only one row without row header.  On click on an interval a new appointment is created."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarViews",
-		  "name": "PlanningCalendar - with custom views",
+		  "name": "Planning Calendar - with custom views",
 		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
-		  "name": "PlanningCalendar - with one line appointments",
+		  "name": "Planning Calendar - with one line appointments",
 		  "description": "PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMinMax",
-		  "name": "PlanningCalendar - with min. and max. date",
+		  "name": "Planning Calendar - with min. and max. date",
 		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
 		},
 		{
