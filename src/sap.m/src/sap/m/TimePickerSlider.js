@@ -940,16 +940,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			var oElement = this._getSliderContainerDomRef()[0],
 				oDevice = sap.ui.Device;
 
-			if (oDevice.support.touch) {
+			if (oDevice.system.combi) { // we need both mouse and touch events
 				//Attach touch events
 				oElement.addEventListener("touchstart", jQuery.proxy(onTouchStart, this), false);
 				oElement.addEventListener("touchmove", jQuery.proxy(onTouchMove, this), false);
 				document.addEventListener("touchend", jQuery.proxy(onTouchEnd, this), false);
-			} else {
 				//Attach mouse events
 				oElement.addEventListener("mousedown", jQuery.proxy(onTouchStart, this), false);
 				document.addEventListener("mousemove", jQuery.proxy(onTouchMove, this), false);
 				document.addEventListener("mouseup", jQuery.proxy(onTouchEnd, this), false);
+			} else {
+				if (oDevice.system.phone || oDevice.system.tablet) {
+					//Attach touch events
+					oElement.addEventListener("touchstart", jQuery.proxy(onTouchStart, this), false);
+					oElement.addEventListener("touchmove", jQuery.proxy(onTouchMove, this), false);
+					document.addEventListener("touchend", jQuery.proxy(onTouchEnd, this), false);
+				} else {
+					//Attach mouse events
+					oElement.addEventListener("mousedown", jQuery.proxy(onTouchStart, this), false);
+					document.addEventListener("mousemove", jQuery.proxy(onTouchMove, this), false);
+					document.addEventListener("mouseup", jQuery.proxy(onTouchEnd, this), false);
+				}
 			}
 		};
 
@@ -962,16 +973,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			var oElement = this.getDomRef(),
 				oDevice = sap.ui.Device;
 
-			if (oDevice.support.touch) {
+			if (oDevice.system.combi) {
 				//Detach touch events
 				oElement.removeEventListener("touchstart", jQuery.proxy(onTouchStart, this), false);
 				oElement.removeEventListener("touchmove", jQuery.proxy(onTouchMove, this), false);
 				document.removeEventListener("touchend", jQuery.proxy(onTouchEnd, this), false);
-			} else {
 				//Detach mouse events
 				oElement.removeEventListener("mousedown", jQuery.proxy(onTouchStart, this), false);
-				oElement.removeEventListener("mousemove", jQuery.proxy(onTouchMove, this), false);
+				document.removeEventListener("mousemove", jQuery.proxy(onTouchMove, this), false);
 				document.removeEventListener("mouseup", jQuery.proxy(onTouchEnd, this), false);
+			} else {
+				if (oDevice.system.phone || oDevice.system.tablet) {
+					//Detach touch events
+					oElement.removeEventListener("touchstart", jQuery.proxy(onTouchStart, this), false);
+					oElement.removeEventListener("touchmove", jQuery.proxy(onTouchMove, this), false);
+					document.removeEventListener("touchend", jQuery.proxy(onTouchEnd, this), false);
+				} else {
+					//Detach mouse events
+					oElement.removeEventListener("mousedown", jQuery.proxy(onTouchStart, this), false);
+					document.removeEventListener("mousemove", jQuery.proxy(onTouchMove, this), false);
+					document.removeEventListener("mouseup", jQuery.proxy(onTouchEnd, this), false);
+				}
 			}
 		};
 
