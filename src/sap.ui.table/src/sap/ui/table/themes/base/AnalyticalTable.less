@@ -24,21 +24,10 @@
 	border-right: 0;
 }
 
-.sapUiAnalyticalTable .sapUiTableColHdrCnt {
-	min-height: @sapUiTableColHdrHeight;
-}
-
 .sapUiAnalyticalTable .sapUiTableCtrl tr {
 	height: @sapUiTableRowHeight;
 }
 
-.sapUiAnalyticalTable .sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiAnalyticalTable .sapUiTableRSel .sapUiTableColHdrFixed {
-	margin-left: @sapUiTableRowHdrWidth;
-}
-
-.sapUiAnalyticalTable .sapUiTableColRowHdr,
-.sapUiAnalyticalTable .sapUiTableColRowHdrIco,
 .sapUiAnalyticalTable .sapUiTableRowHdrScr {
 	width: @sapUiTableRowHdrWidth;
 }
@@ -46,12 +35,6 @@
 .sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScrFixed {
 	margin-left: @sapUiTableRowHdrWidth;
-}
-
-.sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
-	font-weight: bold;
-	font-size: 0.875rem;
-	color: @sapUiListTextColor;
 }
 
 .sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
@@ -82,13 +65,7 @@
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiTf,
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk,
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:visited,
-.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:hover,
-.sapUiAnalyticalTable .sapUiTableCol:hover,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLbl,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiTf,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:visited,
-.sapUiAnalyticalTable .sapUiTableCol:hover .sapUiLnk:hover {
+.sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLnk:hover {
 	color: @sapUiListTextColor;
 	background-color: @sapUiListHoverBackground;
 }
@@ -113,7 +90,6 @@
  * CHILD CONTROL STYLES
  ******************************************************************************/
 
-.sapUiAnalyticalTable .sapUiTableCol .sapMLabel,
 .sapUiAnalyticalTable .sapUiTableCell > .sapMLabel,
 .sapUiAnalyticalTable .sapUiTableCell > .sapMText {
 	width: 100%;

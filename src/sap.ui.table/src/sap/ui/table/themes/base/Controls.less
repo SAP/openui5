@@ -2,6 +2,47 @@
  * STYLE ADAPTATIONS OF FOREIGN CONTROLS
  ******************************************************************************/
 
+.sapUiTableCol .sapUiLbl {
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
+	font-weight: bold;
+	font-size: 0.875rem;
+	color: @sapUiListTextColor;
+}
+
+.sapUiTableCol:hover .sapUiLbl,
+.sapUiTableCol:hover .sapUiTf,
+.sapUiTableCol:hover .sapUiLnk,
+.sapUiTableCol:hover .sapUiLnk:visited,
+.sapUiTableCol:hover .sapUiLnk:hover {
+	color: @sapUiListTextColor;
+}
+
+.sapUiAnalyticalTable .sapUiTableCol .sapMLabel {
+	width: 100%;
+}
+
+.sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
+	font-weight: bold;
+	font-size: 0.875rem;
+	color: @sapUiListTextColor;
+}
+
+.sapUiSizeCompact .sapUiTableColCell > .sapUiLbl,
+.sapUiSizeCompact .sapUiTableColCell > .sapMLabel,
+.sapUiTableColCell > .sapUiLbl {
+	font-weight: normal;
+	font-size: 0.875rem;
+	color: @sapUiListTextColor;
+}
+
+
 .sapUiSizeCozy .sapUiTableFtr > .sapMLabel {
 	height: 3rem;
 	line-height: 3rem;
