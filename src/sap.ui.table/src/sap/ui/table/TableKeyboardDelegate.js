@@ -421,8 +421,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
 		if (this._getKeyboardExtension().isInActionMode()) {
-			this._getKeyboardExtension().setActionMode(false);
-			oEvent.preventDefault();
+			var $Target = jQuery(oEvent.target);
+			var bTargetIsTreeIcon = $Target.hasClass("sapUiTableTreeIcon");
+			var bCellHasTreeIcon = $Target.parent().find(".sapUiTableTreeIcon").length === 1;
+			var bPreviousItemIsLeafTreeIcon = $Target.prev().hasClass("sapUiTableTreeIconLeaf");
+
+			if (!bCellHasTreeIcon || bPreviousItemIsLeafTreeIcon || bTargetIsTreeIcon) {
+				this._getKeyboardExtension().setActionMode(false);
+				oEvent.preventDefault();
+			}
 		} else {
 			if (oEvent.target === this.getDomRef("overlay")) {
 				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterBefore"));
@@ -464,8 +471,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	TableKeyboardDelegate.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
 		if (this._getKeyboardExtension().isInActionMode()) {
-			this._getKeyboardExtension().setActionMode(false);
-			oEvent.preventDefault();
+			var $Target = jQuery(oEvent.target);
+			var bTargetIsTreeIcon = $Target.hasClass("sapUiTableTreeIcon");
+			var bCellHasElements = $Target.parent().find(":visible").length > 1;
+
+			if (!bTargetIsTreeIcon || !bCellHasElements) {
+				this._getKeyboardExtension().setActionMode(false);
+				oEvent.preventDefault();
+			}
 		} else {
 			if (oEvent.target === this.getDomRef("overlay")) {
 				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterAfter"));
