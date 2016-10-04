@@ -103,18 +103,21 @@
 
 		QUnit.module("localization change", {
 			beforeEach: function(assert) {
-				this.oConfig = sap.ui.getCore().getConfiguration();
-				this.oConfig.setLanguage("en");
 				this.reset = function() {
 					this.eventsReceived = 0;
 					this.changes = [];
 				};
-				this.fnListener = function(e) {
-					this.eventsReceived++;
-					this.changes.push(e.getParameter("changes"));
-				};
 				this.reset();
-				sap.ui.getCore().attachLocalizationChanged(this.fnListener, this);
+				this.oCoreMock = {
+					fireLocalizationChanged: function(changes) {
+						this.eventsReceived++;
+						this.changes.push(changes);
+					}.bind(this)
+				};
+				window['sap-ui-config'] = {
+					language: 'en'
+				};
+				this.oConfig = new sap.ui.core.Configuration(this.oCoreMock);
 			},
 			afterEach: function(assert) {
 				sap.ui.getCore().detachLocalizationChanged(this.fnListener, this);
@@ -143,6 +146,32 @@
 			assert.equal(this.oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
 			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['language', 'rtl'], "event should have reported 'language' and 'rtl' as changed");
+		});
+
+		QUnit.test("setRTL(null) - noop", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(null);
+			assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getRTL(), true, "language 'he' should change the RTL flag when none (null) had been set");
+		});
+
+		QUnit.test("setRTL(false) - noop", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(false);
+			assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getRTL(), false, "language 'he' must not change the explicitily configured RTL flag");
+		});
+
+		QUnit.test("setRTL(true) - change", function(assert) {
+			assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
+			this.oConfig.setRTL(true);
+			assert.equal(this.oConfig.getRTL(), true, "RTL still should be false for 'en'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['rtl'], "event should have reported 'rtl' as changed");
 		});
 
 		QUnit.test("getSAPLogonLanguage()", function(assert) {
