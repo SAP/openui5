@@ -727,120 +727,133 @@ sap.ui.define([
 					return log(WARNING, "Invalid segment: $Annotations");
 				}
 
-				if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
-					// split trailing @sapui.name first
-					iIndexOfAt = sSegment.length - 11;
-				} else {
-					iIndexOfAt = sSegment.indexOf("@");
-				}
-				if (iIndexOfAt > 0) {
-					// <17.2 SimpleIdentifier|17.3 QualifiedName>@<annotation[@annotation]>
-					if (!step(sSegment.slice(0, iIndexOfAt), i, aSegments)) {
-						return false;
-					}
-					sSegment = sSegment.slice(iIndexOfAt);
-					bSplitSegment = true;
-				}
-
-				if (typeof vResult === "string"
-					&& !(bSplitSegment && sSegment[0] === "@"
-						&& (sSegment === "@sapui.name" || sSegment[1] === "@"))
-					// indirection: treat string content as a meta model path unless followed by a
-					// computed annotation
-					&& !steps(vResult, aSegments.slice(0, i))) {
-					return false;
-				}
-
-				if (bODataMode) {
+				if (vResult !== mScope && typeof vResult === "object" && sSegment in vResult) {
+					// fast path for pure "JSON" drill-down, but this cannot replace scopeLookup()!
 					if (sSegment[0] === "$" || rNumber.test(sSegment)) {
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
-					} else if (!bSplitSegment) {
-						if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
-							// "17.3 QualifiedName": scope lookup
-							return scopeLookup(sSegment);
-						} else if (vResult && "$Type" in vResult) {
-							// implicit $Type insertion, e.g. at (navigation) property
-							if (!scopeLookup(vResult.$Type, "$Type")) {
-								return false;
-							}
-						} else if (vResult && "$Action" in vResult) {
-							// implicit $Action insertion at action import
-							if (!scopeLookup(vResult.$Action, "$Action")) {
-								return false;
-							}
-						} else if (vResult && "$Function" in vResult) {
-							// implicit $Function insertion at function import
-							if (!scopeLookup(vResult.$Function, "$Function")) {
-								return false;
-							}
-						} else if (i === 0) {
-							// "17.2 SimpleIdentifier" (or placeholder):
-							// lookup inside schema child (which is determined lazily)
-							sTarget = sName = sSchemaChildName
-								= sSchemaChildName || mScope.$EntityContainer;
-							vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
-							if (sSegment && sSegment[0] !== "@"
-								&& !(sSegment in oSchemaChild)) {
-								return log(WARNING, "Unknown child '", sSegment,
-									"' of '", sSchemaChildName, "'");
-							}
+					}
+				} else {
+					if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
+						// split trailing @sapui.name first
+						iIndexOfAt = sSegment.length - 11;
+					} else {
+						iIndexOfAt = sSegment.indexOf("@");
+					}
+					if (iIndexOfAt > 0) {
+						// <17.2 SimpleIdentifier|17.3 QualifiedName>@<annotation[@annotation]>
+						// Note: only the 1st annotation may use external targeting, the rest is
+						// pure "JSON" drill-down (except for "@sapui.name")!
+						if (!step(sSegment.slice(0, iIndexOfAt), i, aSegments)) {
+							return false;
 						}
-						if (Array.isArray(vResult)) { // overloads of Action or Function
-							if (vResult.length !== 1) {
-								return log(WARNING, "Unsupported overloads");
-							}
-							vResult = vResult[0].$ReturnType;
-							sTarget = sTarget + "/0/$ReturnType";
-							if (vResult) {
-								if (sSegment === "value"
-									&& !(mScope[vResult.$Type] && mScope[vResult.$Type].value)) {
-									// symbolic name "value" points to primitive return type
-									sName = undefined; // block "@sapui.name"
-									return true;
-								}
+						sSegment = sSegment.slice(iIndexOfAt);
+						bSplitSegment = true;
+					}
+
+					if (typeof vResult === "string"
+						&& !(bSplitSegment && sSegment[0] === "@"
+							&& (sSegment === "@sapui.name" || sSegment[1] === "@"))
+						// indirection: treat string content as a meta model path unless followed by
+						// a computed annotation
+						&& !steps(vResult, aSegments.slice(0, i))) {
+						return false;
+					}
+
+					if (bODataMode) {
+						if (sSegment[0] === "$" || rNumber.test(sSegment)) {
+							// technical property, switch to pure "JSON" drill-down
+							bODataMode = false;
+						} else if (!bSplitSegment) {
+							if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
+								// "17.3 QualifiedName": scope lookup
+								return scopeLookup(sSegment);
+							} else if (vResult && "$Type" in vResult) {
+								// implicit $Type insertion, e.g. at (navigation) property
 								if (!scopeLookup(vResult.$Type, "$Type")) {
 									return false;
 								}
+							} else if (vResult && "$Action" in vResult) {
+								// implicit $Action insertion at action import
+								if (!scopeLookup(vResult.$Action, "$Action")) {
+									return false;
+								}
+							} else if (vResult && "$Function" in vResult) {
+								// implicit $Function insertion at function import
+								if (!scopeLookup(vResult.$Function, "$Function")) {
+									return false;
+								}
+							} else if (i === 0) {
+								// "17.2 SimpleIdentifier" (or placeholder):
+								// lookup inside schema child (which is determined lazily)
+								sTarget = sName = sSchemaChildName
+									= sSchemaChildName || mScope.$EntityContainer;
+								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+								if (sSegment && sSegment[0] !== "@"
+									&& !(sSegment in oSchemaChild)) {
+									return log(WARNING, "Unknown child '", sSegment,
+										"' of '", sSchemaChildName, "'");
+								}
+							}
+							if (Array.isArray(vResult)) { // overloads of Action or Function
+								if (vResult.length !== 1) {
+									return log(WARNING, "Unsupported overloads");
+								}
+								vResult = vResult[0].$ReturnType;
+								sTarget = sTarget + "/0/$ReturnType";
+								if (vResult) {
+									if (sSegment === "value"
+										&& !(mScope[vResult.$Type] && mScope[vResult.$Type].value)) {
+										// symbolic name "value" points to primitive return type
+										sName = undefined; // block "@sapui.name"
+										return true;
+									}
+									if (!scopeLookup(vResult.$Type, "$Type")) {
+										return false;
+									}
+								}
 							}
 						}
 					}
-				}
 
-				// Note: trailing slash is useful to force implicit lookup or $Type insertion
-				if (!sSegment) { // empty segment is at end or else...
-					return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
-				}
-				if (sSegment[0] === "@") {
-					if (sSegment === "@sapui.name") {
-						vResult = sName;
-						if (vResult === undefined) {
-							log(WARNING, "Unsupported path before @sapui.name");
-						} else if (i + 1 < aSegments.length) {
-							log(WARNING, "Unsupported path after @sapui.name");
-						}
-						return false;
+					// Note: trailing slash is useful to force implicit lookup or $Type insertion
+					if (!sSegment) { // empty segment is at end or else...
+						return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
 					}
-					if (sSegment[1] === "@") {
-						// computed annotation
-						if (i + 1 < aSegments.length) {
-							return log(WARNING, "Unsupported path after ", sSegment);
+					if (sSegment[0] === "@") {
+						if (sSegment === "@sapui.name") {
+							vResult = sName;
+							if (vResult === undefined) {
+								log(WARNING, "Unsupported path before @sapui.name");
+							} else if (i + 1 < aSegments.length) {
+								log(WARNING, "Unsupported path after @sapui.name");
+							}
+							return false;
 						}
-						return computedAnnotation(sSegment, "/" + aSegments.slice(0, i).join("/")
-							+ "/" + aSegments[i].slice(0, iIndexOfAt));
+						if (sSegment[1] === "@") {
+							// computed annotation
+							if (i + 1 < aSegments.length) {
+								return log(WARNING, "Unsupported path after ", sSegment);
+							}
+							return computedAnnotation(sSegment, "/"
+								+ aSegments.slice(0, i).join("/") + "/"
+								+ aSegments[i].slice(0, iIndexOfAt));
+						}
 					}
-				}
-				if (!vResult || typeof vResult !== "object") {
-					// Note: even an OData path cannot continue here (e.g. by type cast)
-					return log(DEBUG, "Invalid segment: ", sSegment);
-				}
-				if (bODataMode && sSegment[0] === "@") {
-					// annotation(s) via external targeting
-					sSchemaName
-						= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
-					vResult = sSchemaName === sSchemaChildName
-						? oSchemaChild // annotations at schema are inline
-						: (mScope.$Annotations || {})[sTarget] || {};
-					bODataMode = false; // switch to pure "JSON" drill-down
+					if (!vResult || typeof vResult !== "object") {
+						// Note: even an OData path cannot continue here (e.g. by type cast)
+						return log(DEBUG, "Invalid segment: ", sSegment);
+					}
+					if (bODataMode && sSegment[0] === "@") {
+						// annotation(s) via external targeting
+						// Note: inline annotations can only be reached via pure "JSON" drill-down,
+						//       e.g. ".../$ReturnType/@..."
+						sSchemaName
+							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
+						vResult = sSchemaName === sSchemaChildName
+							? oSchemaChild // annotations at schema are inline
+							: (mScope.$Annotations || {})[sTarget] || {};
+						bODataMode = false; // switch to pure "JSON" drill-down
+					}
 				}
 
 				if (sSegment !== "@") {

@@ -37,13 +37,37 @@ sap.ui.require([
 					"@T€AMS" : {}
 				},
 				"tea_busi.TEAM" : {
+					"@Common.Text" : {
+						"$Path" : "Name"
+					},
+					"@Common.Text@UI.TextArrangement" : {
+						"$EnumMember" : "UI.TextArrangementType/TextLast"
+					},
 					// UI := com.sap.vocabularies.UI.v1
+					"@UI.Badge" : {
+						"@Common.Label" : "Label inside",
+						"$Type" : "UI.BadgeType",
+						"HeadLine" : {
+							"$Type" : "UI.DataField",
+							"Value" : {
+								"$Path" : "Name"
+							}
+						},
+						"Title" : {
+							"$Type" : "UI.DataField",
+							"Value" : {
+								"$Path" : "Team_Id"
+							}
+						}
+					},
+					"@UI.Badge@Common.Label" : "Best Badge Ever!",
 					"@UI.LineItem" : [{
 						"@UI.Importance" : {
 							"$EnumMember" : "UI.ImportanceType/High"
 						},
 						"$Type" : "UI.DataField",
 						"Label" : "Team ID",
+						"Label@Common.Label" : "Team ID's Label",
 						"Value" : {
 							"$Path" : "Team_Id"
 						}
@@ -55,8 +79,7 @@ sap.ui.require([
 						"$Path" : "Name"
 					},
 					"@Common.Text@UI.TextArrangement" : {
-						"$EnumMember"
-							: "UI.TextArrangementType/TextLast"
+						"$EnumMember" : "UI.TextArrangementType/TextLast"
 					}
 				},
 				"tea_busi.Worker" : {
@@ -172,7 +195,8 @@ sap.ui.require([
 			"tea_busi.AcChangeManagerOfTeam" : [{
 				"$kind" : "Action",
 				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM"
+					"$Type" : "tea_busi.TEAM",
+					"@Common.Label" : "Hail to the Chief"
 				}
 			}],
 			"tea_busi.ContainedC" : {
@@ -288,6 +312,12 @@ sap.ui.require([
 				"TEAM_2_EMPLOYEES" : {
 					"$kind" : "NavigationProperty",
 					"$isCollection" : true,
+					"$OnDelete" : "None",
+					"$OnDelete@Common.Label" : "None of my business",
+					"$ReferentialConstraint" : {
+						"foo" : "bar",
+						"foo@Common.Label" : "Just a Gigolo"
+					},
 					"$Type" : "tea_busi.Worker"
 				},
 				"TEAM_2_CONTAINED_S" : {
@@ -690,6 +720,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	//TODO better map meta model path to pure JSON path (look up inside JsonModel)?
 	// what about @sapui.name then, which requires a literal as expected result?
+	// --> we could distinguish "/<path>" from "<literal>"
 	forEach({
 		// "JSON" drill-down ----------------------------------------------------------------------
 		"/$EntityContainer" : "tea_busi.DefaultContainer",
@@ -739,9 +770,11 @@ sap.ui.require([
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/tea_busi.DefaultContainer@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
-		"/$EntityContainer@DefaultContainer"
+		"/tea_busi.DefaultContainer/@DefaultContainer" // w/o $Type, slash makes no difference!
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
-		"/$EntityContainer/@DefaultContainer" // Note: w/o $Type, slash makes no difference!
+		"/$EntityContainer@DefaultContainer" // Note: we could change this
+			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+		"/$EntityContainer/@DefaultContainer" // w/o $Type, slash makes no difference!
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/@UI.LineItem" : oTeamLineItem,
@@ -749,17 +782,28 @@ sap.ui.require([
 		"/T€AMS/@UI.LineItem/0/@UI.Importance" : oTeamLineItem[0]["@UI.Importance"],
 		"/T€AMS@T€AMS"
 			: mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"]["@T€AMS"],
+		"/T€AMS/@Common.Text"
+			: mScope.$Annotations["tea_busi.TEAM"]["@Common.Text"],
+		"/T€AMS/@Common.Text@UI.TextArrangement"
+			: mScope.$Annotations["tea_busi.TEAM"]["@Common.Text@UI.TextArrangement"],
 		"/T€AMS/Team_Id@Common.Text"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
-			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]
-				["@Common.Text@UI.TextArrangement"],
+			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text@UI.TextArrangement"],
 		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
+		// inline annotations
+		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label" : "Hail to the Chief",
+		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
+		"/T€AMS/TEAM_2_EMPLOYEES/$ReferentialConstraint/foo@Common.Label" : "Just a Gigolo",
+		"/T€AMS/@UI.LineItem/0/Label@Common.Label" : "Team ID's Label",
+		"/T€AMS/@UI.Badge@Common.Label" : "Best Badge Ever!", // annotation of annotation
+		"/T€AMS/@UI.Badge/@Common.Label" : "Label inside", // annotation of record
 		// "@" to access to all annotations, e.g. for iteration
 		"/T€AMS@" : mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"],
 		"/T€AMS/@" : mScope.$Annotations["tea_busi.TEAM"],
 		"/T€AMS/Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		// "14.5.12 Expression edm:Path"
+		// Note: see integration test "{field>Value/$Path@com.sap.vocabularies.Common.v1.Label}"
 		"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Text"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label"
@@ -1696,6 +1740,12 @@ sap.ui.require([
 			assert.deepEqual(mScope, oMetadataClone, "metadata unchanged");
 		});
 	});
+	//TODO iterate mix of inline and external targeting annotations
+	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
+	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
+	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
+	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
+	// the resolved path. Could we support setContext() then?
 
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
@@ -1801,11 +1851,5 @@ sap.ui.require([
 		}, new Error("Overwriting 'com.sap.gateway.default.iwbep.tea_busi.v0001.Department'"
 				+ " with the value defined in '/my/annotation.xml' is not supported"));
 	});
-	//TODO iterate mix of inline and external targeting annotations
-	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
-	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
-	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
-	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
-	// the resolved path. Could we support setContext() then?
 });
 //TODO getContext vs. createBindingContext; map of "singletons" vs. memory leak
