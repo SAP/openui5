@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._handleResize = function() {
-		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this.getParent()) {
 			LineModeRenderer._updateHoverStyle.call(this);
 		}
 	};
@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._updateLineTileSiblings = function() {
-		if (this.getMode() === library.GenericTileMode.LineMode && this.getParent()) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this.getParent()) {
 			var i = this.getParent().indexOfAggregation(this.sParentAggregationName, this);
 			var aSiblings = this.getParent().getAggregation(this.sParentAggregationName).splice(i + 1);
 

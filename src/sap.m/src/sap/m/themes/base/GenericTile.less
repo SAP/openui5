@@ -81,20 +81,75 @@
 	font-size: 2.5rem;
 }
 
-/************************ LINE MODE *************************/
+/************************ LINE MODE COZY ********************/
 
-.sapMGTLineModeContainer{
-	padding-right: 1.5rem; //results in 0.5rem (1rem is used for tile spacing)
+.sapMGTLineMode.sapMGT {
+	float: left;
+	clear: left;
+	min-height: 2.5rem;
+	min-width: 2rem;
+	border-radius: 0.2rem;
+	box-shadow: none;
+	transition: background-color 0.2s;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	margin-bottom: 0.125rem;
+	pointer-events: none;
 }
 
-.sapMGT.sapMGTLineMode {
-	-webkit-user-select: none;
-	-moz-user-select: -moz-none;
-	-ms-user-select: none;
+.sapMGTLineMode .sapMGTTouchArea {
+	display: flex;
+	min-height: 2.750rem;
+	margin-top: -0.125rem;
+	margin-bottom: -0.125rem;
+	overflow: hidden;
+	pointer-events: all;
 }
+
+.sapMGTLineMode .sapMGTLineModeHelpContainer {
+	padding: 0.625rem 0 0.375rem 0;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt {
+	position: relative;
+}
+
+.sapMGTLineMode .sapMGTHdrTxt:after {
+	content: " ";
+}
+
+.sapMGTLineMode .sapMGTSubHdrTxt {
+	line-height: auto;
+	white-space: normal;
+}
+
+.sapMGTLineMode .sapMGTLineModeFailedIcon {
+	line-height: 1.375rem;
+	vertical-align: top;
+	margin-top: 0.625rem;
+	border-right: 0.375rem solid transparent;
+}
+
+/************************ LINE MODE COMPACT *****************/
 
 .sapUiSizeCompact {
+	.sapMGTLineModeContainer{
+		padding-right: 1.5rem; //results in 0.5rem (1rem is used for tile spacing)
+	}
+
 	.sapMGT.sapMGTLineMode {
+		-webkit-user-select: none;
+		-moz-user-select: -moz-none;
+		-ms-user-select: none;
+	}
+
+	.sapMGT.sapMGTLineMode {
+		float: none;
+		clear: none;
+		padding-left: 0rem;
+		padding-right: 0rem;
+		margin-bottom: 0rem;
+	
 		display: inline;
 		min-width: 2rem;
 		border-radius: 0;
@@ -148,7 +203,7 @@
 		line-height: 1.375rem;
 		vertical-align: top;
 		padding-top: 0.25rem;
-
+		margin-top: 0rem;
 		position: relative;
 		left: 0.5rem;
 		border-right: 0.375rem solid transparent;
@@ -192,11 +247,12 @@
 			border-bottom: 0.25rem solid transparent;
 		}
 	}
+
+	.sapMGTLineMode .sapMGTHdrTxt {
+		max-height: none !important;
+	}
 }
 
-.sapMGTLineMode .sapMGTHdrTxt {
-	max-height: none !important;
-}
 
 /******************* OVERLAYS AND HELPERS *******************/
 

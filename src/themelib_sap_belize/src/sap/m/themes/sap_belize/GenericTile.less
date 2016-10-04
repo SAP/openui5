@@ -3,57 +3,29 @@
 /* Belize theme                       */
 /* ================================== */
 
+/************************ LINE MODE COZY ********************/
+
 .sapMGT.sapMGTLineMode {
-	font-size: @sapMFontMediumSize;
-	& * {
-		font-size: @sapMFontMediumSize;
-	}
+	transition: background 0.2s;
+	background: transparent;
+}
 
-	.sapMGTLineStyleHelper {
-		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
-			margin-right: 0.125rem;
-		}
+.sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTLineModePress):hover {
+	background: fade(@sapUiShellHoverBackground, 10);
+}
 
-		&:not(:first-child) .sapMGTLineStyleHelperInner {
-			margin: 0 0.125rem;
-		}
-		&:last-child .sapMGTLineStyleHelperInner {
-			margin-right: 0;
-		}
+.sapMGT.sapMGTLineMode.sapMGTLineModePress {
+	background: fade(@sapUiShellHoverBackground, 12);
+}
 
-		&:first-child .sapMGTLineStyleHelperInner {
-			border-top-left-radius: 0.2rem;
-			border-bottom-left-radius: 0.2rem;
-		}
-
-		&:last-child .sapMGTLineStyleHelperInner {
-			border-top-right-radius: 0.2rem;
-			border-bottom-right-radius: 0.2rem;
-		}
-	}
-
-	&:focus .sapMGTLineStyleHelperInner:before {
-		content: "";
-		position: absolute;
-		top: 1px;
-		left: 1px;
-		bottom: 1px;
-		right: 1px;
+.sapMGT.sapMGTLineMode:focus {
 		box-sizing: border-box;
 		border: 1px dotted @sapUiContentFocusColor;
-	}
+		border-radius: 0px;
+}
 
-	.sapMGTLineStyleHelperInner {
-		transition: background 0.2s;
-	}
-
-	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
-		background: fade(@sapUiShellHoverBackground, 10);
-	}
-
-	&.sapMGTLineModePress:not(.sapMGTDisabled) .sapMGTLineStyleHelperInner {
-		background: fade(@sapUiShellHoverBackground, 12);
-	}
+.sapMGTLineMode.sapMGTDisabled {
+	opacity: 0.5;
 }
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -62,9 +34,76 @@
 	text-shadow: @sapUiShadowText;
 }
 
-.sapMGTLineMode.sapMGTDisabled {
-	opacity: 0.5;
+/************************ LINE MODE COMPACT *****************/
+
+.sapUiSizeCompact {
+	.sapMGT.sapMGTLineMode {
+		font-size: @sapMFontMediumSize;
+		& * {
+			font-size: @sapMFontMediumSize;
+		}
+
+		.sapMGTLineStyleHelper {
+			&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+				margin-right: 0.125rem;
+			}
+
+			&:not(:first-child) .sapMGTLineStyleHelperInner {
+				margin: 0 0.125rem;
+			}
+			&:last-child .sapMGTLineStyleHelperInner {
+				margin-right: 0;
+			}
+
+			&:first-child .sapMGTLineStyleHelperInner {
+				border-top-left-radius: 0.2rem;
+				border-bottom-left-radius: 0.2rem;
+			}
+
+			&:last-child .sapMGTLineStyleHelperInner {
+				border-top-right-radius: 0.2rem;
+				border-bottom-right-radius: 0.2rem;
+			}
+		}
+
+		&:focus {
+			border: none;
+		}
+
+		&:focus .sapMGTLineStyleHelperInner:before {
+			content: "";
+			position: absolute;
+			top: 1px;
+			left: 1px;
+			bottom: 1px;
+			right: 1px;
+			box-sizing: border-box;
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+
+		.sapMGTLineStyleHelperInner {
+			transition: background 0.2s;
+		}
+
+		&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
+			background: fade(@sapUiShellHoverBackground, 10);
+		}
+
+		&.sapMGTLineModePress {
+			background: none;
+		}
+
+		&.sapMGTLineModePress:not(.sapMGTDisabled) .sapMGTLineStyleHelperInner {
+			background: fade(@sapUiShellHoverBackground, 12);
+		}
+
+		&:not(.sapMGTDisabled):not(.sapMGTLineModePress):hover {
+			background: none;
+		}
+	}
 }
+
+/************************************************************/
 
 .sapMGTHdrTxt > .sapMText {
 	color: @sapUiTileTitleTextColor;
