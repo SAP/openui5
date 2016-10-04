@@ -244,9 +244,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 */
 		FixFlex.prototype._changeFlexibleContainerScroll = function () {
 
-			var $flexibleContainer = this.$("FlexibleContainer");
+			var $flexibleContainer = this.$("FlexibleContainer"),
+				containerHeight = $flexibleContainer.height(),
+				childrenHeight = $flexibleContainer.children().height();
 
-			if ($flexibleContainer.height() > $flexibleContainer.children().height()) {
+			if (containerHeight == childrenHeight){
+				return;
+			}
+
+			if (containerHeight > childrenHeight) {
 				$flexibleContainer.addClass('sapUiFixFlexFlexibleContainerHeight');
 			} else {
 				$flexibleContainer.removeClass('sapUiFixFlexFlexibleContainerHeight');
