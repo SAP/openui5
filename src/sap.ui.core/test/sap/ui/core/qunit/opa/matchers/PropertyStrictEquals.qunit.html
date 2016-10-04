@@ -38,17 +38,20 @@
 					[{
 						textValue: "foo",
 						matcherValue: "foo",
-						expected: true
+						expected: true,
+						logMessage: ""
 					},
 					{
 						textValue: "foo",
 						matcherValue: "bar",
-						expected: false
+						expected: false,
+						logMessage: "The property 'text' of 'myButton' has the value 'foo' expected 'bar'"
 					},
 					{
 						textValue: "",
 						matcherValue: null,
-						expected: false
+						expected: false,
+						logMessage: "The property 'text' of 'myButton' has the value '' expected 'undefined'"
 					}].forEach(function (oTestCase) {
 						QUnit.test("Should strictmatch for " + JSON.stringify(oTestCase), function (assert) {
 							// Arrange
@@ -59,12 +62,18 @@
 								name : "text",
 								value : oTestCase.matcherValue
 							});
+							var fnLogSpy = sinon.spy(oMatcher._oLogger, "debug");
 
 							// Act
 							var bResult = oMatcher.isMatching(this.oButton);
 
 							// Assert
 							assert.strictEqual(bResult, oTestCase.expected, "Strict match");
+							if (oTestCase.logMessage) {
+								sinon.assert.calledWith(fnLogSpy, oTestCase.logMessage);
+							} else {
+								sinon.assert.notCalled(fnLogSpy);
+							}
 						});
 					});
 
