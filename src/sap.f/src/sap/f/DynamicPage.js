@@ -103,6 +103,14 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Determines whether the the user can switch between the expanded/collapsed states of the
+				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>. If set to
+				 * <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the application
+				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
+				 */
+				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
+
+				/**
 				 * Determines whether the footer is visible.
 				 */
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
@@ -248,6 +256,14 @@ sap.ui.define([
 		if (bPreserveHeaderStateOnScroll) {
 			this.setProperty("headerExpanded", true, true);
 		}
+
+		return vResult;
+	};
+
+	DynamicPage.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
+		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
+
+		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
 
 		return vResult;
 	};
@@ -1093,6 +1109,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the title press event and prevents the collapse/expand, if necessary
+	 * @private
+	 */
+	DynamicPage.prototype._onTitlePress = function () {
+		if (this.getToggleHeaderOnTitleClick()) {
+			this._titleExpandCollapseWhenAllowed();
+		}
+	};
+
+	/**
 	 * Еxpands/collapses the header when allowed to do so by the internal rules of the <code>DynamicPage</code>.
 	 * @private
 	 */
@@ -1232,7 +1258,7 @@ sap.ui.define([
 		var oTitle = this.getTitle();
 
 		if (exists(oTitle) && !this._bAlreadyAttachedTitlePressHandler) {
-			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_PRESS, this._titleExpandCollapseWhenAllowed, this);
+			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_PRESS, this._onTitlePress, this);
 			this._bAlreadyAttachedTitlePressHandler = true;
 		}
 	};

@@ -6,7 +6,7 @@
 		xmlns:layout="sap.ui.layout"
 		xmlns="sap.m"
 		xmlns:f="sap.f">
-		<f:DynamicPage id="dynamicPageId" headerExpanded="{/headerExpanded}">
+		<f:DynamicPage id="dynamicPageId" headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="{/titleClickable}">
 			<!-- DynamicPage Title -->
 			<f:title>
 				<f:DynamicPageTitle>
@@ -18,6 +18,10 @@
 						<ToggleButton
 								pressed="{/headerExpanded}"
 								text="{path:'/headerExpanded', formatter:'.formatToggleButtonText'}"
+								type="Transparent"/>
+						<ToggleButton
+								pressed="{/titleClickable}"
+								text="Title Clickable"
 								type="Transparent"/>
 						<OverflowToolbarButton
 								icon="sap-icon://add"
