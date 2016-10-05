@@ -319,12 +319,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		 *   the binding info
 		 * @param {object} mSettings
 		 *   map/JSON-object with initial property values, etc.
+		 * @param {object} oScope
+		 *   map of currently known aliases
 		 * @returns {any}
 		 *   the property value or <code>oUNBOUND</code> in case the binding is not ready (because
 		 *   it refers to a model which is not available)
 		 * @throws {Error}
 		 */
-		function getAny(oWithControl, oBindingInfo, mSettings) {
+		function getAny(oWithControl, oBindingInfo, mSettings, oScope) {
 			/*
 			 * Prepares the given binding info or part of it; makes it "one time" and binds its
 			 * formatter function (if opted in) to an interface object.
@@ -342,6 +344,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oInfo.formatter
 					= fnFormatter.bind(null, createContextInterface(oWithControl, mSettings, i));
 				}
+				oInfo.parameters = oInfo.parameters || {};
+				oInfo.parameters.scope = oScope;
 			}
 
 			try {
@@ -961,7 +965,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					}
 
 					if (typeof vBindingInfo === "object") {
-						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
+						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings, oScope);
 						if (bMandatory && vBindingInfo === oUNBOUND) {
 							warn(oElement, 'Binding not ready');
 						}
