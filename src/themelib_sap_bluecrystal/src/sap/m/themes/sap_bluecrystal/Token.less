@@ -37,13 +37,13 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		outline: none;
 	}
 
-	.sapMTokenText:before{
+	.sapMTokenText:before {
 		position: absolute;
 		top: 2px;
 		left: 2px;
 		right: 2px;
 		bottom: 2px;
-		border: 0.0625rem dotted @sapUiInvertedFocus;
+		border: 0.0625rem dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		content: "";
 		pointer-events: none;
 	}
