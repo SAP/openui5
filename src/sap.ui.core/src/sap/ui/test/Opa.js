@@ -350,22 +350,26 @@ sap.ui.define([
 
 		return oDeferred.promise().fail(function(oOptions, oError){
 			queue = [];
-			var oStackOptions, sErrorMessage;
+			var oStackOptions,
+				sErrorMessage = "";
+
+			if (oOptions.errorMessage) {
+				sErrorMessage = oOptions.errorMessage + "\n";
+			}
 
 			if (isStopped) {
-				sErrorMessage = oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
+				sErrorMessage += oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
 				oStackOptions = { _stack : createStack(1) };
-			} else if (!oOptions.errorMessage && !oError) {
-				sErrorMessage = "Opa timeout";
+			} else if (!oError) {
+				sErrorMessage += "Opa timeout";
 			} else if (oError) {
 				var sExceptionText = oError.toString();
-
 				// Some browsers don't have the stack property it will be added later for those browsers
 				if (oError.stack) {
 					sExceptionText += "\n" + oError.stack;
 				}
 
-				sErrorMessage = "Exception thrown by the testcode:'" + sExceptionText + "'";
+				sErrorMessage += "Exception thrown by the testcode:'" + sExceptionText + "'";
 			}
 
 			if (!oStackOptions) {
