@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			sapUiSizeCondensed : 24,
 			sapUiSizeCompact : 32,
 			sapUiSizeCozy : 48,
-			undefined : 27
+			undefined : 32
 		},
 
 		/**

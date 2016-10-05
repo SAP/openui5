@@ -800,6 +800,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return [];
 		}
 
+		var iDefaultRowHeight = this._getDefaultRowHeight();
+
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
 		var aRowItemHeights = [];
@@ -813,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oScrollRowClientRect = aScrollRowItems[i].getBoundingClientRect();
 			var iRowHeight = oScrollRowClientRect.bottom - oScrollRowClientRect.top;
 
-			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight));
+			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight, iDefaultRowHeight));
 		}
 
 		return aRowItemHeights;
@@ -2069,11 +2071,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var oTableCCnt = this.getDomRef("tableCCnt");
 		if (oTableCCnt) {
-			if (this.getFixedRowCount() > 0) {
-				oVSb.style.top += oTableCCnt.offsetTop + "px";
-			} else {
-				oVSb.style.top = oTableCCnt.offsetTop + "px";
+			var iTop = oTableCCnt.offsetTop;
+			var iFixedRows = this.getFixedRowCount();
+			if (iFixedRows > 0) {
+				iTop += this._iVsbTop;
 			}
+			oVSb.style.top = iTop + "px";
 		}
 
 		oVSb.scrollTop = iScrollTop;

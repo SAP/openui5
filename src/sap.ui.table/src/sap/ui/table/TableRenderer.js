@@ -940,7 +940,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.addStyle("max-height", oTable._getVSbHeight() + "px");
 
 		if (oTable.getFixedRowCount() > 0) {
-			rm.addStyle("top", (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1  + 'px');
+			oTable._iVsbTop = (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1;
+			rm.addStyle("top", oTable._iVsbTop  + 'px');
 		}
 
 		rm.writeStyles();
