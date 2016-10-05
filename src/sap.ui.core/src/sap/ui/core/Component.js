@@ -579,21 +579,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	Component.prototype.destroy = function() {
 
 		// destroy all services
-		if (typeof this._mServices === "object") {
-			for (var sLocalServiceAlias in this._mServices) {
+		for (var sLocalServiceAlias in this._mServices) {
+			if (this._mServices[sLocalServiceAlias].instance) {
 				this._mServices[sLocalServiceAlias].instance.destroy();
-				delete this._mServices[sLocalServiceAlias];
 			}
-			this._mServices = null;
 		}
+		delete this._mServices;
 
 		// destroy all models created via manifest definition
-		if (typeof this._mManifestModels === 'object') {
-			for (var sModelName in this._mManifestModels) {
-				this._mManifestModels[sModelName].destroy();
-			}
-			this._mManifestModels = null;
+		for (var sModelName in this._mManifestModels) {
+			this._mManifestModels[sModelName].destroy();
 		}
+		delete this._mManifestModels;
 
 		// remove the event handlers
 		if (this._fnWindowErrorHandler) {
@@ -801,11 +798,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// require the Service Factory Registry on-demand
 		var ServiceFactoryRegistry = sap.ui.requireSync("sap/ui/core/service/ServiceFactoryRegistry");
 
-		return new Promise(function(fnResolve, fnReject) {
+		// check whether the Service has already been created or not
+		if (!this._mServices[sLocalServiceAlias]) {
 
-			// check whether the Service has already been created or not
-			var oService = this._mServices && this._mServices[sLocalServiceAlias];
-			if (!oService) {
+			this._mServices[sLocalServiceAlias] = {};
+
+			// cache the promise to avoid redundant creation
+			this._mServices[sLocalServiceAlias].promise = new Promise(function(fnResolve, fnReject) {
 
 				// lookup the factoryName in the manifest
 				var sServiceFactoryName = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/factoryName");
@@ -823,16 +822,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						scopeObject: this,
 						scopeType: "component"
 					}).then(function(oServiceInstance) {
+						if (!this.bIsDestroyed) {
+							// store the created Service instance and interface
+							this._mServices[sLocalServiceAlias].instance = oServiceInstance;
+							this._mServices[sLocalServiceAlias].interface = oServiceInstance.getInterface();
 
-						// store the created Service instance and interface
-						oService = this._mServices[sLocalServiceAlias] = {
-							"instance": oServiceInstance,
-							"interface": oServiceInstance.getInterface()
-						};
-
-						// return the Service interface
-						fnResolve(oService.interface);
-
+							// return the Service interface
+							fnResolve(this._mServices[sLocalServiceAlias].interface);
+						} else {
+							fnReject(new Error("Service " + sLocalServiceAlias + " could not be loaded as its Component was destroyed."));
+						}
 					}.bind(this)).catch(fnReject);
 
 				} else {
@@ -847,14 +846,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					fnReject(new Error(sErrorMessage));
 
 				}
-
-			} else {
-				// return the Service interface from cache
-				fnResolve(oService.interface);
-			}
-
-		}.bind(this));
-
+			}.bind(this));
+		}
+		return this._mServices[sLocalServiceAlias].promise;
 	};
 
 

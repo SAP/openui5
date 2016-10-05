@@ -594,63 +594,89 @@
 
 	});
 
+	QUnit.test("Retrieve Service from existing Service Factory twice, with caching", function(assert) {
+
+		var oComponent = this.oComponent,
+			done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/Service",
+			"my/Service"
+		], function(Service, MyService) {
+
+			var oServicePromise1 = oComponent.getService("MyServiceAlias"),
+				oServicePromise2 = oComponent.getService("MyServiceAlias");
+
+			assert.strictEqual(oServicePromise1, oServicePromise2, "The second promise comes from cache.");
+
+			Promise.all([oServicePromise1, oServicePromise2]).then(function(aServices) {
+				assert.strictEqual(aServices[0], aServices[1], "Both services should be the same.");
+			}).then(done);
+		});
+
+	});
+
+	QUnit.test("Retrieve Service while component has been destroyed", function(assert) {
+
+		var oComponent = this.oComponent,
+			done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/Service",
+			"my/Service"
+		], function(Service, MyService) {
+
+			var oServicePromise = oComponent.getService("MyServiceAlias");
+			oComponent.destroy();
+
+			oServicePromise.then(function(oService) {
+				assert.notOk(true, "Service Promise should reject");
+			}, function(e) {
+				assert.ok(e instanceof Error, "Rejected with Error.");
+				assert.equal(e.message, "Service MyServiceAlias could not be loaded as its Component was destroyed.", "Rejected with message.");
+			}).then(done);
+		});
+	});
+
 	QUnit.test("Retrieve Service from missing Service Factory", function(assert) {
 
-		var oComponent = this.oComponent;
+		var oComponent = this.oComponent,
+			done = assert.async();
 
-		var done = assert.async();
 		oComponent.getService("OtherServiceAlias").then(function(oService) {
-
 			assert.ok(false, "Service must not be created!");
-			done();
-
 		}).catch(function(oError) {
-
 			assert.equal(oError.message, "The ServiceFactory other.ServiceFactoryAlias for Service OtherServiceAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
 			assert.equal(this.oLogSpy.callCount, 1, "getService created one error log message");
 			assert.equal(this.oLogSpy.firstCall.args[0], "The ServiceFactory other.ServiceFactoryAlias for Service OtherServiceAlias not found in ServiceFactoryRegistry!", "getService created one error log message");
-			done();
-
-		}.bind(this));
+		}.bind(this)).then(done);
 
 	});
 
 	QUnit.test("Retrieve optional Service from missing Service Factory", function(assert) {
 
-		var oComponent = this.oComponent;
+		var oComponent = this.oComponent,
+			done = assert.async();
 
-		var done = assert.async();
 		oComponent.getService("OptionalServiceAlias").then(function(oService) {
-
 			assert.ok(false, "Service must not be created!");
-			done();
-
 		}).catch(function(oError) {
-
 			assert.equal(oError.message, "The ServiceFactory optional.ServiceFactoryAlias for Service OptionalServiceAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
 			assert.equal(this.oLogSpy.callCount, 0, "getService created no error log message");
-			done();
-
-		}.bind(this));
+		}.bind(this)).then(done);
 
 	});
 
 	QUnit.test("Retrieve Service from invalid Service Factory", function(assert) {
 
-		var oComponent = this.oComponent;
+		var oComponent = this.oComponent,
+			done = assert.async();
 
-		var done = assert.async();
 		oComponent.getService("InvalidServiceAlias").then(function(oService) {
-
 			assert.ok(false, "Service must not be created!");
-			done();
-
 		}).catch(function(oError) {
-
 			assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a service constructor function to create a new service instance or to override the createInstance function!", "Service Factory not found Error");
-			done();
-
-		}.bind(this));
+		}.bind(this)).then(done);
 
 	});
 
