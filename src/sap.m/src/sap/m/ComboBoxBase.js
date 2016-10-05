@@ -53,15 +53,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 				events: {
 
 					/**
-					 * This event is fired when the end user moves the cursor to the text field, performs
-					 * an action that requires items to be loaded, and items are not already loaded. For example,
+					 * This event is fired when the end user clicks the combo box button to open the dropdown list and
+					 * the data used to display items is not already loaded.
+					 * Alternatively, it is fired after the user moves the cursor to the combo box text
+					 * field and perform an action that requires data to be loaded. For example,
 					 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
 					 *
-					 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
-					 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
-					 * experience. For example, the busy indicator has to be shown while the items are being loaded and
-					 * assistive technology software also has to announce the state changes (which may be confusing
-					 * for some screen reader users).
+					 * <b>Note:</b> Use this feature in performance critical scenarios only.
+					 * Loading the data lazily (on demand) to defer initialization has several implications for the
+					 * end user experience. For example, the busy indicator has to be shown while the items are being
+					 * loaded and assistive technology software also has to announce the state changes
+					 * (which may be confusing for some screen reader users).
 					 *
 					 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
 					 * @since 1.38
@@ -124,8 +126,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		};
 
 		/**
-		 * Fires the {@link #loadItems} event if the items are not already loaded and enqueue the
-		 * <code>fnCallBack</code> callback into the event queue for further processing.
+		 * Fires the {@link #loadItems} event if the data used to display items in the dropdown list
+		 * is not already loaded and enqueue the <code>mOptions</code> into the message queue for processing.
 		 *
 		 * @param {function} [fnCallBack] A callback function to execute after the items are loaded.
 		 * @param {object} [mOptions] Additional options.
@@ -153,9 +155,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 
 					this.aMessageQueue.push(mOptions);
 
-					// sets up a timeout to know if the items are not loaded after a 300ms delay,
-					// to show the busy indicator in the text field, notice that if the items
-					// are loaded before 300ms the timeout is canceled
+					// sets up a timeout to know if the data used to display the items in the dropdown list
+					// is loaded after a 300ms delay, to show the busy indicator in the text field,
+					// notice that if the items are loaded before 300ms the timeout is canceled
 					if ((this.iLoadItemsEventInitialProcessingTimeoutID === -1) &&
 
 						// the busy indicator in the input field should not be shown while the user is typing
