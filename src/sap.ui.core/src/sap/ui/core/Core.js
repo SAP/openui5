@@ -283,6 +283,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
 
+			// evaluate configuration for library preload file types
+			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
+				var fields = String(v).trim().split(/\s*:\s*/),
+					name = fields[0],
+					fileType = fields[1];
+				if ( fields.length === 1 ) {
+					fileType = name;
+					name = '';
+				}
+				if ( /^(?:none|js|json|both)$/.test(fileType) ) {
+					mLibraryPreloadFileTypes[name] = fileType;
+				}
+			});
+
 			log.info("Declared modules: " + aModules, METHOD);
 
 			this._setupThemes();
@@ -1283,27 +1297,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Configured type of preload file per library.
+	 * The empty name represents the default for all libraries not explicitly listed.
+	 *
+	 * A type can be one of
+	 * - 'none' (do not preload),
+	 * - 'js' (preload JS file),
+	 * - 'json' (preload a json file)
+	 * or 'both (try js first, then 'json')
+	 *
+	 * @private
+	 */
+	var mLibraryPreloadFileTypes = {};
+
+	function evalLibConfig(lib) {
+
+		jQuery.sap.assert(
+			typeof lib === 'string' && lib ||
+			typeof lib === 'object' && typeof lib.name === 'string' && lib.name && (lib.json == null || typeof lib.json === 'boolean'),
+			"lib must be a non-empty string or an object with at least a non-empty 'name' property and an optional (boolean) property 'json'" );
+
+		var fileTypeSupportedByLib = 'both';
+		if ( typeof lib === 'object' ) {
+			if ( lib.json === true ) {
+				fileTypeSupportedByLib = 'json';
+			} else if ( lib.json === false ) {
+				fileTypeSupportedByLib = 'js';
+			}
+			lib = lib.name;
+		}
+
+		// decide between supported and configured preload file types
+		var fileType = mLibraryPreloadFileTypes[lib] || mLibraryPreloadFileTypes[''] || 'both';
+		if ( fileType === 'both' ) {
+			// if the configured file type is 'both', the supported type always wins
+			fileType = fileTypeSupportedByLib;
+		} else if ( fileType !== fileTypeSupportedByLib && fileTypeSupportedByLib !== 'both' ) {
+			// if the configured and the supported file type are not equal and the library doesn't support 'both',
+			// then there is no compromise -> 'none'
+			fileType = 'none';
+		}
+
+		return {
+			name: lib,
+			fileType: fileType
+		};
+
+	}
+
+	/**
 	 * Preloads a library asynchronously.
 	 *
-	 * @param {string|object} lib Name of the library to preload or settings object describing library.
-	 * @param {string} [lib.name] Name of the library to preload
-	 * @param {boolean|undefined} [lib.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {string|object} libConfig Name of the library to preload or settings object describing library
+	 * @param {string} [libConfig.name] Name of the library to preload
+	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
 	 *                               or whether both should be tried (undefined)
 	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
 	 * @private
 	 */
-	function preloadLibraryAsync(lib) {
+	function preloadLibraryAsync(libConfig) {
 
-		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+		libConfig = evalLibConfig(libConfig);
 
-		var json;
-		if ( typeof lib !== 'string' ) {
-			json = lib.json;
-			lib = lib.name;
-		}
+		var lib = libConfig.name,
+			fileType = libConfig.fileType,
+			libPackage = lib.replace(/\./g, '/');
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
 			return Promise.resolve(true);
 		}
 
@@ -1320,8 +1380,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// first preload code, resolves with list of dependencies (or undefined)
 		var p;
-		if ( json !== true /* not forced to JSON */ ) {
-			var sPreloadModule = lib.replace(/\./g, '/') + '/library-preload.js';
+		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
+			var sPreloadModule = libPackage + '/library-preload.js';
 			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
@@ -1329,7 +1389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					function(e) {
 						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
 						// with json === false, this fallback can be suppressed
-						if ( json !== false ) {
+						if ( fileType !== 'js' /* 'both' */ ) {
 							jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
 							return loadJSONAsync(lib);
 						}
@@ -1415,24 +1475,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Preloads a library synchronously.
 	 *
-	 * @param {string|object} lib Name of the library to preload or settings object describing library.
-	 * @param {string} [lib.name] Name of the library to preload
-	 * @param {boolean|undefined} [lib.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {string|object} libConfig Name of the library to preload or settings object describing library.
+	 * @param {string} [libConfig.name] Name of the library to preload
+	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
 	 *                               or whether both should be tried (undefined)
 	 * @private
 	 */
-	function preloadLibrarySync(lib) {
+	function preloadLibrarySync(libConfig) {
 
-		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+		libConfig = evalLibConfig(libConfig);
 
-		var json;
-		if ( typeof lib !== 'string' ) {
-			json = lib.json;
-			lib = lib.name;
-		}
+		var lib = libConfig.name,
+			fileType = libConfig.fileType,
+			libPackage = lib.replace(/\./g, '/');
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
 			return;
 		}
 
@@ -1464,12 +1521,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		});
 
 		var dependencies;
-		if ( json !== true /* not forced to JSON */ ) {
+		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
+			var sPreloadModule = libPackage + '/library-preload';
 			try {
-				sap.ui.requireSync(lib.replace(/\./g, '/') + '/library-preload');
+				sap.ui.requireSync(sPreloadModule);
 				dependencies = dependenciesFromManifest(lib);
 			} catch (e) {
-				if ( e && e.loadError ) {
+				jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
+				if ( e && e.loadError && fileType !== 'js' ) {
 					dependencies = loadJSONSync(lib);
 				} // ignore other errors (preload shouldn't fail)
 			}
