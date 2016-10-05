@@ -2201,7 +2201,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (!jQuery.isEmptyObject(this.oModels)) {
 				var oProperties = {
 					oModels: jQuery.extend({}, this.oModels),
-					oBindingContexts: {}
+					oBindingContexts: {},
+					aPropagationListeners: []
 				};
 				that.mUIAreas[sId]._propagateProperties(true, that.mUIAreas[sId], oProperties, true);
 			}
@@ -3149,7 +3150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			} else {
 				oProperties = {
 					oModels: jQuery.extend({}, that.oModels),
-					oBindingContexts: {}
+					oBindingContexts: {},
+					aPropagationListeners: []
 				};
 			}
 			// propagate Models to all UI areas
@@ -3165,7 +3167,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				if (oModel != oUIArea.getModel(sName)) {
 					var oProperties = {
 						oModels: jQuery.extend({}, that.oModels),
-						oBindingContexts: {}
+						oBindingContexts: {},
+						aPropagationListeners: []
 					};
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}
