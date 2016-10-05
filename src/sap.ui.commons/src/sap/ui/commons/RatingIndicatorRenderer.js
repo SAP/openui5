@@ -166,23 +166,17 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (sType == "selected") {
 			sIcon = oRating.getIconSelected();
-			sParam = "sap.ui.commons.RatingIndicator:sapUiRatingSymbolSelected";
+			sParam = "sapUiRatingSymbolSelected";
 		} else if (sType == "unselected") {
 			sIcon = oRating.getIconUnselected();
-			sParam = "sap.ui.commons.RatingIndicator:sapUiRatingSymbolUnselected";
+			sParam = "sapUiRatingSymbolUnselected";
 		} else {
 			sIcon = oRating.getIconHovered();
-			sParam = "sap.ui.commons.RatingIndicator:sapUiRatingSymbolHovered";
+			sParam = "sapUiRatingSymbolHovered";
 		}
 
 		if (!sIcon) {
-			var sThemePath =
-				"themes/" +
-				sap.ui.getCore().getConfiguration().getTheme() + "/" +
-				sap.ui.core.theming.Parameters.get(sParam);
-
-			// The documentation states that sap.ui.resource() should be used for theme-URLs
-			sIcon = sap.ui.resource("sap.ui.commons", sThemePath);
+			sIcon = sap.ui.core.theming.Parameters._getThemeImage(sParam);
 		}
 
 		return sIcon;
