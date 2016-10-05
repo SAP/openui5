@@ -150,5 +150,27 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		return aActions;
 	};
 
+	ElementDesignTimeMetadata.prototype._getText = function(vName){
+		if (typeof vName === "function") {
+			return vName();
+		} else {
+			return this.getLibraryText(vName);
+		}
+	};
+
+	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement){
+		var vChildNames = this.getAggregation(sAggregationName).childNames;
+		if (typeof vChildNames === "function") {
+			vChildNames = vChildNames.call(null, oElement);
+		}
+		if (vChildNames){
+			return {
+				singular : this._getText(vChildNames.singular),
+				plural : this._getText(vChildNames.plural)
+			};
+		}
+
+	};
+
 	return ElementDesignTimeMetadata;
 }, /* bExport= */ true);
