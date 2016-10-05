@@ -325,7 +325,8 @@
 			"sap.m.sample.FlexBoxNav",
 			"sap.m.sample.FlexBoxNested",
 			"sap.m.sample.FlexBoxOpposingAlignment",
-			"sap.m.sample.FlexBoxSizeAdjustments"
+			"sap.m.sample.FlexBoxSizeAdjustments",
+			"sap.m.sample.FlexBoxRenderType"
 		  ]
 		},
 		{
@@ -1439,6 +1440,11 @@
 		  "id": "sap.m.sample.FlexBoxNested",
 		  "name": "Flex Box - Nested",
 		  "description": "Flex Boxes can be nested. Remember also that HBox and VBox are 'convenience' controls based on the Flex Box control."
+		},
+		{
+		  "id": "sap.m.sample.FlexBoxRenderType",
+		  "name": "Flex Box - Render Type",
+		  "description": "Flex items can be rendered differently. By default, they are wrapped in a <div> element. Optionally, the bare controls can be rendered directly. This can affect the resulting layout."
 		},
 		{
 		  "id": "sap.m.sample.FormattedText",
