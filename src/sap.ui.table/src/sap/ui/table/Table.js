@@ -2320,7 +2320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._getVirtualScrollRange = function() {
 		var iMaxScrollRange = this._getTotalScrollRange() - this._getVSbHeight();
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxScrollRange = iMaxScrollRange - this._getDefaultRowHeight() * this.getVisibleRowCount();
+			iMaxScrollRange = iMaxScrollRange - this._iRowHeightsDelta;
 		}
 		return Math.max(1, iMaxScrollRange);
 	};
