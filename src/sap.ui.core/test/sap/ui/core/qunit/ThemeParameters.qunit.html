@@ -213,6 +213,71 @@
 					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
+		QUnit.test("Relative URLs in parameters", function(assert) {
+
+			var expected = {
+				url1: new URI("testdata/uilib/img1.jpg", new URI()).path(),
+				url2: new URI("testdata/uilib/foo/img2.jpg", new URI()).path(),
+				url3: new URI("testdata/uilib/foo/bar/img3.jpg", new URI()).path(),
+				url4: new URI("testdata/uilib/themes/sap_hcb/", new URI()).path(),
+				url5: new URI("testdata/uilib/themes/sap_hcb/", new URI()).path(),
+				url6: new URI("testdata/uilib/themes/sap_hcb/", new URI()).path(),
+				url7: "blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4",
+				url8: "data:text/plain;utf-8,foo",
+				url9: {
+					plain: "none",
+					themeImage: null,
+					themeImageForce: sap.ui.resource("sap.ui.core", "themes/base/img/1x1.gif")
+				}
+			};
+
+			// plain values
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl1"), "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/img1.jpg'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl2"), "url('" + expected.url2 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/foo/img2.jpg'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl3"), "url('" + expected.url3 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/foo/bar/img3.jpg'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl4"), "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/themes/sap_hcb/'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl5"), "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/themes/sap_hcb/'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl6"), "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/themes/sap_hcb/'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl7"), "url('" + expected.url7 + "')", "Relative URL should be resolved correctly 'blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl8"), "url('" + expected.url8 + "')", "Relative URL should be resolved correctly 'data:text/plain;utf-8,foo'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiTestUrl9"), expected.url9.plain, "'none' should stay as defined");
+
+			// _getThemeImage
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl1"), expected.url1, "Theme Image value should be correct for 'sapUiTestUrl1'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl2"), expected.url2, "Theme Image value should be correct for 'sapUiTestUrl2'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl3"), expected.url3, "Theme Image value should be correct for 'sapUiTestUrl3'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl4"), expected.url4, "Theme Image value should be correct for 'sapUiTestUrl4'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl5"), expected.url5, "Theme Image value should be correct for 'sapUiTestUrl5'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl6"), expected.url6, "Theme Image value should be correct for 'sapUiTestUrl6'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl7"), expected.url7, "Theme Image value should be correct for 'sapUiTestUrl7'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl8"), expected.url8, "Theme Image value should be correct for 'sapUiTestUrl8'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl9"), expected.url9.themeImage, "Theme Image value should be 'null' for parameter value 'none'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiTestUrl9", true), expected.url9.themeImageForce, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none' (force).");
+
+		});
+
+		QUnit.test("Relative URLs in parameters (legacy library)", function(assert) {
+
+			var expected = {
+				url1: new URI("testdata/legacy-uilib/img1.jpg", new URI()).path(),
+				url2: {
+					plain: "none",
+					themeImage: null,
+					themeImageForce: sap.ui.resource("sap.ui.core", "themes/base/img/1x1.gif")
+				}
+			};
+
+			// plain values
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTestUrl1"), "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/uilib/img1.jpg'.");
+			assert.equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTestUrl2"), expected.url2.plain, "'none' should stay as defined");
+
+			// _getThemeImage
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiLegacyTestUrl1"), expected.url1, "Theme Image value should be correct for 'sapUiLegacyTestUrl1'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiLegacyTestUrl2"), expected.url2.themeImage, "Theme Image value should be 'null' for parameter value 'none'.");
+			assert.equal(sap.ui.core.theming.Parameters._getThemeImage("sapUiLegacyTestUrl2", true), expected.url2.themeImageForce, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none' (force).");
+
+		});
+
     </script>
 	</head>
 	<body>
