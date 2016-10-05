@@ -2918,29 +2918,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 	};
 
-	/**
-	 * The row index only considers the position of the row in the aggregation. It must be adapted
-	 * to consider the firstVisibleRow offset or if a fixed bottom row was pressed
-	 * @param {int} iRow row index of the control in the rows aggregation
-	 * @returns {int} the adapted (absolute) row index
-	 * @private
-	 */
-	Table.prototype._getAbsoluteRowIndex = function(iRow) {
-		var iIndex = 0;
-		var iFirstVisibleRow = this.getFirstVisibleRow();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var iFirstFixedBottomRowIndex = iVisibleRowCount - iFixedBottomRowCount;
-
-		if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
-			iIndex = this.getBinding().getLength() - iVisibleRowCount + iRow;
-		} else {
-			iIndex = iFirstVisibleRow + iRow;
-		}
-
-		return iIndex;
-	};
-
 	// =============================================================================
 	// SELECTION HANDLING
 	// =============================================================================
@@ -2973,7 +2950,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					oColumn._openMenu($col[0], oEvent.type == "keyup");
 				}
 			} else {
-				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent), oEvent.type == "keyup");
+				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent),
+					oEvent.type === "keydown" ||
+					oEvent.type === "keyup" ||
+					oEvent.type	=== "sapspace" ||
+					oEvent.type	=== "sapenter");
 			}
 
 			return;
@@ -2983,7 +2964,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var $row = $target.closest(".sapUiTableRowHdr");
 		if ($row.length === 1) {
 			var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-			this._onRowSelect(this._getAbsoluteRowIndex(iIndex), bShift, bCtrl);
+			this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
 			return;
 		}
 
@@ -3001,7 +2982,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
 			if ($row.length === 1) {
 				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-				this._onRowSelect(this._getAbsoluteRowIndex(iIndex), bShift, bCtrl);
+				this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
 				return;
 			}
 		}
@@ -4310,7 +4291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._toggleSelectAll = function() {
 		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
 		// to indicate that the selection was changed by user interaction
-		if (!this.$("selall").hasClass("sapUiTableSelAll")) {
+		if (TableUtils.areAllRowsSelected(this)) {
 			this._iSourceRowIndex = -1;
 			this.clearSelection();
 		} else {
