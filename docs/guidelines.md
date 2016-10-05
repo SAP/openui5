@@ -256,6 +256,9 @@ UI5 Control Development Guidelines
     -   If no suitable parameter exists, derive the color by calculation from a suitable parameter
 -   Do not add parameters to the public API (using annotations) without sufficient clarification with designers and Product Owners
 -   You can (but do not need to) create your own internal control-specific parameters. If you do, also prefix their name with your control name (e.g. `@sapUiBtnDisabledText`).
+-   When defining URLs as parameters use the proper `url()` format: ```@sapUiMyUrl: url(./path/to/img.png)```
+    -   Do **NOT** use escaped strings (`~`): ~~@sapUiMyUrl: ~"path/to/img.png"~~
+    -   Do **NOT** use absolute urls: ~~@sapUiMyUrl: url(/absolute/path/to/img.png)~~
 
 Product Standards / Acceptance Criteria
 ---------------------------------------
