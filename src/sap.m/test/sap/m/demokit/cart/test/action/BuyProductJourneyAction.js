@@ -65,13 +65,11 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 			},
 
 			iPressOnTheProceedButton : function () {
-
 				return this.waitFor({
 					viewName : "Cart",
 					id : "proceedButton",
 					actions : new sap.ui.test.actions.Press()
 				});
-
 			},
 
 			iFillTheForm : function () {
