@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 		});
 
 		// only for root "views" we automatically define the target parent
-		var oRootControl = this.getAggregation("rootControl");
+		var oRootControl = this.getRootControl();
 		if (oRootControl instanceof View) {
 			if (oRoutingConfig.targetParent === undefined) {
 				oRoutingConfig.targetParent = oRootControl.getId();
@@ -505,13 +505,41 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	};
 
 	/**
+	 * Returns the content of {@link sap.ui.core.UIComponent#createContent}.
+	 * If you specified a <code>rootView</code> in your metadata or in the descriptor file (manifest.json),
+	 * you will get the instance of the root view.
+	 * This getter will only return something if the {@link sap.ui.core.UIComponent#init} function was invoked.
+	 * If <code>createContent</code> is not implemented, and there is no root view, it will return <code>null</code>. Here is an example:
+	 * <code>
+	 *     <pre>
+	 *          var MyExtension = UIComponent.extend("my.Component", {
+	 *               metadata: {
+	 *                    rootView: "my.View"
+	 *               },
+	 *               init: function () {
+	 *                    this.getRootControl(); // returns null
+	 *                    UIComponent.prototype.init.apply(this, arguments);
+	 *                    this.getRootControl(); // returns the view "my.View"
+	 *               }
+	 *          });
+	 *     </pre>
+	 * </code>
+	 * @protected
+	 * @since 1.44.0
+	 * @returns {sap.ui.core.Control} the control created by {@link sap.ui.core.UIComponent#createContent}
+	 */
+	UIComponent.prototype.getRootControl = function() {
+		return this.getAggregation("rootControl");
+	};
+
+	/**
 	 * Renders the the root control of the UIComponent.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager a RenderManager instance
 	 * @public
 	 */
 	UIComponent.prototype.render = function(oRenderManager) {
-		var oControl = this.getAggregation("rootControl");
+		var oControl = this.getRootControl();
 		if (oControl && oRenderManager) {
 			oRenderManager.renderControl(oControl);
 		}

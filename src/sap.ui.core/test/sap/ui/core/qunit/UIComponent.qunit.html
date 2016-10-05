@@ -460,6 +460,52 @@
 
 	});
 
+	QUnit.test("UIComponent - getRootControl returns the root view", function (assert) {
+		var oComponent = sap.ui.component({
+			manifestUrl: "/anylocation/mf1st/prefixid/manifest.json"
+		});
+
+		assert.strictEqual(oComponent.getRootControl(), oComponent.getAggregation("rootControl"));
+
+		oComponent.destroy();
+	});
+
+	sap.ui.require(["sap/ui/core/UIComponent", "sap/m/Button"], function (UIComponent, Button) {
+		QUnit.test("UIComponent - getRootControl returns null before init", function (assert) {
+			var oRootControlBeforeInit,
+				oRootControlAfterInit,
+				oCreatedContent;
+
+			var MyExtension = UIComponent.extend("my.getRootControl.Component", {
+				init: function () {
+					oRootControlBeforeInit = this.getRootControl();
+					UIComponent.prototype.init.apply(this, arguments);
+					oRootControlAfterInit = this.getRootControl();
+				},
+
+				createContent: function() {
+					oCreatedContent = new Button({
+						"text": "The Button"
+					});
+					return oCreatedContent;
+				}
+
+			});
+
+			var oComponent = new MyExtension();
+
+			var oComponent2 = new UIComponent();
+			assert.strictEqual(oRootControlBeforeInit, null);
+			assert.strictEqual(oRootControlAfterInit, oCreatedContent);
+			// no create content
+			assert.strictEqual(oComponent2.getRootControl(), null);
+
+			oComponent.destroy();
+			oComponent2.destroy();
+		});
+	});
+
+
 	</script>
 	</head>
 	<body>
