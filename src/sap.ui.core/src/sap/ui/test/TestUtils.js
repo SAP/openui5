@@ -19,10 +19,6 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils;
 
-	// This is required so that unit tests find their fake data via useFakeServer
-	jQuery.sap.registerResourcePath("sap/ui/core/qunit",
-		"/" + window.location.pathname.split("/")[1] + "/test-resources/sap/ui/core/qunit");
-
 	/**
 	 * Checks that the actual value deeply contains the expected value, ignoring additional
 	 * properties.
@@ -148,10 +144,8 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {string} sBase
-		 *   The base path for <code>source</code> values in the fixture. The path must have been
-		 *   registered through {@link jQuery.sap#.registerModulePath},
-		 *   {@link jQuery.sap#.registerResourcePath} or the attribute
-		 *   <code>data-sap-ui-resourceroots</code> in the bootstrap. It must not end with '/'.
+		 *   The base path for <code>source</code> values in the fixture. The path must be in the
+		 *   project's test folder, typically it should start with "sap".
 		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {map} mFixture
 		 *   The fixture. Each key represents a URL to respond to. The value is an object that may
@@ -229,7 +223,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 					oResponse = mFixture[sUrl];
 					oHeaders = oResponse.headers || {};
 					if (oResponse.source) {
-						sMessage = readMessage(oResponse.source);
+						sMessage = readMessage(sBase + oResponse.source);
 						oHeaders["Content-Type"] = oHeaders["Content-Type"]
 							|| contentType(oResponse.source);
 					} else {
@@ -258,10 +252,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 			 * Reads and caches the source for the given path.
 			 */
 			function readMessage(sPath) {
-				var sMessage, oResult;
+				var sMessage = mMessageForPath[sPath],
+					oResult;
 
-				sPath = jQuery.sap.getResourcePath(sBase + "/" + sPath);
-				sMessage = mMessageForPath[sPath];
 				if (!sMessage) {
 					oResult = jQuery.sap.sjax({
 						url: sPath,
@@ -316,6 +309,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				});
 			}
 
+			// ensure to always search the fake data in test-resources, remove cache buster token
+			sBase = jQuery.sap.getResourcePath(sBase)
+				.replace(/(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/, "$1test-resources/") + "/";
 			setupServer();
 
 		},
@@ -433,10 +429,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {map} mFixture
 		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}.
 		 * @param {string} [sSourceBase="sap/ui/core/qunit/odata/v4/data"]
-		 *   The base path for <code>source</code> values in the fixture. The path must have been
-		 *   registered through {@link jQuery.sap#.registerModulePath},
-		 *   {@link jQuery.sap#.registerResourcePath} or the attribute
-		 *   <code>data-sap-ui-resourceroots</code> in the bootstrap. It must not end with '/'.
+		 *   The base path for <code>source</code> values in the fixture. The path must be in the
+		 *   project's test folder, typically it should start with "sap".
+		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {string} [sFilterBase="/"]
 		 *   A base path for the filter URLs. It is prepended to all keys in <code>mFixture</code>.
 		 *   It must end with '/'.
