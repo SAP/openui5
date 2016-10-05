@@ -131,7 +131,11 @@
 			this.vItemConfigs = [
 			                     {},
 			                     {
-			                    	content: "<div class='items'>2</div>"
+			                    	content: "<div class='items'>2</div>",
+			                    	layoutData: new sap.m.FlexItemData({
+			                    		growFactor: 2,
+			                    		baseSize: "58%"
+			                    	})
 			                     },
 			                     {
 			                    	content: "<div class='items'>3</div>"
@@ -165,6 +169,10 @@
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
+		if(!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
+			equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
+			equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
+		}
 	});
 
 	QUnit.module("Inline vs. block display", {
