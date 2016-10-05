@@ -1410,8 +1410,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			oInput._iPopupListSelectedIndex = -1;
 
 			if (!bShowSuggestion ||
+				!oInput._bShouldRefreshListItems ||
 				!oInput.getDomRef() ||
-				(!oInput._bUseDialog && oInput._bShouldRefreshListItems && !oInput.$().hasClass("sapMInputFocused"))) {
+				(!oInput._bUseDialog && !oInput.$().hasClass("sapMInputFocused"))) {
 				return false;
 			}
 
