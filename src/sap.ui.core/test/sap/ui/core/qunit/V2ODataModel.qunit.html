@@ -122,7 +122,7 @@
 			ok(true, "metadataloaded");
 			start();
 		}
-		oModel.attachMetadataLoaded(this, fnTest);
+		oModel.attachMetadataLoaded(fnTest, this);
 	});
 
 	asyncTest("read JSON", function() {
@@ -738,10 +738,10 @@
 			ok(iCount === 1, "request performed");
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
-			oModel.detachBatchRequestCompleted(fnCheck);
+			oModel.detachBatchRequestCompleted(fnCheck, this);
 			start();
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck, this);
 	});
 
 	asyncTest("test oDataModel read and bind Object", function() {
@@ -772,7 +772,7 @@
 					start();
 				}
 				oModel.attachBatchRequestCompleted(
-					this, fnCheck
+					fnCheck
 				);
 			},
 			error : function(oError) {
@@ -832,7 +832,7 @@
 			start();
 
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in default batch group", function() {
@@ -875,7 +875,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different batch groups", function() {
@@ -920,7 +920,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different deferred batch groups", function() {
@@ -964,7 +964,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 		oModel.submitChanges();
 	});
 

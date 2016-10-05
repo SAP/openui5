@@ -121,7 +121,6 @@
 				this.oConfig = new sap.ui.core.Configuration(this.oCoreMock);
 			},
 			afterEach: function(assert) {
-				sap.ui.getCore().detachLocalizationChanged(this.fnListener, this);
 				this.oConfig.setLanguage("en");
 			}
 		});

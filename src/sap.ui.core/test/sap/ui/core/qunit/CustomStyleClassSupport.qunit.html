@@ -57,9 +57,7 @@
 				}
 			});
 
-			var myControl = new my.lib.MyControl("myControl", {
-				text : "test"
-			});
+			var myControl = new my.lib.MyControl("myControl");
 
 			myControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -80,9 +78,7 @@
 
 				this.fireThemeScopingChangedSpy = sinon.spy(sap.ui.getCore(), "fireThemeScopingChanged");
 
-				this.myControl = new my.lib.MyControl("myControl", {
-					text : "test"
-				});
+				this.myControl = new my.lib.MyControl("myControl");
 
 				this.myControl.placeAt("content");
 				sap.ui.getCore().applyChanges();

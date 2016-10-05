@@ -11,7 +11,8 @@ sap.ui.core.Control.extend("TestControl", {
 			"alt" : "string",
 			"visible" : "boolean",
 			"tabbable" : "boolean",
-			"index" : "int" //Results in different behavior of the control in different columns
+			"index" : "int", //Results in different behavior of the control in different columns
+			"width" : "sap.ui.core.CSSSize" // Table sets "width" for the title text
 		}
 	},
 
