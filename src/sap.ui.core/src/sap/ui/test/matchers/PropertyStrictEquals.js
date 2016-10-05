@@ -45,14 +45,20 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		 */
 		isMatching : function (oControl) {
 			var sPropertyName = this.getName(),
+				sId = oControl.getId(),
 				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
 
 			if (!fnProperty) {
-				this._oLogger.error("Control '" + oControl.sId + "' does not have a property called '" + sPropertyName + "'");
+				this._oLogger.error("Control '" + sId + "' does not have a property called '" + sPropertyName + "'");
 				return false;
 			}
 
-			return fnProperty.call(oControl) === this.getValue();
+			var vPropertyValue = fnProperty.call(oControl);
+			var bMatches = vPropertyValue === this.getValue();
+			if (!bMatches) {
+				this._oLogger.debug("The property '" + sPropertyName + "' of '" + sId + "' has the value '" + vPropertyValue + "' expected '" + this.getValue() + "'");
+			}
+			return bMatches;
 
 		}
 	});
