@@ -1,6 +1,7 @@
 <mvc:View controllerName="sap.ui.demokit.icex.view.Master"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<Page
 		id="page"
 		title="{i18n>appTitle}"
@@ -43,6 +44,7 @@
 				<items>
 					<StandardListItem
 						title="{name}"
+						app:tags="{tags}"
 						type="{ui>/listItemType}"
 						press="pressIconListItem"
 						icon="sap-icon://{name}"
