@@ -203,6 +203,60 @@
 		});
 
 
+		QUnit.module("Keyboard handling", {
+			setup: function() {
+				// arrange
+				this.oPaginator = new sap.ui.commons.Paginator({
+					currentPage: 1,
+					numberOfPages: 100
+				});
+
+				this.oPaginator.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			getPageLink: function(oPaginator, iIndex) {
+				return oPaginator.$("a--" + iIndex);
+			},
+			teardown: function() {
+				// cleanup
+				this.oPaginator.destroy();
+			}
+		});
+
+		QUnit.test("Enter", function(assert) {
+			var oFirstPageLink = this.getPageLink(this.oPaginator, 1),
+				oSecondPageLink = this.getPageLink(this.oPaginator, 2);
+
+			oFirstPageLink.focus();
+			qutils.triggerKeydown(oFirstPageLink[0], jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(document.activeElement,  jQuery.sap.KeyCodes.ENTER);
+
+			assert.strictEqual(this.oPaginator.getCurrentPage(), 2, "Enter event should change the current page.");
+
+		});
+
+		QUnit.test("Enter for Paginator inside other controls", function(assert) {
+			var oPaginator1 = new sap.ui.commons.Paginator({
+				currentPage: 1,
+				numberOfPages: 100
+			});
+
+			var oDialog1 = new sap.ui.commons.Dialog({
+				content: [oPaginator1]
+			});
+
+			oDialog1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oDialog1.open();
+
+			qutils.triggerKeydown(oPaginator1.$("a--2"), jQuery.sap.KeyCodes.ENTER);
+			assert.strictEqual(oPaginator1.getCurrentPage(), 2, "Enter event should change the current page");
+
+			//clean up
+			oPaginator1.destroy();
+			oDialog1.destroy();
+		});
 
 		</script>
 	</head>
