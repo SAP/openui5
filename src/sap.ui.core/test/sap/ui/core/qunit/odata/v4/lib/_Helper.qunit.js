@@ -230,6 +230,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("formatLiteral", function (assert) {
+		assert.throws(function () {
+			_Helper.formatLiteral();
+		}, new Error("Illegal value: undefined"));
+
+		assert.strictEqual(_Helper.formatLiteral(null), "null"); // type must not matter
+	});
+
+	//*********************************************************************************************
 	// t: the tested type
 	// v: the value to format
 	// e: the expected result

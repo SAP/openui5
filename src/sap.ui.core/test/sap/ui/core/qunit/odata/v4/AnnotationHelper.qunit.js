@@ -3,12 +3,17 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/core/Icon",
 	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, BaseContext, AnnotationHelper, _SyncPromise, ODataMetaModel, TestUtils) {
+], function (jQuery, Icon, BaseContext, JSONModel, Basics, Expression, AnnotationHelper,
+		_SyncPromise, ODataMetaModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -98,6 +103,32 @@ sap.ui.require([
 				}
 			}
 		};
+
+	/**
+	 * Checks that the given raw value is turned by <code>AnnotationHelper.value</code> into a value
+	 * that a control is able to evaluate into the given expected result.
+	 *
+	 * @param {object} assert
+	 *   QUnit's <code>assert</code>
+	 * @param {any} vRawValue
+	 *   Any raw value from the meta model
+	 * @param {any} vResult
+	 *   The expected result
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} [oMetaModel]
+	 *   Optional meta model (or dummy)
+	 * @param {sap.ui.model.Model} [oModel]
+	 *   Optional model (in case bindings are involved)
+	 */
+	function check(assert, vRawValue, vResult, oMetaModel, oModel) {
+		var oContext = new BaseContext(oMetaModel, "/"),
+			// code under test
+			sColor = AnnotationHelper.value(vRawValue, {context : oContext}),
+			oIcon = new Icon({color: sColor, models : oModel});
+
+		oIcon.bindObject("/");
+		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult),
+			JSON.stringify(vRawValue) + " --> " + sColor);
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.AnnotationHelper", {
@@ -201,5 +232,101 @@ sap.ui.require([
 				assert.strictEqual(codeUnderTest(), mFixture[sPath], sPath);
 			}
 		}
+	});
+
+	//*********************************************************************************************
+	["/my/path", "/my/path/"].forEach(function (sPath) {
+		QUnit.test("value", function (assert) {
+			var oMetaModel = {},
+				oContext = new BaseContext(oMetaModel, sPath),
+				vRawValue = {},
+				sResult = "foo";
+
+			this.mock(Expression).expects("getExpression")
+				.withExactArgs({
+						asExpression : false,
+						model : sinon.match.same(oMetaModel),
+						path : "/my/path", // trailing slash removed!
+						value : sinon.match.same(vRawValue)
+					})
+				.returns(sResult);
+
+			assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("value: 14.5.1 Comparison and Logical Operators", function (assert) {
+		check(assert, {
+			$And : [{
+				$And : [
+					{
+						$Eq : [
+							{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
+							{"$DateTimeOffset" : "1970-01-01T00:00:00.000+00:00"}
+						]
+					}, {
+						$Eq : [
+							{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
+							{"$DateTimeOffset" : "1970-01-01T00:00:00.000-00:00"}
+						]
+					}
+				]
+			}, {
+				$Le : [
+					{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
+					{"$DateTimeOffset" : "1970-01-01T00:00:00.000-01:00"}
+				]
+			}]
+		}, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("value: 14.5.3.1.2 Function odata.fillUriTemplate", function (assert) {
+		var oMetaModel = {
+				getProperty : function (sPath) {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oModel = new JSONModel({
+				Address : {
+					City : "MyCity",
+					Street : "O'Neil's Alley"
+				}
+			}),
+			sUrl = "https://www.google.de/maps/place/'O''Neil''s Alley',MyCity"
+				.replace(/ /g, "%20")
+				.replace(/'/g, "%27");
+
+		oMetaModelMock.expects("getProperty")
+			.withExactArgs("/$Apply/1/$LabeledElement/$Apply/0/$Path/$Type")
+			.returns("Edm.Guid"); // City; just kidding
+		oMetaModelMock.expects("getProperty")
+			.withExactArgs("/$Apply/2/$LabeledElement/$Apply/0/$Path/$Type")
+			.returns("Edm.String"); // Street
+
+		check(assert, {
+			$Apply : [
+				"https://www.google.de/maps/place/{street},{city}",
+				{
+					$LabeledElement : {
+						$Apply : [{
+							$Path : "Address/City"
+						}],
+						$Function : "odata.uriEncode"
+					},
+					$Name : "city"
+				},
+				{
+					$LabeledElement : {
+						$Apply : [{
+							$Path : "Address/Street"
+						}],
+						$Function : "odata.uriEncode"
+					},
+					$Name : "street"
+				}
+			],
+			$Function : "odata.fillUriTemplate"
+		}, sUrl, oMetaModel, oModel);
 	});
 });

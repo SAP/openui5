@@ -483,7 +483,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("odata.compare", function (assert) {
-		this.mock(sap.ui).expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
+		this.mock(sap.ui).expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(ODataUtils);
 		this.mock(ODataUtils).expects("compare")
 			.withExactArgs(2, 3).returns("-1");
 
@@ -492,7 +493,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("odata.uriEncode", function (assert) {
-		this.mock(sap.ui).expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
+		this.mock(sap.ui).expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
 		this.mock(ODataUtils).expects("formatValue")
 			.withExactArgs("foo", "Edm.String").returns("'foo'");
 
