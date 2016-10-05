@@ -244,8 +244,6 @@
 						<phase>process-resources</phase>
 						<goals>
 							<goal>helium-activate-version</goal>
-							<goal>helium-stop</goal>
-							<goal>helium-start</goal>
 						</goals>
 						<configuration>
 							<skip>${skipActivateVersion}</skip>
