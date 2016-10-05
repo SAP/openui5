@@ -189,6 +189,53 @@
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
+		test("Add button rendering in nested TabContainer with binding", function () {
+			//arrange
+			var oTemplate2,
+				oTabContainer2,
+				oItems,
+				oFirstItemContent;
+
+			oTemplate2 = new sap.m.TabContainerItem({
+				name: "{Name}",
+				content:[ new sap.m.TabContainer({
+							showAddNewButton: true,
+							items: [
+									new sap.m.TabContainerItem({
+										name: "Plus button in nested tab container",
+										content: [
+											new sap.m.Text({text: "plus button should be rendered" })
+										]
+									})
+								]
+							})
+						]
+				});
+
+			oTabContainer2 = new sap.m.TabContainer({
+				id: "test",
+				showAddNewButton: true,
+				items: {
+					path: "/ProductCollection",
+					template: oTemplate2
+				}
+			});
+
+			oTabContainer2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oItems = oTabContainer2.getItems();
+			oFirstItemContent = oItems[0].getContent();
+
+			//assert
+			ok(oItems[0].getContent()[0].getShowAddNewButton(), "showAddNewButton is set to true");
+			strictEqual(oItems[0].getContent()[0]._getTabStrip().$().find(".sapMTSAddNewTabBtn").length, 1, "Add new button is rendered and it is only one");
+
+			// clean up
+			oTabContainer2.destroy();
+			oTabContainer2 = null;
+		});
+
 		module("Focus", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
