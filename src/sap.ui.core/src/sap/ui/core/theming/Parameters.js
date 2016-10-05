@@ -29,20 +29,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 
 		var aParametersToLoad = [];
 
+		// match a CSS url
+		var rCssUrl = /url[\s]*\('?"?([^\'")]*)'?"?\)/;
+
 		function resetParameters() {
 			mParameters = null;
 		}
 
-		function mergeParameterSet(mCurrent, mNew) {
+		function checkAndResolveRelativeUrl(sUrl, sThemeBaseUrl) {
+
+			var aMatch = rCssUrl.exec(sUrl);
+			if (aMatch) {
+				var oUri = new URI(aMatch[1]);
+				if (oUri.is("relative")) {
+					// Rewrite relative URLs based on the theme base url
+					// Otherwise they would be relative to the HTML page which is incorrect
+					var sNormalizedUrl = oUri.absoluteTo(sThemeBaseUrl).normalize().path();
+					sUrl = "url('" + sNormalizedUrl + "')";
+				}
+			}
+
+			return sUrl;
+		}
+
+		function mergeParameterSet(mCurrent, mNew, sThemeBaseUrl) {
 			for (var sParam in mNew) {
 				if (typeof mCurrent[sParam] === "undefined") {
-					mCurrent[sParam] = mNew[sParam];
+					mCurrent[sParam] = checkAndResolveRelativeUrl(mNew[sParam], sThemeBaseUrl);
 				}
 			}
 			return mCurrent;
 		}
 
-		function mergeParameters(mNewParameters) {
+		function mergeParameters(mNewParameters, sThemeBaseUrl) {
 
 			// check for old format:
 			// {
@@ -63,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			mParameters["scopes"] = mParameters["scopes"] || {};
 
 			// merge default parameters
-			mergeParameterSet(mParameters["default"], mNewParameters["default"]);
+			mergeParameterSet(mParameters["default"], mNewParameters["default"], sThemeBaseUrl);
 
 			// merge scopes
 			if (typeof mNewParameters["scopes"] === "object") {
@@ -71,27 +90,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 					// ensure scope object
 					mParameters["scopes"][sScopeName] = mParameters["scopes"][sScopeName] || {};
 					// merge scope set
-					mergeParameterSet(mParameters["scopes"][sScopeName], mNewParameters["scopes"][sScopeName]);
+					mergeParameterSet(mParameters["scopes"][sScopeName], mNewParameters["scopes"][sScopeName], sThemeBaseUrl);
 				}
 			}
-		}
-
-		function checkAndResolveUrls(mParams, sResourceUrl){
-			//only resolve relative urls
-			var rRelativeUrl = /^url\(['|"]{1}(?!https?:\/\/|\/)(.*)['|"]{1}\)$/,
-				sAbsolutePath = sResourceUrl.replace(/library-parameters\.json.*/, "");
-
-			/*eslint-disable no-loop-func */
-			for (var sId in mParams){
-				if (rRelativeUrl.test(mParams[sId])){
-					mParams[sId] = mParams[sId].replace(rRelativeUrl, function($0, $1, $2){
-						var sNormalizedPath = new URI(sAbsolutePath + $1).normalize().path();
-						return "url('" + sNormalizedPath + "')";
-					});
-				}
-			}
-			/*eslint-enable no-loop-func */
-			return mParams;
 		}
 
 		function forEachStyleSheet(fnCallback) {
@@ -114,7 +115,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		/*
 		 * Load parameters for a library/theme combination as identified by the URL of the library.css
 		 */
-		function loadParameters(sId, sUrl) {
+		function loadParameters(sId, sStyleSheetUrl) {
+
+			// Remove CSS file name and query to create theme base url (to resolve relative urls)
+			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
 
 			// read inline parameters from css style rule
 			// (can be switched off for testing purposes via private URI parameter "sap-ui-xx-no-inline-theming-parameters=true")
@@ -134,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 					}
 					try {
 						var oParams = jQuery.parseJSON(sParams);
-						mergeParameters(oParams);
+						mergeParameters(oParams, sThemeBaseUrl);
 						return;
 					} catch (ex) {
 						jQuery.sap.log.warning("Could not parse theme parameters from " + sUrl + ". Loading library-parameters.json as fallback solution.");
@@ -148,8 +152,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 
 			// derive parameter file URL from CSS file URL
 			// $1: name of library (incl. variants)
-			// $2: additional parameters, e.g. for sap-ui-merged use case
-			sUrl = sUrl.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0,$1,$2) {
+			// $2: additional parameters, e.g. for sap-ui-merged, version/sap-ui-dist-version
+			var sUrl = sStyleSheetUrl.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0, $1, $2) {
 				return "/library-parameters.json" + ($2 ? $2 : "");
 			});
 
@@ -162,12 +166,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
 						var oParams = oResult[j];
-						oParams = checkAndResolveUrls(oParams, sUrl);
-						mergeParameters(oParams);
+						mergeParameters(oParams, sThemeBaseUrl);
 					}
 				} else {
-					oResult = checkAndResolveUrls(oResult, sUrl);
-					mergeParameters(oResult);
+					mergeParameters(oResult, sThemeBaseUrl);
 				}
 			} else {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
@@ -180,7 +182,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			// Inital loading
 			if (!mParameters) {
 
-				mergeParameters({});
+				// Merge an empty parameter set to initialize the internal object
+				mergeParameters({}, "");
+
 				sTheme = sap.ui.getCore().getConfiguration().getTheme();
 
 				forEachStyleSheet(loadParameters);
@@ -482,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			sParamName = sParamName || "sapUiGlobalLogo";
 			var logo = Parameters.get(sParamName);
 			if (logo) {
-				var match = /url[\s]*\('?"?([^\'")]*)'?"?\)/.exec(logo);
+				var match = rCssUrl.exec(logo);
 				if (match) {
 					logo = match[1];
 				} else if (logo === "''" || logo === "none") {
