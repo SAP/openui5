@@ -751,7 +751,74 @@ sap.ui.require([
 			})
 		]);
 	});
-	//TODO: reject PATCH if POST has been sent but not finished
+
+	//*********************************************************************************************
+	QUnit.test("setCreatePending influences update/_delete", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees"),
+			oCreatePromise,
+			oRequestorMock = this.mock(oRequestor),
+			fnResolveCreate;
+
+		// code under test - no error if there is no transient entry
+		oCache.setCreatePending();
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object,
+					sinon.match.func)
+			.returns(new Promise(function (resolve, request) {
+				fnResolveCreate = resolve;
+			}));
+
+		oCreatePromise = oCache.create("updateGroup", "Employees", "");
+
+		// code under test
+		return oCache.update("updateGroup", "foo", "bar", "n/a", "-1").then(function () {
+			assert.ok(true, "Update works before calling setCreatePending()");
+
+			// code under test
+			oCache.setCreatePending();
+
+			return Promise.all([
+				// code under test
+				oCache.update("updateGroup", "foo", "baz", "n/a", "-1")
+					.then(function () {
+						assert.ok(false, "unexpected success - update");
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"No 'update' allowed while waiting for server response",
+							oError.message);
+
+					}),
+				// code under test
+				oCache._delete("updateGroup", "n/a", "-1")
+					.then(function () {
+						assert.ok(false, "unexpected success - _delete");
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"No 'delete' allowed while waiting for server response",
+							oError.message);
+
+					})
+				]).then(function () {
+					// simulate successful create
+					fnResolveCreate({});
+
+					return oCreatePromise.then(function () {
+						oRequestorMock.expects("request")
+							.withExactArgs("PATCH", "Employees", "updateGroup",
+								{"If-Match" : undefined}, {foo : "baz2"}, sinon.match.func)
+							.returns(Promise.resolve({}));
+
+						// code under test
+						return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
+							.then(function () {
+								assert.ok(true, "Update works again after create is resolved");
+							});
+					});
+				});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("create entity without initial data", function (assert) {
