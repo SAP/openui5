@@ -169,6 +169,7 @@ sap.ui.define([
 				var i,
 					oNextContext;
 				if (iIndex === -1) {
+					// happens only for a created context that is not transient anymore
 					oContext.destroy();
 					delete that.aContexts[-1];
 				} else {
@@ -292,7 +293,8 @@ sap.ui.define([
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (sGroupId, oInitialData) {
-		var oContext;
+		var oContext,
+			that = this;
 
 		if (this.aContexts[-1]) {
 			throw new Error("Must not create twice");
@@ -304,7 +306,11 @@ sap.ui.define([
 		sGroupId = sGroupId || this.getUpdateGroupId();
 		oContext = Context.create(this.oModel, this,
 			this.oModel.resolve(this.sPath, this.oContext) + "/-1", -1,
-			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData));
+			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData, function () {
+				oContext.destroy();
+				delete that.aContexts[-1];
+				that._fireChange({reason : ChangeReason.Remove});
+		}));
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});

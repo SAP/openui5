@@ -157,6 +157,32 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						}
 					});
 				},
+				firstSalesOrderIsAtPos0 : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						check : function (oSalesOrderTable) {
+							return  oSalesOrderTable.getItems()[0].getCells()[0].getText()
+								=== sap.ui.test.Opa.getContext().firstSalesOrderId;
+						},
+						success : function (oSalesOrderTable) {
+							Opa5.assert.ok(true, "First SalesOrderID " +
+								oSalesOrderTable.getItems()[0].getCells()[0].getText());
+						},
+						viewName : sViewName
+					});
+				},
+				pressCancelSalesOrdersChangesButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "cancelSalesOrdersChanges",
+						success : function (oCreateSalesOrderButton) {
+							Opa5.assert.ok(true, "Cancel Sales Orders Changes button pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				pressConfirmSalesOrdersButton : function () {
 					return this.waitFor({
 						actions : new Press(),

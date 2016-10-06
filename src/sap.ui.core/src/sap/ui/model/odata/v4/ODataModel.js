@@ -765,7 +765,7 @@ sap.ui.define([
 		sGroupId = sGroupId || this.sUpdateGroupId;
 		_ODataHelper.checkGroupId(sGroupId, true);
 
-		this.oRequestor.cancelPatch(sGroupId);
+		this.oRequestor.cancelChanges(sGroupId);
 	};
 
 	/**

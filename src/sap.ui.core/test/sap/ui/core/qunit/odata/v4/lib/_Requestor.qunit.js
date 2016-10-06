@@ -852,10 +852,11 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelPatch: various requests", function (assert) {
+	QUnit.test("cancelChanges: various requests", function (assert) {
 		var fnCancel1 = sinon.spy(),
 			fnCancel2 = sinon.spy(),
 			fnCancel3 = sinon.spy(),
+			fnCancelPost = sinon.spy(),
 			iCount = 1,
 			oPostData = {},
 			oPromise,
@@ -867,7 +868,6 @@ sap.ui.require([
 
 		function rejected (iOrder, oError) {
 			assert.strictEqual(oError.canceled, true);
-			assert.strictEqual(oError.message, "Group 'groupId' canceled");
 			assert.strictEqual(iCount, iOrder);
 			iCount += 1;
 		}
@@ -881,9 +881,10 @@ sap.ui.require([
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
-				oPostData).then(unexpected, function (oError) {
+				oPostData, fnCancelPost).then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
-					assert.strictEqual(oError.message, "");
+					assert.strictEqual(oError.message, "Request canceled: " +
+						"POST LeaveRequests('42')/name.space.Submit; group: groupId");
 				}),
 			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
@@ -901,17 +902,17 @@ sap.ui.require([
 				{responseText: "{}"},
 				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
 			]));
+		sinon.spy(oRequestor, "cancelChangeRequests");
 
 		// code under test
-		oRequestor.cancelPatch("groupId");
+		oRequestor.cancelChanges("groupId");
 
 		sinon.assert.calledOnce(fnCancel1);
 		sinon.assert.calledWithExactly(fnCancel1);
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
-		assert.strictEqual(oRequestor.hasPendingChanges(), true);
-
-		oRequestor.removePost("groupId", oPostData);
+		sinon.assert.calledOnce(fnCancelPost);
+		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 		oRequestor.submitBatch("groupId");
 
@@ -919,7 +920,7 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelPatch: only PATCH", function (assert) {
+	QUnit.test("cancelChanges: only PATCH", function (assert) {
 		var fnCancel = function() {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
@@ -944,24 +945,26 @@ sap.ui.require([
 		this.mock(oRequestor).expects("request").never();
 
 		// code under test
-		oRequestor.cancelPatch("groupId");
+		oRequestor.cancelChanges("groupId");
 		oRequestor.submitBatch("groupId");
 
 		return oPromise;
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelPatch: unused group", function (assert) {
-		_Requestor.create("/Service/").cancelPatch("unusedGroupId");
+	QUnit.test("cancelChanges: unused group", function (assert) {
+		_Requestor.create("/Service/").cancelChanges("unusedGroupId");
 	});
 
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
-		var oPromise,
+		var fnCancel = sinon.spy(),
+			oPromise,
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
+			fnCancel);
 		oTestPromise = oPromise.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -971,6 +974,7 @@ sap.ui.require([
 		// code under test
 		oRequestor.removePatch(oPromise);
 
+		sinon.assert.calledOnce(fnCancel);
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
 		return oTestPromise;
@@ -978,7 +982,8 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("removePatch: various requests", function (assert) {
-		var oPromise,
+		var fnCancel = sinon.spy(),
+			oPromise,
 			aPromises,
 			oRequestor = _Requestor.create("/Service/");
 
@@ -988,9 +993,12 @@ sap.ui.require([
 
 		function rejected(oError) {
 			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message,
+				"Request canceled: PATCH Products('0'); group: groupId");
 		}
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
+			fnCancel);
 
 		aPromises = [
 			oPromise.then(unexpected, rejected),
@@ -1018,26 +1026,34 @@ sap.ui.require([
 		oRequestor.removePatch(oPromise);
 		oRequestor.submitBatch("groupId");
 
+		sinon.assert.calledOnce(fnCancel);
+
 		return Promise.all(aPromises);
 	});
 
 	//*****************************************************************************************
 	QUnit.test("removePost", function (assert) {
 		var oBody = {},
+			fnCancel1 = sinon.spy(),
+			fnCancel2 = sinon.spy(),
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
+		sinon.spy(oRequestor, "cancelChangeRequests");
 		oTestPromise = Promise.all([
-			oRequestor.request("POST", "Products", "groupId", {}, oBody).then(function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.canceled, true);
-			}),
-			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"})
+			oRequestor.request("POST", "Products", "groupId", {}, oBody, fnCancel1)
+				.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.canceled, true);
+				}),
+			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"}, fnCancel2)
 		]);
 
 		// code under test
 		oRequestor.removePost("groupId", oBody);
+
+		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
@@ -1049,17 +1065,23 @@ sap.ui.require([
 			]).returns(Promise.resolve([
 				{responseText : "{}"}
 			]));
+
+		// code under test
 		oRequestor.submitBatch("groupId");
+
+		sinon.assert.calledOnce(fnCancel1);
+		sinon.assert.notCalled(fnCancel2);
 		return oTestPromise;
 	});
 
 	//*****************************************************************************************
 	QUnit.test("removePost with only one POST", function (assert) {
 		var oBody = {},
+			fnCancel = sinon.spy(),
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
-		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody).then(
+		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody, fnCancel).then(
 			function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -1069,6 +1091,7 @@ sap.ui.require([
 
 		// code under test
 		oRequestor.removePost("groupId", oBody);
+		sinon.assert.calledOnce(fnCancel);
 
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
@@ -1155,5 +1178,4 @@ sap.ui.require([
 // TODO: continue-on-error? -> flag on model
 // TODO: provide test that checks that .request() does not serialize twice in case of
 // 		 refreshSecurityToken and repeated request
-// TODO: cancelPatch: what about existing GET requests in deferred queue (delete or not)?
-// TODO: cancelPatch/removePatch/removePost are very similar, merge using a filter function?
+// TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

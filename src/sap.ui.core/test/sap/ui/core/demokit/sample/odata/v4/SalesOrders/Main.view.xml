@@ -106,8 +106,8 @@
 							press="onRefreshSalesOrdersList"/>
 						<Button icon="sap-icon://save" id="saveSalesOrders"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
-						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
-							tooltip="Cancel sales orders changes"/>
+						<Button id="cancelSalesOrdersChanges" icon="sap-icon://sys-cancel-2"
+							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
 						<SearchField enabled="{ui>/bRealOData}" id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"

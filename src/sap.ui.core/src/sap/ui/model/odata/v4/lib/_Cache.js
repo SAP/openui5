@@ -271,7 +271,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Reset all pending PATCH requests for the given <code>sPath</code>
+	 * Reset all pending POST requests and PATCH requests for the given <code>sPath</code>
 	 *
 	 * @param {_Cache} oCache The cache
 	 * @param {string} sPath The path
@@ -279,7 +279,9 @@ sap.ui.define([
 	function resetChanges(oCache, sPath) {
 		var i,
 			sRequestPath,
-			aPromises;
+			aPromises,
+			sTransientGroup =
+				oCache.aElements && oCache.aElements[-1] && oCache.aElements[-1]["@$ui5.transient"];
 
 		for (sRequestPath in oCache.mPatchRequests) {
 			if (isSubPath(sRequestPath, sPath)) {
@@ -289,6 +291,9 @@ sap.ui.define([
 				}
 				delete oCache.mPatchRequests[sRequestPath];
 			}
+		}
+		if (sTransientGroup) {
+			oCache.oRequestor.removePost(sTransientGroup, oCache.aElements[-1]);
 		}
 	}
 
@@ -439,7 +444,6 @@ sap.ui.define([
 			oEntity = oCacheData[vDeleteProperty];
 			if (oEntity["@$ui5.transient"]) {
 				that.oRequestor.removePost(oEntity["@$ui5.transient"], oEntity);
-				fnCallback(iIndex);
 				return Promise.resolve();
 			}
 			if (oEntity["$ui5.deleting"]) {
@@ -486,12 +490,20 @@ sap.ui.define([
 	 *   The entity's path within the cache
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
+	 * @param {function} fnCancelCallback
+	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @returns {Promise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
 	 *   and the entity has been marked as non-transient.
 	 */
-	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData) {
+	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData,
+			fnCancelCallback) {
 		var that = this;
+
+		function cleanUp() {
+			delete that.aElements[-1];
+			fnCancelCallback();
+		}
 
 		// clone data to avoid modifications outside the cache
 		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
@@ -501,16 +513,11 @@ sap.ui.define([
 		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
 		oEntityData["@odata.etag"] = undefined;
 		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData)
+		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData, cleanUp)
 			.then(function (oResult) {
 				delete oEntityData["@$ui5.transient"];
 				// update the cache with the POST response
 				_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
-			}, function (oError) {
-				if (oError.canceled) {
-					delete that.aElements[-1];
-				}
-				throw oError;
 			});
 	};
 
