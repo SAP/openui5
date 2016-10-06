@@ -870,6 +870,21 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	box-sizing: border-box;
 }
 
+.sapUiSizeCondensed {
+
+	.sapUiTableCell,
+	.sapUiTableCell > .sapUiTableNoCondensedPadding {
+		padding: 0;
+	}
+
+	.sapUiTableCell > *,
+	.sapUiTableCondensedPadding {
+		box-sizing: border-box;
+		padding: 0 0.5rem;
+	}
+
+}
+
 .sapUiTableCellFlex {
 	display: flex;
 }
