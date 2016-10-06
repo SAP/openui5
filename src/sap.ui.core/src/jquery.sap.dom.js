@@ -38,6 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.byId = function byId(sId, oContext) {
 		var escapedId = "";
 		if (sId) {
+			// Note: This does not escape all relevant characters according to jQuery's documentation
+			// (see http://api.jquery.com/category/selectors/)
+			// As the behavior hasn't been changed for a long time it is not advisable to change it in
+			// future as users might be already escaping characters on their own or relying on the fact
+			// selector like jQuery.sap.byId("my-id > div") can be used.
 			escapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
 		}
 		return jQuery(escapedId, oContext);
