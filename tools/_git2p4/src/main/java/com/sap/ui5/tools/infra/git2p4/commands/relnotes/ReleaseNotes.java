@@ -156,6 +156,7 @@ public class ReleaseNotes {
         processCommand = new GatherPreviousNotesCommand();
         gatherFromPreviousCodelines(repo.getRepository());
       }
+      context.lastRunInfo.save();
       processCommand = new GatherNotesCommand();
       scan(repo.getRepository());
       if (haveNewNotes()) {

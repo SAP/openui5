@@ -75,6 +75,7 @@ public class Git2P4Main {
     public List<Mapping> mappings = null;
     public Version version;
     public int lowestMinor = 28; //28 is the lowest minor at the time this is done
+    public LastRunInfo lastRunInfo;
     public String findVersion(String branch) throws IOException {
       return Git2P4Main.findVersion(branch);
     }
@@ -117,9 +118,9 @@ public class Git2P4Main {
     if ("openui5".equals(repo.getRepositoryName()) && context.range.contains("1.24.0")){
       repo.range = "";
     } 
-    LastRunInfo lastRunInfo = new LastRunInfo(repo.getRepository(), branch);
+    context.lastRunInfo = new LastRunInfo(repo.getRepository(), branch);
     if (useLastCommit) {
-      String lastCommitId = lastRunInfo.getLastCommitId();
+      String lastCommitId = context.lastRunInfo.getLastCommitId();
       if (lastCommitId != null) {
         repo.range = lastCommitId + "..";
       }
@@ -127,8 +128,7 @@ public class Git2P4Main {
     Log.println("Range for repository " + repo.getRepositoryName() + " - " + repo.range);
     git.log(repo.range);
     if (!git.getLastCommits().isEmpty()) {
-      lastRunInfo.setLastCommitId(git.getLastCommits().keySet().iterator().next());
-      lastRunInfo.save();
+      context.lastRunInfo.setLastCommitId(git.getLastCommits().keySet().iterator().next());
     }
 //    List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.getLastCommits()).run();
     for(GitClient.Commit commit : git.getLastCommits().values()) {
