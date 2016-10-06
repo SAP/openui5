@@ -603,9 +603,23 @@ jQuery.sap.require("sap.m.Button");
 			return oAppComponent;
 		};
 
-		var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
+		var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		assert.equal(oDeterminedAppComponent, oAppComponent);
+	});
+
+	QUnit.test("getAppComponentForControl can determine that the passed control is already the app component", function () {
+		var oComponent = new sap.ui.core.UIComponent({
+			manifest: {
+				"sap.app": {
+					type: "application"
+				}
+			}
+		});
+
+		var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
+
+		assert.equal(oDeterminedAppComponent, oComponent);
 	});
 
 	QUnit.test("getAppComponentForControl can determine the OVP special case", function () {
@@ -613,7 +627,7 @@ jQuery.sap.require("sap.m.Button");
 		var oAppComponent = new sap.ui.core.UIComponent();
 		oComponent.oComponentData = {appComponent: oAppComponent};
 
-		var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
+		var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		assert.equal(oDeterminedAppComponent, oAppComponent);
 	});
@@ -621,7 +635,7 @@ jQuery.sap.require("sap.m.Button");
 	QUnit.test("getAppComponentForControl returns the component if no Manifest is available", function () {
 		var oComponent = new sap.ui.core.UIComponent();
 
-		var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
+		var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		assert.equal(oDeterminedAppComponent, oComponent);
 	});
