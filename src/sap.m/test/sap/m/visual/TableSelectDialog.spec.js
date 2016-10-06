@@ -1,6 +1,6 @@
 describe('sap.m.TableSelectDialog', function() {
     it('should open simple table select dialog', function() {
-        element(by.id('tsdWithBindingInput__vhi')).click();
+        element(by.id('tsdWithBindingInput-vhi')).click();
         var tableSelectDialog = element(by.id('TableSelectDialog2-dialog'));
         expect(takeScreenshot(tableSelectDialog)).toLookAs('simple-tableSelectDialog');
         element(by.id('TableSelectDialog2-cancel')).click();
