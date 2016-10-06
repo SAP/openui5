@@ -167,6 +167,11 @@ oControl = new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Checkbox"}), template: oControl, width: "50px"});
 oTable.addColumn(oColumn);
 
+//sap.m.RadioButton
+oControl = new sap.m.RadioButton({selected: "{checked}", text: "{lastName}"});
+oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.RadioButton"}), template: oControl, width: "50px"});
+oTable.addColumn(oColumn);
+
 // sap.m.Link
 oControl = new sap.m.Link({href: "{href}", text: "{linkText}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Link"}), template: oControl, width: "150px"});

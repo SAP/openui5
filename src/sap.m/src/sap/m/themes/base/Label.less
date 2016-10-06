@@ -212,9 +212,9 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	text-align: left !important; /* to overwrite style set on element */
 }
 
-/* ================================ */
-/* COMPACT + CONDENSED SIZE         */
-/* ================================ */
+/* ========================================================== */
+/* COMPACT + CONDENSED SIZE + SPECIALS FOR SAP.UI.TABLE.TABLE */
+/* ========================================================== */
 
 .sapUiSizeCompact,
 .sapUiSizeCondensed.sapUiTable,
@@ -225,6 +225,27 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	}
 }
 
-.sapUiSizeCondensed .sapUiTableCell>.sapMLabel{
-	.sapUiCondensedTableCellContent; /* see shared.css */
+.sapUiSizeCompact,
+.sapUiSizeCondensed {
+	.sapUiTableCell .sapMLabel,
+	.sapUiTableColCell > .sapMLabel {
+		font-weight: normal;
+		font-size: @sapMFontHeader6Size;
+		color: @sapUiListTextColor;
+	}
+}
+
+.sapUiAnalyticalTable {
+	.sapUiTableCell > .sapMLabel,
+	.sapUiTableColCell > .sapMLabel {
+		width: 100%;
+	}
+
+	.sapUiAnalyticalTableSum .sapUiTableCell .sapMLabel {
+		font-weight: bold;
+	}
+}
+
+.sapUiTableCell .sapMLabel:not(.sapMRbBLabel):not(.sapMCbLabel) {
+	vertical-align: middle;
 }
