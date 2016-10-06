@@ -301,6 +301,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					this.oHashChanger.attachEvent("hashReplaced", this.fnHashReplaced, this);
 
 					this._aHistory = [];
+
+					var oHomeRoute = getHomeRoute(this);
+					if (oHomeRoute) {
+						this._aHistory.push(oHomeRoute);
+					}
 				}
 
 				if (!oHashChanger.init()) {
@@ -816,8 +821,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					oLastHistoryEntry = this._aHistory[this._aHistory.length - 1],
 					oNewHistoryEntry;
 
-				// when back navigation, the last history state should be removed
-				if (sDirection === HistoryDirection.Backwards) {
+				// when back navigation, the last history state should be removed - except home route
+				if (sDirection === HistoryDirection.Backwards && !oLastHistoryEntry.isHome) {
 					// but only if the last history entrie´s title is not the same as the current one
 					if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
 						this._aHistory.pop();
@@ -922,6 +927,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			}
 
 		});
+
+
+		function getHomeRoutePattern(oRouter) {
+			var oHomeRoute = oRouter._oRoutes[oRouter._oConfig.homeRoute];
+			return oHomeRoute && oRouter._oRoutes[oRouter._oConfig.homeRoute].getPattern();
+		}
+
+
+		function getAppTitle(oOwnerComponent) {
+			return oOwnerComponent && oOwnerComponent.getManifestEntry("sap.app/title");
+		}
+
+
+		function getHomeRoute(oRouter) {
+			var sPattern = getHomeRoutePattern(oRouter);
+			// check for placeholders - they are not allowed
+			if (sPattern === "" || (sPattern !== undefined && !/({.*})+/.test(sPattern))) {
+				return {
+					hash: sPattern,
+					isHome: true,
+					title: getAppTitle(oRouter._oOwner)
+				};
+			} else {
+				jQuery.sap.log.error("Routes with dynamic parts cannot be resolved as home route.");
+			}
+		}
 
 		Router.M_EVENTS = {
 			ROUTE_MATCHED: "routeMatched",
