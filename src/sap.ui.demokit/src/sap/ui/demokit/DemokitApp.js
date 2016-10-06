@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iPendingCalls = 0;
 			this._mBestMatchingPage = {};
 			this._aTopLevelNavItems = [];
-			this._aThemes = aThemes || ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_bluecrystal", "sap_goldreflection", "sap_hcb"];
+			this._aThemes = aThemes || ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw", "sap_bluecrystal", "sap_goldreflection", "sap_hcb"];
 			this._sTheme = this._aThemes[0]; // 'aThemes' must contain at least one theme
 			this._sCurrentContent = null;
 			this._mAliases = {};
@@ -1229,6 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap_belize": "Belize",
 			"sap_belize_plus": "Belize Plus",
 			"sap_belize_hcb": "Belize High Contrast Black",
+			"sap_belize_hcw": "Belize High Contrast White",
 			"sap_goldreflection": "Gold Reflection",
 			"sap_hcb": "High Contrast Black"
 		};
@@ -1259,7 +1260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				//Find supported themes
 				var isMobilePage = sIFrameContent.match(/\/sap\/me?\//);
-				var aMySupportedThemes = isMobilePage ? ["sap_bluecrystal", "sap_belize", "sap_belize_plus", "sap_belize_hcb"] : this._aThemes;
+				var aMySupportedThemes = isMobilePage ? ["sap_bluecrystal", "sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcb"] : this._aThemes;
 				var aSupportedThemes = oContentWindow.sap.ui.demokit && oContentWindow.sap.ui.demokit._supportedThemes ? oContentWindow.sap.ui.demokit._supportedThemes : aMySupportedThemes;
 
 				//Update theme switch
