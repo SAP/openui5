@@ -59,6 +59,7 @@ sap.ui.define([], function () {
             oRm.write('>');
 
             this.renderPriorityArea(oRm, oControl);
+            this.renderMessageStrip(oRm, oControl);
             this.renderHeader(oRm, oControl);
             this.renderBody(oRm, oControl);
             this.renderFooter(oRm, oControl);
@@ -106,6 +107,16 @@ sap.ui.define([], function () {
         oRm.write('>');
         oRm.write('</div>');
     };
+
+	/**
+	 * Renders the MessageStrip of the notification if such exists.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 */
+	NotificationListItemRenderer.renderMessageStrip = function (oRm, oControl) {
+		oRm.renderControl(oControl.getProcessingMessage());
+	};
 
     /**
      * Renders the picture of the author of the Notification.
