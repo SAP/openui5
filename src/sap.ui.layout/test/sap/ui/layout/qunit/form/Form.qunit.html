@@ -190,7 +190,7 @@
 			ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
 			ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
 			equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
-			equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
+			equal(jQuery("#F2T").width(), Math.round(jQuery("#F2").children().first().innerWidth()), "Form2 title rendered as large as the Layout");
 			ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
 			ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
 			ok(!jQuery.sap.domById("F3"), "invisible Form is not rendered");
