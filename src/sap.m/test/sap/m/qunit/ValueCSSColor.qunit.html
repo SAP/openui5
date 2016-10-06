@@ -19,10 +19,18 @@
 
 	QUnit.module("RegEx check for additional sap.m.ValueColor enum type");
 
-	QUnit.test("All sap.m.ValueColors are supported.", function(assert) {
+	QUnit.test("All sap.m.ValueColors are supported", function(assert) {
 		assert.expect(4);
 		for (var sValueColor in sap.m.ValueColor) {
 			assert.ok(sap.m.ValueCSSColor.isValid(sValueColor));
+		}
+	});
+
+	QUnit.test("Invalid sap.m.ValueColors are not supported", function(assert) {
+		assert.expect(8);
+		for (var sValueColor in sap.m.ValueColor) {
+			assert.ok(!sap.m.ValueCSSColor.isValid(sValueColor + "Color"));
+			assert.ok(!sap.m.ValueCSSColor.isValid("Color" + sValueColor));
 		}
 	});
 
