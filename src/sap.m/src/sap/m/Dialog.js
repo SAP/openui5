@@ -648,7 +648,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
-			$Ref.addClass("sapMDialogOpen");
+
+			// Without the timeout, Firefox won't fire the transitionend event
+			// because of display = "none" in the same call stack before.
+			jQuery.sap.delayedCall(0, this, function(){$Ref.addClass("sapMDialogOpen");});
 
 			if (isTheCurrentBrowserIENine) {
 				$Ref.fadeIn(200, fnOpened);
