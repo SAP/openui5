@@ -6,12 +6,12 @@
 sap.ui.define([
 		'jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/base/ManagedObject', 'sap/ui/base/Object', 'sap/ui/base/ObjectPool',
-		'./Control', './IntervalTrigger', './RenderManager', './ResizeHandler', './Element',
+		'./Control', './IntervalTrigger', './RenderManager', './Element',
 		'jquery.sap.script'
 	], function(
 		jQuery, Device,
 		ManagedObject, BaseObject, ObjectPool,
-		Control, IntervalTrigger, RenderManager, ResizeHandler, Element
+		Control, IntervalTrigger, RenderManager, Element
 		/* , jQuerySap */) {
 
 	"use strict";
@@ -103,7 +103,6 @@ sap.ui.define([
 			this._animations = { open: null, close: null };
 			this._durations = {	open: "fast", close: "fast" };
 			this._iZIndex = -1;
-			this._oBlindLayer = null;
 			this.setNavigationMode();
 
 			//autoclose handler for mobile or desktop browser in touch mode
@@ -202,8 +201,6 @@ sap.ui.define([
 		}
 
 	});
-
-	Popup._activateBlindLayer = true;
 
 	// stack used for storing z-indices for blocklayer
 	Popup.blStack = [];
@@ -414,35 +411,6 @@ sap.ui.define([
 	};
 
 	//End of Layer
-
-	//****************************************************
-	// BlindLayer et al
-	//****************************************************
-
-	/**
-	 * Layer to work around an IE issue that existed from IE 8-10 showing embedded
-	 * content (like flash) above the popup content which is not expected.
-	 *
-	 * @class
-	 * @private
-	 */
-	Popup.Layer.extend("sap.ui.core.Popup.BlindLayer", {
-		constructor : function() {
-			Popup.Layer.apply(this);
-		}
-	});
-
-	Popup.BlindLayer.prototype.getDomString = function(){
-		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + jQuery.sap.uid() + "\"><iframe scrolling=\"no\" tabIndex=\"-1\"></iframe></div>";
-	};
-
-	/**
-	 * Facility for reuse of created iframes.
-	 * @type sap.ui.base.ObjectPool
-	 * @private
-	 */
-	Popup.prototype.oBlindLayerPool = new ObjectPool(Popup.BlindLayer);
-	// End of BlindLayer
 
 	//****************************************************
 	//ShieldLayer et al
@@ -748,8 +716,7 @@ sap.ui.define([
 	/**
 	 * This function is called after the open animation has been finished.
 	 * It sets the DOM really to 'visible', sets the focus inside the Popup,
-	 * registers the 'followOf-Handler', will update the BlindLayer, and fires
-	 * the 'opened' event.
+	 * registers the 'followOf-Handler' and fires the 'opened' event.
 	 *
 	 * @fires sap.ui.core.Popup#opened
 	 * @private
@@ -799,22 +766,13 @@ sap.ui.define([
 			Popup.DockTrigger.addListener(Popup.checkDocking, this);
 		}
 
-		this._updateBlindLayer();
-
 		// notify that opening has completed
-		if (!!Device.browser.internet_explorer && Device.browser.version === 9) {
-			jQuery.sap.delayedCall(0, this, function(){
-				this.fireOpened();
-			});
-		} else {
-			this.fireOpened();
-		}
+		this.fireOpened();
 	};
 
 	/**
 	 * This function is called before or during the Popup opens. Here the registration
-	 * of events and delegates takes place, the BlindLayer for Internet Explorer
-	 * is added to the DOM, and the corresponding flags for the Popup are set.
+	 * of events and delegates takes place and the corresponding flags for the Popup are set.
 	 *
 	 * @private
 	 */
@@ -843,11 +801,6 @@ sap.ui.define([
 			});
 		}
 
-		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!Device.browser.msie && Device.browser.version < 11 && !Device.os.windows_phone && Popup._activateBlindLayer) {
-			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
-		} // -1 = BlindLayer, -2 = BlockLayer
-
 		if (this._bModal) {
 			this._showBlockLayer();
 		}
@@ -868,11 +821,6 @@ sap.ui.define([
 		//autoclose implementation for mobile or desktop browser in touch mode
 		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
 			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
-		}
-
-		//  register resize handler for blindlayer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
 
 		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
@@ -1103,12 +1051,6 @@ sap.ui.define([
 			this._unregisterEventBusEvents();
 		}
 
-		// get (and 'hide' i.e. remove) the BlindLayer
-		if (this._oBlindLayer) {
-			this.oBlindLayerPool.returnObject(this._oBlindLayer);
-		}
-		this._oBlindLayer = null;
-
 		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
 		//  to prevent the delayed mouse events from reaching the underneath dom element.
 		if (jQuery.sap.isMouseEventDelayed) {
@@ -1224,18 +1166,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * This stuff is being executed during an animation is goind on. But if there
+	 * This stuff is being executed during an animation is going on. But if there
 	 * is no animation this stuff has to be done in advance, before ._closed is
 	 * called.
 	 *
 	 * @private
 	 */
 	Popup.prototype._duringClose = function() {
-		//deregister resize handler
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
-		}
 	};
 
 	/**
@@ -1364,7 +1301,6 @@ sap.ui.define([
 
 		if (this.eOpenState != sap.ui.core.OpenState.CLOSED) {
 			this._applyPosition(this._oPosition);
-			this._oBlindLayer && this._oBlindLayer.update(this._$());
 		}
 
 		return this;
@@ -2013,12 +1949,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.destroy = function() {
-		// deregister resize handler
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
-		}
-
 		this.close();
 		this.oContent = null;
 
@@ -2076,7 +2006,7 @@ sap.ui.define([
 		var i = 0, l = 0;
 
 		if ($PopupRoot.length) {
-			if (document.addEventListener && !Device.browser.internet_explorer) { //FF, Safari
+			if (document.addEventListener && !Device.browser.msie) { //FF, Safari
 				document.addEventListener("focus", this.fEventHandler, true);
 				$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
 
@@ -2086,7 +2016,7 @@ sap.ui.define([
 						oDomRef.addEventListener("blur", this.fEventHandler, true);
 					}
 				}
-			} else { // IE8
+			} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
 				jQuery(document).bind("activate." + this._popupUID, this.fEventHandler);
 				$PopupRoot.bind("deactivate." + this._popupUID, this.fEventHandler);
 
@@ -2115,7 +2045,7 @@ sap.ui.define([
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		if (document.removeEventListener && !Device.browser.internet_explorer) { //FF, Safari
+		if (document.removeEventListener && !Device.browser.msie) { //FF, Safari
 			document.removeEventListener("focus", this.fEventHandler, true);
 			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
 
@@ -2127,7 +2057,7 @@ sap.ui.define([
 
 				this.closePopup(aChildPopups[i]);
 			}
-		} else { // IE8
+		} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
 			jQuery(document).unbind("activate." + this._popupUID, this.fEventHandler);
 			$PopupRoot.unbind("deactivate." + this._popupUID, this.fEventHandler);
 
@@ -2480,10 +2410,6 @@ sap.ui.define([
 			var $Ref = this._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
 			$Ref.css("z-index", this._iZIndex);
 
-			if (this._oBlindLayer) {
-				this._oBlindLayer.update($Ref, this._iZIndex - 1);
-			}
-
 			// only increase children's z-index if this function called via mousedown
 			if (oEventData && !oEventData.type || oEventData && oEventData.type != "mousedown" || sEvent === "mousedown") {
 				var aChildPopups = this.getChildPopups();
@@ -2535,11 +2461,6 @@ sap.ui.define([
 			"z-index" : this._iZIndex
 		});
 
-		// register resize handler for blindlayer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
-
 		if (this.isOpen() && (this.getModal() || this.getAutoClose())) {
 			// register the focus event listener again after rendering because the content DOM node is changed
 			this._addFocusEventListeners();
@@ -2553,39 +2474,12 @@ sap.ui.define([
 	* @private
 	*/
 	Popup.prototype.onBeforeRendering = function(oEvent) {
-		// deregister resize handler
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
-		}
-
 		if (this.isOpen() && (this.getModal() || this.getAutoClose())) {
 			// deregister the focus event listener because the content DOM node is going to be deleted
 			this._removeFocusEventListeners();
 		}
 
 		this._$(false, true).off("keydown", this._F6NavigationHandler);
-	};
-
-	/**
-	 * Resize handler listening to the popup. If the Popup changes its size the blindlayer
-	 * should be updated as well. For example necessary when popup content has absolute positions.
-	 *
-	 * @private
-	 */
-	Popup.prototype.onresize = function(oEvent) {
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED && this._oBlindLayer) {
-			var that = this;
-			setTimeout(function(){
-				that._updateBlindLayer();
-			}, 0);
-		}
-	};
-
-	Popup.prototype._updateBlindLayer = function() {
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED && this._oBlindLayer) {
-			this._oBlindLayer.update(this._$(/*forceRerender*/ false, /*getOnly*/ true));
-		}
 	};
 
 	/**
@@ -2771,15 +2665,7 @@ sap.ui.define([
 		}
 
 		if (oFocusDomRef) {
-			/*
-			 * This check especially for IE9 is needed because when IE9 is
-			 * used together with JAWS the element that will be focused
-			 * isn't read when the focus happens too fast. Therefore a delay
-			 * is added to JAWS can read the newly focused element.
-			 */
-			var iDelay = Device.browser.msie && Device.browser.version === 9 ? 100 : 0;
-
-			jQuery.sap.delayedCall(iDelay, this, function() {
+			jQuery.sap.delayedCall(0, this, function() {
 				// if the element is a control the focus should be called
 				// via the control
 				// especially if the control has an individual focus DOM-ref

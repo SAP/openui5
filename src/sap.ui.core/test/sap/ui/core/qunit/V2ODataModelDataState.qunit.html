@@ -40,9 +40,7 @@
 	var sDataRootPath =  "testdata/SalesOrder/";
 	var oModel, spy;
 	
-	var ie9_10 = sap.ui.Device.browser.version == 9 || sap.ui.Device.browser.version == 10; 
-	//increase response delay for IE9/10 as javascript processing is to slow, which breaks our timing assumptions for this test 
-	var iResponseDelay = sap.ui.Device.browser.name == "ie" && ie9_10 ? 500 : 250;
+	var iResponseDelay = 250;
 	
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUri

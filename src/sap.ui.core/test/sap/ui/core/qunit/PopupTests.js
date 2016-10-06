@@ -451,12 +451,6 @@ QUnit.module("Animation", {
 QUnit.test("Open Popup Without Animation", function(assert) {
 	assert.expect(4);
 
-	var done;
-	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
-		// In IE9 the opened event is fired with timeout therefore async test has to be used for IE9
-		done = assert.async();
-	}
-
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -464,10 +458,6 @@ QUnit.test("Open Popup Without Animation", function(assert) {
 		assert.equal(this.$Ref.css("display"), "block", "Popup should be immediately 'display:block' after opening without animation");
 		assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be immediately 'visibility:visible' after opening without animation");
 		assert.equal(this.$Ref.css("opacity"), "1", "Popup should be immediately 'opacity:1' after opening without animation");
-
-		if (done) {
-			done();
-		}
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -476,12 +466,6 @@ QUnit.test("Open Popup Without Animation", function(assert) {
 
 QUnit.test("Close Popup Without Animation", function(assert) {
 	assert.expect(3);
-
-	var done;
-	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
-		// In IE9 the opened event is fired with timeout therefore async test has to be used for IE9
-		done = assert.async();
-	}
 
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
@@ -495,9 +479,6 @@ QUnit.test("Close Popup Without Animation", function(assert) {
 		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' immediately after closing without animation");
 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' immediately after closing without animation");
 
-		if (done) {
-			done();
-		}
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -756,7 +737,7 @@ QUnit.test("Event registration and deregistration", function(assert) {
 		assert.ok(this.oSpyOpened.calledOnce, "Opened callback called");
 		assert.ok(this.oSpyClosed.calledOnce, "Closed callback called");
 
-		assert.ok(!!!this.oPopup.mEventRegistry.length, "Event registries should have been removed for 'opened' & 'closed'");
+		assert.ok(!this.oPopup.mEventRegistry.length, "Event registries should have been removed for 'opened' & 'closed'");
 
 		this.oSpyOpened.restore();
 		delete this.oSpyOpened;
@@ -1136,72 +1117,6 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 	oPopup2.attachOpened(fnOpened);
 	oPopup2.attachClosed(fnClosed2);
 	oPopup2.open();
-});
-
-QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
-	var done = assert.async();
-
-	var oPopupDomRef = jQuery.sap.domById("popup");
-	this.oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
-	this.$Ref = this.oPopup._$();
-
-	sap.ui.require("sap.ui.Device");
-	var oDeviceStub = sinon.stub(sap.ui.Device);
-	oDeviceStub.browser.msie = true;
-	oDeviceStub.browser.version = 9;
-	oDeviceStub.os.windows_phone = false;
-
-	var oSpyOpened = sinon.spy(this.oPopup, "_opened");
-	var oSpyClosed = sinon.spy(this.oPopup, "_closed");
-
-	var fnOpened = function() {
-		this.oPopup.detachOpened(fnOpened, this);
-		sap.ui.getCore().applyChanges();
-
-		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
-		$BlockLayer.width();
-		assert.ok($BlockLayer.length, "BlockLayer rendered in DOM");
-
-		var oRectBlockLayer = $BlockLayer.rect();
-		var oRectPopup = this.$Ref.rect();
-
-		assert.equal(oRectBlockLayer.top, oRectPopup.top, "Top position is same of BlockLayer and Popup");
-		assert.equal(oRectBlockLayer.left, oRectPopup.left, "Left position is same of BlockLayer and Popup");
-		assert.equal(oRectBlockLayer.width, oRectPopup.width, "Width is same of BlockLayer and Popup");
-		assert.equal(oRectBlockLayer.height, oRectPopup.height, "Height is same of BlockLayer and Popup");
-
-		assert.ok(this.oPopup._resizeListenerId, "ResizeHandler was registered");
-
-		this.oPopup.close(0);
-	};
-	var fnClosed = function() {
-		this.oPopup.detachClosed(fnClosed, this);
-		sap.ui.getCore().applyChanges();
-
-		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
-		assert.ok($BlockLayer.length, "BlockLayer still in DOM");
-
-		assert.ok(!this.oPopup._resizeListenerId, "ResizeHandler deregistered");
-		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Order of open and close correct");
-
-		this.oPopup.attachOpened(fnReopen, this);
-		this.oPopup.open(0);
-	};
-	var fnReopen = function() {
-		this.oPopup.detachOpened(fnReopen, this);
-
-		assert.equal(oSpyOpened.callCount, 2, "Now _opened called for the second time");
-		assert.equal(oSpyClosed.callCount, 1, "_closed called still only once");
-		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Oder of open and close correct");
-
-		this.oPopup.close(0);
-		this.oPopup.destroy();
-		done();
-	}
-
-	this.oPopup.attachOpened(fnOpened, this);
-	this.oPopup.attachClosed(fnClosed, this);
-	this.oPopup.open(0);
 });
 
 QUnit.module("ShieldLayer", {

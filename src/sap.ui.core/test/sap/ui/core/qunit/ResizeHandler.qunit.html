@@ -114,9 +114,7 @@
 				if(oResizeListener.sId == sResizeListenerId){
 					bIsRegistered = true;
 					ok(oResizeListener.oDomRef == oDomRef, "Registered DOM Ref correct");
-					if (!(sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version >= 9))) {
-						ok(oResizeListener.fHandler == doOnResize, "Registered Handler correct");
-					}
+					ok(oResizeListener.fHandler == doOnResize, "Registered Handler correct");
 					return false; //break the loop
 				};
 			});

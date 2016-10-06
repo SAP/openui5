@@ -1199,7 +1199,7 @@
 
 
 		test("test Callbacks Merge", function() {
-			if (!!sap.ui.Device.browser.internet_explorer) {
+			if (sap.ui.Device.browser.msie) {
 				ok(true, "IE does not support HTTP MERGE");
 				return;
 			}
@@ -1259,7 +1259,7 @@
 
 
 	test("test Callbacks Patch", function() {
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (sap.ui.Device.browser.msie) {
 			ok(true, "IE does not support HTTP PATCH");
 			return;
 		}

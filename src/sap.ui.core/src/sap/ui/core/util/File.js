@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.util.File
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function(jQuery, Device) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	'use strict';
 
 	/**
@@ -25,10 +25,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 * <p>Triggers a download / save action of the given file.</p>
 		 *
 		 * <p>There are limitations for this feature in some browsers:<p>
-		 *
-		 * <p><b>Internet Explorer 8 / 9</b><br>
-		 * Some file extensions on some operating systems are not working due to a bug in IE.
-		 * Therefore 'txt' will be used as file extension if the problem is occurring.</p>
 		 *
 		 * <p><b>Safari (OS X / iOS)</b><br>
 		 * A new window/tab will be opened. In OS X the user has to manually save the file (CMD + S), choose "page source" and specify a filename.
@@ -95,41 +91,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 						}
 					}
 				}
-			} else if (Device.browser.internet_explorer && Device.browser.version === 9) {
-				// iframe fallback for IE9
-				var $body = jQuery(document.body);
-				var $iframe = jQuery('<iframe/>', {
-					style: 'display:none'
-				});
-				$body.append($iframe);
-				var oDocument = $iframe.get(0).contentWindow.document;
-				// open the document to be able to modify it
-				oDocument.open(sMimeType, 'replace');
-				// set charset (e.g. utf-8) if given
-				if (sCharset) {
-					oDocument.charset = sCharset;
-				}
-				// write content to iframe
-				oDocument.write(sData);
-				oDocument.close();
-
-				// open the file-save dialog
-				// measure the time that the execCommand takes to detect an
-				// IE bug with some file extensions on some OS (e.g. Windows Server 2008 E2 Enterprise SP1) in all IE versions:
-				// http://stackoverflow.com/questions/2515791/execcommandsaveas-null-file-csv-is-not-working-in-ie8
-				var oTime = new Date();
-				var bSuccess = oDocument.execCommand('SaveAs', false, sFullFileName);
-				if (!bSuccess && new Date() - oTime < 10) {
-					// execCommand returns false either when the user clicks on cancel or
-					// when the bug mentioned above is occurring, so the time is measured
-					// to detect the cancel action
-
-					// .txt as file extension will work on all systems
-					oDocument.execCommand('SaveAs', false, sFullFileName + '.txt');
-				}
-
-				// cleanup
-				$iframe.remove();
 			}
 		}
 	};

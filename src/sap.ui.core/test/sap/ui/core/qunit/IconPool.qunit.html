@@ -158,9 +158,6 @@
 					IconPool.insertFontFaceStyle();
 					assert.ok(jQuery("head > style[type='text/css']").text().indexOf("font-family: 'SAP-icons'") !== -1, "Style should have been inserted.");
 				});
-				QUnit.test("_calcAbsPath", function(assert) {
-					assert.equal(IconPool._calcAbsPath("themes/base/fonts/", "http://foo.bar/baz/?foo=bar#blub"), "http://foo.bar/baz/themes/base/fonts/", "Correct absolute URI should get calculated.");
-				});
 				QUnit.test("getIconForMimeType", function(assert) {
 					assert.equal(IconPool.getIconForMimeType("image/png"), "sap-icon://attachment-photo", "Should return correct icon URI.");
 					assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");

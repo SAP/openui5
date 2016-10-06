@@ -140,41 +140,38 @@ sap.ui.define([
 			oOpa5.emptyQueue().done(done);
 		});
 
-		// For IE 9 errors in frame are disabled see comment in OPA5.js
-		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
-			QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
-				// Arrange
-				jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
-				var $Frame = jQuery("#OpaFrame").on("load", function () {
-					var fnSpy = sinon.spy();
-					$Frame[0].contentWindow.onerror = fnSpy;
+		QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
+			// Arrange
+			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
+			var $Frame = jQuery("#OpaFrame").on("load", function () {
+				var fnSpy = sinon.spy();
+				$Frame[0].contentWindow.onerror = fnSpy;
 
-					// System under Test
-					var oOpa5 = new Opa5();
+				// System under Test
+				var oOpa5 = new Opa5();
 
-					oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-						// Act + Assert
-						var clock = sinon.useFakeTimers();
+				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+					// Act + Assert
+					var clock = sinon.useFakeTimers();
 
-						assert.throws(function () {
-							Opa5.getWindow().onerror("Errormessage", "Url", 31);
-							// throws the actual exception in a delay
-							clock.tick(0);
-						},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
+					assert.throws(function () {
+						Opa5.getWindow().onerror("Errormessage", "Url", 31);
+						// throws the actual exception in a delay
+						clock.tick(0);
+					},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
 
-						clock.restore();
-						assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
-					});
-
-					oOpa5.iTeardownMyAppFrame();
-
-					oOpa5.emptyQueue().done(function () {
-						QUnit.start();
-					});
+					clock.restore();
+					assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
 				});
 
+				oOpa5.iTeardownMyAppFrame();
+
+				oOpa5.emptyQueue().done(function () {
+					QUnit.start();
+				});
 			});
-		}
+
+		});
 
 		QUnit.module("IFrame navigation", {
 			beforeEach: function () {

@@ -658,7 +658,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		//Append busy indicator to control DOM
 		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
 
-		BusyIndicatorUtils.animateIE9.start(this._$BusyIndicator);
 		fnHandleInteraction.call(this, true);
 	}
 
@@ -783,7 +782,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			}
 			fnHandleInteraction.call(this, false);
 
-			BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
 		}
 		return this;
 	};
@@ -821,7 +819,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 			delete this._busyIndicatorDelayedCallId;
 		}
-		BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
 	};
 
 

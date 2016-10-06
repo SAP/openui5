@@ -532,7 +532,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 				text = "Please open your debugger by pressing CTRL + SHIFT + I.";
 			}
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				text = "Please open your debugger using F12, go to the 'Script' tab and attach it by pressing F5.";
 			}
 

@@ -280,7 +280,7 @@ sap.ui.testfwk.TestFWK.applySettings = function() {
 sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 
 	// hash rewriting currently doesn't work with webkit browsers and framesets
-	if ( !!!sap.ui.Device.browser.webkit ) {
+	if ( !sap.ui.Device.browser.webkit ) {
 		top.window.location.hash = sURL.replace(/\?/g, "_");
 	}
 

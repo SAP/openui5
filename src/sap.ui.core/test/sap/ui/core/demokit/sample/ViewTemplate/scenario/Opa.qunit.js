@@ -4,18 +4,12 @@
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/Device"
-], function (Opa5, opaTest, Properties, Device) {
+	"sap/ui/test/matchers/Properties"
+], function (Opa5, opaTest, Properties) {
 	/*global QUnit */
 	"use strict";
 
 	QUnit.module("sap.ui.core.sample.ViewTemplate.scenario");
-
-	if (Device.browser.msie && Device.browser.version === 9) {
-		// Bug Fix: IE9 >>> http://bugs.jquery.com/ticket/13378
-		return;
-	}
 
 	opaTest("Find view elements", function (Given, When, Then) {
 		function onLoad() {

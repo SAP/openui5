@@ -193,8 +193,7 @@
 		test("OuterHTML", function () {
 			function getExpected(bReversAttributeOrder){
 				function att(n, v){
-					var quote = sap.ui.Device.browser.internet_explorer && (document.documentMode == undefined || document.documentMode && document.documentMode < 9) ? "" : "\""; //No '"' in IE8
-					return " " + n + "=" + quote + v + quote;
+					return " " + n + "=\"" + v + "\"";
 				}
 
 				var sRes = "<DIV";

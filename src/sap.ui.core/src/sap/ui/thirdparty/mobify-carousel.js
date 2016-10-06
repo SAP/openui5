@@ -274,7 +274,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     //SAP MODIFICATION
     //added private changeAnimation function
     Carousel.prototype.changeAnimation = function(sTransitionClass, fnCallback, oCallbackContext, aCallbackParams) {
-    	if(!(jQuery.browser.msie && jQuery.browser.fVersion < 10) && this.$inner){
+    	if ( this.$inner ){
 	    	var $carouselInner = this.$inner,
 	    		sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
 
