@@ -293,7 +293,7 @@ public class GitClient {
   public boolean commit(CharSequence message) throws IOException {
   	// locally set the user to be used as committer for the commit
   	try {
-    	if (useHTTPS && email != null) {
+    	if (email != null) {
     		execute("config", "--local", "--add", "user.name", user);
     		execute("config", "--local", "--add", "user.email", email);
     	}
@@ -307,7 +307,7 @@ public class GitClient {
       return executeWithInput(message.toString(), "-c", "core.autocrlf=false", "commit", "-F", "-");
   	} finally {
   		// cleanup the locally set user/email
-    	if (useHTTPS && email != null) {
+    	if (email != null) {
     		execute("config", "--local", "--unset", "user.name");
     		execute("config", "--local", "--unset", "user.email");
     	}
@@ -350,14 +350,14 @@ public class GitClient {
   		baseUrl.append("ssh://");
     	if (sshUser != null) {
     		baseUrl.append(sshUser);
-    		baseUrl.append("@");
+    		//baseUrl.append("@");
     	}
   	}
-    baseUrl.append(getGitURL()).append(":");
   	if (useHTTPS) {
+  	  baseUrl.append(getGitURL()).append(":");
   		baseUrl.append(getGitHttpsPort());
   	} else {
-  		baseUrl.append("29418");
+  		//baseUrl.append("29418");
   	}
   	return baseUrl.toString();
   }
