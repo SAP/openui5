@@ -31,11 +31,12 @@ import com.sap.ui5.tools.maven.MyReleaseButton;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
+import com.sap.ui5.tools.maven.XMLUtils;
 
 public class Git2P4Main {
 
   private static final String UPDATE_ONLY_CORE_FILTER_NAME = "update-only-core";
-  private static final String RELEASE_NOTES = "release-notes";
+  private static final String RELEASE_NOTES = "release-notes"; 
   private static final String TOOLS_VERSION_HELPER_CORE_VERSION = "tools/_git2p4/sapui5-core-version";
   static final GitClient git = new GitClient();
   static final P4Client p4 = new P4Client();
@@ -207,13 +208,27 @@ public class Git2P4Main {
     if ( op == null || branch == null || fromVersion == null || toVersion == null ) {
       throw new IllegalArgumentException("incomplete information for version change");
     }
-
+	
     if ( guess ) {
       Log.println("Automatically determined parameters:");
       Log.println("       branch: " + branch);
       Log.println("    operation: " + op);
       Log.println("  fromVersion: " + fromVersion);
       Log.println("    toVersion: " + toVersion);
+    }
+
+    if(op.equals(ReleaseOperation.MilestoneDevelopment)){
+    Runtime p = Runtime.getRuntime();
+
+    // Getting the location of the getSnapshotVersion.js file     
+   File fileLoc = new File("");
+   String sp = File.separator;      
+   String jsLocation = fileLoc.getAbsolutePath();   
+   jsLocation += sp +"tools" + sp +"_git2p4" + sp +"resources";  
+   MyReleaseButton.getFileOSLocation(jsLocation);
+   
+     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions  )   
+   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);
     }
     
     if ( guess && git2p4.interactive ) {
@@ -296,10 +311,16 @@ public class Git2P4Main {
     if (skipContributorsVersions || !applyContributorsVersions) {
       return null;
     }
+    String versionRange;
     //read latest versions for uilib-collections.pom
     Version fromV = new Version(fromVersion);
-    Version toV = new Version(toVersion);
-    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(toV.major, toV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
+    Version toV = new Version(toVersion);    
+    if(op.equals(ReleaseOperation.MilestoneDevelopment)){
+    	versionRange = "[" + toVersion + "," + new Version(toV.major, toV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
+    } else {
+    	versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(toV.major, toV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
+    }
+
     Log.println("Contributors version range: " + versionRange);
     Properties contributorsVersions = new Properties();
     if (op.equals(ReleaseOperation.PatchDevelopment)||op.equals(ReleaseOperation.MilestoneDevelopment)){
@@ -307,6 +328,12 @@ public class Git2P4Main {
       contributorsVersions.put("contributorsRange", versionRange);
       //set to snapshot core version 
       contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, true));
+    } else if (op.equals(ReleaseOperation.MinorRelease)){
+    	Version fromRangeVersion = new Version(toVersion).previousMinor();
+    	Version toRangeVersion = new Version(toVersion).nextMinorSnapshot();
+    	versionRange = "[" + fromRangeVersion + "," + toRangeVersion + ")";
+    	contributorsVersions.put("contributorsRange", versionRange);
+    	contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, false));
     } else {
       contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, false));
     }
@@ -314,13 +341,16 @@ public class Git2P4Main {
   }
   
   private static Version getLatestCoreVersion(String versionRange, boolean snapshot) throws IOException {
-    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-U", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
+	MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-U", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
+	
     Matcher m = Pattern.compile("so unable to set version to (.*)").matcher(MvnClient.getLatestOutput());
-    if (m.find()){
+
+       if (m.find()){
       Version coreVersion = new Version(m.group(1));
       Log.println("Detected sapui5 core version: " + coreVersion);
       return coreVersion;
     }
+
     Log.println("WARNING: Can't detect sapui5 core version.");
     return null;
   }
@@ -775,7 +805,7 @@ public class Git2P4Main {
         throw new IllegalArgumentException("unsupported command " + args[i]);
       }
     }
-    
+   
     MyReleaseButton.setRelOperation(op);
 	
     Log.println("args = " + Arrays.toString(argsForTrace));
@@ -811,7 +841,8 @@ public class Git2P4Main {
       createUI5Mappings(gitDir, p4depotPath, branch);
     } else if ( "dist".equals(mappingSet) ) {
       createUI5DistMappings(gitDir, p4depotPath, branch);
-      applyContributorsVersions = true;
+      applyContributorsVersions = true;     
+      
       if (!UPDATE_ONLY_CORE_FILTER_NAME.equals(filter.name)) {
         filter.name = (EnumSet.of(ReleaseOperation.PatchDevelopment, ReleaseOperation.MilestoneDevelopment).contains(op)) ? "after" : "before";
       }
@@ -844,7 +875,7 @@ public class Git2P4Main {
       context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
     }
     
-    if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {
+    if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {	
       throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
     }
 
@@ -916,7 +947,6 @@ public class Git2P4Main {
         Log.restorePrevious();
       }
     }
-
   }
   
   private static int exitcode = 0;
@@ -924,5 +954,4 @@ public class Git2P4Main {
     main0(args);
    // System.exit(exitcode);
   }
-
 }
