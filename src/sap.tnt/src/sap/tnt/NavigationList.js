@@ -224,22 +224,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 		 */
 		NavigationList.prototype._openPopover = function (source, list) {
 
+			var that = this;
 			var selectedItem = list.getSelectedItem();
 			if (selectedItem && list.isGroupSelected) {
 				selectedItem = null;
 			}
 
-			var popover = new Popover({
+			var popover = this._popover = new Popover({
 				showHeader: false,
 				horizontalScrolling: false,
 				verticalScrolling: true,
 				initialFocus: selectedItem,
+				afterClose: function () {
+					that._popover = null;
+				},
 				content: list
 			});
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;
 
 			popover.openBy(source);
+		};
+
+		NavigationList.prototype._closePopover = function () {
+			if (this._popover) {
+				this._popover.close();
+			}
 		};
 
 		return NavigationList;
