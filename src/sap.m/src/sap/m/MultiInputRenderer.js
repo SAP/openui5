@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	};
 
 	MultiInputRenderer._renderTokens = function(oRm, oControl) {
-		oRm.renderControl(oControl._tokenizer);
+		oRm.renderControl(oControl.getAggregation("tokenizer"));
 	};
 
 	MultiInputRenderer._renderInput = function(oRm, oControl) {
@@ -86,6 +86,12 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		oRm.write("</div>");
 		oRm.write("</div>");
 		oRm.write("<div class=\"sapMMultiInputShadowDiv\"/>");
+	};
+
+	MultiInputRenderer.addInnerStyles = function(oRm, oControl) {
+		if (oControl._bUseDialog && oControl.getTokens().length > 1) {
+			oRm.addStyle("opacity", 0);
+		}
 	};
 
 
