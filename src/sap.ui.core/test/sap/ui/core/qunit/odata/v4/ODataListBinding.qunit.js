@@ -2678,8 +2678,8 @@ sap.ui.require([
 	}].forEach(function(oFixture) {
 		QUnit.test("create: absolute, " + JSON.stringify(oFixture), function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
-				bChangeFired = false,
 				oCacheMock = this.mock(oBinding.oCache),
+				bChangeFired = false,
 				oContext,
 				oExpectation;
 
@@ -2707,8 +2707,12 @@ sap.ui.require([
 			assert.strictEqual(oContext.getIndex(), -1);
 			assert.strictEqual(oContext.isTransient(), true);
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
-			assert.strictEqual(oBinding.hasPendingChanges(), true);
 			assert.ok(bChangeFired, "Change event fired");
+
+			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
+
+			// code under test
+			oBinding.hasPendingChanges();
 
 			assert.throws(function () {
 				//code under test
