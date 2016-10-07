@@ -969,7 +969,8 @@
 			"sap.m.sample.TableVerticalAlignment",
 			"sap.m.sample.TableViewSettingsDialog",
 			"sap.m.sample.TableExport",
-			"sap.m.sample.TableOutdated"
+			"sap.m.sample.TableOutdated",
+			"sap.m.sample.TableEditable"
 		  ]
 		},
 		{
@@ -2089,6 +2090,11 @@
 		  "id": "sap.m.sample.TableExport",
 		  "name": "Table - Export",
 		  "description": "The table control provides export capabilities for downloading your data as a  csv file. However, for huge tables, it is recommended that you provide an export mechanism on the server side."
+		},
+		{
+		  "id": "sap.m.sample.TableEditable",
+		  "name": "Table - Editable",
+		  "description": "Table with edit/display togglable scenario."
 		},
 		{
 		  "id": "sap.m.sample.ActionListItem",
