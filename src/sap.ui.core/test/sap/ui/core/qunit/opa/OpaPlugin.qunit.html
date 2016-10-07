@@ -757,6 +757,45 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.module("Prepare a correct viewName", {
+		beforeEach: function () {
+			this.oView = createXmlView("sample.viewNamespace.viewName");
+
+			// System under Test
+			this.oPlugin = new OpaPlugin();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			this.oPlugin.destroy();
+		}
+	});
+
+	[{
+		viewNamespace: "",
+		viewName: "sample.viewNamespace.viewName",
+	},{
+		viewNamespace: "",
+		viewName: ".sample.viewNamespace.viewName",
+	},{
+		viewNamespace: "sample.viewNamespace",
+		viewName: "viewName",
+	},{
+		viewNamespace: "sample.viewNamespace.",
+		viewName: "viewName",
+	},{
+		viewNamespace: "sample.viewNamespace",
+		viewName: ".viewName",
+	},{
+		viewNamespace: "sample.viewNamespace.",
+		viewName: ".viewName",
+	}].forEach(function (value) {
+		QUnit.test("Should find matching controls", function (assert) {
+			value.visible = false;
+			var aAllControlsInTheView = this.oPlugin.getMatchingControls(value);
+			assert.strictEqual(aAllControlsInTheView.length, 4);
+		});
+	});
+
 	$(function () {
 		// hack for IE - dialog introduces a global when opened so i open it before the test starts
 		new Dialog().open().destroy();

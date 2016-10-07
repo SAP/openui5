@@ -94,7 +94,8 @@ sap.ui.define(['jquery.sap.global',
 			 * @public
 			 */
 			getControlInView : function (oOptions) {
-				var sViewName = (oOptions.viewNamespace || "") + oOptions.viewName,
+				var sViewName = ((oOptions.viewNamespace || "") + "." + (oOptions.viewName || ""))
+					.replace(/\.+/g,'.').replace(/^\.|\.$/g, ""),
 					oView = this.getView(sViewName),
 					aResult = [],
 					oControl,
