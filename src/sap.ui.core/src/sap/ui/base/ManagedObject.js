@@ -1789,7 +1789,7 @@ sap.ui.define([
 	 *
 	 * The removed object is not destroyed nor is it marked as changed.
 	 *
-	 * If the given object is found in the aggreation, it is removed, it's parent relationship
+	 * If the given object is found in the aggregation, it is removed, it's parent relationship
 	 * is unset and this ManagedObject is marked as changed. The removed object is returned as
 	 * result of this method. If the object could not be found, <code>undefined</code> is returned.
 	 *
