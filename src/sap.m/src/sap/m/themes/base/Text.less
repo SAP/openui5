@@ -104,7 +104,16 @@
 	padding-top: 0.3125rem;
 	padding-bottom: 0.3125rem;
 }
-/* Condensed size */
-.sapUiSizeCondensed .sapUiTableCell>.sapMText {
-	.sapUiCondensedTableCellContent; /* see shared.css */
+
+/* Condensed size / Table Specifics */
+.sapUiTableCell .sapMText {
+	vertical-align: middle;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMText {
+	line-height: 1.5rem;
+}
+
+.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
+	width: 100%;
 }
