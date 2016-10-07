@@ -443,11 +443,6 @@
 			"appComponent": "CA-UI5-TBL"
 		},
 		{
-			"control": "sap.m.Token",
-			"url": "../Token.html",
-			"appComponent": "CA-UI5-CTR-ROD"
-		},
-		{
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
 			"appComponent": "CA-UI5-CTR-ROD"
