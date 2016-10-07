@@ -1243,25 +1243,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
-	jQuery.sap.setObject("sap.ui.table.TableHelper", {
-		createLabel: function(mConfig){
-			return new sap.ui.commons.Label(mConfig);
-		},
-		createTextView: function(mConfig){
-			if (mConfig && !mConfig.wrapping) {
-				mConfig.wrapping = false;
-			}
-			return new sap.ui.commons.TextView(mConfig);
-		},
-		createTextField: function(mConfig){
-			return new sap.ui.commons.TextField(mConfig);
-		},
-		createImage: function(mConfig){
-			return new sap.ui.commons.Image(mConfig);
-		},
-		addTableClass: function() { return "sapUiTableCommons"; },
-		bFinal: false /* to allow mobile to overwrite  */
-	});
+	var oTableHelper = jQuery.sap.getObject("sap.ui.table.TableHelper", 4);
+	if (!oTableHelper || !oTableHelper.bFinal) {
+		jQuery.sap.setObject("sap.ui.table.TableHelper", {
+			createLabel: function(mConfig){
+				return new sap.ui.commons.Label(mConfig);
+			},
+			createTextView: function(mConfig){
+				if (mConfig && !mConfig.wrapping) {
+					mConfig.wrapping = false;
+				}
+				return new sap.ui.commons.TextView(mConfig);
+			},
+			addTableClass: function() { return "sapUiTableCommons"; },
+			bFinal: false /* to allow mobile to overwrite  */
+		});
+	}
 
 	return sap.ui.commons;
 

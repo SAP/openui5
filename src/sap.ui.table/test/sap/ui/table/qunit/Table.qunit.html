@@ -159,9 +159,9 @@
 	});
 
 	QUnit.test("Properties", 8, function(assert) {
-		assert.equal(jQuery.sap.byId("__view0").text(), "TABLEHEADER", "Title of Table is correct!");
+		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
 		assert.equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
-		assert.equal(jQuery.sap.byId("__view1").text(), "Footer", "Title of Table is correct!");
+		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
 		assert.equal(jQuery(".sapUiTableCtrl tr").length - 1, oTable.getVisibleRowCount(), "Visible Row Count correct!");

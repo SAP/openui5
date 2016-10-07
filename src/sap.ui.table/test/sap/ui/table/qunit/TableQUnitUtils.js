@@ -55,9 +55,7 @@ sap.ui.core.Control.extend("TestInputControl", {
 sap.ui.table.TableHelper = {
 	createLabel: function(mConfig){ return new TestControl(mConfig); },
 	createTextView: function(mConfig){ return new TestControl(mConfig); },
-	createTextField: function(mConfig){ throw new Error("no TextField control available!"); },
-	createImage: function(mConfig){ return new TestControl(mConfig); },
-	addTableClass: function() { return "sapUiTableM"; },
+	addTableClass: function() { return "sapUiTableTest"; },
 	bFinal: true
 };
 
