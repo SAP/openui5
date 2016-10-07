@@ -65,7 +65,7 @@ sap.ui.define([
 	}
 
 	ODataHelper = {
-		aAllowedSystemQueryOptions : ["$expand", "$filter", "$orderby", "$select"],
+		aAllowedSystemQueryOptions : ["$apply", "$expand", "$filter", "$orderby", "$select"],
 
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"

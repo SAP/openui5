@@ -42,6 +42,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("aAllowedSystemQueryOptions", function (assert) {
+		assert.deepEqual(_ODataHelper.aAllowedSystemQueryOptions,
+			["$apply", "$expand", "$filter", "$orderby", "$select"]);
+	});
+
+	//*********************************************************************************************
 	[{
 		sKeyPredicate : "('42')",
 		oEntityInstance : {"ID" : "42"},

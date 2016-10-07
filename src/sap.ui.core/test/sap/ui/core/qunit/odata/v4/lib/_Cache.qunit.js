@@ -348,12 +348,14 @@ sap.ui.require([
 
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
+			$apply : "filter(Price gt 100)",
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
+			$apply : "filter(Price gt 100)",
 			$expand : "expand",
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -363,6 +365,7 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			"sap-client" : "111",
+			$apply : "filter(Price gt 100)",
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",

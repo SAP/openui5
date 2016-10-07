@@ -294,14 +294,20 @@ sap.ui.require([
 			oContext = {},
 			oError = new Error("Unsupported ..."),
 			oHelperMock,
-			mParameters = {"$expand" : "foo", "$orderby" : "bar", "$select" : "bar",
-				"custom" : "baz"},
+			mParameters = {
+				"$apply" : "filter(Amount gt 3)",
+				"$expand" : "foo",
+				"$orderby" : "bar",
+				"$select" : "bar",
+				"custom" : "baz"
+			},
 			mQueryOptions = {"$orderby" : "bar"};
 
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
+				sinon.match.same(mParameters),
+				sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildOrderbyOption")
 			.withExactArgs([], mQueryOptions.$orderby)
@@ -394,7 +400,7 @@ sap.ui.require([
 			oHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oModel.mUriParameters),
 					sinon.match.same(oFixture.mParameters),
-					["$expand", "$filter", "$orderby", "$select"])
+					sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
 				.returns(oFixture.buildQueryOptionResult);
 			oHelperMock.expects("buildOrderbyOption")
 				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : [],
@@ -454,7 +460,7 @@ sap.ui.require([
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mQueryParameters),
-				["$expand", "$filter", "$orderby", "$select"])
+				sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
 			.returns(mExpectedbuildQueryOptions);
 		oHelperMock.expects("buildOrderbyOption").never();
 		this.mock(_Cache).expects("create").never();
@@ -500,7 +506,7 @@ sap.ui.require([
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				undefined, ["$expand", "$filter", "$orderby", "$select"])
+				undefined, sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",

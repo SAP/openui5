@@ -56,6 +56,7 @@ sap.ui.define([
 				case "$expand":
 					vValue = Cache.convertExpand(vValue);
 					break;
+				case "$apply":
 				case "$filter":
 				case "$orderby":
 					break;
@@ -1009,6 +1010,7 @@ sap.ui.define([
 		 *			"SO_2_SOITEM" : {
 		 *				"$expand" : {
 		 *					"SOITEM_2_PRODUCT" : {
+		 *						"$apply" : "filter(Price gt 100)",
 		 *						"$expand" : {
 		 *							"PRODUCT_2_BP" : null,
 		 *						},
