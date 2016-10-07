@@ -8,10 +8,6 @@
 <title>Table - sap.ui.table</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
 
-<!-- ********************************************************************** -->
-<!-- SAPUI5 Bootstrap:                                                     -->
-<!-- Extend the "libs" property if you like to import additional libraries  -->
-<!-- ********************************************************************** -->
 <script id="sap-ui-bootstrap"
 		type="text/javascript"
 		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
@@ -22,58 +18,15 @@
 
 <script type="text/javascript">
 
-var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-newtablekeyboard');
-if (sKeyboard === "true") {
-	jQuery.sap.require("sap.ui.table.TableKeyboardExtension");
-	sap.ui.table.TableKeyboardExtension._enableNewDelegate();
-}
-
-var oButtonBefore = new sap.m.Button({
+(new sap.m.Button({
 	text: "Just a Button before"
+})).placeAt("content");
+
+var oTable = new sap.ui.table.Table({
+	title: "Title of the Table",
+	footer: "Footer of the Table",
+	selectionMode: sap.ui.table.SelectionMode.MultiToggle
 });
-oButtonBefore.placeAt("content");
-
-// TABLE TEST DATA
-var aData = [
-	{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning"},
-	{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error"},
-	{lastName: "Berry", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-05-09", currency: "USD", objStatusText: "Status unknown Text", objStatusTitle: "Status unknown Title", objStatusState: "None"},
-	{lastName: "Open", name: "Jenny", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-03-03", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Dewit", name: "Stanley", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 34.23, birthday: "1957-02-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Zar", name: "Louise", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Burr", name: "Timothy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-05-08", currency: "DEM", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Hughes", name: "Trisha", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Town", name: "Mike", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-06-06", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Case", name: "Josephine", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-03-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Time", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-04-02", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Barr", name: "Susan", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-03-02", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Poole", name: "Gerry", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-04-01", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Early", name: "Boris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-07-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Noring", name: "Cory", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Tress", name: "Matthew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
-	{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"}
-];
-
-// enhance test data
-var aOrgData = jQuery.extend(true, [], aData);
-for (var i = 0; i < 9; i++) {
-	aData = aData.concat(jQuery.extend(true, [], aOrgData));
-}
-
-for (var i = 0, l = aData.length; i < l; i++) {
-	aData[i].lastName += " - " + (i + 1);
-	aData[i].birthdayDate = new Date(aData[i].birthday);
-}
-
-// create table with supported sap.m controls
-var oTable = new sap.ui.table.Table();
-
-oTable.setTitle("Title of the Table");
-oTable.setFooter("Footer of the Table");
-oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
 	new sap.m.Button({
@@ -91,11 +44,9 @@ oTable.setToolbar(new sap.m.Toolbar({content: [
 ]}));
 
 
-
-
-
 // create columns
 var oControl, oColumn;
+
 // sap.m.Text
 oControl = new sap.m.Text({text: "{lastName}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
@@ -218,12 +169,9 @@ oTable.addColumn(oColumn);
 
 
 
-
-
-
 // set Model and bind Table
 var oModel = new sap.ui.model.json.JSONModel();
-oModel.setData({flex: false, modelData: aData});
+oModel.setData({flex: false, modelData: TABLESETTINGS.listTestData});
 oTable.setModel(oModel);
 oTable.bindRows("/modelData");
 oTable.placeAt("content");
