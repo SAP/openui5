@@ -29,14 +29,9 @@ sap.ui.define([],
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 
-		oRm.writeAttributeEscaped("title", sTooltip);
 		oRm.writeAttribute("id", oControl.getId() + "-feed-content");
 		oRm.writeAttribute("role", "presentation");
-		if (sap.ui.Device.browser.firefox) {
-			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + "" + sTooltip);
-		} else {
-			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + " " + sTooltip );
-		}
+		oRm.writeAttributeEscaped("aria-label", sTooltip);
 
 		oRm.addClass("sapMFC");
 		if (oControl.hasListeners("press")) {
