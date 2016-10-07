@@ -6,7 +6,10 @@
 /* eslint-disable no-eval */
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
-jQuery.sap.require("sap.ui.thirdparty.qunit");
+// Only load QUnit if it has not been loaded via script tag
+if (!window.QUnit) {
+  jQuery.sap.require("sap.ui.thirdparty.qunit");
+}
 
 // put qunit-coverage last so library files don't get measured
 sap.ui.define([
