@@ -135,6 +135,22 @@ oControl = new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "unified.Currency"}), template: oControl, width: "200px"});
 oTable.addColumn(oColumn);
 
+//sap.m.ProgressIndicator
+oControl = new sap.m.ProgressIndicator({percentValue: {path: "lastName", formatter: function(sValue) {
+	sValue = sValue || "";
+	return (sValue.length*10)%100;
+}}});
+oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ProgressIndicator"}), template: oControl, width: "150px"});
+oTable.addColumn(oColumn);
+
+//sap.m.RatingIndicator
+oControl = new sap.m.RatingIndicator({value: {path: "lastName", formatter: function(sValue) {
+	sValue = sValue || "";
+	return sValue.length % 5;
+}}});
+oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.RatingIndicator"}), template: oControl, width: "200px"});
+oTable.addColumn(oColumn);
+
 //sap.m.HBox with sap.m.Link || sap.m.Text
 oControl = new sap.m.HBox({width: "100%", items: [
 	new sap.m.Link({visible: "{checked}", href: "{href}", text: "{linkText}"}),
