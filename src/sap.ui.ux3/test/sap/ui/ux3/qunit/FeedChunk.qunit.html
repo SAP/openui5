@@ -201,9 +201,6 @@
 			equal(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
 			equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
 
-			// expand button if long text
-			ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button if text is short");
-
 			// no expand button if short text
 			ok(!jQuery.sap.byId("Chunk1-exp").get(0), "No expand button if text is short");
 
@@ -237,6 +234,13 @@
 			// comments displayed, by default only 2
 			ok(!jQuery.sap.byId("commentChunk1").get(0) && jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "Only last 2 comments displayed by default");
 
+		});
+
+		asyncTest("Chunk expand button rendered", function() {
+			setTimeout(function () {
+				ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button if text is short");
+				start();
+			}, 0);
 		});
 
 		module("Behaviour");
