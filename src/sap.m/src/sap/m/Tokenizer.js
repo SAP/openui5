@@ -906,7 +906,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		for (i = 0; i < length; i++) {
 			token = tokensToBeDeleted[i];
-			this.removeToken(token);
+			if (token.getEditable()) {
+				this.removeToken(token);
+			}
 		}
 
 		this.scrollToEnd();
