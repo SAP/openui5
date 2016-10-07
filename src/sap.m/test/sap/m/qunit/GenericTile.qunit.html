@@ -326,15 +326,27 @@
 		//Arrange
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 
-		//Act
-		this.oGenericTile.invalidate();
-		sap.ui.getCore().applyChanges();
+		if (sap.ui.getCore().isThemeApplied()) {
+			fnThemeApplied.call(this);
+		} else {
+			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
+			var done = assert.async();
+		}
 
-		//Assert
-		assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOnce);
 
-		//Cleanup
-		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+		function fnThemeApplied(oEvent) {
+			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
+			//Act
+			this.oGenericTile.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOnce, "The hover style is updated when the control is rendered.");
+			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+			if (done) {
+				done();
+			}
+		}
 	});
 
 	QUnit.test("Hover style update on resize", function(assert) {
@@ -347,7 +359,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1);
+		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "_updateHoverStyle is called once.");
 
 		//Cleanup
 		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
@@ -1026,19 +1038,20 @@
 		this.oGenericTile.$().trigger("mouseenter");
 		sap.ui.getCore().applyChanges();
 		//Act
-		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		//Assert
 		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip set by user is applied");
 	});
 
-	QUnit.test("Tooltip for GenericTile with long(truncated) header text", function(assert) {
+	QUnit.test("Tooltip for GenericTile with long (truncated) header text", function(assert) {
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
 
 		//Act
-		this.oGenericTile.$().trigger("mouseenter");
-		var sTooltip = this.oGenericTile.$().attr("title");
+		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
+		var sTooltip = this.oGenericTile.$()[0].getAttribute("title");
 
 		//Assert
 		assert.equal(sTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
@@ -1051,7 +1064,7 @@
 		this.oGenericTile.$().trigger("mouseenter");
 		sap.ui.getCore().applyChanges();
 		//Act
-		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		//Assert
 		assert.equal(this.oGenericTile.getHeader(), "A long long long long long long long long long long", "GenericTile has truncated header");
 		assert.equal(sGenericTileTooltip, "tooltip", "User tooltip overwrites the header text");
@@ -1065,7 +1078,7 @@
 		$Tile.trigger("mouseleave");
 		sap.ui.getCore().applyChanges();
 		//Act
-		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		//Assert
 		assert.equal(sGenericTileTooltip, null, "Truncated text tooltip is removed");
 	});
@@ -1281,35 +1294,6 @@
 		//Assert
 		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain ARIA-label attribute after content changed");
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
-	});
-
-	QUnit.module("Hindi launguage in header and subheader tests", {
-		beforeEach : function() {
-			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
-				header : "जर्नल प्रविष्टियों के लिए विकल्प संपादित करें",
-				subheader : "मेरी सेटिंग"
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oGenericTile.destroy();
-			this.oGenericTile = null;
-		}
-	});
-
-	QUnit.test("The maximal number of lines in Hindi language in HeaderMode is four", function(assert) {
-		// arrange
-		this.oGenericTile.setMode("HeaderMode");
-		sap.ui.getCore().applyChanges();
-		// assert
-		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
-		assert.equal(nLines, 4, "The number of header lines is right");
-	});
-
-	QUnit.test("The maximal number of lines in Hindi language in ContentMode is two", function(assert) {
-		// assert
-		var nLines = this.oGenericTile.getAggregation("_titleText").getMaxLines();
-		assert.equal(nLines, 2, "The number of header lines is right");
 	});
 
 	QUnit.module("Event Tests", {
