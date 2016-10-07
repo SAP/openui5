@@ -181,6 +181,7 @@ sap.ui.require([
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
 			<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" \
 				EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly"/>\
+			<Annotation Term="com.sap.vocabularies.UI.v1.Hidden" Bool="false"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">\
@@ -1686,6 +1687,10 @@ sap.ui.require([
 							(i === 0 ? "Hidden" : "ReadOnly")},
 					"Product WeightUnit invisible");
 				delete oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"];
+				assert.deepEqual(oProductWeightUnit["com.sap.vocabularies.UI.v1.Hidden"],
+					(i === 0 ? {"Bool" : "true"} : {"Bool" : "false"}),
+					"Product WeightUnit invisible - UI.Hidden");
+				delete oProductWeightUnit["com.sap.vocabularies.UI.v1.Hidden"];
 
 				// sap:deletable-path (EntitySet)
 				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
