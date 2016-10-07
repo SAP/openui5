@@ -92,11 +92,7 @@ sap.ui.define([
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				if (oControl instanceof sap.ui.core.Component) {
-					oAppComponent = this._getAppComponentForComponent(oControl);
-				} else {
-					oAppComponent = this.getAppComponentForControl(oControl);
-				}
+				oAppComponent = this.getAppComponentForControl(oControl);
 
 				// check if the component is an application variant and assigned an application descriptor then use this as reference
 				if (oAppComponent) {
@@ -357,7 +353,13 @@ sap.ui.define([
 		 * @public
 		 */
 		getAppComponentForControl: function(oControl) {
-			var oComponent = this._getComponentForControl(oControl);
+			var oComponent;
+
+			if (oControl instanceof sap.ui.core.Component) {
+				oComponent = oControl;
+			} else {
+				oComponent = this._getComponentForControl(oControl);
+			}
 			return this._getAppComponentForComponent(oComponent);
 		},
 
