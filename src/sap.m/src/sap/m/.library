@@ -74,6 +74,29 @@
                 <module>sap/m/P13nSortPanel</module>
             </modules>
         </component>
+        <component>
+            <name>CA-UI5-TBL</name>
+            <modules>
+                <module>sap/m/ListBase</module>
+                <module>sap/m/List</module>
+                <module>sap/m/Tree</module>
+                <module>sap/m/Table</module>
+                <module>sap/m/ListItemBase</module>
+                <module>sap/m/DisplayListItem</module>
+                <module>sap/m/GroupHeaderListItem</module>
+                <module>sap/m/InputListItem</module>
+                <module>sap/m/StandardListItem</module>
+                <module>sap/m/CustomListItem</module>
+                <module>sap/m/GrowingList</module>
+                <module>sap/m/Column</module>
+                <module>sap/m/ColumnListItem</module>
+                <module>sap/m/FlexBox</module>
+                <module>sap/m/FlexItemData</module>
+                <module>sap/m/HBox</module>
+                <module>sap/m/VBox</module>
+                <module>sap/m/Title</module>
+            </modules>
+        </component>
     </ownership>
   </appData>
 
