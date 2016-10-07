@@ -30,12 +30,14 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 
 		oModifier.setStashed(oControl, false);
-		oModifier.setVisible(oControl, true);
 
-		var sTargetAggregation = mContent.parentAggregationName;
-		var oTargetParent = oModifier.getParent(oControl);
-		oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
-		oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index);
+		if (mContent.parentAggregationName){
+			//old way including move, new way will have seperate move change
+			var sTargetAggregation = mContent.parentAggregationName;
+			var oTargetParent = oModifier.getParent(oControl);
+			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
+			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index);
+		}
 		return true;
 	};
 
@@ -51,13 +53,8 @@ sap.ui.define([
 		var oChangeJson = oChange.getDefinition();
 
 		if (oSpecificChangeInfo.content) {
-
+			//old way including move, new way will have seperate move change
 			oChangeJson.content = oSpecificChangeInfo.content;
-
-		} else {
-
-			throw new Error("oSpecificChangeInfo attribute required");
-
 		}
 
 	};
