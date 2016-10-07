@@ -119,15 +119,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		this.setTooltip("{AltText}"); // TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
 	};
 
+	NumericContent.prototype.onBeforeRendering = function() {
+		this.$().unbind("mouseenter", this._addTooltip);
+		this.$().unbind("mouseleave", this._removeTooltip);
+	};
+
 	/**
 	 * Handler for after rendering
 	 */
 	NumericContent.prototype.onAfterRendering = function() {
+		this.$().bind("mouseenter", this._addTooltip.bind(this));
+		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+
 		if (sap.m.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
 			jQuery.sap.byId(this.getId()).animate({
 				opacity : "1"
 			}, 1000);
 		}
+	};
+
+	/**
+	 * Sets the control's title attribute in order to show the tooltip.
+	 * @private
+	 */
+	NumericContent.prototype._addTooltip = function() {
+		this.$().attr("title", this.getTooltip_AsString());
+	};
+
+	/**
+	 * Removes the control's tooltip in order to prevent screen readers from reading it.
+	 * @private
+	 */
+	NumericContent.prototype._removeTooltip = function() {
+		this.$().attr("title", null);
 	};
 
 	/**
