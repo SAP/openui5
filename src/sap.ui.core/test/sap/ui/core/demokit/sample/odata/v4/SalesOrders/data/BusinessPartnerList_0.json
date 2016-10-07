@@ -10,8 +10,8 @@
 	"FaxNumber" : "0622734004",
 	"LegalForm" : "SE",
 	"CurrencyCode" : "EUR",
-	"CreatedAt" : "2016-04-20T14:39:45Z",
-	"ChangedAt" : "2016-04-20T14:39:45Z",
+	"CreatedAt" : "2016-04-20T14:39:45.000000Z",
+	"ChangedAt" : "2016-04-20T14:39:45.000000Z",
 	"Address" : {
 		"City" : "Walldorf",
 		"PostalCode" : "69190",

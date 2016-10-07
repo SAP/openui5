@@ -3,7 +3,7 @@
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "SAP",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
 		"LifecycleStatusDesc" : "New",
@@ -20,7 +20,7 @@
 			"FaxNumber" : "0622734004",
 			"LegalForm" : "SE",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
 			"ChangedAt" : "2016-06-13T14:33:41.154887Z",
 			"Address" : {
 				"City" : "Walldorf",
@@ -38,7 +38,7 @@
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "TECUM",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "5631.08",
 		"LifecycleStatusDesc" : "New",
@@ -55,8 +55,8 @@
 			"FaxNumber" : "2511004",
 			"LegalForm" : "AG",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-06-13T06:53:13Z",
-			"ChangedAt" : "2016-06-13T06:53:13Z",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 			"Address" : {
 				"City" : "Münster",
 				"PostalCode" : "48155",
@@ -73,7 +73,7 @@
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "Talpa",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "250.73",
 		"LifecycleStatusDesc" : "New",
@@ -90,8 +90,8 @@
 			"FaxNumber" : "511403004",
 			"LegalForm" : "GmbH",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-06-13T06:53:13Z",
-			"ChangedAt" : "2016-06-13T06:53:13Z",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 			"Address" : {
 				"City" : "Hannover",
 				"PostalCode" : "30625",
@@ -108,7 +108,7 @@
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "10311.35",
 		"LifecycleStatusDesc" : "New",
@@ -118,7 +118,7 @@
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "Telecomunicaciones Star",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "195.16",
 		"LifecycleStatusDesc" : "New",
@@ -135,8 +135,8 @@
 			"FaxNumber" : "1133557004",
 			"LegalForm" : "S.A.",
 			"CurrencyCode" : "ARS",
-			"CreatedAt" : "2016-06-13T06:53:13Z",
-			"ChangedAt" : "2016-06-13T06:53:13Z",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 			"Address" : {
 				"City" : "Buenos Aires",
 				"PostalCode" : "1511",
