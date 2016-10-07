@@ -590,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 			// the selected cell index is the index of the first cell in the span.
 			// Treat this case like there is no span and the last cell of the fixed area is selected.
 			if (oCellInfo.type === CellType.COLUMNHEADER && TableUtils.hasFixedColumns(this)) {
-				var iColSpan = oCellInfo.cell.data('sap-ui-colspan');
+				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1, 10);
 				if (iColSpan > 1 && iFocusedCellInRow + iColSpan - iRowHeaderOffset === this.getFixedColumnCount()) {
 					bIsColSpanAtFixedAreaEnd = true;
 				}
@@ -902,7 +902,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				var bHasRowHeader = TableUtils.hasRowHeader(this);
 				var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
 				var iVisibleColumnCount = TableUtils.getVisibleColumnCount(this);
-				var iColSpan = oCellInfo.cell.data('sap-ui-colspan') || 1;
+				var iColSpan = parseInt(oCellInfo.cell.attr("colspan") || 1, 10);
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 

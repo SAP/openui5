@@ -790,8 +790,8 @@ QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
 
 QUnit.test("ARIA for Overlay", function(assert) {
 	var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
-	//Heading + Extension + Footer + 2xTable + Row Selector + Column Headers + NoData Container = 8
-	assert.strictEqual($OverlayCoveredElements.length, 8 , "Number of potentionally covered elements");
+	//Heading + Extension + Footer + 2xTable + Row Selector + 2xColumn Headers + NoData Container = 8
+	assert.strictEqual($OverlayCoveredElements.length, 9, "Number of potentionally covered elements");
 	$OverlayCoveredElements.each(function(){
 		assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 	});

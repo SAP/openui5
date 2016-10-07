@@ -586,36 +586,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	}});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// =============================================================================
 	// BASIC CONTROL API
 	// =============================================================================
@@ -662,10 +632,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
 
-					var oTableSizes = that._collectTableSizes();
-					that._aRowHeights = that._collectRowHeights();
-					that._updateRowHeader(that._aRowHeights);
-					that._syncColumnHeaders(oTableSizes);
+					// TODO: check if this can be removed:
+					that._collectTableSizes();
+
+					// row heights
+					that._aRowHeights = that._collectRowHeights(false);
+					that._updateRowHeights(that._collectRowHeights(true), true); // column header rows
+					that._updateRowHeights(that._aRowHeights, false); // table body rows
+
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
 						that._iRowHeightsDelta = this._getRowHeightsDelta(that._aRowHeights);
 						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
@@ -768,6 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._oSelection.destroy(); // deregisters all the handler(s)
 			//Note: _oSelection is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
 		}
+		delete this._aTableHeaders;
 	};
 
 
@@ -794,35 +769,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Determines the row heights of the fixed and scroll area.
 	 * @private
 	 */
-	Table.prototype._collectRowHeights = function() {
+	Table.prototype._collectRowHeights = function(bHeader) {
 		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return [];
 		}
 
-		var iDefaultRowHeight = this._getDefaultRowHeight();
-
-		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
-		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
-		var aRowItemHeights = [];
-		for (var i = 0; i < aScrollRowItems.length; i++) {
-			var iFixedRowHeight = 0;
-			if (aFixedRowItems[i]) {
-				var oFixedRowClientRect = aFixedRowItems[i].getBoundingClientRect();
-				iFixedRowHeight = oFixedRowClientRect.bottom - oFixedRowClientRect.top;
-			}
-
-			var oScrollRowClientRect = aScrollRowItems[i].getBoundingClientRect();
-			var iRowHeight = oScrollRowClientRect.bottom - oScrollRowClientRect.top;
-
-			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight, iDefaultRowHeight));
+		if (bHeader && this.getColumnHeaderHeight()) {
+			return []; // column headers are set fix in the renderer
 		}
+
+		var iDefaultRowHeight = this._getDefaultRowHeight();
+		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
+
+		// Collect row heights for all tables, including column headers
+		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
+		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
+		var aRowItemHeights = [];
+
+		function collectHeights(row, index) {
+			var currentValue = aRowItemHeights[index] || 0;
+			aRowItemHeights[index] = Math.max(currentValue, row.getBoundingClientRect().height, iDefaultRowHeight);
+		}
+
+		[].forEach.call(aFixedRowItems, collectHeights);
+		[].forEach.call(aScrollRowItems, collectHeights);
 
 		return aRowItemHeights;
 	};
 
 	/**
-	 * Resets the height style property of all TR elements of the table
+	 * Resets the height style property of all TR elements of the table body
 	 * @private
 	 */
 	Table.prototype._resetRowHeights = function() {
@@ -840,6 +817,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				aRowItems[i].style.height = sRowHeight;
 			}
 		}
+	};
+
+	/**
+	 * Resets the height style property of all TR elements of the table header
+	 * @private
+	 */
+	Table.prototype._resetColumnHeaderHeights = function() {
+
+		if (this.getColumnHeaderHeight()) {
+			return; // height is set fixed in renderer
+		}
+
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			var aRowItems = oDomRef.querySelectorAll("tr.sapUiColHdrTr");
+			for (var i = 0; i < aRowItems.length; i++) {
+				aRowItems[i].style.height = null;
+			}
+		}
+
 	};
 
 	/**
@@ -872,8 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			tableHSbScrollLeft: 0,
 			tableCtrlFixedWidth: 0,
 			tableCntHeight: 0,
-			tableCntWidth: 0,
-			invisibleColWidth: 0
+			tableCntWidth: 0
 		};
 
 		var oDomRef = this.getDomRef();
@@ -913,14 +909,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var iFixedColumnCount = this.getProperty("fixedColumnCount");
-		var aHeaderWidths = [];
 		var iFixedHeaderWidthSum = 0;
 		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
 			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
 				var iHeaderWidth = aHeaderElements[i].getBoundingClientRect().width;
-				aHeaderWidths.push(iHeaderWidth);
 
 				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
 					// the fixedColumnCount does not consider the visibility of the column, whereas the DOM only represents
@@ -959,49 +953,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		oSizes.headerWidths = aHeaderWidths;
-
-		if (TableUtils.hasRowHeader(this)) {
-			var oFirstInvisibleColumn = oDomRef.querySelector(".sapUiTableCtrlFirstCol > th:first-child");
-			if (oFirstInvisibleColumn) {
-				oSizes.invisibleColWidth = oFirstInvisibleColumn.clientWidth;
-			}
-		}
-
 		return oSizes;
 	};
 
 	/**
-	 * Synchronizes the row heights with the row header heights.
+	 * Synchronizes the row heights.
+	 * @param {boolean} bHeader update of column headers if true, otherwise update data rows.
 	 * @private
 	 */
-	Table.prototype._updateRowHeader = function(aRowItemHeights) {
+	Table.prototype._updateRowHeights = function(aRowItemHeights, bHeader) {
 		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return;
 		}
-		var aRowHeaderItems = oDomRef.querySelectorAll(".sapUiTableRowHdr");
 
-		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
-		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
+		if (bHeader && this.getColumnHeaderHeight()) {
+			return; // column headers are set fix in the renderer
+		}
 
-		var iLength = Math.max(aRowHeaderItems.length, aScrollRowItems.length, 0);
-		for (var i = 0; i < iLength; i++) {
-			var iRowItemHeight = aRowItemHeights[i];
-			if (iRowItemHeight) {
-				if (aRowHeaderItems[i]) {
-					aRowHeaderItems[i].style.height = iRowItemHeight + "px";
-				}
-
-				if (aFixedRowItems[i]) {
-					aFixedRowItems[i].style.height = iRowItemHeight + "px";
-				}
-
-				if (aScrollRowItems[i]) {
-					aScrollRowItems[i].style.height = iRowItemHeight + "px";
-				}
+		function updateRow (row, index) {
+			var rowHeight = aRowItemHeights[index];
+			if (rowHeight) {
+				row.style.height = rowHeight + "px";
 			}
 		}
+
+		// select rows
+		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
+		var aRowHeaderItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowHdr");
+		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
+		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
+
+		var a = [];
+
+		a.forEach.call(aRowHeaderItems, updateRow);
+		a.forEach.call(aFixedRowItems, updateRow);
+		a.forEach.call(aScrollRowItems, updateRow);
+
 	};
 
 	/**
@@ -1039,6 +1027,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// Rows got invalidated, recreate rows with new template
 			this._adjustRows(aRows.length);
 		}
+		this._aTableHeaders = []; // free references to DOM elements
 	};
 
 	/**
@@ -1091,6 +1080,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._updateVSb(this._iScrollTop);
 
+		// needed for the column resize ruler
+		this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
+
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
 		}
@@ -1126,7 +1118,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._resetRowHeights();
-		this._aRowHeights = this._collectRowHeights();
+		this._resetColumnHeaderHeights();
+		this._aRowHeights = this._collectRowHeights(false);
+		var aColumnHeaderRowHeights = this._collectRowHeights(true);
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			this._iRowHeightsDelta = this._getRowHeightsDelta(this._aRowHeights);
 		}
@@ -1160,8 +1154,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Manipulation of UI Sizes
-		this._updateRowHeader(this._aRowHeights);
-		this._syncColumnHeaders(oTableSizes);
+		this._updateRowHeights(this._aRowHeights, false);
+		this._updateRowHeights(aColumnHeaderRowHeights, true);
+
 		this._determineVisibleCols(oTableSizes);
 		if (!bSkipHandleRowCountMode) {
 			this._setRowContentHeight(iRowContentSpace);
@@ -2464,185 +2459,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return this._adjustRows(iRows);
-	};
-
-	/**
-	 * Synchronizes the <th> width of the table, with the rendered header divs.
-	 * @private
-	 */
-	Table.prototype._syncColumnHeaders = function(oTableSizes) {
-		var oDomRef = this.getDomRef();
-		if (!oDomRef) {
-			// _syncColumnHeaders gets called async, there might be no DomRef anymore
-			return;
-		}
-		var $this = this.$();
-
-		var aHeaderWidths = oTableSizes.headerWidths;
-		var iFixedColumns = this.getFixedColumnCount();
-		var aVisibleColumns = this._getVisibleColumns();
-		if (aVisibleColumns.length == 0) {
-			return;
-		}
-
-		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
-		var $columns = $this.find(".sapUiTableColHdr .sapUiTableCol");
-		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
-		this._aTableHeaders = $tableHeaders;
-
-		// Create map with source table headers and their corresponding resizers.
-		var mHeaders = {};
-
-		// Traverse the source table headers, which are needed to determine the column head width
-		$tableHeaders.each(function(iIndex, oElement) {
-			var iHeadColIndex = oElement.getAttribute("data-sap-ui-headcolindex");
-			var iHeaderWidth = aHeaderWidths[iIndex];
-
-			// set width of target column div
-			var iTargetWidth;
-			var oVisibleColumn = aVisibleColumns[iIndex];
-			if (oVisibleColumn) {
-				iTargetWidth = iHeaderWidth;
-			}
-
-			// for the first column also calculate the width of the hidden column
-			if (iIndex == 0 || iIndex == iFixedColumns) {
-				iTargetWidth += Math.max(0, oTableSizes.invisibleColWidth);
-			}
-
-			// apply the width of the column
-			var	vHeaderSpan = aVisibleColumns[iIndex] ? aVisibleColumns[iIndex].getHeaderSpan() : 1,
-				aHeaderData = [],
-				aSpans;
-
-			if (vHeaderSpan) {
-				// vHeaderSpan can be an array for multi column header rows purpose.
-				if (!jQuery.isArray(vHeaderSpan)) {
-					vHeaderSpan = [vHeaderSpan];
-				}
-				jQuery.each(vHeaderSpan, function(iSpanIndex, iSpan) {
-					vHeaderSpan[iSpanIndex] = Math.max(iSpan, 1);
-				});
-				aSpans = vHeaderSpan;
-			} else {
-				aSpans = [1];
-			}
-
-			for (var i = 0; i < aSpans.length; i++) {
-				aHeaderData[i] = {
-					width: iTargetWidth,
-					span: 1
-				};
-
-				for (var j = 1; j < aSpans[i]; j++) {
-					var oHeader = $tableHeaders[iIndex + j];
-					if (oHeader) {
-						aHeaderData[i].width += aHeaderWidths[iIndex + j];
-						aHeaderData[i].span = aSpans[i];
-					}
-				}
-			}
-
-			if (oVisibleColumn) {
-				mHeaders[iHeadColIndex] = {
-					domRefColumnTh: oElement,
-					domRefColumnDivs: [],
-					aHeaderData: aHeaderData
-				};
-			}
-		});
-
-		var that = this;
-		// Map target column header divs to corresponding source table header.
-		$columns.each(function(iIndex, oElement) {
-			var iColIndex = parseInt(oElement.getAttribute("data-sap-ui-colindex"), 10);
-			var mHeader = mHeaders[iColIndex];
-			if (mHeader) {
-				mHeader.domRefColumnDivs.push(oElement);
-			} else {
-				jQuery.sap.log.error("Inconsistent DOM / Control Tree combination", that);
-			}
-		});
-
-		jQuery.each(mHeaders, function(iIndex, mHeader) {
-			for (var i = 0; i < mHeader.domRefColumnDivs.length; i++) {
-				var oHeaderData = mHeader.aHeaderData[0];
-				if (mHeader.aHeaderData[i]) {
-					oHeaderData = mHeader.aHeaderData[i];
-				}
-				if (mHeader.domRefColumnDivs[i]) {
-					mHeader.domRefColumnDivs[i].style.width = oHeaderData.width + "px";
-					mHeader.domRefColumnDivs[i].setAttribute("data-sap-ui-colspan", oHeaderData.span);
-				} else {
-					jQuery.sap.log.error("Inconsistent DOM / Control Tree combination", that);
-				}
-			}
-		});
-
-		// Sync width of content scroll area to header scroll area
-		$this.find(".sapUiTableColHdrScr").each(function(index, item) {
-			item.style.width = oTableSizes.tableCtrlScrWidth + "px";
-		});
-
-
-		// --------------------------------
-		//  Adjust column header heights.
-		// --------------------------------
-		// Ensure that all header cells in each header row are equally high
-		// Header row heights must be determined after the cell width is set (due to contents wrapping)
-		//
-		var totalHeight;
-		var headerRows = []; // two dimensional array of header cells
-
-		// Collect headers from fixed and scrollable areas into array of rows
-		function collectHeaderRows(rowIndex, headerRowElement){
-			var cols = [].slice.call(headerRowElement.getElementsByClassName("sapUiTableCol"));
-			headerRows[rowIndex] = (headerRows[rowIndex] || []).concat(cols);
-		}
-
-		// Process each header row separately. Add row height to total height.
-		function processRow(total, row) {
-
-			var maxHeight = 0,
-				cellHeight,
-				bDoFix = false, // in many cases, all cells have equal height and no adjustment is needed
-				l = row.length,
-				i;
-
-			// If, after resize, the cell contents requires less vertical space, the old
-			// css height would keep it too high, clear it
-			for (i = 0; i < l; i++) {
-				row[i].style.height = null;
-			}
-
-			// Find maximum cell height in the current row and check if all cells are equally high
-			for (i = 0; i < l; i++) {
-				cellHeight = row[i].offsetHeight;
-				if (maxHeight > 0 && cellHeight > 0 && cellHeight != maxHeight) {
-					bDoFix = true; // at least two cells in a row have different heights
-				}
-				maxHeight = Math.max(cellHeight, maxHeight);
-			}
-
-			// Fix column heights
-			if (bDoFix) {
-				for (i = 0; i < l; i++) {
-					row[i].style.height = maxHeight + "px";
-				}
-			}
-			return total + maxHeight;
-		}
-
-		if (!(this.getColumnHeaderHeight() > 0)) {
-			// Select header rows in each header area separately and collect into rows
-			$this.find(".sapUiTableColHdrFixed").find(".sapUiTableColHdr").each(collectHeaderRows);
-			$this.find(".sapUiTableColHdrScr").find(".sapUiTableColHdr").each(collectHeaderRows);
-
-			totalHeight = headerRows.reduce(processRow, 0);
-
-			// Fix the whole column header area (to adjust the select all column header)
-			$this.find(".sapUiTableColHdrCnt").height(totalHeight);
-		}
 	};
 
 	/**
