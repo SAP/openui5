@@ -277,6 +277,78 @@
 			});
 		});
 	});
+
+	module("Bugfixes");
+
+	asyncTest("MessageManager: Message sorting", function() {
+		var MessageType = sap.ui.core.MessageType;
+		var aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
+
+
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		var oInput = new sap.m.Input({
+			value: "{/test}"
+		});
+		oInput.setModel(oModel);
+		sap.ui.getCore().getMessageManager().registerObject(oInput);
+
+
+		var aMessages = [ new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Information,
+			id: "test-info",
+			processor: oModel,
+			target: "/test"
+		}), new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Warning,
+			id: "test-warning",
+			processor: oModel,
+			target: "/test"
+		}), new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Error,
+			id: "test-error1",
+			processor: oModel,
+			target: "/test"
+		}), new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Success,
+			id: "test-success",
+			processor: oModel,
+			target: "/test"
+		}), new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Error,
+			id: "test-error2",
+			processor: oModel,
+			target: "/test"
+		})];
+
+
+		// CHeck direct call to private method
+		var aMessageCopy = aMessages.slice(0);
+		sap.ui.core.message.MessageManager.prototype._sortMessages(aMessageCopy);
+		var aNewOrder = aMessageCopy.map(function(oM) { return oM.type; });
+		deepEqual(aNewOrder, aCorrectOrder, "Sorted messages are in the correct order (Highest severity first)");
+
+
+
+
+		var bCorrectOrder = false;
+		oInput.refreshDataState = function(sName, oDataState) {
+			var aPropagatedMessages = oDataState.getMessages();
+			var aNewOrder = aPropagatedMessages.map(function(oM) { return oM.type; });
+
+			bCorrectOrder = JSON.stringify(aNewOrder) == JSON.stringify(aCorrectOrder);
+		};
+
+		sap.ui.getCore().getMessageManager().addMessages(aMessages);
+
+		ok(!bCorrectOrder, "Messages have not been propagated synchronously");
+
+		setTimeout(function() {
+			ok(bCorrectOrder, "Messages have been propagated asynchronously and are correctly sorted");
+			start();
+		}, 50);
+	});
+
 </script>
 
 </head>
