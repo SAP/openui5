@@ -3565,16 +3565,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		createTextView: function(mConfig){
 			return new sap.m.Label(mConfig);
 		},
-		createTextField: function(mConfig){
-			return new sap.m.Input(mConfig);
-		},
-		createImage: function(mConfig){
-			var oImage = new sap.m.Image(mConfig);
-			oImage.setDensityAware(false); // by default we do not have density aware images in the Table
-			return oImage;
-		},
 		addTableClass: function() { return "sapUiTableM"; },
-		bFinal: true
+		bFinal: true /* This table helper wins, even when commons helper was set before */
 	});
 
 
