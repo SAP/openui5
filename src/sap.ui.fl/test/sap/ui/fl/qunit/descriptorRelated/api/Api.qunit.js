@@ -533,7 +533,78 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		});
 	});
 
+	QUnit.test("create_app_setKeywords", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setKeywords({
+			"keywords": ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
+		},{
+    "customer.newid_sap.app.tags.keywords.0" :
+      {
+        "type": "XTIT",
+        "maxLength": 20,
+        "comment": "sample comment",
+        "value": {
+            "": "Default Keyword 1",
+            "en": "English Keyword 1",
+            "de": "Deutsches Schlagwort 1",
+            "en_US": "English Keyword 1 in en_US"
+        }
+    },
+    "customer.newid_sap.app.tags.keywords.1" :
+      {
+        "type": "XTIT",
+        "maxLength": 20,
+        "comment": "sample comment",
+        "value": {
+            "": "Default Keyword 2",
+            "en": "English Keyword 2",
+            "de": "Deutsches Schlagwort 2",
+            "en_US": "English Keyword 2 in en_US"
+        }
+    }
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+		});
+	});
 
+	QUnit.test("create_app_setKeywords failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setKeywords({
+				"keywords" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setKeywords({
+				"keywords" : "a.id"
+			})
+		}.bind(this));
+	});
+
+
+	QUnit.test("create_app_setDestination", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setDestination({
+			"destination": {
+				"name": "ERP"
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_app_setDestination failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setDestination({
+				"destinations" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setDestination({
+				"destination" : "a.id"
+			})
+		}.bind(this));
+	});
+
+	
 	QUnit.test("appdescr_ui5_addNewModel", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_addNewModel({
 			"model" : {
