@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					if (oControl._bDoTypeAhead) {
 
-						// note: timeout required for a Android and Windows Phone bug
+						// timeout required for an Android and Windows Phone bug
 						setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
 					}
 				}
@@ -478,7 +478,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 						this.scrollToItem(this.getSelectedItem());
 					}
 				} else if (this.isOpen()) {
-					if (bToggleOpenState) {
+					if (bToggleOpenState && !this.bOpenedByKeyboardOrButton) {
 						this.close();
 					}
 				} else {
