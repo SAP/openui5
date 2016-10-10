@@ -231,8 +231,12 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	.sapUiTableColCell > .sapMLabel {
 		font-weight: normal;
 		font-size: @sapMFontHeader6Size;
-		color: @sapUiListTextColor;
 	}
+}
+
+.sapUiTableCell .sapMLabel,
+.sapUiTableColCell > .sapMLabel {
+	color: @sapUiListTextColor;
 }
 
 .sapUiAnalyticalTable {
