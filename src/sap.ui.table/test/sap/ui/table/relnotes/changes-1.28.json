@@ -512,5 +512,29 @@
         "references": []
       }
     ]
+  },
+  "1.28.39": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "12b1b98b8238c01281a377aa4fb078f1213a3501",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Update scrollbar on end of transitions",
+        "references": []
+      }
+    ]
+  },
+  "1.28.40": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "12b1b98b8238c01281a377aa4fb078f1213a3501",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Update scrollbar on end of transitions",
+        "references": []
+      }
+    ]
   }
 }
