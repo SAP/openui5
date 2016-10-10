@@ -1993,6 +1993,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// including the library theme as controls might use it to calculate theme-specific URLs
 			this._ensureThemeRoot(sLibName, this.sTheme);
 
+			// also ensure correct theme root for the library's base theme which might be relevant in some cases
+			// (e.g. IconPool which includes font files from sap.ui.core base theme)
+			this._ensureThemeRoot(sLibName, "base");
+
 			if (this.oConfiguration['preloadLibCss'].indexOf(sLibName) < 0) {
 				// check for configured query parameters and use them
 				var sQuery = this._getLibraryCssQueryParams(oLibInfo);

@@ -22,6 +22,8 @@
 
 		<script>
 
+			QUnit.config.autostart = false;
+
 			sap.ui.require([
 				"sap/ui/core/IconPool",
 				"sap/ui/core/Icon",
@@ -45,6 +47,17 @@
 
 				QUnit.module("Methods");
 
+				QUnit.test("insertFontFaceStyle", function(assert) {
+
+					assert.equal(jQuery("head > style[type='text/css']").get(0), null, "Style should not have been inserted.");
+
+					IconPool.insertFontFaceStyle();
+
+					var sCss = jQuery("head > style[type='text/css']").text()
+					assert.ok(sCss.indexOf("url('../../../../../resources/sap/ui/core/themes/base/fonts/SAP-icons") !== -1,
+						"Font should have been include from sap.ui.core base theme folder.");
+
+				});
 				QUnit.test("createControlByURI", function(assert) {
 					var oAssertStub = this.stub(jQuery.sap, "assert", function(bCondition) {
 						if (!bCondition) {
@@ -154,14 +167,12 @@
 					assert.deepEqual(IconPool.getIconNames("collection-1"), [ "legacy-syntax" ], "Correct set of icons for 'collection-1' should be returned.");
 
 				});
-				QUnit.test("insertFontFaceStyle", function(assert) {
-					IconPool.insertFontFaceStyle();
-					assert.ok(jQuery("head > style[type='text/css']").text().indexOf("font-family: 'SAP-icons'") !== -1, "Style should have been inserted.");
-				});
 				QUnit.test("getIconForMimeType", function(assert) {
 					assert.equal(IconPool.getIconForMimeType("image/png"), "sap-icon://attachment-photo", "Should return correct icon URI.");
 					assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");
 				});
+
+				QUnit.start();
 
 			});
 
