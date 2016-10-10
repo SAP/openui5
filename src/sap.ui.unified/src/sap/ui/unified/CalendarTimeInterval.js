@@ -519,6 +519,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
+		return this;
+
 	};
 
 	CalendarTimeInterval.prototype._getItems = function(){
@@ -601,6 +603,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oDatesRow.getAriaLabelledBy = function(){
 			return this.getAssociation("ariaLabelledBy", []);
 		};
+
+		return this;
 
 	};
 
