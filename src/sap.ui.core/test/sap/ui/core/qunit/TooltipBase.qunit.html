@@ -233,7 +233,7 @@
       // needed to wait for rendering the icons
       setTimeout(function() {
         var $DomRef = this.oButton1.$();
-        assert.ok(!!!$DomRef.attr("title"), "There should be no title attribute by default");
+        assert.ok(!$DomRef.attr("title"), "There should be no title attribute by default");
 
         $DomRef.attr("title", "Remove me");
         assert.ok($DomRef.attr("title"), "Title attribute added");

@@ -387,7 +387,7 @@ var SwipeView = (function (window, document) {
 			if (!this.options.loop && (newX > 0 || newX < this.maxX)) {
 				//SAP MODIFICATION BEGIN
 				//Make sure rubber band effect is only shown for IOS
-				if(!!sap.ui.Device.os.ios) {
+				if(sap.ui.Device.os.ios) {
 					newX = this.x + (deltaX / 2);
 				} else {
 					//No rubber-band for non ios!

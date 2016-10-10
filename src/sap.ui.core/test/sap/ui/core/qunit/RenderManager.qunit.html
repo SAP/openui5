@@ -619,11 +619,7 @@
 			ok($icon1[0], "icon should be rendered");
 			ok($icon1.is("span"), "Icon URI should be rendered as a span");
 			equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9){
-				equal($icon1.text(), oIconInfo.content, "Icon content is rendered as dom content in IE8");
-			}else{
-				equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-			}
+			equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
 			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
@@ -648,11 +644,7 @@
 			ok($icon1[0], "icon should be rendered");
 			ok($icon1.is("span"), "Icon URI should be rendered as a span");
 			equal($icon1.css("font-family"), oIconInfo.fontFamily, "Icon's font family is rendered");
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9){
-				equal($icon1.text(), oIconInfo.content, "Icon content is rendered as dom content in IE8");
-			}else{
-				equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-			}
+			equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
 			ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
 			ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
 			ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");

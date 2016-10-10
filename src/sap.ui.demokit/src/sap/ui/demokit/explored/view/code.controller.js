@@ -121,14 +121,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		onDownload : function (evt) {
 
-			if (Device.browser.internet_explorer && Device.browser.version < 10) {
-				MessageToast.show('Download action is not supported in Internet Explorer 9', {
-					autoClose: true,
-					duration: 3000
-				});
-				return;
-			}
-
 			jQuery.sap.require("sap.ui.thirdparty.jszip");
 			var oZipFile = new JSZip();
 

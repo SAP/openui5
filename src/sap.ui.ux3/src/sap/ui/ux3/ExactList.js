@@ -1051,7 +1051,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 					}, function(jRef){
 						//Update BlindLayer of popup
 						jListContRef.addClass("sapUiUx3ExactLstExpandedBL");
-						oList._oPopup._updateBlindLayer();
 						//Adapt the scroll behavior and set the focus
 						adaptScollBehavior(oList);
 						oList.getFocusDomRef().focus();

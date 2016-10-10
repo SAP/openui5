@@ -309,11 +309,7 @@
 		"<baz>52</baz>" +
 		"</root>";
 		oModel.setXML(sXML);
-		if (sap.ui.Device.browser.internet_explorer && parseInt(sap.ui.Device.browser.version) < 9){
-			equal(oModel.getData().getElementsByTagName("bar")[0].text, "ABCDEFG", "get XML test");
-		}else {
-			equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");
-		}
+		equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");
 	});
 
 	test("test XML compatible syntax", function() {

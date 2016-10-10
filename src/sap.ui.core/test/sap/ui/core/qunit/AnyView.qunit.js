@@ -60,7 +60,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			window.onAfterRenderingCalled = false;
 		}
 
-		if (!!sap.ui.Device.browser.safari) {
+		if (sap.ui.Device.browser.safari) {
 			stop();
 			setTimeout(function() {
 				start();
@@ -138,7 +138,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			}
 		}
 
-		if (!!sap.ui.Device.browser.safari) {
+		if (sap.ui.Device.browser.safari) {
 			stop();
 			setTimeout(function() {
 				start();

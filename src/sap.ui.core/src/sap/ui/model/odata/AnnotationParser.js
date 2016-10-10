@@ -1010,7 +1010,7 @@ var AnnotationParser =  {
 		var xPath = {};
 		var mParserData = AnnotationParser._parserData;
 
-		if (Device.browser.internet_explorer) {// old IE
+		if (Device.browser.msie) {// old IE
 			xPath = {
 				setNameSpace : function(outNode) {
 					outNode.setProperty("SelectionNamespaces",
