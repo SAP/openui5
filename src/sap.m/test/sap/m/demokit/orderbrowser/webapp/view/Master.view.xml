@@ -34,6 +34,7 @@
 				id="list"
 				items="{
 					path: '/Orders',
+					parameters: {expand: 'Customer'},
 					sorter: {
 						path: 'OrderID',
 						descending: false
@@ -62,12 +63,47 @@
 					<ObjectListItem
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
 						press="onSelectionChange"
-						title="{OrderID}"
->
+						title="{
+							path: 'OrderID',
+							formatter: '.formatter.masterItemTitle'
+						}"
+						number="{
+							path: 'OrderDate',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: { style: 'short' }
+						}">
+						<attributes>
+							<ObjectAttribute text="{i18n>masterItemCustomer}: {Customer/CompanyName}" />
+							<ObjectAttribute text="{i18n>masterItemShipped}: {
+								path: 'ShippedDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: { style: 'medium' }
+							}" />
+						</attributes>
 					</ObjectListItem>
 				</items>
 			</List>
 		</semantic:content>
+
+		<semantic:sort>
+			<semantic:SortSelect change="onSort">
+				<core:Item key="OrderID" text="{i18n>masterSortOrderNumber}" />
+				<core:Item key="Customer/CompanyName" text="{i18n>masterSortCustomer}" />
+				<core:Item key="OrderDate" text="{i18n>masterSortOrderDate}" />
+				<core:Item key="ShippedDate" text="{i18n>masterSortShippedDate}" />
+			</semantic:SortSelect>
+		</semantic:sort>
+		<semantic:filter>
+			<semantic:FilterAction press="onFilter"/>
+		</semantic:filter>
+		<semantic:group>
+			<semantic:GroupSelect change="onGroup">
+				<core:Item key="NO_GROUPING" text="{i18n>masterGroupNoGrouping}" />
+				<core:Item key="CompanyName" text="{i18n>masterGroupCustomer}" />
+				<core:Item key="OrderPeriod" text="{i18n>masterGroupOrderPeriod}" />
+				<core:Item key="ShippedPeriod" text="{i18n>masterGroupShippedPeriod}" />
+			</semantic:GroupSelect>
+		</semantic:group>
 
 	</semantic:MasterPage>
 

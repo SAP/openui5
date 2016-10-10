@@ -4,6 +4,16 @@ sap.ui.define([
 
 		return {
 			/**
+			 * Provides the full title for an ObjectListItem in the master list,
+			 * consisting of a translated text ("Order") and the order ID.
+			 * @param {int} orderId ID of the order
+			 * @returns {string} 
+			 */
+			masterItemTitle : function (orderId) {
+				return this.getResourceBundle().getText("masterItemTitle", [ orderId ]);
+			},
+
+			/**
 			 * Rounds the currency value to 2 digits
 			 *
 			 * @public
