@@ -851,4 +851,60 @@ jQuery.sap.require("sap.m.Button");
 		assert.ok(Utils.isApplicationVariant(this.oComponentOfVariant));
 	});
 
+	QUnit.test("isApplication returns false if there is no manifest", function (assert) {
+		assert.notOk(Utils.isApplication());
+	});
+
+	QUnit.test("isApplication returns false if there is no manifest['sap.app']", function (assert) {
+
+		var oManifest = {
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.notOk(Utils.isApplication(oManifest));
+	});
+
+	QUnit.test("isApplication returns false if there is no manifest['sap.app'].type", function (assert) {
+
+		var oManifest = {
+			"sap.app": {
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.notOk(Utils.isApplication(oManifest));
+	});
+
+	QUnit.test("isApplication returns false if the manifest type is not 'application'", function (assert) {
+
+		var oManifest = {
+			"sap.app": {
+				"type": "component"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.notOk(Utils.isApplication(oManifest));
+	});
+
+	QUnit.test("isApplication returns true if the manifest type is 'application'", function (assert) {
+
+		var oManifest = {
+			"sap.app": {
+				"type": "application"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.ok(Utils.isApplication(oManifest));
+	});
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));

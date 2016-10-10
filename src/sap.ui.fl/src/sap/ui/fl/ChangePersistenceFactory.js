@@ -73,26 +73,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Callback which is called within the early state of Component processing.
-	 * Already triggers the loading of the flexiblity changes if the loaded manifest is an application variant.
+	 * Processing of the load component, shared by _onLoadComponent and _getChangesForComponentAfterInstantiation.
 	 *
 	 * @param {object} oConfig - copy of the configuration of loaded component
 	 * @param {object} oConfig.asyncHints - async hints passed from the app index to the core Component processing
-	 * @param {object} oManifest - copy of the manifest of loaded component
-	 * @param {object} oManifest."sap.app"
-	 * @param {string} oManifest."sap.app".type - type of the component (i.e. "application").
-	 * The processing is only done for components of the type "application"
-	 * @since 1.38
+	 * @returns {object} Wrapper for oChangePersistence and oRequestOptions
+	 * @since 1.43
 	 * @private
 	 */
-	ChangePersistenceFactory._onLoadComponent = function (oConfig, oManifest) {
-
-		// stop processing if the component is not of the type application
-		if (!(oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application")) {
-			return;
-		}
-
-		var oRequestOptions = {};
+	ChangePersistenceFactory._doLoadComponent = function (oConfig) {
+		var oChangePersistenceWrapper = {oChangePersistence: {}, oRequestOptions: {}};
 		var sComponentName = oConfig.name;
 
 		if (oConfig.componentData && oConfig.componentData.startupParameters
@@ -106,14 +96,65 @@ sap.ui.define([
 					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests);
 					if (oFlAsyncHint) {
 						sComponentName = oFlAsyncHint.reference;
-						oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
+						oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 					}
 				}
 			}
 		}
 
-		var oChangePersistence = this.getChangePersistenceForComponent(sComponentName);
-		oChangePersistence.getChangesForComponent(oRequestOptions);
+		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName);
+		return oChangePersistenceWrapper;
+	};
+
+	/**
+	 * Callback which is called within the early state of Component processing.
+	 * Already triggers the loading of the flexibility changes if the loaded manifest is an application variant.
+	 *
+	 * @param {object} oConfig - copy of the configuration of loaded component
+	 * @param {object} oConfig.asyncHints - async hints passed from the app index to the core Component processing
+	 * @param {object} oManifest - copy of the manifest of loaded component
+	 * @param {object} oManifest."sap.app"
+	 * @param {string} oManifest."sap.app".type - type of the component (i.e. "application").
+	 * The processing is only done for components of the type "application"
+	 * @since 1.38
+	 * @private
+	 */
+	ChangePersistenceFactory._onLoadComponent = function (oConfig, oManifest) {
+
+		// stop processing if the component is not of the type application
+		if (!Utils.isApplication(oManifest)) {
+			return;
+		}
+
+		var oChangePersistenceWrapper = this._doLoadComponent(oConfig);
+
+		oChangePersistenceWrapper.oChangePersistence.getChangesForComponent(oChangePersistenceWrapper.oRequestOptions);
+	};
+
+	/**
+	 * Callback which is called within the early state of Component instantiation.
+	 *
+	 * @param {object} oConfig - copy of the configuration of loaded component
+	 * @param {object} oConfig.asyncHints - async hints passed from the app index to the core Component processing
+	 * @param {object} oManifest - copy of the manifest of loaded component
+	 * @param {object} oManifest."sap.app"
+	 * @param {string} oManifest."sap.app".type - type of the component (i.e. "application").
+	 * @param {object} oComponent Component instance
+	 * The processing is only done for components of the type "application"
+	 * @returns {array} Promise with an array of changes.
+	 * @since 1.43
+	 * @private
+	 */
+	ChangePersistenceFactory._getChangesForComponentAfterInstantiation = function (oConfig, oManifest, oComponent) {
+
+		// stop processing if the component is not of the type application
+		if (!Utils.isApplication(oManifest)) {
+			return Promise.resolve([]);
+		}
+
+		var oChangePersistenceWrapper = this._doLoadComponent(oConfig);
+
+		return oChangePersistenceWrapper.oChangePersistence.getChangesMapForComponent(oComponent, oChangePersistenceWrapper.oRequestOptions);
 	};
 
 	ChangePersistenceFactory._findFlAsyncHint = function (oAsyncHintRequest) {

@@ -746,6 +746,10 @@ sap.ui.define([
 			var sReferenceName = oPropertyBag.reference.replace('.Component','');
 			var sNamespace = 'apps/' + sReferenceName + "/" + sSubfolder + "/";
 			return sNamespace;
+		},
+
+		isApplication: function (oManifest) {
+			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		}
 	};
 	return Utils;

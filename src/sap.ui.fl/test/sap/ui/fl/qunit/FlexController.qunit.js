@@ -488,4 +488,91 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
 	});
 
+	QUnit.module("applyChangesOnControl", {
+		beforeEach: function () {
+			this.oControl = new sap.ui.core.Control("someId");
+		},
+		afterEach: function () {
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("applyChangesOnControl does not call anything of there is no change for the control", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oSomeOtherChange = {};
+		var mChanges = {
+			"someOtherId": [oSomeOtherChange]
+		};
+
+		FlexController.applyChangesOnControl(mChanges, this.oControl);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
+	});
+
+	QUnit.test("applyChangesOnControl processes only those changes that belong to the control", function (assert) {
+		var oCheckTargetAndApplyChangeStub = this.stub(FlexController.prototype, "_checkTargetAndApplyChange");
+
+		var oChange0 = {};
+		var oChange1 = {};
+		var oChange2 = {};
+		var oChange3 = {};
+		var oSomeOtherChange = {};
+		var mChanges = {
+			"someId": [oChange0, oChange1, oChange2, oChange3],
+			"someOtherId": [oSomeOtherChange]
+		};
+
+		FlexController.applyChangesOnControl(mChanges, this.oControl);
+
+		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
+		assert.equal(oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange3, "the fourth change was processed fourth");
+	});
+
+	QUnit.module("getChangesAndPropagate", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+
+	QUnit.test("does not propagate if there are no changes for the component", function (assert) {
+		this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
+
+		var oComponent = {
+			getManifestObject: function () {},
+			addPropagationListener: function () {}
+		};
+
+		var oAddPropagationListenerStub = this.stub(oComponent, "addPropagationListener");
+
+		FlexController.getChangesAndPropagate(oComponent, {});
+
+		assert.equal(oAddPropagationListenerStub.callCount, 0, "no propagation was triggered");
+	});
+
+	QUnit.test("does propagate if there are changes for the component", function (assert) {
+
+		var done = assert.async();
+		assert.expect(0); // assert only the addPropagationListener to be called
+
+		var mDeterminedChanges = {
+			"someId": [{}]
+		};
+
+		this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(mDeterminedChanges));
+
+		var oComponent = {
+			getManifestObject: function () {},
+			addPropagationListener: function () {
+				done();
+			}
+		};
+
+		FlexController.getChangesAndPropagate(oComponent, {});
+	});
+
 }(sap.ui.fl.FlexController, sap.ui.fl.Change, sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.HideControl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier, sap.ui.fl.context.ContextManager));
