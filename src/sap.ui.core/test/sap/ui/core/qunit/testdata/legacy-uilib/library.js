@@ -19,3 +19,7 @@ sap.ui.getCore().initLibrary({
   elements: [
   ],
   version: "0.0.1-SNAPSHOT"});
+
+// only to test compatibility with "variant" parameter
+// (which is not in use in productive libraries)
+sap.ui.getCore().includeLibraryTheme("sap.ui.legacy.testlib", "[legacy]");
