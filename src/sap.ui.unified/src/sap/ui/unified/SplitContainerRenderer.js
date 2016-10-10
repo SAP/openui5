@@ -11,6 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * SplitContainer renderer.
 	 * @namespace
+	 * @deprecated Since version 1.44.0.
 	 */
 	var SplitContainerRenderer = {};
 
