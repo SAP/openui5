@@ -99,8 +99,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * sapUiUnifiedCSwitcherVisible
 	 */
 	ContentSwitcher.prototype._showActiveContent = function(iNumber) {
-		this._$Contents[0].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 1);
-		this._$Contents[1].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 2);
+		if (this._$Contents) {
+			this._$Contents[0].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 1);
+			this._$Contents[1].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 2);
+		}
 	};
 
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
@@ -153,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		if (sAnimation === sCurrentAnimation) {
 			// No change.
-			return;
+			return this;
 		}
 
 		var $Dom = this.$();
@@ -165,9 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			// The renderer will take care of it.
 		}/**/
 
-		this.setProperty("animation", sAnimation, bSuppressInvalidate);
-
-		return this;
+		return this.setProperty("animation", sAnimation, bSuppressInvalidate);
 	};
 
 
