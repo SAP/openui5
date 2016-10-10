@@ -89,8 +89,8 @@
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden; /* avoid scrollbar for column resize handlers */
-	border-left: 1px solid @sapUiListHeaderBorderColor;
-	border-right: 1px solid @sapUiListHeaderBorderColor;
+	border-left: 1px solid @sapUiListVerticalBorderColor;
+	border-right: 1px solid @sapUiListVerticalBorderColor;
 	border-top: 1px solid @sapUiListBorderColor;
 	background-color: @sapUiListBackground;
 }
@@ -217,7 +217,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 		content: '';
 		z-index: 9;
 		/* same as sapUiOverlay */
-		background-color: fade(@sapUiExtraLightBG, 80%);
+		background-color: fade(@sapUiGroupContentBackground, 80%);
 		position: absolute;
 		top: -2px;
 		left: 0;
