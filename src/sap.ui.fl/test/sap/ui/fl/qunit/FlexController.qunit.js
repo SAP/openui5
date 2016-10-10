@@ -488,6 +488,41 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
 	});
 
+	QUnit.test("creates a change for a map of a control with id and appComponent", function (assert) {
+
+		var oAppComponent = new sap.ui.core.UIComponent();
+		var mControl = {id : this.oControl.getId(), appComponent : oAppComponent};
+
+		var oDummyChangeHandler = {
+			completeChangeContent: function () {}
+		};
+		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+
+		var oChange = this.oFlexController.createChange({}, mControl);
+
+		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
+	});
+
+	QUnit.test("throws an error if a map of a control has no appComponent or no id", function (assert) {
+
+		var oAppComponent = new sap.ui.core.UIComponent();
+		var mControl1 = {id : this.oControl.getId(), appComponent : undefined};
+		var mControl2 = {id : undefined, appComponent : oAppComponent};
+
+		var oDummyChangeHandler = {
+			completeChangeContent: function () {}
+		};
+		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+
+		assert.throws( function () {
+			this.oFlexController.createChange({}, mControl1);
+		});
+
+		assert.throws( function () {
+			this.oFlexController.createChange({}, mControl2);
+		});
+});
+
 	QUnit.module("applyChangesOnControl", {
 		beforeEach: function () {
 			this.oControl = new sap.ui.core.Control("someId");
