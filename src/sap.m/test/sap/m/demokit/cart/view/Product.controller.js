@@ -124,18 +124,11 @@ sap.ui.define([
 				oCartEntry.Quantity += 1;
 			}
 
-			// recalculate total price
-			oCartData.totalPrice = 0;
-			Object.keys(oCartEntries).forEach(function (sProductId) {
-				var oProduct = oCartEntries[sProductId];
-				oCartData.totalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
-			});
-
 			//if there is at least one entry, the edit button is shown
 			oCartData.showEditAndProceedButton = true;
 
 			// update model
-			oCartModel.setData(oCartData);
+			oCartModel.refresh(true);
 
 			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART"));

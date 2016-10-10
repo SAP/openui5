@@ -20,7 +20,7 @@
 			<Toolbar>
 				<Text
 					text="{
-						path : 'cartProducts>/totalPrice',
+						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
 						} EUR" />
 				<ToolbarSpacer/>
