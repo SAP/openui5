@@ -58,7 +58,10 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 
 		this._renderFailedIcon(oRm, oControl);
 		this._renderHeader(oRm, oControl);
-		this._renderSubheader(oRm, oControl);
+
+		if (oControl.getSubheader()) {
+			this._renderSubheader(oRm, oControl);
+		}
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-endMarker");
@@ -131,14 +134,14 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			$End = this.$("endMarker"),
 			$Start =  this.$("startMarker"),
 			iBarOffsetX, iBarOffsetY,
-			iBarPaddingTop = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "margin-top")),
+			iBarPaddingTop = Math.ceil(GenericTileLineModeRenderer._getCSSPixelValue(this, "margin-top")),
 			iBarWidth,
-			iParentWidth = this.getParent().$().outerWidth(),
-			iParentLeft = this.getParent().$().offset().left,
+			iParentWidth = this.$().parent().outerWidth(),
+			iParentLeft = this.$().parent().offset().left,
 			iParentRight = iParentLeft + iParentWidth,
 			iHeight = Math.round($End.offset().top - $Start.offset().top),
-			cHeight = GenericTileLineModeRenderer._getCSSHeight(this, "line-height"), //height including gap between lines
-			cLineHeight = Math.ceil(GenericTileLineModeRenderer._getCSSHeight(this, "min-height")), //line height
+			cHeight = GenericTileLineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
+			cLineHeight = Math.ceil(GenericTileLineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
 			iLines = Math.round(iHeight / cHeight) + 1,
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
 			i = 0,
@@ -216,13 +219,13 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 * Calculates the given property of the passed tile. If the property is retrieved in pixels, it is directly returned.
 	 * If the property is given as rem, it is converted to pixels.
 	 *
-	 * @param {sap.m.GenericTile|jQuery} tile The tile the CSS property is to be retrieved of.
+	 * @param {sap.m.GenericTile|jQuery} obj The object the CSS property is to be retrieved of.
 	 * @param {string} property The CSS property to be read and converted.
 	 * @returns {float} The property value in pixels.
 	 * @private
 	 */
-	GenericTileLineModeRenderer._getCSSHeight = function(tile, property) {
-		var $Obj = tile instanceof jQuery ? tile : tile.$(),
+	GenericTileLineModeRenderer._getCSSPixelValue = function(obj, property) {
+		var $Obj = obj instanceof jQuery ? obj : obj.$(),
 			aMatch = ($Obj.css(property) || "").match(/([^a-zA-Z\%]*)(.*)/),
 			fValue = parseFloat(aMatch[1]),
 			sUnit = aMatch[2];

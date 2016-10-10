@@ -114,8 +114,8 @@
 		pointer-events: none;
 
 		&.sapMGTNewLine:before {
-			content: "\A0\A"; //linebreak
-			white-space: pre;
+			content: "\A"; //linebreak
+			white-space: pre-wrap;
 			display: inline;
 			pointer-events: none;
 		}
@@ -130,12 +130,17 @@
 		border-top: 2px solid transparent;
 		border-bottom: 2px solid transparent;
 		z-index: 2;
+
+		padding-right: 0.5rem;
 	}
 
 	.sapMGTLineMode .sapMGTSubHdrTxt {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
 		margin-right: 0.5rem;
+
+		&:before { //this is needed to enable line-wrapping between header end and subheader beginning
+			content: "";
+			display: inline-block;
+		}
 	}
 
 	.sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -151,6 +156,11 @@
 	.sapMGTLineMode .sapMGTHdrTxt {
 		border-left: 0.5rem solid transparent;
 		margin-left: -0.5rem;
+	}
+
+	.sapMGTLineMode .sapMGTHdrTxt:last-of-type {
+		padding-right: 0.5rem;
+		margin-right: 0.5rem;
 	}
 
 	.sapMGTStartMarker, .sapMGTEndMarker {

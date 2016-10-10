@@ -1,0 +1,28 @@
+<core:View controllerName="sap.m.sample.GenericTileLineMode.Page" xmlns="sap.m" xmlns:core="sap.ui.core"  xmlns:l="sap.ui.layout" xmlns:html="http://www.w3.org/1999/xhtml">
+	<VBox width="100%">
+		<l:HorizontalLayout id="TileContainerExpanded" allowWrapping="true" class="TileContainer" content="{/tiles/expanded}">
+			<GenericTile header="{title}" subheader="{subtitle}" state="{=${state} || 'Loaded'}" press="press">
+				<tileContent>
+					<TileContent footer="{footer}">
+						<content>
+							<NumericContent value="{kpivalue}" valueColor="{color}" indicator="{trend}" scale="{scale}" />
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+		</l:HorizontalLayout>
+		<html:div class="LowerContainer">
+			<l:HorizontalLayout id="TileContainerCollapsed" allowWrapping="true" class="LineTileContainer" content="{/tiles/collapsed}">
+				<GenericTile header="{title}" subheader="{subtitle}" state="{=${state} || 'Loaded'}" mode="LineMode" press="press">
+					<tileContent>
+						<TileContent footer="{footer}">
+							<content>
+								<NumericContent value="{kpivalue}" valueColor="{color}" indicator="{trend}" scale="{scale}" />
+							</content>
+						</TileContent>
+					</tileContent>
+				</GenericTile>
+			</l:HorizontalLayout>
+		</html:div>
+	</VBox>
+</core:View>

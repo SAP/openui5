@@ -335,9 +335,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 	/* --- Getters and Setters --- */
 
-	GenericTile.prototype.setProperty = function() {
+	GenericTile.prototype.setProperty = function(sPropertyName) {
 		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
-		this._bUpdateLineTileSiblings = true;
+
+		//If these properties are being changed, update all sibling controls that are GenericTiles in LineMode
+		var aLineModeProperties = [ "state", "subheader", "header" ];
+		if (aLineModeProperties.indexOf(sPropertyName) !== -1) {
+			this._bUpdateLineTileSiblings = true;
+		}
 		return this;
 	};
 
