@@ -1168,19 +1168,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		this._updateHSb(oTableSizes);
 
-		this.$().find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
+		var that = this;
+		var $this = this.$();
 
-		if (this._mTimeouts.afterUpdateTableSizes) {
-			window.clearTimeout(this._mTimeouts.afterUpdateTableSizes);
+		$this.find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
+
+		function registerResizeHandler() {
+			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), true);
 		}
 
-		var that = this;
-		this._mTimeouts.afterUpdateTableSizes = window.setTimeout(function () {
+		if ($this.closest(".sapUiLoSplitter").length) {
+			// a special workaround for the splitter control due to concurrence issues
+			registerResizeHandler();
+		} else {
 			// size changes of the parent happen due to adaptations of the table sizes. In order to first let the
 			// browser finish painting, the resize handler is registered in a timeout. If this would be done synchronously,
 			// updateTableSizes would always run twice.
-			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), true);
-		}, 0);
+			this._mTimeouts.afterUpdateTableSizes = window.setTimeout( registerResizeHandler, 0);
+		}
 	};
 
 	Table.prototype.setShowOverlay = function(bShow) {

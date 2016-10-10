@@ -9,7 +9,7 @@
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
 
 <script id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
+		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified, sap.ui.layout"
 		data-sap-ui-theme="sap_belize"
 		src="../../../../resources/sap-ui-core.js"></script>
 
@@ -96,6 +96,7 @@
     createColumns(oTable1);
     oTable1.setModel(oModel);
     oTable1.bindRows("/modelData");
+    oTable1.setVisibleRowCountMode("Auto");
 
     var oTable2 = new sap.ui.table.Table();
     oTable2.setTitle("Table 2");
@@ -109,7 +110,7 @@
     var app = new sap.m.App("tableApp", {initialPage:"page1"});
 
     var page1 = new sap.m.Page("page1", {
-        enableScrolling: true,
+        enableScrolling: false,
         title:"Page 1",
         headerContent: [
             new sap.m.Button({
@@ -121,19 +122,19 @@
 
     var page2 = new sap.m.Page("page2", {
         title:"Page 2",
+        enableScrolling: true,
         headerContent: [
             new sap.m.Button({
                 text : "Go to Table 1",
                 press : function() { app.to("page1", "slide"); }
             })
         ],
-        content : [oTable2]
+        content : [new sap.ui.layout.Splitter({contentAreas: [oTable2]})]
     });
 
     app.addPage(page1).addPage(page2).placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody sapUiSizeCompact" role="application">
-<p>
 </body>
 </html>
