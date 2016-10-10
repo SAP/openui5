@@ -325,17 +325,14 @@ sap.ui.define([], function() {
 							return {
 								changeType : "unhideSimpleFormField",
 								getInvisibleElements : function(oSimpleForm) {
-									var aInvisibleLabels = [];
+									var aElements = [];
 									var aContent = oSimpleForm.getContent();
 									aContent.forEach(function(oField) {
 										if (oField instanceof sap.m.Label && !oField.getDomRef()) {
-											aInvisibleLabels.push({
-												id : oField.getId(),
-												label : oField.getText()
-											});
+											aElements.push(oField);
 										}
 									});
-									return aInvisibleLabels;
+									return aElements;
 								}
 							};
 						}
