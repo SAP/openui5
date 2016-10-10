@@ -253,9 +253,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 			}
 
 			if (containerHeight > childrenHeight) {
-				$flexibleContainer.addClass('sapUiFixFlexFlexibleContainerHeight');
+				$flexibleContainer.removeClass('sapUiFixFlexFlexibleContainerGrowing');
 			} else {
-				$flexibleContainer.removeClass('sapUiFixFlexFlexibleContainerHeight');
+				$flexibleContainer.addClass('sapUiFixFlexFlexibleContainerGrowing');
 			}
 		};
 
