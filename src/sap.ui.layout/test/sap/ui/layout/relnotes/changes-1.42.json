@@ -139,5 +139,52 @@
         "references": []
       }
     ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "eda4762ebc01c504b98deb882ff332573bb72e0e",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: AMD load of library.js",
+        "references": []
+      },
+      {
+        "id": "8118d569a8364c88dfddbe0ca238f7f531e62e65",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: ScrollEnablement is now used for scrolling",
+        "references": []
+      },
+      {
+        "id": "ddb9ba25160f8eb5a716689e29792a8614018bfd",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Scrollbars are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "223a580bfcc2c0f859329e80cc33a00398a5509e",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Splitter containers\u0027 sizes are now properly calculated",
+        "references": []
+      },
+      {
+        "id": "4661cb6837b749b241adce1d7df97d4e2333673a",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Vertical-align for all browsers adjusted to topD",
+        "references": []
+      }
+    ]
   }
 }

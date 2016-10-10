@@ -1201,5 +1201,192 @@
         "references": []
       }
     ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "3a9596eff7c5ab2491a3ddd36556439f585a5b4d",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "FlexBox.less: invalid semicolon removed",
+        "references": []
+      },
+      {
+        "id": "6912ec01e3c76eb992d7a645e0cc58977c005518",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "TimePicker: use type \u0027int\u0027 for integer properties, not \u0027integer\u0027",
+        "references": []
+      },
+      {
+        "id": "a8ce892076753894ba6cdeac60e4c5da7a8e369a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "qUnit: Remove or refactor theme dependent unit tests",
+        "references": []
+      },
+      {
+        "id": "1214d14c5803078b5031f909670536cf923e7c53",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Breadcrumbs: discard invisible link when rendering the control",
+        "references": []
+      },
+      {
+        "id": "ed26508b69ff8221234bf6dd1fe88935ee2daa10",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: focus didn\u0027t have enough contrast in active toolbar contest",
+        "references": []
+      },
+      {
+        "id": "c544d4997b2214a30266f12da1d259fd5da59775",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Change event is fired after SelectionChange on tablet",
+        "references": []
+      },
+      {
+        "id": "ad8cd6a65f8a53bcc32ac1f179c0911ec394d5b2",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Loosing focus  on iPad fixed",
+        "references": []
+      },
+      {
+        "id": "df780ac05d7ee2fe24376632456098c24046883c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: keyboard support wrong if different calendarType used",
+        "references": []
+      },
+      {
+        "id": "b43aaab6fff2e8b633abd0f3c0319ddc94d81f66",
+        "author": "Svetoslav Spasov \u003csvetoslav.spasov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Width when RTL mode is on fixed",
+        "references": []
+      },
+      {
+        "id": "3897f7cc640f20d764d9e9cd437704c7a68be178",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: grouping functionality is fully supported",
+        "references": []
+      },
+      {
+        "id": "92af9ab56adb409a58b3c9154d02c923500c7f4f",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Fixed bugs in rendering of layout data",
+        "references": []
+      },
+      {
+        "id": "4eb93f855bccfb1658671857acc8457aa8ff51d7",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Hindi texts in header improved",
+        "references": []
+      },
+      {
+        "id": "fffd1fd39e9446c2edbcd43cab478fdc8b82e6cf",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tabs text are not clipped any more",
+        "references": []
+      },
+      {
+        "id": "e1007d4b3e452f6957ea9fbc68f04c9514ccd2ef",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Suggestion popup is now closing correctly",
+        "references": []
+      },
+      {
+        "id": "76f02c03dee9d393ed72ce016fc6f806a8e64486",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Suggestions are now correct when the input is in a list",
+        "references": []
+      },
+      {
+        "id": "d807dabf7f770988e7a28867ed5b15b6b4c70da0",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Suggestions are now not open accidentally",
+        "references": []
+      },
+      {
+        "id": "28d80ce892952bb91f0e5c6cc0d98c4bc15af808",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: maxLength now works correctly with composed characters",
+        "references": []
+      },
+      {
+        "id": "b43cd5d237aa86ff8bfcb489693f2531d68a34d3",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.LightBox: Error handling when picture is missing fixed.",
+        "references": []
+      },
+      {
+        "id": "993f2452ee9736079d70d242e334652357c2a4f7",
+        "author": "Elena Stoyanova \u003celena.stoyanova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Container size is now calculated correctly",
+        "references": []
+      },
+      {
+        "id": "9b2f7de9a6f0e11560979d3168c2bbd3ff669d97",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Truncation when Show More/Less button is pressed fixed",
+        "references": []
+      },
+      {
+        "id": "48f40e1ec73d3ee1786aa559a0879918417761c3",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Layouting recatored with flexbox",
+        "references": []
+      },
+      {
+        "id": "0f7e7050afaf8393bd967e6857c1dc9aace5761d",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Overstyling of the RadioButtons removed",
+        "references": []
+      },
+      {
+        "id": "49349910c75f10be635203c776f267f5ca92ef8c",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider/RangeSlider Tooltip size in Cozy mode",
+        "references": []
+      },
+      {
+        "id": "e5d1ff4b0042d23461cada8c172b67fd77b425ed",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Should sync aria-labelled by associations of the cells when columns shown as pop-in.",
+        "references": []
+      },
+      {
+        "id": "06416e4b14898334d511a14abaf015c207e09944",
+        "author": "Svetoslav Spasov \u003csvetoslav.spasov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TableSelectDialog: Selection remembering fixed",
+        "references": []
+      },
+      {
+        "id": "3f60ccf1be4adc407241bb24d50be2ca75bb9b04",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text: Text is not unnecessary split in 2 lines",
+        "references": []
+      }
+    ]
   }
 }

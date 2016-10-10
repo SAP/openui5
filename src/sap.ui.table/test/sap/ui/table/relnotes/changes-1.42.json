@@ -167,5 +167,45 @@
         "references": []
       }
     ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "be1f4e62d97b539b465223eee6cff27e7faa0d01",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Column Reordering via keyboard",
+        "references": []
+      },
+      {
+        "id": "321d83ef4a31bb551d113694835a11983ee577f3",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fix overlapping of cells and headers on indented rows (e.g. grouping)",
+        "references": []
+      },
+      {
+        "id": "b8926108552c49e652143861540128d5577c5a60",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: JavaScript exception by column resize",
+        "references": []
+      },
+      {
+        "id": "548985e9031dfd74a4a7bbe403201e2242242754",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: header row is too high",
+        "references": []
+      },
+      {
+        "id": "384ab9ed25e89fb2b4074a4aa44c604a38242b25",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect header widths in a Dialog",
+        "references": []
+      }
+    ]
   }
 }

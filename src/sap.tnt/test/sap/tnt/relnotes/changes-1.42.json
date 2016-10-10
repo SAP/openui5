@@ -29,5 +29,17 @@
         "references": []
       }
     ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "5ff66fbedb82e7517a6664e7d2ceefc270740908",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
+        "references": []
+      }
+    ]
   }
 }

@@ -643,5 +643,80 @@
         "references": []
       }
     ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "3df75f93f996ed6ad92e07a19c47b64486e0ccc7",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Configuration: setRTL must not ignore the new value",
+        "references": []
+      },
+      {
+        "id": "d9f5b08d194230127837df6c786d579f8565970f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ListBinding: Detect updates if grouping is enabled",
+        "references": []
+      },
+      {
+        "id": "4812145e9a35da6dae5a50dc4687a525b1d0bdec",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Removal of BlockLayer now happens when Popup has closed",
+        "references": []
+      },
+      {
+        "id": "a1bede4fbf2e54854a74c36d308396a07fa8c65c",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: new position isn\u0027t applied in RTL after popup is opened",
+        "references": []
+      },
+      {
+        "id": "ffdf3bc033b6abddf41b8949dbb620c739b6cc23",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: remove visible shieldlayer when destroy popup",
+        "references": []
+      },
+      {
+        "id": "9cee3bd4211dd1ffbe98500a67508f68d9bf23f1",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: should keep focus for non-recently-opened modal popup",
+        "references": []
+      },
+      {
+        "id": "1acdc491a5a2c7abb416654d7e0d4bdcb4065107",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
+        "references": []
+      },
+      {
+        "id": "7d0203b9e0c26b9e8a4fca1d942e7978482fd754",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.encoder: Check host names in validateUrl",
+        "references": []
+      },
+      {
+        "id": "a86726da9754709a56f95134f4c829419b535186",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: fallback format by using given pattern without delimiters",
+        "references": []
+      },
+      {
+        "id": "77dde6ce91f5e2bdde68202190da194a3d813e81",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.theming.Parameters: Correctly rewrite relative urls",
+        "references": []
+      }
+    ]
   }
 }
