@@ -443,6 +443,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
+		return this;
+
 	};
 
 	CalendarMonthInterval.prototype._getMonths = function(){
@@ -487,6 +489,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oYearPicker.setColumns(0);
 			oYearPicker.setYears(6);
 		}
+
+		return this;
 
 	};
 
