@@ -111,7 +111,8 @@ var Key = {
 	F2: "F2",
 	SPACE: "SPACE",
 	ENTER: "ENTER",
-	ESCAPE: "ESCAPE"
+	ESCAPE: "ESCAPE",
+	A: "A"
 };
 
 //************************************************************************
@@ -3315,6 +3316,99 @@ QUnit.test("On a Group Header Row", function(assert) {
 	/* Data Cell */
 	oElem = checkFocus(getCell(0, 1, true), assert);
 	test.call(this, assert);
+});
+
+QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+A (Select/Deselect All)", {
+	beforeEach: function() {
+		setupTest();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("(De)SelectAll possible", function(assert) {
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+	sap.ui.getCore().applyChanges();
+
+	var oElem = checkFocus(getSelectAll(true), assert);
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows selected");
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows deselected");
+
+	oElem = checkFocus(getRowHeader(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows selected");
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Row Header: All rows deselected");
+
+	oElem = checkFocus(getCell(0, 0, true), assert);
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows selected");
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(!sap.ui.table.TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows deselected");
+});
+
+QUnit.test("(De)SelectAll not possible", function(assert) {
+	function test(bSelected) {
+		// Mass (De)Selection on column header is never allowed, regardless of the selection mode.
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		if (bSelected) {
+			oTable.selectAll();
+		} else {
+			oTable.clearSelection();
+		}
+		sap.ui.getCore().applyChanges();
+
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		// Setting the selection mode to "Single" or "None" clears the selection.
+		// So we can stop here as we already tested mass selection when no row is selected.
+		if (bSelected) {
+			return;
+		}
+
+		// Mass (De)Selection is not allowed in selection mode "Single".
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		oElem = checkFocus(getSelectAll(true), assert);
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		oElem = checkFocus(getRowHeader(0, true), assert);
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		oElem = checkFocus(getCell(0, 0, true), assert);
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		// Mass (De)Selection is not allowed in selection mode "None".
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+
+		oElem = checkFocus(getCell(0, 0, true), assert);
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.strictEqual(sap.ui.table.TableUtils.areAllRowsSelected(oTable), bSelected,
+			"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
+	}
+
+	test(false);
+	test(true);
 });
 
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {

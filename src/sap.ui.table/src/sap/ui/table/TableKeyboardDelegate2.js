@@ -81,11 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 		// Select/Deselect all.
 		} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
-			oTable._onSelect(oEvent);
+			oTable._toggleSelectAll();
 
 		// Collapse/Expand group.
 		} else if (TableUtils.isInGroupingRow(oEvent.target)) {
-			// FIXME: Expanding a group causes a re-rendering of (parts?) of the table. The focus gets lost, set it back. Do it! NOW!!
 			TableUtils.toggleGroupHeader(oTable, oEvent.target);
 
 		// Select/Deselect row.
@@ -198,6 +197,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				startIndex: iDataRowIndex,
 				selected: this.isIndexSelected(iDataRowIndex)
 			};
+
+		// Select/Deselect all.
+		} else if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.keyCode === jQuery.sap.KeyCodes.A) {
+			oEvent.preventDefault(); // To prevent full page text selection.
+
+			if ((oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.COLUMNROWHEADER)
+				&& this.getSelectionMode() === SelectionMode.MultiToggle) {
+
+				this._toggleSelectAll();
+			}
 
 		// Toggle the action mode by changing the focus between a data cell and its interactive controls.
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F2) {

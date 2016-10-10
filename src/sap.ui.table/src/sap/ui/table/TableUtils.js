@@ -278,6 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					iHeaderRows = Math.max(iHeaderRows,  aColumns[i].getMultiLabels().length);
 				}
 			}
+
 			return iHeaderRows;
 		},
 
@@ -286,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {Object} oTable current table object
 		 * @param {int} iRowIndex the index of the row which height is needed
 		 * @private
-		 * @return {number}
+		 * @return {int}
 		 */
 		getRowHeightByIndex : function(oTable, iRowIndex) {
 			var iRowHeight = 0;
