@@ -302,7 +302,7 @@
 		if (oReopenTimer) {
 			clearTimeout(oReopenTimer);
 		}
-		oReopenTimer = setTimeout(function() {oReopenTimer = null;}, 200);
+		oReopenTimer = setTimeout(function() {oReopenTimer = null;}, 800);
 	}
 
 	function initMenu(mActions) {
@@ -314,7 +314,7 @@
 				oItem._action = mActions[item].action;
 				oItem.attachSelect(function(oEvent) {
 					var oTFItem = oEvent.getParameter("item");
-					oTFItem._action(TABLESETTINGS.table, oItem.getValue());
+					oTFItem._action(TABLESETTINGS.table, oTFItem.getValue());
 					setReopenTimer();
 				});
 			} else {
