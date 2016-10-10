@@ -284,6 +284,8 @@ sap.ui.require([
 		assert.strictEqual(_Helper.buildPath("base", undefined, "relative"), "base/relative");
 		assert.strictEqual(_Helper.buildPath("base", 42, "relative"), "base/42/relative");
 		assert.strictEqual(_Helper.buildPath("base", 0, "relative"), "base/0/relative");
+		assert.strictEqual(_Helper.buildPath("/", "relative"), "/relative");
+		assert.strictEqual(_Helper.buildPath("/base", "relative"), "/base/relative");
 	});
 
 	//*********************************************************************************************

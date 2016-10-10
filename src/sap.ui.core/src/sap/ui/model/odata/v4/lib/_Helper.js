@@ -40,7 +40,7 @@ sap.ui.define([
 			for (i = 0; i < arguments.length; i++) {
 				sSegment = arguments[i];
 				if (sSegment || sSegment === 0) {
-					aPath.push(sSegment);
+					aPath.push(sSegment === "/" ? "" : sSegment); //avoid duplicated '/'
 				}
 			}
 			return aPath.join("/");
