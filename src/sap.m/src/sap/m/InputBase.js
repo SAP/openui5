@@ -192,23 +192,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Triggers input event from the input field delayed
-	 * This event is marked as synthetic since it is not a native input event
-	 * Event properties can be specified with first parameter when necessary
-	 */
-	InputBase.prototype._triggerInputEvent = function(mProperties) {
-		mProperties = mProperties || {};
-		var oEvent = new jQuery.Event("input", mProperties);
-		oEvent.originalEvent = mProperties;
-		oEvent.setMark("synthetic", true);
-
-		// not to break real event order fire the event delayed
-		jQuery.sap.delayedCall(0, this, function() {
-			this.$("inner").trigger(oEvent);
-		});
-	};
-
-	/**
 	 * Returns the name of the tag element used for the input.
 	 */
 	InputBase.prototype._getInputElementTagName = function() {
@@ -556,19 +539,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
-		// IE9 does not fire input event on BACKSPACE & DEL
-		var mKC = jQuery.sap.KeyCodes;
-		var mBrowser = sap.ui.Device.browser;
 
 		// mark the event as InputBase event
 		oEvent.setMark("inputBase");
-
-		if ((mBrowser.msie && mBrowser.version < 10) &&
-			(oEvent.which === mKC.DELETE || oEvent.which === mKC.BACKSPACE)) {
-
-			// trigger synthetic input event
-			this._triggerInputEvent();
-		}
 	};
 
 	/**
@@ -577,16 +550,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	InputBase.prototype.oncut = function(oEvent) {
-
-		// IE9 does not fire input event on cut
-		var mBrowser = sap.ui.Device.browser;
-		if (mBrowser.msie && mBrowser.version < 10) {
-
-			// trigger synthetic input event
-			this._triggerInputEvent();
-		}
-	};
+	InputBase.prototype.oncut = function(oEvent) {};
 
 	/* =========================================================== */
 	/* API methods                                                 */
