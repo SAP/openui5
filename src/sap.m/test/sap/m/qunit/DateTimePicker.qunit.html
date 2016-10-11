@@ -21,6 +21,9 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<!-- Test functions -->
 		<script language="javascript">
@@ -120,6 +123,28 @@
 				} else {
 					ok(!jQuery("#DTP1").children("input").attr("placeholder"), "No placeholder attribute");
 				}
+			});
+
+			asyncTest("Time sliders are updated right after popup is open", function() {
+				//Prepare
+				var oDTP = new sap.m.DateTimePicker().placeAt("uiArea1");
+				sap.ui.getCore().applyChanges();
+
+				oDTP._createPopup();
+				oDTP._createPopupContent();
+				var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "updateSlidersValues");
+
+				//Act
+				oDTP._openPopup();
+				setTimeout(function() {
+					//Assert
+					equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
+
+					//Cleanup
+					oSpyUpdateSlidersFn.restore();
+					oDTP.destroy();
+					start();
+				}, 200);
 			});
 
 			module("interaction");
@@ -253,6 +278,7 @@
 				strictEqual(oInfo.description, "2014-03-26-10-32-30 Placeholder Date and Time Tooltip", "Description");
 				oInput.destroy();
 			});
+
 		</script>
 
 	</head>
