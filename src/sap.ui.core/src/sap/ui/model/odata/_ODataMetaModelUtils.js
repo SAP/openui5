@@ -404,6 +404,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						o["com.sap.vocabularies.Common.v1.FieldControl"] = {
 							"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
 						};
+						o["com.sap.vocabularies.UI.v1.Hidden"] = oBoolTrue;
 					}
 					break;
 				default:
