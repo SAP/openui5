@@ -244,13 +244,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		var oSpecificChangeInfo = { sUnhideId: "component---Title0" };
+
+		var oSpecificChangeInfo = { revealedElementId: sap.ui.getCore().byId("component---Label0").getParent().getId() };
 
 		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
 
-        assert.equal(oChange.content.elementSelector.id, "Title0", "sUnhideId has been added to the change");
+        assert.equal(oChange.content.elementSelector.id, "Label0", "sUnhideId has been added to the change");
         assert.ok(oChange.content.elementSelector.idIsLocal, "the id is a local id");
 	});
 
@@ -267,7 +268,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.throws(function() {
 			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.mPropertyBag);
 			},
-			new Error("oSpecificChangeInfo.sUnhideId attribute required"),
+			new Error("oSpecificChangeInfo.revealedElementId attribute required"),
 			"the undefined value raises an error message"
 		);
 	});
