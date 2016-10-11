@@ -1436,6 +1436,7 @@
 			});
 
 			test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function() {
+
 				// system under test
 				var oInput = new sap.m.InputBase({
 					placeholder : "Test"
@@ -1462,40 +1463,9 @@
 				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with character input");
 				fnInputDelegateSpy.reset();
 
-				// stub - IE9
-				sap.ui.Device.browser.msie = sap.ui.Device.browser.msie;
-				this.stub(sap.ui.Device.browser, "msie", true);
-				this.stub(sap.ui.Device.browser, "version", 9);
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "BACKSPACE");
-				this.clock.tick(1);
-
-				// assertion
-				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with BACKSPACE");
-				fnInputDelegateSpy.reset();
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "DELETE");
-				this.clock.tick(1);
-
-				// assertion
-				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with DELETE");
-				fnInputDelegateSpy.reset();
-
-				// act
-				sap.ui.test.qunit.triggerEvent("cut", oInputDomRef);
-				this.clock.tick(1);
-
-				// assertion
-				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with CUT");
-				fnInputDelegateSpy.reset();
-
 				// cleanup
 				oInput.destroy();
-
-
-			})
+			});
 
 			/* =========================================================== */
 			/* Focus And Cursor Position Module                            */
