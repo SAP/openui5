@@ -583,15 +583,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		}
 
 		var oRef = this.oModel._getObject(sPath);
-		if (jQuery.isArray(oRef)) {
+		if (Array.isArray(oRef)) {
 			this.oKeys[sPath] = oRef;
 			this.oLengths[sPath] = oRef.length;
 			this.oFinalLengths[sPath] = true;
 		}
 
 		if (sNavPath && oObject[sNavPath]) {
-			if (jQuery.isArray(oRef)) {
-				jQuery.each(oRef, function(iIndex, sRef) {
+			if (Array.isArray(oRef)) {
+				oRef.forEach(function(sRef) {
 					var oObject = that.getModel().getData("/" + sRef);
 					that._processODataObject(oObject, "/" + sRef + "/" + sNavPath, aNavPath.join("/"));
 				});

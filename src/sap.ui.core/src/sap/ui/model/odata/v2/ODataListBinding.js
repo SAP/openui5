@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
 			// oRef needs to be an array, so that it is the list of expanded entries
-			if (jQuery.isArray(oRef)) {
+			if (Array.isArray(oRef)) {
 				this.aAllKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
@@ -423,7 +423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
 			// oRef needs to be an array, so that it is the list of expanded entries
-			if (jQuery.isArray(oRef)) {
+			if (Array.isArray(oRef)) {
 				this.aAllKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
@@ -881,7 +881,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			// - set the new keys
 			// - trigger clientside filter/sorter
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
-			bRefChanged = jQuery.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
+			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				this.aAllKeys = oRef;
@@ -1150,7 +1150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		aFilters = this.aFilters.concat(this.aApplicationFilters);
 
-		if (!aFilters || !jQuery.isArray(aFilters) || aFilters.length === 0) {
+		if (!aFilters || !Array.isArray(aFilters) || aFilters.length === 0) {
 			this.aFilters = [];
 			this.aApplicationFilters = [];
 		}

@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 */
 	MessageListBinding.prototype.update = function(){
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
-		if (oList && jQuery.isArray(oList)) {
+		if (Array.isArray(oList)) {
 			if (this.bUseExtendedChangeDetection) {
 				this.oList = jQuery.extend(true, [], oList);
 			} else {
