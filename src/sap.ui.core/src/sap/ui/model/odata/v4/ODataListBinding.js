@@ -311,6 +311,9 @@ sap.ui.define([
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 		}));
+		this.oModel.addedRequestToGroup(sGroupId, function() {
+			that.oCache.setCreatePending();
+		});
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});

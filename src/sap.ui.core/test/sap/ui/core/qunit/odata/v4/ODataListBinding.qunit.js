@@ -1505,7 +1505,7 @@ sap.ui.require([
 
 		oPromise = oListBinding.fetchValue("bar", oListener, 42);
 		assert.ok(oPromise.isFulfilled());
-		return oPromise.then( function (oResult){
+		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oReadResult);
 		});
 	});
@@ -2679,12 +2679,14 @@ sap.ui.require([
 		QUnit.test("create: absolute, " + JSON.stringify(oFixture), function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				bChangeFired = false,
-				oContext;
+				oCacheMock = this.mock(oBinding.oCache),
+				oContext,
+				oExpectation;
 
 			if (!oFixture.sGroupId) {
 				this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 			}
-			this.mock(oBinding.oCache).expects("create")
+			oCacheMock.expects("create")
 				.withExactArgs("update", "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func)
 				.returns(Promise.resolve());
@@ -2693,6 +2695,8 @@ sap.ui.require([
 				assert.ok(oBinding.aContexts[-1], "transient context exists");
 				bChangeFired = true;
 			});
+			oExpectation = this.mock(this.oModel).expects("addedRequestToGroup")
+				.withExactArgs("update", sinon.match.func);
 
 			//code under test
 			oContext = oBinding.create(oFixture.sGroupId, oFixture.oInitialData);
@@ -2704,13 +2708,18 @@ sap.ui.require([
 			assert.strictEqual(oContext.isTransient(), true);
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
 			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.ok(bChangeFired, "Change event fired");
 
 			assert.throws(function () {
 				//code under test
 				oBinding.create();
 			}, new Error("Must not create twice"));
 
-			assert.ok(bChangeFired, "Change event fired");
+			oCacheMock.expects("setCreatePending").withExactArgs();
+
+			// code under test
+			oExpectation.args[0][1](); //simulate submitBatch
+
 			return oContext.created().then(function () {
 				assert.strictEqual(oContext.isTransient(), false);
 			});

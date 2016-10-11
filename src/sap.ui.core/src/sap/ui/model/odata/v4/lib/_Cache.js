@@ -347,6 +347,9 @@ sap.ui.define([
 				+ "' does not exist");
 		}
 		sTransientGroup = oCacheData["@$ui5.transient"];
+		if (sTransientGroup === true) {
+			throw new Error("No 'update' allowed while waiting for server response");
+		}
 		if (sTransientGroup && sTransientGroup !== sGroupId) {
 			throw new Error("The entity will be created via group '" + sTransientGroup
 				+ "'. Cannot patch via group '" + sGroupId + "'");
@@ -435,7 +438,9 @@ sap.ui.define([
 			that = this;
 
 		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oCacheData) {
-			var oEntity, mHeaders;
+			var oEntity,
+				mHeaders,
+				sTransientGroup;
 
 			if (!vDeleteProperty) {
 				// deleting at root level
@@ -443,8 +448,12 @@ sap.ui.define([
 				vDeleteProperty = iIndex;
 			}
 			oEntity = oCacheData[vDeleteProperty];
-			if (oEntity["@$ui5.transient"]) {
-				that.oRequestor.removePost(oEntity["@$ui5.transient"], oEntity);
+			sTransientGroup = oEntity["@$ui5.transient"];
+			if (sTransientGroup === true) {
+				throw new Error("No 'delete' allowed while waiting for server response");
+			}
+			if (sTransientGroup) {
+				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return Promise.resolve();
 			}
 			if (oEntity["$ui5.deleting"]) {
@@ -670,6 +679,19 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.resetChanges = function (sPath) {
 		resetChanges(this, sPath);
+	};
+
+	/**
+	 * Set the status of transient entity to pending to forbid updates while the POST request
+	 * is not yet resolved.
+	 */
+	CollectionCache.prototype.setCreatePending = function () {
+		if (this.aElements[-1] && this.aElements[-1]["@$ui5.transient"]) {
+			// group ID is not needed anymore
+			// requests are submitted and later on only the update group ID is relevant
+			// successful "create" removes @$ui5.transient -> no setCreatePending(false) needed
+			this.aElements[-1]["@$ui5.transient"] = true;
+		}
 	};
 
 	/**
