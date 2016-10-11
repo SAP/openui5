@@ -2,25 +2,25 @@
  * STYLE ADAPTATIONS OF COMMONS CONTROLS FOR SAP.UI.TABLE.TABLE
  ******************************************************************************/
 
-.sapUiTableCell > {
+.sapUiTableCell {
 
-	.sapUiTv,
-	.sapUiLbl,
-	.sapUiLnk {
+	> .sapUiTv,
+	> .sapUiLbl,
+	> .sapUiLnk {
 		display: block;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.sapUiTv {
+	> .sapUiTv {
 		font-weight: normal;
 		font-size: 12px;
 	}
 	
-	.sapUiTf,
-	.sapUiSearchField,
-	.sapUiSearchField > .sapUiTfCombo,
-	.sapUiTfCombo {
+	> .sapUiTf,
+	> .sapUiSearchField,
+	> .sapUiSearchField > .sapUiTfCombo,
+	> .sapUiTfCombo {
 		border: none;
 		background: none;
 		padding: 0;
@@ -28,34 +28,34 @@
 		width: 100%;
 	}
 
-	.sapUiTf.sapUiTfErr.sapUiTfStd,
-	.sapUiTfCombo.sapUiTfErr.sapUiTfStd {
+	> .sapUiTf.sapUiTfErr.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfErr.sapUiTfStd {
 		background-color: @sapUiFieldInvalidBackground;
 	}
 
-	.sapUiTf.sapUiTfWarn.sapUiTfStd,
-	.sapUiTfCombo.sapUiTfWarn.sapUiTfStd {
+	> .sapUiTf.sapUiTfWarn.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfWarn.sapUiTfStd {
 		background-color: @sapUiFieldWarningBackground;
 	}
 
-	.sapUiTf.sapUiTfSucc.sapUiTfStd,
-	.sapUiTfCombo.sapUiTfSucc.sapUiTfStd {
+	> .sapUiTf.sapUiTfSucc.sapUiTfStd,
+	> .sapUiTfCombo.sapUiTfSucc.sapUiTfStd {
 		background-color: @sapUiFieldSuccessBackground;
 	}
 
-	.sapUiTfCombo {
+	> .sapUiTfCombo {
 		padding: 0 8px 0 0;
 	}
 
-	.sapUiImg {
+	> .sapUiImg {
 		margin-top: 1px;
 	}
 
-	.sapUiRating {
+	> .sapUiRating {
 		display: block;
 	}
 
-	.sapUiLnk {
+	> .sapUiLnk {
 		vertical-align: middle;
 	}
 
