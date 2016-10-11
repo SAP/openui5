@@ -2,18 +2,28 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function (FormatException, ODataType, Raw, ParseException, ValidateException) {
-	/*global QUnit */
+], function (jQuery, FormatException, ODataType, Raw, ParseException, ValidateException) {
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.type.Raw");
+	QUnit.module("sap.ui.model.odata.type.Raw", {
+		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			this.oLogMock.verify();
+		}
+	});
 
 	QUnit.test("basics", function (assert) {
 		var oRaw = new Raw(undefined, undefined);
