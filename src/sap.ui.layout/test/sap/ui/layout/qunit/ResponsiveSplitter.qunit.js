@@ -331,7 +331,7 @@
 				.withArgs("RESPONSIVE_SPLITTER_HOME").returns("Go to split screen")
 				.withArgs("RESPONSIVE_SPLITTER_AND").returns("and")
 				.withArgs("RESPONSIVE_SPLITTER_GOTO").returns("Go to screen")
-				.withArgs("RESPONSIVESPLITTER_ARIA_PAGINATOR_LABEL").returns("Pane Switcher");
+				.withArgs("RESPONSIVE_SPLITTER_ARIA_PAGINATOR_LABEL").returns("Pane Switcher");
 
 
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
