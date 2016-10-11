@@ -145,6 +145,18 @@
             }
         }
 
+		function getThirdModelData() {
+			return{
+				items: [
+					{name : 'abc', type: 'hello'},
+					{name : 'abc1', type: 'hello'},
+					{name : 'abc2', type: 'hello'},
+					{name : 'xyz', type: 'world'},
+					{name : 'xyz1', type: 'world'}
+				]
+			}
+		}
+
         function bindAggregations(oControl) {
             var template = new sap.m.MenuItem({
                 text: "{text}",
@@ -464,6 +476,7 @@
             },
             getFirstModelData: getFirstModelData,
             getSecondModelData: getSecondModelData,
+            getThirdModelData: getThirdModelData,
             bindAggregations: function() {
                 bindAggregations(this.sut);
             }
@@ -529,6 +542,30 @@
             strictEqual(oItem.getText(), oSecondData[1]['items'][0]['items'][0]['text'], 'Correct item is being asserted.');
             strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
         });
+
+		test("filtering", function() {
+			var aItems,
+				oItemId,
+				oThirdData;
+
+			this.bindAggregations();
+			this.sut.openBy(this.oButton);
+
+			oThirdData = this.getThirdModelData()['items'];
+
+			this.sut.getModel().setProperty('/items', oThirdData);
+
+			// get visual items
+			aItems = this.sut._getVisualParent().getItems();
+			// get the item that won't fit in the filtered items and should be destroyed
+			oItemId = aItems[2].getId();
+
+			// filter the model
+			this.sut.getBinding('items').filter(new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.EQ, 'world'));
+			sap.ui.getCore().applyChanges();
+
+			ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
+		});
 
         module("[PHONE] Data binding", {
             beforeEach : function () {
@@ -810,6 +847,7 @@
             //Assert
             strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
         });
+
     </script>
 
 </head>
