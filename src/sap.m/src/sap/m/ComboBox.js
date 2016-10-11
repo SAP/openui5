@@ -530,17 +530,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {sap.ui.base.Event} oControlEvent
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem"),
-				bTablet = Device.system.tablet;
+			var oItem = oControlEvent.getParameter("selectedItem");
 
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
 
-			if (this.getPickerType() === "Dialog" || bTablet) {
-				this.onChange();
-			}
+			this.onChange();
 		};
 
 		/**
