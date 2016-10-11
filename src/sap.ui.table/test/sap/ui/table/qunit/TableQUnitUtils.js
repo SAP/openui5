@@ -87,6 +87,7 @@ function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 		title: "TABLE_TITLE",
 		selectionMode: "Single",
 		visibleRowCount: 3,
+		groupHeaderProperty: aFields[0],
 		ariaLabelledBy: "ARIALABELLEDBY"
 	});
 

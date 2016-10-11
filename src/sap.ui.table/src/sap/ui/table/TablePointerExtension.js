@@ -652,6 +652,43 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	};
 
 
+	/*
+	 * Provides the event handling for the row hover effect.
+	 */
+	var RowHoverHandler = {
+
+		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableCtrlFixed > tbody > tr", ".sapUiTableCtrlScroll > tbody > tr"],
+
+		initRowHovering : function(oTable) {
+			var $Table = oTable.$();
+			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
+				RowHoverHandler._initRowHoveringForArea($Table, RowHoverHandler.ROWAREAS[i]);
+			}
+		},
+
+		_initRowHoveringForArea: function($Table, sArea) {
+			$Table.find(sArea).hover(function() {
+				RowHoverHandler._onHover(this, $Table, sArea);
+			}, function() {
+				RowHoverHandler._onUnhover(this, $Table);
+			});
+		},
+
+		_onHover: function(oElem, $Table, sArea) {
+			var iIndex = $Table.find(sArea).index(oElem);
+			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
+				$Table.find(RowHoverHandler.ROWAREAS[i]).filter(":eq(" + (iIndex) + ")").addClass("sapUiTableRowHvr");
+			}
+		},
+
+		_onUnhover: function(oElem, $Table) {
+			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
+				$Table.find(RowHoverHandler.ROWAREAS[i]).removeClass("sapUiTableRowHvr");
+			}
+		}
+
+	};
+
 
 	/*
 	 * Event handling of touch and mouse events.
@@ -799,6 +836,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			if (oTable) {
 				// Initialize the basic event handling for column resizing.
 				ColumnResizeHelper.initColumnTracking(oTable);
+				RowHoverHandler.initRowHovering(oTable);
 			}
 		},
 
@@ -808,8 +846,14 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		_detachEvents : function() {
 			var oTable = this.getTable();
 			if (oTable) {
-				// Cleans up the basic event handling for column resizing.
-				oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+				var $Table = oTable.$();
+
+				// Cleans up the basic event handling for column resizing (and others).
+				$Table.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+
+				// Cleans up the basic event handling for row hover effect
+				$Table.find(".sapUiTableCtrl > tbody > tr").unbind();
+				$Table.find(".sapUiTableRowHdr").unbind();
 			}
 		},
 
@@ -822,6 +866,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			this._InteractiveResizeHelper = InteractiveResizeHelper;
 			this._ReorderHelper = ReorderHelper;
 			this._ExtensionDelegate = ExtensionDelegate;
+			this._RowHoverHandler = RowHoverHandler;
 		},
 
 		/*

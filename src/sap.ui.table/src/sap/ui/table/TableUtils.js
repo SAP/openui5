@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * and column index (in the array of visible columns (see Table._getVisibleColumns()).
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {int} iRowIdx Index of row in the tables rows aggregation
-		 * @param {int} iColIdx Index of column in the tables columns aggregation
+		 * @param {int} iColIdx Index of column in the list of visible columns
 		 * @return {Object}
 		 * @type {Object}
 		 * @property {sap.ui.table.Row} row Row of the table
