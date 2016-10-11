@@ -336,8 +336,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
-	 * binding that have not yet been sent to the server.
+	 * Returns <code>true</code> if the binding has pending changes, meaning updates that have not
+	 * yet been sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
@@ -390,8 +390,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Change handler for the cache. The cache calls this method when the value is changed via
-	 * two-way binding.
+	 * Change handler for the cache. The cache calls this method when the value is changed.
 	 *
 	 * @param {any} vValue
 	 *   The new value

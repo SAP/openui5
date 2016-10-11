@@ -513,36 +513,41 @@ sap.ui.define([
 			fnCancelCallback) {
 		var that = this;
 
-		/*
-		 * Clean-up when the create has been canceled.
-		 */
+		// Clean-up when the create has been canceled.
 		function cleanUp() {
 			delete that.aElements[-1];
 			fnCancelCallback();
 		}
 
-		/*
-		 * Sets a marker that the create request is pending, so that update and delete fail.
-		 */
+		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
 			oEntityData["@$ui5.transient"] = true;
+		}
+
+		function request() {
+			oEntityData["@$ui5.transient"] = sGroupId; // mark as transient (again)
+			return that.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData,
+					setCreatePending, cleanUp)
+				.then(function (oResult) {
+					delete oEntityData["@$ui5.transient"];
+					// update the cache with the POST response
+					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
+				}, function (oError) {
+					if (oError.canceled) {
+						throw oError;
+					}
+					return request();
+				});
 		}
 
 		// clone data to avoid modifications outside the cache
 		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
 
 		this.aElements[-1] = oEntityData;
-		oEntityData["@$ui5.transient"] = sGroupId; // mark as transient
 		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
 		oEntityData["@odata.etag"] = undefined;
 		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData,
-				setCreatePending, cleanUp)
-			.then(function (oResult) {
-				delete oEntityData["@$ui5.transient"];
-				// update the cache with the POST response
-				_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
-			});
+		return request();
 	};
 
 	/**

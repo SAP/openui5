@@ -2714,7 +2714,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("create: cancel callback", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oBinding = this.oModel.bindList("/EMPLOYEES", null, null, null,
+				{$$updateGroupId : "update"}),
 			oContext,
 			oExpectation,
 			oInitialData = {};
@@ -2726,7 +2727,7 @@ sap.ui.require([
 			.returns(new Promise(function () {}));
 
 		// code under test
-		oContext = oBinding.create("update", oInitialData);
+		oContext = oBinding.create(oInitialData);
 
 		assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
 
@@ -2742,9 +2743,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		sTitle : "create: absolute"
-	}, {
-		sGroupId : "update",
-		sTitle : "create: absolute, with group id"
 	}, {
 		oInitialData : {},
 		sTitle : "create: absolute, with initial data"
@@ -2763,16 +2761,13 @@ sap.ui.require([
 			if (oFixture.bRelative) {
 				oExpectation = this.mock(_ODataHelper).expects("createListCacheProxy")
 					.returns(_Cache.create(this.oModel.oRequestor, "EMPLOYEES", {}));
-				oBinding = this.oModel.bindList("EMPLOYEES",
-						oBindingContext);
+				oBinding = this.oModel.bindList("EMPLOYEES", oBindingContext);
 				assert.ok(oExpectation.calledWithExactly(oBinding, oBindingContext));
 			} else {
 				oBinding = this.oModel.bindList("/EMPLOYEES");
 			}
 			oCacheMock = this.mock(oBinding.oCache);
-			if (!oFixture.sGroupId) {
-				this.mock(oBinding).expects("getUpdateGroupId").returns("update");
-			}
+			this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 			oCacheMock.expects("create")
 				.withExactArgs("update", "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func)
@@ -2783,8 +2778,8 @@ sap.ui.require([
 				bChangeFired = true;
 			});
 
-			//code under test
-			oContext = oBinding.create(oFixture.sGroupId, oFixture.oInitialData);
+			// code under test
+			oContext = oBinding.create(oFixture.oInitialData);
 
 			assert.strictEqual(oContext.getModel(), this.oModel);
 			assert.strictEqual(oContext.getBinding(), oBinding);
@@ -2800,7 +2795,7 @@ sap.ui.require([
 			oBinding.hasPendingChanges();
 
 			assert.throws(function () {
-				//code under test
+				// code under test
 				oBinding.create();
 			}, new Error("Must not create twice"));
 
@@ -2822,8 +2817,30 @@ sap.ui.require([
 	// TODO allow relative binding, use createInCache to forward to the binding owning a cache
 
 	//*********************************************************************************************
-	QUnit.test("getContexts after create", function (assert) {
+	QUnit.test("create: only for application groups, not for $direct or $auto", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("getUpdateGroupId").returns("$auto");
+
+		//code under test
+		assert.throws(function () {
+			oBinding.create();
+		}, new Error("Create for update group '$auto' is not supported"));
+
+		oBindingMock.expects("getUpdateGroupId").returns("$direct");
+
+		//code under test
+		assert.throws(function () {
+			oBinding.create();
+		}, new Error("Create for update group '$direct' is not supported"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts after create", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$updateGroupId : "update"
+			}),
 			oCacheMock = this.mock(oBinding.oCache),
 			oContext,
 			aContexts;
@@ -2831,7 +2848,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3);
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", undefined, sinon.match.func)
+			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -2872,7 +2889,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getContexts after create, extended change detection", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$updateGroupId : "update"
+			}),
 			oCacheMock = this.mock(oBinding.oCache),
 			oContext,
 			aContexts,
@@ -2883,7 +2902,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3, "Reason");
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("$auto", "EMPLOYEES", "", undefined, sinon.match.func)
+			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -2924,8 +2943,9 @@ sap.ui.require([
 				assert.strictEqual(oBinding.getLength(), 3);
 			});
 		});
+		this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 
-		oContext = oBinding.create("update");
+		oContext = oBinding.create();
 		assert.strictEqual(oBinding.getLength(), 4);
 
 		// avoid "pause on uncaught exception"
@@ -2935,7 +2955,7 @@ sap.ui.require([
 		this.mock(oContext).expects("destroy").withExactArgs();
 
 		// code under test
-		return oContext.delete().then(function () {
+		return oContext.delete("$direct").then(function () {
 			assert.notOk(-1 in oBinding.aContexts, "No transient context");
 			assert.strictEqual(oBinding.getLength(), 3);
 		});

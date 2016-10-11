@@ -87,7 +87,6 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 								Opa5.assert.strictEqual(oNewNoteInput.getValue(), sExpectedNote,
 									"New Note");
 							} else {
-
 								Opa5.assert.ok(true, "Stored NewNote value " + sLastNewNoteValue);
 							}
 						},

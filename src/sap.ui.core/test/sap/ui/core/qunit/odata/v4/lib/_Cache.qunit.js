@@ -763,65 +763,89 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			oCreatePromise,
-			oRequestExpectation,
+			oFailedPostPromise,
+			oRequestExpectation1,
+			oRequestExpectation2,
 			oRequestorMock = this.mock(oRequestor),
-			fnResolveCreate;
+			fnRejectPost,
+			fnResolvePost;
 
-		oRequestExpectation = oRequestorMock.expects("request");
-		oRequestExpectation
-			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object,
-					sinon.match.func, sinon.match.func)
-			.returns(new Promise(function (resolve, request) {
-				fnResolveCreate = resolve;
+		function checkUpdateAndDeleteFailure() {
+			// code under test
+			oCache.update("updateGroup", "foo", "baz", "n/a", "-1").then(function () {
+				assert.ok(false, "unexpected success - update");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"No 'update' allowed while waiting for server response",
+					oError.message);
+
+			});
+			oCache._delete("updateGroup", "n/a", "-1").then(function () {
+				assert.ok(false, "unexpected success - _delete");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"No 'delete' allowed while waiting for server response",
+					oError.message);
+
+			});
+		}
+
+		function checkUpdateSuccess(sWhen) {
+			// code under test
+			return oCache.update("updateGroup", "foo", sWhen, "Employees", "-1").then(function () {
+				assert.ok(true, "Update works " + sWhen);
+				assert.strictEqual(oCache.aElements[-1]["@$ui5.transient"], "updateGroup");
+			});
+		}
+
+		oRequestExpectation1 = oRequestorMock.expects("request");
+		oRequestExpectation1.withExactArgs("POST", "Employees", "updateGroup", null,
+				sinon.match.object, sinon.match.func, sinon.match.func)
+			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
+				fnRejectPost = reject;
 			}));
 
 		oCreatePromise = oCache.create("updateGroup", "Employees", "");
 
-		// code under test
-		return oCache.update("updateGroup", "foo", "bar", "n/a", "-1").then(function () {
-			assert.ok(true, "Update works before submitBatch");
+		checkUpdateSuccess("before submitBatch").then(function () {
+			oRequestExpectation2 = oRequestorMock.expects("request");
+			// immediately add the POST request again into queue
+			oRequestExpectation2.withExactArgs("POST", "Employees", "updateGroup", null,
+					sinon.match.object, sinon.match.func, sinon.match.func)
+				.returns(new Promise(function (resolve) {
+						fnResolvePost = resolve;
+					}));
+
+			// simulate a submitBatch leading to a failed POST
+			oRequestExpectation1.args[0][5]();
+
+			checkUpdateAndDeleteFailure();
+
+			fnRejectPost(new Error());
+
+			oFailedPostPromise.then(undefined, function () {
+				checkUpdateSuccess("with restarted POST").then(function () {
+					// simulate a submitBatch leading to a successful POST
+					oRequestExpectation2.args[0][5]();
+
+					checkUpdateAndDeleteFailure();
+
+					fnResolvePost({}); // this will resolve oCreatePromise, too
+				});
+			});
+		});
+
+		return oCreatePromise.then(function () {
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", "Employees", "updateGroup",
+					{"If-Match" : undefined}, {foo : "baz2"}, undefined,
+					sinon.match.func)
+				.returns(Promise.resolve({}));
 
 			// code under test
-			oRequestExpectation.args[0][5](); // simulate submitBatch, call fnSubmit()
-
-			return Promise.all([
-				// code under test
-				oCache.update("updateGroup", "foo", "baz", "n/a", "-1")
-					.then(function () {
-						assert.ok(false, "unexpected success - update");
-					}, function (oError) {
-						assert.strictEqual(oError.message,
-							"No 'update' allowed while waiting for server response",
-							oError.message);
-
-					}),
-				// code under test
-				oCache._delete("updateGroup", "n/a", "-1")
-					.then(function () {
-						assert.ok(false, "unexpected success - _delete");
-					}, function (oError) {
-						assert.strictEqual(oError.message,
-							"No 'delete' allowed while waiting for server response",
-							oError.message);
-
-					})
-				]).then(function () {
-					// simulate successful create
-					fnResolveCreate({});
-
-					return oCreatePromise.then(function () {
-						oRequestorMock.expects("request")
-							.withExactArgs("PATCH", "Employees", "updateGroup",
-								{"If-Match" : undefined}, {foo : "baz2"}, undefined,
-								sinon.match.func)
-							.returns(Promise.resolve({}));
-
-						// code under test
-						return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
-							.then(function () {
-								assert.ok(true, "Update works again after create is resolved");
-							});
-					});
+			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
+				.then(function () {
+					assert.ok(true, "Update patches after successful create");
 				});
 		});
 	});
@@ -837,6 +861,34 @@ sap.ui.require([
 			"@$ui5.transient" : "updateGroup",
 			"@odata.etag" : undefined
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create entity, canceled", function (assert) {
+		var bFnCancelCallbackCalled = false,
+			oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oCanceledError = new Error(),
+			oRequestorMock = this.mock(oRequestor);
+
+		oCanceledError.canceled = true;
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object,
+				sinon.match.func, sinon.match.func)
+			.callsArg(6)
+			.returns(Promise.reject(oCanceledError));
+
+		// code under test
+		return oCache.create("updateGroup", "Employees", "", undefined, function () {
+				bFnCancelCallbackCalled = true;
+			}).then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError, oCanceledError);
+				assert.notOk(-1 in oCache.aElements);
+				assert.ok(bFnCancelCallbackCalled);
+			});
 	});
 
 	//*********************************************************************************************
@@ -876,30 +928,6 @@ sap.ui.require([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("create failure", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees"),
-			oEntityData = {foo : "bar"},
-			oError = new Error("POST failed"),
-			oRequestorMock = this.mock(oRequestor);
-
-		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees", "updateGroup", null, sinon.match.object,
-				sinon.match.func, sinon.match.func)
-			.returns(Promise.reject(oError));
-
-		// code under test
-		return oCache.create("updateGroup", "Employees", "", oEntityData).then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oCache.aElements[-1].foo, "bar");
-			assert.strictEqual(oError0, oError);
-		});
-	});
-	// TODO a failed request must be repeated, the promise of create may only fail on cancel
-
-	//*********************************************************************************************
 	QUnit.test("delete transient", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),

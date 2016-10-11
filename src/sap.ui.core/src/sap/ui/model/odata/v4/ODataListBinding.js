@@ -271,31 +271,38 @@ sap.ui.define([
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
-	 * possible after the POST request has been sent to the server and you have called
+	 * possible after the create has been successfully sent to the server and you have called
 	 * {@link #refresh} at the binding or the new entity is deleted in between.
 	 *
-	 * You can {@link sap.ui.model.odata.v4.Context#delete} the created context again. In this case,
-	 * no request is sent and the pending POST is simply canceled.
+	 * For creating the new entity, the binding's update group ID is used, see binding parameter
+	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}. The update group ID
+	 * must not be "$auto" or "$direct".
 	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for the POST request; the default value is the binding's update
-	 *   group ID, see binding parameter $$updateGroupId of
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}
+	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
+	 * again. As long as the context is transient, {@link #resetChanges} and a call to
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
+	 * also delete the created context together with other changes.
+	 *
+	 * If the create on the server fails, the create will be repeated automatically with the next
+	 * call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *
 	 * @param {object} [oInitialData={}]
-	 *   The initial data for the created entity. If the POST request is deferred and has not yet
-	 *   been sent to the server, user input via two-way binding modifies this data.
+	 *   The initial data for the created entity. If the create has not yet been sent successfully
+	 *   to the server, updates modify this data.
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity.
 	 * @throws {Error}
-	 *   If the binding already contains an entity created via this function or {@link #create} on
-	 *   this binding is not supported.
+	 *   If the binding already contains an entity created via this function, or {@link #create} on
+	 *   this binding is not supported, or the update group ID is either "$auto" or "$direct".
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.Context#isTransient
 	 * @since 1.43.0
 	 */
-	ODataListBinding.prototype.create = function (sGroupId, oInitialData) {
+	ODataListBinding.prototype.create = function (oInitialData) {
 		var oContext,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sUpdateGroupId,
 			that = this;
 
 		if (this.aContexts[-1]) {
@@ -304,10 +311,12 @@ sap.ui.define([
 		if (!this.oCache) {
 			throw new Error("Create on this binding is not supported");
 		}
-
-		sGroupId = sGroupId || this.getUpdateGroupId();
+		sUpdateGroupId = this.getUpdateGroupId();
+		if (sUpdateGroupId === "$auto" || sUpdateGroupId === "$direct") {
+			throw new Error("Create for update group '" + sUpdateGroupId + "' is not supported");
+		}
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			this.oCache.create(sGroupId, sResolvedPath.slice(1), "", oInitialData, function () {
+			this.oCache.create(sUpdateGroupId, sResolvedPath.slice(1), "", oInitialData, function () {
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
@@ -820,8 +829,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
-	 * bindings or created entities (see {@link #create}) that have not yet been sent to the server.
+	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
+	 * meaning updates or created entities (see {@link #create}) that have not yet been successfully
+	 * sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
@@ -880,8 +890,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available.
+	 * Refreshes the binding. All data is thrown away and with the next call of
+	 * {@link #getContexts} the data is requested again from the server.
 	 * Refresh is supported for bindings which are not relative to a V4
 	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
@@ -889,14 +899,20 @@ sap.ui.define([
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
 	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *
+	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * {@link #refresh}.
+	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
-	 *   {@link #refresh} on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes or {@link #refresh} on
+	 *   this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -971,8 +987,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending property changes of this binding, meaning updates via two-way binding that
-	 * have not yet been sent to the server.
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
 	 *
 	 * @public
 	 * @since 1.40.1

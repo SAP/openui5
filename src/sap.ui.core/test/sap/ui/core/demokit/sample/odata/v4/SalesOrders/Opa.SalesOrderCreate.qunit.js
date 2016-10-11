@@ -114,12 +114,41 @@ sap.ui.require([
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
 		Then.onTheMainPage.checkID(0);
 
+		if (bRealOData) {
+			// Cancel/resume failed creation of a sales order
+			// Create a sales order with invalid note, save, cancel
+			When.onTheMainPage.pressCreateSalesOrdersButton();
+			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheMainPage.pressRefreshSalesOrdersButton();
+			When.onTheRefreshConfirmation.cancel();
+			Then.onTheMainPage.checkID(0, "");
+			When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+			When.onTheMainPage.firstSalesOrderIsAtPos0();
+			// Create a sales order with invalid note, save, update note, save -> success
+			When.onTheMainPage.pressCreateSalesOrdersButton();
+			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			// do it again, POST is sent again without a change
+			// TODO implement error handling and check the errors on save
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheMainPage.changeNote(0, "Valid Note");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkDifferentID(0, "");
+			// cleanup
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			When.onTheSalesOrderDeletionConfirmation.confirm();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkID(0);
+		}
+
 		// set base context for input field FavoriteProductID
 		When.onTheMainPage.pressSetBindingContextButton();
 		Then.onTheMainPage.checkFavoriteProductID();
 
-		// Filter and then sort: filter is not lost on sort
 		if (bRealOData) {
+			// Filter and then sort: filter is not lost on sort
 			When.onTheMainPage.filterGrossAmount("1000");
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
 			When.onTheMainPage.sortByGrossAmount();

@@ -94,12 +94,12 @@ sap.ui.define([
 		onCreateSalesOrder : function (oEvent) {
 			var oView = this.getView(),
 				oContext = oView.byId("SalesOrders").getBinding("items")
-					.create(undefined, {
+					.create({
 						// TODO where to get initial values from to avoid "failed to drill-down"
 						// and "Not all properties provided while creation or update was executed."
 						// $select?
 						"SalesOrderID" : "",
-						"Note" : new Date().toString(),
+						"Note" : null, // set to null to provoke server error if no note is entered
 						"NoteLanguage" : "E",
 						"BuyerID" : "0100000000",
 						"BuyerName" : "",

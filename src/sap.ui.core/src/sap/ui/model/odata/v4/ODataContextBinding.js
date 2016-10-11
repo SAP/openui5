@@ -611,8 +611,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
-	 * binding that have not yet been sent to the server.
+	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
+	 * meaning updates that have not yet been successfully sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
@@ -662,14 +662,20 @@ sap.ui.define([
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
 	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *
+	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * {@link #refresh}.
+	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
-	 *   refresh on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
+	 *   binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -728,8 +734,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending property changes of this binding, meaning updates via two-way binding that
-	 * have not yet been sent to the server.
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
 	 *
 	 * @public
 	 * @since 1.40.1

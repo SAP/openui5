@@ -599,8 +599,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes that would be reset by
-	 * {@link #refresh}.
+	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
+	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
+	 * successfully sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
@@ -632,12 +633,17 @@ sap.ui.define([
 	 * the last call determines the model's data; it is <b>independent</b> of the order of calls to
 	 * {@link #submitBatch} with the given group ID.
 	 *
+	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call {@link #submitBatch} to submit the
+	 * changes or {@link #resetChanges} to reset the changes before calling {@link #refresh}.
+	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
 	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
 	 *   {@link #submitBatch}
 	 * @throws {Error}
-	 *   If the given group ID is invalid
+	 *   If the given group ID is invalid or if there are pending changes, see
+	 *   {@link #hasPendingChanges}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -724,8 +730,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all property changes associated with the given application group ID which have not
-	 * yet been submitted via {@link #submitBatch}.
+	 * Resets all property changes and created entities associated with the given group ID which
+	 * have not been successfully submitted via {@link #submitBatch}. This function does not reset
+	 * the deletion of entities (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution
+	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   The application group ID, which is a non-empty string consisting of alphanumeric
@@ -736,6 +744,7 @@ sap.ui.define([
 	 *   If the given group ID is not an application group ID
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor.
 	 * @since 1.39.0
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
