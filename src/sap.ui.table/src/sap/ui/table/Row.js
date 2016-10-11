@@ -226,12 +226,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	};
 
 	Row.prototype._updateTableCells = function(oContext) {
-		var aCells = this.getCells();
-		var iAbsoluteRowIndex = this.getIndex();
+		var oTable = this.getParent();
+
+		if (!oTable) {
+			return;
+		}
+
+		var aCells = this.getCells(),
+			iAbsoluteRowIndex = this.getIndex(),
+			bHasTableCellUpdate = !!oTable._updateTableCell,
+			oCell, $Td, bHasCellUpdate;
+
 		for (var i = 0; i < aCells.length; i++) {
-			var oCell = aCells[i];
-			if (oCell._updateTableCell) {
-				oCell._updateTableCell(oCell, oContext, oCell.$().closest("td"), iAbsoluteRowIndex);
+			oCell = aCells[i];
+			bHasCellUpdate = !!oCell._updateTableCell;
+			$Td = bHasCellUpdate || bHasTableCellUpdate ? oCell.$().closest("td") : null;
+
+			if (bHasCellUpdate) {
+				oCell._updateTableCell(oCell, oContext, $Td, iAbsoluteRowIndex);
+			}
+			if (bHasTableCellUpdate) {
+				oTable._updateTableCell(oCell, oContext, $Td, iAbsoluteRowIndex);
 			}
 		}
 	};
