@@ -193,10 +193,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var aFileNameMatches = R_EXTRACT_FILENAME.exec(sIFrameUrl);
 		var sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : sIFrameUrl);
 		var sFileEnding = R_STRIP_UI5_ENDING.exec(sFileName)[0];
-		var sIframeWithoutUI5Ending = sIFrameUrl.replace(R_STRIP_UI5_ENDING, "");
+		var sIFrameWithoutUI5Ending = sIFrameUrl.replace(R_STRIP_UI5_ENDING, "");
 
 		// combine namespace with the file name again
-		sIframeWithoutUI5Ending = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutUI5Ending, sFileEnding || ".html");
+		sIFrameWithoutUI5Ending = jQuery.sap.getModulePath(sSampleId + "." + sIFrameWithoutUI5Ending, sFileEnding || ".html");
 
 		// construct iFrame URL based on the index file and the current query parameters
 		var sSearch = window.location.search,
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		// applying the theme after the bootstrap causes flickering, so we inject a URL parameter
 		// to override the bootstrap parameter of the iFrame example
-		if (sSearch) {
+		if (sSearch && sSearch !== "?") {
 			var oRegExp = /sap-ui-theme=[a-z0-9\-\_]+/;
 			if (sSearch.match(oRegExp)) {
 				sSearch = sSearch.replace(oRegExp, sThemeUrlParameter);
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			sSearch = sSearch.replace("?",  "&");
 		}
 
-		return sIframeWithoutUI5Ending + sSearch;
+		return sIFrameWithoutUI5Ending + sSearch;
 	};
 	return SampleController;
 });
