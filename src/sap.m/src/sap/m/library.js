@@ -1799,7 +1799,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Panel type for dimension and measure settings.
 		 * @public
 		 */
-		dimeasure: "dimeasure"
+		dimeasure: "dimeasure",
+
+		/**
+		 * Panel type for selection settings in general.
+		 *
+		 * @private
+		 */
+		selection: "selection"
 
 	};
 

@@ -1,0 +1,730 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Test Page for sap.m.P13nSelectionPanel</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- use the sinon faketimers for this test -->
+<script type="text/javascript">
+	sinon.config.useFakeTimers = true;
+</script>
+
+<script>
+	QUnit.config.autostart = false;
+	sap.ui.test.qunit.delayTestStart();
+
+	// =========================================================== //
+	// Check UX requirements on                                    //
+	// =========================================================== //
+
+	// =========================================================== //
+	// API module                                                  //
+	// =========================================================== //
+
+	module("API");
+
+	// ------------------------------ //
+	// tests for default values       //
+	// ------------------------------ //
+	test("constructor - items: []", function() {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: []
+		});
+
+		// assertions
+		strictEqual(oSelectionPanel.getTitle(), "");
+		strictEqual(oSelectionPanel.getTitleLarge(), "");
+		strictEqual(oSelectionPanel.getType(), sap.m.P13nPanelType.selection);
+		deepEqual(oSelectionPanel.getItems(), []);
+		deepEqual(oSelectionPanel.getColumnsItems(), []);
+		deepEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items, []);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems]", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C",
+					visible: true
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B",
+					visible: false
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A",
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oSelectionPanel.getItems().length, 3);
+		deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - [], addItem", function() {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel();
+		var oItemA = new sap.m.P13nItem({
+			columnKey: "keyA",
+			text: "A"
+		}), oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B",
+			visible: false
+		}), oItemC = new sap.m.P13nItem({
+			columnKey: "keyC",
+			text: "C"
+		});
+		oSelectionPanel.addItem(oItemC);
+		oSelectionPanel.addItem(oItemB);
+		oSelectionPanel.addItem(oItemA);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oSelectionPanel.getItems().length, 3);
+		deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], insertItem", function() {
+
+		// system under test
+		var oItemA, oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B"
+		}), oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		oSelectionPanel.insertItem(oItemB, 1);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oSelectionPanel.getItems().length, 3);
+		deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemB, oItemA
+		]);
+		// The table items order has been changed to: A, B, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], removeItem", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var oItem = oSelectionPanel.removeItem(oItemB);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		deepEqual(oItem, oItemB);
+		strictEqual(oSelectionPanel.getItems().length, 2);
+		deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemA
+		]);
+		// The table items order has been changed to: A, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], removeItem dummy", function() {
+
+		// system under test
+		var oItemA, oItemB = new sap.m.P13nItem({
+			columnKey: "keyB",
+			text: "B"
+		}), oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var oItem = oSelectionPanel.removeItem(oItemB);
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oItem, null);
+		strictEqual(oSelectionPanel.getItems().length, 2);
+		deepEqual(oSelectionPanel.getItems(), [
+			oItemC, oItemA
+		]);
+		// The table items order has been changed to: A, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], removeAllItems", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		var aItems = oSelectionPanel.removeAllItems();
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		deepEqual(aItems, [
+			oItemC, oItemB, oItemA
+		]);
+		strictEqual(oSelectionPanel.getItems().length, 0);
+		// The table items order has been changed to: []
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items.length, 0);
+		// The table selection is: []
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], destroyItems", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// act
+		oSelectionPanel.destroyItems();
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oSelectionPanel.getItems().length, 0);
+		// The table items order has been changed to: []
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items.length, 0);
+		// The table selection is: []
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oColumnsItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: [
+				oColumnsItemC = new sap.m.P13nColumnsItem({
+					columnKey: "keyC",
+					index: 1,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		// The table items order has been changed to: C, A, B
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemB.getColumnKey());
+		// The table selection is: C=on, A=off, B=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		// Index of ColumnsItem has not been changed
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - columnsItems: [aColumnsItems], items: [aItems]", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oColumnsItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			columnsItems: [
+				oColumnsItemC = new sap.m.P13nColumnsItem({
+					columnKey: "keyC",
+					visible: true,
+					index: 1
+				})
+			],
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		// The table items order has been changed to: C, A, B
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemB.getColumnKey());
+		// The table selection is: C=on, A=off, B=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		// Index of ColumnsItem has not been changed
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+
+		// system under test
+		var oItemA, oItemB, oItemC;
+		var oColumnsItemC;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				oItemC = new sap.m.P13nItem({
+					columnKey: "keyC",
+					text: "C"
+				}), oItemB = new sap.m.P13nItem({
+					columnKey: "keyB",
+					text: "B"
+				}), oItemA = new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: [
+				oColumnsItemC = new sap.m.P13nColumnsItem({
+					columnKey: "keyC",
+					index: 1,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSelectionPanel.removeColumnsItem(oColumnsItemC);
+
+		// assertions
+		// The table items order has been changed to: A, B, C
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		// The table selection is: A=off, B=off, C=off
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		// Index of ColumnsItem has not been changed
+		strictEqual(oSelectionPanel.getColumnsItems().length, 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: â0 -> a0", function() {
+
+		// system under test
+		var oColumnsItemA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: [
+				oColumnsItemA = new sap.m.P13nColumnsItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), false);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), -1);
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> â0", function() {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 0;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> a1", function() {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = undefined;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 0);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> â1", function() {
+
+		// system under test
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: []
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: â0 -> â1", function() {
+
+		// system under test
+		var oColumnsItemsA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: [
+				oColumnsItemA = new sap.m.P13nColumnsItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+
+	test("getOkPayload: â0 -> a1", function() {
+
+		// system under test
+		var oColumnsItemsA;
+		var oSelectionPanel = new sap.m.P13nSelectionPanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			columnsItems: [
+				oColumnsItemA = new sap.m.P13nColumnsItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oSelectionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oSelectionPanel.getOkPayload();
+
+		// assertions
+		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
+		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), false);
+		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), -1);
+
+		// cleanup
+		oSelectionPanel.destroy();
+	});
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nSelectionPanel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="content"></div>
+</body>
+</html>
+
