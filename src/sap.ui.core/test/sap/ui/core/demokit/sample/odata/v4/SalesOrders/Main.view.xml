@@ -32,6 +32,19 @@
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
+				<Label design="Bold" labelFor="FavoriteProductID" text="Favorite product ID:">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Label>
+				<Text id="FavoriteProductID" width="4em">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Text>
+				<Button icon="sap-icon://accept" id="setBindingContext"
+					press="onSetBindingContext"/>
+				<ToolbarSpacer />
 				<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
 				<Button enabled="false"
 					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"

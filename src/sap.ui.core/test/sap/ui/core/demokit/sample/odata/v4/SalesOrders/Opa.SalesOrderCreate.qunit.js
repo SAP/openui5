@@ -114,6 +114,10 @@ sap.ui.require([
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
 		Then.onTheMainPage.checkID(0);
 
+		// set base context for input field FavoriteProductID
+		When.onTheMainPage.pressSetBindingContextButton();
+		Then.onTheMainPage.checkFavoriteProductID();
+
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog();

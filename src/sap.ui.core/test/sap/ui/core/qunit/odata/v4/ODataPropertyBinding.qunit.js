@@ -134,7 +134,8 @@ sap.ui.require([
 	QUnit.test("toString", function (assert) {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name"),
 			oContext = {
-				toString: function () {return "/EMPLOYEES(ID='1')";}
+				toString : function () {return "/EMPLOYEES(ID='1')";},
+				getPath : function () {return "/EMPLOYEES(ID='1')";}
 			};
 
 		assert.strictEqual(oBinding.toString(), sClassName + ": /EMPLOYEES(ID='1')/Name",
@@ -186,6 +187,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bindProperty with relative path and !v4.Context", function (assert) {
+		var oBinding,
+			oCache = {},
+			oContext = {getPath : function () {return "/EMPLOYEES(ID='1')";}},
+			oCreatedBinding,
+			sPath = "Name",
+			sResolvedPath = "/EMPLOYEES(ID='1')/Name";
+
+		this.oSandbox.mock(this.oModel).expects("resolve")
+			.withExactArgs(sPath, oContext)
+			.returns(sResolvedPath);
+		this.oSandbox.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResolvedPath.slice(1),
+				{"sap-client" : "111"}, true)
+			.returns(oCache);
+		this.oSandbox.stub(this.oModel, "bindingCreated", function (oBinding) {
+			oCreatedBinding = oBinding;
+		});
+
+		//code under test
+		oBinding = this.oModel.bindProperty(sPath, oContext);
+
+		assert.strictEqual(oCreatedBinding, oBinding, "bindingCreated() has been called");
+		assert.strictEqual(oBinding.getModel(), this.oModel);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.getPath(), sPath);
+		assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
+		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
+		assert.strictEqual(oBinding.sGroupId, undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
 			oError = new Error("Unsupported ..."),
@@ -212,11 +246,6 @@ sap.ui.require([
 		assert.throws(function () {
 			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 		}, oError);
-
-		//error for relative paths
-		assert.throws(function () {
-			this.oModel.bindProperty("Name", null, mParameters);
-		}, new Error("Bindings with a relative path do not support parameters"));
 	});
 
 	//*********************************************************************************************
@@ -225,6 +254,62 @@ sap.ui.require([
 			assert.throws(function () {
 				this.oModel.bindProperty(sPath);
 			}, new Error("Invalid path: " + sPath));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		sInit : "base", sTarget : undefined
+	}, {
+		sInit : "base", sTarget : "base"
+	}, {
+		sInit : "base", sTarget : "v4"
+	}, {
+		sInit : "v4", sTarget : "base"
+	}, {
+		sInit : undefined, sTarget : "base"
+	}].forEach(function (oFixture) {
+		QUnit.test("change context:" + oFixture.sInit + "->" + oFixture.sTarget, function (assert) {
+			var oBinding,
+				oModel = this.oModel,
+				oCache = {oRequestor : oModel.oRequestor},
+				oCacheMock = this.mock(_Cache),
+				oInitialContext = createContext(oFixture.sInit, "/EMPLOYEES(ID='1')"),
+				oTargetContext = createContext(oFixture.sTarget, "/EMPLOYEES(ID='2')");
+
+			function createContext(sType, sPath) {
+				if (sType === "base") {
+					oCacheMock.expects("createSingle")
+						.withExactArgs(sinon.match.same(oModel.oRequestor),
+							sPath.slice(1) + "/Name", {"sap-client" : "111"}, true)
+						.returns(oCache);
+					return oModel.createBindingContext(sPath);
+				}
+				if (sType === "v4") {
+					return Context.create(oModel, null/*oBinding*/, sPath);
+				}
+
+				return undefined;
+			}
+
+			//Create Initial Binding
+			oBinding = oModel.bindProperty("Name", oInitialContext);
+
+			assert.strictEqual(oBinding.oCache, oFixture.sInit !== "base" ? undefined : oCache);
+
+			if (oFixture.sTarget) {
+				this.mock(oBinding).expects("checkUpdate")
+					.withExactArgs(false, "context");
+			}
+			if (oFixture.sInit === "v4") {
+				this.mock(oInitialContext).expects("deregisterChange")
+					.withExactArgs(oBinding.getPath(), oBinding);
+			}
+
+			//code under test
+			oBinding.setContext(oTargetContext);
+
+			assert.strictEqual(oBinding.oCache, oFixture.sTarget === "base" ? oCache : undefined);
 		});
 	});
 
@@ -784,7 +869,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
-		var oBinding = this.oModel.bindProperty("PRODUCT_2_BP", {/*oContext*/});
+		var oContext = {
+				getPath : function () {return "";}
+			},
+			oBinding = this.oModel.bindProperty("PRODUCT_2_BP", oContext);
 
 		this.oSandbox.mock(oBinding).expects("checkUpdate")
 			.withExactArgs(true, ChangeReason.Refresh, "groupId");
@@ -878,45 +966,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
-		var oBinding,
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
-			oModel = new ODataModel({
-				serviceUrl : "/service/",
-				synchronizationMode : "None"
-			}),
-			oModelMock = this.oSandbox.mock(oModel),
-			mParameters = {};
+	["/absolute", "relative"].forEach(function (sPath) {
+		QUnit.test("$$groupId, $$updateGroupId - sPath: " + sPath, function (assert) {
+			var oBinding,
+				oContext = this.oModel.createBindingContext("/absolute"),
+				oHelperMock = this.oSandbox.mock(_ODataHelper),
+				oModelMock = this.oSandbox.mock(this.oModel),
+				mParameters = {};
 
-		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
-		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
+			oModelMock.expects("getGroupId").withExactArgs().returns("baz");
+			oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
-				aAllowedBindingParameters)
-			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
-		// code under test
-		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
-		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
+			oHelperMock.expects("buildBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+			// code under test
+			oBinding = this.oModel.bindProperty(sPath, oContext, mParameters);
+			assert.strictEqual(oBinding.getGroupId(), "foo");
+			assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
-				aAllowedBindingParameters)
-			.returns({$$groupId : "foo"});
-		// code under test
-		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
-		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+			oHelperMock.expects("buildBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.returns({$$groupId : "foo"});
+			// code under test
+			oBinding = this.oModel.bindProperty(sPath, oContext, mParameters);
+			assert.strictEqual(oBinding.getGroupId(), "foo");
+			assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
-				aAllowedBindingParameters)
-			.returns({});
-		// code under test
-		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
-		assert.strictEqual(oBinding.getGroupId(), "baz");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
-
-		// buildBindingParameters not called for relative binding
-		oBinding = this.oModel.bindProperty("relative");
+			oHelperMock.expects("buildBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.returns({});
+			// code under test
+			oBinding = this.oModel.bindProperty(sPath, oContext, mParameters);
+			assert.strictEqual(oBinding.getGroupId(), "baz");
+			assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+		});
 	});
 
 	//*********************************************************************************************
@@ -940,6 +1024,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getGroupId: relative bindings with base context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/absolute"),
+			oBinding = this.oModel.bindProperty("relative", oContext);
+
+		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getUpdateGroupId: relative bindings", function (assert) {
 		var oBinding = this.oModel.bindProperty("relative"),
 			oContext = Context.create(this.oModel, {}, "/absolute");
@@ -957,6 +1052,17 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUpdateGroupId: relative bindings with base context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/absolute"),
+			oBinding = this.oModel.bindProperty("relative", oContext);
+
+		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 	});
 
 	//*********************************************************************************************
@@ -1009,7 +1115,33 @@ sap.ui.require([
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
-			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name", sClassName);
+			"Cannot set value on this binding", "/ProductList('HT-1000')/Name", sClassName);
+
+		// code under test
+		oControl.setText("foo");
+
+		assert.strictEqual(oControl.getText(), "HT-1000's Name", "control change is rolled back");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue (binding with cache): forbidden", function (assert) {
+		var oControl;
+
+		this.getCacheMock().expects("read")
+			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
+			.returns(_SyncPromise.resolve("HT-1000's Name"));
+		oControl = new TestControl({
+			models : this.oModel,
+			text : "{path : 'Name'"
+				+ ", type : 'sap.ui.model.odata.type.String'}"
+		});
+		oControl.setBindingContext(this.oModel.createBindingContext("/ProductList('HT-1000')"));
+
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
+		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
+		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
+		this.oLogMock.expects("error").withExactArgs(
+			"Cannot set value on this binding", "/ProductList('HT-1000')/Name", sClassName);
 
 		// code under test
 		oControl.setText("foo");
@@ -1158,10 +1290,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
-		var oContext = {
-				getPath : function () { return "/ProductList('HT-1000')"; },
-				updateValue : function () {}
-			},
+		var oContext = Context.create(this.oModel, null, "/ProductList('HT-1000')"),
 			sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
 			oPromise = Promise.reject(oError),
@@ -1177,6 +1306,25 @@ sap.ui.require([
 		oPropertyBinding.setValue("foo");
 
 		return oPromise.catch(function () {}); // wait, but do not fail
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue (relative binding): canceled", function (assert) {
+		var oContext = Context.create(this.oModel, null, "/ProductList('HT-1000')"),
+			oError = new Error(),
+			oPromise = Promise.reject(oError),
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+
+		oError.canceled = true;
+
+		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
+			.returns(oPromise);
+		this.oSandbox.mock(this.oModel).expects("reportError").never();
+
+		// code under test
+		oPropertyBinding.setValue("foo");
+
+		return oPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
@@ -1259,7 +1407,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
 		var oContext = {
-				hasPendingChanges : function () {}
+				hasPendingChanges : function () {},
+				getPath : function () {return "Name";}
 			},
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
 			oResult = {};
@@ -1287,12 +1436,15 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy("foo", 42);
+
+		assert.strictEqual(oPropertyBinding.oCache, null);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("destroy: relative binding resolved", function (assert) {
 		var oContext = {
-				deregisterChange : function () {}
+				deregisterChange : function () {},
+				getPath : function () {return "Name";}
 			},
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 

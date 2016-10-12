@@ -711,6 +711,22 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getDependentBindings: base context", function (assert) {
+		var oModel = createModel(),
+			oParentBinding = {},
+			oContext = new BaseContext(oModel, "/foo"),
+			oBinding = new Binding(oModel, "relative", oContext);
+
+		// to be called by V4 binding's c'tors
+		oModel.bindingCreated(oBinding);
+		oModel.bindingCreated(
+			new Binding(oModel, "unrelated", Context.create(oModel, {}, "/absolute")));
+		oModel.bindingCreated(new Binding(oModel, "relative"));
+
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), []);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getDependentBindings: context", function (assert) {
 		var oModel = createModel(),
 			oParentContext = Context.create(oModel, null, "/absolute"),
