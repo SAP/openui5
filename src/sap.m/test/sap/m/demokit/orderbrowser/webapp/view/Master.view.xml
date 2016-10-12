@@ -70,8 +70,11 @@
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
 						press="onSelectionChange"
 						title="{
-							path: 'OrderID',
-							formatter: '.formatter.masterItemTitle'
+							parts: [
+								'i18n>commonItemTitle',
+								'OrderID'
+							],
+							formatter: 'jQuery.sap.formatMessage'
 						}"
 						number="{
 							path: 'OrderDate',
@@ -79,13 +82,13 @@
 							formatOptions: { style: 'short' }
 						}">
 						<attributes>
-							<ObjectAttribute id="companyName" text="{Customer/CompanyName}" />
-							<ObjectAttribute title="{i18n>masterItemShipped}"
+							<ObjectAttribute title="{i18n>commonCustomerName}" id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute title="{i18n>commonItemShipped}"
 								text="{= ${ShippedDate}
 									? ${ path: 'ShippedDate',
 										 type: 'sap.ui.model.type.Date',
 										 formatOptions: { style: 'medium' } }
-									: ${i18n>masterItemNotYetShipped} }" />
+									: ${i18n>commonItemNotYetShipped} }" />
 						</attributes>
 					</ObjectListItem>
 				</items>
