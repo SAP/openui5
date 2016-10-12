@@ -120,7 +120,10 @@ sap.ui.define([
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);
 		// for getting the change handler the control type and the change type are needed
-		var sControlType = Utils.getControlType(oControl);
+		var sControlType = oControl.controlType || Utils.getControlType(oControl);
+		if (!sControlType) {
+			throw new Error("No control type found - the change handler can not be retrieved");
+		}
 		ChangeHandler = this._getChangeHandler(oChange, sControlType);
 		if (ChangeHandler) {
 			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
