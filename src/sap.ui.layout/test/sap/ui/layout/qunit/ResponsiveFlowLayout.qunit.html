@@ -111,21 +111,6 @@
 		ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
-	test("_getElementRect", function () {
-		//prepare
-		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
-
-		//act
-		var oReal = oRFL._getElementRect(jQuery("#myDiv"));
-
-		//check
-		equal(oReal.height, "30.3", "Height check");
-		equal(oReal.width, "25.1", "Width check");
-
-		//act and check
-		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
-	});
-
 	module("Resize", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);
@@ -187,36 +172,40 @@
 		}, 100);
 	});
 
-	/* asyncTest("Check Min-Width", function() {
-		expect(2);
+	module("Private functions");
+	test("_getElementRect", function () {
+		//prepare
+		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
 
-		var $layout = jQuery.sap.byId("uiArea1");
-		$layout.css("width", "141px");
+		//act
+		var oReal = oRFL._getElementRect(jQuery("#myDiv"));
 
-		var oLDBtn1 = oBtn1.getLayoutData();
-		oLDBtn1.setMinWidth(15);
-		oLDBtn1.setWeight(1);
-		oLDBtn1.setMargin(false);
+		//check
+		equal(oReal.height, "30.3", "Height check");
+		equal(oReal.width, "25.1", "Width check");
 
-		var oLDBtn2 = oBtn2.getLayoutData();
-		oLDBtn2.setWeight(9);
-		oLDBtn2.setMinWidth(84);
-		oLDBtn2.setMargin(false);
+		//act and check
+		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
+	});
 
+	test("The private render manager is lazy initialized", function() {
+		//prepare
+		var oResponsiveFlowLayout = {};
+		//act
+		sap.ui.layout.ResponsiveFlowLayout.prototype.init.call(oResponsiveFlowLayout);
+		//check
+		ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created in ResponsiveFlowLayout.prototype.init method, as focus handler is not available yet (no dom yet)");
+
+		//prepare
+		oResponsiveFlowLayout = new sap.ui.layout.ResponsiveFlowLayout();
+		//act
+		oResponsiveFlowLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-
-		setTimeout(function() {
-			var $Row2 = jQuery.sap.byId("rflLayout-row1");
-			ok($Row2.length === 0, "Buttons in one row (min-width of button1 almost same as percentage-width)");
-
-			$layout.css("width", "140px");
-			setTimeout(function() {
-				$Row2 = jQuery.sap.byId("rflLayout-row1");
-				ok($Row2.length > 0, "Min-width of button bigger than percantage-width");
-				start();
-			}, 100);
-		}, 100);
-	}); */
+		//check
+		ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
+		//cleanup
+		oResponsiveFlowLayout.destroy();
+	});
 </script>
 
 </head>
