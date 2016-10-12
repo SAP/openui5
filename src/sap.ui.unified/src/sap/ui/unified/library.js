@@ -158,22 +158,27 @@ sap.ui.define(['jquery.sap.global',
 	sap.ui.unified.CalendarIntervalType = {
 
 		/**
-		 * one code>CalendarRow</code> interval has the size of one hour
+		 * one <code>CalendarRow</code> interval has the size of one hour
 		 * @public
 		 */
 		Hour : "Hour",
 
 		/**
-		 * one code>CalendarRow</code> interval has the size of one day
+		 * one <code>CalendarRow</code> interval has the size of one day
 		 * @public
 		 */
 		Day : "Day",
 
 		/**
-		 * one code>CalendarRow</code> interval has the size of one Month
+		 * one <code>CalendarRow</code> interval has the size of one Month
 		 * @public
 		 */
-		Month : "Month"
+		Month : "Month",
+
+		/**
+		 * one <code>CalendarRow</code> interval has the size of one Week
+		 */
+		Week : "Week"
 
 	};
 

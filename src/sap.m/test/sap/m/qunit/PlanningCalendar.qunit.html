@@ -5,1080 +5,1550 @@
 -->
 
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>PlanningCalendar - sap.m</title>
-		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.m.PlanningCalendar.gif">
-		<script id="sap-ui-bootstrap"
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>PlanningCalendar - sap.m</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.m.PlanningCalendar.gif">
+	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m, sap.ui.unified"
-			data-sap-ui-language="en-US">
-		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+			data-sap-ui-language="en_GB">
+		//Make sure that changing the sap-ui-language is reflected into the tests as well, as the tests are bound to en_GB
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
 
-		<!-- Test functions -->
-		<script language="javascript">
+	<!-- Test functions -->
+	<script language="javascript">
 
-			jQuery.sap.require("sap.ui.model.type.Date");
-			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
+		jQuery.sap.require("sap.ui.model.type.Date");
+		var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
+		//the SUT won't be destroyed when single test is run
+		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 
-			var createToolbarContent = function(sSearchFieldId, sButtonId) {
-				oSearchField1 = new sap.m.SearchField(sSearchFieldId, {
-					width: "10rem",
-					search: function(oEvent) {
-											alert("Search!");
-									}
-				});
-
-				oButton1 = new sap.m.Button(sButtonId, {
-					icon: "sap-icon://sap-ui5",
-					type: sap.m.ButtonType.Transparent,
-					press: function(oEvent) {
-										alert("UI5 Button pressed");
-									}
-				});
-			};
-
-			var oSelectedAppointment;
-			var handleAppointmentSelect = function(oEvent){
-				oSelectedAppointment = oEvent.getParameter("appointment");
-			};
-
-			var bRowSelectionChange = false;
-			var aChangedRows;
-			var handleRowSelectionChange = function(oEvent){
-				bRowSelectionChange = true;
-				aChangedRows = oEvent.getParameter("rows");
-			};
-
-			var bStartDateChange = false;
-			var handleStartDateChange = function(oEvent){
-				bStartDateChange = true;
-
-			};
-
-			var bViewChange = false;
-			var handleViewChange = function(oEvent){
-				bViewChange = true;
-
-			};
-
-			var bIntervalSelect = false;
-			var oIntervalStartDate;
-			var oIntervalEndDate;
-			var bSubInterval;
-			var oIntervalRow;
-			var handleIntervalSelect = function(oEvent){
-				bIntervalSelect = true;
-				oIntervalStartDate = oEvent.getParameter("startDate");
-				oIntervalEndDate = oEvent.getParameter("endDate");
-				bSubInterval = oEvent.getParameter("bubInterval");
-				oIntervalRow = oEvent.getParameter("row");
-			};
-
-			var createPlanningCalendar = function(sID, oSearchField, oButton) {
-				var oTC = new sap.m.PlanningCalendar(sID, {
-					startDate: new Date("2015", "0", "1", "08", "00"),
-					rows: [ new sap.m.PlanningCalendarRow(sID + "-Row1", {
-					        	icon: "sap-icon://employee",
-					        	title: "Max Mustermann",
-					        	text: "Musterteam",
-					        	tooltip: "Header tooltip",
-					        	intervalHeaders: [ new sap.ui.unified.CalendarAppointment(sID + "-R1H1",{
-					        	                   	startDate: new Date("2015", "0", "1", "09", "00"),
-					        	                   	endDate: new Date("2015", "0", "1", "11", "00"),
-					        	                   	type: sap.ui.unified.CalendarDayType.Type02,
-					        	                   	title: "SAPUI5",
-					        	                   	tooltip: "Test",
-					        	                   	icon: "sap-icon://sap-ui5"
-					        	                   })
-					        	                 ],
-					        	appointments: [ new sap.ui.unified.CalendarAppointment(sID + "-R1A1", {
-					        	                	startDate: new Date("2015", "0", "1", "08", "00"),
-					        	                	endDate: new Date("2015", "0", "1", "09", "00"),
-					        	                	type: sap.ui.unified.CalendarDayType.Type01,
-					        	                	title: "App 1",
-					        	                	icon: "../../ui/unified/images/m_01.png",
-					        	                	tooltip: "Tooltip",
-					        	                	text: "Text"
-					        	                }),
-					        	                new sap.ui.unified.CalendarAppointment(sID + "-R1A2", {
-					        	                	startDate: new Date("2015", "0", "1", "07", "00"),
-					        	                	endDate: new Date("2015", "0", "1", "08", "00"),
-					        	                	type: sap.ui.unified.CalendarDayType.Type02,
-					        	                	title: "App 2",
-					        	                	icon: "sap-icon://home",
-					        	                	tooltip: "Tooltip",
-					        	                	text: "Text",
-					        	                	tentative: true
-					        	                }),
-					        	                new sap.ui.unified.CalendarAppointment(sID + "-R1A3", {
-					        	                	startDate: new Date("2015", "0", "2", "08", "30"),
-					        	                	endDate: new Date("2015", "0", "2", "09", "30"),
-					        	                	type: sap.ui.unified.CalendarDayType.Type03,
-					        	                	title: "App3",
-					        	                	icon: "sap-icon://home",
-					        	                	tooltip: "Tooltip"
-					        	                }),
-					        	                new sap.ui.unified.CalendarAppointment(sID + "-R1A4", {
-					        	                	startDate: new Date("2014", "6", "1", "0", "0"),
-					        	                	endDate: new Date("2014", "6", "2", "0", "0"),
-					        	                	type: sap.ui.unified.CalendarDayType.Type04,
-					        	                	title: "Meeting 4",
-					        	                	tooltip: "Tooltip 4",
-					        	                	selected: true
-					        	                })
-					        	              ]
-					        	}),
-					        new sap.m.PlanningCalendarRow(sID + "-Row2", {
-					        	icon: "../../ui/unified/images/m_01.png",
-					        	title: "Edward",
-					        	text: "the great",
-					        	tooltip: "Header tooltip",
-					        	nonWorkingDays: [2,3],
-					        	nonWorkingHours: [11, 12],
-					        	intervalHeaders: [ new sap.ui.unified.CalendarAppointment(sID + "-R2H1",{
-					        	                   	startDate: new Date("2015", "0", "2", "00", "00"),
-					        	                   	endDate: new Date("2015", "0", "2", "23", "59"),
-					        	                   	type: sap.ui.unified.CalendarDayType.Type01,
-					        	                   	title: "SAPUI5",
-					        	                   	tooltip: "Test",
-					        	                   	icon: "sap-icon://sap-ui5"
-					        	                   })
-					        	                 ],
-					        	appointments: [ new sap.ui.unified.CalendarAppointment(sID + "-R2A1", {
-					        	                	startDate: new Date("2015", "0", "1", "00", "00"),
-					        	                	endDate: new Date("2015", "0", "2", "23", "59"),
-					        	                	type: sap.ui.unified.CalendarDayType.Type01,
-					        	                	title: "App 1",
-					        	                	tooltip: "Tooltip",
-					        	                	text: "Text"
-					        	                })
-					        	]
-					        	})
-					       ],
-					specialDates: [ new sap.ui.unified.DateTypeRange(sID + "SD1", {
-					                	startDate: new Date(2015, 0, 6),
-					                	type: sap.ui.unified.CalendarDayType.Type01,
-					                	tooltip: "Heilige 3 Könige"
-					                }),
-					                new sap.ui.unified.DateTypeRange(sID + "SD2", {
-					                	startDate: new Date(2015, 0, 1, 12, 00),
-					                	endDate: new Date(2015, 0, 1, 14, 00),
-					                	type: sap.ui.unified.CalendarDayType.Type02,
-					                	tooltip: "Lunch"
-					                })
-					              ],
-					toolbarContent: [oSearchField, oButton],
-					appointmentSelect: handleAppointmentSelect,
-					startDateChange: handleStartDateChange,
-					rowSelectionChange: handleRowSelectionChange,
-					viewChange: handleViewChange,
-					intervalSelect: handleIntervalSelect
-				});
-
-				return oTC;
-			};
-
-			var initPlanningCalendar = function(sID, sSearchFieldId, sButtonId) {
-				var oTC = sap.ui.getCore().byId(sID);
-				var oUIArea;
-				if(oTC) {
-					oTC.removeAllToolbarContent();
-					oUIArea = oTC.getUIArea();
-					oTC.destroy();
+		var createToolbarContent = function(sSearchFieldId, sButtonId) {
+			oSearchField1 = new sap.m.SearchField(sSearchFieldId, {
+				width: "10rem",
+				search: function(oEvent) {
+					alert("Search!");
 				}
+			});
 
-				if(!sap.ui.getCore().byId(sSearchFieldId)) {
-					createToolbarContent(sSearchFieldId, sButtonId);
+			oButton1 = new sap.m.Button(sButtonId, {
+				icon: "sap-icon://sap-ui5",
+				type: sap.m.ButtonType.Transparent,
+				press: function(oEvent) {
+					alert("UI5 Button pressed");
 				}
-
-				oTC = createPlanningCalendar(sID, oSearchField1, oButton1);
-
-				if(oUIArea) {
-					oTC.placeAt(oUIArea.getId());
-				}
-
-				sap.ui.getCore().applyChanges();
-
-				return oTC;
-
-			};
-
-			var oSearchField1, oButton1;
-			createToolbarContent("SF1", "B1");
-			var oPC1 = createPlanningCalendar("PC1", oSearchField1, oButton1);
-			oPC1.placeAt("uiArea1");
-
-			qutils.delayTestStart();
-
-			module("internal controls");
-
-			test("PlanningCalendarRow", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				ok(oRow.getColumnListItem(), "ColumnListItem exist");
-				equal(oRow.getColumnListItem().getCells().length, 2, "row has 2 columns")
-
-				var oRowHeader = oRow.getColumnListItem().getCells()[0];
-				ok(oRowHeader, "row header exist");
-				equal(oRowHeader.getTitle(), oRow.getTitle(), "row header Title");
-				equal(oRowHeader.getIcon(), oRow.getIcon(), "row header icon");
-				equal(oRowHeader.getDescription(), oRow.getText(), "row header Text");
-
-				ok(oRow.getColumnListItem().getCells()[1], "CalendarRow exist");
-				ok(oRow.getColumnListItem().getCells()[1] instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
-
-				var oCalendarRow = oRow.getCalendarRow();
-				ok(!oCalendarRow.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
-				ok(!oCalendarRow.getNonWorkingHours(), "Row1: CalendarRow - nonWorkingHours");
-
-				oRow = sap.ui.getCore().byId("PC1-Row2");
-				oCalendarRow = oRow.getCalendarRow();
-				ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
-				ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
 			});
+		};
 
-			test("Table", function() {
-				var oTable = sap.ui.getCore().byId("PC1-Table");
+		var oSelectedAppointment;
+		var handleAppointmentSelect = function(oEvent){
+			oSelectedAppointment = oEvent.getParameter("appointment");
+		};
 
-				equal(oTable.getColumns().length, 2, "Table columns");
-				equal(oTable.getItems().length, 2, "Table rows");
-				equal(oTable.getItems()[0].getId(), "PC1-Row1-CLI", "Table row1 is first row");
+		var bRowSelectionChange = false;
+		var aChangedRows;
+		var handleRowSelectionChange = function(oEvent){
+			bRowSelectionChange = true;
+			aChangedRows = oEvent.getParameter("rows");
+		};
 
-				ok(oTable.getHeaderToolbar(), "HeaderToolbar exist");
-				equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[0].getId(), "SF1", "HeaderToolbar: searchField exist");
-				equal(oTable.getHeaderToolbar().getContent()[1].getId(), "B1", "HeaderToolbar: application button exist");
+		var bStartDateChange = false;
+		var handleStartDateChange = function(oEvent){
+			bStartDateChange = true;
+		};
 
-				ok(oTable.getInfoToolbar(), "InfoToolbar exist");
-				equal(oTable.getInfoToolbar().getContent().length, 2, "InfoToolbar items");
-				equal(oTable.getInfoToolbar().getContent()[0].getId(), "PC1-CalHead", "InfoToolbar: Calendar head exist");
-				equal(oTable.getInfoToolbar().getContent()[1].getId(), "PC1-TimeInt", "InfoToolbar: CalendarTimeInterval exist");
+		var bViewChange = false;
+		var handleViewChange = function(oEvent){
+			bViewChange = true;
 
-				var oCalHead = sap.ui.getCore().byId("PC1-CalHead");
-				equal(oCalHead.getToolbar().getId(), "PC1-HeaderToolbar", "Calendar head: Toolbar exist");
+		};
 
-				var oHeaderToolbar = sap.ui.getCore().byId("PC1-HeaderToolbar");
-				equal(oHeaderToolbar.getContent().length, 2, "HeaderToolbar items");
-				equal(oHeaderToolbar.getContent()[0].getId(), "PC1-IntType", "Calendar head Toolbar: IntervalType-select exist");
-				equal(oHeaderToolbar.getContent()[1].getId(), "PC1-Today", "Calendar head Toolbar: today button exist");
-			});
+		var bIntervalSelect = false;
+		var oIntervalStartDate;
+		var oIntervalEndDate;
+		var bSubInterval;
+		var oIntervalRow;
+		var handleIntervalSelect = function(oEvent){
+			bIntervalSelect = true;
+			oIntervalStartDate = oEvent.getParameter("startDate");
+			oIntervalEndDate = oEvent.getParameter("endDate");
+			bSubInterval = oEvent.getParameter("bubInterval");
+			oIntervalRow = oEvent.getParameter("row");
+		};
+		var oPCStartDate = new Date("2015", "0", "1", "08", "00");
 
-			module("rendering");
-
-			test("table", function() {
-				var oTable = sap.ui.getCore().byId("PC1-Table");
-
-				ok(oTable.getDomRef(), "Table rendered");
-				ok(jQuery("#PC1-Row1-Head").get(0), "Row1 Header rendered");
-				ok(jQuery("#PC1-Row1-CalRow").get(0), "Row1 CalendarRow rendered");
-				ok(jQuery("#PC1-Row2-Head").get(0), "Row2 Header rendered");
-				ok(jQuery("#PC1-Row2-CalRow").get(0), "Row2 CalendarRow rendered");
-
-				ok(jQuery("#PC1-Toolbar").get(0), "Table header toolbar rendered");
-				ok(jQuery("#SF1").get(0), "SearchField rendered");
-				ok(jQuery("#B1").get(0), "application button rendered");
-
-				ok(jQuery("#PC1-InfoToolbar").get(0), "Table info toolbar rendered");
-				ok(jQuery("#PC1-CalHead").get(0), "Calendar header rendered");
-				ok(jQuery("#PC1-HeaderToolbar").get(0), "Calendar header toolbar rendered");
-				ok(jQuery("#PC1-IntType").get(0), "IntervalType select rendered");
-				ok(jQuery("#PC1-Today").get(0), "Today button rendered");
-				ok(jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval rendered");
-			});
-
-			test("Appointments", function() {
-				ok(jQuery("#PC1-R1H1").get(0), "Row1: IntervalHeader1 rendered");
-				ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 rendered");
-				ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 not rendered");
-				ok(!jQuery("#PC1-R1A3").get(0), "Row1: Appointment3 not rendered");
-				ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment4 not rendered");
-
-				ok(!jQuery("#PC1-R2H1").get(0), "Row2: IntervalHeader1 rendered");
-				ok(jQuery("#PC1-R2A1").get(0), "Row2: Appointment1 rendered");
-			});
-
-			module("Setters");
-
-			test("startDate", function() {
-				var oExpectedDate = new Date("2015", "0", "1", "08", "00");
-				var iStartTime = oPC1.getStartDate().getTime();
-				equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
-				equal(sap.ui.getCore().byId("PC1-TimeInt").getStartDate().getTime(), iStartTime, "CalendarTimeInterval Start date");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
-				equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
-
-				oExpectedDate = new Date("2015", "0", "1", "07", "00");
-				oPC1.setStartDate(new Date("2015", "0", "1", "07", "00"));
-				sap.ui.getCore().applyChanges();
-				iStartTime = oPC1.getStartDate().getTime();
-				equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
-				equal(sap.ui.getCore().byId("PC1-TimeInt").getStartDate().getTime(), iStartTime, "CalendarTimeInterval Start date");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
-				equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
-				ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 still rendered");
-				ok(jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 now rendered");
-			});
-
-			test("viewKey", function() {
-				var sViewKey = oPC1.getViewKey();
-				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Hour, "Default ViewKey")
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow2 intervalType");
-				ok(!sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control not exist");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
-
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
-				sap.ui.getCore().applyChanges();
-				sViewKey = oPC1.getViewKey();
-				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Day, "Default ViewKey");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow2 intervalType");
-				ok(sap.ui.getCore().byId("PC1-TimeInt"), "CalendarTimeInterval control still exist");
-				ok(sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control now exist");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
-				ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
-				ok(jQuery("#PC1-DateInt").get(0), "CalendarDateInterval rendered");
-
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
-				sap.ui.getCore().applyChanges();
-				sViewKey = oPC1.getViewKey();
-				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Month, "Default ViewKey");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow2 intervalType");
-				ok(sap.ui.getCore().byId("PC1-TimeInt"), "CalendarTimeInterval control still exist");
-				ok(sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control now exist");
-				ok(sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
-				ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
-				ok(!jQuery("#PC1-DateInt").get(0), "CalendarDateInterval not rendered");
-				ok(jQuery("#PC1-MonthInt").get(0), "CalendarMonthInterval rendered");
-			});
-
-			test("singleSelection", function() {
-				var oTable = sap.ui.getCore().byId("PC1-Table");
-				ok(oPC1.getSingleSelection(), "Single selection is default");
-				equal(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode");
-				ok(!sap.ui.getCore().byId("PC1-All"), "Select All CheckBox not exits")
-
-				oPC1.setSingleSelection(false);
-				sap.ui.getCore().applyChanges();
-				ok(!oPC1.getSingleSelection(), "Single selection not set");
-				equal(oTable.getMode(), sap.m.ListMode.MultiSelect, "Table selection mode");
-				ok(sap.ui.getCore().byId("PC1-All"), "Select All CheckBox exits")
-				ok(jQuery("#PC1-All").get(0), "Select All CheckBox rendered");
-
-				oPC1.setSingleSelection(true);
-				sap.ui.getCore().applyChanges();
-				ok(sap.ui.getCore().byId("PC1-All"), "Select All CheckBox stillexits")
-				ok(!jQuery("#PC1-All").get(0), "Select All CheckBox not rendered");
-			});
-
-			test("width", function() {
-				ok(!oPC1.getWidth(), "no width set ad default");
-				var sStyle = oPC1.$().attr("style") || "";
-				ok(sStyle.search("width") < 0, "no width set on DOM")
-
-				oPC1.setWidth("90%");
-				sap.ui.getCore().applyChanges();
-				var sStyle = oPC1.$().attr("style") || "";
-				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
-				var iWidth = aTest? aTest[2] : 0;
-				equal(iWidth, 90 + "", "width set on DOM");
-			});
-
-			test("height", function() {
-				ok(!oPC1.getHeight(), "no height set ad default");
-				var sStyle = oPC1.$().attr("style") || "";
-				ok(sStyle.search("height") < 0, "no height set on DOM")
-
-				oPC1.setHeight("90%");
-				sap.ui.getCore().applyChanges();
-				var sStyle = oPC1.$().attr("style") || "";
-				var aTest = sStyle.match(/height:(\s?)(\d+(.?)(\d+))/);
-				var iheight = aTest? aTest[2] : 0;
-				equal(iheight, 90 + "", "height set on DOM");
-			});
-
-			test("showIntervalHeaders", function() {
-				ok(oPC1.getShowIntervalHeaders(), "ShowIntervalHeaders is enabled by default");
-				ok(oPC1.getShowEmptyIntervalHeaders(), "ShowEmptyIntervalHeaders is enabled by default");
-				var aRows = oPC1.getRows();
-				for(var i = 0; i < aRows.length; i++) {
-					ok(aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
-					ok(aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders set");
-				}
-
-				oPC1.setShowIntervalHeaders(false);
-				oPC1.setShowEmptyIntervalHeaders(false);
-				sap.ui.getCore().applyChanges();
-				for(var i = 0; i < aRows.length; i++) {
-					ok(!aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
-					ok(!aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders not set");
-				}
-
-				oPC1.setShowIntervalHeaders(true);
-				oPC1.setShowEmptyIntervalHeaders(true);
-				sap.ui.getCore().applyChanges();
-			});
-
-			test("appointmentsReducedHeight", function() {
-				ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
-				var aRows = oPC1.getRows();
-				for(var i = 0; i < aRows.length; i++) {
-					ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
-				}
-
-				oPC1.setAppointmentsReducedHeight(true);
-				sap.ui.getCore().applyChanges();
-				for(var i = 0; i < aRows.length; i++) {
-					ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
-				}
-
-				oPC1.setAppointmentsReducedHeight(false);
-				sap.ui.getCore().applyChanges();
-			});
-
-			test("appointmentsVisualization", function() {
-				equal(oPC1.getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
-				var aRows = oPC1.getRows();
-				for(var i = 0; i < aRows.length; i++) {
-					equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "Row " + i + ": AppointmentVisualization default set");
-				}
-
-				oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Filled);
-				sap.ui.getCore().applyChanges();
-				for(var i = 0; i < aRows.length; i++) {
-					equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Filled, "Row " + i + ": AppointmentVisualization Filled set");
-				}
-
-				oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Standard);
-				sap.ui.getCore().applyChanges();
-			});
-
-			test("showRowHeaders", function() {
-				ok(oPC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
-
-				oPC1.setShowRowHeaders(false);
-				sap.ui.getCore().applyChanges();
-				ok(!jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header not visible");
-
-				oPC1.setShowRowHeaders(true);
-				sap.ui.getCore().applyChanges();
-				ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
-			});
-
-			test("noDataText", function() {
-				var oTable = sap.ui.getCore().byId("PC1-Table");
-				ok(!oPC1.getNoDataText(), "noDataText empty by default");
-				ok(!oTable.getProperty("noDataText"), "noDataText of table empty by default"); // use getProperty("noDataText") because getter is overwritten in ListBase
-
-				oPC1.setNoDataText("Test");
-				sap.ui.getCore().applyChanges();
-				equal(oPC1.getNoDataText(), "Test", "noDataText set");
-				equal(oTable.getProperty("noDataText"), "Test", "noDataText set on table");
-
-				oPC1.setNoDataText(null);
-				sap.ui.getCore().applyChanges();
-			});
-
-			test("minDate/maxDate", function() {
-				ok(!oPC1.getMinDate(), "no minDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate set by default");
-
-				ok(!oPC1.getMaxDate(), "no maxDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate set by default");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate set by default");
-
-				var oMinDate = new Date(2000, 0 , 1, 0, 0, 0);
-				oPC1.setMinDate(oMinDate);
-				ok(jQuery.sap.equal(oMinDate, oPC1.getMinDate()), "no minDate set");
-				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-TimeInt").getMinDate()), "CalendarTimeInterval minDate set");
-				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-DateInt").getMinDate()), "CalendarDateInterval minDate set");
-				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-MonthInt").getMinDate()), "CalendarMonthInterval minDate set");
-
-				var oMaxDate = new Date(2050, 11 , 31, 23, 59, 59);
-				oPC1.setMaxDate(oMaxDate);
-				ok(jQuery.sap.equal(oMaxDate, oPC1.getMaxDate()), "no minDate set");
-				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-TimeInt").getMaxDate()), "CalendarTimeInterval maxDate set");
-				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-DateInt").getMaxDate()), "CalendarDateInterval maxDate set");
-				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-MonthInt").getMaxDate()), "CalendarMonthInterval maxDate set");
-
-				oPC1.setMinDate();
-				ok(!oPC1.getMinDate(), "no minDate set");
-				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate");
-				ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate");
-
-				oPC1.setMaxDate();
-				ok(!oPC1.getMaxDate(), "no maxDate");
-				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate");
-				ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate");
-				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate");
-			});
-
-			test("rows", function() {
-				var oTable = sap.ui.getCore().byId("PC1-Table");
-				equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
-				var iIntervals = 12;
-				if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-					iIntervals = 3;
-				}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-					iIntervals = 6;
-				}
-
-				var oRow = new sap.m.PlanningCalendarRow("NewRow", {
+		var createPlanningCalendar = function(sID, oSearchField, oButton, oParamStartDate, sViewKey) {
+			var oTC = new sap.m.PlanningCalendar(sID, {
+				startDate: oParamStartDate || oPCStartDate,
+				rows: [ new sap.m.PlanningCalendarRow(sID + "-Row1", {
 					icon: "sap-icon://employee",
-					title: "new Row"
-				});
-				oPC1.addRow(oRow);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getItems().length, 3, "Table rows");
-				equal(oTable.getItems()[2].getId(), "NewRow-CLI", "new row added to table");
-				ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
-				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
-				equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
-
-				oPC1.removeRow(oRow);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getItems().length, 2, "Table rows");
-				ok(!jQuery("#NewRow-Head").get(0), "new row Header not rendered");
-				ok(!jQuery("#NewRow-CalRow").get(0), "new row CalendarRow not rendered");
-
-				oRow.getCalendarRow().setStartDate(new Date());
-				oRow.getCalendarRow().setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
-				oRow.getCalendarRow().setIntervals(3);
-				oPC1.insertRow(oRow, 1);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getItems().length, 3, "Table rows");
-				equal(oTable.getItems()[1].getId(), "NewRow-CLI", "new row added to table");
-				ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
-				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
-				equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
-
-				var aRemoved = oPC1.removeAllRows();
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getItems().length, 0, "Table rows removed");
-				equal(aRemoved.length, 3, "3 rows removed");
-
-				for(var i = 0; i < aRemoved.length; i++) {
-					aRemoved[i].destroy();
-				}
-
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-				oTable = sap.ui.getCore().byId("PC1-Table");
-
-				oPC1.destroyRows();
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getItems().length, 0, "Table rows destroyed");
-				ok(!sap.ui.getCore().byId("PC1-Row1"), "Row1 destroyed");
-
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-			});
-
-			test("toolbarContent", function() {
-				var oButton = new sap.m.Button("BX", {
-					icon: "sap-icon://home",
-					type: sap.m.ButtonType.Transparent
-				});
-
-				var oTable = sap.ui.getCore().byId("PC1-Table");
-
-				oPC1.addToolbarContent(oButton);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[2].getId(), "BX", "HeaderToolbar: new button exist");
-				ok(jQuery("#BX").get(0), "new button rendered");
-
-				oPC1.removeToolbarContent(oButton);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
-				ok(!jQuery("#BX").get(0), "new button not rendered");
-
-				oPC1.insertToolbarContent(oButton, 0);
-				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[0].getId(), "BX", "HeaderToolbar: new button exist");
-				ok(jQuery("#BX").get(0), "new button rendered");
-
-				var aRemoved = oPC1.removeAllToolbarContent();
-				sap.ui.getCore().applyChanges();
-				ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
-				equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
-				ok(!jQuery("#BX").get(0), "new button not rendered");
-				equal(aRemoved.length, 3, "3 controls removed");
-
-				for(var i = 0; i < aRemoved.length; i++) {
-					aRemoved[i].destroy();
-				}
-
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-				oTable = sap.ui.getCore().byId("PC1-Table");
-
-				oPC1.destroyToolbarContent();
-				sap.ui.getCore().applyChanges();
-				ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
-				equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
-				ok(!sap.ui.getCore().byId("SF1"), "SearchField destroyed");
-
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-			});
-
-			test("views", function() {
-				equal(oPC1.getViews().length, 0, "no views set in aggregation per default");
-
-				oPC1.setViewKey("D");
-				var oView = new sap.m.PlanningCalendarView("View-H", {
-					key: "H",
-					intervalType: sap.ui.unified.CalendarIntervalType.Hour,
-					description: "View1",
-					intervalsS: 1,
-					intervalsM: 2,
-					intervalsL: 3
-				});
-				oPC1.addView(oView);
-				oView = new sap.m.PlanningCalendarView("View-D", {
-					key: "D",
-					intervalType: sap.ui.unified.CalendarIntervalType.Day,
-					description: "View2",
-					intervalsS: 2,
-					intervalsM: 4,
-					intervalsL: 6,
-					showSubIntervals: true
-				});
-				oPC1.addView(oView);
-				sap.ui.getCore().applyChanges();
-				equal(oPC1.getViews().length, 2, "2 views set");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getShowSubIntervals(), true, "CalendarRow1 subIntervals");
-				if(jQuery("#PC1").outerWidth() > 1100) {
-					equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
-				}
-				ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
-				ok(jQuery("#PC1-DateInt").get(0), "CalendarDateInterval rendered");
-
-				oView.setIntervalsL(5);
-				sap.ui.getCore().applyChanges();
-				if(jQuery("#PC1").outerWidth() > 1100) {
-					equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervals(), 5, "CalendarRow1 intervals");
-				}
-
-				oPC1.destroyViews();
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
-				sap.ui.getCore().applyChanges();
-				equal(oPC1.getViews().length, 0, "no views set in aggregation");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
-			});
-
-			test("specialDates", function() {
-				var oTimeInterval = sap.ui.getCore().byId("PC1-TimeInt");
-				equal(oTimeInterval.getSpecialDates().length, 2, "TimeInterval gets SpecialDates from PlanningCalendar");
-				ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
-
-				oPC1.addSpecialDate(new sap.ui.unified.DateTypeRange("SD1", {
-					startDate: new Date(2015, 0, 1, 15, 30),
+					title: "Max Mustermann",
+					text: "Musterteam",
+					tooltip: "Header tooltip",
+					intervalHeaders: [ new sap.ui.unified.CalendarAppointment(sID + "-R1H1",{
+						startDate: new Date("2015", "0", "1", "09", "00"),
+						endDate: new Date("2015", "0", "1", "11", "00"),
+						type: sap.ui.unified.CalendarDayType.Type02,
+						title: "SAPUI5",
+						tooltip: "Test",
+						icon: "sap-icon://sap-ui5"
+					})
+					],
+					appointments: [ new sap.ui.unified.CalendarAppointment(sID + "-R1A1", {
+						startDate: oPCStartDate,
+						endDate: new Date("2015", "0", "1", "09", "00"),
+						type: sap.ui.unified.CalendarDayType.Type01,
+						title: "App 1",
+						icon: "../../ui/unified/images/m_01.png",
+						tooltip: "Tooltip",
+						text: "Text"
+					}),
+						new sap.ui.unified.CalendarAppointment(sID + "-R1A2", {
+							startDate: new Date("2015", "0", "1", "07", "00"),
+							endDate: oPCStartDate,
+							type: sap.ui.unified.CalendarDayType.Type02,
+							title: "App 2",
+							icon: "sap-icon://home",
+							tooltip: "Tooltip",
+							text: "Text",
+							tentative: true
+						}),
+						new sap.ui.unified.CalendarAppointment(sID + "-R1A3", {
+							startDate: new Date("2015", "0", "2", "08", "30"),
+							endDate: new Date("2015", "0", "2", "09", "30"),
+							type: sap.ui.unified.CalendarDayType.Type03,
+							title: "App3",
+							icon: "sap-icon://home",
+							tooltip: "Tooltip"
+						}),
+						new sap.ui.unified.CalendarAppointment(sID + "-R1A4", {
+							startDate: new Date("2014", "6", "1", "0", "0"),
+							endDate: new Date("2014", "6", "2", "0", "0"),
+							type: sap.ui.unified.CalendarDayType.Type04,
+							title: "Meeting 4",
+							tooltip: "Tooltip 4",
+							selected: true
+						})
+					]
+				}),
+					new sap.m.PlanningCalendarRow(sID + "-Row2", {
+						icon: "../../ui/unified/images/m_01.png",
+						title: "Edward",
+						text: "the great",
+						tooltip: "Header tooltip",
+						nonWorkingDays: [2,3],
+						nonWorkingHours: [11, 12],
+						intervalHeaders: [ new sap.ui.unified.CalendarAppointment(sID + "-R2H1",{
+							startDate: new Date("2015", "0", "2", "00", "00"),
+							endDate: new Date("2015", "0", "2", "23", "59"),
+							type: sap.ui.unified.CalendarDayType.Type01,
+							title: "SAPUI5",
+							tooltip: "Test",
+							icon: "sap-icon://sap-ui5"
+						})
+						],
+						appointments: [ new sap.ui.unified.CalendarAppointment(sID + "-R2A1", {
+							startDate: new Date("2015", "0", "1", "00", "00"),
+							endDate: new Date("2015", "0", "2", "23", "59"),
+							type: sap.ui.unified.CalendarDayType.Type01,
+							title: "App 1",
+							tooltip: "Tooltip",
+							text: "Text"
+						})
+						]
+					})
+				],
+				specialDates: [ new sap.ui.unified.DateTypeRange(sID + "SD1", {
+					startDate: new Date(2015, 0, 6),
 					type: sap.ui.unified.CalendarDayType.Type01,
-					tooltip: "Test"
-				}));
-				sap.ui.getCore().applyChanges();
-				ok(jQuery("#PC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+					tooltip: "Heilige 3 Könige"
+				}),
+					new sap.ui.unified.DateTypeRange(sID + "SD2", {
+						startDate: new Date(2015, 0, 1, 12, 00),
+						endDate: new Date(2015, 0, 1, 14, 00),
+						type: sap.ui.unified.CalendarDayType.Type02,
+						tooltip: "Lunch"
+					})
+				],
+				toolbarContent: [oSearchField, oButton],
+				appointmentSelect: handleAppointmentSelect,
+				startDateChange: handleStartDateChange,
+				rowSelectionChange: handleRowSelectionChange,
+				viewChange: handleViewChange,
+				intervalSelect: handleIntervalSelect
+			});
+			if (sViewKey) {
+				oTC.setViewKey(sViewKey);
+			}
 
-				oPC1.insertSpecialDate(new sap.ui.unified.DateTypeRange("SD2", {
-					startDate: new Date(2015, 0, 1, 16, 30),
-					type: sap.ui.unified.CalendarDayType.Type01,
-					tooltip: "Test"
-				}), 1);
-				sap.ui.getCore().applyChanges();
-				ok(jQuery("#PC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+			return oTC;
+		};
 
-				var oSD = oPC1.removeSpecialDate("SD1");
-				sap.ui.getCore().applyChanges();
-				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
-				oSD.destroy();
+		var initPlanningCalendar = function(sID, sSearchFieldId, sButtonId) {
+			var oTC = sap.ui.getCore().byId(sID);
+			var oUIArea;
+			if(oTC) {
+				oTC.removeAllToolbarContent();
+				oUIArea = oTC.getUIArea();
+				oTC.destroy();
+			}
 
-				var aRemoved = oPC1.removeAllSpecialDates();
-				sap.ui.getCore().applyChanges();
-				equal(aRemoved.length, 3, "3 specialDates removed");
-				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
-				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
+			if(!sap.ui.getCore().byId(sSearchFieldId)) {
+				createToolbarContent(sSearchFieldId, sButtonId);
+			}
 
-				for(var i = 0; i < aRemoved.length; i++) {
-					aRemoved[i].destroy();
+			oTC = createPlanningCalendar(sID, oSearchField1, oButton1);
+
+			if(oUIArea) {
+				oTC.placeAt(oUIArea.getId());
+			}
+
+			sap.ui.getCore().applyChanges();
+
+			return oTC;
+
+		};
+
+		var oSearchField1, oButton1;
+		createToolbarContent("SF1", "B1");
+		var oPC1 = createPlanningCalendar("PC1", oSearchField1, oButton1);
+		oPC1.placeAt("uiArea1");
+
+		qutils.delayTestStart();
+
+		module("internal controls");
+
+		test("PlanningCalendarRow", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			ok(oRow.getColumnListItem(), "ColumnListItem exist");
+			equal(oRow.getColumnListItem().getCells().length, 2, "row has 2 columns")
+
+			var oRowHeader = oRow.getColumnListItem().getCells()[0];
+			ok(oRowHeader, "row header exist");
+			equal(oRowHeader.getTitle(), oRow.getTitle(), "row header Title");
+			equal(oRowHeader.getIcon(), oRow.getIcon(), "row header icon");
+			equal(oRowHeader.getDescription(), oRow.getText(), "row header Text");
+
+			ok(oRow.getColumnListItem().getCells()[1], "CalendarRow exist");
+			ok(oRow.getColumnListItem().getCells()[1] instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
+
+			var oCalendarRow = oRow.getCalendarRow();
+			ok(!oCalendarRow.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
+			ok(!oCalendarRow.getNonWorkingHours(), "Row1: CalendarRow - nonWorkingHours");
+
+			oRow = sap.ui.getCore().byId("PC1-Row2");
+			oCalendarRow = oRow.getCalendarRow();
+			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
+			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
+		});
+
+		test("Table", function() {
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+
+			equal(oTable.getColumns().length, 2, "Table columns");
+			equal(oTable.getItems().length, 2, "Table rows");
+			equal(oTable.getItems()[0].getId(), "PC1-Row1-CLI", "Table row1 is first row");
+
+			ok(oTable.getHeaderToolbar(), "HeaderToolbar exist");
+			equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
+			equal(oTable.getHeaderToolbar().getContent()[0].getId(), "SF1", "HeaderToolbar: searchField exist");
+			equal(oTable.getHeaderToolbar().getContent()[1].getId(), "B1", "HeaderToolbar: application button exist");
+
+			ok(oTable.getInfoToolbar(), "InfoToolbar exist");
+			equal(oTable.getInfoToolbar().getContent().length, 2, "InfoToolbar items");
+			equal(oTable.getInfoToolbar().getContent()[0].getId(), "PC1-CalHead", "InfoToolbar: Calendar head exist");
+			equal(oTable.getInfoToolbar().getContent()[1].getId(), "PC1-TimeInt", "InfoToolbar: CalendarTimeInterval exist");
+
+			var oCalHead = sap.ui.getCore().byId("PC1-CalHead");
+			equal(oCalHead.getToolbar().getId(), "PC1-HeaderToolbar", "Calendar head: Toolbar exist");
+
+			var oHeaderToolbar = sap.ui.getCore().byId("PC1-HeaderToolbar");
+			equal(oHeaderToolbar.getContent().length, 2, "HeaderToolbar items");
+			equal(oHeaderToolbar.getContent()[0].getId(), "PC1-IntType", "Calendar head Toolbar: IntervalType-select exist");
+			equal(oHeaderToolbar.getContent()[1].getId(), "PC1-Today", "Calendar head Toolbar: today button exist");
+		});
+
+		module("rendering");
+
+		test("table", function() {
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+
+			ok(oTable.getDomRef(), "Table rendered");
+			ok(jQuery("#PC1-Row1-Head").get(0), "Row1 Header rendered");
+			ok(jQuery("#PC1-Row1-CalRow").get(0), "Row1 CalendarRow rendered");
+			ok(jQuery("#PC1-Row2-Head").get(0), "Row2 Header rendered");
+			ok(jQuery("#PC1-Row2-CalRow").get(0), "Row2 CalendarRow rendered");
+
+			ok(jQuery("#PC1-Toolbar").get(0), "Table header toolbar rendered");
+			ok(jQuery("#SF1").get(0), "SearchField rendered");
+			ok(jQuery("#B1").get(0), "application button rendered");
+
+			ok(jQuery("#PC1-InfoToolbar").get(0), "Table info toolbar rendered");
+			ok(jQuery("#PC1-CalHead").get(0), "Calendar header rendered");
+			ok(jQuery("#PC1-HeaderToolbar").get(0), "Calendar header toolbar rendered");
+			ok(jQuery("#PC1-IntType").get(0), "IntervalType select rendered");
+			ok(jQuery("#PC1-Today").get(0), "Today button rendered");
+			ok(jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval rendered");
+		});
+
+		test("Appointments", function() {
+			ok(jQuery("#PC1-R1H1").get(0), "Row1: IntervalHeader1 rendered");
+			ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 rendered");
+			ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 not rendered");
+			ok(!jQuery("#PC1-R1A3").get(0), "Row1: Appointment3 not rendered");
+			ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment4 not rendered");
+
+			ok(!jQuery("#PC1-R2H1").get(0), "Row2: IntervalHeader1 rendered");
+			ok(jQuery("#PC1-R2A1").get(0), "Row2: Appointment1 rendered");
+		});
+
+		module("Setters");
+
+		test("startDate", function() {
+			var oExpectedDate = new Date("2015", "0", "1", "08", "00");
+			var iStartTime = oPC1.getStartDate().getTime();
+			equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
+			equal(sap.ui.getCore().byId("PC1-TimeInt").getStartDate().getTime(), iStartTime, "CalendarTimeInterval Start date");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
+			equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
+
+			oExpectedDate = new Date("2015", "0", "1", "07", "00");
+			oPC1.setStartDate(new Date("2015", "0", "1", "07", "00"));
+			sap.ui.getCore().applyChanges();
+			iStartTime = oPC1.getStartDate().getTime();
+			equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
+			equal(sap.ui.getCore().byId("PC1-TimeInt").getStartDate().getTime(), iStartTime, "CalendarTimeInterval Start date");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
+			equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
+			ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 still rendered");
+			ok(jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 now rendered");
+		});
+
+		test("viewKey", function() {
+			var sViewKey = oPC1.getViewKey();
+			equal(sViewKey, sap.ui.unified.CalendarIntervalType.Hour, "Default ViewKey")
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+			equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow2 intervalType");
+			ok(!sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control not exist");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
+
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			sap.ui.getCore().applyChanges();
+			sViewKey = oPC1.getViewKey();
+			equal(sViewKey, sap.ui.unified.CalendarIntervalType.Day, "Default ViewKey");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
+			equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow2 intervalType");
+			ok(sap.ui.getCore().byId("PC1-TimeInt"), "CalendarTimeInterval control still exist");
+			ok(sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control now exist");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
+			ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
+			ok(jQuery("#PC1-DateInt").get(0), "CalendarDateInterval rendered");
+
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
+			sap.ui.getCore().applyChanges();
+			sViewKey = oPC1.getViewKey();
+			equal(sViewKey, sap.ui.unified.CalendarIntervalType.Month, "Default ViewKey");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow1 intervalType");
+			equal(sap.ui.getCore().byId("PC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow2 intervalType");
+			ok(sap.ui.getCore().byId("PC1-TimeInt"), "CalendarTimeInterval control still exist");
+			ok(sap.ui.getCore().byId("PC1-DateInt"), "CalendarDateInterval control now exist");
+			ok(sap.ui.getCore().byId("PC1-MonthInt"), "CalendarMonthInterval control not exist");
+			ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
+			ok(!jQuery("#PC1-DateInt").get(0), "CalendarDateInterval not rendered");
+			ok(jQuery("#PC1-MonthInt").get(0), "CalendarMonthInterval rendered");
+		});
+
+		test("singleSelection", function() {
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+			ok(oPC1.getSingleSelection(), "Single selection is default");
+			equal(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode");
+			ok(!sap.ui.getCore().byId("PC1-All"), "Select All CheckBox not exits")
+
+			oPC1.setSingleSelection(false);
+			sap.ui.getCore().applyChanges();
+			ok(!oPC1.getSingleSelection(), "Single selection not set");
+			equal(oTable.getMode(), sap.m.ListMode.MultiSelect, "Table selection mode");
+			ok(sap.ui.getCore().byId("PC1-All"), "Select All CheckBox exits")
+			ok(jQuery("#PC1-All").get(0), "Select All CheckBox rendered");
+
+			oPC1.setSingleSelection(true);
+			sap.ui.getCore().applyChanges();
+			ok(sap.ui.getCore().byId("PC1-All"), "Select All CheckBox stillexits")
+			ok(!jQuery("#PC1-All").get(0), "Select All CheckBox not rendered");
+		});
+
+		test("width", function() {
+			ok(!oPC1.getWidth(), "no width set ad default");
+			var sStyle = oPC1.$().attr("style") || "";
+			ok(sStyle.search("width") < 0, "no width set on DOM")
+
+			oPC1.setWidth("90%");
+			sap.ui.getCore().applyChanges();
+			var sStyle = oPC1.$().attr("style") || "";
+			var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
+			var iWidth = aTest? aTest[2] : 0;
+			equal(iWidth, 90 + "", "width set on DOM");
+		});
+
+		test("height", function() {
+			ok(!oPC1.getHeight(), "no height set ad default");
+			var sStyle = oPC1.$().attr("style") || "";
+			ok(sStyle.search("height") < 0, "no height set on DOM")
+
+			oPC1.setHeight("90%");
+			sap.ui.getCore().applyChanges();
+			var sStyle = oPC1.$().attr("style") || "";
+			var aTest = sStyle.match(/height:(\s?)(\d+(.?)(\d+))/);
+			var iheight = aTest? aTest[2] : 0;
+			equal(iheight, 90 + "", "height set on DOM");
+		});
+
+		test("showIntervalHeaders", function() {
+			ok(oPC1.getShowIntervalHeaders(), "ShowIntervalHeaders is enabled by default");
+			ok(oPC1.getShowEmptyIntervalHeaders(), "ShowEmptyIntervalHeaders is enabled by default");
+			var aRows = oPC1.getRows();
+			for(var i = 0; i < aRows.length; i++) {
+				ok(aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
+				ok(aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders set");
+			}
+
+			oPC1.setShowIntervalHeaders(false);
+			oPC1.setShowEmptyIntervalHeaders(false);
+			sap.ui.getCore().applyChanges();
+			for(var i = 0; i < aRows.length; i++) {
+				ok(!aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
+				ok(!aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders not set");
+			}
+
+			oPC1.setShowIntervalHeaders(true);
+			oPC1.setShowEmptyIntervalHeaders(true);
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("appointmentsReducedHeight", function() {
+			ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
+			var aRows = oPC1.getRows();
+			for(var i = 0; i < aRows.length; i++) {
+				ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
+			}
+
+			oPC1.setAppointmentsReducedHeight(true);
+			sap.ui.getCore().applyChanges();
+			for(var i = 0; i < aRows.length; i++) {
+				ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
+			}
+
+			oPC1.setAppointmentsReducedHeight(false);
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("appointmentsVisualization", function() {
+			equal(oPC1.getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
+			var aRows = oPC1.getRows();
+			for(var i = 0; i < aRows.length; i++) {
+				equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "Row " + i + ": AppointmentVisualization default set");
+			}
+
+			oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Filled);
+			sap.ui.getCore().applyChanges();
+			for(var i = 0; i < aRows.length; i++) {
+				equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Filled, "Row " + i + ": AppointmentVisualization Filled set");
+			}
+
+			oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Standard);
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("showRowHeaders", function() {
+			ok(oPC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
+
+			oPC1.setShowRowHeaders(false);
+			sap.ui.getCore().applyChanges();
+			ok(!jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header not visible");
+
+			oPC1.setShowRowHeaders(true);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
+		});
+
+		test("noDataText", function() {
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+			ok(!oPC1.getNoDataText(), "noDataText empty by default");
+			ok(!oTable.getProperty("noDataText"), "noDataText of table empty by default"); // use getProperty("noDataText") because getter is overwritten in ListBase
+
+			oPC1.setNoDataText("Test");
+			sap.ui.getCore().applyChanges();
+			equal(oPC1.getNoDataText(), "Test", "noDataText set");
+			equal(oTable.getProperty("noDataText"), "Test", "noDataText set on table");
+
+			oPC1.setNoDataText(null);
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("minDate/maxDate", function() {
+			ok(!oPC1.getMinDate(), "no minDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate set by default");
+
+			ok(!oPC1.getMaxDate(), "no maxDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate set by default");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate set by default");
+
+			var oMinDate = new Date(2000, 0 , 1, 0, 0, 0);
+			oPC1.setMinDate(oMinDate);
+			ok(jQuery.sap.equal(oMinDate, oPC1.getMinDate()), "no minDate set");
+			ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-TimeInt").getMinDate()), "CalendarTimeInterval minDate set");
+			ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-DateInt").getMinDate()), "CalendarDateInterval minDate set");
+			ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-MonthInt").getMinDate()), "CalendarMonthInterval minDate set");
+
+			var oMaxDate = new Date(2050, 11 , 31, 23, 59, 59);
+			oPC1.setMaxDate(oMaxDate);
+			ok(jQuery.sap.equal(oMaxDate, oPC1.getMaxDate()), "no minDate set");
+			ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-TimeInt").getMaxDate()), "CalendarTimeInterval maxDate set");
+			ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-DateInt").getMaxDate()), "CalendarDateInterval maxDate set");
+			ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-MonthInt").getMaxDate()), "CalendarMonthInterval maxDate set");
+
+			oPC1.setMinDate();
+			ok(!oPC1.getMinDate(), "no minDate set");
+			ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate");
+			ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate");
+
+			oPC1.setMaxDate();
+			ok(!oPC1.getMaxDate(), "no maxDate");
+			ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate");
+			ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate");
+			ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate");
+		});
+
+		test("rows", function() {
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+			equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
+			var iIntervals = 12;
+			if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+				iIntervals = 3;
+			}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+				iIntervals = 6;
+			}
+
+			var oRow = new sap.m.PlanningCalendarRow("NewRow", {
+				icon: "sap-icon://employee",
+				title: "new Row"
+			});
+			oPC1.addRow(oRow);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getItems().length, 3, "Table rows");
+			equal(oTable.getItems()[2].getId(), "NewRow-CLI", "new row added to table");
+			ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
+			ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
+			equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
+			equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
+			equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
+
+			oPC1.removeRow(oRow);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getItems().length, 2, "Table rows");
+			ok(!jQuery("#NewRow-Head").get(0), "new row Header not rendered");
+			ok(!jQuery("#NewRow-CalRow").get(0), "new row CalendarRow not rendered");
+
+			oRow.getCalendarRow().setStartDate(new Date());
+			oRow.getCalendarRow().setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+			oRow.getCalendarRow().setIntervals(3);
+			oPC1.insertRow(oRow, 1);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getItems().length, 3, "Table rows");
+			equal(oTable.getItems()[1].getId(), "NewRow-CLI", "new row added to table");
+			ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
+			ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
+			equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
+			equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
+			equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
+
+			var aRemoved = oPC1.removeAllRows();
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getItems().length, 0, "Table rows removed");
+			equal(aRemoved.length, 3, "3 rows removed");
+
+			for(var i = 0; i < aRemoved.length; i++) {
+				aRemoved[i].destroy();
+			}
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+			oTable = sap.ui.getCore().byId("PC1-Table");
+
+			oPC1.destroyRows();
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getItems().length, 0, "Table rows destroyed");
+			ok(!sap.ui.getCore().byId("PC1-Row1"), "Row1 destroyed");
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		test("toolbarContent", function() {
+			var oButton = new sap.m.Button("BX", {
+				icon: "sap-icon://home",
+				type: sap.m.ButtonType.Transparent
+			});
+
+			var oTable = sap.ui.getCore().byId("PC1-Table");
+
+			oPC1.addToolbarContent(oButton);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
+			equal(oTable.getHeaderToolbar().getContent()[2].getId(), "BX", "HeaderToolbar: new button exist");
+			ok(jQuery("#BX").get(0), "new button rendered");
+
+			oPC1.removeToolbarContent(oButton);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
+			ok(!jQuery("#BX").get(0), "new button not rendered");
+
+			oPC1.insertToolbarContent(oButton, 0);
+			sap.ui.getCore().applyChanges();
+			equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
+			equal(oTable.getHeaderToolbar().getContent()[0].getId(), "BX", "HeaderToolbar: new button exist");
+			ok(jQuery("#BX").get(0), "new button rendered");
+
+			var aRemoved = oPC1.removeAllToolbarContent();
+			sap.ui.getCore().applyChanges();
+			ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
+			equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
+			ok(!jQuery("#BX").get(0), "new button not rendered");
+			equal(aRemoved.length, 3, "3 controls removed");
+
+			for(var i = 0; i < aRemoved.length; i++) {
+				aRemoved[i].destroy();
+			}
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+			oTable = sap.ui.getCore().byId("PC1-Table");
+
+			oPC1.destroyToolbarContent();
+			sap.ui.getCore().applyChanges();
+			ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
+			equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
+			ok(!sap.ui.getCore().byId("SF1"), "SearchField destroyed");
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		test("views", function() {
+			equal(oPC1.getViews().length, 0, "no views set in aggregation per default");
+
+			oPC1.setViewKey("D");
+			var oView = new sap.m.PlanningCalendarView("View-H", {
+				key: "H",
+				intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+				description: "View1",
+				intervalsS: 1,
+				intervalsM: 2,
+				intervalsL: 3
+			});
+			oPC1.addView(oView);
+			oView = new sap.m.PlanningCalendarView("View-D", {
+				key: "D",
+				intervalType: sap.ui.unified.CalendarIntervalType.Day,
+				description: "View2",
+				intervalsS: 2,
+				intervalsM: 4,
+				intervalsL: 6,
+				showSubIntervals: true
+			});
+			oPC1.addView(oView);
+			sap.ui.getCore().applyChanges();
+			equal(oPC1.getViews().length, 2, "2 views set");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getShowSubIntervals(), true, "CalendarRow1 subIntervals");
+			if(jQuery("#PC1").outerWidth() > 1100) {
+				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
+			}
+			ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
+			ok(jQuery("#PC1-DateInt").get(0), "CalendarDateInterval rendered");
+
+			oView.setIntervalsL(5);
+			sap.ui.getCore().applyChanges();
+			if(jQuery("#PC1").outerWidth() > 1100) {
+				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervals(), 5, "CalendarRow1 intervals");
+			}
+
+			oPC1.destroyViews();
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			sap.ui.getCore().applyChanges();
+			equal(oPC1.getViews().length, 0, "no views set in aggregation");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+			equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
+		});
+
+		test("specialDates", function() {
+			var oTimeInterval = sap.ui.getCore().byId("PC1-TimeInt");
+			equal(oTimeInterval.getSpecialDates().length, 2, "TimeInterval gets SpecialDates from PlanningCalendar");
+			ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
+
+			oPC1.addSpecialDate(new sap.ui.unified.DateTypeRange("SD1", {
+				startDate: new Date(2015, 0, 1, 15, 30),
+				type: sap.ui.unified.CalendarDayType.Type01,
+				tooltip: "Test"
+			}));
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#PC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+
+			oPC1.insertSpecialDate(new sap.ui.unified.DateTypeRange("SD2", {
+				startDate: new Date(2015, 0, 1, 16, 30),
+				type: sap.ui.unified.CalendarDayType.Type01,
+				tooltip: "Test"
+			}), 1);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#PC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+
+			var oSD = oPC1.removeSpecialDate("SD1");
+			sap.ui.getCore().applyChanges();
+			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
+			oSD.destroy();
+
+			var aRemoved = oPC1.removeAllSpecialDates();
+			sap.ui.getCore().applyChanges();
+			equal(aRemoved.length, 3, "3 specialDates removed");
+			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
+			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
+
+			for(var i = 0; i < aRemoved.length; i++) {
+				aRemoved[i].destroy();
+			}
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+			ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered again");
+
+			oPC1.destroySpecialDates();
+			sap.ui.getCore().applyChanges();
+			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
+		});
+
+		test("Row header", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			var oRowHeader = oRow.getColumnListItem().getCells()[0];
+
+			oRow.setTitle("Test");
+			oRow.setText("Test");
+			oRow.setIcon("sap-icon://sap-ui5");
+			sap.ui.getCore().applyChanges();
+			equal(oRowHeader.getTitle(), "Test", "row header Title");
+			equal(oRowHeader.getDescription(), "Test", "row header Text");
+			equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
+		});
+
+		test("Row nonWorkingIntervals", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			var oCalendarRow = oRow.getCalendarRow();
+
+			oRow.setNonWorkingDays([2, 3]);
+			oRow.setNonWorkingHours([11, 12]);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
+			ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
+		});
+
+		test("Row selected", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			var oColumnListItem = oRow.getColumnListItem();
+			ok(!oRow.getSelected(), "Row not selected as default");
+			ok(!oColumnListItem.getSelected(), "ColumnListItem not selected as default");
+
+			oRow.setSelected(true)
+			sap.ui.getCore().applyChanges();
+			ok(oRow.getSelected(), "Row now selected");
+			ok(oColumnListItem.getSelected(), "ColumnListItem now selected");
+		});
+
+		test("Row appointments", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			var oCalendarRow = oRow.getCalendarRow();
+			ok(jQuery.sap.equal(oRow.getAppointments(), oCalendarRow.getAppointments()), "CalendarRow appointments");
+			equal(oRow.getAppointments().length, 4, "number of appointments");
+
+			var oAppointment = new sap.ui.unified.CalendarAppointment("NewAppointment", {
+				startDate: new Date("2015", "0", "1", "12", "00"),
+				endDate: new Date("2015", "0", "1", "15", "00"),
+				type: sap.ui.unified.CalendarDayType.Type10,
+				title: "New",
+				text: "Appointment",
+				tooltip: "Test",
+				icon: "sap-icon://sap-ui5"
+			});
+
+			oRow.addAppointment(oAppointment);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getAppointments().length, 5, "number of appointments after add");
+			equal(oRow.getAppointments()[4].getId(), "NewAppointment", "position of new appointments in array");
+			ok(oAppointment.getDomRef(), "Appointment rendered");
+
+			oRow.removeAppointment(oAppointment);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getAppointments().length, 4, "number of appointments after remove");
+			ok(!oAppointment.getDomRef(), "Appointment not rendered");
+
+			oRow.insertAppointment(oAppointment, 1);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getAppointments().length, 5, "number of appointments after insert");
+			equal(oRow.getAppointments()[1].getId(), "NewAppointment", "position of new appointments in array");
+			ok(oAppointment.getDomRef(), "Appointment rendered");
+
+			var aRemoved =oRow.removeAllAppointments();
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getAppointments().length, 0, "number of appointments after remove all");
+			ok(oAppointment, "Appointment still exist");
+			ok(!oAppointment.getDomRef(), "Appointment not rendered");
+			for(var i = 0; i < aRemoved.length; i++) {
+				aRemoved[i].destroy();
+			}
+
+			oRow = sap.ui.getCore().byId("PC1-Row2");
+			oCalendarRow = oRow.getCalendarRow();
+			ok(sap.ui.getCore().byId("PC1-R2A1"), "Appointment exist before destroy");
+			oRow.destroyAppointments();
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getAppointments().length, 0, "number of appointments after destroy");
+			ok(!sap.ui.getCore().byId("PC1-R2A1"), "Appointment destroyed");
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		test("Row intervalHeaders", function() {
+			var oRow = sap.ui.getCore().byId("PC1-Row1");
+			var oCalendarRow = oRow.getCalendarRow();
+			ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oCalendarRow.getIntervalHeaders()), "CalendarRow IntervalHeaders");
+			equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders");
+
+			var oIntervalHeader = new sap.ui.unified.CalendarAppointment("NewIntervalHeader", {
+				startDate: new Date("2015", "0", "1", "12", "00"),
+				endDate: new Date("2015", "0", "1", "15", "00"),
+				type: sap.ui.unified.CalendarDayType.Type10,
+				title: "New",
+				tooltip: "Test",
+				icon: "sap-icon://sap-ui5"
+			});
+
+			oRow.addIntervalHeader(oIntervalHeader);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getIntervalHeaders().length, 2, "number of IntervalHeaders after add");
+			equal(oRow.getIntervalHeaders()[1].getId(), "NewIntervalHeader", "position of new IntervalHeaders in array");
+			ok(oIntervalHeader.getDomRef(), "IntervalHeader rendered");
+
+			oRow.removeIntervalHeader(oIntervalHeader);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders after remove");
+			ok(!oIntervalHeader.getDomRef(), "IntervalHeader not rendered");
+
+			oRow.insertIntervalHeader(oIntervalHeader, 0);
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getIntervalHeaders().length, 2, "number of IntervalHeaders after insert");
+			equal(oRow.getIntervalHeaders()[0].getId(), "NewIntervalHeader", "position of new IntervalHeaders in array");
+			ok(oIntervalHeader.getDomRef(), "IntervalHeader rendered");
+
+			var aRemoved =oRow.removeAllIntervalHeaders();
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after remove all");
+			ok(oIntervalHeader, "IntervalHeader still exist");
+			ok(!oIntervalHeader.getDomRef(), "IntervalHeader not rendered");
+			for(var i = 0; i < aRemoved.length; i++) {
+				aRemoved[i].destroy();
+			}
+
+			oRow = sap.ui.getCore().byId("PC1-Row2");
+			oCalendarRow = oRow.getCalendarRow();
+			ok(sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader exist before destroy");
+			oRow.destroyIntervalHeaders();
+			sap.ui.getCore().applyChanges();
+			equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after destroy");
+			ok(!sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader destroyed");
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		module("events");
+
+		test("appointmentSelect", function() {
+			oSelectedAppointment = undefined;
+			qutils.triggerEvent("click", "PC1-R1A1");
+			equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
+			ok(sap.ui.getCore().byId("PC1-R1A1").getSelected(), "Appointment is selected");
+			oSelectedAppointment = undefined;
+		});
+
+		test("rowSelectionChange", function() {
+			equal(oPC1.getSelectedRows().length, 0, "No rows selected")
+
+			bRowSelectionChange = false;
+			aChangedRows = undefined;
+			qutils.triggerEvent("tap", "PC1-Row1-CLI_cell0");
+			ok(bRowSelectionChange, "rowSelectionChange fired");
+			equal(aChangedRows.length, 1, "one row changed");
+			equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
+			ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
+			equal(oPC1.getSelectedRows().length, 1, "one row selected")
+
+			bRowSelectionChange = false;
+			aChangedRows = undefined;
+
+			qutils.triggerEvent("tap", "PC1-Row2-CLI_cell0");
+			ok(bRowSelectionChange, "rowSelectionChange fired");
+			equal(aChangedRows.length, 2, "two row changed");
+			equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
+			equal(aChangedRows[1].getId(), "PC1-Row2", "Row2 changed");
+			ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
+			ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
+			equal(oPC1.getSelectedRows().length, 1, "one row selected")
+
+			bRowSelectionChange = false;
+			aChangedRows = undefined;
+			oPC1.setSingleSelection(false);
+			sap.ui.getCore().applyChanges();
+			qutils.triggerEvent("tap", "PC1-All");
+			ok(bRowSelectionChange, "rowSelectionChange fired");
+			equal(aChangedRows.length, 1, "one row changed");
+			equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
+			ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
+			ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
+			equal(oPC1.getSelectedRows().length, 2, "2 row selected")
+
+			bRowSelectionChange = false;
+			aChangedRows = undefined;
+			oPC1.setSingleSelection(true);
+			sap.ui.getCore().applyChanges();
+			ok(!bRowSelectionChange, "rowSelectionChange not fired");
+			ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
+			ok(!sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is not selected");
+			equal(oPC1.getSelectedRows().length, 0, "No row selected")
+
+			bRowSelectionChange = false;
+			aChangedRows = undefined;
+
+		});
+
+		test("startDateChange", function() {
+			bStartDateChange = false;
+			// via navigation on CalendarTimeInterval
+			qutils.triggerEvent("click", "PC1-TimeInt--Head-prev");
+			ok(bStartDateChange, "startDateChange fired");
+			var oStartDate = oPC1.getStartDate();
+			var oExpectedDate = new Date("2014", "11", "31", "20", "00");
+			if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+				oExpectedDate = new Date("2015", "0", "1", "02", "00");
+			}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+				oExpectedDate = new Date("2015", "0", "1", "02", "00");
+			}
+			equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+
+			bStartDateChange = false;
+			// via navigation on CalendarDateInterval
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			sap.ui.getCore().applyChanges();
+			qutils.triggerEvent("click", "PC1-DateInt--Head-prev");
+			ok(bStartDateChange, "startDateChange fired");
+			oStartDate = oPC1.getStartDate();
+			oExpectedDate = new Date("2014", "11", "17", "00", "00");
+			if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+				oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+				oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			}
+			equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+
+			bStartDateChange = false;
+			// via navigation on CalendarMonthInterval
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
+			sap.ui.getCore().applyChanges();
+			qutils.triggerEvent("click", "PC1-MonthInt--Head-prev");
+			ok(bStartDateChange, "startDateChange fired");
+			oStartDate = oPC1.getStartDate();
+			oExpectedDate = new Date("2013", "11", "01", "00", "00");
+			if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+				oExpectedDate = new Date("2014", "08", "01", "00", "00");
+			}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+				oExpectedDate = new Date("2014", "05", "01", "00", "00");
+			}
+			equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+
+			bStartDateChange = false;
+			// via today button
+			qutils.triggerEvent("tap", "PC1-Today");
+			ok(bStartDateChange, "startDateChange fired");
+			oStartDate = oPC1.getStartDate();
+			oExpectedDate = new Date();
+			equal(oExpectedDate.getFullYear(), oStartDate.getFullYear(), "Start date is OK");
+			equal(oExpectedDate.getMonth(), oStartDate.getMonth(), "Start date is OK");
+			equal(oExpectedDate.getDate(), oStartDate.getDate(), "Start date is OK");
+
+			bStartDateChange = false;
+
+			//change view
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			sap.ui.getCore().applyChanges();
+			jQuery("#PC1-IntType").focus();
+			qutils.triggerKeydown("PC1-IntType", "ARROW_DOWN"); //to Days
+			qutils.triggerKeydown("PC1-IntType", "ARROW_DOWN"); //to Months
+			qutils.triggerKeydown("PC1-IntType", "ARROW_DOWN"); //to Week
+			qutils.triggerKeydown("PC1-IntType", "ENTER");
+			sap.ui.getCore().applyChanges();
+			ok(bStartDateChange, "startDateChange fired when view is switched to Week");
+			bStartDateChange = false;
+
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			sap.ui.getCore().applyChanges();
+
+			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		test("viewChange", function() {
+			bViewChange = false;
+			jQuery("#PC1-IntType").focus();
+			qutils.triggerKeyboardEvent("PC1-IntType", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("PC1-IntType", "ENTER");
+			sap.ui.getCore().applyChanges();
+			ok(bViewChange, "viewChange fired");
+
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("intervalselect", function() {
+			bIntervalSelect = false;
+			oIntervalStartDate = undefined;
+			oIntervalEndDate = undefined;
+			bSubInterval = undefined,
+					oIntervalRow = undefined,
+					jQuery("#PC1-TimeInt--TimesRow-201501011200").focus();
+			qutils.triggerKeyboardEvent("PC1-TimeInt--TimesRow-201501011200", "ENTER");
+			sap.ui.getCore().applyChanges();
+			ok(bIntervalSelect, "intervalSelect fired");
+			equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011200", "interval start date returned");
+			equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011259", "interval end date returned");
+			ok(!bSubInterval, "No sub-interval");
+			ok(!oIntervalRow, "No row");
+			ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemSel"), "interval not longer selected");
+
+			bIntervalSelect = false;
+			oIntervalStartDate = undefined;
+			oIntervalEndDate = undefined;
+			bSubInterval = undefined,
+					oIntervalRow = undefined,
+					qutils.triggerEvent("click", "PC1-Row1-CalRow-AppsInt3");
+			ok(bIntervalSelect, "intervalSelect fired");
+			equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011100", "interval start date returned");
+			equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011159", "interval end date returned");
+			ok(!bSubInterval, "No sub-interval");
+			equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
+		});
+
+		module("Interaction", {
+			beforeEach: function() {
+				var oSearchField = new sap.m.SearchField(),
+						oButton = new sap.m.Button();
+				this.o1stOfSeptMidOfWeek = new Date(2016, 8, 1, 1);
+				this.o10thOfSeptember = new Date(2016, 8, 10);
+				this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1stOfSeptMidOfWeek,
+						sap.ui.unified.CalendarIntervalType.Week);
+				this.oPC2.placeAt("uiArea1");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				if (!bSkipDestroy) {
+					this.oPC2.destroy();
+				}
+			},
+
+			_switchToView: function (sViewName, oPC) {
+				var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+						mIntervalStringsMap = {},
+						i = 0,
+						sIntervalTypeDropdownId,
+						sIntervalTypeDropdownLabelId,
+						sViewI18Name,
+						sErrMsg;
+
+				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Hour] = "PLANNINGCALENDAR_HOURS";
+				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Day] = "PLANNINGCALENDAR_DAYS";
+				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Month] = "PLANNINGCALENDAR_MONTHS";
+				mIntervalStringsMap[sap.ui.unified.CalendarIntervalType.Week] = "PLANNINGCALENDAR_WEEK";
+
+				sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
+				ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
+
+				sIntervalTypeDropdownId = oPC.getId() + "-IntType",
+				sIntervalTypeDropdownLabelId = sIntervalTypeDropdownId + "-label";
+
+				if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() === sViewI18Name.toLowerCase()) {
+					return;
+				}
+				qutils.triggerKeydown(sIntervalTypeDropdownId, "HOME");
+
+				do {
+					i++;
+					if (jQuery("#" + sIntervalTypeDropdownLabelId).text().toLowerCase() == sViewI18Name.toLowerCase()) {
+						qutils.triggerKeydown(sIntervalTypeDropdownId, "ENTER");
+						return;
+					}
+					qutils.triggerKeydown(sIntervalTypeDropdownId, "ARROW_DOWN");
+				} while (i < 4);
+
+				sErrMsg = "Cannot switch to view " + sViewName;
+				ok(false, sErrMsg);
+				throw sErrMsg;
+			},
+
+			_switchToMonth: function (oPC, iMonth) {
+				var oMonthPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("monthPicker");
+				oMonthPicker.setMonth(iMonth);
+				oMonthPicker.fireSelect();
+			},
+
+			_switchToYear: function (oPC, iYear) {
+				var oYearPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("yearPicker");
+				oYearPicker.setYear(iYear);
+				oYearPicker.fireSelect();
+			},
+
+			_clickTodayButton: function(oPC) {
+				var sTodayButtonId = this._getTodayButton(oPC).getId();
+				qutils.triggerEvent("tap", sTodayButtonId);
+			},
+
+			_getTodayButton: function(oPC) {
+				return sap.ui.getCore().byId(oPC.getId() + "-Today");
+			},
+
+			//Verifies that given dates are "displayed" in the Planning Calendar
+			_assertDatesAreVisible: function (aDates, oPC, sMessagePrefix) {
+				var sDaysSelector = oPC.getId() + "-" + this._getIntervalId(oPC) + "-days",
+						iAvailableDays = jQuery('#' + sDaysSelector).children().length,
+						sExpectedDateRange = this._formatDate(aDates[0]) + "-" + this._formatDate(aDates[aDates.length - 1]);
+
+				sMessagePrefix+= ": expected dates: " + sExpectedDateRange;
+				equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
+
+				aDates.forEach(function (oDate) {
+					this._assertDateIsVisible(oDate, oPC, sMessagePrefix);
+				}.bind(this));
+			},
+
+			//Verifies that given Date is "displayed" in the Planning Calendar
+			_assertDateIsVisible: function (oDate, oPC, sMessagePrefix) {
+				var that = this;
+
+				function convertDate2DomId(oDate, sPrefix) {
+					return sPrefix + "-" + oDate.getFullYear() + that._padTo10(oDate.getMonth() + 1) + that._padTo10(oDate.getDate());
 				}
 
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-				ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered again");
+				var sDayId = convertDate2DomId(oDate, oPC.getId() + "-" + this._getIntervalId(oPC));
+				equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + this._formatDate(oDate) + " should be visible (" + sDayId + ")");
+			},
+			//Verifies that given hour for given date is "displayed" in the Planning Calendar
+			_assertHourIsVisible: function(oDate, oPC, sMessagePrefix) {
+				var that = this;
 
-				oPC1.destroySpecialDates();
-				sap.ui.getCore().applyChanges();
-				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
-			});
-
-			test("Row header", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				var oRowHeader = oRow.getColumnListItem().getCells()[0];
-
-				oRow.setTitle("Test");
-				oRow.setText("Test");
-				oRow.setIcon("sap-icon://sap-ui5");
-				sap.ui.getCore().applyChanges();
-				equal(oRowHeader.getTitle(), "Test", "row header Title");
-				equal(oRowHeader.getDescription(), "Test", "row header Text");
-				equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
-			});
-
-			test("Row nonWorkingIntervals", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				var oCalendarRow = oRow.getCalendarRow();
-
-				oRow.setNonWorkingDays([2, 3]);
-				oRow.setNonWorkingHours([11, 12]);
-				sap.ui.getCore().applyChanges();
-				ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
-				ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
-			});
-
-			test("Row selected", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				var oColumnListItem = oRow.getColumnListItem();
-				ok(!oRow.getSelected(), "Row not selected as default");
-				ok(!oColumnListItem.getSelected(), "ColumnListItem not selected as default");
-
-				oRow.setSelected(true)
-				sap.ui.getCore().applyChanges();
-				ok(oRow.getSelected(), "Row now selected");
-				ok(oColumnListItem.getSelected(), "ColumnListItem now selected");
-			});
-
-			test("Row appointments", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				var oCalendarRow = oRow.getCalendarRow();
-				ok(jQuery.sap.equal(oRow.getAppointments(), oCalendarRow.getAppointments()), "CalendarRow appointments");
-				equal(oRow.getAppointments().length, 4, "number of appointments");
-
-				var oAppointment = new sap.ui.unified.CalendarAppointment("NewAppointment", {
-					startDate: new Date("2015", "0", "1", "12", "00"),
-					endDate: new Date("2015", "0", "1", "15", "00"),
-					type: sap.ui.unified.CalendarDayType.Type10,
-					title: "New",
-					text: "Appointment",
-					tooltip: "Test",
-					icon: "sap-icon://sap-ui5"
-				});
-
-				oRow.addAppointment(oAppointment);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getAppointments().length, 5, "number of appointments after add");
-				equal(oRow.getAppointments()[4].getId(), "NewAppointment", "position of new appointments in array");
-				ok(oAppointment.getDomRef(), "Appointment rendered");
-
-				oRow.removeAppointment(oAppointment);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getAppointments().length, 4, "number of appointments after remove");
-				ok(!oAppointment.getDomRef(), "Appointment not rendered");
-
-				oRow.insertAppointment(oAppointment, 1);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getAppointments().length, 5, "number of appointments after insert");
-				equal(oRow.getAppointments()[1].getId(), "NewAppointment", "position of new appointments in array");
-				ok(oAppointment.getDomRef(), "Appointment rendered");
-
-				var aRemoved =oRow.removeAllAppointments();
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getAppointments().length, 0, "number of appointments after remove all");
-				ok(oAppointment, "Appointment still exist");
-				ok(!oAppointment.getDomRef(), "Appointment not rendered");
-				for(var i = 0; i < aRemoved.length; i++) {
-					aRemoved[i].destroy();
+				function convertHourInDate2DomId(oDate, sPrefix) {
+					return sPrefix + "-" + oDate.getFullYear() + that._padTo10(oDate.getMonth() + 1) + that._padTo10(oDate.getDate()) + that._padTo10(oDate.getHours()) + "00";
 				}
 
-				oRow = sap.ui.getCore().byId("PC1-Row2");
-				oCalendarRow = oRow.getCalendarRow();
-				ok(sap.ui.getCore().byId("PC1-R2A1"), "Appointment exist before destroy");
-				oRow.destroyAppointments();
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getAppointments().length, 0, "number of appointments after destroy");
-				ok(!sap.ui.getCore().byId("PC1-R2A1"), "Appointment destroyed");
+				var sHourInDayId = convertHourInDate2DomId(oDate, oPC.getId() + "-" + this._getIntervalId(oPC));
+				equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + this._formatDateHour(oDate) + " should be visible (" + sHourInDayId + ")");
+			},
 
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-			});
+			_assertHoursAreVisible: function(aDates, oPC, sMessagePrefix) {
+				var iAvailableDays = jQuery('#' + oPC.getId() + "-"+ this._getIntervalId(oPC) + "-times").children().length,
+						sExpectedDateRange = this._formatDateHour(aDates[0]) + "-" + this._formatDateHour(aDates[aDates.length-1]);
 
-			test("Row intervalHeaders", function() {
-				var oRow = sap.ui.getCore().byId("PC1-Row1");
-				var oCalendarRow = oRow.getCalendarRow();
-				ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oCalendarRow.getIntervalHeaders()), "CalendarRow IntervalHeaders");
-				equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders");
+				sMessagePrefix+= ": expected hours: " + sExpectedDateRange;
+				equals(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
 
-				var oIntervalHeader = new sap.ui.unified.CalendarAppointment("NewIntervalHeader", {
-					startDate: new Date("2015", "0", "1", "12", "00"),
-					endDate: new Date("2015", "0", "1", "15", "00"),
-					type: sap.ui.unified.CalendarDayType.Type10,
-					title: "New",
-					tooltip: "Test",
-					icon: "sap-icon://sap-ui5"
-				});
+				aDates.forEach(function (oDate) {
+					this._assertHourIsVisible(oDate, oPC, sMessagePrefix);
+				}.bind(this));
+			},
 
-				oRow.addIntervalHeader(oIntervalHeader);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getIntervalHeaders().length, 2, "number of IntervalHeaders after add");
-				equal(oRow.getIntervalHeaders()[1].getId(), "NewIntervalHeader", "position of new IntervalHeaders in array");
-				ok(oIntervalHeader.getDomRef(), "IntervalHeader rendered");
+			_formatDate: function(oDate) {
+				return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY"}).format(oDate);
+			},
 
-				oRow.removeIntervalHeader(oIntervalHeader);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders after remove");
-				ok(!oIntervalHeader.getDomRef(), "IntervalHeader not rendered");
+			_formatDateHour: function(oDate) {
+				return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY hh:mm"}).format(oDate);
+			},
 
-				oRow.insertIntervalHeader(oIntervalHeader, 0);
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getIntervalHeaders().length, 2, "number of IntervalHeaders after insert");
-				equal(oRow.getIntervalHeaders()[0].getId(), "NewIntervalHeader", "position of new IntervalHeaders in array");
-				ok(oIntervalHeader.getDomRef(), "IntervalHeader rendered");
+			_padTo10: function(i) {
+				return (i > 9 ? i : "0" + i);
+			},
 
-				var aRemoved =oRow.removeAllIntervalHeaders();
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after remove all");
-				ok(oIntervalHeader, "IntervalHeader still exist");
-				ok(!oIntervalHeader.getDomRef(), "IntervalHeader not rendered");
-				for(var i = 0; i < aRemoved.length; i++) {
-					aRemoved[i].destroy();
+			_getIntervalId: function (oPC) {
+				return this._getIntervalPrefix(oPC) + "--" + this._getIntervalSuffix(oPC);
+			},
+
+			_getIntervalPrefix: function(oPC) {
+				switch (oPC.getViewKey()) {
+					case sap.ui.unified.CalendarIntervalType.Hour:
+						return "TimeInt";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Day:
+						return "DateInt";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Week:
+						return "WeekInt";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Month:
+						return "MonthInt";
+						break;
+					default:
+						throw "Unknown viewKey:" + oPC.getViewKey();
 				}
+			},
 
-				oRow = sap.ui.getCore().byId("PC1-Row2");
-				oCalendarRow = oRow.getCalendarRow();
-				ok(sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader exist before destroy");
-				oRow.destroyIntervalHeaders();
-				sap.ui.getCore().applyChanges();
-				equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after destroy");
-				ok(!sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader destroyed");
-
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-			});
-
-			module("events");
-
-			test("appointmentSelect", function() {
-				oSelectedAppointment = undefined;
-				qutils.triggerEvent("click", "PC1-R1A1");
-				equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
-				ok(sap.ui.getCore().byId("PC1-R1A1").getSelected(), "Appointment is selected");
-				oSelectedAppointment = undefined;
-			});
-
-			test("rowSelectionChange", function() {
-				equal(oPC1.getSelectedRows().length, 0, "No rows selected")
-
-				bRowSelectionChange = false;
-				aChangedRows = undefined;
-				qutils.triggerEvent("tap", "PC1-Row1-CLI_cell0");
-				ok(bRowSelectionChange, "rowSelectionChange fired");
-				equal(aChangedRows.length, 1, "one row changed");
-				equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
-				ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
-				equal(oPC1.getSelectedRows().length, 1, "one row selected")
-
-				bRowSelectionChange = false;
-				aChangedRows = undefined;
-
-				qutils.triggerEvent("tap", "PC1-Row2-CLI_cell0");
-				ok(bRowSelectionChange, "rowSelectionChange fired");
-				equal(aChangedRows.length, 2, "two row changed");
-				equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
-				equal(aChangedRows[1].getId(), "PC1-Row2", "Row2 changed");
-				ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
-				ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
-				equal(oPC1.getSelectedRows().length, 1, "one row selected")
-
-				bRowSelectionChange = false;
-				aChangedRows = undefined;
-				oPC1.setSingleSelection(false);
-				sap.ui.getCore().applyChanges();
-				qutils.triggerEvent("tap", "PC1-All");
-				ok(bRowSelectionChange, "rowSelectionChange fired");
-				equal(aChangedRows.length, 1, "one row changed");
-				equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
-				ok(sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is selected");
-				ok(sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is selected");
-				equal(oPC1.getSelectedRows().length, 2, "2 row selected")
-
-				bRowSelectionChange = false;
-				aChangedRows = undefined;
-				oPC1.setSingleSelection(true);
-				sap.ui.getCore().applyChanges();
-				ok(!bRowSelectionChange, "rowSelectionChange not fired");
-				ok(!sap.ui.getCore().byId("PC1-Row1").getSelected(), "Row1 is not selected");
-				ok(!sap.ui.getCore().byId("PC1-Row2").getSelected(), "Row2 is not selected");
-				equal(oPC1.getSelectedRows().length, 0, "No row selected")
-
-				bRowSelectionChange = false;
-				aChangedRows = undefined;
-
-			});
-
-			test("startDateChange", function() {
-				bStartDateChange = false;
-				// via navigation on CalendarTimeInterval
-				qutils.triggerEvent("click", "PC1-TimeInt--Head-prev");
-				ok(bStartDateChange, "startDateChange fired");
-				var oStartDate = oPC1.getStartDate();
-				var oExpectedDate = new Date("2014", "11", "31", "20", "00");
-				if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-					oExpectedDate = new Date("2015", "0", "1", "02", "00");
-				}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-					oExpectedDate = new Date("2015", "0", "1", "02", "00");
+			_getIntervalSuffix: function(oPC) {
+				switch (oPC.getViewKey()) {
+					case sap.ui.unified.CalendarIntervalType.Hour:
+						return "TimesRow";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Day:
+						return "Month0";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Week:
+						return "Month0";
+						break;
+					case sap.ui.unified.CalendarIntervalType.Month:
+						return "MonthsRow";
+						break;
+					default:
+						throw "Unknown viewKey:" + oPC.getViewKey();
 				}
-				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+			},
 
-				bStartDateChange = false;
-				// via navigation on CalendarDateInterval
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
-				sap.ui.getCore().applyChanges();
-				qutils.triggerEvent("click", "PC1-DateInt--Head-prev");
-				ok(bStartDateChange, "startDateChange fired");
-				oStartDate = oPC1.getStartDate();
-				oExpectedDate = new Date("2014", "11", "17", "00", "00");
-				if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-					oExpectedDate = new Date("2014", "11", "25", "00", "00");
-				}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-					oExpectedDate = new Date("2014", "11", "25", "00", "00");
-				}
-				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+			_navBackward: function(oPC) {
+				var sIdBackButton = oPC.getId() + "-" +  this._getIntervalPrefix(oPC) + "--Head-prev";
+				qutils.triggerEvent("click", sIdBackButton);
+			},
 
-				bStartDateChange = false;
-				// via navigation on CalendarMonthInterval
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
-				sap.ui.getCore().applyChanges();
-				qutils.triggerEvent("click", "PC1-MonthInt--Head-prev");
-				ok(bStartDateChange, "startDateChange fired");
-				oStartDate = oPC1.getStartDate();
-				oExpectedDate = new Date("2013", "11", "01", "00", "00");
-				if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-					oExpectedDate = new Date("2014", "08", "01", "00", "00");
-				}else if(jQuery("#PC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-					oExpectedDate = new Date("2014", "05", "01", "00", "00");
-				}
-				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
+			_navForward: function(oPC) {
+				var sIdBackButton = oPC.getId() + "-" +  this._getIntervalPrefix(oPC) + "--Head-next";
+				qutils.triggerEvent("click", sIdBackButton);
+			}
+		});
 
-				bStartDateChange = false;
-				// via today button
-				qutils.triggerEvent("tap", "PC1-Today");
-				ok(bStartDateChange, "startDateChange fired");
-				oStartDate = oPC1.getStartDate();
-				oExpectedDate = new Date();
-				equal(oExpectedDate.getFullYear(), oStartDate.getFullYear(), "Start date is OK");
-				equal(oExpectedDate.getMonth(), oStartDate.getMonth(), "Start date is OK");
-				equal(oExpectedDate.getDate(), oStartDate.getDate(), "Start date is OK");
+		asyncTest("keyboard navigation", function() {
+			// test here only interaction between rows, other things arre tested on CalendarRow
+			jQuery("#PC1-R1A1").focus();
+			equal(document.activeElement.id, "PC1-R1A1", "Appointment1 focused");
+			qutils.triggerKeyboardEvent("PC1-R1A1", "END");
+			equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
 
-				bStartDateChange = false;
+			qutils.triggerKeyboardEvent("PC1-R2A1", "HOME");
+			sap.ui.getCore().applyChanges();
 
-				oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-			});
-
-			test("viewChange", function() {
-				bViewChange = false;
-				jQuery("#PC1-IntType").focus();
-				qutils.triggerKeyboardEvent("PC1-IntType", "ARROW_DOWN");
-				qutils.triggerKeyboardEvent("PC1-IntType", "ENTER");
-				sap.ui.getCore().applyChanges();
-				ok(bViewChange, "viewChange fired");
-
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
-				sap.ui.getCore().applyChanges();
-			});
-
-			test("intervalselect", function() {
-				bIntervalSelect = false;
-				oIntervalStartDate = undefined;
-				oIntervalEndDate = undefined;
-				bSubInterval = undefined,
-				oIntervalRow = undefined,
-				jQuery("#PC1-TimeInt--TimesRow-201501011200").focus();
-				qutils.triggerKeyboardEvent("PC1-TimeInt--TimesRow-201501011200", "ENTER");
-				sap.ui.getCore().applyChanges();
-				ok(bIntervalSelect, "intervalSelect fired");
-				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011200", "interval start date returned");
-				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011259", "interval end date returned");
-				ok(!bSubInterval, "No sub-interval");
-				ok(!oIntervalRow, "No row");
-				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemSel"), "interval not longer selected");
-
-				bIntervalSelect = false;
-				oIntervalStartDate = undefined;
-				oIntervalEndDate = undefined;
-				bSubInterval = undefined,
-				oIntervalRow = undefined,
-				qutils.triggerEvent("click", "PC1-Row1-CalRow-AppsInt3");
-				ok(bIntervalSelect, "intervalSelect fired");
-				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011100", "interval start date returned");
-				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011159", "interval end date returned");
-				ok(!bSubInterval, "No sub-interval");
-				equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
-			});
-
-			module("Interaction");
-
-			asyncTest("keyboard navigation", function() {
-				// test here only interaction between rows, other things arre tested on CalendarRow
-				jQuery("#PC1-R1A1").focus();
-				equal(document.activeElement.id, "PC1-R1A1", "Appointment1 focused");
-				qutils.triggerKeyboardEvent("PC1-R1A1", "END");
+			setTimeout(function(){
+				equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
+				qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_DOWN");
 				equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
-
-				qutils.triggerKeyboardEvent("PC1-R2A1", "HOME");
+				qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_UP");
 				sap.ui.getCore().applyChanges();
+				equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
+				start();
+			}, 0);
 
-				setTimeout(function(){
-					equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
-					qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_DOWN");
-					equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
-					qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_UP");
-					sap.ui.getCore().applyChanges();
-					equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
-					start();
-				}, 0);
+		});
 
-			});
+		test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function() {
+			//assert initial state
+			this._assertDatesAreVisible([
+						new Date(2016, 7, 29),
+						new Date(2016, 7, 30),
+						new Date(2016, 7, 31),
+						new Date(2016, 8, 1),
+						new Date(2016, 8, 2),
+						new Date(2016, 8, 3),
+						new Date(2016, 8, 4)],
+					this.oPC2, "Initially set start date");
+			//act
+			this.oPC2.setStartDate(this.o10thOfSeptember);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 8, 5),
+						new Date(2016, 8, 6),
+						new Date(2016, 8, 7),
+						new Date(2016, 8, 8),
+						new Date(2016, 8, 9),
+						new Date(2016, 8, 10),
+						new Date(2016, 8, 11)],
+					this.oPC2, "StartDate modified afterwards");
+		});
+
+		test("Navigation backward", function() {
+			//act
+			this._navBackward(this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 7, 22),
+						new Date(2016, 7, 23),
+						new Date(2016, 7, 24),
+						new Date(2016, 7, 25),
+						new Date(2016, 7, 26),
+						new Date(2016, 7, 27),
+						new Date(2016, 7, 28)],
+					this.oPC2, "Initially navigating back once");
+
+			//act
+			this._navBackward(this.oPC2);//two weeks before
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 7, 15),
+						new Date(2016, 7, 16),
+						new Date(2016, 7, 17),
+						new Date(2016, 7, 18),
+						new Date(2016, 7, 19),
+						new Date(2016, 7, 20),
+						new Date(2016, 7, 21)],
+					this.oPC2, "Navigating back twice");
+		});
+
+		test("Navigation forward", function() {
+			//act
+			this._navForward(this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 8, 5),
+						new Date(2016, 8, 6),
+						new Date(2016, 8, 7),
+						new Date(2016, 8, 8),
+						new Date(2016, 8, 9),
+						new Date(2016, 8, 10),
+						new Date(2016, 8, 11)],
+					this.oPC2, "Navigating forward once");
+
+			//act
+			this._navForward(this.oPC2);//two weeks after
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 8, 12),
+						new Date(2016, 8, 13),
+						new Date(2016, 8, 14),
+						new Date(2016, 8, 15),
+						new Date(2016, 8, 16),
+						new Date(2016, 8, 17),
+						new Date(2016, 8, 18)],
+					this.oPC2, "Navigating forward twice");
+		});
+
+		test("Navigation backward and forward", function() {
+            var i;
+			//act
+			for (i = 0; i < 10; i++) {
+				this._navForward(this.oPC2);
+			}
+			for (i = 0; i < 9; i++) {
+				this._navBackward(this.oPC2);
+			}
+			//Expected is one week after the initial - Sep 5th, 2016 - Sep 11th, 2016
+
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 8, 5),
+						new Date(2016, 8, 6),
+						new Date(2016, 8, 7),
+						new Date(2016, 8, 8),
+						new Date(2016, 8, 9),
+						new Date(2016, 8, 10),
+						new Date(2016, 8, 11)],
+					this.oPC2, "Navigating forward once");
+		});
+
+		test("Navigation (month picker) - switch month and shift the planning calendar to the week of the month containing the first day of the month", function(){
+			//act
+			//November 2016. This leads to week 31 Oct - 6 Nov
+			this._switchToMonth(this.oPC2, 10);
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 9, 31),
+						new Date(2016, 10, 1),
+						new Date(2016, 10, 2),
+						new Date(2016, 10, 3),
+						new Date(2016, 10, 4),
+						new Date(2016, 10, 5),
+						new Date(2016, 10, 6)],
+					this.oPC2, "Month September->November");
+
+			//March 2016. This leads to week 29 Feb - 06 Mar
+			this._switchToMonth(this.oPC2, 2);
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2016, 1, 29),
+						new Date(2016, 2, 1),
+						new Date(2016, 2, 2),
+						new Date(2016, 2, 3),
+						new Date(2016, 2, 4),
+						new Date(2016, 2, 5),
+						new Date(2016, 2, 6)],
+					this.oPC2, "Month November->March");
+		});
+
+		test("Navigation (year picker) - the calendar should show the same calendar week in the picked year", function(){
+			//act
+			/* 1st of September is calendar week #35
+			 CW#35 2017 is 28 August - 03 September*/
+			this._switchToYear(this.oPC2, 2017);
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2017, 7, 28),
+						new Date(2017, 7, 29),
+						new Date(2017, 7, 30),
+						new Date(2017, 7, 31),
+						new Date(2017, 8, 1),
+						new Date(2017, 8, 2),
+						new Date(2017, 8, 3)],
+					this.oPC2, "Year 2016->2017");
+
+			//act
+			this._switchToYear(this.oPC2, 2015); //CW#35 24 August - 30 August
+			//aseert
+			this._assertDatesAreVisible([
+						new Date(2015, 7, 24),
+						new Date(2015, 7, 25),
+						new Date(2015, 7, 26),
+						new Date(2015, 7, 27),
+						new Date(2015, 7, 28),
+						new Date(2015, 7, 29),
+						new Date(2015, 7, 30)],
+					this.oPC2, "Year 2017->2015");
+		});
+
+		test("'Today' button should be disabled when current day is visible", function() {
+			//assert
+			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
+
+			//act
+			this.oPC2.setStartDate(new Date());
+			//assert
+			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
+		});
+
+		test("Clicking 'Today' button navigates to the week of the current day", function () {
+			//prepare
+			var oFakeNow = this.o10thOfSeptember,
+					clock = sinon.useFakeTimers(oFakeNow.getTime());
+			this.oPC2.rerender(); //start date is 1st of September 2016
+
+			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
+			//act
+			this._clickTodayButton(this.oPC2);
+			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
+
+			this._assertDatesAreVisible([
+						new Date(2016, 8, 5),
+						new Date(2016, 8, 6),
+						new Date(2016, 8, 7),
+						new Date(2016, 8, 8),
+						new Date(2016, 8, 9),
+						new Date(2016, 8, 10),
+						new Date(2016, 8, 11)],
+					this.oPC2, "StartDate modified afterwards");
+			//assert
+			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
+			//cleanup
+			clock.restore();
+
+		});
+
+		test("'Today' button visibility works only with week view", function () {
+			//prepare
+			var oFakeNow = this.o10thOfSeptember,
+					clock = sinon.useFakeTimers(oFakeNow.getTime());
+			this.oPC2.rerender(); //start date is 1st of September 2016
+
+			//act
+			this._clickTodayButton(this.oPC2);
+			clock.tick(10);
+			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			clock.tick(10);
+
+			//assert
+			equal(this._getTodayButton(this.oPC2).getEnabled(), true, "Today button should be enabled for non 'week' views although 'today' is in visible area");
+
+			//act
+			this._switchToView(sap.ui.unified.CalendarIntervalType.Week, this.oPC2);
+			clock.tick(10);
+
+			//assert
+			equal(this._getTodayButton(this.oPC2).getEnabled(), false, "Today button should not be enabled for non 'week' views when switched back from hours view");
+
+			//cleanup
+			clock.restore();
+		});
+
+		test("If view changed from Week->Hours, we see hours for first day of the previously shown week", function () {
+			//startDate 1st of september 2016(Thursday)->show hours for the 1st day of week 29 Aug 2016 (Monday)
+            //prepare
+			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			sap.ui.getCore().applyChanges();
+
+            //assert
+			this._assertHoursAreVisible([
+				new Date(2016, 7, 29, 1),
+				new Date(2016, 7, 29, 2),
+						new Date(2016, 7, 29, 3),
+						new Date(2016, 7, 29, 4),
+						new Date(2016, 7, 29, 5),
+						new Date(2016, 7, 29, 6),
+						new Date(2016, 7, 29, 7),
+						new Date(2016, 7, 29, 8),
+						new Date(2016, 7, 29, 9),
+						new Date(2016, 7, 29, 10),
+						new Date(2016, 7, 29, 11),
+						new Date(2016, 7, 29, 12)],
+					this.oPC2, "1 Sept 2016, 01:00: Weeks->Hours");
+		});
 
 
-			module("ARIA");
+		module("ARIA");
 
-			test("Week day and date aria", function() {
-				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
-				sap.ui.getCore().applyChanges();
+		test("Week day and date aria", function() {
+			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			sap.ui.getCore().applyChanges();
 
-				var oFormatDate = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
+			var oFormatDate = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
 					oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2015, 0, 2, 10, 0, 0), "Gregorian"),
 					sAriaDate = oFormatDate.format(oDate, true),
 					aWeekDaysWide = oFormatDate.oLocaleData.getDaysStandAlone("wide", "Gregorian"),
 					sWeekDayAriaText = aWeekDaysWide[5],
 					sExpectedAria = sWeekDayAriaText + " " + sAriaDate;
 
-				strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
-			});
+			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
+		});
 
-		</script>
+	</script>
 
-	</head>
-	<body class="sapUiBody" role="application">
-		<h1 id="qunit-header">QUnit tests: sap.m.PlanningCalendar</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
-		<div id="uiArea1"></div>
-	</body>
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.m.PlanningCalendar</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="uiArea1"></div>
+</body>
 </html>

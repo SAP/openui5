@@ -71,10 +71,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oYearPicker.setYears(3); // default for 7 days
 		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
 
-		this._iDaysLarge = 10; // if more than this number of days are displayed, start and end month are displayed on the button
 		this._iDaysMonthHead = 35; // if more than this number of days, month names are displayed on top of days
 
 	};
+
+	/**
+	* If more than this number of days are displayed, start and end month are displayed on the button
+	* @returns {number}
+	* @protected
+	*/
+   CalendarDateInterval.prototype._getDaysLarge = function() {
+	   return 10;
+   };
 
 	CalendarDateInterval.prototype._createMonth = function(sId){
 
@@ -177,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._updateHeader(oStartDate);
 
 		if (this.getDomRef()) {
-			if (iDays > this._iDaysLarge) {
+			if (iDays > this._getDaysLarge()) {
 				this.$().addClass("sapUiCalIntLarge");
 			}else {
 				this.$().removeClass("sapUiCalIntLarge");
@@ -541,7 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iDays = this._getDays();
 
 		aMonths.push(iMonth);
-		if (iDays > this._iDaysLarge) {
+		if (iDays > this._getDaysLarge()) {
 			// of only a few days displayed, there is not enough space for 2 Months in Button
 			var oEndDate = this._newUniversalDate(oDate);
 			oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
