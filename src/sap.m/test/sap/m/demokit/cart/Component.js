@@ -103,12 +103,11 @@ sap.ui.define([
 
 			//create and set cart model
 			var oCartModel = new JSONModel({
-				entries: [],
-				totalPrice: "0",
+				cartEntries: {},
+				savedForLaterEntries: {},
 				showEditAndProceedButton: false
 			});
 			this.setModel(oCartModel, "cartProducts");
-
 
 			// set device model
 			var oDeviceModel = new JSONModel({

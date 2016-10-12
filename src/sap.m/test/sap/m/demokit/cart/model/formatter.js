@@ -19,8 +19,14 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 			return numberFormat.format(value);
 		},
 
-		totalPrice: function (value) {
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CART_TOTAL_PRICE") + ": " + formatter.price(value);
+		totalPrice: function (oCartEntries) {
+			var fTotalPrice = 0;
+
+			Object.keys(oCartEntries).forEach(function (sProductId) {
+				var oProduct = oCartEntries[sProductId];
+				fTotalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
+			});
+			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CART_TOTAL_PRICE") + ": " + formatter.price(fTotalPrice);
 		},
 
 		statusText: function (status) {

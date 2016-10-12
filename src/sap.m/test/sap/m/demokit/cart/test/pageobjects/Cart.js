@@ -51,7 +51,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
-							matchers : new BindingPath({path : "/entries/0", modelName: "cartProducts"}),
+							matchers : new BindingPath({path : "/cartEntries/id_11", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
@@ -158,16 +158,11 @@ sap.ui.define([
 
 					iShouldSeeOneProductInMySafeForLaterList: function () {
 						return this.waitFor({
-							id : "entryList",
+							id : "savedForLaterList",
 							viewName : CART_VIEW_NAME,
-							check: function () {
-								var sMessageToastText = Opa5.getJQuery()(".sapMMessageToast:visible").text();
-                                return sMessageToastText === "Safed 'by Very Best Screens' for later";
-							},
-							success : function () {
-								Opa5.assert.ok(true, "Product safed for later");
-							},
-							errorMessage : "The cart was not found"
+							success : function (oList) {
+								Opa5.assert.strictEqual(oList.getItems().length, 1, "Product saved for later");
+							}
 						});
 					}
 				}

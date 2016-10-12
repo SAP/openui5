@@ -10,4 +10,5 @@ Feature: Safe a product for later
 
   Scenario: Safe for later
     Then on the cart: I should see one product in my safe for later list
+    Then I should see an empty cart
 
