@@ -114,7 +114,8 @@ sap.ui.define([
 						},
 						sParameter,
 						sServiceUrl,
-						oUri;
+						oUri,
+						that = this;
 
 					// do not pass any parameters to Model
 					Model.apply(this);
@@ -160,9 +161,14 @@ sap.ui.define([
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters);
+						this.mUriParameters, function (sGroupId) {
+							if (sGroupId === "$auto") {
+								sap.ui.getCore()
+									.addPrerenderingTask(that._submitBatch.bind(that, sGroupId));
+							}
+						});
+
 					this.aAllBindings = [];
-					this.mCallbacksByGroupId = {};
 					this.sDefaultBindingMode = BindingMode.TwoWay;
 					this.mSupportedBindingModes = {
 						OneTime : true,
@@ -184,53 +190,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatch = function (sGroupId) {
-		var aCallbacks = this.mCallbacksByGroupId[sGroupId],
-			oPromise;
-
-		oPromise = this.oRequestor.submitBatch(sGroupId)
+		return this.oRequestor.submitBatch(sGroupId)
 			["catch"](function (oError) {
 				jQuery.sap.log.error("$batch failed", oError.message, sClassName);
 				throw oError;
 			});
-		if (aCallbacks) {
-			delete this.mCallbacksByGroupId[sGroupId];
-			aCallbacks.forEach(function (fnCallback) {
-				fnCallback();
-			});
-		}
-		return oPromise;
-	};
-
-	/**
-	 * Informs the model that a request has been added to the given group.
-	 *
-	 * @param {string} sGroupId
-	 *   ID of the group which should be sent as an OData batch request
-	 * @param {function} [fnGroupSentCallback]
-	 *   A function that is called synchronously after the group has been sent
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.addedRequestToGroup = function (sGroupId, fnGroupSentCallback) {
-		var aCallbacks = this.mCallbacksByGroupId[sGroupId];
-
-		if (sGroupId === "$direct") {
-			if (fnGroupSentCallback) {
-				fnGroupSentCallback();
-			}
-			return;
-		}
-
-		if (!aCallbacks) {
-			aCallbacks = this.mCallbacksByGroupId[sGroupId] = [];
-			if (sGroupId === "$auto") {
-				sap.ui.getCore().addPrerenderingTask(this._submitBatch.bind(this, sGroupId));
-			}
-		}
-
-		if (fnGroupSentCallback) {
-			aCallbacks.push(fnGroupSentCallback);
-		}
 	};
 
 	// See class documentation

@@ -230,7 +230,7 @@ sap.ui.define([
 			sGroupId = sGroupId || this.getGroupId();
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
-				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
+				that.fireDataRequested();
 			}, this);
 		} else {
 			oReadPromise = this.oContext.fetchValue(this.sPath, this);

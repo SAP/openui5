@@ -312,9 +312,6 @@ sap.ui.define([
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 		}));
-		this.oModel.addedRequestToGroup(sGroupId, function () {
-			that.oCache.setCreatePending();
-		});
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});
@@ -410,7 +407,6 @@ sap.ui.define([
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
 			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
-			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
@@ -659,8 +655,7 @@ sap.ui.define([
 				oPromise = this.oCache.read(oRange.start, oRange.length, sGroupId, undefined,
 					function () {
 						bDataRequested = true;
-						that.oModel.addedRequestToGroup(sGroupId,
-							that.fireDataRequested.bind(that));
+						that.fireDataRequested();
 				});
 			} else {
 				oPromise = oContext.fetchValue(this.sPath);
@@ -1134,7 +1129,6 @@ sap.ui.define([
 		if (this.oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
-			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 

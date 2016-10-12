@@ -88,10 +88,12 @@ sap.ui.require([
 	QUnit.test("request", function (assert) {
 		var oPayload = {"foo" : 42},
 			oPromise,
+			fnOnCreateGroup = sinon.spy(),
 			oRequestor = _Requestor.create(sServiceUrl, undefined, {
 				"foo" : "URL params are ignored for normal requests"
-			}),
-			oResult = {};
+			}, fnOnCreateGroup),
+			oResult = {},
+			fnSubmit = sinon.spy();
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
@@ -104,7 +106,7 @@ sap.ui.require([
 
 		// code under test
 		oPromise = oRequestor.request("FOO", "Employees?foo=bar", "$direct",
-			{"Content-Type" : "wrong"}, oPayload);
+			{"Content-Type" : "wrong"}, oPayload, fnSubmit);
 
 		return oPromise.then(function (result) {
 				assert.strictEqual(result, oResult);
@@ -175,6 +177,18 @@ sap.ui.require([
 					assert.strictEqual(result, oResult);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request(), fnOnCreateGroup", function (assert) {
+		var fnOnCreateGroup = sinon.spy(),
+			oRequestor = _Requestor.create("/", {}, {}, fnOnCreateGroup);
+
+		oRequestor.request("GET", "SalesOrders", "groupId");
+		oRequestor.request("GET", "SalesOrders", "groupId");
+
+		sinon.assert.calledOnce(fnOnCreateGroup);
+		sinon.assert.calledWithExactly(fnOnCreateGroup, "groupId");
 	});
 
 	//*********************************************************************************************
@@ -303,6 +317,7 @@ sap.ui.require([
 				oRequestor = _Requestor.create("/Service/"),
 				oRequestPayload = {},
 				oResponsePayload = {},
+				fnSubmit = sinon.spy(),
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
@@ -363,12 +378,15 @@ sap.ui.require([
 				});
 			}
 
-			return oRequestor.request("FOO", "foo", "$direct", {"foo" : "bar"}, oRequestPayload)
+			return oRequestor.request("FOO", "foo", "$direct", {"foo" : "bar"}, oRequestPayload,
+					fnSubmit)
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
+					sinon.assert.calledOnce(fnSubmit);
 					assert.strictEqual(oPayload, oResponsePayload);
 				}, function (oError0) {
 					assert.ok(!bSuccess, "certain failure");
+					sinon.assert.calledOnce(fnSubmit);
 					assert.strictEqual(oError0, o.bReadFails ? oReadFailure : oError);
 				});
 		});
@@ -479,7 +497,8 @@ sap.ui.require([
 				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
-				$resolve: sinon.match.func
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}, {
 				method: "DELETE",
 				url: "SalesOrders('42')",
@@ -492,7 +511,8 @@ sap.ui.require([
 				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
-				$resolve: sinon.match.func
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}], {
 				method: "GET",
 				url: "Products",
@@ -506,7 +526,8 @@ sap.ui.require([
 				$cancel: undefined,
 				$promise: sinon.match.defined,
 				$reject: sinon.match.func,
-				$resolve: sinon.match.func
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}],
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, undefined],
@@ -579,7 +600,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
 		var aPromises = [],
-			oRequestor = _Requestor.create("/");
+			oRequestor = _Requestor.create("/"),
+			fnSubmit0 = sinon.spy(),
+			fnSubmit1 = sinon.spy(),
+			fnSubmit2 = sinon.spy(),
+			fnSubmit3 = sinon.spy();
 
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Name : null}));
@@ -587,7 +612,7 @@ sap.ui.require([
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}));
 		aPromises.push(oRequestor
-			.request("GET", "Products", "groupId"));
+			.request("GET", "Products", "groupId", undefined, undefined, fnSubmit0));
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Note : "hello, world"}));
 		// just different headers
@@ -595,7 +620,7 @@ sap.ui.require([
 			.request("PATCH", "Products('0')", "groupId", {"If-Match" : ""}, {Note : "no merge!"}));
 		// just a different verb
 		aPromises.push(oRequestor
-			.request("POST", "Products", "groupId", {"If-Match" : ""}, {Name : "baz"}));
+			.request("POST", "Products", "groupId", {"If-Match" : ""}, {Name : "baz"}, fnSubmit1));
 		// structured property
 		// first set to null: may be merged with each other, but not with PATCHES to properties
 		aPromises.push(oRequestor
@@ -607,10 +632,10 @@ sap.ui.require([
 		// then two different properties therein: must be merged
 		aPromises.push(oRequestor
 			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
-				{Address : {City: "Walldorf"}}));
+				{Address : {City: "Walldorf"}}, fnSubmit2));
 		aPromises.push(oRequestor
 			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
-				{Address : {PostalCode: "69190"}}));
+				{Address : {PostalCode: "69190"}}, fnSubmit3));
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				[
@@ -659,6 +684,14 @@ sap.ui.require([
 		// code under test
 		aPromises.push(oRequestor.submitBatch("groupId"));
 
+		sinon.assert.calledOnce(fnSubmit0);
+		sinon.assert.calledWithExactly(fnSubmit0);
+		sinon.assert.calledOnce(fnSubmit1);
+		sinon.assert.calledWithExactly(fnSubmit1);
+		sinon.assert.calledOnce(fnSubmit2);
+		sinon.assert.calledWithExactly(fnSubmit2);
+		sinon.assert.calledOnce(fnSubmit3);
+		sinon.assert.calledWithExactly(fnSubmit3);
 		return Promise.all(aPromises).then(function (aResults) {
 			assert.deepEqual(aResults, [
 				{Name : "bar", Note : "hello, world"}, // 1st PATCH
@@ -845,7 +878,7 @@ sap.ui.require([
 			.withExactArgs(sResponseContentType, oResult)
 			.returns(aExpectedResponses);
 
-		return oRequestor.request("POST", "$batch", "$direct", undefined, aBatchRequests, true)
+		return oRequestor.request("POST", "$batch", "$direct", undefined, aBatchRequests)
 			.then(function (oPayload) {
 				assert.strictEqual(aExpectedResponses, oPayload);
 			});
@@ -875,18 +908,21 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel1)
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
+					undefined, fnCancel1)
 				.then(unexpected, rejected.bind(null, 3)),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel2)
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"},
+					undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
-				oPostData, fnCancelPost).then(unexpected, function (oError) {
+				oPostData, undefined, fnCancelPost).then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 					assert.strictEqual(oError.message, "Request canceled: " +
 						"POST LeaveRequests('42')/name.space.Submit; group: groupId");
 				}),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel3)
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"},
+					undefined, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
@@ -934,11 +970,14 @@ sap.ui.require([
 		}
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}, fnCancel)
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
+					undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}, fnCancel)
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"},
+					undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"}, fnCancel)
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"},
+					undefined, fnCancel)
 				.then(unexpected, rejected)
 		]);
 
@@ -964,7 +1003,7 @@ sap.ui.require([
 			oTestPromise;
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
-			fnCancel);
+			undefined, fnCancel);
 		oTestPromise = oPromise.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -998,7 +1037,7 @@ sap.ui.require([
 		}
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
-			fnCancel);
+			undefined, fnCancel);
 
 		aPromises = [
 			oPromise.then(unexpected, rejected),
@@ -1041,13 +1080,14 @@ sap.ui.require([
 
 		sinon.spy(oRequestor, "cancelChangeRequests");
 		oTestPromise = Promise.all([
-			oRequestor.request("POST", "Products", "groupId", {}, oBody, fnCancel1)
+			oRequestor.request("POST", "Products", "groupId", {}, oBody, undefined, fnCancel1)
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 				}),
-			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"}, fnCancel2)
+			oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"}, undefined,
+				fnCancel2)
 		]);
 
 		// code under test
@@ -1081,12 +1121,13 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
-		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody, fnCancel).then(
-			function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.canceled, true);
-			}
+		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody,
+				undefined, fnCancel)
+			.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.canceled, true);
+				}
 		);
 
 		// code under test
@@ -1176,6 +1217,4 @@ sap.ui.require([
 	}
 });
 // TODO: continue-on-error? -> flag on model
-// TODO: provide test that checks that .request() does not serialize twice in case of
-// 		 refreshSecurityToken and repeated request
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

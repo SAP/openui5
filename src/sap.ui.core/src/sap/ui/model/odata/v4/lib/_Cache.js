@@ -236,14 +236,17 @@ sap.ui.define([
 	 *   The position of the last element to request ($skip + $top)
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {function} [fnDataRequested]
+	 *   The function is called when the back end requests have been sent.
 	 */
-	function requestElements(oCache, iStart, iEnd, sGroupId) {
+	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
 		var aElements = oCache.aElements,
 			iExpectedLength = iEnd - iStart,
 			oPromise,
 			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
-		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId)
+		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+				fnDataRequested)
 			.then(function (oResult) {
 				var i, iResultLength = oResult.value.length, oError;
 
@@ -377,7 +380,7 @@ sap.ui.define([
 		}
 		// send and register the PATCH request
 		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody,
-			onCancel);
+			undefined, onCancel);
 		addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 		return oUpdatePromise.then(function (oPatchResult) {
 			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
@@ -510,20 +513,31 @@ sap.ui.define([
 			fnCancelCallback) {
 		var that = this;
 
+		/*
+		 * Clean-up when the create has been canceled.
+		 */
 		function cleanUp() {
 			delete that.aElements[-1];
 			fnCancelCallback();
+		}
+
+		/*
+		 * Sets a marker that the create request is pending, so that update and delete fail.
+		 */
+		function setCreatePending() {
+			oEntityData["@$ui5.transient"] = true;
 		}
 
 		// clone data to avoid modifications outside the cache
 		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
 
 		this.aElements[-1] = oEntityData;
-		oEntityData["@$ui5.transient"] = sGroupId;
+		oEntityData["@$ui5.transient"] = sGroupId; // mark as transient
 		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
 		oEntityData["@odata.etag"] = undefined;
 		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData, cleanUp)
+		return this.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData,
+				setCreatePending, cleanUp)
 			.then(function (oResult) {
 				delete oEntityData["@$ui5.transient"];
 				// update the cache with the POST response
@@ -577,7 +591,7 @@ sap.ui.define([
 	 *   OData response object, but <code>""</code> already drills down into the element at
 	 *   <code>iIndex</code> (and requires <code>iLength === 1</code>)
 	 * @param {function} [fnDataRequested]
-	 *   The function is called directly after all back end requests have been triggered.
+	 *   The function is called just before a back end request is sent.
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
@@ -599,7 +613,6 @@ sap.ui.define([
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
-			bIsDataRequested = false,
 			iLowerBound = this.aElements[-1] ? -1 : 0,
 			iStart = Math.max(iIndex, 0), // for Array#slice()
 			that = this;
@@ -620,8 +633,8 @@ sap.ui.define([
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
-					requestElements(this, iGapStart, i, sGroupId);
-					bIsDataRequested = true;
+					requestElements(this, iGapStart, i, sGroupId, fnDataRequested);
+					fnDataRequested = undefined;
 					iGapStart = -1;
 				}
 			} else if (iGapStart < 0) {
@@ -629,12 +642,8 @@ sap.ui.define([
 			}
 		}
 		if (iGapStart >= 0) {
-			requestElements(this, iGapStart, iEnd, sGroupId);
-			bIsDataRequested = true;
-		}
-
-		if (bIsDataRequested && fnDataRequested) {
-			fnDataRequested();
+			requestElements(this, iGapStart, iEnd, sGroupId, fnDataRequested);
+			fnDataRequested = undefined;
 		}
 
 		// Note: this.aElements[-1] cannot be a promise...
@@ -680,19 +689,6 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.resetChanges = function (sPath) {
 		resetChanges(this, sPath);
-	};
-
-	/**
-	 * Set the status of transient entity to pending to forbid updates while the POST request
-	 * is not yet resolved.
-	 */
-	CollectionCache.prototype.setCreatePending = function () {
-		if (this.aElements[-1] && this.aElements[-1]["@$ui5.transient"]) {
-			// group ID is not needed anymore
-			// requests are submitted and later on only the update group ID is relevant
-			// successful "create" removes @$ui5.transient -> no setCreatePending(false) needed
-			this.aElements[-1]["@$ui5.transient"] = true;
-		}
 	};
 
 	/**
@@ -900,7 +896,7 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function()} [fnDataRequested]
-	 *   The function is called directly after the back end request has been triggered.
+	 *   The function is called just before the back end request is sent.
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
@@ -923,8 +919,9 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Read before a POST request");
 			}
-			oPromise = _SyncPromise.resolve(
-				this.oRequestor.request("GET", sResourcePath, sGroupId).then(function (oResult) {
+			oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath, sGroupId,
+					undefined, undefined, fnDataRequested)
+				.then(function (oResult) {
 					var oError;
 
 					if (that.oPromise !== oPromise) {
@@ -935,9 +932,6 @@ sap.ui.define([
 					}
 					return oResult;
 				}));
-			if (fnDataRequested) {
-				fnDataRequested();
-			}
 			this.oPromise = oPromise;
 		}
 		return this.oPromise.then(function (oResult) {

@@ -471,89 +471,87 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
 		QUnit.test("ManagedObject.bindProperty: type and value, path " + sPath, function (assert) {
-			var bAbsolute = sPath[0] === "/",
-				oValue = "foo",
-				fnResolveRead,
-				oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;}),
-				oCache = {
-					read : function (sGroupId, sReadPath, fnDataRequested) {
-						fnDataRequested();
-						// read returns an unresolved Promise to be resolved by submitBatch;
-						// otherwise this Promise would be resolved before the rendering and
-						// dataReceived would be fired before dataRequested
-						return oReadPromise;
-					}
-				},
-				oCacheMock = this.oSandbox.mock(_Cache),
-				oContextBindingMock,
-				sContextPath = "/EMPLOYEES(ID='42')",
-				iDataReceivedCount = 0,
-				iDataRequestedCount = 0,
-				done = assert.async(),
-				oControl = new TestControl({models : this.oModel}),
-				sResolvedPath,
-				oType = new TypeString();
+			var that = this;
 
-			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sContextPath.slice(1),
-					{"sap-client" : "111"});
-			oControl.bindObject(sContextPath);
-			oContextBindingMock = this.oSandbox.mock(oControl.getObjectBinding());
-			if (bAbsolute) { // absolute path: use cache on binding
-				sResolvedPath = sPath;
-				oContextBindingMock.expects("fetchValue").never();
+			return new Promise(function (finishTest) {
+				var bAbsolute = sPath[0] === "/",
+					oValue = "foo",
+					oCache = {
+						read : function (sGroupId, sReadPath, fnDataRequested) {
+							return Promise.resolve().then(function () {
+								fnDataRequested();
+							}).then(function () {
+								return oValue;
+							});
+						}
+					},
+					oCacheMock = that.oSandbox.mock(_Cache),
+					oContextBindingMock,
+					sContextPath = "/EMPLOYEES(ID='42')",
+					iDataReceivedCount = 0,
+					iDataRequestedCount = 0,
+					oControl = new TestControl({models : that.oModel}),
+					sResolvedPath,
+					oType = new TypeString();
+
+				// (don't) create parent cache, it won't be used
 				oCacheMock.expects("createSingle")
-					.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResolvedPath.slice(1),
-						{"sap-client" : "111"}, true)
-					.returns(oCache);
-				this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
-					// submitBatch resolves the promise of the read
-					fnResolveRead(oValue);
-					return Promise.resolve();
-				});
-			} else {
-				sResolvedPath = sContextPath + "/" + sPath;
-				oContextBindingMock.expects("fetchValue")
-					.withExactArgs(sPath, sinon.match.object, /*iIndex*/undefined)
-					.returns(Promise.resolve(oValue));
-			}
-			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
-				.withExactArgs(sResolvedPath)
-				.returns(Promise.resolve(oType));
-			this.oSandbox.mock(oType).expects("formatValue").withExactArgs(oValue, "string");
+					.withExactArgs(sinon.match.same(that.oModel.oRequestor), sContextPath.slice(1),
+						{"sap-client" : "111"});
+				oControl.bindObject(sContextPath);
 
-			//code under test
-			oControl.bindProperty("text", {path : sPath, events : {
-				change : function () {
-					var oBinding = oControl.getBinding("text");
-
-					assert.strictEqual(oBinding.getType(), oType);
-					assert.strictEqual(oBinding.getValue(), oValue);
-					if (!bAbsolute) {
-						assert.strictEqual(iDataRequestedCount, 0);
-						done();
-					}
-				},
-				dataRequested : function (oEvent) {
-					assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
-						"dataRequested - correct source");
-					iDataRequestedCount++;
-				},
-				dataReceived : function (oEvent) {
-					var oBinding = oControl.getBinding("text");
-
-					assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
-						"dataReceived - correct source");
-					assert.strictEqual(iDataRequestedCount, 1);
-					assert.strictEqual(oBinding.getType(), oType);
-					assert.strictEqual(oBinding.getValue(), oValue);
-					iDataReceivedCount++;
-					done();
+				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
+				if (bAbsolute) { // absolute path: use cache on binding
+					sResolvedPath = sPath;
+					oContextBindingMock.expects("fetchValue").never();
+					oCacheMock.expects("createSingle")
+						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+							sResolvedPath.slice(1), {"sap-client" : "111"}, true)
+						.returns(oCache);
+				} else {
+					sResolvedPath = sContextPath + "/" + sPath;
+					oContextBindingMock.expects("fetchValue")
+						.withExactArgs(sPath, sinon.match.object, /*iIndex*/undefined)
+						.returns(Promise.resolve(oValue));
 				}
-			}});
+				that.oSandbox.mock(that.oModel.getMetaModel()).expects("requestUI5Type")
+					.withExactArgs(sResolvedPath)
+					.returns(Promise.resolve(oType));
+				that.oSandbox.mock(oType).expects("formatValue").withExactArgs(oValue, "string");
 
-			assert.strictEqual(iDataRequestedCount, 0, "dataRequested not (yet) fired");
-			assert.strictEqual(iDataReceivedCount, 0, "dataReceived not (yet) fired");
+				//code under test
+				oControl.bindProperty("text", {path : sPath, events : {
+					change : function () {
+						var oBinding = oControl.getBinding("text");
+
+						assert.strictEqual(oBinding.getType(), oType);
+						assert.strictEqual(oBinding.getValue(), oValue);
+						if (!bAbsolute) {
+							assert.strictEqual(iDataRequestedCount, 0);
+							finishTest();
+						}
+					},
+					dataRequested : function (oEvent) {
+						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
+							"dataRequested - correct source");
+						iDataRequestedCount++;
+					},
+					dataReceived : function (oEvent) {
+						var oBinding = oControl.getBinding("text");
+
+						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
+							"dataReceived - correct source");
+						assert.strictEqual(iDataRequestedCount, 1);
+						assert.strictEqual(oBinding.getType(), oType);
+						assert.strictEqual(oBinding.getValue(), oValue);
+						iDataReceivedCount++;
+						finishTest();
+					}
+				}});
+
+				assert.strictEqual(iDataRequestedCount, 0, "dataRequested not (yet) fired");
+				assert.strictEqual(iDataReceivedCount, 0, "dataReceived not (yet) fired");
+			});
 		});
 	});
 
@@ -1078,9 +1076,6 @@ sap.ui.require([
 				.withExactArgs(sGroupId || "$auto", undefined, sinon.match.func, sinon.match.object)
 				.callsArg(2)
 				.returns(oReadPromise);
-			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
-				.withExactArgs(sGroupId || "$auto", sinon.match.func)
-				.callsArg(1);
 
 			oBinding.initialize();
 
@@ -1111,7 +1106,6 @@ sap.ui.require([
 			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
@@ -1137,7 +1131,6 @@ sap.ui.require([
 		});
 		oControl.setBindingContext(this.oModel.createBindingContext("/ProductList('HT-1000')"));
 
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
@@ -1154,12 +1147,10 @@ sap.ui.require([
 	QUnit.skip("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
 			oModel = new ODataModel({serviceUrl: "/", synchronizationMode : "None"}),
-			oModelMock = this.oSandbox.mock(oModel),
 			oPropertyBinding,
 			oPropertyBindingCacheMock,
 			fnRead = this.getCacheMock().expects("read");
 
-		oModelMock.expects("addedRequestToGroup").withExactArgs("groupId", sinon.match.func);
 		fnRead.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.callsArg(2).returns(_SyncPromise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
@@ -1170,7 +1161,6 @@ sap.ui.require([
 		});
 		oPropertyBinding = oControl.getBinding("text");
 		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCache);
-		oModelMock.expects("addedRequestToGroup").twice().withExactArgs("updateGroupId");
 		oPropertyBindingCacheMock.expects("update")
 			.withExactArgs("updateGroupId", "Name", "foo", "ProductList('HT-1000')")
 			.returns(Promise.resolve());
@@ -1236,7 +1226,6 @@ sap.ui.require([
 			oPromise = Promise.reject(oError),
 			oPropertyBinding = oModel.bindProperty("/ProductList('0')/Name");
 
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("$direct");
 		this.oSandbox.mock(oPropertyBinding.oCache).expects("update")
 			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
 			.returns(oPromise);
@@ -1265,7 +1254,6 @@ sap.ui.require([
 			}),
 			oContextMock = this.oSandbox.mock(oControl.getObjectBinding().getBoundContext());
 
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
 		oCacheMock.expects("read")
 			.withExactArgs("$direct", "Note", sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("Some note")); // text property of control

@@ -206,17 +206,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oModel,
-			oRequestor = {};
+		var oExpectedCreate = this.mock(_Requestor).expects("create"),
+			oModel,
+			oRequestor = {},
+			fnSubmitAuto = function () {};
 
-		this.mock(_Requestor).expects("create")
-			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
+		oExpectedCreate
+			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
+					sinon.match.func)
 			.returns(oRequestor);
 
+		// code under test
 		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
+
+		this.mock(oModel._submitBatch).expects("bind")
+			.withExactArgs(sinon.match.same(oModel), "$auto")
+			.returns(fnSubmitAuto);
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(fnSubmitAuto);
+
+		// code under test - call fnOnCreateGroup
+		oExpectedCreate.args[0][3]("$auto");
+		oExpectedCreate.args[0][3]("foo");
 	});
 
 	//*********************************************************************************************
@@ -376,89 +390,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with group ID '$direct'", function (assert) {
-		var bDataRequested = false,
-			oModel = createModel();
-
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-		this.mock(oModel.oRequestor).expects("submitBatch").never();
-
-		// code under test
-		oModel.addedRequestToGroup("$direct");
-
-		// code under test
-		oModel.addedRequestToGroup("$direct", function () {
-			bDataRequested = true;
-		});
-
-		assert.strictEqual(bDataRequested, true);
-		assert.strictEqual("$direct" in oModel.mCallbacksByGroupId, false);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with group ID '$auto'", function (assert) {
-		var oModel = createModel(),
-			fnGroupSentCallback = function () {},
-			fnGroupSentCallback2 = function () {},
-			fnSubmitAuto = function () {};
-
-		this.mock(oModel._submitBatch).expects("bind")
-			.withExactArgs(sinon.match.same(oModel), "$auto")
-			.returns(fnSubmitAuto);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
-			.withExactArgs(fnSubmitAuto);
-
-		// code under test
-		oModel.addedRequestToGroup("$auto");
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"], []);
-
-		// code under test
-		oModel.addedRequestToGroup("$auto", fnGroupSentCallback);
-		oModel.addedRequestToGroup("$auto", fnGroupSentCallback2);
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"],
-			[fnGroupSentCallback, fnGroupSentCallback2]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with application group ID", function (assert) {
-		var oModel = createModel(),
-			fnGroupSentCallback = {},
-			fnGroupSentCallback2 = {};
-
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-
-		// code under test
-		oModel.addedRequestToGroup("groupId");
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"], []);
-
-		// code under test
-		oModel.addedRequestToGroup("groupId", fnGroupSentCallback);
-		oModel.addedRequestToGroup("groupId", fnGroupSentCallback2);
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"],
-			[fnGroupSentCallback, fnGroupSentCallback2]);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_submitBatch: success", function (assert) {
 		var oBatchResult = {},
-			fnCallback1 = sinon.spy(),
-			fnCallback2 = sinon.spy(),
 			oModel = createModel();
 
 		this.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
 			.returns(Promise.resolve(oBatchResult));
-		oModel.mCallbacksByGroupId["groupId"] = [fnCallback1, fnCallback2];
 
 		// code under test
 		return oModel._submitBatch("groupId").then(function (oResult) {
 			assert.strictEqual(oResult, oBatchResult);
-			assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
-			assert.ok(fnCallback1.calledOnce);
-			assert.ok(fnCallback2.calledOnce);
 		});
 	});
 
@@ -467,7 +408,6 @@ sap.ui.require([
 		var oExpectedError = new Error("deliberate failure"),
 			oModel = createModel();
 
-		oModel.addedRequestToGroup("groupId");
 		this.mock(oModel.oRequestor).expects("submitBatch")
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));

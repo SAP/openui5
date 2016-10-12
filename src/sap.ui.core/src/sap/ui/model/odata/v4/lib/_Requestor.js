@@ -70,11 +70,15 @@ sap.ui.define([
 	 * @param {object} mQueryParams
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
+	 * @param {function (string)} [fnOnCreateGroup]
+	 *   A callback function that is called with the group name as parameter when the first
+	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
 		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
+		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.sServiceUrl = sServiceUrl;
@@ -260,6 +264,9 @@ sap.ui.define([
 	 * @param {object} [oPayload]
 	 *   Data to be sent to the server; this object is live and can be modified until the request
 	 *   is really sent
+	 * @param {function} [fnSubmit]
+	 *   A function that is called when the request has been submitted, either immediately (when
+	 *   the group ID is "$direct") or via {@link #submitBatch}
 	 * @param {function} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue; for <code>sMethod</code> === 'PATCH' or 'POST' the parameter is mandatory
@@ -272,7 +279,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnCancel, bIsFreshToken) {
+			fnSubmit, fnCancel, bIsFreshToken) {
 		var that = this,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
@@ -291,6 +298,9 @@ sap.ui.define([
 
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
+						if (that.fnOnCreateGroup) {
+							that.fnOnCreateGroup(sGroupId);
+						}
 					}
 					oRequest = {
 						method : sMethod,
@@ -300,7 +310,8 @@ sap.ui.define([
 						body : oPayload,
 						$cancel : fnCancel,
 						$reject : fnReject,
-						$resolve : fnResolve
+						$resolve : fnResolve,
+						$submit : fnSubmit
 					};
 					if (sMethod === "GET") { // push behind change set
 						aRequests.push(oRequest);
@@ -313,6 +324,9 @@ sap.ui.define([
 			}
 
 			sPayload = JSON.stringify(oPayload);
+			if (fnSubmit) {
+				fnSubmit();
+			}
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -337,8 +351,10 @@ sap.ui.define([
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
 					that.refreshSecurityToken().then(function () {
+						// no fnSubmit, it has been called already
+						// no fnCancel, it is only relevant while the request is in the queue
 						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							fnCancel/*ignored*/, true));
+							undefined, undefined, true));
 					}, fnReject);
 				} else {
 					fnReject(_Helper.createError(jqXHR));
@@ -425,10 +441,22 @@ sap.ui.define([
 			});
 		}
 
+		function onSubmit(aRequests) {
+			aRequests.forEach(function (vRequest) {
+				if (Array.isArray(vRequest)) {
+					onSubmit(vRequest);
+				} else if (vRequest.$submit) {
+					vRequest.$submit();
+				}
+			});
+		}
+
 		if (!aRequests) {
 			return Promise.resolve();
 		}
 		delete this.mBatchQueue[sGroupId];
+
+		onSubmit(aRequests);
 
 		// iterate over the change set and merge related PATCH requests
 		aRequests[0].forEach(function (oChange) {
@@ -505,11 +533,14 @@ sap.ui.define([
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
+		 * @param {function (string)} [fnOnCreateGroup]
+		 *   A callback function that is called with the group name as parameter when the first
+		 *   request is added to a group
 		 * @returns {object}
 		 *   A new <code>_Requestor<code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams) {
-			return new Requestor(sServiceUrl, mHeaders, mQueryParams);
+		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
+			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
 		}
 	};
 }, /* bExport= */false);
