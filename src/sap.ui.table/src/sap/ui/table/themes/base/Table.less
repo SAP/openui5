@@ -584,6 +584,10 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	bottom: 0px;
 }
 
+html[data-sap-ui-browser^="ed"] .sapUiTableVSb {
+	-ms-overflow-style: scrollbar;
+}
+
 html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 	width: 18px;
 	right: -1px;
@@ -658,6 +662,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableHSb {
 
 html[data-sap-ui-browser^="ed"] .sapUiTableHSb {
 	height: 12px;
+	-ms-overflow-style: scrollbar;
 }
 
 .sapUiTableHScr .sapUiTableHSb {
@@ -824,4 +829,51 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 // Hide table during transition, because shrinked width causes growing rows
 .sapMNavItemFlipping .sapUiTable {
 	opacity: 0;
+}
+
+
+html.sap-tablet:not(.sap-desktop), html.sap-phone {
+
+	.sapUiTableVSb,
+	.sapUiTableHSb {
+
+		&::-webkit-scrollbar {
+			-webkit-appearence: none;
+			width: 0.45rem;
+			height: 0.45rem;
+			background-color: @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: @sapUiScrollBarFaceColor;
+			border-top: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-left: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-right: 0.125rem solid @sapUiScrollBarBorderColor;
+			border-bottom: 0.125rem solid @sapUiScrollBarBorderColor;
+			width: 0.25rem;
+			height: 0.25rem;
+		}
+
+	}
+
+	.sapUiTableVSb {
+		width: 0.45rem;
+	}
+
+	.sapUiTableHSb {
+		height: 0.45rem;
+	}
+
+	.sapUiTableVScr {
+		.sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableHSb {
+			margin-right: 0.45rem;
+		}
+	}
+
+	.sapUiTableHScr {
+		.sapUiTableColReorderIndicator, .sapUiTableColRsz {
+			bottom: 0.45rem;
+		}
+	}
+
 }
