@@ -208,34 +208,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		return oBinding;
 	};
 
-	TreeTable.prototype._updateTableContent = function() {
-		var oBinding = this.getBinding("rows"),
-			aRows = this.getRows(),
-			iCount = aRows.length;
-
-		if (oBinding) {
-			var oRowBindingInfo = this.getBindingInfo("rows"),
-				sModelName = oRowBindingInfo && oRowBindingInfo.model,
-				oRow, sGroupTitle;
-
-			for (var iRow = 0; iRow < iCount; iRow++) {
-				oRow = aRows[iRow];
-				sGroupTitle = TableUtils.Grouping.isGroupMode(this) && this.getGroupHeaderProperty() ? this.getModel(sModelName).getProperty(this.getGroupHeaderProperty(), oRow.getBindingContext(sModelName)) : "";
-
-				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, oRow._bHasChildren, oRow._bIsExpanded,
-					oRow._bHasChildren, false, oRow._iLevel, sGroupTitle);
-			}
-		} else {
-			for (var iRow = 0; iRow < iCount; iRow++) {
-				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[iRow]);
-			}
-		}
-	};
-
-	TreeTable.prototype._updateTableCell = function () {
-		return true;
-	};
-
 	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {

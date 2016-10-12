@@ -1904,42 +1904,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			});
 		}
 
-		// sync row header > content (hover effect)
-		$this.find(".sapUiTableRowHdr").hover(function() {
-			jQuery(this).addClass("sapUiTableRowHvr");
-			var iIndex = $this.find(".sapUiTableRowHdr").index(this);
-			$this.find(".sapUiTableCtrlFixed > tbody > tr").filter(":eq(" + iIndex + ")").addClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlScroll > tbody > tr").filter(":eq(" + iIndex + ")").addClass("sapUiTableRowHvr");
-		}, function() {
-			jQuery(this).removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlScroll > tbody > tr").removeClass("sapUiTableRowHvr");
-		});
-
-		// sync content fixed > row header (hover effect)
-		$this.find(".sapUiTableCtrlFixed > tbody > tr").hover(function() {
-			jQuery(this).addClass("sapUiTableRowHvr");
-			var iIndex = $this.find(".sapUiTableCtrlFixed > tbody > tr").index(this);
-			$this.find(".sapUiTableRowHdr").filter(":eq(" + (iIndex) + ")").addClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlScroll > tbody > tr").filter(":eq(" + iIndex + ")").addClass("sapUiTableRowHvr");
-		}, function() {
-			jQuery(this).removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableRowHdr").removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlScroll > tbody > tr").removeClass("sapUiTableRowHvr");
-		});
-
-		// sync content scroll > row header (hover effect)
-		$this.find(".sapUiTableCtrlScroll > tbody > tr").hover(function() {
-			jQuery(this).addClass("sapUiTableRowHvr");
-			var iIndex = $this.find(".sapUiTableCtrlScroll > tbody > tr").index(this);
-			$this.find(".sapUiTableRowHdr").filter(":eq(" + iIndex + ")").addClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlFixed > tbody > tr").filter(":eq(" + iIndex + ")").addClass("sapUiTableRowHvr");
-		}, function() {
-			jQuery(this).removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableRowHdr").removeClass("sapUiTableRowHvr");
-			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
-		});
-
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
 			jQuery("body").bind('webkitTransitionEnd transitionend',
 				jQuery.proxy(function(oEvent) {
@@ -1958,13 +1922,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._detachEvents = function() {
-		var $this = this.$();
-
-		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
-		$this.find(".sapUiTableRowHdr").unbind();
-
-		var $body = jQuery(document.body);
-		$body.unbind('webkitTransitionEnd transitionend');
+		jQuery(document.body).unbind('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
 		TableExtension.detachEvents(this);
@@ -4421,28 +4379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._updateTableContent = function() {
-		if (TableUtils.Grouping.isGroupMode(this)) {
-			var oBinding = this.getBinding("rows"),
-			aRows = this.getRows(),
-			iCount = aRows.length;
-
-			if (oBinding) {
-				var oRow, sGroupTitle, iRowIndex, bIsGroupHeader;
-
-				for (var iRow = 0; iRow < iCount; iRow++) {
-					oRow = aRows[iRow];
-					iRowIndex = iRow + this.getFirstVisibleRow();
-					bIsGroupHeader = !!oBinding.isGroupHeader(iRowIndex);
-					sGroupTitle = bIsGroupHeader ? oBinding.getTitle(iRowIndex) : "";
-					TableUtils.Grouping.updateTableRowForGrouping(this, oRow, bIsGroupHeader, bIsGroupHeader ? !!oBinding.isExpanded(iRowIndex) : false,
-						bIsGroupHeader, false, bIsGroupHeader ? 0 : 1, sGroupTitle);
-				}
-			} else {
-				for (var iRow = 0; iRow < iCount; iRow++) {
-					TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[iRow]);
-				}
-			}
-		}
+		TableUtils.Grouping.updateGroups(this);
 	};
 
 	return Table;
