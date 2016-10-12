@@ -491,7 +491,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 	QUnit.test("creates a change for a map of a control with id and appComponent", function (assert) {
 
 		var oAppComponent = new sap.ui.core.UIComponent();
-		var mControl = {id : this.oControl.getId(), appComponent : oAppComponent};
+		var mControl = {id : this.oControl.getId(), appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
 
 		var oDummyChangeHandler = {
 			completeChangeContent: function () {}
@@ -503,11 +503,12 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
 	});
 
-	QUnit.test("throws an error if a map of a control has no appComponent or no id", function (assert) {
+	QUnit.test("throws an error if a map of a control has no appComponent or no id or no controlType", function (assert) {
 
 		var oAppComponent = new sap.ui.core.UIComponent();
-		var mControl1 = {id : this.oControl.getId(), appComponent : undefined};
-		var mControl2 = {id : undefined, appComponent : oAppComponent};
+		var mControl1 = {id : this.oControl.getId(), appComponent : undefined, controlType : "sap.ui.core.Control"};
+		var mControl2 = {id : undefined, appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
+		var mControl3 = {id : this.oControl.getId(), appComponent : oAppComponent, controlType : undefined};
 
 		var oDummyChangeHandler = {
 			completeChangeContent: function () {}
@@ -521,7 +522,11 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.throws( function () {
 			this.oFlexController.createChange({}, mControl2);
 		});
-});
+
+		assert.throws( function () {
+			this.oFlexController.createChange({}, mControl3);
+		});
+	});
 
 	QUnit.module("applyChangesOnControl", {
 		beforeEach: function () {
