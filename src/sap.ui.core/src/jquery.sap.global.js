@@ -4970,8 +4970,6 @@
 	 *            is loaded. This is the only option how to determine in IE if the load was successful
 	 *            or not since the native onerror callback for link elements doesn't work in IE. The IE
 	 *            always calls the onload callback of the link element.
-	 *            Another issue of the IE9 is that in case of loading too many stylesheets the eventing
-	 *            is not working and therefore the error or load callback will not be triggered anymore.
 	 * @return {void|Promise}
 	 *            When using the configuration object a <code>Promise</code> will be returned. The
 	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>

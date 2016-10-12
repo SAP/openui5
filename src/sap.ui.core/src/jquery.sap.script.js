@@ -351,7 +351,8 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Substitute for <code>for(n in o)</code> loops which fixes the 'Don'tEnum' bug of IE8.
+	 * Substitute for <code>for(n in o)</code> loops which used to fix the 'Don'tEnum' bug of IE8.
+	 * As IE8 is not supported anymore this function is just a wrapper around the native for-in loop.
 	 *
 	 * Iterates over all enumerable properties of the given object and calls the
 	 * given callback function for each of them. The assumed signature of the
@@ -361,64 +362,19 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * where name is the name of the property and value is its value.
 	 *
-	 * When an object in IE8 overrides a property of Object.prototype
-	 * that has been marked as 'don't enum', then IE8 by mistake also
-	 * doesn't enumerate the overriding property.
-	 *
-	 * A 100% complete substitute is hard to achieve. The current implementation
-	 * enumerates an overridden property when it either is an 'own' property
-	 * (hasOwnProperty(name) is true) or when the property value is different
-	 * from the value in the Object.prototype object.
-	 *
 	 * @param {object} oObject object to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
 	 * @function
+	 * @deprecated Since version 1.48.0. IE8 is not supported anymore, thus no special handling is required. Use native for-in loop instead.
 	 * @since 1.7.1
 	 */
-	jQuery.sap.forIn = {toString:null}.propertyIsEnumerable("toString") ?
-		// for browsers without the bug we use the straight forward implementation of a for in loop
-		function(oObject, fnCallback) {
-			for (var n in oObject) {
-				if ( fnCallback(n, oObject[n]) === false ) {
-					return;
-				}
+	jQuery.sap.forIn = function(oObject, fnCallback) {
+		for (var n in oObject) {
+			if ( fnCallback(n, oObject[n]) === false ) {
+				return;
 			}
-		} :
-		// use a special implementation for IE8
-		(function() {
-			var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
-					DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
-					oObjectPrototype = Object.prototype,
-					fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
-
-			return function(oObject, fnCallback) {
-				var n,i;
-
-				// standard for(in) loop
-				for (n in oObject) {
-					if ( fnCallback(n, oObject[n]) === false ) {
-						return;
-					}
-				}
-				// additionally check the known 'don't enum' names
-				for (var i = 0; i < DONT_ENUM_KEYS_LENGTH; i++) {
-					n = DONT_ENUM_KEYS[i];
-					// assume an enumerable property if it is either an own property
-					// or if its value differes fro mthe value in the Object.prototype
-					if ( fnHasOwnProperty.call(oObject,n) || oObject[n] !== oObjectPrototype[n] ) {
-						if ( fnCallback(n, oObject[n]) === false ) {
-							return;
-						}
-					}
-				}
-				// Note: this substitute implementation still fails in several regards
-				// - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
-				// - it fails when one of the don't enum properties by intention has been overridden in the
-				//	 prototype chain with a value identical to the value in Object.prototype
-				// - the don't enum properties are handled out of order. This is okay with the ECMAScript
-				//	 spec but might be unexpected for some callers
-			};
-		}());
+		}
+	};
 
 	/**
 	 * Calculate delta of old list and new list.

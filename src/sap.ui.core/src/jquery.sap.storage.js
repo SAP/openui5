@@ -213,8 +213,8 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		 */
 		this.removeAll = function(sIdPrefix) {
-			//precondition: available storage feature (in case of IE8 typeof native functions returns "object")
-			if (this.isSupported() && oStorage.length && (document.addEventListener ? /function/ : /function|object/).test(typeof (oStorage.key))) {
+			//precondition: available storage feature
+			if (this.isSupported() && oStorage.length && typeof oStorage.key === "function") {
 				try {
 					var len = oStorage.length;
 					var aKeysToRemove = [];
