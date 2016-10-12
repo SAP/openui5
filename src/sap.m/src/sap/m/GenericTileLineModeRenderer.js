@@ -20,63 +20,111 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 */
 	GenericTileLineModeRenderer.render = function(oRm, oControl) {
 		var sTooltipText = oControl._getTooltipText(),
+			bIsCompact = oControl._isCompact(),
 			sAriaText = oControl._getAriaText(),
 			bHasPress = oControl.hasListeners("press");
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-		oRm.write("<span");
-		oRm.writeControlData(oControl);
-		oRm.writeAttributeEscaped("aria-label", sAriaText);
-		if (bHasPress) {
-			oRm.writeAttribute("role", "button");
+		if (bIsCompact) {
+			//compact
+			oRm.write("<span");
+			oRm.writeControlData(oControl);
+			oRm.writeAttributeEscaped("aria-label", sAriaText);
+			if (bHasPress) {
+				oRm.writeAttribute("role", "button");
+			} else {
+				oRm.writeAttribute("role", "presentation");
+			}
+			oRm.addClass("sapMGT");
+			oRm.addClass("sapMGTLineMode");
+			this._writeDirection(oRm);
+			if (sTooltipText) {
+				oRm.writeAttributeEscaped("title", sTooltipText);
+			}
+			if (oControl.getState() !== LoadState.Disabled) {
+				oRm.addClass("sapMPointer");
+				oRm.writeAttribute("tabindex", "0");
+			} else {
+				oRm.addClass("sapMGTDisabled");
+			}
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-startMarker");
+			oRm.addClass("sapMGTStartMarker");
+			oRm.writeClasses();
+			oRm.write("/>");
+
+			this._renderFailedIcon(oRm, oControl);
+			this._renderHeader(oRm, oControl);
+			if (oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
+			}
+
+			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-endMarker");
+			oRm.addClass("sapMGTEndMarker");
+			oRm.writeClasses();
+			oRm.write("/>");
+
+			//hover and press style helper
+			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-styleHelper");
+			oRm.addClass("sapMGTStyleHelper");
+			oRm.writeClasses();
+			oRm.write("/>");
+			oRm.write("</span>"); //.sapMGT
+
 		} else {
-			oRm.writeAttribute("role", "presentation");
+			// cozy
+			oRm.write("<span");
+			oRm.writeControlData(oControl);
+			oRm.writeAttributeEscaped("aria-label", sAriaText);
+			if (bHasPress) {
+				oRm.writeAttribute("role", "button");
+			} else {
+				oRm.writeAttribute("role", "presentation");
+			}
+			oRm.addClass("sapMGT");
+			oRm.addClass("sapMGTLineMode");
+			this._writeDirection(oRm);
+			if (sTooltipText) {
+				oRm.writeAttributeEscaped("title", sTooltipText);
+			}
+			if (oControl.getState() !== LoadState.Disabled) {
+				oRm.addClass("sapMPointer");
+				oRm.writeAttribute("tabindex", "0");
+			} else {
+				oRm.addClass("sapMGTDisabled");
+			}
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.write("<div");
+			oRm.addClass("sapMGTTouchArea");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			this._renderFailedIcon(oRm, oControl);
+
+			oRm.write("<span");
+			oRm.addClass("sapMGTLineModeHelpContainer");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			this._renderHeader(oRm, oControl);
+
+			if (oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
+			}
+
+			oRm.write("</span>"); //.sapMGTLineModeHelpContainer
+
+			oRm.write("</div>"); //.sapMGTTouchArea
+
+			oRm.write("</span>"); //.sapMGT
+
 		}
-		oRm.addClass("sapMGT");
-		oRm.addClass("sapMGTLineMode");
-		this._writeDirection(oRm);
-
-		if (sTooltipText) {
-			oRm.writeAttributeEscaped("title", sTooltipText);
-		}
-
-		if (oControl.getState() !== LoadState.Disabled) {
-			oRm.addClass("sapMPointer");
-			oRm.writeAttribute("tabindex", "0");
-		} else {
-			oRm.addClass("sapMGTDisabled");
-		}
-
-		oRm.writeClasses();
-		oRm.write(">");
-
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-startMarker");
-		oRm.addClass("sapMGTStartMarker");
-		oRm.writeClasses();
-		oRm.write("/>");
-
-		this._renderFailedIcon(oRm, oControl);
-		this._renderHeader(oRm, oControl);
-
-		if (oControl.getSubheader()) {
-			this._renderSubheader(oRm, oControl);
-		}
-
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-endMarker");
-		oRm.addClass("sapMGTEndMarker");
-		oRm.writeClasses();
-		oRm.write("/>");
-
-		//hover and press style helper
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-styleHelper");
-		oRm.addClass("sapMGTStyleHelper");
-		oRm.writeClasses();
-		oRm.write("/>");
-
-		oRm.write("</span>"); //.sapMGT
 	};
 
 	GenericTileLineModeRenderer._writeDirection = function(oRm) {

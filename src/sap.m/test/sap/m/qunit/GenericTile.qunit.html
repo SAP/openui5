@@ -259,7 +259,7 @@
 		}.bind(this));
 	});
 
-	QUnit.module("sap.m.GenericTileMode.LineMode", {
+	QUnit.module("sap.m.GenericTileMode.LineMode compact", {
 		beforeEach: function() {
 			this.oGenericTile = new sap.m.GenericTile({
 				state: sap.m.LoadState.Loaded,
@@ -389,6 +389,7 @@
 			mode: sap.m.GenericTileMode.LineMode
 		});
 		this.oParent.addItem(oSiblingTile);
+		sinon.stub(oSiblingTile, "_isCompact").returns(true);
 		sap.ui.getCore().applyChanges();
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 
@@ -403,6 +404,7 @@
 		assert.deepEqual(sap.m.GenericTileLineModeRenderer._updateHoverStyle.thisValues[1], oSiblingTile, "Function _updateHoverStyle has been called on sibling Tile.");
 
 		//Cleanup
+		oSiblingTile._isCompact.restore();
 		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
@@ -1105,7 +1107,7 @@
 		assert.ok(oDom, "The span with suffix 'inner' exists");
 	});
 
-	QUnit.module("Tooltip handling in LineMode", {
+	QUnit.module("Tooltip handling in LineMode compact", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				header : "header text of GenericTile",
@@ -1113,6 +1115,7 @@
 				mode: "LineMode",
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			});
+			sinon.stub(this.oGenericTile, "_isCompact").returns(true);
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
 				return "ARIA and tooltip text of TileContent 1";
