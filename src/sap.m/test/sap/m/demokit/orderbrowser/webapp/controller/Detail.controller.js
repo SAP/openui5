@@ -5,7 +5,10 @@ sap.ui.define([
 		"sap/ui/demo/orderbrowser/model/formatter"
 	], function (BaseController, JSONModel, formatter) {
 		"use strict";
-
+		function _calculateOrderTotal (fPreviousTotal, oCurrentContext) {
+			var fItemTotal = oCurrentContext.getObject().Quantity * oCurrentContext.getObject().UnitPrice;
+			return fPreviousTotal + fItemTotal;
+		}
 		return BaseController.extend("sap.ui.demo.orderbrowser.controller.Detail", {
 
 			formatter: formatter,
@@ -23,13 +26,15 @@ sap.ui.define([
 					delay : 0,
 					lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading"),
 					// Set fixed currency on view model (as the OData service does not provide a currency).
-					currency : "EUR"
+					currency : "EUR",
+					// the sum of all items of this order
+					totalOrderAmount: 0
 				});
 
 				this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 
 				this.setModel(oViewModel, "detailView");
-				
+
 				this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 			},
 
@@ -59,11 +64,15 @@ sap.ui.define([
 			 */
 			onListUpdateFinished : function (oEvent) {
 				var sTitle,
+					fOrderTotal = 0,
 					iTotalItems = oEvent.getParameter("total"),
-					oViewModel = this.getModel("detailView");
+					oViewModel = this.getModel("detailView"),
+					oItemsBinding = oEvent.getSource().getBinding("items"),
+					aItemsContext;
 
 				// only update the counter if the length is final
-				if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
+//				if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
+				if (oItemsBinding.isLengthFinal()) {
 					if (iTotalItems) {
 						sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 					} else {
@@ -71,12 +80,27 @@ sap.ui.define([
 						sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
 					}
 					oViewModel.setProperty("/lineItemListTitle", sTitle);
+
+					aItemsContext = oItemsBinding.getContexts();
+					fOrderTotal = aItemsContext.reduce(_calculateOrderTotal, 0);
+					oViewModel.setProperty("/totalOrderAmount", fOrderTotal);
 				}
+//				function _calculateOrderTotal (fPreviousTotal, oCurrentContext, iCurrentIndex, aItemsContext) {
+//					//var fItemTotal = 0;
+//					var fItemTotal = oCurrentContext.getObject().Quantity * oCurrentContext.getObject().UnitPrice;
+//					return fPreviousTotal + fItemTotal;
+//				}
 			},
 
 			/* =========================================================== */
 			/* begin: internal methods                                     */
 			/* =========================================================== */
+
+//			_calculateOrderTotal : function (fPreviousTotal, oCurrentContext, iCurrentIndex, aItemsContext) {
+//				var fItemTotal = 0;
+//				fItemTotal = oCurrentContext.getObject().Quantiy * oCurrentContext.getObject().UnitPrice;
+//				return fPreviousTotal + fItemTotal;
+//			},
 
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
@@ -85,7 +109,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_onObjectMatched : function (oEvent) {
-				var sObjectId =  oEvent.getParameter("arguments").objectId;
+				var sObjectId = oEvent.getParameter("arguments").objectId;
 				this.getModel().metadataLoaded().then( function() {
 					var sObjectPath = this.getModel().createKey("Orders", {
 						OrderID :  sObjectId
@@ -110,6 +134,9 @@ sap.ui.define([
 
 				this.getView().bindElement({
 					path : sObjectPath,
+					parameters: {
+						expand: "Customer,Order_Details/Product"
+					},
 					events: {
 						change : this._onBindingChange.bind(this),
 						dataRequested : function () {

@@ -10,8 +10,7 @@ sap.ui.define([
 		"use strict";
 
 		var sViewName = "Master",
-			sSomethingThatCannotBeFound = "*#-Q@@||",
-			iGroupingBoundary = 100;
+			sSomethingThatCannotBeFound = "*#-Q@@||";
 
 		Opa5.createPageObjects({
 			onTheMasterPage : {

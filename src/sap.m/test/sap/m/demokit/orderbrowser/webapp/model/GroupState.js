@@ -34,7 +34,7 @@ sap.ui.define([
 		 * @returns {sap.ui.model.Sorter|sap.ui.model.Sorter[]} single sorter or array of sorters
 		 */
 		groupBy: function (sKey) {
-			if(this._oSorters && this._oSorters[sKey]) {
+			if (this._oSorters && this._oSorters[sKey]) {
 				return this._oSorters[sKey];
 			}
 
@@ -58,7 +58,7 @@ sap.ui.define([
 				 * Shipping date: Grouping by period (= same year + month), in descending order.
 				 * Note: If not yet shipped, field "ShippedDate" is empty. Due to server-side sorting, where an empty date
 				 * is treated as the lowest possible date, orders without shipments are displayed at the very end of the list.
-				 */ 
+				 */
 				case "ShippedPeriod":
 					aSorters = [
 						new Sorter("ShippedDate", true, this._groupByShippedPeriod.bind(this)),
@@ -70,7 +70,7 @@ sap.ui.define([
 					aSorters = this._oSorters[this._KEY_NO_GROUPING];
 					break;
 				}
-			
+
 			// Remember new Sorter instance for later reuse.
 			this._oSorters[sKey] = aSorters;
 
@@ -80,7 +80,7 @@ sap.ui.define([
 		/**
 		 * Groups the orders by the name of the ordering company.
 		 * @returns {Object} the properties needed to display the group for the passed order,
-		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()} 
+		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
 		_groupByCompanyName: function (oContext) {
 			var sCompanyName = oContext.getProperty("Customer/CompanyName");
@@ -93,7 +93,7 @@ sap.ui.define([
 		/**
 		 * Groups the orders by month (+ year) when it was created.
 		 * @returns {Object} the properties needed to display the group for the passed order,
-		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()} 
+		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
 		_groupByOrderPeriod: function (oContext) {
 			var oDate = oContext.getProperty("OrderDate"),
@@ -102,7 +102,7 @@ sap.ui.define([
 				sMonthName = this._oMonthNameFormat.format(oDate);
 
 			return {
-				key: iYear + '-' + iMonth,
+				key: iYear + "-" + iMonth,
 				text: this._oResourceBundle.getText("masterGroupTitleOrderedInPeriod", [ sMonthName, iYear ])
 			};
 		},
@@ -111,18 +111,18 @@ sap.ui.define([
 		 * Groups the orders by month (+ year) when the ordered products have been shipped.
 		 * There will be one group covering all orders which still need to be shipped.
 		 * @returns {Object} the properties needed to display the group for the passed order,
-		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()} 
+		 * 			see also {@link sap.ui.demo.orderbrowser.controller.Master#createGroupHeader()}
 		 */
 		_groupByShippedPeriod: function (oContext) {
 			var oDate = oContext.getProperty("ShippedDate");
 			// Special handling needed because shipping date may be empty (=> not yet shipped).
-			if(oDate != null) {
+			if (oDate != null) {
 				var iYear = oDate.getFullYear(),
 					iMonth = oDate.getMonth() + 1,
 					sMonthName = this._oMonthNameFormat.format(oDate);
-				
+
 				return {
-					key: iYear + '-' + iMonth,
+					key: iYear + "-" + iMonth,
 					text: this._oResourceBundle.getText("masterGroupTitleShippedInPeriod", [ sMonthName, iYear ])
 				};
 			}
