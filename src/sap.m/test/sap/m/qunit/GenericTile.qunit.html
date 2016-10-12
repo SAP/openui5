@@ -353,16 +353,30 @@
 		//Arrange
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 
-		//Act
-		this.oParent.setWidth("500px");
-		this.oParent.invalidate();
-		sap.ui.getCore().applyChanges();
+		if (sap.ui.getCore().isThemeApplied()) {
+			fnThemeApplied.call(this);
+		} else {
+			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
+			var done = assert.async();
+		}
 
-		//Assert
-		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "_updateHoverStyle is called once.");
+		function fnThemeApplied(oEvent) {
+			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
 
-		//Cleanup
-		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+			//Act
+			this.oParent.setWidth("500px");
+			this.oParent.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "_updateHoverStyle is called once.");
+
+			//Cleanup
+			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+			if (done) {
+				done();
+			}
+		}
 	});
 
 	QUnit.test("Hover style update of siblings on state change", function(assert) {
