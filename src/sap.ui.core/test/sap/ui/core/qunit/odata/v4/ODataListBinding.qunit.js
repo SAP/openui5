@@ -1973,18 +1973,15 @@ sap.ui.require([
 		{
 			mParameters : {$$operationMode : OperationMode.Server},
 			queryOptions : {"sap-client" : "111"},
-			vSorters : undefined,
-			vSortersExpected : []
+			vSorters : undefined
 		}, {
 			mParameters : {$$operationMode : OperationMode.Server},
 			queryOptions : {$orderby : "foo", "sap-client" : "111"},
-			vSorters : new Sorter("foo"),
-			vSortersExpected : [new Sorter("foo")]
+			vSorters : new Sorter("foo")
 		}, {
 			mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"},
 			queryOptions : {$orderby : "foo,bar", "sap-client" : "111"},
-			vSorters : [new Sorter("foo")],
-			vSortersExpected : [new Sorter("foo")]
+			vSorters : [new Sorter("foo")]
 		}, {
 			oModel : new ODataModel({
 				operationMode : OperationMode.Server,
@@ -1993,78 +1990,44 @@ sap.ui.require([
 			}),
 			mParameters : {$orderby : "bar"},
 			queryOptions : {$orderby : "foo,bar", "sap-client" : "111"},
-			vSorters : [new Sorter("foo")],
-			vSortersExpected : [new Sorter("foo")]
+			vSorters : [new Sorter("foo")]
 		}
 	].forEach(function (oFixture) {
 		QUnit.test("sort: vSorters = " + JSON.stringify(oFixture.vSorters) + " and mParameters = "
 				+ JSON.stringify(oFixture.mParameters), function (assert) {
-			var oCache = { read : function () {} },
-				oListBinding,
-				oModel = oFixture.oModel || this.oModel;
+			var oCacheProxy = {},
+				oModel = oFixture.oModel || this.oModel,
+				oContext = Context.create(oModel, /*oBinding*/{}, "/TEAMS", 1),
+				oListBinding;
 
-			oListBinding = oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			oListBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 				oFixture.mParameters);
 
-			this.mock(_Cache).expects("create").withExactArgs(
-				sinon.match.same(oModel.oRequestor), "EMPLOYEES", oFixture.queryOptions)
-				.returns(oCache);
-			this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Sort);
-
-			this.spy(_ODataHelper, "buildOrderbyOption");
-			this.spy(_ODataHelper, "mergeQueryOptions");
+			oListBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
+			this.mock(oListBinding).expects("hasPendingChanges").returns(false);
 			this.spy(_ODataHelper, "toArray");
+			this.mock(_ODataHelper).expects("createListCacheProxy")
+				.twice() // from setContext and sort
+				.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
+				.returns(oCacheProxy);
+			this.spy(oListBinding, "reset");
+			oListBinding.setContext(oContext);
 
-			// Code under test
+			// code under test
 			assert.strictEqual(oListBinding.sort(oFixture.vSorters), oListBinding, "chaining");
-			assert.deepEqual(oListBinding.aSorters, oFixture.vSortersExpected,
-				"aSorters is updated after calling sort");
+
+			assert.deepEqual(oListBinding.aSorters, _ODataHelper.toArray.returnValues[0]);
 			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.vSorters));
-			assert.ok(_ODataHelper.buildOrderbyOption.calledWithExactly(
-				_ODataHelper.toArray.returnValues[0],
-				oFixture.mParameters && oFixture.mParameters.$orderby));
-			assert.ok(_ODataHelper.mergeQueryOptions.calledWithExactly(oListBinding.mQueryOptions,
-				oFixture.queryOptions.$orderby || ""), "mergeQueryOptions called");
-
+			assert.strictEqual(oListBinding.mCacheByContext, undefined);
+			assert.ok(oListBinding.reset.calledWithExactly(), "from setContext");
+			assert.ok(oListBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
 		});
-	});
-	// TODO simplify this test
-
-	//*********************************************************************************************
-	QUnit.test("sort: relative bindings", function (assert) {
-		var oModel = new ODataModel({
-				operationMode : OperationMode.Server,
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
-			}),
-			oCacheProxy = {},
-			oContext = Context.create(oModel, /*oBinding*/{}, "/TEAMS", 1),
-			oListBinding = oModel.bindList("EMPLOYEES", oContext),
-			oSorter = new Sorter("foo"),
-			aSorters = [oSorter];
-
-		this.mock(oListBinding).expects("hasPendingChanges").returns(false);
-		this.mock(_ODataHelper).expects("toArray").withExactArgs(sinon.match.same(oSorter))
-			.returns(aSorters);
-		this.mock(_ODataHelper).expects("createListCacheProxy")
-			.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
-			.returns(oCacheProxy);
-		oListBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
-		this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Sort);
-
-		// Code under test
-		assert.strictEqual(oListBinding.sort(oSorter), oListBinding, "chaining");
-
-		assert.strictEqual(oListBinding.oCache, oCacheProxy);
-		assert.strictEqual(oListBinding.mCacheByContext, undefined);
-		assert.strictEqual(oListBinding.aSorters, aSorters, "store sorter");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("sort - errors", function (assert) {
 		var oContext,
-			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oPathPromise = Promise.resolve("/foo");
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		assert.throws(function () {
 			oListBinding.sort([]);
@@ -2085,7 +2048,7 @@ sap.ui.require([
 		oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 		//avoid cache creation
 		this.mock(_ODataHelper).expects("createListCacheProxy").returns(/*oCacheProxy*/{});
-		oListBinding = this.oModel.bindList("EMPLOYEES", oContext, null, null,
+		oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 			{$$operationMode : OperationMode.Server});
 		this.mock(oListBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 
@@ -2093,8 +2056,6 @@ sap.ui.require([
 		assert.throws(function () {
 			oListBinding.sort();
 		}, new Error("Cannot sort due to pending changes"));
-
-		return oPathPromise;
 	});
 
 	//*********************************************************************************************

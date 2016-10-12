@@ -171,7 +171,9 @@ sap.ui.define([
 							bRealOData : bRealOData,
 							bSalesOrderSelected : false,
 							bScheduleSelected : false,
-							bSelectedSalesOrderTransient : false
+							bSelectedSalesOrderTransient : false,
+							bSortGrossAmountDescending : undefined,
+							sSortGrossAmountIcon : ""
 						}
 				)},
 				type : ViewType.XML,

@@ -10,9 +10,10 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
-		'sap/ui/model/json/JSONModel'
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/Sorter'
 ], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		JSONModel) {
+		JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -380,6 +381,38 @@ sap.ui.define([
 
 			oText.setBindingContext(oBindingContext);
 			oText.bindProperty("text", "ProductID");
+		},
+
+		onSortByGrossAmount : function () {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				sNewIcon,
+				oUIModel = oView.getModel("ui"),
+				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending");
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot sort due to unsaved changes"
+					+ "; save or reset changes before sorting");
+				return;
+			}
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			if (bDescending === undefined) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else if (bDescending === false) {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			} else {
+				sNewIcon = "";
+				bDescending = undefined;
+			}
+			oUIModel.setProperty("/bSortGrossAmountDescending", bDescending);
+			oUIModel.setProperty("/sSortGrossAmountIcon", sNewIcon);
+			oBinding.sort(bDescending === undefined
+				? undefined
+				: new Sorter("GrossAmount", bDescending)
+			);
 		},
 
 		/**

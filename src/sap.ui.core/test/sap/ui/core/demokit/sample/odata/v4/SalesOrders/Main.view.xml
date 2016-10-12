@@ -138,7 +138,9 @@
 					<Text text="Buyer Name"/>
 				</Column>
 				<Column>
-					<Text text="Gross Amount"/>
+					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
+						icon="{ui>/sortGrossAmountIcon}" iconFirst="false"
+						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
 				<Column>
 					<Text text="Currency"/>
