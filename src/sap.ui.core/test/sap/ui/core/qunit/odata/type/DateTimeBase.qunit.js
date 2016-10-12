@@ -24,8 +24,11 @@ sap.ui.require([
 		oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
+		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
+//		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
 		oMessages = {
 			"EnterDateTime" : "EnterDateTime Nov 27, 2014, 1:47:26 PM",
 			"EnterDate" : "EnterDate Nov 27, 2014"
@@ -187,6 +190,11 @@ sap.ui.require([
 				.atLeast(1).returns("string");
 			assert.strictEqual(oType.formatValue(oDateTime, "sap.ui.core.CSSSize"),
 				sFormattedDateTime);
+
+			oType = createInstance(sTypeName, {}, {precision : 3});
+			// TODO DateFormat only supports split seconds using a locale-dependent pattern
+			assert.strictEqual(oType.formatValue(oDateTimeWithMS, "string"),
+				sFormattedDateTime, "format with precision");
 		});
 
 		//*****************************************************************************************
@@ -217,6 +225,11 @@ sap.ui.require([
 				.returns("string");
 			assert.deepEqual(oType.parseValue(sFormattedDateTime, "sap.ui.core.CSSSize"),
 				oDateTime);
+
+			oType = createInstance(sTypeName, {}, {precision : 3});
+//			TODO not supported by DateFormat
+//			assert.deepEqual(oType.parseValue(sFormattedDateTimeWithMS, "string"),
+//				oDateTimeWithMS, "parse with precision");
 		});
 
 		//*****************************************************************************************
@@ -398,13 +411,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setV4", function (assert) {
-		var oDateTimeOffsetV4 = new DateTimeOffset().setV4(),
+		var oDateTimeOffsetV4 = new DateTimeOffset(undefined, {precision : 7}).setV4(),
 			sDateTimeOffsetParsed = oDateTimeOffsetV4.parseValue(sFormattedDateTime, "string"),
+			sDateTimeOffsetWithPrecision = "2014-11-27T13:47:26.0000000"
+				+ getTimezoneOffset(oDateTime),
 			oDateTimeOffsetV2 = new DateTimeOffset(),
 			oDateTimeOffsetAsDate = oDateTimeOffsetV2.parseValue(sFormattedDateTime, "string");
 
 		assert.strictEqual(typeof sDateTimeOffset, "string");
-		assert.strictEqual(sDateTimeOffsetParsed, sDateTimeOffset);
+		assert.strictEqual(sDateTimeOffsetParsed, sDateTimeOffsetWithPrecision);
 		assert.ok(oDateTimeOffsetAsDate instanceof Date);
 
 		assert.throws(function () {
@@ -457,6 +472,17 @@ sap.ui.require([
 			withExactArgs("sap.ui.core.CSSSize").returns("string");
 		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "sap.ui.core.CSSSize"),
 				sFormattedDateTime);
+
+		oDateTimeOffset = new DateTimeOffset({}, {precision : 3});
+		// TODO DateFormat only supports split seconds using a locale-dependent pattern
+		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffsetWithMS, "string"),
+			sFormattedDateTime, "V4 value with milliseconds accepted");
+
+		oDateTimeOffset = new DateTimeOffset({precision : 0});
+		assert.throws(function () {
+			oDateTimeOffset.formatValue(sDateTimeOffsetWithMS, "string");
+		}, new FormatException(
+			"Illegal sap.ui.model.odata.type.DateTimeOffset value: " + sDateTimeOffsetWithMS));
 	});
 
 	//*********************************************************************************************

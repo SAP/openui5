@@ -112,8 +112,8 @@ sap.ui.define([
 						"BillingStatusDesc" : "",
 						"DeliveryStatus" : "",
 						"DeliveryStatusDesc" : "",
-						"CreatedAt" : "",
-						"ChangedAt" : "",
+						"CreatedAt" : "1970-01-01T00:00:00Z",
+						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"SOItemCount" : 0,
 						"SO_2_BP" : null
 					}),

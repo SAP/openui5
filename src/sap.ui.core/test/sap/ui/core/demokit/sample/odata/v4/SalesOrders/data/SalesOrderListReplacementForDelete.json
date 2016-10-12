@@ -3,7 +3,7 @@
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "SAP",
-		"ChangedAt" : "20160619220000.0000000 ",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
 		"LifecycleStatusDesc" : "New",
@@ -20,7 +20,7 @@
 			"FaxNumber" : "0622734004",
 			"LegalForm" : "SE",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
 			"ChangedAt" : "2016-06-13T14:33:41.154887Z",
 			"Address" : {
 				"City" : "Walldorf",
