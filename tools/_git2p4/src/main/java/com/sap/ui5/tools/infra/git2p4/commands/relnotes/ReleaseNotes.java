@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -279,13 +280,36 @@ public class ReleaseNotes {
           }
         }
       }
-      if (uiLibVersion.notes.size() > notesSizeBefore){
+      removeDuplicates(uiLibraryNotes);
+      if (uiLibVersion.notes.size() != notesSizeBefore){
         saveToFile(uiLibraryNotes, file);
       } else {
         Log.println("No new notes found for '" + lib + "' library");
       }
       copyPrevNotes(file.getParentFile(), lib);
-    }    
+    }
+
+    private void removeDuplicates(UILibNotes uiLibraryNotes) {
+      Object[] keys = uiLibraryNotes.versions.keySet().toArray();
+      for (int i = 0; i < keys.length; i++){
+        for (int j = i + 1; j < keys.length; j++){
+          removeDuplicatesForVersion(uiLibraryNotes.versions.get(keys[i]), uiLibraryNotes.versions.get(keys[j]));
+        }
+      }
+    }
+
+    private void removeDuplicatesForVersion(LibVersion libVersion, LibVersion libVersion2) {
+      for (ReleaseNote note : libVersion.notes) {
+        for (ReleaseNote note2 : libVersion2.notes) {
+          if (note.id.equals(note2.id)){
+            libVersion2.notes.remove(note2);
+            Log.println("Removed duplicated note: " + note2.id + " from " + libVersion2.version);
+            break;
+          }
+        }
+      }
+    }
+    
   }
 
   private void processCommit(LibVersion uiLibVersion, GitClient.Commit commit) {
