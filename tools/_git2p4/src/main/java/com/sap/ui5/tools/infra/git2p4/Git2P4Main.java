@@ -347,6 +347,9 @@ public class Git2P4Main {
        if (m.find()){
       Version coreVersion = new Version(m.group(1));
       Log.println("Detected sapui5 core version: " + coreVersion);
+      if (snapshot && !coreVersion.isSnapshot()) {
+        throw new RuntimeException("Expected core version is not a snapshot.");
+      }
       return coreVersion;
     }
 
