@@ -309,7 +309,23 @@
 					"The add button is get");
 		});
 
-		test("Manipulating the items", function () {
+		module("Items synchronization", {
+			beforeEach: function () {
+				this.oTabContainer = new sap.m.TabContainer({
+				});
+
+				this.oTabContainer.placeAt("qunit-fixture");
+				this.oTabStrip = this.oTabContainer._getTabStrip();
+				this.items = this.oTabContainer.getItems();
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTabContainer.destroy();
+				this.oTabContainer = null;
+			}
+		});
+
+		test("Insert items", function () {
 
 			this.oTabContainer.destroyItems();
 			//assert
@@ -330,7 +346,54 @@
 			//assert
 			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
 					"All items are removed");
+		});
 
+
+		test("TabContainerItems are in sync with TabStripItems when TabContainerItem.key is null", function () {
+			var oTabContainerItem;
+
+			//arrange
+			oTabContainerItem = new sap.m.TabContainerItem({
+				name: "Ghost"
+			});
+
+			//act
+			this.oTabContainer.addItem(oTabContainerItem);
+
+			strictEqual(this.oTabContainer._getTabStrip().getItems().length, 1,
+					"An item in TabStrip is successfully added");
+			strictEqual(this.oTabContainer.getItems().length, 1,
+					"An item in TabContainer is successfully added");
+
+			oTabContainerItem.setKey(null);
+			this.oTabContainer.removeItem(oTabContainerItem);
+
+			//assert
+			strictEqual( this.oTabContainer.getItems().length, 0,
+					"Item in TabContainer is removed");
+			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+					"Item in TabStrip is removed");
+
+		});
+
+		test("TabContainerItem properties are in sync with TabStripItem properties", function () {
+			var oTabContainerItem;
+
+			//arrange
+			oTabContainerItem = new sap.m.TabContainerItem({
+				name: "Apple"
+			});
+			this.oTabContainer.addItem(oTabContainerItem);
+
+			//act
+			oTabContainerItem.setKey(null);
+			oTabContainerItem.setModified(!oTabContainerItem.getModified());
+			oTabContainerItem.setName("Android");
+
+			//assert
+			equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerItem.getId(), "TabContainerItem.id should be propagated to TabStripItem.key");
+			equal(this.oTabStrip.getItems()[0].getText(), oTabContainerItem.getName(), "TabContainerItem.name should be propagated to TabStripItem.text");
+			equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerItem.getModified(), "TabContainerItem.modified should be propagated to TabStripItem.modified");
 		});
 
 		module("Constructing with array of items", {
