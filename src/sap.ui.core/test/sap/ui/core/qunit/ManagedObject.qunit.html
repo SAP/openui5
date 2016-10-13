@@ -579,6 +579,26 @@
 				ok(bThrown, "Must throw error on unknown property bind")
 			});
 
+			test("Bind property: targetType", function() {
+				this.obj.bindProperty("value", {path : "/value", targetType : "any"});
+				equal(this.obj.getBinding("value").sInternalType, "any", "targetType is used");
+				notOk("targetType" in this.obj.getBindingInfo("value"), "targetType is moved into part");
+			});
+
+			test("Bind property: targetType for composite", function() {
+				this.obj.bindProperty("value", {
+					parts : [{
+						path : "/value", targetType : "foo"
+					}, {
+						path : "/value", targetType : "bar"
+					}],
+					targetType : "any"
+				});
+				equal(this.obj.getBinding("value").getBindings()[0].sInternalType, "foo");
+				equal(this.obj.getBinding("value").getBindings()[1].sInternalType, "bar");
+				equal(this.obj.getBinding("value").sInternalType, "any", "targetType is used");
+			});
+
 			module("Aggregations", {
 				setup: function() {
 					this.obj = new sap.ui.core.TestManagedObject();
