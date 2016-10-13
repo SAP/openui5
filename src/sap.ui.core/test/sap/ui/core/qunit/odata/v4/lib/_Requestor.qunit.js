@@ -106,7 +106,7 @@ sap.ui.require([
 		oPromise = oRequestor.request("FOO", "Employees?foo=bar", "$direct",
 			{"Content-Type" : "wrong"}, oPayload);
 
-		return oPromise.then(function (result){
+		return oPromise.then(function (result) {
 				assert.strictEqual(result, oResult);
 			});
 	});
@@ -171,7 +171,7 @@ sap.ui.require([
 			assert.deepEqual(mRequestHeaders, mHeaders.requestHeaders,
 				"caller's map is unchanged");
 			assert.ok(oPromise instanceof Promise);
-			return oPromise.then(function (result){
+			return oPromise.then(function (result) {
 					assert.strictEqual(result, oResult);
 				});
 		});
@@ -921,7 +921,7 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: only PATCH", function (assert) {
-		var fnCancel = function() {},
+		var fnCancel = function () {},
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
 
@@ -1104,7 +1104,7 @@ sap.ui.require([
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),
 				sResourcePath = "TEAMS('TEAM_01')";
 
-			function assertResult(oPayload){
+			function assertResult(oPayload) {
 				assert.deepEqual(oPayload, {
 					"@odata.context": "$metadata#TEAMS/$entity",
 					"Team_Id": "TEAM_01",

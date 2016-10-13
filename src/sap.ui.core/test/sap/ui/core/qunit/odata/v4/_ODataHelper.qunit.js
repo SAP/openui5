@@ -635,7 +635,7 @@ sap.ui.require([
 	}, {
 		bRelative : false,
 		aApplicationFilters : [{}]
-	}].forEach(function (oFixture){
+	}].forEach(function (oFixture) {
 		QUnit.test("createListCacheProxy:" + JSON.stringify(oFixture), function (assert) {
 			var sCanonicalPath = "/SalesOrderList('1')",
 				sCachePath = sCanonicalPath.slice(1) + "/SO_2_SOITEMS",

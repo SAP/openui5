@@ -64,6 +64,7 @@ sap.ui.define([
 	 *   For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
 	 * @public
+	 * @since 1.37.0
 	 * @version ${version}
 	 */
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
@@ -277,7 +278,7 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	// @override
-	ODataPropertyBinding.prototype.destroy = function() {
+	ODataPropertyBinding.prototype.destroy = function () {
 		if (this.oCache) {
 			this.oCache.deregisterChange(undefined, this);
 			this.oCache = null;
@@ -296,7 +297,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.getGroupId = function() {
+	ODataPropertyBinding.prototype.getGroupId = function () {
 		return this.sGroupId
 			|| (this.bRelative && this.oContext && this.oContext.getGroupId
 					&& this.oContext.getGroupId())
@@ -311,7 +312,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.getUpdateGroupId = function() {
+	ODataPropertyBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId
 			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
 					&& this.oContext.getUpdateGroupId())
@@ -514,6 +515,7 @@ sap.ui.define([
 	 *   information
 	 *
 	 * @public
+	 * @since 1.43.0
 	 * @see sap.ui.model.PropertyBinding#setType
 	 */
 	// @override

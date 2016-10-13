@@ -88,6 +88,7 @@ sap.ui.define([
 	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @public
+	 * @since 1.37.0
 	 * @version ${version}
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
@@ -311,7 +312,7 @@ sap.ui.define([
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 		}));
-		this.oModel.addedRequestToGroup(sGroupId, function() {
+		this.oModel.addedRequestToGroup(sGroupId, function () {
 			that.oCache.setCreatePending();
 		});
 
@@ -876,7 +877,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataListBinding.prototype.isLengthFinal = function() {
+	ODataListBinding.prototype.isLengthFinal = function () {
 		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
 	};

@@ -8,6 +8,7 @@
  * @namespace
  * @name sap.ui.model.odata.v4
  * @public
+ * @since 1.37.0
  */
 
 //Provides class sap.ui.model.odata.v4.ODataModel
@@ -26,7 +27,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
+], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
 		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataPropertyBinding) {
 
@@ -101,6 +102,7 @@ sap.ui.define([
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
 	 * @public
+	 * @since 1.37.0
 	 * @version ${version}
 	 */
 	var ODataModel = Model.extend(sClassName,

@@ -1760,7 +1760,7 @@ sap.ui.require([
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, third"
 				+ " parameter must not be set if extended change detection is enabled"));
 
-		assert.throws(function() {
+		assert.throws(function () {
 			oListBinding.getContexts(42);
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, first parameter " +
 			"must be 0 if extended change detection is enabled, but is 42"));
@@ -2576,6 +2576,37 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_delete: transient context that has been persisted", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = Context.create(this.oModel, oListBinding, "/EMPLOYEES/-1", -1),
+			oContextMock = this.mock(oContext),
+			oExpectation,
+			oListBindingMock = this.mock(oListBinding);
+
+		// simulate created entity which is already persisted
+		oListBinding.aContexts[-1] = oContext;
+		oContextMock.expects("isTransient").returns(false);
+		oListBindingMock.expects("hasPendingChanges").returns(false);
+
+		oExpectation = oListBindingMock.expects("deleteFromCache")
+			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1", sinon.match.func);
+
+		// code under test
+		oListBinding._delete("myGroup", "EMPLOYEES('1')", oContext);
+
+		assert.strictEqual(oListBinding.aContexts[-1], oContext, "Element at -1 still available");
+
+		// test callback of deleteFromCache
+		oContextMock.expects("destroy").withExactArgs();
+		oListBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
+
+		// code under test
+		oExpectation.args[0][3](-1); // call fnCallback
+
+		assert.notOk(-1 in oListBinding.aContexts, "Element at -1 removed");
+	});
+
+	//*********************************************************************************************
 	["$auto", undefined].forEach(function (sGroupId) {
 		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
@@ -2675,7 +2706,7 @@ sap.ui.require([
 		sGroupId : "update"
 	}, {
 		oInitialData : {}
-	}].forEach(function(oFixture) {
+	}].forEach(function (oFixture) {
 		QUnit.test("create: absolute, " + JSON.stringify(oFixture), function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				bChangeFired = false,

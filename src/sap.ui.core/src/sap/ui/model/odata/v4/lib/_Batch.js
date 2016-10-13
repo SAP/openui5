@@ -250,7 +250,7 @@ sap.ui.define([
 				sBatchBoundary, "\r\n\r\n");
 		}
 
-		aRequests.forEach(function(oRequest, iRequestIndex) {
+		aRequests.forEach(function (oRequest, iRequestIndex) {
 			var sContentIdHeader = "";
 
 			if (bIsChangeSet) {
