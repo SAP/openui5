@@ -228,6 +228,12 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		}
 		return this._setUTCJapanese(oJapanese);
 	};
+	Japanese.prototype.getWeek = function() {
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(), this.getMonth(), this.getDate());
+	};
+	Japanese.prototype.getUTCWeek = function() {
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
+	};
 
 	return Japanese;
 
