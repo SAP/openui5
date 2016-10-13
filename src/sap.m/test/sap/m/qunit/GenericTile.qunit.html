@@ -1060,17 +1060,31 @@
 	});
 
 	QUnit.test("Tooltip for GenericTile with long (truncated) header text", function(assert) {
-		//Arrange
-		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		if (sap.ui.getCore().isThemeApplied()) {
+			fnThemeApplied.call(this);
+		} else {
+			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
+			var done = assert.async();
+		}
 
-		//Act
-		this.oGenericTile.invalidate();
-		sap.ui.getCore().applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
-		var sTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		function fnThemeApplied(oEvent) {
+			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
 
-		//Assert
-		assert.equal(sTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
+			//Arrange
+			this.oGenericTile.setHeader("A long long long long long long long long long long");
+
+			//Act
+			this.oGenericTile.invalidate();
+			sap.ui.getCore().applyChanges();
+			this.oGenericTile.$().trigger("mouseenter");
+			var sTooltip = this.oGenericTile.$()[0].getAttribute("title");
+
+			//Assert
+			assert.equal(sTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
+			if (done) {
+				done();
+			}
+		}
 	});
 
 	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
