@@ -85,6 +85,20 @@ sap.ui.define([
 				});
 			},
 
+			iShouldSeeAnEmptySaveForLaterList : function () {
+				return this.waitFor({
+					viewName : "Cart",
+					id : "saveForLaterList",
+					check : function (oList) {
+						return oList.getItems().length === 0;
+					},
+					success : function (oList) {
+						Opa5.assert.strictEqual(oList.getItems().length, 0, "The savelist was empty");
+					},
+					errorMessage : "The savelist still has entries"
+				});
+			},
+
 			theProceedButtonShouldBeEnabled : function () {
 				return this.waitFor({
 					viewName : "Cart",
