@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.26.0
+	 * @since 1.44.0
 	 * @alias sap.m.P13nSelectionPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -31,7 +31,7 @@ sap.ui.define([
 				/**
 				 * List of columns that has been changed
 				 *
-				 * @since 1.26.0
+				 * @since 1.44.0
 				 */
 				columnsItems: {
 					type: "sap.m.P13nColumnsItem",
@@ -42,6 +42,8 @@ sap.ui.define([
 
 				/**
 				 * Internal aggregation for the toolbar
+				 *
+				 * @since 1.44.0
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -68,9 +70,19 @@ sap.ui.define([
 		}
 	});
 
+	P13nSelectionPanel.prototype.getOkPayload = function() {
+		this._syncModel2Panel();
+		return {
+			// We have to return columnsItems as of the fact that new created or deleted columnsItems are not updated in the model via list
+			// binding.
+			columnsItems: this.getColumnsItems()
+		};
+	};
+
+	// ----------------------- Overwrite Method -----------------
+
 	P13nSelectionPanel.prototype.init = function() {
-		// this.setType(sap.m.P13nPanelType.columns);
-		// this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMSPANEL_TITLE"));
+		this.setType(sap.m.P13nPanelType.selection);
 
 		var that = this;
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -136,107 +148,6 @@ sap.ui.define([
 		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(oScrollContainer, this._fnHandleResize);
 	};
 
-	/**
-	 * @private
-	 */
-	P13nSelectionPanel.prototype._moveMarkedTableItem = function(sDirection) {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
-		if (!oData.markedTableItem || oData.indexOfMarkedTableItem < 0) {
-			// No table item is marked
-			return;
-		}
-
-		var aVisibleTableItems = this._getVisibleTableItems();
-		if (aVisibleTableItems.indexOf(oData.markedTableItem) < 0) {
-			// Marked table item is currently not visible in the table
-			return;
-		}
-
-		var fcalculateIndexTo = function() {
-			switch (sDirection) {
-				case "Down":
-					return oData.indexOfMarkedTableItem + 1;
-				case "Bottom":
-					return aVisibleModelItems.length - 1;
-				case "Up":
-					return oData.indexOfMarkedTableItem - 1;
-				case "Top":
-					return 0;
-			}
-		};
-
-		// Note: visible model items are in sync with visible table items. So we can use 'oData.indexOfMarkedTableItem'
-		// in the same manner for visible model items as well as for visible table items.
-		var aVisibleModelItems = this._getVisibleModelItems();
-		var oModelItemFrom = aVisibleModelItems[oData.indexOfMarkedTableItem];
-		var oModelItemTo = aVisibleModelItems[fcalculateIndexTo()];
-
-		if (this._moveModelItems(this._getModelItemIndexByColumnKey(oModelItemFrom.columnKey), this._getModelItemIndexByColumnKey(oModelItemTo.columnKey))) {
-			this._switchMarkedTableItemTo(aVisibleTableItems[fcalculateIndexTo()]);
-		}
-	};
-
-	/**
-	 * *
-	 *
-	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
-	 *        sSearchText="".
-	 * @private
-	 */
-	P13nSelectionPanel.prototype._filterModelItemsBySearchText = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
-		var sSearchText = this._getSearchText();
-
-		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
-		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
-		// Escape special characters entered by user
-		sSearchText = sSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-		// i = ignore case; g = global; m = multiline
-		var oRegExp = new RegExp(sSearchText, 'igm');
-		if (!oRegExp) {
-			return;
-		}
-
-		this._getVisibleModelItems().forEach(function(oModelItem) {
-			oModelItem.visible = false;
-			// Search in item text
-			if (oModelItem.text && oModelItem.text.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-			// Search in tooltip
-			if (oModelItem.tooltip && oModelItem.tooltip.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-		});
-		oModel.refresh();
-	};
-
-	/**
-	 * @private
-	 */
-	P13nSelectionPanel.prototype._scrollToSelectedItem = function(oItem) {
-		var oFocusedElement = null;
-		if (oItem) {
-			sap.ui.getCore().applyChanges();
-			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
-			if (!!oItem.getDomRef()) {
-				// get just focused DOM element
-				oFocusedElement = document.activeElement;
-
-				// focus actual item to get it into the scroll container viewport
-				oItem.focus();
-
-				// reset focus to previous DOM element
-				if (oFocusedElement && oFocusedElement.focus) {
-					oFocusedElement.focus();
-				}
-			}
-		}
-	};
-
-	/* =========================================================== */
-	/* Lifecycle methods */
-	/* =========================================================== */
 	P13nSelectionPanel.prototype.onBeforeRendering = function() {
 		var oModel = this.getModel("$sapmP13nSelectionPanel");
 		var oData = oModel.getData();
@@ -275,66 +186,9 @@ sap.ui.define([
 			iLiveChangeTimer = window.setTimeout(function() {
 				that._fnHandleResize();
 
-//				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
-//				that._getToolbar()._resetAndInvalidateToolbar();
+// // following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
+// that._getToolbar()._resetAndInvalidateToolbar();
 			}, 0);
-		}
-	};
-
-	P13nSelectionPanel.prototype.getOkPayload = function() {
-		this._syncModel2Panel();
-		return {
-			// We have to return columnsItems as of the fact that new created or deleted columnsItems are not updated in the model via list
-			// binding.
-			columnsItems: this.getColumnsItems()
-		};
-	};
-
-	/**
-	 * @private
-	 */
-	P13nSelectionPanel.prototype._syncModel2Panel = function() {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
-
-		// ColumnsItems
-		oData.items.forEach(function(oModelItem) {
-			var oColumnsItem = this._getColumnsItemByColumnKey(oModelItem.columnKey);
-			if (oColumnsItem) {
-				// Update existing columnsItem if some properties have been changed
-				if (!this._isColumnsItemEqualToModelItem(oColumnsItem, oModelItem)) {
-					oColumnsItem.setProperty("visible", oModelItem.persistentSelected, true);
-					oColumnsItem.setProperty("index", oModelItem.persistentIndex, true);
-				}
-				return;
-			}
-			if (!oModelItem.persistentSelected) {
-				// Nothing relevant has been changed as item is not selected
-				return;
-			}
-			// Create a new columnsItem if an item have been changed to 'selected'
-			oColumnsItem = new sap.m.P13nColumnsItem({
-				columnKey: oModelItem.columnKey,
-				visible: oModelItem.persistentSelected,
-				index: oModelItem.persistentIndex,
-				width: oModelItem.persistentWidth
-			});
-			this.addAggregation("columnsItems", oColumnsItem, true);
-		}, this);
-	};
-
-	P13nSelectionPanel.prototype.exit = function() {
-
-		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-		this._sContainerResizeListener = null;
-
-		this._getToolbar().destroy();
-
-		this._oTable.destroy();
-		this._oTable = null;
-
-		// destroy model and its data
-		if (this.getModel("$sapmP13nSelectionPanel")) {
-			this.getModel("$sapmP13nSelectionPanel").destroy();
 		}
 	};
 
@@ -514,7 +368,151 @@ sap.ui.define([
 		return P13nPanel.prototype.onBeforeNavigationFrom.apply(this, arguments);
 	};
 
+	P13nSelectionPanel.prototype.exit = function() {
+
+		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+		this._sContainerResizeListener = null;
+
+		this._getToolbar().destroy();
+
+		this._oTable.destroy();
+		this._oTable = null;
+
+		// destroy model and its data
+		if (this.getModel("$sapmP13nSelectionPanel")) {
+			this.getModel("$sapmP13nSelectionPanel").destroy();
+		}
+	};
+
 	// ----------------------- Private Methods -----------------------------------------
+
+	/**
+	 * @private
+	 */
+	P13nSelectionPanel.prototype._syncModel2Panel = function() {
+		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+
+		// ColumnsItems
+		oData.items.forEach(function(oModelItem) {
+			var oColumnsItem = this._getColumnsItemByColumnKey(oModelItem.columnKey);
+			if (oColumnsItem) {
+				// Update existing columnsItem if some properties have been changed
+				if (!this._isColumnsItemEqualToModelItem(oColumnsItem, oModelItem)) {
+					oColumnsItem.setProperty("visible", oModelItem.persistentSelected, true);
+					oColumnsItem.setProperty("index", oModelItem.persistentIndex, true);
+				}
+				return;
+			}
+			if (!oModelItem.persistentSelected) {
+				// Nothing relevant has been changed as item is not selected
+				return;
+			}
+			// Create a new columnsItem if an item have been changed to 'selected'
+			oColumnsItem = new sap.m.P13nColumnsItem({
+				columnKey: oModelItem.columnKey,
+				visible: oModelItem.persistentSelected,
+				index: oModelItem.persistentIndex,
+				width: oModelItem.persistentWidth
+			});
+			this.addAggregation("columnsItems", oColumnsItem, true);
+		}, this);
+	};
+
+	/**
+	 * @private
+	 */
+	P13nSelectionPanel.prototype._moveMarkedTableItem = function(sDirection) {
+		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		if (!oData.markedTableItem || oData.indexOfMarkedTableItem < 0) {
+			// No table item is marked
+			return;
+		}
+
+		var aVisibleTableItems = this._getVisibleTableItems();
+		if (aVisibleTableItems.indexOf(oData.markedTableItem) < 0) {
+			// Marked table item is currently not visible in the table
+			return;
+		}
+
+		var fcalculateIndexTo = function() {
+			switch (sDirection) {
+				case "Down":
+					return oData.indexOfMarkedTableItem + 1;
+				case "Bottom":
+					return aVisibleModelItems.length - 1;
+				case "Up":
+					return oData.indexOfMarkedTableItem - 1;
+				case "Top":
+					return 0;
+			}
+		};
+
+		// Note: visible model items are in sync with visible table items. So we can use 'oData.indexOfMarkedTableItem'
+		// in the same manner for visible model items as well as for visible table items.
+		var aVisibleModelItems = this._getVisibleModelItems();
+		var oModelItemFrom = aVisibleModelItems[oData.indexOfMarkedTableItem];
+		var oModelItemTo = aVisibleModelItems[fcalculateIndexTo()];
+
+		if (this._moveModelItems(this._getModelItemIndexByColumnKey(oModelItemFrom.columnKey), this._getModelItemIndexByColumnKey(oModelItemTo.columnKey))) {
+			this._switchMarkedTableItemTo(aVisibleTableItems[fcalculateIndexTo()]);
+		}
+	};
+
+	/**
+	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
+	 *        sSearchText="".
+	 * @private
+	 */
+	P13nSelectionPanel.prototype._filterModelItemsBySearchText = function() {
+		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var sSearchText = this._getSearchText();
+
+		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
+		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
+		// Escape special characters entered by user
+		sSearchText = sSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		// i = ignore case; g = global; m = multiline
+		var oRegExp = new RegExp(sSearchText, 'igm');
+		if (!oRegExp) {
+			return;
+		}
+
+		this._getVisibleModelItems().forEach(function(oModelItem) {
+			oModelItem.visible = false;
+			// Search in item text
+			if (oModelItem.text && oModelItem.text.match(oRegExp)) {
+				oModelItem.visible = true;
+			}
+			// Search in tooltip
+			if (oModelItem.tooltip && oModelItem.tooltip.match(oRegExp)) {
+				oModelItem.visible = true;
+			}
+		});
+		oModel.refresh();
+	};
+
+	/**
+	 * @private
+	 */
+	P13nSelectionPanel.prototype._scrollToSelectedItem = function(oItem) {
+		var oFocusedElement = null;
+		if (oItem) {
+			sap.ui.getCore().applyChanges();
+			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
+			if (!!oItem.getDomRef()) {
+				// get just focused DOM element
+				oFocusedElement = document.activeElement;
+
+				// focus actual item to get it into the scroll container viewport
+				oItem.focus();
+
+				// reset focus to previous DOM element
+				if (oFocusedElement && oFocusedElement.focus) {
+					oFocusedElement.focus();
+				}
+			}
+		}
+	};
 
 	/**
 	 * @private
