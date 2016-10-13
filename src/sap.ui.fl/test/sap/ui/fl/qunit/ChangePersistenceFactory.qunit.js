@@ -108,13 +108,9 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -143,15 +139,11 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "notAnApplication"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "notAnApplication"
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -178,15 +170,12 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : null,
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -213,22 +202,21 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 				"requests": [
 					{
 						"name": "sap.ui.fl.changes",
-						"reference": sComponentName
+						"reference": sComponentName + ".Component"
 					}
 				]
 			}
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -245,7 +233,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		assert.equal(oChangePersistenceStub.callCount, 1, "changes were requested once");
 		var oGetChangePersistenceForComponentCall = oStubbedGetChangePersistence.getCall(0).args[0];
-		assert.equal(oGetChangePersistenceForComponentCall, sComponentName, "the component name was passed correct");
+		assert.equal(oGetChangePersistenceForComponentCall, sComponentName  + ".Component", "the component name was passed correct");
 		var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
 		assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
 		assert.equal(oGetChangesForComponentCall.cacheKey, "<NO CHANGES>", "no changes was the cache information");
@@ -269,15 +257,14 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"appVariantId": sAppVariantId
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -308,7 +295,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 				"requests": [
 					{
 						"name": "sap.ui.fl.changes",
-						"reference": sComponentName,
+						"reference": sComponentName + ".Component",
 						"cachebusterToken": sCacheKey
 					}
 				]
@@ -316,15 +303,14 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
