@@ -13,6 +13,10 @@ Common compact/cozy
 	background: @sapUiObjectHeaderBackground;
 }
 
+.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageStickyAnchorBar {
+	border-bottom: 0.125rem solid transparent;
+}
+
 /* L fullscreen paddings */
 html.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapMTB,
 html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB /* overriding selector for desktop in split-container */
@@ -66,8 +70,8 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
-	font-family: @sapUiFontHeaderFamily; 
-	font-size: @sapMFontHeader6Size; 
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader6Size;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
 }
