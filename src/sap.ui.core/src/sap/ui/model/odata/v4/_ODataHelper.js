@@ -694,6 +694,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks whether the given binding can be refreshed. Only bindings which are not relative
+		 * to a V4 context can be refreshed.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|
+		 * sap.ui.model.odata.v4.ODataPropertyBinding} oBinding
+		 *   The binding to check
+		 * @returns {boolean}
+		 *   <code>true</code> if the binding can be refreshed
+		 *
+		 * @private
+		 */
+		isRefreshable : function (oBinding) {
+			return (!oBinding.bRelative || oBinding.oContext && !oBinding.oContext.getBinding);
+		},
+
+		/**
 		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
 		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *

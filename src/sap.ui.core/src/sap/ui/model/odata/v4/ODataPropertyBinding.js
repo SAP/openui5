@@ -30,7 +30,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -83,7 +83,8 @@ sap.ui.define([
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
-				this.setContextOnConstruction(oContext);
+				this.oContext = oContext;
+				this.makeCache();
 				this.bInitial = true;
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
@@ -369,7 +370,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the cache for absolute binding and bindings with a base context.
+	 * Creates the cache for absolute bindings and bindings with a base context.
 	 *
 	 * @private
 	 */
@@ -403,9 +404,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes this binding; refresh is supported for absolute bindings only.
-	 * A refresh retrieves data from the server using the given group ID and fires a change event
-	 * when new data is available.
+	 * Refreshes this binding. A refresh retrieves data from the server using the given group ID and
+	 * fires a change event when new data is available.
+	 * Refresh is supported for bindings which are not relative to a V4
+	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -425,7 +427,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.refresh = function (sGroupId) {
-		if (!this.oCache) {
+		if (!_ODataHelper.isRefreshable(this)) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 
@@ -467,7 +469,7 @@ sap.ui.define([
 	 * if a cache needs to be created and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
 	 *
-	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -486,22 +488,6 @@ sap.ui.define([
 			}
 		}
 	};
-
-
-	/**
-	 * Sets the context for the binding instance. Triggers (@link #makeCache) to check if a cache
-	 * needs to be created.
-	 *
-	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} oContext
-	 *   The context which is required as base for a relative path
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.setContextOnConstruction = function (oContext) {
-		this.oContext = oContext;
-		this.makeCache();
-	};
-
 
 	/**
 	 * Sets the optional type and internal type for this binding; used for formatting and parsing.

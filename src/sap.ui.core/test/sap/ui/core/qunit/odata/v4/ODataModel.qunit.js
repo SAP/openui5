@@ -331,21 +331,32 @@ sap.ui.require([
 			oError = new Error(),
 			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
+			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
 			oContext = Context.create(oModel, undefined, "/TEAMS('42')"),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
+			oListBinding3 = oModel.bindList("TEAM_2_EMPLOYEES"),
 			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined, {}),
-			oPropertyBinding = oModel.bindProperty("Name");
+			oPropertyBinding = oModel.bindProperty("Name"),
+			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
 		// cache proxy for oRelativeContextBinding
 		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
-		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(_ODataHelper).expects("createCacheProxy").twice().returns(oCacheProxy);
 		oRelativeContextBinding.setContext(oContext);
+		oListBinding3.setContext(oBaseContext);
+		this.mock(oPropertyBinding2).expects("makeCache");
+		this.mock(oPropertyBinding2).expects("checkUpdate");
+		oPropertyBinding2.setContext(oBaseContext);
 
 		oListBinding.attachChange(function () {});
+		oListBinding3.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
+		oPropertyBinding2.attachChange(function () {});
 		oRelativeContextBinding.attachChange(function () {});
 		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
+		this.mock(oListBinding3).expects("refresh").withExactArgs("myGroup");
+		this.mock(oPropertyBinding2).expects("refresh").withExactArgs("myGroup");
 		// check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
 		// check: no refresh on binding with relative path
