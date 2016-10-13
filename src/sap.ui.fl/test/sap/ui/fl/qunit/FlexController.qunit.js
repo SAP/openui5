@@ -544,8 +544,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		var mChanges = {
 			"someOtherId": [oSomeOtherChange]
 		};
+		var oAppComponent = {};
 
-		FlexController.applyChangesOnControl(mChanges, this.oControl);
+		FlexController.applyChangesOnControl(mChanges, oAppComponent, this.oControl);
 
 		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
 	});
@@ -562,8 +563,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			"someId": [oChange0, oChange1, oChange2, oChange3],
 			"someOtherId": [oSomeOtherChange]
 		};
+		var oAppComponent = {};
 
-		FlexController.applyChangesOnControl(mChanges, this.oControl);
+		FlexController.applyChangesOnControl(mChanges, oAppComponent, this.oControl);
 
 		assert.equal(oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
 		assert.equal(oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
