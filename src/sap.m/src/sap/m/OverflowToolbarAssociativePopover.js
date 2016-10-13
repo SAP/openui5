@@ -166,6 +166,24 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		return this._getAllContent().join(".");
 	};
 
+
+	/**
+	 * Recalculate the margin offsets so the Popover will never cover the control that opens it.
+	 * Overrides the popovers placement rules only for PlacementType.Top
+	 *
+	 * @param {sap.m.PlacementType} sCalculatedPlacement Calculated placement of the Popover
+	 * @param {object} oPosParams used to calculate actual values for the screen margins, so the Popover will never cover the Opener control or goes outside of the viewport
+	 * @override
+	 * @private
+	 */
+	OverflowToolbarAssociativePopover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
+		if (sCalculatedPlacement !== sap.m.PlacementType.Top){
+			return Popover.prototype._recalculateMargins.apply(this, arguments);
+		}
+
+		oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fOffsetY;
+	};
+
 	/**
 	 * Returns the content from the aggregation and association combined
 	 * @returns {(Array.<T>|string|*|!Array)}
