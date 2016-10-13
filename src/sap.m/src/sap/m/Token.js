@@ -9,24 +9,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 
-	/**
-	 * Constructor for a new Token.
-	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-	 * @param {object} [mSettings] Initial settings for the new control.
-	 *
-	 * @class
-	 * The <code>sap.m.Token</code> is a container of a single text item with a delete icon if the token is in edit mode.
-	 * @extends sap.ui.core.Control
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @public
-	 * @alias sap.m.Token
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model.
-	 */
+		/**
+		 * Constructor for a new Token.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 * <strong><em>Overview</em></strong>
+		 * <br><br>
+		 * Tokens are small items of information (similar to tags) that mainly serve to visualize previously selected items.
+		 * Tokens are manipulated by a {@link sap.m.Tokenizer Tokenizer}.
+		 * <br><br>
+		 * <strong><em>Structure</em></strong>
+		 * <br><br>
+		 * The tokens store single text items or sometimes key-value pairs, such as "John Miller (ID1234567)".
+		 * Each token also contains a delete icon, which is invisible if the token is in edit mode.
+		 *
+		 * <br><br>
+		 * <strong><em>Usage</em></strong>
+		 * <br><br>
+		 * <strong>When to use:</strong>
+		 * Tokens can only be used with the Tokenizer as a container.
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 *
+		 * @constructor
+		 * @public
+		 * @alias sap.m.Token
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {
 
 		library : "sap.m",

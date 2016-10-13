@@ -9,22 +9,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-	/**
-	 * Constructor for a new Tokenizer.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * Tokenizer displays multiple tokens
-	 * @extends sap.ui.core.Control
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @public
-	 * @alias sap.m.Tokenizer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
+		/**
+		 * Constructor for a new Tokenizer.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 * <strong><em>Overview</em></strong>
+		 * <br><br>
+		 * A tokenizer is a container for {@link sap.m.Token Tokens}. It also handles all actions associated with the tokens like adding, deleting, selecting and editing.
+		 * <br><br>
+		 * <strong><em>Structure</em></strong>
+		 * <br><br>
+		 * The tokens are stored in the <code>tokens</code> aggregation.
+		 * The tokenizer can determine, by setting the <code>editable</code> property, whether the tokens in it are editable.
+		 * Still the Token itself can determine if it is <code>editable</code>. This allows you to have non-editable Tokens in an editable Tokenizer.
+		 *
+		 * <br><br>
+		 * <strong><em>Usage</em></strong>
+		 * <br><br>
+		 * <strong>When to use:</strong>
+		 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 *
+		 * @constructor
+		 * @public
+		 * @alias sap.m.Tokenizer
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
 
 		library : "sap.m",
