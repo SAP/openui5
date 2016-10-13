@@ -66,11 +66,16 @@ sap.ui.define([
 	 */
 	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
 		var oChangeDefinition = oChangeWrapper.getDefinition();
+		//TODO remove sUnhideId when rta is switched to new logic to create reveal changes
 		if (oSpecificChangeInfo.sUnhideId) {
 			var oUnhideElement = sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId);
 			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oUnhideElement, mPropertyBag.appComponent);
+		} else if (oSpecificChangeInfo.revealedElementId ) {
+			//translate from FormElement (unstable id) to the label control (stable id and in public aggregation)
+			var oFormElement = sap.ui.getCore().byId(oSpecificChangeInfo.revealedElementId || oSpecificChangeInfo.sUnhideId);
+			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oFormElement.getLabel(), mPropertyBag.appComponent);
 		} else {
-			throw new Error("oSpecificChangeInfo.sUnhideId attribute required");
+			throw new Error("oSpecificChangeInfo.revealedElementId attribute required");
 		}
 	};
 
