@@ -22,6 +22,11 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<!-- SinonJS -->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<!-- Test functions -->
 		<script language="javascript">
@@ -215,7 +220,15 @@
 				tooltip: "Row tooltip",
 				showIntervalHeaders: false,
 				select: handleSelect,
-				intervalSelect: handleIntervalSelect
+				intervalSelect: handleIntervalSelect,
+				appointments: [
+					{
+						startDate: new Date("2015", "01", "07", "0", "0"),
+						endDate: new Date("2015", "01", "12", "23", "59"),
+						title: "Education",
+						type: "Type03"
+					}
+				]
 			}).placeAt("uiArea2");
 
 			qutils.delayTestStart();
@@ -900,6 +913,21 @@
 			test("focusNearestAppointment", function() {
 				oRow1.focusNearestAppointment(new Date("2015", "01", "01", "11", "00"));
 				equal(document.activeElement.id, "App1", "Appointment1 focused");
+			});
+
+			test("_determineVisibleAppointments", function () {
+				//arrange
+				var aAppointments = oRow2.getAppointments(),
+					oApp = aAppointments[0];
+
+				//assert
+				ok(!oApp.$().is(":visible"), "The appointment is visible");
+				//arrange
+				oRow2.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				sap.ui.getCore().applyChanges();
+				//assert
+				ok(oApp.$().is(":visible"), "The first appointment is visible");
+				equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 	</script>
 
