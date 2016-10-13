@@ -218,6 +218,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			}
 
+			if (mSettings && typeof mSettings._cacheToken === "object") {
+				this._mCacheToken = mSettings._cacheToken;
+				delete mSettings._cacheToken;
+			}
+
 			// registry of models from manifest
 			if (mSettings && typeof mSettings._manifestModels === "object") {
 				// use already created models from sap.ui.component.load if available
@@ -698,7 +703,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			models: mModels,
 			dataSources: mDataSources,
 			component: this,
-			mergeParent: true
+			mergeParent: true,
+			cacheToken: this._mCacheToken
 		});
 
 		if (!mAllModelConfigurations) {
@@ -974,6 +980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var oComponent = mOptions.component;
 		var oManifest = mOptions.manifest || oComponent.getManifestObject();
 		var bMergeParent = mOptions.mergeParent;
+		var mCacheToken = mOptions.cacheToken || {};
 		var sLogComponentName = oComponent ? oComponent.toString() : oManifest.getComponentName();
 
 		if (!mOptions.models) {
@@ -1070,6 +1077,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					if (!oModelConfig.uri) {
 						oModelConfig.uri = oDataSource.uri;
 						bIsDataSourceUri = true;
+
+						if (mCacheToken.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+							var sCacheToken = mCacheToken.dataSources[oDataSource.uri];
+							if (sCacheToken) {
+
+								// Lazy initialize settings and metadataUrlParams objects
+								oModelConfig.settings = oModelConfig.settings || {};
+								oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
+
+								// set sapbc cache token (override existing value)
+								oModelConfig.settings.metadataUrlParams["sapbc"] = sCacheToken;
+
+								// set sap-language (do not override existing value)
+								if (typeof oModelConfig.settings.metadataUrlParams["sap-language"] === "undefined") {
+									oModelConfig.settings.metadataUrlParams["sap-language"] = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+								}
+							}
+						}
+
 					}
 
 					if (oDataSource.type === 'OData' && oDataSource.settings && typeof oDataSource.settings.maxAge === "number") {
@@ -1103,14 +1129,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								continue;
 							}
 
+							var oAnnotationUri = new URI(oAnnotation.uri);
+
+							if (mCacheToken.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+								var sCacheToken = mCacheToken.dataSources[oAnnotation.uri];
+								if (sCacheToken) {
+
+									// set sapbc cache token (override existing value)
+									oAnnotationUri.setQuery("sapbc", sCacheToken);
+
+									// set sap-language (do not override existing value)
+									if (!oAnnotationUri.hasQuery("sap-language")) {
+										oAnnotationUri.setQuery("sap-language", sap.ui.getCore().getConfiguration().getSAPLogonLanguage());
+									}
+								}
+							}
+
 							// resolve relative to component
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var oAnnotationUri = oAnnotationSourceManifest.resolveUri(new URI(oAnnotation.uri)).toString();
+							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
 							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
-							oModelConfig.settings.annotationURI.push(oAnnotationUri);
+							oModelConfig.settings.annotationURI.push(sAnnotationUri);
 						}
 					}
 
@@ -1426,7 +1468,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// create an instance
 			var oInstance = new oClass(jQuery.extend({}, mSettings, {
 				id: sId,
-				componentData: oComponentData
+				componentData: oComponentData,
+				_cacheToken: vConfig.asyncHints && vConfig.asyncHints.cacheToken
 			}));
 			jQuery.sap.assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
@@ -1807,7 +1850,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						models: oManifestModels,
 						dataSources: oManifestDataSources,
 						manifest: oManifest,
-						componentData: oConfig.componentData
+						componentData: oConfig.componentData,
+						cacheToken: hints.cacheToken
 					});
 
 					if (mAllModelConfigurations) {

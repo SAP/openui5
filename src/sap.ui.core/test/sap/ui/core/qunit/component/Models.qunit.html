@@ -16,7 +16,8 @@
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-noConflict="true">
+		data-sap-ui-noConflict="true"
+		data-sap-ui-language="en-US">
 	</script>
 
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -412,6 +413,76 @@
 			//JSON Model, should not have an origin
 			// model: json
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
+
+			//ResourceModel should also not have an origin attached
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+
+		QUnit.test("metadata v2 with cacheToken", function(assert) {
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.parent",
+				asyncHints: {
+					cacheToken: {
+						dataSources: {
+							"/path/to/odata/service": "1476971059",
+							"/path/to/odata/service/with/trailing/slash/": "1476971462",
+							"/path/to/odata/service/with/trailing/slash/annotations.xml": "1476971136",
+							"path/to/local/odata/annotations/2": "1476971160"
+						}
+					}
+				}
+			});
+
+			// V1 ODataModel should not be affected by cache tokens
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service',
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2'],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+			// Model without "dataSource" reference should not be affected by cache tokens
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "v2-ODataModel-ServiceOrigin"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service/with/trailing/slash/',
+				metadataUrlParams: {
+					"sapbc": "1476971462",
+					"sap-language": "EN"
+				},
+				annotationURI: [
+					'/path/to/odata/service/with/trailing/slash/annotations.xml?sapbc=1476971136&sap-language=EN',
+					'v2models/parent/path/to/local/odata/annotations/2?sapbc=1476971160&sap-language=EN'
+				],
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			//JSON Model, should not have an origin
+			// model: json
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json');
 
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
@@ -1003,18 +1074,54 @@
 				//setup fake server
 				var oManifest = this.oManifest = {
 					"sap.app" : {
-						"id" : "samples.components.button"
+						"id" : "samples.components.button",
+						"dataSources": {
+							"ODataService1": {
+								"uri": "/path/to/odata/service1",
+								"settings": {
+									"annotations": ["Annotation1"]
+								}
+							},
+							"ODataService2": {
+								"uri": "/path/to/odata/service2",
+								"settings": {
+									"annotations": ["Annotation2"]
+								}
+							},
+							"Annotation1": {
+								"type": "ODataAnnotation",
+								"uri": "/path/to/odata/annotations/1"
+							},
+							"Annotation2": {
+								"type": "ODataAnnotation",
+								"uri": "/path/to/odata/annotations/2?sap-language=abc"
+							}
+						}
 					},
 					"sap.ui5": {
 						"models": {
 							"odata1": {
-								"type": "sap.ui.model.odata.v2.ODataModel",
-								"uri": "/path/to/odata/service1",
+								"dataSource": "ODataService1",
 								"preload": true
 							},
 							"odata2": {
 								"type": "sap.ui.model.odata.v2.ODataModel",
-								"uri": "/path/to/odata/service2"
+								"uri": "/path/to/odata/service2",
+								"settings": {
+									"metadataUrlParams": {
+										"custom-param": "foo-2"
+									}
+								}
+							},
+							"odata3": {
+								"dataSource": "ODataService2",
+								"settings": {
+									"metadataUrlParams": {
+										"custom-param": "foo-3",
+										"sapbc": "foo",
+										"sap-language": "bar"
+									}
+								}
 							},
 							"json1": {
 								"type": "sap.ui.model.json.JSONModel",
@@ -1087,6 +1194,7 @@
 				this.oLogErrorSpy.restore();
 				this.oLogWarningSpy.restore();
 				this.oServer.restore();
+				this.restoreGetUriParameters();
 				oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			}
 		});
@@ -1104,9 +1212,10 @@
 
 							// sap.ui.model.odata.v2.ODataModel
 							sinon.assert.callCount(this.modelSpy.odataV2, 1);
-							// model: "odata"
+							// model: "odata1"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-								serviceUrl: "/path/to/odata/service1"
+								serviceUrl: "/path/to/odata/service1",
+								annotationURI: ["/path/to/odata/annotations/1"]
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1129,9 +1238,9 @@
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 
-				// Should be called twice now (2nd model created)
+				// Should be called 3 times now (2nd and 3rd models created)
 				// sap.ui.model.odata.v2.ODataModel
-				sinon.assert.callCount(this.modelSpy.odataV2, 2);
+				sinon.assert.callCount(this.modelSpy.odataV2, 3);
 
 				// Should be called twice now (2nd model created)
 				// sap.ui.model.json.JSONModel
@@ -1154,6 +1263,7 @@
 				this.assertModelInstances({
 					"odata1": sap.ui.model.odata.v2.ODataModel,
 					"odata2": sap.ui.model.odata.v2.ODataModel,
+					"odata3": sap.ui.model.odata.v2.ODataModel,
 					"json1": sap.ui.model.json.JSONModel,
 					"json2": sap.ui.model.json.JSONModel,
 					"i18n1": sap.ui.model.resource.ResourceModel,
@@ -1182,9 +1292,10 @@
 
 							// sap.ui.model.odata.v2.ODataModel
 							sinon.assert.callCount(this.modelSpy.odataV2, 1);
-							// model: "odata"
+							// model: "odata1"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-								serviceUrl: "/path/to/odata/service1;o=XXX"
+								serviceUrl: "/path/to/odata/service1;o=XXX",
+								annotationURI: ["/path/to/odata/annotations/1"]
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1212,9 +1323,9 @@
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 
-				// Should be called twice now (2nd model created)
+				// Should be called 3 times now (2nd and 3rd models created)
 				// sap.ui.model.odata.v2.ODataModel
-				sinon.assert.callCount(this.modelSpy.odataV2, 2);
+				sinon.assert.callCount(this.modelSpy.odataV2, 3);
 
 				// Should be called twice now (2nd model created)
 				// sap.ui.model.json.JSONModel
@@ -1237,6 +1348,87 @@
 				this.assertModelInstances({
 					"odata1": sap.ui.model.odata.v2.ODataModel,
 					"odata2": sap.ui.model.odata.v2.ODataModel,
+					"odata3": sap.ui.model.odata.v2.ODataModel,
+					"json1": sap.ui.model.json.JSONModel,
+					"json2": sap.ui.model.json.JSONModel,
+					"i18n1": sap.ui.model.resource.ResourceModel,
+					"i18n2": sap.ui.model.resource.ResourceModel
+				});
+
+				// destroy the component
+				this.oComponent.destroy();
+
+				// check if all models got destroyed (uses the models from #assertModelInstances)
+				this.assertModelsDestroyed();
+
+			}.bind(this));
+		});
+
+		QUnit.test("Early model instantiation (with cacheToken)", function(assert) {
+
+			this.stubGetUriParameters();
+
+			return sap.ui.component({
+				manifestUrl: "/anylocation/manifest.json",
+				async: true,
+				asyncHints: {
+					cacheToken: {
+						dataSources: {
+							"/path/to/odata/service1": "1476348072",
+							"/path/to/odata/service2": "1476361076",
+							"/path/to/odata/annotations/1": "1476348278",
+							"/path/to/odata/annotations/2?sap-language=abc": "1476365059"
+						}
+					}
+				},
+				componentData: {
+					startupParameters: {
+						"sap-system": ["XXX"]
+					}
+				}
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+
+				// sap.ui.model.odata.v2.ODataModel
+				sinon.assert.callCount(this.modelSpy.odataV2, 3);
+
+				// model: "odata1"
+				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+					serviceUrl: "/path/to/odata/service1;o=XXX?sap-client=foo&sap-server=bar",
+					metadataUrlParams: {
+						"sapbc": "1476348072",
+						"sap-language": "EN"
+					},
+					annotationURI: [
+						"/path/to/odata/annotations/1?sapbc=1476348278&sap-language=EN"
+					]
+				});
+
+				// model: "odata2"
+				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+					serviceUrl: "/path/to/odata/service2;o=XXX",
+					metadataUrlParams: {
+						"custom-param": "foo-2"
+					}
+				});
+
+				// model: "odata3"
+				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+					serviceUrl: "/path/to/odata/service2;o=XXX?sap-client=foo&sap-server=bar",
+					metadataUrlParams: {
+						"custom-param": "foo-3",
+						"sapbc": "1476361076",
+						"sap-language": "bar"
+					},
+					annotationURI: [
+						"/path/to/odata/annotations/2?sap-language=abc&sapbc=1476365059"
+					]
+				});
+
+				this.assertModelInstances({
+					"odata1": sap.ui.model.odata.v2.ODataModel,
+					"odata2": sap.ui.model.odata.v2.ODataModel,
+					"odata3": sap.ui.model.odata.v2.ODataModel,
 					"json1": sap.ui.model.json.JSONModel,
 					"json2": sap.ui.model.json.JSONModel,
 					"i18n1": sap.ui.model.resource.ResourceModel,
@@ -1295,7 +1487,8 @@
 				sinon.assert.callCount(this.modelSpy.odataV2, 1);
 				// model: "odata"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-					serviceUrl: "/path/to/odata/service1"
+					serviceUrl: "/path/to/odata/service1",
+					annotationURI: ["/path/to/odata/annotations/1"]
 				});
 
 				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
@@ -1353,7 +1546,8 @@
 				sinon.assert.callCount(this.modelSpy.odataV2, 1);
 				// model: "odata"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-					serviceUrl: "/path/to/odata/service1"
+					serviceUrl: "/path/to/odata/service1",
+					annotationURI: ["/path/to/odata/annotations/1"]
 				});
 
 				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
