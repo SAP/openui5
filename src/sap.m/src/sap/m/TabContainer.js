@@ -444,6 +444,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
+			this.setProperty("showAddNewButton", bShowButton, true);
+
 			var oTabStrip = this._getTabStrip();
 			if (oTabStrip) {
 				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
