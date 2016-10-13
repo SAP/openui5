@@ -43,10 +43,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         oRm.write("<div");
 
         oRm.writeControlData(oControl);
-        oRm.writeAttribute("style", "width: " + this._iWidth + "px");
+        oRm.addStyle("width", this._iWidth + "px");
+        oRm.addStyle("height", this._iHeight + "px");
         oControl.getEnabled() ? oRm.writeAttribute("tabindex", "0") : oRm.writeAttribute("tabindex", "-1");
         oControl.getEnabled() ? oRm.addClass("sapMPointer") : oRm.addClass("sapMRIDisabled");
         oRm.addClass("sapMRI");
+        oRm.writeStyles();
         oRm.writeClasses();
         this.writeTooltip(oRm, oControl);
         this.writeAccessibility(oRm, oControl);
@@ -72,8 +74,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         // gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
         this._bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;
         this._sLabelID = oControl.getId() + "-ariaLabel";
-        this._iSymbolCount =  oControl.getMaxValue();
+        this._iSymbolCount = oControl.getMaxValue();
         this._iWidth = this._iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
+        this._iHeight = fIconSize + 2 * oControl._iPxPaddingSize;
         this._iSelectedWidth = iSelectedWidth;
         this._fIconSize = fIconSize;
     };
