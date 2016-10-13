@@ -138,7 +138,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			 * The function receives the entered filter value as parameter and returns the proper
 			 * value for the filter expression. Another option is to pass the class name of the type,
 			 * e.g.: <code>sap.ui.model.type.Date</code> or an expression similar to the binding syntax,
-			 * e.g.: <code>"\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: {} \}"</code>.
+			 * e.g.: <code>"\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: \{\} \}"</code>.
 			 * Here the escaping is mandatory to avoid handling by the binding parser.
 			 * By default the filter type is <code>sap.ui.model.type.String</code>.
 			 * @since 1.9.2
