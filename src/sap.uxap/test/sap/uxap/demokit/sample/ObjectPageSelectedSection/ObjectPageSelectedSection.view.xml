@@ -7,9 +7,9 @@
 		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
 		   xmlns:connections="sap.uxap.sample.SharedBlocks.connections"
-		   controllerName="sap.uxap.sample.ObjectPageInitiallySelectedSection.ObjectPageInitiallySelectedSection"
+		   controllerName="sap.uxap.sample.ObjectPageSelectedSection.ObjectPageSelectedSection"
 		   height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="true" initiallySelectedSection="personal">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="true" selectedSection="personal">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"

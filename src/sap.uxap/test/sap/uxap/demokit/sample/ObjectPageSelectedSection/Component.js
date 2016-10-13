@@ -1,8 +1,8 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
-	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageInitiallySelectedSection.Component", {
+	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageSelectedSection.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageInitiallySelectedSection.ObjectPageInitiallySelectedSection",
+			rootView: "sap.uxap.sample.ObjectPageSelectedSection.ObjectPageSelectedSection",
 			dependencies: {
 				libs: [
 					"sap.m"
@@ -12,8 +12,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageInitiallySelectedSection.view.xml",
-						"ObjectPageInitiallySelectedSection.controller.js",
+						"ObjectPageSelectedSection.view.xml",
+						"ObjectPageSelectedSection.controller.js",
 						"../SharedBlocks/employment/BlockEmpDetailPart1.js",
 						"../SharedBlocks/employment/BlockEmpDetailPart1.view.xml",
 						"../SharedBlocks/employment/BlockEmpDetailPart2.js",
