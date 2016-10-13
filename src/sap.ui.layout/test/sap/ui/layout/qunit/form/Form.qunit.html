@@ -12,11 +12,12 @@
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+		data-sap-ui-libs="sap.ui.layout, sap.m">
 	</script>
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script language="javascript">
@@ -36,17 +37,17 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement("C1E1",{
 							label: "Label1",
-							fields: [new sap.ui.commons.TextField("TF1", {required:true})]
+							fields: [new sap.m.Input("I1", {width: "10rem", required:true})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E2",{
-							label: new sap.ui.commons.Label("L1",{text:"Label2"}),
-							fields: [new sap.ui.commons.DatePicker("DP1",{ariaLabelledBy: "dummy"})]
+							label: new sap.m.Label("L1",{text:"Label2"}),
+							fields: [new sap.m.DatePicker("DP1",{width: "10rem", ariaLabelledBy: "dummy"})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E3",{
-							label: new sap.ui.commons.Label("L2",{text:"Label3", icon:"../../../commons/images/help.gif"}),
-							fields: [new sap.ui.commons.RadioButtonGroup("RBG1",{
-								items: [new sap.ui.core.Item({text: "true"}),
-								        new sap.ui.core.Item({text: "false"})]
+							label: new sap.m.Label("L2",{text:"Label3", icon:"../../../commons/images/help.gif"}),
+							fields: [new sap.m.RadioButtonGroup("RBG1",{
+								buttons: [new sap.m.RadioButton({text: "true"}),
+								          new sap.m.RadioButton({text: "false"})]
 							})]
 						})
 					]
@@ -55,13 +56,13 @@
 					title: new sap.ui.core.Title("C2T",{text: "Container2", icon: "../../images/controls/sap.ui.layout.form.FormContainer.gif", tooltip: "Title tooltip"}),
 					formElements: [
 						new sap.ui.layout.form.FormElement("C2E1",{
-							label: new sap.ui.commons.Label("L4",{text:"Label4"}),
-							fields: [new sap.ui.commons.TextField("TF3"),
-							         new sap.ui.commons.TextField("TF4",{width: "5em", required: true})]
+							label: new sap.m.Label("L4",{text:"Label4"}),
+							fields: [new sap.m.Input("I3", {width: "10rem"}),
+							         new sap.m.Input("I4",{width: "3rem", required: true})]
 						}),
 						new sap.ui.layout.form.FormElement("C3E3",{
 							label: "Label5",
-							fields: [new sap.ui.commons.DropdownBox("DdB1",{
+							fields: [new sap.m.Select("Sel1",{
 								items: [new sap.ui.core.ListItem({text: "one"}),
 								        new sap.ui.core.ListItem({text: "two"}),
 								        new sap.ui.core.ListItem({text: "three"})]
@@ -75,23 +76,23 @@
 					expandable: true,
 					formElements: [
 						new sap.ui.layout.form.FormElement("C3E1",{
-							fields: [new sap.ui.commons.CheckBox({text: 'one'}),
-							         new sap.ui.commons.CheckBox({text: 'two'})]
+							fields: [new sap.m.CheckBox("CB1", {text: 'one'}),
+							         new sap.m.CheckBox("CB2", {text: 'two'})]
 						}),
 						new sap.ui.layout.form.FormElement("C3E2",{
-							fields: [new sap.ui.commons.CheckBox({text: 'three'})]
+							fields: [new sap.m.CheckBox("CB3", {text: 'three'})]
 						})
 					]
 				}),
 				new sap.ui.layout.form.FormContainer("C4",{
 					formElements: [
 						new sap.ui.layout.form.FormElement("C4E1",{
-							fields: [new sap.ui.commons.Button({text: 'OK'}),
-							         new sap.ui.commons.Button({text: 'Cancel'})]
+							fields: [new sap.m.Button({text: 'OK'}),
+							         new sap.m.Button({text: 'Cancel'})]
 						}),
 						new sap.ui.layout.form.FormElement("C4E2",{
 							visible: false,
-							fields: [new sap.ui.commons.TextField("C4E2T1", {value: 'invisible'})]
+							fields: [new sap.m.Input("C4E2T1", {width: "10rem", value: 'invisible'})]
 						})
 					]
 				}),
@@ -100,7 +101,7 @@
 					visible: false,
 					formElements: [
 						new sap.ui.layout.form.FormElement("C5E1",{
-							fields: [new sap.ui.commons.TextField("C5E1T1", {value: 'invisible'})]
+							fields: [new sap.m.Input("C5E1T1", {width: "10rem", value: 'invisible'})]
 						})
 					]
 				})]
@@ -118,8 +119,8 @@
 					title: "Container1",
 					formElements: [
 						new sap.ui.layout.form.FormElement("F2C1E1",{
-							label: "Label1",
-							fields: [new sap.ui.commons.TextField("F2C1E1TF1", {required:true})]
+							label: "Label 1",
+							fields: [new sap.m.Input("F2C1E1TF1", {width: "10rem", required:true})]
 						})
 					]
 				})]
@@ -137,7 +138,7 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement("F3C1E1",{
 							label: "Label1",
-							fields: [new sap.ui.commons.TextField("F3C1E1TF1", {required:true})]
+							fields: [new sap.m.Input("F3C1E1TF1", {width: "10rem", required:true})]
 						})
 					]
 				})]
@@ -170,10 +171,10 @@
 			var oElement = sap.ui.getCore().byId("C1E1");
 			//label must return text if text entered, control if control enterd
 			equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
-			ok(!(oElement.getAggregation("label") instanceof sap.ui.commons.Label), "Label as text entered must not be an control in aggregation");
-			ok(oElement.getLabelControl() instanceof sap.ui.commons.Label, "Label as text endeted must be an control in getLabelControl");
+			ok(!(oElement.getAggregation("label") instanceof sap.m.Label), "Label as text entered must not be an control in aggregation");
+			ok(oElement.getLabelControl() instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
 			oElement = sap.ui.getCore().byId("C1E2");
-			ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
+			ok(oElement.getLabel() instanceof sap.m.Label, "getLabel(): Label as control entered must return control");
 			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
 
 			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
@@ -216,17 +217,17 @@
 
 		test("FormControls", function() {
 			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
-			ok(jQuery('label:contains("Label1")').hasClass("sapUiLblReq"), "Label1 is renderd as required");
-			equal(jQuery('label:contains("Label1")').attr("for"), "TF1", "Label1 (as text) is renderd for TextField1");
-			ok(jQuery("#L4").hasClass("sapUiLblReq"), "Label4 is renderd as required");
-			ok(jQuery.sap.domById("TF1"), "TextField is rendered");
-			equal(jQuery("#TF1").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "TextField aria-labelledby points to label")
-			equal(jQuery("#TF3").attr("aria-labelledby"), "L4", "TextField3 aria-labelledby points to label")
-			equal(jQuery("#TF4").attr("aria-labelledby"), "L4", "TextField4 aria-labelledby points to label")
+			ok(jQuery('label:contains("Label1")').hasClass("sapMLabelRequired"), "Label1 is renderd as required");
+			equal(jQuery('label:contains("Label1")').attr("for"), "I1-inner", "Label1 (as text) is renderd for Input1");
+			ok(jQuery("#L4").hasClass("sapMLabelRequired"), "Label4 is renderd as required");
+			ok(jQuery.sap.domById("I1"), "Input is rendered");
+			equal(jQuery("#I1-inner").attr("aria-labelledby"), jQuery('label:contains("Label1")').attr("id"), "Input aria-labelledby points to label")
+			equal(jQuery("#I3-inner").attr("aria-labelledby"), "L4", "Input3 aria-labelledby points to label")
+			equal(jQuery("#I4-inner").attr("aria-labelledby"), "L4", "Input4 aria-labelledby points to label")
 			ok(jQuery.sap.domById("L1"), "Label (as control) is rendered");
-			equal(jQuery("#L1").attr("for"), "DP1-input", "Label1 is renderd for DatePicker");
+			equal(jQuery("#L1").attr("for"), "DP1-inner", "Label1 is renderd for DatePicker");
 			ok(jQuery.sap.domById("DP1"), "DatePicker is rendered");
-			equal(jQuery("#DP1-input").attr("aria-labelledby"), "L1 dummy", "DatePicker aria-labelledby changed (contains reference to label)");
+			ok(jQuery("#DP1-inner").attr("aria-labelledby").search("L1 dummy") >= 0, "DatePicker aria-labelledby changed (contains reference to label)");
 			ok(jQuery.sap.domById("RBG1"), "RadioButtonGroup is rendered");
 			ok(!jQuery.sap.domById("C4E2T1"), "Content of invisible Element is not rendered");
 			ok(!jQuery.sap.domById("C5e1T1"), "Content of invisible Container is not rendered");
@@ -247,27 +248,43 @@
 
 		module("Interaction");
 
-//		test("Form", 0, function() {
-//
-//		});
-
 		test("Container", function() {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
-			qutils.triggerMouseEvent("C3--Exp", "click");
+			qutils.triggerEvent("tap", "C3--Exp");
 			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after click on expander");
 			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
-		});
 
-//		test("Element", 0, function() {
-//
-//		});
+			jQuery("#C3--Exp").focus();
+			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyup(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after ENTER on expander");
+			equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+
+			jQuery("#CB1").focus();
+			qutils.triggerKeydown(jQuery("#CB1").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
+			ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after NumpadMinus on control");
+			equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
+
+			jQuery("#C3--Exp").focus();
+			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
+			ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after NumpadPlus on expander");
+			equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+
+			// container navigation
+			jQuery("#I1").focus();
+			qutils.triggerKeydown(jQuery("#I1").get(0), jQuery.sap.KeyCodes.F6, false, false, false);
+			equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
+
+			jQuery("#I3").focus();
+			qutils.triggerKeydown(jQuery("#I3").get(0), jQuery.sap.KeyCodes.F6, true, false, false);
+			equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
+		});
 
 		</script>
 
 	<title>qUnit Test for Form</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../../images/controls/sap.ui.layout.form.Form.gif">
-
 
 </head>
 <body class="sapUiBody">
