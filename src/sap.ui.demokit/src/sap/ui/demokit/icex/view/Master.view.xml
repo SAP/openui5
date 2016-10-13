@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	xmlns:control="control"
 	xmlns:h="http://www.w3.org/1999/xhtml">
 	<Page
@@ -47,6 +48,7 @@
 				<items>
 					<StandardListItem
 						title="{name}"
+						app:tags="{tags}"
 						type="{ui>/listItemType}"
 						press="pressIconListItem"
 						icon="sap-icon://{name}"
