@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/icex/model/Config",
-	"sap/ui/Device"], function (Controller, Filter, FilterOperator, JSONModel, Config, Device) {
+	"sap/ui/Device"
+], function (Controller, Filter, FilterOperator, JSONModel, Config, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Master", {
@@ -30,8 +31,9 @@ sap.ui.define([
 
 		search : function () {
 
-			var searchValue = this.getView().byId("search").getValue();
-			var showSearch = (searchValue.length !== 0);
+			var searchValue = this.getView().byId("search").getValue(),
+			showSearch = (searchValue.length !== 0),
+			filterTags = new Filter("tags", FilterOperator.Contains, searchValue);
 
 			// switch visibility of lists
 			var iconList = this.getView().byId("iconList");
@@ -42,8 +44,7 @@ sap.ui.define([
 			// filter icon list
 			var binding = iconList.getBinding("items");
 			if (showSearch && binding !== undefined) {
-				var filterName = new Filter("name", FilterOperator.Contains, searchValue);
-				binding.filter([filterName]);
+				binding.filter([filterTags]);
 			}
 		},
 
