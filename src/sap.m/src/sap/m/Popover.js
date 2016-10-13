@@ -602,16 +602,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			// initialFocus, beginButton, endButton, and popover itself.
 			// focus has to be inside/on popover otherwise autoclose() will not work
 				sFocusId = this._getInitialFocusId(),
-				sTheme = sap.ui.getCore().getConfiguration().getTheme(),
-				oParentDomRef, iPlacePos, bThemeBelize, aCompactParents;
+				oParentDomRef, iPlacePos, bForceCompactArrowOffset, aCompactParents;
 
 			oParentDomRef = (oControl.getDomRef && oControl.getDomRef()) || oControl;
 			aCompactParents = jQuery(oParentDomRef).closest(".sapUiSizeCompact");
 
+			// A theme can force the usage of compact arrow offset in all content density modes, by setting sapMPopoverForceCompactArrowOffset variable.
+			// This is needed when a theme defines only a compact arrow for all modes.
+			bForceCompactArrowOffset = Parameters.get("sapMPopoverForceCompactArrowOffset") === "true";
+
 			// Determines if the Popover will be rendered in a compact mode
-			bThemeBelize = sTheme === "sap_belize" || sTheme === "sap_belize_plus";
 			this._bSizeCompact = sap.m._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
-			this._bUseCompactArrow = this._bSizeCompact || bThemeBelize;
+			this._bUseCompactArrow = this._bSizeCompact || bForceCompactArrowOffset;
 
 			this._adaptPositionParams();
 

@@ -3,6 +3,9 @@
 /* Belize theme                   */
 /* ============================== */
 
+/* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
+@sapMPopoverForceCompactArrowOffset: true;
+
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
 	box-shadow: @horizontalShadow @verticalShadow 0.750rem 0 fade(@sapUiContentShadowColor, 30), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
