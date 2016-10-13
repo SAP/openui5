@@ -488,7 +488,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
 	});
 
-	QUnit.test("creates a change for a map of a control with id and appComponent", function (assert) {
+	QUnit.test("creates a change for a map of a control with id, control type and appComponent", function (assert) {
 
 		var oAppComponent = new sap.ui.core.UIComponent();
 		var mControl = {id : this.oControl.getId(), appComponent : oAppComponent, controlType : "sap.ui.core.Control"};

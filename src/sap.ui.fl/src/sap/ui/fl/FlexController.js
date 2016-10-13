@@ -65,6 +65,9 @@ sap.ui.define([
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
 	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
+	 * @param {string} oControl.id id of the control in case a map has been used to specify the control
+	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @param {string} oControl.controlType control type of the control in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
