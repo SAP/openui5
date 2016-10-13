@@ -557,9 +557,43 @@
 			pattern: "wwww",
 			calendarType: sap.ui.core.CalendarType.Islamic
 		});
-		equal(oDateFormat.format(new Date(2015, 0, 1)), "", "week number isn't supported for Islamic calendar");
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 11", "week number in Islamic calendar");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww",
+			calendarType: sap.ui.core.CalendarType.Japanese
+		});
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
 	});
 
+	test("format and parse weekYear/weekInYear pattern", function() {
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "Y-w"
+		});
+		equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For en-US 1st of January is always week 1");
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For en-US 1st of January is always week 1");
+		equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For en-US 1st of January is always week 1");
+		equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For en-US 31st of December is always week 53");
+		equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For en-US 31st of December is always week 53");
+		equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For en-US 31st of December is always week 53");
+		equal(oDateFormat.parse("2015-1").valueOf(), new Date(2015, 0, 1).valueOf(), "Date can be correctly parsed to 1st of January 2015");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "Y-w"
+		});
+		equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For de-DE 1st of January 2014 is week 1/2014");
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For de-DE 1st of January 2015 is week 1/2015");
+		equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For de-DE 1st of January 2016 is week 53/2015");
+		equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For de-DE 31st of December 2014 is week 1/2015");
+		equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For de-DE 31st of December 2015 is week 53/2015");
+		equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For de-DE 31st of December 2016 is week 52/2016");
+		equal(oDateFormat.parse("2015-1").valueOf(), new Date(2014, 11, 29).valueOf(), "Date can be correctly parsed to 29th of December 2014");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+	
 	test("origin info", function() {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
