@@ -157,5 +157,24 @@
         "references": []
       }
     ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "ea9f8958c8897041183d8c3d72a9ed19777edbfb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.theming.Parameters: Correctly rewrite relative urls",
+        "references": []
+      }
+    ]
   }
 }

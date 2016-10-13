@@ -536,13 +536,6 @@
         "type": "FIX",
         "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
         "references": []
-      },
-      {
-        "id": "c4879af3bdca06497818c9dc9919b03ca90815c0",
-        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
-        "references": []
       }
     ]
   },
@@ -569,59 +562,42 @@
         "type": "FIX",
         "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
         "references": []
-      },
-      {
-        "id": "f5adf42db34dc2e880ad0da8891e5c27a96dd573",
-        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
-        "references": []
-      },
-      {
-        "id": "c4879af3bdca06497818c9dc9919b03ca90815c0",
-        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
-        "references": []
       }
     ]
   },
   "1.40.9": {
     "date": "September 2016",
+    "notes": []
+  },
+  "1.40.10": {
+    "date": "October 2016",
     "notes": [
       {
-        "id": "9233d920656f2db9f25b08e51dbeda538ff66fbd",
-        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
         "references": []
       },
       {
-        "id": "caf2f13d7a87084554bb249898eae2d807e5ac7f",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "id": "e96143974961540d9ce9961135c85a6b1491b742",
+        "author": "i032160 \u003cevgeni.katsarski@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.DatePicker: keyboard support wrong if different calendarType used",
+        "text": "commons.Dialog: Center dialog according the view point size",
         "references": []
       },
       {
-        "id": "8cf25764dfb1d86cc93b098c16cec298cd7ac03c",
+        "id": "fc5f23c1eb01cdddd4056a848495a8eea5565566",
         "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
+        "text": "sap.ui.commons.DropDownBox: Selecting text and focusing does not cycle anymore.",
         "references": []
       },
       {
-        "id": "f5adf42db34dc2e880ad0da8891e5c27a96dd573",
-        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "id": "b5bce87b39a5eeb56c3dcaf9558c5cf3ee2c463a",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
-        "references": []
-      },
-      {
-        "id": "c4879af3bdca06497818c9dc9919b03ca90815c0",
-        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.ui.core.Icon: mirroring of Icon should be done on pesudo element",
+        "text": "sap.ui.commons.TabStrip: Destroying tabs is now correct",
         "references": []
       }
     ]

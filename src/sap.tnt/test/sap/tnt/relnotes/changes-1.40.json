@@ -107,48 +107,35 @@
   },
   "1.40.6": {
     "date": "August 2016",
-    "notes": [
-      {
-        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-        "references": []
-      }
-    ]
+    "notes": []
   },
   "1.40.7": {
     "date": "September 2016",
-    "notes": [
-      {
-        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-        "references": []
-      }
-    ]
+    "notes": []
   },
   "1.40.8": {
     "date": "September 2016",
-    "notes": [
-      {
-        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-        "references": []
-      }
-    ]
+    "notes": []
   },
   "1.40.9": {
     "date": "September 2016",
+    "notes": []
+  },
+  "1.40.10": {
+    "date": "October 2016",
     "notes": [
       {
-        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "id": "d45be16fdf25808f721bc74d4108d10574632d9f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
+        "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
+        "references": []
+      },
+      {
+        "id": "491ee8eb2761659678342580593fbf5bb6c19c2e",
+        "author": "Svetoslav Spasov \u003csvetoslav.spasov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
         "references": []
       }
     ]
