@@ -470,6 +470,32 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 		});
 	});
+	
+	QUnit.test("create_app_setTitle descriptor change", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorChange;
+		var mParameter = {
+				"type" : "XTIT",
+				"maxLength" : 20,
+				"comment" : "a comment",
+				"value" : {
+					"" : "Default Title",
+					"en":"English Title",
+					"de":"Deutscher Titel",
+					"en_US":"English Title in en_US"
+				}
+			};
+		return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);		
+		}).then(function(_oDescriptorChange){
+			_oDescriptorChange._getChangeToSubmit();
+			assert.ok(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], 'Initial empty text key replaced');
+			assert.ok(!_oDescriptorChange._mChangeFile.texts[''], 'Initial empty text key removed ');
+			assert.deepEqual(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+		});
+	});
 
 	QUnit.test("create_app_setSubTitle", function(assert) {
 		var _oDescriptorInlineChange;

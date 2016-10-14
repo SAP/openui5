@@ -121,6 +121,7 @@ sap.ui.define([
 
 		//create Change
 		this._mChangeFile.content = mInlineChange.content;
+		this._mChangeFile.texts = mInlineChange.texts;
 		var oChange = new Change(this._mChangeFile);
 
 		if ( this._sTransportRequest ) {
@@ -158,6 +159,15 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 	DescriptorChangeFactory.prototype.createNew = function(sReference,oInlineChange,sLayer) {
+		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId){
+			//providing "hosting id" for appdescr_app_setTitle and similar
+			//"hosting id" is descriptor variant id
+			if ( _oDescriptorInlineChange["setHostingIdForTextKey"] ){
+				_oDescriptorInlineChange.setHostingIdForTextKey(sId);
+			}
+		};
+		fSetHostingIdForTextKey(oInlineChange,sReference);
+
 		var mPropertyBag = {};
 		mPropertyBag.changeType = oInlineChange._getChangeType();
 		mPropertyBag.componentName = sReference;
