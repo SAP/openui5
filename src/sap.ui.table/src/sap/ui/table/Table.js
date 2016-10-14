@@ -808,6 +808,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return [];
 		}
 
+		var iDefaultRowHeight = this._getDefaultRowHeight();
+
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr");
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr");
 		var aRowItemHeights = [];
@@ -821,7 +823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oScrollRowClientRect = aScrollRowItems[i].getBoundingClientRect();
 			var iRowHeight = oScrollRowClientRect.bottom - oScrollRowClientRect.top;
 
-			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight));
+			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight, iDefaultRowHeight));
 		}
 
 		return aRowItemHeights;
@@ -1083,7 +1085,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
-		this._iDefaultRowHeight = undefined;
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
 		var $this = this.$();
@@ -1170,7 +1171,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._resetRowHeights();
 		var aRowHeights = this._collectRowHeights();
-		this._getDefaultRowHeight(aRowHeights);
 
 		var iRowContentSpace = 0;
 		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
@@ -2081,7 +2081,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			jQuery("body").bind('webkitTransitionEnd transitionend',
 				jQuery.proxy(function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {
-						this._iDefaultRowHeight = undefined;
 						this._updateTableSizes();
 					}
 			}, this));
@@ -4534,7 +4533,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oRM = new sap.ui.getCore().createRenderManager(),
 				oRenderer = this.getRenderer();
 
-			this._iDefaultRowHeight = undefined;
 			oRenderer.renderTableCCnt(oRM, this);
 			oRM.flush(oTBody, false, false);
 			oRM.destroy();
@@ -4587,23 +4585,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Determines the default row height, based upon the height of the row template.
 	 * @private
 	 */
-	Table.prototype._getDefaultRowHeight = function(aRowHeights) {
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iDefaultRowHeight = this.getRowHeight() || 28;
-		} else {
-			if (!this._iDefaultRowHeight && this.getDomRef()) {
-				aRowHeights = aRowHeights || this._collectRowHeights();
-				if (aRowHeights && aRowHeights.length > 0) {
-					this._iDefaultRowHeight = aRowHeights[0];
-				}
-			}
-
-			if (!this._iDefaultRowHeight) {
-				this._iDefaultRowHeight = 28;
-			}
-		}
-
-		return this._iDefaultRowHeight;
+	Table.prototype._getDefaultRowHeight = function() {
+		var sContentDensity = TableUtils.getContentDensity(this);
+		// +1 for the border
+		return this.getRowHeight() || TableUtils.CONTENT_DENSITY_ROW_HEIGHTS[sContentDensity] + 1;
 	};
 
 	/**
