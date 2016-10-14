@@ -12,11 +12,12 @@
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+		data-sap-ui-libs="sap.ui.layout, sap.m">
 	</script>
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script language="javascript">
@@ -25,6 +26,7 @@
 
 		var oLayout1 = new sap.ui.layout.form.ResponsiveLayout("Layout1");
 		var oForm1 = new sap.ui.layout.form.Form("F1",{
+			editable: true,
 			title: new sap.ui.core.Title("F1T",{text: "Form1"}),
 			layout: oLayout1,
 			formContainers: [
@@ -32,7 +34,7 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F1C1E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F1C1E1_T1",{value: "Text"})]
+									fields: [new sap.m.Input("F1C1E1_T1",{value: "Text"})]
 								})
 							]
 					})
@@ -43,6 +45,7 @@
 			backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent
 		});
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
+			editable: true,
 			title: "Form2",
 			layout: oLayout2,
 			formContainers: [
@@ -51,8 +54,8 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F2C1E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F2C1E1_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F2C1E1_T2",{value: "Text"})]
+									fields: [new sap.m.Input("F2C1E1_T1",{value: "Text"}),
+									         new sap.m.Input("F2C1E1_T2",{value: "Text"})]
 								})
 							]
 					})
@@ -63,6 +66,7 @@
 			backgroundDesign: sap.ui.layout.BackgroundDesign.Solid
 		});
 		var oForm3 = new sap.ui.layout.form.Form("F3",{
+			editable: true,
 			title: "Form3",
 			layout: oLayout3,
 			formContainers: [
@@ -71,13 +75,13 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F3C1E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C1E1_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C1E1_T2",{value: "Text"})]
+									fields: [new sap.m.Input("F3C1E1_T1",{value: "Text"}),
+									         new sap.m.Input("F3C1E1_T2",{value: "Text"})]
 								}),
 							new sap.ui.layout.form.FormElement("F3C1E2",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C1E2_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C1E2_T2",{value: "Text"})]
+									fields: [new sap.m.Input("F3C1E2_T1",{value: "Text"}),
+									         new sap.m.Input("F3C1E2_T2",{value: "Text"})]
 								})
 							]
 					}),
@@ -87,13 +91,13 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F3C2E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C2E1_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C2E1_T2",{value: "Text"})]
+									fields: [new sap.m.Input("F3C2E1_T1",{value: "Text"}),
+									         new sap.m.Input("F3C2E1_T2",{value: "Text"})]
 								}),
 							new sap.ui.layout.form.FormElement("F3C2E2",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C2E2_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C2E2_T2",{value: "Text",
+									fields: [new sap.m.Input("F3C2E2_T1",{value: "Text"}),
+									         new sap.m.Input("F3C2E2_T2",{value: "Text",
 														layoutData: new sap.ui.layout.ResponsiveFlowLayoutData("F3C2E2_T2LD",{linebreak: true})
 									         })],
 									layoutData: new sap.ui.layout.ResponsiveFlowLayoutData("F3C2E2LD",{linebreak: true})
@@ -101,7 +105,7 @@
 							new sap.ui.layout.form.FormElement("F3C2E3",{
 									visible: false,
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C2E3_T1",{value: "invisible"})],
+									fields: [new sap.m.Input("F3C2E3_T1",{value: "invisible"})],
 									layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})
 								})
 							],
@@ -114,13 +118,13 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F3C3E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C3E1_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C3E1_T2",{value: "Text"})]
+									fields: [new sap.m.Input("F3C3E1_T1",{value: "Text"}),
+									         new sap.m.Input("F3C3E1_T2",{value: "Text"})]
 								}),
 							new sap.ui.layout.form.FormElement("F3C3E2",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C3E2_T1",{value: "Text"}),
-									         new sap.ui.commons.TextField("F3C3E2_T2",{value: "Text"})],
+									fields: [new sap.m.Input("F3C3E2_T1",{value: "Text"}),
+									         new sap.m.Input("F3C3E2_T2",{value: "Text"})],
 									layoutData: new sap.ui.core.VariantLayoutData({
 										multipleLayoutData: [new sap.ui.core.LayoutData(),
 										                     new sap.ui.layout.ResponsiveFlowLayoutData("F3C3E2LD",{linebreak: true})]})
@@ -136,7 +140,7 @@
 						formElements: [
 							new sap.ui.layout.form.FormElement("F3C5E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F3C5E1_T1",{value: "Text"})]
+									fields: [new sap.m.Input("F3C5E1_T1",{value: "Text"})]
 								})
 							]
 					}),
@@ -144,7 +148,7 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement("F3C6E1",{
 								label: "Label",
-								fields: [new sap.ui.commons.TextField("F3C6E1_T1",{value: "Text"})]
+								fields: [new sap.m.Input("F3C6E1_T1",{value: "Text"})]
 							})
 						]
 					})
@@ -154,36 +158,40 @@
 		// test toolbar as header
 		var oLayout4 = new sap.ui.layout.form.ResponsiveLayout("Layout4");
 		var oForm4 = new sap.ui.layout.form.Form("F4",{
+			editable: true,
 			title: new sap.ui.core.Title("F4-T",{text: "Form4"}),
-			toolbar: new sap.ui.commons.Toolbar("F4-TB1", {
-				items: [new sap.ui.commons.TextView("F4-Title", {text: "Form 4", design: sap.ui.commons.TextViewDesign.H3, tooltip: "Title tooltip"})],
-				rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+			toolbar: new sap.m.Toolbar("F4-TB1", {
+				content: [new sap.m.Title("F4-Title", {text: "Form 4", level: sap.ui.core.TitleLevel.H3, titleStyle: sap.ui.core.TitleLevel.H3, tooltip: "Title tooltip"}),
+				          new sap.m.ToolbarSpacer(),
+				          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 			}),
 			ariaLabelledBy: "F4-Title",
 			layout: oLayout4,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F4C1",{
 						title: new sap.ui.core.Title("F4-C1T",{text: "Container 1"}),
-						toolbar: new sap.ui.commons.Toolbar("F4-TB2", {
-							items: [new sap.ui.commons.TextView("F4C1-Title", {text: "Container 1", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
-							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						toolbar: new sap.m.Toolbar("F4-TB2", {
+							content: [new sap.m.Title("F4C1-Title", {text: "Container 1", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+							          new sap.m.ToolbarSpacer(),
+							          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 						}),
 						ariaLabelledBy: "F4C1-Title",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F4C1E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F4C1E1_T1")]
+									fields: [new sap.m.Input("F4C1E1_T1")]
 								})]
 					}),
 				new sap.ui.layout.form.FormContainer("F4C2",{
-						toolbar: new sap.ui.commons.Toolbar("F4-TB3", {
-							items: [new sap.ui.commons.TextView("F4C2-Title", {text: "Container 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
-							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						toolbar: new sap.m.Toolbar("F4-TB3", {
+							content: [new sap.m.Title("F4C2-Title", {text: "Container 2", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+							          new sap.m.ToolbarSpacer(),
+							          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 						}),
 						formElements: [
 							new sap.ui.layout.form.FormElement("F4C2E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F4C2E1_T1")]
+									fields: [new sap.m.Input("F4C2E1_T1")]
 								})]
 					})]
 			}).placeAt("uiArea4");
@@ -292,14 +300,14 @@
 
 		test("Fields Rendering", function() {
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F1C1E1").getLabelControl().getId()), "Label1 rendered");
-			ok(jQuery.sap.domById("F1C1E1_T1"), "TextField1 rendered");
+			ok(jQuery.sap.domById("F1C1E1_T1"), "Input1 rendered");
 
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F2C1E1").getLabelControl().getId()), "Form2: Label rendered");
-			ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: TextField1 rendered");
-			ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: TextField2 rendered");
+			ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: Input1 rendered");
+			ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: Input2 rendered");
 
-			ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - TextField not rendered");
-			ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - TextField not rendered");
+			ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - Input not rendered");
+			ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - Input not rendered");
 		});
 
 		test("Aria", function() {
@@ -333,8 +341,8 @@
 							formElements: [
 									new sap.ui.layout.form.FormElement("F3C4E1",{
 										label: "Label",
-										fields: [new sap.ui.commons.TextField("F3C4E1_T1",{value: "Text"}),
-										         new sap.ui.commons.TextField("F3C4E1_T2",{value: "Text"})]
+										fields: [new sap.m.Input("F3C4E1_T1",{value: "Text"}),
+										         new sap.m.Input("F3C4E1_T2",{value: "Text"})]
 									})
 					]
 				})
@@ -345,7 +353,7 @@
 			ok(jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout rendered");
 			ok(jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout for content rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form3: new Label1 rendered");
-			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: new TextField1 rendered");
+			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: new Input1 rendered");
 		});
 
 		test("add element", function() {
@@ -353,23 +361,23 @@
 			oContainer.addFormElement(
 					new sap.ui.layout.form.FormElement("F3C4E2",{
 						label: "Label",
-						fields: [new sap.ui.commons.TextField("F3C4E2_T1",{value: "Text"})]
+						fields: [new sap.m.Input("F3C4E2_T1",{value: "Text"})]
 					})
 				);
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout rendered");
 			ok(!jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: new Element2 no ResponsiveFlowLayout for content rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: new Label2 rendered");
-			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new TextField1 rendered");
+			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new Input1 rendered");
 		});
 
 		test("add field", function() {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
-			oElement.addField(new sap.ui.commons.TextField("F3C4E2_T2",{value: "Text"}));
+			oElement.addField(new sap.m.Input("F3C4E2_T2",{value: "Text"}));
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout for content rendered");
-			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new still TextField1 rendered");
-			ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: new TextField2 rendered");
+			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new still Input1 rendered");
+			ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: new Input2 rendered");
 		});
 
 		test("make Element invisible", function() {
@@ -379,7 +387,7 @@
 			ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout does not exist any more.");
 			ok(!sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: ResponsiveFlowLayout for Element content does not exist any more.");
 			ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 not longer rendered");
-			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
+			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 not longer rendered");
 		});
 
 		test("make Element visible", function() {
@@ -391,7 +399,7 @@
 			ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
 			ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 rendered");
-			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 rendered");
+			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 rendered");
 		});
 
 		test("make Container invisible", function() {
@@ -403,7 +411,7 @@
 			ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout does not exist any more.");
 			ok(!sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: ResponsiveFlowLayout for Element content does not exist any more.");
 			ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 not longer rendered");
-			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
+			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 not longer rendered");
 		});
 
 		test("make Container visible", function() {
@@ -419,7 +427,7 @@
 			ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
 			ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 rendered");
-			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 rendered");
+			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 rendered");
 		});
 
 		test("destroy and add container new", function() {
@@ -438,7 +446,7 @@
 			ok(jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: Element1 ResponsiveFlowLayout still rendered");
 			ok(jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form3: Element1 ResponsiveFlowLayout for content still rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form3: Label1 still rendered");
-			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: TextField1 still rendered");
+			ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: Input1 still rendered");
 		});
 
 		test("destroy and add element new", function() {
@@ -448,20 +456,20 @@
 			oContainer.addFormElement(
 					new sap.ui.layout.form.FormElement("F3C4E2",{
 						label: "Label",
-						fields: [new sap.ui.commons.TextField("F3C4E2_T1",{value: "Text"})]
+						fields: [new sap.m.Input("F3C4E2_T1",{value: "Text"})]
 					})
 				);
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element2 ResponsiveFlowLayout still rendered");
 			ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 still rendered");
-			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 still rendered");
+			ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 still rendered");
 		});
 
 		test("remove field", function() {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.removeField("F3C4E2_T1");
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
+			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
 			ok(!jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form4: new Element2 ResponsiveFlowLayout for content not longer rendered");
 			var oElementData = oLayout3.mContainers["F3C4"][2]["F3C4E2"];
 			ok(!oElementData[1], "Element2 ResponsiveFlowLayout for content not longer in layout control data");
@@ -474,7 +482,7 @@
 			sap.ui.getCore().applyChanges();
 			ok(!jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout not longer rendered");
 			ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form4: new Label2 not longer rendered");
-			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
+			ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
 			var oElementData = oLayout3.mContainers["F3C4"][2]["F3C4E2"];
 			ok(!oElementData, "Element2 not longer in the layout control data");
 			ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Element2 ResponsiveFlowLayout destroyed");
@@ -488,7 +496,7 @@
 			ok(!jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout not longer rendered");
 			ok(!jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form4: new Element1 ResponsiveFlowLayout for content not longer rendered");
 			ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form4: new Label1 not longer rendered");
-			ok(!jQuery.sap.domById("F3C4E1_T1"), "Form4: new TextField1 not longer rendered rendered");
+			ok(!jQuery.sap.domById("F3C4E1_T1"), "Form4: new Input1 not longer rendered rendered");
 			ok(!oLayout3.mContainers["F3C4"], "Container not longer in the layout control data");
 			ok(!sap.ui.getCore().byId("F3C4E1--content--RFLayout"), "Element1 ResponsiveFlowLayout for content destroyed");
 			ok(!sap.ui.getCore().byId("F3C4E1--RFLayout"), "Element1 ResponsiveFlowLayout destroyed");

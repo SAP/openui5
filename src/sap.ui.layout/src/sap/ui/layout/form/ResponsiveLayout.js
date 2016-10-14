@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 						// order has changed -> move it
 						oContainerLayout.removeContent(oRFLayout);
 						oContainerLayout.insertContent(oRFLayout, iVisibleElements);
-						iLastIndex == iVisibleElements;
+						iLastIndex = iVisibleElements;
 					}
 				} else {
 					oRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, oElement);

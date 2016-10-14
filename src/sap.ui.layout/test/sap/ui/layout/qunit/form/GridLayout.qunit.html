@@ -12,11 +12,12 @@
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+		data-sap-ui-libs="sap.ui.layout, sap.m">
 	</script>
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script language="javascript">
@@ -26,6 +27,7 @@
 		var oLayout1 = new sap.ui.layout.form.GridLayout("Layout1");
 
 		var oForm = new sap.ui.layout.form.Form("F1",{
+			editable: true,
 			title: new sap.ui.core.Title("F1T",{text: "Form Title", icon: "../../images/controls/sap.ui.layout.form.Form.gif", tooltip: "Title tooltip"}),
 			layout: oLayout1,
 			formContainers: [
@@ -37,98 +39,98 @@
 						// elements with auto size
 						new sap.ui.layout.form.FormElement("C1E1",{
 							label: "Label1",
-							fields: [new sap.ui.commons.TextField("C1E1_T1",{required:true})]
+							fields: [new sap.m.Input("C1E1_T1",{required:true})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E2",{
-							label: new sap.ui.commons.Label("C1E2_L1",{text:"Label2"}),
-							fields: [new sap.ui.commons.TextField("C1E2_T1"),
-							         new sap.ui.commons.TextField("C1E2_T2",{required:true})]
+							label: new sap.m.Label("C1E2_L1",{text:"Label2"}),
+							fields: [new sap.m.Input("C1E2_T1"),
+							         new sap.m.Input("C1E2_T2",{required:true})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E3",{
-							label: new sap.ui.commons.Label("C1E3_L1",{text:"Label3", icon:"../../../commons/images/help.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
-							fields: [new sap.ui.commons.TextField("C1E3_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
-							         new sap.ui.commons.TextField("C1E3_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
-							         new sap.ui.commons.TextField("C1E3_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})})]
+							label: new sap.m.Label("C1E3_L1",{text:"Label3", layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
+							fields: [new sap.m.Input("C1E3_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
+							         new sap.m.Input("C1E3_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
+							         new sap.m.Input("C1E3_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})})]
 							}),
 						// elements with fix size
 						new sap.ui.layout.form.FormElement("C1E4",{
 							label: "Label4",
-							fields: [new sap.ui.commons.TextField("C1E4_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+							fields: [new sap.m.Input("C1E4_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 						}),
 						new sap.ui.layout.form.FormElement("C1E5",{
 							label: "Label5",
-							fields: [new sap.ui.commons.TextField("C1E5_T1",{layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "3"})]})}),
-							         new sap.ui.commons.TextField("C1E5_T2",{layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "3"})]})})]
+							fields: [new sap.m.Input("C1E5_T1",{layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "3"})]})}),
+							         new sap.m.Input("C1E5_T2",{layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "3"})]})})]
 						}),
 						// mixed elements
 						new sap.ui.layout.form.FormElement("C1E6",{
-							label: new sap.ui.commons.Label("C1E6_L1",{text:"Label6", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
-							fields: [new sap.ui.commons.TextField("C1E6_T1",{value:"hello", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
-							         new sap.ui.commons.TextField("C1E6_T2", {enabled: false}),
-							         new sap.ui.commons.TextField("C1E6_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+							label: new sap.m.Label("C1E6_L1",{text:"Label6", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})}),
+							fields: [new sap.m.Input("C1E6_T1",{value:"hello", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
+							         new sap.m.Input("C1E6_T2", {enabled: false}),
+							         new sap.m.Input("C1E6_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 						}),
 						// elements without label
 						new sap.ui.layout.form.FormElement("C1E7",{
-							fields: [new sap.ui.commons.TextField("C1E7_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
-							         new sap.ui.commons.TextField("C1E7_T2", {editable: false}),
-							         new sap.ui.commons.TextField("C1E7_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
+							fields: [new sap.m.Input("C1E7_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
+							         new sap.m.Input("C1E7_T2", {editable: false}),
+							         new sap.m.Input("C1E7_T3",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})})]
 						}),
 						// full size element
 						new sap.ui.layout.form.FormElement("C1E8",{
-							label: new sap.ui.commons.Label("C1E8_L1",{text:"Label8"}),
-							fields: [new sap.ui.commons.TextArea("C1E8_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
+							label: new sap.m.Label("C1E8_L1",{text:"Label8"}),
+							fields: [new sap.m.TextArea("C1E8_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
 						}),
 						// full size element without label
 						new sap.ui.layout.form.FormElement("C1E9",{
-							fields: [new sap.ui.commons.TextArea("C1E9_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full",vCells:2})})]
+							fields: [new sap.m.TextArea("C1E9_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full",vCells:2})})]
 						}),
 						// elements using vCells
 						new sap.ui.layout.form.FormElement("C1E10",{
-							label: new sap.ui.commons.Label({text:"Label 10"}),
-							fields: [new sap.ui.commons.TextArea("C1E10_T1",{height: "72px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
-							         new sap.ui.commons.TextArea("C1E10_T2",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3",vCells: 2})}),
-							         new sap.ui.commons.TextArea("C1E10_T3",{height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
+							label: new sap.m.Label({text:"Label 10"}),
+							fields: [new sap.m.TextArea("C1E10_T1",{height: "10rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
+							         new sap.m.TextArea("C1E10_T2",{height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({hCells: "3",vCells: 2})}),
+							         new sap.m.TextArea("C1E10_T3",{height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E11",{
-							fields: [new sap.ui.commons.TextArea("C1E11_T1",{height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
-							         new sap.ui.commons.TextArea("C1E11_T2",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
+							fields: [new sap.m.TextArea("C1E11_T1",{height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
+							         new sap.m.TextArea("C1E11_T2",{height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E12",{
-							label: new sap.ui.commons.Label({text:"Label 12"}),
-							fields: [new sap.ui.commons.TextArea("C1E12_T1",{height: "22px", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
+							label: new sap.m.Label({text:"Label 12"}),
+							fields: [new sap.m.TextArea("C1E12_T1",{height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E13",{
-							label: new sap.ui.commons.Label({text:"Label 13"}),
-							fields: [new sap.ui.commons.TextArea("C1E13_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells:"13",vCells: 2})})
+							label: new sap.m.Label({text:"Label 13"}),
+							fields: [new sap.m.TextArea("C1E13_T1",{height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({hCells:"13",vCells: 2})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E14",{
-							label: new sap.ui.commons.Label({text:"Label 14"}),
-							fields: [new sap.ui.commons.TextField("C1E14_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
+							label: new sap.m.Label({text:"Label 14"}),
+							fields: [new sap.m.Input("C1E14_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E15",{
-							fields: [new sap.ui.commons.TextArea("C1E15_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells:"13",vCells: 2})}),
-							         new sap.ui.commons.TextArea("C1E15_T2",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells:"3",vCells: 2})})
+							fields: [new sap.m.TextArea("C1E15_T1",{height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({hCells:"13",vCells: 2})}),
+							         new sap.m.TextArea("C1E15_T2",{height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({hCells:"3",vCells: 2})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E16",{
 							label: "Label 16",
-							fields: [new sap.ui.commons.TextField("C1E16_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
+							fields: [new sap.m.Input("C1E16_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E17",{
 							label: "Label 17",
-							fields: [new sap.ui.commons.TextArea("C1E17_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells:"3",vCells: 2})})
+							fields: [new sap.m.TextArea("C1E17_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells:"3",vCells: 2})})
 												]
 						}),
 						new sap.ui.layout.form.FormElement("C1E18"), //empty element to put nex field in next row
 						new sap.ui.layout.form.FormElement("C1E19",{
-							label: new sap.ui.commons.Label("C1E19_L",{text:"Label 19"}),
-							fields: [new sap.ui.commons.TextField("C1E19_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
+							label: new sap.m.Label("C1E19_L",{text:"Label 19"}),
+							fields: [new sap.m.Input("C1E19_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})
 												]
 						})
 						]
@@ -138,8 +140,8 @@
 						title: new sap.ui.core.Title("C2T",{text: "Title as Control", icon: "../../images/controls/sap.ui.layout.form.Form.gif", tooltip: "Title tooltip"}),
 						formElements: [
 										new sap.ui.layout.form.FormElement("C2E1",{
-											label: new sap.ui.commons.Label("C2E1_L1",{text:"Label20"}),
-											fields: [new sap.ui.commons.TextField("C2E1_T1",{required:true})]
+											label: new sap.m.Label("C2E1_L1",{text:"Label20"}),
+											fields: [new sap.m.Input("C2E1_T1",{required:true})]
 										})
 						],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -149,13 +151,13 @@
 						expandable: true,
 						formElements: [
 										new sap.ui.layout.form.FormElement("C3E1",{
-											label: new sap.ui.commons.Label("C3E1_L1",{text:"Label21"}),
-											fields: [new sap.ui.commons.TextField("C3E1_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
-											         new sap.ui.commons.TextField("C3E1_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})})]
+											label: new sap.m.Label("C3E1_L1",{text:"Label21"}),
+											fields: [new sap.m.Input("C3E1_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "3"})}),
+											         new sap.m.Input("C3E1_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})})]
 										}),
 										new sap.ui.layout.form.FormElement("C3E2",{
-											label: new sap.ui.commons.Label("C3E2_L1",{text:"Label22"}),
-											fields: [new sap.ui.commons.TextArea("C3E2_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
+											label: new sap.m.Label("C3E2_L1",{text:"Label22"}),
+											fields: [new sap.m.TextArea("C3E2_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
 										})
 						],
 						layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridContainerData({halfGrid: true})]})
@@ -166,28 +168,28 @@
 						formElements: [
 										new sap.ui.layout.form.FormElement("C4E1",{
 											label: "Label23",
-											fields: [new sap.ui.commons.TextField("C4E1_T1")]
+											fields: [new sap.m.Input("C4E1_T1")]
 										}),
 										new sap.ui.layout.form.FormElement("C4E2",{
 											label: "Label24",
-											fields: [new sap.ui.commons.TextField("C4E2_T1")]
+											fields: [new sap.m.Input("C4E2_T1")]
 										}),
 										new sap.ui.layout.form.FormElement("C4E3",{
 											label: "Label25",
-											fields: [new sap.ui.commons.TextField("C4E3_T1")]
+											fields: [new sap.m.Input("C4E3_T1")]
 										}),
 										new sap.ui.layout.form.FormElement("C4E4",{
 											label: "Label26",
-											fields: [new sap.ui.commons.TextArea("C4E4_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "5", vCells: 2})})]
+											fields: [new sap.m.TextArea("C4E4_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "5", vCells: 2})})]
 										}),
 										new sap.ui.layout.form.FormElement("C4E5",{
 											label: "Label27",
-											fields: [new sap.ui.commons.TextArea("C4E5_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 2})})]
+											fields: [new sap.m.TextArea("C4E5_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 2})})]
 										}),
 										new sap.ui.layout.form.FormElement("C4E6"),
 										new sap.ui.layout.form.FormElement("C4E7",{
 											label: "Label28",
-											fields: [new sap.ui.commons.TextField("C4E7_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
+											fields: [new sap.m.Input("C4E7_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "1"})})]
 										})
 						],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -197,11 +199,11 @@
 						formElements: [
 										new sap.ui.layout.form.FormElement("C5E1",{
 											label: "Label29",
-											fields: [new sap.ui.commons.TextArea("C5E1_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "full", vCells: 2})})]
+											fields: [new sap.m.TextArea("C5E1_T1",{height: "47px", layoutData: new sap.ui.layout.form.GridElementData({hCells: "full", vCells: 2})})]
 										}),
 										new sap.ui.layout.form.FormElement("C5E2",{
 											label: "Label30",
-											fields: [new sap.ui.commons.TextField("C5E2_T1")]
+											fields: [new sap.m.Input("C5E2_T1")]
 										}),
 										new sap.ui.layout.form.FormElement("C5E3")
 						],
@@ -211,17 +213,17 @@
 					new sap.ui.layout.form.FormContainer("C6",{
 						formElements: [
 										new sap.ui.layout.form.FormElement("C6E1",{
-											label: new sap.ui.commons.Label("C6E1_L1",{text:"Label31"}),
-											fields: [new sap.ui.commons.Image("C6E1_I1", {src: "../../../commons/images/SAPLogo.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
+											label: new sap.m.Label("C6E1_L1",{text:"Label31"}),
+											fields: [new sap.m.Image("C6E1_I1", {src: "../../../commons/images/SAPLogo.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
 										}),
 										new sap.ui.layout.form.FormElement("C6E2",{
-											label: new sap.ui.commons.Label("C6E2_L1",{text:"Label32"}),
-											fields: [new sap.ui.commons.TextArea("C6E2_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 3})})]
+											label: new sap.m.Label("C6E2_L1",{text:"Label32"}),
+											fields: [new sap.m.TextArea("C6E2_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 3})})]
 										}),
 										new sap.ui.layout.form.FormElement("C6E3",{
 											visible: false,
-											label: new sap.ui.commons.Label("C6E3_L1",{text:"Label"}),
-											fields: [new sap.ui.commons.TextField("C6E3_T1",{value: "invisible"})]
+											label: new sap.m.Label("C6E3_L1",{text:"Label"}),
+											fields: [new sap.m.Input("C6E3_T1",{value: "invisible"})]
 										})
 						],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -231,51 +233,51 @@
 						title: "Error handling",
 						formElements: [
 										new sap.ui.layout.form.FormElement("C7E1",{
-											label: new sap.ui.commons.Label("C7E1_L1",{text:"Label33"}),
-											fields: [new sap.ui.commons.TextField("C7E1_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "10"})}),
-											         new sap.ui.commons.TextField("C7E1_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "10"})})]
+											label: new sap.m.Label("C7E1_L1",{text:"Label33"}),
+											fields: [new sap.m.Input("C7E1_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "10"})}),
+											         new sap.m.Input("C7E1_T2",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "10"})})]
 										}),
 										new sap.ui.layout.form.FormElement("C7E2",{
-											label: new sap.ui.commons.Label("C7E2_L1",{text:"Label34"}),
-											fields: [new sap.ui.commons.TextField("C7E2_T1",{value: "1"}),
-											         new sap.ui.commons.TextField("C7E2_T2",{value: "2"}),
-											         new sap.ui.commons.TextField("C7E2_T3",{value: "3"}),
-											         new sap.ui.commons.TextField("C7E2_T4",{value: "4"}),
-											         new sap.ui.commons.TextField("C7E2_T5",{value: "5"}),
-											         new sap.ui.commons.TextField("C7E2_T6",{value: "6"}),
-											         new sap.ui.commons.TextField("C7E2_T7",{value: "7"}),
-											         new sap.ui.commons.TextField("C7E2_T8",{value: "8"}),
-											         new sap.ui.commons.TextField("C7E2_T9",{value: "9"}),
-											         new sap.ui.commons.TextField("C7E2_T10",{value: "10"}),
-											         new sap.ui.commons.TextField("C7E2_T11",{value: "11"}),
-											         new sap.ui.commons.TextField("C7E2_T12",{value: "12"}),
-											         new sap.ui.commons.TextField("C7E2_T13",{value: "13"}),
-											         new sap.ui.commons.TextField("C7E2_T14",{value: "14"}),
-											         new sap.ui.commons.TextField("C7E2_T15",{value: "15"})]
+											label: new sap.m.Label("C7E2_L1",{text:"Label34"}),
+											fields: [new sap.m.Input("C7E2_T1",{value: "1"}),
+											         new sap.m.Input("C7E2_T2",{value: "2"}),
+											         new sap.m.Input("C7E2_T3",{value: "3"}),
+											         new sap.m.Input("C7E2_T4",{value: "4"}),
+											         new sap.m.Input("C7E2_T5",{value: "5"}),
+											         new sap.m.Input("C7E2_T6",{value: "6"}),
+											         new sap.m.Input("C7E2_T7",{value: "7"}),
+											         new sap.m.Input("C7E2_T8",{value: "8"}),
+											         new sap.m.Input("C7E2_T9",{value: "9"}),
+											         new sap.m.Input("C7E2_T10",{value: "10"}),
+											         new sap.m.Input("C7E2_T11",{value: "11"}),
+											         new sap.m.Input("C7E2_T12",{value: "12"}),
+											         new sap.m.Input("C7E2_T13",{value: "13"}),
+											         new sap.m.Input("C7E2_T14",{value: "14"}),
+											         new sap.m.Input("C7E2_T15",{value: "15"})]
 										}),
 										new sap.ui.layout.form.FormElement("C7E3",{
-											label: new sap.ui.commons.Label("C7E3_L1",{text:"Label35"}),
-											fields: [new sap.ui.commons.TextField("C7E3_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})}),
-											         new sap.ui.commons.TextField("C7E3_T2"),
-											         new sap.ui.commons.TextField("C7E3_T3")]
+											label: new sap.m.Label("C7E3_L1",{text:"Label35"}),
+											fields: [new sap.m.Input("C7E3_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "12"})}),
+											         new sap.m.Input("C7E3_T2"),
+											         new sap.m.Input("C7E3_T3")]
 										}),
 										new sap.ui.layout.form.FormElement("C7E4",{
-											label: new sap.ui.commons.Label("C7E4_L1",{text:"Label36"}),
-											fields: [new sap.ui.commons.TextArea("C7E4_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells:2})}),
-											         new sap.ui.commons.TextField("C7E4_T2")]
+											label: new sap.m.Label("C7E4_L1",{text:"Label36"}),
+											fields: [new sap.m.TextArea("C7E4_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells:2})}),
+											         new sap.m.Input("C7E4_T2")]
 										}),
 										new sap.ui.layout.form.FormElement("C7E5",{
-											label: new sap.ui.commons.Label("C7E5_L1",{text:"Label37"}),
-											fields: [new sap.ui.commons.TextField("C7E5_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
+											label: new sap.m.Label("C7E5_L1",{text:"Label37"}),
+											fields: [new sap.m.Input("C7E5_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "full"})})]
 										}),
 										new sap.ui.layout.form.FormElement("C7E6",{
-											label: new sap.ui.commons.Label("C7E6_L1",{text:"Label38"}),
-											fields: [new sap.ui.commons.TextArea("C7E6_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 3})})]
+											label: new sap.m.Label("C7E6_L1",{text:"Label38"}),
+											fields: [new sap.m.TextArea("C7E6_T1",{layoutData: new sap.ui.layout.form.GridElementData({hCells: "2", vCells: 3})})]
 										}),
 										new sap.ui.layout.form.FormElement("C7E7",{
 											visible: false,
-											label: new sap.ui.commons.Label("C7E7_L1",{text:"Label39"}),
-											fields: [new sap.ui.commons.TextField("C7E7_T1",{value: "invisible"})]
+											label: new sap.m.Label("C7E7_L1",{text:"Label39"}),
+											fields: [new sap.m.Input("C7E7_T1",{value: "invisible"})]
 										})
 						]
 					}),
@@ -285,8 +287,8 @@
 						visible: false,
 						formElements: [
 										new sap.ui.layout.form.FormElement("C8E1",{
-											label: new sap.ui.commons.Label("C8E1_L1",{text:"Label40"}),
-											fields: [new sap.ui.commons.TextField("C8E1_T1")]
+											label: new sap.m.Label("C8E1_L1",{text:"Label40"}),
+											fields: [new sap.m.Input("C8E1_T1")]
 										})
 						]
 					})
@@ -298,6 +300,7 @@
 		});
 
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
+			editable: true,
 			title: new sap.ui.core.Title("F2T",{text: "16 cells without separator", level: sap.ui.core.TitleLevel.H1}),
 			layout: oLayout2,
 			formContainers: [
@@ -305,19 +308,19 @@
 								formElements: [
 												new sap.ui.layout.form.FormElement("F2C1E1",{
 													label: "Label",
-													fields: [new sap.ui.commons.TextField("F2C1E1_T1",{value: "1"}),
-													         new sap.ui.commons.TextField("F2C1E1_T2",{value: "2"}),
-													         new sap.ui.commons.TextField("F2C1E1_T3",{value: "3"}),
-													         new sap.ui.commons.TextField("F2C1E1_T4",{value: "4"}),
-													         new sap.ui.commons.TextField("F2C1E1_T5",{value: "5"}),
-													         new sap.ui.commons.TextField("F2C1E1_T6",{value: "6"}),
-													         new sap.ui.commons.TextField("F2C1E1_T7",{value: "7"}),
-													         new sap.ui.commons.TextField("F2C1E1_T8",{value: "8"}),
-													         new sap.ui.commons.TextField("F2C1E1_T9",{value: "9"}),
-													         new sap.ui.commons.TextField("F2C1E1_T10",{value: "10"}),
-													         new sap.ui.commons.TextField("F2C1E1_T11",{value: "11"}),
-													         new sap.ui.commons.TextField("F2C1E1_T12",{value: "12"}),
-													         new sap.ui.commons.TextField("F2C1E1_T13",{value: "13"})]
+													fields: [new sap.m.Input("F2C1E1_T1",{value: "1"}),
+													         new sap.m.Input("F2C1E1_T2",{value: "2"}),
+													         new sap.m.Input("F2C1E1_T3",{value: "3"}),
+													         new sap.m.Input("F2C1E1_T4",{value: "4"}),
+													         new sap.m.Input("F2C1E1_T5",{value: "5"}),
+													         new sap.m.Input("F2C1E1_T6",{value: "6"}),
+													         new sap.m.Input("F2C1E1_T7",{value: "7"}),
+													         new sap.m.Input("F2C1E1_T8",{value: "8"}),
+													         new sap.m.Input("F2C1E1_T9",{value: "9"}),
+													         new sap.m.Input("F2C1E1_T10",{value: "10"}),
+													         new sap.m.Input("F2C1E1_T11",{value: "11"}),
+													         new sap.m.Input("F2C1E1_T12",{value: "12"}),
+													         new sap.m.Input("F2C1E1_T13",{value: "13"})]
 												})
 								]
 							})
@@ -330,6 +333,7 @@
 			});
 
 		var oForm3 = new sap.ui.layout.form.Form("F3",{
+			editable: true,
 			title: "8 cells without separator",
 			layout: oLayout3,
 			formContainers: [
@@ -338,11 +342,11 @@
 								formElements: [
 												new sap.ui.layout.form.FormElement("F3C1E1",{
 													label: "Label",
-													fields: [new sap.ui.commons.TextField("F3C1E1_T1",{value: "1"}),
-													         new sap.ui.commons.TextField("F3C1E1_T2",{value: "2"}),
-													         new sap.ui.commons.TextField("F3C1E1_T3",{value: "3"}),
-													         new sap.ui.commons.TextField("F3C1E1_T4",{value: "4"}),
-													         new sap.ui.commons.TextField("F3C1E1_T5",{value: "5"})]
+													fields: [new sap.m.Input("F3C1E1_T1",{value: "1"}),
+													         new sap.m.Input("F3C1E1_T2",{value: "2"}),
+													         new sap.m.Input("F3C1E1_T3",{value: "3"}),
+													         new sap.m.Input("F3C1E1_T4",{value: "4"}),
+													         new sap.m.Input("F3C1E1_T5",{value: "5"})]
 												})
 								]
 							}),
@@ -351,7 +355,7 @@
 								formElements: [
 												new sap.ui.layout.form.FormElement("F3C2E1",{
 													label: "Label",
-													fields: [new sap.ui.commons.TextField("F3C2E1_T1")]
+													fields: [new sap.m.Input("F3C2E1_T1")]
 												})
 								],
 								layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -361,11 +365,11 @@
 								formElements: [
 												new sap.ui.layout.form.FormElement("F3C3E1",{
 													label: "Label",
-													fields: [new sap.ui.commons.TextField("F3C3E1_T1"),
-													         new sap.ui.commons.TextField("F3C3E1_T2")]
+													fields: [new sap.m.Input("F3C3E1_T1"),
+													         new sap.m.Input("F3C3E1_T2")]
 												}),
 												new sap.ui.layout.form.FormElement("F3C3E2",{
-													fields: [new sap.ui.commons.TextField("F3C3E2_T1", {value: "Test changing LayoutData"})]
+													fields: [new sap.m.Input("F3C3E2_T1", {value: "Test changing LayoutData"})]
 												})
 								],
 								layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -399,35 +403,38 @@
 		var oLayout4 = new sap.ui.layout.form.GridLayout("Layout4");
 		var oForm4 = new sap.ui.layout.form.Form("F4",{
 			title: new sap.ui.core.Title("F4-T",{text: "Form4"}),
-			toolbar: new sap.ui.commons.Toolbar("F4-TB1", {
-				items: [new sap.ui.commons.TextView("F4-Title", {text: "Form 4", design: sap.ui.commons.TextViewDesign.H3, tooltip: "Title tooltip"})],
-				rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+			toolbar: new sap.m.Toolbar("F4-TB1", {
+				content: [new sap.m.Title("F4-Title", {text: "Form 4", level: sap.ui.core.TitleLevel.H3, titleStyle: sap.ui.core.TitleLevel.H3, tooltip: "Title tooltip"}),
+				          new sap.m.ToolbarSpacer(),
+				          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 			}),
 			ariaLabelledBy: "F4-Title",
 			layout: oLayout4,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F4C1",{
 						title: new sap.ui.core.Title("F4-C1T",{text: "Container 1"}),
-						toolbar: new sap.ui.commons.Toolbar("F4-TB2", {
-							items: [new sap.ui.commons.TextView("F4C1-Title", {text: "Container 1", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
-							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						toolbar: new sap.m.Toolbar("F4-TB2", {
+							content: [new sap.m.Title("F4C1-Title", {text: "Container 1", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+							          new sap.m.ToolbarSpacer(),
+							          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 						}),
 						formElements: [
 							new sap.ui.layout.form.FormElement("F4C1E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F4C1E1_T1")]
+									fields: [new sap.m.Input("F4C1E1_T1")]
 								})],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
 					}),
 				new sap.ui.layout.form.FormContainer("F4C2",{
-						toolbar: new sap.ui.commons.Toolbar("F4-TB3", {
-							items: [new sap.ui.commons.TextView("F4C2-Title", {text: "Container 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
-							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						toolbar: new sap.m.Toolbar("F4-TB3", {
+							content: [new sap.m.Title("F4C2-Title", {text: "Container 2", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+							          new sap.m.ToolbarSpacer(),
+							          new sap.m.Button({icon: "sap-icon://sap-ui5"})]
 						}),
 						formElements: [
 							new sap.ui.layout.form.FormElement("F4C2E1",{
 									label: "Label",
-									fields: [new sap.ui.commons.TextField("F4C2E1_T1")]
+									fields: [new sap.m.Input("F4C2E1_T1")]
 								})],
 						layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
 					})]
@@ -474,7 +481,7 @@
 		test("FormControls Full-Size", function() {
 			ok(jQuery('label:contains("Label1")').get(0), "Label (as text) is renderd");
 			equal(jQuery('label:contains("Label1")').parent().attr("colspan"), "3", "Label 1 rendered over 3 grid cells");
-			ok(jQuery.sap.domById("C1E1_T1"), "TextField is rendered");
+			ok(jQuery.sap.domById("C1E1_T1"), "Input is rendered");
 			equal(jQuery("#C1E1_T1").get(0).style.width, "100%", "Element1: Field 1 rendered width = 100%");
 			equal(jQuery("#C1E1_T1").parent().attr("colspan"), "14", "Element1: Field 1 rendered over 14 grid cells");
 			ok(!jQuery("#C1E1_T1").parent().attr("rowspan") || (sap.ui.Device.browser.internet_explorer && jQuery("#C1E1_T1").parent().attr("rowspan") == "1"), "Element1: Field 1 no rowspan");
@@ -516,10 +523,10 @@
 			equal(jQuery("#C1E12_T1").parent().attr("colspan"), "6", "Element12: Field 1 rendered over 6 grid cells");
 			equal(jQuery("#C1E13_T1").parent().attr("rowspan"), "2", "Element13: Field 1 (with vCells=2) rendered with rowspan 2");
 			equal(jQuery("#C1E13_T1").parent().parent().next().children().length, 0, "Empty dummy row rendered after full-size rowspan");
-			ok(jQuery.sap.domById("C1E14_T1"), "Element14: TextField is rendered");
+			ok(jQuery.sap.domById("C1E14_T1"), "Element14: Input is rendered");
 			equal(jQuery("#C1E15_T1").parent().attr("rowspan"), "2", "Element15: Field 1 (with vCells=2) rendered with rowspan 2");
 			equal(jQuery("#C1E15_T1").parent().parent().next().children().length, 0, "Empty dummy row rendered after full-size rowspan");
-			ok(jQuery.sap.domById("C1E16_T1"), "Element16: TextField is rendered");
+			ok(jQuery.sap.domById("C1E16_T1"), "Element16: Input is rendered");
 			ok(jQuery.sap.domById("C1E18"), "Element18: empty element is rendered");
 			equal(jQuery("#C1E17_T1").parent().parent().next().next().children().first().children().first().attr("id"), "C1E19_L", "Element19: Label rendered 2 rows below element 17");
 
@@ -566,7 +573,6 @@
 
 			equal(jQuery("#C6E1_I1").parent().attr("colspan"), "2", "Container6 - Element1: Field 1 (with hCells=2) rendered over 2 grid cells");
 			ok((jQuery("#C6E1_I1").parent().next().next().next().is("td") && jQuery("#C6E1_I1").parent().next().next().next().attr("colspan") == "8" && jQuery("#C6E1_I1").parent().next().next().next().children().length == 0), "Container6 - empty dummy cell rendered beside (because no second half-size container in row)");
-			ok(jQuery("#C6E1_I1").get(0).style.width != "100%", "Container6 - Element1: Image not rendered width = 100%");
 
 			ok(!jQuery.sap.domById("C6E3_T1"), "Content of invisible Element is not rendered");
 		});
@@ -597,7 +603,7 @@
 		test("Container expander", function() {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
-			qutils.triggerMouseEvent("C3--Exp", "click");
+			qutils.triggerEvent("tap", "C3--Exp");
 			sap.ui.getCore().applyChanges();
 			ok(!jQuery.sap.domById("C3E1_T1"), "Container3 content area is not visible after click on expander");
 			ok((jQuery("#C2E1_T1").parent().next().next().is("td") && jQuery("#C2E1_T1").parent().next().next().attr("colspan") == "8" && jQuery("#C2E1_T1").parent().next().next().children().length == 0), "Container3 - empty dummy cell rendered");
@@ -631,64 +637,38 @@
 		});
 
 		test("Keyboard Navigation", function() {
-			jQuery.sap.byId("C1E1_T1").focus();
-			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E1_T1", "ARROW_DOWN");
-			equal(jQuery.sap.byId("C1E2_T1").is(":focus"), true, "Arrow Down: Container 1, Element 2, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E2_T1", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E2_T2").is(":focus"), true, "Arrow Right: Container 1, Element 2, Field 2 - Selected");
-			qutils.triggerKeyboardEvent("C1E2_T2", "ARROW_DOWN");
-			equal(jQuery.sap.byId("C1E3_T2").is(":focus"), true, "Arrow Down: Container 1, Element 3, Field 2 - Selected");
-			qutils.triggerKeyboardEvent("C1E3_T2", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E3_T3").is(":focus"), true, "Arrow Right: Container 1, Element 3, Field 3 - Selected");
-			qutils.triggerKeyboardEvent("C1E3_T3", "ARROW_UP");
-			equal(jQuery.sap.byId("C1E2_T2").is(":focus"), true, "Arrow Up: Container 1, Element 2, Field 2 - Selected");
-			qutils.triggerKeyboardEvent("C1E2_T2", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C1E2_T1").is(":focus"), true, "Arrow Left: Container 1, Element 2, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E2_T1", "F6");
-			equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C2E1_T1", "F6", true, false, false);
-			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Shift + F6: Container 1, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E1_T1", "END", false, false, true);
-			equal(jQuery.sap.byId("C7E6_T1").is(":focus"), true, "Ctrl + End: Container 7, Element 6, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C7E6_T1", "HOME");
-			equal(jQuery.sap.byId("C7E1_T1").is(":focus"), true, "HOME: Container 7, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C7E1_T1", "F6");
-			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
-			jQuery.sap.byId("C1E1_T1").focus();
-			qutils.triggerKeyboardEvent("C1E1_T1", "F6");
-			equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C2E1_T1", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C4E1_T1").is(":focus"), true, "Arrow Right: Container 4, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C4E1_T1", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "Arrow Left: Container 2, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C2E1_T1", "HOME", false, false, true);
-			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "Ctrl + Home: Container 1, Element 1, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E1_T1", "END");
-			equal(jQuery.sap.byId("C1E19_T1").is(":focus"), true, "END: Container 1, Element 19, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E19_T1", "HOME");
-			qutils.triggerKeyboardEvent("C1E1_T1", "ARROW_DOWN");
-			qutils.triggerKeyboardEvent("C1E2_T1", "ARROW_DOWN");
-			qutils.triggerKeyboardEvent("C1E3_T1", "ARROW_DOWN");
-			qutils.triggerKeyboardEvent("C1E4_T1", "ARROW_DOWN");
-			qutils.triggerKeyboardEvent("C1E5_T1", "ARROW_DOWN");
-			equal(jQuery.sap.byId("C1E6_T1").is(":focus"), true, "Home + 5 times Arrow Down: Container 1, Element 6, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E6_T1", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E6_T3").is(":focus"), true, "Arrow Right: Container 1, Element 6, Field 3 - Selected");
-			qutils.triggerKeyboardEvent("C1E6_T3", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E7_T1").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E7_T1", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E7_T2").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 2 - Selected");
-			qutils.triggerKeyboardEvent("C1E7_T2", "ARROW_RIGHT");
-			equal(jQuery.sap.byId("C1E7_T3").is(":focus"), true, "Arrow Right: Container 1, Element 7, Field 3 - Selected");
-			qutils.triggerKeyboardEvent("C1E7_T3", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C1E7_T2").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 2 - Selected");
-			qutils.triggerKeyboardEvent("C1E7_T2", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C1E7_T1").is(":focus"), true, "Arrow Left: Container 1, Element 7, Field 1 - Selected");
-			qutils.triggerKeyboardEvent("C1E7_T1", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C1E6_T3").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 3 - Selected");
-			qutils.triggerKeyboardEvent("C1E6_T3", "ARROW_LEFT");
-			equal(jQuery.sap.byId("C1E6_T1").is(":focus"), true, "Arrow Left: Container 1, Element 6, Field 1 - Selected");
+			// no arrow navigation in sap.m nvironment
+			jQuery.sap.byId("C1E2_T1-inner").focus();
+			equal(jQuery.sap.byId("C1E2_T1-inner").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C1E2_T1-inner", "F6");
+			equal(jQuery.sap.byId("C2E1_T1-inner").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C2E1_T1-inner", "F6", true, false, false);
+			equal(jQuery.sap.byId("C1E1_T1-inner").is(":focus"), true, "Shift + F6: Container 1, Element 1, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C7E1_T1-inner", "F6");
+			equal(jQuery.sap.byId("C1E1_T1-inner").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
+			jQuery.sap.byId("C1E1_T1-inner").focus();
+			qutils.triggerKeyboardEvent("C1E1_T1-inner", "F6");
+			equal(jQuery.sap.byId("C2E1_T1-inner").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
+			jQuery.sap.byId("C1E1_T1-inner").focus();
+			qutils.triggerKeyboardEvent("C1E1_T1-inner", jQuery.sap.KeyCodes.TAB);
+			equal(jQuery.sap.byId("C1E2_T1-inner").is(":focus"), true, "Tab: Container 1, Element 2, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C1E2_T1-inner", jQuery.sap.KeyCodes.TAB);
+			equal(jQuery.sap.byId("C1E2_T2-inner").is(":focus"), true, "Tab: Container 1, Element 2, Field 2 - Selected");
+			qutils.triggerKeyboardEvent("C1E2_T2-inner", jQuery.sap.KeyCodes.TAB, true, false, false);
+			equal(jQuery.sap.byId("C1E2_T1-inner").is(":focus"), true, "Shift+Tab: Container 1, Element 2, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C1E2_T1-inner", jQuery.sap.KeyCodes.TAB, true, false, false);
+			equal(jQuery.sap.byId("C1E1_T1-inner").is(":focus"), true, "Shift+Tab: Container 1, Element 1, Field 1 - Selected");
+			jQuery.sap.byId("C1E19_T1-inner").focus();
+			qutils.triggerKeyboardEvent("C1E19_T1-inner", jQuery.sap.KeyCodes.TAB);
+			equal(jQuery.sap.byId("C2E1_T1-inner").is(":focus"), true, "Tab: Container 2, Element 1, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C2E1_T1-inner", jQuery.sap.KeyCodes.TAB);
+			equal(jQuery.sap.byId("C3--Exp").is(":focus"), true, "Tab: Container 3 Expander - Selected");
+			qutils.triggerKeyboardEvent("C3--Exp", jQuery.sap.KeyCodes.TAB);
+			equal(jQuery.sap.byId("C4E1_T1-inner").is(":focus"), true, "Tab: Container 4, Element 1, Field 1 - Selected");
+			qutils.triggerKeyboardEvent("C4E1_T1-inner", jQuery.sap.KeyCodes.TAB, true, false, false);
+			equal(jQuery.sap.byId("C3--Exp").is(":focus"), true, "Shift+Tab: Container 3 Expander - Selected");
+			qutils.triggerKeyboardEvent("C3--Exp", jQuery.sap.KeyCodes.TAB, true, false, false);
+			equal(jQuery.sap.byId("C2E1_T1-inner").is(":focus"), true, "Shift+Tab: Container 2, Element 1, Field 1 - Selected");
 		});
 
 		module("Error handling");
@@ -704,8 +684,8 @@
 				}
 				return false;
 			}
-			ok(jQuery.sap.domById("C7E1_T1"), "Element1: TextField1 is rendered");
-			ok(!jQuery.sap.domById("C7E1_T2"), "Element1: TextField2 is not rendered");
+			ok(jQuery.sap.domById("C7E1_T1"), "Element1: Input1 is rendered");
+			ok(!jQuery.sap.domById("C7E1_T2"), "Element1: Input2 is not rendered");
 			ok(findLogEntry('Element "C7E1" - Too much fields for one row!',1),"Error entry in log found for Element1");
 
 			var bOK = true;
@@ -714,25 +694,25 @@
 					bOK = false;
 				}
 			}
-			ok(bOK, "Element2: TextFields 1-13 are rendered");
+			ok(bOK, "Element2: Inputs 1-13 are rendered");
 			bOK = true;
 			for( var i=14; i <= 15;i++){
 				if( jQuery.sap.domById("C7E2_T"+i) ) {
 					bOK = false;
 				}
 			}
-			ok(bOK, "Element2: TextFields 14-15 are not rendered");
+			ok(bOK, "Element2: Inputs 14-15 are not rendered");
 			ok(findLogEntry('Element "C7E2" - Too much fields for one row!',1),"Error entry in log found for Element2");
 
-			ok(jQuery.sap.domById("C7E3_T1"), "Element3: TextField1 is rendered");
-			ok(jQuery.sap.domById("C7E3_T2"), "Element3: TextField2 is rendered");
-			ok(!jQuery.sap.domById("C7E3_T3"), "Element3: TextField3 is not rendered");
+			ok(jQuery.sap.domById("C7E3_T1"), "Element3: Input1 is rendered");
+			ok(jQuery.sap.domById("C7E3_T2"), "Element3: Input2 is rendered");
+			ok(!jQuery.sap.domById("C7E3_T3"), "Element3: Input3 is not rendered");
 			ok(findLogEntry('Element "C7E3" - Too much fields for one row!',1),"Error entry in log found for Element3");
 
 
-			ok(jQuery.sap.domById("C7E4_T1"), "Element4: TextField1 is rendered");
+			ok(jQuery.sap.domById("C7E4_T1"), "Element4: Input1 is rendered");
 			equal(jQuery("#C7E4_T1").parent().attr("rowspan"), "2", "Element4: Field 1 (with vCells=2) rendered with rowspan 2");
-			ok(!jQuery.sap.domById("C7E5_T1"), "Element5: TextField1 (full size) is not rendered");
+			ok(!jQuery.sap.domById("C7E5_T1"), "Element5: Input1 (full size) is not rendered");
 			ok(findLogEntry('Element "C7E5" - Too much fields for one row!',1),"Error entry in log found for Element5");
 		});
 

@@ -292,7 +292,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 		var oControl = oEvent.srcControl;
 		var oRoot = this.findElement(oControl);
 		var oElement = oRoot.element;
-		var oContainer = oElement.getParent();
+		var oContainer;
+
+		if (oElement instanceof sap.ui.layout.form.FormContainer) {
+			oContainer = oElement; // e.g. expand button
+		} else {
+			oContainer = oElement.getParent();
+		}
 
 		if (oContainer.getExpandable()) {
 			oContainer.setExpanded(true);
@@ -304,7 +310,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 		var oControl = oEvent.srcControl;
 		var oRoot = this.findElement(oControl);
 		var oElement = oRoot.element;
-		var oContainer = oElement.getParent();
+		var oContainer;
+
+		if (oElement instanceof sap.ui.layout.form.FormContainer) {
+			oContainer = oElement; // e.g. expand button
+		} else {
+			oContainer = oElement.getParent();
+		}
 
 		if (oContainer.getExpandable()) {
 			oContainer.setExpanded(false);
