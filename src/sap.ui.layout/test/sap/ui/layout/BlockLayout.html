@@ -4,17 +4,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>sap.ui.layout.BlockLayout</title>
 	<style>
-
 		.brightText {
 			color: white;
 		}
 
 		#area-dashboard {
 			background: linear-gradient(to bottom, #a9c6de, #e7ecf0);
-		}
-
-		#area-dashboard .sapUiBlockLayoutCell {
-			background-color: #ffffff;
 		}
 	</style>
 	<script id='sap-ui-bootstrap' type='text/javascript'
@@ -31,6 +26,7 @@
 					minWidth: 1024,
 					maxContainerCols: 2,
 					editable: true,
+					backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
 					content: [
 						new sap.ui.core.Title({ // this starts a new group
 							text: "Editable Form"
@@ -124,10 +120,11 @@
 
 			var fnCreateBlockLayout = function (sBackground, sText) {
 				var oCell1 = fnCreateCell(1),
-						oCell2 = fnCreateCell(2, "An Icon", new sap.ui.core.Icon({src: "arrow-right"})),
+						oCell2 = fnCreateCell(1, "An Icon", new sap.ui.core.Icon({src: "arrow-right"})),
 						oCell3 = fnCreateCell(1, "Tomato Heading", [
 							new sap.m.Text({text: sText.substr(0, 20)})
-						], "Center");
+						], "Center"),
+						oCell4 = fnCreateCell(3, null, fnCreateForm());
 
 				return new sap.ui.layout.BlockLayout({
 					background: sBackground,
@@ -136,7 +133,7 @@
 							content: [
 								oCell1,
 								oCell2,
-								fnCreateCell(1, "Custom", null, "Right")
+								fnCreateCell(2, "Custom", null, "Right")
 							],
 							accentCells: [oCell1, oCell2]
 						}),
@@ -151,9 +148,10 @@
 						}),
 						new sap.ui.layout.BlockLayoutRow({
 							content: [
-								fnCreateCell(3, null, fnCreateForm()),
-								fnCreateCell(1, "Green is good for u")
-							]
+								fnCreateCell(1, "Green is good for u"),
+								oCell4
+							],
+							accentCells: [oCell4]
 						}),
 						new sap.ui.layout.BlockLayoutRow({
 							scrollable: true,
@@ -184,7 +182,7 @@
 
 			var fnCreatePage = function (sBackground, oBlockLayout) {
 				return new sap.m.Page("area-" + sBackground.toLowerCase(), {
-					title: "Default BlockLayout",
+					title: sBackground + " BlockLayout",
 					showNavButton: jQuery.device.is.phone,
 					navButtonText: "Back",
 					navButtonPress: function () {
