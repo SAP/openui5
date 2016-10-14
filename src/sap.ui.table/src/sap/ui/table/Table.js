@@ -1092,6 +1092,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// invalidate item navigation
 		this._getKeyboardExtension().invalidateItemNavigation();
 
+		this._updateTableContent();
+
 		if (this._bFirstRendering && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
@@ -1107,8 +1109,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				oVSb.scrollTop = Math.max(oVSb.scrollTop, this._iOldScrollTop);
 			}
 		}
-
-			this._updateTableContent();
 
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
@@ -4371,11 +4371,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 			}
 
+			this._updateTableContent();
 			this._updateTableSizes();
 
 			bReturn = true;
 
-			this._updateTableContent();
 			this._attachEvents();
 		}
 
