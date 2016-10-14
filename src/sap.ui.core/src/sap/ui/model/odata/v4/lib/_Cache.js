@@ -293,7 +293,7 @@ sap.ui.define([
 				delete oCache.mPatchRequests[sRequestPath];
 			}
 		}
-		if (sTransientGroup) {
+		if (sTransientGroup && sPath === "") {
 			oCache.oRequestor.removePost(sTransientGroup, oCache.aElements[-1]);
 		}
 	}
@@ -559,7 +559,8 @@ sap.ui.define([
 	 *   <code>true</code> if there are pending changes
 	 */
 	CollectionCache.prototype.hasPendingChanges = function (sPath) {
-		return hasPendingChanges(this.mPatchRequests, sPath);
+		return !!(sPath === "" && this.aElements[-1] && this.aElements[-1]["@$ui5.transient"])
+			|| hasPendingChanges(this.mPatchRequests, sPath);
 	};
 
 	/**

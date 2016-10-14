@@ -700,7 +700,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create entity", function (assert) {
+	QUnit.test("create entity and has pending changes", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
 			oEntityData = {name : "John Doe"},
@@ -730,6 +730,9 @@ sap.ui.require([
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
 
+		assert.strictEqual(oCache.hasPendingChanges(""), true, "pending changes for root");
+		assert.strictEqual(oCache.hasPendingChanges("foo"), false, "pending changes for non-root");
+
 		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[-1], {
 			name : "John Doe",
@@ -751,6 +754,7 @@ sap.ui.require([
 			}),
 			oPostPromise.then(function () {
 				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
+				assert.strictEqual(oCache.hasPendingChanges(""), false, "no more pending changes");
 			})
 		]);
 	});
@@ -1482,6 +1486,11 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oCache.aElements[-1] = oEntity;
+		oRequestorMock.expects("removePost").never();
+
+		// code under test - don't call removePost on root if resetChanges is called with a path
+		oCache.resetChanges("any/Path");
+
 		oRequestorMock.expects("removePost").withExactArgs("groupId", oEntity);
 
 		// code under test

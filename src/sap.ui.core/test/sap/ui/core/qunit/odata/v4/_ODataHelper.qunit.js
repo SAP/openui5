@@ -1457,20 +1457,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: with transient context", function (assert) {
-		var oBinding = {
-				aContexts : []
-			};
-
-			oBinding.aContexts[-1] = {
-				isTransient : function () {
-					return true;
-				}
-			};
-			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding), true);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): without cache", function (assert) {
 		var oBinding = {
 				sPath : "relative"
