@@ -382,6 +382,11 @@
 		}
 	});
 
+	QUnit.test("test min-width", function(assert) {
+		oTable.getDomRef().style.width = "0px";
+		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
+	});
+
 	QUnit.module("Column operations", {
 		beforeEach: function() {
 			createTable();
