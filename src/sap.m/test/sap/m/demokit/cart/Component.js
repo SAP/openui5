@@ -111,8 +111,8 @@ sap.ui.define([
 
 			// set device model
 			var oDeviceModel = new JSONModel({
-				// feature toggle for a safe for later functionality in the Cart.view.xml
-				safeForLater: !!jQuery.sap.getUriParameters().get("safeForLater"),
+				// feature toggle for a save for later functionality in the Cart.view.xml
+				saveForLater: !!jQuery.sap.getUriParameters().get("saveForLater"),
 				isTouch: sap.ui.Device.support.touch,
 				isNoTouch: !sap.ui.Device.support.touch,
 				isPhone: sap.ui.Device.system.phone,

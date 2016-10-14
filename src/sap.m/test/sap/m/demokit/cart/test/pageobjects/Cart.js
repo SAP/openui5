@@ -47,11 +47,25 @@ sap.ui.define([
 						});
 					},
 
-					iPressOnSafeForLaterForTheFirstProduct : function () {
+					iPressOnSaveForLaterForTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
 							matchers : new BindingPath({path : "/cartEntries/id_11", modelName: "cartProducts"}),
+							success: function (aObjectAttributes) {
+								this.waitFor({
+									controlType : "sap.m.Text",
+									matchers: new Ancestor(aObjectAttributes[0], true),
+									actions : new Press()
+								});
+							}
+						});
+					},
+					iPressOnAddBackToCartForTheFirstProduct : function () {
+						return this.waitFor({
+							controlType : "sap.m.ObjectAttribute",
+							viewName : CART_VIEW_NAME,
+							matchers : new BindingPath({path : "/savedForLaterEntries/id_11", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
@@ -156,9 +170,9 @@ sap.ui.define([
 						});
 					},
 
-					iShouldSeeOneProductInMySafeForLaterList: function () {
+					iShouldSeeOneProductInMySaveForLaterList: function () {
 						return this.waitFor({
-							id : "savedForLaterList",
+							id : "saveForLaterList",
 							viewName : CART_VIEW_NAME,
 							success : function (oList) {
 								Opa5.assert.strictEqual(oList.getItems().length, 1, "Product saved for later");

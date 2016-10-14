@@ -17,6 +17,7 @@ sap.ui.define([
 	Dialog,
 	Button) {
 	var sCartModelName = "cartProducts";
+
 	return Controller.extend("sap.ui.demo.cart.view.Cart", {
 		formatter: formatter,
 
@@ -76,28 +77,40 @@ sap.ui.define([
 			this._showProduct(oEvent.getParameter("listItem"));
 		},
 
-		onSafeForLater: function (oEvent) {
+		onSaveForLater: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
+			var oModelData = oBindingContext.getModel().getData();
+
+			var oListToAddItem = oModelData.savedForLaterEntries;
+			var oListToDeleteItem = oModelData.cartEntries;
+			this._changeList(oListToAddItem, oListToDeleteItem, oEvent);
+		},
+
+		onAddBackToCart: function (oEvent) {
+			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
+			var oModelData = oBindingContext.getModel().getData();
+
+			var oListToAddItem = oModelData.cartEntries;
+			var oListToDeleteItem = oModelData.savedForLaterEntries;
+			this._changeList(oListToAddItem, oListToDeleteItem, oEvent);
+		},
+
+		_changeList: function (oListToAddItem, oListToDeleteItem, oEvent) {
+			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
+			var oCartModel = this.getView().getModel(sCartModelName);
 			var oProduct = oBindingContext.getObject();
-
-			//Move Products from cart to saveList
-			var oCartModel =oBindingContext.getModel();
-			var oCartData = oCartModel.getData();
-			var oSavedForLaterEntries = oCartData.savedForLaterEntries;
-			var oCartEntries = oCartData.cartEntries;
-
-			// find existing entry for product
 			var sProductId = oProduct.ProductId;
 
-			if (oSavedForLaterEntries[sProductId] === undefined) {
+			// find existing entry for product
+			if (oListToAddItem[sProductId] === undefined) {
 				// copy new entry
-				oSavedForLaterEntries[sProductId] = oProduct;
+				oListToAddItem[sProductId] = oProduct;
 			}
 
 			//Delete the saved Product from cart
-			delete oCartEntries[sProductId];
+			delete oListToDeleteItem[sProductId];
 			// update model
-			oCartModel.setData(oCartData);
+			oCartModel.refresh(true);
 		},
 
 		_showProduct: function (item) {
