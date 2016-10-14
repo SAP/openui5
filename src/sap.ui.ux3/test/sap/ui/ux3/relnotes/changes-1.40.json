@@ -185,5 +185,24 @@
         "references": []
       }
     ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "dce56cb11d98b0587c527a86dc6f4cd0e1d52a67",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
+        "references": []
+      }
+    ]
   }
 }
