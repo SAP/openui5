@@ -961,6 +961,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines how the input display text should be formatted.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.44.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.InputTextFormatMode = {
+
+		/**
+		 * Text
+		 * @public
+		 */
+		Value: "Value",
+
+		/**
+		 * Key
+		 * @public
+		 */
+		Key: "Key",
+
+		/**
+		 * A value-key pair formatted like "text (key)"
+		 * @public
+		 */
+		ValueKey: "ValueKey",
+
+		/**
+		 * A key-value pair formatted like "(key) text"
+		 * @public
+		 */
+		KeyValue: "KeyValue"
+	};
+
+	/**
 	 * Defines the mode of GenericTile.
 	 *
 	 * @enum {string}
