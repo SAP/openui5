@@ -598,28 +598,37 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @public
 		 */
 		TimePicker.prototype.getPlaceholder = function() {
-			var sPlaceholder = this.getProperty("placeholder"),
-				oBinding;
+			var sPlaceholder = this.getProperty("placeholder");
 
 			if (!sPlaceholder) {
+				sPlaceholder =  this._getFormat();
+			}
+			return sPlaceholder;
+		};
+
+		/**
+		 * Obtains time pattern
+		 * @returns {*} the time pattern
+		 * @private
+		 */
+		TimePicker.prototype._getFormat = function () {
+			var sFormat,
 				oBinding = this.getBinding("value");
 
-				if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
-					sPlaceholder = oBinding.oType.getOutputPattern();
-				} else {
-					sPlaceholder = this.getDisplayFormat();
-				}
-
-				if (!sPlaceholder) {
-					sPlaceholder = TimeFormatStyles.Medium;
-				}
-
-				if (Object.keys(TimeFormatStyles).indexOf(sPlaceholder) !== -1 ) {
-					sPlaceholder = getDefaultDisplayFormat();
-				}
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
+				sFormat = oBinding.oType.getOutputPattern();
+			} else {
+				sFormat = this.getDisplayFormat();
 			}
 
-			return sPlaceholder;
+			if (!sFormat) {
+				sFormat = TimeFormatStyles.Medium;
+			}
+
+			if (Object.keys(TimeFormatStyles).indexOf(sFormat) !== -1) {
+				sFormat = getDefaultDisplayFormat();
+			}
+			return sFormat;
 		};
 
 		/**
