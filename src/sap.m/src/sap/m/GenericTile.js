@@ -489,7 +489,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if ($Tile.attr("title") !== sAriaAndTitleText) {
 			$Tile.attr("aria-label", sAriaText).attr("title", sTooltipText);
 		}
-		$Tile.find('*').removeAttr("aria-label").removeAttr("title");
+		$Tile.find('*').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
 	};
 
 	return GenericTile;
