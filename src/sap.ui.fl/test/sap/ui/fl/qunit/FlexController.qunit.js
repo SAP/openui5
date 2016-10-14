@@ -45,6 +45,23 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		}
 	};
 
+	var labelChangeContent2 = {
+		"fileType": "change",
+		"layer": "USER",
+		"fileName": "a2",
+		"namespace": "b",
+		"packageName": "c",
+		"changeType": "labelChange",
+		"creation": "",
+		"reference": "",
+		"selector": {
+			"id": "abc123"
+		},
+		"content": {
+			"something": "createNewVariant"
+		}
+	};
+
 	QUnit.module("sap.ui.fl.FlexController", {
 		beforeEach: function () {
 			this.oFlexController = new FlexController("testScenarioComponent");
@@ -613,6 +630,224 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		};
 
 		FlexController.getChangesAndPropagate(oComponent, {});
+	});
+
+	QUnit.module("[JS] _checkTargetAndApplyChange with one change for a label", {
+		beforeEach: function (assert) {
+			this.sLabelId = labelChangeContent.selector.id;
+			this.oControl = new sap.m.Label(this.sLabelId);
+			this.oChange = new Change(labelChangeContent);
+			this.mChanges = {};
+			this.mChanges[this.sLabelId] = [this.oChange];
+
+			this.oChangeHandlerApplyChangeStub = sandbox.stub();
+			sandbox.stub(FlexController.prototype, "_getChangeHandler").returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
+		},
+		afterEach: function (assert) {
+			this.oControl.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("adds custom data on the first change applied on a control", function (assert) {
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
+	});
+
+	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
+		var sAlreadyAppliedChangeId = "id_123_anAlreadyAppliedChange";
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: sAlreadyAppliedChangeId
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedFlexCustomDataValue, "the change id is the value");
+	});
+
+	QUnit.test("does not call the change handler if the change was already applied", function (assert) {
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: this.oChange.getId()
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change was NOT applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData is still set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
+	});
+
+	QUnit.module("[JS] _checkTargetAndApplyChange with two changes for a label", {
+		beforeEach: function (assert) {
+			this.sLabelId = labelChangeContent.selector.id;
+			this.oControl = new sap.m.Label(this.sLabelId);
+			this.oChange = new Change(labelChangeContent);
+			this.oChange2 = new Change(labelChangeContent2);
+			this.mChanges = {};
+			this.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
+
+			this.oChangeHandlerApplyChangeStub = sandbox.stub();
+			sandbox.stub(FlexController.prototype, "_getChangeHandler").returns({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
+		},
+		afterEach: function (assert) {
+			this.oControl.destroy();
+			sandbox.restore();
+		}
+	});
+	QUnit.test("calls the change handler twice for two unapplied changes and concatenate the custom data correct", function (assert) {
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
+	});
+
+	QUnit.test("concatenate custom data on the later changes (first already applied) applied on a control", function (assert) {
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: this.oChange.getId()
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange2, "the second change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
+	});
+
+	QUnit.test("concatenate custom data on the later changes (second already applied) applied on a control", function (assert) {
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: this.oChange2.getId()
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange, "the first change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange2.getId() + "," + this.oChange.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
+	});
+
+	QUnit.test("calls NO the change handler for two applied changes", function (assert) {
+		var sFlexCustomDataValue = this.oChange.getId() + "," + this.oChange2.getId();
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: sFlexCustomDataValue
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+
+		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "no changes were applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sFlexCustomDataValue, "the concatenated change ids are the value");
+	});
+
+	QUnit.module("[XML] _checkTargetAndApplyChange with one change for a label", {
+		beforeEach: function (assert) {
+			this.sLabelId = labelChangeContent.selector.id;
+			this.oDOMParser = new DOMParser();
+			this.oChange = new Change(labelChangeContent);
+
+			this.oChangeHandlerApplyChangeStub = sandbox.stub();
+			sandbox.stub(FlexController.prototype, "_getChangeHandler").returns({
+			applyChange: this.oChangeHandlerApplyChangeStub
+			});
+		},
+		afterEach: function (assert) {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("adds custom data on the first change applied on a control", function (assert) {
+		this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+			'<Label id="' + this.sLabelId  + '" />' +
+			'</mvc:View>';
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
+		this.oControl = this.oView.childNodes[0].childNodes[0];
+
+		FlexController.prototype._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+	 });
+
+	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
+
+		var sAlreadyAppliedChangeId = "id_123_anAlreadyAppliedChange";
+
+		this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<Label id="' + this.sLabelId + '" >' +
+				'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + sAlreadyAppliedChangeId + '"/></customData>' +
+				'</Label>' +
+			'</mvc:View>';
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
+		this.oControl = this.oView.childNodes[0].childNodes[0];
+
+		FlexController.prototype._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
+		assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change id is the value");
+	});
+
+	QUnit.test("does not call the change handler if the change was already applied", function (assert) {
+
+		this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<Label id="' + this.sLabelId + '" >' +
+			'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + this.oChange.getId() + '"/></customData>' +
+			'</Label>' +
+			'</mvc:View>';
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
+		this.oControl = this.oView.childNodes[0].childNodes[0];
+
+		FlexController.prototype._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData is still present");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 	});
 
 }(sap.ui.fl.FlexController, sap.ui.fl.Change, sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.HideControl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier, sap.ui.fl.context.ContextManager));
