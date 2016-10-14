@@ -360,18 +360,16 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+			this.submitBatch("SalesOrderUpdateGroup");
 		},
 
 		onSaveSalesOrderSchedules : function () {
-			var oView = this.getView();
-
-			oView.getModel().submitBatch("SalesOrderUpdateGroup");
-			oView.byId("SalesOrderSchedulesDialog").close();
+			this.getView().byId("SalesOrderSchedulesDialog").close();
+			this.submitBatch("SalesOrderUpdateGroup");
 		},
 
 		onSaveSalesOrderList : function () {
-			this.getView().getModel().submitBatch("SalesOrderListUpdateGroup");
+			this.submitBatch("SalesOrderListUpdateGroup");
 		},
 
 		onSetBindingContext : function () {
@@ -433,6 +431,23 @@ sap.ui.define([
 			} else {
 				oRefreshable.refresh();
 			}
+		},
+
+		/**
+		 * Submits the given batch group while the view is locked.
+		 *
+		 * @param {string} sGroupId
+		 *   the group ID
+		 */
+		submitBatch : function (sGroupId) {
+			var oView = this.getView();
+
+			function resetBusy() {
+				oView.setBusy(false);
+			}
+
+			oView.setBusy(true);
+			oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
 		}
 	});
 
