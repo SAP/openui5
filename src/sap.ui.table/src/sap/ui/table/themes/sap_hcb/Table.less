@@ -478,14 +478,19 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	border-bottom: none;
 }
 
-.sapUiTableTouch .sapUiScrollBar {
-	::-webkit-scrollbar-thumb {
-		background-color: @sapHCStandardFG;
+html.sap-tablet:not(.sap-desktop), html.sap-phone {
 
-	}
+	.sapUiTableVSb,
+	.sapUiTableHSb {
 
-	::-webkit-scrollbar {
-		background-color: @sapHCStandardBG;
+		::-webkit-scrollbar-thumb {
+			background-color: @sapHCStandardFG;
+		}
+
+		::-webkit-scrollbar {
+			background-color: @sapHCStandardBG;
+		}
+
 	}
 }
 
