@@ -86,21 +86,26 @@
         }
     });
 
-    QUnit.test("Default Values", function(assert) {
-        // assert
-        var aRange = this.rangeSlider.getRange();
-        assert.strictEqual(this.rangeSlider.getEnabled(), true, "By default the RangeSlider is enabled");
-        assert.strictEqual(this.rangeSlider.getVisible(), true, "By default the RangeSlider is visible");
-        assert.strictEqual(this.rangeSlider.getName(), "", "By default the RangeSlider's name is ''");
-        assert.strictEqual(this.rangeSlider.getWidth(), "100%", "The initial width is set to \"100%\"");
-        assert.strictEqual(this.rangeSlider.getMin(), 0, "The default value for min is 0.");
-        assert.strictEqual(this.rangeSlider.getMax(), 100, "The default value for max is 100.");
-        assert.strictEqual(this.rangeSlider.getStep(), 1, "By default the RangeSlider's step is 1");
-        assert.ok(Array.isArray(aRange), "The range of the RangeSlider should be an array.");
-        assert.strictEqual(aRange.length, 2, "The range of the RangeSlider should be an array with two values in it.");
-        assert.strictEqual(aRange[0], 0, "The default low value of the range should be 0.");
-        assert.strictEqual(aRange[1], 100, "The default high value of the range should be 100.");
-    });
+	QUnit.test("it should not throw an error when the .destroy() method is called twice", function (assert) {
+		this.rangeSlider.destroy();
+		assert.ok(true);
+	});
+
+	QUnit.test("Default Values", function (assert) {
+		// assert
+		var aRange = this.rangeSlider.getRange();
+		assert.strictEqual(this.rangeSlider.getEnabled(), true, "By default the RangeSlider is enabled");
+		assert.strictEqual(this.rangeSlider.getVisible(), true, "By default the RangeSlider is visible");
+		assert.strictEqual(this.rangeSlider.getName(), "", "By default the RangeSlider's name is ''");
+		assert.strictEqual(this.rangeSlider.getWidth(), "100%", "The initial width is set to \"100%\"");
+		assert.strictEqual(this.rangeSlider.getMin(), 0, "The default value for min is 0.");
+		assert.strictEqual(this.rangeSlider.getMax(), 100, "The default value for max is 100.");
+		assert.strictEqual(this.rangeSlider.getStep(), 1, "By default the RangeSlider's step is 1");
+		assert.ok(Array.isArray(aRange), "The range of the RangeSlider should be an array.");
+		assert.strictEqual(aRange.length, 2, "The range of the RangeSlider should be an array with two values in it.");
+		assert.strictEqual(aRange[0], 0, "The default low value of the range should be 0.");
+		assert.strictEqual(aRange[1], 100, "The default high value of the range should be 100.");
+	});
 
     QUnit.test("getRange()", function(assert) {
         var aRange = this.rangeSlider.getRange();
@@ -221,16 +226,33 @@
         assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 72, "The function should return 72");
     });
 
-    QUnit.test("Calculate movement offset", function (assert) {
-        var aRange = [4, 27],
-            iStep = 5,
-            oSlider = new sap.m.RangeSlider("RangeSlider6", {
-                step: iStep,
-                min: 4,
-                max: 27,
-                range: aRange
-            }).placeAt(DOM_RENDER_LOCATION);
-        sap.ui.getCore().applyChanges();
+	QUnit.test("_calculateHandlePosition() with decimal step", function () {
+		this.rangeSlider._fSliderWidth = 100;
+		this.rangeSlider._fSliderOffsetLeft = 0;
+		this.rangeSlider._fSliderPaddingLeft = 0;
+		this.rangeSlider.setStep(0.5);
+
+		var value1 = 0.0,
+			value2 = 5.5,
+			value3 = 25.2,
+			value4 = 30.8;
+
+		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value1), 0, "The function should return 0");
+		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value2), 5.5, "The function should return 5.5");
+		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value3), 25, "The function should return 25");
+		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 31, "The function should return 31");
+	});
+
+	QUnit.test("Calculate movement offset", function (assert) {
+		var aRange = [4, 27],
+			iStep = 5,
+			oSlider = new sap.m.RangeSlider("RangeSlider6", {
+				step: iStep,
+				min: 4,
+				max: 27,
+				range: aRange
+			}).placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
 
         //Act
         oSlider._updateSliderValues(iStep, oSlider._mHandleTooltip.start.handle);
@@ -275,5 +297,254 @@
         }
     });
 
+	QUnit.module("Overwritten methods");
+
+	QUnit.test("getRange", function (assert) {
+		var aRange = [12, 38],
+			oRangeSlider = new sap.m.RangeSlider({range: aRange, min: 0, max: 100}).placeAt(DOM_RENDER_LOCATION);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(oRangeSlider.getRange(), aRange, "Range should equal to the initial set value: " + aRange);
+		assert.deepEqual(oRangeSlider.getRange(), oRangeSlider.getRange(), "Ranges should be equal");
+		assert.ok(oRangeSlider.getRange() !== oRangeSlider.getRange(), "Ranges should not be the same instance");
+
+		oRangeSlider.destroy();
+	});
+
+	QUnit.module("Integrations:");
+
+	QUnit.test("Model change from the outside", function (assert) {
+		var oData = {min: 0, max: 5000, range: [100, 500]},
+			oModel = new sap.ui.model.json.JSONModel(oData),
+			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+
+		oRangeSlider.setModel(oModel);
+		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oData.min, oRangeSlider.getMin(), "Min threshold to be set properly");
+		assert.strictEqual(oData.max, oRangeSlider.getMax(), "Max threshold to be set properly");
+		assert.deepEqual(oData.range, oRangeSlider.getRange(), "Ranges should be equal");
+		assert.ok(oData.range !== oRangeSlider.getRange(), "Range array should not be the same instances");
+
+		//Act
+		oModel.setProperty("/range", [120, 150]);
+		oModel.setProperty("/min", 100);
+		oModel.setProperty("/max", 200);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(100, oRangeSlider.getMin(), "Min threshold to be set properly");
+		assert.strictEqual(200, oRangeSlider.getMax(), "Max threshold to be set properly");
+		assert.strictEqual(120, oRangeSlider.getValue(), "Max threshold to be set properly");
+		assert.strictEqual(150, oRangeSlider.getValue2(), "Max threshold to be set properly");
+		assert.deepEqual([120, 150], oRangeSlider.getRange(), "Ranges should be equal");
+
+		oRangeSlider.destroy();
+	});
+
+	QUnit.test("Model change from the inside", function (assert) {
+		var oData = {min: 0, max: 5000, range: [100, 500]},
+			oModel = new sap.ui.model.json.JSONModel(oData),
+			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+
+		oRangeSlider.setModel(oModel);
+		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oData2 = [50, 80];
+		oRangeSlider.setRange(oData2);
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual([50, 80], oModel.getProperty("/range"), "Ranges should be equal");
+		assert.deepEqual([50, 80], oRangeSlider.getRange(), "Ranges should be equal");
+		assert.ok(oData2 !== oRangeSlider.getRange(), "Range array should not be the same instances");
+
+		oRangeSlider.destroy();
+	});
+
+	QUnit.test("XML value", function (assert) {
+		var oRangeSlider,
+			sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,20" /></mvc:View>',
+			oView = sap.ui.xmlview({viewContent: sXMLText});
+
+		oView.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		oRangeSlider = oView.byId("range");
+
+		assert.ok(oRangeSlider, "Slider should have been initialized");
+		assert.deepEqual(oRangeSlider.getRange(), [5, 20], "Range's string array should have been parsed properly");
+
+		oView.destroy();
+	});
+
+	QUnit.test("value, value2 and range bindings through setters", function (assert) {
+		var oRangeSlider = new sap.m.RangeSlider({value: 12, value2: 88, min: 0, max: 90});
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [12, 88], "Range should be equal to [12, 88]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+
+
+		//act
+		oRangeSlider.setValue(22);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 88], "Range should be equal to [22, 88]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be updated properly");
+
+		//act
+		oRangeSlider.setValue2(35);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be updated properly");
+
+		//act
+		oRangeSlider.setRange([5, 15]);
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [5, 15], "Range should be equal to [5, 15]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+	});
+
+	QUnit.test("value, value2 and range setters, bindings + outer Model", function (assert) {
+		var oData = {min: 0, max: 5000, range: [100, 500]},
+			oModel = new sap.ui.model.json.JSONModel(oData),
+			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
+
+		oRangeSlider.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+
+		//act
+		oRangeSlider.setValue(22);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], 22, "Range 0 and value should be updated properly to 22");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oRangeSlider.setValue2(35);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oRangeSlider.setRange([5, 15]);
+
+		//assert
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+	});
+
+	QUnit.test("value, value2 and range setters, bindings + outer Model V2", function (assert) {
+		var oData = {min: 0, max: 5000, range: [100, 500]},
+			oModel = new sap.ui.model.json.JSONModel(oData),
+			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", value: "{/range/0}", value2: "{/range/1}", range: "{/range}"});
+
+		oRangeSlider.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+
+		//act
+		oRangeSlider.setValue(22);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], 22, "Range 0 and value should be updated properly to 22");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oRangeSlider.setValue2(35);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oRangeSlider.setRange([5, 15]);
+
+		//assert
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+	});
+
+	QUnit.test("value, value2 and range setters, bindings + outer Model change", function (assert) {
+		var oData = {min: 0, max: 5000, range: [100, 500]},
+			oModel = new sap.ui.model.json.JSONModel(oData),
+			oRangeSlider = new sap.m.RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}", value: "{/range/0}", value2: "{/range/1}"});
+
+		oRangeSlider.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+
+
+		//act
+		oModel.setProperty("/range/0", 22);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
+		assert.strictEqual(oRangeSlider.getRange()[0], 22, "Range 0 and value should be updated properly to 22");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oModel.setProperty("/range/1", 35);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be updated properly");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//act
+		oModel.setProperty("/range", [5, 15]);
+		oModel.setProperty("/range/1", 99);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [5, 99], "Range should be equal to [5, 99]");
+		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
+		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+	});
 }());
 
