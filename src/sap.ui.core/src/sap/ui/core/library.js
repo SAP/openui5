@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.CSSSize",
 			"sap.ui.core.CSSSizeShortHand",
 			"sap.ui.core.Collision",
+			"sap.ui.core.ComponentLifecycle",
 			"sap.ui.core.Design",
 			"sap.ui.core.Dock",
 			"sap.ui.core.HorizontalAlign",
@@ -1588,6 +1589,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 * @public
 		 */
 		Unknown : "Unknown"
+
+	};
+
+	/**
+	 * Enumeration for different lifecycle behaviors of Components created by the
+	 * ComponentContainer.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.core.ComponentLifecycle =  {
+
+		/**
+		 * Legacy lifecycle means that the ComponentContainer takes care
+		 * to destroy the Component which is associated with the
+		 * ComponentContainer once the ComponentContainer is destroyed but
+		 * not when a new Component is associated.
+		 * @public
+		 */
+		Legacy : "Legacy",
+
+		/**
+		 * Application managed lifecycle means that the Application takes care
+		 * to destroy the Components associated with the ComponentContainer.
+		 * @public
+		 */
+		Application : "Application",
+
+		/**
+		 * Container managed lifecycle means that the ComponentContainer takes
+		 * care to destroy the Components associated with the ComponentContainer
+		 * once the ComponentContainer is destroyed or a new Component is associated.
+		 * @public
+		 */
+		Container : "Container"
 
 	};
 
