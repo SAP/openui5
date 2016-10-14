@@ -227,14 +227,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * Calculates all data that is necessary for displaying style helpers in LineMode (compact).
 	 * These helpers are used in order to imitate a per-line box effect.
 	 *
-	 * @returns {object} An object containing general data about the style helpers and information about each single line
+	 * @returns {object|undefined} An object containing general data about the style helpers and information about each
+	 *                             single line or undefined if the tile is invisible or not in compact density.
 	 * @private
 	 */
 	GenericTile.prototype._getStyleData = function() {
 		this.removeStyleClass("sapMGTNewLine"); //remove this class before the new calculation begins in order to have the "default state" of tile-breaks
 
-		if (!this._isCompact()) {
-			return {};
+		if (!this._isCompact() || this.$().is(":not(:visible)")) {
+			return;
 		}
 
 		var $End = this.$("endMarker"),
