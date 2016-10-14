@@ -388,6 +388,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {boolean} mPropertyBag.unmergedChangesOnly - flag if view should only processed with changes flagged as unmerged within the ChangePersistence
 	 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent - component instance that is currently loading
 	 * @param {string} siteId - id of the flp site containing this application
 	 * @private
 	 */
@@ -596,13 +597,14 @@ sap.ui.define([
 	 * creation process.
 	 *
 	 * @param {array} mChanges Changes belonging to the app component
+	 * @param {object} oAppComponent Component instance that is currently loading
 	 * @param {object} oControl Control instance that is being created
 	 * @public
 	 */
-	FlexController.applyChangesOnControl = function (mChanges, oControl) {
+	FlexController.applyChangesOnControl = function (mChanges, oAppComponent, oControl) {
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		aChangesForControl.forEach(function (oChange) {
-			FlexController.prototype._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier});
+			FlexController.prototype._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
 		});
 	};
 
@@ -618,7 +620,7 @@ sap.ui.define([
 		sap.ui.fl.ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 			.then(function(mChanges) {
 				if (Object.keys(mChanges).length !== 0) {
-					oComponent.addPropagationListener(FlexController.applyChangesOnControl.bind(this,mChanges));
+					oComponent.addPropagationListener(FlexController.applyChangesOnControl.bind(this, mChanges, oComponent));
 				}
 			}
 		);
