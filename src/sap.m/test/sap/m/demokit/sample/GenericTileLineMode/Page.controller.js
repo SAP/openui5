@@ -7,10 +7,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 			var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getResourcePath("sap/m/sample/GenericTileLineMode/tiles.json"));
 			this.getView().setModel(oModel);
 
+			this.oTileContainer = this.getView().byId("TileContainerCollapsed");
+
 			sap.ui.getCore().attachIntervalTimer(function() {
 				var bCompact = jQuery("body").hasClass("sapUiSizeCompact");
 				if (this._bCompact !== bCompact) {
-					this.getView().byId("TileContainerCollapsed").invalidate();
+					this.oTileContainer.rerender();
 					this._bCompact = bCompact;
 				}
 			}.bind(this));

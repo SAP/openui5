@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer'],
-	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/table/TableUtils' ],
+	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer, TableUtils) {
 	"use strict";
 
 	/**
@@ -224,18 +224,139 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
+	 * Calculates all data that is necessary for displaying style helpers in LineMode (compact).
+	 * These helpers are used in order to imitate a per-line box effect.
+	 *
+	 * @returns {object} An object containing general data about the style helpers and information about each single line
+	 * @private
+	 */
+	GenericTile.prototype._getStyleData = function() {
+		this.removeStyleClass("sapMGTNewLine"); //remove this class before the new calculation begins in order to have the "default state" of tile-breaks
+
+		if (!this._isCompact()) {
+			return {};
+		}
+
+		var $End = this.$("endMarker"),
+			$Start =  this.$("startMarker"),
+			iBarOffsetX, iBarOffsetY,
+			iBarPaddingTop = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "margin-top")),
+			iBarWidth,
+			iParentWidth = this.$().parent().outerWidth(),
+			iParentLeft = this.$().parent().offset().left,
+			iParentRight = iParentLeft + iParentWidth,
+			iHeight = Math.round($End.offset().top - $Start.offset().top),
+			cHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
+			cLineHeight = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
+			iLines = Math.round(iHeight / cHeight) + 1,
+			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
+			i = 0,
+			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			iPosEnd = $End.offset().left,
+			iOffset = $Start.offset().left;
+
+		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile
+			this.addStyleClass("sapMGTNewLine");
+			iPosEnd = $End.offset().left;
+			iHeight = $End.offset().top - $Start.offset().top;
+			iLines = Math.round(iHeight / cHeight) + 2; //+ first empty line
+		}
+
+		if (bRTL) {
+			iOffset = iParentRight - iOffset;
+			iPosEnd = iParentRight - iPosEnd;
+		} else {
+			iOffset -= iParentLeft;
+			iPosEnd -= iParentLeft;
+		}
+
+		var oData = {
+			rtl: bRTL,
+			startX: iOffset,
+			endX: iPosEnd,
+			lines: []
+		};
+
+		for (i; i < iLines; i++) {
+			if (bLineBreak && i === 0) {
+				continue;
+			}
+
+			//set bar width
+			if (iLines === 1) { //first and only line
+				iBarOffsetX = iOffset;
+				iBarWidth = iPosEnd - iBarOffsetX;
+			} else if (i === iLines - 1) { //last line
+				iBarOffsetX = 0;
+				iBarWidth = iPosEnd - iBarOffsetX;
+			} else if (i === 0) { //first line for non-wrapped tile
+				iBarOffsetX = iOffset;
+				iBarWidth = iParentWidth - iBarOffsetX;
+			} else if (bLineBreak && i === 1) { //first line for wrapped tile
+				iBarOffsetX = 0;
+				iBarWidth = iParentWidth - iBarOffsetX;
+			} else {
+				iBarOffsetX = 0;
+				iBarWidth = iParentWidth;
+			}
+			iBarOffsetY = i * cHeight + iBarPaddingTop;
+
+			oData.lines.push({
+				offset: {
+					x: iBarOffsetX,
+					y: iBarOffsetY
+				},
+				width: iBarWidth,
+				height: cLineHeight
+			});
+		}
+		return oData;
+	};
+
+	/**
+	 * Calculates the bounding box of the tile for use in drag&drop scenarios.
+	 *
+	 * @returns {object} The bounding box object as a rectangle with offset (x, y) and dimensions (width, height)
+	 * @private
+	 */
+	GenericTile.prototype._getBoundingBox = function() {
+		if (!this._oStyleData) {
+			this._oStyleData = this._getStyleData();
+		}
+		if (jQuery.isEmptyObject(this._oStyleData)) {
+			var oPos = this.$().position();
+			return {
+				x: oPos.left,
+				y: oPos.top,
+				width: this.$().outerWidth(true),
+				height: this.$().outerHeight(true)
+			};
+		} else if (this._oStyleData.lines.length > 0) {
+			return {
+				x: this._oStyleData.startX, //this x-offset is browser-dependent
+				y: this._oStyleData.lines[0].offset.y,
+				width: this._oStyleData.lines[0].width,
+				height: this._oStyleData.lines[0].height * this._oStyleData.lines.length
+			};
+		}
+		return {};
+	};
+
+	/**
 	 * Updates the hover style of all siblings that are tiles in LineMode.
 	 *
 	 * @private
 	 */
 	GenericTile.prototype._updateLineTileSiblings = function() {
-		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this.getParent()) {
-			var i = this.getParent().indexOfAggregation(this.sParentAggregationName, this);
-			var aSiblings = this.getParent().getAggregation(this.sParentAggregationName).splice(i + 1);
+		var oParent = this.getParent();
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && oParent) {
+			var i = oParent.indexOfAggregation(this.sParentAggregationName, this);
+			var aSiblings = oParent.getAggregation(this.sParentAggregationName).splice(i + 1);
 
 			for (i = 0; i < aSiblings.length; i++) {
-				if (aSiblings[i] instanceof sap.m.GenericTile && aSiblings[i].getMode() === library.GenericTileMode.LineMode) {
-					LineModeRenderer._updateHoverStyle.call(aSiblings[i]);
+				var oSibling = aSiblings[i];
+				if (oSibling instanceof sap.m.GenericTile && oSibling.getMode() === library.GenericTileMode.LineMode) {
+					LineModeRenderer._updateHoverStyle.call(oSibling);
 				}
 			}
 		}
@@ -653,12 +774,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Determines the content density mode.
-	 * @returns {boolean} Returns true, if the control or its parents have the class sapUiSizeCompact, otherwise false.
+	 * Checks whether the control has compact content density.
+	 * @returns {boolean} Returns true if the control or its parents have the class sapUiSizeCompact, otherwise false.
 	 * @private
 	 */
 	GenericTile.prototype._isCompact = function() {
-		return this.$().parents().andSelf().hasClass("sapUiSizeCompact");
+		return TableUtils.getContentDensity(this) === "sapUiSizeCompact";
 	};
 
 	return GenericTile;
