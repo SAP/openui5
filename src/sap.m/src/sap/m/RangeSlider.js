@@ -324,8 +324,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 this._mHandleTooltip.start.label = this._mHandleTooltip.end.label;
                 this._mHandleTooltip.end.label = oTempLabel;
 
-                this._mHandleTooltip.start.handle.setAttribute("aria-labelledby", this._mHandleTooltip.start.label.getId());
-                this._mHandleTooltip.end.handle.setAttribute("aria-labelledby", this._mHandleTooltip.end.label.getId());
+                if (this._mHandleTooltip.start.handle) {
+                    this._mHandleTooltip.start.handle.setAttribute("aria-labelledby", this._mHandleTooltip.start.label.getId());
+                }
+                if (this._mHandleTooltip.end.handle) {
+                    this._mHandleTooltip.end.handle.setAttribute("aria-labelledby", this._mHandleTooltip.end.label.getId());
+                }
 
                 this._mHandleTooltip.bAriaHandlesSwapped = !this._mHandleTooltip.bAriaHandlesSwapped;
             }
@@ -881,6 +885,9 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @override
          */
         RangeSlider.prototype.onsaphome = function (oEvent) {
+            var iHandleIndex = 0,
+                fDistanceToStart = 0;
+
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
                 return;
             }
@@ -892,7 +899,10 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             oEvent.preventDefault();
 
             if (this.getEnabled()) {
-                this._updateSliderValues(this.getMin(), oEvent.target);
+                iHandleIndex = this._getIndexOfHandle(oEvent.target);
+                fDistanceToStart = this.getRange()[iHandleIndex] - this.getMin();
+
+                this._updateSliderValues(fDistanceToStart, oEvent.target);
                 this._fireChangeAndLiveChange({range: this.getRange()});
             }
         };

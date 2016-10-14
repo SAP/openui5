@@ -336,17 +336,140 @@
 		oSlider = null;
 	});
 
-	QUnit.module("Events", {
-		setup: function () {
-			this.rangeSlider = new sap.m.RangeSlider();
+	QUnit.test("_updateHandleAria", function (assert) {
+		var oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
 
-			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
+		//Act
+		oSlider._updateHandleAria(oSlider._mHandleTooltip.start.handle, 12);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oSlider._mHandleTooltip.start.handle.getAttribute("aria-valuenow"), "12", "Change valuenow property");
+
+		oSlider.destroy();
+		oSlider = null;
+	});
+
+	QUnit.test("_updateHandlesAriaLabels", function (assert) {
+		var clock = sinon.useFakeTimers(),
+			oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+			oInitStateStartLabel, oInitStateEndLabel;
+		sap.ui.getCore().applyChanges();
+
+		oInitStateStartLabel = oSlider._mHandleTooltip.start.label;
+		oInitStateEndLabel = oSlider._mHandleTooltip.end.label;
+
+		//Act
+		oSlider.setRange([60, 20]);
+		sap.ui.getCore().applyChanges();
+		clock.tick(1000);
+
+		//Assert
+		assert.ok(oSlider._mHandleTooltip.start.label === oInitStateEndLabel, "Labels are swapped");
+		assert.ok(oSlider._mHandleTooltip.end.label === oInitStateStartLabel, "Labels are swapped");
+
+		assert.strictEqual(oSlider._mHandleTooltip.start.handle.getAttribute("aria-labelledby"), oInitStateEndLabel.getId(), "Labels are swapped");
+		assert.strictEqual(oSlider._mHandleTooltip.end.handle.getAttribute("aria-labelledby"), oInitStateStartLabel.getId(), "Labels are swapped");
+
+		oSlider.destroy();
+		oSlider = null;
+		clock.restore();
+	});
+
+	QUnit.test("_swapTooltips", function (assert) {
+		var oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+			oInitStateStartTooltip, oInitStateEndTooltip;
+		sap.ui.getCore().applyChanges();
+
+		oInitStateStartTooltip = oSlider._mHandleTooltip.start.tooltip;
+		oInitStateEndTooltip = oSlider._mHandleTooltip.end.tooltip;
+
+		//Act
+		oSlider._swapTooltips([60, 20]);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oSlider._mHandleTooltip.start.tooltip === oInitStateEndTooltip, "Tooltips are swapped");
+		assert.ok(oSlider._mHandleTooltip.end.tooltip === oInitStateStartTooltip, "Tooltips are swapped");
+
+		oSlider.destroy();
+		oSlider = null;
+	});
+
+	QUnit.module("SAP KH", {
+		setup: function () {
+			this.oRangeSlider = new sap.m.RangeSlider({range: [20, 30]});
+			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
+
+			this.oEvent = {
+				target: this.oRangeSlider._mHandleTooltip.start.handle,
+				preventDefault: function () {
+				},
+				setMarked: function () {
+				}
+			};
+
+			this.testSAPEvents = function testSAPEvents(assert, methodName) {
+				var oMock = sinon.mock(this.oRangeSlider),
+					aCurRange = this.oRangeSlider.getRange();
+
+				oMock.expects("_fireChangeAndLiveChange").once();
+
+				this.oRangeSlider[methodName](this.oEvent);
+				sap.ui.getCore().applyChanges();
+
+				oMock.verify();
+				assert.notDeepEqual(this.oRangeSlider.getRange(), aCurRange, "Not equals");
+			};
 		},
 		teardown: function () {
-			this.rangeSlider.destroy();
-			this.rangeSlider = null;
+			this.oEvent = null;
+			this.testSAPEvents = null;
+			this.oRangeSlider.destroy();
+			this.oRangeSlider = null;
 		}
+	});
+
+	QUnit.test("KH: onsapincrease", function (assert) {
+		this.testSAPEvents(assert, "onsapincrease");
+	});
+
+	QUnit.test("KH: onsapplus", function (assert) {
+		this.testSAPEvents(assert, "onsapplus");
+	});
+
+	QUnit.test("KH: onsapincreasemodifiers", function (assert) {
+		this.testSAPEvents(assert, "onsapincreasemodifiers");
+	});
+
+	QUnit.test("KH: onsappageup", function (assert) {
+		this.testSAPEvents(assert, "onsappageup");
+	});
+
+	QUnit.test("KH: onsapdecrease", function (assert) {
+		this.testSAPEvents(assert, "onsapdecrease");
+	});
+
+	QUnit.test("KH: onsapminus", function (assert) {
+		this.testSAPEvents(assert, "onsapminus");
+	});
+
+	QUnit.test("KH: onsapdecreasemodifiers", function (assert) {
+		this.testSAPEvents(assert, "onsapdecreasemodifiers");
+	});
+
+	QUnit.test("KH: onsappagedown", function (assert) {
+		this.testSAPEvents(assert, "onsappagedown");
+	});
+
+	QUnit.test("KH: onsapend", function (assert) {
+		this.testSAPEvents(assert, "onsapend");
+	});
+
+	QUnit.test("KH: onsaphome", function (assert) {
+		this.testSAPEvents(assert, "onsaphome");
 	});
 
 	QUnit.module("Overwritten methods");
@@ -394,6 +517,7 @@
 		assert.deepEqual([120, 150], oRangeSlider.getRange(), "Ranges should be equal");
 
 		oRangeSlider.destroy();
+		oModel.destroy();
 	});
 
 	QUnit.test("Model change from the inside", function (assert) {
@@ -415,6 +539,7 @@
 		assert.ok(oData2 !== oRangeSlider.getRange(), "Range array should not be the same instances");
 
 		oRangeSlider.destroy();
+		oModel.destroy();
 	});
 
 	QUnit.test("XML value", function (assert) {
@@ -430,6 +555,8 @@
 		assert.ok(oRangeSlider, "Slider should have been initialized");
 		assert.deepEqual(oRangeSlider.getRange(), [5, 20], "Range's string array should have been parsed properly");
 
+		oRangeSlider.destroy();
+		oRangeSlider = null;
 		oView.destroy();
 	});
 
@@ -466,6 +593,10 @@
 		assert.deepEqual(oRangeSlider.getRange(), [5, 15], "Range should be equal to [5, 15]");
 		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
 		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
+
+		//Destroy
+		oRangeSlider.destroy();
+		oRangeSlider = null;
 	});
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model", function (assert) {
@@ -509,6 +640,12 @@
 		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
 		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
 		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//Destroy
+		oRangeSlider.destroy();
+		oRangeSlider = null;
+		oModel.destroy();
+		oModel = null;
 	});
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model V2", function (assert) {
@@ -552,6 +689,12 @@
 		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
 		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
 		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//Destroy
+		oRangeSlider.destroy();
+		oRangeSlider = null;
+		oModel.destroy();
+		oModel = null;
 	});
 
 	QUnit.test("value, value2 and range setters, bindings + outer Model change", function (assert) {
@@ -597,6 +740,12 @@
 		assert.strictEqual(oRangeSlider.getRange()[0], oRangeSlider.getValue(), "Range 0 and value should be equal");
 		assert.strictEqual(oRangeSlider.getRange()[1], oRangeSlider.getValue2(), "Range 1 and value2 should be equal");
 		assert.deepEqual(oRangeSlider.getRange(), oModel.getProperty("/range"), "Model should equal the range");
+
+		//Destroy
+		oRangeSlider.destroy();
+		oRangeSlider = null;
+		oModel.destroy();
+		oModel = null;
 	});
 }());
 
