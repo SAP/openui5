@@ -134,8 +134,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return oObject;
 		};
 
-		BlockLayoutRow.prototype.addAccentCell = function (sId) {
+		BlockLayoutRow.prototype.addAccentCell = function (vId) {
 			var oObject,
+				sId = vId && vId.getId ? vId.getId() : vId,
 				args = Array.prototype.slice.call(arguments),
 				oBackgrounds = sap.ui.layout.BlockBackgroundType,
 				oParent = this.getParent(),
@@ -155,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			if (oBackgrounds.Mixed === sLayoutBackground) {
 				this._processMixedCellStyles(sId, this.getContent());
 			} else if (oBackgrounds.Accent === sLayoutBackground) {
-				this._processAccentCellStyles(this.getAccentCells, this.getContent());
+				this._processAccentCellStyles(this.getAccentCells(), this.getContent());
 			}
 
 			return oObject;
@@ -170,18 +171,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		 * @private
 		 */
 		BlockLayoutRow.prototype._processMixedCellStyles = function (sId, aCells) {
+			var oParent, bProcessAccentCells;
+
 			if (!aCells || !aCells.length) {
 				jQuery.sap.log.warning("No accent cells were set");
 				return this;
 			}
 
+			oParent = this.getParent();
+			bProcessAccentCells = oParent && (oParent.hasStyleClass("sapUiBlockLayoutSizeL") || oParent.hasStyleClass("sapUiBlockLayoutSizeXL"));
+
 			aCells.forEach(function (oCell) {
-				// Accent only on a cell with 25% width
-				if (oCell.getId() === sId && oCell.getWidth() === 1) {
+				var oColorSets, bUseContrast2;
+
+				// Accent only on a cell with 25% width and L, XL sizes
+				if (bProcessAccentCells && oCell.getId() === sId && oCell.getWidth() === 1) {
 					oCell.addStyleClass("sapContrast").addStyleClass("sapContrastPlus");
 
-				} else if (oCell.getId() !== sId && (oCell.hasStyleClass("sapContrast") || oCell.hasStyleClass("sapContrastPlus"))) {
-					oCell.removeStyleClass("sapContrast").removeStyleClass("sapContrastPlus");
+					oColorSets = sap.ui.layout.BlockRowColorSets;
+					bUseContrast2 = this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, sap.ui.layout.BlockBackgroundType.Mixed, false, oColorSets.ColorSet1) ||
+						this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, sap.ui.layout.BlockBackgroundType.Mixed, true, oColorSets.ColorSet1);
+
+					if (bUseContrast2) {
+						oCell.addStyleClass("sapUiBlockLayoutBackgroundContrast2");
+					}
+				} else if ((!bProcessAccentCells || oCell.getId() !== sId) && (oCell.hasStyleClass("sapContrast") || oCell.hasStyleClass("sapContrastPlus"))) {
+					oCell.removeStyleClass("sapContrast").removeStyleClass("sapContrastPlus").removeStyleClass("sapUiBlockLayoutBackgroundContrast2");
 
 					this.removeAssociation("accentCells", oCell);
 
@@ -353,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		 */
 		BlockLayoutRow.prototype._isCellRatioIncluded = function (ratio) {
 			var guidelineRatios = BlockLayoutRow.CONSTANTS.guidelineRatios;
-			for (var i = 0 ; i < guidelineRatios.length; i++) {
+			for (var i = 0; i < guidelineRatios.length; i++) {
 				if (guidelineRatios[i] === ratio) {
 					return true;
 				}
@@ -396,8 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		BlockLayoutRow.prototype._hasStyleClass = function (sStyleClass, sLayoutBackground, bIsColorInverted, sType) {
 			var oBackgrounds = sap.ui.layout.BlockBackgroundType,
 				oColorSets = sap.ui.layout.BlockRowColorSets,
-				i, aStyleClasses,
-				aEqualSets = [];
+				i, aStyleClasses, aEqualSets;
 
 			// Check if this is NOT Mixed or Light background and just do the normal check
 			if ([oBackgrounds.Light, oBackgrounds.Mixed].indexOf(sLayoutBackground) === -1) {
