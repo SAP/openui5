@@ -158,7 +158,7 @@ sap.ui.define([
 		 * Returns the siteId of a component
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {string} siteId - that represent the found sietId
+		 * @returns {string} siteId - that represent the found siteId
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.getSiteId
@@ -182,6 +182,23 @@ sap.ui.define([
 
 				}
 			}
+
+			return sSiteId;
+		},
+
+		/**
+		 * Returns the siteId of a component when you already have the component data.
+		 *
+		 * @param {object} oComponentData - Component data
+		 * @returns {string} siteId - that represent the found siteId
+		 * @public
+		 * @function
+		 * @name sap.ui.fl.Utils.getSiteIdByComponentData
+		 */
+		getSiteIdByComponentData: function(oComponentData) {
+			var sSiteId = null;
+
+			sSiteId = this._getStartUpParameter(oComponentData, "hcpApplicationId");
 
 			return sSiteId;
 		},
@@ -258,20 +275,23 @@ sap.ui.define([
 		 * @private
 		 */
 		_getComponentStartUpParameter: function(oComponent, sParameterName) {
-			var startUpParameterContent = null, oComponentData = null;
+			var startUpParameterContent = null;
 
 			if (sParameterName) {
 				if (oComponent && oComponent.getComponentData) {
-					oComponentData = oComponent.getComponentData();
-					if (oComponentData && oComponentData.startupParameters) {
-						if (jQuery.isArray(oComponentData.startupParameters[sParameterName])) {
-							startUpParameterContent = oComponentData.startupParameters[sParameterName][0];
-						}
-					}
+					startUpParameterContent = this._getStartUpParameter(oComponent.getComponentData(), sParameterName);
 				}
 			}
 
 			return startUpParameterContent;
+		},
+
+		_getStartUpParameter: function (oComponentData, sParameterName) {
+			if (oComponentData && oComponentData.startupParameters && sParameterName) {
+				if (jQuery.isArray(oComponentData.startupParameters[sParameterName])) {
+					return oComponentData.startupParameters[sParameterName][0];
+				}
+			}
 		},
 
 		/**
@@ -750,6 +770,32 @@ sap.ui.define([
 
 		isApplication: function (oManifest) {
 			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
+		},
+
+		/**
+		 * Returns the reference of a component, according to the following logic:
+		 * First appVariantId, if not, componentName + ".Component", if not appId + ".Component".
+		 *
+		 * @param {object} oManifest - Manifest of the component
+		 * @returns {string} flex reference
+		 * @public
+		 */
+		getFlexReference: function (oManifest) {
+			if (oManifest) {
+				if (oManifest.getEntry("sap.ui5")) {
+					if (oManifest.getEntry("sap.ui5").appVariantId) {
+						return oManifest.getEntry("sap.ui5").appVariantId;
+					}
+					if (oManifest.getEntry("sap.ui5").componentName) {
+						return oManifest.getEntry("sap.ui5").componentName + ".Component";
+					}
+				}
+				if (oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").id) {
+					return oManifest.getEntry("sap.app").id + ".Component";
+				}
+			}
+			this.log.warning("No Manifest received.");
+			return "";
 		}
 	};
 	return Utils;

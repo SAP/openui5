@@ -77,13 +77,14 @@ sap.ui.define([
 	 *
 	 * @param {object} oConfig - copy of the configuration of loaded component
 	 * @param {object} oConfig.asyncHints - async hints passed from the app index to the core Component processing
+	 * @param {object} oManifest - Manifest of the component
 	 * @returns {object} Wrapper for oChangePersistence and oRequestOptions
 	 * @since 1.43
 	 * @private
 	 */
-	ChangePersistenceFactory._doLoadComponent = function (oConfig) {
+	ChangePersistenceFactory._doLoadComponent = function (oConfig, oManifest) {
 		var oChangePersistenceWrapper = {oChangePersistence: {}, oRequestOptions: {}};
-		var sComponentName = oConfig.name;
+		var sComponentName = Utils.getFlexReference(oManifest);
 
 		if (oConfig.componentData && oConfig.componentData.startupParameters
 				&& oConfig.componentData.startupParameters["sap-app-id"] && oConfig.componentData.startupParameters["sap-app-id"].length === 1) {
@@ -94,13 +95,14 @@ sap.ui.define([
 				var aAsyncHints = oConfig.asyncHints;
 				if (aAsyncHints && aAsyncHints.requests && Array.isArray(aAsyncHints.requests)) {
 					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests);
-					if (oFlAsyncHint) {
-						sComponentName = oFlAsyncHint.reference;
+					if (oFlAsyncHint && sComponentName === oFlAsyncHint.reference) {
 						oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 					}
 				}
 			}
 		}
+
+		oChangePersistenceWrapper.oRequestOptions.siteId = Utils.getSiteIdByComponentData(oConfig.componentData);
 
 		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName);
 		return oChangePersistenceWrapper;
@@ -126,7 +128,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oChangePersistenceWrapper = this._doLoadComponent(oConfig);
+		var oChangePersistenceWrapper = this._doLoadComponent(oConfig, oManifest);
 
 		oChangePersistenceWrapper.oChangePersistence.getChangesForComponent(oChangePersistenceWrapper.oRequestOptions);
 	};
@@ -152,7 +154,7 @@ sap.ui.define([
 			return Promise.resolve([]);
 		}
 
-		var oChangePersistenceWrapper = this._doLoadComponent(oConfig);
+		var oChangePersistenceWrapper = this._doLoadComponent(oConfig, oManifest);
 
 		return oChangePersistenceWrapper.oChangePersistence.getChangesMapForComponent(oComponent, oChangePersistenceWrapper.oRequestOptions);
 	};

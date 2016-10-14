@@ -907,4 +907,71 @@ jQuery.sap.require("sap.m.Button");
 		assert.ok(Utils.isApplication(oManifest));
 	});
 
+	QUnit.test("getFlexReference returns the variantId if it exists", function (assert) {
+
+		var sAppVariantId = "appVariantId";
+		var sComponentName = "componentName";
+		var sAppId = "appId";
+		var oManifest = {
+			"sap.app": {
+				"type": "application",
+				"id": sAppId
+			},
+			"sap.ui5": {
+				"appVariantId": sAppVariantId,
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.equal(Utils.getFlexReference(oManifest), sAppVariantId);
+	});
+
+
+	QUnit.module("Utils.getFlexReference", {
+		beforeEach: function () {
+		},
+
+		afterEach: function () {
+		}
+	});
+
+	QUnit.test("getFlexReference returns the componentName if it exists and variantId does not exist", function (assert) {
+
+		var sComponentName = "componentName";
+		var sAppId = "appId";
+		var oManifest = {
+			"sap.app": {
+				"type": "application",
+				"id": sAppId
+			},
+			"sap.ui5": {
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.equal(Utils.getFlexReference(oManifest), sComponentName + ".Component");
+	});
+
+	QUnit.test("getFlexReference returns the appId if neither the variantId nor the componentName exist", function (assert) {
+
+		var sAppId = "appId";
+		var oManifest = {
+			"sap.app": {
+				"type": "application",
+				"id": sAppId
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
+	});
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));
