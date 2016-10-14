@@ -225,7 +225,8 @@ sap.ui.define(['jquery.sap.global', "sap/m/List", "sap/m/InputListItem", 'sap/m/
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_TRANSPORT_TT"),
 			width: "100%",
 			selectionChange: function() {
-				if (that._oPackage.getEnabled() && that._oPackage.getVisible() && (!that._oPackage.getValue() || that._oPackage.getValue() === "")) {
+				//if package field is visible but has no value, the OK button is disable
+				if (that._oPackageListItem.getVisible() && !that._oPackage.getValue()) {
 					return;
 				}
 
