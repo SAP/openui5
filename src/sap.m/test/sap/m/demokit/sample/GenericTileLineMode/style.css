@@ -1,19 +1,16 @@
-.OneByOne.sapMGT, .TwoByOne.sapMGT {
-	margin: 0.25rem;
+.TileContainer {
+	width: 100%;
+	padding: 0.5rem 0.25rem 0 0.25rem;
 }
 
-.sapMGTLineMode:not(:first-child):not(.sapMGTNewLine) {
-	margin-left: 1.25rem;
+.TileContainer .sapMGT {
+	margin: 0.25rem;
 }
 
 .LowerContainer {
 	padding: 0.25rem 0.5rem;
 }
-.LineTileContainer {
-	width: calc(100% - 1.5rem); /*1.5rem are added by the tiles*/
-}
 
-.TileContainer {
-	width: 100%;
-	padding: 0.5rem 0.25rem 0 0.25rem;
+.LineTileContainer .sapMGTLineMode:not(:first-child):not(.sapMGTNewLine) {
+	margin-left: 1.25rem;
 }

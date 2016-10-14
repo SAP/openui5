@@ -25,30 +25,36 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			bHasPress = oControl.hasListeners("press");
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
+		oRm.write("<span");
+		oRm.writeControlData(oControl);
+		oRm.writeAttributeEscaped("aria-label", sAriaText);
+		if (bHasPress) {
+			oRm.writeAttribute("role", "button");
+		} else {
+			oRm.writeAttribute("role", "presentation");
+		}
+		oRm.addClass("sapMGT");
+		oRm.addClass("sapMGTLineMode");
+		this._writeDirection(oRm);
+		if (sTooltipText) {
+			oRm.writeAttributeEscaped("title", sTooltipText);
+		}
+
+		var sState = oControl.getState();
+		if (sState !== LoadState.Disabled) {
+			oRm.addClass("sapMPointer");
+			oRm.writeAttribute("tabindex", "0");
+		} else {
+			oRm.addClass("sapMGTDisabled");
+		}
+		if (sState === LoadState.Failed) {
+			oRm.addClass("sapMGTFailed");
+		}
+		oRm.writeClasses();
+		oRm.write(">");
+
 		if (bIsCompact) {
 			//compact
-			oRm.write("<span");
-			oRm.writeControlData(oControl);
-			oRm.writeAttributeEscaped("aria-label", sAriaText);
-			if (bHasPress) {
-				oRm.writeAttribute("role", "button");
-			} else {
-				oRm.writeAttribute("role", "presentation");
-			}
-			oRm.addClass("sapMGT");
-			oRm.addClass("sapMGTLineMode");
-			this._writeDirection(oRm);
-			if (sTooltipText) {
-				oRm.writeAttributeEscaped("title", sTooltipText);
-			}
-			if (oControl.getState() !== LoadState.Disabled) {
-				oRm.addClass("sapMPointer");
-				oRm.writeAttribute("tabindex", "0");
-			} else {
-				oRm.addClass("sapMGTDisabled");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-startMarker");
 			oRm.addClass("sapMGTStartMarker");
@@ -73,33 +79,9 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.addClass("sapMGTStyleHelper");
 			oRm.writeClasses();
 			oRm.write("/>");
-			oRm.write("</span>"); //.sapMGT
 
 		} else {
 			// cozy
-			oRm.write("<span");
-			oRm.writeControlData(oControl);
-			oRm.writeAttributeEscaped("aria-label", sAriaText);
-			if (bHasPress) {
-				oRm.writeAttribute("role", "button");
-			} else {
-				oRm.writeAttribute("role", "presentation");
-			}
-			oRm.addClass("sapMGT");
-			oRm.addClass("sapMGTLineMode");
-			this._writeDirection(oRm);
-			if (sTooltipText) {
-				oRm.writeAttributeEscaped("title", sTooltipText);
-			}
-			if (oControl.getState() !== LoadState.Disabled) {
-				oRm.addClass("sapMPointer");
-				oRm.writeAttribute("tabindex", "0");
-			} else {
-				oRm.addClass("sapMGTDisabled");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-
 			oRm.write("<div");
 			oRm.addClass("sapMGTTouchArea");
 			oRm.writeClasses();
@@ -121,10 +103,9 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.write("</span>"); //.sapMGTLineModeHelpContainer
 
 			oRm.write("</div>"); //.sapMGTTouchArea
-
-			oRm.write("</span>"); //.sapMGT
-
 		}
+
+		oRm.write("</span>"); //.sapMGT
 	};
 
 	GenericTileLineModeRenderer._writeDirection = function(oRm) {
@@ -170,96 +151,42 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	};
 
 	/**
-	 * Renders the style helper elements for LineMode.
-	 * These elements are used in order to imitate a per-line box effect.
+	 * Removes and re-calculates the style helpers used in compact mode for hover and focus display.
 	 *
 	 * @private
 	 */
 	GenericTileLineModeRenderer._updateHoverStyle = function() {
-		this.removeStyleClass("sapMGTNewLine"); //remove this class before the new calculation begins in order to have the "default state" of tile-breaks
-
+		this._oStyleData = this._getStyleData();
 		var $StyleHelper = this.$("styleHelper"),
-			$End = this.$("endMarker"),
-			$Start =  this.$("startMarker"),
-			iBarOffsetX, iBarOffsetY,
-			iBarPaddingTop = Math.ceil(GenericTileLineModeRenderer._getCSSPixelValue(this, "margin-top")),
-			iBarWidth,
-			iParentWidth = this.$().parent().outerWidth(),
-			iParentLeft = this.$().parent().offset().left,
-			iParentRight = iParentLeft + iParentWidth,
-			iHeight = Math.round($End.offset().top - $Start.offset().top),
-			cHeight = GenericTileLineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
-			cLineHeight = Math.ceil(GenericTileLineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
-			iLines = Math.round(iHeight / cHeight) + 1,
-			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
+			oLine,
 			i = 0,
-			sHelpers,
-			$Rect,
-			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iPosEnd = $End.offset().left,
-			iOffset = $Start.offset().left;
+			sHelpers = "";
 
-		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile
-			this.addStyleClass("sapMGTNewLine");
-			iPosEnd = $End.offset().left;
-			iHeight = $End.offset().top - $Start.offset().top;
-			iLines = Math.round(iHeight / cHeight) + 2; //+ first empty line
-		}
-
-		if (bRTL) {
-			iOffset = iParentRight - iOffset;
-			iPosEnd = iParentRight - iPosEnd;
-
-			if (sap.ui.Device.browser.mozilla) {
-				$StyleHelper.css("right", -iOffset + "px");
-			} else if (!(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
-				$StyleHelper.css("right", -Math.min(iOffset, iPosEnd) + "px");
-			}
-		} else {
-			iOffset -= iParentLeft;
-			iPosEnd -= iParentLeft;
+		if (this._oStyleData.rtl && sap.ui.Device.browser.mozilla) {
+			$StyleHelper.css("right", -this._oStyleData.startX + "px");
+		} else if (this._oStyleData.rtl && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+			$StyleHelper.css("right", -Math.min(this._oStyleData.startX, this._oStyleData.endX) + "px");
 		}
 
 		$StyleHelper.empty();
+		for (i; i < this._oStyleData.lines.length; i++) {
+			oLine = this._oStyleData.lines[i];
 
-		sHelpers = "";
-		for (i; i < iLines; i++) {
-			if (bLineBreak && i === 0) {
-				continue;
-			}
-
-			//set bar width
-			if (iLines === 1) { //first and only line
-				iBarOffsetX = iOffset;
-				iBarWidth = iPosEnd - iBarOffsetX;
-			} else if (i === iLines - 1) { //last line
-				iBarOffsetX = 0;
-				iBarWidth = iPosEnd - iBarOffsetX;
-			} else if (i === 0) { //first line for non-wrapped tile
-				iBarOffsetX = iOffset;
-				iBarWidth = iParentWidth - iBarOffsetX;
-			} else if (bLineBreak && i === 1) { //first line for wrapped tile
-				iBarOffsetX = 0;
-				iBarWidth = iParentWidth - iBarOffsetX;
+			var $Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner' /></div>");
+			if (this._oStyleData.rtl) {
+				$Rect.css("right", oLine.offset.x + "px");
 			} else {
-				iBarOffsetX = 0;
-				iBarWidth = iParentWidth;
-			}
-			iBarOffsetY = i * cHeight + iBarPaddingTop;
-
-			$Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner' /></div>");
-			if (bRTL) {
-				$Rect.css("right", iBarOffsetX + "px");
-			} else {
-				$Rect.css("left", iBarOffsetX + "px");
+				$Rect.css("left", oLine.offset.x + "px");
 			}
 			$Rect.css({
-				top: iBarOffsetY + "px",
-				width: iBarWidth + "px",
-				height: cLineHeight
+				top: oLine.offset.y + "px",
+				width: oLine.width + "px",
+				height: oLine.height
 			});
+
 			sHelpers += $Rect.outerHTML();
 		}
+
 		$StyleHelper.html(sHelpers);
 	};
 
