@@ -1,12 +1,13 @@
 /* Shared CSS for 'base' theme */
 
 .sapUiThemeDesignerCustomCssCheck() when(@sapUiThemeDesignerCustomCss = true){
-	visible:true;
+	content: 'true';
 }
 .sapUiThemeDesignerCustomCssCheck() when not(@sapUiThemeDesignerCustomCss = true){
 }
 
-.sapUiThemeDesignerCustomCss{
+link[id^="sap-ui-theme-"]::after,
+.sapUiThemeDesignerCustomCss {
 	.sapUiThemeDesignerCustomCssCheck;
 }
 

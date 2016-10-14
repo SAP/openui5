@@ -215,32 +215,85 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		return res;
 	}
 
-	/* checks if a particular class is available at the beginning of the core styles
+	/* checks if a particular class is available
 	 */
 	function checkCustom (oThemeCheck, lib){
-		var iRulesToCheck = 2,
-			bSuccess = false,
-			aRules = [];
-		if (jQuery.sap.domById("sap-ui-theme-" + lib)) {
-			var cssFile = jQuery.sap.domById("sap-ui-theme-" + lib);
-			if (cssFile.sheet && cssFile.sheet.cssRules) {
-				aRules = cssFile.sheet.cssRules;
-			} else if (cssFile.styleSheet && cssFile.styleSheet.rules) {
-				// we're in an old IE version
-				aRules = cssFile.styleSheet.rules;
+
+		var cssFile = jQuery.sap.domById("sap-ui-theme-" + lib);
+
+		if (!cssFile) {
+			return false;
+		}
+
+		/*
+		Check if custom.css indication rule is applied to <link> element
+		The rule looks like this:
+
+			link[id^="sap-ui-theme-"]::after,
+			.sapUiThemeDesignerCustomCss {
+			  content: '{"customcss" : true}';
+			}
+
+		First selector is to apply it to the <link> elements,
+		the second one for the Safari workaround (see below).
+		*/
+		var content = window.getComputedStyle(cssFile, ':after').getPropertyValue('content');
+
+		if (!content && Device.browser.safari) {
+
+			// Safari has a bug which prevents reading properties of hidden pseudo elements
+			// As a workaround: Add "sapUiThemeDesignerCustomCss" class on html element
+			// in order to get the computed "content" value and remove it again.
+			var html = document.documentElement;
+
+			html.classList.add("sapUiThemeDesignerCustomCss");
+			content = window.getComputedStyle(html, ":after").getPropertyValue("content");
+			html.classList.remove("sapUiThemeDesignerCustomCss");
+		}
+
+		if (content && content !== "none") {
+			try {
+
+				// Strip surrounding quotes (single or double depending on browser)
+				if (content[0] === "'" || content[0] === '"') {
+					content = content.substring(1, content.length - 1);
+				}
+
+				// Cast to boolean (returns true if string equals "true", otherwise false)
+				return content === "true";
+
+			} catch (e) {
+				// parsing error
+				jQuery.sap.log.error("Custom check: Error parsing JSON string for custom.css indication.", e);
 			}
 		}
-		if (aRules.length == 0) {
+
+		//***********************************
+		// Fallback legacy customcss check
+		//***********************************
+
+		/*
+		 * checks if a particular class is available at the beginning of the stylesheet
+		*/
+
+		var aRules;
+		if (cssFile.sheet && cssFile.sheet.cssRules) {
+			aRules = cssFile.sheet.cssRules;
+		}
+
+		if (!aRules || aRules.length == 0) {
 			jQuery.sap.log.warning("Custom check: Failed retrieving a CSS rule from stylesheet " + lib);
 			return false;
 		}
+
 		// we should now have some rule name ==> try to match against custom check
-		for (var i = 0; (i < iRulesToCheck && i < aRules.length) ; i++) {
+		for (var i = 0; (i < 2 && i < aRules.length) ; i++) {
 			if (oThemeCheck._CUSTOMCSSCHECK.test(aRules[i].selectorText)) {
-				bSuccess = true;
+				return true;
 			}
 		}
-		return bSuccess;
+
+		return false;
 	}
 
 	function delayedCheckTheme(bFirst) {
