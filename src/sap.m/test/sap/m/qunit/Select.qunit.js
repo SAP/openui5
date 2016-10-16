@@ -2277,6 +2277,39 @@ QUnit.test("it should returns the this reference to allow method chaining", func
 	oSelect.destroy();
 });
 
+// github #1177
+QUnit.test("it should adjust the width of the field to the size of its content", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		width: "auto",
+		items: [
+			new sap.ui.core.ListItem({
+				key: "lorem",
+				text: "lorem",
+				additionalText: "lorem"
+			})
+		]
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	var sWidth = oSelect.getDomRef().offsetWidth;
+
+	// act
+	oSelect.open();
+	this.clock.tick(1000);	// wait 1s after the open animation is completed
+	oSelect.setShowSecondaryValues(true);
+	sap.ui.getCore().applyChanges();
+
+	// assert
+	assert.ok(oSelect.getDomRef().offsetWidth > sWidth);
+
+	// cleanup
+	oSelect.destroy();
+});
+
 /* ------------------------------ */
 /* getLabels()                    */
 /* ------------------------------ */
