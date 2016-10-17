@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 
 		if (iFirstDayOfWeek == -1) {
-			this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
+			return this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
 		} else {
 			throw new Error("Property firstDayOfWeek not supported " + this);
 		}
