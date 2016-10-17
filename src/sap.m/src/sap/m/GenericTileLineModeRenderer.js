@@ -82,7 +82,10 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 
 		} else {
 			// cozy
+			this._renderFocusDiv(oRm, oControl);
+
 			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-touchArea");
 			oRm.addClass("sapMGTTouchArea");
 			oRm.writeClasses();
 			oRm.write(">");
@@ -90,6 +93,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			this._renderFailedIcon(oRm, oControl);
 
 			oRm.write("<span");
+			oRm.writeAttribute("id", oControl.getId() + "-lineModeHelpContainer");
 			oRm.addClass("sapMGTLineModeHelpContainer");
 			oRm.writeClasses();
 			oRm.write(">");
@@ -188,6 +192,20 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		}
 
 		$StyleHelper.html(sHelpers);
+	};
+
+	/**
+	 * Renders a helper used in cozy mode for focus display.
+	 *
+	 * @private
+	 */
+	GenericTileLineModeRenderer._renderFocusDiv = function(oRm, oControl) {
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-focus");
+		oRm.addClass("sapMGTFocusDiv");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
 	};
 
 	/**

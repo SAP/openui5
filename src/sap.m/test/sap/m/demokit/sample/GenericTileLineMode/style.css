@@ -11,6 +11,6 @@
 	padding: 0.25rem 0.5rem;
 }
 
-.LineTileContainer .sapMGTLineMode:not(:first-child):not(.sapMGTNewLine) {
+.sapUiSizeCompact .LineTileContainer .sapMGTLineMode:not(:first-child):not(.sapMGTNewLine) {
 	margin-left: 1.25rem;
 }

@@ -259,6 +259,34 @@
 		}.bind(this));
 	});
 
+	QUnit.module("sap.m.GenericTileMode.LineMode cozy", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				header: "headerText",
+				subheader: "subheaderText",
+				mode: sap.m.GenericTileMode.LineMode
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("All elements found", function(assert) {
+		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
+		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found");
+		assert.equal(this.oGenericTile.$("hdr-text").text(), "headerText", "Header text was correct");
+		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found");
+		assert.equal(this.oGenericTile.$("subHdr-text").text(), "subheaderText", "SubHeader text was correct");
+		assert.ok(this.oGenericTile.$("focus").length > 0, "Focus helper was found");
+		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
+		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
+	});
+
 	QUnit.module("sap.m.GenericTileMode.LineMode compact", {
 		beforeEach: function() {
 			this.oGenericTile = new sap.m.GenericTile({
@@ -284,8 +312,8 @@
 	});
 
 	QUnit.test("All elements found", function(assert) {
-		assert.ok(this.oGenericTile.$().hasClass("sapMGT"));
-		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"));
+		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("startMarker").length > 0, "StartMarker was found.");
 		assert.ok(this.oGenericTile.$("endMarker").length > 0, "EndMarker was found.");
 		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found.");
@@ -1249,7 +1277,7 @@
 		assert.ok(oDom, "The span with suffix 'inner' exists");
 	});
 
-	QUnit.module("Tooltip handling in LineMode compact", {
+	QUnit.module("Tooltip handling in LineMode", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				header : "header text of GenericTile",
@@ -1257,7 +1285,6 @@
 				mode: "LineMode",
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			});
-			sinon.stub(this.oGenericTile, "_isCompact").returns(true);
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
 				return "ARIA and tooltip text of TileContent 1";
