@@ -25,8 +25,8 @@ sap.ui.define([
 		};
 
 	/**
-	 * DO NOT CALL this private constructor for a new <code>ODataContextBinding</code>,
-	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData V4 model
@@ -259,10 +259,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
-	 *   when the binding is initialized, {@link sap.ui.model.ChangeReason.Refresh Refresh} when
-	 *   the binding is refreshed, and {@link sap.ui.model.ChangeReason.Context Context} when the
-	 *   parent context is changed
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
+	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
+	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
@@ -578,6 +577,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The bound context
 	 *
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
 	 * @public
 	 * @since 1.39.0
@@ -658,10 +658,9 @@ sap.ui.define([
 	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for absolute bindings.
 	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the binding's data; it is <b>independent</b>
-	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
-	 * group ID.
+	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
+	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
