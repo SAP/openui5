@@ -1297,6 +1297,34 @@
         "type": "FIX",
         "text": "sap.ui.table.Table: incorrect header widths in a Dialog",
         "references": []
+      },
+      {
+        "id": "7785352ff2074bdd7ea540c7148b73ca7b3d3f88",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Scrollbar appearence on mobile devices",
+        "references": []
+      },
+      {
+        "id": "6fff3b40246184b9a3800d4af8aa7fbdfcd84d08",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Select All icon not refreshed on binding update",
+        "references": []
+      },
+      {
+        "id": "aabcf38699e9595a53866c29bfce7f8189d9fd2a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: getDefaultRowHeight to consider the content density",
+        "references": []
+      },
+      {
+        "id": "a96916bcd9d49700d17490416f83d961fa015a8e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes endless loop in IE if the table has no width",
+        "references": []
       }
     ]
   }

@@ -599,6 +599,13 @@
         "type": "FIX",
         "text": "sap.ui.commons.TabStrip: Destroying tabs is now correct",
         "references": []
+      },
+      {
+        "id": "d2647137541159edf0e240310d9f1b46d8f019bc",
+        "author": "Elena Stoyanova \u003celena.stoyanova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: onsapenter is now handled",
+        "references": []
       }
     ]
   }

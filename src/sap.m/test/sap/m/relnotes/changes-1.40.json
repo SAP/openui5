@@ -5780,6 +5780,13 @@
         "type": "FIX",
         "text": "sap.m: added latest i18n texts from 1.42 version",
         "references": []
+      },
+      {
+        "id": "60b100d57a63aa636c00426f68e3af3bac166657",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Truncates when used inside Table",
+        "references": []
       }
     ]
   }
