@@ -1853,8 +1853,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 
 		Select.prototype.setShowSecondaryValues = function(bAdditionalText) {
-			this.setProperty("showSecondaryValues", bAdditionalText, true);
 
+			// invalidate the field only when the width is set to "auto",
+			// otherwise invalidate only the dropdown list
+			var bSuppressInvalidate = !this._isShadowListRequired();
+			this.setProperty("showSecondaryValues", bAdditionalText, bSuppressInvalidate);
 			var oList = this.getList();
 
 			if (oList) {
