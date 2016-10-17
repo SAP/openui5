@@ -595,11 +595,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsappagedown = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode()) {
-			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
-			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
+			var iHeaderRows = TableUtils.getHeaderRowCount(this);
 
 			// Check if focus is on header
 			// Special Handling is required here:
@@ -671,11 +670,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsappageup = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode()) {
-			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
-			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
+			var iHeaderRows = TableUtils.getHeaderRowCount(this);
 			var iCol = oInfo.cellInRow;
 
 			if (this.getColumnHeaderVisible() && oInfo.cell < (oInfo.columnCount * iHeaderRows)) {

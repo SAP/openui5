@@ -298,6 +298,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 
 .sapUiTableColHdrCnt {
 	display: none;
+	position: relative;
 	background-color: @sapUiListHeaderBackground;
 	max-width: 100%;
 	overflow: hidden;
@@ -325,8 +326,10 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableColRowHdr {
 	display: none;
-	position: relative;
-	height: inherit;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
 	width: @_sapUiTableRowHdrWidth;
 	box-sizing: border-box;
 	min-height: @_sapUiTableColHdrHeight;
@@ -447,15 +450,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	min-height: @_sapUiTableColHdrHeightCozy;
 }
 
-.sapUiTableColHdr {
-	display: table;
-	position: relative;
-	box-sizing: border-box;
-}
-
 .sapUiTableCol {
-	display: inline-block;
-	position: relative;
 	vertical-align: top;
 	box-sizing: border-box;
 	min-height: @_sapUiTableColHdrHeight;

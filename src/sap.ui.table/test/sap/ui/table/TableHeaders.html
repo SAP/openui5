@@ -33,7 +33,9 @@
             template: new sap.m.Text({text: "{lastName}"}),
             sortProperty: "lastName",
             filterProperty: "lastName",
-            width: "10rem"
+            width: "100px",
+            flexible: false,
+            resizable: true
         }));
 
         // 2nd column with multilabels
@@ -46,45 +48,59 @@
             template: new sap.m.Label({text: "{name}"}),
             sortProperty: "name",
             filterProperty: "name",
-            width: "10rem"
+            width: "100px",
+            flexible: false,
+            resizable: true
         }));
 
         // 3rd column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
                 new sap.m.Label({text: "MultiLabel A"}),
-                new sap.m.Text({text: "MultiLabel B long long long"}),
+                //new sap.m.Text({text: "MultiLabel B long long long"}),
                 new sap.m.Text({text: "MultiLabel C long long long long"})
             ],
             template: new sap.m.ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"}),
             sortProperty: "objStatusState",
-            filterProperty: "objStatusState"
+            filterProperty: "objStatusState",
+            width: "100px",
+            flexible: true,
+            resizable: true
         }));
 
         // Other columns
         oTable.addColumn(new sap.ui.table.Column({
             label: new sap.m.Label({text: "Icon"}),
+            headerSpan: "2",
             template: new sap.ui.core.Icon({src: "sap-icon://account", decorative: false}),
             hAlign: sap.ui.core.HorizontalAlign.Center,
-            flexible: false,
+            width: "100px",
+            flexible: true,
             resizable: true
         }));
 
         oTable.addColumn(new sap.ui.table.Column({
             label: new sap.m.Label({text: "m.Checkbox"}),
             template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
+            width: "100px",
             flexible: false,
             resizable: true
         }));
 
         oTable.addColumn(new sap.ui.table.Column({
             label: new sap.m.Label({text: "m.Link"}),
-            template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"})
+            template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
+            width: "100px",
+            flexible: false,
+            resizable: true
         }));
 
         oTable.addColumn(new sap.ui.table.Column({
             label: new sap.m.Label({text: "unified.Currency"}),
-            template: new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"})
+            template: new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"}),
+            width: "100px",
+            flexible: false,
+            resizable: true
         }));
     }
 
@@ -93,10 +109,13 @@
     oTable1.setFooter("Footer");
     oTable1.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
     oTable1.setFixedColumnCount(2);
+    oTable1.setFixedRowCount(1);
+    oTable1.setFixedBottomRowCount(1);
+    oTable1.setEnableColumnFreeze(true);
+    oTable1.setColumnHeaderVisible(true);
     createColumns(oTable1);
     oTable1.setModel(oModel);
     oTable1.bindRows("/modelData");
-    oTable1.setVisibleRowCountMode("Auto");
 
     var oTable2 = new sap.ui.table.Table();
     oTable2.setTitle("Table 2");

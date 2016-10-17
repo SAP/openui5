@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 */
 		initColumnTracking : function(oTable) {
 			// attach mousemove listener to update resizer position
-			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").mousemove(function(oEvent){
+			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").mousemove(function(oEvent){
 				var oDomRef = this.getDomRef();
 				if (!oDomRef || this._bIsColumnResizerMoving) {
 					return;
@@ -657,7 +657,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	 */
 	var RowHoverHandler = {
 
-		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableCtrlFixed > tbody > tr", ".sapUiTableCtrlScroll > tbody > tr"],
+		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
 
 		initRowHovering : function(oTable) {
 			var $Table = oTable.$();
@@ -849,7 +849,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				var $Table = oTable.$();
 
 				// Cleans up the basic event handling for column resizing (and others).
-				$Table.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+				$Table.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").unbind();
 
 				// Cleans up the basic event handling for row hover effect
 				$Table.find(".sapUiTableCtrl > tbody > tr").unbind();

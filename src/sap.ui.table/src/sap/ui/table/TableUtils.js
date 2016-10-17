@@ -514,7 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
 				return {
 					index: parseInt($Cell.data("sap-ui-colindex"), 10),
-					span: parseInt($Cell.data("sap-ui-colspan"), 10)
+					span: parseInt($Cell.attr("colspan") || 1, 10)
 				};
 			} else {
 				return null;
