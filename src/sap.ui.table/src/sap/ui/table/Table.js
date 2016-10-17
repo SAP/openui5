@@ -3403,7 +3403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param oEvent
 	 */
 	Table.prototype.ontouchstart = function(oEvent) {
-		if ('ontouchstart' in document) {
+		if (this._isTouchMode(oEvent)) {
 			this._aTouchStartPosition = null;
 			this._bIsScrollVertical = null;
 			var $scrollTargets = this._getScrollTargets();
@@ -3429,7 +3429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param oEvent
 	 */
 	Table.prototype.ontouchmove = function(oEvent) {
-		if ('ontouchstart' in document && this._aTouchStartPosition) {
+		if (this._isTouchMode(oEvent) && this._aTouchStartPosition) {
 			var oTouch = oEvent.targetTouches[0];
 			var iDeltaX = (oTouch.pageX - this._aTouchStartPosition[0]);
 			var iDeltaY = (oTouch.pageY - this._aTouchStartPosition[1]);
