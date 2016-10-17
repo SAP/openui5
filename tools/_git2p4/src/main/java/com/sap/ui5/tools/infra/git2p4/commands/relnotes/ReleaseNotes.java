@@ -280,34 +280,39 @@ public class ReleaseNotes {
           }
         }
       }
-      removeDuplicates(uiLibraryNotes);
-      if (uiLibVersion.notes.size() != notesSizeBefore){
+      if (removeDuplicates(uiLibraryNotes) || (uiLibVersion.notes.size() != notesSizeBefore)){
         saveToFile(uiLibraryNotes, file);
       } else {
-        Log.println("No new notes found for '" + lib + "' library");
+        Log.println("No changes for '" + lib + "' library");
       }
       copyPrevNotes(file.getParentFile(), lib);
     }
 
-    private void removeDuplicates(UILibNotes uiLibraryNotes) {
+    private boolean removeDuplicates(UILibNotes uiLibraryNotes) {
+      boolean result = false;
       Object[] keys = uiLibraryNotes.versions.keySet().toArray();
       for (int i = 0; i < keys.length; i++){
         for (int j = i + 1; j < keys.length; j++){
-          removeDuplicatesForVersion(uiLibraryNotes.versions.get(keys[i]), uiLibraryNotes.versions.get(keys[j]));
+          result = removeDuplicatesForVersion(uiLibraryNotes.versions.get(keys[i]), uiLibraryNotes.versions.get(keys[j]), 
+            keys[j].toString()) || result;
         }
       }
+      return result;
     }
 
-    private void removeDuplicatesForVersion(LibVersion libVersion, LibVersion libVersion2) {
-      for (ReleaseNote note : libVersion.notes) {
+    private boolean removeDuplicatesForVersion(LibVersion libVersion1, LibVersion libVersion2, String version2) {
+      boolean result = false;
+      for (ReleaseNote note : libVersion1.notes) {
         for (ReleaseNote note2 : libVersion2.notes) {
           if (note.id.equals(note2.id)){
             libVersion2.notes.remove(note2);
-            Log.println("Removed duplicated note: " + note2.id + " from " + libVersion2.version);
+            Log.println("Removed duplicated note: " + note2.id + " from " + version2);
+            result = true;
             break;
           }
         }
       }
+      return result;
     }
     
   }
