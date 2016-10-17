@@ -176,9 +176,7 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Input
-							enabled="{= ${path : 'LifecycleStatus', targetType : 'any'} === 'N' }"
-							id="SalesOrders_Note" value="{Note}"/>
+						<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
 					</cells>
 					<cells>
 						<Text text="{LifecycleStatusDesc}"/>
