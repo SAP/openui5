@@ -90,7 +90,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID',
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
@@ -175,7 +175,7 @@
 					</cells>
 					<cells>
 						<Input
-							enabled="{= ${path : 'LifecycleStatusDesc', targetType : 'any'} === 'New' }"
+							enabled="{= ${path : 'LifecycleStatus', targetType : 'any'} === 'N' }"
 							id="SalesOrders_Note" value="{Note}"/>
 					</cells>
 					<cells>
