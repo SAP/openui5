@@ -654,7 +654,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 	});
 
 	QUnit.test("adds custom data on the first change applied on a control", function (assert) {
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
@@ -670,7 +670,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
@@ -686,7 +686,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change was NOT applied");
 		assert.ok(this.oControl.getCustomData()[0], "CustomData is still set");
@@ -714,7 +714,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		}
 	});
 	QUnit.test("calls the change handler twice for two unapplied changes and concatenate the custom data correct", function (assert) {
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
 		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
@@ -730,7 +730,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange2, "the second change was applied");
@@ -747,7 +747,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange, "the first change was applied");
@@ -765,7 +765,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		FlexController.applyChangesOnControl(this.mChanges, this.oControl);
+		FlexController.applyChangesOnControl(this.mChanges, {}, this.oControl);
 
 		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "no changes were applied");
 		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
