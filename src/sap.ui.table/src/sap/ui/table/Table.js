@@ -1135,6 +1135,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		TableUtils.deregisterResizeHandler(this, "");
 
+		// the only place to fix the minimum column width
+		function setMinColWidths(oTable) {
+			var table = oTable.getDomRef();
+
+			function isFixNeeded(col) {
+				var minWidth = col._minWidth || col._MIN_WIDTH;
+				var colWidth = col.getWidth();
+				var aColHeaders;
+				var colHeader;
+				var domWidth;
+				// if a column has variable width, check if its current width of the
+				// first corresponding <th> element in less than minimum and store it
+				if (TableUtils.isVariableWidth(colWidth)) {
+					aColHeaders = table.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
+					colHeader = aColHeaders[0];
+					domWidth = colHeader && colHeader.offsetWidth;
+					if (domWidth) {
+						if (domWidth <= minWidth) {
+							// tolerance of -5px to make the resizing smooother
+							return {headers : aColHeaders, newWidth: Math.max(domWidth, minWidth - 5, col._MIN_WIDTH) + "px"};
+						} else if (colHeader && colHeader.style.width != colWidth) {
+							// reset the minimum style width that was set previously
+							return {headers : aColHeaders, newWidth: colWidth};
+						}
+					}
+				}
+				return null;
+			}
+			// adjust widths of all found column headers
+			oTable.getColumns().map(isFixNeeded).forEach(function(oCol) {
+				if (oCol) {
+					Array.prototype.forEach.call(oCol.headers, function (header) {
+							header.style.width = oCol.newWidth;
+					});
+				}
+			});
+		}
+		setMinColWidths(this);
+
 		var oTableSizes = this._collectTableSizes();
 
 		if (this._mTimeouts.afterUpdateTableSizes) {
@@ -2757,132 +2796,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param sWidth
 	 * @private
 	 */
-	Table.prototype._resizeDependentColumns = function(oColumn, sWidth) {
-		var that = this;
-		// Adjust columns only if the columns have percentage values
-		if (this._checkPercentageColumnWidth()) {
-			var aVisibleColumns = this._getVisibleColumns();
-			//var oLastVisibleColumn = aVisibleColumns[aVisibleColumns.length - 1]; // NOT USED!
-			//var bAllFollowingColumnsFlexible = true; // NOT USED!
-
-			var iColumnIndex;
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				if (oColumn === oCurrentColumn) {
-					iColumnIndex = iIndex;
-				//} else if (iColumnIndex !== undefined && !oCurrentColumn.getFlexible()) { // NOT REQUIRED?
-					//bAllFollowingColumnsFlexible = false;
-				}
-			});
-
-			var iOthersWidth = 0;
-			var iLastIndex = aVisibleColumns.length - 1;
-			var iTotalPercentage;
-			if (iColumnIndex === undefined) {
-				iTotalPercentage = 0;
-			} else {
-				iTotalPercentage = parseInt(sWidth,10);
-			}
-			var iPercentages = 0;
-			var aOtherColumns = [];
-
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				var iColumnPercentage = that._getColumnPercentageWidth(oCurrentColumn);
-				if ((((iColumnIndex === iLastIndex && iIndex < iColumnIndex) || ((iColumnIndex !== iLastIndex) && iIndex > iColumnIndex)) && oCurrentColumn.getFlexible()) || iColumnIndex === undefined) {
-					iOthersWidth += oCurrentColumn.$().outerWidth();
-					iPercentages += iColumnPercentage;
-					aOtherColumns.push(oCurrentColumn);
-				} else if (iIndex !== iColumnIndex) {
-					iTotalPercentage += iColumnPercentage;
-				}
-			});
-
-			var iCalcPercentage = iTotalPercentage;
-			jQuery.each(aOtherColumns, function(iIndex, oCurrentColumn){
-				var iColumnPercentage = that._getColumnPercentageWidth(oCurrentColumn);
-				var iNewWidth = Math.round((100 - iCalcPercentage) / iPercentages * iColumnPercentage);
-				if (iIndex === aOtherColumns.length - 1) {
-					iNewWidth = 100 - iTotalPercentage;
-				} else {
-					iTotalPercentage += iNewWidth;
-				}
-				// foolproof the above calculation logic
-				if (!isFinite(iNewWidth) || iNewWidth <= 0) {
-					iNewWidth = 1;
-				}
-				that._updateColumnWidth(oCurrentColumn, iNewWidth + "%");
-			});
-		} else if (!this._hasOnlyFixColumnWidths()) {
-
-			var aVisibleColumns = this._getVisibleColumns(),
-				iAvailableSpace = this.$().find(".sapUiTableCtrl").width(),
-				iColumnIndex,
-				iRightColumns = 0,
-				iLeftWidth = 0,
-				iRightWidth = 0,
-				iNonFixedColumns = 0;
-
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				//Check columns if they are fixed = they have a pixel width
-				if (!jQuery.sap.endsWith(oCurrentColumn.getWidth(), "px")
-					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "em")
-					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "rem")) {
-					iNonFixedColumns++;
-					return false;
-				}
-				//if iColumnIndex is defined we already found our column and all other columns are right of that one
-				if (iColumnIndex != undefined) {
-					iRightWidth += that._CSSSizeToPixel(oCurrentColumn.getWidth());
-					iRightColumns++;
-				} else if (oColumn !== oCurrentColumn) {
-					iLeftWidth += that._CSSSizeToPixel(oCurrentColumn.getWidth());
-				}
-				if (oColumn === oCurrentColumn) {
-					iColumnIndex = iIndex;
-					//Use new width of column
-					iLeftWidth += that._CSSSizeToPixel(sWidth);
-				}
-			});
-			//If there are non fixed columns we don't do this
-			if (iNonFixedColumns > 0 || (iLeftWidth + iRightWidth > iAvailableSpace)) {
-				return;
-			}
-			//Available space is all space right of the modified columns
-			iAvailableSpace -= iLeftWidth;
-			for (var i = iColumnIndex + 1; i < aVisibleColumns.length; i++) {
-				//Calculate new column width based on previous percentage width
-				var oColumn = aVisibleColumns[i],
-					iColWidth = this._CSSSizeToPixel(oColumn.getWidth()),
-					iPercent = iColWidth / iRightWidth * 100,
-					iNewWidth = iAvailableSpace / 100 * iPercent;
-				this._updateColumnWidth(oColumn, Math.round(iNewWidth) + 'px');
-			}
-		}
-	};
-
-	/**
-	 *
-	 * @param oColumn
-	 * @returns {*}
-	 * @private
-	 */
-	Table.prototype._getColumnPercentageWidth = function(oColumn) {
-		var sColumnWidth = oColumn.getWidth();
-		var iColumnPercentage = parseInt(oColumn.getWidth(),10);
-		var iTotalWidth = this.$().find(".sapUiTableCtrl").width();
-		if (jQuery.sap.endsWith(sColumnWidth, "px") || jQuery.sap.endsWith(sColumnWidth, "em") || jQuery.sap.endsWith(sColumnWidth, "rem")) {
-			iColumnPercentage = Math.round(100 / iTotalWidth * iColumnPercentage);
-		} else if (!jQuery.sap.endsWith(sColumnWidth, "%")) {
-			iColumnPercentage = Math.round(100 / iTotalWidth * oColumn.$().width());
-		}
-		return iColumnPercentage;
-	};
-
-	/**
-	 *
-	 * @param oColumn
-	 * @param sWidth
-	 * @private
-	 */
 	Table.prototype._updateColumnWidth = function(oColumn, sWidth, bFireEvent) {
 		// forward the event
 		var bExecuteDefault = true;
@@ -2900,40 +2813,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return bExecuteDefault;
-	};
-
-	/**
-	 * Check if at least one column has a percentage value.
-	 * @private
-	 */
-	Table.prototype._checkPercentageColumnWidth = function() {
-		var aColumns = this.getColumns();
-		var bHasPercentageColumns = false;
-		jQuery.each(aColumns, function(iIndex, oColumn) {
-			if (jQuery.sap.endsWith(oColumn.getWidth(), "%")) {
-				bHasPercentageColumns = true;
-				return false;
-			}
-		});
-		return bHasPercentageColumns;
-	};
-
-	/**
-	 * Check if table has only non flexible columns with fixed widths and only then
-	 * the table adds a dummy column to fill the rest of the width instead of resizing
-	 * the columns to fit the complete table width.
-	 * @private
-	 */
-	Table.prototype._hasOnlyFixColumnWidths = function() {
-		var bOnlyFixColumnWidths = true;
-		jQuery.each(this.getColumns(), function(iIndex, oColumn) {
-			var sWidth = oColumn.getWidth();
-			if (oColumn.getFlexible() || !sWidth || sWidth.substr(-2) !== "px") {
-				bOnlyFixColumnWidths = false;
-				return false;
-			}
-		});
-		return bOnlyFixColumnWidths;
 	};
 
 

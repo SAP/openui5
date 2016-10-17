@@ -1640,10 +1640,6 @@
 		assert.ok(oColumn.getWidth() !== sOldColumnWidth, "Columns should have been resized");
 	});
 
-	QUnit.test("test _getColumnPercentageWidth function", function(assert) {
-		assert.equal(oTable._getColumnPercentageWidth(oTable.getColumns()[0]), 21, "Column percentage width calculated");
-	});
-
 	QUnit.test("Check for table focus", function(assert) {
 		assert.strictEqual(oTable.getFocusInfo().id, "table", "Table has focus");
 		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
@@ -1754,19 +1750,6 @@
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 0, "Selection interval is not set on the table");
 		oTable.setSelectionInterval(2, 6);
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 5, "Selection invterval is set to 5 on the table");
-	});
-
-	QUnit.test("test _resizeDependentColumns function", function(assert) {
-		// defining all columns with fixed width
-		oTable.getColumns()[3].setWidth("150px");
-		oTable.getColumns()[5].setWidth("75px");
-		oTable.getColumns()[6].setWidth("100px");
-		oTable._resizeDependentColumns(null);
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setWidth("20%");
-		var oOldColumnWidth = oTable.getColumns()[1].getWidth();
-		oTable._resizeDependentColumns(oColumn, "20%");
-		assert.ok(oTable.getColumns()[1].getWidth() !== oOldColumnWidth, "Column widths were adapted to depending on the first column resize percentage");
 	});
 
 	QUnit.test("test _attachBindingLister function", function(assert) {

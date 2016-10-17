@@ -905,6 +905,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Checks if the given CSS width is not fix.
+		 * @param {string} sWidth
+		 * @returns {boolean} true if the width is flexible
+		 * @private
+		 */
+		isVariableWidth: function(sWidth) {
+			return !sWidth || sWidth == "auto" || sWidth.toString().match(/%$/);
+		},
+
+		/**
 		 * Resizes one or more visible columns to the specified amount of pixels.
 		 *
 		 * In case a column span is specified:
@@ -976,6 +986,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var iPixelDelta = iWidth - iSpanWidth;
 			var iSharedPixelDelta = Math.round(iPixelDelta / aResizableColumns.length);
 			var bResizeWasPerformed = false;
+
+			var oTableElement = oTable.getDomRef();
+
+			// Fix Auto Columns if a column in the scrollable area was resized:
+			// Set minimum widths of all columns with variable width except those in aResizableColumns.
+			// As a result, flexible columns cannot shrink smaller as their current width after the resize
+			// (see setMinColWidths in Table.js).
+			if (!this.isFixedColumn(oTable, iColumnIndex)) {
+				oTable._getVisibleColumns().forEach(function (col) {
+					var width = col.getWidth(),
+						colElement;
+					if (oTableElement && aResizableColumns.indexOf(col) < 0 && TableUtils.isVariableWidth(width)) {
+						colElement = oTableElement.querySelector('th[data-sap-ui-colid="' + col.getId() + '"]');
+						if (colElement) {
+							col._minWidth = Math.max(colElement.offsetWidth, col._MIN_WIDTH);
+						}
+					}
+				});
+			}
 
 			// Resize all resizable columns. Share the width change (pixel delta) between them.
 			for (var i = 0; i < aResizableColumns.length; i++) {
