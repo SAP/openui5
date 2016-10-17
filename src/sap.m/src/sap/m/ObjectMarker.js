@@ -19,8 +19,10 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * <li><code>Favorite</code>
 	 * <li><code>Draft</code>
 	 * <li><code>Locked</code>
+	 * <li><code>LockedBy</code>
 	 * <li><code>Unsaved</code>
 	 * </ul>
+	 * <b>Note</b>: Use the <code>LockedBy</code> type when you need to display the name of the user who locked the object, otherwise use <code>Locked</code>.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -44,7 +46,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 				 * <ul>
 				 *                 <li>For <code>Flagged</code> and <code>Favorite</code> the icon is visible and the text is not displayed</li>
 				 *                 <li>For <code>Draft</code> the text is visible and the icon is not displayed</li>
-				 *                 <li>For <code>Locked</code> and <code>Unsaved</code> - on screens larger than 600px both icon and text are visible, otherwise only the icon</li>
+				 *                 <li>For <code>Locked</code>, <code>LockedBy</code> and <code>Unsaved</code> - on screens larger than 600px both icon and text are visible, otherwise only the icon</li>
 				 *
 				 * </ul>
 				 */
@@ -179,6 +181,22 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			},
 			text: {
 				value: oRB.getText("OM_UNSAVED"),
+				visibility: {
+					small: false,
+					large: true
+				}
+			}
+		},
+		LockedBy: {
+			icon: {
+				src: "sap-icon://private",
+				visibility: {
+					small: true,
+					large: true
+				}
+			},
+			text: {
+				value: oRB.getText("OM_LOCKED_BY"),
 				visibility: {
 					small: false,
 					large: true
@@ -348,7 +366,11 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		}
 
 		if (oType) {
-			sText = (sAdditionalInfo) ? oType.text.value + " " + sAdditionalInfo : oType.text.value;
+			if (this.getType() === "LockedBy") {
+				sText = (sAdditionalInfo) ? oRB.getText('OM_LOCKED_BY', [sAdditionalInfo]) : oType.text.value;
+			} else {
+				sText = (sAdditionalInfo) ? oType.text.value + " " + sAdditionalInfo : oType.text.value;
+			}
 		}
 
 		if (this._isIconVisible()) {
