@@ -20,6 +20,8 @@
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		module("Rendering");
 
 		test("Creating control should add it in the DOM", function () {
@@ -150,6 +152,24 @@
 			// Arrange
 			var oMarker = new sap.m.ObjectMarker({
 				type: sap.m.ObjectMarkerType.Locked
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Locked By", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.LockedBy
 			});
 
 			oMarker.placeAt("qunit-fixture");
@@ -328,12 +348,13 @@
 			strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
 
 			// Act
+			var sExpectedText = oRB.getText('OM_FAVORITE');
 			oModel.setData({ modelData: { type: sap.m.ObjectMarkerType.Favorite }});
 			oMarker.setModel(oModel);
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oMarker.$("text").text(), sap.m.ObjectMarkerType.Favorite, "Control type is displayed as 'Favorite' after re-binding");
+			strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
 
 			// Cleanup
 			oMarker.destroy();
@@ -365,12 +386,14 @@
 				]
 			}));
 
+			var sExpectedText = oRB.getText('OM_LOCKED');
+
 			oTable.placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			strictEqual(oTable.$().find(".sapMLnk").text(), sap.m.ObjectMarkerType.Locked, "Object Marker type is set to 'Locked' via binding");
+			strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
 
 			// Cleanup
 			oTable.destroy();
@@ -427,6 +450,8 @@
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
+			var sExpectedText = oRB.getText('OM_LOCKED');
+
 			// Assert
 			strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
 
@@ -436,8 +461,24 @@
 
 			// Assert
 			strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
-			strictEqual(oMarker.$().text(), "Locked by John Doe", "The rendered text in the element should " +
+			strictEqual(oMarker.$().text(), sExpectedText + " by John Doe", "The rendered text in the element should " +
 					"include the text representation of the status set concatenated with the additional info");
+		});
+
+		test("Rendering when the type is LockedBy", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.LockedBy,
+				additionalInfo: "John Doe"
+			}).placeAt("qunit-fixture");
+
+			var sExpectedText = oRB.getText('OM_LOCKED_BY', ["John Doe"]);
+
+			sap.ui.getCore().applyChanges();
+
+
+			// Assert
+			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
 	</script>
