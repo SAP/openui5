@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var oTable = oLI.getTable();
 
 		// for table render navigation column always
-		oTable && rm.write('<td role="gridcell" class="sapMListTblNavCol">');
+		oTable && rm.write('<td class="sapMListTblNavCol">');
 		ListItemBaseRenderer.renderType.apply(this, arguments);
 		oTable && rm.write('</td>');
 	};
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	// Returns aria accessibility role
 	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
-		return oLI.getTable() ? "row" : "option";
+		return oLI.getTable() ? "" : "option";
 	};
 
 	// Returns the inner aria describedby ids for the accessibility
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var oTable = oLI.getTable();
 
 		if (oTable) {
-			rm.write('<td class="sapMGHLICell" role="gridcell"');
+			rm.write('<td class="sapMGHLICell"');
 			rm.writeAttribute("colspan", oTable.getColSpan());
 			rm.write(">");
 		}
