@@ -136,6 +136,26 @@ sap.ui.define([
 		this._oRm.destroy();
 	};
 
+	/**
+	 * Allows the setting of а predefined layout.
+	 * It may not be honored if it's not valid in that particular case.
+	 *
+	 * @param oConfig
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FlexibleColumnLayout.prototype.setLayout = function (oConfig){
+		var aLayoutConfig;
+
+		if (!oConfig){
+			return;
+		}
+
+		aLayoutConfig = [oConfig.beginColumnWidth || 0, oConfig.midColumnWidth || 0, oConfig.endColumnWidth || 0];
+		this._sLayout = aLayoutConfig.join("/");
+		this._adjustLayout(null, true, true);
+	};
+
 	FlexibleColumnLayout.prototype._registerResizeHandler = function () {
 		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
@@ -439,9 +459,10 @@ sap.ui.define([
 	 * Recalculates the layout and if it changed, updates the columns, arrows and fires the change event
 	 * @param sShift
 	 * @param bResize
+	 * @param bSuppressEvent
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._adjustLayout = function (sShift, bResize) {
+	FlexibleColumnLayout.prototype._adjustLayout = function (sShift, bResize, bSuppressEvent) {
 		var sNewLayout = this._sLayout,
 			bBegin = this.getBeginColumn() ? true : false,
 			bMid = this.getMidColumn() ? true : false,
@@ -544,7 +565,7 @@ sap.ui.define([
 		this._resizeColumns();
 		this._hideShowArrows();
 
-		if (!sFullScreenId) {
+		if (!sFullScreenId && !bSuppressEvent) {
 			this.fireLayoutChange({
 				beginColumnWidth: this._getColumnSize("begin"),
 				midColumnWidth: this._getColumnSize("mid"),

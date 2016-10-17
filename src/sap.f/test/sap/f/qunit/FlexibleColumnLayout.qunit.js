@@ -16,6 +16,10 @@
 		});
 	};
 
+	var fnCreateFCLWithPages = function (){
+		return new fnCreateFCL(oFactory.createPage("begin"), oFactory.createPage("mid"), oFactory.createPage("end"))
+	};
+
 	var fnCreateFCL = function (oBegin, oMid, oEnd, sFullScreen) {
 		var oFCL = new FlexibleColumnLayout({
 			beginColumn: oBegin,
@@ -29,6 +33,7 @@
 	};
 
 	var oFactory = {
+		fnCreateFCLWithPages: fnCreateFCLWithPages,
 		createPage: fnCreatePage,
 		createFCL: fnCreateFCL
 	};
@@ -483,6 +488,33 @@
 
 		assert.ok(this.oFCL._getMaxColumns() === 2, "Despite the desktop size the maximum number of columns is 2");
 		assert.ok(oBeginPage.$().width() === 0, "The begin page is not visible (as on desktop)");
+	});
+
+	QUnit.test("API call - setLayout", function (assert) {
+		this.oFCL = oFactory.fnCreateFCLWithPages();
+		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange"),
+			oAdjustLayoutSpy = this.spy(this.oFCL, "_adjustLayout"),
+			checkSpiesAndReset = function () {
+				assert.ok(!oEventSpy.called, "The layoutChange event is not called when using the setLayout API");
+				assert.ok(oAdjustLayoutSpy.calledWith(null, true, true), "_adjustLayout called with correct params");
+				oEventSpy.reset();
+				oAdjustLayoutSpy.reset();
+			};
+
+		// using a valid config
+		this.oFCL.setLayout({beginColumnWidth: 67, midColumnWidth: 33, endColumnWidth: 0});
+		checkSpiesAndReset();
+		assert.ok(this.oFCL._sLayout === "67/33/0", "The new layout is correctly set");
+
+		// using an invalid input
+		this.oFCL.setLayout("INVALID INPUT");
+		checkSpiesAndReset();
+		assert.ok(this.oFCL._sLayout === "25/50/25", "On invalid input we fallback to the default value");
+
+		// using a valid config again
+		this.oFCL.setLayout({beginColumnWidth: 33, midColumnWidth: 67, endColumnWidth: 0});
+		checkSpiesAndReset();
+		assert.ok(this.oFCL._sLayout === "33/67/0", "The new layout is correctly set");
 	});
 
 	QUnit.module("TABLET - API", {
