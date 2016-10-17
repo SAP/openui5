@@ -265,6 +265,143 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
 		},
 
+		/**
+		 * Returns the interval format with the given Id (see CLDR documentation for valid Ids)
+		 * or the fallback format if no interval format with that Id is known.
+		 *
+		 * The empty Id ("") might be used to retrieve the interval format fallback.
+		 *
+		 * @param {string} sId Id of the interval format, e.g. "d-d"
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @returns {string} interval format string with placeholders {0} and {1}
+		 * @public
+		 * @since 1.17.0
+		 */
+		getIntervalPattern : function(sId, sCalendarType) {
+			var oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats"),
+				aIdParts, sIntervalId, sDifference, oInterval, sPattern;
+			if (sId) {
+				aIdParts = sId.split("-");
+				sIntervalId = aIdParts[0];
+				sDifference = aIdParts[1];
+				oInterval = oIntervalFormats[sIntervalId];
+				if (oInterval) {
+					sPattern = oInterval[sDifference];
+					if (sPattern) {
+						return sPattern;
+					}
+				}
+			}
+			return oIntervalFormats.intervalFormatFallback;
+		},
+
+		/**
+		 * Get combined interval pattern using a given pattern and the fallback interval pattern.
+		 *
+		 * If a skeleton based pattern is not available or not wanted, this method can be used to create an interval
+		 * pattern based on a given pattern, using the fallback interval pattern.
+		 *
+		 * @param {string} sPattern the single date pattern to use within the interval pattern
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @returns {string} the calculated interval pattern
+		 * @since 1.46
+		 * @public
+		 */
+		getCombinedIntervalPattern : function(sPattern, sCalendarType) {
+			var oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats"),
+				sFallbackPattern = oIntervalFormats.intervalFormatFallback;
+			return sFallbackPattern.replace(/\{(0|1)\}/g, sPattern);
+		},
+
+		/**
+		 * Get interval pattern for a given skeleton format.
+		 *
+		 * The format string does contain pattern symbols (e.g. "yMMMd" or "Hms") and will be converted into the pattern in the used
+		 * locale, which matches the wanted symbols best. The symbols must be in canonical order, that is:
+		 * Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D),
+		 * Hour (h/H/k/K/), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
+		 *
+		 * See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
+		 *
+		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
+		 * @param {string} sGreatestDiff the symbol matching the greatest difference in the two dates to format
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @returns {string} the best matching interval pattern
+		 * @since 1.46
+		 * @public
+		 */
+		getCustomIntervalPattern : function(sSkeleton, sGreatestDiff, sCalendarType) {
+			var oAvailableFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats");
+			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sGreatestDiff);
+		},
+
+		/* Helper functions for skeleton pattern processing */
+		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
+			var sPattern, oIntervalFormats;
+			if (sIntervalDiff) {
+				if (sIntervalDiff == "j" || sIntervalDiff == "J") {
+					sIntervalDiff = this.getPreferredHourSymbol();
+				}
+				oIntervalFormats = oAvailableFormats[sSkeleton];
+				sPattern = oIntervalFormats && oIntervalFormats[sIntervalDiff];
+			} else {
+				sPattern = oAvailableFormats[sSkeleton];
+			}
+			if (!sPattern) {
+				sPattern = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff);
+			}
+			return sPattern;
+		},
+
+		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
+			var aTokens = this._parseSkeletonFormat(sSkeleton),
+				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
+				sPattern,
+				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
+
+			if (sIntervalDiff) {
+				// Only use best match, if there are no missing tokens, as there is no possibility
+				// to append items on interval formats
+				if (oBestMatch && oBestMatch.missingTokens.length === 0) {
+					sPattern = oBestMatch.pattern[sIntervalDiff];
+					// if there is no exact match, we need to do further processing
+					if (sPattern && oBestMatch.distance > 0) {
+						sPattern = this._expandFields(sPattern, oBestMatch.patternTokens, aTokens);
+					}
+				}
+				// If no pattern could be found, get the best availableFormat for the skeleton
+				// and use the fallbackIntervalFormat to create the pattern
+				if (!sPattern) {
+					sPattern = this.getCombinedIntervalPattern(
+						this.getCustomDateTimePattern(sSkeleton, sCalendarType), sCalendarType);
+				}
+			} else if (!oBestMatch) {
+				sPattern = sSkeleton;
+			} else {
+				sPattern = oBestMatch.pattern;
+				// if there is no exact match, we need to do further processing
+				if (oBestMatch.distance > 0) {
+					if (oBestMatch.missingTokens.length > 0) {
+						// if tokens are missing create a pattern containing all, otherwise just adjust pattern
+						if (rMixedSkeleton.test(sSkeleton)) {
+							sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
+						} else {
+							sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
+							sPattern = this._appendItems(sPattern, oBestMatch.missingTokens, sCalendarType);
+						}
+					} else {
+						sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
+					}
+				}
+			}
+			// If special input token "J" was used, remove dayperiod from pattern
+			if (sSkeleton.indexOf("J") >= 0) {
+				sPattern = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/g, "");
+			}
+
+			return sPattern;
+		},
+
 		_parseSkeletonFormat: function(sSkeleton) {
 			var aTokens = [],
 				oToken = {index: -1},
@@ -307,35 +444,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return aTokens;
 		},
 
-		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType) {
-			var sPattern = oAvailableFormats[sSkeleton];
-			if (!sPattern) {
-				sPattern = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
-			}
-			return sPattern;
-		},
-
-		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType) {
-			var aTokens = this._parseSkeletonFormat(sSkeleton),
-				aTestTokens,
+		_findBestMatch: function(aTokens, sSkeleton, oAvailableFormats) {
+			var aTestTokens,
 				aMissingTokens,
 				oToken,
 				oTestToken,
 				iTest,
 				iDistance,
 				bMatch,
-				sBestPattern,
-				aBestPatternTokens,
-				aBestMissingTokens,
-				iBestDistance = 10000,
-				sPattern,
-				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
+				iFirstDiffPos,
 				oTokenSymbol,
 				oTestTokenSymbol,
-				iFirstDiffPos,
-				iBestFirstDiffPos = -1;
+				oBestMatch = {
+					distance: 10000,
+					firstDiffPos: -1
+				};
 			// Loop through all available tokens, find matches and calculate distance
 			for (var sTestSkeleton in oAvailableFormats) {
+				if (sTestSkeleton === "intervalFormatFallback") {
+					continue;
+				}
 				aTestTokens = this._parseSkeletonFormat(sTestSkeleton);
 				iDistance = 0;
 				aMissingTokens = [];
@@ -397,40 +525,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				//  1. the distance is smaller than the best distance or
 				//  2. the distance equals the best distance and the position of the token in the given skeleton which
 				//   isn't the same between the given skeleton and the available skeleton is bigger than the best one's.
-				if (bMatch && (iDistance < iBestDistance || (iDistance === iBestDistance && iFirstDiffPos > iBestFirstDiffPos))) {
-					iBestDistance = iDistance;
-					iBestFirstDiffPos = iFirstDiffPos;
-					aBestMissingTokens = aMissingTokens;
-					sBestPattern = oAvailableFormats[sTestSkeleton];
-					aBestPatternTokens = aTestTokens;
+				if (bMatch && (iDistance < oBestMatch.distance || (iDistance === oBestMatch.distance && iFirstDiffPos > oBestMatch.firstDiffPos))) {
+					oBestMatch.distance = iDistance;
+					oBestMatch.firstDiffPos = iFirstDiffPos;
+					oBestMatch.missingTokens = aMissingTokens;
+					oBestMatch.pattern = oAvailableFormats[sTestSkeleton];
+					oBestMatch.patternTokens = aTestTokens;
 				}
 			}
-
-			// if there is no exact match, we need to do further processing
-			if (iBestDistance == 0) {
-				sPattern = sBestPattern;
-			} else {
-				if (!sBestPattern) {
-					// if no best match could been found, just take the skeleton as pattern
-					sPattern = sSkeleton;
-				} else if (aBestMissingTokens.length > 0) {
-					// if tokens are missing create a pattern containing all, otherwise just adjust pattern
-					if (rMixedSkeleton.test(sSkeleton)) {
-						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
-					} else {
-						sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
-						sPattern = this._appendItems(sPattern, aBestMissingTokens, sCalendarType);
-					}
-				} else {
-					sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
-				}
+			if (oBestMatch.pattern) {
+				return oBestMatch;
 			}
-			// If special input token "J" was used, remove dayperiod from pattern
-			if (sSkeleton.indexOf("J") >= 0) {
-				sPattern = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/, "");
-			}
-
-			return sPattern;
 		},
 
 		_expandFields: function(sPattern, aPatternTokens, aTokens) {
@@ -554,36 +659,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sDateTimePattern = this.getDateTimePattern(sStyle, sCalendarType);
 			sResultPattern = sDateTimePattern.replace(/\{1\}/, sDatePattern).replace(/\{0\}/, sTimePattern);
 			return sResultPattern;
-		},
-
-		/**
-		 * Returns the interval format with the given ID or the fallback format if no interval
-		 * format with that ID is known.
-		 *
-		 * See CLDR documentation for valid IDs. The empty ID ("") might be used to retrieve the interval format fallback.
-		 *
-		 * @param {string} sId ID of the interval format, e.g. "d-d"
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @returns {string} interval format string with placeholders {0} and {1}
-		 * @public
-		 * @since 1.17.0
-		 */
-		getIntervalPattern: function(sId, sCalendarType) {
-			var oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats"),
-				aIdParts, sIntervalId, sDifference, oInterval, sPattern;
-			if (sId) {
-				aIdParts = sId.split("-");
-				sIntervalId = aIdParts[0];
-				sDifference = aIdParts[1];
-				oInterval = oIntervalFormats[sIntervalId];
-				if (oInterval) {
-					sPattern = oInterval[sDifference];
-					if (sPattern) {
-						return sPattern;
-					}
-				}
-			}
-			return oIntervalFormats.intervalFormatFallback;
 		},
 
 		/**
@@ -1284,7 +1359,99 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"Year": "{0} {1}"
 					},
 					"intervalFormats": {
-						"intervalFormatFallback":"{0} – {1}"
+						"intervalFormatFallback":"{0} – {1}",
+						"d": {
+							"d": "d – d"
+						},
+						"h": {
+							"a": "h a – h a",
+							"h": "h – h a"
+						},
+						"H": {
+							"H": "HH – HH"
+						},
+						"hm": {
+							"a": "h:mm a – h:mm a",
+							"h": "h:mm – h:mm a",
+							"m": "h:mm – h:mm a"
+						},
+						"Hm": {
+							"H": "HH:mm – HH:mm",
+							"m": "HH:mm – HH:mm"
+						},
+						"hmv": {
+							"a": "h:mm a – h:mm a v",
+							"h": "h:mm – h:mm a v",
+							"m": "h:mm – h:mm a v"
+						},
+						"Hmv": {
+							"H": "HH:mm – HH:mm v",
+							"m": "HH:mm – HH:mm v"
+						},
+						"hv": {
+							"a": "h a – h a v",
+							"h": "h – h a v"
+						},
+						"Hv": {
+							"H": "HH – HH v"
+						},
+						"M": {
+							"M": "M – M"
+						},
+						"Md": {
+							"d": "M/d – M/d",
+							"M": "M/d – M/d"
+						},
+						"MEd": {
+							"d": "E, M/d – E, M/d",
+							"M": "E, M/d – E, M/d"
+						},
+						"MMM": {
+							"M": "MMM – MMM"
+						},
+						"MMMd": {
+							"d": "MMM d – d",
+							"M": "MMM d – MMM d"
+						},
+						"MMMEd": {
+							"d": "E, MMM d – E, MMM d",
+							"M": "E, MMM d – E, MMM d"
+						},
+						"y": {
+							"y": "y – y"
+						},
+						"yM": {
+							"M": "M/y – M/y",
+							"y": "M/y – M/y"
+						},
+						"yMd": {
+							"d": "M/d/y – M/d/y",
+							"M": "M/d/y – M/d/y",
+							"y": "M/d/y – M/d/y"
+						},
+						"yMEd": {
+							"d": "E, M/d/y – E, M/d/y",
+							"M": "E, M/d/y – E, M/d/y",
+							"y": "E, M/d/y – E, M/d/y"
+						},
+						"yMMM": {
+							"M": "MMM – MMM y",
+							"y": "MMM y – MMM y"
+						},
+						"yMMMd": {
+							"d": "MMM d – d, y",
+							"M": "MMM d – MMM d, y",
+							"y": "MMM d, y – MMM d, y"
+						},
+						"yMMMEd": {
+							"d": "E, MMM d – E, MMM d, y",
+							"M": "E, MMM d – E, MMM d, y",
+							"y": "E, MMM d, y – E, MMM d, y"
+						},
+						"yMMMM": {
+							"M": "MMMM – MMMM y",
+							"y": "MMMM y – MMMM y"
+						}
 					}
 				},
 				"months": {
