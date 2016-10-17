@@ -3379,17 +3379,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 
 		var $SelAll = this.$("selall");
-		if ((oSelMode == SelectionMode.Multi || oSelMode == SelectionMode.MultiToggle)
-				&& this.getEnableSelectAll() && !$SelAll.hasClass("sapUiTableSelAll")) {
+		if ((oSelMode == SelectionMode.Multi || oSelMode == SelectionMode.MultiToggle) && this.getEnableSelectAll()) {
 			var iSelectedIndicesCount = this._getSelectedIndicesCount();
 			var bClearSelectAll = iSelectedIndicesCount == 0;
 			if (!bClearSelectAll) {
 				var iSelectableRowCount = this._getSelectableRowCount();
 				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
 			}
-			if (bClearSelectAll) {
-				$SelAll.addClass("sapUiTableSelAll");
-			}
+			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
 		}
 	};
 
