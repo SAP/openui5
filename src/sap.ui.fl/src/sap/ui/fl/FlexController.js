@@ -38,6 +38,8 @@ sap.ui.define([
 		}
 	};
 
+	FlexController.appliedChangesCustomDataKey = "sap.ui.fl:AppliedChanges";
+
 	/**
 	 * Sets the component name of the FlexController
 	 *
@@ -393,14 +395,43 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
-		var sControlType = mPropertyBag.modifier.getControlType(oControl);
+		var oModifier = mPropertyBag.modifier;
+		var sControlType = oModifier.getControlType(oControl);
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 
 		if (!oChangeHandler) {
 			throw (new Error("A change handler for the given change type does not exist."));
 		}
 
-		oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+		var aCustomData = oModifier.getAggregation(oControl, "customData") || [];
+		var sChangeId = oChange.getId();
+		var aAppliedChanges = [];
+		var oAppliedChangeCustomData;
+		var sAppliedChanges = "";
+		aCustomData.some(function (oCustomData) {
+			var sKey = oModifier.getProperty(oCustomData, "key");
+			if (sKey === FlexController.appliedChangesCustomDataKey) {
+				oAppliedChangeCustomData = oCustomData;
+				sAppliedChanges = oModifier.getProperty(oCustomData, "value");
+				aAppliedChanges = sAppliedChanges.split(",");
+				return true; // break loop
+			}
+		});
+
+		if (aAppliedChanges.indexOf(sChangeId) === -1) {
+			oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+
+			if (oAppliedChangeCustomData) {
+				oModifier.setProperty(oAppliedChangeCustomData, "value", sAppliedChanges + "," + sChangeId);
+			} else {
+				var oAppComponent = mPropertyBag.appComponent;
+				var oView = mPropertyBag.view;
+				oAppliedChangeCustomData = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView);
+				oModifier.setProperty(oAppliedChangeCustomData, "key", FlexController.appliedChangesCustomDataKey);
+				oModifier.setProperty(oAppliedChangeCustomData, "value", sChangeId);
+				oModifier.insertAggregation(oControl, "customData", oAppliedChangeCustomData, 0, oView, true);
+			}
+		}
 	};
 
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
