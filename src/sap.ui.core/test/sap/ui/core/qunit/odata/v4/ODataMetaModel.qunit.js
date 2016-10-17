@@ -1511,6 +1511,7 @@ sap.ui.require([
 			oContext = {},
 			mParameters = {},
 			sPath = "foo",
+			mParameters = {},
 			oValue = {};
 
 		//TODO call fetchObject instead once lazy loading is implemented

@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([], function () {
+sap.ui.define([
+	"../_AnnotationHelperBasics",
+	"./_AnnotationHelperExpression"
+], function (Basics, Expression) {
 	"use strict";
 
 	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
@@ -32,7 +35,9 @@ sap.ui.define([], function () {
 			 * @throws {Error}
 			 *   If the result of {@link #getNavigationPath} contains segments which are not valid
 			 *   OData identifiers and violate the data binding syntax
+			 *
 			 * @public
+			 * @since 1.43.0
 			 */
 			getNavigationBinding : function (sPath) {
 				sPath = AnnotationHelper.getNavigationPath(sPath);
@@ -61,7 +66,9 @@ sap.ui.define([], function () {
 			 *   "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"
 			 * @returns {string}
 			 *   The path of structural and navigation properties, for example "ToSupplier" or ""
+			 *
 			 * @public
+			 * @since 1.43.0
 			 */
 			getNavigationPath : function (sPath) {
 				var iIndexOfAt;
@@ -125,7 +132,9 @@ sap.ui.define([], function () {
 			 * @returns {boolean}
 			 *   <code>true</code> if the given path ends with "$count" or with a multi-valued
 			 *   structural or navigation property, <code>false</code> otherwise
+			 *
 			 * @public
+			 * @since 1.43.0
 			 */
 			isMultiple : function (sPath, oDetails) {
 				var iIndexOfAt;
@@ -146,6 +155,75 @@ sap.ui.define([], function () {
 				}
 				sPath = "/" + oDetails.schemaChildName + "/" + sPath + "$isCollection";
 				return oDetails.context.getObject(sPath) === true;
+			},
+
+			/**
+			 * A function that helps to interpret OData V4 annotations. It knows about
+			 * <ul>
+			 *   <li> the "14.4 Constant Expressions" for "edm:Bool", "edm:Date",
+			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
+			 *   "edm:TimeOfDay".
+			 *   <li> the constant "14.4.11 Expression edm:String": This is turned into a fixed
+			 *   text (e.g. <code>"Width"</code>). String constants that contain a simple binding
+			 *   <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n" with arbitrary path
+			 *   are not turned into a fixed text, but kept as a data binding expression; this
+			 *   allows local annotation files to refer to a resource bundle for
+			 *   internationalization.
+			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
+			 *   expression bindings to perform the operations at run-time.
+			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
+			 *   <ul>
+			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
+			 *     expression.
+			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
+			 *     expression binding to fill the template at run-time.
+			 *     <li> "14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
+			 *     binding to encode the parameter at run-time.
+			 *     <li> Apply functions may be nested arbitrarily.
+			 *   </ul>
+			 *   <li> the dynamic "14.5.6 Expression edm:If": This is turned into an expression
+			 *   binding to be evaluated at run-time. The expression is a conditional expression
+			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
+			 *   <li> the dynamic "14.5.10 Expression edm:Null": This is turned into a
+			 *   <code>null</code> value. In <code>odata.concat</code> it is ignored.
+			 *   <li> the dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
+			 *   edm:PropertyPath": This is turned into a simple data binding, e.g.
+			 *   <code>"{Name}"</code>.
+			 * </ul>
+			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
+			 * as such. An error describing the problem is logged to the console in such a case.
+			 *
+			 * Example:
+			 * <pre>
+			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
+			 * </pre>
+			 *
+			 * @param {any} vRawValue
+			 *   The raw value from the meta model
+			 * @param {object} oDetails
+			 *   The details object
+			 * @param {sap.ui.model.Context} oDetails.context
+			 *   Points to the given raw value, that is
+			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
+			 * @returns {string}
+			 *   A data binding or a fixed text or a sequence thereof
+			 *
+			 * @public
+			 * @since 1.43.0
+			 */
+			value : function (vRawValue, oDetails) {
+				var sPath = oDetails.context.getPath();
+
+				if (sPath.slice(-1) === "/") {
+					// cut off trailing slash, happens with computed annotations
+					sPath = sPath.slice(0, -1);
+				}
+				return Expression.getExpression({
+						asExpression : false,
+						model : oDetails.context.getModel(),
+						path : sPath,
+						value : vRawValue
+					});
 			}
 		};
 

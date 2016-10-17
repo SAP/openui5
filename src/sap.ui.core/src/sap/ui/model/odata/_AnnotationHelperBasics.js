@@ -42,39 +42,34 @@ sap.ui.define([
 		 * throws an error if the result is not of the expected type.
 		 *
 		 * @param {object} oPathValue
-		 *   a path/value pair
-		 * @param {boolean} oPathValue.asExpression
-		 *   if <code>true</code> an embedded concat must use expression binding; the value is
-		 *   simply passed through here; it is only used in _AnnotationHelperExpression.concat
+		 *   a path/value pair which may contain additional arbitrary properties
 		 * @param {string} oPathValue.path
 		 *   the meta model path to start at
 		 * @param {object|any[]} oPathValue.value
 		 *   the value at this path
-		 * @param {boolean} oPathValue.withType
-		 *   if <code>true</code> bindings shall be rendered with type information; the value is
-		 *   simply passed through here
 		 * @param {string|number} vProperty
 		 *   the property name or array index
-		 * @param {string} [sExpectedType]
+		 * @param {boolean|string} [vExpectedType]
 		 *   the expected type (tested w/ typeof) or the special value "array" for an array;
-		 *   if <code>undefined</code> the result is not checked
+		 *   if <code>undefined</code> the result is not checked; <code>true</code> means that no
+		 *   check happens, but the result carries the <code>asExpression : true</code> flag.
 		 * @returns {object}
-		 *   the meta model path and its value after descending
+		 *   the path/value pair after descending with all original additional properties
 		 * @throws {SyntaxError}
 		 *   if the result is not of the expected type
 		 */
-		descend : function (oPathValue, vProperty, sExpectedType) {
+		descend : function (oPathValue, vProperty, vExpectedType) {
+			var oTarget = jQuery.extend({}, oPathValue);
+
 			Basics.expectType(oPathValue, typeof vProperty === "number" ? "array" : "object");
-			oPathValue = {
-				asExpression : oPathValue.asExpression,
-				path : oPathValue.path + "/" + vProperty,
-				value : oPathValue.value[vProperty],
-				withType : oPathValue.withType
-			};
-			if (sExpectedType) {
-				Basics.expectType(oPathValue, sExpectedType);
+			oTarget.path = oPathValue.path + "/" + vProperty;
+			oTarget.value = oPathValue.value[vProperty];
+			if (vExpectedType === true) {
+				oTarget.asExpression = true;
+			} else if (vExpectedType) {
+				Basics.expectType(oTarget, vExpectedType);
 			}
-			return oPathValue;
+			return oTarget;
 		},
 
 		/**
@@ -83,11 +78,13 @@ sap.ui.define([
 		 *   a path/value pair
 		 * @param {string} sMessage
 		 *   the message to log
+		 * @param {string} [sComponent="sap.ui.model.odata.AnnotationHelper"]
+		 *   Name of the component that produced the log entry
 		 */
-		error : function (oPathValue, sMessage) {
+		error : function (oPathValue, sMessage, sComponent) {
 			sMessage = oPathValue.path + ": " + sMessage;
 			jQuery.sap.log.error(sMessage, Basics.toErrorString(oPathValue.value),
-				sAnnotationHelper);
+				sComponent || sAnnotationHelper);
 			throw new SyntaxError(sMessage);
 		},
 
@@ -310,7 +307,7 @@ sap.ui.define([
 		 * @param {object} oResult
 		 *   an object with the following properties:
 		 *   result: "constant", "binding", "composite" or "expression"
-		 *   value: {string} the value to write into the resulting string depending on result:
+		 *   value: {any} the value to write into the resulting string depending on result:
 		 *     when "constant": the constant value as a string (from the annotation)
 		 *     when "binding": the binding path
 		 *     when "expression": a binding expression not wrapped (no "{=" and "}")
@@ -327,14 +324,14 @@ sap.ui.define([
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
 		resultToString : function (oResult, bExpression, bWithType) {
-			var sValue = oResult.value;
+			var vValue = oResult.value;
 
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
 				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
-				if (bAddType || rBadChars.test(sValue)) {
-					sResult = "{path:" + Basics.toJSON(sValue);
+				if (bAddType || rBadChars.test(vValue)) {
+					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
@@ -344,7 +341,7 @@ sap.ui.define([
 					}
 					return sResult + "}";
 				}
-				return "{" + sValue + "}";
+				return "{" + vValue + "}";
 			}
 
 			function constant(oResult) {
@@ -352,7 +349,7 @@ sap.ui.define([
 					case "Edm.Boolean":
 					case "Edm.Double":
 					case "Edm.Int32":
-						return oResult.value;
+						return String(oResult.value);
 					default:
 						return Basics.toJSON(oResult.value);
 				}
@@ -367,18 +364,21 @@ sap.ui.define([
 					throw new Error(
 						"Trying to embed a composite binding into an expression binding");
 				}
-				return sValue;
+				return vValue; // Note: it's already a composite binding string
 
 			case "constant":
 				if (oResult.type === "edm:Null") {
 					return bExpression ? "null" : null;
 				}
-				return bExpression
-					? constant(oResult)
-					: BindingParser.complexParser.escape(sValue);
+				if (bExpression) {
+					return constant(oResult);
+				}
+				return typeof vValue === "string"
+					? BindingParser.complexParser.escape(vValue)
+					: String(vValue);
 
 			case "expression":
-				return bExpression ? sValue : "{=" + sValue + "}";
+				return bExpression ? vValue : "{=" + vValue + "}";
 
 			// no default
 			}

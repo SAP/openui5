@@ -401,7 +401,7 @@ sap.ui.define([
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameters array (for a possible error
 		 *   message, see above)
-		 * @param {int} iIndex
+		 * @param {number} iIndex
 		 *   the parameter index (for a possible error message)
 		 * @param {object} oResult
 	 	 *   a result object with category
@@ -611,7 +611,7 @@ sap.ui.define([
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @param {int} iIndex
+		 * @param {number} iIndex
 		 *   the parameter index
 		 * @param {string} [sEdmType]
 		 *   the expected EDM type or <code>undefined</code> if any type is allowed

@@ -4,6 +4,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
 	<template:alias name=".stringify"
 			value="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper.stringify">
 	<VBox>
@@ -66,10 +67,12 @@
 										<!-- TODO $EnumMember is a bit strange, what about computed values etc.? -->
 										<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
 											=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
-											text="{field>Label}"/>
+											text="{field>Label@@.value}"/>
 									</template:then>
 									<template:else>
-										<Text text="{field>Value/$Path@com.sap.vocabularies.Common.v1.Label}"/>
+										<!-- TODO ...@...@@... does not work! -->
+										<!-- .../@@.value triggers indirection in case of string constant -->
+										<Text text="{field>Value/$Path@com.sap.vocabularies.Common.v1.Label@@.value}"/>
 									</template:else>
 								</template:if>
 							</Column>
@@ -85,12 +88,13 @@
 												<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
 												<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
 													=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
-													<Text text="{= '{' + ${target>} + '} {'
-														+ ${target>@com.sap.vocabularies.Common.v1.Text/$Path} + '}' }" />
+													<!-- Text: "A descriptive text for values of the annotated property.
+														Value MUST be a dynamic expression when used as metadata annotation." -->
+													<Text text="{field>Value/@@.value} {target>@com.sap.vocabularies.Common.v1.Text/@@.value}" />
 												</template:if>
 											</template:then>
 											<template:else>
-												<Text text="{= '{' + ${target>} + '}' }" />
+												<Text text="{field>Value/@@.value}" />
 											</template:else>
 										</template:if>
 									</template:with>
@@ -102,5 +106,6 @@
 			</template:with>
 		</template:with>
 	</VBox>
+	</template:alias>
 	</template:alias>
 </mvc:View>

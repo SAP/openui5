@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	'sap/ui/base/BindingParser',
 	'sap/ui/model/odata/_AnnotationHelperBasics'
-], function (jQuery, Basics) {
+], function (jQuery, BindingParser, Basics) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -65,7 +66,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("error", function (assert) {
+	QUnit.test("error w/o component", function (assert) {
 		var sErrorText = "Wrong! So wrong!",
 			oPathValue = {path : "/path/to/foo", value : {foo : "bar"}},
 			sMessage = oPathValue.path + ": " + sErrorText;
@@ -75,6 +76,20 @@ sap.ui.require([
 
 		assert.throws(function () {
 			Basics.error(oPathValue, sErrorText);
+		}, new SyntaxError(sMessage));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("error w/ component", function (assert) {
+		var sErrorText = "Wrong! So wrong!",
+			oPathValue = {path : "/path/to/foo", value : {foo : "bar"}},
+			sMessage = oPathValue.path + ": " + sErrorText;
+
+		this.oLogMock.expects("error").withExactArgs(sMessage,
+			Basics.toErrorString(oPathValue.value), "custom.Component");
+
+		assert.throws(function () {
+			Basics.error(oPathValue, sErrorText, "custom.Component");
 		}, new SyntaxError(sMessage));
 	});
 
@@ -119,12 +134,16 @@ sap.ui.require([
 			].forEach(sinon.test(function (oFixture) {
 				var oStart = {
 						asExpression : "asExpression",
+						foo : "bar",
+						model : "model",
 						path : "/my/path",
 						value : oFixture.value,
 						withType : "withType"
 					},
 					oEnd = {
 						asExpression : "asExpression",
+						foo : "bar",
+						model : "model",
 						path : "/my/path/" + oFixture.property,
 						value : "foo",
 						withType : "withType"
@@ -143,6 +162,39 @@ sap.ui.require([
 				assert.deepEqual(oResult, oEnd, oFixture.type);
 			}));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("descend w/o extras", function (assert) {
+		var oPathValue = {
+				path : "/my/path",
+				value : {foo : "bar"}
+			},
+			oResult;
+
+		oResult = Basics.descend(oPathValue, "foo");
+
+		assert.deepEqual(oResult, {
+				path : "/my/path/foo",
+				value : "bar"
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("descend 'as expression'", function (assert) {
+		var oPathValue = {
+				path : "/my/path",
+				value : {foo : "bar"}
+			},
+			oResult;
+
+		oResult = Basics.descend(oPathValue, "foo", true/*"as expression"*/);
+
+		assert.deepEqual(oResult, {
+				asExpression : true,
+				path : "/my/path/foo",
+				value : "bar"
+			});
 	});
 
 	//*********************************************************************************************
@@ -191,31 +243,44 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resultToString: constants", function (assert) {
-		[
-			{type : "edm:Null", value : "null", binding : null, expression : "null"},
-			{type : "Edm.Boolean", value : "false", expression : "false"},
+	[
+		{type : "edm:Null", value : "null", binding : null, expression : "null"},
+		{type : "edm:Null", value : null, binding : null, expression : "null"},
+		{type : "Edm.Boolean", value : "false", expression : "false"},
+		{type : "Edm.Boolean", value : false, expression : "false"},
 // TODO		{type : "Edm.Date", value : "2000-01-01", expression : ""},
 // TODO		{type : "Edm.DateTimeOffset", value : "2000-01-01T16:00Z", expression : ""},
-			{type : "Edm.Decimal", value : "3.1415", expression : "'3.1415'"},
-			{type : "Edm.Guid", value : "12345678-ABCD-EFab-cdef-123456789012",
-				expression : "'12345678-ABCD-EFab-cdef-123456789012'"},
-			{type : "Edm.Int32", value : "42", expression : "42"},
-			{type : "Edm.Int64", value : "9007199254740992", expression : "'9007199254740992'"},
-			{type : "Edm.String", value : "foo", expression : "'foo'"}
+		{type : "Edm.Decimal", value : "3.1415", expression : "'3.1415'"},
+		{type : "Edm.Double", value : 3.1415926535, expression : "3.1415926535"},
+		{type : "Edm.Double", value : NaN, expression : "NaN"},
+		{type : "Edm.Double", value : Infinity, expression : "Infinity"},
+		{type : "Edm.Double", value : -Infinity, expression : "-Infinity"},
+		{type : "Edm.Guid", value : "12345678-ABCD-EFab-cdef-123456789012",
+			expression : "'12345678-ABCD-EFab-cdef-123456789012'"},
+		{type : "Edm.Int32", value : "42", expression : "42"},
+		{type : "Edm.Int32", value : 42, expression : "42"},
+		{type : "Edm.Int64", value : "9007199254740992", expression : "'9007199254740992'"},
+		{type : "Edm.String", value : "foo", expression : "'foo'"}
 // TODO		{type : "Edm.TimeOfDay", value : "23:59:59", expression : ""}
-		].forEach(function (oFixture) {
+	].forEach(function (oFixture) {
+		QUnit.test("resultToString: constant " + JSON.stringify(oFixture.value), function (assert) {
 			var oResult = {
 					result : "constant",
 					type : oFixture.type,
 					value : oFixture.value
 				};
 
-			assert.strictEqual(Basics.resultToString(oResult, false),
-					"binding" in oFixture ? oFixture.binding : oFixture.value,
-					oFixture.type + " -> binding");
 			assert.strictEqual(Basics.resultToString(oResult, true), oFixture.expression,
-					oFixture.type + " -> expression");
+				oFixture.type + " -> expression");
+
+			if (typeof oFixture.value !== "string") {
+				// no need to escape values which are not arbitrary strings
+				this.mock(BindingParser.complexParser).expects("escape").never();
+			}
+
+			assert.strictEqual(Basics.resultToString(oResult, false),
+				"binding" in oFixture ? oFixture.binding : String(oFixture.value),
+				oFixture.type + " -> binding");
 		});
 	});
 
