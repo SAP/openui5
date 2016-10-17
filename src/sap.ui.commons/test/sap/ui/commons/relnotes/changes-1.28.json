@@ -1191,5 +1191,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.41": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "20de399b3b2758713e49b3996c0c085d4039c395",
+        "author": "Elena Stoyanova \u003celena.stoyanova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: onsapenter is now handled",
+        "references": []
+      }
+    ]
   }
 }

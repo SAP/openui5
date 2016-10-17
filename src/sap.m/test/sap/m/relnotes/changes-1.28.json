@@ -5035,33 +5035,15 @@
         "type": "FIX",
         "text": "sap.m.RatingIndicator: Fix failing QUnit tests",
         "references": []
-      },
-      {
-        "id": "4dd4da027a450da8791d896f27c136eee4c49e26",
-        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
-        "references": []
       }
     ]
   },
   "1.28.40": {
     "date": "October 2016",
-    "notes": [
-      {
-        "id": "d3a10c75bbdb16f9534cca2e5963d0eb3dd22414",
-        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.RatingIndicator: Fix failing QUnit tests",
-        "references": []
-      },
-      {
-        "id": "4dd4da027a450da8791d896f27c136eee4c49e26",
-        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
-        "references": []
-      }
-    ]
+    "notes": []
+  },
+  "1.28.41": {
+    "date": "October 2016",
+    "notes": []
   }
 }
