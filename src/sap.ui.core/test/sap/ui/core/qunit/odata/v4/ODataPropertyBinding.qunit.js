@@ -685,8 +685,30 @@ sap.ui.require([
 			type : new TypeString()
 		});
 
-		var oBinding = oControl.getBinding("text");
-		oBinding.attachChange(function () {
+		oControl.getBinding("text").attachChange(function () {
+			assert.strictEqual(oControl.getText(), "foo");
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("automaticTypes: targetType : 'any'", function (assert) {
+		var oControl = new TestControl({models : this.oModel}),
+			sPath = "/EMPLOYEES(ID='42')/Name",
+			done = assert.async();
+
+		this.getCacheMock().expects("read")
+			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
+			.returns(_SyncPromise.resolve("foo"));
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
+
+		//code under test
+		oControl.bindProperty("text", {
+			path : sPath,
+			targetType : "any"
+		});
+
+		oControl.getBinding("text").attachChange(function () {
 			assert.strictEqual(oControl.getText(), "foo");
 			done();
 		});
@@ -694,7 +716,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("automaticTypes: formatter set by app", function (assert) {
-		var oControl = new TestControl({models : this.oModel}),
+		var oBinding,
+			oControl = new TestControl({models : this.oModel}),
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			oType = new TypeString(),
 			done = assert.async();
@@ -715,7 +738,7 @@ sap.ui.require([
 				return "~" + sValue + "~";
 			}
 		});
-		var oBinding = oControl.getBinding("text");
+		oBinding = oControl.getBinding("text");
 		oBinding.attachChange(function () {
 			assert.strictEqual(oBinding.getType(), oType);
 			assert.strictEqual(oControl.getText(), "~*foo*~");

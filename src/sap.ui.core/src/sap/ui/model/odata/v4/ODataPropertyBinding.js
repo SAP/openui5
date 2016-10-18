@@ -216,7 +216,8 @@ sap.ui.define([
 			that.vValue = undefined; // ensure value is reset
 			return oPromise;
 		}
-		if (!this.bRequestTypeFailed && !this.oType) { // request type only once
+		if (!this.bRequestTypeFailed && !this.oType && this.sInternalType !== "any") {
+			// request type only once
 			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
