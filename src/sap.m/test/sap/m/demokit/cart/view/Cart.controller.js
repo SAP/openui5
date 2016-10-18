@@ -86,7 +86,7 @@ sap.ui.define([
 			this._changeList(oListToAddItem, oListToDeleteItem, oEvent);
 		},
 
-		onAddBackToCart: function (oEvent) {
+		onAddBackToBasket: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
 			var oModelData = oBindingContext.getModel().getData();
 

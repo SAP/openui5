@@ -77,7 +77,7 @@ sap.ui.define([
 					viewName : "Cart",
 					id : "entryList",
 					matchers: new AggregationEmpty({ name : "items" }),
-					success : function (oList) {
+					success : function () {
 						Opa5.assert.ok(true, "The cart was empty");
 					},
 					errorMessage : "The cart still has entries"
@@ -89,7 +89,7 @@ sap.ui.define([
 					viewName : "Cart",
 					id : "saveForLaterList",
 					matchers: new AggregationEmpty({ name : "items" }),
-					success : function (oList) {
+					success : function () {
 						Opa5.assert.ok(true, "The savelist was empty");
 					},
 					errorMessage : "The savelist still has entries"

@@ -61,7 +61,7 @@ sap.ui.define([
 							}
 						});
 					},
-					iPressOnAddBackToCartForTheFirstProduct : function () {
+					iPressOnAddBackToBasketForTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
@@ -88,6 +88,17 @@ sap.ui.define([
 								Opa5.assert.ok(true, "The cart has entries");
 							},
 							errorMessage : "The cart does not contain any entries"
+						});
+					},
+
+					iShouldNotSeeASaveForLaterFooter : function () {
+						return this.waitFor({
+							viewName : "Cart",
+							id : "entryList",
+							success : function (oList) {
+								Opa5.assert.strictEqual("", oList.getFooterText(), "The footer is not visible");
+							},
+							errorMessage : "The footer is still visible"
 						});
 					},
 
