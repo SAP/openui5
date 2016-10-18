@@ -302,7 +302,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData) {
 		var oContext,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sCreatePath,
+			sResolvedPath,
 			sUpdateGroupId,
 			that = this;
 
@@ -316,12 +317,18 @@ sap.ui.define([
 		if (sUpdateGroupId === "$auto" || sUpdateGroupId === "$direct") {
 			throw new Error("Create for update group '" + sUpdateGroupId + "' is not supported");
 		}
+
+		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		sCreatePath = sResolvedPath.slice(1);
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			this.oCache.create(sUpdateGroupId, sResolvedPath.slice(1), "", oInitialData, function () {
+			this.oCache.create(sUpdateGroupId, sCreatePath, "", oInitialData, function () {
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
-		}));
+			}, function (oError) {
+				that.oModel.reportError("POST on '" + sCreatePath
+					+ "' failed; will be repeated automatically", sClassName, oError);
+			}));
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});

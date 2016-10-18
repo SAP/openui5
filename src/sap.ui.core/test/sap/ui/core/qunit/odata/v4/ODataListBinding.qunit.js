@@ -2791,7 +2791,7 @@ sap.ui.require([
 
 		oExpectation = this.mock(oBinding.oCache).expects("create")
 			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
-				sinon.match.func)
+				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
 			.returns(new Promise(function () {}));
 
@@ -2807,6 +2807,32 @@ sap.ui.require([
 		oExpectation.args[0][4](); // call fnCancelCallback to simulate cancellation
 
 		assert.notOk(-1 in oBinding.aContexts);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: error callback", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oError = new Error(),
+			oExpectation,
+			oInitialData = {};
+
+		this.mock(oBinding).expects("getUpdateGroupId").returns("update");
+
+		oExpectation = this.mock(oBinding.oCache).expects("create")
+			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
+				/*fnCancelCallback*/sinon.match.func, /*fnErrorCallback*/sinon.match.func)
+			// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
+			.returns(new Promise(function () {}));
+
+		// code under test
+		oBinding.create(oInitialData);
+
+		this.mock(this.oModel).expects("reportError").withExactArgs(
+			"POST on 'EMPLOYEES' failed; will be repeated automatically",
+			sClassName, sinon.match.same(oError));
+
+		// code under test
+		oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
 	});
 
 	//*********************************************************************************************
@@ -2839,7 +2865,7 @@ sap.ui.require([
 			this.mock(oBinding).expects("getUpdateGroupId").returns("update");
 			oCacheMock.expects("create")
 				.withExactArgs("update", "EMPLOYEES", "",
-					sinon.match.same(oFixture.oInitialData), sinon.match.func)
+					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
 				.returns(Promise.resolve());
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -2917,7 +2943,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3);
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func)
+			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -2971,7 +2997,7 @@ sap.ui.require([
 		oBinding.createContexts({length : 3, start : 0}, 3, "Reason");
 
 		this.mock(oBinding.oCache).expects("create")
-			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func)
+			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 

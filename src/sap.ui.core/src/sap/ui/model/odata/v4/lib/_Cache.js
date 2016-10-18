@@ -493,7 +493,9 @@ sap.ui.define([
 
 	/**
 	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
-	 * group with the given ID.
+	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
+	 * with an Error object, the POST request is parked and ready to be repeated with the next
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#submitBatch} for the same group.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -505,12 +507,14 @@ sap.ui.define([
 	 *   The initial entity data
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a POST request fails
 	 * @returns {Promise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
-	 *   and the entity has been marked as non-transient.
+	 *   and the entity has been marked as non-transient
 	 */
 	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData,
-			fnCancelCallback) {
+			fnCancelCallback, fnErrorCallback) {
 		var that = this;
 
 		// Clean-up when the create has been canceled.
@@ -534,7 +538,11 @@ sap.ui.define([
 					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
 				}, function (oError) {
 					if (oError.canceled) {
+						// for cancellation no error is reported via fnErrorCallback
 						throw oError;
+					}
+					if (fnErrorCallback) {
+						fnErrorCallback(oError);
 					}
 					return request();
 				});
