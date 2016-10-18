@@ -14,7 +14,11 @@
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 	<style>
 		#content {
 			display: block;
@@ -262,7 +266,6 @@
 			oSplitter.rerender();
 		});
 
-
 		test("Mixed vertical sizing", function() {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
@@ -289,7 +292,6 @@
 			oSplitter.rerender();
 		});
 
-
 		module("General tests");
 		test("Events and Rerendering", function() {
 			ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
@@ -307,6 +309,192 @@
 
 			assert.strictEqual(oSplitter.getContentAreas().length, oSplitter._getContentAreas().length, "Should return same value as getContent()");
 			assert.strictEqual(oSplitter._getContentAreas().length, 1, "Should have 1 content Area");
+		});
+
+		QUnit.test("triggerResize", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter();
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oResizeSpy = sinon.spy(oSplitter, "_resize"),
+					oDelayedResizeSpy = sinon.spy(oSplitter, "_delayedResize");
+
+			oSplitter.triggerResize();
+			assert.ok(oDelayedResizeSpy.calledOnce, "Call delayed resize");
+			assert.ok(!oResizeSpy.calledOnce, "Direct resize not called");
+
+			oSplitter.triggerResize(true);
+			assert.ok(oResizeSpy.calledOnce, "Direct resize called");
+		});
+
+		QUnit.test("Live resize enabling", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter();
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oSplitter._liveResize, true, "Live resize enabled by default");
+
+			oSplitter.disableLiveResize();
+			assert.strictEqual(oSplitter._liveResize, false, "Disable Live resize");
+
+			oSplitter.enableLiveResize();
+			assert.strictEqual(oSplitter._liveResize, true, "Enable Live resize");
+
+		});
+
+		QUnit.test("Keyboard support enabling", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter({
+				contentAreas: [
+					new sap.ui.commons.Button(),
+					new sap.ui.commons.Button()
+				]
+			});
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oEnableKeyboardSupportSpy = sinon.spy(oSplitter, "_enableKeyboardListeners"),
+					oDisableKeyboardSupportSpy = sinon.spy(oSplitter, "_disableKeyboardListeners");
+
+			oSplitter.enableKeyboardSupport();
+			assert.ok(oEnableKeyboardSupportSpy.calledOnce, "Enable keyboard support");
+			assert.strictEqual(oSplitter.$().find(".sapUiLoSplitterBar").attr("tabindex"), "0", "Set a proper tabindex");
+
+			oSplitter.disableKeyboardSupport();
+			assert.ok(oDisableKeyboardSupportSpy.calledOnce, "Disable keyboard support");
+			assert.strictEqual(oSplitter.$().find(".sapUiLoSplitterBar").attr("tabindex"), "-1", "Set a proper tabindex");
+		});
+
+		QUnit.test("_onKeyboardResize", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter({
+						contentAreas: [
+							new sap.ui.commons.Button(),
+							new sap.ui.commons.Button()
+						]
+					}),
+					oEvent = {
+						target: {
+							id: oSplitter.getId() + "-splitbar-0"
+						}
+					};
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oKeyboardResizeSpy = sinon.spy(oSplitter, "_resizeContents");
+			oKeyboardResizeSpy.withArgs(12, 5, true);
+
+			oSplitter._onKeyboardResize("inc", 5, oEvent);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
+		});
+
+		QUnit.module("Content areas");
+
+		QUnit.test("addContentArea", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter({
+						contentAreas: [
+							new sap.ui.commons.Button(),
+							new sap.ui.commons.Button()
+						]
+					}),
+					addedItem = new sap.ui.commons.Button();
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			oSplitter.addContentArea(addedItem);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
+			assert.strictEqual(oSplitter.getContentAreas()[2], addedItem, "Added an item at the end");
+		});
+
+		QUnit.test("insertContentArea", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter({
+						contentAreas: [
+							new sap.ui.commons.Button(),
+							new sap.ui.commons.Button()
+						]
+					}),
+					addedItem = new sap.ui.commons.Button();
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			oSplitter.insertContentArea(addedItem, 1);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
+			assert.strictEqual(oSplitter.getContentAreas()[1], addedItem, "Added an item at the proper index");
+		});
+
+		QUnit.test("removeContentArea", function (assert) {
+			var addedItem = new sap.ui.commons.Button(),
+					oSplitter = new sap.ui.layout.Splitter({
+						contentAreas: [
+							addedItem
+						]
+					});
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 1, "Has 1 content areas");
+
+
+			oSplitter.removeContentArea(addedItem);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 3 content areas");
+		});
+
+		QUnit.test("removeAllContentArea", function (assert) {
+			var oSplitter = new sap.ui.layout.Splitter({
+				contentAreas: [
+					new sap.ui.commons.Button(),
+					new sap.ui.commons.Button(),
+					new sap.ui.commons.Button(),
+					new sap.ui.commons.Button(),
+					new sap.ui.commons.Button()
+				]
+			});
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 5, "Has 5 content areas");
+
+
+			oSplitter.removeAllContentArea();
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
+		});
+
+		QUnit.test("destroyContentArea", function (assert) {
+			var oBtn = new sap.ui.commons.Button(),
+					oSplitter = new sap.ui.layout.Splitter({
+						contentAreas: [
+							oBtn
+						]
+					});
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 1, "Has 1 content areas");
+
+
+			oSplitter.destroyContentArea();
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSplitter.getContentAreas());
+			assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
+			assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
 		});
 	}
 	else{

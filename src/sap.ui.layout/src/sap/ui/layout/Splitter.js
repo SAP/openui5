@@ -1177,7 +1177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	Splitter.prototype.removeAllContentArea = function() {
 		this._needsInvalidation = true;
-		return this.destroyAllAggregation("contentAreas");
+		return this.removeAllAggregation("contentAreas");
 	};
 
 	Splitter.prototype.destroyContentArea = function() {
