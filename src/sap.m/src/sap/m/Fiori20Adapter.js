@@ -2,13 +2,6 @@
  * ${copyright}
  */
 
-/**
- * Fiori20Adapter
- *
- * @namespace
- * @name sap.m
- */
-
 // Provides class sap.m.Fiori20Adapter
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider'],
 	function(jQuery,  Object, EventProvider) {
