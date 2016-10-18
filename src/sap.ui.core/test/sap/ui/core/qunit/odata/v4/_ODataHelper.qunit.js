@@ -929,6 +929,8 @@ sap.ui.require([
 				});
 		});
 	});
+	//TODO refactor requestFilter -> fetchFilter: SyncPromise is faster if already resolved; we do
+	// not create a microtask if it is not needed
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {

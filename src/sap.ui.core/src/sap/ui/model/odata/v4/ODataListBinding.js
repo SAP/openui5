@@ -1048,29 +1048,18 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.sort = function (vSorters) {
-		var sOrderby;
-
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
+
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot sort due to pending changes");
 		}
-		// update aSorters to enable grouping
+
 		this.aSorters = _ODataHelper.toArray(vSorters);
-
-		// replace cache and reset contexts and length properties
-		if (this.bRelative) {
-			this.mCacheByContext = undefined;
-			this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
-		} else {
-			sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-				this.mQueryOptions && this.mQueryOptions.$orderby);
-			this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1),
-				_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
-		}
+		this.mCacheByContext = undefined;
+		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
 		this.reset(ChangeReason.Sort);
-
 		return this;
 	};
 

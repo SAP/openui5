@@ -10,29 +10,29 @@
 	<body>
 		<h1>Manual Integration Test: Create Sales Order</h1>
 		<h2>DESCRIPTION</h2>
-		<div>Test entity creation with the Sales Orders application.</div>
+		Test entity creation with the Sales Orders application.
 		<h2>PREPARATION</h2>
-		<div>
+
 			To check console errors open the developer tools before starting the application and
 			check with each step, that there are no errors and warnings.
-		</div>
+
 		<h3>Testing with mock data</h3>
-		<div>Start the Sales Orders application</div>
-		<div>URL (adjust host and port if necessary):
+		Start the Sales Orders application
+		URL (adjust host and port if necessary):
 			<ul>
 				<li> as explored application: http://&lt;host>:&lt;port>/sapui5-sdk-dist/explored.html#/sample/sap.ui.core.sample.odata.v4.SalesOrders/preview</li>
 				<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 			</ul>
-		</div>
+
 		<h3>Testing with backend</h3>
-		<div>Configure your IDE to be able to execute the Sales Orders application against an ABAP
-			backend system</div>
-		<div>Start the Sales Orders application</div>
-		<div>URL (adjust host and port if necessary):
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+			backend system
+		Start the Sales Orders application
+		URL (adjust host and port if necessary):
 			<ul>
 				<li>local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
 			</ul>
-		</div>
+
 		<h2>REALIZE and CHECK</h2>
 		<h3>Create, modify and delete of an unsaved sales order</h3>
 		<ol>

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
@@ -11,7 +12,8 @@ sap.ui.require([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
 ],
-function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties, TestUtils) {
+function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties,
+		TestUtils) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -282,6 +284,14 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						},
 						viewName : sViewName
 					});
+				},
+				sortByGrossAmount : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "sortByGrossAmount",
+						viewName : sViewName
+					});
 				}
 			},
 			assertions: {
@@ -333,6 +343,22 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				checkFirstGrossAmountGreater : function (sAmount) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var sAmount,
+								aTableItems = oSalesOrderTable.getItems();
+							if (aTableItems.length > 0) {
+								sAmount = aTableItems[0].getBindingContext()
+									.getProperty("GrossAmount");
+								Opa5.assert.ok(ODataUtils.compare(sAmount, "1000", true) > 0);
+							}
+						},
+						viewName : sViewName
+					});
+				},
 				checkID : function (iRow, sExpectedID) {
 					var that = this;
 					return this.waitFor({
@@ -341,7 +367,7 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						// we wait for the refresh button becomes interactable before checking the
 						// Sales Orders list
 						matchers : new Interactable(),
-						success : function (oSalesOrderTable) {
+						success : function () {
 							return that.waitFor({
 								controlType : "sap.m.Table",
 								id : "SalesOrders",

@@ -118,6 +118,14 @@ sap.ui.require([
 		When.onTheMainPage.pressSetBindingContextButton();
 		Then.onTheMainPage.checkFavoriteProductID();
 
+		// Filter and then sort: filter is not lost on sort
+		if (bRealOData) {
+			When.onTheMainPage.filterGrossAmount("1000");
+			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+			When.onTheMainPage.sortByGrossAmount();
+			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+		}
+
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog();
