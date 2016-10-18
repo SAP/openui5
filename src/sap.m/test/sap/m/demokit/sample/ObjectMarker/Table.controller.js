@@ -10,7 +10,12 @@ sap.ui.define([
 		onInit: function () {
 			var aData = [
 				{ product: "Power Projector 4713", type: "Locked" },
+				{ product: "Power Projector 4713", type: "LockedBy", additionalInfo: "John Doe" },
+				{ product: "Power Projector 4713", type: "LockedBy" },
 				{ product: "Gladiator MX", type: "Draft" },
+				{ product: "Hurricane GX", type: "Unsaved" },
+				{ product: "Hurricane GX", type: "UnsavedBy", additionalInfo: "John Doe" },
+				{ product: "Hurricane GX", type: "UnsavedBy"},
 				{ product: "Hurricane GX", type: "Unsaved" },
 				{ product: "Webcam", type: "Favorite" },
 				{ product: "Deskjet Super Highspeed", type: "Flagged" }
