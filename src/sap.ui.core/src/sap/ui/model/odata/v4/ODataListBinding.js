@@ -611,9 +611,10 @@ sap.ui.define([
 			bDataRequested = false,
 			bFireChange = false,
 			sGroupId,
-			iStartInModel, // in model coordinates
 			oPromise,
 			oRange,
+			bRefreshEvent = !!this.sChangeReason,
+			iStartInModel, // in model coordinates
 			that = this;
 
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
@@ -671,6 +672,12 @@ sap.ui.define([
 					// fetchDiff() of course works with view coordinates; everything is fine here!
 					return _ODataHelper.fetchDiff(that, aResult, iStart, iLength)
 						.then(function (oDiff) {
+							// make sure "refresh" is followed by async "change"
+							return bRefreshEvent && !bFireChange
+								? Promise.resolve(oDiff)
+								: oDiff;
+						})
+						.then(function (oDiff) {
 							that.oDiff = oDiff;
 							if (that.createContexts(oRange, iResultLength) && bFireChange) {
 								that._fireChange({reason: sChangeReason});
@@ -713,7 +720,7 @@ sap.ui.define([
 					+ iLength + ")");
 			}
 			aContexts.dataRequested = !this.oDiff;
-			aContexts.diff = this.oDiff ? this.oDiff.aDiff :  [];
+			aContexts.diff = this.oDiff ? this.oDiff.aDiff : [];
 		}
 		this.oDiff = undefined;
 		return aContexts;

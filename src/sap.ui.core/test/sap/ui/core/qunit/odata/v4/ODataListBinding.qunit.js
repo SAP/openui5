@@ -80,7 +80,9 @@ sap.ui.require([
 	 *   the promise which is fulfilled as specified
 	 */
 	function createResult(iLength, iStart, bDrillDown) {
-		return _SyncPromise.resolve(Promise.resolve(createData(iLength, iStart, bDrillDown)));
+		//TODO "cache proxy" does not respect contract of _Cache w.r.t. _SyncPromise as return value
+		// of #read
+		return /*_SyncPromise.resolve(*/Promise.resolve(createData(iLength, iStart, bDrillDown));
 	}
 
 	/**
@@ -296,6 +298,66 @@ sap.ui.require([
 
 		// code under test
 		oBinding.reset(ChangeReason.Sort);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bUseExtendedChangeDetection) {
+		QUnit.test("refresh event is always followed by a change event; E.C.D.: "
+				+ bUseExtendedChangeDetection, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oDiff = bUseExtendedChangeDetection
+					? {aDiff : [], iLength : 1, iStart : 0}
+					: undefined;
+
+			if (bUseExtendedChangeDetection) {
+				oBinding.enableExtendedChangeDetection(false);
+			}
+			this.mock(oBinding.oCache).expects("read")
+				.exactly(bUseExtendedChangeDetection ? 1 : 2)
+				.returns(createSyncResult(1));
+			this.mock(_ODataHelper).expects("fetchDiff")
+				.exactly(bUseExtendedChangeDetection ? 1 : 2)
+				.withExactArgs(oBinding, sinon.match.array, 0, 1)
+				.returns(_SyncPromise.resolve(oDiff));
+
+			// Promise used instead of assert.async because only Promises prevent that Sinon
+			// restores the mocks immediately after the test function returned.
+			return new Promise(function (resolve, reject) {
+				oBinding.attachRefresh(function (oEvent) {
+					var aContexts;
+
+					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+
+					// code under test
+					aContexts = oBinding.getContexts(0, 1);
+
+					// preliminary result, "change" event is pending
+					assert.deepEqual(aContexts, []); //TODO is this good w/o E.C.D.?
+					assert.strictEqual(aContexts.dataRequested,
+						bUseExtendedChangeDetection ? true : undefined);
+					assert.deepEqual(aContexts.diff,
+						bUseExtendedChangeDetection ? [] : undefined);
+
+					// "change" must be fired async!
+					oBinding.attachChange(function (oEvent) {
+						assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+
+						// code under test
+						aContexts = oBinding.getContexts(0, 1);
+
+						// real result
+						assert.strictEqual(aContexts.length, 1);
+						assert.strictEqual(aContexts.dataRequested,
+							bUseExtendedChangeDetection ? false : undefined);
+						assert.strictEqual(aContexts.diff,
+							bUseExtendedChangeDetection ? oDiff.aDiff : undefined);
+						resolve();
+					});
+				});
+
+				oBinding.reset(ChangeReason.Sort);
+			});
+		});
 	});
 
 	//*********************************************************************************************
