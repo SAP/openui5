@@ -202,6 +202,24 @@
 			oMarker.destroy();
 		});
 
+		test("UnsavedBy", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.UnsavedBy
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
 		module("Visibility");
 
 		test("Resize control to change the device size", function() {
@@ -481,6 +499,51 @@
 			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 		});
 
+		test("Rendering when the type is LockedBy but no additionalInfo is provided", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.LockedBy
+			}).placeAt("qunit-fixture");
+
+			var sExpectedText = oRB.getText('OM_LOCKED_BY_ANOTHER_USER');
+
+			sap.ui.getCore().applyChanges();
+
+
+			// Assert
+			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
+		});
+
+		test("Rendering when the type is UnsavedBy", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.UnsavedBy,
+				additionalInfo: "John Doe"
+			}).placeAt("qunit-fixture");
+
+			var sExpectedText = oRB.getText('OM_UNSAVED_BY', ["John Doe"]);
+
+			sap.ui.getCore().applyChanges();
+
+
+			// Assert
+			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
+		});
+
+		test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.UnsavedBy
+			}).placeAt("qunit-fixture");
+
+			var sExpectedText = oRB.getText('OM_UNSAVED_BY_ANOTHER_USER');
+
+			sap.ui.getCore().applyChanges();
+
+
+			// Assert
+			strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Unsaved by another user' taken from messagebundle");
+		});
 	</script>
 </head>
 <body>
