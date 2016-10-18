@@ -3132,6 +3132,238 @@ QUnit.test("Default Test Table - Resize not resizable column", function(assert) 
 	assert.strictEqual(iOriginalColumnWidth, sap.ui.table.TableUtils.getColumnWidth(oTable, 2), "Column width did not change (" + iOriginalColumnWidth + "px)");
 });
 
+QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+Left & Ctrl+Right (Column Reordering)", {
+	beforeEach: function() {
+		setupTest();
+		oTable.setFixedColumnCount(0);
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("Default Test Table - Move columns", function(assert) {
+	var done = assert.async();
+	var oFirstColumn = oTable.getColumns()[0];
+	var oLastColumn = oTable.getColumns()[iNumberOfCols - 1];
+	var iOldColumnIndex, iNewColumnIndex;
+
+	// First column.
+	iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+	qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
+
+	new Promise(function(resolve) {
+		window.setTimeout(function() {
+			iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+			assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First column was not moved to the left");
+
+			qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
+
+			resolve();
+		}, 0);
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First column was moved to the right");
+
+				iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
+
+				// Last column.
+				iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 1), Key.Arrow.RIGHT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last column was not moved to the right");
+
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 1), Key.Arrow.LEFT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last column was moved to the left");
+
+				iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 2), Key.Arrow.RIGHT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		done();
+	});
+});
+
+QUnit.test("Fixed Columns - Move fixed columns", function(assert) {
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	var done = assert.async();
+	var oFirstFixedColumn = oTable.getColumns()[0];
+	var oLastFixedColumn = oTable.getColumns()[1];
+	var iOldColumnIndex, iNewColumnIndex;
+
+	// First fixed column.
+	iOldColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+	qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
+
+	new Promise(function(resolve) {
+		window.setTimeout(function() {
+			iNewColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+			assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the left");
+
+			qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
+
+			resolve();
+		}, 0);
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the right");
+
+				// Last fixed column.
+				iOldColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.RIGHT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last fixed column was not moved to the right");
+
+				qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
+				iNewColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last fixed column was not moved to the left");
+
+			resolve();
+		});
+	}).then(function() {
+		done();
+	});
+});
+
+QUnit.test("Fixed Columns - Move movable columns", function(assert) {
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	var done = assert.async();
+	var oFirstColumn = oTable.getColumns()[2];
+	var oLastColumn = oTable.getColumns()[iNumberOfCols - 1];
+	var iOldColumnIndex, iNewColumnIndex;
+
+	// First normal column.
+	iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+	qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.LEFT, false, false, true);
+
+	new Promise(function(resolve) {
+		window.setTimeout(function() {
+			iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+			assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First movable column was not moved to the left");
+
+			qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.RIGHT, false, false, true);
+
+			resolve();
+		}, 0);
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First movable column was moved to the right");
+
+				iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(3), Key.Arrow.LEFT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
+
+				// Last normal column.
+				iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 1), Key.Arrow.RIGHT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last movable column was not moved to the right");
+
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 1), Key.Arrow.LEFT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last movable column was moved to the left");
+
+				iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				qutils.triggerKeydown(getColumnHeader(iNumberOfCols - 2), Key.Arrow.RIGHT, false, false, true);
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+				assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
+
+				resolve();
+			}, 0);
+		});
+	}).then(function() {
+		done();
+	});
+});
+
 QUnit.module("TableKeyboardDelegate2 - Interaction > Space & Enter", {
 	beforeEach: function() {
 		setupTest();
