@@ -129,6 +129,18 @@ test("Collapse", function() {
 	ok(oTree.getItems(), 2, "two nodes displayed after tree collapsing");
 });
 
+test("Expand to level", function() {
+	oTree.expandToLevel(3);
+	ok(oTree.getItems()[0].getExpanded(),"node is expanded");
+	equals(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
+});
+
+test("Collapse all", function() {
+	oTree.collapseAll();
+	ok(!oTree.getItems()[0].getExpanded(),"node is expanded");
+	equals(oTree.getItems().length, 2, "node is collapsed");
+});
+
 module("Node structure");
 
 test("ParentNode", function() {
