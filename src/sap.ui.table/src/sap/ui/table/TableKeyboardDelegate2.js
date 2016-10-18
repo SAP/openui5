@@ -111,6 +111,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		}
 	};
 
+	/*
+	 * Moves the given column to the next or previous position (based on the visible columns).
+	 */
+	TableKeyboardDelegate._moveColumn = function(oColumn, bNext) {
+		var oTable = oColumn.getParent();
+		var aVisibleColumns = oTable._getVisibleColumns();
+		var iIndexInVisibleColumns = aVisibleColumns.indexOf(oColumn);
+		var iTargetIndex;
+
+		if (bNext && iIndexInVisibleColumns < aVisibleColumns.length - 1) {
+			iTargetIndex = oTable.indexOfColumn(aVisibleColumns[iIndexInVisibleColumns + 1]) + 1;
+		} else if (!bNext && iIndexInVisibleColumns > 0) {
+			iTargetIndex = oTable.indexOfColumn(aVisibleColumns[iIndexInVisibleColumns - 1]);
+		}
+
+		if (iTargetIndex != null) {
+			TableUtils.ColumnUtils.moveColumnTo(oColumn, iTargetIndex);
+		}
+	};
+
 	//******************************************************************************************
 
 	/*
@@ -429,11 +449,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	};
 
 	TableKeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+
 		if (oEvent.shiftKey) {
 			oEvent.preventDefault(); // To avoid text selection flickering.
-
-			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
-			var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			/* Range Selection */
 
@@ -482,14 +502,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
+
+		} else if (oEvent.ctrlKey || oEvent.metaKey) {
+
+			/* Column Reordering */
+
+			if (oCellInfo.type === CellType.COLUMNHEADER) {
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+
+				var iColumnIndex = TableUtils.getColumnHeaderCellInfo(oEvent.target).index;
+				var oColumn = this.getColumns()[iColumnIndex];
+				TableKeyboardDelegate._moveColumn(oColumn, bIsRTL);
+			}
 		}
 	};
 
 	TableKeyboardDelegate.prototype.onsaprightmodifiers = function(oEvent) {
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+
 		if (oEvent.shiftKey) {
 			oEvent.preventDefault(); // To avoid text selection flickering.
-
-			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 			/* Range Selection */
 
@@ -509,7 +543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			} else if (oCellInfo.type === CellType.COLUMNHEADER) {
 				var iResizeDelta = this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (bIsRTL) {
 					iResizeDelta = iResizeDelta * -1;
 				}
 
@@ -526,6 +560,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
+			}
+
+		} else if (oEvent.ctrlKey || oEvent.metaKey) {
+
+			/* Column Reordering */
+
+			if (oCellInfo.type === CellType.COLUMNHEADER) {
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+
+				var iColumnIndex = TableUtils.getColumnHeaderCellInfo(oEvent.target).index;
+				var oColumn = this.getColumns()[iColumnIndex];
+				TableKeyboardDelegate._moveColumn(oColumn, !bIsRTL);
 			}
 		}
 	};
