@@ -910,8 +910,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
 					var i = 0;
 					for ( i = 0; i < aSeparatedText.length; i++) {
-						this.updateDomValue(aSeparatedText[i]);
-						this._validateCurrentText();
+						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings
+							this.updateDomValue(aSeparatedText[i]);
+							this._validateCurrentText();
+						}
 					}
 				}
 				this.cancelPendingSuggest();
