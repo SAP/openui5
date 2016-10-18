@@ -1,3 +1,6 @@
+/*!
+ * ${copyright}
+ */
 (function() {
 
 	/*global document,prettyPrint */
