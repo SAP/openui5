@@ -139,7 +139,7 @@
 				</Column>
 				<Column>
 					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
-						icon="{ui>/sortGrossAmountIcon}" iconFirst="false"
+						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
 						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
 				<Column>
