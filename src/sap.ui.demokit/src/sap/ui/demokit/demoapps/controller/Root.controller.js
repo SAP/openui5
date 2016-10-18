@@ -34,9 +34,10 @@ sap.ui.define([
 			onDownloadPress: function (oEvent) {
 				var oListItem = oEvent.getParameters().selectedItem;
 				var oDownloadTile = this._downloadTile;
+				var that = this;
 
 				oDownloadTile.setBusy(true);
-				sap.ui.require(["sap/ui/core/util/File", "sap/ui/thirdparty/jszip"], function (File) {
+				sap.ui.require(["sap/ui/core/util/File", "sap/ui/thirdparty/jszip"], function (oFile) {
 					var oZipFile = new JSZip();
 
 					$.getJSON(oListItem.data("config"), function (oConfig) {
@@ -64,18 +65,24 @@ sap.ui.define([
 								var sCompleteErrorMessage = aFails.reduce(function (sErrorMessage, sError) {
 									return sErrorMessage + sError + "\n";
 								}, "Was not able to locate the following files:\n");
-								MessageBox.error(sCompleteErrorMessage);
+								that._handleError(sCompleteErrorMessage);
 							}
 
 							// Still make the available files ready for download
 							var oContent = oZipFile.generate({type:"blob"});
 							oDownloadTile.setBusy(false);
-							File.save(oContent, oListItem.getTitle(), "zip", "application/zip");
+							that._createArchive(oFile, oContent, oListItem.getTitle());
 						});
 					});
 
 				});
+			},
+			_createArchive: function (oFile, oContent, sTitle) {
+				oFile.save(oContent, sTitle, "zip", "application/zip");
+			},
+			_handleError: function (sError) {
+				MessageBox.error(sError);
 			}
-	})	;
+	});
 	}
 );
