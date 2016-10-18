@@ -512,7 +512,7 @@
 
 	test("mergeParts fails for unsupported properties, error is logged", function () {
 		var sBinding
-			= "prefix {parts:[{path:'/p1'},{path:'/p2'}],type:'sap.ui.model.type.Currency'}",
+			= "{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'sap.ui.model.type.Currency'} }",
 			oBindingInfo;
 
 		this.mock(jQuery.sap.log).expects("error")
@@ -769,26 +769,6 @@
 		strictEqual(oIcon.getColor(), "0,1");
 		oModel.setProperty("/foo", 42);
 		strictEqual(oIcon.getColor(), "0,1", "one time binding -> value unchanged");
-	});
-
-	test("mergeParts fails for unsupported properties, error is logged", function () {
-		var sBinding
-			= "{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'sap.ui.model.type.Currency'} }",
-			oBindingInfo;
-
-		this.mock(jQuery.sap.log).expects("error")
-			.withExactArgs("Cannot merge parts: Unsupported property: type", sBinding,
-				"sap.ui.base.BindingParser");
-
-		//TODO complex binding with type: does not work (but is left untouched by mergeParts())
-		oBindingInfo = parse(sBinding);
-//		throws(function () {
-//			oControl.bindProperty("text", oBindingInfo);
-//			strictEqual(oControl.getText(), "foo0.00", "foo0.00");
-//		});
-
-		strictEqual(oBindingInfo.parts.length, 1, "# embedded bindings in composite binding");
-		ok(oBindingInfo.parts[0].type instanceof sap.ui.model.type.Currency);
 	});
 
 	test("Single expression binding, no mergeParts needed", function () {
