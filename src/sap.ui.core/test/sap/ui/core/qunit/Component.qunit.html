@@ -185,6 +185,31 @@
 		equal(sNestedComponentId, oNestedControl._sOwnerId, "The nested control has the correct component context"); // INTERNAL ONLY!
 	});
 
+	QUnit.module("Destruction");
+
+	QUnit.test("Should destroy dependencies when the constructor is throwing an error", function (assert) {
+		var fnDestroySpy, fnDone = assert.async();
+
+		sap.ui.require(["samples/components/routing/Component"], function (RoutingComponent) {
+			var FailingComponent = RoutingComponent.extend("sample.components.ComponentThatThrows", {
+				init: function () {
+					RoutingComponent.prototype.init.apply(this, arguments);
+
+					fnDestroySpy = sinon.spy(this._oRouter, "destroy");
+
+					throw new Error();
+				}
+			});
+
+
+			assert.throws(function () {
+				new FailingComponent();
+			});
+			sinon.assert.calledOnce(fnDestroySpy);
+			fnDone();
+		});
+	});
+
 	QUnit.module("Routing", {
 		beforeEach : function () {
 			// System under test

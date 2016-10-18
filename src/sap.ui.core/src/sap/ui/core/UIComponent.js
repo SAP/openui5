@@ -46,11 +46,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	{
 		constructor : function(sId, mSettings) {
 
+			var bCreated = false;
 			try {
 				Component.apply(this, arguments);
-			} catch (e) {
-				this._destroyCreatedInstances();
-				throw e;
+				bCreated = true;
+			} finally {
+				if (!bCreated) {
+					this._destroyCreatedInstances();
+				}
 			}
 
 		},

@@ -1805,6 +1805,28 @@
 				ok(this.obj3.getMetadata().getDefaultPropertyName() === null, "empty defaultPropertyName");
 			});
 
+			QUnit.test("Should keep the exception stack", function (assert) {
+				assert.expect(2);
+				function failingNamedFunction () {
+					throw new Error("oh nose")
+				}
+
+				var FailingManagedObject = sap.ui.base.ManagedObject.extend("sap.ui.namespace.for.unitTests.FailingManagedObject",{
+					init: function () {
+						failingNamedFunction();
+					}
+				});
+
+				// cannot use QUnit.assert.throws since the stack is not exposed here
+				// this test cannot test the original problem that the exceptions source was not visible when try catch was used
+				try {
+					new FailingManagedObject("myId");
+				} catch (ex) {
+					assert.ok(ex.stack.indexOf("failingNamedFunction" > -1), "contained the named function in the stack");
+				}
+
+				assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
+			});
 		</script>
 	</head>
 	<body>
