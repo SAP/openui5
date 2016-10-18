@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ProgressIndicator.prototype._getCSSClassByPercentValue = function(fPercentValue) {
 		if (fPercentValue === 100) {
-			return "sapMPIValueMax";
+			return "sapMPIValueMax sapMPIValueGreaterHalf";
 		}
 
 		if (fPercentValue === 0) {
