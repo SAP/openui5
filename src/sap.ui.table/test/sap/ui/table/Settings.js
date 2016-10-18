@@ -245,13 +245,30 @@
 					text: "RowSelector",
 					action: function(oTable) {oTable.setSelectionBehavior("RowSelector");}
 				},
-				SINGLE: {
+				ROW: {
 					text: "Row",
 					action: function(oTable) {oTable.setSelectionBehavior("Row");}
 				},
-				MULTITOGGLE: {
+				ROWONLY: {
 					text: "RowOnly",
 					action: function(oTable) {oTable.setSelectionBehavior("RowOnly");}
+				}
+			}
+		},
+		ROWCOUNTMODE: {
+			text: "Visible Row Count Mode",
+			sub: {
+				FIXED: {
+					text: "Fixed",
+					action: function(oTable) {oTable.setVisibleRowCountMode("Fixed");}
+				},
+				AUTO: {
+					text: "Auto",
+					action: function(oTable) {oTable.setVisibleRowCountMode("Auto");}
+				},
+				INTERACTIVE: {
+					text: "Interactive",
+					action: function(oTable) {oTable.setVisibleRowCountMode("Interactive");}
 				}
 			}
 		},
@@ -261,7 +278,14 @@
 		},
 		NODATA: {
 			text: "Switch NoData",
-			action: switchNoData
+			action: switchNoData,
+			setData: function(oTable, bClear) {
+				if (bClear) {
+					oTable.setModel(oEmptyModel);
+				} else {
+					oTable.setModel(TABLESETTINGS.model);
+				}
+			}
 		},
 		BUSY: {
 			text: "Busy",
@@ -281,6 +305,11 @@
 			text: "Fixed Bottom Rows",
 			input: true,
 			action: function(oTable, sValue) {oTable.setFixedBottomRowCount(parseInt(sValue, 10) || 0);}
+		},
+		VISIBLEROWCOUNT: {
+			text: "Visible Row Count",
+			input: true,
+			action: function(oTable, sValue) {oTable.setVisibleRowCount(parseInt(sValue, 10) || 0);}
 		},
 		GROUPING: {
 			text: "Toogle Grouping",
@@ -310,7 +339,7 @@
 		for (var item in mActions) {
 			var oItem;
 			if (mActions[item].input) {
-				oItem = new sap.ui.unified.MenuTextFieldItem({label: mActions[item].text});
+				oItem = new sap.ui.unified.MenuTextFieldItem({label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
 				oItem.attachSelect(function(oEvent) {
 					var oTFItem = oEvent.getParameter("item");
@@ -318,7 +347,7 @@
 					setReopenTimer();
 				});
 			} else {
-				oItem = new sap.ui.unified.MenuItem({text: mActions[item].text});
+				oItem = new sap.ui.unified.MenuItem({text: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				if (mActions[item].sub) {
 					oItem.setSubmenu(initMenu(mActions[item].sub));
 				} else {
@@ -350,10 +379,11 @@
 
 		TABLESETTINGS.table = oTable;
 		TABLESETTINGS.model = oTable.getModel();
+		TABLESETTINGS.actions = jQuery.extend(true, {}, DEFAULTACTIONS, mCustomActions || {});
 
 		var oButton = new sap.m.Button({text: "Settings", press: function() {
 			if (!oMenu) {
-				oMenu = initMenu(jQuery.extend({}, DEFAULTACTIONS, mCustomActions || {}));
+				oMenu = initMenu(TABLESETTINGS.actions);
 			}
 			if (oReopenTimer) {
 				return;
@@ -361,6 +391,27 @@
 			oMenu.open(false, oButton, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, oButton);
 		}});
 		oButton.placeAt(sUIArea || "content");
+	};
+
+	TABLESETTINGS.getAnalyticalService = function() {
+		if (!TABLESETTINGS.oStorage) {
+			jQuery.sap.require("jquery.sap.storage");
+			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+		}
+		return {url: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTURL"), collection: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTCOLLECTION")};
+	};
+
+	TABLESETTINGS.setAnalyticalService = function(sUrl, sCollection) {
+		if (!TABLESETTINGS.oStorage) {
+			jQuery.sap.require("jquery.sap.storage");
+			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+		}
+		if (sUrl && sCollection) {
+			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTURL", sUrl);
+			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTCOLLECTION", sCollection);
+			return true;
+		}
+		return false;
 	};
 
 	//*************************
@@ -383,24 +434,24 @@
 		iState++;
 		switch (iState) {
 			case 1:
-				oTable.setModel(oEmptyModel);
+				TABLESETTINGS.actions.NODATA.setData(oTable, true);
 				oTable.setShowNoData(true);
 				oTable.setNoData(null);
 				break;
 			case 2:
-				oTable.setModel(oEmptyModel);
+				TABLESETTINGS.actions.NODATA.setData(oTable, true);
 				oTable.setShowNoData(true);
 				oTable.setNoData(oCustom);
 				break;
 			case 3:
-				oTable.setModel(oEmptyModel);
+				TABLESETTINGS.actions.NODATA.setData(oTable, true);
 				oTable.setShowNoData(false);
 				oTable.setNoData(null);
 				break;
 			default:
 			case 0:
 				iState = 0;
-				oTable.setModel(TABLESETTINGS.model);
+				TABLESETTINGS.actions.NODATA.setData(oTable, false);
 				oTable.setShowNoData(true);
 				oTable.setNoData(null);
 				break;
