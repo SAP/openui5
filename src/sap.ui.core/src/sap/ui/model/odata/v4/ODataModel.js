@@ -733,7 +733,8 @@ sap.ui.define([
 	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
 	 *   default <code>updateGroupId</code> is "$auto", which is invalid here.
 	 * @throws {Error}
-	 *   If the given group ID is not an application group ID
+	 *   If the given group ID is not an application group ID or if change requests for the given
+	 *   group ID are running.
 	 *
 	 * @public
 	 * @since 1.39.0

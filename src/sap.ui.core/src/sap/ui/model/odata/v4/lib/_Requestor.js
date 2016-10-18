@@ -80,9 +80,47 @@ sap.ui.define([
 		this.mHeaders = mHeaders || {};
 		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
+		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.sServiceUrl = sServiceUrl;
 	}
+
+	/**
+	 * Called when a batch request has been sent to count the number of running change requests.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} bHasChanges
+	 *   Whether the batch contains change requests; when <code>true</code> the number is increased
+	 */
+	Requestor.prototype.batchRequestSent = function (sGroupId, bHasChanges) {
+		if (bHasChanges) {
+			if (sGroupId in this.mRunningChangeRequests) {
+				this.mRunningChangeRequests[sGroupId] += 1;
+			} else {
+				this.mRunningChangeRequests[sGroupId] = 1;
+			}
+		}
+	};
+
+	/**
+	 * Called when a batch response has been received to count the number of running change
+	 * requests.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} bHasChanges
+	 *   Whether the batch contained change requests; when <code>true</code> the number is
+	 *   decreased
+	 */
+	Requestor.prototype.batchResponseReceived = function (sGroupId, bHasChanges) {
+		if (bHasChanges) {
+			this.mRunningChangeRequests[sGroupId] -= 1;
+			if (this.mRunningChangeRequests[sGroupId] === 0) {
+				delete this.mRunningChangeRequests[sGroupId];
+			}
+		}
+	};
 
 	/**
 	 * Cancels all change requests in the batch queue of the given group or in all batch queues,
@@ -142,10 +180,16 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
+	 * @throws {Error}
+	 *   If change requests for the given group ID are running.
 	 *
 	 * @private
 	 */
 	Requestor.prototype.cancelChanges = function (sGroupId) {
+		if (this.mRunningChangeRequests[sGroupId]) {
+			throw new Error("Cannot cancel the changes for group '" + sGroupId
+				+ "', the batch request is running");
+		}
 		this.cancelChangeRequests(function () {
 			// change set contains only PATCH and POST requests; cancel all
 			return true;
@@ -175,7 +219,7 @@ sap.ui.define([
 				return true;
 			}
 		}
-		return false;
+		return Object.keys(this.mRunningChangeRequests).length > 0;
 	};
 
 	/**
@@ -374,8 +418,10 @@ sap.ui.define([
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aChangeSet = [],
+			bHasChanges,
 			oPreviousChange,
-			aRequests = this.mBatchQueue[sGroupId];
+			aRequests = this.mBatchQueue[sGroupId],
+			that = this;
 
 		/*
 		 * Merges a change from a change set into the previous one if possible.
@@ -479,8 +525,14 @@ sap.ui.define([
 			aRequests[0] = aChangeSet;
 		}
 
+		bHasChanges = aChangeSet.length > 0;
+		this.batchRequestSent(sGroupId, bHasChanges);
+
 		return this.request("POST", "$batch", undefined, undefined, aRequests)
-			.then(visit.bind(null, aRequests)).catch(function (oError) {
+			.then(function (aResponses) {
+				that.batchResponseReceived(sGroupId, bHasChanges);
+				visit(aRequests, aResponses);
+			}).catch(function (oError) {
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
@@ -499,6 +551,7 @@ sap.ui.define([
 					});
 				}
 
+				that.batchResponseReceived(sGroupId, bHasChanges);
 				oRequestError.cause = oError;
 				rejectAll(aRequests);
 				throw oError;
