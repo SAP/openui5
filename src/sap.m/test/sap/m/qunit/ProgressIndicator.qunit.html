@@ -55,7 +55,6 @@
 	});
 
 	oProgInd4.placeAt("content");
-
 	sap.ui.getCore().applyChanges();
 
 	//deferment
@@ -67,9 +66,7 @@
 	//basic rendering
 	test("basic rendering", function() {
 		var oDomRefPI = jQuery.sap.domById("pi1");
-		equal(oDomRefPI.style.width, "50%", "width should be the same");
-		var oDomRefPIBar = jQuery.sap.domById("pi1" + "-bar");
-		equal(oDomRefPIBar.style.width, "30%", "width should be the same");
+		equal(oDomRefPI.style.width, "50%", "control width should be the same");
 		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
 		ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});

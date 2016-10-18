@@ -77,15 +77,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
+	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
+
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
 		var that = this,
 			$progressBar,
+			fPercentDiff,
 			$progressIndicator = this.$(),
 			fAnimationDuration;
 
 		if (!isValidPercentValue(fPercentValue)) {
 			fPercentValue = 0;
 			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
+			fPercentDiff = this.getPercentValue() - fPercentValue;
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
@@ -104,10 +108,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				.attr("aria-valuenow", fPercentValue)
 				.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
-			fAnimationDuration = Math.abs(that.getPercentValue() - fPercentValue) * 20;
+			fAnimationDuration = bUseAnimations ? Math.abs(fPercentDiff) * 20 : 0;
 			$progressBar = this.$("bar");
 			$progressBar.animate({
-				width : fPercentValue + "%"
+				"flex-basis" : fPercentValue + "%"
 			}, fAnimationDuration, "linear", function() {
 				that._setText.apply(that);
 				that.$().removeClass("sapMPIAnimate");
