@@ -14,35 +14,83 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is a date range input control with a calendar as date picker.
-	 *
-	 * A date range can be entered using a calendar that opens in a popup. Alternatively a value can be entered directly in the input field by typing it in.
-	 * (This is only possible on desktop devices, on mobile devices keyboard input is not possible.)
-	 * If a date range is entered by typing it into the input field, it must fit to the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
-	 *
-	 * There are two options to provide a date for the <code>DateRangeSelection</code>.
-	 * You can put a date range as a string to the property <code>value</code> or you can put JavaScript Date objects to the properties <code>dateValue</code> and <code>secondDateValue</code>.
-	 * Only one of the properties should be used at one time, but they are synchronized internally.
-	 * What property to use depends on the use case of the application.
+	 * <b><i>Overview</i></b>
+	 * <br><br>
+	 * The {@link sap.m.DateRangeSelection} is a single-field input control that
+	 * enables the users to enter a localized date range using touch, mouse, keyboard
+	 * input, or by selecting a date range in the calendar. They can also navigate
+	 * directly from one month or year to another.
+	 * <br><br>
+	 * <b>Note:</b> The {@link sap.ui.unified.Calendar} is used internally only if the
+	 * <code>DateRangeSelection</code> is opened (not used for the initial rendering).
+	 * If the <code>sap.ui.unified</code> library is not loaded before the
+	 * <code>DateRangeSelection</code> is opened, it will be loaded upon opening.
+	 * This could lead to a waiting time when the <code>DateRangeSelection</code> is
+	 * opened for the first time. To prevent this, apps using the
+	 * <code>DateRangeSelection</code> should also load the <code>sap.ui.unified</code>
+	 * library.
+	 * <br><br>
+	 * <b><i>Usage</i></b>
+	 * <br><br>
+	 * <i>When to use</i>
+	 * <br>
+	 * If you need a time range and know that your user is a power user who has to
+	 * input lots of data. If the keyboard is the primary device used for navigating
+	 * the app, use two input fields. This allows the user to quickly jump from field
+	 * to field. By selecting a date in one of the fields, the other field should
+	 * recognize the information and jump to the same selection.
+	 * <br><br>
+	 * <i>When not to use</i>
+	 * <br>
+	 * If the user's primary goal is not to select ranges or if you just want to enter
+	 * a date and a time. For such cases, use the {@link sap.m.DatePicker} or
+	 * {@link sap.m.TimePicker}.
+	 * <br><br>
+	 * The user can enter a date by:
 	 * <ul>
-	 * <li>Use the <code>value</code> property if the date range is already provided as a formatted string.</li>
-	 * <li>Use the <code>dateValue</code> and <code>secondDateValue</code> properties if the date range is already provided as JavaScript Date objects or you want to work with JavaScript Date objects.</li>
+	 * <li>Using the calendar that opens in a popup</li>
+	 * <li>Typing it in directly in the input field (not available for mobile
+	 * devices)</li>
 	 * </ul>
-	 *
-	 * All formatting and parsing of dates from and to strings is done using the {@link sap.ui.core.format.DateFormat}, so read the corresponding documentation if you need some information about this.
-	 *
-	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
-	 *
-	 * For example, if the <code>displayFormat</code> is "MMM d, y", <code>delimiter</code> is "-" and the used locale is English,
-	 * a valid <code>value</code> string is "Jul 29, 2015 - Jul 31, 2015" and it will be displayed in the same way in the input field.
-	 *
-	 * If no <code>placeholder</code> is set to the <code>DatePicker</code> the used <code>displayFormat</code> is shown as placeholder.
-	 * If another placeholder is needed, it must be set.
-	 *
-	 * Internally the <code>sap.ui.unified.Calendar</code> is used, but it is only needed if the <code>DateRangeSelection</code> is opened. This means that it is not needed for the initial rendering.
-	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>DateRangeSelection</code> is opened, it will be loaded upon opening.
-	 * This could lead to a waiting time before a <code>DateRangeSelection</code> is opened the first time. To prevent this, applications using the <code>DateRangeSelection</code> should also load
-	 * the <code>sap.ui.unified</code> library.
+	 * On app level, there are two options to provide a date for the
+	 * <code>DateRangeSelection</code> - date range as a string to the
+	 * <code>value</code> property or JavaScript Date objects to the
+	 * <code>dateValue</code> and <code>secondDateValue</code> properties (only one of
+	 * these options should be used at a time):
+	 * <ul>
+	 * <li>Use the <code>value</code> property if the date range is already provided as
+	 * a formatted string</li>
+	 * <li>Use the <code>dateValue</code> and <code>secondDateValue</code> properties
+	 * if the date range is already provided as JavaScript Date objects or you want to
+	 * work with JavaScript Date objects</li>
+	 * </ul>
+	 * <b><i>Formatting</i></b>
+	 * <br><br>
+	 * All formatting and parsing of dates from and to strings is done using the
+	 * {@link sap.ui.core.format.DateFormat}. If a date is entered by typing it into
+	 * the input field, it must fit to the used date format and locale.
+	 * <br><br>
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation.
+	 * See {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+	 * <br><br>
+	 * For example, if the <code>displayFormat</code> is "MMM d, y", delimiter is "-",
+	 * and the used locale is English, a valid value string is "Jul 29, 2015 - Jul 31,
+	 * 2015" and it is displayed in the same way in the input field.
+	 * <br><br>
+	 * If no placeholder is set to the <code>DateRangeSelection</code>, the used
+	 * <code>displayFormat</code> is displayed as a placeholder. If another placeholder
+	 * is needed, it must be set.
+	 * <br><br>
+	 * <b>Note:</b> If the string does NOT match the <code>displayFormat</code>
+	 * (from user input) or the <code>valueFormat</code> (on app level), the
+	 * {@link sap.ui.core.format.DateFormat} makes an attempt to parse it based on the
+	 * locale settings. For more information, see the respective documentation in the
+	 * API Reference.
+	 * <br><br>
+	 * <b><i>Responsive behavior</i></b>
+	 * <br><br>
+	 * The <code>DateRangeSelection</code> is fully responsive. It is smaller in
+	 * compact mode and provides a touch-friendly size in cozy mode.
 	 *
 	 * @extends sap.m.DatePicker
 	 * @version ${version}
