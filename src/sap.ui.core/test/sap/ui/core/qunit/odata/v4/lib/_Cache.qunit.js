@@ -763,6 +763,8 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			oCreatePromise,
+			oError = new Error(),
+			fnErrorCallback = sinon.spy(),
 			oFailedPostPromise,
 			oRequestExpectation1,
 			oRequestExpectation2,
@@ -805,7 +807,8 @@ sap.ui.require([
 				fnRejectPost = reject;
 			}));
 
-		oCreatePromise = oCache.create("updateGroup", "Employees", "");
+		oCreatePromise = oCache.create("updateGroup", "Employees", "", {}, undefined,
+			fnErrorCallback);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = oRequestorMock.expects("request");
@@ -821,9 +824,10 @@ sap.ui.require([
 
 			checkUpdateAndDeleteFailure();
 
-			fnRejectPost(new Error());
+			fnRejectPost(oError);
 
 			oFailedPostPromise.then(undefined, function () {
+				assert.ok(fnErrorCallback.calledWithExactly(oError));
 				checkUpdateSuccess("with restarted POST").then(function () {
 					// simulate a submitBatch leading to a successful POST
 					oRequestExpectation2.args[0][5]();
