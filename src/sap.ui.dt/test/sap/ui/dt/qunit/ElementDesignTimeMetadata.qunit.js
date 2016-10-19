@@ -11,6 +11,10 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 		this.oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
 			libraryName : "fake.lib",
 			data : {
+				name : {
+					singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+					plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+				},
 				aggregations : {
 					testAggregation : {
 						testField : "testValue",
@@ -23,7 +27,7 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 								return {changeType: oElement.name};
 							}
 						},
-						childNames : {
+						childrenName : {
 							singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 							plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 						}
@@ -35,7 +39,7 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 						}
 					},
 					testAggregation3 : {
-						childNames : function(oElement){
+						childrenName : function(oElement){
 							//fake 2 cases:
 							//1. childNames is a function, that returns the object
 							//2. singular and plural can be functions to handle cases with self made resource bundling
@@ -132,4 +136,16 @@ QUnit.test("when getAggregationText is called", function(assert) {
 		singular : "I18N_KEYsimulateElement",
 		plural :  "I18N_KEY_PLURALsimulateElement"
 	}, "then the translated texts are returned for variable texts/keys");
+});
+
+QUnit.test("when getText is called", function(assert) {
+	var oFakeLibBundle = {
+		getText : this.stub().returnsArg(0) //just return i18n keys
+	};
+	this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
+
+	assert.deepEqual(this.oElementDesignTimeMetadata.getName(), {
+		singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+		plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+	}, "then the translated texts are returned for static keys");
 });

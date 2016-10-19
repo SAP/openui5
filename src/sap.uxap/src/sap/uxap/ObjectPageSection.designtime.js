@@ -8,6 +8,14 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		name : {
+			singular : function(){
+				return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
+			},
+			plural : function(){
+				return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
+			}
+		},
 		actions : {
 			remove : {
 				changeType : "stashControl",

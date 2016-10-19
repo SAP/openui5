@@ -31,13 +31,27 @@ sap.ui.define([], function() {
 	};
 
 	return {
+		name : function (oElement){
+			var sType = oElement.getMetadata().getName();
+			if (sType === "sap.ui.layout.form.SimpleForm") {
+				return {
+					singular : "GROUP_CONTROL_NAME",
+					plural : "GROUP_CONTROL_NAME_PLURAL"
+				};
+			} else if (sType === "sap.ui.layout.form.FormContainer"){
+				return {
+					singular : "FIELD_CONTROL_NAME",
+					plural : "FIELD_CONTROL_NAME_PLURAL"
+				};
+			}
+		},
 		aggregations : {
 			content : {
 				ignore : true
 			},
 			form : {
 				ignore : false,
-				childNames : function (oElement){
+				childrenName : function (oElement){
 					var sType = oElement.getMetadata().getName();
 					if (sType === "sap.ui.layout.form.SimpleForm") {
 						return {
@@ -236,7 +250,7 @@ sap.ui.define([], function() {
 								getState: function (oElement) {
 								},
 								containerTitle : "GROUP_CONTROL_NAME",
-								mapToRelevantControlID : function(sNewControlID) {
+								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
 
@@ -285,7 +299,7 @@ sap.ui.define([], function() {
 								getState: function (oElement) {
 								},
 								containerTitle : "GROUP_CONTROL_NAME",
-								mapToRelevantControlID : function(sNewControlID) {
+								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
 

@@ -159,17 +159,29 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement){
-		var vChildNames = this.getAggregation(sAggregationName).childNames;
-		if (typeof vChildNames === "function") {
-			vChildNames = vChildNames.call(null, oElement);
+		var vChildrenName = this.getAggregation(sAggregationName).childrenName;
+		if (typeof vChildrenName === "function") {
+			vChildrenName = vChildrenName.call(null, oElement);
 		}
-		if (vChildNames){
+		if (vChildrenName){
 			return {
-				singular : this._getText(vChildNames.singular),
-				plural : this._getText(vChildNames.plural)
+				singular : this._getText(vChildrenName.singular),
+				plural : this._getText(vChildrenName.plural)
 			};
 		}
+	};
 
+	ElementDesignTimeMetadata.prototype.getName = function(oElement){
+		var vChildrenName = this.getData().name;
+		if (typeof vChildrenName === "function") {
+			vChildrenName = vChildrenName.call(null, oElement);
+		}
+		if (vChildrenName){
+			return {
+				singular : this._getText(vChildrenName.singular),
+				plural : this._getText(vChildrenName.plural)
+			};
+		}
 	};
 
 	return ElementDesignTimeMetadata;
