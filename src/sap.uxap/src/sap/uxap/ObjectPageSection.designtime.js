@@ -28,7 +28,9 @@ sap.ui.define([],
 				restoreState : function(oObjectPageSection, oState) {
 					oState.control.setVisible(oState.visible);
 				}
-
+			},
+			reveal : {
+				changeType : "unstashControl"
 			}
 		}
 	};
