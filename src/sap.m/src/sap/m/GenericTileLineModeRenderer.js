@@ -166,13 +166,18 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			i = 0,
 			sHelpers = "";
 
+		$StyleHelper.empty();
+
+		if (!this._oStyleData) {
+			return;
+		}
+
 		if (this._oStyleData.rtl && sap.ui.Device.browser.mozilla) {
 			$StyleHelper.css("right", -this._oStyleData.startX + "px");
 		} else if (this._oStyleData.rtl && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
 			$StyleHelper.css("right", -Math.min(this._oStyleData.startX, this._oStyleData.endX) + "px");
 		}
 
-		$StyleHelper.empty();
 		for (i; i < this._oStyleData.lines.length; i++) {
 			oLine = this._oStyleData.lines[i];
 
