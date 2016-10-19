@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', './delegate/ValueStateMessage'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Popup, ValueStateMessage) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Popup, ValueStateMessage, MessageMixin) {
 	"use strict";
 
 	/**
@@ -128,6 +128,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	EnabledPropagator.call(InputBase.prototype);
 	IconPool.insertFontFaceStyle();
+	// apply the message mixin so all message on the input will get the associated label-texts injected
+	MessageMixin.call(InputBase.prototype);
+
 
 	/* =========================================================== */
 	/* Private methods and properties                              */
@@ -880,21 +883,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getId() + "-inner";
 	};
 
-	/**
-	 * Message handling
-	 * @param {string} sName The Property Name
-	 * @param {array} aMessages Array of Messages
-	 */
-	InputBase.prototype.propagateMessages = function(sName, aMessages) {
-		if (aMessages && aMessages.length > 0) {
-			this.setValueState(aMessages[0].type);
-			this.setValueStateText(aMessages[0].message);
-		} else {
-			this.setValueState(sap.ui.core.ValueState.None);
-			this.setValueStateText('');
-		}
-	};
-
 	InputBase.prototype.setTooltip = function(vTooltip) {
 		var oDomRef = this.getDomRef();
 
@@ -950,15 +938,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return this;
-	};
-
-	/**
-	 * This method is called in case an AggregatedDataStateChange happens.
-	 */
-	InputBase.prototype.refreshDataState = function(sName, oDataState) {
-		if (oDataState.getChanges().messages) {
-			this.propagateMessages(sName, oDataState.getMessages());
-		}
 	};
 
 	/**

@@ -28,12 +28,20 @@
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 
 	var oModel;
-	var oLabel, oLabel2, oStreet, oZip, oNr;
+	var oInput1, oInput2, oInput3, oLabel1, oLabel2, oStreet, oZip, oNr;
 
 	function createControls() {
 		// create some control for testing
-		oLabel = new sap.m.Input({value:"{path:'/form/firstname'}"});
-		oLabel2 = new sap.m.Input({value:"{/form/lastname}"});
+		oInput1 = new sap.m.Input({value:"{path:'/form/firstname'}"});
+		oInput2 = new sap.m.Input({value:"{/form/lastname}"});
+		oInput3 = new sap.m.Input({value:"{path:'/form/firstname'}"});
+
+		oLabel1 = new sap.m.Label({text: "First name"});
+		oLabel1.setLabelFor(oInput1);
+
+		oLabel2 = new sap.m.Label({text: "Forename"});
+		oLabel2.setLabelFor(oInput1);
+
 		oString = new sap.ui.model.type.String(null,{maxLength: 5});
 		oInteger = new sap.ui.model.type.Integer();
 		oNrFormat = function(oValue) {
@@ -48,20 +56,24 @@
 		oStreet = new sap.m.Input({value:{path:'/form/street', type: oString}});
 		oNr = new sap.m.Input({value:{path:'/form/nr', formatter: oNrFormat}});
 
-		oLabel.placeAt("content");
-		oLabel2.placeAt("content");
+		oInput1.placeAt("content");
+		oInput2.placeAt("content");
+		oInput3.placeAt("content");
 		oZip.placeAt("content");
 		oStreet.placeAt("content");
 		oNr.placeAt("content");
-	};
+	}
 
 	function destroyControls() {
-		oLabel.destroy();
+		oInput1.destroy();
+		oInput2.destroy();
+		oInput3.destroy();
+		oLabel1.destroy();
 		oLabel2.destroy();
 		oZip.destroy();
 		oStreet.destroy();
 		oNr.destroy();
-	};
+	}
 
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {
@@ -72,7 +84,7 @@
 				oControl.refreshDataState = fnRefresh;
 			}
 		}
-	};
+	}
 
 	var createMessage = function(sText, sTarget, sType) {
 		return new sap.ui.core.message.Message({
@@ -94,12 +106,13 @@
 					nr: 1,
 					zip: "12345"
 				}
-			}
+			};
 			oModel.setData(oData);
 		}
 		sap.ui.getCore().setModel(oModel);
 		createControls();
-	}
+	};
+
 	module("MessageManager", {
 		setup : function() {
 			initModel("json");
@@ -124,10 +137,10 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage();
-		spyDataState(oLabel, function(sName, oDataState) {
+		spyDataState(oInput1, function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 1, 'Message propagated to control');
-				ok(oLabel.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-				ok(oLabel.getValueStateText() === 'test message', 'Input: ValueStateText set correctly')
+				ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				ok(oInput1.getValueStateText() === 'test message', 'Input: ValueStateText set correctly')
 				start();
 			}
 		);
@@ -143,10 +156,10 @@
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage();
 		oMessageManager.addMessages(oMessage);
-		spyDataState(oLabel, function(sName, oDataState) {
+		spyDataState(oInput1, function(sName, oDataState) {
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				ok(oLabel.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				ok(oLabel.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			start();
 			}
 		);
@@ -161,18 +174,18 @@
 		var oMessage2 = createMessage('mt2');
 		var oMessage3 = createMessage('mt3');
 
-		spyDataState(oLabel, function(sName, oDataState) {
+		spyDataState(oInput1, function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 2, 'Message propagated to control - 2');
-				ok(oLabel.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-				ok(oLabel.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly')
+				ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				ok(oInput1.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly')
 			}
 		);
 
-		spyDataState(oLabel2,
+		spyDataState(oInput2,
 			function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 1, 'Message propagated to control - 1');
-				ok(oLabel2.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-				ok(oLabel2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly')
+				ok(oInput2.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				ok(oInput2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly')
 			}
 		);
 
@@ -184,15 +197,15 @@
 		equals(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
 
 		jQuery.sap.delayedCall(0, this, function() {
-			spyDataState(oLabel, function(sName, oDataState) {
+			spyDataState(oInput1, function(sName, oDataState) {
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				ok(oLabel.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				ok(oLabel.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
-			spyDataState(oLabel2, function(sName, oDataState) {
+			spyDataState(oInput2, function(sName, oDataState) {
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				ok(oLabel2.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				ok(oLabel2.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				ok(oInput2.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				ok(oInput2.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				start();
 			});
 			oMessageManager.removeAllMessages();
@@ -201,11 +214,6 @@
 	});
 
 	asyncTest("parseError", function() {
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oMessageModel = oMessageManager.getMessageModel();
-		var iChangeHandler = 0;
-		var iChangeHandler2 = 0;
-
 		spyDataState(oZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
 			ok(oZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -225,7 +233,6 @@
 
 	asyncTest("validationError", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oMessageModel = oMessageManager.getMessageModel();
 
 		spyDataState(oStreet, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
@@ -246,7 +253,6 @@
 
 	asyncTest("validationError - multiple input", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oMessageModel = oMessageManager.getMessageModel();
 
 		spyDataState(oStreet, function(sName, oDataState) {
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -276,6 +282,41 @@
 				});
 			});
 		});
+	});
+
+	asyncTest("AdditionalText property on message for different labels", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessage = createMessage();
+
+		spyDataState(oInput1, function(sName, oDataState) {
+			var aMessages = oDataState.getMessages();
+			ok(aMessages[0].additionalText, "AdditionalText was added.");
+			// InputBase takes
+			equal(aMessages[0].additionalText, "First name", "AdditionalText is set correctly.");
+			start();
+		});
+
+		oMessageManager.addMessages(oMessage);
+	});
+
+	asyncTest("AdditionalText property on message for more than one input field", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessage = createMessage();
+
+		// third input field for the same property "firstname", this label is taken
+		var oLabel3 = new sap.m.Label({text: "Nickname"});
+		oLabel3.setLabelFor(oInput3);
+
+		spyDataState(oInput3, function(sName, oDataState) {
+			var aMessages = oDataState.getMessages();
+			ok(aMessages[0].additionalText, "AdditionalText was added.");
+			equal(aMessages[0].additionalText, "Nickname", "AdditionalText is set correctly.");
+
+			oLabel3.destroy();
+			start();
+		});
+
+		oMessageManager.addMessages(oMessage);
 	});
 </script>
 
