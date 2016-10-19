@@ -263,6 +263,10 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	display: none;
 }
 
+.sapUiTableColCell {
+	position: relative;
+}
+
 .sapUiTableColCell, .sapUiTableColRowHdrIco {
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -404,12 +408,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 .sapUiSizeCozy .sapUiTableColSF::after {
 	line-height: 3rem;
 }
-
-.sapUiSizeCompact .sapUiTableColSF::after,
-.sapUiSizeCondensed .sapUiTableColSF::after {
-	line-height: 2rem;
-}
-
 
 /* show different icon combinations */
 .sapUiTableColSorted::after {
