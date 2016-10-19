@@ -172,14 +172,14 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	ElementDesignTimeMetadata.prototype.getName = function(oElement){
-		var vChildrenName = this.getData().name;
-		if (typeof vChildrenName === "function") {
-			vChildrenName = vChildrenName.call(null, oElement);
+		var vName = this.getData().name;
+		if (typeof vName === "function") {
+			vName = vName.call(null, oElement);
 		}
-		if (vChildrenName){
+		if (vName){
 			return {
-				singular : this._getText(vChildrenName.singular),
-				plural : this._getText(vChildrenName.plural)
+				singular : this._getText(vName.singular),
+				plural : this._getText(vName.plural)
 			};
 		}
 	};
