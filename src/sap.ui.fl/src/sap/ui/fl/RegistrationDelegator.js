@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/PreprocessorImpl",
-	"sap/ui/core/mvc/Controller"
-], function(FlexController, Component, ChangeHandlerRegistration, ChangePersistenceFactory, PreprocessorImpl, MvcController) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/XMLView"
+], function(FlexController, Component, ChangeHandlerRegistration, ChangePersistenceFactory, PreprocessorImpl, MvcController, XMLView) {
 	"use strict";
 
 	/**
@@ -63,6 +64,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Register the xml preprocessor
+	 *
+	 * @public
+	 */
+	RegistrationDelegator.registerXMLPreprocessor = function() {
+		if (XMLView.registerPreprocessor){
+			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
+		}
+	};
+
+	/**
 	 * Register everything in one call
 	 *
 	 * @public
@@ -72,6 +84,7 @@ sap.ui.define([
 		RegistrationDelegator.registerLoadComponentEventHandler();
 		RegistrationDelegator.registerExtensionProvider();
 		RegistrationDelegator.registerChangesInComponent();
+		RegistrationDelegator.registerXMLPreprocessor();
 	};
 
 	return RegistrationDelegator;

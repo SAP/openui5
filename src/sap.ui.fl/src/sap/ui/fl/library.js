@@ -26,17 +26,6 @@ sap.ui.define(["sap/ui/fl/RegistrationDelegator"
 		noLibraryCSS: true
 	});
 
-//	if ( XMLView.registerPreprocessor ){
-//		// Register preprocessor for flexibility changes
-//		XMLView.registerPreprocessor("controls", "sap.ui.fl.PreprocessorImpl", true);
-//		// Deactivated until caching is in place!
-//		//XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
-//	} else {
-//		//workaround solution until registerPreprocessor is available
-//		//PreprocessorImpl because in the workaround case there is no preprocessor base object
-//		View._sContentPreprocessor = "sap.ui.fl.PreprocessorImpl";
-//	}
-
 	RegistrationDelegator.registerAll();
 
 	return sap.ui.fl;
