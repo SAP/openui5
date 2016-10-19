@@ -9,23 +9,23 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Menu - sap.ui.unified</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-theme="sap_bluecrystal"	
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.unified">
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Control initialization -->
-	<script language="javascript">
+	<script>
 
 		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
@@ -160,7 +160,7 @@
 	</script>
 
 	<!-- Test help functions -->
-	<script language="javascript">
+	<script>
 
 		var checkHoveredItem = function(sExpectedId, oMenu){
 			if(!oMenu){
@@ -212,7 +212,7 @@
 	</script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 		qutils.delayTestStart();
 

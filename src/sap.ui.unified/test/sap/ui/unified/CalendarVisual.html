@@ -7,15 +7,14 @@
 		<title>Calendar - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.Calendar.gif">
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				type="text/javascript"
 				data-sap-ui-libs="sap.ui.unified, sap.m"
 				src="../../../../resources/sap-ui-core.js"
 		>
 		</script>
-		<script type="text/javascript">
+		<script>
 
 		var oCalendar1 = new sap.ui.unified.Calendar("Cal1", {
 			selectedDates: [new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)})],
