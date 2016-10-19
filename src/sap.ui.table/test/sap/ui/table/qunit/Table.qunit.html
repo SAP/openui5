@@ -271,7 +271,19 @@
 		checkSelection("MultiToggle - After 5th selection", [2]);
 		triggerSelectionOnRow(0, true, true, false);
 		checkSelection("MultiToggle - After 6th selection", [0, 2]);
-		triggerSelectionOnRow(4, true, false, true);
+		if (oTable._getKeyboardExtension()._legacy) {
+			triggerSelectionOnRow(4, true, false, true);
+		} else {
+			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
+			oCell.focus();
+			qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
+		}
+		//debugger;
 		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(2, false, false, true);
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);

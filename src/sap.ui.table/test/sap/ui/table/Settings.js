@@ -1,12 +1,5 @@
 (function() {
 
-	//Activate new keyboard behavior
-	var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-newtablekeyboard');
-	if (sKeyboard === "true") {
-		jQuery.sap.require("sap.ui.table.TableKeyboardExtension");
-		sap.ui.table.TableKeyboardExtension._enableNewDelegate();
-	}
-
 	window.TABLESETTINGS = {};
 
 
