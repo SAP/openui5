@@ -307,7 +307,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			return;
 		}
 
-		this._onSelect(oEvent);
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+			TableUtils.openContextMenu(this, oEvent.target, true);
+		} else {
+			this._onSelect(oEvent);
+		}
+
 		oEvent.preventDefault();
 	};
 
@@ -395,6 +402,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			TableUtils.toggleGroupHeader(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {
 			TableUtils.toggleGroupHeader(this, oEvent.target, false);
+		}
+	};
+
+	TableKeyboardDelegate.prototype.oncontextmenu = function(oEvent) {
+		var bRightMouseClick = oEvent.button === 2;
+		if (bRightMouseClick) {
+			return;
+		}
+
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+
+		if (oCellInfo !== null) {
+			// To prevent opening the default browser context menu when pressing the context menu key on a table cell.
+			oEvent.preventDefault();
+		}
+
+		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+
+			TableUtils.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
