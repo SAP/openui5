@@ -185,6 +185,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 					vResult;
 
 				if (sMethod === "addAction" || sMethod === "insertAction") {
+					this.validateAggregation("actions", oControl, true); // Add controls that suits the DynamicPageTitle actions aggregation type
 					vResult = oToolbar[sToolbarMethod].apply(oToolbar, arguments);
 					this._preProcessAction(oControl);
 					return vResult;
