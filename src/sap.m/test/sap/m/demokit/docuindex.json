@@ -362,8 +362,7 @@
 				"sap.m.sample.GenericTileAsKPITile",
 				"sap.m.sample.GenericTileAsFeedTile",
 				"sap.m.sample.SlideTile",
-				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.GenericTileLineMode"
+				"sap.m.sample.GenericTileStates"
 			]
 		},
 		{
