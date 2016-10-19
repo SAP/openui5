@@ -14,35 +14,75 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is a date input control with a calendar and a time selector as date time picker.
-	 *
-	 * A date can be entered using a calendar or time selector that opens in a popup. Alternatively a value can be entered directly in the input field by typing it in.
-	 * If a date is entered by typing it into the input field, it must fit the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
-	 *
-	 * There are two options to provide a date for the <code>DateTimePicker</code>.
-	 * You can put a date as a string to the property <code>value</code> or you can put a JavaScript Date object to the property <code>dateValue</code>.
-	 * Only one of the properties should be used at one time, but they are synchronized internally.
-	 * What property you should use depends on the use case of the application:
+	 * <b><i>Overview</i></b>
+	 * <br><br>
+	 * The {@link sap.m.DateTimePicker} control allows users to select date and time
+	 * values in a combined input. It consists of two parts: the input field and the
+	 * date/time picker.
+	 * <br><br>
+	 * <b>Note:</b> The {@link sap.ui.unified.Calendar} is used internally only if the
+	 * <code>DateTimePicker</code> is opened (not used for the initial rendering). If
+	 * the <code>sap.ui.unified</code> library is not loaded before the
+	 * <code>DateTimePicker</code> is opened, it will be loaded upon opening. This
+	 * could lead to a waiting time when the <code>DateTimePicker</code> is opened for
+	 * the first time. To prevent this, apps using the <code>DateTimePicker</code>
+	 * should also load the <code>sap.ui.unified</code> library.
+	 * <br><br>
+	 * <b><i>Usage</i></b>
+	 * <br><br>
+	 * Use this control if you need a combined date and time input control.
+	 * <br>
+	 * Don't use it if you want to use either a date or a time value. In this case,
+	 * use the {@link sap.m.DatePicker} or the {@link sap.m.TimePicker} controls
+	 * instead.
+	 * <br><br>
+	 * The user can enter a date by:
 	 * <ul>
-	 * <li>Use the <code>value</code> property if you want to bind the <code>DateTimePicker</code> to a model using the <code>sap.ui.model.type.DateTime</code>.</li>
-	 * <li>Use the <code>value</code> property if the date is provided as a string from the back end or inside the application (e.g. as ABAP type DATS field).</li>
-	 * <li>Use the <code>dateValue</code> property if the date is already provided as a JavaScript Date object or you want to work with a JavaScript Date object.</li>
+	 * <li>Using the calendar or a time selector that opens in a popup</li>
+	 * <li>Typing it in directly in the input field</li>
 	 * </ul>
-	 *
-	 * All formatting and parsing of dates to and from strings is done using the {@link sap.ui.core.format.DateFormat}, so please read the corresponding documentation if you need more information about this.
-	 *
-	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
-	 *
-	 * For example, if the <code>valueFormat</code> is "yyyy-MM-dd-HH-mm-ss", <code>displayFormat</code> is "MMM d, y, HH:mm:ss" and the used locale is English,
-	 * a valid <code>value</code> string is "2015-07-30-10-30-15", which leads to an output of "Jul 30, 2015, 10:30:15".
-	 *
-	 * If no <code>placeholder</code> is set to the <code>DateTimePicker</code>, the used <code>displayFormat</code> is shown as a placeholder.
-	 * If another placeholder is needed, it must be set.
-	 *
-	 * Internally the <code>sap.ui.unified.Calendar</code> is used, but it is only needed if the <code>DateTimePicker</code> is opened. This means that it is not needed for the initial rendering.
-	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>DateTimePicker</code> is opened, it will be loaded upon opening.
-	 * This could lead to a waiting time before a <code>DateTimePicker</code> is opened the first time. To prevent this, applications using the <code>DateTimePicker</code> should also load
-	 * the <code>sap.ui.unified</code> library.
+	 * On app level, there are two options to provide a date for the
+	 * <code>DateTimePicker</code> - as a string to the <code>value</code> property
+	 * or as a JavaScript Date object to the <code>dateValue</code> property (only one
+	 * of these properties should be used at a time):
+	 * <ul>
+	 * <li>Use the <code>value</code> property if you want to bind the
+	 * <code>DateTimePicker</code> to a model using the
+	 * <code>sap.ui.model.type.DateTime</code></li>
+	 * <li>Use the <code>value</code> property if the date is provided as a string from
+	 * the backend or inside the app (for example, as ABAP type DATS field)</li>
+	 * <li>Use the <code>dateValue</code> property if the date is already provided as a
+	 * JavaScript Date object or you want to work with a JavaScript Date object</li>
+	 * </ul>
+	 * <b><i>Formatting</i></b>
+	 * <br><br>
+	 * All formatting and parsing of dates from and to strings is done using the
+	 * {@link sap.ui.core.format.DateFormat}. If a date is entered by typing it into
+	 * the input field, it must fit to the used date format and locale.
+	 * <br><br>
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation.
+	 * See {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+	 * <br><br>
+	 * For example, if the <code>valueFormat</code> is "yyyy-MM-dd-HH-mm-ss", the
+	 * <code>displayFormat</code> is "MMM d, y, HH:mm:ss", and the used locale is
+	 * English, a valid value string is "2015-07-30-10-30-15", which leads to an output
+	 * of "Jul 30, 2015, 10:30:15".
+	 * <br><br>
+	 * If no placeholder is set to the <code>DateTimePicker</code>, the used
+	 * <code>displayFormat</code> is displayed as a placeholder. If another placeholder
+	 * is needed, it must be set.
+	 * <br><br>
+	 * <b>Note:</b> If the string does NOT match the <code>displayFormat</code>
+	 * (from user input) or the <code>valueFormat</code> (on app level), the
+	 * {@link sap.ui.core.format.DateFormat} makes an attempt to parse it based on the
+	 * locale settings. For more information, see the respective documentation in the
+	 * API Reference.
+	 * <br><br>
+	 * <b><i>Responsive behavior</i></b>
+	 * <br><br>
+	 * The <code>DateTimePicker</code> is responsive and fully adapts to all devices.
+	 * For larger screens, such as tablet or desktop, it opens as a popover. For
+	 * mobile devices, it opens in full screen.
 	 *
 	 * @extends sap.m.DatePicker
 	 * @version ${version}
