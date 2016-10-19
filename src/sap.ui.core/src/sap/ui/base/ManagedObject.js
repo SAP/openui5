@@ -3537,11 +3537,6 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
-		var oModel = this.getModel(sModelName);
-		if (oModel && oContext && oModel !== oContext.getModel()) {
-			jQuery.sap.log.fatal("BindingContext type does not match model type and can't be set");
-			return this;
-		}
 		var oOldContext = this.oBindingContexts[sModelName];
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
