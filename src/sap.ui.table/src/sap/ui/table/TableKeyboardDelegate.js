@@ -349,13 +349,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			//Set tabindex to second table if fixed columns are used
 			if (this.getFixedColumnCount() > 0) {
 				var $cell = jQuery(oEvent.target);
-				if ($cell.is("td[role=gridcell]") == false) {
-					$cell = $cell.parents("td[role=gridcell]");
+				if ($cell.is("td.sapUiTableTd") == false) {
+					$cell = $cell.parents("td.sapUiTableTd");
 				}
 				var $row = $cell.parent("tr[data-sap-ui-rowindex]");
 				var $table = $row.closest(".sapUiTableCtrl");
 				var iRowIndex = parseInt($row.attr("data-sap-ui-rowindex"),10);
-				var $cells = $row.find("td[role=gridcell]");
+				var $cells = $row.find("td.sapUiTableTd");
 				var iColIndex = $cells.index($cell);
 				var iTableCols = $cells.length;
 				if (iColIndex === (iTableCols - 1)) {
