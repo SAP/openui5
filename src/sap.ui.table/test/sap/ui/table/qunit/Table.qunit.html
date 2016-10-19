@@ -1294,7 +1294,7 @@
 		afterEach: destroyTable
 	});
 
-	QUnit.test("RowSelectionChange", 35, function() {
+	QUnit.test("RowSelectionChange", 42, function(assert) {
 		var sTestCase = "";
 		var fnHandler = function(oEvent) {
 			switch(sTestCase) {
@@ -1304,6 +1304,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
 				case "userClearSelectAll":
 					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
@@ -1311,6 +1312,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"),Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
 				case "APISelectAll":
 					assert.equal(oEvent.getParameter("selectAll"), true, sTestCase + ": Parameter selectAll correct");
@@ -1318,6 +1320,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
 				case "APIClearSelectAll":
 					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
@@ -1325,6 +1328,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
 				case "userSetSelectedIndex":
 					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
@@ -1332,6 +1336,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
 				case "userUnsetSelectedIndex":
 					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
@@ -1339,6 +1344,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
 				case "APISetSelectedIndex":
 					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
@@ -1346,6 +1352,7 @@
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
 					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
 			}
 
@@ -1370,6 +1377,32 @@
 
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
+	});
+
+	QUnit.asyncTest("Select All on Binding Change", 4, function(assert) {
+		var oModel;
+		oTable.attachRowSelectionChange(function(){
+			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
+			
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
+				
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
+					start();
+				});
+				
+				oModel.setData({modelData: aData});
+			});
+			
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({modelData: []});
+			oTable.setModel(oModel);
+			oTable.bindRows("/modelData");
+		});
+
+		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
+		oTable.$("selall").click();
 	});
 
 	</script>
