@@ -1683,6 +1683,133 @@
 			}
 		});
 
+		test("_hasLabelReferencing", function() {
+			//prepare
+			var oRenderer = this.oTP.getRenderer(), oLabel;
+			//act & assert
+			ok(!oRenderer._hasLabelReferencing(this.oTP), "No Label refers time picker");
+
+			//prepare
+			oLabel = new sap.m.Label({labelFor: this.oTP});
+			sap.ui.getCore().applyChanges();
+			//act & assert
+			ok(oRenderer._hasLabelReferencing(this.oTP), "Label refers time picker");
+		});
+
+		/* Scenarios
+		 Time Picker can be references by label by use of "labelFor" property for given label, that points to the Time Picker.
+		 Also we differentiate the case of the default placeholder (i.e. time format) than the one with placeholder
+		 set by the application developer (custom placeholder).
+		 |===========================================================================================================|
+		 |#	TP is labelled 		Custom Placeholder	| ariaDescribedBy						ariaLabelledBy 			|
+		 |	by other label(X) 						|																|
+		 |===========================================================================================================|
+		 1	yes					yes					| "TimePicker"							X + custom placeholder
+		 2	yes					no					| "TimePicker in format <format>"		X
+		 3	no					yes					| "TimePicker"							no
+		 4	no					no					| "TimePicker"							no
+		 */
+		test("Placeholder with labelFor combination", function() {
+			var fnCheckAriaAttribute,
+					sTPDefaultDescribedBy = this.oRB.getText("TIMEPICKER_SCREENREADER_TAG"),
+					sTPAriaDescribedBy = this.oRB.getText("TIMEPICKER_WITH_PH_SCREENREADER_TAG", this.oTP._getFormat());
+
+			/**
+			 * Verifies given attribute value
+			 * @param oTimePicker
+			 * @param aExpectedStrings expected value(s) as array of strings
+			 * @param sAriaAttributeName the name of the attribute
+			 * @param sScenario (optional string used to prefix assert messages
+			 */
+			fnCheckAriaAttribute = function (oTimePicker, aExpectedStrings, sAriaAttributeName, sScenario) {
+				var $innerInput, sAriaAttributeValue, aAriaAttributes, aRealStrings = [];
+
+				$innerInput = oTimePicker.$().children("input");
+				sAriaAttributeValue = $innerInput.attr(sAriaAttributeName);
+
+				if (aExpectedStrings.length == 0) {
+					equal(sAriaAttributeValue, undefined, sScenario + ": " + sAriaAttributeName + " attribute for DOM element " +
+							$innerInput.get(0).id + " should be empty");
+					return;
+				}
+				ok(sAriaAttributeValue.length, sScenario + ": Expected " + sAriaAttributeName + " attribute for DOM element " +
+						$innerInput.get(0).id);
+
+				aAriaAttributes = sAriaAttributeValue.split(" ");
+				aAriaAttributes.forEach(function(id) {
+					aRealStrings.push(jQuery("#" + id).text());
+				});
+				deepEqual(aRealStrings, aExpectedStrings, sScenario + ": " + sAriaAttributeName + " check.");
+			};
+
+			//SC1: Prepare
+			this.oTP.setPlaceholder("CustomPlaceholder");
+			var oLabel = new sap.m.Label({text: "Meeting at:", labelFor: this.oTP.getId()});
+			//Act
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Labelled TimePicker with custom placeholder");
+			fnCheckAriaAttribute(this.oTP, [oLabel.getText(), "CustomPlaceholder"], "aria-labelledby", "Labelled TimePicker with custom placeholder");
+
+			//Cleanup
+			oLabel.destroy();
+			this.oTP.destroy();
+
+
+			//SC2: Prepare
+			this.oTP = new sap.m.TimePicker();
+			oLabel = new sap.m.Label({text: "Meeting at:", labelFor: this.oTP.getId()});
+			//Act
+			this.oTP.placeAt("content");
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			fnCheckAriaAttribute(this.oTP, [sTPAriaDescribedBy], "aria-describedby", "Labelled TimePicker with default placeholder");
+			fnCheckAriaAttribute(this.oTP, [oLabel.getText()], "aria-labelledby", "Labelled TimePicker with default placeholder");
+
+			//Cleanup
+			oLabel.destroy();
+			this.oTP.destroy();
+
+
+			//SC3: Prepare
+			this.oTP = new sap.m.TimePicker({placeholder: "CustomPlaceholder"});
+			oLabel = new sap.m.Label({text: "Meeting at:"});
+
+			//Act
+			this.oTP.placeAt("content");
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Non-labelled TimePicker with custom placeholder");
+			fnCheckAriaAttribute(this.oTP, [], "aria-labelledby", "Non-labelled TimePicker with custom placeholder");
+
+			//Cleanup
+			oLabel.destroy();
+			this.oTP.destroy();
+
+
+			//SC4: Prepare
+			this.oTP = new sap.m.TimePicker();
+			oLabel = new sap.m.Label({text: "Meeting at:"});
+			//Act
+			this.oTP.placeAt("content");
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Non-labelled TimePicker with default placeholder");
+			fnCheckAriaAttribute(this.oTP, [], "aria-labelledby", "Non-labelled TimePicker with default placeholder");
+
+			//Cleanup
+			oLabel.destroy();
+			this.oTP.destroy();
+		});
+
 		module("MaskInput integration", {
 			beforeEach : function() {
 				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
