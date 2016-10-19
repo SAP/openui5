@@ -96,23 +96,25 @@ function teardownTest() {
  */
 var Key = {
 	Arrow: {
-		LEFT: sap.ui.getCore().getConfiguration().getRTL() ? "ARROW_RIGHT" : "ARROW_LEFT",
-		RIGHT: sap.ui.getCore().getConfiguration().getRTL() ? "ARROW_LEFT" : "ARROW_RIGHT",
-		UP: "ARROW_UP",
-		DOWN: "ARROW_DOWN"
+		LEFT: sap.ui.getCore().getConfiguration().getRTL() ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT,
+		RIGHT: sap.ui.getCore().getConfiguration().getRTL() ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT,
+		UP: jQuery.sap.KeyCodes.ARROW_UP,
+		DOWN: jQuery.sap.KeyCodes.ARROW_DOWN
 	},
-	HOME: "HOME",
-	END: "END",
+	HOME: jQuery.sap.KeyCodes.HOME,
+	END: jQuery.sap.KeyCodes.END,
 	Page: {
-		UP: "PAGE_UP",
-		DOWN: "PAGE_DOWN"
+		UP: jQuery.sap.KeyCodes.PAGE_UP,
+		DOWN: jQuery.sap.KeyCodes.PAGE_DOWN
 	},
-	SHIFT: "SHIFT",
-	F2: "F2",
-	SPACE: "SPACE",
-	ENTER: "ENTER",
-	ESCAPE: "ESCAPE",
-	A: "A"
+	SHIFT: jQuery.sap.KeyCodes.SHIFT,
+	F2: jQuery.sap.KeyCodes.F2,
+	F10: jQuery.sap.KeyCodes.F10,
+	SPACE: jQuery.sap.KeyCodes.SPACE,
+	ENTER: jQuery.sap.KeyCodes.ENTER,
+	ESCAPE: jQuery.sap.KeyCodes.ESCAPE,
+	A: jQuery.sap.KeyCodes.A,
+	CONTEXTMENU: jQuery.sap.KeyCodes.CONTEXT_MENU
 };
 
 //************************************************************************
@@ -3364,6 +3366,33 @@ QUnit.test("Fixed Columns - Move movable columns", function(assert) {
 	});
 });
 
+/**
+ * Opens a column header conext menu and closes it by pressing the Escape key.
+ * @param sKey The key to press.
+ * @param bKeydown Indicates whether to trigger keydown or keyup.
+ * @param bShift
+ * @private
+ */
+function _testColumnHeaderContextMenus(sKey, bKeydown, bShift) {
+	var oColumn = oTable.getColumns()[0];
+	oColumn.setSortProperty("dummy");
+	var oElem = checkFocus(getColumnHeader(0, true), assert);
+	var oColumnMenu = oColumn.getMenu();
+
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	if (bKeydown) {
+		qutils.triggerKeydown(oElem, sKey, bShift, false, false);
+	} else {
+		qutils.triggerKeyup(oElem, sKey, bShift, false, false);
+	}
+	assert.ok(oColumnMenu.bOpen, "Menu is opened");
+	var bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+}
+
 QUnit.module("TableKeyboardDelegate2 - Interaction > Space & Enter", {
 	beforeEach: function() {
 		setupTest();
@@ -3375,28 +3404,8 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Space & Enter", {
 });
 
 QUnit.test("On a Column Header", function(assert) {
-	oTable._getVisibleColumns()[0].setMenu(new sap.ui.unified.Menu({items: [new sap.ui.unified.MenuItemBase()]}));
-	sap.ui.getCore().applyChanges();
-
-	var oElem = checkFocus(getColumnHeader(0, true), assert);
-	var oColumnMenu = oTable._getVisibleColumns()[0].getMenu();
-
-	// Space
-	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-	assert.ok(oColumnMenu.bOpen, "Menu is opened");
-	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
-	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-	checkFocus(oElem, assert);
-
-	// Enter
-	oColumnMenu.close();
-	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-	assert.ok(oColumnMenu.bOpen, "Menu is opened");
-	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
-	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-	checkFocus(oElem, assert);
+	_testColumnHeaderContextMenus(Key.SPACE, false, false);
+	_testColumnHeaderContextMenus(Key.ENTER, false, false);
 });
 
 QUnit.test("On SelectAll", function(assert) {
@@ -3641,6 +3650,125 @@ QUnit.test("(De)SelectAll not possible", function(assert) {
 
 	test(false);
 	test(true);
+});
+
+QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+F10 & ContextMenu (Open Context Menus)", {
+	beforeEach: function() {
+		setupTest();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("On a Column Header", function(assert) {
+	var oKeydownEvent = this.spy(oTable._getKeyboardExtension()._delegate, "onkeydown");
+	var oContextMenuEvent = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+
+	// Shift+F10
+	_testColumnHeaderContextMenus(Key.F10, true, true);
+	var oKeyDownEventArgument = oKeydownEvent.args[0][0];
+	assert.ok(oKeyDownEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// ContextMenu
+	var oColumn = oTable.getColumns()[0];
+	oColumn.setSortProperty("dummy");
+	var oElem = checkFocus(getColumnHeader(0, true), assert);
+	var oColumnMenu = oColumn.getMenu();
+
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(oColumnMenu.bOpen, "Menu is opened");
+	var bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+
+	var oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+});
+
+QUnit.test("On a Data Cell", function(assert) {
+	var oElem = checkFocus(getCell(0, 0, true), assert);
+	var oColumn = oTable.getColumns()[0];
+	var oKeydownEvent = this.spy(oTable._getKeyboardExtension()._delegate, "onkeydown");
+	var oContextMenuEvent = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+	var bFirstItemHovered;
+
+	oTable.setEnableCellFilter(true);
+	this.stub(oColumn, "isFilterableByMenu").returns(true);
+
+	// Shift+F10
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "The cell context menu object is not yet created");
+	qutils.triggerKeydown(oElem, Key.F10, true, false, false);
+	assert.notEqual(oTable._oCellContextMenu, undefined, "The cell context menu object has been created");
+	assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
+	assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+
+	var oKeyDownEventArgument = oKeydownEvent.args[0][0];
+	assert.ok(oKeyDownEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// ContextMenu
+	oKeydownEvent.reset();
+	oContextMenuEvent.reset();
+
+	assert.notEqual(oTable._oCellContextMenu, undefined, "The cell context menu object already exists");
+	assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
+	qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
+	assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+
+	var oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+});
+
+QUnit.test("On other cells", function(assert) {
+	var oElem;
+	var oColumn = oTable.getColumns()[0];
+	oColumn.setSortProperty("dummy");
+	var oColumnMenu = oColumn.getMenu();
+	var oKeydownEvent = this.spy(oTable._getKeyboardExtension()._delegate, "onkeydown");
+	var oContextMenuEvent = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+
+	oTable.setEnableCellFilter(true);
+	this.stub(oColumn, "isFilterableByMenu").returns(true);
+
+	// Shift+F10
+	oElem = checkFocus(getSelectAll(true), assert);
+	qutils.triggerKeydown(oElem, Key.F10, true, false, false);
+	assert.ok(!oColumnMenu.bOpen, "Menu is not open");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "The cell context menu is not open");
+	assert.ok(oKeydownEvent.args[0][0].isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
+
+	oElem = checkFocus(getRowHeader(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.F10, true, false, false);
+	assert.ok(!oColumnMenu.bOpen, "Menu is not open");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "The cell context menu is not open");
+	assert.ok(oKeydownEvent.args[1][0].isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
+
+	// ContextMenu
+	oElem = checkFocus(getSelectAll(true), assert);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oColumnMenu.bOpen, "Menu is not open");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "The cell context menu is not open");
+	assert.ok(oContextMenuEvent.args[0][0].isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
+
+	oElem = checkFocus(getRowHeader(0, true), assert);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oColumnMenu.bOpen, "Menu is not open");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "The cell context menu is not open");
+	assert.ok(oContextMenuEvent.args[1][0].isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
 });
 
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {

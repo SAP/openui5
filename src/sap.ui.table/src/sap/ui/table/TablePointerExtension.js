@@ -533,8 +533,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 * Ends the column reordering process via drag&drop.
 		 */
 		exitReordering : function(oEvent) {
-			var iOldIndex = this._iDnDColIndex,
-				iNewIndex = this._iNewColPos;
+			var iOldIndex = this._iDnDColIndex;
+			var iNewIndex = this._iNewColPos;
 
 			// Unbind the event handlers
 			var $Document = jQuery(document);
@@ -562,11 +562,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			TableUtils.ColumnUtils.moveColumnTo(this.getColumns()[iOldIndex], iNewIndex);
 
 			// Re-apply focus
-			if (this._mTimeouts.reApplyFocusTimer) {
-				window.clearTimeout(this._mTimeouts.reApplyFocusTimer);
+			if (this._mTimeouts.reApplyFocusTimerId) {
+				window.clearTimeout(this._mTimeouts.reApplyFocusTimerId);
 			}
 			var that = this;
-			this._mTimeouts.reApplyFocusTimer = window.setTimeout(function() {
+			this._mTimeouts.reApplyFocusTimerId = window.setTimeout(function() {
 				var iOldFocusedIndex = TableUtils.getFocusedItemInfo(that).cell;
 				TableUtils.focusItem(that, 0, oEvent);
 				TableUtils.focusItem(that, iOldFocusedIndex, oEvent);
@@ -615,16 +615,16 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 * Starts or continues stepwise horizontal scrolling until oTable._bReorderScroll is false.
 		 */
 		doScroll : function(oTable, bForward) {
-			if (oTable._mTimeouts.horizontalReorderScrollTimer) {
-				window.clearTimeout(oTable._mTimeouts.horizontalReorderScrollTimer);
-				oTable._mTimeouts.horizontalReorderScrollTimer = null;
+			if (oTable._mTimeouts.horizontalReorderScrollTimerId) {
+				window.clearTimeout(oTable._mTimeouts.horizontalReorderScrollTimerId);
+				oTable._mTimeouts.horizontalReorderScrollTimerId = null;
 			}
 			if (oTable._bReorderScroll) {
 				var iStep = bForward ? 30 : -30;
 				if (oTable._bRtlMode) {
 					iStep = (-1) * iStep;
 				}
-				oTable._mTimeouts.horizontalReorderScrollTimer = jQuery.sap.delayedCall(60, oTable, ReorderHelper.doScroll, [oTable, bForward]);
+				oTable._mTimeouts.horizontalReorderScrollTimerId = jQuery.sap.delayedCall(60, oTable, ReorderHelper.doScroll, [oTable, bForward]);
 				var $Scr = oTable.$("sapUiTableCtrlScr");
 				var ScrollLeft = oTable._bRtlMode ? "scrollLeftRTL" : "scrollLeft";
 				$Scr[ScrollLeft]($Scr[ScrollLeft]() + iStep);
@@ -697,6 +697,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	var ExtensionDelegate = {
 
 		onmousedown : function(oEvent) {
+			var oPointerExtension = this._getPointerExtension();
+			var $Cell = TableUtils.getCell(this, oEvent.target);
+			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+
 			// check whether item navigation should be reapplied from scratch
 			this._getKeyboardExtension().initItemNavigation();
 
@@ -705,32 +709,33 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 				if (oEvent.target === this.getDomRef("sb")) { // mousedown on interactive resize bar
 					InteractiveResizeHelper.initInteractiveResizing(this, oEvent);
+
 				} else if (oEvent.target === this.getDomRef("rsz")) { // mousedown on column resize bar
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
+
 				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
 					var iColIndex = $Target.closest(".sapUiTableCol").attr("data-sap-ui-colindex");
 					this._iLastHoveredColumnIndex = parseInt(iColIndex, 10);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
-				} else {
-					var $Col = $Target.closest(".sapUiTableCol", this.getDomRef());
-					if ($Col.length === 1) { // mousedown on a column header
 
-						var iIndex = parseInt($Col.attr("data-sap-ui-colindex"), 10),
-							oColumn = this.getColumns()[iIndex];
+				} else if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+					var iIndex = TableUtils.getColumnHeaderCellInfo($Cell).index;
+					var oColumn = this.getColumns()[iIndex];
+					var oMenu = oColumn.getAggregation("menu");
+					var bMenuOpen = oMenu && oMenu.bOpen;
 
-						// Prevent potentially open column menu from closing and reopening again.
-						// see Column#_openMenu
-						var oMenu = oColumn.getAggregation("menu");
-						oColumn._bSkipOpen = oMenu && oMenu.bOpen;
+					if (!bMenuOpen) {
+						// A long click starts column reordering, so it should not also open the menu in the onclick event handler.
+						oPointerExtension._bShowMenu = true;
+						this._mTimeouts.delayedMenuTimerId = jQuery.sap.delayedCall(200, this, function () {
+							delete oPointerExtension._bShowMenu;
+						});
+					}
 
-						this._bShowMenu = true;
-						this._mTimeouts.delayedMenuTimer = jQuery.sap.delayedCall(200, this, function() { this._bShowMenu = false; });
-
-						if (this.getEnableColumnReordering()
-							&& !(this._isTouchMode(oEvent) && $Target.hasClass("sapUiTableColDropDown")) /*Target is not the mobile column menu button*/) {
-							// Start column reordering
-							this._getPointerExtension().doReorderColumn(iIndex, oEvent);
-						}
+					if (this.getEnableColumnReordering()
+						&& !(this._isTouchMode(oEvent) && $Target.hasClass("sapUiTableColDropDown")) /*Target is not the mobile column menu button*/) {
+						// Start column reordering
+						this._getPointerExtension().doReorderColumn(iIndex, oEvent);
 					}
 				}
 
@@ -744,11 +749,32 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					oEvent.preventDefault();
 				}
 			}
+
+			if (oEvent.button === 2) { // Right mouse button.
+				if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+					var oColumnHeaderCellInfo = TableUtils.getColumnHeaderCellInfo($Cell);
+					var oColumn = this.getColumns()[oColumnHeaderCellInfo.index];
+					var oMenu = oColumn.getAggregation("menu");
+					var bMenuOpen = oMenu && oMenu.bOpen;
+
+					if (!bMenuOpen) {
+						oPointerExtension._bShowMenu = true;
+					}
+
+				} else if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+					var bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
+					var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
+
+					if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
+						oPointerExtension._bShowMenu = true;
+					}
+				}
+			}
 		},
 
 		onmouseup : function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimer);
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
 		},
 
 		ondblclick : function(oEvent) {
@@ -760,7 +786,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 		onclick : function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimer);
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
 
 			if (oEvent.isMarked()) {
 				// the event was already handled by some other handler, do nothing.
@@ -785,14 +811,43 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				}
 			}
 
-			// forward the event
-			if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-				this._onSelect(oEvent);
+			var $Cell = TableUtils.getCell(this, oEvent.target);
+			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+
+			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+				var oPointerExtension = this._getPointerExtension();
+				if (oPointerExtension._bShowMenu) {
+					TableUtils.openContextMenu(this, oEvent.target, false);
+					delete oPointerExtension._bShowMenu;
+				}
 			} else {
-				oEvent.preventDefault();
+				// forward the event
+				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
+					this._onSelect(oEvent);
+				} else {
+					oEvent.preventDefault();
+				}
+			}
+		},
+
+		oncontextmenu: function(oEvent) {
+			var $Cell = TableUtils.getCell(this, oEvent.target);
+			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+
+			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+				oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+
+				oEvent.preventDefault(); // To prevent opening the default browser context menu.
+
+				var oPointerExtension = this._getPointerExtension();
+				var bRightMouseClick = oEvent.button === 2;
+
+				if (oPointerExtension._bShowMenu && bRightMouseClick) {
+					TableUtils.openContextMenu(this, oEvent.target, false);
+					delete oPointerExtension._bShowMenu;
+				}
 			}
 		}
-
 	};
 
 
@@ -886,8 +941,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			var oTable = this.getTable();
 			if (oTable && TableUtils.ColumnUtils.isColumnMovable(oTable.getColumns()[iColIndex])) {
 				// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
-				oTable._mTimeouts.delayedColumnReorderTimer = jQuery.sap.delayedCall(200, oTable, function() {
-					ReorderHelper.initReordering(oTable, iColIndex, oEvent);
+				oTable._mTimeouts.delayedColumnReorderTimerId = jQuery.sap.delayedCall(200, oTable, function() {
+					ReorderHelper.initReordering(this, iColIndex, oEvent);
 				});
 			}
 		},

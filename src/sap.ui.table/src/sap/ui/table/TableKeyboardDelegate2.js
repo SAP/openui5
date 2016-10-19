@@ -67,20 +67,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		oTable._getKeyboardExtension()._setSilentFocus(oTable.$().find("." + sTabDummy));
 	};
 
-	/*
+	/**
 	 * Handler which is called when the Space or Enter keys are pressed.
+	 * Opening the column context menu is not handled here, because pressing the ENTER key triggers sapenter on keydown. The column header should
+	 * only be opened on keyup.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
 	 */
 	TableKeyboardDelegate._handleSpaceAndEnter = function(oTable, oEvent) {
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		// Open column menu.
-		if (oCellInfo.type === CellType.COLUMNHEADER) {
-			oTable._bShowMenu = true;
-			oTable._onSelect(oEvent);
-			oTable._bShowMenu = false;
-
 		// Select/Deselect all.
-		} else if (oCellInfo.type === CellType.COLUMNROWHEADER) {
+		if (oCellInfo.type === CellType.COLUMNROWHEADER) {
 			oTable._toggleSelectAll();
 
 		// Collapse/Expand group.
@@ -98,8 +98,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				TableUtils.toggleRowSelection(oTable, oEvent.target);
 
 			// Fire cell click event.
-			} else if (oTable._findAndfireCellEvent(oTable.fireCellClick, oEvent) !== false) {
-				// CellClick event handler exists and was called.
+			} else if (oTable.hasListeners("cellClick")) {
+				oTable._findAndfireCellEvent(oTable.fireCellClick, oEvent);
 
 			// Enter action mode.
 			} else {
@@ -179,7 +179,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		}
 
 		// Enter the action mode if a tabbable element inside a cell or the footer received focus, otherwise leave the action mode.
-		var $Target = jQuery(oEvent.target);
 		var $ParentDataCell = TableUtils.getParentDataCell(this, $Target);
 
 		if ($ParentDataCell !== null && $Target.is(":sapFocusable")) {
@@ -245,18 +244,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					$ParentDataCell.focus();
 				}
 			}
+
+		} else if (oEvent.shiftKey && oEvent.keyCode === jQuery.sap.KeyCodes.F10) {
+			oEvent.preventDefault(); // To prevent opening the default browser context menu.
+			TableUtils.openContextMenu(this, oEvent.target, true);
+		}
+	};
+
+	TableKeyboardDelegate.prototype.oncontextmenu = function(oEvent) {
+		var bRightMouseClick = oEvent.button === 2;
+		if (bRightMouseClick) {
+			return;
+		}
+
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+
+		if (oCellInfo !== null) {
+			// To prevent opening the default browser context menu when pressing the context menu key on a table cell.
+			oEvent.preventDefault();
+		}
+
+		if (oCellInfo.type === CellType.COLUMNHEADER ||
+			oCellInfo.type === CellType.DATACELL) {
+
+			TableUtils.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
 	TableKeyboardDelegate.prototype.onkeyup = function(oEvent) {
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
 		// End the range selection mode.
 		if (oEvent.keyCode === jQuery.sap.KeyCodes.SHIFT) {
 			delete this._oRangeSelection;
 		}
 
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.SPACE && !oEvent.shiftKey) {
+		if ((oEvent.keyCode === jQuery.sap.KeyCodes.SPACE && !oEvent.shiftKey)) {
 			oEvent.preventDefault(); // To prevent the browser window to scroll down.
-			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
+
+			// Open the column menu.
+			if (oCellInfo.type === CellType.COLUMNHEADER) {
+				TableUtils.openContextMenu(this, oEvent.target, true);
+			} else {
+				TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
+			}
+		}
+
+		if (oEvent.keyCode === jQuery.sap.KeyCodes.ENTER) {
+			// Open the column menu.
+			if (oCellInfo.type === CellType.COLUMNHEADER) {
+				TableUtils.openContextMenu(this, oEvent.target, true);
+			}
 		}
 	};
 
