@@ -35,7 +35,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially. Call {@link #sort} to replace them. Static
@@ -121,7 +121,7 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
 
-				if (!this.bRelative || mParameters) {
+				if (!this.bRelative || oContext && !oContext.getBinding || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 				}
@@ -287,27 +287,27 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity.
 	 * @throws {Error}
-	 *   If the binding is relative or if the binding already contains an entity created via this
-	 *   function.
+	 *   If the binding already contains an entity created via this function or {@link #create} on
+	 *   this binding is not supported.
 	 *
 	 * @public
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (sGroupId, oInitialData) {
 		var oContext,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
 		if (this.aContexts[-1]) {
 			throw new Error("Must not create twice");
 		}
-		if (this.bRelative) {
-			throw new Error("Create on relative bindings is not supported");
+		if (!this.oCache) {
+			throw new Error("Create on this binding is not supported");
 		}
 
 		sGroupId = sGroupId || this.getUpdateGroupId();
-		oContext = Context.create(this.oModel, this,
-			this.oModel.resolve(this.sPath, this.oContext) + "/-1", -1,
-			this.oCache.create(sGroupId, this.sPath.slice(1), "", oInitialData, function () {
+		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
+			this.oCache.create(sGroupId, sResolvedPath.slice(1), "", oInitialData, function () {
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
@@ -774,7 +774,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getGroupId = function () {
-		return this.sGroupId || (this.bRelative && this.oContext && this.oContext.getGroupId())
+		return this.sGroupId
+			|| (this.bRelative && this.oContext && this.oContext.getGroupId
+					&& this.oContext.getGroupId())
 			|| this.oModel.getGroupId();
 	};
 
@@ -812,7 +814,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId())
+			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
+					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
 	};
 
@@ -892,7 +895,7 @@ sap.ui.define([
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
-	 *   refresh on this binding is not supported.
+	 *   {@link #refresh} on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -902,7 +905,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.refresh = function (sGroupId) {
-		if (this.bRelative) {
+		if (this.bRelative && (!this.oContext || this.oContext.getBinding)) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		if (this.hasPendingChanges()) {
@@ -994,7 +997,7 @@ sap.ui.define([
 	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 *
 	 * @private
@@ -1086,7 +1089,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.toString = function () {
-		return sClassName + ": " + (this.bRelative  ? this.oContext + "|" : "") + this.sPath;
+		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
 	};
 
 	/**

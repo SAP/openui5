@@ -635,6 +635,9 @@ sap.ui.require([
 	}, {
 		bRelative : false,
 		aApplicationFilters : [{}]
+	}, {
+		bRelative : true,
+		bBaseContext : true
 	}].forEach(function (oFixture) {
 		QUnit.test("createListCacheProxy:" + JSON.stringify(oFixture), function (assert) {
 			var sCanonicalPath = "/SalesOrderList('1')",
@@ -648,9 +651,10 @@ sap.ui.require([
 					bRelative : oFixture.bRelative,
 					aSorters : oFixture.aSorters || []
 				},
-				oContext = {
-					requestCanonicalPath : function () {}
-				},
+
+				oContext = oFixture.bBaseContext
+					? { getPath : function () {} }
+					: { requestCanonicalPath : function () {} },
 				oCache = {},
 				oCacheProxy = {
 					promise : Promise.resolve(oCache)
@@ -662,9 +666,16 @@ sap.ui.require([
 				mQueryOptions = oFixture.mInheritedQueryOptions || oFixture.mQueryOptions,
 				oPathPromise = oFixture.bRelative ? Promise.resolve(sCanonicalPath) : undefined;
 
-			this.mock(oContext).expects("requestCanonicalPath")
-				.exactly(oFixture.bRelative ? 1 : 0)
-				.withExactArgs().returns(oPathPromise);
+			if (oFixture.bBaseContext) {
+				this.mock(oContext).expects("getPath").withExactArgs().returns(sCanonicalPath);
+				oPathPromise = {};
+				this.mock(Promise).expects("resolve").withExactArgs(sCanonicalPath)
+					.returns(oPathPromise);
+			} else {
+				this.mock(oContext).expects("requestCanonicalPath")
+					.exactly(oFixture.bRelative ? 1 : 0)
+					.withExactArgs().returns(oPathPromise);
+			}
 			this.mock(_ODataHelper).expects("getQueryOptions")
 				.withExactArgs(sinon.match.same(oBinding), "",
 					sinon.match.same(oFixture.bRelative ? oContext : undefined))
@@ -751,7 +762,7 @@ sap.ui.require([
 				bRelative : true,
 				aSorters : [{}]
 			},
-			oContext = {};
+			oContext = {requestCanonicalPath : function () {}};
 
 		this.mock(_ODataHelper).expects("createCacheProxy").never();
 
@@ -1280,6 +1291,20 @@ sap.ui.require([
 				_ODataHelper.getQueryOptions(oBinding, oFixture.sQueryPath, undefined),
 				undefined, "no query options and no context");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions ignores base context", function (assert) {
+		var oBaseContext = {},
+			oBinding = {
+				mQueryOptions : undefined,
+				sPath : "foo"
+			};
+
+
+		// code under test
+		assert.strictEqual(_ODataHelper.getQueryOptions(oBinding, "", oBaseContext), undefined,
+			"no query options and base context ignored");
 	});
 
 	//*********************************************************************************************
