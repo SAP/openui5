@@ -623,7 +623,7 @@
 		var lSizeClass = 'sapMNLI-LSize';
 
 	    // act
-		this.list.setWidth('648px'); // 8px over the threshold go for margins
+		this.list.setWidth('658px'); // 8px over the threshold go for margins
 		sap.ui.getCore().applyChanges();
 		this.NotificationListItem._resizeNotification(); // Manually triggering resizing
 
