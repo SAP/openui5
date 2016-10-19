@@ -712,13 +712,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bHasOnlyFixedColumns);
 			}
 		} else {
-			if (aRows.length == 0) {
-				// For the very first rendering in visibleRowCountMode Auto, there are no rows which can be rendered but
-				// it's required to have a dummy row rendered to determine the default/expected row height since the controls
-				// of the column template may expand the rowHeight.
-				aRows = [oTable._getDummyRow()];
-				iEndRow = 1;
-			}
 			// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 

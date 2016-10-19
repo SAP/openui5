@@ -316,9 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		isVariableRowHeightEnabled : function(oTable) {
-			return oTable._bVariableRowHeightEnabled
-				&& oTable.getFixedRowCount() <= 0
-				&& oTable.getFixedBottomRowCount() <= 0;
+			return oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
 		},
 
 		/**

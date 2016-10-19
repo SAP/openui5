@@ -601,6 +601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._attachExtensions();
 
 		this._bBindingLengthChanged = false;
+		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 
 		/**
@@ -724,7 +725,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// destroy the child controls
 		this._bExitCalled = true;
 
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 
 		// destroy helpers
 		this._detachExtensions();
@@ -2159,7 +2160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!this._bReorderInProcess && iIndex >= 0) {
 			this._aSortedColumns.splice(iIndex, 1);
 		}
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 		return oResult;
 	};
 
@@ -2169,7 +2170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.removeAllColumns = function() {
 		var oResult = this.removeAllAggregation('columns');
 		this._aSortedColumns = [];
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 		return oResult;
 	};
 
@@ -2179,7 +2180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.destroyColumns = function() {
 		var oResult = this.destroyAggregation('columns');
 		this._aSortedColumns = [];
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 		return oResult;
 	};
 
@@ -2189,7 +2190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.addColumn = function (oColumn, bSuppressInvalidate) {
 		this.addAggregation('columns', oColumn, bSuppressInvalidate);
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 		return this;
 	};
 
@@ -2198,7 +2199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.insertColumn = function (oColumn, iIndex, bSuppressInvalidate) {
 		this.insertAggregation('columns', oColumn, iIndex, bSuppressInvalidate);
-		this._resetRowTemplate();
+		this.invalidateRowsAggregation();
 		return this;
 	};
 
@@ -3459,66 +3460,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return !!oEvent.originalEvent["touches"];
 	};
 
-	Table.prototype._determineParent = function() {
-		var oParent = this.getParent();
-
-		if (oParent) {
-			var oParentDomRef;
-			if (oParent.getDomRef) {
-				// for Controls
-				oParentDomRef = oParent.getDomRef();
-			} else if (oParent.getRootNode) {
-				// for UIArea
-				oParentDomRef = oParent.getRootNode();
-			}
-
-			if (oParentDomRef) {
-				return jQuery(oParentDomRef);
-			}
-		}
-		return jQuery();
-	};
-
-	Table.prototype._getRowTemplate = function() {
-		if (!this._oRowTemplate) {
-			// create the new template
-			this._oRowTemplate = new Row(this.getId() + "-rows");
-			var aColumns = this.getColumns();
-			for (var i = 0, l = aColumns.length; i < l; i++) {
-				if (aColumns[i].getVisible()) {
-					var oColumnTemplate = aColumns[i].getTemplate();
-					if (oColumnTemplate) {
-						var oColumnTemplateClone = oColumnTemplate.clone("col" + i);
-						oColumnTemplateClone.data("sap-ui-colindex", i);
-						oColumnTemplateClone.data("sap-ui-colid", aColumns[i].getId());
-						this._oRowTemplate.addCell(oColumnTemplateClone);
-					}
+	Table.prototype._getRowClone = function(iIndex) {
+		var oClone = new Row(this.getId() + "-rows" + "-row" + iIndex);
+		var aColumns = this.getColumns();
+		for (var i = 0, l = aColumns.length; i < l; i++) {
+			if (aColumns[i].getVisible()) {
+				var oColumnTemplateClone = aColumns[i].getTemplateClone(i);
+				if (oColumnTemplateClone) {
+					oClone.addCell(oColumnTemplateClone);
 				}
 			}
 		}
-
-		return this._oRowTemplate;
+		return oClone;
 	};
 
-	Table.prototype._getDummyRow = function() {
-		if (!this._oDummyRow) {
-			this._oDummyRow = this._getRowTemplate().clone("dummy");
-			this._oDummyRow._bDummyRow = true;
-			this._oDummyRow._bHidden = true;
-		}
-
-		return this._oDummyRow;
-	};
-
-	Table.prototype._resetRowTemplate = function() {
-		if (this._oRowTemplate) {
-			this._oRowTemplate.destroy();
-			this._oRowTemplate = undefined;
-		}
-		if (this._oDummyRow) {
-			this._oDummyRow.destroy();
-			this._oDummyRow = undefined;
-		}
+	/**
+	 * Sets a marker to indicate that the rows aggregation is invalid and should be destroyed within the next cycle
+	 * @private
+	 */
+	Table.prototype.invalidateRowsAggregation = function() {
+		this._bRowAggregationInvalid = true;
 	};
 
 	/**
@@ -3537,7 +3498,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var i;
 		var aRows = this.getRows();
-		if (!this._oRowTemplate && aRows.length > 0) {
+		if (this._bRowAggregationInvalid && aRows.length > 0) {
 			this.destroyAggregation("rows", true);
 			aRows = [];
 		}
@@ -3581,16 +3542,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (aRows.length < iNumberOfRows) {
 			// clone rows and set binding context for them
-			var oRowTemplate = this._getRowTemplate();
-
 			for (i = aRows.length; i < iNumberOfRows; i++) {
 				// add new rows and set their binding contexts in the same run in order to avoid unnecessary context
 				// propagations.
-				var oClone = oRowTemplate.clone("row" + i);
+				var oClone = this._getRowClone(i);
 				if (!bNoUpdate) {
 					oClone.setRowBindingContext(aContexts[i], sModelName, oBinding);
 				}
 				this.addAggregation("rows", oClone, true);
+				this._bRowAggregationInvalid = false;
 				if (!bNoUpdate) {
 					// As long the clone is not yet in the aggregation setRowBindingContext will not process the following,
 					// therefore call it manually here.
