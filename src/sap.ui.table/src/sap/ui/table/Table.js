@@ -3085,7 +3085,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._findAndfireCellEvent = function(fnFire, oEvent, fnContextMenu) {
 		var $target = jQuery(oEvent.target);
 		// find out which cell has been clicked
-		var $cell = $target.closest("td[role='gridcell']");
+		var $cell = $target.closest("td.sapUiTableTd");
 		var sId = $cell.attr("id");
 		var aMatches = /.*-row(\d*)-col(\d*)/i.exec(sId);
 		var bCancel = false;
@@ -3227,15 +3227,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// table control? (only if the selection behavior is set to row)
-		var oClosestTd;
+		var oClosestTd, $ClosestTd;
 		if (oEvent.target) {
-			var $ClosestTd = jQuery(oEvent.target).closest("td");
+			$ClosestTd = jQuery(oEvent.target).closest("td");
 			if ($ClosestTd.length > 0) {
 				oClosestTd = $ClosestTd[0];
 			}
 		}
 
-		if (oClosestTd && (oClosestTd.getAttribute("role") == "gridcell" || jQuery(oClosestTd).hasClass("sapUiTableTDDummy"))
+		if (oClosestTd && ($ClosestTd.hasClass("sapUiTableTd") || $ClosestTd.hasClass("sapUiTableTDDummy"))
 			&& TableUtils.isRowSelectionAllowed(this)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
 			if ($row.length === 1) {
