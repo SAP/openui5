@@ -255,17 +255,6 @@
 		equals(multiInput1._completeTextIsSelected(), true, "text is selected");
 	});
 
-	test("test text validation on focus leave", function() {
-		var testTokenText = "C-Item";
-		multiInput1.setValue(testTokenText);
-		multiInput1._selectAllInputText();
-		multiInput1.onsapfocusleave({});
-
-		var aTokens = multiInput1.getTokens();
-		equals(aTokens.length, 1, "MultiInput contains 1 token");
-		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
-	});
-
 	test("test keyboard navigation", function(){
 		var token = new sap.m.Token({selected: true});
 		multiInput1.addToken(token);
@@ -489,7 +478,7 @@
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, true, "multi-line mode still diaplays after item selected");
 		equals(oMLInput.$().find(".sapMTokenizer").css("white-space"), "normal");
-		
+
 		oMLInput.setValue("z");
 
 		oMultiInput = sap.ui.getCore().getControl("i1");
@@ -543,16 +532,26 @@
 		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
 
-		oMLInput2._oPopupInput.setValue("a");
+		//oMLInput2._oPopupInput.setValue("a");
+		var inputDomRef = oMLInput2.getFocusDomRef();
+		inputDomRef.focus();
+		sap.ui.test.qunit.triggerCharacterInput(inputDomRef, "a");
+
+		oMLInput2._triggerSuggest('a');
 		this.clock.tick(500);
-		oMLInput2.onsapenter();
+
+		equals(oMLInput2._oList.getItems().length, 1, "one item is suggested");
+
+		sap.ui.test.qunit.triggerEvent("click", oMLInput2._oList.onItemPress(oMLInput2._oList.getItems()[0]));
 		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
 		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
 		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[3].getVisible(), true, "new token can be displayed");
-		
+
 		oMLInput2._oPopupInput.setValue("z");
 		oMLInput2._oSuggestionPopup.close();
 		this.clock.tick(500);
@@ -561,15 +560,15 @@
 		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
-		
+
 		oMLInput2.focus();
 		equals(oMLInput2._oPopupInput.getValue(), "z");
 
 		oMLInput2.destroy();
 	});
-	
+
 	module("Accessibility");
-	
+
 	test("getAccessibilityInfo", function() {
 		var oInput = new sap.m.MultiInput({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 		ok(!!oInput.getAccessibilityInfo, "MultiInput has a getAccessibilityInfo function");

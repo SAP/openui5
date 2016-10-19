@@ -324,6 +324,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
 	};
 
+	Tokenizer.prototype.clone = function() {
+		var aTokens = this.getTokens(),
+			oClone,
+			i;
+
+		for (i = 0; i < aTokens.length; i++) {
+			aTokens[i].detachDelete(this._onDeleteToken, this);
+			aTokens[i].detachPress(this._onTokenPress, this);
+		}
+
+		oClone = Control.prototype.clone.apply(this, arguments);
+
+		for (i = 0; i < aTokens.length; i++) {
+			aTokens[i].attachDelete(this._onDeleteToken, this);
+			aTokens[i].attachPress(this._onTokenPress, this);
+		}
+
+		return oClone;
+	};
+
 	Tokenizer.prototype.onBeforeRendering = function() {
 		this._deregisterResizeHandler();
 	};
@@ -820,7 +840,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oParent instanceof sap.m.MultiInput) {
 			// if max number is set and the number of existing tokens is equal to or more than the max number, then do not add token.
 			if (oParent.getMaxTokens() !== undefined && oParent.getTokens().length >= oParent.getMaxTokens()) {
-				return;
+				return this;
 			}
 		}
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
@@ -839,6 +859,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			token : oToken,
 			type : Tokenizer.TokenChangeType.Added
 		});
+
+		return this;
 	};
 
 	Tokenizer.prototype.removeToken = function(oToken) {
@@ -1097,6 +1119,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				jQuery.sap.focus(oFocusRef.id == this.getId() + "-clip" ? this.getDomRef() : oFocusRef);
 			}
 		}
+	};
+
+	/**
+	 * Returns if tokens should be rendered in reverse order
+	 * @private
+	 * @returns {boolean} true if tokens should be rendered in reverse order
+	 */
+	Tokenizer.prototype.getReverseTokens = function() {
+		return !!this._reverseTokens;
+	};
+
+	/**
+	 * Sets internal property defining if tokens should be rendered in reverse order
+	 * @param {boolean} bReverseTokens
+	 * @private
+	 */
+	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {
+		this._reverseTokens = bReverseTokens;
 	};
 
 	Tokenizer.TokenChangeType = {

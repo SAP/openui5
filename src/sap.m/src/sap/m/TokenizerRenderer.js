@@ -88,11 +88,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenizerRenderer._renderTokens = function(oRm, oControl){
-		var i, length, tokens;
-		tokens = oControl.getTokens();
-		length = tokens.length;
-		for (i = 0; i < length; i++) {
-			oRm.renderControl(tokens[i]);
+		var i = 0,
+			tokens = oControl.getTokens(),
+			length = tokens.length;
+
+		if (oControl.getReverseTokens()) {
+			for (i = length - 1; i > -1; i--) {
+				oRm.renderControl(tokens[i]);
+			}
+		} else {
+			for (i = 0; i < length; i++) {
+				oRm.renderControl(tokens[i]);
+			}
 		}
 	};
 
