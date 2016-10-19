@@ -14,12 +14,64 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The TimePicker is an extension of the Input control and allows time selection in any
-		 * device or browser supported by UI5.
-		 * It enables users to fill time related input fields. For the TimePicker UI,
-		 * you can define text, icon or both. A time format must be specified,
-		 * otherwise the default "HH:mm:ss a" will be used. The functionality is aligned with the
-		 * {@link sap.m.DatePicker} control for consistent behavior.
+		 * <b><i>Overview</i></b>
+		 * <br><br>
+		 * The {@link sap.m.TimePicker} control enables users to fill time related input
+		 * fields. It can be used with touch, mouse, or keyboard input.
+		 * <br><br>
+		 * <b><i>Usage</i></b>
+		 * <br><br>
+		 * Use this control if you want the user to select a time. If you want the user to
+		 * select a duration (1 hour), use the {@link sap.m.Select} control instead.
+		 * <br><br>
+		 * The user can enter a date by:
+		 * <ul>
+		 * <li>Using the <code>TimePicker</code> dropdown that opens in a popup</li>
+		 * <li>Typing it in directly in the input field</li>
+		 * </ul>
+		 * On app level, there are two options to provide value for the
+		 * <code>TimePicker</code> - as a string to the <code>value</code> property or as a
+		 * JavaScript Date object to the <code>dateValue</code> property (only one of these
+		 * properties should be used at a time):
+		 * <ul>
+		 * <li>Use the <code>value</code> property if you want to bind the
+		 * <code>TimePicker</code> to a model using the
+		 * <code>sap.ui.model.type.Time</code></li>
+		 * <li>Use the <code>value</code> property if the date is provided as a string from
+		 * the backend or inside the app (for example, as ABAP type DATS field)</li>
+		 * <li>Use the <code>dateValue</code> property if the date is already provided as a
+		 * JavaScript Date object or you want to work with a JavaScript Date object</li>
+		 * </ul>
+		 * <b><i>Formatting</i></b>
+		 * <br><br>
+		 * All formatting and parsing of values from and to strings is done using the
+		 * {@link sap.ui.core.format.DateFormat}. If a value is entered by typing it into
+		 * the input field, it must fit to the used time format and locale.
+		 * <br><br>
+		 * Supported format options are pattern-based on Unicode LDML Date Format notation.
+		 * See {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+		 * <br><br>
+		 * A time format must be specified, otherwise the default "HH:mm:ss a" will be
+		 * used. For example, if the <code>valueFormat</code> is "HH-mm-ss a", the
+		 * <code>displayFormat</code> is "HH:mm:ss a", and the used locale is English, a
+		 * valid value string is "10-30-15 AM", which leads to an output of "10:30:15 AM".
+		 * <br><br>
+		 * If no placeholder is set to the <code>TimePicker</code>, the used
+		 * <code>displayFormat</code> is displayed as a placeholder. If another placeholder
+		 * is needed, it must be set.
+		 * <br><br>
+		 * <b>Note:</b> If the string does NOT match the <code>displayFormat</code>
+		 * (from user input) or the <code>valueFormat</code> (on app level), the
+		 * {@link sap.ui.core.format.DateFormat} makes an attempt to parse it based on the
+		 * locale settings. For more information, see the respective documentation in the
+		 * API Reference.
+		 * <br><br>
+		 * <b><i>Responsive behavior</i></b>
+		 * <br><br>
+		 * The <code>TimePicker</code> is responsive and fully adapts to all device types.
+		 * For larger screens, such as tablet or desktop, it opens as a popover. For
+		 * mobile devices, it opens in full screen.
+		 *
 		 * @extends sap.m.MaskInput
 		 *
 		 * @author SAP SE
