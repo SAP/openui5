@@ -75,7 +75,7 @@
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute
-								active="{device>/saveForLater}"
+								active="true"
 								press="onSaveForLater"
 								text="{i18n>CART_SAVE_FOR_LATER_LINK_TEXT}" />
 						</attributes>
@@ -123,7 +123,7 @@
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute
-								active="{device>/saveForLater}"
+								active="true"
 								press="onAddBackToCart"
 								text="{i18n>CART_ADD_TO_CART_LINK_TEXT}" />
 						</attributes>
