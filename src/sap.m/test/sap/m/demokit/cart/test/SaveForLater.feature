@@ -1,7 +1,7 @@
 Feature: Save a product for later
 
   Background:
-    Given I start my App save for later activated
+    Given I start my App
     When on home: I press on "The second category"
     When on the category: I press on "The first Product"
     When on the product: I add the displayed product to the cart
