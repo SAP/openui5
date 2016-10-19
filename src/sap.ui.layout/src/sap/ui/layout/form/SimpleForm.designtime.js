@@ -50,6 +50,29 @@ sap.ui.define([], function() {
 				ignore : true
 			},
 			form : {
+				getIndex : function(oSimpleForm, oFormContainer) {
+					var iIndex = 0;
+					var aContent = oSimpleForm.getContent();
+
+					if (oSimpleForm.getMetadata().getName() === "sap.ui.layout.form.SimpleForm" && !oFormContainer) {
+						iIndex = aContent.length;
+					} else if (oFormContainer && oFormContainer.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+						var oTitle = oFormContainer.getTitle();
+						if (oTitle !== null) {
+							var iTitleIndex = aContent.indexOf(oTitle);
+							aContent.some(function(oField, index) {
+								if (oField instanceof sap.ui.core.Title && index > iTitleIndex) {
+									iIndex = index;
+									return true;
+								}
+							});
+							if (iIndex === 0) {
+								iIndex = aContent.length;
+							}
+						}
+					}
+					return iIndex;
+				},
 				ignore : false,
 				childrenName : function (oElement){
 					var sType = oElement.getMetadata().getName();
