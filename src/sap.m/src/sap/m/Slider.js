@@ -14,22 +14,57 @@ sap.ui.define([
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>sap.m.Slider</code>.
+		 * Constructor for a new Slider.
 		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-		 * @param {object} [mSettings] Initial settings for the new control.
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A slider is a user interface control that enables the user to adjust values in a specified numerical range.
-		 * @extends sap.ui.core.Control
-		 *
+		 * <strong><i>Overview</i></strong>
+		 * <br><br>
+		 * A {@link sap.m.Slider} control represents a numerical range and a handle that is used to select a value in that range.
+		 * The purpose of the control is to enable visual selection of values in a continuous numerical range.
+		 * <br><br>
+		 * <strong>Notes:</strong>
+		 * <ul><li>Only horizontal sliders are possible. </li>
+		 * <li>The slider can be moved in steps of predefined size. This is done with the <code>step</code> property. </li>
+		 * <li>Setting the property <code>showAdvancedTooltips</code> shows an input field above the handle</li>
+		 * <li>Setting the property <code>inputsAsTooltips</code> enables the user to enter a specific value in the handle's tooltip. </li>
+		 * </ul>
+		 * <strong><i>Structure</i></strong>
+		 * <br><br>
+		 * The most important properties of the Slider are:
+		 * <ul>
+		 * <li> min - The minimum value of the slider range </li>
+		 * <li> max - The maximum value of the slider range </li>
+		 * <li> showAdvancedTooltips - Determines if a tooltip should be displayed above the handle</li>
+		 * <li> inputsAsTooltips - Determines if the tooltip displayed above the slider's handle should include an input field</li>
+		 * <li> value - The current value of the slider</li>
+		 * <li> progress - Determines if a progress bar will be shown on the slider range</li>
+		 * <li> step - Determines the increments in which the slider will move</li>
+		 * </ul>
+		 * <strong><i>Usage</i></strong>
+		 * <br><br>
+		 * The most common usecase is to select values on a continuous numerical scale (e.g. temperature, volume, etc. ).
+		 * <br><br>
+		 * <strong><i>Responsive Behavior</i></strong>
+		 * <br><br>
+		 * The slider itself is not responsive. It adjusts to the responsiveness of its parent container by recalculating and resizing the width of the control.
+		 * You can move the slider handle in several different ways:
+		 * <ul>
+		 * <li> Drag and drop to the desired location</li>
+		 * <li> Click/tap on the range bar to move the handle to that location </li>
+		 * <li> Enter the desired value in the input field (if available) </li>
+		 * <li> Keyboard (Arrow keys, "+" and "-") </li>
+		 * </ul>
+		 * <br><br>
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Slider
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 
