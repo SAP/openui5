@@ -890,11 +890,13 @@ QUnit.test("getColumnHeaderCellInfo", function(assert) {
 });
 
 QUnit.test("getColumnWidth", function(assert) {
+	var aVisibleColumns = oTable._getVisibleColumns();
+	var iColumnWidth;
+
+	assert.strictEqual(TableUtils.getColumnWidth(), null, "Returned null: No parameters passed");
 	assert.strictEqual(TableUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
 	assert.strictEqual(TableUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
 	assert.strictEqual(TableUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
-
-	var aVisibleColumns = oTable._getVisibleColumns();
 
 	assert.strictEqual(TableUtils.getColumnWidth(oTable, 0), 100, "Returned 100");
 
@@ -906,7 +908,38 @@ QUnit.test("getColumnWidth", function(assert) {
 	assert.strictEqual(TableUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
 
 	aVisibleColumns[3].setVisible(false);
-	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column not visible");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column is not visible and width set to 100px");
+
+	aVisibleColumns[3].setWidth("");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"\"");
+
+	aVisibleColumns[3].setWidth("auto");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"auto\"");
+
+	aVisibleColumns[3].setWidth("10%");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"10%\"");
+
+	aVisibleColumns[4].setWidth("");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"\"");
+
+	aVisibleColumns[4].setWidth("auto");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"auto\"");
+
+	aVisibleColumns[4].setWidth("10%");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(TableUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case of a column width specified in percentage");
 });
 
 QUnit.module("Context Menus", {

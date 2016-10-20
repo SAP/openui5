@@ -905,7 +905,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Resizes one or more visible columns by the given amount of pixels.
+		 * Resizes one or more visible columns to the specified amount of pixels.
 		 *
 		 * In case a column span is specified:
 		 * The span covers only visible columns. If columns directly after the column with index <code>iColumnIndex</code> are invisible they
@@ -921,13 +921,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
 		 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
 		 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.
+		 * @return {boolean} Returns <code>true</code>, if at least one column has been resized.
 		 * @private
 		 */
 		resizeColumn: function(oTable, iColumnIndex, iWidth, bFireEvent, iColumnSpan) {
 			if (oTable == null ||
 				iColumnIndex == null || iColumnIndex < 0 ||
 				iWidth == null || iWidth <= 0) {
-				return;
+				return false;
 			}
 			if (iColumnSpan == null || iColumnSpan <= 0) {
 				iColumnSpan = 1;
@@ -938,7 +939,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			var aColumns = oTable.getColumns();
 			if (iColumnIndex >= aColumns.length || !aColumns[iColumnIndex].getVisible()) {
-				return;
+				return false;
 			}
 
 			var aVisibleColumns = [];
@@ -963,7 +964,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 			if (aResizableColumns.length === 0) {
-				return;
+				return false;
 			}
 
 			var iSpanWidth = 0;
@@ -974,6 +975,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			var iPixelDelta = iWidth - iSpanWidth;
 			var iSharedPixelDelta = Math.round(iPixelDelta / aResizableColumns.length);
+			var bResizeWasPerformed = false;
 
 			// Resize all resizable columns. Share the width change (pixel delta) between them.
 			for (var i = 0; i < aResizableColumns.length; i++) {
@@ -1006,16 +1008,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 					if (bExecuteDefault) {
 						oResizableColumn.setWidth(iNewWidth + "px");
+						bResizeWasPerformed = true;
 					}
 				}
 			}
+
+			return bResizeWasPerformed;
 		},
 
 		/**
 		 * Returns the width of a visible column in pixels.
+		 * In case the width is set to auto or in percentage, the <code>offsetWidth</code> of the columns DOM element will be returned.
+		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {int} iColumnIndex The index of a column. Must be a visible column.
 		 * @returns {int|null} Returns <code>null</code> if <code>iColumnIndex</code> is out of bound.
+		 * 					   Returns 0, if the column is not visible, or not yet rendered, and its width is not specified in pixels.
 		 * @private
 		 */
 		getColumnWidth: function(oTable, iColumnIndex) {
@@ -1030,8 +1038,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			var oColumn = aColumns[iColumnIndex];
+			var sColumnWidth = oColumn.getWidth();
 
-			return oTable._CSSSizeToPixel(oColumn.getWidth());
+			// If the columns width is "auto" or specified in percentage, get the width from the DOM.
+			if (sColumnWidth === "" || sColumnWidth === "auto" || sColumnWidth.match(/%$/)) {
+				if (oColumn.getVisible()) {
+					var oColumnElement = oColumn.getDomRef();
+					return oColumnElement != null ? oColumnElement.offsetWidth : 0;
+				} else {
+					return 0;
+				}
+			} else {
+				return oTable._CSSSizeToPixel(sColumnWidth);
+			}
 		},
 
 		/**
