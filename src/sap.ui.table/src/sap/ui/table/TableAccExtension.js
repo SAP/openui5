@@ -674,6 +674,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				case TableAccExtension.ELEMENTTYPES.TABLESUBHEADER: //The table toolbar and extension areas
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
+
+				case "PRESENTATION":
+					mAttributes["role"] = "presentation";
+					break;
 			}
 
 			return mAttributes;

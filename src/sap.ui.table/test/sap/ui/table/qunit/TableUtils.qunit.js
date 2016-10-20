@@ -815,8 +815,8 @@ QUnit.test("resizeColumn", function(assert) {
 	// Column 1 to 3 - Column 2 not resizable
 	aVisibleColumns[1].setResizable(false);
 	TableUtils.resizeColumn(oTable, 0, 100, false, 3);
-	assertColumnWidth(0, oTable._iColMinWidth);
-	assertColumnWidth(2, oTable._iColMinWidth);
+	assertColumnWidth(0, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
+	assertColumnWidth(2, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
 	assertUnchanged([0, 2]);
 	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
 	TableUtils.resizeColumn(oTable, 2, aOriginalColumnWidths[2], false);
@@ -838,15 +838,15 @@ QUnit.test("resizeColumn", function(assert) {
 
 	// Do not decrease column width below the minimum column width value.
 	TableUtils.resizeColumn(oTable, 1, 1, false);
-	assertColumnWidth(1, oTable._iColMinWidth);
+	assertColumnWidth(1, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
 	assertUnchanged([1]);
 	TableUtils.resizeColumn(oTable, 1, aOriginalColumnWidths[1], false);
 	assertUnchanged();
 
 	TableUtils.resizeColumn(oTable, 0, 1, false, 3);
-	assertColumnWidth(0, oTable._iColMinWidth);
-	assertColumnWidth(1, oTable._iColMinWidth);
-	assertColumnWidth(2, oTable._iColMinWidth);
+	assertColumnWidth(0, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
+	assertColumnWidth(1, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
+	assertColumnWidth(2, sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth());
 	assertUnchanged([0, 1, 2]);
 	TableUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
 	assertUnchanged();

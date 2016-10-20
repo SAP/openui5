@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './library'],
+	function(jQuery, Element, Device, library) {
 		"use strict";
 
 		/**
@@ -508,6 +508,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 				oTable._bReorderInProcess = false;
 
 				return true;
+			},
+
+			/**
+			 * Returns the minimal possible column width in pixels.
+			 *
+			 * @returns {integer} The minimal possible column width in pixels
+			 * @private
+			 */
+			getMinColumnWidth: function() {
+				if (this._iColMinWidth) {
+					return this._iColMinWidth;
+				}
+				this._iColMinWidth = 48;
+				if (!Device.system.desktop) {
+					this._iColMinWidth = 88;
+				}
+				return this._iColMinWidth;
 			}
 		};
 

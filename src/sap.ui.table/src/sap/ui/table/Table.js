@@ -667,13 +667,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// basic selection model (by default the table uses multi selection)
 		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
 
-		// minimum width of a table column in pixel:
-		// should at least be larger than the paddings for cols and cells!
-		this._iColMinWidth = 20;
-		if ('ontouchstart' in document) {
-			this._iColMinWidth = 88;
-		}
-
 		this._aTableHeaders = [];
 
 		// columns to cells map
@@ -1140,7 +1133,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var table = oTable.getDomRef();
 
 			function isFixNeeded(col) {
-				var minWidth = col._minWidth || col._MIN_WIDTH;
+				var iAbsoluteMinWidth = TableUtils.ColumnUtils.getMinColumnWidth();
+				var minWidth = col._minWidth || iAbsoluteMinWidth;
 				var colWidth = col.getWidth();
 				var aColHeaders;
 				var colHeader;
@@ -1154,7 +1148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					if (domWidth) {
 						if (domWidth <= minWidth) {
 							// tolerance of -5px to make the resizing smooother
-							return {headers : aColHeaders, newWidth: Math.max(domWidth, minWidth - 5, col._MIN_WIDTH) + "px"};
+							return {headers : aColHeaders, newWidth: Math.max(domWidth, minWidth - 5, iAbsoluteMinWidth) + "px"};
 						} else if (colHeader && colHeader.style.width != colWidth) {
 							// reset the minimum style width that was set previously
 							return {headers : aColHeaders, newWidth: colWidth};
@@ -2415,7 +2409,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._CSSSizeToPixel = function(sCSSSize, bReturnWithUnit) {
-		var sPixelValue = this._iColMinWidth;
+		var sPixelValue = TableUtils.ColumnUtils.getMinColumnWidth();
 
 		if (sCSSSize) {
 			if (jQuery.sap.endsWith(sCSSSize, "px")) {
