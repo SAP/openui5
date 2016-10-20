@@ -13,9 +13,9 @@ sap.ui.define([],
 				domRef : function(oElement) {
 					var oDomRef = oElement.getDomRef();
 					if (!oDomRef && oElement.getFormElements().length === 0) {
-						var oTitle = oElement.getTitle();
-						if (oTitle) {
-							return oTitle.getDomRef();
+						var oGroup = oElement.getTitle() || oElement.getToolbar();
+						if (oGroup) {
+							return oGroup.getDomRef();
 						}
 					} else {
 						return oDomRef;
