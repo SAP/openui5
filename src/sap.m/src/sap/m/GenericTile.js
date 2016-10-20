@@ -163,6 +163,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this._$RootNode) {
 			this._$RootNode.off(this._getAnimationEvents());
 		}
+
+		sap.ui.getCore().detachIntervalTimer(this._checkContentDensity, this);
 	};
 
 	GenericTile.prototype.onAfterRendering = function() {
@@ -172,7 +174,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
-		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact()) {
+		this._bCompact = this._isCompact();
+		if (this.getMode() === library.GenericTileMode.LineMode && this._bCompact) {
 			// This class needs to be added in order to account for the paddings of the tile.
 			// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
 			// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
@@ -187,6 +190,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this.getMode() === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
 			this._updateLineTileSiblings();
 			this._bUpdateLineTileSiblings = false;
+		}
+
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			// attach an interval timer in order to check the control's density mode and invalidate on change
+			sap.ui.getCore().attachIntervalTimer(this._checkContentDensity, this);
 		}
 
 		// Assign TileContent content again after rendering.
@@ -207,7 +215,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype._handleResize = function() {
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this.getParent()) {
-			this._updateHoverStyle();
+			this._queueAnimationEnd();
+		}
+	};
+
+	/**
+	 * Checks the current content density and invalidates the control if it changed in order to trigger a rerendering.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._checkContentDensity = function() {
+		if (this.$().length > 0) {
+			var bCompact = this.$().is(".sapUiSizeCompact") || this.$().closest(".sapUiSizeCompact").length > 0;
+			if (bCompact !== this._bCompact) {
+				this._bCompact = bCompact;
+				sap.ui.getCore().detachIntervalTimer(this._checkContentDensity);
+				this.invalidate();
+			}
 		}
 	};
 
@@ -228,8 +252,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		var $this = this.$(),
 			$End = this.$("endMarker"),
-			$Start =  this.$("startMarker"),
-			iLines = this._getLineCount(),
+			$Start =  this.$("startMarker");
+
+		//due to animations or transitions, this function is called when no rendering has been done yet. So we have to check if the markers are available.
+		if ($End.length === 0 || $Start.length === 0) {
+			return null;
+		}
+
+		var iLines = this._getLineCount(),
 			iBarOffsetX, iBarOffsetY,
 			iBarPaddingTop = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "margin-top")),
 			iBarWidth,
@@ -352,14 +382,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._updateHoverStyle = function(forceUpdate) {
-		if (!forceUpdate && !this._getStyleData()) {
+		if (!this._getStyleData() && !forceUpdate) {
 			return;
 		}
 
 		this._clearAnimationUpdateQueue();
 		this._cHoverStyleUpdates = -1;
 		this._oAnimationEndCallIds = {};
-		if (this._oStyleData && this._oStyleData.lineBreak) {
+		if (this._oStyleData && this._oStyleData.lineBreak && this.getUIArea()) {
 			this._$RootNode = jQuery(this.getUIArea().getRootNode());
 
 			//attach browser event handlers to wait for transitions and animations to end
@@ -383,6 +413,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			if ($Target.is(".sapMGT, .sapMGT *")) { //exclude other GenericTiles and all of their contents
 				return false; //stop bubbling and prevent default behaviour
 			}
+		}
+
+		//initialize helper variables
+		if (typeof this._cHoverStyleUpdates !== "number") {
+			this._cHoverStyleUpdates = -1;
+		}
+		if (!this._oAnimationEndCallIds) {
+			this._oAnimationEndCallIds = {};
 		}
 
 		this._cHoverStyleUpdates++;
@@ -480,7 +518,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			for (i = 0; i < aSiblings.length; i++) {
 				var oSibling = aSiblings[i];
 				if (oSibling instanceof sap.m.GenericTile && oSibling.getMode() === library.GenericTileMode.LineMode) {
-					oSibling._updateHoverStyle(true);
+					oSibling._updateHoverStyle();
 				}
 			}
 		}
@@ -491,6 +529,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sParentResizeListenerId = null;
 		}
+
+		sap.ui.getCore().detachIntervalTimer(this._checkContentDensity, this);
 
 		if (this._$RootNode) {
 			this._$RootNode.off(this._getAnimationEvents());
