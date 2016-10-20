@@ -7,7 +7,13 @@
 
 	<semantic:MasterPage
 		id="page"
-		title="{masterView>/title}"
+		title="{
+			parts: [
+				'i18n>masterTitleCount',
+				'masterView>/titleCount'
+			],
+			formatter: 'jQuery.sap.formatMessage'
+		}"
 		navButtonPress="onNavBack"
 		showNavButton="true">
 		<semantic:subHeader>
@@ -37,8 +43,8 @@
 					parameters: {expand: 'Customer'},
 					sorter: {
 						path: 'OrderID',
-						descending: false
-						},
+						descending: true
+					},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"
@@ -73,29 +79,19 @@
 							formatOptions: { style: 'short' }
 						}">
 						<attributes>
-							<ObjectAttribute text="{i18n>masterItemCustomer}: {Customer/CompanyName}" />
-							<ObjectAttribute text="{i18n>masterItemShipped}: {
-								path: 'ShippedDate',
-								type: 'sap.ui.model.type.Date',
-								formatOptions: { style: 'medium' }
-							}" />
+							<ObjectAttribute id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute title="{i18n>masterItemShipped}"
+								text="{= ${ShippedDate}
+									? ${ path: 'ShippedDate',
+										 type: 'sap.ui.model.type.Date',
+										 formatOptions: { style: 'medium' } }
+									: ${i18n>masterItemNotYetShipped} }" />
 						</attributes>
 					</ObjectListItem>
 				</items>
 			</List>
 		</semantic:content>
 
-		<semantic:sort>
-			<semantic:SortSelect change="onSort">
-				<core:Item key="OrderID" text="{i18n>masterSortOrderNumber}" />
-				<core:Item key="Customer/CompanyName" text="{i18n>masterSortCustomer}" />
-				<core:Item key="OrderDate" text="{i18n>masterSortOrderDate}" />
-				<core:Item key="ShippedDate" text="{i18n>masterSortShippedDate}" />
-			</semantic:SortSelect>
-		</semantic:sort>
-		<semantic:filter>
-			<semantic:FilterAction press="onFilter"/>
-		</semantic:filter>
 		<semantic:group>
 			<semantic:GroupSelect change="onGroup">
 				<core:Item key="NO_GROUPING" text="{i18n>masterGroupNoGrouping}" />
@@ -104,6 +100,14 @@
 				<core:Item key="ShippedPeriod" text="{i18n>masterGroupShippedPeriod}" />
 			</semantic:GroupSelect>
 		</semantic:group>
+
+		<semantic:filter>
+			<semantic:FilterSelect change="onFilter">
+				<core:Item key="NoFilter" text="{i18n>masterFilterNoFilter}" />
+				<core:Item key="Shipped" text="{i18n>masterFilterShipped}" />
+				<core:Item key="NotShipped" text="{i18n>masterFilterNotShipped}" />
+			</semantic:FilterSelect>
+		</semantic:filter>
 
 	</semantic:MasterPage>
 

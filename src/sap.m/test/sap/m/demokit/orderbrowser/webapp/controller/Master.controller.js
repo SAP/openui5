@@ -7,8 +7,9 @@ sap.ui.define([
 		"sap/ui/model/Sorter",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
-		"sap/ui/demo/orderbrowser/model/formatter"
-	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter) {
+		"sap/ui/demo/orderbrowser/model/formatter",
+		"sap/ui/demo/orderbrowser/model/GroupState"
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, GroupState) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.orderbrowser.controller.Master", {
@@ -32,8 +33,13 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-
 				this._oList = oList;
+				
+				// Remember initial sorter, to be able to "remove" a user-selected sorter
+				// and return to the default as defined in the XML view.
+				var oInitialSorter = oList.getBindingInfo("items").sorter;
+				this._oGroupState = new GroupState(oInitialSorter, this.getResourceBundle());
+
 				// keeps the filter and search state
 				this._oListFilterState = {
 					aFilter : [],
@@ -159,102 +165,45 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event handler for sorting of master list.
-			 * We sort by the selected key = path in the data model. If the sort field is a date, we sort with descending order.
-			 * @public
+			 * Adds/changes/removes a filter according to the user selection in the footer
+			 * of the master list.
+			 * Note: In addition, there can be another filter based on the search field.
+			 * Both optional filters are combined in _applyFilterSearch().
 			 */
-			onSort : function(oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				var sKey = oSelectedItem.getKey();
-
-				// Convention: The item key is the name of the entry in the data model to sort by.
-				var sPath = sKey;
-				var bDescending = false;
-
-				// Show latest dates first.
-				if(sKey === "OrderDate" || sKey === "ShippedDate") {
-					bDescending = true;
+			onFilter : function(oEvent) {
+				var sKey = oEvent.getSource().getSelectedItem().getKey();
+				var oFilter = null;
+				switch (sKey) {
+					case "Shipped":
+						oFilter = new Filter("ShippedDate", FilterOperator.NE, null);
+						break;
+					case "NotShipped":
+						oFilter = new Filter("ShippedDate", FilterOperator.EQ, null);
+						break;
+					case "NoFilter":
+					default:
+						oFilter = null;
 				}
 
-				var oSorter = new Sorter(sKey, bDescending);
-				this._oList.getBinding("items").sort(oSorter);
-			},
-
-			// TODO document
-			onFilter : function(oEvent) {
-				// TODO implement
-				sap.m.MessageToast.show("List filtering still to be implemented...");
+				if (oFilter) {
+					this._oListFilterState.aFilter = [ oFilter ];
+				}
+				else {
+					this._oListFilterState.aFilter = [];
+				}
+				this._applyFilterSearch();
 			},
 
 			/**
-			 * Event handler for grouping of master list.
-			 * Returns (where relevant: localized) group titles for the list.
+			 * Event handler for selection of another grouping option.
+			 * @param {sap.ui.base.Event} oEvent the search field event
 			 * @public
 			 */
-			onGroup : function(oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				var sKey = oSelectedItem.getKey();
+			onGroup : function (oEvent) {
+				var sKey = oEvent.getSource().getSelectedItem().getKey(),
+					aSorters = this._oGroupState.groupBy(sKey);
 
-				var oSorter = null;
-
-				switch (sKey) {
-				// Customer: Every customer gets their own group, with the group name being the customer name.
-				case "CompanyName":
-					oSorter = new Sorter("Customer/CompanyName", false, function(oContext) {
-						var sCompanyName = oContext.getProperty("Customer/CompanyName");
-    					return {
-    						key: sCompanyName,
-    						text: sCompanyName
-    					};
-					});
-					break;
-				// Order date: Grouping by period (= same year + month), in descending order.
-				case "OrderPeriod":
-					oSorter = new Sorter("OrderDate", true, function (oContext) {
-						var oDate = oContext.getProperty("OrderDate"),
-    						iYear = oDate.getFullYear(),
-    						iMonth = oDate.getMonth() + 1;
-
-    					return {
-    						key: iYear + '/' + iMonth,
-    						text: this.getResourceBundle().getText("masterGroupTitleOrderedInPeriod", [ iMonth, iYear ])
-    					};
-					}.bind(this));
-					break;
-				/*
-				 * Shipping date: Grouping by period (= same year + month), in descending order.
-				 * Note: If not yet shipped, field "ShippedDate" is empty. Due to server-side sorting, where an empty date
-				 * is treated as the lowest possible date, orders without shipments are displayed at the very end of the list.
-				 */ 
-				case "ShippedPeriod":
-					oSorter = new Sorter("ShippedDate", true, function (oContext) {
-						var oDate = oContext.getProperty("ShippedDate");
-						// Special handling needed because shipping date may be empty (=> not yet shipped).
-						if(oDate != null) {
-							var iYear = oDate.getFullYear(),
-								iMonth = oDate.getMonth() + 1;
-							
-							return {
-								key: iYear + '/' + iMonth,
-								text: this.getResourceBundle().getText("masterGroupTitleShippedInPeriod", [ iMonth, iYear ])
-							};
-						}
-						else {
-							return {
-								key: 0,
-								text: this.getResourceBundle().getText("masterGroupTitleNotShippedYet")
-							};
-						}
-					}.bind(this));
-					break;
-				case "NO_GROUPING":
-				default:
-					// Use default sorter. (TODO Keep in sync with sorted in view.xml!)
-					oSorter = new Sorter("OrderID", false);
-					break;
-				}
-
-				this._oList.getBinding("items").sort(oSorter);
+				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/* =========================================================== */
@@ -267,10 +216,8 @@ sap.ui.define([
 					isFilterBarVisible: false,
 					filterBarLabel: "",
 					delay: 0,
-					title: this.getResourceBundle().getText("masterTitleCount", [0]),
-					noDataText: this.getResourceBundle().getText("masterListNoDataText"),
-					sortBy: "OrderID",
-					groupBy: "None"
+					titleCount: 0,
+					noDataText: this.getResourceBundle().getText("masterListNoDataText")
 				});
 			},
 
@@ -317,11 +264,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_updateListItemCount : function (iTotalItems) {
-				var sTitle;
 				// only update the counter if the length is final
 				if (this._oList.getBinding("items").isLengthFinal()) {
-					sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
-					this.getModel("masterView").setProperty("/title", sTitle);
+					this.getModel("masterView").setProperty("/titleCount", iTotalItems);
 				}
 			},
 
@@ -340,15 +285,6 @@ sap.ui.define([
 					// only reset the no data text to default when no new search was triggered
 					oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 				}
-			},
-
-			/**
-			 * Internal helper method to apply both group and sort state together on the list binding
-			 * @param {sap.ui.model.Sorter[]} aSorters an array of sorters
-			 * @private
-			 */
-			_applyGroupSort : function (aSorters) {
-				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/**
