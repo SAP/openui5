@@ -109,6 +109,42 @@
 
 	});
 
+	test("TreeBinding relative getRootContexts getNodeContexts", function(){
+		 setup();
+		 createTreeBinding("orgStructure");
+		 var treeBinding = bindings[0],
+			 contexts,
+			 context;
+		 
+		 treeBinding.setContext(oModel.getContext("/"));
+		 
+		 equal(treeBinding.getPath(), "orgStructure", "TreeBinding path");
+		 equal(treeBinding.getModel(), oModel, "TreeBinding model");
+		 
+		 contexts = treeBinding.getRootContexts();
+		 equal(contexts.length, 1, "TreeBinding rootContexts length");
+		 
+		 context = contexts[0];
+		 equal(oModel.getProperty("@name",context), "Peter Cliff", "TreeBinding root content");
+		 
+		 contexts = treeBinding.getNodeContexts(context);
+		 equal(contexts.length, 3, "TreeBinding nodeContexts length");
+		 
+		 context = contexts[0];
+		 equal(oModel.getProperty("@name",context), "Inga Horst", "TreeBinding node content");
+		 
+		 context = contexts[2];
+		 equal(oModel.getProperty("@name",context), "Catherine Platte", "TreeBinding node content");
+		 
+		 equal(treeBinding.getChildCount(contexts[0]), 3, "TreeBinding childcount");
+		 contexts = treeBinding.getNodeContexts(contexts[0]);
+		 equal(contexts.length, 3, "TreeBinding nodeContexts length");
+		 
+		 context = contexts[1];
+		 equal(oModel.getProperty("@name",context), "Frank Wallace", "TreeBinding node content");
+		 
+	 });
+	 
 	test("TreeBinding getRootContexts getNodeContexts", function(){
 		setup();
 		createTreeBinding("/orgStructure");
