@@ -491,17 +491,17 @@
 			},
 			{
 				"id": "sap.ui.core.sample.gherkin.GherkinWithQUnit",
-				"name": "Using Gherking with QUnit",
+				"name": "Using Gherkin with QUnit",
 				"description": "How to combine Gherkin and QUnit to run behavior driven development tests"
 			},
 			{
 				"id": "sap.ui.core.sample.gherkin.GherkinWithOPA5",
-				"name": "Using Gherking with OPA5",
+				"name": "Using Gherkin with OPA5",
 				"description": "How to combine Gherkin and OPA5 to run behavior driven development tests"
 			},
 			{
 				"id": "sap.ui.core.sample.gherkin.GherkinWithPageObjects",
-				"name": "Using Gherking with OPA5 Page Objects",
+				"name": "Using Gherkin with OPA5 Page Objects",
 				"description": "How to combine Gherkin and OPA5 page objects to run behavior driven development tests"
 			},
 			{
