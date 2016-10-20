@@ -18,7 +18,7 @@ function(ManagedObject) {
 	 * @class
 	 * The Plugin allows to handle the overlays and aggregation overlays from the DesignTime
 	 * The Plugin should be overriden by the real plugin implementations, which define some actions through events attached to an overlays
-	 * @extends sap.ui.core.ManagedObject
+	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}

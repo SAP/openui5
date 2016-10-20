@@ -21,7 +21,7 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 	 *
 	 * @class
 	 * The DesignTimeMetadata is a wrapper for the DesignTimeMetadata of the associated element
-	 * @extends sap.ui.core.ManagedObject
+	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}

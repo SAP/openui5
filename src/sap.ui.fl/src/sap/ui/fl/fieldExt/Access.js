@@ -339,7 +339,7 @@ sap.ui.define(["jquery.sap.storage"], function(Storage) {
 	/**
 	 * Returns the current timestamp in milliseconds
 	 *
-	 * @return {integer} Current timestamp in milli seconds
+	 * @return {int} Current timestamp in milli seconds
 	 */
 	Access._getCurrentTime = function() {
 		return Date.now();
