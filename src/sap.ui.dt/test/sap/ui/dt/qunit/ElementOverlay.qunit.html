@@ -514,7 +514,7 @@
 				assert.strictEqual(oAggregationOverlay.$().is(":visible"), false, "the aggregation overlay is hidden in DOM");
 			});
 
-			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored", {
+			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and inHiddenTree", {
 				beforeEach : function() {
 					this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
 						content : [
@@ -526,7 +526,8 @@
 							data : {
 								aggregations: {
 									form: {
-										ignore : false
+										ignore : false,
+										inHiddenTree : true
 									}
 								}
 							}

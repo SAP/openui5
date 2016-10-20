@@ -428,7 +428,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		aAggregationNames.forEach(function (sAggregationName) {
 			var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
 			if (oAggregationMetadata.ignore === false && !mAggregationsWithOverlay[sAggregationName]) {
-				that._createAggregationOverlay(sAggregationName, true);
+				// this is needed to point out, that a control is both in public and private tree, so that it has a "public" parent, which can be different from a getParent()
+				// flag is needed so that parents could have possibility to handle actions for the children. The better solution yet to come: probably, propagation of metadata from parents to children
+				var bIsInHiddenTree = oAggregationMetadata.inHiddenTree;
+				that._createAggregationOverlay(sAggregationName, bIsInHiddenTree);
 			}
 		});
 

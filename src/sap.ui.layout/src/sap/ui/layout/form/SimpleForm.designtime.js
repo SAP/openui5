@@ -50,6 +50,7 @@ sap.ui.define([], function() {
 				ignore : true
 			},
 			form : {
+				inHiddenTree : true,
 				getIndex : function(oSimpleForm, oFormContainer) {
 					var iIndex = 0;
 					var aContent = oSimpleForm.getContent();
