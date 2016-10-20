@@ -685,7 +685,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sClassName name of the class to be created
 	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ManagedObjectMetadata.
+	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to <code>sap.ui.base.ManagedObjectMetadata</code>.
 	 * @return {function} the created class / constructor function
 	 *
 	 * @public

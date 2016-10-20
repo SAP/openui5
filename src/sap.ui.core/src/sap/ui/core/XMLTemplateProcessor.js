@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		 * TODO cannot handle event handlers in the root node
 		 *
 		 * @param {Element} xmlNode the XML element representing the View
-		 * @param {sap.ui.core.ManagedObject} oView the View to consider when parsing the attributes
+		 * @param {sap.ui.base.ManagedObject} oView the View to consider when parsing the attributes
 		 * @param {object} mSettings the settings object which should be enriched with the suitable attributes from the XML node
 		 * @return undefined
 		 */
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		 * Parses a complete XML template definition (full node hierarchy) and resolves the ids to their full qualification
 		 *
 		 * @param {Element} xmlNode the XML element representing the View/Fragment
-		 * @param {sap.ui.core.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
+		 * @param {sap.ui.base.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
 		 * @return {Element} the element enriched with the full ids
 		 * @protected
 		 */
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		 * Parses a complete XML template definition (full node hierarchy)
 		 *
 		 * @param {Element} xmlNode the XML element representing the View/Fragment
-		 * @param {sap.ui.core.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
+		 * @param {sap.ui.base.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
 		 * @return an array containing Controls and/or plain HTML element strings
 		 */
 		XMLTemplateProcessor.parseTemplate = function(xmlNode, oView) {
