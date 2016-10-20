@@ -333,6 +333,7 @@ var oData = [
 		title: "{text}"
 	});
 	oTree.bindItems("/", oStandardTreeItem);
+	oTree.expandToLevel(3);
 
 	// ODATA with mock server
 /* 	jQuery.sap.require("sap.ui.core.util.MockServer");
@@ -524,6 +525,25 @@ var oData = [
 		});
 	};
 
+	function addExpandToLevel(){
+		return new sap.m.Select({
+			tooltip: "Icon",
+			items: [
+				new sap.ui.core.Item({ key: "0", text: "CollapseAll" }),
+				new sap.ui.core.Item({ key: "1", text: "ExpandToLevel3" })
+			],
+			selectedItem: "0",
+			change: function(oControlEvent){
+				var sItem = oControlEvent.getParameter("selectedItem").getText();
+				if (sItem === "ExpandToLevel3") {
+					oTree.expandToLevel(3);
+				} else {
+					oTree.collapseAll();
+				}
+			}
+		});
+	};
+
 	var oPage = new sap.m.Page("TreeTest", {
 		title : "Test Page for sap.m.Tree",
 		content : [oTree],
@@ -531,6 +551,7 @@ var oData = [
 			contentMiddle : [
 				addSizeMode(),
 				addSelectionMode(),
+				addExpandToLevel(),
 				addNodeType(),
 				addShowSeparator(),
 				addIcon(),

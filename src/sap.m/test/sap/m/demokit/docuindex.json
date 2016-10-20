@@ -1071,7 +1071,9 @@
 		  "samples": [
 			"sap.m.sample.Tree",
 			"sap.m.sample.TreeIcon",
-			"sap.m.sample.TreeSelection"
+			"sap.m.sample.TreeSelection",
+			"sap.m.sample.TreeInitialExpandState",
+			"sap.m.sample.TreeCollapseAll"
 		  ]
 		},
 		{
@@ -1849,12 +1851,22 @@
 		{
 		  "id": "sap.m.sample.TreeSelection",
 		  "name": "Tree - Selection",
-		  "description": "Different selection modes of Tree item."
+		  "description": "Different selection modes of Tree."
 		},
 		{
 		  "id": "sap.m.sample.TreeIcon",
 		  "name": "Tree - Icon",
 		  "description": "Tree item with icon."
+		},
+		{
+		  "id": "sap.m.sample.TreeInitialExpandState",
+		  "name": "Tree - InitialExpandState",
+		  "description": "Initial expand state can be set to Tree."
+		},
+		{
+		  "id": "sap.m.sample.TreeCollapseAll",
+		  "name": "Tree - CollapseAll",
+		  "description": "Collapse all nodes."
 		},
 		{
 			"id": "sap.m.sample.RangeSlider",
