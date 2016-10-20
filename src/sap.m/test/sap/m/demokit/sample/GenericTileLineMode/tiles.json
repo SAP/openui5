@@ -47,21 +47,12 @@
 				"color": "Error",
 				"trend": "Up",
 				"state": "Disabled"
-			},
-			{
-				"title": "Manage Employees",
-				"subtitle": "Performance",
-				"footer": "Success Stories",
-				"kpivalue": 42,
-				"scale": "",
-				"color": "Good",
-				"trend": "Up"
 			}
 		],
 		"collapsed": [
 			{
-				"title": "Manage Products App",
-				"subtitle": "Outbound",
+				"title": "Manage Products",
+				"subtitle": "Product Details",
 				"footer": "",
 				"kpivalue": 2,
 				"scale": "",
@@ -69,26 +60,26 @@
 				"trend": "None"
 			},
 			{
-				"title": "Manage Products App",
-				"subtitle": "Inbound",
-				"footer": "",
-				"kpivalue": 12,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Down"
-			},
-			{
-				"title": "Manage super important business data that needs to be approved as fast as possible using this super handy long tile",
-				"subtitle": "Mobile Application with useful KPI data",
-				"footer": "",
-				"kpivalue": 12,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Down"
-			},
-			{
-				"title": "Manage Invoices",
+				"title": "Business Decisions",
 				"subtitle": "Approval Needed",
+				"footer": "",
+				"kpivalue": 12,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Down"
+			},
+			{
+				"title": "Manage Master Data Type Activity With a Long Title and Without an Icon",
+				"subtitle": "Subtitle for Activity",
+				"footer": "",
+				"kpivalue": 12,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Down"
+			},
+			{
+				"title": "Jessica Danielle Johnson ",
+				"subtitle": "Senior Consultant, Department Sales & Distribution",
 				"footer": "",
 				"kpivalue": 1,
 				"scale": "k",
@@ -106,12 +97,12 @@
 				"state": "Failed"
 			},
 			{
-				"title": "Look at my horse",
-				"subtitle": "My horse is amazing",
+				"title": "Manage Invoices",
+				"subtitle": "Payment Open",
 				"footer": "",
 				"kpivalue": 1,
-				"scale": "MM",
-				"color": "Good",
+				"scale": "k",
+				"color": "Critical",
 				"trend": "Down",
 				"state": "Disabled"
 			}
