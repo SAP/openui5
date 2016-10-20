@@ -36,7 +36,14 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 		properties : {
 
 			/**
-			 * Width of the column. Works only with px/em/rem values. Em are handled like rem values.
+			 * Width of the column in css units.
+			 * Default value is "auto". See https://www.w3.org/TR/CSS2/tables.html#width-layout
+			 * <p>Minimal column width is 48px. If width is set to a smaller value, the column is 48px wide.
+			 * <p>Note: this property may be overruled by the user action or by the application
+			 * configuration/personalization.
+			 * <p>If a user adjusts the column width manually, the resulting value is always set in pixels.
+			 * In addition, other columns with width "auto" become a fixed minimum width and do not shrink
+			 * after the resize.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -45,6 +52,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
 			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
 			 * created at the end of the table.
+			 * @deprecated As of version 1.44, this property has no effect
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -250,6 +258,9 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 	/** default filter type for the columns */
 	Column._DEFAULT_FILTER_TYPE = new StringType();
+
+	/** default minimal column width in pixels */
+	Column.prototype._MIN_WIDTH = 48;
 
 	/**
 	 * called when the column is initialized

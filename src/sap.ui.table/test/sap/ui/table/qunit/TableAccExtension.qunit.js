@@ -749,7 +749,7 @@ QUnit.test("ARIA Attributes of Content Element", function(assert) {
 });
 
 QUnit.test("ARIA Attributes of TH Elements", function(assert) {
-	var $Elem = oTable.$().find("th");
+	var $Elem = oTable.$().find(".sapUiTableCCnt th[id]"); // all with ID
 	$Elem.each(function(){
 		var $TH = jQuery(this);
 		assert.strictEqual($TH.attr("role"), "columnheader" , "role");
@@ -759,6 +759,11 @@ QUnit.test("ARIA Attributes of TH Elements", function(assert) {
 			assert.strictEqual($TH.attr("aria-owns"), oColumn.getId() , "aria-owns");
 			assert.strictEqual($TH.attr("aria-labelledby"), oColumn.getId() , "aria-labelledby");
 		}
+	});
+	$Elem = oTable.$().find(".sapUiTableCCnt th:not([id])"); // dummy column
+	$Elem.each(function(){
+		var $TH = jQuery(this);
+		assert.strictEqual($TH.attr("role"), "presentation" , "role");
 	});
 });
 

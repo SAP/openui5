@@ -81,7 +81,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
 			var iDeltaX = iLocationX - this._iColumnResizeStart;
-			var iWidth = Math.max(oColumn.$().width() + iDeltaX * (this._bRtlMode ? -1 : 1), this._iColMinWidth);
+			var iColWidth = this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').width();
+			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), this._iColMinWidth);
 
 			// calculate and set the position of the resize handle
 			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
@@ -123,19 +124,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
 				if (oColumn._iNewWidth) {
-					var sWidth;
-					var iAvailableSpace = oTable.$().find(".sapUiTableCtrl").width();
-					if (!oTable._checkPercentageColumnWidth()) {
-						sWidth = oColumn._iNewWidth + "px";
-					} else {
-						var iColumnWidth = Math.round(100 / iAvailableSpace * oColumn._iNewWidth);
-						sWidth = iColumnWidth + "%";
-					}
-
-					if (oTable._updateColumnWidth(oColumn, sWidth, true)) {
-						oTable._resizeDependentColumns(oColumn, sWidth);
-					}
-
+					TableUtils.resizeColumn(oTable, iColIndex, oColumn._iNewWidth);
 					delete oColumn._iNewWidth;
 					bResized = true;
 				}
@@ -329,7 +318,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				}
 			}.bind(oTable));
 		}
-
 	};
 
 
