@@ -262,7 +262,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 		function getVersionInfo() {
 			return sap.ui.getVersionInfo({async:true}).then(function(oInfo) {
-				return oInfo.buildTimestamp;
+				var sTimestamp = "";
+				if (!oInfo.libraries) {
+					sTimestamp = sap.ui.buildinfo.buildtime;
+				} else {
+					oInfo.libraries.forEach(function(oLibrary) {
+						sTimestamp += oLibrary.buildTimestamp;
+					});
+				}
+				return sTimestamp;
 			});
 		}
 
