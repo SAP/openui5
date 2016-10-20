@@ -82,19 +82,6 @@ html[data-sap-ui-animation='on'] {
 	}
 }
 
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanelExpandableIcon {
-	-webkit-transform: translateY(-50%) scale(-1, 1);
-	-ms-transform: translateY(-50%) scale(-1, 1);
-	transform: translateY(-50%) scale(-1, 1);
-}
-
-/* rotate(90deg) will be mirrored to rotate(-90deg) for RTL */
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanelExpandableIconExpanded {
-	-webkit-transform: translateY(-50%) rotate(90deg) scale(-1, 1);
-	-ms-transform: translateY(-50%) rotate(90deg) scale(-1, 1);
-	transform: translateY(-50%) rotate(90deg) scale(-1, 1);
-}
-
 .sapMPanelWrappingDiv,
 .sapMPanelWrappingDivTb {
 	position: relative;
