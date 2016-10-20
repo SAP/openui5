@@ -68,6 +68,9 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
 			 * The accepted content might be restricted to single root nodes in future versions.
 			 * To notify applications about this fact, a warning is written in the log when multiple root nodes are used.
 			 *
+			 * When changing the content dynamically, ensure that the ID of the root node remains the same as the HTML
+			 * control's ID. Otherwise it cannot be guaranteed that certain lifecycle events take place.
+			 *
 			 * @SecSink {,XSS} The content of the 'content' property is rendered 1:1 to allow the full
 			 * flexibility of HTML in UI5 applications. Applications therefore must ensure, that they don't
 			 * set malicious content (e.g. derived from user input). UI5 does not provide an HTML validation

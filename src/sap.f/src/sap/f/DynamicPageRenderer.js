@@ -29,6 +29,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.write("<article");
 		oRm.writeControlData(oDynamicPage);
 		oRm.addClass("sapFDynamicPage");
+		if (oDynamicPage.getToggleHeaderOnTitleClick()) {
+			oRm.addClass("sapFDynamicPageTitleClickEnabled");
+		}
 
 		oRm.writeClasses();
 		oRm.write(">");

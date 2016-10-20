@@ -226,6 +226,27 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 		}
 	};
 
+	FlexBox.prototype.setRenderType = function(sValue) {
+		var sOldValue = this.getRenderType(),
+			aItems = this.getItems();
+
+		if (sValue === sOldValue) {
+			return this;
+		}
+
+		this.setProperty("renderType", sValue);
+
+		if (sOldValue === "Bare") {
+			aItems.forEach(this._onItemRemoved, this);
+		}
+
+		if (sValue === "Bare") {
+			aItems.forEach(this._onItemInserted, this);
+		}
+
+		return this;
+	};
+
 	FlexBox.prototype.setDisplayInline = function(bInline) {
 		this.setProperty("displayInline", bInline, true);
 		this.$().toggleClass("sapMFlexBoxInline", this.getDisplayInline());

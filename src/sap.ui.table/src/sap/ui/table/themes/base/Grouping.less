@@ -2,7 +2,7 @@
 @_sapUiTableGroupIconHeightCondensed: 24px; /*1.5rem*/
 @_sapUiTableGroupIconHeightCozy: 48px; /*3rem*/
 @_sapUiTableGroupHeaderBackground: @sapUiListTableGroupHeaderBackground;
-@_sapUiTableGroupOutlineWidth: 1px;
+@_sapUiTableGroupOutlineWidth: @_sapUiTableFocusOutlineWidth;
 @_sapUiTableGroupIconBorderWidth: 1px;
 @_sapUiTableGroupIconFontSize: @sapMFontMediumSize;
 
@@ -12,6 +12,19 @@
 	padding: 0;
 	flex-shrink: 0;
 	margin-right: 6px;
+}
+
+.sapUiSizeCondensed {
+	
+	.sapUiTableCell > .sapUiTableTreeIcon {
+		padding: 0;
+		margin-right: 1px;
+	}
+	
+	.sapUiTableCell > .sapUiTableTreeIcon::before {
+		line-height: 1.5rem;
+	}
+	
 }
 
 .sapUiTableTreeIcon:focus {
@@ -84,7 +97,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	font-size: 12px;
 	font-weight: normal;
 	display: none;
-	width: @sapUiTableRowHdrWidth;
+	width: @_sapUiTableRowHdrWidth;
 	text-align: center;
 	vertical-align: middle;
 	color: @sapUiContentIconColor;
@@ -126,11 +139,6 @@ html[dir=rtl] {
 
 .sapUiTableRowHdr.sapUiTableGroupHeader {
 	border-right: none;
-	position: relative;
-}
-
-.sapUiTableSelModeNone .sapUiTableRowHdr.sapUiTableGroupHeader {
-	width: @sapUiTableRowHdrWidth;
 }
 
 .sapUiTableRowHdr.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
@@ -154,7 +162,6 @@ html[dir=rtl] {
 	display: inline-block;
 }
 
-.sapUiTableGroupMode .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiTableGroupMode .sapUiTableGroupHeader td {
 	border-right: none;
 }
@@ -170,19 +177,6 @@ html[dir=rtl] {
 
 .sapUiTableGroupMode .sapUiTableRowHvr .sapUiTableGroupIcon:after {
 	box-shadow: inset 40px 0px 20px -20px @sapUiListHoverBackground;
-}
-
-.sapUiTableGroupMode .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after {
-	display: none;
-}
-
-.sapUiTableGroupMode.sapUiTableSelModeNone .sapUiTableRowHdr,
-.sapUiTableGroupMode.sapUiTableSelModeNone .sapUiTableRowHdr.sapUiTableGroupHeader {
-	width: auto;
-}
-
-.sapUiTableGroupMode.sapUiTableSelModeNone .sapUiTableRowHdr {
-	border-right: 1px solid @sapUiListVerticalBorderColor;
 }
 
 // The cell under the first column cell of a group header is only allowed to show a measure label. Any other content should be hidden.

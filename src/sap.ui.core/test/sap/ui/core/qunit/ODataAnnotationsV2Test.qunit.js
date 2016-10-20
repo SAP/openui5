@@ -773,8 +773,8 @@ function runODataAnnotationsV2Tests() {
 
 
 							// XML Parser is not available should lead to an error
-							var bIsIE = sap.ui.Device.browser.internet_explorer;
-							sap.ui.Device.browser.internet_explorer = false;
+							var bIsIE = sap.ui.Device.browser.msie;
+							sap.ui.Device.browser.internet_explorer = sap.ui.Device.browser.msie = false;
 							var oOriginalDOMParser = window.DOMParser;
 							window.DOMParser = function() {
 								this.parseFromString = function() {}
@@ -788,12 +788,12 @@ function runODataAnnotationsV2Tests() {
 							}).catch(function() {
 								ok(true, "Adding annotations without having a DOM parser should lead to an error");
 
-								sap.ui.Device.browser.internet_explorer = bIsIE;
+								sap.ui.Device.browser.internet_explorer = sap.ui.Device.browser.msie = bIsIE;
 								window.DOMParser = oOriginalDOMParser;
 
 								// Mock IE XML Parser
-								bIsIE = sap.ui.Device.browser.internet_explorer;
-								sap.ui.Device.browser.internet_explorer = true;
+								bIsIE = sap.ui.Device.browser.msie;
+								sap.ui.Device.browser.internet_explorer = sap.ui.Device.browser.msie = true;
 								var oOriginalActiveXObject = window.ActiveXObject;
 								window.ActiveXObject = function() {
 									this.loadXML = function() {}
@@ -809,7 +809,7 @@ function runODataAnnotationsV2Tests() {
 
 
 									window.ActiveXObject = oOriginalActiveXObject;
-									sap.ui.Device.browser.internet_explorer = bIsIE;
+									sap.ui.Device.browser.internet_explorer = sap.ui.Device.browser.msie = bIsIE;
 
 									// Clean up
 									oModel.destroy();

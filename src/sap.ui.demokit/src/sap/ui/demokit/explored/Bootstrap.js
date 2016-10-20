@@ -29,21 +29,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ComponentContainer', 'sap/m/She
 			var aCategoryWhiteList = [
 				"Action",
 				"Application",
-				"Container",
-				"Display",
 				"Chart",
-				"Mini Chart",
+				"Container",
+				"Data Binding",
+				"Data Visualization",
+				"Display",
 				"Layout",
 				"List",
+				"Map",
+				"Mini Chart",
 				"Popup",
-				"Tile",
-				"User Input",
+				"Routing",
 				"Testing",
 				"Theming",
+				"Tile",
 				"Tutorial",
-				"Routing",
-				"Data Binding",
-				"Map"
+				"User Input"
 			];
 			var afilterProps = [ "namespace", "since", "category"]; // content density are set manually
 			var oFilterSets = {

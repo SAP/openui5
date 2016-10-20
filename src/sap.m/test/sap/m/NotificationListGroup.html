@@ -103,7 +103,10 @@
 				listItem,
 				listItem2,
 				listItem3
-			]
+			],
+			onCollapse: function (evt) {
+				sap.m.MessageToast.show('Collapse event fired');
+			}
 		});
 
 		var singleItemGroup = new sap.m.NotificationListGroup({

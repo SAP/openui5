@@ -1,0 +1,120 @@
+{
+	"tiles": {
+		"expanded": [
+			{
+				"title": "Customer Confidence",
+				"subtitle": "CRM",
+				"footer": "",
+				"kpivalue": 97,
+				"scale": "%",
+				"color": "Good",
+				"trend": "Up"
+			},
+			{
+				"title": "Customer Complaints",
+				"subtitle": "CRM",
+				"footer": "In the last week",
+				"kpivalue": 3,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Down",
+				"state": "Loading"
+			},
+			{
+				"title": "Business Decisions",
+				"subtitle": "Commitments",
+				"footer": "Up for decision",
+				"kpivalue": 5,
+				"scale": "",
+				"color": "Neutral",
+				"trend": "None"
+			},
+			{
+				"title": "Manage Invoices",
+				"subtitle": "",
+				"footer": "Processed this week",
+				"kpivalue": 200,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Up"
+			},
+			{
+				"title": "Manage Expenses",
+				"subtitle": "Premises",
+				"footer": "",
+				"kpivalue": 500,
+				"scale": "G",
+				"color": "Error",
+				"trend": "Up",
+				"state": "Disabled"
+			},
+			{
+				"title": "Manage Employees",
+				"subtitle": "Performance",
+				"footer": "Success Stories",
+				"kpivalue": 42,
+				"scale": "",
+				"color": "Good",
+				"trend": "Up"
+			}
+		],
+		"collapsed": [
+			{
+				"title": "Manage Products App",
+				"subtitle": "Outbound",
+				"footer": "",
+				"kpivalue": 2,
+				"scale": "",
+				"color": "Good",
+				"trend": "None"
+			},
+			{
+				"title": "Manage Products App",
+				"subtitle": "Inbound",
+				"footer": "",
+				"kpivalue": 12,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Down"
+			},
+			{
+				"title": "Manage super important business data that needs to be approved as fast as possible using this super handy long tile",
+				"subtitle": "Mobile Application with useful KPI data",
+				"footer": "",
+				"kpivalue": 12,
+				"scale": "",
+				"color": "Critical",
+				"trend": "Down"
+			},
+			{
+				"title": "Manage Invoices",
+				"subtitle": "Approval Needed",
+				"footer": "",
+				"kpivalue": 1,
+				"scale": "k",
+				"color": "Critical",
+				"trend": "Down"
+			},
+			{
+				"title": "Manage Assets",
+				"subtitle": "",
+				"footer": "",
+				"kpivalue": 500,
+				"scale": "",
+				"color": "Error",
+				"trend": "Up",
+				"state": "Failed"
+			},
+			{
+				"title": "Look at my horse",
+				"subtitle": "My horse is amazing",
+				"footer": "",
+				"kpivalue": 1,
+				"scale": "MM",
+				"color": "Good",
+				"trend": "Down",
+				"state": "Disabled"
+			}
+		]
+	}
+}

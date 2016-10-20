@@ -104,7 +104,6 @@
 		}),
 		columns : oData.cols.map(function(colname) {
 			return new sap.m.Column("id" + colname, {
-				caption : colname,
 				header : new sap.m.Label({
 					text : colname
 				})
@@ -150,7 +149,7 @@
 	});
 
 	var app = new sap.m.App("myApp", {
-		initPage : "myFirstPage"
+		initialPage : "myFirstPage"
 	});
 
 	app.addPage(page).placeAt("content");

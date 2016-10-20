@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData"><edmx:Reference
-	Uri="https://ldai2uia.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+	Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
 	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"/>
 	<edmx:DataServices m:DataServiceVersion="2.0">
 		<Schema Namespace="COLLE" sap:schema-version="1" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -647,8 +647,8 @@
 				<Annotation Qualifier="V_DURABLE_LOCK_REACQUIRE" Term="com.sap.vocabularies.Common.v1.SideEffects">
 					<Record><PropertyValue EnumMember="ValidationMessage" Property="EffectTypes"/></Record>
 				</Annotation>
-			</Annotations><atom:link href="https://ldai2uia.wdf.sap.corp:44300/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="self"
-				xmlns:atom="http://www.w3.org/2005/Atom"/><atom:link href="https://ldai2uia.wdf.sap.corp:44300/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="latest-version"
+			</Annotations><atom:link href="/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="self"
+				xmlns:atom="http://www.w3.org/2005/Atom"/><atom:link href="/sap/opu/odata/sap/S_PROTOTYPE_MDS_SRV/$metadata" rel="latest-version"
 				xmlns:atom="http://www.w3.org/2005/Atom"/></Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

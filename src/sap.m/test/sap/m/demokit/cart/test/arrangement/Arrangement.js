@@ -5,10 +5,6 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 			return this.iStartMyAppInAFrame('../index.html?sap-ui-language=en' + sAdditionalUrlParameters);
 		},
 
-		iStartMyAppSafeForLaterActivated: function () {
-			return this.iStartMyApp("&safeForLater=true")
-		},
-
 		iStartMyComponent : function () {
 			return this.iStartMyUIComponent({
 				componentConfig: {

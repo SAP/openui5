@@ -1429,7 +1429,7 @@
 			this.sut.removeAllAggregation('sortItems');
 			this.sut.addGroupItem(new sap.m.TabStripItem({
 				key: 'test1',
-				value: 'test1'
+				text: 'test1'
 			}));
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);
@@ -1447,7 +1447,7 @@
 			this.sut.removeAllAggregation('groupItems');
 			this.sut.addFilterItem(new sap.m.TabStripItem({
 				key: 'test2',
-				value: 'test2'
+				text: 'test2'
 			}));
 			this.sut.openBy(this.oOpeningButton);
 			this.clock.tick(1000);

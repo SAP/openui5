@@ -15,16 +15,12 @@
 <script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.ui.unified"
-	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../../resources/sap-ui-core.js"></script>
+	
+<script src="Settings.js"></script>
 
 <script type="text/javascript">
-
-	var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-newtablekeyboard');
-	if (sKeyboard === "true") {
-		jQuery.sap.require("sap.ui.table.TableKeyboardExtension");
-		sap.ui.table.TableKeyboardExtension._enableNewDelegate();
-	}
 
 	// TABLE SETTINGS
 	var oDialog = new sap.ui.commons.Dialog({
@@ -248,37 +244,7 @@
     });
 
     // TABLE TEST DATA
-	var aData = [
-   		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR"},
-   		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-01", currency: "EUR"},
-   		{lastName: "Schutt", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-01-01", currency: "USD"},
-   		{lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-01", currency: "USD"},
-   		{lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR"},
-   		{lastName: "Zar", name: "Lou", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 1, money: 123, birthday: "1965-01-01", currency: "EUR"},
-   		{lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 678.45, birthday: "1978-01-01", currency: "DEM"},
-   		{lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 123.45, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 678.90, birthday: "1968-01-01", currency: "JPY"},
-   		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 4, money: 836.4, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Barr", name: "Sandy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 9.3, birthday: "1968-01-01", currency: "USD"},
-   		{lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 1, money: 6344.21, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-01-01", currency: "JPY"},
-   		{lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD"},
-   		{lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR"},
-   		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR"}
-   	];
-
-	var aOrgData = jQuery.extend(true, [], aData);
-	for (var i = 0; i < 9; i++) {
-		aData = aData.concat(jQuery.extend(true, [], aOrgData));
-	}
-
-	for (var i = 0, l = aData.length; i < l; i++) {
-		aData[i].lastName += " - " + i;
-	}
+	var aData = TABLESETTINGS.listTestData;
 	aData[100].lastName = "Multi\nLine";
 
 	var oTable = new sap.ui.table.Table("table", {
@@ -443,7 +409,7 @@
 </script>
 </head>
 <body class="sapUiBody" role="application">
-	<h1 id="header">Test Page for <code>sap.ui.table.Table</code></h1>
+	<h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.ui.commons</code> library</h1>
 	<div id="content"></div>
 	<p>
 </body>

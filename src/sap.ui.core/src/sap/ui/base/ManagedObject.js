@@ -401,6 +401,7 @@ sap.ui.define([
 
 			// data binding
 			this.oModels = {};
+			this.aPropagationListeners = [];
 			this.oBindingContexts = {};
 			this.mElementBindingContexts = {};
 			this.mBindingInfos = {};
@@ -1788,7 +1789,7 @@ sap.ui.define([
 	 *
 	 * The removed object is not destroyed nor is it marked as changed.
 	 *
-	 * If the given object is found in the aggreation, it is removed, it's parent relationship
+	 * If the given object is found in the aggregation, it is removed, it's parent relationship
 	 * is unset and this ManagedObject is marked as changed. The removed object is returned as
 	 * result of this method. If the object could not be found, <code>undefined</code> is returned.
 	 *
@@ -2165,13 +2166,13 @@ sap.ui.define([
 
 		if (oPropagatedProperties !== this.oPropagatedProperties) {
 			this.oPropagatedProperties = oPropagatedProperties;
-
 			// update bindings
 			if (this.hasModel()) {
 				this.updateBindings(true, null); // TODO could be restricted to models that changed
 				this.updateBindingContext(false, undefined, true);
 				this.propagateProperties(true);
 			}
+			this._callPropagationListener();
 			this.fireModelContextChange();
 		}
 
@@ -3532,7 +3533,7 @@ sap.ui.define([
 	 *
 	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
 	 *
-	 * @param {Object} oContext the new binding context for this object
+	 * @param {sap.ui.model.Context} oContext the new binding context for this object
 	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
@@ -3540,11 +3541,6 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
-		var oModel = this.getModel(sModelName);
-		if (oModel && oContext && oModel !== oContext.getModel()) {
-			jQuery.sap.log.fatal("BindingContext type does not match model type and can't be set");
-			return this;
-		}
 		var oOldContext = this.oBindingContexts[sModelName];
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
@@ -3668,7 +3664,7 @@ sap.ui.define([
 	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
 	 *
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
-	 * @return {sap.ui.model.Context} oContext The binding context of this object
+	 * @return {sap.ui.model.Context} The binding context of this object
 	 * @public
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
@@ -3750,18 +3746,85 @@ sap.ui.define([
 		return this;
 	};
 
-	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}};
+	/**
+	 * Adds a listener function that will be called during each propagation step on every control
+	 * @param {function} listener function
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @private
+	 * @sap-restricted sap.ui.fl
+	 */
+	ManagedObject.prototype.addPropagationListener = function(listener) {
+		jQuery.sap.assert(typeof listener === 'function', "listener must be a function");
+		this.aPropagationListeners.push(listener);
+		this.propagateProperties(false);
+		// call Listener on current object
+		this._callPropagationListener(listener);
+		return this;
+	};
+
+	/**
+	 * remove a propagation listener
+	 * @param {function} listener function
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @private
+	 * @sap-restricted sap.ui.fl
+	 */
+	ManagedObject.prototype.removePropagationListener = function(listener) {
+		jQuery.sap.assert(typeof listener === 'function', "listener must be a function");
+		var aListeners = this.aPropagationListeners;
+		var i = aListeners.indexOf(listener);
+		if ( i >= 0 ) {
+		  aListeners.splice(i,1);
+		  this.propagateProperties(false);
+		}
+		return this;
+	};
+
+	/**
+	 * get propagation listeners
+	 * @returns {array} aPropagationListeners Returns registered propagationListeners
+	 * @private
+	 */
+	ManagedObject.prototype._getPropagationListeners = function() {
+		return this.oPropagatedProperties.aPropagationListeners.concat(this.aPropagationListeners);
+	};
+
+	/**
+	 * Calls a registered listener during propagation
+	 *
+	 * @param {string|boolean} 	sName If set true all listeners will be called.
+	 * 							If a name is specified only the listener for this name is called
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @private
+	 */
+	ManagedObject.prototype._callPropagationListener = function(listener) {
+		var aListeners;
+		if (listener) {
+			listener(this);
+		} else {
+			aListeners = this._getPropagationListeners();
+			for (var i = 0; i < aListeners.length; i++) {
+				listener = aListeners[i];
+				listener(this);
+			}
+		}
+		return this;
+	};
+
+	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}, aPropagationListeners:[]};
 
 	/**
 	 * Propagate Properties (models and bindingContext) to aggregated objects.
-	 * @param {string|undefined|true} sName when <code>true</code>, all bindings are updated.
-	 *           Otherwise only those for the given model name (undefined == name of default model)
+	 * @param {string|undefined|true|false} sName when <code>true</code>, all bindings are updated,
+	 * 		when <code>false</code> only propagationListeners are update.
+	 * 		Otherwise only those for the given model name (undefined == name of default model)
 	 *
 	 * @private
 	 */
 	ManagedObject.prototype.propagateProperties = function(vName) {
 		var oProperties = this._getPropertiesToPropagate(),
 			bUpdateAll = vName === true, // update all bindings when no model name parameter has been specified
+			bUpdateListener = vName === false, //update only propagation listeners
 			sName = bUpdateAll ? undefined : vName,
 			sAggregationName, oAggregation, i;
 
@@ -3771,28 +3834,36 @@ sap.ui.define([
 			}
 			oAggregation = this.mAggregations[sAggregationName];
 			if (oAggregation instanceof ManagedObject) {
-				this._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName);
+				this._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName, bUpdateListener);
 			} else if (oAggregation instanceof Array) {
 				for (i = 0; i < oAggregation.length; i++) {
 					if (oAggregation[i] instanceof ManagedObject) {
-						this._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName);
+						this._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName, bUpdateListener);
 					}
 				}
 			}
 		}
 	};
 
-	ManagedObject.prototype._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName) {
+	ManagedObject.prototype._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName, bUpdateListener) {
 		if (!oProperties) {
 			oProperties = this._getPropertiesToPropagate();
 			bUpdateAll = vName === true;
+			bUpdateListener = vName === false;
 			sName = bUpdateAll ? undefined : vName;
 		}
 		if (oObject.oPropagatedProperties !== oProperties) {
 			oObject.oPropagatedProperties = oProperties;
-			oObject.updateBindings(bUpdateAll,sName);
-			oObject.updateBindingContext(false, sName, bUpdateAll);
+			// if propagation triggered by adding a listener no binding updates needed
+			if (bUpdateListener !== true) {
+				oObject.updateBindings(bUpdateAll,sName);
+				oObject.updateBindingContext(false, sName, bUpdateAll);
+			}
 			oObject.propagateProperties(vName);
+			// call listener only in add listener and setParent case
+			if (bUpdateListener || bUpdateAll) {
+				oObject._callPropagationListener();
+			}
 			oObject.fireModelContextChange();
 		}
 	};
@@ -3805,20 +3876,26 @@ sap.ui.define([
 	ManagedObject.prototype._getPropertiesToPropagate = function() {
 		var bNoOwnModels = jQuery.isEmptyObject(this.oModels),
 			bNoOwnContexts = jQuery.isEmptyObject(this.oBindingContexts),
+			bNoOwnListeners = this.aPropagationListeners.length === 0,
 			bNoOwnElementContexts = jQuery.isEmptyObject(this.mElementBindingContexts);
 
 		function merge(empty,o1,o2,o3) {
 			return empty ? o1 : jQuery.extend({}, o1, o2, o3);
 		}
 
-		if (bNoOwnContexts && bNoOwnModels && bNoOwnElementContexts) {
+		function concat(empty,a1,a2) {
+			return empty ? a1 : a1.concat(a2);
+		}
+
+		if (bNoOwnContexts && bNoOwnModels && bNoOwnElementContexts && bNoOwnListeners) {
 			//propagate the existing container
 			return this.oPropagatedProperties;
 		} else {
 			//merge propagated and own properties
 			return {
-					oModels : merge(bNoOwnModels, this.oPropagatedProperties.oModels, this.oModels),
-					oBindingContexts : merge((bNoOwnContexts && bNoOwnElementContexts), this.oPropagatedProperties.oBindingContexts, this.oBindingContexts, this.mElementBindingContexts)
+				oModels : merge(bNoOwnModels, this.oPropagatedProperties.oModels, this.oModels),
+				oBindingContexts : merge((bNoOwnContexts && bNoOwnElementContexts), this.oPropagatedProperties.oBindingContexts, this.oBindingContexts, this.mElementBindingContexts),
+				aPropagationListeners : concat(bNoOwnListeners, this.oPropagatedProperties.aPropagationListeners, this.aPropagationListeners)
 			};
 		}
 	};

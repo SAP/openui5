@@ -140,41 +140,38 @@ sap.ui.define([
 			oOpa5.emptyQueue().done(done);
 		});
 
-		// For IE 9 errors in frame are disabled see comment in OPA5.js
-		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
-			QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
-				// Arrange
-				jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
-				var $Frame = jQuery("#OpaFrame").on("load", function () {
-					var fnSpy = sinon.spy();
-					$Frame[0].contentWindow.onerror = fnSpy;
+		QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
+			// Arrange
+			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
+			var $Frame = jQuery("#OpaFrame").on("load", function () {
+				var fnSpy = sinon.spy();
+				$Frame[0].contentWindow.onerror = fnSpy;
 
-					// System under Test
-					var oOpa5 = new Opa5();
+				// System under Test
+				var oOpa5 = new Opa5();
 
-					oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-						// Act + Assert
-						var clock = sinon.useFakeTimers();
+				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+					// Act + Assert
+					var clock = sinon.useFakeTimers();
 
-						assert.throws(function () {
-							Opa5.getWindow().onerror("Errormessage", "Url", 31);
-							// throws the actual exception in a delay
-							clock.tick(0);
-						},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
+					assert.throws(function () {
+						Opa5.getWindow().onerror("Errormessage", "Url", 31);
+						// throws the actual exception in a delay
+						clock.tick(0);
+					},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
 
-						clock.restore();
-						assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
-					});
-
-					oOpa5.iTeardownMyAppFrame();
-
-					oOpa5.emptyQueue().done(function () {
-						QUnit.start();
-					});
+					clock.restore();
+					assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
 				});
 
+				oOpa5.iTeardownMyAppFrame();
+
+				oOpa5.emptyQueue().done(function () {
+					QUnit.start();
+				});
 			});
-		}
+
+		});
 
 		QUnit.module("IFrame navigation", {
 			beforeEach: function () {
@@ -523,12 +520,19 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		var iTestIndex = 0;
 		// In this module a site full of errors is launched and the error messages are checked
 		QUnit.module("Tests with errors");
 
 		function createMatcherForTestMessage (oOptions) {
+			var bIncreased = false;
 			return function () {
-				var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
+				// increase the test index once per matcher
+				if (!bIncreased) {
+					iTestIndex++;
+					bIncreased = true;
+				}
+				var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + iTestIndex + ")");
 				return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
 			}
 		}
@@ -543,7 +547,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 1,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -559,7 +562,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 2,
 					passed: true
 				}),
 				success: function ($Messages) {
@@ -569,7 +571,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 3,
 					passed: true
 				}),
 				success: function ($Messages) {
@@ -579,7 +580,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 4,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -592,7 +592,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 5,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -607,7 +606,21 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 6,
+					passed: false
+				}),
+				success: function ($Messages) {
+					var sOpaMessage = $Messages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "bad luck no button was found");
+					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
+					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.contains(sOpaMessage, "Callstack:");
+					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -634,7 +647,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 7,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -644,7 +656,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 8,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -654,7 +665,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 9,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -664,7 +674,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 10,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -674,7 +683,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 11,
 					passed: false
 				}),
 				success: function ($Messages) {
@@ -690,7 +698,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 12,
 					passed: false
 				}),
 				success: function (aMessages) {
@@ -702,7 +709,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 13,
 					passed: false
 				}),
 				success: function (aMessages) {
@@ -715,7 +721,6 @@ sap.ui.define([
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
-					testIndex: 14,
 					passed: false
 				}),
 				success: function (aMessages) {

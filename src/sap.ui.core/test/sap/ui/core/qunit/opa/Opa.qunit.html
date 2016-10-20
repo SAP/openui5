@@ -495,10 +495,6 @@ sap.ui.require([
 			return false;
 		}
 
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			return false;
-		}
-
 		//Incident 1580223677: IOS does not support stacktraces
 		if (Device.os.ios) {
 			return false;

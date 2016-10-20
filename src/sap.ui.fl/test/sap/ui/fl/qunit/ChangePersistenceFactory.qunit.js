@@ -65,12 +65,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		assert.strictEqual(firstlyRequestedChangePersistence, secondlyRequestedChangePersistence, "Retrieved ChangePersistence instances are equal");
 	});
 
-	QUnit.test("can register its manifest loaded event handler to the sap.ui.core.Component", function (assert) {
-		ChangePersistenceFactory.registerLoadComponentEventHandler();
-
-		assert.ok(sap.ui.core.Component._fnLoadComponentCallback, "the event handler was registered");
-	});
-
 	QUnit.test("onLoadComponent does nothing if no manifest was passed", function (assert) {
 
 		var sComponentName = "componentName";
@@ -114,13 +108,9 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -149,15 +139,11 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "notAnApplication"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "notAnApplication"
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -184,15 +170,12 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : null,
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -219,22 +202,21 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 				"requests": [
 					{
 						"name": "sap.ui.fl.changes",
-						"reference": sComponentName
+						"reference": sComponentName + ".Component"
 					}
 				]
 			}
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -251,7 +233,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		assert.equal(oChangePersistenceStub.callCount, 1, "changes were requested once");
 		var oGetChangePersistenceForComponentCall = oStubbedGetChangePersistence.getCall(0).args[0];
-		assert.equal(oGetChangePersistenceForComponentCall, sComponentName, "the component name was passed correct");
+		assert.equal(oGetChangePersistenceForComponentCall, sComponentName  + ".Component", "the component name was passed correct");
 		var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
 		assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
 		assert.equal(oGetChangesForComponentCall.cacheKey, "<NO CHANGES>", "no changes was the cache information");
@@ -275,15 +257,14 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"appVariantId": sAppVariantId
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -314,7 +295,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 				"requests": [
 					{
 						"name": "sap.ui.fl.changes",
-						"reference": sComponentName,
+						"reference": sComponentName + ".Component",
 						"cachebusterToken": sCacheKey
 					}
 				]
@@ -322,15 +303,14 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		};
 
 		var oManifest = {
-			"getEntry": function (sEntryKey) {
-				switch (sEntryKey) {
-					case "sap.app":
-						return {
-							"type": "application"
-						};
-					default:
-						throw new Error("wrong key requested");
-				}
+			"sap.app": {
+				"type": "application"
+			},
+			"sap.ui5" : {
+				"componentName": sComponentName
+			},
+			getEntry: function (key) {
+				return this[key];
 			}
 		};
 
@@ -341,7 +321,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		var oChangePersistence = new ChangePersistence(sComponentName);
 		var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-		var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
 
 		ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 
@@ -368,6 +348,104 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		assert.equal(oFlAsyncHint, oDeterminedFlAsyncHint, "the flHint was determined correct");
 		assert.equal(oMatcherSpy.callCount, 2, "the matcher was called twice");
+	});
+
+	QUnit.test("_onLoadComponent does nothing if the component is not of the type 'application'", function (assert) {
+
+		var oConfig = {
+			"name": "theComponentName"
+		};
+		var oManifest = {
+			"sap.app": {
+				"type": "component"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+		var oComponent = {};
+
+		var oGetChangePersistenceForComponentStub = this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent");
+
+		ChangePersistenceFactory._onLoadComponent(oConfig, oManifest, oComponent);
+
+		assert.equal(oGetChangePersistenceForComponentStub.callCount, 0, "no Change persistence was retrieved");
+	});
+
+	QUnit.test("_onLoadComponent requests mapped changes for a component of the type 'application'", function (assert) {
+
+		var oConfig = {
+			"name": "theComponentName"
+		};
+		var oManifest = {
+			"sap.app": {
+				"type": "application"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+		var oComponent = {};
+
+		var oMappedChangesPromise = Promise.resolve({});
+
+		var oChangePersistence = new ChangePersistence("theComponentName");
+		var oGetChangesForComponentStub = this.stub(oChangePersistence, "getChangesForComponent").returns(oMappedChangesPromise);
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+
+		ChangePersistenceFactory._onLoadComponent(oConfig, oManifest, oComponent);
+
+		assert.ok(oGetChangesForComponentStub.calledOnce, "changes were requested once");
+	});
+
+	QUnit.test("_getChangesForComponentAfterInstantiation does nothing if the component is not of the type 'application'", function (assert) {
+
+		var oConfig = {
+			"name": "theComponentName"
+		};
+		var oManifest = {
+			"sap.app": {
+				"type": "component"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+		var oComponent = {};
+
+		var oGetChangePersistenceForComponentStub = this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent");
+
+		ChangePersistenceFactory._getChangesForComponentAfterInstantiation(oConfig, oManifest, oComponent);
+
+		assert.equal(oGetChangePersistenceForComponentStub.callCount, 0, "no Change persistence was retrieved");
+	});
+
+	QUnit.test("_getChangesForComponentAfterInstantiation requests mapped changes for a component of the type 'application'", function (assert) {
+
+
+		var oConfig = {
+			"name": "theComponentName"
+		};
+		var oManifest = {
+			"sap.app": {
+				"type": "application"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+		var oComponent = {};
+
+		var oMappedChangesPromise = Promise.resolve({});
+
+		var oChangePersistence = new ChangePersistence("theComponentName");
+		var oGetChangesForComponentStub = this.stub(oChangePersistence, "getChangesMapForComponent").returns(oMappedChangesPromise);
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+
+		var oPromise = ChangePersistenceFactory._getChangesForComponentAfterInstantiation(oConfig, oManifest, oComponent);
+
+		assert.ok(oGetChangesForComponentStub.calledOnce, "changes were requested once");
+		assert.equal(oPromise, oMappedChangesPromise, "a promise for the changes was returned");
 	});
 
 }(sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.core.Control));

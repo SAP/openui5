@@ -30,8 +30,14 @@ sap.ui.define(function() {
 	};
 
 	Utils.prototype.checkParameterAndType = function(mParameters, sParameterName, sType) {
-		if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
-			throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
+		if (sType === "array") {
+			if (mParameters === undefined || mParameters[sParameterName] === undefined || !Array.isArray(mParameters[sParameterName])) {
+				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
+			}
+		} else {
+			if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
+				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
+			}
 		}
 	};
 

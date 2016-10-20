@@ -47,17 +47,17 @@
 /* Link in sap.ui.table.* tables */
 
 .sapUiTableCell .sapMLnk {
-	margin-top: 0.125rem;
+	vertical-align: middle;
 }
 
 .sapUiSizeCondensed .sapUiTableCell .sapMLnk {
-	margin-top: 0;
-	.sapUiCondensedTableCellContent; /* see shared.css */
+	line-height: 1.5rem;
 }
 
 /* Global focus offset */
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline-offset: -1px;
+	text-decoration: underline;
 }
 
 /* Link focus offset in sap.ui.table.* tables */

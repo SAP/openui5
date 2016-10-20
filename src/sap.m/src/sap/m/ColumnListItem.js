@@ -179,12 +179,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	// update the aria-selected for the cells
 	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $This) {
 		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);
-		$This.children().attr("aria-selected", bSelected);
 
 		// update popin as well
 		if (this.hasPopin()) {
 			this.$Popin().attr("aria-selected", bSelected);
-			this.$("subcell").attr("aria-selected", bSelected);
 		}
 	};
 

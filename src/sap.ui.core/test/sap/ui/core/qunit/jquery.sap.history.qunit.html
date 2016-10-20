@@ -19,7 +19,7 @@
 		<script language="javascript">
 		//This qunit test has been removed from the testsuite because it leads to a infinite loop in IE
 		//In order to cover this test on other platforms, we entered the following if-statement, checkign for IE.
- 		if(!sap.ui.Device.browser.internet_explorer){
+ 		if(!sap.ui.Device.browser.msie){
 			jQuery.sap.require("jquery.sap.history");
 			var sSuffix = "_skip",
 				rSkipRegex = new RegExp(sSuffix + "[0-9]*$"),

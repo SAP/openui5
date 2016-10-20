@@ -15,156 +15,16 @@
 <script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
-	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../../resources/sap-ui-core.js"></script>
+	
+<script src="Settings.js"></script>
 
 <script type="text/javascript">
 
-var oData = {
-	bing: {
-		root:{
-			name: "root",
-			description: "moep moep",
-			checked: false,
-			0: {
-				name: "Rock",
-				description: "Rockmusik",
-				checked: true,
-				0: { //children as object references
-					name: "Rock'n'Roll",
-					description: "late 1940s",
-					checked: true,
-					children: [ // Children inside an array
-						{
-							name: "Elvis Presley",
-							description: "*1935 - +1977",
-							checked: true
-						},
-						{
-							name: "Chuck Berry",
-							description: "*1926",
-							checked: true
-						}
-					],
-					"flup": { // mixed with arrays and objects
-							name: "Keith Richards",
-							description: "*1943",
-							checked: true
-						}
-				},
-				1: {
-					name: "Heavy Metal",
-					description: "late 1960s",
-					checked: true,
-					0: {
-						name: "Black Sabbath",
-						description: "founded 1968",
-						checked: true
-					},
-					1: {
-						name: "Judas Priest",
-						description: "founded 1969",
-						checked: true
-					}
-				},
-				2: {
-					name: "Grunge",
-					description: "Mid-1980s",
-					checked: true,
-					0: {
-						name: "Nirvana",
-						description: "1987",
-						checked: true
-					},
-					1: {
-						name: "Soundgarden",
-						description: "1984",
-						checked: true
-					},
-					2: {
-						name: "Alice in Chains",
-						description: "1987",
-						checked: true
-					}
-				}
-			},
-			1:{
-				name: "Hip-Hop",
-				description: "Hip-Hop",
-				checked: true,
-				0: {
-					name: "Old-School",
-					description: "Mid 1970s",
-					checked: true,
-					0: {
-						name: "The Sugarhill Gang",
-						description: "1973",
-						checked: true
-					},
-					1: {
-						name: "Grandmaster Flash and the Furious Five",
-						description: "1978",
-						checked: true
-					}
-				},
-				1: {
-					name: "Rap-Rock",
-					description: "early 1980s",
-					checked: true,
-					0: {
-						name: "Run-D.M.C.",
-						description: "1981 - 2002",
-						checked: true
-					},
-					1: {
-						name: "Beastie Boys",
-						description: "1981 - 2012",
-						checked: true
-					}
-				},
-				2: {
-					name: "Gangsta rap",
-					description: "mid 1980s",
-					checked: true,
-					0: {
-						name: "2Pac",
-						description: "1971 - 1996",
-						checked: true
-					},
-					1: {
-						name: "N.W.A",
-						description: "1986 - 1991, 1998 - 2002",
-						checked: true
-					}
-				}
-			},
-			2: {
-				name: "Swing/Big Band",
-				description: "1930s",
-				checked: true,
-				0: {
-					name: "Frank Sinatra",
-					description: "1915 - 1998",
-					checked: true
-				},
-				1: {
-					name: "Count Basie",
-					description: "1904 - 1984",
-					checked: true
-				}
-			},
-			3: {
-				name: "ZZZ",
-				description: "None",
-				checked: true
-			}
-		}
-	}
-};
-
 
 var oModel = new sap.ui.model.json.JSONModel();
-oModel.setData(oData);
+oModel.setData(TABLESETTINGS.treeTestData);
 
 var oTable = new sap.ui.table.TreeTable({
 	title: "TreeTable",
@@ -199,8 +59,8 @@ var oTable = new sap.ui.table.TreeTable({
 	}),
 	visibleRowCount: 20,
 	columns: [
-		new sap.ui.table.Column({label: "Name", template: "hello>name", filterProperty: "name", sortProperty: "name"}),
-		new sap.ui.table.Column({label: "Description", template: "hello>description", sortProperty: "description"})
+		new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name", sortProperty: "name"}),
+		new sap.ui.table.Column({label: "Description", template: "description", sortProperty: "description"})
 	],
 	selectionMode: sap.ui.table.SelectionMode.Single,
 	enableColumnReordering: true,
@@ -218,8 +78,8 @@ oTable.attachRowSelectionChange(function(oEvent) {
 			" - rowContext: " + oEvent.getParameter("rowContext"));
 });
 
-oTable.setModel(oModel, "hello");
-oTable.bindRows("hello>/bing/root");
+oTable.setModel(oModel);
+oTable.bindRows("/root");
 
 oTable.placeAt("content");
 
@@ -230,7 +90,7 @@ b = oTable.getBinding("rows");
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" role="application">
-<h1>Test Page for <code>sap.ui.table.TreeTable</code></h1>
+<h1>Test Page for <code>sap.ui.table.TreeTable</code> with <code>sap.ui.commons</code> library</h1>
 <p>
 <div id="content"></div>
 </body>

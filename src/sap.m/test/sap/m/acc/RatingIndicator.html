@@ -9,6 +9,74 @@
 			data-sap-ui-theme="sap_bluecrystal">
 	</script>
 	<script>
+
+//rating table
+		var data = {
+			tableData: [
+				{Name: "Garry", Rating: 0},
+				{Name: "John Smith", Rating: 1.5},
+				{Name: "Jane Smith", Rating: 4}]
+			};
+
+		var oTable = new sap.m.Table("items", {
+			columns: [
+				new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+				new sap.m.Column({header: new sap.m.Text({text: "Rating"})})
+			]
+		});
+
+		var template = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Label({
+					text: "{Name}"
+				}),
+				new sap.m.RatingIndicator({
+					enabled: false,
+					value: "{Rating}"
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(data);
+		oTable.setModel(oModel);
+		oTable.bindAggregation("items", {
+			path: "/tableData",
+			template: template,
+		});
+
+		// rating list
+		var oRatingList = new sap.m.List("ratingList", {
+			inset: true,
+			headerText: "Rating List",
+			items: [
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "Rate me now!",
+					content: new sap.m.RatingIndicator({
+						value: 1,
+						tooltip: "Rating"
+					})
+				}),
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "No, rate me!",
+					content: new sap.m.RatingIndicator({
+						value: 2.5,
+						tooltip: "Rating"
+					})
+				}),
+				new sap.m.InputListItem({
+					type: "Active",
+					label: "Or maybe rate me!",
+					content: new sap.m.RatingIndicator({
+						value: 5,
+						tooltip: "Rating"
+					})
+				})
+			]
+		});
+
 		var sInactiveRatingId = "inactiveRating",
 				sActiveRatingId = "activeRating",
 				oPage = new sap.m.Page("myPage", {
@@ -28,7 +96,11 @@
 									tooltip: "This is a tooltip"
 								})
 							]
-						})
+						}),
+						new sap.m.Label({text: 'Rating indicator in List:', labelFor: oRatingList}),
+						oRatingList,
+						new sap.m.Label({text: 'Rating indicator in Table:', labelFor: oTable}),
+						oTable
 					]
 				});
 

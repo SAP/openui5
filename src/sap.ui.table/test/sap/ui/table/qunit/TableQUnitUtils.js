@@ -11,7 +11,8 @@ sap.ui.core.Control.extend("TestControl", {
 			"alt" : "string",
 			"visible" : "boolean",
 			"tabbable" : "boolean",
-			"index" : "int" //Results in different behavior of the control in different columns
+			"index" : "int", //Results in different behavior of the control in different columns
+			"width" : "sap.ui.core.CSSSize" // Table sets "width" for the title text
 		}
 	},
 
@@ -54,9 +55,7 @@ sap.ui.core.Control.extend("TestInputControl", {
 sap.ui.table.TableHelper = {
 	createLabel: function(mConfig){ return new TestControl(mConfig); },
 	createTextView: function(mConfig){ return new TestControl(mConfig); },
-	createTextField: function(mConfig){ throw new Error("no TextField control available!"); },
-	createImage: function(mConfig){ return new TestControl(mConfig); },
-	addTableClass: function() { return "sapUiTableM"; },
+	addTableClass: function() { return "sapUiTableTest"; },
 	bFinal: true
 };
 
@@ -88,6 +87,7 @@ function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 		title: "TABLE_TITLE",
 		selectionMode: "Single",
 		visibleRowCount: 3,
+		groupHeaderProperty: aFields[0],
 		ariaLabelledBy: "ARIALABELLEDBY"
 	});
 

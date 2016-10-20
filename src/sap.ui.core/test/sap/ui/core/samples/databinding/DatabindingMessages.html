@@ -105,7 +105,14 @@
 		var oMP = new sap.m.MessagePopover({
 			items: {
 					path:"message>/",
-					template: new sap.m.MessagePopoverItem({description: "{message>description}", type: "{message>type}", title:"{message>message}"})
+					template: new sap.m.MessagePopoverItem({
+						description: "{message>description}",
+						type: "{message>type}",
+						title:"{message>message}",
+						subtitle: {
+							path: 'message>additionalText'
+						}
+					})
 			}
 		});
 

@@ -103,6 +103,14 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Determines whether the the user can switch between the expanded/collapsed states of the
+				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>. If set to
+				 * <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the application
+				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
+				 */
+				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
+
+				/**
 				 * Determines whether the footer is visible.
 				 */
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
@@ -248,6 +256,14 @@ sap.ui.define([
 		if (bPreserveHeaderStateOnScroll) {
 			this.setProperty("headerExpanded", true, true);
 		}
+
+		return vResult;
+	};
+
+	DynamicPage.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
+		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
+
+		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
 
 		return vResult;
 	};
@@ -789,20 +805,27 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
 		var oScrollBar,
-			bScrollBarNeeded;
+			bScrollBarNeeded,
+			bNeedUpdate;
 
 		if (!Device.system.desktop || !exists(this.$wrapper)) {
 			return;
 		}
 
-		bScrollBarNeeded = this._needsVerticalScrollBar();
 		oScrollBar = this._getScrollBar();
 		oScrollBar.setContentSize(this._measureScrollBarOffsetHeight() + this.$wrapper[0].scrollHeight + "px");
-		oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
-		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
+
+		bScrollBarNeeded = this._needsVerticalScrollBar();
+		bNeedUpdate = this.bHasScrollbar !== bScrollBarNeeded;
+		if (bNeedUpdate) {
+			oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
+			this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
+			this.bHasScrollbar = bScrollBarNeeded;
+			jQuery.sap.delayedCall(0, this, this._updateFitContainer);
+		}
 
 		jQuery.sap.delayedCall(0, this, this._updateScrollBarOffset);
-		jQuery.sap.delayedCall(0, this, this._updateFitContainer);
+
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
@@ -1024,7 +1047,7 @@ sap.ui.define([
 			this._updateFitContainer(bNeedsVerticalScrollbar);
 		}
 
-		if (oEvent.size.height !== oEvent.oldSize.height && !this._bExpandingWithAClick) {
+		if (!this._bExpandingWithAClick) {
 			this._updateScrollBar();
 		}
 
@@ -1090,6 +1113,16 @@ sap.ui.define([
 
 		this.allowCustomScroll = true;
 		this.$wrapper.scrollTop(this._getScrollBar().getScrollPosition());
+	};
+
+	/**
+	 * Handles the title press event and prevents the collapse/expand, if necessary
+	 * @private
+	 */
+	DynamicPage.prototype._onTitlePress = function () {
+		if (this.getToggleHeaderOnTitleClick()) {
+			this._titleExpandCollapseWhenAllowed();
+		}
 	};
 
 	/**
@@ -1232,7 +1265,7 @@ sap.ui.define([
 		var oTitle = this.getTitle();
 
 		if (exists(oTitle) && !this._bAlreadyAttachedTitlePressHandler) {
-			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_PRESS, this._titleExpandCollapseWhenAllowed, this);
+			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_PRESS, this._onTitlePress, this);
 			this._bAlreadyAttachedTitlePressHandler = true;
 		}
 	};

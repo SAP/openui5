@@ -429,7 +429,7 @@
 		},
 		{
 			"control": "sap.m.TimePicker",
-			"url": "../TimePicker.html",
+			"url": "TimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -441,11 +441,6 @@
 			"control": "sap.m.TextArea",
 			"url": "../TextArea.html",
 			"appComponent": "CA-UI5-TBL"
-		},
-		{
-			"control": "sap.m.Token",
-			"url": "../Token.html",
-			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.Tokenizer",

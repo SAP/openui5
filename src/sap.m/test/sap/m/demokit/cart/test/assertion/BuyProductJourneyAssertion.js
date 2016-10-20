@@ -79,9 +79,23 @@ sap.ui.define([
 						return oList.getItems().length === 0;
 					},
 					success : function (oList) {
-						Opa5.assert.strictEqual(oList.getItems().length, 0, "The cart was empty after shopping");
+						Opa5.assert.strictEqual(oList.getItems().length, 0, "The cart was empty");
 					},
 					errorMessage : "The cart still has entries"
+				});
+			},
+
+			iShouldSeeAnEmptySaveForLaterList : function () {
+				return this.waitFor({
+					viewName : "Cart",
+					id : "saveForLaterList",
+					check : function (oList) {
+						return oList.getItems().length === 0;
+					},
+					success : function (oList) {
+						Opa5.assert.strictEqual(oList.getItems().length, 0, "The savelist was empty");
+					},
+					errorMessage : "The savelist still has entries"
 				});
 			},
 

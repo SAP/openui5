@@ -62,7 +62,6 @@
 						return [this.oButton];
 					}.bind(this);
 					this.mSettings = {
-							stashedAlias: "alias",
 							sParentId: "parent",
 							sParentAggregationName: "content",
 							fnCreate: this.create
@@ -207,7 +206,7 @@
 		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
 			<Panel id="Panel">
 				<content>
-					<Button id="StashedButton" stashed="true" stashedAlias="a button"/>
+					<Button id="StashedButton" stashed="true"/>
 					<Button id="Button"/>
 				</content>
 			</Panel>

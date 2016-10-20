@@ -119,7 +119,7 @@
 			});
 
 			var app = new sap.m.App("myApp", {
-				initPage: "myFirstPage"
+				initialPage: "myFirstPage"
 			});
 
 			app.addPage(page).placeAt("content");
@@ -532,6 +532,43 @@
 				ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Dialog with contentHeight set should have class sapMDialogStretchContent");
 
 				oDialog.destroy();
+			});
+
+			test("set escapeHandler property", function (assert) {
+				assert.expect(2);
+
+				var done = assert.async();
+				// arrange
+				var escapeHandlerFunction = function (oPromise) {
+					oPromise.resolve();
+				}.bind(this),
+
+				fnEscapeHandlerFunctionSpy = this.spy(escapeHandlerFunction),
+
+				oDialog = new sap.m.Dialog('escapeDialog', {
+					escapeHandler: fnEscapeHandlerFunctionSpy,
+					afterClose: function () {
+						assert.strictEqual(oDialog.isOpen(), false, 'Dialog should be closed.');
+
+						oDialog.destroy();
+						oDialog = null;
+
+						done();
+						done = null;
+					}
+				});
+
+				// act
+				oDialog.open();
+				this.clock.tick(250);
+				sap.ui.getCore().applyChanges();
+
+				qutils.triggerKeydown(oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				this.clock.tick(250);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.strictEqual(fnEscapeHandlerFunctionSpy.callCount, 1, 'escapeHandler function should be called');
 			});
 
 			test("beginButton, endButton, buttons on desktop or tablet", function () {

@@ -124,16 +124,23 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 
 ### Creating Classes
 
--   Instance fields should be initialized and described in the constructor function: `this._bReady = false; // ready to handle requests`
--   Instance methods are defined as members of the prototype of the constructor function: `MyClass.prototype.doSomething = function(){...`
--   Static members (fields and functions) are defined as members of the constructor function object itself: `MyClass.doSomething = function(){...`
--   Private members should have a name starting with an underscore: `this._bFinalized`
+| Implementation | Description |
+|-------------|----------------|
+| `this.bReady = false;`| Instance fields (members) should be initialized and described in the constructor function. If necessary
+ remove them again in <code>MyClass.prototype.exit = function() { delete this.bReady; }</code> to prevent memory leaks |
+| `this._bFinalized` | Private members should have a name starting with an underscore |
+| `MyClass.prototype.doSomething = function(){...}` | Instance methods are defined as members of the prototype of the constructor function |
+| `MyClass.doSomething = function(){...}` | Static members (fields and functions) are defined as members of the constructor function object itself |
+| <code>MyClass.prototype.isOpen = function() { return true; }</code> | Members that return a Boolean value should be prefixed with `is`. An exception are Control properties for Boolean values. The Getters are prefixed with `get`.  |
+| <code>MyClass.prototype.hasModel = function() { return !!this._oModel; }</code> | Members that check the content of an array, map, or object and return a Boolean value should be prefixed with `has` |
+| <code>MyClass.prototype._onMetadataLoaded = function() {...}</code> | Members that are attached to an event and thus are used as event listeners should be prefixed with `on`. Since event listeners usually are used in a private manner they should be prefixed with a <code>_</code> as well. |
+| <code>MyClass.prototype.metadataLoaded = function() { return new Promise({...}); }</code> | Members that return a <code>Promise</code> should be named with a verbal phrase in past tense that states what they do |
+| <code>MyClass.prototype.setSomething = function() {... return this;}</code> | API methods with no return value should return `this` to enable method chaining |
+| <code>SuperClass.extend(…)</code> | Subclasses should use this way to extend a class<br>If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap.ui.base.Object` |
+| `SuperClass.apply(this, arguments);` | Subclasses have to call (or apply) their parent's constructor |
+
 -   Constructor + methods + statics are combined in a single JS source file named and located after the qualified name of the class (precondition for the class loading)
--   API methods with no return value should return "this" to enable method chaining
 -   Static classes do not have a constructor but an object literal. There is no pattern for inheritance of such classes. If inheritance is needed, use a normal class and create a singleton in the class.
--   Subclasses should use SuperClass.extend(…)
-    -   If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap.ui.base.Object`
--   Subclasses call (or apply) the constructor of their base class: `SuperClass.apply(this, arguments);`
 
 See the [example for creating a class (with documentation)](guidelines/classexample.md).
 
@@ -256,6 +263,9 @@ UI5 Control Development Guidelines
     -   If no suitable parameter exists, derive the color by calculation from a suitable parameter
 -   Do not add parameters to the public API (using annotations) without sufficient clarification with designers and Product Owners
 -   You can (but do not need to) create your own internal control-specific parameters. If you do, also prefix their name with your control name (e.g. `@sapUiBtnDisabledText`).
+-   When defining URLs as parameters use the proper `url()` format: ```@sapUiMyUrl: url(./path/to/img.png)```
+    -   Do **NOT** use escaped strings (`~`): ~~@sapUiMyUrl: ~"path/to/img.png"~~
+    -   Do **NOT** use absolute urls: ~~@sapUiMyUrl: url(/absolute/path/to/img.png)~~
 
 Product Standards / Acceptance Criteria
 ---------------------------------------

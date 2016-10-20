@@ -301,6 +301,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, oDomRefs.rowScrollPart, oDomRefs.rowSelector, oDomRefs.rowFixedPart, false, false, -1, $TreeIcon);
 		},
 
+		/**
+		 * Updates the dom of the rows of the given table.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @see TableGrouping.updateTableRowForGrouping
+		 * @see TableGrouping.cleanupTableRowForGrouping
+		 * @private
+		 */
+		updateGroups: function(oTable) {
+			if (TableGrouping.isGroupMode(oTable) || TableGrouping.isTreeMode(oTable)) {
+				var oBinding = oTable.getBinding("rows"),
+					oRowBindingInfo = oTable.getBindingInfo("rows"),
+					aRows = oTable.getRows(),
+					iCount = aRows.length;
+
+				if (oBinding) {
+					var oRowGroupInfo;
+
+					for (var iRow = 0; iRow < iCount; iRow++) {
+						oRowGroupInfo = TableGrouping._getRowGroupInfo(oTable, aRows[iRow], oBinding, oRowBindingInfo);
+						TableGrouping.updateTableRowForGrouping(oTable, aRows[iRow], oRowGroupInfo.isHeader, oRowGroupInfo.expanded,
+							oRowGroupInfo.hidden, false, oRowGroupInfo.level, oRowGroupInfo.title);
+					}
+
+				} else {
+					for (var iRow = 0; iRow < iCount; iRow++) {
+						TableGrouping.cleanupTableRowForGrouping(oTable, aRows[iRow]);
+					}
+				}
+			}
+		},
+
+		/**
+		 * Updates the dom of the rows of the given table.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Row} oRow Instance of the row
+		 * @param {object} oRowBinding the binding object of the rows aggregation
+		 * @param {object} oRowBindingInfo the binding info object of the rows aggregation
+		 * @return {object} the group information for the given row
+		 * @private
+		 */
+		_getRowGroupInfo: function(oTable, oRow, oRowBinding, oRowBindingInfo) {
+			var oRowGroupInfo = {
+				isHeader: false,
+				expanded: false,
+				hidden: false,
+				title: "",
+				level: 0
+			};
+
+			if (oTable.getGroupHeaderProperty) { //TreeTable
+				oRowGroupInfo.isHeader = oRow._bHasChildren;
+				oRowGroupInfo.expanded = oRow._bIsExpanded;
+				oRowGroupInfo.hidden = oRowGroupInfo.isHeader;
+				oRowGroupInfo.level = oRow._iLevel;
+
+				var sHeaderProp = oTable.getGroupHeaderProperty();
+
+				if (TableGrouping.isGroupMode(oTable) && sHeaderProp) {
+					var sModelName = oRowBindingInfo && oRowBindingInfo.model;
+					oRowGroupInfo.title = oTable.getModel(sModelName).getProperty(sHeaderProp, oRow.getBindingContext(sModelName));
+				}
+			} else { //Table
+				var iRowIndex = oRow.getIndex();
+				oRowGroupInfo.isHeader = !!oRowBinding.isGroupHeader(iRowIndex);
+				oRowGroupInfo.level = oRowGroupInfo.isHeader ? 0 : 1;
+
+				if (oRowGroupInfo.isHeader) {
+					oRowGroupInfo.expanded = !!oRowBinding.isExpanded(iRowIndex);
+					oRowGroupInfo.hidden = true;
+					oRowGroupInfo.title = oRowBinding.getTitle(iRowIndex);
+				}
+			}
+
+			return oRowGroupInfo;
+		},
 
 		/*
 		 * EXPERIMENTAL Grouping Feature of sap.ui.table.Table:

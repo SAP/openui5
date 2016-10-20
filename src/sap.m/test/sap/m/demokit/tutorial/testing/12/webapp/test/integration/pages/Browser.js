@@ -11,7 +11,7 @@ sap.ui.require([
 				actions: {
 					iPressOnTheForwardButton: function () {
 						return this.waitFor({
-							success: function () {
+							actions: function () {
 								Opa5.getWindow().history.forward();
 							}
 						});

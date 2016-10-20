@@ -9,7 +9,7 @@ sap.ui
 		function(jQuery, Device, ManagedObject, sinon) {
 			"use strict";
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we

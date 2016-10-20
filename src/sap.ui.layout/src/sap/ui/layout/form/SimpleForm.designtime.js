@@ -31,12 +31,63 @@ sap.ui.define([], function() {
 	};
 
 	return {
+		name : function (oElement){
+			var sType = oElement.getMetadata().getName();
+			if (sType === "sap.ui.layout.form.SimpleForm") {
+				return {
+					singular : "GROUP_CONTROL_NAME",
+					plural : "GROUP_CONTROL_NAME_PLURAL"
+				};
+			} else if (sType === "sap.ui.layout.form.FormContainer"){
+				return {
+					singular : "FIELD_CONTROL_NAME",
+					plural : "FIELD_CONTROL_NAME_PLURAL"
+				};
+			}
+		},
 		aggregations : {
 			content : {
 				ignore : true
 			},
 			form : {
+				getIndex : function(oSimpleForm, oFormContainer) {
+					var iIndex = 0;
+					var aContent = oSimpleForm.getContent();
+
+					if (oSimpleForm.getMetadata().getName() === "sap.ui.layout.form.SimpleForm" && !oFormContainer) {
+						iIndex = aContent.length;
+					} else if (oFormContainer && oFormContainer.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+						var oTitle = oFormContainer.getTitle();
+						if (oTitle !== null) {
+							var iTitleIndex = aContent.indexOf(oTitle);
+							aContent.some(function(oField, index) {
+								if (oField instanceof sap.ui.core.Title && index > iTitleIndex) {
+									iIndex = index;
+									return true;
+								}
+							});
+							if (iIndex === 0) {
+								iIndex = aContent.length;
+							}
+						}
+					}
+					return iIndex;
+				},
 				ignore : false,
+				childrenName : function (oElement){
+					var sType = oElement.getMetadata().getName();
+					if (sType === "sap.ui.layout.form.SimpleForm") {
+						return {
+							singular : "GROUP_CONTROL_NAME",
+							plural : "GROUP_CONTROL_NAME_PLURAL"
+						};
+					} else if (sType === "sap.ui.layout.form.FormContainer"){
+						return {
+							singular : "FIELD_CONTROL_NAME",
+							plural : "FIELD_CONTROL_NAME_PLURAL"
+						};
+					}
+				},
 				actions : {
 					move : function(oMovedElement){
 						var sType = oMovedElement.getMetadata().getName();
@@ -213,7 +264,7 @@ sap.ui.define([], function() {
 											return false;
 										}
 									}
-							        return true;
+									return true;
 								},
 								restoreState : function (oElement) {
 									oElement.destroy();
@@ -222,7 +273,7 @@ sap.ui.define([], function() {
 								getState: function (oElement) {
 								},
 								containerTitle : "GROUP_CONTROL_NAME",
-								mapToRelevantControlID : function(sNewControlID) {
+								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
 
@@ -255,7 +306,7 @@ sap.ui.define([], function() {
 									return iIndex;
 								}
 							};
-			            } else if (sType === "sap.ui.layout.form.FormContainer") {
+						} else if (sType === "sap.ui.layout.form.FormContainer") {
 							oCreateContainerMetadata = {
 								changeType : "addSimpleFormGroup",
 								isEnabled : function (oFormContainer) {
@@ -271,7 +322,7 @@ sap.ui.define([], function() {
 								getState: function (oElement) {
 								},
 								containerTitle : "GROUP_CONTROL_NAME",
-								mapToRelevantControlID : function(sNewControlID) {
+								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
 
@@ -301,26 +352,24 @@ sap.ui.define([], function() {
 									return iIndex;
 								}
 							};
-			            }
+						}
 						return oCreateContainerMetadata;
 					},
-					reveal : function(oRemovedElement) {
-						var sType = oRemovedElement.getMetadata().getName();
-						if (sType === "sap.ui.layout.form.SimpleForm") {
+					reveal : function(oParentElement) {
+						var sType = oParentElement.getMetadata().getName();
+						if (sType === "sap.ui.layout.form.FormContainer") {
 							return {
 								changeType : "unhideSimpleFormField",
 								getInvisibleElements : function(oSimpleForm) {
-									var aInvisibleLabels = [];
+									var aElements = [];
 									var aContent = oSimpleForm.getContent();
 									aContent.forEach(function(oField) {
 										if (oField instanceof sap.m.Label && !oField.getDomRef()) {
-											aInvisibleLabels.push({
-												id : oField.getId(),
-												label : oField.getText()
-											});
+											//return FormElements
+											aElements.push(oField.getParent());
 										}
 									});
-									return aInvisibleLabels;
+									return aElements;
 								}
 							};
 						}

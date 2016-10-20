@@ -232,13 +232,13 @@
 			var oP13nSortPanel = new sap.m.P13nSortPanel({
 				items: [
 					new sap.m.P13nItem({
-						key: "c0",
+						columnKey: "c0",
 						text: "Name"
 					}), new sap.m.P13nItem({
-						key: "c1",
+						columnKey: "c1",
 						text: "Color"
 					}), new sap.m.P13nItem({
-						key: "c2",
+						columnKey: "c2",
 						text: "Number"
 					})
 				],
@@ -276,15 +276,15 @@
 			sap.ui.getCore().applyChanges();
 
 			oP13nSortPanel.addItem(new sap.m.P13nItem({
-				key: "c0",
+				columnKey: "c0",
 				text: "Name"
 			}));
 			oP13nSortPanel.addItem(new sap.m.P13nItem({
-				key: "c1",
+				columnKey: "c1",
 				text: "Color"
 			}));
 			oP13nSortPanel.addItem(new sap.m.P13nItem({
-				key: "c2",
+				columnKey: "c2",
 				text: "Number"
 			}));
 

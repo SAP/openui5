@@ -746,20 +746,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	FileUploader.prototype.setStyle = function(sStyle) {
 		this.setProperty("style", sStyle, true);
-		if (sStyle == "Transparent") {
-			if (this.oBrowse.setLite) {
-				this.oBrowse.setLite(true);
-			} else {
-				this.oBrowse.setType("Transparent");
-			}
-		} else {
-			if (this.oBrowse.setType) {
-				this.oBrowse.setType(sStyle);
-			} else {
-				if (sStyle == "Emphasized") {
-					sStyle = "Emph";
+		if (sStyle) {
+			if (sStyle == "Transparent") {
+				if (this.oBrowse.setLite) {
+					this.oBrowse.setLite(true);
+				} else {
+					this.oBrowse.setType("Transparent");
 				}
-				this.oBrowse.setStyle(sStyle);
+			} else {
+				if (this.oBrowse.setType) {
+					this.oBrowse.setType(sStyle);
+				} else {
+					if (sStyle == "Emphasized") {
+						sStyle = "Emph";
+					}
+					this.oBrowse.setStyle(sStyle);
+				}
 			}
 		}
 		return this;

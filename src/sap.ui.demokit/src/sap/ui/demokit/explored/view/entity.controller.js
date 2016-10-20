@@ -160,9 +160,10 @@ sap.ui.define([
 				this._sId = sNewId;
 
 			} else {
-
+				var oModel = this.getView().getModel();
+				oModel.refresh(true);
 				// get existing data model
-				oData = this.getView().getModel().getData();
+				oData = oModel.getData();
 			}
 
 			// handle unknown tab
@@ -273,7 +274,7 @@ sap.ui.define([
 				if (oDoc.properties.hasOwnProperty(key) && key.indexOf("_") !== 0) {
 					var oProp = oDoc.properties[key];
 					oProp.name = key;
-					oProp.deprecatedDescription = this._formatDeprecatedDescription(oProp.deprecation);
+					oProp.deprecatedDescription = this._formatDeprecatedSinceDescription(oProp.deprecation, oProp.deprecationSince);
 					oProp.deprecated = this._formatDeprecated(oProp.deprecation);
 					oProp.doc = this._wrapInSpanTag(oProp.doc);
 					oProp.typeText = this._formatTypeText(oProp.type);
@@ -435,7 +436,21 @@ sap.ui.define([
 		 * Adds the string "Deprecated" in front of the deprecation description.
 		 */
 		_formatDeprecatedDescription: function (sDeprecation) {
-			return (sDeprecation && sDeprecation.length > 0 ) ? (this._createDeprecatedMark(sDeprecation) + ": " + sDeprecation) : null;
+			return (this._isDeprecated(sDeprecation)) ? (this._createDeprecatedMark(sDeprecation) + ": " + sDeprecation) : null;
+		},
+
+		/**
+		 * Adds "Deprecated Since" release in front of the deprecation description.
+		 */
+		_formatDeprecatedSinceDescription: function (sDeprecation, sDeprecationSince) {
+			return (this._isDeprecated(sDeprecation)) ? (this._createDeprecatedSinceMark() + " " + sDeprecationSince + ": " + sDeprecation) : null;
+		},
+
+		/**
+		 * Checks if object is deprecated.
+		 */
+		_isDeprecated: function (sDeprecation) {
+			return (sDeprecation && sDeprecation.length > 0);
 		},
 
 		/**
@@ -469,7 +484,21 @@ sap.ui.define([
 		 * Converts the deprecated boolean to a human readable text
 		 */
 		_createDeprecatedMark: function (sDeprecated) {
-			return (sDeprecated) ? this.getView().getModel("i18n").getProperty("deprecated") : "";
+			return (sDeprecated) ? this._getI18nModel().getProperty("deprecated") : "";
+		},
+
+		/**
+		 * Fetch deprecatedSince translatable label
+		 */
+		_createDeprecatedSinceMark: function () {
+			return this._getI18nModel().getProperty("deprecatedSince");
+		},
+
+		/**
+		 * Get i18n model
+		 */
+		_getI18nModel: function () {
+			return this.getView().getModel("i18n");
 		},
 
 		/**

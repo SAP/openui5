@@ -6342,7 +6342,7 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 		"</feed>";
 
 		var sProductsCategory =
-		{"odata.metadata":"http://veui5infra.dhcp.wdf.sap.corp:8080/databinding/proxy/http/services.odata.org/Northwind/Northwind.svc/$metadata#Categories/@Element","CategoryID":1,"CategoryName":"Beverages","Description":"Soft drinks, coffees, teas, beers, and ales","Picture":""}
+		{"odata.metadata":"http://services.odata.org/Northwind/Northwind.svc/$metadata#Categories/@Element","CategoryID":1,"CategoryName":"Beverages","Description":"Soft drinks, coffees, teas, beers, and ales","Picture":""}
 		var sRegionsJSON = "{\n" +
 		"\"d\" : {\n" +
 		"\"results\": [\n" +
@@ -6473,12 +6473,12 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" +
 				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" +
 				"			Alias=\"Common\" />\n" +
 				"	</edmx:Reference>\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" +
 				"			Alias=\"UI\" />\n" +
 				"	</edmx:Reference>\n" +
@@ -7187,12 +7187,12 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" +
 				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" +
 				"			Alias=\"Common\" />\n" +
 				"	</edmx:Reference>\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" +
 				"			Alias=\"UI\" />\n" +
 				"	</edmx:Reference>\n" +
@@ -7317,13 +7317,13 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"				</Annotation>\n" +
 				"			</Annotations>\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"		</Schema>\n" +
 				"	</edmx:DataServices>\n" +
 				"</edmx:Edmx>";
@@ -7332,12 +7332,12 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" +
 				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" +
 				"			Alias=\"Common\" />\n" +
 				"	</edmx:Reference>\n" +
 				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" +
-				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
+				"		Uri=\"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" +
 				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" +
 				"			Alias=\"UI\" />\n" +
 				"	</edmx:Reference>\n" +
@@ -7462,13 +7462,13 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"				</Annotation>\n" +
 				"			</Annotations>\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" +
-				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
+				"				href=\"/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" +
 				"		</Schema>\n" +
 				"	</edmx:DataServices>\n" +
 				"</edmx:Edmx>";

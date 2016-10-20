@@ -83,6 +83,8 @@ QUnit.test("resize", function(assert) {
 
 QUnit.module("Column Resizing", {
 	setup: function() {
+		this.bOriginalSystemDesktop = sap.ui.Device.system.desktop;
+
 		jQuery.sap.byId("content").toggleClass("StablePosition", true);
 		createTables(true);
 		oTable.placeAt("content");
@@ -109,6 +111,8 @@ QUnit.module("Column Resizing", {
 		};
 	},
 	teardown: function () {
+		sap.ui.Device.system.desktop = this.bOriginalSystemDesktop;
+
 		destroyTables();
 		jQuery.sap.byId("content").toggleClass("StablePosition", false);
 		sap.ui.table.TablePointerExtension._fnCheckTextBasedControl = null;
@@ -138,7 +142,6 @@ QUnit.test("Moving Resizer", function(assert){
 });
 
 QUnit.asyncTest("Automatic Column Resize via Double Click", function(assert){
-	var bOrigSystemDesktop = sap.ui.Device.system.desktop;
 	sap.ui.Device.system.desktop = true;
 
 	function triggerDoubleClick(bExpect, iIndex) {
@@ -182,7 +185,6 @@ QUnit.asyncTest("Automatic Column Resize via Double Click", function(assert){
 				setTimeout(function() {
 					iWidth = oColumn.$().width();
 					assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-					sap.ui.Device.system.desktop = bOrigSystemDesktop; //Cleanup
 					start();
 				}, 50);
 			}, 50);
@@ -272,7 +274,8 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 
 	var $Resizer = oTable.$("rsz");
 	var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-	oTable._onColumnSelect(oColumn, oColumn.getDomRef(), true, false);
+	sap.ui.Device.system.desktop = false;
+	sap.ui.table.TableUtils.openContextMenu(oTable, oColumn.getDomRef(), false);
 	var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
 	var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
 	qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
@@ -310,16 +313,16 @@ QUnit.module("Mousedown", {
 QUnit.asyncTest("Columnheader", function(assert){
 	var oColumn = oTable._getVisibleColumns()[3];
 	var bColumnReorderingTriggered = false;
+	var oPointerExtension = oTable._getPointerExtension();
 
-	oTable._getPointerExtension().doReorderColumn = function() {
+	oPointerExtension.doReorderColumn = function() {
 		bColumnReorderingTriggered = true;
 	};
 
 	qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
-	assert.ok(!oColumn._bSkipOpen, "Menu not open -> no skipping needed");
-	assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+	assert.ok(oPointerExtension._bShowMenu, "Show Menu flag set to be used in onSelect later");
 	setTimeout(function(){
-		assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
+		assert.ok(!oPointerExtension._bShowMenu, "ShowMenu flag reset again");
 		assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
 
 		oColumn.getMenu().bOpen = true;
@@ -328,10 +331,8 @@ QUnit.asyncTest("Columnheader", function(assert){
 		bColumnReorderingTriggered = false;
 
 		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
-		assert.ok(oColumn._bSkipOpen, "Menu open -> skipping needed");
-		assert.ok(oTable._bShowMenu, "Show Menu flag set to be used in onSelect later");
+		assert.ok(!oPointerExtension._bShowMenu, "Menu was opened -> _bShowMenu is false");
 		setTimeout(function(){
-			assert.ok(!oTable._bShowMenu, "ShowMenu flag reset again");
 			assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
 			start();
 		}, 250);
@@ -735,6 +736,64 @@ QUnit.asyncTest("TreeTable - No Reordering via Drag&Drop of first column - decre
 			start();
 		}, 100);
 	}, 250);
+});
+
+
+
+QUnit.module("Row Hover Effect", {
+	setup: function() {
+		jQuery.sap.byId("content").toggleClass("StablePosition", true);
+		createTables(true);
+		oTable.placeAt("content");
+		oTreeTable.placeAt("content");
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function () {
+		destroyTables();
+		jQuery.sap.byId("content").toggleClass("StablePosition", false);
+	}
+});
+
+QUnit.test("RowHeader", function(assert) {
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+	getRowHeader(0).mouseover();
+	assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+	assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+	assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
+	getRowHeader(0).mouseout();
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+});
+
+QUnit.test("Fixed column area", function(assert) {
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+	getCell(0, 0).mouseover();
+	assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+	assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+	assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
+	getCell(0, 0).mouseout();
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+});
+
+QUnit.test("Scroll column area", function(assert) {
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+	getCell(0, 2).mouseover();
+	assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+	assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+	assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
+	getCell(0, 2).mouseout();
+	assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+	assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+	assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 });
 
 

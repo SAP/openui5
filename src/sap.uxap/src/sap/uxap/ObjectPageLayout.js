@@ -167,7 +167,7 @@ sap.ui.define([
 				 * The section that is selected by default on load.
 				 * @since 1.44.0
 				 */
-				initiallySelectedSection: {type: "sap.uxap.ObjectPageSection", multiple: false}
+				selectedSection: {type: "sap.uxap.ObjectPageSection", multiple: false}
 			},
 			defaultAggregation: "sections",
 			aggregations: {
@@ -367,7 +367,7 @@ sap.ui.define([
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {
 			// In case we are not lazy loaded make sure that we connect the blocks properly...
-			aToLoad = this.getUseIconTabBar() ? [this._oInitiallySelectedSection || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
+			aToLoad = this.getUseIconTabBar() ? [this._oSelectedSection || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
 
 		} else { //lazy loading, so connect first visible subsections
 			var aSectionBasesToLoad = this.getUseIconTabBar() ? this._grepCurrentTabSectionBases() : this._aSectionBases;
@@ -379,7 +379,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-			oSectionToLoad = this._oCurrentTabSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
+			oSectionToLoad = this._oCurrentTabSection || this._oSelectedSection || this._oFirstVisibleSection;
 
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
@@ -414,7 +414,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || this._oInitiallySelectedSection || this._oFirstVisibleSection;
+		var oSectionToSelect = this._oStoredSection || this._oSelectedSection || this._oFirstVisibleSection;
 
 		this._bDomReady = true;
 
@@ -423,8 +423,8 @@ sap.ui.define([
 		if (this.getUseIconTabBar() && oSectionToSelect) {
 			this._setSelectedSectionId(oSectionToSelect.getId());
 			this._setCurrentTabSection(oSectionToSelect);
-		} else if (this._oInitiallySelectedSection) {
-			this.scrollToSection(this._oInitiallySelectedSection.getId());
+		} else if (this._oSelectedSection) {
+			this.scrollToSection(this._oSelectedSection.getId());
 		}
 
 		this._initAnchorBarScroll();
@@ -665,7 +665,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
 			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			sInitiallySelectedSectionId = this.getInitiallySelectedSection();
+			sSelectedSectionId = this.getSelectedSection();
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -683,8 +683,8 @@ sap.ui.define([
 				return true;
 			}
 
-			if (oSection.getId() === sInitiallySelectedSectionId) {
-				this._oInitiallySelectedSection = oSection;
+			if (oSection.getId() === sSelectedSectionId) {
+				this._oSelectedSection = oSection;
 			}
 
 			this._registerSectionBaseInfo(oSection);
@@ -990,7 +990,7 @@ sap.ui.define([
 
 		this._oSectionInfo = {};
 		this._aSectionBases = [];
-		this._oInitiallySelectedSection = null;
+		this._oSelectedSection = null;
 	};
 
 	/**
@@ -2146,8 +2146,16 @@ sap.ui.define([
 		this._iStoredScrollPosition = this._oScroller.getScrollTop();
 		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
 
-		if (this.getSections().indexOf(this._oStoredSection) === -1) {
-			this._oStoredSection = null;
+		// If there was a stored section, check if it still exists and if not - set it to null
+		// Note: not only sections, but subsections should be checked as well - hence this._aSectionBases is used
+		if (this._oStoredSection) {
+			var aSectionBasesIds = this._aSectionBases.map(function (oSectionBase) {
+				return oSectionBase.getId();
+			});
+
+			if (aSectionBasesIds.indexOf(this._oStoredSection.getId()) === -1) {
+				this._oStoredSection = null;
+			}
 		}
 
 		this._oCurrentTabSection = null;

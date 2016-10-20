@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Device, core, URI) {
+sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
+	function(jQuery, core, URI) {
 	"use strict";
 
 		/**
@@ -456,14 +456,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 
 			var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/", sFontFace;
 
-			//In IE9 the relative paths in dynamically inserted styles in iframe are relative to the html page
-			//which contains the iframe, not the iframe itself.
-			//http://support.microsoft.com/kb/937266
-			//A conversion from relative path to absolute path is needed.
-			if (Device.browser.msie && Device.browser.version < 10 && /*check if it's in a iFrame*/window.self !== window.top) {
-				sFontPath = IconPool._calcAbsPath(sFontPath, window.location.href);
-			}
-
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +
 							"font-family: 'SAP-icons';" +
@@ -477,10 +469,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			jQuery('head').append('<style type="text/css">' + sFontFace + '</style>');
 
 			bFontFaceInserted = true;
-		};
-
-		IconPool._calcAbsPath = function(sRelative, sBase){
-			return URI(sRelative, URI(sBase).search("")).toString();
 		};
 
 		var mIconForMimeType = {

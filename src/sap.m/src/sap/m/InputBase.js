@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', './delegate/ValueStateMessage'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Popup, ValueStateMessage) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Popup, ValueStateMessage, MessageMixin) {
 	"use strict";
 
 	/**
@@ -128,6 +128,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	EnabledPropagator.call(InputBase.prototype);
 	IconPool.insertFontFaceStyle();
+	// apply the message mixin so all message on the input will get the associated label-texts injected
+	MessageMixin.call(InputBase.prototype);
+
 
 	/* =========================================================== */
 	/* Private methods and properties                              */
@@ -189,23 +192,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return sValue;
-	};
-
-	/**
-	 * Triggers input event from the input field delayed
-	 * This event is marked as synthetic since it is not a native input event
-	 * Event properties can be specified with first parameter when necessary
-	 */
-	InputBase.prototype._triggerInputEvent = function(mProperties) {
-		mProperties = mProperties || {};
-		var oEvent = new jQuery.Event("input", mProperties);
-		oEvent.originalEvent = mProperties;
-		oEvent.setMark("synthetic", true);
-
-		// not to break real event order fire the event delayed
-		jQuery.sap.delayedCall(0, this, function() {
-			this.$("inner").trigger(oEvent);
-		});
 	};
 
 	/**
@@ -556,19 +542,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
-		// IE9 does not fire input event on BACKSPACE & DEL
-		var mKC = jQuery.sap.KeyCodes;
-		var mBrowser = sap.ui.Device.browser;
 
 		// mark the event as InputBase event
 		oEvent.setMark("inputBase");
-
-		if ((mBrowser.msie && mBrowser.version < 10) &&
-			(oEvent.which === mKC.DELETE || oEvent.which === mKC.BACKSPACE)) {
-
-			// trigger synthetic input event
-			this._triggerInputEvent();
-		}
 	};
 
 	/**
@@ -577,16 +553,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	InputBase.prototype.oncut = function(oEvent) {
-
-		// IE9 does not fire input event on cut
-		var mBrowser = sap.ui.Device.browser;
-		if (mBrowser.msie && mBrowser.version < 10) {
-
-			// trigger synthetic input event
-			this._triggerInputEvent();
-		}
-	};
+	InputBase.prototype.oncut = function(oEvent) {};
 
 	/* =========================================================== */
 	/* API methods                                                 */
@@ -916,21 +883,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getId() + "-inner";
 	};
 
-	/**
-	 * Message handling
-	 * @param {string} sName The Property Name
-	 * @param {array} aMessages Array of Messages
-	 */
-	InputBase.prototype.propagateMessages = function(sName, aMessages) {
-		if (aMessages && aMessages.length > 0) {
-			this.setValueState(aMessages[0].type);
-			this.setValueStateText(aMessages[0].message);
-		} else {
-			this.setValueState(sap.ui.core.ValueState.None);
-			this.setValueStateText('');
-		}
-	};
-
 	InputBase.prototype.setTooltip = function(vTooltip) {
 		var oDomRef = this.getDomRef();
 
@@ -986,15 +938,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return this;
-	};
-
-	/**
-	 * This method is called in case an AggregatedDataStateChange happens.
-	 */
-	InputBase.prototype.refreshDataState = function(sName, oDataState) {
-		if (oDataState.getChanges().messages) {
-			this.propagateMessages(sName, oDataState.getMessages());
-		}
 	};
 
 	/**

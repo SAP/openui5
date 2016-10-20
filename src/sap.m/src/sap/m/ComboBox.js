@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					if (oControl._bDoTypeAhead) {
 
-						// note: timeout required for a Android and Windows Phone bug
+						// timeout required for an Android and Windows Phone bug
 						setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
 					}
 				}
@@ -478,7 +478,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 						this.scrollToItem(this.getSelectedItem());
 					}
 				} else if (this.isOpen()) {
-					if (bToggleOpenState) {
+					if (bToggleOpenState && !this.bOpenedByKeyboardOrButton) {
 						this.close();
 					}
 				} else {
@@ -531,14 +531,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem");
+
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
 
-			if (this.getPickerType() === "Dialog") {
-				this.onChange();
-			}
+			this.onChange();
 		};
 
 		/**
@@ -834,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var bTablet, oPicker,
-				oRelatedControl, oFocusDomRef;
+				oRelatedControl, oFocusDomRef, bNotCombi;
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 
@@ -848,7 +847,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				return;
 			}
 
-			bTablet = Device.system.tablet;
+			bNotCombi = !Device.system.combi;
+			bTablet = Device.system.tablet && bNotCombi;
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 

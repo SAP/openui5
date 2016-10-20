@@ -26,6 +26,54 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			delete this._oSandbox;
 		}
 	});
+	
+	QUnit.test("createDescriptorInlineChange", function(assert) {
+		return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
+			"card" : {
+				"customer.acard" : {
+					"model" : "customer.boring_model",
+					"template" : "sap.ovp.cards.list",
+					"settings" : {
+						"category" : "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
+						"title" : "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
+						"description" : "extended",
+						"entitySet" : "Zme_Overdue",
+						"sortBy" : "OverdueTime",
+						"sortOrder" : "desc",
+						"listType" : "extended"
+					}
+				}
+			}
+		},{
+			"customer.newid_sap.app.ovp.cards.customer.acard.category": {
+				"type": "XTIT",
+				"maxLength": 20,
+				"comment": "example",
+				"value": {
+					"": "Category example default text",
+					"en": "Category example text in en",
+					"de": "Kategorie Beispieltext in de",
+					"en_US": "Category example text in en_US"
+				}
+			},
+			"customer.newid_sap.app.ovp.cards.customer.acard.title": {
+				"type": "XTIT",
+				"maxLength": 20,
+				"comment": "example",
+				"value": {
+					"": "Title example default text",
+					"en": "Title example text in en",
+					"de": "Titel Beispieltext in de",
+					"en_US": "Title example text in en_US"
+				}
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, 'appdescr_ovp_addNewCard');
+			assert.notEqual(oDescriptorInlineChange.getMap().content, null);
+			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+		});
+	});
 
 	QUnit.test("create_ovp_addNewCard", function(assert) {
 		return DescriptorInlineChangeFactory.create_ovp_addNewCard({
@@ -422,6 +470,32 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 		});
 	});
+	
+	QUnit.test("create_app_setTitle descriptor change", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorChange;
+		var mParameter = {
+				"type" : "XTIT",
+				"maxLength" : 20,
+				"comment" : "a comment",
+				"value" : {
+					"" : "Default Title",
+					"en":"English Title",
+					"de":"Deutscher Titel",
+					"en_US":"English Title in en_US"
+				}
+			};
+		return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);		
+		}).then(function(_oDescriptorChange){
+			_oDescriptorChange._getChangeToSubmit();
+			assert.ok(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], 'Initial empty text key replaced');
+			assert.ok(!_oDescriptorChange._mChangeFile.texts[''], 'Initial empty text key removed ');
+			assert.deepEqual(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+		});
+	});
 
 	QUnit.test("create_app_setSubTitle", function(assert) {
 		var _oDescriptorInlineChange;
@@ -485,7 +559,78 @@ jQuery.sap.require('sap.ui.fl.descriptorRelated.api.Settings');
 		});
 	});
 
+	QUnit.test("create_app_setKeywords", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setKeywords({
+			"keywords": ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
+		},{
+    "customer.newid_sap.app.tags.keywords.0" :
+      {
+        "type": "XTIT",
+        "maxLength": 20,
+        "comment": "sample comment",
+        "value": {
+            "": "Default Keyword 1",
+            "en": "English Keyword 1",
+            "de": "Deutsches Schlagwort 1",
+            "en_US": "English Keyword 1 in en_US"
+        }
+    },
+    "customer.newid_sap.app.tags.keywords.1" :
+      {
+        "type": "XTIT",
+        "maxLength": 20,
+        "comment": "sample comment",
+        "value": {
+            "": "Default Keyword 2",
+            "en": "English Keyword 2",
+            "de": "Deutsches Schlagwort 2",
+            "en_US": "English Keyword 2 in en_US"
+        }
+    }
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.notEqual(oDescriptorInlineChange.getMap().texts, null);
+		});
+	});
 
+	QUnit.test("create_app_setKeywords failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setKeywords({
+				"keywords" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setKeywords({
+				"keywords" : "a.id"
+			})
+		}.bind(this));
+	});
+
+
+	QUnit.test("create_app_setDestination", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setDestination({
+			"destination": {
+				"name": "ERP"
+			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_app_setDestination failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setDestination({
+				"destinations" : {}
+			})
+		}.bind(this));
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setDestination({
+				"destination" : "a.id"
+			})
+		}.bind(this));
+	});
+
+	
 	QUnit.test("appdescr_ui5_addNewModel", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_addNewModel({
 			"model" : {

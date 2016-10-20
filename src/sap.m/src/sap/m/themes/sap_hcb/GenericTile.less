@@ -7,56 +7,91 @@
 	background: @sapHCStandardBG;
 }
 
+/************************ LINE MODE COZY ********************/
+
 .sapMGT.sapMGTLineMode {
-	font-size: @sapMFontMediumSize;
+	border: 0.0625rem solid @sapHCStandardFG;
+}
 
-	.sapMGTHdrTxt {
-		color: @sapHCStandardFG;
-		font-weight: bold;
+.sapMGTLineMode.sapMGTFailed .sapMGTLineModeFailedIcon ~ *:not(.sapMGTStyleHelper) {
+	opacity: 0.5;
+}
+
+/************************ LINE MODE COMPACT *****************/
+
+.sapUiSizeCompact {
+	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
-		font-family: @sapUiFontFamily;
-	}
+		border: none;
 
-	.sapMGTLineModeFailedIcon {
-		cursor: pointer;
-		color: @sapHCStandardFG;
-		border-right: 0.25rem solid transparent; //padding-right
-	}
+		.sapMGTHdrTxt {
+			color: @sapHCStandardFG;
+			font-weight: bold;
+			font-size: @sapMFontMediumSize;
+			font-family: @sapUiFontFamily;
+		}
 
+		.sapMGTLineModeFailedIcon {
+			cursor: pointer;
+			color: @sapHCStandardFG;
+			border-right: 0.25rem solid transparent; //padding-right
+		}
+
+		.sapMGTLineStyleHelper {
+			.sapMGTLineStyleHelperInner {
+				box-shadow: 0 0 0 1px @sapHCStandardFG;
+				bottom: 1px;
+			}
+
+			&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+				margin-right: 0.125rem;
+			}
+
+			&:not(:first-child) .sapMGTLineStyleHelperInner {
+				margin: 0 0.125rem;
+			}
+			&:last-child .sapMGTLineStyleHelperInner {
+				margin-right: 0;
+			}
+
+			&:first-child .sapMGTLineStyleHelperInner {
+				border-top-left-radius: 0.375rem;
+				border-bottom-left-radius: 0.375rem;
+			}
+
+			&:last-child .sapMGTLineStyleHelperInner {
+				border-top-right-radius: 0.375rem;
+				border-bottom-right-radius: 0.375rem;
+			}
+		}
+
+		&.sapMGTDisabled {
+			.sapMGTLineStyleHelperInner {
+				border: 1px solid @sapHCReducedFG;
+			}
+			.sapMGTHdrTxt {
+				color: @sapHCReducedFG;
+			}
+			.sapMGTSubHdrTxt {
+				color: @sapHCReducedFG;
+			}
+		}
+	}
+}
+
+.sap-desktop .sapUiSizeCompact .sapMGT.sapMGTLineMode {
 	&:hover {
 		box-shadow: none !important;
 	}
 
-	.sapMGTLineStyleHelper {
-		.sapMGTLineStyleHelperInner {
-			box-shadow: 0 0 0 1px @sapHCStandardFG;
-			bottom: 1px;
-		}
-
-		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
-			margin-right: 0.125rem;
-		}
-
-		&:not(:first-child) .sapMGTLineStyleHelperInner {
-			margin: 0 0.125rem;
-		}
-		&:last-child .sapMGTLineStyleHelperInner {
-			margin-right: 0;
-		}
-
-		&:first-child .sapMGTLineStyleHelperInner {
-			border-top-left-radius: 0.375rem;
-			border-bottom-left-radius: 0.375rem;
-		}
-
-		&:last-child .sapMGTLineStyleHelperInner {
-			border-top-right-radius: 0.375rem;
-			border-bottom-right-radius: 0.375rem;
-		}
+	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
+		box-shadow: 0 0 0 0.1875rem @sapHCStandardFG;
+		margin-top: 1px;
+		margin-bottom: 1px;
 	}
 
-	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
-		box-shadow: 0 0 0 0.1875rem @sapHCStandardFG;
+	&:focus {
+		border: 0.125rem dotted @sapUiContentFocusColor;
 	}
 
 	&:focus .sapMGTLineStyleHelperInner:before {
@@ -69,25 +104,13 @@
 		box-sizing: border-box;
 		border: 2px dotted @sapHCStandardFG;
 	}
-
-	&.sapMGTDisabled {
-		.sapMGTLineStyleHelperInner {
-			border: 1px solid @sapHCReducedFG;
-		}
-		.sapMGTHdrTxt {
-			color: @sapHCReducedFG;
-		}
-		.sapMGTSubHdrTxt {
-			color: @sapHCReducedFG;
-		}
-	}
 }
 
 .sapMGTHdrContent {
 	color: @sapHCStandardFG;
 }
 
-.sapMGTBackgroundImage{
+.sapMGTBackgroundImage {
 	border: none;
 }
 
@@ -121,7 +144,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 .sapMGenericTileFtrFldTxt {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	color:@sapHCStandardFG;
+	color: @sapHCStandardFG;
 }
 
 .sapMGenericTileFtrFldIcn {
@@ -133,7 +156,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	opacity: 1;
 }
 
-.sapMGTOverlay>.sapUiLocalBusyIndicator>.sapUiLocalBusyIndicatorAnimation {
+.sapMGTOverlay > .sapUiLocalBusyIndicator > .sapUiLocalBusyIndicatorAnimation {
 	border: none;
 	box-shadow: none;
 }
@@ -144,6 +167,12 @@ html.sap-tablet .sapMGTHvrOutln:active,
 html.sap-phone .sapMGTBackgroundHvrOutln:active,
 html.sap-tablet .sapMGTBackgroundHvrOutln:active {
 	box-shadow: 0 0 0 0.125rem @sapHCStandardFG;
+}
+
+.sap-desktop .sapMGTLineMode:hover {
+	&.sapMGTDisabled, &.sapMGTLineModePress, &.sapMGTFailed {
+		box-shadow: none;
+	}
 }
 
 /* BREAKPOINT FOR SMALL PHONES */

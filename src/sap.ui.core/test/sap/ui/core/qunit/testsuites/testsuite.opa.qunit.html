@@ -13,7 +13,6 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-			var bIsIE9 = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9;
 
 			var sUrlParameters = "?noglobals=true&sap-ui-animation=false";
 
@@ -58,22 +57,19 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/pipelines/PipelineFactory.qunit.html");
 
 			// OPA Samples
-			// Bug in IE9 http://bugs.jquery.com/ticket/13378
-			if (!bIsIE9) {
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
 
-				// Matcher samples
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
+			// Matcher samples
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
 
-				// Launcher samples
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html");
-				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html");
-			}
+			// Launcher samples
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html");
 
 			return suite;
 		}

@@ -86,15 +86,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 */
 		FixFlex.prototype.init = function () {
 			this._scroller = new ScrollEnablement(this, null, {
-				scrollContainerId : this.getId(),
-				horizontal: false,
-				vertical: false
+				scrollContainerId : this.getId()
 			});
 
 			this._innerScroller = new ScrollEnablement(this, this.getId() + "-FlexibleContainer", {
-				scrollContainerId: this.getId() + "-Flexible",
-				horizontal: false,
-				vertical: false
+				scrollContainerId: this.getId() + "-Flexible"
 			});
 		};
 
@@ -174,6 +170,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				ResizeHandler.deregister(this.sResizeListenerFixFlexScrollFlexPart);
 				this.sResizeListenerFixFlexScrollFlexPart = null;
 			}
+
+			// Deregister resize event for FixFlex flexible container scrolling
+			if (this.sResizeListenerFixFlexContainerScroll) {
+				ResizeHandler.deregister(this.sResizeListenerFixFlexContainerScroll);
+				this.sResizeListenerFixFlexContainerScroll = null;
+			}
 		};
 
 		/**
@@ -195,7 +197,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				sDirection = "width";
 			}
 
-			// Add scrolling inside Flexible container
+			// Add scrolling for entire FixFlex
 			if (nFlexSize < parseInt(this.getMinFlexSize(), 10)) {
 				$this.addClass("sapUiFixFlexScrolling");
 				$this.removeClass("sapUiFixFlexInnerScrolling");
@@ -217,7 +219,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					this.$("Flexible").attr("style", sDirection + ":" + nMinFlexSize + "px");
 				}
 
-			} else { // Add scrolling for entire FixFlex
+			} else { // Add scrolling inside Flexible container
 
 				$this.addClass("sapUiFixFlexInnerScrolling");
 				$this.removeClass("sapUiFixFlexScrolling");
@@ -230,7 +232,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					this._innerScroller.setHorizontal(true);
 				}
 
+				this._changeFlexibleContainerScroll();
+
 				this.$("Flexible").removeAttr("style");
+			}
+		};
+
+		/**
+		 * Change flexible container scroll
+		 * @private
+		 */
+		FixFlex.prototype._changeFlexibleContainerScroll = function () {
+
+			var $flexibleContainer = this.$("FlexibleContainer"),
+				containerHeight = $flexibleContainer.height(),
+				childrenHeight = $flexibleContainer.children().height();
+
+			if (containerHeight == childrenHeight){
+				return;
+			}
+
+			if (containerHeight > childrenHeight) {
+				$flexibleContainer.removeClass('sapUiFixFlexFlexibleContainerGrowing');
+			} else {
+				$flexibleContainer.addClass('sapUiFixFlexFlexibleContainerGrowing');
 			}
 		};
 
@@ -257,25 +282,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 * @private
 		 */
 		FixFlex.prototype.onBeforeRendering = function () {
-			var bIsVertical = this.getVertical(),
-				oScroller = this._scroller,
+			var oScroller = this._scroller,
 				oInnerScroller = this._innerScroller;
 
 			this._deregisterControl();
 
-			if (bIsVertical) {
-				oScroller.setVertical(false);
-				oScroller.setHorizontal(false);
+			oScroller.setVertical(false);
+			oScroller.setHorizontal(false);
 
-				oInnerScroller.setVertical(true);
-				oInnerScroller.setHorizontal(false);
-			} else {
-				oScroller.setVertical(false);
-				oScroller.setHorizontal(false);
-
-				oInnerScroller.setVertical(false);
-				oInnerScroller.setHorizontal(true);
-			}
+			oInnerScroller.setVertical(true);
+			oInnerScroller.setHorizontal(true);
 		};
 
 		/**
@@ -294,6 +310,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 			if (this.getMinFlexSize() !== 0) {
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
 				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._changeScrolling, this));
+
+				var flexibleContainerChildDomRef = this.$("FlexibleContainer").children()[0];
+				if (flexibleContainerChildDomRef) {
+					this.sResizeListenerFixFlexContainerScroll = ResizeHandler.register(flexibleContainerChildDomRef, jQuery.proxy(this._changeFlexibleContainerScroll, this));
+				}
 
 				this._changeScrolling();
 			}

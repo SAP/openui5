@@ -80,6 +80,15 @@
 						});
 					});
 
+					opaTest("Should log the error message when Opa times out", function (oOpa) {
+						oOpa.waitFor({
+							timeout: 1, // seconds
+							pollingInterval: 50, //ms
+							id: "myGlobalId",
+							errorMessage: "bad luck no button was found"
+						});
+					});
+
 					opaTest("Should log that the queue was stopped manually", function (oOpa) {
 						oOpa.waitFor({
 							check: function () {

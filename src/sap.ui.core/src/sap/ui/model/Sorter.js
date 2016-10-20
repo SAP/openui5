@@ -81,6 +81,19 @@ sap.ui.define(['sap/ui/base/Object'],
 				};
 			}
 			return oGroup;
+		},
+
+		/**
+		 * Returns the group function of this Sorter. If grouping is not enabled on this Sorter, it will return
+		 * undefined, if no explicit group function has been defined the default group function is returned.
+		 * The returned function is bound to its Sorter, so it will group according to its own property path,
+		 * even if it is used in the context of another Sorter.
+		 *
+		 * @return {function} The group function
+		 * @public
+		 */
+		getGroupFunction : function() {
+			return this.fnGroup.bind(this);
 		}
 
 	});

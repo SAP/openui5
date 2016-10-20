@@ -3,57 +3,23 @@
 /* Belize theme                       */
 /* ================================== */
 
+/************************ LINE MODE COZY ********************/
+
 .sapMGT.sapMGTLineMode {
-	font-size: @sapMFontMediumSize;
-	& * {
-		font-size: @sapMFontMediumSize;
-	}
+	transition: background 0.2s;
+	background: transparent;
+}
 
-	.sapMGTLineStyleHelper {
-		&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
-			margin-right: 0.125rem;
-		}
+.sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTLineModePress):not(.sapMGTFailed):hover {
+	background: fade(@sapUiShellHoverBackground, 10);
+}
 
-		&:not(:first-child) .sapMGTLineStyleHelperInner {
-			margin: 0 0.125rem;
-		}
-		&:last-child .sapMGTLineStyleHelperInner {
-			margin-right: 0;
-		}
+.sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTFailed).sapMGTLineModePress {
+	background: fade(@sapUiShellHoverBackground, 12);
+}
 
-		&:first-child .sapMGTLineStyleHelperInner {
-			border-top-left-radius: 0.2rem;
-			border-bottom-left-radius: 0.2rem;
-		}
-
-		&:last-child .sapMGTLineStyleHelperInner {
-			border-top-right-radius: 0.2rem;
-			border-bottom-right-radius: 0.2rem;
-		}
-	}
-
-	&:focus .sapMGTLineStyleHelperInner:before {
-		content: "";
-		position: absolute;
-		top: 1px;
-		left: 1px;
-		bottom: 1px;
-		right: 1px;
-		box-sizing: border-box;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-
-	.sapMGTLineStyleHelperInner {
-		transition: background 0.2s;
-	}
-
-	&:not(.sapMGTDisabled):hover .sapMGTLineStyleHelperInner {
-		background: fade(@sapUiShellHoverBackground, 10);
-	}
-
-	&.sapMGTLineModePress:not(.sapMGTDisabled) .sapMGTLineStyleHelperInner {
-		background: fade(@sapUiShellHoverBackground, 12);
-	}
+.sapMGT.sapMGTLineMode .sapMGTFocusDiv {
+	border-radius: 0;
 }
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -65,6 +31,76 @@
 .sapMGTLineMode.sapMGTDisabled {
 	opacity: 0.5;
 }
+
+.sapMGTLineMode.sapMGTFailed .sapMGTLineModeFailedIcon ~ *:not(.sapMGTStyleHelper) {
+	opacity: 0.5;
+}
+
+/************************ LINE MODE COMPACT *****************/
+
+.sap-desktop .sapUiSizeCompact .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+	&:focus .sapMGTLineStyleHelperInner:before{
+		content: "";
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		box-sizing: border-box;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+
+	&:not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
+		background: fade(@sapUiShellHoverBackground, 10);
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMGT.sapMGTLineMode {
+		font-size: @sapMFontMediumSize;
+
+		& * {
+			font-size: @sapMFontMediumSize;
+		}
+
+		.sapMGTLineStyleHelper {
+			&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
+				margin-right: 0.125rem;
+			}
+
+			&:not(:first-child) .sapMGTLineStyleHelperInner {
+				margin: 0 0.125rem;
+			}
+			&:last-child .sapMGTLineStyleHelperInner {
+				margin-right: 0;
+			}
+
+			&:first-child .sapMGTLineStyleHelperInner {
+				border-top-left-radius: 0.2rem;
+				border-bottom-left-radius: 0.2rem;
+			}
+
+			&:last-child .sapMGTLineStyleHelperInner {
+				border-top-right-radius: 0.2rem;
+				border-bottom-right-radius: 0.2rem;
+			}
+		}
+
+		.sapMGTLineStyleHelperInner {
+			transition: background 0.2s;
+		}
+
+		&.sapMGTLineModePress:not(.sapMGTDisabled):not(.sapMGTFailed) {
+			&, &:hover {
+				.sapMGTLineStyleHelperInner {
+					background: fade(@sapUiShellHoverBackground, 12);
+				}
+			}
+		}
+	}
+}
+
+/************************************************************/
 
 .sapMGTHdrTxt > .sapMText {
 	color: @sapUiTileTitleTextColor;
@@ -123,13 +159,6 @@ html.sap-desktop .sapMGTWithImageHoverOverlay {
 	left: 0;
 	bottom: 0;
 	transition: background 0.2s;
-}
-
-.sapMGTLineMode .sapMGTFocusDiv {
-	top: 1px;
-	right: 1px;
-	left: 1px;
-	bottom: 1px;
 }
 
 html.sap-phone .sapMGTWithoutImageHoverOverlay,

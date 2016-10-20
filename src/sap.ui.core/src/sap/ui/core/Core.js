@@ -1570,32 +1570,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	/**
-	 * Synchronously loads the given library and makes it available to the application.
+	 * Loads the given library and its dependencies and makes it available to the application.
 	 *
-	 * Loads the *.library module, which contains all preload modules (enums, types, content of a shared.js
-	 * if it exists). The library module will call initLibrary with additional metadata for the library.
+	 * When library preloads are not suppressed for the given library, then a library-preload bundle
+	 * will be loaded for it. By default, the bundle will be loaded synchronously (for compatibility
+	 * reasons). Only when the optional parameter <code>vUrl</code> is given as <code>true</code> or as
+	 * a configuration object with a property of <code>async:true</code>, then the bundle will be loaded
+	 * asynchronously and a <code>Promise</code> will be returned (preferred usage).
 	 *
-	 * As a result, consuming applications can instantiate any control or element from that library
-	 * without having to write import statements for the controls or for the enums.
+	 * After preloading the bundle, dependency information from the bundle is evaluated and any
+	 * missing libraries are also preloaded.
 	 *
-	 * When the optional parameter <code>sUrl</code> is given, then all request for resources of the
-	 * library will be redirected to the given Url. This is convenience for a call to
+	 * Only then the library entry module (named <code><i>your/lib</i>/library.js</code>) will be required
+	 * and executed. The module is supposed to call <code>sap.ui.getCore().initLibrary(...)</code>
+	 * providing the framework with additional metadata about the library, e.g. its version, the set of contained
+	 * enums, types, interfaces, controls and elements and whether the library requires CSS. If the library
+	 * requires CSS, a &lt;link&gt; will be added to the page referring to the corresponding <code>library.css</code>
+	 * stylesheet for the library and the current theme.
+	 *
+	 * When the optional parameter <code>vUrl</code> is given as a string or when a configuration object is given
+	 * with a non-empty, string-valued property <code>url</code>, then that URL will be registered for the
+	 * namespace of the library and all resources will be loaded from that location. This is convenience for
+	 * a call like
 	 * <pre>
-	 *   jQuery.sap.registerModulePath(sLibrary, sUrl);
+	 *   jQuery.sap.registerModulePath(sLibrary, vUrl); // or vUrl.url resp.
 	 * </pre>
 	 *
-	 * When the given library has been loaded already, no further action will be taken.
-	 * Especially, a given Url will not be honored!
+	 * When the given library has been loaded already, no further action will be taken, especially, a given
+	 * URL will not be registered! In the case of asynchronous loading, a Promise will be returned, but will be
+	 * resolved immediately.
 	 *
-	 * Note: this method does not participate in the supported preload of libraries.
-	 *
-	 * @param {string} sLibrary name of the library to import
-	 * @param {string} [sUrl] URL to load the library from
+	 * @param {string} sLibrary name of the library to load
+	 * @param {string|boolean|object} [vUrl] URL to load the library from or the async flag or a complex configuration object
+	 * @param {string} [vUrl.url] URL to load the library from
+	 * @param {boolean} [vUrl.async] Whether to load the library asynchronously
+	 * @returns {Object|Promise} An info object for the library (sync) or a Promise (async)
 	 * @public
 	 */
-	Core.prototype.loadLibrary = function(sLibrary, sUrl) {
+	Core.prototype.loadLibrary = function(sLibrary, vUrl) {
 		jQuery.sap.assert(typeof sLibrary === "string", "sLibrary must be a string");
-		jQuery.sap.assert(sUrl === undefined || typeof sUrl === "string", "sUrl must be a string or empty");
+		jQuery.sap.assert(vUrl === undefined ||
+			typeof vUrl === 'boolean' ||
+			typeof vUrl === 'string' ||
+			typeof vUrl === 'object' && (vUrl.url == null || vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
+			"sUrl must be empty or a string or an object with an optional property 'url' of type string and an optional boolean property 'async'");
+
+		if ( typeof vUrl === 'boolean' ) {
+			vUrl = { async: vUrl };
+		}
+		if ( typeof vUrl === 'object' ) {
+			if ( vUrl.async ) {
+				if ( vUrl.url && mLibraryPreloadBundles[sLibrary] == null ) { // only if lib has not been loaded yet
+					jQuery.sap.registerModulePath(sLibrary, vUrl.url);
+				}
+				return this.loadLibraries([sLibrary]);
+			}
+			vUrl = vUrl.url;
+		}
 
 		// load libraries only once
 		if ( !mLoadedLibraries[sLibrary] ) {
@@ -1604,8 +1635,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sAllInOneModule;
 
 			// if a sUrl is given, redirect access to it
-			if ( sUrl ) {
-				jQuery.sap.registerModulePath(sLibrary, sUrl);
+			if ( vUrl ) {
+				jQuery.sap.registerModulePath(sLibrary, vUrl);
 			}
 
 			// optimization: in all-in-one mode we are loading all modules of the lib in a single file
@@ -1641,7 +1672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * The module loading is still synchronous, so if a library loads additional modules besides
 	 * its library.js file, those modules might be loaded synchronously by the library.js
-	 * The async loading is only supported by the means of the library-preload.json files, so if a
+	 * The async loading is only supported by the means of the library-preload.js(on) files, so if a
 	 * library doesn't provide a preload or when the preload is deactivated (configuration, debug mode)
 	 * then this API falls back to synchronous loading. However, the contract (Promise) remains valid
 	 * and a Promise will be returned if async is specified - even when the real loading
@@ -2170,7 +2201,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (!jQuery.isEmptyObject(this.oModels)) {
 				var oProperties = {
 					oModels: jQuery.extend({}, this.oModels),
-					oBindingContexts: {}
+					oBindingContexts: {},
+					aPropagationListeners: []
 				};
 				that.mUIAreas[sId]._propagateProperties(true, that.mUIAreas[sId], oProperties, true);
 			}
@@ -3118,7 +3150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			} else {
 				oProperties = {
 					oModels: jQuery.extend({}, that.oModels),
-					oBindingContexts: {}
+					oBindingContexts: {},
+					aPropagationListeners: []
 				};
 			}
 			// propagate Models to all UI areas
@@ -3134,7 +3167,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				if (oModel != oUIArea.getModel(sName)) {
 					var oProperties = {
 						oModels: jQuery.extend({}, that.oModels),
-						oBindingContexts: {}
+						oBindingContexts: {},
+						aPropagationListeners: []
 					};
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}

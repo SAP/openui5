@@ -86,14 +86,14 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			// create the list of item dom refs
 			var aItemDomRefs = [];
 			if (oTable.getFixedColumnCount() == 0) {
-				aItemDomRefs = $Table.find(".sapUiTableCtrl td[tabindex]").get();
+				aItemDomRefs = $Table.find(".sapUiTableCtrl:not(.sapUiTableCHT) td[tabindex]").get();
 			} else {
-				var $topLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed');
-				var $topRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed');
-				var $middleLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll');
-				var $middleRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll');
-				var $bottomLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom');
-				var $bottomRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom');
+				var $topLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
+				var $topRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
+				var $middleLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
+				var $middleRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
+				var $bottomLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
+				var $bottomRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
 				for (var i = 0; i < oTable.getVisibleRowCount(); i++) {
 					aItemDomRefs = aItemDomRefs.concat($topLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
 					aItemDomRefs = aItemDomRefs.concat($topRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
@@ -126,8 +126,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			if (oTable.getColumnHeaderVisible()) {
 				var aHeaderDomRefs = [];
 
-				var $FixedHeaders = $Table.find(".sapUiTableColHdrFixed").children(); //returns the .sapUiTableColHdr elements
-				var $ScrollHeaders = $Table.find(".sapUiTableColHdrScr").children(); //returns the .sapUiTableColHdr elements
+				var $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr"); //.sapUiTableColHdrCnt .sapUiTableCtrlFixed .sapUiTableColHdrTr"); //returns the .sapUiTableColHdr elements
+				var $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr"); //".sapUiTableColHdrCnt .sapUiTableCtrlScr .sapUiTableColHdrTr"); //returns the .sapUiTableColHdr elements
 
 				for (var i = 0; i < TableUtils.getHeaderRowCount(oTable); i++) {
 					if (bHasRowHeader) {

@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @since 1.16.0
 	 * @experimental Since version 1.16.0.
 	 * API is not yet finished and might change completely
+	 * @deprecated Since version 1.44.0.
 	 * @alias sap.ui.unified.ContentSwitcher
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -99,8 +100,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * sapUiUnifiedCSwitcherVisible
 	 */
 	ContentSwitcher.prototype._showActiveContent = function(iNumber) {
-		this._$Contents[0].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 1);
-		this._$Contents[1].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 2);
+		if (this._$Contents) {
+			this._$Contents[0].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 1);
+			this._$Contents[1].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 2);
+		}
 	};
 
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
@@ -153,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		if (sAnimation === sCurrentAnimation) {
 			// No change.
-			return;
+			return this;
 		}
 
 		var $Dom = this.$();
@@ -165,9 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			// The renderer will take care of it.
 		}/**/
 
-		this.setProperty("animation", sAnimation, bSuppressInvalidate);
-
-		return this;
+		return this.setProperty("animation", sAnimation, bSuppressInvalidate);
 	};
 
 

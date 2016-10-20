@@ -364,10 +364,14 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* icon                           */
 /* ------------------------------ */
 
-.sapUiSizeCompact .sapMSltIcon,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltIcon {
+.sapUiSizeCompact .sapMSltIcon {
 	font-size: 1rem;
 	line-height: 1.5rem;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMSltIcon {
+	font-size: 1rem;
+	line-height: 1.375rem; /* + 2*1px padding = 1.5rem */
 }
 
 /* =================================================================== */
@@ -393,7 +397,7 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* ------------------------------ */
 
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt {
-	height: 1.5rem;
+	height: 1.375rem; /* + 2*1px padding = 1.5rem */
 }
 
 /* ------------------------------ */
@@ -402,6 +406,10 @@ div.sapMSltPicker .sapMDialogScrollCont {
 
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt {
 	border-color: @sapHCStandardFG;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMSlt .sapMSltLabel {
+	line-height: 1.375rem;
 }
 
 /* ------------------------------ */

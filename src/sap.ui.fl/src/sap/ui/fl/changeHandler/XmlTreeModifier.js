@@ -110,7 +110,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 
 			getControlType: function (oControl) {
 				var sControlType = oControl.namespaceURI;
-				sControlType += (sControlType ? "." : ""); // add a dot if there is already a prefix
+				sControlType = (sControlType ? sControlType + "." : ""); // add a dot if there is already a prefix
 				sControlType += this._getLocalName(oControl);
 
 				return sControlType;

@@ -38,6 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.byId = function byId(sId, oContext) {
 		var escapedId = "";
 		if (sId) {
+			// Note: This does not escape all relevant characters according to jQuery's documentation
+			// (see http://api.jquery.com/category/selectors/)
+			// As the behavior hasn't been changed for a long time it is not advisable to change it in
+			// future as users might be already escaping characters on their own or relying on the fact
+			// selector like jQuery.sap.byId("my-id > div") can be used.
 			escapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
 		}
 		return jQuery(escapedId, oContext);
@@ -501,13 +506,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (oDomRef) {
 
 			if (iPos === undefined) { // GETTER code
-				if (!!Device.browser.internet_explorer || !!Device.browser.edge) {
+				if (Device.browser.msie || Device.browser.edge) {
 					return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
-				} else if (!!Device.browser.webkit) {
+				} else if (Device.browser.webkit) {
 					return oDomRef.scrollLeft;
 
-				} else if (!!Device.browser.firefox) {
+				} else if (Device.browser.firefox) {
 					return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
 
 				} else {
@@ -543,13 +548,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oDomRef = this.get(0);
 		if (oDomRef) {
 
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return oDomRef.scrollLeft;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return (-oDomRef.scrollLeft);
 
 			} else {
@@ -580,13 +585,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 
 		if (oDomRef) {
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return iNormalizedScrollLeft;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
 
 			} else {
@@ -621,13 +626,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
 
 		if (oDomRef) {
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				return iNormalizedScrollBegin;
 
-			} else if (!!Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
 
-			} else if (!!Device.browser.firefox) {
+			} else if (Device.browser.firefox) {
 				return -iNormalizedScrollBegin;
 
 			} else {

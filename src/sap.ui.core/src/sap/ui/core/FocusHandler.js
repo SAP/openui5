@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 				this.fEventHandler = jQuery.proxy(this.onEvent, this);
 
 				// initialize event handling
-				if (oRootRef.addEventListener && !Device.browser.internet_explorer) { //FF, Safari
+				if (oRootRef.addEventListener && !Device.browser.msie) { //FF, Safari
 					oRootRef.addEventListener("focus", this.fEventHandler, true);
 					oRootRef.addEventListener("blur", this.fEventHandler, true);
 				} else { //IE
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		FocusHandler.prototype.destroy = function(event) {
 			var oRootRef = event.data.oRootRef;
 			if (oRootRef) {
-				if (oRootRef.removeEventListener && !Device.browser.internet_explorer) { //FF, Safari
+				if (oRootRef.removeEventListener && !Device.browser.msie) { //FF, Safari
 					oRootRef.removeEventListener("focus", this.fEventHandler, true);
 					oRootRef.removeEventListener("blur", this.fEventHandler, true);
 				} else { //IE

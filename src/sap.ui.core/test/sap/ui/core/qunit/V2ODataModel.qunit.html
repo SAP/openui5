@@ -2,7 +2,6 @@
 
 <!--
   Tested sap.ui.model.odata.ODataModel
-  Author: d050084
 -->
 
 <html>
@@ -122,7 +121,7 @@
 			ok(true, "metadataloaded");
 			start();
 		}
-		oModel.attachMetadataLoaded(this, fnTest);
+		oModel.attachMetadataLoaded(fnTest, this);
 	});
 
 	asyncTest("read JSON", function() {
@@ -738,10 +737,10 @@
 			ok(iCount === 1, "request performed");
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
-			oModel.detachBatchRequestCompleted(fnCheck);
+			oModel.detachBatchRequestCompleted(fnCheck, this);
 			start();
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck, this);
 	});
 
 	asyncTest("test oDataModel read and bind Object", function() {
@@ -772,7 +771,7 @@
 					start();
 				}
 				oModel.attachBatchRequestCompleted(
-					this, fnCheck
+					fnCheck
 				);
 			},
 			error : function(oError) {
@@ -832,7 +831,7 @@
 			start();
 
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in default batch group", function() {
@@ -875,7 +874,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different batch groups", function() {
@@ -920,7 +919,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different deferred batch groups", function() {
@@ -964,7 +963,7 @@
 				start();
 			}
 		}
-		oModel.attachBatchRequestCompleted(this, fnCheck);
+		oModel.attachBatchRequestCompleted(fnCheck);
 		oModel.submitChanges();
 	});
 
@@ -1196,7 +1195,32 @@
 			}
 		});
 	});
-
+	
+	asyncTest("test oDataModel setProperty - Response object", function() {
+		var iCount = 0;
+		oModel.setDefaultBindingMode("TwoWay");
+		oModel.setRefreshAfterChange(true);
+		var oInput = new sap.m.Input({value: "{Name}"});
+		oInput.setModel(oModel);
+		oInput.bindElement("/ProductSet('AD-1000')");
+		
+		var fnHandler = function() {
+			oInput.getElementBinding().detachDataReceived(fnHandler);
+			oInput.setValue("test");
+			oModel.submitChanges();
+			oModel.attachBatchRequestCompleted(function(oInfo) {
+				iCount++;
+				if (iCount == 2) {
+					ok(oInfo.mParameters.requests[0].response.statusCode == 204, "MERGE response ok");
+					ok(oInfo.mParameters.requests[1].response.statusCode == 200, "GET response ok");
+					ok(oInfo.mParameters.requests.length == 2, "MERGE and GET request sent")
+					start();
+				}
+			});
+		};
+		oInput.getElementBinding().attachDataReceived(fnHandler);
+	});
+	
 	asyncTest("test oDataModel create", function() {
 		var iCount = 0;
 		var bCreate = false;

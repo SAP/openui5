@@ -189,7 +189,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			"content": {}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		var oSpecificChangeInfo = {index: 5, newControlId: "newId", groupLabel: "New Control"};
+		var oSpecificChangeInfo = {index: 5, newControlId: "newId", newLabel: "New Control"};
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
 

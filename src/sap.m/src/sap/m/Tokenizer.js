@@ -9,22 +9,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-	/**
-	 * Constructor for a new Tokenizer.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * Tokenizer displays multiple tokens
-	 * @extends sap.ui.core.Control
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @public
-	 * @alias sap.m.Tokenizer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
+		/**
+		 * Constructor for a new Tokenizer.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 * <strong><em>Overview</em></strong>
+		 * <br><br>
+		 * A tokenizer is a container for {@link sap.m.Token Tokens}. It also handles all actions associated with the tokens like adding, deleting, selecting and editing.
+		 * <br><br>
+		 * <strong><em>Structure</em></strong>
+		 * <br><br>
+		 * The tokens are stored in the <code>tokens</code> aggregation.
+		 * The tokenizer can determine, by setting the <code>editable</code> property, whether the tokens in it are editable.
+		 * Still the Token itself can determine if it is <code>editable</code>. This allows you to have non-editable Tokens in an editable Tokenizer.
+		 *
+		 * <br><br>
+		 * <strong><em>Usage</em></strong>
+		 * <br><br>
+		 * <strong>When to use:</strong>
+		 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 *
+		 * @constructor
+		 * @public
+		 * @alias sap.m.Tokenizer
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
 
 		library : "sap.m",
@@ -307,6 +322,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._removeLastTokensTruncation();
 
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
+	};
+
+	Tokenizer.prototype.clone = function() {
+		var aTokens = this.getTokens(),
+			oClone,
+			i;
+
+		for (i = 0; i < aTokens.length; i++) {
+			aTokens[i].detachDelete(this._onDeleteToken, this);
+			aTokens[i].detachPress(this._onTokenPress, this);
+		}
+
+		oClone = Control.prototype.clone.apply(this, arguments);
+
+		for (i = 0; i < aTokens.length; i++) {
+			aTokens[i].attachDelete(this._onDeleteToken, this);
+			aTokens[i].attachPress(this._onTokenPress, this);
+		}
+
+		return oClone;
 	};
 
 	Tokenizer.prototype.onBeforeRendering = function() {
@@ -805,7 +840,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oParent instanceof sap.m.MultiInput) {
 			// if max number is set and the number of existing tokens is equal to or more than the max number, then do not add token.
 			if (oParent.getMaxTokens() !== undefined && oParent.getTokens().length >= oParent.getMaxTokens()) {
-				return;
+				return this;
 			}
 		}
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
@@ -824,6 +859,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			token : oToken,
 			type : Tokenizer.TokenChangeType.Added
 		});
+
+		return this;
 	};
 
 	Tokenizer.prototype.removeToken = function(oToken) {
@@ -906,7 +943,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		for (i = 0; i < length; i++) {
 			token = tokensToBeDeleted[i];
-			this.removeToken(token);
+			if (token.getEditable()) {
+				this.removeToken(token);
+			}
 		}
 
 		this.scrollToEnd();
@@ -1080,6 +1119,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				jQuery.sap.focus(oFocusRef.id == this.getId() + "-clip" ? this.getDomRef() : oFocusRef);
 			}
 		}
+	};
+
+	/**
+	 * Returns if tokens should be rendered in reverse order
+	 * @private
+	 * @returns {boolean} true if tokens should be rendered in reverse order
+	 */
+	Tokenizer.prototype.getReverseTokens = function() {
+		return !!this._reverseTokens;
+	};
+
+	/**
+	 * Sets internal property defining if tokens should be rendered in reverse order
+	 * @param {boolean} bReverseTokens
+	 * @private
+	 */
+	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {
+		this._reverseTokens = bReverseTokens;
 	};
 
 	Tokenizer.TokenChangeType = {

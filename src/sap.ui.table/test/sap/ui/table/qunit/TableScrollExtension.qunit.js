@@ -371,7 +371,8 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 			targetTouches: [{
 				pageX: iPageX,
 				pageY: 0
-			}]
+			}],
+			originalEvent: {touches: true}
 		});
 		oScrollDelegate.ontouchstart.call(oTable, oTouchStartEventData);
 	}
@@ -386,7 +387,8 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 					targetTouches: [{
 						pageX: itouchPosition,
 						pageY: 0
-					}]
+					}],
+					originalEvent: {touches: true}
 				});
 				oScrollDelegate.ontouchmove.call(oTable, oTouchMoveEventData);
 

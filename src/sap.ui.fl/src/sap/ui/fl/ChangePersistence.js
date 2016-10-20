@@ -159,6 +159,7 @@ sap.ui.define([
 
 	/**
 	 * Calls the backend asynchronously and fetches all changes for the component. If there are any new changes (dirty state) which are not yet saved in the backend, these changes will not be returned
+	 * @param {object} oComponent Component instance, used to prepare the ids (local, etc)
 	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
 	 * @param {object} mPropertyBag.appDescriotor - manifest that belongs to actual component
 	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
@@ -166,7 +167,7 @@ sap.ui.define([
 	 * @returns {Promise} resolving with a map of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesMapForComponent = function(mPropertyBag) {
+	ChangePersistence.prototype.getChangesMapForComponent = function (oComponent, mPropertyBag) {
 
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
 
@@ -176,6 +177,9 @@ sap.ui.define([
 				var oSelector = oChange.getSelector();
 				if (oSelector && oSelector.id) {
 					var sSelectorId = oSelector.id;
+					if (oSelector.idIsLocal) {
+						sSelectorId = oComponent.createId(sSelectorId);
+					}
 					if (!mChanges[sSelectorId]) {
 						mChanges[sSelectorId] = [];
 					}

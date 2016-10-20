@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @param {string} [mParameters.id] The message id: will be defaulted if no id is set
 	 * @param {string} [mParameters.message] The message text
 	 * @param {string} [mParameters.description] The message description
+	 * @param {string} [mParameters.additionalText] The message additionalText
 	 * @param {sap.ui.core.MessageType} [mParameters.type] The message type
 	 * @param {string} [mParameters.code] The message code
 	 * @param {sap.ui.core.message.MessageProcessor} [mParameters.processor]
@@ -47,6 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.message = mParameters.message;
 			this.description = mParameters.description;
 			this.descriptionUrl = mParameters.descriptionUrl;
+			this.additionalText = mParameters.additionalText;
 			this.type = mParameters.type;
 			this.code = mParameters.code;
 			this.target = mParameters.target;
@@ -102,6 +104,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 */
 	Message.prototype.getDescription = function() {
 		return this.description;
+	};
+
+	/**
+	 * Sets the additionaltext for the message or merge different additionaltext strings
+	 *
+	 * @private
+	 * @param {string} sAdditionalText The additionaltext.
+	 */
+	Message.prototype.setAdditionalText = function(sAdditionalText) {
+		this.additionalText = sAdditionalText;
+	};
+
+	/**
+	 * Returns the messages additional text.
+	 *
+	 * @returns {string} The additionaltext
+	 */
+	Message.prototype.getAdditionalText = function() {
+		return this.additionalText;
 	};
 
 	/**

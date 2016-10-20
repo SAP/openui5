@@ -211,7 +211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param oEvent {jQuery.Event} oEvent The event object passed to the event handler.
 	 */
-	RatingIndicator.prototype.onThemeChanged = function (oEvent){
+	RatingIndicator.prototype.onThemeChanged = function (oEvent) {
 		this.invalidate(); // triggers a re-rendering
 	};
 
@@ -233,7 +233,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
-		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding")) || 4;
+		if (this._checkCondensedMode(this)) {
+			this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPaddingCondensed")) || 0;
+		} else {
+			this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding")) || 4;
+		}
 	};
 
 	/**
@@ -267,6 +271,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 	/*           begin: internal methods and properties            */
 	/* =========================================================== */
+
+	/**
+	 * Check if is it in Condensed mode
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype._checkCondensedMode = function (oRef) {
+		//this check is made before control rendering
+		return jQuery('html').hasClass('sapUiSizeCondensed');
+	};
 
 	RatingIndicator.prototype._toPx = function (cssSize) {
 		cssSize = cssSize || 0;

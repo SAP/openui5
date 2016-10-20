@@ -3,96 +3,43 @@
 /* High Contrast Black theme           */
 /* =================================== */
 
-.sapUiTable > div {
-	border-bottom: 1px solid @sapUiListHeaderBorderColor;
-}
+@_sapUiTableFocusOutlineWidth: 2px;
+@_sapUiTableFocusOutlineOffset: -3px;
 
-.sapUiTable > .sapUiTableHdr {
+.sapUiTableHdr {
 	border-bottom: 3px solid @sapUiListHeaderBorderColor;
 }
 
-.sapUiTable > .sapUiTableTbr,
-.sapUiTable > .sapUiTableExt {
+.sapUiTableTbr,
+.sapUiTableExt {
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 	padding: 0.125rem;
 	box-sizing: content-box;
 }
 
-
-
-
-.sapUiTableColHdrCnt {
-	border-bottom: 3px solid @sapUiListHeaderBorderColor;
-}
-
-.sapUiTableCtrl tr.sapUiTableRowHvr,
-tr.sapUiTableRowHvr .sapMObjStatusText,
-tr.sapUiTableRowHvr .sapMObjStatusTitle,
-tr.sapUiTableRowHvr .sapMObjStatusIcon,
-.sapUiTableCol:hover .sapMObjStatusText,
-.sapUiTableCol:hover .sapMObjStatusTitle,
-.sapUiTableCol:hover .sapMObjStatusIcon {
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapUiTableCCnt {
-	background-color: @sapUiListBackground;
-}
-
-.sapUiTable > div.sapUiTableCnt {
+.sapUiTableCnt {
 	border: 1px solid @sapUiListBorderColor;
 }
 
+.sapUiTableColHdrCnt {
+	border-bottom-width: 3px;
+}
+
+.sapUiTableCol:hover,
+.sapUiTableColRowHdr:hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiTableRowHdr::after,
+.sapUiTableColRowHdrIco::after {
+	color: @sapUiContentIconColor;
+}
+
+.sapUiTableCtrl tr.sapUiTableRowHvr,
 .sapUiTableRowHdr.sapUiTableRowHvr {
 	color: @sapUiContentContrastTextColor;
 }
 
-.sapUiTableCol:hover,
-.sapUiTableColRowHdr:hover,
-.sapUiSizeCompact .sapUiTableCol:hover,
-.sapUiSizeCompact .sapUiTableColRowHdr:hover {
-	background-color: @sapUiListHoverBackground;
-}
-
-.sapUiSizeCompact, .sapUiSizeCozy {
-	.sapUiTableSelModeMultiToggle {
-		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
-		.sapUiTableRowHdr::after {
-			color: @sapUiContentIconColor;
-		}
-	}
-}
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr:hover:after,
-.sapUiSizeCozy .sapUiTableSelModeMultiToggle .sapUiTableRowHdr:hover:after {
+.sapUiTableRowHdr.sapUiTableRowHvr::after {
 	background-color: @sapUiSelected;
-}
-
-/*
- * Focus Outline for Table Cells
- *
- * IE, Edge : use native outline rendering. It has correct contrast and offset.
- * Any attempt to specify another outline in CSS breaks it.
- *
- * Other browsers see below:
- */
-
-/* WebKit */
-.sapUiTableTr > td:focus:not(*:root),
-.sapUiTableCol:focus:not(*:root),
-.sapUiTableRowHdr:focus:not(*:root),
-.sapUiTableColRowHdr:focus:not(*:root) {
-	outline-offset: -3px;
-	outline: 2px dotted @sapUiContentFocusColor;
-}
-
-/* Firefox */
-@supports (-moz-appearance:meterbar) {
-.sapUiTableTr > td:focus,
-.sapUiTableCol:focus,
-.sapUiTableRowHdr:focus,
-.sapUiTableColRowHdr:focus {
-	outline-offset: -3px;
-	outline: 2px dotted @sapUiContentFocusColor;
-	}
 }

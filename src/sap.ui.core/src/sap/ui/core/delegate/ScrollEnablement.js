@@ -417,7 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 				if (!(this._oPullDown && this._oPullDown._bTouchMode)
 					&& !this._fnScrollLoadCallback
-					&& !Device.browser.internet_explorer) {
+					&& !Device.browser.msie) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
 					ResizeHandler.deregister(this._sResizeListenerId);
@@ -651,7 +651,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				this._refresh();
 
 				if (!bElementVisible
-					|| !!Device.browser.internet_explorer
+					|| Device.browser.msie
 					|| this._oPullDown
 					|| this._fnScrollLoadCallback) {
 
@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					}
 					if (sap.ui.getCore().getConfiguration().getRTL()) {
 						this._scrollX = 9999; // in RTL case initially scroll to the very right
-						if (Device.browser.internet_explorer || Device.browser.edge) {
+						if (Device.browser.msie || Device.browser.edge) {
 							this._bFlipX = true; // in IE and Edge RTL, scrollLeft goes opposite direction
 						}
 					}

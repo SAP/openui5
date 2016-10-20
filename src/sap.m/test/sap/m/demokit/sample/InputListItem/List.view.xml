@@ -9,7 +9,7 @@
 			<Switch state="true" />
 		</InputListItem>
 		<InputListItem label="Flight Mode">
-			<CheckBox state="true" />
+			<CheckBox selected="true" />
 		</InputListItem>
 		<InputListItem label="High Performance">
 			<RadioButton

@@ -24,6 +24,6 @@ describe('sap.ui.layout.BlockLayout', function () {
 	});
 
 	it('Dashboard Background', function () {
-		_switchBackgroundAndTakeScreenshot("navigate-to-dashboard", "layout-dashboardss");
+		_switchBackgroundAndTakeScreenshot("navigate-to-dashboard", "layout-dashboard");
 	});
 });

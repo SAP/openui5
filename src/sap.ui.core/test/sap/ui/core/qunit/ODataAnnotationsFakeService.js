@@ -2718,13 +2718,13 @@ var sEPMAnnotationsComplex = '\
 		<edmx:Reference Uri="/epm_http/purchase/$metadata" >\
 			<edmx:Include Namespace="EPMDemo" Alias="EPMModel" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="/giq-100/ODATA/IWFND/RMTSAMPLEFLIGHT/$metadata" >\
+		<edmx:Reference Uri="/ODATA/IWFND/RMTSAMPLEFLIGHT/$metadata" >\
 			<edmx:Include Namespace="RMTSAMPLEFLIGHT" Alias="RMTSAMPLEFLIGHT" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="/vs6/sap/hba/apps/wcm/odata/wcm.xsodata/$metadata" >\
+		<edmx:Reference Uri="/sap/hba/apps/wcm/odata/wcm.xsodata/$metadata" >\
 			<edmx:Include Namespace="sap.hba.apps.wcm.odata.wcm" Alias="WCM" />\
 		</edmx:Reference>\
-		<edmx:Reference Uri="https://dewdfgwd01082.wdf.sap.corp:4080/sap/hba/r/ecc/odata/mm/pur/PurchaseContractQueries.xsodata;o=hanasys/$metadata" >\
+		<edmx:Reference Uri="/sap/hba/r/ecc/odata/mm/pur/PurchaseContractQueries.xsodata;o=hanasys/$metadata" >\
 			<edmx:Include Namespace="sap.hba.r.ecc.odata.mm.pur.PurchaseContractQueries" Alias="PurchaseContract" />\
 		</edmx:Reference>\
 		<edmx:DataServices>\

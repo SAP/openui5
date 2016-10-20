@@ -1097,7 +1097,7 @@
 
 			test("Bind aggregation without templateShareable (default)", function() {
 
-				var oTemplate = new sap.ui.core.Element("template", {value: "{value}"});
+				var oTemplate = new sap.ui.core.Element("template");
 
 				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate}); // old behavior
 				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
@@ -1178,7 +1178,7 @@
 
 				var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
 					createContent : function() {
-						this.oMyTemplate = new sap.ui.core.Element("template", {value: "{value}"});
+						this.oMyTemplate = new sap.ui.core.Element("template");
 						this.oMyRootControl = new MyControl({
 							models: oModel,
 							elements: {
@@ -1218,7 +1218,7 @@
 
 				// undefined
 
-				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				var oTemplate = new sap.ui.core.Element();
 				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate});
 				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
@@ -1240,7 +1240,7 @@
 
 				// false
 
-				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				var oTemplate = new sap.ui.core.Element();
 				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: false});
 				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
@@ -1259,7 +1259,7 @@
 
 				// true
 
-				var oTemplate = new sap.ui.core.Element({value: "{value}"});
+				var oTemplate = new sap.ui.core.Element();
 				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate, templateShareable: true});
 				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");

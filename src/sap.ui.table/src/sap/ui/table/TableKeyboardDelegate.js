@@ -307,9 +307,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			return;
 		}
 
-		this._bShowMenu = true;
-		this._onSelect(oEvent);
-		this._bShowMenu = false;
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+			TableUtils.openContextMenu(this, oEvent.target, true);
+		} else {
+			this._onSelect(oEvent);
+		}
+
 		oEvent.preventDefault();
 	};
 
@@ -351,13 +356,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			//Set tabindex to second table if fixed columns are used
 			if (this.getFixedColumnCount() > 0) {
 				var $cell = jQuery(oEvent.target);
-				if ($cell.is("td[role=gridcell]") == false) {
-					$cell = $cell.parents("td[role=gridcell]");
+				if ($cell.is("td.sapUiTableTd") == false) {
+					$cell = $cell.parents("td.sapUiTableTd");
 				}
 				var $row = $cell.parent("tr[data-sap-ui-rowindex]");
 				var $table = $row.closest(".sapUiTableCtrl");
 				var iRowIndex = parseInt($row.attr("data-sap-ui-rowindex"),10);
-				var $cells = $row.find("td[role=gridcell]");
+				var $cells = $row.find("td.sapUiTableTd");
 				var iColIndex = $cells.index($cell);
 				var iTableCols = $cells.length;
 				if (iColIndex === (iTableCols - 1)) {
@@ -391,11 +396,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			oEvent.stopImmediatePropagation(true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
 			// SHIFT + 10 should open the context menu
-			this.oncontextmenu(oEvent);
+			oEvent.preventDefault();
+			TableUtils.openContextMenu(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS) {
 			TableUtils.toggleGroupHeader(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {
 			TableUtils.toggleGroupHeader(this, oEvent.target, false);
+		}
+	};
+
+	TableKeyboardDelegate.prototype.oncontextmenu = function(oEvent) {
+		var bRightMouseClick = oEvent.button === 2;
+		if (bRightMouseClick) {
+			return;
+		}
+
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+
+		if (oCellInfo !== null) {
+			// To prevent opening the default browser context menu when pressing the context menu key on a table cell.
+			oEvent.preventDefault();
+		}
+
+		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+
+			TableUtils.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
@@ -421,8 +447,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
 		if (this._getKeyboardExtension().isInActionMode()) {
-			this._getKeyboardExtension().setActionMode(false);
-			oEvent.preventDefault();
+			var $Target = jQuery(oEvent.target);
+			var bTargetIsTreeIcon = $Target.hasClass("sapUiTableTreeIcon");
+			var bCellHasTreeIcon = $Target.parent().find(".sapUiTableTreeIcon").length === 1;
+			var bPreviousItemIsLeafTreeIcon = $Target.prev().hasClass("sapUiTableTreeIconLeaf");
+
+			if (!bCellHasTreeIcon || bPreviousItemIsLeafTreeIcon || bTargetIsTreeIcon) {
+				this._getKeyboardExtension().setActionMode(false);
+				oEvent.preventDefault();
+			}
 		} else {
 			if (oEvent.target === this.getDomRef("overlay")) {
 				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterBefore"));
@@ -464,8 +497,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	TableKeyboardDelegate.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
 		if (this._getKeyboardExtension().isInActionMode()) {
-			this._getKeyboardExtension().setActionMode(false);
-			oEvent.preventDefault();
+			var $Target = jQuery(oEvent.target);
+			var bTargetIsTreeIcon = $Target.hasClass("sapUiTableTreeIcon");
+			var bCellHasElements = $Target.parent().find(":visible").length > 1;
+
+			if (!bTargetIsTreeIcon || !bCellHasElements) {
+				this._getKeyboardExtension().setActionMode(false);
+				oEvent.preventDefault();
+			}
 		} else {
 			if (oEvent.target === this.getDomRef("overlay")) {
 				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterAfter"));
@@ -582,11 +621,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsappagedown = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode()) {
-			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
-			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
+			var iHeaderRows = TableUtils.getHeaderRowCount(this);
 
 			// Check if focus is on header
 			// Special Handling is required here:
@@ -658,11 +696,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsappageup = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode()) {
-			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
-			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
+			var iHeaderRows = TableUtils.getHeaderRowCount(this);
 			var iCol = oInfo.cellInRow;
 
 			if (this.getColumnHeaderVisible() && oInfo.cell < (oInfo.columnCount * iHeaderRows)) {

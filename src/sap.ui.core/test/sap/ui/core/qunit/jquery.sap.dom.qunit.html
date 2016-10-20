@@ -21,7 +21,7 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-		test("ById", function() {
+		test("domById", function() {
 			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
@@ -30,6 +30,84 @@
 			equal(jQuery.sap.domById('CoNtRoL5'), null, "jQuery.sap.domById('CoNtRoL5') should be null");
 			equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
 			equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
+		});
+
+		QUnit.test("byId - escaping", function(assert) {
+
+			var id = ".A:B::C..D";
+			var element = document.createElement("div");
+			element.setAttribute("id", id);
+			document.body.appendChild(element);
+
+			var $element = jQuery.sap.byId(id);
+			assert.ok($element instanceof jQuery, "Is jQuery object");
+			assert.equal($element.get(0), element, "Element found");
+			assert.equal($element.attr("id"), id, "Element id found");
+
+			document.body.removeChild(element);
+
+		});
+
+		QUnit.test("byId - context", function(assert) {
+
+			var id = ".A:B::C..D";
+			var element = document.createElement("div");
+			element.setAttribute("id", id);
+
+			var parentElement = document.createElement("div");
+			parentElement.appendChild(element);
+			document.body.appendChild(parentElement);
+
+			var wrongParentElement = document.createElement("div");
+			document.body.appendChild(wrongParentElement);
+
+			var $element1 = jQuery.sap.byId(id, parentElement);
+			assert.ok($element1 instanceof jQuery, "Is jQuery object");
+			assert.equal($element1.get(0), element, "Element found");
+			assert.equal($element1.attr("id"), id, "Element id found");
+
+			var $element2 = jQuery.sap.byId(id, wrongParentElement);
+			assert.ok($element2 instanceof jQuery, "Is jQuery object");
+			assert.equal($element2.get(0), null, "No element found");
+
+			document.body.removeChild(parentElement);
+			document.body.removeChild(wrongParentElement);
+
+		});
+
+		QUnit.test("byId - no input", function(assert) {
+
+			var $element1 = jQuery.sap.byId();
+			assert.ok($element1 instanceof jQuery, "Is jQuery object");
+			assert.equal($element1.get(0), null, "No element found");
+
+			var $element2 = jQuery.sap.byId("");
+			assert.ok($element2 instanceof jQuery, "Is jQuery object");
+			assert.equal($element2.get(0), null, "No element found");
+
+			var $element3 = jQuery.sap.byId(null);
+			assert.ok($element3 instanceof jQuery, "Is jQuery object");
+			assert.equal($element3.get(0), null, "No element found");
+
+		});
+
+		QUnit.test("byId - invalid input (special characters)", function(assert) {
+
+			// The following chars are special characters but won't be escaped
+			// (see comment in jQuery.sap.byId)
+
+			assert.throws(function() {
+				jQuery.sap.byId("[foo]");
+			},
+			/Syntax error, unrecognized expression/,
+			"Should thrown an syntax error");
+
+			assert.throws(function() {
+				jQuery.sap.byId("a!b(c)");
+			},
+			/Syntax error, unrecognized expression/,
+			"Should thrown an syntax error");
+
 		});
 
 		test("focus", function () {
@@ -193,8 +271,7 @@
 		test("OuterHTML", function () {
 			function getExpected(bReversAttributeOrder){
 				function att(n, v){
-					var quote = sap.ui.Device.browser.internet_explorer && (document.documentMode == undefined || document.documentMode && document.documentMode < 9) ? "" : "\""; //No '"' in IE8
-					return " " + n + "=" + quote + v + quote;
+					return " " + n + "=\"" + v + "\"";
 				}
 
 				var sRes = "<DIV";

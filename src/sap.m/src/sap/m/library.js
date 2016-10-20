@@ -169,6 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.P13nColumnsItem",
 			"sap.m.P13nDimMeasureItem",
 			"sap.m.P13nColumnsPanel",
+			"sap.m.P13nSelectionPanel",
 			"sap.m.P13nDimMeasurePanel",
 			"sap.m.P13nConditionPanel",
 			"sap.m.P13nDialog",
@@ -1293,22 +1294,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.ValueCSSColor = DataType.createType('sap.m.ValueCSSColor', {
 		isValid : function (vValue) {
-				var bResult = /Neutral|Good|Critical|Error/.test(vValue);
+			var bResult = sap.m.ValueColor.hasOwnProperty(vValue);
+			if (bResult) {
+				return bResult;
+			} else { // seems to be a less parameter or sap.ui.core.CSSColor
+				bResult = CoreLibrary.CSSColor.isValid(vValue);
 				if (bResult) {
 					return bResult;
-				} else { // seems to be a less parameter or sap.ui.core.CSSColor
-					bResult = CoreLibrary.CSSColor.isValid(vValue);
-					if (bResult) {
-						return bResult;
-					} else {
-						jQuery.sap.require("sap.ui.core.theming.Parameters");
-						return CoreLibrary.CSSColor.isValid(sap.ui.core.theming.Parameters.get(vValue));
-					}
+				} else {
+					jQuery.sap.require("sap.ui.core.theming.Parameters");
+					return CoreLibrary.CSSColor.isValid(sap.ui.core.theming.Parameters.get(vValue));
 				}
 			}
-		},
-		DataType.getType('string')
-	);
+		}
+	}, DataType.getType('string'));
 
 	/**
 	 * A subset of input types that fits to a simple API returning one string.
@@ -1800,7 +1799,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Panel type for dimension and measure settings.
 		 * @public
 		 */
-		dimeasure: "dimeasure"
+		dimeasure: "dimeasure",
+
+		/**
+		 * Panel type for selection settings in general.
+		 *
+		 * @private
+		 */
+		selection: "selection"
 
 	};
 
@@ -2320,8 +2326,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Unsaved type
 		 * @public
 		 */
-		Unsaved : "Unsaved"
+		Unsaved : "Unsaved",
 
+		/**
+		 * LockedBy type
+		 * Use when you need to display the name of the user who locked the object.
+		 * @public
+		 */
+		LockedBy : "LockedBy"
 	};
 
 
@@ -3566,16 +3578,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		createTextView: function(mConfig){
 			return new sap.m.Label(mConfig);
 		},
-		createTextField: function(mConfig){
-			return new sap.m.Input(mConfig);
-		},
-		createImage: function(mConfig){
-			var oImage = new sap.m.Image(mConfig);
-			oImage.setDensityAware(false); // by default we do not have density aware images in the Table
-			return oImage;
-		},
 		addTableClass: function() { return "sapUiTableM"; },
-		bFinal: true
+		bFinal: true /* This table helper wins, even when commons helper was set before */
 	});
 
 

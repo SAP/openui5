@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.writeClasses();
 		oRm.writeAttribute("id", sControlId + "-bar");
-		oRm.writeAttribute("style", "width:" + fPercentValue + "%");
+		oRm.writeAttribute("style", "flex-basis:" + fPercentValue + "%");
 		oRm.write(">");
 
 		// PI text in progress bar

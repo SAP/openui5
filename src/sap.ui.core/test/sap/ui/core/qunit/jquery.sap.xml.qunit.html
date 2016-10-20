@@ -3,7 +3,6 @@
 
 <!--
   Tested file: jquery.sap.xml
-  Author: d050084
 -->
 
 	<head>
@@ -62,11 +61,7 @@
 		test("parse XML string parse error", function(){
 			var oXMLDocument = jQuery.sap.parseXML(testdataError);
 			ok(oXMLDocument.parseError.errorCode != 0, "check parse Error");
-			if (!(sap.ui.Device.browser.internet_explorer && parseInt(sap.ui.Device.browser.version) < 9) && oXMLDocument.getElementsByTagName){
-				equal(oXMLDocument.getElementsByTagName("teamMembers").length,0, "check length");
-				equal(oXMLDocument.getElementsByTagName("member").length,0, "check length");
-			}else if (sap.ui.Device.browser.internet_explorer && parseInt(sap.ui.Device.browser.version) < 9){
-				// IE8 check
+			if (oXMLDocument.getElementsByTagName){
 				equal(oXMLDocument.getElementsByTagName("teamMembers").length,0, "check length");
 				equal(oXMLDocument.getElementsByTagName("member").length,0, "check length");
 			}

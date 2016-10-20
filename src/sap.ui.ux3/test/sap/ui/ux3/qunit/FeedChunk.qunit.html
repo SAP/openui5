@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <!--
   Tested control/class: sap.ui.ux3.FeedChunk
-  Author: D031513
 -->
 
 <html>
@@ -112,8 +111,8 @@
 		// with comments
 		var oChunk2 = new sap.ui.ux3.FeedChunk("Chunk2", {
 //			thumbnailSrc: "../images/feeder/m_01.png",
-		  sender: sSender,
-	    text: "Line1 \nLine2 with @Reference \nLine3 \nLine4 \nLine5",
+			sender: sSender,
+			text: "Line1 \nLine2 with @Reference \nLine3 \nLine4 \nLine5",
 			timestamp: sTimestamp,
 			feederThumbnailSrc: "../images/feeder/w_01.png",
 			feederSender: 'FeederSender',
@@ -130,7 +129,7 @@
 			inspect: handleInspect,
 			toggleShared: handleToggleShared,
 			actionItemSelected: handleActionItemSelected
-			}).placeAt("uiArea2");
+		}).placeAt("uiArea2");
 
 	  oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk1", {
 		  sender: sChunkSender+"1",
@@ -163,7 +162,7 @@
 			referenceClicked: handleReferenceClicked
 	  }));
 
-	  var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 
 		module("Appearance");
 
@@ -187,6 +186,15 @@
 		});
 
 		test("Output of Attribute", function() {
+			// expand button if long text
+			oChunk2.addDelegate({
+				onAfterRendering: function () {
+					test("Expand button rendering", function () {
+						ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button rendered when the text is long");
+					});
+				}
+			});
+
 			// sender thumb
 			equal(jQuery.sap.byId("Chunk1-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for chunk");
 			equal(jQuery.sap.byId("commentChunk3-thumb").attr("src"), "../images/feeder/m_01.png", "Sender image rendered for comment chunk");
@@ -201,9 +209,6 @@
 			equal(jQuery.sap.byId("Chunk1").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for Chunk without comments");
 			equal(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
 			equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
-
-			// expand button if long text
-			ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button if text is short");
 
 			// no expand button if short text
 			ok(!jQuery.sap.byId("Chunk1-exp").get(0), "No expand button if text is short");

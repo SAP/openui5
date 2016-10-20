@@ -81,7 +81,7 @@
 		oButton2.addStyleClass("positioned");
 
 		var app = new sap.m.App("myApp", {
-			initPage: "myFirstPage"
+			initialPage: "myFirstPage"
 		});
 
 		var page = new sap.m.Page("myFirstPage", {
@@ -1739,29 +1739,31 @@
 			oPopover.destroy();
 		});
 
-		test("In belize theme the Popover should use compact arrow and adjust offsets", function () {
-			var stubTheme = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize"),
+		test("Popover should use compact arrow offset if a theme sets less variable sapMPopoverForceCompactArrowOffset to true", function () {
+			var stubGetParameters = sinon.stub(sap.ui.core.theming.Parameters, "get"),
 				oPopover = new sap.m.Popover();
 
+			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("true");
 			oPopover.openBy(oButton2);
 
 			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
 			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
-			stubTheme.restore();
+			stubGetParameters.restore();
 			oPopover.destroy();
 		});
 
-		test("In belize plus theme the Popover should use compact arrow and adjust offsets", function () {
-			var stubTheme = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize_plus"),
+		test("Popover should use normal arrow offset if a theme sets less variable sapMPopoverForceCompactArrowOffset to be false", function () {
+			var stubGetParameters = sinon.stub(sap.ui.core.theming.Parameters, "get"),
 				oPopover = new sap.m.Popover();
 
+			stubGetParameters.withArgs("sapMPopoverForceCompactArrowOffset").returns("false");
 			oPopover.openBy(oButton2);
 
-			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+			equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+			deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
 
-			stubTheme.restore();
+			stubGetParameters.restore();
 			oPopover.destroy();
 		});
 

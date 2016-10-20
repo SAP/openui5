@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage'],
-	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage, MessageMixin) {
 		"use strict";
 
 		/**
@@ -266,6 +266,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.apply(Select.prototype, [true]);
+		// apply the message mixin so all message on the input will get the associated label-texts injected
+		MessageMixin.call(Select.prototype);
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
@@ -1867,8 +1869,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/* ----------------------------------------------------------- */
 
 		Select.prototype.setShowSecondaryValues = function(bAdditionalText) {
-			this.setProperty("showSecondaryValues", bAdditionalText, true);
 
+			// invalidate the field only when the width is set to "auto",
+			// otherwise invalidate only the dropdown list
+			var bSuppressInvalidate = !this._isShadowListRequired();
+			this.setProperty("showSecondaryValues", bAdditionalText, bSuppressInvalidate);
 			var oList = this.getList();
 
 			if (oList) {
@@ -2286,22 +2291,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			return oInfo;
-		};
-
-		Select.prototype.propagateMessages = function(sName, aMessages) {
-			if (aMessages && aMessages.length > 0) {
-				this.setValueState(aMessages[0].type);
-				this.setValueStateText(aMessages[0].message);
-			} else {
-				this.setValueState(sap.ui.core.ValueState.None);
-				this.setValueStateText("");
-			}
-		};
-
-		Select.prototype.refreshDataState = function(sName, oDataState) {
-			if (oDataState.getChanges().messages) {
-				this.propagateMessages(sName, oDataState.getMessages());
-			}
 		};
 
 		return Select;

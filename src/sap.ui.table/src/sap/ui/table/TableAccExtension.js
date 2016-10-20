@@ -579,6 +579,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
+				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_TBL: //Table of column headers
+					mAttributes["role"] = "presentation";
+					break;
+
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
 					if (!TableUtils.hasRowHeader(oTable)) {
 						mAttributes["role"] = "row";
@@ -788,7 +792,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		TABLEHEADER : 		"TABLEHEADER", 							// The table header area
 		TABLEFOOTER : 		"TABLEFOOTER", 							// The table footer area
 		TABLESUBHEADER : 	"TABLESUBHEADER", 						// The table toolbar and extension areas
-		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
+		COLUMNHEADER_TBL :  "COLUMNHEADER_TABLE", 					// The table with the column headers
+		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The table row with the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
 		ROWHEADER_COL : 	"ROWHEADER_COL", 						// The area which contains the row headers (TableUtils.CELLTYPES.ROWHEADER)
 		TH : 				"TH", 									// The "technical" column headers
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers

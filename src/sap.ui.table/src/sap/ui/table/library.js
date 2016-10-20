@@ -310,10 +310,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 	//factory for table to create labels an textviews to be overwritten by commons and mobile library
 	if (!thisLib.TableHelper) {
 		thisLib.TableHelper = {
+			addTableClass: function(){ return ""; }, /* must return some additional CSS class */
 			createLabel: function(mConfig){ throw new Error("no Label control available!"); }, /* must return a Label control */
 			createTextView: function(mConfig){ throw new Error("no TextView control available!"); }, /* must return a textview control */
-			createTextField: function(mConfig){ throw new Error("no TextField control available!"); }, /* must return a textfield control */
-			createImage: function(mConfig){ throw new Error("no Image control available!"); }, /* must return a textview control */
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};
 	}

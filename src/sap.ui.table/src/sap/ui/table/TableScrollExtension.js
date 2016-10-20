@@ -3,8 +3,9 @@
  */
 
 // Provides helper sap.ui.table.TableScrollExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', './library'],
-	function(jQuery, TableExtension, TableUtils, Device, library) {
+sap.ui.define([
+	'jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', './library'
+], function(jQuery, TableExtension, TableUtils, Device, library) {
 	"use strict";
 
 	// Shortcuts
@@ -16,10 +17,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	var ExtensionHelper = {
 		onFixedAreaHorizontalScrolling: function(oEvent) {
 			oEvent.target.scrollLeft = 0;
-		},
-
-		onContentAndRowHeaderVerticalScrolling: function(oEvent) {
-			oEvent.target.scrollTop = 0;
 		},
 
 		/**
@@ -90,8 +87,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 * @param oEvent
 		 */
 		onVerticalScrolling: function(oEvent) {
-			var oScrollExtension = this._getScrollExtension();
-
 			// For interaction detection.
 			jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 
@@ -120,11 +115,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			}
 
 			if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
-				window.clearTimeout(oScrollExtension._mTimeouts.scrollUpdateTimerId);
-				oScrollExtension._mTimeouts.scrollUpdateTimerId = window.setTimeout(function () {
+				jQuery.sap.clearDelayedCall(this._mTimeouts.scrollUpdateTimerId);
+				this._mTimeouts.scrollUpdateTimerId = jQuery.sap.delayedCall(300, this, function() {
 					updateVisibleRow(this);
-					oScrollExtension._mTimeouts._sScrollUpdateTimerId = null;
-				}.bind(this), 300);
+					delete this._mTimeouts.scrollUpdateTimerId;
+				});
 			} else {
 				updateVisibleRow(this);
 			}
@@ -136,37 +131,37 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 * @param oEvent
 		 */
 		onMouseWheelScrolling: function(oEvent) {
-				var oOriginalEvent = oEvent.originalEvent;
-				var bIsHorizontal = oOriginalEvent.shiftKey;
-				var iScrollDelta = 0;
+			var oOriginalEvent = oEvent.originalEvent;
+			var bIsHorizontal = oOriginalEvent.shiftKey;
+			var iScrollDelta = 0;
 
-				if (bIsHorizontal) {
-					iScrollDelta = oOriginalEvent.deltaX;
-				} else {
-					iScrollDelta = oOriginalEvent.deltaY;
+			if (bIsHorizontal) {
+				iScrollDelta = oOriginalEvent.deltaX;
+			} else {
+				iScrollDelta = oOriginalEvent.deltaY;
+			}
+
+			if (bIsHorizontal) {
+				var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+				if (oHsb) {
+					oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
 				}
-
-				if (bIsHorizontal) {
-					var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-					if (oHsb) {
-						oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
+			} else {
+				var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+				if (oVsb) {
+					this._bIsScrolledByWheel = true;
+					var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
+					// If at least one row is scrolled, floor to full rows.
+					// Below one row, we scroll pixels.
+					if (iRowsPerStep > 1) {
+						iRowsPerStep = Math.floor(iRowsPerStep);
 					}
-				} else {
-					var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-					if (oVsb) {
-						this._bIsScrolledByWheel = true;
-						var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
-						// If at least one row is scrolled, floor to full rows.
-						// Below one row, we scroll pixels.
-						if (iRowsPerStep > 1) {
-							iRowsPerStep = Math.floor(iRowsPerStep);
-						}
-						oVsb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
-					}
+					oVsb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
 				}
+			}
 
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
 		}
 	};
 
@@ -176,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	 */
 	var ExtensionDelegate = {
 		ontouchstart: function(oEvent) {
-			if ('ontouchstart' in document) {
+			if (this._isTouchMode(oEvent)) {
 				this._aTouchStartPosition = null;
 				this._bIsScrollVertical = null;
 				var $scrollTargets = this._getScrollTargets();
@@ -198,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		},
 
 		ontouchmove: function(oEvent) {
-			if ('ontouchstart' in document && this._aTouchStartPosition) {
+			if (this._isTouchMode(oEvent) && this._aTouchStartPosition) {
 				var oTouch = oEvent.targetTouches[0];
 				var iDeltaX = (oTouch.pageX - this._aTouchStartPosition[0]);
 				var iDeltaY = (oTouch.pageY - this._aTouchStartPosition[1]);
@@ -250,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		/*
 		 * @see TableExtension._init
 		 */
-		_init : function(oTable, sTableType, mSettings) {
+		_init: function(oTable, sTableType, mSettings) {
 			this._type = sTableType;
 			this._delegate = ExtensionDelegate;
 
@@ -263,16 +258,16 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		/*
 		 * @see TableExtension._attachEvents
 		 */
-		_attachEvents : function() {
+		_attachEvents: function() {
 			var oTable = this.getTable();
 			var $Table = oTable.$();
 
 			// Horizontal scrolling
 			var $HSb = jQuery(oTable.getDomRef(SharedDomRef.HorizontalScrollBar));
 			var $HeaderScroll = jQuery(oTable.getDomRef("sapUiTableColHdrScr"));
-			var $FixedHeaderScroll = $Table.find(".sapUiTableColHdrFixed");
+			var $FixedHeaderScroll = $Table.find(".sapUiTableCtrlScrFixed.sapUiTableCHA");
 			var $ContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScr"));
-			var $FixedContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScrFixed"));
+			var $FixedContentScroll = jQuery(oTable.getDomRef(".sapUiTableCtrlScrFixed:not(.sapUiTableCHA)"));
 
 			$HSb.on("scroll.sapUiTableHScroll", ExtensionHelper.onHorizontalScrolling.bind(oTable));
 			$HeaderScroll.on("scroll", ExtensionHelper.onHorizontalScrolling.bind(oTable));
@@ -283,12 +278,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			// Vertical scrolling
 			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
-			var $ContentAndRowHeaderScroll = jQuery(oTable.getDomRef("tableCCnt"));
-
 			$VSb.on("scroll.sapUiTableVScroll", ExtensionHelper.onVerticalScrolling.bind(oTable));
-			if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-				$ContentAndRowHeaderScroll.on("scroll.sapUiTableContentAndRowHeaderVScroll", ExtensionHelper.onContentAndRowHeaderVerticalScrolling);
-			}
 
 			// Mouse wheel
 			oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
@@ -297,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		/*
 		 * @see TableExtension._detachEvents
 		 */
-		_detachEvents : function() {
+		_detachEvents: function() {
 			var oTable = this.getTable();
 			var $Table = oTable.$();
 
@@ -317,12 +307,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			// Vertical scrolling
 			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
-			var $ContentAndRowHeaderScroll = jQuery(oTable.getDomRef("tableCCnt"));
 
 			$VSb.off("scroll.sapUiTableVScroll");
-			if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-				$ContentAndRowHeaderScroll.off("scroll.sapUiTableContentAndRowHeaderVScroll");
-			}
 
 			// Mouse wheel
 			oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
@@ -331,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		/*
 		 * Enables debugging for the extension.
 		 */
-		_debug : function() {
+		_debug: function() {
 			this._ExtensionHelper = ExtensionHelper;
 			this._ExtensionDelegate = ExtensionDelegate;
 		},
@@ -339,7 +325,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
-		destroy : function() {
+		destroy: function() {
 			// Deregister the delegates
 			var oTable = this.getTable();
 			if (oTable) {

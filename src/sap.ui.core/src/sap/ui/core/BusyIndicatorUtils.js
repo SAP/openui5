@@ -3,8 +3,8 @@
  */
 
 // Provides utility class sap.ui.core.BusyIndicatorUtils
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function(jQuery, Device) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
 
 	// Static class
@@ -89,58 +89,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	};
 
 	/**
-	 * Pragmatic IE9 support, looks a bit different than the keyframes anymation.
-	 * TODO: Is this needed? When will IE9 go out of support.
+	 * Obsolete IE9 support, kept for some more time to avoid issues with custom controls,
+	 * start/stop now are 'noop's.
 	 */
 	BusyIndicatorUtils.animateIE9 = {
-		/**
-		 * Starts the Animation for the given busy indicator (jQuery instance)
-		 *
-		 * @param {object} $BusyIndicator is the jQuery object of the busyIndicator
-		 */
-		start: function ($BusyIndicator) {
-
-			if ($BusyIndicator && Device.browser.msie &&  Device.browser.version <= 9) {
-
-				var fnAnimate = function ($div, iDelay) {
-					var fnScale = function (iTo) {
-						$div.animate({ opacity: iTo }, {
-							step: function (now) {
-								$div.css("-ms-transform","scale(" + now + "," + now + ")");
-							},
-							complete: function () {
-								// start again, but the scale factor
-								fnScale(iTo == 1 ? 0.3 : 1);
-							},
-							duration: 700
-						}, "linear");
-					};
-					setTimeout(function(){fnScale(0.3);}, iDelay);
-				};
-
-				var aDivsToAnimate = $BusyIndicator.find(".sapUiLocalBusyIndicatorAnimation > div");
-
-				for (var i = 0; i < aDivsToAnimate.length; i++) {
-					fnAnimate(jQuery(aDivsToAnimate[i]), i * 300);
-				}
-
-			}
-
-		},
-
-		/**
-		 * Stops the Animation for the given busy indicator (jQuery instance)
-		 *
-		 * @param {object} $BusyIndicator is the jQuery object of the BusyIndicator
-		 */
-		stop: function ($BusyIndicator) {
-			if ($BusyIndicator && Device.browser.msie &&  Device.browser.version <= 9) {
-				var aDivsToAnimate = $BusyIndicator.find(".sapUiLocalBusyIndicatorAnimation > div");
-				for (var i = 0; i < aDivsToAnimate.length; i++) {
-					jQuery(aDivsToAnimate[i]).stop();
-				}
-			}
-		}
+		start: function () {},
+		stop: function () {}
 	};
 
 	return BusyIndicatorUtils;

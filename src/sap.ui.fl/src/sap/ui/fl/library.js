@@ -2,13 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/XMLView",
-		"sap/ui/core/mvc/View",
-		"sap/ui/fl/registry/ChangeHandlerRegistration",
-		"sap/ui/fl/ChangePersistenceFactory",
-		"sap/ui/fl/PreprocessorImpl"
+sap.ui.define(["sap/ui/fl/RegistrationDelegator"
 	],
-	function(XMLView, View, ChangeHandlerRegistration, ChangePersistenceFactory, PreprocessorImpl) {
+	function(RegistrationDelegator) {
 	"use strict";
 
 	/**
@@ -30,20 +26,18 @@ sap.ui.define(["sap/ui/core/mvc/XMLView",
 		noLibraryCSS: true
 	});
 
-	if ( XMLView.registerPreprocessor ){
-		// Register preprocessor for flexibility changes
-		XMLView.registerPreprocessor("controls", "sap.ui.fl.PreprocessorImpl", true);
-		// Deactivated until caching is in place!
-		//XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
-	} else {
-		//workaround solution until registerPreprocessor is available
-		//PreprocessorImpl because in the workaround case there is no preprocessor base object
-		View._sContentPreprocessor = "sap.ui.fl.PreprocessorImpl";
-	}
+//	if ( XMLView.registerPreprocessor ){
+//		// Register preprocessor for flexibility changes
+//		XMLView.registerPreprocessor("controls", "sap.ui.fl.PreprocessorImpl", true);
+//		// Deactivated until caching is in place!
+//		//XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
+//	} else {
+//		//workaround solution until registerPreprocessor is available
+//		//PreprocessorImpl because in the workaround case there is no preprocessor base object
+//		View._sContentPreprocessor = "sap.ui.fl.PreprocessorImpl";
+//	}
 
-	ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
-	ChangePersistenceFactory.registerLoadComponentEventHandler();
-	sap.ui.require("sap/ui/core/mvc/Controller").registerExtensionProvider("sap.ui.fl.PreprocessorImpl");
+	RegistrationDelegator.registerAll();
 
 	return sap.ui.fl;
 

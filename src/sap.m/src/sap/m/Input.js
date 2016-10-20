@@ -1224,21 +1224,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					oInput._oPopupInput.setMaxLength(oInput.getMaxLength());
 				}).attachBeforeClose(function(){
 					// call _getInputValue to apply the maxLength to the typed value
-						oInput._$input.val(oInput
-								._getInputValue(oInput._oPopupInput
-										.getValue()));
-						oInput.onChange();
+					oInput._$input.val(oInput
+							._getInputValue(oInput._oPopupInput
+									.getValue()));
+					oInput.onChange();
 
-						if (oInput instanceof sap.m.MultiInput ) {
-							oInput._validateCurrentText();
-						}
+					if (oInput instanceof sap.m.MultiInput && oInput._bUseDialog) {
+						oInput._onDialogClose();
+					}
 
 				}).attachAfterClose(function() {
 
 					if (oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode) {
 
-						oInput._updateTokenizerInMultiInput();
-						oInput._tokenizerInPopup.destroy();
 						oInput._showIndicator();
 
 						setTimeout(function() {
@@ -1410,8 +1408,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			oInput._iPopupListSelectedIndex = -1;
 
 			if (!bShowSuggestion ||
+				!oInput._bShouldRefreshListItems ||
 				!oInput.getDomRef() ||
-				(!oInput._bUseDialog && oInput._bShouldRefreshListItems && !oInput.$().hasClass("sapMInputFocused"))) {
+				(!oInput._bUseDialog && !oInput.$().hasClass("sapMInputFocused"))) {
 				return false;
 			}
 

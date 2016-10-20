@@ -8,19 +8,14 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/Device"
-], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties, Device) {
+	"sap/ui/test/matchers/Properties"
+], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties) {
 	/*global QUnit */
 	"use strict";
 
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders");
-
-	if (Device.browser.msie && Device.browser.version === 9) {
-		return;
-	}
 
 
 	//*****************************************************************************

@@ -30,6 +30,12 @@
 					width="230px"
 					press="onDraggableDialog"
 					class="sapUiSmallMarginBottom" />
+
+			<Button
+					text="Dialog with prevent close"
+					width="230px"
+					press="onEscapePreventDialog"
+					class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

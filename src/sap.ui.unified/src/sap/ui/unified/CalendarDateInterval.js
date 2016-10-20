@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	CalendarDateInterval.prototype.setMonths = function(iMonths){
 
 		if (iMonths == 1) {
-			this.setProperty("months", iMonths, false); // rerender
+			return this.setProperty("months", iMonths, false); // rerender
 		} else {
 			throw new Error("Property months not supported " + this);
 		}
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 
 		if (iFirstDayOfWeek == -1) {
-			this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
+			return this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
 		} else {
 			throw new Error("Property firstDayOfWeek not supported " + this);
 		}
@@ -369,6 +369,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oYearPicker.setColumns(0);
 			oYearPicker.setYears(6);
 		}
+
+		return this;
 
 	};
 

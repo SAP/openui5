@@ -25,6 +25,7 @@ QUnit.test("setLrepObject", function(assert) {
 QUnit.test("setHidePackage", function(assert) {
 	this.oDialog.setHidePackage(true);
 	assert.equal(this.oDialog.getProperty("hidePackage"), true);
+	assert.equal(this.oDialog._oPackageListItem.getVisible(), false);
 });
 
 QUnit.test("setTransports", function(assert) {
@@ -243,6 +244,12 @@ QUnit.test("_setTransports - one transport", function(assert) {
 	assert.equal(this.oDialog.getProperty("transports").length, 1);
 	assert.equal(this.oDialog._oTransport.getEnabled(), true);
 	assert.equal(this.oDialog._oTransport.getSelectedKey(), "T1");
+});
+
+QUnit.test("_oTransport - selectionChange event - when package is hide", function(assert) {
+	this.oDialog.setHidePackage(true);
+	this.oDialog._oTransport.fireSelectionChange();
+	assert.equal(this.oDialog.getButtons()[1].getEnabled(), true);
 });
 
 QUnit.test("_oTransport - selectionChange event - changing nothing", function(assert) {

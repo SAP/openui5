@@ -5,7 +5,10 @@
 /* global jQuery,QUnit,assert */
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
-jQuery.sap.require("sap.ui.thirdparty.qunit");
+// Only load QUnit if it has not been loaded via script tag
+if (!window.QUnit) {
+  jQuery.sap.require("sap.ui.thirdparty.qunit");
+}
 
 // put qunit-coverage last so library files don't get measured  (we load StepDefinitions, even though we don't have to,
 // so that it doesn't appear in the code coverage list, knowing that the user will need to load it)

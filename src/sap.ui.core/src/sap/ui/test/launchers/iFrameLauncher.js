@@ -34,12 +34,6 @@ sap.ui.define([
 	}
 
 	function registerOnError () {
-		// In IE9 retrieving the active element in an IFrame when it has no focus produces an error.
-		// Since we use it all over the UI5 libraries, the only solution is to ignore frame errors in IE9.
-		if (Device.browser.internet_explorer && Device.browser.version === 9) {
-			return;
-		}
-
 		var fnFrameOnError = oFrameWindow.onerror;
 
 		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {

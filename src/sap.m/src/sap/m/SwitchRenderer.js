@@ -31,7 +31,6 @@ sap.ui.define([], function() {
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
 				bAccessibilityEnabled = sap.ui.getCore().getConfiguration().getAccessibility(),
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			oRm.write("<div");
@@ -97,7 +96,7 @@ sap.ui.define([], function() {
 			if (bAccessibilityEnabled) {
 				this.renderInvisibleElement(oRm, oSwitch, {
 					id: oSwitch.getInvisibleElementId(),
-					text: oRb.getText(oSwitch.getInvisibleElementText())
+					text: oSwitch.getInvisibleElementText()
 				});
 			}
 

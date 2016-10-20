@@ -196,8 +196,8 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 /* Condensed size */
 .sapUiSizeCondensed .sapUiTableCell {
 	.sapMInputBase {
-		height: 1.5rem;
-		padding: 0;
+		height: 1.375rem; /* + 2*1px padding = 1.5rem */
+		padding: 0 0.0625rem; /* 1px padding only */
 	}
 
 	.sapMInputBaseInner:not(.sapMInputBaseStateInner) {
@@ -205,11 +205,12 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	}
 
 	.sapMInputBaseInner {
-		height: 1.5rem;
+		height: 1.375rem;
 	}
 
-	.sapMInputBasePlaceholder {
-		line-height: 1.5rem;
+	.sapMInputBasePlaceholder,
+	.sapMInputDescription > span {
+		line-height: 1.375rem;
 	}
 }
 

@@ -69,12 +69,11 @@
 	var oTable = new sap.m.Table("table",{
 					inset : false,
 					showUnread : true,
-					scrollToLoad : true,
 					headerText : "Personal Info",
 					columns : [
 						new sap.m.Column({
 						styleClass : "key",
-						valign : "Center",
+						vAlign : "Middle",
 						width : "35%",
 						hAlign : "Right"
 						})
@@ -134,7 +133,7 @@
 				attributes : [oAttr]
 			});
 
-		oObjectHeader.placeAt("objectAtrributesWrap");
+		oObjectHeader.placeAt("objectAttributesWrap");
 
 		sap.ui.getCore().applyChanges()
 
@@ -160,7 +159,7 @@
 			attributes : [oAttr],
 			responsive : true
 		});
-		oObjectHeader.placeAt("objectAtrributesWrap");
+		oObjectHeader.placeAt("objectAttributesWrap");
 
 		sap.ui.getCore().applyChanges()
 
@@ -180,7 +179,7 @@
 		var oObjectListItem = new sap.m.ObjectListItem("oOL3", {
 			attributes : [oAttr]
 		});
-		oObjectListItem.placeAt("objectAtrributesWrap");
+		oObjectListItem.placeAt("objectAttributesWrap");
 
 		sap.ui.getCore().applyChanges()
 
@@ -200,7 +199,7 @@
 	});
 	/******************************************************************/
 
-	module("Aggregation attribute");
+	module("Aggregation customContent");
 
 	test("Aggregation sap.m.Link", function() {
 
@@ -208,10 +207,10 @@
 		var oAttr = new sap.m.ObjectAttribute("attr", {
 			text: "Joe Smith",
 			active: true,
-			attribute: new sap.m.Link("alink", {text: "this is sap.m.Link"})
+			customContent: new sap.m.Link("alink", {text: "this is sap.m.Link"})
 		});
 
-		oAttr.placeAt("objectAtrributesWrap");
+		oAttr.placeAt("objectAttributesWrap");
 
 		sap.ui.getCore().applyChanges();
 
@@ -337,7 +336,7 @@
 <body class="sapUiBody">
 	<div id="qunit"></div>
 	<div id="objectAttributes"></div>
-	<div id="objectAtrributesWrap"></div>
+	<div id="objectAttributesWrap"></div>
 	<div id="qunit-fixture"></div>
 </body>
 </html>

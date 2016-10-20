@@ -103,17 +103,15 @@ sap.ui.define([
 
 			//create and set cart model
 			var oCartModel = new JSONModel({
-				entries: [],
-				totalPrice: "0",
+				cartEntries: {},
+				savedForLaterEntries: {},
 				showEditAndProceedButton: false
 			});
 			this.setModel(oCartModel, "cartProducts");
 
-
 			// set device model
 			var oDeviceModel = new JSONModel({
-				// feature toggle for a safe for later functionality in the Cart.view.xml
-				safeForLater: !!jQuery.sap.getUriParameters().get("safeForLater"),
+				// feature toggle for a save for later functionality in the Cart.view.xml
 				isTouch: sap.ui.Device.support.touch,
 				isNoTouch: !sap.ui.Device.support.touch,
 				isPhone: sap.ui.Device.system.phone,

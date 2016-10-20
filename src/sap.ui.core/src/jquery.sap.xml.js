@@ -143,13 +143,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		};
 
 		// IE
-		if (!!Device.browser.internet_explorer && oDocument && oDocument.parseError
+		if (Device.browser.msie && oDocument && oDocument.parseError
 				&& oDocument.parseError.errorCode != 0) {
 			return oDocument.parseError;
 		}
 
 		// Firefox or Edge
-		if ((!!Device.browser.firefox  || !!Device.browser.edge) && oDocument && oDocument.documentElement
+		if ((Device.browser.firefox  || Device.browser.edge) && oDocument && oDocument.documentElement
 				&& oDocument.documentElement.tagName == "parsererror") {
 
 			var sErrorText = oDocument.documentElement.firstChild.nodeValue, rParserError = /XML Parsing Error: (.*)\nLocation: (.*)\nLine Number (\d+), Column (\d+):(.*)/;
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 
 		// Safari or Chrome
-		if (!!Device.browser.webkit && oDocument && oDocument.documentElement
+		if (Device.browser.webkit && oDocument && oDocument.documentElement
 				&& oDocument.getElementsByTagName("parsererror").length > 0) {
 
 			var sErrorText = jQuery.sap.serializeXML(oDocument), rParserError = /(error|warning) on line (\d+) at column (\d+): ([^<]*)\n/;

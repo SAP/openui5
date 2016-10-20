@@ -10,7 +10,7 @@ sap.ui.define([],
 	return {
 		aggregations : {
 			columns : {
-				domRef : ".sapUiTableColHdrScr"
+				domRef : ".sapUiTableCHA"
 			},
 			// fake aggregations with a dom ref pointing to scrollbars
 			// since scrollbars aren't part of columns aggregation dom ref, this is needed to allow overlay scrolling

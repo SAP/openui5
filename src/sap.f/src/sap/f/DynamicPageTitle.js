@@ -26,9 +26,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * control and displays the most important information regarding the
 	 * object that will always remain visible while scrolling.
 	 * <br><br>
-	 * By clicking on the {@link sap.f.DynamicPageTitle DynamicPageTitle},
-	 * the user can switch between the expanded/collapsed states of the
-	 * {@link sap.f.DynamicPageHeader DynamicPageHeader}.
+	 * If the <code>toggleHeaderOnTitleClick</code> property of the
+	 * {@link sap.f.DynamicPage DynamicPage} is set to <code>true</code>, the user can
+	 * switch between the expanded/collapsed states of the
+	 * {@link sap.f.DynamicPageHeader DynamicPageHeader} by clicking on the
+	 * <code>DynamicPageTitle</code>. If set to <code>false</code>, the
+	 * <code>DynamicPageTitle</code> is not clickable and the application must provide
+	 * other means for expanding/collapsing the <code>DynamicPageHeader</code>,
+	 * if necessary.
 	 * </ul>
 	 * <br><br>
 	 * <strong><i>Responsive Behavior</i></strong>

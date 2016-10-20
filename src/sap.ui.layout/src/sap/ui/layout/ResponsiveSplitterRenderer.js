@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 		oRm.addClass("sapUiResponsiveSplitterPaginatorButtons");
 		oRm.writeClasses();
 		oRm.writeAttribute("role", "radiogroup");
-		oRm.writeAttributeEscaped("aria-label", oBundle.getText("RESPONSIVESPLITTER_ARIA_PAGINATOR_LABEL"));
+		oRm.writeAttributeEscaped("aria-label", oBundle.getText("RESPONSIVE_SPLITTER_ARIA_PAGINATOR_LABEL"));
 		if (aPages.length > 0) {
 			oRm.writeAttribute("aria-controls", aPages[0].getParent().getId());
 		}

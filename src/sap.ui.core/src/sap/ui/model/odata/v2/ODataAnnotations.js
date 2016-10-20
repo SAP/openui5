@@ -651,7 +651,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 		return new Promise(function(fnResolve, fnReject) {
 			var oXMLDocument;
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				// IE is a special case: Even though it supports DOMParser with the latest versions, the resulting
 				// document does not support the evaluate method, which leads to a differnt kind of XPath implementation
 				// being used in the AnnotationParser. Thus IE (the MSXML implementation) must always be handled separately.
@@ -708,8 +708,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
-		// On IE we have a specia format for the XML documents on every other browser it must be a "Document" object.
-		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.internet_explorer, "Source must contain a parsed XML document converted to an annotation object");
+		// On IE we have a special format for the XML documents on every other browser it must be a "Document" object.
+		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
 
 		mSource.annotations = AnnotationParser.parse(this._oMetadata, mSource.document);
 
