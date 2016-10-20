@@ -154,8 +154,22 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
+				if (sap.ui.Device.system.phone) {
+					this._adjustTimePickerHeightOnPhone();
+				}
 			}
 
+		},
+
+		_adjustTimePickerHeightOnPhone: function() {
+			var oSwitcher = this.getAggregation("_switcher"),
+				// height of the area containing the buttons that switch from date picker to time picker
+				sSwhitcherButtonsHeight = oSwitcher.$().children(0).css("height").replace('px','');
+
+			// we have to set the height of the DateTimePicker container ("sapMDateTimePopupCont")
+			// so the TimePicker can calculate correctly it's height depending on the container height minus height of the dialog footer height
+			// for doing this we get the document height and extract the switch buttons area height
+			this.$().css("height", (document.documentElement.clientHeight - parseInt(sSwhitcherButtonsHeight, 10)) + "px");
 		},
 
 		_handleSelect: function(oEvent) {
@@ -204,6 +218,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		}
 
 	});
+
 
 	DateTimePicker.prototype.init = function(){
 
