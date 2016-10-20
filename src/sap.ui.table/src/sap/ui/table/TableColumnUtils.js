@@ -399,8 +399,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			/**
 			 * Checks and adapts the given index if needed.
 			 * @param {sap.ui.table.Column} oColumn column of the table
-			 * @param {integer} iNewIndex the desired new index of the column in the CURRENT table setup
-			 * @returns {integer} the corrected index
+			 * @param {int} iNewIndex the desired new index of the column in the CURRENT table setup
+			 * @returns {int} the corrected index
 			 * @private
 			 */
 			_normalizeColumnMoveTargetIndex : function(oColumn, iNewIndex) {
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 * Note: The index must be given for the current table setup (which includes the column itself).
 			 *
 			 * @param {sap.ui.table.Column} oColumn column of the table
-			 * @param {integer} iNewIndex the desired new index of the column in the CURRENT table setup
+			 * @param {int} iNewIndex the desired new index of the column in the CURRENT table setup
 			 * @returns {boolean} True if the column can be moved to the desired position
 			 * @private
 			 */
