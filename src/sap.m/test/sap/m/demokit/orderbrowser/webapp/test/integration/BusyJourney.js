@@ -7,7 +7,7 @@ sap.ui.define([
 
 		opaTest("Should see a global busy indication while loading the metadata", function (Given, When, Then) {
 			// Arrangements
-			Given.iStartTheAppWithDelay("", 5000);
+			Given.iStartTheAppWithDelay("", 10000);
 
 			// Actions
 			When.onTheAppPage.iLookAtTheScreen();

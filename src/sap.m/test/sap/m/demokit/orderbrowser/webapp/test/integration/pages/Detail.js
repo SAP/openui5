@@ -157,24 +157,13 @@ sap.ui.define([
 								return this.waitFor({
 									id : "lineItemsHeader",
 									viewName : sViewName,
-									matchers : new PropertyStrictEquals({name: "text", value: "<LineItemNamePlural> (" + iNumberOfItems + ")"}),
+									matchers : new PropertyStrictEquals({name: "text", value: "Line Items (" + iNumberOfItems + ")"}),
 									success : function () {
 										Opa5.assert.ok(true, "The line item list displays " + iNumberOfItems + " items");
 									},
 									errorMessage : "The line item list does not display " + iNumberOfItems + " items."
 								});
 							}
-						});
-					},
-
-					iShouldSeeTheShareEmailButton : function () {
-						return this.waitFor({
-							id : "shareEmail",
-							viewName : sViewName,
-							success : function () {
-								Opa5.assert.ok(true, "The E-Mail button is visible");
-							},
-							errorMessage : "The E-Mail button was not found"
 						});
 					}
 				}
