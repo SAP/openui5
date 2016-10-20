@@ -84,7 +84,7 @@ QUnit.test("isRowSelectorSelectionAllowed", function(assert) {
 });
 
 QUnit.test("areAllRowsSelected", function(assert) {
-	assert.strictEqual(TableUtils.areAllRowsSelected(), null, "No table was passed: Returned null");
+	assert.strictEqual(TableUtils.areAllRowsSelected(), false, "No table was passed: Returned null");
 
 	assert.ok(!TableUtils.areAllRowsSelected(oTable), "Not all rows are selected");
 	oTable.selectAll();
