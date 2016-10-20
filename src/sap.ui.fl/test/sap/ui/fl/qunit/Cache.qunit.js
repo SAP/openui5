@@ -9,9 +9,8 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 	function createLoadChangesResponse() {
 		return Promise.resolve({
 			changes: {
-				changes: [
-					{something: "1"}
-				]
+				changes: [{something: "1"}],
+				settings: {switchedOnBusinessFunctions: ["bFunction1", "bFunction2"]}
 			}
 		});
 	}
@@ -25,12 +24,28 @@ jQuery.sap.require("sap.ui.fl.LrepConnector");
 	QUnit.module("sap.ui.fl.Cache", {
 		beforeEach: function() {
 			Cache._entries = {};
+			Cache._switches = {};
 			Cache.setActive(true);
 			this.oLrepConnector = LrepConnector.createConnector();
 		},
 		afterEach: function() {
 			Cache._entries = {};
+			Cache._switches = {};
 		}
+	});
+
+	QUnit.test('getSwitches shall return the list of switched-on business functions', function(assert) {
+		var that = this;
+		var oChangesFromFirstCall;
+		var sComponentName = "test";
+
+		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
+
+		return Cache.getChangesFillingCache(that.oLrepConnector, sComponentName).then(function(changes) {
+			var mSwitches = Cache.getSwitches();
+			var mSwitchesExp = {"bFunction1": true, "bFunction2": true};
+			assert.deepEqual(mSwitchesExp, mSwitches);
+		});
 	});
 
 	QUnit.test('isActive should ensure, that calls for same component are done only once', function(assert) {

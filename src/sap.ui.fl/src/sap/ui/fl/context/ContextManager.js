@@ -20,7 +20,8 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 
 		_oContext: new Context({
 			configuration : {
-				"device" : "sap/ui/fl/context/DeviceContextProvider"
+				"device" : "sap/ui/fl/context/DeviceContextProvider",
+				"switches" : "sap/ui/fl/context/SwitchContextProvider"
 			}
 		}),
 		_oLrepConnector: new LrepConnector(),
