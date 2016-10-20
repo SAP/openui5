@@ -198,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
 	 *   the target type; may be "any", "float", "int", "string", or a type with one of these types
-	 *   as its {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -236,7 +236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * @param {string} sSourceType
 	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
-	 *   {@link sap.ui.core.DataType#getPrimitiveType primitive type}.
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value

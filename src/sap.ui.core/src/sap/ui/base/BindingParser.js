@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			//  formatter or type specified"
 			return n > 1 ? aResults.join(" ") : aResults[0];
 		}
-		// @see sap.ui.core.ManagedObject#_bindProperty
+		// @see sap.ui.base.ManagedObject#_bindProperty
 		formatter.textFragments = fnRootFormatter && fnRootFormatter.textFragments
 			|| "sap.ui.base.BindingParser: composeFormatters";
 		return formatter;

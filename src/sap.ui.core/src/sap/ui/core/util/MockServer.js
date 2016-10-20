@@ -1578,7 +1578,7 @@ sap.ui
 			 *
 			 * @param {object}
 			 *            oEntitySet description of the entity set, conatins the full list of key fields
-			 * @param {oKeys}
+			 * @param {object}
 			 *            oKeys contains already defined key values
 			 * @param {oEntity}
 			 *            oEntity the result object, where the key property/value pairs merged into

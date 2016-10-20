@@ -26,7 +26,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/test/_L
 		},
 
 		/**
-		 * Checks if the matcher is matching - will get an instance of sap.ui.Control as parameter.
+		 * Checks if the matcher is matching - will get an instance of sap.ui.core.Control as parameter.
 		 *
 		 * Should be overwritten by subclasses
 		 *

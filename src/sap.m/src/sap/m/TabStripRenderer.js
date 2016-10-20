@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 * Returns the accessibility attributes for a given <code>TabStripItem</code>.
 	 *
 	 * @param oItem {sap.m.TabStripItem} The <code>TabStripItem</code> to prepare accessibility attributes for
-	 * @param oTabStripParent {sap.ui.Control} The <code>TabStrip</code> parent control
+	 * @param oTabStripParent {sap.ui.core.Control} The <code>TabStrip</code> parent control
 	 * @param oSelectedItem {sap.m.TabStripItem} The <code>TabStripItem</code> that is currently selected
 	 * @returns {Object} The accessibility attributes for given <code>TabStripItem</code>
 	 * @private

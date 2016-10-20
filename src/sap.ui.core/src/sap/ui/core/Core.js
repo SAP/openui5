@@ -2716,7 +2716,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/**
 	 * Registers the given object. Must be called once during construction.
-	 * @param {sap.ui.core.ManagedObject} oObject the object instance
+	 * @param {sap.ui.base.ManagedObject} oObject the object instance
 	 * @private
 	 */
 	Core.prototype.registerObject = function(oObject) {
@@ -2734,7 +2734,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/**
 	 * Deregisters the given object. Must be called once during destruction.
-	 * @param {sap.ui.core.ManagedObject} oObject the object instance
+	 * @param {sap.ui.base.ManagedObject} oObject the object instance
 	 * @private
 	 */
 	Core.prototype.deregisterObject = function(oObject) {

@@ -48,7 +48,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @see sap.ui.core.Core
-	 * @see sap.ui.getCore()
+	 * @see sap.ui.getCore
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
