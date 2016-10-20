@@ -96,14 +96,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 					/**
 					 * Indicates if user can scroll horizontally inside dialog when the content is bigger than the content area.
-					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
+					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, sap.m.ScrollContainer or sap.m.SplitContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 					 * @since 1.15.1
 					 */
 					horizontalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 					/**
 					 * Indicates if user can scroll vertically inside dialog when the content is bigger than the content area.
-					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
+					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, sap.m.ScrollContainer or sap.m.SplitContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 					 * @since 1.15.1
 					 */
 					verticalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer"];
+			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer", "SplitContainer"];
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		};
 
 		/**
-		 * If a scrollable control (sap.m.NavContainer, sap.m.ScrollContainer, sap.m.Page) is added to dialog's content aggregation as a single child or through one or more sap.ui.mvc.View instances,
+		 * If a scrollable control (sap.m.NavContainer, sap.m.ScrollContainer, sap.m.Page, sap.m.SplitContainer) is added to dialog's content aggregation as a single child or through one or more sap.ui.mvc.View instances,
 		 * the scrolling inside dialog will be disabled in order to avoid wrapped scrolling areas.
 		 *
 		 * If more than one scrollable control is added to dialog, the scrolling needs to be disabled manually.
