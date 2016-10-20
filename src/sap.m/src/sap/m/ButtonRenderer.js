@@ -73,6 +73,10 @@ sap.ui.define(['jquery.sap.global'],
 			mAccProps["describedby"] = {value: sTextId, append: true};
 		}
 
+		if (oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
+			mAccProps["labelledby"] = {value: oButton.getId(), append: true };
+		}
+
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
 			this.renderAccessibilityAttributes(oRm, oButton, mAccProps);
