@@ -143,7 +143,7 @@ sap.ui.define([
 	 * @param {string} oManifest."sap.app".type - type of the component (i.e. "application").
 	 * @param {object} oComponent Component instance
 	 * The processing is only done for components of the type "application"
-	 * @returns {array} Promise with an array of changes.
+	 * @returns {Promise} Promise resolving after the changes are loaded with an getter to retrieve the mapped changes.
 	 * @since 1.43
 	 * @private
 	 */
@@ -151,12 +151,14 @@ sap.ui.define([
 
 		// stop processing if the component is not of the type application
 		if (!Utils.isApplication(oManifest)) {
-			return Promise.resolve([]);
+			return Promise.resolve(function() {
+				return [];
+			});
 		}
 
 		var oChangePersistenceWrapper = this._doLoadComponent(oConfig, oManifest);
 
-		return oChangePersistenceWrapper.oChangePersistence.getChangesMapForComponent(oComponent, oChangePersistenceWrapper.oRequestOptions);
+		return oChangePersistenceWrapper.oChangePersistence.loadChangesMapForComponent(oComponent, oChangePersistenceWrapper.oRequestOptions);
 	};
 
 	ChangePersistenceFactory._findFlAsyncHint = function (oAsyncHintRequest) {

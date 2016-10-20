@@ -71,40 +71,6 @@ sap.ui.define([
 		return oExtensionProvider;
 	};
 
-	/**
-	 * Asynchronous view processing method.
-	 *
-	 * @param {sap.ui.core.mvc.View} oView view to process
-	 * @param {object} mProperties
-	 * @param {string} mProperties.componentId ID of the application component
-	 * @returns {jquery.sap.promise} result of the processing, promise if executed asynchronously
-	 *
-	 * @public
-	 */
-	 PreprocessorImpl.process = function(oView, mProperties){
-		 try {
-
-			 var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
-
-			 if (!oComponent) {
-				 Utils.log.warning("View is generated without an component. Flexibility features are not possible.");
-				 return Promise.resolve(oView);
-			 }
-
-			 var sFlexReference = Utils.getComponentClassName(oComponent);
-			 var oFlexController = FlexControllerFactory.create(sFlexReference);
-			 return oFlexController.processView(oView).then(function() {
-				 jQuery.sap.log.debug("flex processing view " + oView.getId() + " finished");
-				 return oView;
-			 });
-		 } catch (error) {
-			 var sError = "view " + oView.getId() + ": " + error;
-			 jQuery.sap.log.info(sError); //to allow control usage in applications that do not work with UI flex and components
-			 // throw new Error(sError); // throw again, when caller handles the promise
-			 return Promise.resolve(oView);
-		 }
-	 };
-
 	 return PreprocessorImpl;
 
 }, /* bExport= */true);
