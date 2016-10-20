@@ -59,6 +59,17 @@ function attachRowsUpdated(oControl, fnHandler, that) {
 }
 
 
+function performTestAfterTableIsUpdated(doTest) {
+	this.oModel.attachMetadataLoaded(function() {
+		attachEventHandler(this.oTable, 1, function(){
+			doTest(this.oTable);
+			start();
+		}, this);
+		this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+	}, this);
+}
+
+
 function createColumn(mSettings) {
 	return new sap.ui.table.AnalyticalColumn({
 		grouped: mSettings.grouped || false,
@@ -98,7 +109,6 @@ function createTable(mSettings) {
 			createColumn({summed: true, name: "PlannedCosts"})
 		],
 
-		selectionMode: sap.ui.table.SelectionMode.Single,
 		visibleRowCount: 20,
 		enableColumnReordering: true,
 		showColumnVisibilityMenu: true,
@@ -121,6 +131,162 @@ function createTable(mSettings) {
 
 
 //************** Test Code **************
+
+QUnit.module("Properties & Functions", {
+	setup: function() {
+		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
+		this.oTable = createTable.call(this);
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function() {
+		this.oTable.destroy();
+	}
+});
+
+QUnit.test("SelectionMode", function (assert) {
+	assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.MultiToggle");
+	this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+	assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.Single, "SelectionMode.Single");
+	this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
+	assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.Multi defaulted to MultiToggle");
+	this.oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+	assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.None not supported");
+});
+
+QUnit.test("SelectionBehavior", function (assert) {
+	assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.RowSelector, "SelectionBehavior.RowSelector");
+	this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+	assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.Row");
+	this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+	assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.RowOnly not supported");
+});
+
+QUnit.test("Dirty", function (assert) {
+	assert.equal(this.oTable.getDirty(), false, "Default dirty");
+	assert.equal(this.oTable.getShowOverlay(), false, "Default showOverlay");
+	this.oTable.setDirty(true);
+	assert.equal(this.oTable.getDirty(), true, "Dirty set");
+	assert.equal(this.oTable.getShowOverlay(), true, "ShowOverlay set");
+});
+
+QUnit.test("FixedRowCount", function (assert) {
+	assert.equal(this.oTable.getFixedRowCount(), 0, "Default fixedRowCount");
+	this.oTable.setFixedRowCount(5);
+	assert.equal(this.oTable.getFixedRowCount(), 0, "FixedRowCount cannot be changed");
+});
+
+QUnit.asyncTest("FixedBottomRowCount", function (assert) {
+	function doTest(oTable) {
+		assert.equal(oTable.getFixedBottomRowCount(), 1, "Default fixedBottomRowCount");
+		oTable.setFixedBottomRowCount(5);
+		assert.equal(oTable.getFixedBottomRowCount(), 1, "FixedBottomRowCount cannot be changed");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
+QUnit.test("EnableGrouping", function (assert) {
+	assert.equal(this.oTable.getEnableGrouping(), false, "Default enableGrouping");
+	this.oTable.setEnableGrouping(true);
+	assert.equal(this.oTable.getEnableGrouping(), false, "EnableGrouping cannot be changed");
+});
+
+QUnit.asyncTest("getTotalSize", 3, function (assert) {
+	function doTest(oTable) {
+		var oBinding = oTable.getBinding("rows");
+		oBinding.getTotalSize = function() {
+			assert.ok(true, "getTotalSize on Binding called");
+			return 5;
+		};
+		assert.equal(oTable.getTotalSize(), 5, "Result of Binding");
+		oTable.unbindRows();
+		assert.equal(oTable.getTotalSize(), 0, "No Binding");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
+QUnit.asyncTest("CollapseRecursive", 7, function (assert) {
+	function doTest(oTable) {
+		var oBinding = oTable.getBinding("rows");
+		var bCollapseRecursive = false;
+		oBinding.setCollapseRecursive = function(bParam) {
+			assert.equal(bParam, bCollapseRecursive, "setCollapseRecursive on Binding called");
+		};
+
+		assert.ok(oTable.setCollapseRecursive(bCollapseRecursive) === oTable, "Call on Binding");
+		assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+		bCollapseRecursive = true;
+		assert.ok(oTable.setCollapseRecursive(bCollapseRecursive) === oTable, "Call of Binding");
+		assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+		oTable.unbindRows();
+		bCollapseRecursive = false;
+		oTable.setCollapseRecursive(bCollapseRecursive);
+		assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
+QUnit.asyncTest("_isRowSelectable", 5, function (assert) {
+	function doTest(oTable) {
+		var oBinding = oTable.getBinding("rows");
+		oBinding.isIndexSelectable = function(iRowIndex) {
+			assert.ok(true, "isIndexSelectable on Binding called");
+			return iRowIndex === 5;
+		};
+		assert.equal(oTable._isRowSelectable(5), true, "Result of Binding");
+		assert.equal(oTable._isRowSelectable(4), false, "Result of Binding");
+		oTable.unbindRows();
+		assert.equal(oTable._isRowSelectable(5), false, "No Binding");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
+QUnit.asyncTest("collapseAll", 6, function (assert) {
+	function doTest(oTable) {
+		oTable.setFirstVisibleRow(2);
+		var oBinding = oTable.getBinding("rows");
+		oBinding.collapseToLevel = function(iLevel) {
+			assert.ok(true, "collapseToLevel on Binding called ...");
+			assert.equal(iLevel, 0, "... with level 0");
+		};
+		assert.ok(oTable.collapseAll() === oTable, "Call on Binding");
+		assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row");
+		oTable.unbindRows();
+		oTable.setFirstVisibleRow(2);
+		assert.ok(oTable.collapseAll() === oTable, "No Binding");
+		assert.equal(oTable.getFirstVisibleRow(), 2, "First visible row");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
+
+
+QUnit.module("GroupHeaderMenu", {
+	setup: function() {
+		this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch:true});
+		this.oTable = createTable.call(this);
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function() {
+		this.oTable.destroy();
+	}
+});
+
+QUnit.asyncTest("Menu", function (assert) {
+	function doTest(oTable) {
+		var oEvent = jQuery.Event({type: "contextmenu"});
+		oEvent.target = oTable.getDomRef("rows-row0-col3");
+		oTable._onContextMenu(oEvent);
+		assert.ok(oTable._getGroupHeaderMenu().bOpen, "Menu is open");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
+
 
 
 QUnit.module("AnalyticalTable with ODataModel v2", {
@@ -153,6 +319,10 @@ QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
 	this.oTable._sanitizeBindingInfo(oBindingInfo);
 	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
 
+	oBindingInfo = {parameters: {autoExpandMode: "Sequential"}};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - From BindingInfo");
+
 	oBindingInfo = {};
 	this.oTable.setAutoExpandMode(oExpandMode.Sequential);
 	this.oTable._sanitizeBindingInfo(oBindingInfo);
@@ -167,6 +337,38 @@ QUnit.asyncTest("TreeAutoExpandMode", function (assert) {
 	this.oTable.setAutoExpandMode("DOES_NOT_EXIST");
 	this.oTable._sanitizeBindingInfo(oBindingInfo);
 	assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
+});
+
+QUnit.test("SumOnTop", function (assert) {
+	this.oTable = new sap.ui.table.AnalyticalTable();
+	var oBindingInfo = {};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.sumOnTop, false, "Property SumOnTop - Default");
+
+	oBindingInfo = {parameters: {sumOnTop: true}};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - From BindingInfo");
+
+	oBindingInfo = {};
+	this.oTable.setSumOnTop(true);
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - Custom");
+});
+
+QUnit.test("NumberOfExpandedLevels", function (assert) {
+	this.oTable = new sap.ui.table.AnalyticalTable();
+	var oBindingInfo = {};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
+
+	oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 5, "Property NumberOfExpandedLevels - From BindingInfo");
+
+	oBindingInfo = {};
+	this.oTable.setNumberOfExpandedLevels(4);
+	this.oTable._sanitizeBindingInfo(oBindingInfo);
+	assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property SumOnTop - Custom");
 });
 
 QUnit.asyncTest("Simple expand/collapse", function (assert) {
