@@ -420,35 +420,50 @@ sap.ui.define([
 				var oError,
 					vResponse = aResponses[index];
 
-				if (Array.isArray(vRequest)) {
+				if (Array.isArray(vResponse)) {
 					visit(vRequest, vResponse);
-				} else if (vResponse) {
-					if (vResponse.status >= 400) {
-						vResponse.getResponseHeader = getResponseHeader;
-						oCause = _Helper.createError(vResponse);
-						vRequest.$reject(oCause);
-					} else if (vResponse.responseText) {
-						vRequest.$resolve(JSON.parse(vResponse.responseText));
-					} else {
-						vRequest.$resolve();
-					}
-				} else {
+				} else if (!vResponse) {
 					oError = new Error(
 						"HTTP request was not processed because the previous request failed");
 					oError.cause = oCause;
 					vRequest.$reject(oError);
+				} else if (vResponse.status >= 400) {
+					vResponse.getResponseHeader = getResponseHeader;
+					oCause = _Helper.createError(vResponse);
+					reject(oCause, vRequest);
+				} else if (vResponse.responseText) {
+					vRequest.$resolve(JSON.parse(vResponse.responseText));
+				} else {
+					vRequest.$resolve();
 				}
 			});
 		}
 
-		function onSubmit(aRequests) {
-			aRequests.forEach(function (vRequest) {
-				if (Array.isArray(vRequest)) {
-					onSubmit(vRequest);
-				} else if (vRequest.$submit) {
-					vRequest.$submit();
-				}
-			});
+		/*
+		 * (Recursively) calls $submit on the request(s)
+		 *
+		 * @param {object|object[]} vRequest
+		 */
+		function onSubmit(vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(onSubmit);
+			} else if (vRequest.$submit) {
+				vRequest.$submit();
+			}
+		}
+
+		/*
+		 * (Recursively) rejects the request(s) with the given error
+		 *
+		 * @param {Error} oError
+		 * @param {object|object[]} vRequest
+		 */
+		function reject(oError, vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(reject.bind(null, oError));
+			} else {
+				vRequest.$reject(oError);
+			}
 		}
 
 		if (!aRequests) {

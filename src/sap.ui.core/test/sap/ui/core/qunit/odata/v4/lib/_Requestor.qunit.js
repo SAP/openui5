@@ -762,8 +762,8 @@ sap.ui.require([
 				status : 404,
 				statusText : "Not found"
 			}],
-			oRequestor = _Requestor.create(),
-			aPromises = [];
+			aPromises = [],
+			oRequestor = _Requestor.create();
 
 		function unexpected () {
 			assert.ok(false);
@@ -799,6 +799,57 @@ sap.ui.require([
 			.returns(Promise.resolve(aBatchResult));
 
 		aPromises.push(oRequestor.submitBatch("testGroupId").then(function (oResult) {
+			assert.deepEqual(oResult, undefined);
+		}));
+
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch(...): error in change set", function (assert) {
+		var oError = {error : {message : "400 Bad Request"}},
+			aBatchResult = [{
+				getResponseHeader : function () {
+					return "application/json";
+				},
+				headers : {"Content-Type":"application/json"},
+				responseText : JSON.stringify(oError),
+				status : 400,
+				statusText : "Bad Request"
+			}],
+			aPromises = [],
+			oRequestor = _Requestor.create();
+
+		function assertError(oResultError, sMessage) {
+			assert.ok(oResultError instanceof Error);
+			assert.strictEqual(oResultError.message, "400 Bad Request");
+			assert.strictEqual(oResultError.status, 400);
+			assert.strictEqual(oResultError.statusText, "Bad Request");
+		}
+
+		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')", "group",
+				{"If-Match" : "*"}, {Name : "foo"})
+			.then(undefined, assertError));
+
+		aPromises.push(oRequestor.request("POST", "Unknown", "group", undefined, {})
+			.then(undefined, assertError));
+
+		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')", "group",
+				{"If-Match" : "*"}, {Name : "bar"})
+			.then(undefined, assertError));
+
+		aPromises.push(oRequestor.request("GET", "ok", "group")
+			.then(undefined, function (oResultError) {
+				assert.ok(oResultError instanceof Error);
+				assert.strictEqual(oResultError.message,
+					"HTTP request was not processed because the previous request failed");
+				assertError(oResultError.cause);
+			}));
+
+		this.mock(oRequestor).expects("request")
+			.returns(Promise.resolve(aBatchResult));
+
+		aPromises.push(oRequestor.submitBatch("group").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
 
@@ -1213,6 +1264,37 @@ sap.ui.require([
 						}),
 					oRequestor.submitBatch("group")
 				]);
+		});
+
+		//*****************************************************************************************
+		QUnit.test("submitBatch (real OData): error in change set", function (assert) {
+			var oCommonError,
+				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl));
+
+			function onError(oError) {
+				if (oCommonError) {
+					assert.strictEqual(oError, oCommonError);
+				} else {
+					oCommonError = oError;
+				}
+			}
+
+			return Promise.all([
+				oRequestor.request("PATCH", "ProductList('HT-1001')", "group", {"If-Match" : "*"},
+						{Name : "foo"})
+					.then(undefined, onError),
+				oRequestor.request("POST", "Unknown", "group", undefined, {})
+					.then(undefined, onError),
+				oRequestor.request("PATCH", "ProductList('HT-1001')", "group", {"If-Match" : "*"},
+						{Name : "bar"})
+					.then(undefined, onError),
+				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", "group")
+					.then(undefined, function (oError) {
+						assert.strictEqual(oError.message,
+							"HTTP request was not processed because the previous request failed");
+					}),
+				oRequestor.submitBatch("group")
+			]);
 		});
 	}
 });
