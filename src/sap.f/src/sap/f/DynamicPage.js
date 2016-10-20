@@ -805,20 +805,27 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
 		var oScrollBar,
-			bScrollBarNeeded;
+			bScrollBarNeeded,
+			bNeedUpdate;
 
 		if (!Device.system.desktop || !exists(this.$wrapper)) {
 			return;
 		}
 
-		bScrollBarNeeded = this._needsVerticalScrollBar();
 		oScrollBar = this._getScrollBar();
 		oScrollBar.setContentSize(this._measureScrollBarOffsetHeight() + this.$wrapper[0].scrollHeight + "px");
-		oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
-		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
+
+		bScrollBarNeeded = this._needsVerticalScrollBar();
+		bNeedUpdate = this.bHasScrollbar !== bScrollBarNeeded;
+		if (bNeedUpdate) {
+			oScrollBar.toggleStyleClass("sapUiHidden", !bScrollBarNeeded);
+			this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
+			this.bHasScrollbar = bScrollBarNeeded;
+			jQuery.sap.delayedCall(0, this, this._updateFitContainer);
+		}
 
 		jQuery.sap.delayedCall(0, this, this._updateScrollBarOffset);
-		jQuery.sap.delayedCall(0, this, this._updateFitContainer);
+
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
@@ -1040,7 +1047,7 @@ sap.ui.define([
 			this._updateFitContainer(bNeedsVerticalScrollbar);
 		}
 
-		if (oEvent.size.height !== oEvent.oldSize.height && !this._bExpandingWithAClick) {
+		if (!this._bExpandingWithAClick) {
 			this._updateScrollBar();
 		}
 
