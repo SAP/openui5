@@ -476,6 +476,25 @@
 		oButton.destroy();
 	});
 
+	test("AriaLabeledBy when the Button is associated with Label", function() {
+		var oLabel = new sap.m.Label("L1", {
+			text:'Label'
+		});
+		var oButton = new sap.m.Button("B1",{
+			text:'Hello World',
+			ariaLabelledBy: "L1"
+		});
+
+		oLabel.placeAt("qunit-fixture");
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+
+		oLabel.destroy();
+		oButton.destroy();
+	});
+
 </script>
 
 </head>
