@@ -439,7 +439,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		var oMappedChangesPromise = Promise.resolve({});
 
 		var oChangePersistence = new ChangePersistence("theComponentName");
-		var oGetChangesForComponentStub = this.stub(oChangePersistence, "getChangesMapForComponent").returns(oMappedChangesPromise);
+		var oGetChangesForComponentStub = this.stub(oChangePersistence, "loadChangesMapForComponent").returns(oMappedChangesPromise);
 		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 		var oPromise = ChangePersistenceFactory._getChangesForComponentAfterInstantiation(oConfig, oManifest, oComponent);

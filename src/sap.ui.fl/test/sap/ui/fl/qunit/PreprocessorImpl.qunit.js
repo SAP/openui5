@@ -32,48 +32,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		}
 	});
 
-	QUnit.test("process shall resolve, after processView resolved successfully", function() {
-		sandbox.stub(sap.ui.getCore(), "getComponent").returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return "preprocessorTest.Component";
-					}
-				};
-			},
-			getManifestEntry: function () {
-				return undefined;
-			}
-		});
-		sandbox.stub(Component, "getOwnerIdFor").returns("preprocessorTest.Component");
-		var flexController = FlexControllerFactory.create("preprocessorTest.Component");
-		sandbox.stub(flexController, "processView").returns(Promise.resolve());
-
-		var oControl = new sap.ui.core.Control("Id4711");
-		controls.push(oControl);
-
-		//Call CUT
-		return PreprocessorImpl.process(oControl, mProperties).then(function() {
-			sinon.assert.called(flexController.processView);
-		});
-	});
-
-	QUnit.test("processView shall resolve, even if an exception occours, as long as the caller does not handle promises", function() {
-		sandbox.stub(sap.ui.getCore(), "getComponent").throws(new Error("Issue getting component"));
-		sandbox.stub(Component, "getOwnerIdFor").returns("preprocessorTest.Component");
-		var flexController = FlexControllerFactory.create("preprocessorTest.Component");
-		sandbox.stub(flexController, "processView").returns(Promise.resolve());
-		sandbox.spy(jQuery.sap.log, "info");
-
-		var oControl = new sap.ui.core.Control("Id4711");
-		controls.push(oControl);
-
-		//Call CUT
-		return PreprocessorImpl.process(oControl, mProperties).then(function() {
-			sinon.assert.called(jQuery.sap.log.info);
-		});
-	});
-
 	QUnit.test("convert coding extensions back and forth", function(assert) {
 
 		var done = assert.async();
