@@ -1152,7 +1152,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * @private
 		 */
 		TreeBindingAdapter.prototype.getSelectedNodesCount = function () {
-			return Object.keys(this._mTreeState.selected).length;
+			var iSelectedNodes = Object.keys(this._mTreeState.selected).length;
+			// in selectAllMode the root node is flagged accordingly
+			// yet if it is artificial, we cannot count it for the selected nodes, as it is never returned by the adapter
+			if (this._oRootNode && this._oRootNode.isArtificial &&
+				this._oRootNode.nodeState && this._oRootNode.nodeState.selected && this._oRootNode.nodeState.selectAllMode) {
+				iSelectedNodes -= 1;
+			}
+			return iSelectedNodes;
 		};
 
 		/**
