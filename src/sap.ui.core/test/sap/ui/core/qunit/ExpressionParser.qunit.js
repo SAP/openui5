@@ -55,8 +55,9 @@ sap.ui.require([
 	 * @param {string} sTitle - test title
 	 * @param {object[]} aFixtures - the array of test fixtures
 	 * @param {function} [fnInit] - optional initializer function to e.g. set stubs
+	 * @param {function} [fnTearDown] optional tear down function to e.g. destroy stubs
 	 */
-	function checkFixtures(sTitle, aFixtures, fnInit) {
+	function checkFixtures(sTitle, aFixtures, fnInit, fnTearDown) {
 		aFixtures.forEach(function (oFixture) {
 			QUnit.test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result,
 				function (assert) {
@@ -64,6 +65,10 @@ sap.ui.require([
 						fnInit(this); //call initializer with sandbox
 					}
 					check(assert, oFixture.expression, oFixture.result);
+
+					if (fnTearDown) {
+						fnTearDown(this); //call initializer with sandbox
+					}
 				}
 			);
 		});
@@ -600,6 +605,49 @@ sap.ui.require([
 		this.checkError(assert, "{=, 'foo'}", "Unexpected ,", 3);
 		assert.strictEqual(oAverageSpy.callCount, 2, "parse start measurement");
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
+	});
+
+
+	QUnit.module('Control Binding');
+
+	//*********************************************************************************************
+	checkFixtures('Control Binding', [{expression: "{=${@Fixture>text}}", result: "Foo"},
+		{expression: "{=${@Fixture>text} + 'Bar'}", result: "FooBar"}], function () {
+		new sap.ui.core.Title('Fixture', {
+			text: "Foo"
+		});
+	}, function () {
+		sap.ui.getCore().byId('Fixture').destroy();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Control Binding : Usage with absolute id resolution", function (assert) {
+		var parentView = sap.ui.xmlview("aggregate-control-binding", {
+			viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
+			'<core:Icon id="Fixture1" color="brown" />' +
+			'<core:Icon id="Fixture2" color="{=${@aggregate-control-binding--Fixture1>color}}" />' +
+			'</mvc:View>'
+		});
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(parentView.byId('Fixture2').getColor(), "brown");
+
+		parentView.destroy();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Control Binding : Binding with later instantiated controls shall also work", function (assert) {
+		var parentView = sap.ui.xmlview("aggregate-control-binding", {
+			viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
+			'<core:Icon id="Fixture2" color="{=${@aggregate-control-binding--Fixture1>color}}" />' +
+			'<core:Icon id="Fixture1" color="brown" />' +
+			'</mvc:View>'
+		});
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(parentView.byId('Fixture2').getColor(), "brown");
+
+		parentView.destroy();
 	});
 
 });

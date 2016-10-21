@@ -101,6 +101,14 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			Element.apply(this,arguments);
 			this.bOutput = this.getDomRef() != null; // whether this control has already produced output
 
+			// notify, that a control has been instantiated.
+			if (typeof sId === "object" && sId.hasOwnProperty("id")) {
+				sap.ui.getCore().getEventBus().publish("sap.ui.core.Control", "__created", {
+					id: sId.id,
+					control: this
+				});
+			}
+
 			if (this._sapUiCoreLocalBusy_initBusyIndicator) {
 				this._sapUiCoreLocalBusy_initBusyIndicator();
 			}

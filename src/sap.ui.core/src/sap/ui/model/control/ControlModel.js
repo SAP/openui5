@@ -34,7 +34,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	var ControlModel = Model.extend("sap.ui.model.control.ControlModel", /** @lends sap.ui.model.control.ControlModel.prototype */ {
 
 		constructor : function (oControl) {
-			Model.apply(this, arguments);
+			if (typeof oControl === 'string') {
+				var _this = this;
+				var eventBus = sap.ui.getCore().getEventBus();
+				var fakePrefix = 'FakeControl--';
+                var fakeId = fakePrefix + oControl;
+
+				// create fake control
+				oControl = sap.ui.getCore().byId(fakeId);
+				if (!oControl) {
+					oControl = new sap.ui.core.Control(fakeId);
+					oControl.getProperty = jQuery.noop;
+				}
+				/**
+				 * observer listens for created controls, to replace the fake control, when the
+				 * real control is instantiated
+				 *
+				 * @param {string} channel
+                 * @param {string} event
+                 * @param {{id: string, control: sap.ui.core.Control}} data
+                 */
+				var controlCreatedObserver = function (channel, event, data) {
+					// check if current model is handling the corresponding fake control for the instantiated control
+					if (data.id === _this.oControl.getId().slice(fakePrefix.length) && typeof data.control === 'object') {
+						// destroy fake control, because we dont need it anymore
+						_this.oControl.destroy();
+
+						// assign the new real control instance
+						_this.oControl = data.control;
+
+						// switch existing bindings to new control
+						jQuery.each(_this.aBindings, function (index, binding) {
+							binding.oContext = _this.oControl;
+						});
+
+						// update value with new values from the real control
+						_this.oControl.attachEvent("_change", _this.checkUpdate, _this);
+						_this.checkUpdate();
+
+						// remove listener, because we now have the real control
+						eventBus.unsubscribe('sap.ui.core.Control', '__created', controlCreatedObserver);
+					}
+				};
+				eventBus.subscribe('sap.ui.core.Control', '__created', controlCreatedObserver);
+			}
+			Model.call(this, oControl);
 			this.oControl = oControl;
 			this.oControl.attachEvent("_change", this.checkUpdate, this);
 			this.oElements = [];

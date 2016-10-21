@@ -8,12 +8,12 @@ sap.ui.define([
 		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata',
 		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException', '../model/ListBinding',
 		'../model/Model', '../model/ParseException', '../model/TreeBinding', '../model/Type', '../model/ValidateException',
-		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
+	'../model/control/ControlModel', 'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
 	], function(
 		jQuery,
 		BindingParser, DataType, EventProvider, ManagedObjectMetadata,
 		BindingMode, CompositeBinding, Context, FormatException, ListBinding,
-		Model, ParseException, TreeBinding, Type, ValidateException
+		Model, ParseException, TreeBinding, Type, ValidateException, ControlModel
 		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
 
 	"use strict";
@@ -3912,6 +3912,14 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.getModel = function(sName) {
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		// models prefixed with an "@" sign, are control models
+		if (typeof sName === "string" && sName.indexOf("@") === 0) {
+
+			var sId = sName.substring(1);
+			var control = sap.ui.getCore().byId(sId) || sId;
+
+			return new ControlModel(control);
+		}
 		return this.oModels[sName] || this.oPropagatedProperties.oModels[sName];
 	};
 
