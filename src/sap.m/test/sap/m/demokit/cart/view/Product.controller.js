@@ -125,7 +125,8 @@ sap.ui.define([
 			}
 
 			//if there is at least one entry, the edit button is shown
-			oCartData.showEditAndProceedButton = true;
+			oCartData.showEditButton = true;
+			oCartData.showProceedButton = true;
 
 			// update model
 			oCartModel.refresh(true);
