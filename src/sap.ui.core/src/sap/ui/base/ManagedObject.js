@@ -3209,18 +3209,21 @@ sap.ui.define([
 		function updateDiff(oControl, aContexts) {
 			var aDiff = aContexts.diff,
 				aChildren = oControl[oAggregationInfo._sGetter]() || [],
-				oDiff, oClone, oContext, aChildren;
+				oDiff, oClone, oContext, i;
+
 			// If no diff exists or aggregation is empty, fall back to default update
 			if (!aDiff || aChildren.length === 0) {
 				update(oControl, aContexts);
 				return;
 			}
+
 			// If diff is empty, nothing needs to be changed
 			if (aDiff.length == 0) {
 				return;
 			}
+
 			// Loop through the diff and apply it
-			for (var i = 0; i < aDiff.length; i++) {
+			for (i = 0; i < aDiff.length; i++) {
 				oDiff = aDiff[i];
 				switch (oDiff.type) {
 					case "insert":
@@ -3237,10 +3240,11 @@ sap.ui.define([
 						jQuery.sap.log.error("Unknown diff type \"" + oDiff.type + "\"");
 				}
 			}
+
 			// Loop through all children and set the binding context again. This is needed for
 			// indexed contexts, where inserting/deleting entries shifts the index of all following items
 			aChildren = oControl[oAggregationInfo._sGetter]() || [];
-			for (var i = 0; i < aChildren.length; i++) {
+			for (i = 0; i < aChildren.length; i++) {
 				aChildren[i].setBindingContext(aContexts[i]);
 			}
 		}
