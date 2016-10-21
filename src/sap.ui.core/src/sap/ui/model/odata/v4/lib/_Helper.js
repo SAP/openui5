@@ -40,7 +40,7 @@ sap.ui.define([
 			for (i = 0; i < arguments.length; i++) {
 				sSegment = arguments[i];
 				if (sSegment || sSegment === 0) {
-					aPath.push(sSegment);
+					aPath.push(sSegment === "/" ? "" : sSegment); //avoid duplicated '/'
 				}
 			}
 			return aPath.join("/");
@@ -202,8 +202,13 @@ sap.ui.define([
 		 * @returns {string}
 		 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
 		 *   "5.1.1.6.1 Primitive Literals"
+		 * @throws {Error}
+		 *   If the value is undefined or the type is not supported
 		 */
 		formatLiteral : function (vValue, sType) {
+			if (vValue === undefined) {
+				throw new Error("Illegal value: undefined");
+			}
 			if (vValue === null) {
 				return "null";
 			}

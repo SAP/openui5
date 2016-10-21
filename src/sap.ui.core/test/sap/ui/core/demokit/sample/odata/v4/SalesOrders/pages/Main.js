@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
@@ -11,7 +12,8 @@ sap.ui.require([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
 ],
-function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties, TestUtils) {
+function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties,
+		TestUtils) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -85,7 +87,6 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 								Opa5.assert.strictEqual(oNewNoteInput.getValue(), sExpectedNote,
 									"New Note");
 							} else {
-
 								Opa5.assert.ok(true, "Stored NewNote value " + sLastNewNoteValue);
 							}
 						},
@@ -132,6 +133,17 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				doubleRefresh : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							oSalesOrderTable.getBinding("items").refresh();
+							oSalesOrderTable.getBinding("items").refresh();
+						},
+						viewName : sViewName
+					});
+				},
 				filterGrossAmount : function (sFilterValue) {
 					return this.waitFor({
 						actions: new EnterText({clearTextFirst : true, text : sFilterValue}),
@@ -155,6 +167,32 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 							Opa5.assert.ok(true, "First SalesOrderID " + sSalesOrderId);
 
 						}
+					});
+				},
+				firstSalesOrderIsAtPos0 : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						check : function (oSalesOrderTable) {
+							return  oSalesOrderTable.getItems()[0].getCells()[0].getText()
+								=== sap.ui.test.Opa.getContext().firstSalesOrderId;
+						},
+						success : function (oSalesOrderTable) {
+							Opa5.assert.ok(true, "First SalesOrderID " +
+								oSalesOrderTable.getItems()[0].getCells()[0].getText());
+						},
+						viewName : sViewName
+					});
+				},
+				pressCancelSalesOrdersChangesButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "cancelSalesOrdersChanges",
+						success : function (oCreateSalesOrderButton) {
+							Opa5.assert.ok(true, "Cancel Sales Orders Changes button pressed");
+						},
+						viewName : sViewName
 					});
 				},
 				pressConfirmSalesOrdersButton : function () {
@@ -209,6 +247,14 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				pressSetBindingContextButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "setBindingContext",
+						viewName : sViewName
+					});
+				},
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -235,6 +281,14 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 							aControls[0].$().tap();
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
 						},
+						viewName : sViewName
+					});
+				},
+				sortByGrossAmount : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "sortByGrossAmount",
 						viewName : sViewName
 					});
 				}
@@ -277,6 +331,33 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						viewName : sViewName
 					});
 				},
+				checkFavoriteProductID : function () {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : "FavoriteProductID",
+						matchers : new Properties({text : "HT-1000"}),
+						success : function (oText) {
+							Opa5.assert.ok(true, "Product ID 'HT-1000' found");
+						},
+						viewName : sViewName
+					});
+				},
+				checkFirstGrossAmountGreater : function (sAmount) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var sAmount,
+								aTableItems = oSalesOrderTable.getItems();
+							if (aTableItems.length > 0) {
+								sAmount = aTableItems[0].getBindingContext()
+									.getProperty("GrossAmount");
+								Opa5.assert.ok(ODataUtils.compare(sAmount, "1000", true) > 0);
+							}
+						},
+						viewName : sViewName
+					});
+				},
 				checkID : function (iRow, sExpectedID) {
 					var that = this;
 					return this.waitFor({
@@ -285,7 +366,7 @@ function (_Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Propert
 						// we wait for the refresh button becomes interactable before checking the
 						// Sales Orders list
 						matchers : new Interactable(),
-						success : function (oSalesOrderTable) {
+						success : function () {
 							return that.waitFor({
 								controlType : "sap.m.Table",
 								id : "SalesOrders",

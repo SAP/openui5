@@ -206,17 +206,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oModel,
-			oRequestor = {};
+		var oExpectedCreate = this.mock(_Requestor).expects("create"),
+			oModel,
+			oRequestor = {},
+			fnSubmitAuto = function () {};
 
-		this.mock(_Requestor).expects("create")
-			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
+		oExpectedCreate
+			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
+					sinon.match.func)
 			.returns(oRequestor);
 
+		// code under test
 		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
+
+		this.mock(oModel._submitBatch).expects("bind")
+			.withExactArgs(sinon.match.same(oModel), "$auto")
+			.returns(fnSubmitAuto);
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(fnSubmitAuto);
+
+		// code under test - call fnOnCreateGroup
+		oExpectedCreate.args[0][3]("$auto");
+		oExpectedCreate.args[0][3]("foo");
 	});
 
 	//*********************************************************************************************
@@ -317,24 +331,35 @@ sap.ui.require([
 			oError = new Error(),
 			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
+			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
 			oContext = Context.create(oModel, undefined, "/TEAMS('42')"),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
+			oListBinding3 = oModel.bindList("TEAM_2_EMPLOYEES"),
 			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined, {}),
-			oPropertyBinding = oModel.bindProperty("Name");
+			oPropertyBinding = oModel.bindProperty("Name"),
+			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
 		// cache proxy for oRelativeContextBinding
 		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
-		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(_ODataHelper).expects("createCacheProxy").twice().returns(oCacheProxy);
 		oRelativeContextBinding.setContext(oContext);
+		oListBinding3.setContext(oBaseContext);
+		this.mock(oPropertyBinding2).expects("makeCache");
+		this.mock(oPropertyBinding2).expects("checkUpdate");
+		oPropertyBinding2.setContext(oBaseContext);
 
 		oListBinding.attachChange(function () {});
+		oListBinding3.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
+		oPropertyBinding2.attachChange(function () {});
 		oRelativeContextBinding.attachChange(function () {});
 		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
-		//check: only bindings with change event handler are refreshed
+		this.mock(oListBinding3).expects("refresh").withExactArgs("myGroup");
+		this.mock(oPropertyBinding2).expects("refresh").withExactArgs("myGroup");
+		// check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
-		//check: no refresh on binding with relative path
+		// check: no refresh on binding with relative path
 		this.mock(oPropertyBinding).expects("refresh").never();
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
@@ -376,89 +401,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with group ID '$direct'", function (assert) {
-		var bDataRequested = false,
-			oModel = createModel();
-
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-		this.mock(oModel.oRequestor).expects("submitBatch").never();
-
-		// code under test
-		oModel.addedRequestToGroup("$direct");
-
-		// code under test
-		oModel.addedRequestToGroup("$direct", function () {
-			bDataRequested = true;
-		});
-
-		assert.strictEqual(bDataRequested, true);
-		assert.strictEqual("$direct" in oModel.mCallbacksByGroupId, false);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with group ID '$auto'", function (assert) {
-		var oModel = createModel(),
-			fnGroupSentCallback = function () {},
-			fnGroupSentCallback2 = function () {},
-			fnSubmitAuto = function () {};
-
-		this.mock(oModel._submitBatch).expects("bind")
-			.withExactArgs(sinon.match.same(oModel), "$auto")
-			.returns(fnSubmitAuto);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
-			.withExactArgs(fnSubmitAuto);
-
-		// code under test
-		oModel.addedRequestToGroup("$auto");
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"], []);
-
-		// code under test
-		oModel.addedRequestToGroup("$auto", fnGroupSentCallback);
-		oModel.addedRequestToGroup("$auto", fnGroupSentCallback2);
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"],
-			[fnGroupSentCallback, fnGroupSentCallback2]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup with application group ID", function (assert) {
-		var oModel = createModel(),
-			fnGroupSentCallback = {},
-			fnGroupSentCallback2 = {};
-
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-
-		// code under test
-		oModel.addedRequestToGroup("groupId");
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"], []);
-
-		// code under test
-		oModel.addedRequestToGroup("groupId", fnGroupSentCallback);
-		oModel.addedRequestToGroup("groupId", fnGroupSentCallback2);
-
-		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"],
-			[fnGroupSentCallback, fnGroupSentCallback2]);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_submitBatch: success", function (assert) {
 		var oBatchResult = {},
-			fnCallback1 = sinon.spy(),
-			fnCallback2 = sinon.spy(),
 			oModel = createModel();
 
 		this.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
 			.returns(Promise.resolve(oBatchResult));
-		oModel.mCallbacksByGroupId["groupId"] = [fnCallback1, fnCallback2];
 
 		// code under test
 		return oModel._submitBatch("groupId").then(function (oResult) {
 			assert.strictEqual(oResult, oBatchResult);
-			assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
-			assert.ok(fnCallback1.calledOnce);
-			assert.ok(fnCallback2.calledOnce);
 		});
 	});
 
@@ -467,7 +419,6 @@ sap.ui.require([
 		var oExpectedError = new Error("deliberate failure"),
 			oModel = createModel();
 
-		oModel.addedRequestToGroup("groupId");
 		this.mock(oModel.oRequestor).expects("submitBatch")
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));
@@ -517,7 +468,7 @@ sap.ui.require([
 		var oModel = createModel();
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
-		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("groupId");
+		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("groupId");
 
 		// code under test
 		oModel.resetChanges("groupId");
@@ -529,7 +480,7 @@ sap.ui.require([
 		var oModel = createModel("", {updateGroupId : "updateGroupId"});
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("updateGroupId", true);
-		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("updateGroupId");
+		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
 
 		// code under test
 		oModel.resetChanges();
@@ -542,7 +493,7 @@ sap.ui.require([
 
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
 			.throws(oError);
-		this.mock(oModel.oRequestor).expects("cancelPatch").never();
+		this.mock(oModel.oRequestor).expects("cancelChanges").never();
 
 		assert.throws(function () {
 			oModel.resetChanges();
@@ -647,6 +598,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError on canceled error", function (assert) {
+		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"};
+
+		this.oLogMock.expects("debug")
+			.withExactArgs("Failure", "Canceled\n    at foo.bar", "class");
+		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+
+		// code under test
+		createModel().reportError("Failure", "class", oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
@@ -654,7 +617,7 @@ sap.ui.require([
 		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
 		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
 
-		//code under test
+		// code under test
 		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
 	});
 
@@ -665,7 +628,7 @@ sap.ui.require([
 
 		this.mock(oModel.oRequestor).expects("hasPendingChanges").withExactArgs().returns(oResult);
 
-		//code under test
+		// code under test
 		assert.strictEqual(oModel.hasPendingChanges(), oResult);
 	});
 
@@ -696,6 +659,22 @@ sap.ui.require([
 			// missing bindingCreated() or duplicate call
 			oModel.bindingDestroyed(oBinding);
 		}, new Error("Unknown " + oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings: base context", function (assert) {
+		var oModel = createModel(),
+			oParentBinding = {},
+			oContext = new BaseContext(oModel, "/foo"),
+			oBinding = new Binding(oModel, "relative", oContext);
+
+		// to be called by V4 binding's c'tors
+		oModel.bindingCreated(oBinding);
+		oModel.bindingCreated(
+			new Binding(oModel, "unrelated", Context.create(oModel, {}, "/absolute")));
+		oModel.bindingCreated(new Binding(oModel, "relative"));
+
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), []);
 	});
 
 	//*********************************************************************************************
@@ -765,20 +744,20 @@ sap.ui.require([
 	});
 	// TODO allow v4.Context and return v4.Context
 });
-// TODO constructor: test that the service root URL is absolute?
-// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
-// TODO read etc.: provide access to "abort" functionality
+//TODO constructor: test that the service root URL is absolute?
+//TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
+//TODO read etc.: provide access to "abort" functionality
 
 // oResponse.headers look like this:
-//Content-Type:application/json; odata.metadata=minimal;charset=utf-8
-//etag:W/"20150915102433.7994750"
-//location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
+// Content-Type:application/json; odata.metadata=minimal;charset=utf-8
+// etag:W/"20150915102433.7994750"
+// location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
 //TODO can we make use of "location" header? relation to canonical URL?
 // oData looks like this:
-//{
-//	"@odata.context" : "$metadata#EMPLOYEES",
-//	"@odata.etag" : "W/\"20150915102433.7994750\"",
-//}
+// {
+//   "@odata.context" : "$metadata#EMPLOYEES",
+//   "@odata.etag" : "W/\"20150915102433.7994750\"",
+// }
 //TODO can we make use of @odata.context in response data?
 //TODO etag handling
 //TODO use 'sap/ui/thirdparty/URI' for URL handling?

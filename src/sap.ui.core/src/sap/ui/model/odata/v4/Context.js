@@ -50,9 +50,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Do <strong>NOT</strong> call this private constructor for a new <code>Context</code>. In the
-	 * OData V4 model you cannot create contexts at will: retrieve them from a binding or a view
-	 * element instead.
+	 * Do <strong>NOT</strong> call this private constructor. In the OData V4 model you cannot
+	 * create contexts at will: retrieve them from a binding or a view element instead.
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The model
@@ -64,19 +63,19 @@ sap.ui.define([
 	 *   Index of item (within the collection addressed by <code>sPath</code>) represented
 	 *   by this context; used by list bindings, not context bindings
 	 * @param {Promise} [oCreatePromise]
-	 *   Promise returned by {@link #created created}
+	 *   Promise returned by {@link #created}
 	 *
 	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
 	 * @class Implementation of an OData V4 model's context.
 	 *
 	 *   The context is a pointer to model data as returned by a query from a
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding context binding} or a
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding list binding}. Contexts are always and only
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding} or a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding}. Contexts are always and only
 	 *   created by such bindings. A context for a context binding points to the complete query
 	 *   result. A context for a list binding points to one specific entry in the binding's
 	 *   collection. A property binding does not have a context, you can access its value via
-	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue getValue}.
+	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue}.
 	 *
 	 *   Applications can access model data only via a context, either synchronously with the risk
 	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
@@ -85,6 +84,7 @@ sap.ui.define([
 	 *   Context instances are immutable.
 	 * @extends sap.ui.model.Context
 	 * @public
+	 * @since 1.39.0
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
@@ -140,6 +140,8 @@ sap.ui.define([
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
 	 *
+	 * @function
+	 * @name sap.ui.model.odata.v4.Context#delete
 	 * @public
 	 * @since 1.41.0
 	 */
@@ -263,6 +265,7 @@ sap.ui.define([
 	 *   If the canonical path cannot be determined yet or in case of failure, e.g. if the given
 	 *   context does not point to an entity
 	 *
+	 * @function
 	 * @public
 	 * @since 1.39.0
 	 */
@@ -298,7 +301,8 @@ sap.ui.define([
 	 * Returns the value for the given path relative to this context. The function allows access to
 	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
 	 * The data is a JSON structure as described in
-	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
+	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
+	 * "OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
@@ -403,7 +407,7 @@ sap.ui.define([
 
 	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
-	 * by {@link #created} is not yet resolved or rejected.
+	 * by {@link #created} is not yet fulfilled.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient
@@ -432,6 +436,7 @@ sap.ui.define([
 	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. if
 	 *   the given context does not point to an entity
 	 *
+	 * @function
 	 * @public
 	 * @since 1.39.0
 	 */
@@ -441,7 +446,8 @@ sap.ui.define([
 	 * Returns a promise on the value for the given path relative to this context. The function
 	 * allows access to the complete data the context points to (if <code>sPath</code> is "") or
 	 * any part thereof. The data is a JSON structure as described in
-	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
+	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
+	 * "OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
@@ -559,7 +565,7 @@ sap.ui.define([
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
 		 * @param {Promise} [oCreatePromise]
-		 *   Promise returned by {@link sap.ui.model.odata.v4.Context#created created}
+		 *   Promise returned by {@link #created}
 		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}

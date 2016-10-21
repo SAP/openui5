@@ -230,6 +230,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("formatLiteral", function (assert) {
+		assert.throws(function () {
+			_Helper.formatLiteral();
+		}, new Error("Illegal value: undefined"));
+
+		assert.strictEqual(_Helper.formatLiteral(null), "null"); // type must not matter
+	});
+
+	//*********************************************************************************************
 	// t: the tested type
 	// v: the value to format
 	// e: the expected result
@@ -284,6 +293,8 @@ sap.ui.require([
 		assert.strictEqual(_Helper.buildPath("base", undefined, "relative"), "base/relative");
 		assert.strictEqual(_Helper.buildPath("base", 42, "relative"), "base/42/relative");
 		assert.strictEqual(_Helper.buildPath("base", 0, "relative"), "base/0/relative");
+		assert.strictEqual(_Helper.buildPath("/", "relative"), "/relative");
+		assert.strictEqual(_Helper.buildPath("/base", "relative"), "/base/relative");
 	});
 
 	//*********************************************************************************************

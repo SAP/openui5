@@ -27,9 +27,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Double", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -59,10 +63,8 @@ sap.ui.require([
 			var oType;
 
 			if (oFixture.warning) {
-				this.mock(jQuery.sap.log).expects("warning")
+				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Double");
-			} else {
-				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
 			oType = new Double({}, oFixture.i);
@@ -204,7 +206,6 @@ sap.ui.require([
 		[null, 1.1, 1.234E+235].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
-		assert.expect(0);
 	});
 
 	//*********************************************************************************************

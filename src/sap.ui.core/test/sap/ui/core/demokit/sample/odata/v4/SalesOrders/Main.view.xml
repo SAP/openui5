@@ -32,6 +32,19 @@
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
+				<Label design="Bold" labelFor="FavoriteProductID" text="Favorite product ID:">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Label>
+				<Text id="FavoriteProductID" width="4em">
+					<layoutData>
+						<ToolbarLayoutData shrinkable="false" />
+					</layoutData>
+				</Text>
+				<Button icon="sap-icon://accept" id="setBindingContext"
+					press="onSetBindingContext"/>
+				<ToolbarSpacer />
 				<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
 				<Button enabled="false"
 					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
@@ -77,7 +90,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID',
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
@@ -90,14 +103,14 @@
 				<Toolbar>
 					<content>
 						<Title text="Sales Orders" titleStyle="H2"/>
-						<Button enabled="{= !${ui>/bCreateSalesOrderPending}}"
+						<Button enabled="{= !${ui>/bCreateSalesOrderPending} }"
 							icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"/>
 						<Button
 							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
 							id="deleteSalesOrder" press="onDeleteSalesOrder"/>
 						<Button
-							enabled="{=${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
-								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+							enabled="{= ${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
+								&amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"
 							id="confirmSalesOrder"
 							icon="sap-icon://accept"
 							press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
@@ -106,8 +119,8 @@
 							press="onRefreshSalesOrdersList"/>
 						<Button icon="sap-icon://save" id="saveSalesOrders"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
-						<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrderList"
-							tooltip="Cancel sales orders changes"/>
+						<Button id="cancelSalesOrdersChanges" icon="sap-icon://sys-cancel-2"
+							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
 						<ToolbarSpacer />
 						<SearchField enabled="{ui>/bRealOData}" id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
@@ -125,7 +138,9 @@
 					<Text text="Buyer Name"/>
 				</Column>
 				<Column>
-					<Text text="Gross Amount"/>
+					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
+						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
+						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
 				<Column>
 					<Text text="Currency"/>
@@ -161,7 +176,7 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Input id="SalesOrders_Note" value="{Note}"/>
+						<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
 					</cells>
 					<cells>
 						<Text text="{LifecycleStatusDesc}"/>

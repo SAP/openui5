@@ -26,7 +26,15 @@ sap.ui.require([
 				//TODO "You can use ISO 8859-1 or Unicode letters such as å and ü in identifiers.
 				// You can also use the Unicode escape sequences as characters in identifiers."
 			}
-		});
+		}),
+		oScope = {
+			join : function () {
+				return Array.prototype.join.call(arguments);
+			},
+			myFormatter: function (vValue) {
+				return "~" + vValue + "~";
+			}
+		};
 
 	/**
 	 * Checks the string result of an expression binding when bound to a control property of type
@@ -130,7 +138,8 @@ sap.ui.require([
 	[
 		{ binding: "{=${target>sap:semantics}}" },
 		{ binding: "{=${ b}   }" },
-		{ binding: "{=     ${ b} }" }
+		{ binding: "{=     ${ b} }" },
+		{ binding: "{= %{b} }" }
 	].forEach(function (oFixture) {
 		QUnit.test("Valid embedded binding " + oFixture.binding, function (assert) {
 			var oBinding = {
@@ -405,12 +414,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Embedded bindings with formatter", function (assert) {
-		var oScope = {
-			myFormatter: function (vValue) {
-				return "~" + String(vValue) + "~";
-			}
-		};
-
 		//two embedded bindings: ManagedObject._bindProperty uses CompositeBinding by default then
 		check(assert, "${/mail} + ${path:'/tel', formatter:'.myFormatter'}", "mail~tel~", oScope);
 		//one embedded binding only: need to set flag
@@ -483,7 +486,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("odata.compare", function (assert) {
-		this.mock(sap.ui).expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
+		this.mock(sap.ui).expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(ODataUtils);
 		this.mock(ODataUtils).expects("compare")
 			.withExactArgs(2, 3).returns("-1");
 
@@ -492,7 +496,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("odata.uriEncode", function (assert) {
-		this.mock(sap.ui).expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
+		this.mock(sap.ui).expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
 		this.mock(ODataUtils).expects("formatValue")
 			.withExactArgs("foo", "Edm.String").returns("'foo'");
 
@@ -554,12 +559,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("multiple references to the same binding", function (assert) {
-		var oScope = {
-				myFormatter: function (vValue) {
-					return "~" + String(vValue) + "~";
-				}
-			};
-
 		function checkParts(sExpression, sExpectedResult, iExpectedParts) {
 			var sBinding = "{=" + sExpression + "}",
 				oBindingInfo = BindingParser.complexParser(sBinding, oScope, true);
@@ -586,6 +585,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Note: it's not worth to treat null the same way
+	[false, 42, "bar", undefined].forEach(function (vPrimitiveValue) {
+		QUnit.test("saveBindingAsPart: primitive value " + vPrimitiveValue, function (assert) {
+			var sBinding = "{:= ${foo : '~primitive~'} }";
+
+			this.mock(jQuery.sap).expects("parseJS")
+				.once() // this would be violated by bad code
+				.withExactArgs(sBinding, 5)
+				.returns({
+					at : sBinding.indexOf("}"),
+					result : {
+						foo : vPrimitiveValue // must not cause saveBindingAsPart() to re-parse!
+					}
+				});
+
+			BindingParser.complexParser(sBinding);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("parse: Performance measurement points", function (assert) {
 		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
 				.withArgs("sap.ui.base.ExpressionParser#parse", "",
@@ -602,4 +621,81 @@ sap.ui.require([
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("${} does not set targetType : 'any'", function (assert) {
+		var sBinding = "{:= ${/five} === 5 }",
+			oBindingInfo = BindingParser.complexParser(sBinding);
+
+		assert.notOk("targetType" in oBindingInfo.parts[0]);
+		check(assert, sBinding, true);
+
+		check(assert, "{:= ${path : '/five', type : 'sap.ui.model.type.Integer'} === 5 }",
+			// Note: wrong result because targetType : "string" is applied by ManagedObject!
+			// (the FormatException is stifled somewhere)
+			false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("${} does not set targetType : 'any' recursively", function (assert) {
+		var sBinding = "{:= ${formatter:'.join', parts:[{path:'/five'},{path:'/thirteen'}]} }",
+			oBindingInfo = BindingParser.complexParser(sBinding, oScope);
+
+		// Note: "parts" of embedded binding are lifted to top-level
+		assert.notOk("targetType" in oBindingInfo.parts[0]);
+		assert.notOk("targetType" in oBindingInfo.parts[1]);
+		check(assert, sBinding, "5,13", oScope);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("%{} sets targetType : 'any'", function (assert) {
+		var sBinding = "{:= %{path:'/five', type:'sap.ui.model.type.Integer'} === 5 }",
+			oBindingInfo = BindingParser.complexParser(sBinding);
+
+		assert.strictEqual(oBindingInfo.parts[0].targetType, "any");
+		check(assert, sBinding, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("%{} sets targetType : 'any' recursively", function (assert) {
+		var sBinding = "{:= %{formatter:'.join', parts:["
+				+ "{path:'/five', type:'sap.ui.model.type.Integer'},"
+				+ "{path:'/thirteen', type:'sap.ui.model.type.Integer'}]} }",
+			oBindingInfo = BindingParser.complexParser(sBinding, oScope);
+
+		assert.strictEqual(oBindingInfo.parts[0].targetType, "any");
+		assert.strictEqual(oBindingInfo.parts[1].targetType, "any");
+		check(assert, sBinding, "5,13", oScope);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("%{} does not override targetType", function (assert) {
+		var sBinding
+				= "{:= %{path:'/five', targetType:'int', type:'sap.ui.model.type.Integer'} === 5 }",
+			oBindingInfo = BindingParser.complexParser(sBinding);
+
+		assert.strictEqual(oBindingInfo.parts[0].targetType, "int");
+		check(assert, sBinding, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("%{} does not override targetType recursively", function (assert) {
+		var sBinding = "{:= %{formatter:'.join', parts:["
+				+ "{path:'/five', targetType:'int', type:'sap.ui.model.type.Integer'},"
+				+ "{path:'/thirteen', targetType:'float', type:'sap.ui.model.type.Integer'}]} }",
+			oBindingInfo = BindingParser.complexParser(sBinding, oScope);
+
+		assert.strictEqual(oBindingInfo.parts[0].targetType, "int");
+		assert.strictEqual(oBindingInfo.parts[1].targetType, "float");
+		check(assert, sBinding, "5,13", oScope);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("%{} vs. ${}", function (assert) {
+		var sBinding = "{:= %{path:'/five', type:'sap.ui.model.type.Integer'}"
+				+ " !== ${path:'/five', type:'sap.ui.model.type.Integer'} }",
+			oBindingInfo = BindingParser.complexParser(sBinding);
+
+		assert.strictEqual(oBindingInfo.parts.length, 2);
+		check(assert, sBinding, true);
+	});
 });

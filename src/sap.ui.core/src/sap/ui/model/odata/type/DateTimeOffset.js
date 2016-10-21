@@ -65,24 +65,32 @@ sap.ui.define([
 					}
 				}
 			}
-		}),
-		oModelFormat;
+		});
 
 	/*
-	 * Returns a date format instance for the OData V4 model format "yyyy-MM-dd'T'HH:mm:ssX".
+	 * Returns a date format instance for the OData V4 model format.
 	 * Creates it lazily.
 	 *
+	 * @param {sap.ui.model.odata.type.DateTimeOffset} oType
+	 *   The type
 	 * @returns {sap.ui.core.format.DateFormat}
 	 *   The date format
 	 */
-	function getModelFormat() {
-		if (!oModelFormat) {
-			oModelFormat = DateFormat.getDateInstance({
-				pattern : "yyyy-MM-dd'T'HH:mm:ssX",
+	function getModelFormat(oType) {
+		var sPattern = "yyyy-MM-dd'T'HH:mm:ss",
+			iPrecision;
+
+		if (!oType.oModelFormat) {
+			iPrecision = oType.oConstraints && oType.oConstraints.precision;
+			if (iPrecision) {
+				sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+			}
+			oType.oModelFormat = DateFormat.getDateInstance({
+				pattern : sPattern + "X",
 				strictParsing : true
 			});
 		}
-		return oModelFormat;
+		return oType.oModelFormat;
 	}
 
 	/**
@@ -109,7 +117,7 @@ sap.ui.define([
 		var oDateValue;
 
 		if (typeof vValue === "string" && this.getPrimitiveType(sTargetType) === "string") {
-			oDateValue = getModelFormat().parse(vValue);
+			oDateValue = getModelFormat(this).parse(vValue);
 			if (!oDateValue) {
 				throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
 			}
@@ -153,7 +161,7 @@ sap.ui.define([
 		var oResult = DateTimeBase.prototype.parseValue.call(this, sValue, sSourceType);
 
 		return this.bV4 && oResult !== null
-			? getModelFormat().format(oResult)
+			? getModelFormat(this).format(oResult)
 			: oResult;
 	};
 

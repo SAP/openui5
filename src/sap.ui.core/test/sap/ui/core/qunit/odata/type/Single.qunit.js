@@ -23,9 +23,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Single", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -55,10 +59,8 @@ sap.ui.require([
 			var oType;
 
 			if (oFixture.warning) {
-				this.mock(jQuery.sap.log).expects("warning")
+				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Single");
-			} else {
-				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
 			oType = new Single({}, oFixture.i);

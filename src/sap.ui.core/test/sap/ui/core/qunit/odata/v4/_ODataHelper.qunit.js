@@ -42,6 +42,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("aAllowedSystemQueryOptions", function (assert) {
+		assert.deepEqual(_ODataHelper.aAllowedSystemQueryOptions,
+			["$apply", "$expand", "$filter", "$orderby", "$select"]);
+	});
+
+	//*********************************************************************************************
 	[{
 		sKeyPredicate : "('42')",
 		oEntityInstance : {"ID" : "42"},
@@ -498,8 +504,7 @@ sap.ui.require([
 
 		// code under test
 		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0.message,
-				"Cannot read from cache, cache creation failed: " + oError);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 
@@ -523,8 +528,7 @@ sap.ui.require([
 
 		// code under test
 		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
-			assert.strictEqual(oError0.message,
-				"Cannot read from cache, cache creation failed: " + oError);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 
@@ -631,7 +635,10 @@ sap.ui.require([
 	}, {
 		bRelative : false,
 		aApplicationFilters : [{}]
-	}].forEach(function (oFixture){
+	}, {
+		bRelative : true,
+		bBaseContext : true
+	}].forEach(function (oFixture) {
 		QUnit.test("createListCacheProxy:" + JSON.stringify(oFixture), function (assert) {
 			var sCanonicalPath = "/SalesOrderList('1')",
 				sCachePath = sCanonicalPath.slice(1) + "/SO_2_SOITEMS",
@@ -644,9 +651,10 @@ sap.ui.require([
 					bRelative : oFixture.bRelative,
 					aSorters : oFixture.aSorters || []
 				},
-				oContext = {
-					requestCanonicalPath : function () {}
-				},
+
+				oContext = oFixture.bBaseContext
+					? { getPath : function () {} }
+					: { requestCanonicalPath : function () {} },
 				oCache = {},
 				oCacheProxy = {
 					promise : Promise.resolve(oCache)
@@ -658,9 +666,16 @@ sap.ui.require([
 				mQueryOptions = oFixture.mInheritedQueryOptions || oFixture.mQueryOptions,
 				oPathPromise = oFixture.bRelative ? Promise.resolve(sCanonicalPath) : undefined;
 
-			this.mock(oContext).expects("requestCanonicalPath")
-				.exactly(oFixture.bRelative ? 1 : 0)
-				.withExactArgs().returns(oPathPromise);
+			if (oFixture.bBaseContext) {
+				this.mock(oContext).expects("getPath").withExactArgs().returns(sCanonicalPath);
+				oPathPromise = {};
+				this.mock(Promise).expects("resolve").withExactArgs(sCanonicalPath)
+					.returns(oPathPromise);
+			} else {
+				this.mock(oContext).expects("requestCanonicalPath")
+					.exactly(oFixture.bRelative ? 1 : 0)
+					.withExactArgs().returns(oPathPromise);
+			}
 			this.mock(_ODataHelper).expects("getQueryOptions")
 				.withExactArgs(sinon.match.same(oBinding), "",
 					sinon.match.same(oFixture.bRelative ? oContext : undefined))
@@ -747,7 +762,7 @@ sap.ui.require([
 				bRelative : true,
 				aSorters : [{}]
 			},
-			oContext = {};
+			oContext = {requestCanonicalPath : function () {}};
 
 		this.mock(_ODataHelper).expects("createCacheProxy").never();
 
@@ -925,6 +940,8 @@ sap.ui.require([
 				});
 		});
 	});
+	//TODO refactor requestFilter -> fetchFilter: SyncPromise is faster if already resolved; we do
+	// not create a microtask if it is not needed
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
@@ -1277,6 +1294,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getQueryOptions ignores base context", function (assert) {
+		var oBaseContext = {},
+			oBinding = {
+				mQueryOptions : undefined,
+				sPath : "foo"
+			};
+
+
+		// code under test
+		assert.strictEqual(_ODataHelper.getQueryOptions(oBinding, "", oBaseContext), undefined,
+			"no query options and base context ignored");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptions - query options and no path", function (assert) {
 		var oBinding = {
 				mQueryOptions : {}
@@ -1450,20 +1481,6 @@ sap.ui.require([
 			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding, undefined, sPath), oResult,
 				"path=" + sPath);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: with transient context", function (assert) {
-		var oBinding = {
-				aContexts : []
-			};
-
-			oBinding.aContexts[-1] = {
-				isTransient : function () {
-					return true;
-				}
-			};
-			assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding), true);
 	});
 
 	//*********************************************************************************************
@@ -1874,5 +1891,17 @@ sap.ui.require([
 
 		assert.deepEqual(oBinding.aPreviousData, ["s0 new", "s1 new"]);
 		assert.deepEqual(oDiffPromise.getResult(), {aDiff : aDiff, iLength : 2});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isRefreshable", function (assert) {
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : false}), true, "absolute");
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : true}), undefined,
+			"relative - no context");
+		assert.strictEqual(_ODataHelper.isRefreshable(
+			{bRelative : true, oContext : {getBinding : function () {}}}), false,
+			"relative - V4 context");
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : true, oContext : {}}), true,
+			"relative - base context");
 	});
 });

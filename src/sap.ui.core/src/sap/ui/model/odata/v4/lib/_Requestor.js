@@ -70,45 +70,130 @@ sap.ui.define([
 	 * @param {object} mQueryParams
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
+	 * @param {function (string)} [fnOnCreateGroup]
+	 *   A callback function that is called with the group name as parameter when the first
+	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
 		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
+		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
+		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.sServiceUrl = sServiceUrl;
 	}
 
 	/**
-	 * Cancels all PATCH requests for a given group.
+	 * Called when a batch request has been sent to count the number of running change requests.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} bHasChanges
+	 *   Whether the batch contains change requests; when <code>true</code> the number is increased
+	 */
+	Requestor.prototype.batchRequestSent = function (sGroupId, bHasChanges) {
+		if (bHasChanges) {
+			if (sGroupId in this.mRunningChangeRequests) {
+				this.mRunningChangeRequests[sGroupId] += 1;
+			} else {
+				this.mRunningChangeRequests[sGroupId] = 1;
+			}
+		}
+	};
+
+	/**
+	 * Called when a batch response has been received to count the number of running change
+	 * requests.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} bHasChanges
+	 *   Whether the batch contained change requests; when <code>true</code> the number is
+	 *   decreased
+	 */
+	Requestor.prototype.batchResponseReceived = function (sGroupId, bHasChanges) {
+		if (bHasChanges) {
+			this.mRunningChangeRequests[sGroupId] -= 1;
+			if (this.mRunningChangeRequests[sGroupId] === 0) {
+				delete this.mRunningChangeRequests[sGroupId];
+			}
+		}
+	};
+
+	/**
+	 * Cancels all change requests in the batch queue of the given group or in all batch queues,
+	 * if no <code>sGroupId</code> is given, for which the given filter function returns
+	 * <code>true</code>. For these change requests the <code>$cancel</code> callback is called and
+	 * the related promises are rejected with an error having property <code>canceled = true</code>.
+	 *
+	 * @param {function} fnFilter
+	 *   A filter function which gets a change request as parameter and determines whether it has
+	 *   to be canceled (returns <code>true</code>) or not.
+	 * @param {string} [sGroupId]
+	 *   The group the change request is related to
+	 *
+	 * @private
+	 */
+	Requestor.prototype.cancelChangeRequests = function (fnFilter, sGroupId) {
+		var that = this;
+
+		function cancelGroupChangeRequests(sGroupId0) {
+			var aBatchQueue = that.mBatchQueue[sGroupId0],
+				oChangeRequest,
+				aChangeSet,
+				oError,
+				i;
+
+			aChangeSet = aBatchQueue[0];
+			// restore changes in reverse order to get the same initial state
+			for (i = aChangeSet.length - 1; i >= 0; i--) {
+				oChangeRequest = aChangeSet[i];
+				if (fnFilter(oChangeRequest)) {
+					oChangeRequest.$cancel(); // all PATCH and POST have a $cancel
+					oError = new Error("Request canceled: " + oChangeRequest.method + " "
+						+ oChangeRequest.url + "; group: " + sGroupId0);
+					oError.canceled = true;
+					oChangeRequest.$reject(oError);
+					aChangeSet.splice(i, 1);
+				}
+			}
+			deleteEmptyGroup(that, sGroupId0);
+		}
+
+		if (sGroupId) {
+			if (this.mBatchQueue[sGroupId]) {
+				cancelGroupChangeRequests(sGroupId);
+			}
+		} else {
+			for (sGroupId in this.mBatchQueue) {
+				cancelGroupChangeRequests(sGroupId);
+			}
+		}
+	};
+
+	/**
+	 * Cancels all change requests (all PATCH and all POST requests) for a given group.
 	 * All pending requests are rejected with an error with property <code>canceled = true</code>.
 	 * PATCHes are canceled in reverse order to properly undo stacked changes.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
+	 * @throws {Error}
+	 *   If change requests for the given group ID are running.
 	 *
 	 * @private
 	 */
-	Requestor.prototype.cancelPatch = function (sGroupId) {
-		var aBatchQueue = this.mBatchQueue[sGroupId],
-			oError = new Error("Group '" + sGroupId + "' canceled"),
-			aChangeSet,
-			i;
-
-		if (!aBatchQueue) {
-			return;
+	Requestor.prototype.cancelChanges = function (sGroupId) {
+		if (this.mRunningChangeRequests[sGroupId]) {
+			throw new Error("Cannot cancel the changes for group '" + sGroupId
+				+ "', the batch request is running");
 		}
-		oError.canceled = true;
-		aChangeSet = aBatchQueue[0];
-		for (i = aChangeSet.length - 1; i >= 0; i--) {
-			if (aChangeSet[i].method === "PATCH") {
-				aChangeSet[i].$cancel();
-				aChangeSet[i].$reject(oError);
-				aChangeSet.splice(i, 1);
-			}
-		}
-		deleteEmptyGroup(this, sGroupId);
+		this.cancelChangeRequests(function () {
+			// change set contains only PATCH and POST requests; cancel all
+			return true;
+		}, sGroupId);
 	};
 
 	/**
@@ -134,7 +219,7 @@ sap.ui.define([
 				return true;
 			}
 		}
-		return false;
+		return Object.keys(this.mRunningChangeRequests).length > 0;
 	};
 
 	/**
@@ -181,22 +266,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.removePatch = function (oPromise) {
-		var aBatchQueue, aChangeSet, oError, sGroupId, i;
-
-		for (sGroupId in this.mBatchQueue) {
-			aBatchQueue = this.mBatchQueue[sGroupId];
-			aChangeSet = aBatchQueue[0];
-			for (i = 0; i < aChangeSet.length; i++) {
-				if (aChangeSet[i].$promise === oPromise) {
-					oError = new Error();
-					oError.canceled = true;
-					aChangeSet[i].$reject(oError);
-					aChangeSet.splice(i, 1);
-					deleteEmptyGroup(this, sGroupId);
-					return;
-				}
-			}
-		}
+		this.cancelChangeRequests(function (oChangeRequest) {
+			return oChangeRequest.$promise === oPromise;
+		});
 	};
 
 	/**
@@ -208,20 +280,9 @@ sap.ui.define([
 	 *   The body of the request
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		var aBatchQueue, aChangeSet, oError, i;
-
-		aBatchQueue = this.mBatchQueue[sGroupId];
-		aChangeSet = aBatchQueue[0];
-		for (i = 0; i < aChangeSet.length; i++) {
-			if (aChangeSet[i].body === oBody) {
-				oError = new Error();
-				oError.canceled = true;
-				aChangeSet[i].$reject(oError);
-				aChangeSet.splice(i, 1);
-				deleteEmptyGroup(this, sGroupId);
-				return;
-			}
-		}
+		this.cancelChangeRequests(function (oChangeRequest) {
+			return oChangeRequest.body === oBody;
+		}, sGroupId);
 	};
 
 	/**
@@ -247,9 +308,12 @@ sap.ui.define([
 	 * @param {object} [oPayload]
 	 *   Data to be sent to the server; this object is live and can be modified until the request
 	 *   is really sent
+	 * @param {function} [fnSubmit]
+	 *   A function that is called when the request has been submitted, either immediately (when
+	 *   the group ID is "$direct") or via {@link #submitBatch}
 	 * @param {function} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
-	 *   queue
+	 *   queue; for <code>sMethod</code> === 'PATCH' or 'POST' the parameter is mandatory
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
@@ -259,7 +323,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnCancel, bIsFreshToken) {
+			fnSubmit, fnCancel, bIsFreshToken) {
 		var that = this,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
@@ -278,6 +342,9 @@ sap.ui.define([
 
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
+						if (that.fnOnCreateGroup) {
+							that.fnOnCreateGroup(sGroupId);
+						}
 					}
 					oRequest = {
 						method : sMethod,
@@ -287,7 +354,8 @@ sap.ui.define([
 						body : oPayload,
 						$cancel : fnCancel,
 						$reject : fnReject,
-						$resolve : fnResolve
+						$resolve : fnResolve,
+						$submit : fnSubmit
 					};
 					if (sMethod === "GET") { // push behind change set
 						aRequests.push(oRequest);
@@ -300,6 +368,9 @@ sap.ui.define([
 			}
 
 			sPayload = JSON.stringify(oPayload);
+			if (fnSubmit) {
+				fnSubmit();
+			}
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -324,8 +395,10 @@ sap.ui.define([
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
 					that.refreshSecurityToken().then(function () {
+						// no fnSubmit, it has been called already
+						// no fnCancel, it is only relevant while the request is in the queue
 						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							fnCancel/*ignored*/, true));
+							undefined, undefined, true));
 					}, fnReject);
 				} else {
 					fnReject(_Helper.createError(jqXHR));
@@ -345,8 +418,10 @@ sap.ui.define([
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aChangeSet = [],
+			bHasChanges,
 			oPreviousChange,
-			aRequests = this.mBatchQueue[sGroupId];
+			aRequests = this.mBatchQueue[sGroupId],
+			that = this;
 
 		/*
 		 * Merges a change from a change set into the previous one if possible.
@@ -391,31 +466,58 @@ sap.ui.define([
 				var oError,
 					vResponse = aResponses[index];
 
-				if (Array.isArray(vRequest)) {
+				if (Array.isArray(vResponse)) {
 					visit(vRequest, vResponse);
-				} else if (vResponse) {
-					if (vResponse.status >= 400) {
-						vResponse.getResponseHeader = getResponseHeader;
-						oCause = _Helper.createError(vResponse);
-						vRequest.$reject(oCause);
-					} else if (vResponse.responseText) {
-						vRequest.$resolve(JSON.parse(vResponse.responseText));
-					} else {
-						vRequest.$resolve();
-					}
-				} else {
+				} else if (!vResponse) {
 					oError = new Error(
 						"HTTP request was not processed because the previous request failed");
 					oError.cause = oCause;
 					vRequest.$reject(oError);
+				} else if (vResponse.status >= 400) {
+					vResponse.getResponseHeader = getResponseHeader;
+					oCause = _Helper.createError(vResponse);
+					reject(oCause, vRequest);
+				} else if (vResponse.responseText) {
+					vRequest.$resolve(JSON.parse(vResponse.responseText));
+				} else {
+					vRequest.$resolve();
 				}
 			});
+		}
+
+		/*
+		 * (Recursively) calls $submit on the request(s)
+		 *
+		 * @param {object|object[]} vRequest
+		 */
+		function onSubmit(vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(onSubmit);
+			} else if (vRequest.$submit) {
+				vRequest.$submit();
+			}
+		}
+
+		/*
+		 * (Recursively) rejects the request(s) with the given error
+		 *
+		 * @param {Error} oError
+		 * @param {object|object[]} vRequest
+		 */
+		function reject(oError, vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(reject.bind(null, oError));
+			} else {
+				vRequest.$reject(oError);
+			}
 		}
 
 		if (!aRequests) {
 			return Promise.resolve();
 		}
 		delete this.mBatchQueue[sGroupId];
+
+		onSubmit(aRequests);
 
 		// iterate over the change set and merge related PATCH requests
 		aRequests[0].forEach(function (oChange) {
@@ -438,8 +540,14 @@ sap.ui.define([
 			aRequests[0] = aChangeSet;
 		}
 
+		bHasChanges = aChangeSet.length > 0;
+		this.batchRequestSent(sGroupId, bHasChanges);
+
 		return this.request("POST", "$batch", undefined, undefined, aRequests)
-			.then(visit.bind(null, aRequests)).catch(function (oError) {
+			.then(function (aResponses) {
+				that.batchResponseReceived(sGroupId, bHasChanges);
+				visit(aRequests, aResponses);
+			}).catch(function (oError) {
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
@@ -458,6 +566,7 @@ sap.ui.define([
 					});
 				}
 
+				that.batchResponseReceived(sGroupId, bHasChanges);
 				oRequestError.cause = oError;
 				rejectAll(aRequests);
 				throw oError;
@@ -492,11 +601,14 @@ sap.ui.define([
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
+		 * @param {function (string)} [fnOnCreateGroup]
+		 *   A callback function that is called with the group name as parameter when the first
+		 *   request is added to a group
 		 * @returns {object}
 		 *   A new <code>_Requestor<code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams) {
-			return new Requestor(sServiceUrl, mHeaders, mQueryParams);
+		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
+			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
 		}
 	};
 }, /* bExport= */false);

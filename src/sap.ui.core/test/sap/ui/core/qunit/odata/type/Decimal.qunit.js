@@ -22,9 +22,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -65,10 +69,8 @@ sap.ui.require([
 			var oType = new Decimal();
 
 			if (oFixture.warning) {
-				this.mock(jQuery.sap.log).expects("warning")
+				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Decimal");
-			} else {
-				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
 			oType = new Decimal({}, oFixture.i);
@@ -287,7 +289,6 @@ sap.ui.require([
 				oType.validateValue(sValue);
 			}
 		);
-		assert.expect(0);
 	});
 
 	//*********************************************************************************************
@@ -304,8 +305,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test('scale="variable"', function (assert) {
 		var oType = new Decimal();
-
-		this.mock(jQuery.sap.log).expects("warning").never();
 
 		oType = new Decimal({}, {precision : 3, scale : "variable"});
 		["123", "12.3", "-1.23"].forEach(function (sValue) {
@@ -336,8 +335,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setConstraints w/ strings", function (assert) {
 		var oType = new Decimal();
-
-		this.mock(jQuery.sap.log).expects("warning").never();
 
 		oType = new Decimal({},
 			{nullable : "false", precision : "10", scale : "3"});
