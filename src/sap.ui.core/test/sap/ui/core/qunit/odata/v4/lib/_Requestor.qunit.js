@@ -885,6 +885,60 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("hasPendingChanges, cancelChanges and running batch requests", function (assert) {
+		var oBatchMock = this.mock(_Batch),
+			oJQueryMock = this.mock(jQuery),
+			aPromises = [],
+			sServiceUrl = "/Service/",
+			oRequestor = _Requestor.create(sServiceUrl);
+
+		function expectBatch(aResponses) {
+			oJQueryMock.expects("ajax")
+				.withArgs(sServiceUrl + "$batch")
+				.returns(createMock(assert, "body", "OK"));
+			oBatchMock.expects("deserializeBatchResponse")
+				.withExactArgs(null, "body")
+				.returns(aResponses);
+		}
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+
+		// add a GET request and submit the queue
+		oRequestor.request("GET", "Products", "groupId");
+		expectBatch([{}]);
+		aPromises.push(oRequestor.submitBatch("groupId"));
+		assert.strictEqual(oRequestor.hasPendingChanges(), false,
+			"a running GET request is not a pending change");
+
+		// add a PATCH request and submit the queue
+		oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+		expectBatch([[{}]]);
+		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
+			// code under test
+			assert.strictEqual(oRequestor.hasPendingChanges(), true,
+				"the batch with the second PATCH is still running");
+		}));
+
+		// code under test
+		assert.strictEqual(oRequestor.hasPendingChanges(), true);
+		assert.throws(function () {
+			oRequestor.cancelChanges("groupId");
+		}, new Error("Cannot cancel the changes for group 'groupId', "
+			+ "the batch request is running"));
+		oRequestor.cancelChanges("anotherGroupId"); // the other groups are not affected
+
+		// while the batch with the first PATCH is still running, add another PATCH and submit
+		oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "bar"});
+		expectBatch([[{}]]);
+		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
+			// code under test
+			assert.strictEqual(oRequestor.hasPendingChanges(), false);
+			oRequestor.cancelChanges("groupId");
+		}));
+
+		return Promise.all(aPromises);
+	});
+
+	//*****************************************************************************************
 	QUnit.test("cancelChanges: various requests", function (assert) {
 		var fnCancel1 = sinon.spy(),
 			fnCancel2 = sinon.spy(),
