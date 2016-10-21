@@ -92,11 +92,11 @@ sap.ui.define([
 			oTable._toggleSelectAll();
 
 		// Collapse/Expand group.
-		} else if (TableUtils.isInGroupingRow(oEvent.target) ||
+		} else if (TableUtils.Grouping.isInGroupingRow(oEvent.target) ||
 			(TableUtils.Grouping.isTreeMode(oTable) && $Target.hasClass("sapUiTableTdFirst")) ||
 			$Target.hasClass("sapUiTableTreeIcon")) {
 
-			TableUtils.toggleGroupHeader(oTable, oEvent.target);
+			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
 
 		// Select/Deselect row.
 		} else if (oCellInfo.type === CellType.ROWHEADER) {
@@ -114,7 +114,7 @@ sap.ui.define([
 
 			// Enter action mode.
 			} else {
-				var $InteractiveElements = TableUtils.getInteractiveElements(oEvent.target);
+				var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oEvent.target);
 				if ($InteractiveElements !== null) {
 					$InteractiveElements[0].focus();
 				}
@@ -138,7 +138,7 @@ sap.ui.define([
 		}
 
 		if (iTargetIndex != null) {
-			TableUtils.ColumnUtils.moveColumnTo(oColumn, iTargetIndex);
+			TableUtils.Column.moveColumnTo(oColumn, iTargetIndex);
 		}
 	};
 
@@ -154,6 +154,189 @@ sap.ui.define([
 		$RowHeaderCell.focus();
 	};
 
+	/**
+	 * Find out if an element is interactive.
+	 *
+	 * @param {jQuery|HTMLElement} oElement The element to check.
+	 * @returns {boolean|null} Returns <code>true</code>, if the passed element is interactive.
+	 * @private
+	 */
+	TableKeyboardDelegate._isElementInteractive = function(oElement) {
+		if (oElement == null) {
+			return false;
+		}
+
+		return jQuery(oElement).is(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
+	};
+
+	/**
+	 * Returns all interactive elements in a data cell.
+	 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
+	 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
+	 * @private
+	 */
+	TableKeyboardDelegate._getInteractiveElements = function(oCell) {
+		if (oCell == null) {
+			return null;
+		}
+
+		var $Cell = jQuery(oCell);
+		var oCellInfo = TableUtils.getCellInfo($Cell);
+
+		if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+			var $InteractiveElements = $Cell.find(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
+			if ($InteractiveElements.length > 0) {
+				return $InteractiveElements;
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Returns the first interactive element in a row.
+	 *
+	 * @param {sap.ui.table.Row} oRow The row from which to get the interactive element.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed row does not contain any interactive elements.
+	 * @private
+	 */
+	TableKeyboardDelegate._getFirstInteractiveElement = function(oRow) {
+		if (oRow == null) {
+			return null;
+		}
+
+		var oTable = oRow.getParent();
+		var aCells = oRow.getCells();
+
+		for (var i = 0; i < aCells.length; i++) {
+			var oCellDomRef = aCells[i].getDomRef();
+			var $Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
+			var $InteractiveElements = this._getInteractiveElements($Cell);
+
+			if ($InteractiveElements !== null) {
+				return $InteractiveElements.first();
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Returns the last interactive element in a row.
+	 *
+	 * @param {sap.ui.table.Row} oRow The row from which to get the interactive element.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed row does not contain any interactive elements.
+	 * @private
+	 */
+	TableKeyboardDelegate._getLastInteractiveElement = function(oRow) {
+		if (oRow == null) {
+			return null;
+		}
+
+		var oTable = oRow.getParent();
+		var aCells = oRow.getCells();
+
+		for (var i = aCells.length - 1; i >= 0; i--) {
+			var oCellDomRef = aCells[i].getDomRef();
+			var $Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
+			var $InteractiveElements = this._getInteractiveElements($Cell);
+
+			if ($InteractiveElements !== null) {
+				return $InteractiveElements.last();
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Returns the interactive element before the passed interactive element in the same row.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the first interactive element in the row.
+	 * @private
+	 */
+	TableKeyboardDelegate._getPreviousInteractiveElement = function(oTable, oElement) {
+		if (oTable == null || oElement == null) {
+			return null;
+		}
+
+		var $Element = jQuery(oElement);
+		if (!this._isElementInteractive($Element)) {
+			return null;
+		}
+
+		var $Cell = TableUtils.getParentDataCell(oTable, oElement);
+		var oDataCellInfo = TableUtils.getDataCellInfo($Cell);
+		var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
+		var aCells = oRow.getCells();
+		var $InteractiveElements;
+
+		// First search for the previous interactive element in the current cell.
+		$InteractiveElements = this._getInteractiveElements($Cell);
+		if ($InteractiveElements[0] !== $Element[0]) {
+			return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
+		}
+
+		// Search in the previous cells.
+		for (var i = oDataCellInfo.columnIndex - 1; i >= 0; i--) {
+			var oCellDomRef = aCells[i].getDomRef();
+			$Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
+			$InteractiveElements = this._getInteractiveElements($Cell);
+
+			if ($InteractiveElements !== null) {
+				return $InteractiveElements.last();
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Returns the interactive element after the passed interactive element in the same row.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the last interactive element in the row.
+	 * @private
+	 */
+	TableKeyboardDelegate._getNextInteractiveElement = function(oTable, oElement) {
+		if (oTable == null || oElement == null) {
+			return null;
+		}
+
+		var $Element = jQuery(oElement);
+		if (!this._isElementInteractive($Element)) {
+			return null;
+		}
+
+		var $Cell = TableUtils.getParentDataCell(oTable, oElement);
+		var oDataCellInfo = TableUtils.getDataCellInfo($Cell);
+		var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
+		var aCells = oRow.getCells();
+		var $InteractiveElements;
+
+		// First search for the next interactive element in the current cell.
+		$InteractiveElements = this._getInteractiveElements($Cell);
+		if ($InteractiveElements.get(-1) !== $Element[0]) {
+			return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
+		}
+
+		// Search in the next cells.
+		for (var i = oDataCellInfo.columnIndex + 1; i < aCells.length; i++) {
+			var oCellDomRef = aCells[i].getDomRef();
+			$Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
+			$InteractiveElements = this._getInteractiveElements($Cell);
+
+			if ($InteractiveElements !== null) {
+				return $InteractiveElements.first();
+			}
+		}
+
+		return null;
+	};
+
 	//******************************************************************************************
 
 	/*
@@ -163,7 +346,7 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.enterActionMode = function() {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oActiveElement = document.activeElement;
-		var $InteractiveElements = TableUtils.getInteractiveElements(oActiveElement);
+		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
 
 		if ($InteractiveElements !== null) {
@@ -251,7 +434,7 @@ sap.ui.define([
 		}
 
 		var $ParentDataCell = TableUtils.getParentDataCell(this, $Target);
-		var bIsInteractiveElement = $ParentDataCell !== null && TableUtils.isElementInteractive($Target);
+		var bIsInteractiveElement = $ParentDataCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			// Leave the action mode when focusing an element in the table which is not supported by the action mode.
@@ -261,7 +444,7 @@ sap.ui.define([
 			// - Interactive element inside a data cell.
 
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
-			var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.type === CellType.ROWHEADER && TableUtils.isInGroupingRow(oEvent.target);
+			var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.type === CellType.ROWHEADER && TableUtils.Grouping.isInGroupingRow(oEvent.target);
 			var bIsRowSelectorCell = oCellInfo.type === CellType.ROWHEADER && !bIsRowHeaderCellInGroupHeaderRow && TableUtils.isRowSelectorSelectionAllowed(this);
 
 			if (!bIsRowHeaderCellInGroupHeaderRow && !bIsRowSelectorCell && !bIsInteractiveElement) {
@@ -323,7 +506,7 @@ sap.ui.define([
 
 		} else if (oEvent.shiftKey && oEvent.keyCode === jQuery.sap.KeyCodes.F10) {
 			oEvent.preventDefault(); // To prevent opening the default browser context menu.
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
@@ -343,7 +526,7 @@ sap.ui.define([
 		if (oCellInfo.type === CellType.COLUMNHEADER ||
 			oCellInfo.type === CellType.DATACELL) {
 
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
@@ -360,7 +543,7 @@ sap.ui.define([
 
 			// Open the column menu.
 			if (oCellInfo.type === CellType.COLUMNHEADER) {
-				TableUtils.openContextMenu(this, oEvent.target, true);
+				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 			} else {
 				TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 			}
@@ -369,7 +552,7 @@ sap.ui.define([
 		if (oEvent.keyCode === jQuery.sap.KeyCodes.ENTER) {
 			// Open the column menu.
 			if (oCellInfo.type === CellType.COLUMNHEADER) {
-				TableUtils.openContextMenu(this, oEvent.target, true);
+				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 			}
 		}
 	};
@@ -396,7 +579,7 @@ sap.ui.define([
 			}
 
 			var oRow = this.getRows()[iRowIndex];
-			var $LastInteractiveElement = TableUtils.getLastInteractiveElement(oRow);
+			var $LastInteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
 			var bIsLastInteractiveElementInRow = $LastInteractiveElement === null || $LastInteractiveElement[0] === oEvent.target;
 
 			if (bIsLastInteractiveElementInRow) {
@@ -419,12 +602,12 @@ sap.ui.define([
 
 					this.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
-							var bScrolledRowIsGroupHeaderRow = TableUtils.isGroupingRow(oRow.getDomRef());
+							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
 
 							if (bTableHasRowSelectors || bScrolledRowIsGroupHeaderRow) {
 								TableKeyboardDelegate._focusRowSelector(this, iRowIndex);
 							} else {
-								TableUtils.getFirstInteractiveElement(oRow).focus();
+								TableKeyboardDelegate._getFirstInteractiveElement(oRow).focus();
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -434,22 +617,22 @@ sap.ui.define([
 
 					var iNextRowIndex = iRowIndex + 1;
 					var oNextRow = this.getRows()[iNextRowIndex];
-					var bNextRowIsGroupHeaderRow = TableUtils.isGroupingRow(oNextRow.getDomRef());
+					var bNextRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oNextRow.getDomRef());
 
 					if (bTableHasRowSelectors || bNextRowIsGroupHeaderRow) {
 						TableKeyboardDelegate._focusRowSelector(this, iNextRowIndex);
 					} else {
-						TableUtils.getFirstInteractiveElement(oNextRow).focus();
+						TableKeyboardDelegate._getFirstInteractiveElement(oNextRow).focus();
 					}
 				}
 
 			} else if (bIsRowHeaderCell) {
 				oEvent.preventDefault();
-				TableUtils.getFirstInteractiveElement(oRow).focus();
+				TableKeyboardDelegate._getFirstInteractiveElement(oRow).focus();
 
 			} else {
 				oEvent.preventDefault();
-				TableUtils.getNextInteractiveElement(this, oEvent.target).focus();
+				TableKeyboardDelegate._getNextInteractiveElement(this, oEvent.target).focus();
 			}
 
 		} else if (oCellInfo.type === CellType.COLUMNHEADER ||
@@ -509,10 +692,10 @@ sap.ui.define([
 
 			var oRow = this.getRows()[iRowIndex];
 			var iAbsoluteRowIndex = oRow.getIndex();
-			var $FirstInteractiveElement = TableUtils.getFirstInteractiveElement(oRow);
+			var $FirstInteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
 			var bIsFirstInteractiveElementInRow = $FirstInteractiveElement !== null && $FirstInteractiveElement[0] === oEvent.target;
 			var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(this);
-			var bRowIsGroupHeaderRow = TableUtils.isGroupingRow(oRow);
+			var bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow);
 			var bRowHasInteractiveRowHeader = bTableHasRowSelectors || bRowIsGroupHeaderRow;
 
 			if (bIsFirstInteractiveElementInRow && bRowHasInteractiveRowHeader) {
@@ -537,12 +720,12 @@ sap.ui.define([
 
 					this.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
-							var bScrolledRowIsGroupHeaderRow = TableUtils.isGroupingRow(oRow.getDomRef());
+							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
 
 							if (bScrolledRowIsGroupHeaderRow) {
 								TableKeyboardDelegate._focusRowSelector(this, iRowIndex);
 							} else {
-								TableUtils.getLastInteractiveElement(oRow).focus();
+								TableKeyboardDelegate._getLastInteractiveElement(oRow).focus();
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -552,18 +735,18 @@ sap.ui.define([
 
 					var iPreviousRowIndex = iRowIndex - 1;
 					var oPreviousRow = this.getRows()[iPreviousRowIndex];
-					var bPreviousRowIsGroupHeaderRow = TableUtils.isGroupingRow(oPreviousRow.getDomRef());
+					var bPreviousRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oPreviousRow.getDomRef());
 
 					if (bPreviousRowIsGroupHeaderRow) {
 						TableKeyboardDelegate._focusRowSelector(this, iPreviousRowIndex);
 					} else {
-						TableUtils.getLastInteractiveElement(oPreviousRow).focus();
+						TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow).focus();
 					}
 				}
 
 			} else {
 				oEvent.preventDefault();
-				TableUtils.getPreviousInteractiveElement(this, oEvent.target).focus();
+				TableKeyboardDelegate._getPreviousInteractiveElement(this, oEvent.target).focus();
 			}
 
 		} else if (oCellInfo.type === CellType.DATACELL ||
@@ -803,10 +986,10 @@ sap.ui.define([
 				var iColumnSpanWidth = 0;
 
 				for (var i = oColumnHeaderInfo.index; i < oColumnHeaderInfo.index + oColumnHeaderInfo.span; i++) {
-					iColumnSpanWidth += TableUtils.getColumnWidth(this, i);
+					iColumnSpanWidth += TableUtils.Column.getColumnWidth(this, i);
 				}
 
-				TableUtils.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
+				TableUtils.Column.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -863,10 +1046,10 @@ sap.ui.define([
 				var iColumnSpanWidth = 0;
 
 				for (var i = oColumnHeaderInfo.index; i < oColumnHeaderInfo.index + oColumnHeaderInfo.span; i++) {
-					iColumnSpanWidth += TableUtils.getColumnWidth(this, i);
+					iColumnSpanWidth += TableUtils.Column.getColumnWidth(this, i);
 				}
 
-				TableUtils.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
+				TableUtils.Column.resizeColumn(this, oColumnHeaderInfo.index, iColumnSpanWidth + iResizeDelta, true, oColumnHeaderInfo.span);
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 
@@ -895,7 +1078,7 @@ sap.ui.define([
 		}
 
 		// If focus is on a group header, do nothing.
-		if (TableUtils.isInGroupingRow(oEvent.target)) {
+		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
 			return;
 		}
@@ -933,7 +1116,7 @@ sap.ui.define([
 		}
 
 		// If focus is on a group header, do nothing.
-		if (TableUtils.isInGroupingRow(oEvent.target)) {
+		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
 			return;
 		}
@@ -1256,7 +1439,7 @@ sap.ui.define([
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 
-				if (bHasRowHeader && (TableUtils.isInGroupingRow(oEvent.target) || iFocusedCellInRow === 1)) {
+				if (bHasRowHeader && (TableUtils.Grouping.isInGroupingRow(oEvent.target) || iFocusedCellInRow === 1)) {
 					// If a row header exists and the focus is on a group header or the first cell,
 					// then set the focus to the row header cell.
 					TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow, null);
@@ -1317,7 +1500,7 @@ sap.ui.define([
 						// then scroll only the remaining cells (set the focus to the last cell).
 						TableUtils.focusItem(this, iFocusedIndex + iVisibleColumnCount - iFocusedCellInRow - 1 + iRowHeaderOffset, null);
 
-					} else if (!TableUtils.isInGroupingRow(oEvent.target)) {
+					} else if (!TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 						// Scroll one page.
 						TableUtils.focusItem(this, iFocusedIndex + iPageSize, null);
 					}
