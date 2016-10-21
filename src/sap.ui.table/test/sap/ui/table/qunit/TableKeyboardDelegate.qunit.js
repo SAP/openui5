@@ -135,8 +135,7 @@ QUnit.module("KeyboardDelegate", {
 
 
 QUnit.test("Delegate Type", function(assert) {
-	//TBD: Switch type when new keyboard spec is implemented
-	assert.ok(checkDelegateType("sap.ui.table.TableKeyboardDelegate"), "Correct delegate");
+	assert.ok(checkDelegateType("sap.ui.table.TableKeyboardDelegate2"), "Correct delegate");
 });
 
 
