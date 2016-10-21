@@ -119,6 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			break;
 
 		case sap.ui.unified.CalendarIntervalType.Day:
+		case sap.ui.unified.CalendarIntervalType.Week:
 			aNonWorkingItems = oRow._getNonWorkingDays();
 			iStartOffset = oStartDate.getUTCDay();
 			iNonWorkingMax = 7;
@@ -154,6 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				break;
 
 			case sap.ui.unified.CalendarIntervalType.Day:
+			case sap.ui.unified.CalendarIntervalType.Week:
 				oIntervalNextStartDate.setUTCDate(oIntervalNextStartDate.getUTCDate() + 1);
 				if (oIntervalNextStartDate.getUTCDate() == 1) {
 					bLastOfType = true;
@@ -240,6 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				break;
 
 			case sap.ui.unified.CalendarIntervalType.Day:
+			case sap.ui.unified.CalendarIntervalType.Week:
 				iSubIntervals = 24;
 				break;
 

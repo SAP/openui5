@@ -1814,13 +1814,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handleSelectMonth (oEvent){
 
-		var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
-		var oMonthPicker = this.getAggregation("monthPicker");
-		var iMonth = oMonthPicker.getMonth();
+		var oFocusedDate = this._newUniversalDate(this._getFocusedDate()),
+				oMonthPicker = this.getAggregation("monthPicker"),
+				iMonth = oMonthPicker.getMonth();
 
 		oFocusedDate.setUTCMonth(iMonth);
-
-		if (iMonth != oFocusedDate.getUTCMonth() ) {
+		if (this._adjustFocusedDateUponMonthChange) {//hook (currently used by PlanningCalendar)
+			this._adjustFocusedDateUponMonthChange(oFocusedDate, iMonth);
+		} else if (iMonth != oFocusedDate.getUTCMonth()){
 			// day did not exist in this month (e.g. 31) -> go to last day of month
 			oFocusedDate.setUTCDate(0);
 		}

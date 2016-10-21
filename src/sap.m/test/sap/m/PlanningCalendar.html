@@ -43,6 +43,7 @@
 
 		var app = new sap.m.App("myApp");
 
+		var oEventLabel = new sap.m.Label({text: "Events log"});
 		function createFooter(){
 			return new sap.m.Bar({
 				contentMiddle: [new sap.m.Button({
@@ -50,7 +51,8 @@
 					press: function(){
 						app.to("page1");
 					}
-				})]
+				})],
+				contentRight: [oEventLabel]
 			});
 		};
 
@@ -140,6 +142,10 @@
 
 		};
 
+		var handleStartDateChange = function(oEvent) {
+			var oDf = sap.ui.core.format.DateFormat.getTimeInstance("HH:mm:ss");
+			oEventLabel.setText("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
+		};
 		var handleLegend = function(oEvent){
 			oDialog.open();
 		};
@@ -637,7 +643,8 @@
 			                 oVisSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
-			intervalSelect: handleAddAppointment
+			intervalSelect: handleAddAppointment,
+			startDateChange: handleStartDateChange,
 		});
 
 		var oInput = new sap.m.Input("I1", {

@@ -178,6 +178,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 	};
 
+	/**
+	 * Retrieves the first date of the same week as given date.
+	 * This function does not imply any knowledge of  UTC.
+	 * @param {Date} oDate the input date for which we search the first week date.
+	 * This date is considered as is (no UTC conversion, time cut etc).
+	 * @returns {Date} first date of the same week as the given <code>oDate</code>.
+	 * @public
+	 */
+	CalendarUtils.getFirstDateOfWeek = function (oDate) {
+		var oLocale = sap.ui.getCore().getConfiguration().getLocale(),
+			oDateUniversal = new UniversalDate(oDate.getTime()),
+			iFirstDayOfWeek = new sap.ui.core.LocaleData(oLocale).getFirstDayOfWeek(),
+			iCurrentDay = oDateUniversal.getDay(),
+			iDelta = Math.abs(iFirstDayOfWeek) - iCurrentDay,
+			oFirstDateOfWeek = new UniversalDate(oDateUniversal.getTime());
+
+		oFirstDateOfWeek.setDate(oDateUniversal.getDate() + iDelta);
+
+		return oFirstDateOfWeek.getJSDate();
+	};
+
 	return CalendarUtils;
 
 }, /* bExport= */ true);
