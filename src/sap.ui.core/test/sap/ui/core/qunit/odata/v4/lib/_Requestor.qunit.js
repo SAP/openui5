@@ -943,26 +943,26 @@ sap.ui.require([
 			sServiceUrl = "/Service/",
 			oRequestor = _Requestor.create(sServiceUrl);
 
-		function expectBatch(aResponses) {
+		function expectBatch() {
 			oJQueryMock.expects("ajax")
 				.withArgs(sServiceUrl + "$batch")
 				.returns(createMock(assert, "body", "OK"));
 			oBatchMock.expects("deserializeBatchResponse")
 				.withExactArgs(null, "body")
-				.returns(aResponses);
+				.returns([{}]);
 		}
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", "groupId");
-		expectBatch([{}]);
+		expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId"));
 		assert.strictEqual(oRequestor.hasPendingChanges(), false,
 			"a running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
-		expectBatch([[{}]]);
+		expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), true,
@@ -979,7 +979,7 @@ sap.ui.require([
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "bar"});
-		expectBatch([[{}]]);
+		expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), false);
