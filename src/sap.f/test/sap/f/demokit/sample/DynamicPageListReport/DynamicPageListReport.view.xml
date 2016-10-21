@@ -14,6 +14,7 @@
 						<Title text="My Products"/>
 					</f:heading>
 					<f:actions>
+						<ToolbarSpacer/>
 						<ToggleButton
 								pressed="{/headerExpanded}"
 								text="{path:'/headerExpanded', formatter:'.formatToggleButtonText'}"
