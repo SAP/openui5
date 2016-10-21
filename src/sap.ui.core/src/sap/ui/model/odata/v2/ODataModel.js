@@ -3689,6 +3689,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
 	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
+	 * @param {map} [mParameters.headers] A map of headers for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
