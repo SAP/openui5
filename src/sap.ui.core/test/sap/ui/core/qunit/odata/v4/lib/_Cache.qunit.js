@@ -22,9 +22,10 @@ sap.ui.require([
 		};
 	}
 
-	function mockRequest(oRequestorMock, sUrl, iStart, iLength) {
+	function mockRequest(oRequestorMock, sUrl, iStart, iLength, fnSubmit) {
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength, undefined)
+			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength,
+				/*sGroupId*/undefined, /*mHeaders*/undefined, /*oPayload*/undefined, fnSubmit)
 			.returns(Promise.resolve(createResult(iStart, iLength)));
 	}
 
@@ -101,7 +102,7 @@ sap.ui.require([
 
 			this.mock(oRequestor).expects("request")
 				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
-					+ oFixture.length, "group")
+					+ oFixture.length, "group", undefined, undefined, undefined)
 				.returns(Promise.resolve(oMockResult));
 
 			// code under test
@@ -135,7 +136,8 @@ sap.ui.require([
 			aPromises = [];
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1", undefined)
+			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1", undefined,
+				undefined, undefined, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
 		assert.throws(function () {
@@ -221,8 +223,7 @@ sap.ui.require([
 	}, {
 		title : "same range",
 		reads : [{index : 1, length : 2}, {index : 1, length : 2}],
-		expectedRequests : [{skip : 1, top : 2}],
-		expectedCallbackCount : 1
+		expectedRequests : [{skip : 1, top : 2}]
 	}, {
 		title : "second range overlaps after",
 		reads : [{index : 3, length : 4}, {index : 5, length : 4}],
@@ -234,8 +235,7 @@ sap.ui.require([
 	}, {
 		title : "second range part of first range",
 		reads : [{index : 5, length : 8}, {index : 7, length : 2}],
-		expectedRequests : [{skip : 5, top : 8}],
-		expectedCallbackCount : 1
+		expectedRequests : [{skip : 5, top : 8}]
 	}, {
 		title : "first range part of second range",
 		reads : [{index : 7, length : 2}, {index : 5, length : 6}],
@@ -256,16 +256,16 @@ sap.ui.require([
 		expectedRequests : [{skip : 2, top : 5}, {skip : 0, top : 2}]
 	}].forEach(function (oFixture) {
 		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
-			var iDataRequestedCount = 0,
-				fnDataRequested = function () {iDataRequestedCount++;},
+			var fnDataRequested = sinon.spy(),
 				oRequestor = _Requestor.create("/~/"),
 				sResourcePath = "Employees",
 				oCache = _Cache.create(oRequestor, sResourcePath),
 				oPromise = Promise.resolve(),
 				oRequestorMock = this.mock(oRequestor);
 
-			oFixture.expectedRequests.forEach(function (oRequest) {
-				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
+			oFixture.expectedRequests.forEach(function (oRequest, i) {
+				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top,
+					i < 2 ? fnDataRequested : undefined);
 			});
 
 			oFixture.reads.forEach(function (oRead) {
@@ -278,25 +278,22 @@ sap.ui.require([
 				});
 			});
 			return oPromise.then(function () {
-				// expect by default 2 calls of the callback
-				assert.strictEqual(iDataRequestedCount,
-					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
-					"data requested called");
+				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
 				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
 			});
 		});
 
 		QUnit.test("multiple read, " + oFixture.title + " (parallel)", function (assert) {
-			var iDataRequestedCount = 0,
-				fnDataRequested = function () {iDataRequestedCount++;},
+			var fnDataRequested = sinon.spy(),
 				oRequestor = _Requestor.create("/~/"),
 				sResourcePath = "Employees",
 				oCache = _Cache.create(oRequestor, sResourcePath),
 				aPromises = [],
 				oRequestorMock = this.mock(oRequestor);
 
-			oFixture.expectedRequests.forEach(function (oRequest) {
-				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
+			oFixture.expectedRequests.forEach(function (oRequest, i) {
+				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top,
+					i < 2 ? fnDataRequested : undefined);
 			});
 
 			oFixture.reads.forEach(function (oRead) {
@@ -307,13 +304,32 @@ sap.ui.require([
 				}));
 			});
 			return Promise.all(aPromises).then(function () {
-				// expect by default 2 calls of the callback
-				assert.strictEqual(iDataRequestedCount,
-					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
-					"data requested called");
+				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
 				assert.strictEqual(oCache.iMaxElements, oFixture.expectedMaxElements || Infinity);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parallel reads beyond length", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oRequestorMock = this.mock(oRequestor);
+
+		mockRequest(oRequestorMock, sResourcePath, 0, 30);
+		mockRequest(oRequestorMock, sResourcePath, 30, 1);
+
+		return Promise.all([
+			oCache.read(0, 30).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(0, 26));
+				assert.strictEqual(oCache.iMaxElements, 26);
+			}),
+			oCache.read(30, 1).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(0, 0));
+				assert.strictEqual(oCache.iMaxElements, 26);
+			})
+		]);
 	});
 
 	//*********************************************************************************************
@@ -326,12 +342,14 @@ sap.ui.require([
 
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
+			$apply : "filter(Price gt 100)",
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
+			$apply : "filter(Price gt 100)",
 			$expand : "expand",
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -341,6 +359,7 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			"sap-client" : "111",
+			$apply : "filter(Price gt 100)",
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
@@ -495,7 +514,8 @@ sap.ui.require([
 		oCache = _Cache.create(oRequestor, sResourcePath, mQueryParams);
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5", undefined)
+			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5", undefined,
+				undefined, undefined, undefined)
 			.returns(Promise.resolve({value: []}));
 
 		// code under test
@@ -513,10 +533,12 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined)
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined, undefined,
+				undefined, undefined)
 			.returns(Promise.reject(oError));
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined)
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined, undefined,
+				undefined, undefined)
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
@@ -538,7 +560,8 @@ sap.ui.require([
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=" + iLength, "groupId")
+				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=" + iLength, "groupId",
+					undefined, undefined, undefined)
 				.returns(Promise.resolve({
 					value : [{
 						"@odata.etag" : "before"
@@ -611,7 +634,8 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees?$expand=Equipments&$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", "Employees?$expand=Equipments&$skip=0&$top=1", "groupId",
+				undefined, undefined, undefined)
 			.returns(Promise.resolve({
 				value : [{
 					"Equipments" : [{
@@ -675,35 +699,45 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create entity", function (assert) {
+	QUnit.test("create entity and has pending changes", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {},
+			oEntityData = {name : "John Doe"},
 			oHelperMock = this.mock(_Helper),
 			oPatchPromise1,
 			oPatchPromise2,
 			oPostResult = {},
 			oPostPromise;
 
+		function transientCacheData(oCacheValue) {
+			return oCache.aElements[-1] === oCacheValue;
+		}
+
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
+				sinon.match(transientCacheData), sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve(oPostResult));
 		// called from update
 		oHelperMock.expects("updateCache")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				{bar : "baz"});
 		// called from the POST's success handler
 		oHelperMock.expects("updateCache")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match.same(oEntityData),
+			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				sinon.match.same(oPostResult));
 
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
 
-		assert.strictEqual(oCache.aElements[-1], oEntityData);
-		assert.strictEqual(oEntityData["@$ui5.transient"], "updateGroup");
-		assert.ok("@odata.etag" in oEntityData, "@odata.etag available");
+		assert.strictEqual(oCache.hasPendingChanges(""), true, "pending changes for root");
+		assert.strictEqual(oCache.hasPendingChanges("foo"), false, "pending changes for non-root");
+
+		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
+		assert.deepEqual(oCache.aElements[-1], {
+			name : "John Doe",
+			"@$ui5.transient" : "updateGroup",
+			"@odata.etag" : undefined
+		});
 
 		// code under test
 		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", "n/a", "-1");
@@ -718,25 +752,160 @@ sap.ui.require([
 					+ "'updateGroup'. Cannot patch via group 'anotherGroup'");
 			}),
 			oPostPromise.then(function () {
-				assert.notOk("@$ui5.transient" in oEntityData);
+				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
+				assert.strictEqual(oCache.hasPendingChanges(""), false, "no more pending changes");
 			})
 		]);
 	});
-	//TODO: reject PATCH if POST has been sent but not finished
+
+	//*********************************************************************************************
+	QUnit.test("pending create forces update/_delete to fail", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees"),
+			oCreatePromise,
+			oFailedPostPromise,
+			oRequestExpectation1,
+			oRequestExpectation2,
+			oRequestorMock = this.mock(oRequestor),
+			fnRejectPost,
+			fnResolvePost;
+
+		function checkUpdateAndDeleteFailure() {
+			// code under test
+			oCache.update("updateGroup", "foo", "baz", "n/a", "-1").then(function () {
+				assert.ok(false, "unexpected success - update");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"No 'update' allowed while waiting for server response",
+					oError.message);
+
+			});
+			oCache._delete("updateGroup", "n/a", "-1").then(function () {
+				assert.ok(false, "unexpected success - _delete");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"No 'delete' allowed while waiting for server response",
+					oError.message);
+
+			});
+		}
+
+		function checkUpdateSuccess(sWhen) {
+			// code under test
+			return oCache.update("updateGroup", "foo", sWhen, "Employees", "-1").then(function () {
+				assert.ok(true, "Update works " + sWhen);
+				assert.strictEqual(oCache.aElements[-1]["@$ui5.transient"], "updateGroup");
+			});
+		}
+
+		oRequestExpectation1 = oRequestorMock.expects("request");
+		oRequestExpectation1.withExactArgs("POST", "Employees", "updateGroup", null,
+				sinon.match.object, sinon.match.func, sinon.match.func)
+			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
+				fnRejectPost = reject;
+			}));
+
+		oCreatePromise = oCache.create("updateGroup", "Employees", "");
+
+		checkUpdateSuccess("before submitBatch").then(function () {
+			oRequestExpectation2 = oRequestorMock.expects("request");
+			// immediately add the POST request again into queue
+			oRequestExpectation2.withExactArgs("POST", "Employees", "updateGroup", null,
+					sinon.match.object, sinon.match.func, sinon.match.func)
+				.returns(new Promise(function (resolve) {
+						fnResolvePost = resolve;
+					}));
+
+			// simulate a submitBatch leading to a failed POST
+			oRequestExpectation1.args[0][5]();
+
+			checkUpdateAndDeleteFailure();
+
+			fnRejectPost(new Error());
+
+			oFailedPostPromise.then(undefined, function () {
+				checkUpdateSuccess("with restarted POST").then(function () {
+					// simulate a submitBatch leading to a successful POST
+					oRequestExpectation2.args[0][5]();
+
+					checkUpdateAndDeleteFailure();
+
+					fnResolvePost({}); // this will resolve oCreatePromise, too
+				});
+			});
+		});
+
+		return oCreatePromise.then(function () {
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", "Employees", "updateGroup",
+					{"If-Match" : undefined}, {foo : "baz2"}, undefined,
+					sinon.match.func)
+				.returns(Promise.resolve({}));
+
+			// code under test
+			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
+				.then(function () {
+					assert.ok(true, "Update patches after successful create");
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create entity without initial data", function (assert) {
+		var oCache = _Cache.create(_Requestor.create("/~/"), "Employees");
+
+		// code under test
+		oCache.create("updateGroup", "Employees", "");
+
+		assert.deepEqual(oCache.aElements[-1], {
+			"@$ui5.transient" : "updateGroup",
+			"@odata.etag" : undefined
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create entity, canceled", function (assert) {
+		var bFnCancelCallbackCalled = false,
+			oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+			oCanceledError = new Error(),
+			oRequestorMock = this.mock(oRequestor);
+
+		oCanceledError.canceled = true;
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object,
+				sinon.match.func, sinon.match.func)
+			.callsArg(6)
+			.returns(Promise.reject(oCanceledError));
+
+		// code under test
+		return oCache.create("updateGroup", "Employees", "", undefined, function () {
+				bFnCancelCallbackCalled = true;
+			}).then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError, oCanceledError);
+				assert.notOk(-1 in oCache.aElements);
+				assert.ok(bFnCancelCallbackCalled);
+			});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("read w/ transient context", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {foo : "bar"},
+			oEntityData = {name : "John Doe"},
 			oReadResult = {value : [{}, {}]},
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, oEntityData)
+			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null, sinon.match.object,
+				sinon.match.func, sinon.match.func)
 			.returns(new Promise(function () {})); // never resolve
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=2", "$direct")
+			.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=2", "$direct", undefined,
+				undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 
 		oCache.create("updateGroup", "Employees", "", oEntityData);
@@ -751,88 +920,85 @@ sap.ui.require([
 			// code under test
 			oResult = oCache.read(-1, 1, "$direct").getResult();
 			assert.strictEqual(oResult.value.length, 1);
-			assert.strictEqual(oResult.value[0].foo, "bar");
+			assert.strictEqual(oResult.value[0].name, "John Doe");
 
 			// code under test
-			oResult = oCache.read(-1, 1, "$direct", "foo").getResult();
-			assert.strictEqual(oResult, "bar");
+			oResult = oCache.read(-1, 1, "$direct", "name").getResult();
+			assert.strictEqual(oResult, "John Doe");
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("create failure", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			oEntityData = {},
-			oError = new Error("POST failed"),
-			oRequestorMock = this.mock(oRequestor);
-
-		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
-			.returns(Promise.reject(oError));
-
-		// code under test
-		return oCache.create("updateGroup", "Employees", "", oEntityData).then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oCache.aElements[-1], oEntityData);
-			assert.strictEqual(oError0, oError);
-		});
-	});
-	// TODO a failed request must be repeated, the promise of create may only fail on cancel
-
-	//*********************************************************************************************
 	QUnit.test("delete transient", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
-			fnCallback = sinon.spy(),
+			oCache = _Cache.create(oRequestor, "Employees"),
+			fnCancelCallback = sinon.spy(),
 			oDeletePromise,
-			oEntityData = {},
-			oError = new Error(),
-			oPostPromise = Promise.reject(oError); // would be rejected by removePost
+			oTransientElement;
 
-		oError.canceled = true;
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
-				sinon.match.same(oEntityData))
-			.returns(oPostPromise);
+		sinon.spy(oRequestor, "request");
 
-		oCache.create("updateGroup", "Employees", "", oEntityData).catch(function () {});
-
-		this.mock(oRequestor).expects("removePost")
-			.withExactArgs("updateGroup", oEntityData);
-
-		// code under test
-		oDeletePromise = oCache._delete("$auto", "n/a", "-1", fnCallback).then(function () {
-			assert.notOk(-1 in oCache.aElements);
-			sinon.assert.calledWith(fnCallback, -1);
-		});
+		oCache.create("updateGroup", "Employees", "", {}, fnCancelCallback)
+			.catch(function (oError) {
+				assert.ok(oError.canceled);
+			});
 
 		assert.ok(-1 in oCache.aElements);
+		oTransientElement = oCache.aElements[-1];
 
+		sinon.assert.calledWithExactly(oRequestor.request, "POST", "Employees", "updateGroup", null,
+			sinon.match.object, sinon.match.func, sinon.match.func);
+		sinon.spy(oRequestor, "removePost");
+
+		// code under test
+		oDeletePromise = oCache._delete("$auto", "n/a", "-1", function () {
+			throw new Error();
+		});
+
+		sinon.assert.calledWithExactly(oRequestor.removePost, "updateGroup",
+			sinon.match(function (oParameter) {
+				return oParameter === oTransientElement;
+			}));
+		sinon.assert.calledOnce(fnCancelCallback);
+		assert.notOk(-1 in oCache.aElements);
+
+		// wait for delete promise to see potential asynchronous errors
 		return oDeletePromise;
 	});
 
 	//*********************************************************************************************
 	QUnit.test("delete created entity", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
+		var oCreatedPromise,
+			fnCallback = sinon.spy(),
+			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
+			sGroupId = "updateGroup",
+			oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
-			oEntity = {"$odata.etag" : "anyEtag"};
+			that = this;
 
-		oCache.aElements[-1] = {"$odata.etag" : "anyEtag"};
-		this.mock(oCache).expects("read").withExactArgs(-1, 1, "groupId", "")
-			.returns(_SyncPromise.resolve(oEntity));
-		this.mock(oCache.oRequestor).expects("request")
-			.withExactArgs("DELETE", "Employees('4711')", "groupId",
-				{"If-Match" : oEntity["@odata.etag"]})
-			.returns(_SyncPromise.resolve(/*don't care*/));
 
-		// code under test
-		return oCache._delete("groupId", "Employees('4711')", "-1", sinon.spy())
-			.then(function () {
-				assert.notOk(-1 in oCache.aElements);
+		oCreatedPromise = oCache.create(sGroupId, "Employees", "", {}, function () {
+			throw new Error();
+		});
+
+		// simulate submitBatch
+		oRequestor.mBatchQueue[sGroupId][0][0].$resolve(oEntity);
+
+		return oCreatedPromise.then(function () {
+			that.mock(oCache).expects("read").withExactArgs(-1, 1, "$auto", "")
+				.returns(_SyncPromise.resolve(oEntity));
+
+			that.mock(oRequestor).expects("request")
+				.withExactArgs("DELETE", "/Employees('4711')", "$auto",
+					{"If-Match" : "anyEtag"})
+				.returns(Promise.resolve());
+
+			// code under test
+			return oCache._delete("$auto", "/Employees('4711')", "-1", fnCallback)
+				.then(function () {
+					sinon.assert.calledOnce(fnCallback);
+					assert.notOk(-1 in oCache.aElements, "ok");
 			});
+		});
 	});
 	//TODO: oCache._delete in resolve handler for that.oRequestor.request("DELETE"...
 	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
@@ -840,8 +1006,7 @@ sap.ui.require([
 	//**********************************************W***********************************************
 	QUnit.test("read single employee", function (assert) {
 		var oCache,
-			iDataRequestedCount = 0,
-			fnDataRequested = function () {iDataRequestedCount++;},
+			fnDataRequested = sinon.spy(),
 			oExpectedResult = {},
 			aPromises = [],
 			mQueryParams = {
@@ -853,19 +1018,19 @@ sap.ui.require([
 		this.mock(_Cache).expects("buildQueryString")
 			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?~", "group")
+			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
+				fnDataRequested)
 			.returns(Promise.resolve(oExpectedResult));
 
 		oCache = _Cache.createSingle(oRequestor, sResourcePath, mQueryParams);
 		aPromises.push(oCache.read("group", undefined, fnDataRequested).then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
 		}));
-		assert.strictEqual(iDataRequestedCount, 1, "data requested called only once");
 		aPromises.push(oCache.read("group", undefined, fnDataRequested).then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
 		}));
 		return Promise.all(aPromises).then(function () {
-			assert.strictEqual(iDataRequestedCount, 1, "data requested called only once");
+			sinon.assert.notCalled(fnDataRequested); // the requestor should call this
 		});
 	});
 
@@ -878,7 +1043,7 @@ sap.ui.require([
 			oCache;
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath, undefined)
+			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
 		// code under test
@@ -902,7 +1067,7 @@ sap.ui.require([
 			oCache;
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath, undefined)
+			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
 			.returns(Promise.resolve(undefined)); // 204 No Content
 
 		// code under test
@@ -927,7 +1092,7 @@ sap.ui.require([
 			aPromises = [];
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath, undefined)
+			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
 		aPromises.push(oCache.read(undefined, "foo").then(function (oResult) {
@@ -1024,7 +1189,7 @@ sap.ui.require([
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath
 				+ "?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111&$skip=0&$top=1",
-				"groupId")
+				"groupId", undefined, undefined, undefined)
 			.returns(oPromise);
 
 		// fill the cache and attach multiple listeners for the same path, one of them twice
@@ -1048,7 +1213,8 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
-					"updateGroupId", {"If-Match" : sETag}, {Note : "foo"}, sinon.match.func)
+					"updateGroupId", {"If-Match" : sETag}, {Note : "foo"},
+					undefined, sinon.match.func)
 				.returns(oPatchPromise);
 
 			oCache.deregisterChange(0, "SO_2_SOITEM/0/Note", oNoteListener2);
@@ -1129,7 +1295,8 @@ sap.ui.require([
 				oNoteListener = {onChange : sinon.spy()};
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+				.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
+					undefined, undefined)
 				.returns(oPromise);
 			// fill the cache and register a listener
 			return oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note", undefined, oNoteListener)
@@ -1138,7 +1305,7 @@ sap.ui.require([
 						oError = new Error(),
 						oExpectation = oRequestorMock.expects("request")
 							.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-								{Note : "foo"}, sinon.match.func)
+								{Note : "foo"}, undefined, sinon.match.func)
 							.returns(oPatchPromise);
 
 					// code under test
@@ -1167,7 +1334,7 @@ sap.ui.require([
 					if (bCancel) {
 						oError.canceled = true;
 						// call the cancel func delivered by the cache via the request call
-						oExpectation.args[0][5]();
+						oExpectation.args[0][6]();
 						assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/0/Note"), false);
 					}
 					fnReject(oError);
@@ -1200,7 +1367,8 @@ sap.ui.require([
 			oCache = _Cache.create(oRequestor, sResourcePath);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
+				undefined, undefined)
 			.returns(oReadPromise);
 		// fill the cache
 		return oCache.read(0, 1, "groupId").then(function () {
@@ -1208,11 +1376,11 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"}, sinon.match.func)
+					{Note : "foo"}, undefined, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "bar"}, sinon.match.func)
+					{Note : "bar"}, undefined, sinon.match.func)
 				.returns(oPatchPromise2);
 
 			// code under test
@@ -1267,7 +1435,8 @@ sap.ui.require([
 
 		oError.canceled = true;
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
+				undefined, undefined)
 			.returns(oPromise);
 		// fill the cache
 		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/10/Note").then(function () {
@@ -1276,11 +1445,11 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"}, sinon.match.func)
+					{Note : "foo"}, undefined, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
-					{Foo : "baz"}, sinon.match.func)
+					{Foo : "baz"}, undefined, sinon.match.func)
 				.returns(oPatchPromise2);
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
@@ -1318,7 +1487,8 @@ sap.ui.require([
 			oCache = _Cache.create(oRequestor, sResourcePath);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
+				undefined, undefined)
 			.returns(Promise.resolve({
 				value: []
 			}));
@@ -1338,11 +1508,36 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Cache: resetChanges", function (assert) {
-		var oRequestor = _Requestor.create("/"),
-			sResourcePath = "/SalesOrderList",
-			oCache = _Cache.create(oRequestor, sResourcePath);
+		var oCache = _Cache.create(_Requestor.create("/"), "/SalesOrderList");
 
+		// code under test
 		this.testResetChanges(assert, oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache: resetChanges - POST requests", function (assert) {
+		var oEntity = {"@$ui5.transient" : "groupId"},
+			oRequestor = _Requestor.create("/"),
+			oCache = _Cache.create(oRequestor, "/SalesOrderList"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oCache.aElements[-1] = oEntity;
+		oRequestorMock.expects("removePost").never();
+
+		// code under test - don't call removePost on root if resetChanges is called with a path
+		oCache.resetChanges("any/Path");
+
+		oRequestorMock.expects("removePost").withExactArgs("groupId", oEntity);
+
+		// code under test
+		oCache.resetChanges("");
+
+		// element at index -1 is not transient (does not have @$ui5.transient property)
+		oCache.aElements[-1] = {};
+		oRequestorMock.expects("removePost").never();
+
+		// code under test
+		oCache.resetChanges("");
 	});
 
 	//*********************************************************************************************
@@ -1458,7 +1653,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath, undefined)
+			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
 			.returns(Promise.resolve({}));
 
 		oCache = _Cache.createSingle(oRequestor, sResourcePath);
@@ -1478,7 +1673,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath, undefined)
+			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
 			.onFirstCall().returns(Promise.resolve({}))
 			.onSecondCall().returns(Promise.resolve({}));
 
@@ -1506,7 +1701,8 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20", undefined)
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20", undefined, undefined,
+				undefined, undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
 		oCache = _Cache.create(oRequestor, sResourcePath);
@@ -1532,7 +1728,8 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10", undefined)
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10", undefined, undefined,
+				undefined, undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
 		oCache = _Cache.create(oRequestor, sResourcePath);
@@ -1639,7 +1836,7 @@ sap.ui.require([
 			oRequestorMock.expects("request")
 				.withExactArgs("GET",
 					o.sResourcePath + "?$orderby=Name&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
-					"groupId")
+					"groupId", undefined, undefined, undefined)
 				.returns(Promise.resolve(o.oGetResult));
 
 			// fill the cache and attach multiple listeners for the same path, one of them twice
@@ -1658,7 +1855,7 @@ sap.ui.require([
 
 				oRequestorMock.expects("request")
 					.withExactArgs("PATCH", o.sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
-						"up", {"If-Match" : o.sETag}, {Name : "foo"}, sinon.match.func)
+						"up", {"If-Match" : o.sETag}, {Name : "foo"}, undefined, sinon.match.func)
 					.returns(oPatchPromise);
 
 				oCache.deregisterChange("foo", {}); // do not crash on useless deregister
@@ -1744,7 +1941,7 @@ sap.ui.require([
 			oPatchPromise = Promise.resolve(oPatchResult);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, "groupId")
+			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 
 		return oCache.read("groupId", "SO_2_BP/Address/City").then(function () {
@@ -1754,7 +1951,8 @@ sap.ui.require([
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl,
 					"up",
-					{"If-Match" : 'W/"19700101000000.0000000"'}, oPatchData, sinon.match.func)
+					{"If-Match" : 'W/"19700101000000.0000000"'}, oPatchData,
+					undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			oHelperMock.expects("updateCache").withExactArgs(
 					sinon.match.same(oCache.mChangeListeners), "SO_2_BP",
@@ -1787,7 +1985,7 @@ sap.ui.require([
 			oPatchPromise = Promise.resolve(oPatchResult);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, "groupId")
+			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve(oReadResult));
 
 		return oCache.read("groupId", "").then(function () {
@@ -1797,7 +1995,7 @@ sap.ui.require([
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl,
 					"up",
-					{"If-Match" : undefined}, oPatchData, sinon.match.func)
+					{"If-Match" : undefined}, oPatchData, undefined, sinon.match.func)
 				.returns(oPatchPromise);
 			oHelperMock.expects("updateCache").withExactArgs(
 					sinon.match.same(oCache.mChangeListeners), "",
@@ -1857,7 +2055,8 @@ sap.ui.require([
 					oNameListener = {onChange : sinon.spy()};
 
 				oRequestorMock.expects("request")
-					.withExactArgs("GET", o.sResourcePath, "groupId")
+					.withExactArgs("GET", o.sResourcePath, "groupId", undefined, undefined,
+						undefined)
 					.returns(Promise.resolve(JSON.parse(JSON.stringify(o.oGetResult))));
 
 				// fill the cache and attach a listener
@@ -1866,7 +2065,7 @@ sap.ui.require([
 						var oUpdatePromise,
 							oExpectation = oRequestorMock.expects("request")
 								.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag},
-									{Name : "foo"}, sinon.match.func)
+									{Name : "foo"}, undefined, sinon.match.func)
 								.returns(oPatchPromise);
 
 						// code under test
@@ -1897,7 +2096,7 @@ sap.ui.require([
 						if (bCancel) {
 							oError.canceled = true;
 							// call the cancel func delivered by the cache via the request call
-							oExpectation.args[0][5]();
+							oExpectation.args[0][6]();
 						}
 						fnReject(oError);
 
@@ -1928,7 +2127,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, "groupId")
+			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(oPromise);
 		// fill the cache
 		return oCache.read("groupId").then(function () {
@@ -1936,11 +2135,11 @@ sap.ui.require([
 
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"}, sinon.match.func)
+					{Note : "foo"}, undefined, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "bar"}, sinon.match.func)
+					{Note : "bar"}, undefined, sinon.match.func)
 				.returns(oPatchPromise2);
 
 			// code under test
@@ -1990,7 +2189,7 @@ sap.ui.require([
 
 		oError.canceled = true;
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, "groupId")
+			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(oPromise);
 		// fill the cache and register a listener
 		return oCache.read("groupId", "Note").then(function () {
@@ -1999,11 +2198,11 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Note : "foo"}, sinon.match.func)
+					{Note : "foo"}, undefined, sinon.match.func)
 				.returns(oPatchPromise1);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
-					{Foo : "baz"}, sinon.match.func)
+					{Foo : "baz"}, undefined, sinon.match.func)
 				.returns(oPatchPromise2);
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
@@ -2038,7 +2237,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, "groupId")
+			.withExactArgs("GET", sResourcePath, "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve({}));
 		this.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
 			+ "/SalesOrderList(SalesOrderID='0')/invalid/path, "
@@ -2069,7 +2268,8 @@ sap.ui.require([
 			oCache = _Cache.create(oRequestor, "Employees");
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", "Employees?$skip=0&$top=1", "$direct")
+			.withExactArgs("GET", "Employees?$skip=0&$top=1", "$direct", undefined, undefined,
+				undefined)
 			.returns(Promise.resolve({value: [{foo: "", bar: ""}]}));
 
 		return Promise.all([
@@ -2089,7 +2289,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, "Employees('42')");
 
 		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", "Employees('42')", "$direct")
+			.withExactArgs("GET", "Employees('42')", "$direct", undefined, undefined, undefined)
 			.returns(Promise.resolve({foo: "", bar: ""}));
 
 		return Promise.all([
@@ -2122,7 +2322,8 @@ sap.ui.require([
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", "Employees('42')?$expand=Equipments", "groupId")
+				.withExactArgs("GET", "Employees('42')?$expand=Equipments", "groupId", undefined,
+					undefined, undefined)
 				.returns(Promise.resolve(oData));
 
 			return oCache.read("groupId").then(function () {
@@ -2178,7 +2379,8 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('42')?$expand=Team", "groupId")
+			.withExactArgs("GET", "Employees('42')?$expand=Team", "groupId", undefined, undefined,
+				undefined)
 			.returns(Promise.resolve(oData));
 
 		return oCache.read("groupId").then(function () {
@@ -2212,7 +2414,7 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('42')", "groupId")
+			.withExactArgs("GET", "Employees('42')", "groupId", undefined, undefined, undefined)
 			.returns(Promise.resolve(oData));
 
 		return oCache.read("groupId").then(function () {

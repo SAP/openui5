@@ -25,8 +25,8 @@ sap.ui.define([
 		};
 
 	/**
-	 * DO NOT CALL this private constructor for a new <code>ODataContextBinding</code>,
-	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData V4 model
@@ -43,9 +43,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"; OData V4 only
-	 *   allows $filter and $orderby inside resource paths that identify a collection. In our case
-	 *   here, this means you can only use them inside $expand.
+	 *   <li> The $apply, $expand, $filter, $orderby and $select "5.1 System Query Options"; OData
+	 *   V4 only allows $apply, $filter and $orderby inside resource paths that identify a
+	 *   collection. In our case here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -103,6 +103,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
+	 * @since 1.37.0
 	 * @version ${version}
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
@@ -258,10 +259,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
-	 *   when the binding is initialized, {@link sap.ui.model.ChangeReason.Refresh Refresh} when
-	 *   the binding is refreshed, and {@link sap.ui.model.ChangeReason.Context Context} when the
-	 *   parent context is changed
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
+	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
+	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
@@ -342,7 +342,6 @@ sap.ui.define([
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
 			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
-			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
@@ -465,7 +464,6 @@ sap.ui.define([
 					sPath.replace("...", aParameters.join(',')), that.mQueryOptions);
 				oPromise = that.oCache.read(sGroupId);
 			}
-			that.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 
@@ -552,7 +550,7 @@ sap.ui.define([
 			this.sRefreshGroupId = undefined;
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
-				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
+				that.fireDataRequested();
 			}, oListener).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();
@@ -560,14 +558,9 @@ sap.ui.define([
 				return vValue;
 			}, function (oError) {
 				if (bDataRequested) {
-					if (oError.canceled) {
-						that.fireDataReceived();
-					} else {
-						// log error only once when data request failed
-						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
-							oError);
-						that.fireDataReceived({error : oError});
-					}
+					that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+						oError);
+					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				}
 				throw oError;
 			});
@@ -584,6 +577,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The bound context
 	 *
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
 	 * @public
 	 * @since 1.39.0
@@ -617,8 +611,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
-	 * binding that have not yet been sent to the server.
+	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
+	 * meaning updates that have not yet been successfully sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
@@ -664,10 +658,15 @@ sap.ui.define([
 	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for absolute bindings.
 	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the binding's data; it is <b>independent</b>
-	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
-	 * group ID.
+	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
+	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
+	 *
+	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * {@link #refresh}.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
@@ -675,8 +674,8 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
-	 *   refresh on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
+	 *   binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -735,8 +734,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending property changes of this binding, meaning updates via two-way binding that
-	 * have not yet been sent to the server.
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
 	 *
 	 * @public
 	 * @since 1.40.1
@@ -875,7 +873,6 @@ sap.ui.define([
 		if (this.oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
-			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 

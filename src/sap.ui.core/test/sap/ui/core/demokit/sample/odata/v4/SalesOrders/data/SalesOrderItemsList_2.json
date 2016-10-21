@@ -37,8 +37,8 @@
 				"Depth" : "4.000",
 				"Height" : "21.000",
 				"DimUnit" : "CM",
-				"CreatedAt" : "2016-06-13T06:53:13Z",
-				"ChangedAt" : "2016-06-13T06:53:13Z",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 				"PRODUCT_2_BP" : {
 					"@odata.etag" : "W/\"20160613065313.0000000\"",
 					"BusinessPartnerID" : "0100000007",
@@ -84,8 +84,8 @@
 				"Depth" : "4.200",
 				"Height" : "23.100",
 				"DimUnit" : "CM",
-				"CreatedAt" : "2016-06-13T06:53:13Z",
-				"ChangedAt" : "2016-06-13T06:53:13Z",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 				"PRODUCT_2_BP" : {
 					"@odata.etag" : "W/\"20160613065313.0000000\"",
 					"BusinessPartnerID" : "0100000008",
@@ -131,8 +131,8 @@
 				"Depth" : "1.500",
 				"Height" : "19.000",
 				"DimUnit" : "CM",
-				"CreatedAt" : "2016-06-13T06:53:13Z",
-				"ChangedAt" : "2016-06-13T06:53:13Z",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 				"PRODUCT_2_BP" : {
 					"@odata.etag" : "W/\"20160613065313.0000000\"",
 					"BusinessPartnerID" : "0100000009",

@@ -46,6 +46,13 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="GW_SAMPLE.BusinessPartner/BusinessPartnerID">
+				<Annotation Term="Common.Label" String="Characterfeld der Länge 10"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CompanyName">
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
+						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

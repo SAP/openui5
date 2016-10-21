@@ -110,8 +110,8 @@
 				<Property Name="BillingStatusDesc" Type="Edm.String" Nullable="false" MaxLength="60"/>
 				<Property Name="DeliveryStatus" Type="Edm.String" Nullable="false" MaxLength="1"/>
 				<Property Name="DeliveryStatusDesc" Type="Edm.String" Nullable="false" MaxLength="60"/>
-				<Property Name="CreatedAt" Type="Edm.String"/>
-				<Property Name="ChangedAt" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7"/>
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7"/>
 				<Property Name="SOItemCount" Type="Edm.Int16"/>
 				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.BusinessPartner" Nullable="false"/>
 				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.SalesOrderSchedule)" ContainsTarget="true">

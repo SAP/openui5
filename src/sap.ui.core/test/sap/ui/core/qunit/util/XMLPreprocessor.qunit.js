@@ -2262,6 +2262,17 @@ sap.ui.require([
 					// return absolute path so this function serves as helper & formatter!
 					return "/bar";
 				},
+				checkScope : function () {
+					// Note: this makes sure that the current scope of aliases is passed as binding
+					// parameter for v4.ODataMetaModel's computed annotations
+					assert.deepEqual(this.getBindingInfo("any").parameters, {
+						foo : "bar",
+						scope : {
+							"bar" : window.foo.Helper.bar,
+							"foo" : window.foo.Helper.bar // see "redefine existing alias" below
+						}
+					}, "scope available in binding info");
+				},
 				foo : function () {
 					assert.ok(!this || !("foo" in this), "no jQuery.proxy(..., oScope) used");
 					return "/foo";
@@ -2295,6 +2306,8 @@ sap.ui.require([
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
 						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+						"<Text text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
+							+ " parameters: {foo: 'bar'}}\"/>",
 					'</template:alias>',
 					// old value must be used again
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2324,6 +2337,7 @@ sap.ui.require([
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 					'<Text text="/foo"/>',
 						'<Text text="/bar"/>',
+						'<Text/>', // checkScope() returns undefined
 					'<Text text="/foo"/>',
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",

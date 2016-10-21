@@ -10,9 +10,10 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
-		'sap/ui/model/json/JSONModel'
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/Sorter'
 ], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		JSONModel) {
+		JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -93,12 +94,12 @@ sap.ui.define([
 		onCreateSalesOrder : function (oEvent) {
 			var oView = this.getView(),
 				oContext = oView.byId("SalesOrders").getBinding("items")
-					.create(undefined, {
+					.create({
 						// TODO where to get initial values from to avoid "failed to drill-down"
 						// and "Not all properties provided while creation or update was executed."
 						// $select?
 						"SalesOrderID" : "",
-						"Note" : new Date().toString(),
+						"Note" : null, // set to null to provoke server error if no note is entered
 						"NoteLanguage" : "E",
 						"BuyerID" : "0100000000",
 						"BuyerName" : "",
@@ -112,8 +113,8 @@ sap.ui.define([
 						"BillingStatusDesc" : "",
 						"DeliveryStatus" : "",
 						"DeliveryStatusDesc" : "",
-						"CreatedAt" : "",
-						"ChangedAt" : "",
+						"CreatedAt" : "1970-01-01T00:00:00Z",
+						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"SOItemCount" : 0,
 						"SO_2_BP" : null
 					}),
@@ -360,18 +361,56 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+			this.submitBatch("SalesOrderUpdateGroup");
 		},
 
 		onSaveSalesOrderSchedules : function () {
-			var oView = this.getView();
-
-			oView.getModel().submitBatch("SalesOrderUpdateGroup");
-			oView.byId("SalesOrderSchedulesDialog").close();
+			this.getView().byId("SalesOrderSchedulesDialog").close();
+			this.submitBatch("SalesOrderUpdateGroup");
 		},
 
 		onSaveSalesOrderList : function () {
-			this.getView().getModel().submitBatch("SalesOrderListUpdateGroup");
+			this.submitBatch("SalesOrderListUpdateGroup");
+		},
+
+		onSetBindingContext : function () {
+			var oText = this.getView().byId("FavoriteProductID"),
+				oBindingContext = oText.getModel().createBindingContext("/ProductList('HT-1000')");
+
+			oText.setBindingContext(oBindingContext);
+			oText.bindProperty("text", "ProductID");
+		},
+
+		onSortByGrossAmount : function () {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				sNewIcon,
+				oUIModel = oView.getModel("ui"),
+				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending");
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot sort due to unsaved changes"
+					+ "; save or reset changes before sorting");
+				return;
+			}
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			if (bDescending === undefined) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else if (bDescending === false) {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			} else {
+				sNewIcon = "";
+				bDescending = undefined;
+			}
+			oUIModel.setProperty("/bSortGrossAmountDescending", bDescending);
+			oUIModel.setProperty("/sSortGrossAmountIcon", sNewIcon);
+			oBinding.sort(bDescending === undefined
+				? undefined
+				: new Sorter("GrossAmount", bDescending)
+			);
 		},
 
 		/**
@@ -425,6 +464,23 @@ sap.ui.define([
 			} else {
 				oRefreshable.refresh();
 			}
+		},
+
+		/**
+		 * Submits the given batch group while the view is locked.
+		 *
+		 * @param {string} sGroupId
+		 *   the group ID
+		 */
+		submitBatch : function (sGroupId) {
+			var oView = this.getView();
+
+			function resetBusy() {
+				oView.setBusy(false);
+			}
+
+			oView.setBusy(true);
+			oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
 		}
 	});
 

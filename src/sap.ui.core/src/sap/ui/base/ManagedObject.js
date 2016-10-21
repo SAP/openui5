@@ -2584,6 +2584,8 @@ sap.ui.define([
 	 *                  the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
 	 *                  If you use only one binding and want raw values then simply don't specify a type for that binding.
 	 * @param {sap.ui.model.Type|string} [oBindingInfo.type] the sap.ui.model.Type object or class name
+	 * @param {string} [oBindingInfo.targetType] the target type to be used by the type, for example
+	 *                 "boolean" or "string" or "any"; defaults to the property's type
 	 * @param {object} [oBindingInfo.formatOptions] the format options to be used
 	 * @param {object} [oBindingInfo.constraints] the constraints for this value
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
@@ -2628,6 +2630,7 @@ sap.ui.define([
 			oBindingInfo.parts = [];
 			oBindingInfo.parts[0] = {
 				path: oBindingInfo.path,
+				targetType: oBindingInfo.targetType,
 				type: oBindingInfo.type,
 				suspended: oBindingInfo.suspended,
 				formatOptions: oBindingInfo.formatOptions,
@@ -2636,6 +2639,7 @@ sap.ui.define([
 				mode: oBindingInfo.mode
 			};
 			delete oBindingInfo.path;
+			delete oBindingInfo.targetType;
 			delete oBindingInfo.mode;
 			delete oBindingInfo.model;
 		}
@@ -2745,7 +2749,7 @@ sap.ui.define([
 			}
 
 			oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
-			oBinding.setType(oType, sInternalType);
+			oBinding.setType(oType, oPart.targetType || sInternalType);
 			oBinding.setFormatter(oPart.formatter);
 			if (oPart.suspended) {
 				oBinding.suspend(true);
@@ -2771,7 +2775,7 @@ sap.ui.define([
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
 			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues);
-			oBinding.setType(oType, sInternalType);
+			oBinding.setType(oType, oBindingInfo.targetType || sInternalType);
 			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
 		} else {
 			oBinding = aBindings[0];

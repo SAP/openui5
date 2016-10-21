@@ -23,9 +23,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Int64", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -54,10 +58,8 @@ sap.ui.require([
 			var oType;
 
 			if (oFixture.warning) {
-				this.mock(jQuery.sap.log).expects("warning")
+				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Int64");
-			} else {
-				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
 			oType = new Int64({}, oFixture.i);
@@ -230,7 +232,6 @@ sap.ui.require([
 		 "+9223372036854775807"].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
-		assert.expect(0);
 	});
 
 	//*********************************************************************************************
@@ -279,7 +280,6 @@ sap.ui.require([
 		var oType = new Int64();
 
 		oType.validateValue(null);
-		this.mock(jQuery.sap.log).expects("warning").never();
 
 		TestUtils.withNormalizedMessages(function () {
 			oType = new Int64({}, {nullable : false});

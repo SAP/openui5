@@ -5,9 +5,10 @@
 /**
  * Model and related classes like bindings for OData V4.
  *
- * @namespace
  * @name sap.ui.model.odata.v4
+ * @namespace
  * @public
+ * @since 1.37.0
  */
 
 //Provides class sap.ui.model.odata.v4.ODataModel
@@ -26,7 +27,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
+], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
 		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataPropertyBinding) {
 
@@ -97,13 +98,17 @@ sap.ui.define([
 	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
 	 *
 	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
+	 *   Bindings which are relative to such a V4 context depend on their corresponding parent
+	 *   binding and do not access data with their own service requests unless parameters are
+	 *   provided.
 	 *
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
 	 * @public
+	 * @since 1.37.0
 	 * @version ${version}
 	 */
-	var ODataModel = Model.extend(sClassName,
+	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (mParameters) {
@@ -112,7 +117,8 @@ sap.ui.define([
 						},
 						sParameter,
 						sServiceUrl,
-						oUri;
+						oUri,
+						that = this;
 
 					// do not pass any parameters to Model
 					Model.apply(this);
@@ -158,9 +164,14 @@ sap.ui.define([
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters);
+						this.mUriParameters, function (sGroupId) {
+							if (sGroupId === "$auto") {
+								sap.ui.getCore()
+									.addPrerenderingTask(that._submitBatch.bind(that, sGroupId));
+							}
+						});
+
 					this.aAllBindings = [];
-					this.mCallbacksByGroupId = {};
 					this.sDefaultBindingMode = BindingMode.TwoWay;
 					this.mSupportedBindingModes = {
 						OneTime : true,
@@ -182,53 +193,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatch = function (sGroupId) {
-		var aCallbacks = this.mCallbacksByGroupId[sGroupId],
-			oPromise;
-
-		oPromise = this.oRequestor.submitBatch(sGroupId)
+		return this.oRequestor.submitBatch(sGroupId)
 			["catch"](function (oError) {
 				jQuery.sap.log.error("$batch failed", oError.message, sClassName);
 				throw oError;
 			});
-		if (aCallbacks) {
-			delete this.mCallbacksByGroupId[sGroupId];
-			aCallbacks.forEach(function (fnCallback) {
-				fnCallback();
-			});
-		}
-		return oPromise;
-	};
-
-	/**
-	 * Informs the model that a request has been added to the given group.
-	 *
-	 * @param {string} sGroupId
-	 *   ID of the group which should be sent as an OData batch request
-	 * @param {function} [fnGroupSentCallback]
-	 *   A function that is called synchronously after the group has been sent
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.addedRequestToGroup = function (sGroupId, fnGroupSentCallback) {
-		var aCallbacks = this.mCallbacksByGroupId[sGroupId];
-
-		if (sGroupId === "$direct") {
-			if (fnGroupSentCallback) {
-				fnGroupSentCallback();
-			}
-			return;
-		}
-
-		if (!aCallbacks) {
-			aCallbacks = this.mCallbacksByGroupId[sGroupId] = [];
-			if (sGroupId === "$auto") {
-				sap.ui.getCore().addPrerenderingTask(this._submitBatch.bind(this, sGroupId));
-			}
-		}
-
-		if (fnGroupSentCallback) {
-			aCallbacks.push(fnGroupSentCallback);
-		}
 	};
 
 	// See class documentation
@@ -247,10 +216,9 @@ sap.ui.define([
 	/**
 	 * Creates a new context binding for the given path, context and parameters.
 	 *
-	 * This binding is inactive and will not know the bound context initially.
-	 * You have to call {@link sap.ui.model.Binding#initialize initialize()} to get it updated
-	 * asynchronously and register a change listener at the binding to be informed when the bound
-	 * context is available.
+	 * This binding is inactive and will not know the bound context initially. You have to call
+	 * {@link sap.ui.model.Binding#initialize} to get it updated asynchronously and register a
+	 * change listener at the binding to be informed when the bound context is available.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
@@ -265,9 +233,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"; OData V4 only
-	 *   allows $filter and $orderby inside resource paths that identify a collection. In our case
-	 *   here, this means you can only use them inside $expand.
+	 *   <li> The $apply, $expand, $filter, $orderby and $select "5.1 System Query Options"; OData
+	 *   V4 only allows $apply, $filter and $orderby inside resource paths that identify a
+	 *   collection. In our case here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -333,7 +301,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially. Call
@@ -342,9 +310,9 @@ sap.ui.define([
 	 *   Supported since 1.39.0.
 	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic application filters to be used initially. Call
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters,
-	 *   as defined in the '$filter' binding parameter, are always combined with the dynamic
-	 *   filters using a logical <code>AND</code>.
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters, as
+	 *   defined in the '$filter' binding parameter, are always combined with the dynamic filters
+	 *   using a logical <code>AND</code>.
 	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -355,7 +323,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
+	 *   <li> The $apply, $expand, $filter, $orderby and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -391,13 +359,13 @@ sap.ui.define([
 
 	/**
 	 * Creates a new property binding for the given path. This binding is inactive and will not
-	 * know the property value initially. You have to call {@link sap.ui.model.Binding#initialize
-	 * initialize()} to get it updated asynchronously and register a change listener at the binding
-	 * to be informed when the value is available.
+	 * know the property value initially. You have to call {@link sap.ui.model.Binding#initialize}
+	 * to get it updated asynchronously and register a change listener at the binding to be informed
+	 * when the value is available.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -472,7 +440,7 @@ sap.ui.define([
 		if (arguments.length > 2) {
 			throw new Error("Only the parameters sPath and oContext are supported");
 		}
-		if (oContext instanceof sap.ui.model.odata.v4.Context) {
+		if (oContext && oContext.getBinding) {
 			throw new Error("Unsupported type: oContext must be of type sap.ui.model.Context, "
 				+ "but was sap.ui.model.odata.v4.Context");
 		}
@@ -540,7 +508,9 @@ sap.ui.define([
 		return this.aAllBindings.filter(function (oBinding) {
 			return oBinding.isRelative()
 				&& (oBinding.getContext() === oParent
-				|| oBinding.getContext() && oBinding.getContext().getBinding() === oParent);
+						|| oBinding.getContext() && oBinding.getContext().getBinding
+							&& oBinding.getContext().getBinding() === oParent
+					);
 		});
 	};
 
@@ -629,8 +599,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes that would be reset by
-	 * {@link #refresh}.
+	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
+	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
+	 * successfully sent to the server.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
@@ -647,9 +618,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *
-	 * @public
+	 * @private
 	 * @see sap.ui.model.Model#isList
-	 * @since 1.37.0
 	 */
 	ODataModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#isList");
@@ -659,16 +629,21 @@ sap.ui.define([
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached.
 	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the model's data; it is <b>independent</b>
-	 * of the order of calls to {@link #submitBatch} with the given group ID.
+	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * the last call determines the model's data; it is <b>independent</b> of the order of calls to
+	 * {@link #submitBatch} with the given group ID.
+	 *
+	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call {@link #submitBatch} to submit the
+	 * changes or {@link #resetChanges} to reset the changes before calling {@link #refresh}.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
 	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
 	 *   {@link #submitBatch}
 	 * @throws {Error}
-	 *   If the given group ID is invalid
+	 *   If the given group ID is invalid or if there are pending changes, see
+	 *   {@link #hasPendingChanges}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -682,7 +657,7 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (!oBinding.isRelative()) { // relative bindings cannot be refreshed
+			if (_ODataHelper.isRefreshable(oBinding)) {
 				oBinding.refresh(sGroupId);
 			}
 		});
@@ -691,6 +666,8 @@ sap.ui.define([
 	/**
 	 * Reports a technical error by adding a message to the MessageManager and logging the error to
 	 * the console. Takes care that the error is only added once to the MessageManager.
+	 * Errors caused by cancellation of backend requests are not reported but just logged to the
+	 * console with level DEBUG.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -707,6 +684,12 @@ sap.ui.define([
 		if (sDetails.indexOf(oError.message) < 0) {
 			sDetails = oError.message + "\n" + oError.stack;
 		}
+
+		if (oError.canceled) {
+			jQuery.sap.log.debug(sLogMessage, sDetails, sReportingClassName);
+			return;
+		}
+
 		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
 		if (oError.$reported) {
 			return;
@@ -747,8 +730,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all property changes associated with the given application group ID which have not
-	 * yet been submitted via {@link #submitBatch}.
+	 * Resets all property changes and created entities associated with the given group ID which
+	 * have not been successfully submitted via {@link #submitBatch}. This function does not reset
+	 * the deletion of entities (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution
+	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   The application group ID, which is a non-empty string consisting of alphanumeric
@@ -756,16 +741,18 @@ sap.ui.define([
 	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
 	 *   default <code>updateGroupId</code> is "$auto", which is invalid here.
 	 * @throws {Error}
-	 *   If the given group ID is not an application group ID
+	 *   If the given group ID is not an application group ID or if change requests for the given
+	 *   group ID are running.
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor.
 	 * @since 1.39.0
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
 		sGroupId = sGroupId || this.sUpdateGroupId;
 		_ODataHelper.checkGroupId(sGroupId, true);
 
-		this.oRequestor.cancelPatch(sGroupId);
+		this.oRequestor.cancelChanges(sGroupId);
 	};
 
 	/**

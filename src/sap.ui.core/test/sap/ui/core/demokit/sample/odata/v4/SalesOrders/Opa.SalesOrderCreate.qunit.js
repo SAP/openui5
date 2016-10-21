@@ -72,7 +72,7 @@ sap.ui.require([
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkID(0);
 
-		// Create a sales order, save and refresh
+		// Create a sales order, save and refresh the sales orders
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote + "_save");
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
@@ -83,9 +83,13 @@ sap.ui.require([
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		Then.onTheMainPage.checkID(0);
 
-		// Create a sales order, refresh w/o saving -> expected "pending changes" message -> cancel
+		When.onTheMainPage.doubleRefresh();
+		Then.onTheMainPage.checkID(0);
+
+		// Create a sales order, refresh/filter w/o saving -> expected "pending changes" message
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		// Cancel refresh
 		When.onTheMainPage.pressRefreshSalesOrdersButton();
 		When.onTheRefreshConfirmation.cancel();
 		Then.onTheMainPage.checkID(0, "");
@@ -97,13 +101,63 @@ sap.ui.require([
 			When.onTheErrorInfo.confirm();
 			Then.onTheMainPage.checkID(0, "");
 		}
+		// Confirm refresh
+		When.onTheMainPage.pressRefreshSalesOrdersButton();
+		When.onTheRefreshConfirmation.confirm();
+		When.onTheMainPage.firstSalesOrderIsAtPos0();
+		Then.onTheMainPage.checkID(0);
+
+		// Create a sales order, press "cancel sales order changes" w/o saving
+		When.onTheMainPage.pressCreateSalesOrdersButton();
+		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+		When.onTheMainPage.firstSalesOrderIsAtPos0();
+		Then.onTheMainPage.checkID(0);
+
+		if (bRealOData) {
+			// Cancel/resume failed creation of a sales order
+			// Create a sales order with invalid note, save, cancel
+			When.onTheMainPage.pressCreateSalesOrdersButton();
+			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheMainPage.pressRefreshSalesOrdersButton();
+			When.onTheRefreshConfirmation.cancel();
+			Then.onTheMainPage.checkID(0, "");
+			When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+			When.onTheMainPage.firstSalesOrderIsAtPos0();
+			// Create a sales order with invalid note, save, update note, save -> success
+			When.onTheMainPage.pressCreateSalesOrdersButton();
+			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			// do it again, POST is sent again without a change
+			// TODO implement error handling and check the errors on save
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheMainPage.changeNote(0, "Valid Note");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkDifferentID(0, "");
+			// cleanup
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			When.onTheSalesOrderDeletionConfirmation.confirm();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkID(0);
+		}
+
+		// set base context for input field FavoriteProductID
+		When.onTheMainPage.pressSetBindingContextButton();
+		Then.onTheMainPage.checkFavoriteProductID();
+
+		if (bRealOData) {
+			// Filter and then sort: filter is not lost on sort
+			When.onTheMainPage.filterGrossAmount("1000");
+			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+			When.onTheMainPage.sortByGrossAmount();
+			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+		}
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-
-		// Check for console errors and warnings
 		Then.onTheMainPage.checkLog();
-
 		Then.iTeardownMyAppFrame();
 	});
 });

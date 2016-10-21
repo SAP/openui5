@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType"
 ], function (jQuery, DateFormat, DateType, ODataType) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
 
@@ -40,9 +40,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Date", {
 		beforeEach : function () {
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
+			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 
@@ -67,8 +71,6 @@ sap.ui.require([
 			function (assert) {
 				var oType;
 
-				this.mock(jQuery.sap.log).expects("warning").never();
-
 				oType = new DateType({}, {
 					foo : "a",
 					nullable : vNullable
@@ -81,7 +83,7 @@ sap.ui.require([
 	QUnit.test("default nullable is true", function (assert) {
 		var oType;
 
-		this.mock(jQuery.sap.log).expects("warning")
+		this.oLogMock.expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Date");
 
 		oType = new DateType(null, {nullable : "foo"});

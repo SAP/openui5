@@ -264,7 +264,7 @@ sap.ui.define([
 		 * @returns {object} The option value as object
 		 * @throws {SyntaxError} If the string could not be parsed
 		 */
-		parseSystemQueryOption : function(sOption) {
+		parseSystemQueryOption : function (sOption) {
 			return parse(tokenize(sOption));
 		}
 	};

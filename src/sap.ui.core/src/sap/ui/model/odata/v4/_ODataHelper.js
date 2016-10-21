@@ -65,7 +65,7 @@ sap.ui.define([
 	}
 
 	ODataHelper = {
-		aAllowedSystemQueryOptions : ["$expand", "$filter", "$orderby", "$select"],
+		aAllowedSystemQueryOptions : ["$apply", "$expand", "$filter", "$orderby", "$select"],
 
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
@@ -312,9 +312,6 @@ sap.ui.define([
 
 					return this.promise.then(function (oCache) {
 						return oCache.read.apply(oCache, aReadArguments);
-					}, function (oError) {
-						throw new Error("Cannot read from cache, cache creation failed: "
-							+ oError);
 					});
 				},
 				refresh : function () {},
@@ -377,6 +374,8 @@ sap.ui.define([
 			oCacheProxy.promise.then(function (oCache) {
 				oBinding.oCache = oCache;
 			})["catch"](function (oError) {
+				//Note: this may also happen if the promise to read data for the canonical path's
+				// key predicate is rejected with a canceled error
 				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});
@@ -398,7 +397,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The OData list binding instance
-		 * @param {sap.ui.model.odata.v4.Context} [oContext]
+		 * @param {sap.ui.model.Context} [oContext]
 		 *   The context instance to be used, may be omitted for absolute bindings
 		 * @returns {object}
 		 *   The created cache proxy or undefined if none is required
@@ -416,15 +415,21 @@ sap.ui.define([
 			}
 
 			if (oBinding.bRelative) {
-				if (!oContext || (!oBinding.mQueryOptions && !oBinding.aSorters.length
-						&& !oBinding.aFilters.length && !oBinding.aApplicationFilters.length)) {
+				if (!oContext
+						|| oContext.requestCanonicalPath
+						&& !oBinding.mQueryOptions
+						&& !oBinding.aSorters.length
+						&& !oBinding.aFilters.length
+						&& !oBinding.aApplicationFilters.length) {
 					return undefined; // no need for an own cache
 				}
 			} else {
 				oContext = undefined; // must be ignored for absolute bindings
 			}
 			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
-			oPathPromise = oContext && oContext.requestCanonicalPath();
+			oPathPromise = oContext && (oContext.requestCanonicalPath
+				? oContext.requestCanonicalPath()
+				: Promise.resolve(oContext.getPath()));
 			oFilterPromise = ODataHelper.requestFilter(oBinding, oContext,
 				oBinding.aApplicationFilters, oBinding.aFilters,
 				mQueryOptions && mQueryOptions.$filter);
@@ -433,6 +438,8 @@ sap.ui.define([
 			oCacheProxy.promise.then(function (oCache) {
 				oBinding.oCache = oCache;
 			})["catch"](function (oError) {
+				//Note: this may also happen if the promise to read data for the canonical path's
+				// key predicate is rejected with a canceled error
 				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});
@@ -571,7 +578,7 @@ sap.ui.define([
 		 * @param {string} sPath
 		 *   The path, relative to the given binding, for which the OData query options are
 		 *   requested
-		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 * @param {sap.ui.model.Context} oContext
 		 *   The context to be used to to compute the inherited query options
 		 * @returns {object}
 		 *   The query options for the given path
@@ -582,7 +589,7 @@ sap.ui.define([
 			var oResult = oBinding.mQueryOptions;
 
 			if (!oResult) {
-				return oContext
+				return oContext && oContext.getQueryOptions
 					&& oContext.getQueryOptions(_Helper.buildPath(oBinding.sPath, sPath));
 			}
 			if (!sPath) {
@@ -673,12 +680,6 @@ sap.ui.define([
 				}
 				return false;
 			}
-			// check if list binding has a transient context; do it here because this function does
-			// not call hasPendingChanges at the binding
-			if (oBinding.aContexts && oBinding.aContexts[-1]
-					&& oBinding.aContexts[-1].isTransient()) {
-				return true;
-			}
 			if (oBinding.oCache) {
 				bResult = oBinding.oCache.hasPendingChanges("");
 			} else if (oBinding.oContext && bAskParent) {
@@ -690,6 +691,22 @@ sap.ui.define([
 			return oBinding.oModel.getDependentBindings(oBinding).some(function (oDependent) {
 				return ODataHelper.hasPendingChanges(oDependent, false);
 			});
+		},
+
+		/**
+		 * Checks whether the given binding can be refreshed. Only bindings which are not relative
+		 * to a V4 context can be refreshed.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|
+		 * sap.ui.model.odata.v4.ODataPropertyBinding} oBinding
+		 *   The binding to check
+		 * @returns {boolean}
+		 *   <code>true</code> if the binding can be refreshed
+		 *
+		 * @private
+		 */
+		isRefreshable : function (oBinding) {
+			return (!oBinding.bRelative || oBinding.oContext && !oBinding.oContext.getBinding);
 		},
 
 		/**
@@ -729,7 +746,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The list binding
-		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 * @param {sap.ui.model.Context} oContext
 		 *   The context instance to be used; it is given as a parameter and oBinding.oContext is
 		 *   unused because the binding's setContext calls this method (indirectly) before calling
 		 *   the superclass to ensure that the cache proxy is already created when the events are
