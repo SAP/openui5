@@ -485,7 +485,9 @@ sap.ui.define([
 			this._bSkipOptimization = true;
 		}
 
-		this.invalidate();
+		if (this.$().length) {
+			this.invalidate();
+		}
 	};
 
 
