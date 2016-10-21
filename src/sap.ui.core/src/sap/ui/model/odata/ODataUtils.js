@@ -285,6 +285,50 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		return sBaseURL + sURLParams;
 	};
 
+
+	/**
+	 * Adds an origin to annotation urls.
+	 * Checks if the annotation is based on a catalog service or it's a generic annotation url, which might be adapted based on the service url.
+	 * The actual url modification is done with the setOrigin function.
+	 *
+	 * @param {string} sAnnotationURL the URL which will be enriched with an origin
+	 * @param {object|string} vParameters explanation see setOrigin function
+	 * @param {string} vParameters.preOriginBaseUri Legacy: Service url base path before adding an origin
+	 * @param {string} vParameters.postOriginBaseUri Legacy: Service url base path after adding an origin
+	 * @private
+	 * @since 1.44.0
+	 * @returns {string} the annotation service URL with the added origin.
+	 */
+	ODataUtils.setAnnotationOrigin = function(sAnnotationURL, vParameters){
+
+		var sFinalAnnotationURL;
+		var iAnnotationIndex = sAnnotationURL.indexOf("/Annotations(");
+
+		if (iAnnotationIndex === -1){ // URL might be encoded, "(" becomes %28
+			iAnnotationIndex = sAnnotationURL.indexOf("/Annotations%28");
+		}
+
+		if (iAnnotationIndex >= 0) { // annotation path is there
+			if (sAnnotationURL.indexOf("/$value", iAnnotationIndex) === -1) { // $value missing
+				jQuery.sap.log.warning("ODataUtils.setAnnotationOrigin: Annotation url is missing $value segment.");
+				sFinalAnnotationURL = sAnnotationURL;
+			} else {
+				// if the annotation URL is a SAP specific annotation url, we add the origin path segment...
+				var sAnnotationUrlBase =  sAnnotationURL.substring(0, iAnnotationIndex);
+				var sAnnotationUrlRest =  sAnnotationURL.substring(iAnnotationIndex, sAnnotationURL.length);
+				var sAnnotationWithOrigin = ODataUtils.setOrigin(sAnnotationUrlBase, vParameters);
+				sFinalAnnotationURL = sAnnotationWithOrigin + sAnnotationUrlRest;
+			}
+		} else {
+			// Legacy Code for compatibility reasons:
+			// ... if not, we check if the annotation url is on the same service-url base-path
+			sFinalAnnotationURL = sAnnotationURL.replace(vParameters.preOriginBaseUri, vParameters.postOriginBaseUri);
+		}
+
+		return sFinalAnnotationURL;
+	};
+
+
 	/**
 	 * convert multi filter to filter string
 	 *

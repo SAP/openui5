@@ -1236,7 +1236,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				var aAnnotationUris = [].concat(oModelConfig.settings.annotationURI); //"to array"
 				var aOriginAnnotations = [];
 				for (var i = 0; i < aAnnotationUris.length; i++) {
-					aOriginAnnotations.push(aAnnotationUris[i].replace(oModelConfig.preOriginBaseUri, oModelConfig.postOriginBaseUri.split("?")[0]));
+					aOriginAnnotations.push(ODataUtils.setAnnotationOrigin(aAnnotationUris[i], {
+						alias: sSystemParameter,
+						preOriginBaseUri: oModelConfig.preOriginBaseUri,
+						postOriginBaseUri: oModelConfig.postOriginBaseUri
+					}));
 				}
 				oModelConfig.settings.annotationURI = aOriginAnnotations;
 			}
