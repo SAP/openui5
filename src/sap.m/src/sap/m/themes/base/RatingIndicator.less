@@ -7,7 +7,7 @@
 	position: relative;
 	display: inline-block;
 	overflow: hidden;
-	vertical-align:middle;
+	vertical-align: top;
 	padding: 0;
 
 	/* IE Windows 8 */
@@ -68,17 +68,43 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
     font-family: SAP-icons;
 }
 
-@sapUiRIIconPadding: 0.25rem;
-@sapUiRIIconPaddingCondensed: 0rem;
-
-/* Condensed mode */
-.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapUiIcon,
-.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapMImg{
-	vertical-align: top;
-}
 
 .sapUiSizeCondensed .sapUiTableCell > .sapMRI {
 	box-sizing: content-box;
 	padding: 0;
 	margin: 0 0.5rem;
+}
+
+.sapUiRatingIndicatorXS .sapMRI .sapUiIcon,
+.sapUiRatingIndicatorXS .sapMRI .sapMImg {
+	padding-right: @sapUiRIIconPaddingXS;
+	vertical-align:top;
+}
+	.sapUiRatingIndicatorS .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorS .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingS;
+		vertical-align:top;
+	}
+
+	.sapUiRatingIndicatorM .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorM .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingM;
+		vertical-align:top;
+	}
+
+	.sapUiRatingIndicatorL .sapMRI .sapUiIcon,
+	.sapUiRatingIndicatorL .sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingL;
+		vertical-align:top;
+	}
+
+.sapMRI.sapUiRatingIndicatorXS .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorXS .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorS  .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorS .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorM .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorM .sapMImg:last-child,
+.sapMRI.sapUiRatingIndicatorL .sapUiIcon:last-child,
+.sapMRI.sapUiRatingIndicatorL .sapMImg:last-child {
+	padding-right: 0;
 }
