@@ -232,10 +232,10 @@
 		oServer.useFilters = true;
 		oServer.autoRespond = true;
 		oServer.xhr.addFilter(function(method, url) {
-			return ("/anylocation/manifest.json" !== url && "/anylocation/manifest1.json" !== url);
+			return "/anylocation/manifest.json?sap-language=EN" !== url;
 		});
 
-		oServer.respondWith("GET", "/anylocation/manifest.json", [
+		oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
 			200,
 			{
 				"Content-Type": "application/json"

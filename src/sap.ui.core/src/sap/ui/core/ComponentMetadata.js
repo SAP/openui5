@@ -92,6 +92,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			// load the manifest if defined as string
 			if (typeof oManifest === "string" && oManifest === "json") {
 
+				// In contrast to sap.ui.core.Manifest#load the sap-language parameter
+				// won't be added here as the resource is expected to be served from the
+				// preload module cache which does not contain any URL parameters
 				var sResource = sPackage.replace(/\./g, "/") + "/manifest.json";
 				jQuery.sap.log.info("The manifest of the component " + sName + " is loaded from file " + sResource + ".");
 				try {
