@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {object} $Row jQuery representation of the row elements
 		 * @param {object} $RowHdr jQuery representation of the row header elements
-		 * @param {integer} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
+		 * @param {int} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
 		 * @private
 		 */
 		_setIndent : function(oTable, $Row, $RowHdr, iIndent) {
