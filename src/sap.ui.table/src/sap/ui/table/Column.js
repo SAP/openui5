@@ -38,8 +38,8 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			/**
 			 * Width of the column in css units.
 			 * Default value is "auto". See https://www.w3.org/TR/CSS2/tables.html#width-layout
-			 * <p>Minimal column width is 48px. If width is set to a smaller value, the column is 48px wide.
-			 * <p>Note: this property may be overruled by the user action or by the application
+			 * <p>Minimal column width is 48px.
+			 * <p>Note: this property may be changed by the user action or by the application
 			 * configuration/personalization.
 			 * <p>If a user adjusts the column width manually, the resulting value is always set in pixels.
 			 * In addition, other columns with width "auto" become a fixed minimum width and do not shrink
@@ -52,7 +52,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
 			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
 			 * created at the end of the table.
-			 * @deprecated As of version 1.44, this property has no effect
+			 * @deprecated Since version 1.44. This property has no effect
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
