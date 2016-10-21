@@ -339,7 +339,7 @@ sap.ui.define([
 	 *                           - appDescriptor that belongs to actual component
 	 *                           - siteId that belongs to actual component
 	 *                           - layer up to which changes shall be read (excluding the specified layer)
-	 * @returns {Promise} Returns a Promise with the changes and componentClassName
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and componentClassName
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(sComponentClassName, mPropertyBag) {
@@ -360,7 +360,13 @@ sap.ui.define([
 			var sCacheKey = mPropertyBag.cacheKey;
 			// in case of no changes present according to async hints
 			if (sCacheKey === "<NO CHANGES>") {
-				return Promise.resolve([]);
+				return Promise.resolve({
+					changes: {
+						changes : [],
+						contexts : []
+					},
+					componentClassName: sComponentClassName
+				});
 			}
 
 			if (sCacheKey) {
