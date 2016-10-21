@@ -948,6 +948,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.addClass("sapUiTableVSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
+		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
 		rm.addStyle("max-height", oTable._getVSbHeight() + "px");
 
 		if (oTable.getFixedRowCount() > 0) {

@@ -241,6 +241,20 @@ QUnit.test("isInGroupingRow", function(assert) {
 	assert.ok(!TableUtils.isInGroupingRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 });
 
+QUnit.test("isGroupingRow", function(assert) {
+	fakeGroupRow(0);
+
+	assert.ok(!TableUtils.isGroupingRow(), "Returned false: Invalid parameter passed");
+	assert.ok(!TableUtils.isGroupingRow(null), "Returned false: Invalid parameter passed");
+
+	assert.ok(TableUtils.isGroupingRow(oTable.getRows()[0].getDomRef()), "Returned true: Row 1 is a group header row");
+	assert.ok(TableUtils.isGroupingRow(getRowHeader(0)), "Returned true: The row header cell in Row 1 is part of the group header row");
+
+	assert.ok(!TableUtils.isGroupingRow(oTable.getRows()[1].getDomRef()), "Returned false: Row 2 is a normal row");
+	assert.ok(!TableUtils.isGroupingRow(getCell(0, 0)), "Returned false: A cell is not a group header row");
+	assert.ok(!TableUtils.isGroupingRow(getColumnHeader(0)), "Returned false: A column header cell is not a group header row");
+});
+
 QUnit.test("toggleGroupHeader", function(assert) {
 
 	function checkExpanded(sType, bExpectExpanded) {
@@ -558,138 +572,6 @@ QUnit.test("isInstanceOf", function(assert) {
 	assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
 });
 
-QUnit.test("scroll", function(assert) {
-	var iVisibleRowCount = 5;
-	var iFixedTop = 2;
-	var iFixedBottom = 1;
-	var iNotVisibleRows = iNumberOfRows - iVisibleRowCount;
-	var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
-	var iPages = Math.ceil((iNumberOfRows - iFixedTop - iFixedBottom) / iPageSize);
-
-	oTable.setVisibleRowCount(iVisibleRowCount);
-	oTable.setFixedRowCount(iFixedTop);
-	oTable.setFixedBottomRowCount(iFixedBottom);
-	sap.ui.getCore().applyChanges();
-
-	var bScrolled = false;
-
-	for (var i = 0; i < iNotVisibleRows + 2; i++) {
-		if (i < iNotVisibleRows) {
-			assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, stepwise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, true, false);
-			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
-		} else {
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, stepwise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, true, false);
-			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
-		}
-	}
-
-	for (var i = 0; i < iNotVisibleRows + 2; i++) {
-		if (i < iNotVisibleRows) {
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, stepwise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, false, false);
-			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
-		} else {
-			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, stepwise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, false, false);
-			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
-		}
-	}
-
-	var iPos = 0;
-	for (var i = 0; i < iPages + 2; i++) {
-		if (i < iPages - 1) {
-			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (forward, pagewise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, true, true);
-			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
-			iPos = iPos + iPageSize;
-			assert.equal(oTable.getFirstVisibleRow(), Math.min(iPos, iNotVisibleRows), "First visible row after scroll");
-		} else {
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, pagewise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, true, true);
-			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
-		}
-	}
-
-	iPos = iNotVisibleRows;
-	for (var i = 0; i < iPages + 2; i++) {
-		if (i < iPages - 1) {
-			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (backward, pagewise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, false, true);
-			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
-			iPos = iPos - iPageSize;
-			assert.equal(oTable.getFirstVisibleRow(), Math.max(iPos, 0), "First visible row after scroll");
-		} else {
-			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, pagewise, " + i + ")");
-			bScrolled = TableUtils.scroll(oTable, false, true);
-			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
-			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
-		}
-	}
-});
-
-QUnit.test("scrollMax", function(assert) {
-	var bScrolled = false;
-
-	/* More data rows than visible rows */
-	// ↓ Down
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-	bScrolled = TableUtils.scrollMax(oTable, true);
-	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
-	// ↑ Up
-	bScrolled = TableUtils.scrollMax(oTable, false);
-	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-
-	/* Less data rows than visible rows */
-	oTable.setVisibleRowCount(10);
-	sap.ui.getCore().applyChanges();
-	// ↓ Down
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-	bScrolled = TableUtils.scrollMax(oTable, true);
-	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-	// ↑ Up
-	bScrolled = TableUtils.scrollMax(oTable, false);
-	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-
-	/* More data rows than visible rows and fixed top/bottom rows */
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	sap.ui.getCore().applyChanges();
-	// ↓ Down
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-	bScrolled = TableUtils.scrollMax(oTable, true);
-	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
-	// ↑ Up
-	bScrolled = TableUtils.scrollMax(oTable, false);
-	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-
-	/* Less data rows than visible rows and fixed top/bottom rows */
-	oTable.setVisibleRowCount(10);
-	sap.ui.getCore().applyChanges();
-	// ↓ Down
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
-	bScrolled = TableUtils.scrollMax(oTable, true);
-	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-	// ↑ Up
-	bScrolled = TableUtils.scrollMax(oTable, false);
-	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
-	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
-});
-
 QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 	var iVisibleRowCount = 6;
 	var iFixedTop = 2;
@@ -705,7 +587,7 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 			assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
 			assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
 		}
-		TableUtils.scroll(oTable, true, false);
+		oTable._getScrollExtension().scroll(true, false);
 	}
 });
 
@@ -1737,7 +1619,7 @@ QUnit.test("getContentDensity table in UI Area", function(assert) {
 	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 });
 
-QUnit.module("TableUtils", {
+QUnit.module("Interactive elements", {
 	beforeEach: function() {
 		createTables();
 
@@ -1783,37 +1665,154 @@ QUnit.module("TableUtils", {
 	}
 });
 
+QUnit.test("isInteractiveElement", function(assert) {
+	var $NoFocusNoTab = getCell(0, iNumberOfCols - 3).find("span");
+	var $NoFocus = getCell(0, iNumberOfCols - 4).find("span");
+	$NoFocus[0].tabIndex = 0;
+	var $NoTab = getCell(0, iNumberOfCols - 1).find("input");
+	var $FullyInteractive = getCell(0, iNumberOfCols - 2).find("input");
+	var $TreeIcon = jQuery('<div class="sapUiTableTreeIcon"></div>');
+
+	assert.ok(!TableUtils.isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
+	assert.ok(TableUtils.isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
+	assert.ok(TableUtils.isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
+	assert.ok(TableUtils.isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
+	assert.ok(TableUtils.isElementInteractive($TreeIcon), "(jQuery) TreeIcon is interactive");
+
+	assert.ok(!TableUtils.isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
+	assert.ok(TableUtils.isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
+	assert.ok(TableUtils.isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
+	assert.ok(TableUtils.isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
+	assert.ok(TableUtils.isElementInteractive($TreeIcon[0]), "(HTMLElement) TreeIcon is interactive");
+
+	assert.ok(!TableUtils.isElementInteractive(), "No parameter passed: False was returned");
+});
+
 QUnit.test("getInteractiveElements", function(assert) {
-	var $InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1));
-	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable control: One control was returned");
-	assert.strictEqual($InteractiveControls[0].value, "NoTab1", "Data cell (jQuery) with focusable control: The correct control was returned");
+	var $InteractiveElements = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1));
+	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "Data cell (jQuery) with focusable element: The correct element was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
-	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable control: One control was returned");
-	assert.strictEqual($InteractiveControls[0].value, "NoTab1", "Data cell (DOM) with focusable control: The correct control was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "Data cell (DOM) with focusable element: The correct element was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2));
-	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable & tabbable control: One control was returned");
-	assert.strictEqual($InteractiveControls[0].value, "FocusTab1", "Data cell (jQuery) with focusable & tabbable control: The correct control was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2));
+	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "Data cell (jQuery) with focusable & tabbable element: The correct element was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
-	assert.strictEqual($InteractiveControls.length, 1, "Data cell with focusable & tabbable control: One control was returned");
-	assert.strictEqual($InteractiveControls[0].value, "FocusTab1", "Data cell (DOM) with focusable & tabbable control: The correct control was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "Data cell (DOM) with focusable & tabbable element: The correct element was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 3));
-	assert.strictEqual($InteractiveControls, null, "Data cell without interactive control: Null was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, iNumberOfCols - 3));
+	assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getColumnHeader(0));
-	assert.strictEqual($InteractiveControls, null, "Column header: Null was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getColumnHeader(0));
+	assert.strictEqual($InteractiveElements, null, "Column header: Null was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getRowHeader(0));
-	assert.strictEqual($InteractiveControls, null, "Row header: Null was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getRowHeader(0));
+	assert.strictEqual($InteractiveElements, null, "Row header: Null was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements(getSelectAll(0));
-	assert.strictEqual($InteractiveControls, null, "SelectAll: Null was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements(getSelectAll(0));
+	assert.strictEqual($InteractiveElements, null, "SelectAll: Null was returned");
 
-	$InteractiveControls = TableUtils.getInteractiveElements();
-	assert.strictEqual($InteractiveControls, null, "No parameter passed: Null was returned");
+	$InteractiveElements = TableUtils.getInteractiveElements();
+	assert.strictEqual($InteractiveElements, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("getFirstInteractiveElement", function(assert) {
+	var $FirstInteractiveElement = TableUtils.getFirstInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
+	assert.strictEqual($FirstInteractiveElement[0].value, "FocusTab1", "First row: The correct element was returned");
+
+	$FirstInteractiveElement = TableUtils.getFirstInteractiveElement();
+	assert.strictEqual($FirstInteractiveElement, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("getLastInteractiveElement", function(assert) {
+	var $LastInteractiveElement = TableUtils.getLastInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($LastInteractiveElement.length, 1, "First row: One element was returned");
+	assert.strictEqual($LastInteractiveElement[0].value, "NoTab1", "First row: The correct element was returned");
+
+	$LastInteractiveElement = TableUtils.getLastInteractiveElement();
+	assert.strictEqual($LastInteractiveElement, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("getPreviousInteractiveElement", function(assert) {
+	var $LastInteractiveElement = TableUtils.getLastInteractiveElement(oTable.getRows()[0]);
+
+	var $PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, $LastInteractiveElement);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "Passed an interactive element (jQuery): One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "The correct previous element was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+	assert.strictEqual($PreviousInteractiveElement, null,
+		"Getting the previous element of the previous element: Null was returned, it is the first interactive element in the row");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, $LastInteractiveElement[0])
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "Passed an interactive element (HTMLElement): One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "First row: The correct previous element was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+	assert.strictEqual($PreviousInteractiveElement, null,
+		"Getting the previous element of the previous element: Null was returned, it is the first interactive element in the row");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, getCell(0, 0));
+	assert.strictEqual($PreviousInteractiveElement, null, "Data cell was passed: Null was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, getColumnHeader(0));
+	assert.strictEqual($PreviousInteractiveElement, null, "Column header cell was passed: Null was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, getRowHeader(0));
+	assert.strictEqual($PreviousInteractiveElement, null, "Row header cell was passed: Null was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable, getSelectAll(0));
+	assert.strictEqual($PreviousInteractiveElement, null, "SelectAll cell was passed: Null was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement(oTable);
+	assert.strictEqual($PreviousInteractiveElement, null, "No interactive element was passed: Null was returned");
+
+	$PreviousInteractiveElement = TableUtils.getPreviousInteractiveElement();
+	assert.strictEqual($PreviousInteractiveElement, null, "No parameter was passed: Null was returned");
+});
+
+QUnit.test("getNextInteractiveElement", function(assert) {
+	var $FirstInteractiveElement = TableUtils.getFirstInteractiveElement(oTable.getRows()[0]);
+
+	var $NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, $FirstInteractiveElement);
+	assert.strictEqual($NextInteractiveElement.length, 1, "Passed an interactive element (jQuery): One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "The correct next element was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, $NextInteractiveElement);
+	assert.strictEqual($NextInteractiveElement, null,
+		"Getting the next element of the next element: Null was returned, it is the last interactive element in the row");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
+	assert.strictEqual($NextInteractiveElement.length, 1, "Passed an interactive element (HTMLElement): One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "First row: The correct next element was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+	assert.strictEqual($NextInteractiveElement, null,
+		"Getting the previous element of the previous element: Null was returned, it is the last interactive element in the row");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, getCell(0, 0));
+	assert.strictEqual($NextInteractiveElement, null, "Data cell was passed: Null was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, getColumnHeader(0));
+	assert.strictEqual($NextInteractiveElement, null, "Column header cell was passed: Null was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, getRowHeader(0));
+	assert.strictEqual($NextInteractiveElement, null, "Row header cell was passed: Null was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable, getSelectAll(0));
+	assert.strictEqual($NextInteractiveElement, null, "SelectAll cell was passed: Null was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement(oTable);
+	assert.strictEqual($NextInteractiveElement, null, "No interactive element was passed: Null was returned");
+
+	$NextInteractiveElement = TableUtils.getNextInteractiveElement();
+	assert.strictEqual($NextInteractiveElement, null, "No parameter was passed: Null was returned");
 });
 
 QUnit.test("getParentDataCell", function(assert) {

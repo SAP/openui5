@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				},
 				isGroupHeader: function(iIndex) {
 					var oContext = aContexts[iIndex];
-					return oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader;
+					return (oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true;
 				},
 				getTitle: function(iIndex) {
 					var oContext = aContexts[iIndex];

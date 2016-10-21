@@ -21,20 +21,20 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			}
 		},
 
-		onfocusin : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapfocusleave : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onmousedown : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapnext : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapnextmodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapprevious : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsappreviousmodifiers : function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsappageup : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsappagedown : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsaphome : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsaphomemodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapend : 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapendmodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapkeyup : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
+		onfocusin: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapfocusleave: 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onmousedown: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnext: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnextmodifiers: 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapprevious: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappreviousmodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappageup: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappagedown: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphome: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphomemodifiers: 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapend: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapendmodifiers: 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapkeyup: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
 
 	};
 
@@ -272,20 +272,27 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	};
 
 
-	/*
-	 * Set or resets the action mode of the table.
+	/**
+	 * Makes the table enter or leave the action mode.
+	 *
+	 * Hooks:
+	 * <code>enterActionMode()</code> - Called when trying to enter the action mode. The action mode will only be entered if this hook returns <code>true</code>.
+	 * <code>leaveActionMode()</code> - Called when leaving the action mode.
+	 * Additional parameters passed after <code>bEnter</code> will be forwarded to the calls of the hooks.
+	 *
 	 * In the action mode the user can navigate through the interactive controls of the table.
+	 *
+	 * @param {boolean} bEnter If set to <code>true</code>, the table will try to enter the action mode, otherwise the table will leave the action mode.
 	 * @public (Part of the API for Table control only!)
 	 */
-	TableKeyboardExtension.prototype.setActionMode = function(bActionMode, oArgs) {
-		if (bActionMode && !this._actionMode && this._delegate.enterActionMode) {
-			this._actionMode = !!this._delegate.enterActionMode.apply(this.getTable(), [oArgs || {}]);
-		} else if (!bActionMode && this._actionMode && this._delegate.leaveActionMode) {
+	TableKeyboardExtension.prototype.setActionMode = function(bEnter) {
+		if (bEnter === true && !this._actionMode && this._delegate.enterActionMode) {
+			this._actionMode = this._delegate.enterActionMode.apply(this.getTable(), Array.prototype.slice.call(arguments, 1)) === true;
+		} else if (bEnter === false && this._actionMode && this._delegate.leaveActionMode) {
 			this._actionMode = false;
-			this._delegate.leaveActionMode.apply(this.getTable(), [oArgs || {}]);
+			this._delegate.leaveActionMode.apply(this.getTable(), Array.prototype.slice.call(arguments, 1));
 		}
 	};
-
 
 	/*
 	 * Returns true when the table is in action mode, false otherwise.
@@ -294,7 +301,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	TableKeyboardExtension.prototype.isInActionMode = function() {
 		return this._actionMode;
 	};
-
 
 	/*
 	 * Sets the focus depending on the noData or overlay mode.
@@ -366,14 +372,15 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	};
 
 
-	/*
-	 * Sets the focus to the given DOM reference or jQuery Object and
-	 * marks the resulting focus event to be ignored.
+	/**
+	 * Sets the focus to the specified element and marks the resulting focus event to be ignored.
+	 *
+	 * @param {jQuery|HTMLElement} oElement The element to be focused.
 	 * @protected (Only to be used by the keyboard delegate)
 	 */
-	TableKeyboardExtension.prototype._setSilentFocus = function(oRef) {
+	TableKeyboardExtension.prototype._setSilentFocus = function(oElement) {
 		this._bIgnoreFocusIn = true;
-		oRef.focus();
+		oElement.focus();
 		this._bIgnoreFocusIn = false;
 	};
 

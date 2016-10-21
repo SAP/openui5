@@ -151,11 +151,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * Hook which is called by the keyboard extension when the table should be set to action mode
 	 * @see TableKeyboardExtension#setActionMode
 	 */
-	TableKeyboardDelegate.prototype.enterActionMode = function(oArgs) {
-		var $Focusable = oArgs.$Dom;
+	TableKeyboardDelegate.prototype.enterActionMode = function($Focusable) {
 		var bEntered = false;
 
-		if ($Focusable.length > 0) {
+		if ($Focusable && $Focusable.length > 0) {
 
 			var $Tabbables = $Focusable.filter(":sapTabbable");
 			var oExtension = this._getKeyboardExtension();
@@ -194,11 +193,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * Hook which is called by the keyboard extension when the table should leave the action mode
 	 * @see TableKeyboardExtension#setActionMode
 	 */
-	TableKeyboardDelegate.prototype.leaveActionMode = function(oArgs) {
+	TableKeyboardDelegate.prototype.leaveActionMode = function(oEvent) {
 		 // TODO: update ItemNavigation position otherwise the position is strange!
 		 //       EDIT AN SCROLL!
 
-		var oEvent = oArgs.event;
 		var oExtension = this._getKeyboardExtension();
 
 		// in the navigation mode we use the item navigation
@@ -243,7 +241,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		// When clicking into a focusable control we enter the action mode
 		// When clicking anywhere else in the table we leave the action mode
 		var $Dom = this.$().find(".sapUiTableCtrl td :focus");
-		this._getKeyboardExtension().setActionMode($Dom.length > 0, {$Dom: $Dom, event: oEvent});
+
+		var bEnterActionMode = $Dom.length > 0;
+		if (bEnterActionMode) {
+			this._getKeyboardExtension().setActionMode(true, $Dom);
+		} else {
+			this._getKeyboardExtension().setActionMode(false, oEvent);
+		}
 	};
 
 
@@ -345,7 +349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2 ||
 			oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
 			if ($this.find(".sapUiTableCtrl td:focus").length > 0) {
-				this._getKeyboardExtension().setActionMode(true, {$Dom: $this.find(".sapUiTableCtrl td:focus").find(":sapFocusable")});
+				this._getKeyboardExtension().setActionMode(true, $this.find(".sapUiTableCtrl td:focus").find(":sapFocusable"));
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -429,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * handle the ESCAPE key to leave the action mode
 	 */
 	TableKeyboardDelegate.prototype.onsapescape = function(oEvent) {
-		this._getKeyboardExtension().setActionMode(false, {event: oEvent});
+		this._getKeyboardExtension().setActionMode(false, oEvent);
 	};
 
 	/*
@@ -531,7 +535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		if (!this._getKeyboardExtension().isInActionMode() && TableUtils.isLastScrollableRow(this, oEvent.target)) {
 			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount()) {
 				oEvent.stopImmediatePropagation(true);
-				TableUtils.scroll(this, true, false);
+				this._getScrollExtension().scroll(true, false);
 			}
 		}
 		oEvent.preventDefault();
@@ -562,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			}
 
 			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-				TableUtils.scroll(this, true, false);
+				this._getScrollExtension().scroll(true, false);
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + DOWN.
@@ -592,7 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 				if (this.getFirstVisibleRow() != 0) {
 					oEvent.stopImmediatePropagation(true);
 				}
-				TableUtils.scroll(this, false, false);
+				this._getScrollExtension().scroll(false, false);
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + UP.
@@ -611,7 +615,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			if (this.getFirstVisibleRow() != 0) {
 				oEvent.stopImmediatePropagation(true);
 			}
-			TableUtils.scroll(this, false, false);
+			this._getScrollExtension().scroll(false, false);
 		}
 		oEvent.preventDefault();
 	};
@@ -646,7 +650,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 				oEvent.stopImmediatePropagation(true);
 			} else {
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-					TableUtils.scroll(this, true, true);
+					this._getScrollExtension().scroll(true, true);
 				}
 
 				var iFixedBottomRowsOffset = this.getFixedBottomRowCount();
@@ -725,7 +729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 					oEvent.stopImmediatePropagation(true);
 
 					if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-						TableUtils.scroll(this, false, true);
+						this._getScrollExtension().scroll(false, true);
 					}
 				}
 			}

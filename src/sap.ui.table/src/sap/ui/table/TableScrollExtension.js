@@ -87,10 +87,16 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onVerticalScrolling: function(oEvent) {
+			var oScrollExtension = this._getScrollExtension();
+
 			// For interaction detection.
 			jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 
-			// Do not scroll in action mode!
+			if (oScrollExtension._bIsScrolledByKeyboard) {
+				return;
+			}
+
+			// Do not scroll in action mode when scrolling was not initiated by a keyboard action! Might cause loss of user input and other undesired behavior.
 			this._getKeyboardExtension().setActionMode(false);
 
 			/**
@@ -114,7 +120,7 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(oTable._getFirstVisibleRowByScrollTop(iScrollTop), true);
 			}
 
-			if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
+			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledByWheel) {
 				jQuery.sap.clearDelayedCall(this._mTimeouts.scrollUpdateTimerId);
 				this._mTimeouts.scrollUpdateTimerId = jQuery.sap.delayedCall(300, this, function() {
 					updateVisibleRow(this);
@@ -123,7 +129,7 @@ sap.ui.define([
 			} else {
 				updateVisibleRow(this);
 			}
-			this._bIsScrolledByWheel = false;
+			oScrollExtension._bIsScrolledByWheel = false;
 		},
 
 		/**
@@ -131,6 +137,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onMouseWheelScrolling: function(oEvent) {
+			var oScrollExtension = this._getScrollExtension();
+
 			var oOriginalEvent = oEvent.originalEvent;
 			var bIsHorizontal = oOriginalEvent.shiftKey;
 			var iScrollDelta = 0;
@@ -149,7 +157,7 @@ sap.ui.define([
 			} else {
 				var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
 				if (oVsb) {
-					this._bIsScrolledByWheel = true;
+					oScrollExtension._bIsScrolledByWheel = true;
 					var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
 					// If at least one row is scrolled, floor to full rows.
 					// Below one row, we scroll pixels.
@@ -162,6 +170,12 @@ sap.ui.define([
 
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+		},
+
+		onVerticalScrollbarMouseDown: function(oEvent) {
+			var oScrollExtension = this._getScrollExtension();
+			oScrollExtension._bIsScrolledByWheel = false;
+			oScrollExtension._bIsScrolledByKeyboard = false;
 		}
 	};
 
@@ -248,6 +262,8 @@ sap.ui.define([
 		_init: function(oTable, sTableType, mSettings) {
 			this._type = sTableType;
 			this._delegate = ExtensionDelegate;
+			this._bIsScrolledByWheel = false;
+			this._bIsScrolledByKeyboard = false;
 
 			// Register the delegate
 			oTable.addEventDelegate(this._delegate, oTable);
@@ -279,6 +295,7 @@ sap.ui.define([
 			// Vertical scrolling
 			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
 			$VSb.on("scroll.sapUiTableVScroll", ExtensionHelper.onVerticalScrolling.bind(oTable));
+			$VSb.on("mousedown.sapUiTableVScrollClick", ExtensionHelper.onVerticalScrollbarMouseDown.bind(oTable));
 
 			// Mouse wheel
 			oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
@@ -334,10 +351,96 @@ sap.ui.define([
 			this._delegate = null;
 
 			TableExtension.prototype.destroy.apply(this, arguments);
+		},
+
+		// "Public" functions which allow the table to communicate with this extension should go here.
+
+		/**
+		 * Scrolls the data in the table forward or backward by setting the property <code>firstVisibleRow</code>.
+		 *
+		 * @param {boolean} [bDown=false] Whether to scroll down or up.
+		 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled, otherwise a single row is scrolled.
+		 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
+		 * @return {boolean} Returns <code>true</code>, if scrolling was actually performed.
+		 * @private
+		 */
+		scroll: function(bDown, bPage, bIsKeyboardScroll) {
+			if (bDown == null) {
+				bDown = false;
+			}
+			if (bPage == null) {
+				bPage = false;
+			}
+			if (bIsKeyboardScroll == null) {
+				bIsKeyboardScroll = false;
+			}
+
+			var oTable = this.getTable();
+			var bScrolled = false;
+			var iRowCount = oTable._getRowCount();
+			var iVisibleRowCount = oTable.getVisibleRowCount();
+			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
+			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+			var iSize = bPage ? iScrollableRowCount : 1;
+
+			if (bDown) {
+				if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
+					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
+					bScrolled = true;
+				}
+			} else {
+				if (iFirstVisibleScrollableRow > 0) {
+					oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
+					bScrolled = true;
+				}
+			}
+
+			if (bScrolled && bIsKeyboardScroll) {
+				this._bIsScrolledByKeyboard = true;
+			}
+
+			return bScrolled;
+		},
+
+		/**
+		 * Scrolls the data in the table to the end or to the beginning by setting the property <code>firstVisibleRow</code>.
+		 *
+		 * @param {boolean} [bDown=false] Whether to scroll down or up.
+		 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
+		 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
+		 * @private
+		 */
+		scrollMax: function(bDown, bIsKeyboardScroll) {
+			if (bDown == null) {
+				bDown = false;
+			}
+			if (bIsKeyboardScroll == null) {
+				bIsKeyboardScroll = false;
+			}
+
+			var oTable = this.getTable();
+			var bScrolled = false;
+			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+
+			if (bDown) {
+				var iFirstVisibleRow = oTable._getRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);
+				if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
+					oTable.setFirstVisibleRow(iFirstVisibleRow);
+					bScrolled = true;
+				}
+			} else {
+				if (iFirstVisibleScrollableRow > 0) {
+					oTable.setFirstVisibleRow(0);
+					bScrolled = true;
+				}
+			}
+
+			if (bScrolled && bIsKeyboardScroll) {
+				this._bIsScrolledByKeyboard = true;
+			}
+
+			return bScrolled;
 		}
-
-		// "Public" functions which allow the table to communicate with this extension should go here
-
 	});
 
 	return TableScrollExtension;

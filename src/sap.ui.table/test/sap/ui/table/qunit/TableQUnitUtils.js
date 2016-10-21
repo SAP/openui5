@@ -72,7 +72,7 @@ var iNumberOfCols = aFields.length;
 function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 	oTable = new sap.ui.table.Table({
 		rows: "{/rows}",
-		title: "TABLE_TITLE",
+		title: "Grid Table",
 		selectionMode: "MultiToggle",
 		visibleRowCount: 3,
 		ariaLabelledBy: "ARIALABELLEDBY",
@@ -84,7 +84,7 @@ function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 			path: "/tree",
 			parameters: {arrayNames:["rows"]}
 		},
-		title: "TABLE_TITLE",
+		title: "Tree Table",
 		selectionMode: "Single",
 		visibleRowCount: 3,
 		groupHeaderProperty: aFields[0],
@@ -116,7 +116,8 @@ function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 					label: aFields[j] + "_TITLE",
 					width: "100px",
 					template: new TestControl({
-						text: "{" + aFields[j] + "}"
+						text: "{" + aFields[j] + "}",
+						tabbable: !!bFocusableCellTemplates
 					})
 				}));
 			}
