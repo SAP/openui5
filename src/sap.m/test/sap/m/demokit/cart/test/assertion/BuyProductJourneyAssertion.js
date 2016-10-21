@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
-		"sap/ui/test/matchers/AggregationFilled"
-	], function (Opa5, AggregationFilled) {
+		"sap/ui/test/matchers/AggregationFilled",
+		"sap/ui/test/matchers/AggregationEmpty"
+	], function (Opa5, AggregationFilled, AggregationEmpty) {
 
 		return Opa5.extend("sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion", {
 
@@ -75,11 +76,9 @@ sap.ui.define([
 				return this.waitFor({
 					viewName : "Cart",
 					id : "entryList",
-					check : function (oList) {
-						return oList.getItems().length === 0;
-					},
+					matchers: new AggregationEmpty({ name : "items" }),
 					success : function (oList) {
-						Opa5.assert.strictEqual(oList.getItems().length, 0, "The cart was empty");
+						Opa5.assert.ok(true, "The cart was empty");
 					},
 					errorMessage : "The cart still has entries"
 				});
@@ -89,11 +88,9 @@ sap.ui.define([
 				return this.waitFor({
 					viewName : "Cart",
 					id : "saveForLaterList",
-					check : function (oList) {
-						return oList.getItems().length === 0;
-					},
+					matchers: new AggregationEmpty({ name : "items" }),
 					success : function (oList) {
-						Opa5.assert.strictEqual(oList.getItems().length, 0, "The savelist was empty");
+						Opa5.assert.ok(true, "The savelist was empty");
 					},
 					errorMessage : "The savelist still has entries"
 				});
