@@ -1082,7 +1082,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!this._ignoreInvalidateOfChildControls) {
 			this._bInvalid = true;
 			var vReturn = Control.prototype.invalidate.call(this);
-			TableUtils.ColumnUtils.invalidateColumnUtils(this);
+			TableUtils.Column.invalidateColumnUtils(this);
 		}
 
 		return vReturn;
@@ -1133,7 +1133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var table = oTable.getDomRef();
 
 			function isFixNeeded(col) {
-				var iAbsoluteMinWidth = TableUtils.ColumnUtils.getMinColumnWidth();
+				var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
 				var minWidth = col._minWidth || iAbsoluteMinWidth;
 				var colWidth = col.getWidth();
 				var aColHeaders;
@@ -2409,7 +2409,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._CSSSizeToPixel = function(sCSSSize, bReturnWithUnit) {
-		var sPixelValue = TableUtils.ColumnUtils.getMinColumnWidth();
+		var sPixelValue = TableUtils.Column.getMinColumnWidth();
 
 		if (sCSSSize) {
 			if (jQuery.sap.endsWith(sCSSSize, "px")) {

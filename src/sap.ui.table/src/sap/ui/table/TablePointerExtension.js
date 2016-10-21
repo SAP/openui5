@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
 			var iDeltaX = iLocationX - this._iColumnResizeStart;
 			var iColWidth = this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').width();
-			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.ColumnUtils.getMinColumnWidth());
+			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.Column.getMinColumnWidth());
 
 			// calculate and set the position of the resize handle
 			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
 				if (oColumn._iNewWidth) {
-					TableUtils.resizeColumn(oTable, iColIndex, oColumn._iNewWidth);
+					TableUtils.Column.resizeColumn(oTable, iColIndex, oColumn._iNewWidth);
 					delete oColumn._iNewWidth;
 					bResized = true;
 				}
@@ -273,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				}).get());
 
 			jQuery(hiddenSizeDetector).remove();
-			return Math.max(minWidth, TableUtils.ColumnUtils.getMinColumnWidth());
+			return Math.max(minWidth, TableUtils.Column.getMinColumnWidth());
 		},
 
 		/*
@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				this._iNewColPos = oPos.index + 1;
 			}
 
-			if (!TableUtils.ColumnUtils.isColumnMovableTo(this.getColumns()[this._iDnDColIndex], this._iNewColPos)) { // prevent the reordering of the fixed columns
+			if (!TableUtils.Column.isColumnMovableTo(this.getColumns()[this._iDnDColIndex], this._iNewColPos)) { // prevent the reordering of the fixed columns
 				this._iNewColPos = iOldColPos;
 			} else {
 				ReorderHelper.adaptReorderMarkerPosition(this, oPos, true);
@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			this._enableTextSelection();
 
 			// Perform Reordering
-			TableUtils.ColumnUtils.moveColumnTo(this.getColumns()[iOldIndex], iNewIndex);
+			TableUtils.Column.moveColumnTo(this.getColumns()[iOldIndex], iNewIndex);
 
 			// Re-apply focus
 			if (this._mTimeouts.reApplyFocusTimerId) {
@@ -794,7 +794,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Grouping Row: Toggle grouping
-				if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+				if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 					return;
 				}
 			}
@@ -805,7 +805,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
 				var oPointerExtension = this._getPointerExtension();
 				if (oPointerExtension._bShowMenu) {
-					TableUtils.openContextMenu(this, oEvent.target, false);
+					TableUtils.Menu.openContextMenu(this, oEvent.target, false);
 					delete oPointerExtension._bShowMenu;
 				}
 			} else {
@@ -831,7 +831,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				var bRightMouseClick = oEvent.button === 2;
 
 				if (oPointerExtension._bShowMenu && bRightMouseClick) {
-					TableUtils.openContextMenu(this, oEvent.target, false);
+					TableUtils.Menu.openContextMenu(this, oEvent.target, false);
 					delete oPointerExtension._bShowMenu;
 				}
 			}
@@ -927,7 +927,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		 */
 		doReorderColumn : function(iColIndex, oEvent) {
 			var oTable = this.getTable();
-			if (oTable && TableUtils.ColumnUtils.isColumnMovable(oTable.getColumns()[iColIndex])) {
+			if (oTable && TableUtils.Column.isColumnMovable(oTable.getColumns()[iColIndex])) {
 				// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
 				oTable._mTimeouts.delayedColumnReorderTimerId = jQuery.sap.delayedCall(200, oTable, function() {
 					ReorderHelper.initReordering(this, iColIndex, oEvent);

@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		}
 
 		if (iTargetIndex != undefined) {
-			TableUtils.ColumnUtils.moveColumnTo(oColumn, iTargetIndex);
+			TableUtils.Column.moveColumnTo(oColumn, iTargetIndex);
 		}
 	};
 
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			return;
 		}
 
-		if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+		if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 			oEvent.preventDefault();
 			return;
 		}
@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
 			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		} else {
 			this._onSelect(oEvent);
 		}
@@ -401,11 +401,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
 			// SHIFT + 10 should open the context menu
 			oEvent.preventDefault();
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS) {
-			TableUtils.toggleGroupHeader(this, oEvent.target, true);
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {
-			TableUtils.toggleGroupHeader(this, oEvent.target, false);
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
 		}
 	};
 
@@ -425,7 +425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
 			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
 
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
@@ -570,7 +570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + DOWN.
-			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+			if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + UP.
-			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+			if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}

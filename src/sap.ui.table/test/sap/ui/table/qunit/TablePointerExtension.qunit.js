@@ -275,7 +275,7 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 	var $Resizer = oTable.$("rsz");
 	var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
 	sap.ui.Device.system.desktop = false;
-	sap.ui.table.TableUtils.openContextMenu(oTable, oColumn.getDomRef(), false);
+	sap.ui.table.TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef(), false);
 	var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
 	var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
 	qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);

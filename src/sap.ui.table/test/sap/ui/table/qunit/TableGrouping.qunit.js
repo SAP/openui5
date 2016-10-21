@@ -53,6 +53,100 @@ QUnit.test("toggleGroupHeader", function(assert) {
 	doToggle("No Binding", true, false, false);
 });
 
+QUnit.test("toggleGroupHeaderByRef", function(assert) {
+
+	function checkExpanded(sType, bExpectExpanded) {
+		assert.equal(oTreeTable.getBinding("rows").isExpanded(0), bExpectExpanded, sType + ": First row " + (bExpectExpanded ? "" : "not ") + "expanded");
+	}
+
+	function doToggle(sType, sText, oRef, bForceExpand, bExpectExpanded, bExpectChange) {
+		var iIndex = -1;
+		var bExpanded = false;
+		var bCalled = false;
+		oTreeTable._onGroupHeaderChanged = function(iRowIndex, bIsExpanded) {
+			iIndex = iRowIndex;
+			bExpanded = bIsExpanded;
+			bCalled = true;
+		};
+		var bRes = Grouping.toggleGroupHeaderByRef(oTreeTable, oRef, bForceExpand);
+		assert.ok(bExpectChange && bRes || !bExpectChange && !bRes, sType + ": " + sText);
+		if (bExpectChange) {
+			assert.ok(bCalled, sType + ": _onGroupHeaderChanged called");
+			assert.ok(bExpectExpanded === bExpanded, sType + ": _onGroupHeaderChanged provides correct expand state");
+			assert.ok(iIndex == 0, sType + ": _onGroupHeaderChanged provides correct index");
+		} else {
+			assert.ok(!bCalled, sType + ": _onGroupHeaderChanged not called");
+		}
+		checkExpanded(sType, bExpectExpanded);
+	}
+
+	function testWithValidDomRef(sType, oRef) {
+		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), sType + ": First row not expanded yet");
+		doToggle(sType, "Nothing changed when force collapse", oRef, false, false, false);
+		doToggle(sType, "Change when force expand", oRef, true, true, true);
+		doToggle(sType, "Nothing changed when force expand again", oRef, true, true, false);
+		doToggle(sType, "Changed when force collapse", oRef, false, false, true);
+		doToggle(sType, "Change when toggle", oRef, null, true, true);
+		doToggle(sType, "Change when toggle", oRef, null, false, true);
+	}
+
+	testWithValidDomRef("TreeIcon", jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"));
+
+	oTreeTable.setUseGroupMode(true);
+	sap.ui.getCore().applyChanges();
+
+	testWithValidDomRef("GroupIcon", jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"));
+
+	doToggle("Wrong DomRef", "", oTreeTable.$(), true, false, false);
+	doToggle("Wrong DomRef", "", oTreeTable.$(), false, false, false);
+	doToggle("Wrong DomRef", "", oTreeTable.$(), null, false, false);
+});
+
+QUnit.test("isInSumRow", function(assert) {
+	fakeSumRow(0);
+
+	assert.ok(TableUtils.Grouping.isInSumRow(getCell(0, 0)), "DATACELL in sum row");
+	assert.ok(!TableUtils.Grouping.isInSumRow(getCell(1, 0)), "DATACELL in normal row");
+
+	assert.ok(TableUtils.Grouping.isInSumRow(getRowHeader(0)), "ROWHEADER in sum row");
+	assert.ok(!TableUtils.Grouping.isInSumRow(getRowHeader(1)), "ROWHEADER in normal row");
+
+	assert.ok(!TableUtils.Grouping.isInSumRow(getColumnHeader(0)), "COLUMNHEADER");
+	assert.ok(!TableUtils.Grouping.isInSumRow(getSelectAll()), "COLUMNROWHEADER");
+	assert.ok(!TableUtils.Grouping.isInSumRow(null), "null");
+	assert.ok(!TableUtils.Grouping.isInSumRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+});
+
+QUnit.test("isInGroupingRow", function(assert) {
+	fakeGroupRow(0);
+
+	assert.ok(TableUtils.Grouping.isInGroupingRow(getCell(0, 0)), "DATACELL in group row");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(getCell(1, 0)), "DATACELL in normal row");
+
+	assert.ok(TableUtils.Grouping.isInGroupingRow(getRowHeader(0)), "ROWHEADER in group row");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(getRowHeader(1)), "ROWHEADER in normal row");
+
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(getColumnHeader(0)), "COLUMNHEADER");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(getSelectAll()), "COLUMNROWHEADER");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(null), "null");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
+});
+
+QUnit.test("isGroupingRow", function(assert) {
+	fakeGroupRow(0);
+
+	assert.ok(!TableUtils.Grouping.isGroupingRow(), "Returned false: Invalid parameter passed");
+	assert.ok(!TableUtils.Grouping.isGroupingRow(null), "Returned false: Invalid parameter passed");
+
+	assert.ok(TableUtils.Grouping.isGroupingRow(oTable.getRows()[0].getDomRef()), "Returned true: Row 1 is a group header row");
+	assert.ok(TableUtils.Grouping.isGroupingRow(getRowHeader(0)), "Returned true: The row header cell in Row 1 is part of the group header row");
+
+	assert.ok(!TableUtils.Grouping.isGroupingRow(oTable.getRows()[1].getDomRef()), "Returned false: Row 2 is a normal row");
+	assert.ok(!TableUtils.Grouping.isGroupingRow(getCell(0, 0)), "Returned false: A cell is not a group header row");
+	assert.ok(!TableUtils.Grouping.isGroupingRow(getColumnHeader(0)), "Returned false: A column header cell is not a group header row");
+});
+
+
 
 QUnit.module("Grouping Modes", {
 	setup: function() {
@@ -246,7 +340,7 @@ QUnit.asyncTest("Tree Mode", function(assert) {
 
 	bSecondPass = true;
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
-	TableUtils.toggleGroupHeader(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"), true);
+	Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"), true);
 	ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 });
@@ -317,7 +411,7 @@ QUnit.asyncTest("Group Mode", function(assert) {
 
 	bSecondPass = true;
 	oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
-	TableUtils.toggleGroupHeader(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"), true);
+	Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"), true);
 	ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 });
@@ -400,16 +494,16 @@ QUnit.test("Collapse / Expand", function(assert) {
 
 	sap.ui.getCore().applyChanges();
 
-	TableUtils.toggleGroupHeader(oTable, getRowHeader(0), false);
+	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
 	equal(oBinding.getLength(), 6, "Row count after Collapse");
 	ok(!oBinding.isExpanded(0), "!Expanded");
-	TableUtils.toggleGroupHeader(oTable, getRowHeader(0), true);
+	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
 	equal(oBinding.getLength(), 10, "Row count after Expand");
 	ok(oBinding.isExpanded(0), "Expanded");
-	TableUtils.toggleGroupHeader(oTable, getRowHeader(0));
+	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
 	equal(oBinding.getLength(), 6, "Row count after Toggle");
 	ok(!oBinding.isExpanded(0), "!Expanded");
-	TableUtils.toggleGroupHeader(oTable, getRowHeader(0));
+	Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
 	equal(oBinding.getLength(), 10, "Row count after Toggle");
 	ok(oBinding.isExpanded(0), "Expanded");
 });
