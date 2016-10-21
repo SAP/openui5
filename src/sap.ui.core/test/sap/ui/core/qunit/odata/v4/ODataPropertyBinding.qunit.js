@@ -877,6 +877,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refresh on relative binding with base context", function (assert) {
+		var oBinding = this.oModel.bindProperty("relative", this.oModel.createBindingContext("/"));
+
+		this.oSandbox.mock(_ODataHelper).expects("isRefreshable")
+			.withExactArgs(oBinding).returns(true);
+		this.oSandbox.mock(oBinding.oCache).expects("refresh");
+		this.oSandbox.mock(oBinding).expects("refreshInternal");
+
+		// code under test
+		oBinding.refresh();
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
 		var oBinding = this.oModel.bindProperty("Name");
 

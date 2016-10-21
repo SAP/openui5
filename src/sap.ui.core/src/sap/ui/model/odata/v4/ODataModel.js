@@ -98,6 +98,9 @@ sap.ui.define([
 	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
 	 *
 	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
+	 *   Bindings which are relative to such a V4 context depend on their corresponding parent
+	 *   binding and do not access data with their own service requests unless parameters are
+	 *   provided.
 	 *
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
@@ -437,7 +440,7 @@ sap.ui.define([
 		if (arguments.length > 2) {
 			throw new Error("Only the parameters sPath and oContext are supported");
 		}
-		if (oContext instanceof sap.ui.model.odata.v4.Context) {
+		if (oContext && oContext.getBinding) {
 			throw new Error("Unsupported type: oContext must be of type sap.ui.model.Context, "
 				+ "but was sap.ui.model.odata.v4.Context");
 		}
@@ -505,7 +508,7 @@ sap.ui.define([
 		return this.aAllBindings.filter(function (oBinding) {
 			return oBinding.isRelative()
 				&& (oBinding.getContext() === oParent
-						|| oBinding.getContext() && oBinding.getContext().fetchValue
+						|| oBinding.getContext() && oBinding.getContext().getBinding
 							&& oBinding.getContext().getBinding() === oParent
 					);
 		});
@@ -648,7 +651,7 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (!oBinding.isRelative()) { // relative bindings cannot be refreshed
+			if (_ODataHelper.isRefreshable(oBinding)) {
 				oBinding.refresh(sGroupId);
 			}
 		});

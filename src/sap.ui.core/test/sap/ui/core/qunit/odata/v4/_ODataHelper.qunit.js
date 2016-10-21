@@ -1892,4 +1892,16 @@ sap.ui.require([
 		assert.deepEqual(oBinding.aPreviousData, ["s0 new", "s1 new"]);
 		assert.deepEqual(oDiffPromise.getResult(), {aDiff : aDiff, iLength : 2});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isRefreshable", function (assert) {
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : false}), true, "absolute");
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : true}), undefined,
+			"relative - no context");
+		assert.strictEqual(_ODataHelper.isRefreshable(
+			{bRelative : true, oContext : {getBinding : function () {}}}), false,
+			"relative - V4 context");
+		assert.strictEqual(_ODataHelper.isRefreshable({bRelative : true, oContext : {}}), true,
+			"relative - base context");
+	});
 });

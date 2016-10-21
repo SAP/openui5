@@ -1229,30 +1229,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh on relative binding", function (assert) {
-		var oBinding = this.oModel.bindList("EMPLOYEES", this.oModel.createBindingContext("/"));
-
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("myGroup");
-
-		// code under test
-		oBinding.refresh("myGroup");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh on absolute binding", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
-
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("myGroup");
-
-		// code under test
-		oBinding.refresh("myGroup");
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
-		QUnit.test("refreshInternal: " + (bRelative ? "relative" : "absolute"), function (assert) {
+		QUnit.test("refresh: " + (bRelative ? "relative, base context" : "absolute"),
+				function (assert) {
+			var oBinding = this.oModel.bindList(bRelative ? "EMPLOYEES" : "/EMPLOYEES");
+
+			if (bRelative){
+				oBinding.setContext(this.oModel.createBindingContext("/"));
+			}
+
+			this.oSandbox.mock(_ODataHelper).expects("isRefreshable")
+				.withExactArgs(oBinding).returns(true);
+			this.mock(oBinding).expects("hasPendingChanges").returns(false);
+			this.mock(oBinding).expects("refreshInternal").withExactArgs("myGroup");
+
+			// code under test
+			oBinding.refresh("myGroup");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		bRelative : false, bBaseContext : false
+	}, {
+		bRelative : true, bBaseContext : false
+	}, {
+		bRelative : true, bBaseContext : true
+	}].forEach(function (oFixture) {
+		QUnit.test("refreshInternal: " + (oFixture.bRelative ? "relative, " : "absolute, ")
+				+ (oFixture.bBaseContext ? "base context" : "V4 context"), function (assert) {
 			var oCache = {
 					deregisterChange : function () {},
 					refresh : function () {}
@@ -1265,19 +1270,25 @@ sap.ui.require([
 					getContext : getContextMock.bind(undefined, 1),
 					refreshInternal : function () {}
 				},
-				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+				oContext,
 				oHelperMock = this.mock(_ODataHelper),
 				oListBinding;
 
-			if (bRelative) {
+			if (oFixture.bBaseContext) {
+				oContext = this.oModel.createBindingContext("/TEAMS('TEAM_01')");
+			} else {
+				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
+			}
+			if (oFixture.bRelative) {
 				oHelperMock.expects("createListCacheProxy").returns(oCache);
 			} else {
 				this.mock(_Cache).expects("create").returns(oCache);
 			}
 
-			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
+			oListBinding = this.oModel.bindList(
+				oFixture.bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 				oContext, undefined, undefined, {/*mParameters*/});
-			if (bRelative) {
+			if (oFixture.bRelative && !oFixture.bBaseContext) {
 				oHelperMock.expects("createListCacheProxy")
 					.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
 					.returns(oCache);
