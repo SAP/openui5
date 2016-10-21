@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', 'sap/ui/Device', './library'],
+	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, Device, library) {
 	"use strict";
 
 	// shortcuts
@@ -1154,7 +1154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					if (oTableElement && aResizableColumns.indexOf(col) < 0 && TableUtils.isVariableWidth(width)) {
 						colElement = oTableElement.querySelector('th[data-sap-ui-colid="' + col.getId() + '"]');
 						if (colElement) {
-							col._minWidth = Math.max(colElement.offsetWidth, col._MIN_WIDTH);
+							col._minWidth = Math.max(colElement.offsetWidth, TableUtils.ColumnUtils.getMinColumnWidth());
 						}
 					}
 				});
@@ -1166,8 +1166,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				var iColumnWidth = this.getColumnWidth(oTable, oResizableColumn.getIndex());
 
 				var iNewWidth = iColumnWidth + iSharedPixelDelta;
-				if (iNewWidth < oTable._iColMinWidth) {
-					iNewWidth = oTable._iColMinWidth;
+				var iColMinWidth = TableUtils.ColumnUtils.getMinColumnWidth();
+				if (iNewWidth < iColMinWidth) {
+					iNewWidth = iColMinWidth;
 				}
 
 				var iWidthChange = iNewWidth - iColumnWidth;
@@ -1284,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				var iColumnIndex = this.getColumnHeaderCellInfo($TableCell).index;
 				var bCellHasMenuButton = $TableCell.find(".sapUiTableColDropDown").length > 0;
 
-				if (sap.ui.Device.system.desktop || bCellHasMenuButton) {
+				if (Device.system.desktop || bCellHasMenuButton) {
 					this.removeColumnHeaderCellMenu(oTable, iColumnIndex);
 					var bExecuteDefault = true;
 

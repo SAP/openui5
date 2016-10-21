@@ -491,6 +491,13 @@ QUnit.test("moveColumnTo() - Prevent movement", function(assert) {
 	assert.equal(oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
 });
 
-
-
+QUnit.test("getMinColumnWidth", function(assert) {
+	var bDesktop = sap.ui.Device.system.desktop;
+	sap.ui.Device.system.desktop = true;
+	assert.equal(ColumnUtils.getMinColumnWidth(), 48, "Desktop column width");
+	ColumnUtils._iColMinWidth = null;
+	sap.ui.Device.system.desktop = false;
+	assert.equal(ColumnUtils.getMinColumnWidth(), 88, "Mobile column width");
+	sap.ui.Device.system.desktop = bDesktop;
+});
 

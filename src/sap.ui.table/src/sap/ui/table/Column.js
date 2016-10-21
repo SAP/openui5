@@ -259,9 +259,6 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	/** default filter type for the columns */
 	Column._DEFAULT_FILTER_TYPE = new StringType();
 
-	/** default minimal column width in pixels */
-	Column.prototype._MIN_WIDTH = 48;
-
 	/**
 	 * called when the column is initialized
 	 */

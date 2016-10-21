@@ -2969,7 +2969,7 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Left & Shift+Right (C
 });
 
 QUnit.test("Default Test Table - Resize fixed column", function(assert) {
-	var iMinColumnWidth = oTable._iColMinWidth;
+	var iMinColumnWidth = sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(0, true);
@@ -2996,7 +2996,7 @@ QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 });
 
 QUnit.test("Default Test Table - Resize column", function(assert) {
-	var iMinColumnWidth = oTable._iColMinWidth;
+	var iMinColumnWidth = sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(1, true);
@@ -3037,7 +3037,7 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 	sap.ui.getCore().applyChanges();
 
 	var aVisibleColumns = oTable._getVisibleColumns();
-	var iMinColumnWidth = oTable._iColMinWidth;
+	var iMinColumnWidth = sap.ui.table.TableUtils.ColumnUtils.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 	var oElem;
 

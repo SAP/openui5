@@ -705,7 +705,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		// dummy column to fill the table width
 		if (bRenderDummyColumn) {
-			rm.write('<th role="presentation"></th>');
+			rm.write("<th");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write("></th>");
 		}
 
 		rm.write("</tr>");
@@ -800,7 +802,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 
 		if (!bFixedTable && bHasOnlyFixedColumns && aColumns.length > 0) {
-			rm.write('<td role="presentation" class="sapUiTableTDDummy"></td>');
+			rm.write('<td class="sapUiTableTDDummy"');
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write('></td>');
 		}
 		rm.write("</tr>");
 	};
@@ -868,7 +872,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
 		}
 		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
-			rm.write('<td role="presentation" class="sapUiTableTDDummy"></td>');
+			rm.write('<td class="sapUiTableTDDummy"');
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write('></td>');
 		}
 		rm.write("</tr>");
 	};

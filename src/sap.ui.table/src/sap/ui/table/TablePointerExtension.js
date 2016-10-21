@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
 			var iDeltaX = iLocationX - this._iColumnResizeStart;
 			var iColWidth = this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').width();
-			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), this._iColMinWidth);
+			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.ColumnUtils.getMinColumnWidth());
 
 			// calculate and set the position of the resize handle
 			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
@@ -273,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				}).get());
 
 			jQuery(hiddenSizeDetector).remove();
-			return Math.max(minWidth, this._iColMinWidth);
+			return Math.max(minWidth, TableUtils.ColumnUtils.getMinColumnWidth());
 		},
 
 		/*
