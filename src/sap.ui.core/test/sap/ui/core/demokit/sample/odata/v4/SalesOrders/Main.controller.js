@@ -61,7 +61,7 @@ sap.ui.define([
 		},
 
 		onCancelSalesOrderList : function (oEvent) {
-			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
+			this.getView().getModel().resetChanges();
 		},
 
 		onConfirmSalesOrder : function () {
@@ -181,7 +181,7 @@ sap.ui.define([
 		onDeleteBusinessPartner: function () {
 			var oContext = this.getView().byId("BusinessPartner").getBindingContext();
 
-			oContext["delete"](oContext.getModel().getUpdateGroupId()).then(function () {
+			oContext["delete"](oContext.getModel().getGroupId()).then(function () {
 				MessageBox.alert("Deleted Business Partner",
 					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 			}, function (oError) {
@@ -202,7 +202,7 @@ sap.ui.define([
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getUpdateGroupId())
+				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
 						that._setSalesOrderBindingContext();
 						MessageBox.alert("Deleted Sales Order " + sOrderID,
@@ -222,7 +222,7 @@ sap.ui.define([
 
 		onDeleteSalesOrderSchedules : function (oEvent) {
 			var oView = this.getView(),
-				sGroupId = oView.getModel().getUpdateGroupId(),
+				sGroupId = oView.getModel().getGroupId(),
 				aPromises = [],
 				oTable = oView.byId("SalesOrderSchedules");
 
@@ -311,10 +311,11 @@ sap.ui.define([
 		},
 
 		onRefreshAll : function () {
-			var oModel = this.getView().getModel();
+			var oView = this.getView(),
+				oModel = oView.getModel();
 
 			this.refresh(oModel, "everything",
-				["SalesOrderListUpdateGroup", "SalesOrderUpdateGroup"]);
+				[oModel.getUpdateGroupId(), "SalesOrderUpdateGroup"]);
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
@@ -370,7 +371,7 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrderList : function () {
-			this.submitBatch("SalesOrderListUpdateGroup");
+			this.submitBatch(this.getView().getModel().getUpdateGroupId());
 		},
 
 		onSetBindingContext : function () {

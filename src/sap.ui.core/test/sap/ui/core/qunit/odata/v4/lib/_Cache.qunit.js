@@ -766,10 +766,10 @@ sap.ui.require([
 			oError = new Error(),
 			fnErrorCallback = sinon.spy(),
 			oFailedPostPromise,
+			fnRejectPost,
 			oRequestExpectation1,
 			oRequestExpectation2,
 			oRequestorMock = this.mock(oRequestor),
-			fnRejectPost,
 			fnResolvePost;
 
 		function checkUpdateAndDeleteFailure() {
@@ -847,10 +847,54 @@ sap.ui.require([
 				.returns(Promise.resolve({}));
 
 			// code under test
-			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
-				.then(function () {
-					assert.ok(true, "Update patches after successful create");
-				});
+			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1");
+		});
+	});
+
+	//*********************************************************************************************
+	["$direct", "$auto"].forEach(function (sUpdateGroupId) {
+		QUnit.test("create: relocate on failed POST for " + sUpdateGroupId, function (assert) {
+			var oRequestor = _Requestor.create("/~/"),
+				oCache = _Cache.create(oRequestor, "Employees"),
+				oFailedPostPromise = Promise.reject(new Error()),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("POST", "Employees", sUpdateGroupId, null, sinon.match.object,
+					sinon.match.func, sinon.match.func)
+				.returns(oFailedPostPromise);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("POST", "Employees", "$parked." + sUpdateGroupId, null,
+					sinon.match.object, sinon.match.func, sinon.match.func)
+				.returns(Promise.resolve({Name: "John Doe", Age: 47}));
+
+			// code under test
+			oCache.create(sUpdateGroupId, "Employees", "", {Name: null});
+
+			return oFailedPostPromise.then(undefined, function () {
+				var aPromises = [],
+					sWrongGroupId = sUpdateGroupId === "$direct" ? "$auto" : "$direct";
+
+				// code under test - try to update via wrong $direct/auto group
+				aPromises.push(oCache.update(sWrongGroupId, "Name", "John Doe", "n/a", "-1")
+					.then(undefined, function(oError) {
+						assert.strictEqual(oError.message, "The entity will be created via group '"
+							+ sUpdateGroupId + "'. Cannot patch via group '" + sWrongGroupId + "'");
+					}));
+
+				oRequestorMock.expects("relocate")
+					.withExactArgs("$parked." + sUpdateGroupId, oCache.aElements[-1],
+						sUpdateGroupId);
+
+				// code under test - first update -> relocate
+				aPromises.push(oCache.update(sUpdateGroupId, "Name", "John Doe", "n/a", "-1"));
+
+				// code under test - second update -> do not relocate again
+				aPromises.push(oCache.update(sUpdateGroupId, "Name", "John Doe1", "n/a", "-1"));
+
+				return Promise.all(aPromises);
+			});
 		});
 	});
 

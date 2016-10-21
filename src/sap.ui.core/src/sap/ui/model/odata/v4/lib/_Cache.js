@@ -306,6 +306,7 @@ sap.ui.define([
 		var oBody, // the body for the PATCH request
 			mHeaders, // the headers for the PATCH request
 			vOldValue, // the old value of the property
+			sParkedGroupId,
 			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
 			sTransientGroup,
 			// the path that is updated; the promise is registered here
@@ -332,6 +333,10 @@ sap.ui.define([
 		if (sTransientGroup === true) {
 			throw new Error("No 'update' allowed while waiting for server response");
 		}
+		if (sTransientGroup && sTransientGroup.indexOf("$parked.") === 0) {
+			sParkedGroupId = sTransientGroup;
+			sTransientGroup = sTransientGroup.slice(8);
+		}
 		if (sTransientGroup && sTransientGroup !== sGroupId) {
 			throw new Error("The entity will be created via group '" + sTransientGroup
 				+ "'. Cannot patch via group '" + sGroupId + "'");
@@ -355,6 +360,10 @@ sap.ui.define([
 		if (sTransientGroup) {
 			// When updating a transient entity, _Helper.updateCache has already updated the POST
 			// request, because the request body is a reference into the cache.
+			if (sParkedGroupId) {
+				oCacheData["@$ui5.transient"] = sTransientGroup;
+				oCache.oRequestor.relocate(sParkedGroupId, oCacheData, sTransientGroup);
+			}
 			return Promise.resolve({});
 		}
 		// send and register the PATCH request
@@ -473,8 +482,9 @@ sap.ui.define([
 	/**
 	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
 	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
-	 * with an Error object, the POST request is parked and ready to be repeated with the next
-	 * {@link sap.ui.model.odata.v4.lib._Requestor#submitBatch} for the same group.
+	 * with an Error object, the POST request is automatically added again to the same batch
+	 * group (for application group IDs) or parked (for $auto or $direct). Parked POST requests are
+	 * repeated with the next update of the entity data.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -507,9 +517,9 @@ sap.ui.define([
 			oEntityData["@$ui5.transient"] = true;
 		}
 
-		function request() {
-			oEntityData["@$ui5.transient"] = sGroupId; // mark as transient (again)
-			return that.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData,
+		function request(sPostGroupId) {
+			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
+			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
 					delete oEntityData["@$ui5.transient"];
@@ -523,7 +533,8 @@ sap.ui.define([
 					if (fnErrorCallback) {
 						fnErrorCallback(oError);
 					}
-					return request();
+					return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
+						? "$parked." + sPostGroupId : sPostGroupId);
 				});
 		}
 
@@ -534,7 +545,7 @@ sap.ui.define([
 		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
 		oEntityData["@odata.etag"] = undefined;
 		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return request();
+		return request(sGroupId);
 	};
 
 	/**
@@ -898,7 +909,7 @@ sap.ui.define([
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
-	 * @param {function()} [fnDataRequested]
+	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back end request is sent.
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]

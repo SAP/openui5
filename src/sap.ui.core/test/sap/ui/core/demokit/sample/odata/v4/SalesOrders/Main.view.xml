@@ -90,8 +90,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID',
-						$$updateGroupId : 'SalesOrderListUpdateGroup'
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID'
 					},
 					events : {
 						dataReceived : '.onDataEvents',
