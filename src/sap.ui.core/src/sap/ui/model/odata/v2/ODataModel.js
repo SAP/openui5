@@ -4678,6 +4678,7 @@ sap.ui.define([
 	 * @param {function} [mParameters.error] The error callback function
 	 * @param {map} [mParameters.headers] A map of headers
 	 * @param {map} [mParameters.urlParameters] A map of url parameters
+	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 *
 	 * @return {sap.ui.model.Context} oContext A Context object that point to the new created entry.
 	 * @public
