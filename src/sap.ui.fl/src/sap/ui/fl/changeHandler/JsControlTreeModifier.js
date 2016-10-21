@@ -142,7 +142,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			 *          sName - aggregation name
 			 * @param {object}
 			 *          oObject - aggregated object to be set
-			 * @param {integer}
+			 * @param {int}
 			 *          iIndex <optional> - index to which it should be added/inserted
 			 */
 			insertAggregation: function (oParent, sName, oObject, iIndex) {

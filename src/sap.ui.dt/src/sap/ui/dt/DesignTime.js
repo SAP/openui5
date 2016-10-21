@@ -25,7 +25,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @class
 	 * The DesignTime allows to create a set of Overlays above the root elements and
 	 * their public children and manage theire events.
-	 * @extends sap.ui.core.ManagedObject
+	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}

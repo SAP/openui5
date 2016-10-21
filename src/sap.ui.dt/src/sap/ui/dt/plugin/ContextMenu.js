@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The ContextMenu registers event handler to open the context menu. Menu entries can dynamically be added
-	 * @extends sap.ui.core.ManagedObject
+	 * @extends sap.ui.dt.Plugin
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
