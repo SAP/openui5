@@ -3765,6 +3765,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.eTag] If the functionImport changes an entity, the eTag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
+	 * @param {map} [mParameters.headers] A map of headers for this request
 	 *
 	 * @return {object} oRequestHandle An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
 	 *         This resolves with the created {@link sap.ui.model.Context}.
