@@ -437,7 +437,9 @@
 			"sap.m.sample.InputSuggestionsOpenSearch",
 			"sap.m.sample.InputTypes",
 			"sap.m.sample.InputStates",
-			"sap.m.sample.InputValueUpdate"
+			"sap.m.sample.InputValueUpdate",
+			"sap.m.sample.InputKeyValue",
+			"sap.m.sample.InputKeyValueTabularSuggestions"
 		  ]
 		},
 		{
@@ -1987,6 +1989,16 @@
 		  "id": "sap.m.sample.InputDescription",
 		  "name": "Input - Description",
 		  "description": "This sample illustrates the usage of the description with input fields, e.g. description for units of measurements and currencies."
+		},
+		{
+			"id": "sap.m.sample.InputKeyValue",
+			"name": "Input - Key and Value",
+			"description": "This sample illustrates how the Input works with key and value values, when the data is available via list of suggestions."
+		},
+		{
+			"id": "sap.m.sample.InputKeyValueTabularSuggestions",
+			"name": "Input - Key and Value Tabular Suggestions",
+			"description": "This sample illustrates how the Input works with key and value values, when the data is provided with table-like suggestions."
 		},
 		{
 		  "id": "sap.m.sample.ListToolbar",

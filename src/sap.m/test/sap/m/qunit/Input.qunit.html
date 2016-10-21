@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -568,7 +568,7 @@
 		$Input = oInput.$();
 
 		var oValueHelpIcon = oInput._oValueHelpIcon;
-		var sValueHelpIconId = oValueHelpIcon.getId(); 
+		var sValueHelpIconId = oValueHelpIcon.getId();
 		strictEqual(oValueHelpIcon instanceof sap.ui.core.Icon, true, "Value Help Indicator icon is set before destroy call");
 		oInput.destroy();
 		strictEqual(sap.ui.getCore().byId(sValueHelpIconId), undefined, "Value Help Indicator icon is also destroyed");
@@ -2311,6 +2311,312 @@
 		oInput.destroy();
 	});
 
+	module("Key and Value");
+
+	function createInputWithSuggestions () {
+
+		var aSuggestionItems = [
+			new sap.ui.core.ListItem({
+				key: '1',
+				text: '1 Item 1',
+				additionalText: 'Desc 1'
+			}),
+			new sap.ui.core.ListItem({
+				key: '2',
+				text: 'Item 2',
+				additionalText: 'Desc 2'
+			}),
+			new sap.ui.core.ListItem({
+				key: '3',
+				text: 'Item 3',
+				additionalText: 'Desc 3'
+			}),
+			new sap.ui.core.ListItem({
+				key: '4',
+				text: 'Item 4',
+				additionalText: 'Desc 4'
+			}),
+			new sap.ui.core.ListItem({
+				key: '5',
+				text: 'Item 5',
+				additionalText: 'Desc 5'
+			})
+		];
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			suggestionItems: aSuggestionItems
+		});
+
+		return oInput;
+	}
+
+	test("Set selection", function() {
+		var oInput = createInputWithSuggestions(),
+				fnCallback = this.spy();
+
+		oInput.attachSuggestionItemSelected(fnCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("It").trigger("input");
+
+		this.clock.tick(300);
+
+		var oItem = oInput._oSuggestionPopup.getContent()[0].getItems()[0];
+		ok(oItem, "Item should be created");
+
+		oItem.focus();
+		oItem.$().trigger("tap");
+
+		this.clock.tick(50);
+
+		equal(fnCallback.callCount, 1, "change event handler only called once");
+		equal(oInput.getSelectedKey(), "2", "selected key is correct");
+
+		oInput.destroy();
+	});
+
+	test("Set selection via API", function() {
+		var oInput = createInputWithSuggestions(),
+				fnCallback = this.spy();
+
+		oInput.attachSuggestionItemSelected(fnCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
+
+		this.clock.tick(50);
+
+		equal(fnCallback.callCount, 0, "change event is not fired");
+		equal(oInput.getSelectedKey(), "2", "selected key is correct");
+
+		oInput.destroy();
+	});
+
+	test("Display text formatting", function() {
+		var oInput = createInputWithSuggestions();
+
+		oInput.setTextFormatMode(sap.m.InputTextFormatMode.ValueKey);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
+
+		var sValue = oInput.getValue();
+		equal(sValue, "Item 2 (2)", "value is correctly formatted");
+
+		oInput.setTextFormatter(function (item) {
+			return 'Custom: ' + item.getText() + " (" + item.getKey() + ")";
+		});
+
+		oInput.setSelectedItem(oInput.getSuggestionItems()[2]);
+
+		var sValue = oInput.getValue();
+		equal(sValue, "Custom: Item 3 (3)", "custom formatting is correct");
+
+		oInput.destroy();
+	});
+
+	function createInputWithTabularSuggestions () {
+
+		var oSuggestionData = {
+			tabularSuggestionItems: [
+				{
+					id: "1",
+					name: "Auch ein gutes Ding",
+					qty: "3 EA",
+					limit: "99.00 EUR",
+					price: "17.00 EUR"
+				}, {
+					id: "2",
+					name: "Besser ist das",
+					qty: "1 EA",
+					limit: "20.00 EUR",
+					price: "13.00 EUR"
+				}, {
+					id: "3",
+					name: "Holter-di-polter",
+					qty: "10 EA",
+					limit: "15.00 EUR",
+					price: "12.00 EUR"
+				}, {
+					id: "4",
+					name: "Ha so was",
+					qty: "10 EA",
+					limit: "5.00 EUR",
+					price: "3.00 EUR"
+				}, {
+					id: "5",
+					name: "Hurra ein Produkt",
+					qty: "8 EA",
+					limit: "60.00 EUR",
+					price: "45.00 EUR"
+				}, {
+					id: "6",
+					name: "Hallo du tolles Ding",
+					qty: "2 EA",
+					limit: "40.00 EUR",
+					price: "15.00 EUR"
+				}, {
+					id: "7",
+					name: "Hier sollte ich zuschlagen",
+					qty: "10 EA",
+					limit: "90.00 EUR",
+					price: "55.00 EUR"
+				}, {
+					id: "8",
+					name: "Hohoho",
+					qty: "18 EA",
+					limit: "29.00 EUR",
+					price: "7.00 EUR"
+				}, {
+					id: "9",
+					name: "Holla die Waldfee",
+					qty: "3 EA",
+					limit: "55.00 EUR",
+					price: "30.00 EUR"
+				}, {
+					id: "10",
+					name: "Hau Ruck",
+					qty: "5 EA",
+					limit: "2.00 EUR",
+					price: "1.00 EUR"
+				}]
+		};
+		var tableModel = new sap.ui.model.json.JSONModel();
+		tableModel.setData(oSuggestionData);
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type: "Active",
+			vAlign: "Middle",
+			cells: [
+				new sap.m.Label({
+					text: "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}"
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text: "{price}"
+				}),
+				new sap.m.Label({
+					text: "{id}"
+				})
+			]
+		});
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			suggestionRowValidator: function (oColumnListItem) {
+				var cells = oColumnListItem.getCells();
+
+				return new sap.ui.core.Item({
+					key: cells[4].getText(),
+					text: cells[0].getText() + ' = ' + cells[2].getText()
+				});
+			},
+			suggestionRows: {
+				path: '/tabularSuggestionItems',
+				template: oTableItemTemplate
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: "{Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "qty",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Qty}"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "limit",
+					width: "30%",
+					header: new sap.m.Label({
+						text: "{Value}"
+					}),
+					minScreenWidth: "XXSmall",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					styleClass: "price",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Price}"
+					}),
+					minScreenWidth: "400px",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					visible: false,
+					header: new sap.m.Label({
+						text: "{id}"
+					})
+				})
+			]
+		});
+
+		oInput.setModel(tableModel);
+
+		return oInput;
+	}
+
+	test("Tabular Suggestions - Set selection via API", function() {
+		var oInput = createInputWithTabularSuggestions(),
+				fnCallback = this.spy();
+
+		oInput.attachSuggestionItemSelected(fnCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
+
+		this.clock.tick(50);
+
+		equal(fnCallback.callCount, 0, "change event is not fired");
+		equal(oInput.getSelectedKey(), "2", "selected key is correct");
+		equal(oInput.getValue(), "Besser ist das = 20.00 EUR", "value is correct");
+
+		oInput.destroy();
+	});
+
+	test("Tabular Suggestions - Display text formatting", function() {
+		var oInput = createInputWithTabularSuggestions();
+
+		oInput.setTextFormatMode(sap.m.InputTextFormatMode.ValueKey);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
+
+		var sValue = oInput.getValue();
+		equal(sValue, "Besser ist das = 20.00 EUR (2)", "value is correctly formatted");
+
+		oInput.destroy();
+	});
+
 	module("Input Description");
 
 	test("Input description", function() {
@@ -2333,9 +2639,9 @@
 
   		oInputWithDes.destroy();
 	});
-	
+
 	module("Accessibility");
-	
+
 	test("getAccessibilityInfo", function() {
 		var oInput = new sap.m.Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 		ok(!!oInput.getAccessibilityInfo, "Input has a getAccessibilityInfo function");
