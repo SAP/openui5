@@ -48,6 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         oControl.getEnabled() ? oRm.writeAttribute("tabindex", "0") : oRm.writeAttribute("tabindex", "-1");
         oControl.getEnabled() ? oRm.addClass("sapMPointer") : oRm.addClass("sapMRIDisabled");
         oRm.addClass("sapMRI");
+        oRm.addClass("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
         oRm.writeStyles();
         oRm.writeClasses();
         this.writeTooltip(oRm, oControl);
@@ -76,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         this._sLabelID = oControl.getId() + "-ariaLabel";
         this._iSymbolCount = oControl.getMaxValue();
         this._iWidth = this._iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
-        this._iHeight = fIconSize + 2 * oControl._iPxPaddingSize;
+        this._iHeight = fIconSize;
         this._iSelectedWidth = iSelectedWidth;
         this._fIconSize = fIconSize;
     };

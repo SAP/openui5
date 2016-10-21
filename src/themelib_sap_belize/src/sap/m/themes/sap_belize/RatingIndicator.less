@@ -92,3 +92,38 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 .sapUiSizeCondensed .sapMRI .sapMImg{
 	padding-right: 0;
 }
+
+.sapMRI.sapUiRatingIndicatorXS {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingXS;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorS {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingS;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorM {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingM;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorL {
+	.sapUiIcon, .sapMImg {
+		padding-right: @sapUiRIIconPaddingL;
+		vertical-align: top;
+	}
+}
+
+.sapMRI.sapUiRatingIndicatorXS, .sapMRI.sapUiRatingIndicatorS, .sapMRI.sapUiRatingIndicatorM,
+.sapMRI.sapUiRatingIndicatorL {
+	.sapUiIcon:last-child, .sapMImg:last-child {
+		padding-right: 0;
+	}
+}
