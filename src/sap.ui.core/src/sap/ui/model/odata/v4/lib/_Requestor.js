@@ -423,6 +423,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Searches the request identified by the given group and body, removes it from that group and
+	 * triggers a new request with the new group ID, based on the found request.
+	 * The result of the new request is delegated to the found request.
+	 *
+	 * @param {string} sCurrentGroupId
+	 *   The ID of the group in which to search the request
+	 * @param {object} oBody
+	 *   The body of the request to be searched
+	 * @param {string} sNewGroupId
+	 *   The ID of the group for the new request
+	 * @throws {Error}
+	 *   If the request could not be found
+	 */
+	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
+		var aRequests = this.mBatchQueue[sCurrentGroupId],
+			that = this,
+			bFound = aRequests && aRequests[0].some(function (oChange, i) {
+				if (oChange.body === oBody) {
+					that.request(oChange.method, oChange.url, sNewGroupId, oChange.headers, oBody,
+						oChange.$submit, oChange.$cancel).then(oChange.$resolve, oChange.$reject);
+					aRequests[0].splice(i, 1);
+					deleteEmptyGroup(that, sCurrentGroupId);
+					return true;
+				}
+			});
+
+		if (!bFound) {
+			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
+		}
+	};
+
+	/**
 	 * Sends an OData batch request containing all requests referenced by the given group ID.
 	 *
 	 * @param {string} sGroupId

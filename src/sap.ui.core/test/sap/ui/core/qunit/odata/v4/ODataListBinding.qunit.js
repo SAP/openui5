@@ -2856,13 +2856,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sTitle : "create: absolute"
+		sTitle : "create: absolute",
+		sUpdateGroupId : "update"
 	}, {
 		oInitialData : {},
-		sTitle : "create: absolute, with initial data"
+		sTitle : "create: absolute, with initial data",
+		sUpdateGroupId : "$direct"
 	}, {
 		bRelative : true,
-		sTitle : "create: relative with base context"
+		sTitle : "create: relative with base context",
+		sUpdateGroupId : "$auto"
 	}].forEach(function (oFixture) {
 		QUnit.test(oFixture.sTitle, function (assert) {
 			var oBinding,
@@ -2881,9 +2884,9 @@ sap.ui.require([
 				oBinding = this.oModel.bindList("/EMPLOYEES");
 			}
 			oCacheMock = this.mock(oBinding.oCache);
-			this.mock(oBinding).expects("getUpdateGroupId").returns("update");
+			this.mock(oBinding).expects("getUpdateGroupId").returns(oFixture.sUpdateGroupId);
 			oCacheMock.expects("create")
-				.withExactArgs("update", "EMPLOYEES", "",
+				.withExactArgs(oFixture.sUpdateGroupId, "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
 				.returns(Promise.resolve());
 			oBinding.attachEventOnce("change", function (oEvent) {
@@ -2929,26 +2932,6 @@ sap.ui.require([
 		}, new Error("Create on this binding is not supported"));
 	});
 	// TODO allow relative binding, use createInCache to forward to the binding owning a cache
-
-	//*********************************************************************************************
-	QUnit.test("create: only for application groups, not for $direct or $auto", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding);
-
-		oBindingMock.expects("getUpdateGroupId").returns("$auto");
-
-		//code under test
-		assert.throws(function () {
-			oBinding.create();
-		}, new Error("Create for update group '$auto' is not supported"));
-
-		oBindingMock.expects("getUpdateGroupId").returns("$direct");
-
-		//code under test
-		assert.throws(function () {
-			oBinding.create();
-		}, new Error("Create for update group '$direct' is not supported"));
-	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts after create", function (assert) {

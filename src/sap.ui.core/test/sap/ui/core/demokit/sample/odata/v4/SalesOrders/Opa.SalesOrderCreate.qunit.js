@@ -120,7 +120,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkID(0);
 
 		if (bRealOData) {
-			// Cancel/resume failed creation of a sales order
+			// Cancel or resume a failed creation of a sales order
 			// Create a sales order with invalid note, save, cancel
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
