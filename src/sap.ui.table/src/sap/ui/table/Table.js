@@ -2255,7 +2255,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		} else if (this.getDomRef()) {
 			// in case of Scrollbar Mode show/hide the scrollbar depending whether it is needed.
-			$this.toggleClass("sapUiTableVScr", this._isVSbRequired());
+			var isVSbRequired = this._isVSbRequired();
+			if (!isVSbRequired) {
+				// reset scroll position to zero when Scroll Bar disappears
+				this.setProperty("firstVisibleRow", 0, true);
+			}
+			$this.toggleClass("sapUiTableVScr", isVSbRequired);
 		}
 	};
 
