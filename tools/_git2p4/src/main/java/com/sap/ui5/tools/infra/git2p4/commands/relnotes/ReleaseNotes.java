@@ -280,14 +280,26 @@ public class ReleaseNotes {
           }
         }
       }
-      if (removeDuplicates(uiLibraryNotes) || (uiLibVersion.notes.size() != notesSizeBefore)){
+      if (removeEmptyVersions(uiLibraryNotes) || 
+          removeDuplicates(uiLibraryNotes) || (uiLibVersion.notes.size() > notesSizeBefore)){
         saveToFile(uiLibraryNotes, file);
       } else {
         Log.println("No changes for '" + lib + "' library");
       }
       copyPrevNotes(file.getParentFile(), lib);
     }
-
+    
+    private boolean removeEmptyVersions(UILibNotes uiLibraryNotes){
+      boolean result = false;
+      for (Object key: uiLibraryNotes.versions.keySet().toArray()){
+        if (uiLibraryNotes.versions.get(key).notes.size() == 0){
+          uiLibraryNotes.versions.remove(key);
+          result = true;
+        }
+      }
+      return result;
+    }
+    
     private boolean removeDuplicates(UILibNotes uiLibraryNotes) {
       boolean result = false;
       Object[] keys = uiLibraryNotes.versions.keySet().toArray();
@@ -323,7 +335,7 @@ public class ReleaseNotes {
     ReleaseNote releaseNote = new ReleaseNote();
     releaseNote.type = msg.getType();
     releaseNote.text = msg.getText();
-    releaseNote.author = commit.getOriginalCommit().getAuthor();
+//    releaseNote.author = commit.getOriginalCommit().getAuthor();
     releaseNote.id = commit.getOriginalCommit().getId();
     releaseNote.references = msg.getReferences(); 
     uiLibVersion.notes.add(releaseNote);
@@ -632,7 +644,7 @@ public class ReleaseNotes {
   }
   static class ReleaseNote {
     String id;
-    String author;
+    //String author;
     String type;
     String text;
     List<NoteRef> references;
