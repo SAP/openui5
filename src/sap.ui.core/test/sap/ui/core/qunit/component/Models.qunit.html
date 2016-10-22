@@ -1218,11 +1218,11 @@
 				oServer.xhr.useFilters = true;
 				oServer.xhr.filters = [];
 				oServer.xhr.addFilter(function(method, url) {
-					return ("/anylocation/manifest.json" !== url && !/should\/cause\/an\/error\/library-preload\.json$/.test(url));
+					return ("/anylocation/manifest.json?sap-language=EN" !== url && !/should\/cause\/an\/error\/library-preload\.json$/.test(url));
 				});
 
 				oServer.autoRespond = true;
-				oServer.respondWith("GET", "/anylocation/manifest.json", [
+				oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
 					200,
 					{
 						"Content-Type": "application/json"
