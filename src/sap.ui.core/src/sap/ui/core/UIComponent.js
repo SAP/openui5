@@ -482,6 +482,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 * This method has to be overwritten in the implementation of the component
 	 * if the root view is not declared in the component metadata.
 	 *
+	 * @return {sap.ui.core.mvc.View} instance of the view specified in the metadata or in the descriptor file
 	 * @public
 	 */
 	UIComponent.prototype.createContent = function() {
