@@ -8,13 +8,12 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * Checks whether a given sString ends with sEndString
+	 * Checks whether a given <code>sString</code> ends with <code>sEndString</code>
 	 * respecting the case of the strings.
 	 *
-	 * @param {string} sString The string to be checked
+	 * @param {string} sString String to be checked
 	 * @param {string} sEndString The end string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @returns {boolean} Whether <code>sString</code> ends with <code>sEndString</code>
 	 * @see jQuery.sap.endsWithIgnoreCase
 	 * @public
 	 */
@@ -27,13 +26,12 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Checks whether a given sString ends with sEndString
+	 * Checks whether a given <code>sString</code> ends with <code>sEndString</code>
 	 * ignoring the case of the strings.
 	 *
-	 * @param {string} sString the string to be checked
-	 * @param {string} sEndString the end string to be searched
-	 * @return true if sString ends with sEndString
-	 * @type {boolean}
+	 * @param {string} sString String to be checked
+	 * @param {string} sEndString The end string to be searched
+	 * @returns {boolean} Whether <code>sString</code> ends with <code>sEndString</code>
 	 * @see jQuery.sap.endsWith
 	 * @public
 	 */
@@ -47,13 +45,12 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Checks whether a given sString starts with sStartString
+	 * Checks whether a given <code>sString</code> starts with <code>sStartString</code>
 	 * respecting the case of the strings.
 	 *
-	 * @param {string} sString The string to be checked
+	 * @param {string} sString String to be checked
 	 * @param {string} sStartString The start string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @returns {boolean} Whether <code>sString</code> starts with <code>sStartString</code>
 	 * @see jQuery.sap.startsWithIgnoreCase
 	 * @public
 	 */
@@ -68,13 +65,12 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Checks whether a given sString starts with sStartString
-	 * ignoring the case of the strings.
+	 * Checks whether a given <code>sString</code> starts with <code>sStartString</code>
+	 * ignoring the case of both strings.
 	 *
-	 * @param {string} sString The string to be checked
+	 * @param {string} sString String to be checked
 	 * @param {string} sStartString The start string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @returns {boolean} Whether <code>sString</code> starts with <code>sStartString</code>
 	 * @see jQuery.sap.startsWith
 	 * @public
 	 */
@@ -88,14 +84,15 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Converts a character of the string to upper case.<br/>
-	 * If no pos is defined as second parameter or pos is negative or greater than sString the first character will be
-	 * converted into upper case. the first char position is 0.
+	 * Converts one character of the string to upper case, at a given position.
 	 *
-	 * @param {string} sString The string to be checked
-	 * @param {int} iPos the position of the character that will be uppercase
-	 * @return The string with the firstletter in upper case
-	 * @type {string}
+	 * If no position is given or when it is negative or beyond the last character
+	 * of <code>sString</code>, then the first character will be converted to upper case.
+	 * The first character position is 0.
+	 *
+	 * @param {string} sString String for which one character should be converted
+	 * @param {int} iPos Position of the character that should be converted
+	 * @returns {string} String with the converted character
 	 * @public
 	 * @SecPassthrough {0|return}
 	 */
@@ -114,17 +111,21 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Pads a string on the left side until is has the given length.<br/>
+	 * Pads a string on the left side until is has at least the given length.
 	 *
-	 * @param {string} sString The string to be padded
-	 * @param {string} sPadChar The char to use for the padding
-	 * @param {int} iLength the target length of the string
-	 * @return The padded string
-	 * @type {string}
+	 * The method always adds full copies of <code>sPadChar</code> to the given string.
+	 * When <code>sPadChar</code> has a length > 1, the length of the returned string
+	 * actually might be greater than <code>iLength</code>.
+	 *
+	 * @param {string} sString String to be padded
+	 * @param {string} sPadChar Char to use for the padding
+	 * @param {int} iLength Target length of the string
+	 * @returns {string} The padded string
 	 * @public
 	 * @SecPassthrough {0 1|return}
 	 */
 	jQuery.sap.padLeft = function padLeft(sString, sPadChar, iLength) {
+		jQuery.sap.assert(typeof sPadChar === 'string' && sPadChar, "padLeft: sPadChar must be a non-empty string");
 		if (!sString) {
 			sString = "";
 		}
@@ -135,17 +136,21 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Pads a string on the right side until is has the given length.<br/>
+	 * Pads a string on the right side until is has at least the given length.
 	 *
-	 * @param {string} sString The string to be padded
-	 * @param {string} sPadChar The char to use for the padding
-	 * @param {int} iLength the target length of the string
-	 * @return The padded string
-	 * @type {string}
+	 * The method always adds full copies of <code>sPadChar</code> to the given string.
+	 * When <code>sPadChar</code> has a length > 1, the length of the returned string
+	 * actually might be greater than <code>iLength</code>.
+	 *
+	 * @param {string} sString String to be padded
+	 * @param {string} sPadChar Char to use for the padding
+	 * @param {int} iLength Target length of the string
+	 * @returns {string} The padded string
 	 * @public
 	 * @SecPassthrough {0 1|return}
 	 */
 	jQuery.sap.padRight = function padRight(sString, sPadChar, iLength) {
+		jQuery.sap.assert(typeof sPadChar === 'string' && sPadChar, "padRight: sPadChar must be a non-empty string");
 		if (!sString) {
 			sString = "";
 		}
@@ -159,11 +164,10 @@ sap.ui.define(['jquery.sap.global'],
 	var rCamelCase = /-(.)/ig;
 
 	/**
-	 * Transforms a hyphen separated string to an camel case string.
+	 * Transforms a hyphen separated string to a camel case string.
 	 *
 	 * @param {string} sString Hyphen separated string
-	 * @return The transformed string
-	 * @type {string}
+	 * @returns {string} The transformed string
 	 * @since 1.7.0
 	 * @public
 	 * @SecPassthrough {0|return}
@@ -181,8 +185,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Transforms a camel case string into a hyphen separated string.
 	 *
 	 * @param {string} sString camel case string
-	 * @return The transformed string
-	 * @type {string}
+	 * @returns {string} The transformed string
 	 * @since 1.15.0
 	 * @public
 	 * @SecPassthrough {0|return}
@@ -197,10 +200,22 @@ sap.ui.define(['jquery.sap.global'],
 	var rEscapeRegExp = /[[\]{}()*+?.\\^$|]/g;
 
 	/**
-	 * This function escapes the reserved letters in Regular Expression
-	 * @param {string} sString string to escape
-	 * @return The escaped string
-	 * @type {string}
+	 * Escapes all characters that would have a special meaning in a regular expression.
+	 *
+	 * This method can be used when a string with arbitrary content has to be integrated
+	 * into a regular expression and when the whole string should match literally.
+	 *
+	 * Example:
+	 * <pre>
+	 *   var text = "E=m*c^2"; // text to search
+	 *   var search = "m*c";   // text to search for
+	 *
+	 *   text.match( new RegExp(                         search  ) ); // [ "c" ]
+	 *   text.match( new RegExp( jQuery.sap.escapeRegExp(search) ) ); // [ "m*c" ]
+	 * </pre>
+	 *
+	 * @param {string} sString String to escape
+	 * @returns {string} The escaped string
 	 * @since 1.9.3
 	 * @public
 	 * @SecPassthrough {0|return}
@@ -248,7 +263,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sPattern A pattern string in the described syntax
 	 * @param {any[]} [aValues=[]] The values to be used instead of the placeholders.
 	 *
-	 * @return {string} The formatted result string
+	 * @returns {string} The formatted result string
 	 * @since 1.12.5
 	 * @SecPassthrough {*|return}
 	 * @public
