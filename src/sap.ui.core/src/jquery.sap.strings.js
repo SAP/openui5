@@ -13,8 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} sString The string to be checked
 	 * @param {string} sEndString The end string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @return {boolean} True if sString ends with sEndString
 	 * @see jQuery.sap.endsWithIgnoreCase
 	 * @public
 	 */
@@ -32,8 +31,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} sString the string to be checked
 	 * @param {string} sEndString the end string to be searched
-	 * @return true if sString ends with sEndString
-	 * @type {boolean}
+	 * @return {boolean} true if sString ends with sEndString
 	 * @see jQuery.sap.endsWith
 	 * @public
 	 */
@@ -52,8 +50,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} sString The string to be checked
 	 * @param {string} sStartString The start string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @return {boolean} True if sString ends with sEndString
 	 * @see jQuery.sap.startsWithIgnoreCase
 	 * @public
 	 */
@@ -73,8 +70,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} sString The string to be checked
 	 * @param {string} sStartString The start string to be searched
-	 * @return True if sString ends with sEndString
-	 * @type {boolean}
+	 * @return {boolean} True if sString ends with sEndString
 	 * @see jQuery.sap.startsWith
 	 * @public
 	 */
@@ -94,8 +90,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} sString The string to be checked
 	 * @param {int} iPos the position of the character that will be uppercase
-	 * @return The string with the firstletter in upper case
-	 * @type {string}
+	 * @return {string} The string with the firstletter in upper case
 	 * @public
 	 * @SecPassthrough {0|return}
 	 */
@@ -119,8 +114,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sString The string to be padded
 	 * @param {string} sPadChar The char to use for the padding
 	 * @param {int} iLength the target length of the string
-	 * @return The padded string
-	 * @type {string}
+	 * @return {string} The padded string
 	 * @public
 	 * @SecPassthrough {0 1|return}
 	 */
@@ -140,8 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sString The string to be padded
 	 * @param {string} sPadChar The char to use for the padding
 	 * @param {int} iLength the target length of the string
-	 * @return The padded string
-	 * @type {string}
+	 * @return {string} The padded string
 	 * @public
 	 * @SecPassthrough {0 1|return}
 	 */
@@ -162,8 +155,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Transforms a hyphen separated string to an camel case string.
 	 *
 	 * @param {string} sString Hyphen separated string
-	 * @return The transformed string
-	 * @type {string}
+	 * @return {string} The transformed string
 	 * @since 1.7.0
 	 * @public
 	 * @SecPassthrough {0|return}
@@ -181,8 +173,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Transforms a camel case string into a hyphen separated string.
 	 *
 	 * @param {string} sString camel case string
-	 * @return The transformed string
-	 * @type {string}
+	 * @return {string} The transformed string
 	 * @since 1.15.0
 	 * @public
 	 * @SecPassthrough {0|return}
@@ -199,8 +190,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * This function escapes the reserved letters in Regular Expression
 	 * @param {string} sString string to escape
-	 * @return The escaped string
-	 * @type {string}
+	 * @return {string} The escaped string
 	 * @since 1.9.3
 	 * @public
 	 * @SecPassthrough {0|return}
