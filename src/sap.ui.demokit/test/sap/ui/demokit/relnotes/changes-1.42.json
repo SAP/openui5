@@ -4,7 +4,6 @@
 		"notes": [
 			{
 				"id": "96a2e84b1a5cd6c84d78bafc7b436bab7b689226",
-				"author": "Nikolay Vankov <nikolay.vankov@sap.com>",
 				"type": "FEATURE",
 				"text": "sap.m.LightBox: Initial implementation.",
 				"references": []
