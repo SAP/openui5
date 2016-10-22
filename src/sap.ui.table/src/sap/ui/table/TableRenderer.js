@@ -642,6 +642,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		if (iStartRow == 0) {
 			rm.addClass("sapUiTableCtrlFirstCol");
 		}
+		if (bHeader) {
+			rm.addClass("sapUiTableCHTHR"); // marker for the column header row
+		}
 		rm.writeClasses();
 		rm.write(">");
 

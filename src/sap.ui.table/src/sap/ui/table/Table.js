@@ -873,7 +873,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableCntWidth = oSapUiTableCnt.clientWidth;
 		}
 
-		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
+		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll:not(.sapUiTableCHT)");
 		if (oSapUiTableCtrlScroll) {
 			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.clientWidth;
 		}
@@ -883,7 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableRowHdrScrWidth = oSapUiTableRowHdrScr.clientWidth;
 		}
 
-		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr");
+		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
 		if (oCtrlScrDomRef) {
 			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
 		}
@@ -893,14 +893,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableHSbScrollLeft = oHsb.scrollLeft;
 		}
 
-		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlFixed");
+		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlScrFixed:not(.sapUiTableCHA) > .sapUiTableCtrlFixed");
 		if (oCtrlFixed) {
 			oSizes.tableCtrlFixedWidth = oCtrlFixed.clientWidth;
 		}
 
 		var iFixedColumnCount = this.getProperty("fixedColumnCount");
 		var iFixedHeaderWidthSum = 0;
-		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
+		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
 			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
