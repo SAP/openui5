@@ -1,12 +1,9 @@
-
 //************************************************************************
 // Helper Functions
 //************************************************************************
 
 jQuery.sap.require("sap.ui.table.TableUtils");
-var MenuUtils = sap.ui.table.TableUtils.Menu;
 var TableUtils = sap.ui.table.TableUtils;
-
 
 //************************************************************************
 // Test Code
@@ -22,11 +19,9 @@ QUnit.module("Misc", {
 });
 
 QUnit.test("Connection to TableUtils", function(assert) {
-	assert.ok(!!sap.ui.table.TableUtils.Menu, "MenuUtils namespace available");
-	assert.ok(sap.ui.table.TableUtils.Menu.TableUtils === sap.ui.table.TableUtils, "Dependency forwarding of TableUtils correct");
+	assert.ok(!!TableUtils.Menu, "MenuUtils namespace available");
+	assert.ok(TableUtils.Menu.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 });
-
-
 
 QUnit.module("Context Menus", {
 	beforeEach: function() {

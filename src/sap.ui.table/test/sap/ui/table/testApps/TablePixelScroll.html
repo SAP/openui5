@@ -14,7 +14,7 @@
     <!-- ********************************************************************** -->
     <script src="../shared-config.js"></script>
     <script id="sap-ui-bootstrap"
-           
+
             data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.unified"
             src="../../../../../resources/sap-ui-core.js"></script>
 
@@ -83,7 +83,7 @@
                         iScrollAutomationIntervalId = null;
                     } else {
                         iScrollAutomationIntervalId = window.setInterval(function() {
-                            var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+                            var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
                             oVsb.scrollTop = oVsb.scrollTop + iScrollSpeed;
                         }, 50);
                     }
@@ -100,7 +100,7 @@
                         iReverseScrollAutomationIntervalId = null;
                     } else {
                         iReverseScrollAutomationIntervalId = window.setInterval(function() {
-                            var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+                            var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
                             oVsb.scrollTop = oVsb.scrollTop - iScrollSpeed;
                         }, 50);
                     }
