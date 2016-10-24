@@ -8,6 +8,7 @@ charset = utf-8
 [*.{css,html,java,js,json,less,txt}]
 trim_trailing_whitespace = true
 end_of_line = lf
+tab_width = 4
 
 [pom.xml]
 trim_trailing_whitespace = true
