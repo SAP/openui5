@@ -320,8 +320,8 @@ sap.ui.require([
 				.withExactArgs(oBinding, sinon.match.array, 0, 1)
 				.returns(_SyncPromise.resolve(oDiff));
 
-			// Promise used instead of assert.async because only Promises prevent that Sinon
-			// restores the mocks immediately after the test function returned.
+			// Promise used instead of assert.async() because else Sinon restores the mocks
+			// immediately after the test function returns, but "fetchDiff" is called later.
 			return new Promise(function (resolve, reject) {
 				oBinding.attachRefresh(function (oEvent) {
 					var aContexts;
@@ -798,7 +798,7 @@ sap.ui.require([
 			oControl = new TestControl({models : this.oModel}),
 			sPath = "TEAM_2_EMPLOYEES",
 			oRange = {startIndex : 1, length : 3},
-			oPromise = createResult(oRange.length, 0, true);
+			oPromise = createSyncResult(oRange.length, 0, true);
 
 		// change event handler for initial read for list binding
 		function onChange() {
@@ -893,7 +893,7 @@ sap.ui.require([
 	QUnit.test("nested listbinding (deferred association)", function (assert) {
 		var oBinding,
 			oContext = Context.create(this.oModel, {}, "/TEAMS('4711')"),
-			oPromise = Promise.resolve();
+			oPromise = Promise.resolve(); //TODO not realistic!
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
@@ -1047,7 +1047,8 @@ sap.ui.require([
 
 			if (bRelative) {
 				oContextMock = this.mock(oContext);
-				oContextMock.expects("fetchValue").returns(createResult(2));
+				// Note: must be async, else no "change" event is fired!
+				oContextMock.expects("fetchValue").returns(createResult(2, 0, true));
 				oContextMock.expects("fetchValue").returns(oPromise);
 				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
@@ -1383,7 +1384,8 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
 			oListBindingMock = this.mock(oListBinding),
-			oReadPromise = createResult(2),
+			// Note: must be async, else no "change" event is fired!
+			oReadPromise = createResult(2, 0, true),
 			that = this;
 
 		oListBinding.setContext(oContext);
@@ -1422,7 +1424,8 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
 			oListBindingMock = this.mock(oListBinding),
-			oReadPromise = createResult(2),
+			// Note: must be async, else no "change" event is fired!
+			oReadPromise = createResult(2, 0, true),
 			that = this;
 
 		oListBinding.setContext(oContext);
@@ -2375,8 +2378,8 @@ sap.ui.require([
 	QUnit.test("Extended change detection, data read from cache", function (assert) {
 		var that = this;
 
-		// Promise used instead of assert.async because only Promises prevent that Sinon restores
-		// the mocks immediately after the test function returned. But fetchDiff is called later.
+		// Promise used instead of assert.async() because else Sinon restores the mocks immediately
+		// after the test function returns, but "fetchDiff" is called later.
 		return new Promise(function (resolve, reject) {
 			var oBinding,
 				oCacheMock = that.getCacheMock(),
@@ -2409,6 +2412,37 @@ sap.ui.require([
 
 			assert.strictEqual(aContexts.dataRequested, true);
 			assert.deepEqual(aContexts.diff, []);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts() calls fetchValue() and slices", function (assert) {
+		var that = this;
+
+		// Promise used instead of assert.async() because else Sinon restores the mocks immediately
+		// after the test function returns, but "fetchDiff" is called later.
+		// BEWARE: if test times out, mocks are NOT restored :-(
+		return new Promise(function (resolve, reject) {
+			var aData = createData(10, 0, true), // Note: oRange is ignored here!
+				oParentContext = Context.create(that.oModel, {}, "/TEAMS('4711')"),
+				oBinding = that.oModel.bindList("EMPLOYEES", oParentContext),
+				oRange = {start : 3, length : 2};
+
+			that.mock(_ODataHelper).expects("getReadRange")
+				.withExactArgs(sinon.match.same(oBinding.aContexts), oRange.start, oRange.length, 0)
+				.returns(oRange);
+			that.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+				.returns(_SyncPromise.resolve(aData));
+			that.mock(_ODataHelper).expects("fetchDiff")
+				.withExactArgs(sinon.match.same(oBinding),
+					aData.slice(oRange.start, oRange.start + oRange.length),
+					oRange.start, oRange.length)
+				.returns(Promise.resolve());
+
+			oBinding.attachChange(resolve); // finish the test
+
+			// code under test
+			oBinding.getContexts(oRange.start, oRange.length);
 		});
 	});
 
