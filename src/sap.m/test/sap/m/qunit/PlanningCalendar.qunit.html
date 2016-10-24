@@ -984,16 +984,6 @@
 			equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 			bStartDateChange = false;
-			// via today button
-			qutils.triggerEvent("tap", "PC1-Today");
-			ok(bStartDateChange, "startDateChange fired");
-			oStartDate = oPC1.getStartDate();
-			oExpectedDate = new Date();
-			equal(oExpectedDate.getFullYear(), oStartDate.getFullYear(), "Start date is OK");
-			equal(oExpectedDate.getMonth(), oStartDate.getMonth(), "Start date is OK");
-			equal(oExpectedDate.getDate(), oStartDate.getDate(), "Start date is OK");
-
-			bStartDateChange = false;
 
 			//change view
 			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
@@ -1009,6 +999,17 @@
 
 			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
 			sap.ui.getCore().applyChanges();
+
+			bStartDateChange = false;
+			// via today button
+			qutils.triggerEvent("tap", "PC1-Today");
+			ok(bStartDateChange, "startDateChange fired");
+			oStartDate = oPC1.getStartDate();
+			oExpectedDate = new Date();
+			equal(oExpectedDate.getFullYear(), oStartDate.getFullYear(), "Start date is OK");
+			equal(oExpectedDate.getMonth(), oStartDate.getMonth(), "Start date is OK");
+			equal(oExpectedDate.getDate(), oStartDate.getDate(), "Start date is OK");
+			// If more tests are about to be added here, please consider that last date is the current one.
 
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
