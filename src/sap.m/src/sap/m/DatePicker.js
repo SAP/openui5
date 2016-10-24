@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * @returns {string} the value of property <code>value</code>
 	 * @public
-	 * @name sap.m.DateRangeSelection#getValue
+	 * @name sap.m.DatePicker#getValue
 	 * @function
 	 */
 
@@ -387,7 +387,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 * @param {string} sValue The new value of the input.
 	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.m.DateRangeSelection#setValue
+	 * @name sap.m.DatePicker#setValue
 	 * @function
 	 */
 	DatePicker.prototype.setValue = function(sValue) {
