@@ -5,11 +5,10 @@
 
 	<title>Popover in SVG - sap.m</title>
 
+	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 	</script>
 
     <style>
@@ -30,7 +29,7 @@
         }
     </style>
 
-	<script type="text/javascript">
+	<script>
 		var oPopover = new sap.m.Popover("pop1", {
 			placement: sap.m.PlacementType.PreferredBottomOrFlip,
 			title: "Currect Selection",
