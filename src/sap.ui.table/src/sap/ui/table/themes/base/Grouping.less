@@ -208,6 +208,10 @@ html[dir=rtl] {
 	height: 1px;
 }
 
+.sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableFixedFirstBottomRow::before {
+	border-top-color: @sapUiListTableFixedBorder;
+}
+
 .sapUiTableGroupShield {
 	position: absolute;
 	top: 0px;
@@ -241,6 +245,15 @@ html[dir=rtl] {
 .sapUiTableRowHdr.sapUiTableGroupHeader,
 .sapUiTableGroupMode .sapUiTableRowHdr:focus {
 	outline: 0px;
+}
+
+.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeader > .sapUiTableTDDummy {
+	border-bottom: 1px solid @sapUiListBorderColor;
+}
+
+.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableFixedPreBottomRow,
+.sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeader.sapUiTableFixedPreBottomRow > .sapUiTableTDDummy {
+	border-bottom-color: @sapUiListTableFixedBorder;
 }
 
 

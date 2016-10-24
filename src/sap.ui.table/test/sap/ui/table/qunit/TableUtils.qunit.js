@@ -323,6 +323,30 @@ QUnit.test("getRowColCell", function(assert) {
 	assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 1,1");
 });
 
+QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
+	function initTest(iFixedBottomCount, iRowCount) {
+		oTable.setFixedBottomRowCount(iFixedBottomCount);
+		oTable.setVisibleRowCount(iRowCount);
+		sap.ui.getCore().applyChanges();
+	}
+
+	initTest(0, iNumberOfRows - 3);
+	assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), -1, "No fixed buttom rows");
+
+	var iVisibleRows,
+		iFixedBottomRows = 2;
+	for (var i = 0; i < 10; i++) {
+		iVisibleRows = iNumberOfRows - 3 + i;
+		initTest(iFixedBottomRows, iVisibleRows);
+
+		if (i <= 3) {
+			assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iVisibleRows - iFixedBottomRows, "Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+		} else {
+			assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iNumberOfRows - iFixedBottomRows, "Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+		}
+	}
+});
+
 QUnit.test("getColumnIndexOfFocusedCell", function(assert) {
 	oTable.getColumns()[1].setVisible(false);
 	sap.ui.getCore().applyChanges();
