@@ -4,27 +4,24 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding</title>
 
-    <script id="sap-ui-bootstrap"
-        type="text/javascript"
-        src="../../../../../../resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_bluecrystal"
-	>
-    </script>
+	<script id="sap-ui-bootstrap"
+	src="../../../../../../resources/sap-ui-core.js">
+	</script>
 
-	<script type="text/javascript">
+	<script>
 
-  		 try{
+		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
 		}catch(e){
 			alert("This test page requires the library 'sap.ui.commons' which is not available.");
 			throw(e);
 		}
- 		 try{
- 			sap.ui.getCore().loadLibrary("sap.ui.layout");
- 		}catch(e){
- 			alert("This test page requires the library 'sap.ui.layout' which is not available.");
- 			throw(e);
- 		}
+		try{
+			sap.ui.getCore().loadLibrary("sap.ui.layout");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.layout' which is not available.");
+			throw(e);
+		}
 
 		function createTreeData(length, depth) {
 			var oData = {

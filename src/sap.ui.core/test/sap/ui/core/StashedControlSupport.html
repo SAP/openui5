@@ -6,7 +6,8 @@
 
 	<title>XMLView - sap.ui.core.mvc</title>
 
-	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m">
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m">
 	</script>
 
 	<script id="myview" type="text/xml">
@@ -498,7 +499,7 @@
 		</core:View>
 	</script>
 
-	<script type="text/javascript">
+	<script>
 		var myController = sap.ui.controller("mycontroller", {
 			onInit: function() {
 				jQuery.sap.log.debug("in controller onInit");
