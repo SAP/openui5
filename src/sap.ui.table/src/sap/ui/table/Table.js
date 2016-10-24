@@ -2781,36 +2781,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	// =============================================================================
-	// COLUMN EVENT HANDLING
-	// =============================================================================
-
-	/**
-	 *
-	 * @param oColumn
-	 * @param sWidth
-	 * @private
-	 */
-	Table.prototype._updateColumnWidth = function(oColumn, sWidth, bFireEvent) {
-		// forward the event
-		var bExecuteDefault = true;
-		if (bFireEvent) {
-			bExecuteDefault = this.fireColumnResize({
-				column: oColumn,
-				width: sWidth
-			});
-		}
-
-		// set the width of the column (when not cancelled)
-		if (bExecuteDefault) {
-			oColumn.setProperty("width", sWidth, true);
-			this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').css('width', sWidth);
-		}
-
-		return bExecuteDefault;
-	};
-
-
-	// =============================================================================
 	// SORTING & FILTERING
 	// =============================================================================
 

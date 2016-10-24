@@ -641,16 +641,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 
 					if (iWidthChange !== 0) {
 						var bExecuteDefault = true;
+						var sWidth = iNewWidth + "px";
 
 						if (bFireEvent) {
 							bExecuteDefault = oTable.fireColumnResize({
 								column: oResizableColumn,
-								width: iNewWidth
+								width: sWidth
 							});
 						}
 
 						if (bExecuteDefault) {
-							oResizableColumn.setWidth(iNewWidth + "px");
+							oResizableColumn.setWidth(sWidth);
 							bResizeWasPerformed = true;
 						}
 					}
