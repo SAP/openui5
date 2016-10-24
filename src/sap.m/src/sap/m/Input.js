@@ -14,13 +14,53 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	/**
 	 * Constructor for a new Input.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Enables users to input data.
-	 * @extends sap.m.InputBase
+	 * <strong><em>Overview</em></strong>
+	 * <br /><br />
+	 * A text input field allows you to enter and edit text or numeric values in one line.
+	 * To easily enter a valid value, you can enable the autocomplete suggestion feature and the value help option.
+	 * <br><br>
+	 * <strong>Guidelines:</strong>
+	 * <ul>
+	 * <li> Always provide a meaningful label for any input field </li>
+	 * <li> Limit the length of the input field. This will visually emphasise the constraints for the field. </li>
+	 * <li> Do not use the <code>placeholder</code> property as a label.</li>
+	 * <li> Use the <code>description</code> property only for small fields with no placeholders (i.e. for currencies).</li>
+	 * </ul>
+	 * <strong><em>Structure</em></strong>
+	 * <br><br>
+	 * The controls inherits from {@link sap.m.InputBase} which controls the core properties like:
+	 * <ul>
+	 * <li> editable / read-only </li>
+	 * <li> enabled / disabled</li>
+	 * <li> placeholder</li>
+	 * <li> text direction</li>
+	 * <li> value states</li>
+	 * </ul>
+	 * To aid the user during input, you can enable value help (<code>showValueHelp</code>) or autocomplete (<code>showSuggestion</code>).
+	 * <strong>Value help</strong> will open a new dialog where you can refine your input.
+	 * <strong>Autocomplete</strong> has three types of suggestions:
+	 * <ul>
+	 * <li> Single value - a list of suggestions of type <code>sap.ui.core.Item</code> or <code>sap.ui.core.ListItem</code> </li>
+	 * <li> Two values - a list of two suggestions (ID and description) of type <code>sap.ui.core.Item</code> or <code>sap.ui.core.ListItem</code> </li>
+	 * <li> Tabular suggestions of type <code>sap.m.ColumnListItem</code> </li>
+	 * </ul>
+	 * The suggestions are stored in two aggregations <code>suggestionItems</code> (for single and double values) and <code>suggestionRows</code> (for tabular values).
 	 *
+	 * <br><br>
+	 * <strong><em>Usage</em></strong>
+	 * <br><br>
+	 * <strong>When to use:</strong>
+	 * Use the control for short inputs like emails, phones, passwords, fields for assisted value selection.
+	 *
+	 * <strong>When not to use:</strong>
+	 * Don't use the control for long texts, dates, designated search fields, fields for multiple selection.
+	 * <br><br>
+	 *
+	 * @extends sap.m.InputBase
 	 * @author SAP SE
 	 * @version ${version}
 	 *
