@@ -44,7 +44,8 @@
 					"BusinessPartnerID" : "0100000007",
 					"CompanyName" : "Laurent",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "149744423"
+					"PhoneNumber" : "149744423",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -91,7 +92,8 @@
 					"BusinessPartnerID" : "0100000008",
 					"CompanyName" : "AVANTEL",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "7257716"
+					"PhoneNumber" : "7257716",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -138,7 +140,8 @@
 					"BusinessPartnerID" : "0100000009",
 					"CompanyName" : "Telecomunicaciones Star",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "1133557799"
+					"PhoneNumber" : "1133557799",
+					"BP_2_CONTACT" : []
 				}
 			}
 		}]

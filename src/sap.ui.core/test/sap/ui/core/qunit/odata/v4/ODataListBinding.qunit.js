@@ -253,8 +253,6 @@ sap.ui.require([
 		// code under test: reset called from ODLB constructor
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 
-		assert.deepEqual(oBinding.aPreviousContexts, []);
-
 		aPreviousContexts = oBinding.aContexts;
 		// set members which should be reset to arbitrary values
 		oBinding.createContexts({start : 0, length : 2}, 2, ChangeReason.Change, false);
@@ -268,7 +266,10 @@ sap.ui.require([
 		// code under test
 		oBinding.reset();
 
-		assert.strictEqual(oBinding.aPreviousContexts, aPreviousContexts);
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 3);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/0"], aPreviousContexts[0]);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/1"], aPreviousContexts[1]);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/3"], aPreviousContexts[3]);
 		assert.deepEqual(oBinding.aContexts, []);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
 		assert.strictEqual(oBinding.iCurrentBegin, 0);
@@ -341,6 +342,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
 
 		// code under test
@@ -356,6 +358,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
 
 		//no call to buildOrderbyOption for binding with relative path
@@ -2492,18 +2495,22 @@ sap.ui.require([
 			oContext2 = {},
 			oContext3 = {},
 			oContextMock = this.mock(Context),
-			aPreviousContexts = [{destroy : function () {}}, oContext1, oContext2],
+			mPreviousContextsByPath = {
+				"/EMPLOYEES/0" : {destroy : function () {}},
+				"/EMPLOYEES/1" : oContext1,
+				"/EMPLOYEES/2" : oContext2
+			},
 			iResultLength = 3,
 			oRange = {start : 1, length : 3};
 
-		oBinding.aPreviousContexts = aPreviousContexts;
+		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES/3", 3)
 			.returns(oContext3);
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(aPreviousContexts[0]).expects("destroy").withExactArgs();
+		this.mock(mPreviousContextsByPath["/EMPLOYEES/0"]).expects("destroy").withExactArgs();
 
 		// code under test
 		oBinding.createContexts(oRange, iResultLength, "Refresh", true/*bDataRequested*/);
@@ -2511,7 +2518,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.aContexts[1], oContext1);
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
 		assert.strictEqual(oBinding.aContexts[3], oContext3);
-		assert.deepEqual(oBinding.aPreviousContexts, []);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 	});
 
 	//*********************************************************************************************
