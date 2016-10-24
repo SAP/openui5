@@ -341,12 +341,12 @@ QUnit.asyncTest("Columnheader", function(assert){
 
 QUnit.test("Scrollbar", function(assert){
 	var oEvent = jQuery.Event({type : "mousedown"});
-	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+	oEvent.target = oTable._getScrollExtension().getHorizontalScrollbar();
 	oEvent.button = 0
 	jQuery(oEvent.target).trigger(oEvent);
 	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on horizontal scrollbar");
 	oEvent = jQuery.Event({type : "mousedown"});
-	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+	oEvent.target = oTable._getScrollExtension().getVerticalScrollbar();
 	oEvent.button = 0
 	jQuery(oEvent.target).trigger(oEvent);
 	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on vertical scrollbar");
