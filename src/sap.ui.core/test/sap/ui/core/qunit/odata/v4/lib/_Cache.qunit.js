@@ -1404,7 +1404,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update, hasPendingChanges and refresh", function (assert) {
+	QUnit.test("update, hasPendingChanges and resetChanges", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -1429,11 +1429,10 @@ sap.ui.require([
 			assert.ok(false);
 		}
 
-		function rejected(oError) {
-			assert.strictEqual(oError.canceled, true);
+		function rejected(oError0) {
+			assert.strictEqual(oError0, oError);
 		}
 
-		oError.canceled = true;
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
 				undefined, undefined)
@@ -1470,7 +1469,7 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/1"), false);
 
 			// code under test
-			oCache.refresh();
+			oCache.resetChanges("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -2164,7 +2163,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: update, hasPendingChanges and refresh", function (assert) {
+	QUnit.test("SingleCache: update, hasPendingChanges and resetChanges", function (assert) {
 		var oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
 			oPatchPromise1 = Promise.reject(oError),
@@ -2220,7 +2219,7 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges("bar"), false);
 
 			// code under test
-			oCache.refresh();
+			oCache.resetChanges("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -2486,3 +2485,4 @@ sap.ui.require([
 	});
 });
 //TODO: resetCache if error in update?
+//TODO: always delete the cache when refreshing a binding and remove method refresh in the caches

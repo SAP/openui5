@@ -205,24 +205,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Removes all pending PATCH requests.
-	 *
-	 * @param {_Cache} oCache The cache
-	 */
-	function removePatchRequests(oCache) {
-		var i,
-			sPath,
-			aPromises;
-
-		for (sPath in oCache.mPatchRequests) {
-			aPromises = oCache.mPatchRequests[sPath];
-			for (i = 0; i < aPromises.length; i++) {
-				oCache.oRequestor.removePatch(aPromises[i]);
-			}
-		}
-	}
-
-	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
 	 * A refresh cancels all pending requests. Their promises are rejected with an error that has a
@@ -279,13 +261,13 @@ sap.ui.define([
 	 *
 	 * @param {_Cache} oCache The cache
 	 * @param {string} sPath The path
+	 * @throws {Error}
+	 *   If one of the requests is currently running
 	 */
 	function resetChanges(oCache, sPath) {
 		var i,
 			sRequestPath,
-			aPromises,
-			sTransientGroup =
-				oCache.aElements && oCache.aElements[-1] && oCache.aElements[-1]["@$ui5.transient"];
+			aPromises;
 
 		for (sRequestPath in oCache.mPatchRequests) {
 			if (isSubPath(sRequestPath, sPath)) {
@@ -295,9 +277,6 @@ sap.ui.define([
 				}
 				delete oCache.mPatchRequests[sRequestPath];
 			}
-		}
-		if (sTransientGroup && sPath === "") {
-			oCache.oRequestor.removePost(sTransientGroup, oCache.aElements[-1]);
 		}
 	}
 
@@ -677,13 +656,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
+	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
+	 * pending changes from {@link #update} or {@link #create}.
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
 		this.iMaxElements = Infinity;
 		this.aElements = [];
-		removePatchRequests(this);
 	};
 
 	/**
@@ -691,8 +670,19 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   The path
+	 * @throws {Error}
+	 *   If there is a change which has been sent to the server and for which there is no response
+	 *   yet.
 	 */
 	CollectionCache.prototype.resetChanges = function (sPath) {
+		var sTransientGroup;
+
+		if (sPath === "" && this.aElements[-1]) {
+			sTransientGroup = this.aElements[-1]["@$ui5.transient"];
+			if (sTransientGroup) {
+				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
+			}
+		}
 		resetChanges(this, sPath);
 	};
 
@@ -959,7 +949,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
+	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
+	 * pending changes from {@link #update} or {@link #create}.
 	 *
 	 * @throws {Error}
 	 *   If the cache is using POST requests
@@ -969,13 +960,15 @@ sap.ui.define([
 			throw new Error("Refresh not allowed when using POST");
 		}
 		this.oPromise = undefined;
-		removePatchRequests(this);
 	};
 
 	/**
 	 * Resets all pending changes below the given path.
 	 * @param {string} [sPath]
 	 *   The path
+	 * @throws {Error}
+	 *   If there is a change which has been sent to the server and for which there is no response
+	 *   yet.
 	 */
 	SingleCache.prototype.resetChanges = function (sPath) {
 		resetChanges(this, sPath);
