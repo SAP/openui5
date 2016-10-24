@@ -1544,6 +1544,7 @@
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable._getSanitizedFirstVisibleRow(true), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		oTable.setVisibleRowCount(250);
+		sap.ui.getCore().applyChanges();
 		oTable._updateFixedBottomRows();
 		assert.ok(oTable._iBindingLength < oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
 		oTable.setVisibleRowCount(7);

@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
 				if (oColumn._iNewWidth) {
-					TableUtils.Column.resizeColumn(oTable, iColIndex, oColumn._iNewWidth);
+					TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), oColumn._iNewWidth);
 					delete oColumn._iNewWidth;
 					bResized = true;
 				}

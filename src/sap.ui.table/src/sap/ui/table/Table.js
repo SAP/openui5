@@ -1234,24 +1234,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oDomRef && iFixedBottomRows > 0) {
 			var $sapUiTableFixedPreBottomRow = jQuery(oDomRef).find(".sapUiTableFixedPreBottomRow");
 			$sapUiTableFixedPreBottomRow.removeClass("sapUiTableFixedPreBottomRow");
+			var $sapUiTableFixedFirstBottomRow = jQuery(oDomRef).find(".sapUiTableFixedFirstBottomRow");
+			$sapUiTableFixedFirstBottomRow.removeClass("sapUiTableFixedFirstBottomRow");
 
-			var oBinding = this.getBinding("rows");
+			var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedButtomRowIndex(this);
+			var aRows = this.getRows();
+			var $rowDomRefs;
 
-			if (oBinding) {
-				var iVisibleRowCount = this.getVisibleRowCount();
-				var bIsPreBottomRow = false;
-				var aRows = this.getRows();
-				var iFirstVisibleRow = this._getSanitizedFirstVisibleRow();
-				for (var i = 0; i < aRows.length; i++) {
-					var $rowDomRefs = aRows[i].getDomRefs(true);
-					if (this._iBindingLength >= iVisibleRowCount) {
-						bIsPreBottomRow = (i == iVisibleRowCount - iFixedBottomRows - 1);
-					} else {
-						bIsPreBottomRow = (iFirstVisibleRow + i) == (this._iBindingLength - iFixedBottomRows - 1) && (iFirstVisibleRow + i) < this._iBindingLength;
-					}
-
-					$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
-				}
+			if (iFirstFixedButtomRowIndex >= 0 && iFirstFixedButtomRowIndex < aRows.length) {
+				$rowDomRefs = aRows[iFirstFixedButtomRowIndex].getDomRefs(true);
+				$rowDomRefs.row.addClass("sapUiTableFixedFirstBottomRow", true);
+			}
+			if (iFirstFixedButtomRowIndex >= 1 && iFirstFixedButtomRowIndex < aRows.length) {
+				$rowDomRefs = aRows[iFirstFixedButtomRowIndex - 1].getDomRefs(true);
+				$rowDomRefs.row.addClass("sapUiTableFixedPreBottomRow", true);
 			}
 		}
 	};
@@ -2777,36 +2773,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._iSourceRowIndex = undefined;
 
-	};
-
-
-	// =============================================================================
-	// COLUMN EVENT HANDLING
-	// =============================================================================
-
-	/**
-	 *
-	 * @param oColumn
-	 * @param sWidth
-	 * @private
-	 */
-	Table.prototype._updateColumnWidth = function(oColumn, sWidth, bFireEvent) {
-		// forward the event
-		var bExecuteDefault = true;
-		if (bFireEvent) {
-			bExecuteDefault = this.fireColumnResize({
-				column: oColumn,
-				width: sWidth
-			});
-		}
-
-		// set the width of the column (when not cancelled)
-		if (bExecuteDefault) {
-			oColumn.setProperty("width", sWidth, true);
-			this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').css('width', sWidth);
-		}
-
-		return bExecuteDefault;
 	};
 
 
