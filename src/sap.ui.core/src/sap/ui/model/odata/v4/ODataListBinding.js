@@ -667,7 +667,9 @@ sap.ui.define([
 						that.fireDataRequested();
 				});
 			} else {
-				oPromise = oContext.fetchValue(this.sPath);
+				oPromise = oContext.fetchValue(this.sPath).then(function (aResult) {
+					return aResult.slice(oRange.start, oRange.start + oRange.length);
+				});
 			}
 			oPromise.then(function (vResult) {
 				var aResult,
