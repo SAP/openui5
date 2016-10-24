@@ -755,6 +755,10 @@ sap.ui.define([
 	/**
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
 	 *
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
+	 *
 	 * @public
 	 * @since 1.40.1
 	 */
