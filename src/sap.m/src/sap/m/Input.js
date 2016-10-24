@@ -405,6 +405,94 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	/**
+	 * Sets selection item.
+	 *
+	 * @param {sap.ui.core.Item} oItem Selected item
+	 *
+	 * @private
+	 */
+	Input.prototype.setSelectionItem = function (oItem) {
+		var iCount = this._iSetCount,
+			sNewValue;
+
+		// fire suggestion item select event
+		this.fireSuggestionItemSelected({
+			selectedItem: oItem
+		});
+
+		// choose which field should be used for the value
+		if (iCount !== this._iSetCount) {
+			// if the event handler modified the input value we take this one as new value
+			sNewValue = this.getValue();
+		} else {
+			// otherwise use title
+			sNewValue = oItem.getText();
+		}
+
+		// update the input field
+		if (this._bUseDialog) {
+			this._oPopupInput.setValue(sNewValue);
+			this._oPopupInput._doSelect();
+		} else {
+			// call _getInputValue to apply the maxLength to the typed value
+			this._$input.val(this._getInputValue(sNewValue));
+			this.onChange();
+		}
+		this._iPopupListSelectedIndex = -1;
+		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+			this._closeSuggestionPopup();
+		}
+		if (!sap.ui.Device.support.touch) {
+			this._doSelect();
+		}
+	};
+
+	/**
+	 * Sets selection item.
+	 *
+	 * @param {sap.m.ColumnListItem} oListItem Selected item
+	 *
+	 * @private
+	 */
+	Input.prototype.setSelectionRow = function (oListItem) {
+		var iCount = this._iSetCount,
+			sNewValue;
+
+		// fire suggestion item select event
+		this.fireSuggestionItemSelected({
+			selectedRow : oListItem
+		});
+
+		// choose which field should be used for the value
+		if (iCount !== this._iSetCount) {
+			// if the event handler modified the input value we take this one as new value
+			sNewValue = this.getValue();
+		} else {
+			// for tabular suggestions we call a result filter function
+			sNewValue = this._fnRowResultFilter(oListItem);
+		}
+
+		// update the input field
+		if (this._bUseDialog) {
+			this._oPopupInput.setValue(sNewValue);
+			this._oPopupInput._doSelect();
+		} else {
+			// call _getInputValue to apply the maxLength to the typed value
+			this._$input.val(this._getInputValue(sNewValue));
+			this.onChange();
+		}
+		this._iPopupListSelectedIndex = -1;
+
+		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+			this._closeSuggestionPopup();
+		}
+
+		if (!sap.ui.Device.support.touch) {
+			this._doSelect();
+		}
+	};
+
+	/**
 	 * Returns/Instantiates the value help icon control when needed
 	 * @private
 	 */
@@ -795,13 +883,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this.cancelPendingSuggest();
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
-			if (this._iPopupListSelectedIndex >= 0) {
-				this._fireSuggestionItemSelectedEvent();
-				this._doSelect();
+			var oSelectedItem = this._oList.getSelectedItem();
+			if (oSelectedItem) {
+				if (this._hasTabularSuggestions()){
+					this.setSelectionRow(oSelectedItem, true);
+				} else {
+					this.setSelectionItem(oSelectedItem._oItem, true);
+				}
+			} else {
+				if (this._iPopupListSelectedIndex >= 0) {
+					this._fireSuggestionItemSelectedEvent();
+					this._doSelect();
 
-				this._iPopupListSelectedIndex = -1;
+					this._iPopupListSelectedIndex = -1;
+				}
+				this._closeSuggestionPopup();
 			}
-			this._closeSuggestionPopup();
 		}
 
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
@@ -1293,43 +1390,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					mode : sap.m.ListMode.SingleSelectMaster,
 					rememberSelections : false,
 					itemPress : function(oEvent) {
-						var oListItem = oEvent.getParameter("listItem"),
-							iCount = oInput._iSetCount,
-							sNewValue;
-
-						// fire suggestion item select event
-						oInput.fireSuggestionItemSelected({
-							selectedItem: oListItem._oItem
-						});
-
-						// choose which field should be used for the value
-						if (iCount !== oInput._iSetCount) {
-							// if the event handler modified the input value we take this one as new value
-							sNewValue = oInput.getValue();
-						} else if (oListItem instanceof sap.m.DisplayListItem) {
-							// use label for two value suggestions
-							sNewValue = oListItem.getLabel();
-						} else {
-							// otherwise use title
-							sNewValue = oListItem.getTitle();
-						}
-
-						// update the input field
-						if (oInput._bUseDialog) {
-							oInput._oPopupInput.setValue(sNewValue);
-							oInput._oPopupInput._doSelect();
-						} else {
-							// call _getInputValue to apply the maxLength to the typed value
-							oInput._$input.val(oInput._getInputValue(sNewValue));
-							oInput.onChange();
-						}
-						oInput._iPopupListSelectedIndex = -1;
-						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
-							oInput._closeSuggestionPopup();
-						}
-						if (!sap.ui.Device.support.touch) {
-							oInput._doSelect();
-						}
+						var oListItem = oEvent.getParameter("listItem");
+						oInput.setSelectionItem(oListItem._oItem);
 					}
 				});
 			} else {
@@ -1610,43 +1672,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				enableBusyIndicator: false,
 				rememberSelections : false,
 				selectionChange: function (oEvent) {
-					var oInput = that,
-						iCount = oInput._iSetCount,
-						oSelectedListItem = oEvent.getParameter("listItem"),
-						sNewValue;
-
-					// fire suggestion item select event
-					that.fireSuggestionItemSelected({
-						selectedRow : oSelectedListItem
-					});
-
-					// choose which field should be used for the value
-					if (iCount !== oInput._iSetCount) {
-						// if the event handler modified the input value we take this one as new value
-						sNewValue = oInput.getValue();
-					} else {
-						// for tabular suggestions we call a result filter function
-						sNewValue = that._fnRowResultFilter(oSelectedListItem);
-					}
-
-					// update the input field
-					if (that._bUseDialog) {
-						that._oPopupInput.setValue(sNewValue);
-						that._oPopupInput._doSelect();
-					} else {
-						// call _getInputValue to apply the maxLength to the typed value
-						that._$input.val(that._getInputValue(sNewValue));
-						that.onChange();
-					}
-					that._iPopupListSelectedIndex = -1;
-
-					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
-						oInput._closeSuggestionPopup();
-					}
-
-					if (!sap.ui.Device.support.touch) {
-						that._doSelect();
-					}
+					var oSelectedListItem = oEvent.getParameter("listItem");
+					that.setSelectionRow(oSelectedListItem);
 				}
 			});
 			// initially hide the table on phone
