@@ -55,9 +55,7 @@ sap.ui.define([], function() {
 					var iIndex = 0;
 					var aContent = oSimpleForm.getContent();
 
-					if (oSimpleForm.getMetadata().getName() === "sap.ui.layout.form.SimpleForm" && !oFormContainer) {
-						iIndex = aContent.length;
-					} else if (oFormContainer && oFormContainer.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+					if (oFormContainer) {
 						var oTitle = oFormContainer.getTitle();
 						if (oTitle !== null) {
 							var iTitleIndex = aContent.indexOf(oTitle);
@@ -70,6 +68,14 @@ sap.ui.define([], function() {
 							if (iIndex === 0) {
 								iIndex = aContent.length;
 							}
+						}
+					} else {
+						var aFormContainers = oSimpleForm.getAggregation("form").getFormContainers();
+						var oTitle = aFormContainers[aFormContainers.length - 1].getTitle();
+						// if there is no Title in the FormContainer, the SimpleForm is empty and
+						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
+						if (oTitle !== null) {
+							iIndex = aContent.length;
 						}
 					}
 					return iIndex;

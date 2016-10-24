@@ -34,6 +34,7 @@
 
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
 			QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
@@ -117,12 +118,37 @@
 				assert.ok(!oLabelOverlay.bIsDestroyed, "overlay for label wasn't destroyed");
 			});
 
-		</script>
+			QUnit.test("when getIndex is called in a simpleForm", function(assert) {
+				var that = this;
+				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
+					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
+					assert.equal(fnGetIndex(that.oSimpleForm), 6, "then the new index should be 6");
+				});
+			});
+
+			QUnit.test("when getIndex is called in a simpleForm with a sibling", function(assert) {
+				var that = this;
+				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
+					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
+					assert.equal(fnGetIndex(that.oSimpleForm, that.oSimpleForm.getAggregation("form").getFormContainers()[0]), 6, "then the new index should be 6");
+				});
+			});
+
+			QUnit.test("when getIndex is called in a simpleForm without Title", function(assert) {
+				var that = this;
+				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
+					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
+					that.oSimpleForm.removeContent(that.oSimpleForm.getAggregation("form").getFormContainers()[0].getTitle());
+					assert.equal(fnGetIndex(that.oSimpleForm), 0, "then the new index should be 0");
+				});
+			});
+
+			</script>
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and SimpleForm</h1>
 		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
+		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="content"></div>
