@@ -17,6 +17,7 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
+		ITEM_COLUMN_INDEX = 1,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -272,6 +273,18 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 						}
 					});
 				},
+				selectSalesOrderItemWithItem : function (sItem) {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : /--SalesOrderLineItems-/,
+						matchers : new Properties({text: sItem}),
+						success : function (aControls) {
+							aControls[0].$().tap();
+							Opa5.assert.ok(true, "Sales Order Item selected: " + sItem);
+						},
+						viewName : sViewName
+					});
+				},
 				selectSalesOrderWithId : function (sSalesOrderId) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -313,6 +326,20 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 						matchers : new Interactable(),
 						success : function (oButton) {
 							Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
+						},
+						viewName : sViewName
+					});
+				},
+				checkContactNameInRow : function (iRow, sExpectedContactName) {
+					return this.waitFor({
+						controlType : "sap.m.List",
+						id : "SupplierContactData",
+						success : function (oContactList) {
+							var oItem = oContactList.getItems()[iRow];
+
+							Opa5.assert.strictEqual(
+								oItem.getTitle().slice(0, sExpectedContactName.length),
+								sExpectedContactName, "Contact Name in row " + iRow);
 						},
 						viewName : sViewName
 					});
@@ -421,6 +448,21 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderItemInRow : function (iRow, sExpectedSalesOrderID, sExpectedItem) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[iRow];
+
+							Opa5.assert.strictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
+								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
+							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
+								sExpectedItem, "Item position in row " + iRow);
 						},
 						viewName : sViewName
 					});

@@ -116,6 +116,7 @@ sap.ui.define([
 				this.sChangeReason = undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
+				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
@@ -347,26 +348,28 @@ sap.ui.define([
 			i,
 			bNewLengthFinal,
 			oModel = this.oModel,
-			sResolvedPath = oModel.resolve(this.sPath, oContext),
+			sPath = oModel.resolve(this.sPath, oContext),
+			sPathWithIndex,
 			that = this;
 
 		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				if (this.aPreviousContexts[i]) {
-					this.aContexts[i] = this.aPreviousContexts[i];
-					delete this.aPreviousContexts[i];
+				sPathWithIndex = sPath + "/" + i;
+				if (sPathWithIndex in this.mPreviousContextsByPath) {
+					this.aContexts[i] = this.mPreviousContextsByPath[sPathWithIndex];
+					delete this.mPreviousContextsByPath[sPathWithIndex];
 				} else {
-					this.aContexts[i] = Context.create(oModel, this, sResolvedPath + "/" + i, i);
+					this.aContexts[i] = Context.create(oModel, this, sPathWithIndex, i);
 				}
 			}
 		}
 		// destroy previous contexts which are not reused
 		sap.ui.getCore().addPrerenderingTask(function () {
-			that.aPreviousContexts.forEach(function (oPreviousContext) {
-				oPreviousContext.destroy();
+			Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+				that.mPreviousContextsByPath[sPath].destroy();
+				delete that.mPreviousContextsByPath[sPath];
 			});
-			that.aPreviousContexts = [];
 		});
 		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 			this.iMaxLength = Infinity;
@@ -979,7 +982,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.reset = function (sChangeReason) {
-		this.aPreviousContexts = this.aContexts || [];
+		var that = this;
+
+		if (this.aContexts) {
+			this.aContexts.forEach(function (oContext) {
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+			});
+		}
 		this.aContexts = [];
 		// the range for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
