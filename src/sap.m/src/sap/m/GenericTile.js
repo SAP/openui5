@@ -136,14 +136,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
-
-		this._bThemeApplied = true;
-		if (!sap.ui.getCore().isInitialized()) {
-			this._bThemeApplied = false;
-			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
-		} else {
-			this._handleCoreInitialized();
-		}
 	};
 
 	GenericTile.prototype.onBeforeRendering = function() {
@@ -176,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._sParentResizeListenerId = null;
 		}
 
-		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this._bThemeApplied) {
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact()) {
 			this.$().parent().addClass("sapMGTLineModeContainer");
 			LineModeRenderer._updateHoverStyle.call(this);
 
@@ -196,19 +188,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			}
 			delete this._aTileContentContent;
 		}
-	};
-
-	GenericTile.prototype._handleCoreInitialized = function() {
-		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
-		if (!this._bThemeApplied) {
-			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
-		}
-	};
-
-	GenericTile.prototype._handleThemeApplied = function() {
-		this._bThemeApplied = true;
-		this.invalidate();
-		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
 	};
 
 	/**
