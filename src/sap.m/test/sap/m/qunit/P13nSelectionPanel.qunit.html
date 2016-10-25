@@ -99,9 +99,9 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -140,9 +140,9 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -184,9 +184,9 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -229,8 +229,8 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -272,8 +272,8 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -391,8 +391,8 @@
 		// assertions
 		// The table items order has been changed to: C, A, B
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -439,8 +439,8 @@
 		// assertions
 		// The table items order has been changed to: C, A, B
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
@@ -489,9 +489,9 @@
 
 		// assertions
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
