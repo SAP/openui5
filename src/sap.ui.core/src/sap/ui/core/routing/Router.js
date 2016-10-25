@@ -290,8 +290,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 				oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
 				if (this._oTargets) {
+					var oHomeRoute = this._oRoutes[this._oConfig.homeRoute];
+
 					this._oTargets.attachTitleChanged(function(oEvent) {
-						this.fireTitleChanged(oEvent.getParameters());
+
+						var oEventParameters = oEvent.getParameters();
+
+						if (oHomeRoute && isHomeRouteTarget(oEventParameters.name, oHomeRoute._oConfig.name)) {
+							oEventParameters.isHome = true;
+						}
+
+						this.fireTitleChanged(oEventParameters);
+
 					}, this);
 
 					this.fnHashReplaced = function() {
@@ -302,9 +312,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 					this._aHistory = [];
 
-					var oHomeRoute = getHomeRoute(this);
-					if (oHomeRoute) {
-						this._aHistory.push(oHomeRoute);
+					// Add the initial home route entry to history
+					var oHomeRouteEntry = oHomeRoute && getHomeEntry(this._oOwner, oHomeRoute);
+					if (oHomeRouteEntry) {
+						this._aHistory.push(oHomeRouteEntry);
 					}
 				}
 
@@ -781,6 +792,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {array} oEvent.getParameters.history An array which contains the history of previous titles
 			 * @param {string} oEvent.getParameters.history[].title The title
 			 * @param {string} oEvent.getParameters.history[].hash The hash
+			 * @param {boolean} oEvent.getParameters.history[].isHome The app home indicator
 			 * @public
 			 */
 
@@ -822,7 +834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 					oNewHistoryEntry;
 
 				// when back navigation, the last history state should be removed - except home route
-				if (sDirection === HistoryDirection.Backwards && !oLastHistoryEntry.isHome) {
+				if (sDirection === HistoryDirection.Backwards && oLastHistoryEntry && !oLastHistoryEntry.isHome) {
 					// but only if the last history entrie´s title is not the same as the current one
 					if (oLastHistoryEntry && oLastHistoryEntry.title !== mArguments.title) {
 						this._aHistory.pop();
@@ -847,6 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 						hash: sHash,
 						title: mArguments.title
 					};
+
 					// Array.some is sufficient here, as we ensure there is only one occurence
 					this._aHistory.some(function(oEntry, i, aHistory) {
 						if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
@@ -875,6 +888,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 *	{
 			 *		title: "TITLE", // The displayed title
 			 *		hash: "HASH" // The url hash
+			 *		isHome: "true/false" // The app home indicator
 			 *	}
 			 * </code>
 			 *
@@ -928,26 +942,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 		});
 
-
-		function getHomeRoutePattern(oRouter) {
-			var oHomeRoute = oRouter._oRoutes[oRouter._oConfig.homeRoute];
-			return oHomeRoute && oRouter._oRoutes[oRouter._oConfig.homeRoute].getPattern();
+		function isHomeRouteTarget(sRouteTarget, sHomeRoute) {
+			return sHomeRoute && sHomeRoute.indexOf(sRouteTarget) > -1;
 		}
 
+		function getHomeEntry(oOwnerComponent, oHomeRoute) {
+			var sHomeRoutePattern = oHomeRoute.getPattern(),
+				sAppTitle = oOwnerComponent && oOwnerComponent.getManifestEntry("sap.app/title");
 
-		function getAppTitle(oOwnerComponent) {
-			return oOwnerComponent && oOwnerComponent.getManifestEntry("sap.app/title");
-		}
-
-
-		function getHomeRoute(oRouter) {
-			var sPattern = getHomeRoutePattern(oRouter);
 			// check for placeholders - they are not allowed
-			if (sPattern === "" || (sPattern !== undefined && !/({.*})+/.test(sPattern))) {
+			if (sHomeRoutePattern === "" || (sHomeRoutePattern !== undefined && !/({.*})+/.test(sHomeRoutePattern))) {
+
 				return {
-					hash: sPattern,
+					hash: sHomeRoutePattern,
 					isHome: true,
-					title: getAppTitle(oRouter._oOwner)
+					title: sAppTitle
 				};
 			} else {
 				jQuery.sap.log.error("Routes with dynamic parts cannot be resolved as home route.");
