@@ -4,7 +4,6 @@
     "notes": [
       {
         "id": "3a91b31344fdd066a7f9f20237b008f3c63aff7c",
-        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Focus is now styled correctly",
         "references": []
@@ -16,7 +15,6 @@
     "notes": [
       {
         "id": "4aa146730c7326bbee55fe95d3c8203ec8cd8bfb",
-        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
         "references": []
@@ -28,14 +26,12 @@
     "notes": [
       {
         "id": "452c3fac3c1a17366bfc13a1e7a1c65a7cd50e3a",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.m.NavigationListItem: Added one click navigation",
         "references": []
       },
       {
         "id": "049d9c62a8234e0d8e61e1a1a645a1296c03ca6e",
-        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
         "references": []
@@ -47,7 +43,6 @@
     "notes": [
       {
         "id": "fa8841d1a95ac858fa48fa1e7c28568658806e80",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Icon rendering issue solved",
         "references": []

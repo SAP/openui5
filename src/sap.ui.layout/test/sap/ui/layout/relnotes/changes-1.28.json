@@ -4,98 +4,84 @@
     "notes": [
       {
         "id": "79f822e3ae64341aff91d6a6a8e1867485da9945",
-        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
         "type": "FEATURE",
         "text": "CSS classes implementation for Container Padding Concept",
         "references": []
       },
       {
         "id": "51b861d4cc7221912e7e917c38ccd161eee7ca42",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "layout/FixFlex: Visible property moved to Control",
         "references": []
       },
       {
         "id": "f7fee1549a9879863793ec3d6e0c1d001d6f5b57",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "layout/Form: Visible property moved to Control",
         "references": []
       },
       {
         "id": "8c856de7b13a5be922edcb2358ea88a1b40b5d4c",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "layout/HorizontalLayout: Visible property moved to Control",
         "references": []
       },
       {
         "id": "44adc18531a3a44cf8f28e5b876d7d0e4f5dbd0d",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "layout/VerticalLayout: Visible property moved to Control",
         "references": []
       },
       {
         "id": "c3750d45938c28b82efa608c38bc42af6300af0c",
-        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.core.LabelEnablement: Provided common functionality for labels",
         "references": []
       },
       {
         "id": "44e4f8c1a1ed7d175a1a5174bfa35b069c90c13a",
-        "author": "Martin Wittmann \u003cmartin.wittmann@sap.com\u003e",
         "type": "FIX",
         "text": "Added missing margins to css class \u0027sapUIFioriObjectPage\u0027",
         "references": []
       },
       {
         "id": "30231d4398033d24e662742d665f05333fb31d8e",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "Fixed copyright headers in LESS/CSS resources",
         "references": []
       },
       {
         "id": "b426e42648571f632b171e1f0bbe887c387d0acb",
-        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "FormContainer: JSDoc written",
         "references": []
       },
       {
         "id": "2c350c0aff6bb260f4a4a14ebea58d7896a0dcd0",
-        "author": "Marius Augenstein \u003cmarius.augenstein@sap.com\u003e",
         "type": "FIX",
         "text": "ResponsiveGridLayout: Fixed issue with onLayoutDataChange checking the wrong member in an if-statement",
         "references": []
       },
       {
         "id": "943d48a69324643d9af054440baacb0eeb3ac84a",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FIX",
         "text": "layout.Splitter: Corrected resizing in Right-To-Left mode",
         "references": []
       },
       {
         "id": "90e58e4dcbfab7fdbf4ccca4d6776307e9dead22",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.layout.Form: ARIA support added",
         "references": []
       },
       {
         "id": "29d2da4a3840d8e6e03f171a2f4607a56274c893",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.layout.form.SimpleForm: Added new \"width\" property",
         "references": []
       },
       {
         "id": "21111c4462f02d57faac143eb25935c077a0a0cf",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "SimpleForm: Fixed Explored examples",
         "references": []
@@ -107,7 +93,6 @@
     "notes": [
       {
         "id": "31759d9c7863905c9c97fe8be6ba9c15e7792a43",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: Keyboard navigation issues",
         "references": []
@@ -119,14 +104,12 @@
     "notes": [
       {
         "id": "1629149fccdeb6a4afc4e47dc83b5b8ed2aeddba",
-        "author": "stefan hipfel \u003cstefan.hipfel@sap.com\u003e",
         "type": "FIX",
         "text": "SimpleForm: Fixes problem with empty form containers on removeContent",
         "references": []
       },
       {
         "id": "33dfd9f1c887d16e777239c52417ed03533146be",
-        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
         "type": "FIX",
         "text": "Splitter: Enable autoresize on bar move end",
         "references": []
@@ -138,7 +121,6 @@
     "notes": [
       {
         "id": "f70be3f80172a5c42347b36634a034929cac1e09",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "Form: RadioButton in compact mode corrected",
         "references": []
@@ -150,14 +132,12 @@
     "notes": [
       {
         "id": "9f895fb08971121030ed1f1524a006b37419735b",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "Existence of namespace ensured during Core.initLibrary()",
         "references": []
       },
       {
         "id": "a76be7b0f219286863a17df2d40cd31f981f7aa5",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: Changing order of FormContainer fixed",
         "references": []
@@ -169,7 +149,6 @@
     "notes": [
       {
         "id": "fcd53c5de409f0c47a80b9202519c07b8674a772",
-        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.VerticalLayout: Vertical alignment issue in Safari fixed",
         "references": []
@@ -181,7 +160,6 @@
     "notes": [
       {
         "id": "40a0c2acdc83b9106a481cd7e52b871800a6abf9",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FIX",
         "text": "layout.Splitter: Correctly resize Splitter bars",
         "references": []
@@ -193,7 +171,6 @@
     "notes": [
       {
         "id": "c3d5711de6920b7e308785823dfd77a0a21ad687",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FIX",
         "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
         "references": []
@@ -205,7 +182,6 @@
     "notes": [
       {
         "id": "11b39ef338bfdf16901ace9059d80afdc1ac745d",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
         "references": []
@@ -217,7 +193,6 @@
     "notes": [
       {
         "id": "c5c84ba2eca6a9f71c42d0f4ae2fe0468ae8f11b",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form: adapt documentation for form controls",
         "references": []
@@ -229,7 +204,6 @@
     "notes": [
       {
         "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
-        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
         "text": "Microsoft Edge Support: Fix CSS text-align statements",
         "references": []
@@ -241,21 +215,18 @@
     "notes": [
       {
         "id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
-        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "Respect \"themeroots\" when resolving img URLs in Controls",
         "references": []
       },
       {
         "id": "c624bc45472d8d3d2d30eee726378adf2b10393f",
-        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
         "references": []
       },
       {
         "id": "d14f311a5a6c09e766fd12030c8bf223ed06f68e",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
         "references": []
@@ -267,7 +238,6 @@
     "notes": [
       {
         "id": "67c7286f16ed3870c8bd13608039bfd04167370a",
-        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FIX",
         "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
         "references": []
@@ -279,7 +249,6 @@
     "notes": [
       {
         "id": "e993e923a8798ba75662b8c665969f323d99360c",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
         "references": []
@@ -291,7 +260,6 @@
     "notes": [
       {
         "id": "38df43ac53308baa1344ba7cb2dbcf348bd32134",
-        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.core.layout.VerticalLayout: Fix vertical-align in IE",
         "references": []
