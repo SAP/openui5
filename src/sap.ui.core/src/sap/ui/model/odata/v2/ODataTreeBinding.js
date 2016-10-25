@@ -1755,19 +1755,28 @@ sap.ui.define(['jquery.sap.global',
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 
-			// reset the internal binding variables when changing the context
-			this.resetData();
-
-			// If binding is initial or not a relative binding, nothing to do here
+			// If binding is not a relative binding, nothing to do here
 			if (!this.isRelative()) {
 				return;
 			}
 
-			this._initialize();
+			// resolving the path makes sure that we can safely analyze the metadata
+			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-			this._fireChange();
+			if (sResolvedPath) {
+				this.resetData();
+				this._initialize(); // triggers metadata/annotation check
+				this._fireChange({ reason: ChangeReason.Context });
+			} else {
+				// path could not be resolved, but some data was already available, so we fire a context-change
+				if (!jQuery.isEmptyObject(this.oAllKeys) || !jQuery.isEmptyObject(this.oKeys) || !jQuery.isEmptyObject(this._aNodes)) {
+					this.resetData();
+					this._fireChange({ reason: ChangeReason.Context });
+				}
+			}
 		}
 	};
+
 
 	/**
 	 * Initially only apply the Adapter interface.
