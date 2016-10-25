@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			this._setupThemes();
 
-			this._setupRTL();
+			this._setupContentDirection();
 
 			var $html = jQuery("html");
 
@@ -574,14 +574,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Set the document's dir property
 	 * @private
 	 */
-	Core.prototype._setupRTL = function() {
+	Core.prototype._setupContentDirection = function() {
 		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core";
+			METHOD = "sap.ui.core.Core",
+			sDir = this.oConfiguration.getRTL() ? "rtl" : "ltr";
 
-		if (this.oConfiguration.getRTL()) {
-			jQuery(document.documentElement).attr("dir", "rtl"); // webkit does not allow setting document.dir before the body exists
-			log.info("RTL mode activated",null,METHOD);
-		}
+		jQuery(document.documentElement).attr("dir", sDir); // webkit does not allow setting document.dir before the body exists
+		log.info("Content direction set to '" + sDir + "'",null,METHOD);
 	};
 
 	/**
@@ -3668,7 +3667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Example:
 	 * <pre>
 	 *   &lt;div id="SAPUI5UiArea">&lt;/div>
-	 *   &lt;script type="text/javascript">
+	 *   &lt;script>
 	 *     var oRoot = new sap.ui.commons.Label();
 	 *     oRoot.setText("Hello world!");
 	 *     sap.ui.setRoot("SAPUI5UiArea", oRoot);
