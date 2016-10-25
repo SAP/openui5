@@ -481,8 +481,28 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	border-width: 2px;
 }
 
-.sapUiSizeCompact .sapUiTableTreeIcon:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
+.sapUiTableTreeIcon:focus {
+	outline: 2px dotted @sapHCStandardFG;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableTreeIcon:focus,
+html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus {
+	outline: 0px;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableTreeIcon:focus::before,
+html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
+	outline: 2px dotted @sapHCStandardFG;
+}
+
+.sapUiTableTreeIcon:focus:not(*:root) { /*Webkit*/
+	outline-offset: -1px;
+}
+
+@supports (-moz-appearance:meterbar) { /* Firefox */
+	.sapUiTableTreeIcon:focus {
+		outline-offset: -1px;
+	}
 }
 
 .sapUiSizeCompact .sapUiTableGroupIcon::before,
