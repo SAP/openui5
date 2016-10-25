@@ -1,7 +1,12 @@
 // Shortcuts
 jQuery.sap.require("sap.ui.table.TableUtils");
-jQuery.sap.require("sap.ui.table.TableKeyboardDelegate2");
 var TableUtils = sap.ui.table.TableUtils;
+
+jQuery.sap.require("sap.ui.table.TableKeyboardDelegate2");
+var TableKeyboardDelegate2 = sap.ui.table.TableKeyboardDelegate2;
+
+jQuery.sap.require("sap.ui.Device");
+var Device = sap.ui.Device;
 
 //************************************************************************
 // Helper Functions
@@ -114,12 +119,15 @@ var Key = {
 	},
 	SHIFT: jQuery.sap.KeyCodes.SHIFT,
 	F2: jQuery.sap.KeyCodes.F2,
+	F4: jQuery.sap.KeyCodes.F4,
 	F10: jQuery.sap.KeyCodes.F10,
 	SPACE: jQuery.sap.KeyCodes.SPACE,
 	ENTER: jQuery.sap.KeyCodes.ENTER,
 	ESCAPE: jQuery.sap.KeyCodes.ESCAPE,
 	A: jQuery.sap.KeyCodes.A,
-	CONTEXTMENU: jQuery.sap.KeyCodes.CONTEXT_MENU
+	CONTEXTMENU: jQuery.sap.KeyCodes.CONTEXT_MENU,
+	PLUS: "+",
+	MINUS: "-"
 };
 
 //************************************************************************
@@ -726,9 +734,6 @@ QUnit.test("getNextInteractiveElement", function(assert) {
 
 QUnit.module("TableKeyboardDelegate2 - Basics", {
 	beforeEach: function() {
-		if (!checkDelegateType("sap.ui.table.TableKeyboardDelegate2")) {
-			sap.ui.table.TableKeyboardExtension._enableNewDelegate();
-		}
 		setupTest();
 	},
 	afterEach: teardownTest
@@ -3191,7 +3196,7 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Left & Shift+Right (C
 });
 
 QUnit.test("Default Test Table - Resize fixed column", function(assert) {
-	var iMinColumnWidth = sap.ui.table.TableUtils.Column.getMinColumnWidth();
+	var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(0, true);
@@ -3218,7 +3223,7 @@ QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 });
 
 QUnit.test("Default Test Table - Resize column", function(assert) {
-	var iMinColumnWidth = sap.ui.table.TableUtils.Column.getMinColumnWidth();
+	var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 
 	var oElem = getColumnHeader(1, true);
@@ -3259,7 +3264,7 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 	sap.ui.getCore().applyChanges();
 
 	var aVisibleColumns = oTable._getVisibleColumns();
-	var iMinColumnWidth = sap.ui.table.TableUtils.Column.getMinColumnWidth();
+	var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
 	var oElem;
 
@@ -3996,6 +4001,146 @@ QUnit.test("On other cells", function(assert) {
 	checkFocus(oElem, assert);
 });
 
+QUnit.module("TableKeyboardDelegate2 - Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
+	beforeEach: function() {
+		setupTest();
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("Table with grouping", function(assert) {
+	var oRowBinding = oTable.getBinding("rows");
+
+	function testCollapseExpandAndFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+		assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+
+		qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
+		assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is expanded");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, true, false);
+		assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is collapsed");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, true, false);
+		assert.ok(!oRowBinding.isExpanded(0), "Alt+ArrowUp: The group is collapsed");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
+		assert.ok(oRowBinding.isExpanded(0), "Alt+ArrowDown: The group is expanded");
+		checkFocus(oCellElement, assert);
+	}
+
+	function testFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
+		checkFocus(oCellElement, assert);
+		qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, true, false);
+	}
+
+	testCollapseExpandAndFocus(getCell(0, 1));
+	testCollapseExpandAndFocus(getRowHeader(0));
+	testFocus(getColumnHeader(0));
+	testFocus(getSelectAll());
+});
+
+QUnit.module("TableKeyboardDelegate2 - Interaction > F4 (Expand/Collapse Group)", {
+	beforeEach: function() {
+		setupTest();
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("Table with grouping", function(assert) {
+	var oRowBinding = oTable.getBinding("rows");
+
+	function testCollapseExpandAndFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+		assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+
+		qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
+		assert.ok(!oRowBinding.isExpanded(0), "F4: The group is collapsed");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
+		assert.ok(oRowBinding.isExpanded(0), "F4: The group is expanded");
+		checkFocus(oCellElement, assert);
+	}
+
+	function testFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
+	}
+
+	testCollapseExpandAndFocus(getCell(0, 1));
+	testCollapseExpandAndFocus(getRowHeader(0));
+	testFocus(getColumnHeader(0));
+	testFocus(getSelectAll());
+});
+
+QUnit.module("TableKeyboardDelegate2 - Interaction > Plus & Minus (Expand/Collapse Group)", {
+	beforeEach: function() {
+		setupTest();
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach: teardownTest
+});
+
+QUnit.test("Table with grouping", function(assert) {
+	var oRowBinding = oTable.getBinding("rows");
+
+	function testCollapseExpandAndFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+		assert.ok(oRowBinding.isExpanded(0), "The group is expanded");
+
+		qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
+		assert.ok(oRowBinding.isExpanded(0), "Plus: The group is expanded");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeypress(oCellElement, Key.MINUS, false, false, false);
+		assert.ok(!oRowBinding.isExpanded(0), "Minus: The group is collapsed");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeypress(oCellElement, Key.MINUS, false, false, false);
+		assert.ok(!oRowBinding.isExpanded(0), "Minus: The group is collapsed");
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
+		assert.ok(oRowBinding.isExpanded(0), "Plus: The group is expanded");
+		checkFocus(oCellElement, assert);
+	}
+
+	function testFocus(oCellElement) {
+		oCellElement.focus();
+		checkFocus(oCellElement, assert);
+
+		qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
+		checkFocus(oCellElement, assert);
+		qutils.triggerKeypress(oCellElement, Key.MINUS, false, false, false);
+	}
+
+	testCollapseExpandAndFocus(getCell(0, 1));
+	testCollapseExpandAndFocus(getRowHeader(0));
+	testFocus(getColumnHeader(0));
+	testFocus(getSelectAll());
+});
+
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 	beforeEach: function() {
 		setupTest();
@@ -4039,6 +4184,147 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 	afterEach: function() {
 		teardownTest();
 		iNumberOfCols -= 3;
+	},
+
+	/**
+	 *  Tests if entering and leaving the action mode works correctly when the focus is on a header cell.
+	 *  Tested header cells are: Column header cell, row header cell, SelectAll cell and group header cell.
+	 *
+	 * @param {Object} assert
+	 * @param {int|string} key
+	 * @param {string} sKeyName
+	 * @param {boolean} bShift
+	 * @param {boolean} bAlt
+	 * @param {boolean} bCtrl
+	 * @param {boolean} bTestLeaveActionMode
+	 * @param {Function} fEventTriggerer
+	 */
+	testOnHeaderCells: function(assert, key, sKeyName, bShift, bAlt, bCtrl, bTestLeaveActionMode, fEventTriggerer) {
+		var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
+		var oElem;
+
+		// Column header cell
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		checkFocus(getColumnHeader(0), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Row header cell
+		oElem = checkFocus(getRowHeader(0, true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		checkFocus(getRowHeader(0), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		if (bTestLeaveActionMode) {
+			oTable._getKeyboardExtension()._actionMode = true;
+			oTable._getKeyboardExtension()._suspendItemNavigation();
+			assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension()._isItemNavigationSuspended(), "Table was programmatically set to Action Mode");
+			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+			checkFocus(getRowHeader(0), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sKeyCombination + ": Table is in Navigation Mode");
+		}
+
+		// SelectAll cell
+		oElem = checkFocus(getSelectAll(true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		checkFocus(getSelectAll(), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Group header icon cell
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		TableUtils.Grouping.toggleGroupHeader(oTable, 0);
+		sap.ui.getCore().applyChanges();
+
+		oElem = checkFocus(getRowHeader(0, true), assert);
+		assert.ok(TableUtils.Grouping.isInGroupingRow(oElem), "Cell to be tested is in a group header row");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Navigation Mode");
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		checkFocus(getRowHeader(0), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sKeyCombination + ": Table is in Navigation Mode");
+
+		if (bTestLeaveActionMode) {
+			oTable._getKeyboardExtension()._actionMode = true;
+			oTable._getKeyboardExtension()._suspendItemNavigation();
+			assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension()._isItemNavigationSuspended(), "Table was programmatically set to Action Mode");
+			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+			checkFocus(getRowHeader(0), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sKeyCombination + ": Table is in Navigation Mode");
+		}
+
+		oTable.setEnableGrouping(false);
+		sap.ui.getCore().applyChanges();
+	},
+
+	/**
+	 *  Tests if the action mode can be entered when a data cell with interactive controls inside is focused and the specified key is pressed.
+	 *  At the end of this test the table is in action mode.
+	 *
+	 * @param {Object} assert
+	 * @param {int|string} key
+	 * @param {string} sKeyName
+	 * @param {boolean} bShift
+	 * @param {boolean} bAlt
+	 * @param {boolean} bCtrl
+	 * @param {Function} fEventTriggerer
+	 * @returns {HTMLElement} Returns the first interactive element inside a data cell. This element has the focus.
+	 */
+	testOnDataCellWithInteractiveControls: function(assert, key, sKeyName, bShift, bAlt, bCtrl, fEventTriggerer) {
+		var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
+		var oElem, $Element;
+
+		// Focus cell with a focusable & tabbable element inside.
+		oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
+
+		// Enter action mode.
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
+		oElem = $Element[0];
+		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		// Focus cell with a focusable & non-tabbable element inside.
+		oTable._getKeyboardExtension().setActionMode(false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and non-tabbable input element: Table is in Navigation Mode");
+
+		// Enter action mode.
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
+		oElem = $Element[0];
+		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		return $Element[0];
+	},
+
+	/**
+	 * Tests if the table stays in navigation mode when a data cell without interactive controls inside is focused and the specified key is pressed.
+	 *
+	 * @param {Object} assert
+	 * @param {int|string} key
+	 * @param {string} sKeyName
+	 * @param {boolean} bShift
+	 * @param {boolean} bAlt
+	 * @param {boolean} bCtrl
+	 * @param {Function} fEventTriggerer
+	 */
+	testOnDataCellWithoutInteractiveControls: function(assert, key, sKeyName, bShift, bAlt, bCtrl, fEventTriggerer) {
+		var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
+		var oElem;
+
+		// Focus cell with a non-focusable & non-tabbable element inside.
+		oElem = checkFocus(getCell(0, iNumberOfCols - 3, true), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a non-focusable and non-tabbable element: Table is in Navigation Mode");
+
+		// Stay in navigation mode.
+		fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+		assert.strictEqual(document.activeElement, oElem[0], sKeyCombination + ": Cell is focused");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	}
 });
 
@@ -4046,7 +4332,7 @@ QUnit.test("Focus", function(assert) {
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 	// Enter Action Mode: Focus a tabbable text control inside a data cell.
-	var oElement = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0];
+	var oElement = TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0];
 	oElement.focus();
 	assert.strictEqual(document.activeElement, oElement, "Text element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -4056,7 +4342,7 @@ QUnit.test("Focus", function(assert) {
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 	// Enter Action Mode: Focus tabbable input control inside a data cell.
-	oElement = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2))[0];
+	oElement = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2))[0];
 	oElement.focus();
 	assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -4092,7 +4378,7 @@ QUnit.test("Focus", function(assert) {
 	sap.ui.getCore().applyChanges();
 
 	// Enter Action Mode: Focus tabbable input control inside a data cell.
-	oElement = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(2, iNumberOfCols - 2))[0];
+	oElement = TableKeyboardDelegate2._getInteractiveElements(getCell(2, iNumberOfCols - 2))[0];
 	oElement.focus();
 	assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -4104,88 +4390,69 @@ QUnit.test("Focus", function(assert) {
 });
 
 QUnit.test("F2 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
-	// Column header cell
-	var oElem = checkFocus(getColumnHeader(0, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus column header cell: Table is in Navigation Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(getColumnHeader(0), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
-
-	// Row header cell
-	oElem = checkFocus(getRowHeader(0, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row header cell: Table is in Navigation Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(getRowHeader(0), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
-	oTable._getKeyboardExtension()._actionMode = true;
-	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table was programmatically set to Action Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
-
-	// SelectAll cell
-	oElem = checkFocus(getSelectAll(true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus SelectAll cell: Table is in Navigation Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(getSelectAll(), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
-
-	// Group header icon cell
-	oTable.setEnableGrouping(true);
-	oTable.setGroupBy(oTable.getColumns()[0]);
-	TableUtils.Grouping.toggleGroupHeader(oTable, 0);
-	TableUtils.Grouping.toggleGroupHeader(oTable, 7);
-	TableUtils.Grouping.toggleGroupHeader(oTable, 8);
-	sap.ui.getCore().applyChanges();
-
-	oElem = checkFocus(getRowHeader(0, true), assert);
-	assert.ok(TableUtils.Grouping.isInGroupingRow(oElem), "Cell to be tested is in a group header row");
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus group header icon cell: Table is in Navigation Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	checkFocus(getRowHeader(0), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
-	oTable._getKeyboardExtension()._actionMode = true;
-	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table was programmatically set to Action Mode");
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "F2: Table is in Navigation Mode");
+	this.testOnHeaderCells(assert, Key.F2, "F2", false, false, false, true, qutils.triggerKeydown);
 });
 
 QUnit.test("F2 - On a Data Cell", function(assert) {
-	// Focus cell with a focusable & tabbable element inside.
-	var oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
-
-	// Enter action mode.
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	var $Element = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(oElem);
-	oElem = $Element[0];
-	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the cell is focused");
-	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+	var oElem = this.testOnDataCellWithInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
 
 	// Leave action mode.
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	oElem = getCell(0, iNumberOfCols - 2);
-	assert.strictEqual(document.activeElement, oElem[0], "F2: Cell is focused");
+	qutils.triggerKeydown(oElem, Key.F2, "F2", false, false, false);
+	checkFocus(getCell(0, iNumberOfCols - 1), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-	// Focus cell with a focusable & non-tabbable element inside.
-	oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and non-tabbable input element: Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
+});
 
-	// Enter action mode.
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	var $Element = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(oElem);
-	oElem = $Element[0];
-	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the cell is focused");
-	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
+	this.testOnHeaderCells(assert, Key.Arrow.UP, "Arrow Up", false, true, false, false, qutils.triggerKeydown);
+	this.testOnHeaderCells(assert, Key.Arrow.DOWN, "Arrow Down", false, true, false, false, qutils.triggerKeydown);
+});
 
-	// Focus cell with a non-focusable & non-tabbable element inside.
-	oElem = checkFocus(getCell(0, iNumberOfCols - 3, true), assert);
-	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a non-focusable and non-tabbable element: Table is in Navigation Mode");
-
-	// Stay in navigation mode.
-	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
-	assert.strictEqual(document.activeElement, oElem[0], "F2: Cell is focused");
+QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On a Data Cell", function(assert) {
+	this.testOnDataCellWithInteractiveControls(assert, Key.Arrow.UP, "Arrow Up", false, true, false, qutils.triggerKeydown);
+	oTable._getKeyboardExtension().setActionMode(false);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.Arrow.DOWN, "Arrow Down", false, true, false, qutils.triggerKeydown);
+
+	this.testOnDataCellWithInteractiveControls(assert, Key.Arrow.UP, "Arrow Up", false, true, false, qutils.triggerKeydown);
+	oTable._getKeyboardExtension().setActionMode(false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.Arrow.DOWN, "Arrow Down", true, false, false, qutils.triggerKeydown);
+});
+
+QUnit.test("F4 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
+	this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
+	this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
+});
+
+QUnit.test("F4 - On a Data Cell", function(assert) {
+	this.testOnDataCellWithInteractiveControls(assert, Key.F4, "F4", false, false, false, qutils.triggerKeydown);
+	oTable._getKeyboardExtension().setActionMode(false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.F4, "F4", false, false, false, qutils.triggerKeydown);
+
+	this.testOnDataCellWithInteractiveControls(assert, Key.F4, "F4", false, false, false, qutils.triggerKeydown);
+	oTable._getKeyboardExtension().setActionMode(false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.F4, "F4", false, false, false, qutils.triggerKeydown);
+});
+
+QUnit.test("Plus & Minus - On Column/Row/SelectAll Header Cells", function(assert) {
+	this.testOnHeaderCells(assert, Key.PLUS, "Plus", false, false, false, false, qutils.triggerKeypress);
+	this.testOnHeaderCells(assert, Key.MINUS, "Minus", false, false, false, false, qutils.triggerKeypress);
+});
+
+QUnit.test("Plus & Minus - On a Data Cell", function(assert) {
+	this.testOnDataCellWithInteractiveControls(assert, Key.PLUS, "Plus", false, false, false, qutils.triggerKeypress);
+	oTable._getKeyboardExtension().setActionMode(false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.MINUS, "Minus", false, false, false, qutils.triggerKeypress);
+
+	this.testOnDataCellWithInteractiveControls(assert, Key.PLUS, "Plus", false, false, false, qutils.triggerKeypress);
+	oTable._getKeyboardExtension().setActionMode(false);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	this.testOnDataCellWithoutInteractiveControls(assert, Key.MINUS, "Minus", false, false, false, qutils.triggerKeypress);
 });
 
 QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no click handler", function(assert) {
@@ -4206,13 +4473,13 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	/* Test on a data cell with an interactive control inside */
 
 	var oElem = checkFocus(getCell(0, 0, true), assert);
-	var $Element = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0];
+	var $Element = TableKeyboardDelegate2._getInteractiveElements(getCell(0, 0))[0];
 
 	// Space
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	assert.equal(oTable.isIndexSelected(0), false, "Space: Row 1: Not Selected");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.strictEqual(document.activeElement, $Element, "First interactive element in the cell is focused");
 	oTable._getKeyboardExtension().setActionMode(false);
@@ -4221,7 +4488,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	oElem = checkFocus(getCell(0, 0, true), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	assert.equal(oTable.isIndexSelected(0), false, "Enter: Row 1: Not Selected");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.strictEqual(document.activeElement, $Element, "First interactive element in the cell is focused");
 	oTable._getKeyboardExtension().setActionMode(false);
@@ -4234,7 +4501,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	assert.equal(oTable.isIndexSelected(0), false, "Space: Row 1: Not Selected");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	checkFocus(oElem, assert);
 
@@ -4242,7 +4509,7 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	assert.equal(oTable.isIndexSelected(0), false, "Enter: Row 1: Not Selected");
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	checkFocus(oElem, assert);
 
@@ -4402,7 +4669,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 						} else {
 							var $Cell = getCell(iRowIndex, iColumnIndex);
-							var $InteractiveElement = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements($Cell);
+							var $InteractiveElement = TableKeyboardDelegate2._getInteractiveElements($Cell);
 
 							if ($InteractiveElement === null) {
 								var bIsLastCellInGroupHeaderRow = iColumnIndex === iNumberOfCols - 1 && TableUtils.Grouping.isInGroupingRow(oElem);
@@ -4454,7 +4721,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	sequence = sequence.then(function() {
 		return new Promise(function(resolve) {
 			// Focus the interactive element in the last cell in the last row.
-			oElem = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(document.activeElement)[0];
+			oElem = TableKeyboardDelegate2._getInteractiveElements(document.activeElement)[0];
 			oKeyboardExtension.setActionMode(true);
 			assert.strictEqual(document.activeElement, oElem, "Last interactive element in the table focused");
 			assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
@@ -4507,7 +4774,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 						} else {
 							var $Cell = getCell(iRowIndex, iColumnIndex);
-							var $InteractiveElement = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements($Cell);
+							var $InteractiveElement = TableKeyboardDelegate2._getInteractiveElements($Cell);
 
 							if ($InteractiveElement === null) {
 								if (bShowInfo) {
@@ -4522,7 +4789,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 							assert.strictEqual(document.activeElement, oElem,
 								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
 
-							var bIsFirstInteractiveElementInRow = sap.ui.table.TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
+							var bIsFirstInteractiveElementInRow = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
 							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
 
 							if (bIsFirstInteractiveElementInRow && iColumnIndex > 0 && !bRowHasInteractiveRowHeader) {

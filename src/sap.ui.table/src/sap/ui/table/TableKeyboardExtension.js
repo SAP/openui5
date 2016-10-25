@@ -41,7 +41,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 	};
 
-
 	/*
 	 * Event handling which is independent of the used keyboard delegate.
 	 * "this" in the function context is the table instance.
@@ -218,8 +217,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			oTable.addEventDelegate(this._delegate, oTable);
 			oTable.addEventDelegate(ItemNavigationDelegate, oTable);
 
-			var that = this;
-			oTable._getItemNavigation = function() { return that._itemNavigation; };
+			oTable._getItemNavigation = function() { return this._itemNavigation; }.bind(this);
 
 			return "KeyboardExtension";
 		},
@@ -340,7 +338,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 	};
 
-
 	/*
 	 * Suspends the event handling of the item navigation.
 	 * @protected (Only to be used by the keyboard delegate)
@@ -348,7 +345,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	TableKeyboardExtension.prototype._suspendItemNavigation = function() {
 		this._itemNavigationSuspended = true;
 	};
-
 
 	/*
 	 * Resumes the event handling of the item navigation.
@@ -358,6 +354,13 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		this._itemNavigationSuspended = false;
 	};
 
+	/*
+	 * Returnes whether the item navigation is suspended.
+	 * @protected (Only to be used by the keyboard delegate)
+	 */
+	TableKeyboardExtension.prototype._isItemNavigationSuspended = function() {
+		return this._itemNavigationSuspended;
+	};
 
 	/*
 	 * Returns the combined info about the last focused data cell (based on the item navigation)
