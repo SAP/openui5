@@ -18,6 +18,7 @@
 	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
+	position: relative;
 }
 
 .sapMLIBContent{
@@ -81,4 +82,37 @@
 	-moz-box-flex: 0;
 	-ms-flex: none;
 	flex: none;
+}
+
+.sapMLIBHighlight {
+	position: absolute;
+	width: 0.375rem;
+	bottom: 0;
+	left: 0;
+	top: 0;
+}
+
+.sapMLIBHighlight + .sapMLIBContent,
+.sapMListHighlight .sapMLIBContent:first-child {
+	margin-left: 0.375rem;
+}
+
+.sapMLIBHighlight + .sapMLIBSelectSL,
+.sapMLIBHighlight + .sapMLIBSelectM,
+.sapMListHighlight > .sapMLIB > .sapMLIBSelectSL:first-child,
+.sapMListHighlight > .sapMLIB .sapMLIBSelectM:first-child  {
+	margin-left: -0.625rem;
+}
+
+.sapMLIBHighlightInformation {
+	background: @sapUiHighlight
+}
+.sapMLIBHighlightSuccess {
+	background: @sapUiSuccessBorder
+}
+.sapMLIBHighlightWarning {
+	background: @sapUiWarningBorder
+}
+.sapMLIBHighlightError {
+	background: @sapUiErrorBorder
 }

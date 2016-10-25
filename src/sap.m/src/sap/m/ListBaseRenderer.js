@@ -120,6 +120,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 
 		// list attributes
 		rm.addClass("sapMListUl");
+		if (oControl._iItemNeedsHighlight) {
+			rm.addClass("sapMListHighlight");
+		}
+
 		rm.writeAttribute("id", oControl.getId("listUl"));
 		if (bRenderItems || bShowNoData) {
 			rm.writeAttribute("tabindex", iTabIndex);

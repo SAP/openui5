@@ -1611,6 +1611,58 @@
 
 		});
 
+		module("Highlight");
+		test("Highlight should be rendered", function () {
+			var oLI = new sap.m.StandardListItem({
+				highlight: "Error",
+				title: "Error"
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+			ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), true, "Highlight is rendered");
+			ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
+		});
+
+		test("List should respect highlight changes", function () {
+
+			var oListItem1 = new sap.m.StandardListItem({
+					title: "oListItem1",
+				}),
+				oListItem2 = new sap.m.CustomListItem({
+					title: "oListItem1",
+					highlight: "Warning"
+				}),
+				oList = new sap.m.List({
+					items: [oListItem1, oListItem2]
+				});
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
+
+			oListItem2.setHighlight("None");
+			sap.ui.getCore().applyChanges();
+			ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+
+			oListItem1.setHighlight("Information");
+			sap.ui.getCore().applyChanges();
+			ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
+
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+
+			oListItem1.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+
+			oListItem1.destroy();
+			sap.ui.getCore().applyChanges();
+			ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+
+			oList.destroy();
+		});
 </script>
 
 </head>

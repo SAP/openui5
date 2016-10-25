@@ -57,7 +57,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines the counter value of the list items.
 			 */
-			counter : {type : "int", group : "Misc", defaultValue : null}
+			counter : {type : "int", group : "Misc", defaultValue : null},
+
+			/**
+			 * Defines the highlight state of the list items.
+			 * @since 1.44.0
+			 */
+			highlight : {type : "sap.ui.core.MessageType", group : "Appearance", defaultValue : "None"}
 		},
 		associations: {
 
@@ -105,10 +111,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.init = function() {
 		this._active = false;
 		this._bGroupHeader = false;
+		this._bNeedsHighlight = false;
 	};
 
 	ListItemBase.prototype.onAfterRendering = function() {
 		this.informList("DOMUpdate", true);
+		this._checkHighlight();
 	};
 
 	/*
@@ -428,6 +436,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ListItemBase.prototype.exit = function() {
 		this._oLastFocused = null;
+		this._checkHighlight(false);
 		this.setActive(false);
 		this.destroyControls([
 			"Delete",
@@ -544,6 +553,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					sMode == mMode.SingleSelect ||
 					sMode == mMode.MultiSelect)
 				));
+	};
+
+	// informs the list when item's highlight is changed
+	ListItemBase.prototype._checkHighlight = function(bNeedsHighlight) {
+		if (bNeedsHighlight == undefined) {
+			bNeedsHighlight = (this.getVisible() && this.getHighlight() != "None");
+		}
+
+		if (this._bNeedsHighlight != bNeedsHighlight) {
+			this._bNeedsHighlight = bNeedsHighlight;
+			this.informList("HighlightChange", bNeedsHighlight);
+		}
 	};
 
 	/**

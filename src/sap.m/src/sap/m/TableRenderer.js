@@ -75,6 +75,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.writeClasses();
 		rm.write(">");
 
+		createBlankCell("HighlightCol", type + "Highlight", !oTable._iItemNeedsHighlight);
+
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
 				rm.write("<th class='" + clsPrefix + "SelCol'>");
