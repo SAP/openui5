@@ -982,8 +982,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var oFocusDomRef;
 
 			if (oControl) {
-				//if someone tryies to focus an existing but not visible control, focus the Dialog itself.
-				if (!oControl.getVisible()) {
+				//if someone tries to focus an existing but not visible control, focus the Dialog itself.
+				if (oControl.getVisible && !oControl.getVisible()) {
 					this.focus();
 					return;
 				}
