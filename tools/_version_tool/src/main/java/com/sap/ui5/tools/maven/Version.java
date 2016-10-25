@@ -92,8 +92,16 @@ public class Version {
 	  return new Version(major, minor - 2, 0, null);
   }
   
-  public Version nextMinorSnapshot(){
+  public Version decreaseMinorSnapshot(){
+	  return  new Version(major, minor - 1, 0, SNAPSHOT_SUFFIX);
+  }
+  
+  public Version increaseMinorSnapshot(){
 	  return new Version(major, minor + 1, 0, SNAPSHOT_SUFFIX);
+  }
+  
+  public Version milestoneSnapshotVersion(){
+	  return new Version(major, minor, 0, SNAPSHOT_SUFFIX);
   }
   
   public Version nextVersion(ReleaseOperation op) {
