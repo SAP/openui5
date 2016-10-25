@@ -3070,6 +3070,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this.getSelectionMode() === library.SelectionMode.None) {
+			return this;
+		}
+
 		this._oSelection.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
@@ -3086,6 +3090,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this.getSelectionMode() === library.SelectionMode.None) {
+			return this;
+		}
+
 		this._oSelection.setSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
