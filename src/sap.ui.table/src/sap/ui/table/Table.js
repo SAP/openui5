@@ -23,7 +23,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode,
 		SelectionBehavior = library.SelectionBehavior,
-		SharedDomRef = library.SharedDomRef,
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
@@ -648,7 +647,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
 						var iScrollTop = 0;
-						var oVSb = that.getDomRef(SharedDomRef.VerticalScrollBar);
+						var oVSb = that._getScrollExtension().getVerticalScrollbar();
 						if (oVSb) {
 							iScrollTop = oVSb.scrollTop;
 						}
@@ -888,7 +887,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
 		}
 
-		var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+		var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 		if (oHsb) {
 			oSizes.tableHSbScrollLeft = oHsb.scrollLeft;
 		}
@@ -1999,7 +1998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// add the horizontal scrollbar
 		if (iColsWidth > oTableSizes.tableCtrlScrWidth) {
 			// show the scrollbar
-			if (!$this.hasClass("sapUiTableHScr")) {
+			if (!this._getScrollExtension().isHorizontalScrollbarVisible()) {
 				$this.addClass("sapUiTableHScr");
 
 				if (!!Device.browser.safari) {
@@ -2029,7 +2028,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		} else {
 			// hide the scrollbar
-			if ($this.hasClass("sapUiTableHScr")) {
+			if (this._getScrollExtension().isHorizontalScrollbarVisible()) {
 				$this.removeClass("sapUiTableHScr");
 				if (!!Device.browser.safari) {
 					// min-width on table elements does not work for safari
@@ -2044,7 +2043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateVSb = function(iScrollTop) {
-		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
@@ -2071,7 +2070,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateVSbRange = function() {
-		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
@@ -2620,7 +2619,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
 			var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
 
-			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+			var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 			if (iOffsetRight > 0) {
 				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 2;
 			} else if (iOffsetLeft < 0) {

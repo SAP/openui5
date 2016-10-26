@@ -22,7 +22,7 @@ sap.ui.define([
 		/**
 		 * Will be called when scrolled horizontally. Because the table does not render/update the data of all columns (only the visible ones),
 		 * we need to update the content of the columns which became visible.
-		 * @param oEvent
+		 * @param {UIEvent} oEvent The event object.
 		 */
 		onHorizontalScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -84,7 +84,7 @@ sap.ui.define([
 
 		/**
 		 * Will be called when scrolled vertically. Updates the visualized data by applying the first visible row from the vertical scrollbar.
-		 * @param oEvent
+		 * @param {UIEvent} oEvent The event object.
 		 */
 		onVerticalScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -104,7 +104,7 @@ sap.ui.define([
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
 			 */
 			function updateVisibleRow(oTable) {
-				var oVSb = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
+				var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 
 				if (!oVSb) {
 					return;
@@ -120,7 +120,7 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(oTable._getFirstVisibleRowByScrollTop(iScrollTop), true);
 			}
 
-			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledByWheel) {
+			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledVerticallyByWheel) {
 				jQuery.sap.clearDelayedCall(this._mTimeouts.scrollUpdateTimerId);
 				this._mTimeouts.scrollUpdateTimerId = jQuery.sap.delayedCall(300, this, function() {
 					updateVisibleRow(this);
@@ -129,52 +129,82 @@ sap.ui.define([
 			} else {
 				updateVisibleRow(this);
 			}
-			oScrollExtension._bIsScrolledByWheel = false;
+
+			oScrollExtension._bIsScrolledVerticallyByWheel = false;
 		},
 
 		/**
 		 * Will be called when scrolled with the mouse wheel.
-		 * @param oEvent
+		 * @param {WheelEvent} oEvent The event object.
 		 */
 		onMouseWheelScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
-
 			var oOriginalEvent = oEvent.originalEvent;
-			var bIsHorizontal = oOriginalEvent.shiftKey;
+			var bHorizontalScrolling = oOriginalEvent.shiftKey;
+			var bScrollingForward;
+			var bScrolledToEnd = false;
 			var iScrollDelta = 0;
 
-			if (bIsHorizontal) {
+			if (Device.browser.firefox) {
+				iScrollDelta = oOriginalEvent.detail;
+			} else if (bHorizontalScrolling) {
 				iScrollDelta = oOriginalEvent.deltaX;
 			} else {
 				iScrollDelta = oOriginalEvent.deltaY;
 			}
 
-			if (bIsHorizontal) {
-				var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-				if (oHsb) {
-					oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
+			bScrollingForward = iScrollDelta > 0;
+
+			if (bHorizontalScrolling) {
+				var oHSb = oScrollExtension.getHorizontalScrollbar();
+
+				if (bScrollingForward) {
+					bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+				} else {
+					bScrolledToEnd = oHSb.scrollLeft === 0;
 				}
+
+				if (oScrollExtension.isHorizontalScrollbarVisible() && !bScrolledToEnd) {
+					oEvent.preventDefault();
+					oEvent.stopPropagation();
+
+					oHSb.scrollLeft = oHSb.scrollLeft + iScrollDelta;
+				}
+
 			} else {
-				var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-				if (oVsb) {
-					oScrollExtension._bIsScrolledByWheel = true;
+				var oVSb = oScrollExtension.getVerticalScrollbar();
+
+				if (bScrollingForward) {
+					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+				} else {
+					bScrolledToEnd = oVSb.scrollTop === 0;
+				}
+
+				if (oScrollExtension.isVerticalScrollbarVisible() && !bScrolledToEnd) {
+					oEvent.preventDefault();
+					oEvent.stopPropagation();
+
 					var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
+
 					// If at least one row is scrolled, floor to full rows.
 					// Below one row, we scroll pixels.
 					if (iRowsPerStep > 1) {
 						iRowsPerStep = Math.floor(iRowsPerStep);
 					}
-					oVsb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
+
+					oScrollExtension._bIsScrolledVerticallyByWheel = true;
+					oVSb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
 				}
 			}
-
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
 		},
 
+		/**
+		 * Will be called when the vertical scrollbar is clicked.
+		 * @param {MouseEvent} oEvent The event object.
+		 */
 		onVerticalScrollbarMouseDown: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
-			oScrollExtension._bIsScrolledByWheel = false;
+			oScrollExtension._bIsScrolledVerticallyByWheel = false;
 			oScrollExtension._bIsScrolledByKeyboard = false;
 		}
 	};
@@ -193,12 +223,12 @@ sap.ui.define([
 				if (bDoScroll) {
 					var oTouch = oEvent.targetTouches[0];
 					this._aTouchStartPosition = [oTouch.pageX, oTouch.pageY];
-					var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+					var oVsb = this._getScrollExtension().getVerticalScrollbar();
 					if (oVsb) {
 						this._iTouchScrollTop = oVsb.scrollTop;
 					}
 
-					var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+					var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 					if (oHsb) {
 						this._iTouchScrollLeft = oHsb.scrollLeft;
 					}
@@ -216,7 +246,7 @@ sap.ui.define([
 				}
 
 				if (this._bIsScrollVertical) {
-					var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+					var oVsb = this._getScrollExtension().getVerticalScrollbar();
 					if (oVsb) {
 						var iScrollTop = this._iTouchScrollTop - iDeltaY;
 
@@ -227,7 +257,7 @@ sap.ui.define([
 						oVsb.scrollTop = iScrollTop;
 					}
 				} else {
-					var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+					var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 					if (oHsb) {
 						var iScrollLeft = this._iTouchScrollLeft - iDeltaX;
 
@@ -262,7 +292,7 @@ sap.ui.define([
 		_init: function(oTable, sTableType, mSettings) {
 			this._type = sTableType;
 			this._delegate = ExtensionDelegate;
-			this._bIsScrolledByWheel = false;
+			this._bIsScrolledVerticallyByWheel = false;
 			this._bIsScrolledByKeyboard = false;
 
 			// Register the delegate
@@ -279,7 +309,7 @@ sap.ui.define([
 			var $Table = oTable.$();
 
 			// Horizontal scrolling
-			var $HSb = jQuery(oTable.getDomRef(SharedDomRef.HorizontalScrollBar));
+			var $HSb = jQuery(this.getHorizontalScrollbar());
 			var $HeaderScroll = jQuery(oTable.getDomRef("sapUiTableColHdrScr"));
 			var $FixedHeaderScroll = $Table.find(".sapUiTableCtrlScrFixed.sapUiTableCHA");
 			var $ContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScr"));
@@ -293,12 +323,16 @@ sap.ui.define([
 			$FixedContentScroll.on("scroll.sapUiTableFixedContentHScroll", ExtensionHelper.onFixedAreaHorizontalScrolling);
 
 			// Vertical scrolling
-			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
+			var $VSb = jQuery(this.getVerticalScrollbar());
 			$VSb.on("scroll.sapUiTableVScroll", ExtensionHelper.onVerticalScrolling.bind(oTable));
 			$VSb.on("mousedown.sapUiTableVScrollClick", ExtensionHelper.onVerticalScrollbarMouseDown.bind(oTable));
 
 			// Mouse wheel
-			oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
+			if (Device.browser.firefox) {
+				oTable._getScrollTargets().on("MozMousePixelScroll.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
+			} else {
+				oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
+			}
 		},
 
 		/*
@@ -309,7 +343,7 @@ sap.ui.define([
 			var $Table = oTable.$();
 
 			// Horizontal scrolling
-			var $HSb = jQuery(oTable.getDomRef(SharedDomRef.HorizontalScrollBar));
+			var $HSb = jQuery(this.getHorizontalScrollbar());
 			var $HeaderScroll = jQuery(oTable.getDomRef("sapUiTableColHdrScr"));
 			var $FixedHeaderScroll = $Table.find(".sapUiTableColHdrFixed");
 			var $ContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScr"));
@@ -323,12 +357,16 @@ sap.ui.define([
 			$FixedContentScroll.off("scroll.sapUiTableFixedContentHScroll");
 
 			// Vertical scrolling
-			var $VSb = jQuery(oTable.getDomRef(SharedDomRef.VerticalScrollBar));
+			var $VSb = jQuery(this.getVerticalScrollbar());
 
 			$VSb.off("scroll.sapUiTableVScroll");
 
 			// Mouse wheel
-			oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
+			if (Device.browser.firefox) {
+				oTable._getScrollTargets().off("MozMousePixelScroll.sapUiTableMouseWheel");
+			} else {
+				oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
+			}
 		},
 
 		/*
@@ -388,11 +426,9 @@ sap.ui.define([
 					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
 					bScrolled = true;
 				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
-					bScrolled = true;
-				}
+			} else if (iFirstVisibleScrollableRow > 0) {
+				oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
+				bScrolled = true;
 			}
 
 			if (bScrolled && bIsKeyboardScroll) {
@@ -428,11 +464,9 @@ sap.ui.define([
 					oTable.setFirstVisibleRow(iFirstVisibleRow);
 					bScrolled = true;
 				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(0);
-					bScrolled = true;
-				}
+			} else if (iFirstVisibleScrollableRow > 0) {
+				oTable.setFirstVisibleRow(0);
+				bScrolled = true;
 			}
 
 			if (bScrolled && bIsKeyboardScroll) {
@@ -440,6 +474,74 @@ sap.ui.define([
 			}
 
 			return bScrolled;
+		},
+
+		/**
+		 * Returns the horizontal scrollbar.
+		 *
+		 * @returns {HTMLElement|null} Returns <code>null</code>, if the horizontal scrollbar does not exist.
+		 * @private
+		 */
+		getHorizontalScrollbar: function() {
+			var oTable = this.getTable();
+
+			if (oTable != null) {
+				var oVSb = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
+
+				if (oVSb != null) {
+					return oVSb;
+				}
+			}
+
+			return null;
+		},
+
+		/**
+		 * Returns the vertical scrollbar.
+		 *
+		 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
+		 * @private
+		 */
+		getVerticalScrollbar: function() {
+			var oTable = this.getTable();
+
+			if (oTable != null) {
+				var oVSb = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
+
+				if (oVSb != null) {
+					return oVSb;
+				}
+			}
+
+			return null;
+		},
+
+		isHorizontalScrollbarVisible: function() {
+			var oTable = this.getTable();
+
+			if (oTable != null) {
+				var oTableElement = oTable.getDomRef();
+
+				if (oTableElement != null) {
+					return oTableElement.classList.contains("sapUiTableHScr");
+				}
+			}
+
+			return false;
+		},
+
+		isVerticalScrollbarVisible: function() {
+			var oTable = this.getTable();
+
+			if (oTable != null) {
+				var oTableElement = oTable.getDomRef();
+
+				if (oTableElement != null) {
+					return oTableElement.classList.contains("sapUiTableVScr");
+				}
+			}
+
+			return false;
 		}
 	});
 
