@@ -460,9 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	TableRenderer._addFixedRowCSSClasses = function(rm, oTable, iIndex) {
 		var iFixedRowCount = oTable.getFixedRowCount();
-		var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
-		var iVisibleRowCount = oTable.getVisibleRowCount();
-		var iFirstVisibleRow = oTable.getFirstVisibleRow();
+		var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedButtomRowIndex(oTable);
 
 		if (iFixedRowCount > 0) {
 			if (iIndex < iFixedRowCount) {
@@ -474,20 +472,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			}
 		}
 
-		if (iFixedBottomRowCount > 0) {
-			var bIsPreBottomRow = false;
-			var oBinding = oTable.getBinding("rows");
-			if (oBinding) {
-				if (oTable._iBindingLength >= iVisibleRowCount) {
-					bIsPreBottomRow = (iIndex == iVisibleRowCount - iFixedBottomRowCount - 1);
-				} else {
-					bIsPreBottomRow = (iFirstVisibleRow + iIndex) == (oTable._iBindingLength - iFixedBottomRowCount - 1) && (oTable.getFirstVisibleRow() + iIndex) < oTable._iBindingLength;
-				}
-			}
-
-			if (bIsPreBottomRow) {
-				rm.addClass("sapUiTableFixedPreBottomRow");
-			}
+		if (iFirstFixedButtomRowIndex >= 0 && iFirstFixedButtomRowIndex === iIndex) {
+			rm.addClass("sapUiTableFixedFirstBottomRow");
+		} else if (iFirstFixedButtomRowIndex >= 1 && iFirstFixedButtomRowIndex - 1 === iIndex) {
+			rm.addClass("sapUiTableFixedPreBottomRow");
 		}
 	};
 

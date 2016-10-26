@@ -798,6 +798,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		isVariableWidth: function(sWidth) {
 			return !sWidth || sWidth == "auto" || sWidth.toString().match(/%$/);
+		},
+
+		/**
+		 * Returns the index of the first fixed buttom row in the <code>rows</code> aggregation.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {int} The index of the first fixed buttom row in the <code>rows</code> aggregation, or <code>-1</code>.
+		 * @private
+		 */
+		getFirstFixedButtomRowIndex: function(oTable) {
+			var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
+			var oBinding = oTable.getBinding("rows");
+			var iFirstFixedButtomIndex = -1;
+
+			if (oBinding && iFixedBottomRowCount > 0) {
+				var iVisibleRowCount = oTable.getVisibleRowCount();
+				var iFirstVisibleRow = oTable._getSanitizedFirstVisibleRow();
+
+				if (oTable._iBindingLength >= iVisibleRowCount) {
+					iFirstFixedButtomIndex = iVisibleRowCount - iFixedBottomRowCount;
+				} else {
+					var iIdx = oTable._iBindingLength - iFixedBottomRowCount - iFirstVisibleRow;
+					if (iIdx >= 0 && (iFirstVisibleRow + iIdx) < oTable._iBindingLength) {
+						iFirstFixedButtomIndex = iIdx;
+					}
+				}
+			}
+
+			return iFirstFixedButtomIndex;
 		}
 
 	};
