@@ -4,14 +4,12 @@
     "notes": [
       {
         "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
         "references": []
       },
       {
         "id": "a47458d4aef0f728bfbb3628ba8bb307773dbc6d",
-        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.ux3.NotificationBar icon color changed for goldreflection theme",
         "references": []
@@ -23,21 +21,18 @@
     "notes": [
       {
         "id": "59820b0e7bec030368dfebaa56c56fadd98f7e8c",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
         "references": []
       },
       {
         "id": "c5533229b829edf895ce368297bdf102b44ec1f4",
-        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.table.Table: fixes regressions related to table rendering - async DOM/ControlTree for updateTableSizes",
         "references": []
       },
       {
         "id": "a9051c16916d628aa9eef987ac2c78809801b52e",
-        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.Shell: Left and right part of the header do not overlap",
         "references": []

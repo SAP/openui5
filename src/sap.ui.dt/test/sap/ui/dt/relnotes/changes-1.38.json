@@ -4,7 +4,6 @@
     "notes": [
       {
         "id": "590c934741e977aa9877caa17681342df57a0aac",
-        "author": "Amiram Wingarten \u003camiram.wingarten@sap.com\u003e",
         "type": "FIX",
         "text": "DOMUtil.getSize to also support transition style on the control",
         "references": []
@@ -16,7 +15,6 @@
     "notes": [
       {
         "id": "3b98f5ab155448d4e8342b377c5723e03f06caff",
-        "author": "Sebastian Wennemers \u003csebastian.wennemers@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.dt prevent cut for not movable overlays",
         "references": []
@@ -28,7 +26,6 @@
     "notes": [
       {
         "id": "c67c47462071cd666eaff05e4fd04f3970168b7f",
-        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
         "type": "FIX",
         "text": "fixes incident1680124836",
         "references": []

@@ -4,14 +4,12 @@
     "notes": [
       {
         "id": "6064be9a4770e39ce594d4a18311c5acf30a91a1",
-        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
         "references": []
       },
       {
         "id": "02fb8a9004fde53c9988fd204a273de2a41c10f0",
-        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
         "references": []
@@ -23,7 +21,6 @@
     "notes": [
       {
         "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "changes-1.42.json: remove duplicates",
         "references": []
@@ -35,7 +32,6 @@
     "notes": [
       {
         "id": "5ff66fbedb82e7517a6664e7d2ceefc270740908",
-        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
         "type": "FIX",
         "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
         "references": []

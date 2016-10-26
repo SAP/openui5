@@ -4,7 +4,6 @@
     "notes": [
       {
         "id": "96a2e84b1a5cd6c84d78bafc7b436bab7b689226",
-        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.m.LightBox: Initial implementation.",
         "references": []
@@ -16,9 +15,19 @@
     "notes": [
       {
         "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  },
+  "1.42.4": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "c710f897e1582fcae68882a301cf85e57e0851f7",
+        "type": "FEATURE",
+        "text": "IconExplorer: search by tags enabled",
         "references": []
       }
     ]

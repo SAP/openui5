@@ -4,14 +4,12 @@
     "notes": [
       {
         "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
-        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "Theme image URLs in commons/ux3/layout libraries",
         "references": []
       },
       {
         "id": "f6fb6dc525c0825b543a481ff720a194ced5aa18",
-        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
         "references": []

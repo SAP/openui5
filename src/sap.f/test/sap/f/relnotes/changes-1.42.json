@@ -4,21 +4,18 @@
     "notes": [
       {
         "id": "4d3c8d2da49926009d79122819c045f76c7eaae8",
-        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
         "type": "FIX",
         "text": "sap.f.DynamicPage: Scrollbar update condition fixed",
         "references": []
       },
       {
         "id": "c79ffc313640a5ba4674328bd66ebfa0532d1f74",
-        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
         "type": "FIX",
         "text": "sap.f.DynamicPage: header visiblitiy shouldn`t change if header is pinned fixed",
         "references": []
       },
       {
         "id": "88b4380fe8cb7e1939f55a6b6cc5e7ddcf4eef36",
-        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
         "type": "FIX",
         "text": "sap.f: wrong css selector preffixes sapF instead of sapM fixed",
         "references": []
@@ -30,7 +27,6 @@
     "notes": [
       {
         "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "changes-1.42.json: remove duplicates",
         "references": []
