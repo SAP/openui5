@@ -2587,8 +2587,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("createContexts, reuse previous contexts", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
-			oContext1 = {},
-			oContext2 = {},
+			oContext1 = {checkUpdate : function () {}},
+			oContext2 = {checkUpdate : function () {}},
 			oContext3 = {},
 			oContextMock = this.mock(Context),
 			mPreviousContextsByPath = {
@@ -2600,6 +2600,8 @@ sap.ui.require([
 			oRange = {start : 1, length : 3};
 
 		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
+		this.mock(oContext1).expects("checkUpdate").withExactArgs();
+		this.mock(oContext2).expects("checkUpdate").withExactArgs();
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES/3", 3)
@@ -2641,16 +2643,6 @@ sap.ui.require([
 		QUnit.test("_delete: success, bUseExtendedChangeDetection = " + bUseExtendedChangeDetection,
 			function (assert) {
 				var oBinding = this.oModel.bindList("/EMPLOYEES"),
-					oBinding1 = {
-						checkUpdate : function () {}
-					},
-					oBinding4a = {
-						checkUpdate : function () {}
-					},
-					oBinding4b = {
-						checkUpdate : function () {}
-					},
-					oModelMock = this.mock(this.oModel),
 					aPreviousContexts,
 					oPromise = {};
 
@@ -2673,15 +2665,8 @@ sap.ui.require([
 				this.mock(oBinding.aContexts[2]).expects("destroy");
 				this.mock(oBinding.aContexts[5]).expects("destroy");
 				if (!bUseExtendedChangeDetection) {
-					oModelMock.expects("getDependentBindings")
-						.withExactArgs(oBinding.aContexts[1])
-						.returns([oBinding1]);
-					this.mock(oBinding1).expects("checkUpdate").withExactArgs();
-					oModelMock.expects("getDependentBindings")
-						.withExactArgs(oBinding.aContexts[4])
-						.returns([oBinding4a, oBinding4b]);
-					this.mock(oBinding4a).expects("checkUpdate").withExactArgs();
-					this.mock(oBinding4b).expects("checkUpdate").withExactArgs();
+					this.mock(oBinding.aContexts[1]).expects("checkUpdate").withExactArgs();
+					this.mock(oBinding.aContexts[4]).expects("checkUpdate").withExactArgs();
 				}
 
 				// code under test
@@ -3084,13 +3069,36 @@ sap.ui.require([
 		this.mock(oContext).expects("destroy").withExactArgs();
 
 		// code under test
-		return oContext.delete("$direct").then(function () {
+		return oContext["delete"]("$direct").then(function () {
 			assert.notOk(-1 in oBinding.aContexts, "No transient context");
 			assert.strictEqual(oBinding.getLength(), 3);
 		});
-
 	});
 	// TODO delete created entity (index -1, but not transient)
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate", function (assert) {
+		var oBinding = this.oModel.bindList("/Employees"),
+			oDependent0 = {checkUpdate : function () {}},
+			oDependent1 = {checkUpdate : function () {}};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+		this.mock(ListBinding.prototype).expects("checkUpdate").withExactArgs()
+			.returns("unused");
+
+		// code under test
+		assert.strictEqual(oBinding.checkUpdate(), "unused");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkUpdate(true);
+		}, new Error("Unsupported operation: v4.ODataListBinding#checkUpdate must not be called "
+			+ "with parameters"));
+	});
 });
 //TODO integration: 2 entity sets with same $expand, but different $select
 //TODO support suspend/resume

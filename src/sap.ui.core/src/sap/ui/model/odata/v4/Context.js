@@ -100,6 +100,17 @@ sap.ui.define([
 		});
 
 	/**
+	 * Updates all dependent bindings of this context.
+	 *
+	 * @private
+	 */
+	Context.prototype.checkUpdate = function () {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.checkUpdate();
+		});
+	};
+
+	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
 	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
 	 * represented by this context is transient.
