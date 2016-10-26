@@ -10,8 +10,10 @@
 	background: transparent;
 }
 
-.sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTLineModePress):not(.sapMGTFailed):hover {
-	background: fade(@sapUiShellHoverBackground, 10);
+.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTFailed) {
+	&:not(.sapMGTLineModePress):hover {
+		background: fade(@sapUiShellHoverBackground, 10);
+	}
 }
 
 .sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTFailed).sapMGTLineModePress {

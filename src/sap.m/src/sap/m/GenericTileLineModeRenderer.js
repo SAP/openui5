@@ -137,9 +137,6 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.writeAttribute("id", oControl.getId() + "-hdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl._oTitle.getText());
-		if (this._bRTL && sap.ui.Device.browser.mozilla) {
-			oRm.write(" ");
-		}
 		oRm.write("</span>");
 	};
 
@@ -160,22 +157,22 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 	 * @private
 	 */
 	GenericTileLineModeRenderer._updateHoverStyle = function() {
-		this._oStyleData = this._getStyleData();
 		var $StyleHelper = this.$("styleHelper"),
 			oLine,
 			i = 0,
 			sHelpers = "";
 
+		//empty the style helper even if there is no style data available in order to guarantee a clean display without artifacts
 		$StyleHelper.empty();
 
-		if (!this._oStyleData) {
+		if (!this._oStyleData || this.$().is(":hidden")) {
 			return;
 		}
 
-		if (this._oStyleData.rtl && sap.ui.Device.browser.mozilla) {
-			$StyleHelper.css("right", -this._oStyleData.startX + "px");
-		} else if (this._oStyleData.rtl && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
-			$StyleHelper.css("right", -Math.min(this._oStyleData.startX, this._oStyleData.endX) + "px");
+		if (this._oStyleData.rtl) {
+			$StyleHelper.css("right", -this._oStyleData.positionRight);
+		} else {
+			$StyleHelper.css("left", -this._oStyleData.positionLeft);
 		}
 
 		for (i; i < this._oStyleData.lines.length; i++) {

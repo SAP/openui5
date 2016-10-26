@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer' ],
-	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler' ],
+	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer, Device, ResizeHandler) {
 	"use strict";
 
 	/**
@@ -154,6 +154,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
 		this.$().unbind("mouseleave", this._removeTooltipFromControl);
+
+		if (this._sParentResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sParentResizeListenerId = null;
+		}
+
+		if (this._$RootNode) {
+			this._$RootNode.off(this._getAnimationEvents());
+		}
 	};
 
 	GenericTile.prototype.onAfterRendering = function() {
@@ -163,21 +172,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
 		this.$().bind("mouseleave", this._removeTooltipFromControl.bind(this));
 
-		if (this._sParentResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
-			this._sParentResizeListenerId = null;
+		// triggers update of all adjacent GenericTile LineMode siblings
+		// this is needed for their visual update if this tile's properties change causing it to expand or shrink
+		if (this.getMode() === library.GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
+			this._updateLineTileSiblings();
+			this._bUpdateLineTileSiblings = false;
 		}
 
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact()) {
+			// This class needs to be added in order to account for the paddings of the tile.
+			// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
+			// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
 			this.$().parent().addClass("sapMGTLineModeContainer");
-			LineModeRenderer._updateHoverStyle.call(this);
+			this._updateHoverStyle();
 
-			this._sParentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
-		}
-
-		if (this._bUpdateLineTileSiblings) {
-			this._updateLineTileSiblings();
-			this._bUpdateLineTileSiblings = false;
+			this._sParentResizeListenerId = ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
 		}
 
 		// Assign TileContent content again after rendering.
@@ -198,7 +207,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype._handleResize = function() {
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact() && this.getParent()) {
-			LineModeRenderer._updateHoverStyle.call(this);
+			this._updateHoverStyle();
 		}
 	};
 
@@ -206,56 +215,76 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * Calculates all data that is necessary for displaying style helpers in LineMode (compact).
 	 * These helpers are used in order to imitate a per-line box effect.
 	 *
-	 * @returns {object|undefined} An object containing general data about the style helpers and information about each
-	 *                             single line or undefined if the tile is invisible or not in compact density.
+	 * @returns {object|null} An object containing general data about the style helpers and information about each
+	 *                        single line or null if the tile is invisible or not in compact density.
 	 * @private
 	 */
-	GenericTile.prototype._getStyleData = function() {
-		this.removeStyleClass("sapMGTNewLine"); //remove this class before the new calculation begins in order to have the "default state" of tile-breaks
+	GenericTile.prototype._calculateStyleData = function() {
+		this.$("lineBreak").remove();
 
-		if (!this._isCompact() || this.$().is(":not(:visible)")) {
-			return;
+		if (!this._isCompact() || !this.getDomRef() || this.$().is(":hidden")) {
+			return null;
 		}
 
-		var $End = this.$("endMarker"),
+		var $this = this.$(),
+			$End = this.$("endMarker"),
 			$Start =  this.$("startMarker"),
+			iLines = this._getLineCount(),
 			iBarOffsetX, iBarOffsetY,
 			iBarPaddingTop = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "margin-top")),
 			iBarWidth,
-			iParentWidth = this.$().parent().outerWidth(),
-			iParentLeft = this.$().parent().offset().left,
-			iParentRight = iParentLeft + iParentWidth,
-			iHeight = Math.round($End.offset().top - $Start.offset().top),
-			cHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
-			cLineHeight = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
-			iLines = Math.round(iHeight / cHeight) + 1,
+			iAvailableWidth = this.$().parent().innerWidth(),
+			iLineHeight = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
+			iHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
+			$LineBreak = jQuery("<span><br /></span>"),
 			i = 0,
 			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iPosEnd = $End.offset().left,
-			iOffset = $Start.offset().left;
+			oEndMarkerPosition = $End.position();
 
 		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile
-			this.addStyleClass("sapMGTNewLine");
-			iPosEnd = $End.offset().left;
-			iHeight = $End.offset().top - $Start.offset().top;
-			iLines = Math.round(iHeight / cHeight) + 2; //+ first empty line
+			$LineBreak.attr("id", this.getId() + "-lineBreak");
+			$this.prepend($LineBreak);
+
+			iLines = this._getLineCount();
+			oEndMarkerPosition = $End.position();
 		}
 
-		if (bRTL) {
-			iOffset = iParentRight - iOffset;
-			iPosEnd = iParentRight - iPosEnd;
-		} else {
-			iOffset -= iParentLeft;
-			iPosEnd -= iParentLeft;
-		}
-
-		var oData = {
+		var oStyleData = {
 			rtl: bRTL,
-			startX: iOffset,
-			endX: iPosEnd,
+			lineBreak: bLineBreak,
+			startOffset: $Start.offset(),
+			endOffset: $End.offset(),
+			availableWidth: iAvailableWidth,
 			lines: []
 		};
+
+		var oLineBreakPosition;
+		if (Device.browser.msie || Device.browser.edge) {
+			//in IE, the line break's position cannot be determined by the container, but only by the br element
+			oLineBreakPosition = $LineBreak.find("br").position();
+		} else {
+			oLineBreakPosition = $LineBreak.position();
+		}
+
+		var oStyleHelperPosition;
+		if (oLineBreakPosition.left < oEndMarkerPosition.left) {
+			//if the line break is positioned left of the end marker (RTL), the end marker's position
+			//is used by the browser to determine the origin of the tile
+			oStyleHelperPosition = Device.browser.mozilla ? oLineBreakPosition : oEndMarkerPosition;
+		} else {
+			oStyleHelperPosition = oLineBreakPosition;
+		}
+
+		if (Device.browser.msie || Device.browser.edge) {
+			oStyleData.positionLeft = bLineBreak ? $LineBreak.find("br").position().left : $this.position().left;
+
+			oStyleData.positionRight = bLineBreak ? $this.width() - oLineBreakPosition.left : oStyleData.availableWidth - $this.position().left;
+		} else {
+			oStyleData.positionLeft = bLineBreak ? oLineBreakPosition.left : $this.position().left;
+
+			oStyleData.positionRight = bLineBreak ? $this.width() - oStyleHelperPosition.left : oStyleData.availableWidth - $this.position().left;
+		}
 
 		for (i; i < iLines; i++) {
 			if (bLineBreak && i === 0) {
@@ -264,33 +293,151 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 			//set bar width
 			if (iLines === 1) { //first and only line
-				iBarOffsetX = iOffset;
-				iBarWidth = iPosEnd - iBarOffsetX;
+				iBarOffsetX = bRTL ? oStyleData.availableWidth - oStyleData.positionLeft : oStyleData.positionLeft;
+				iBarWidth = $this.width();
 			} else if (i === iLines - 1) { //last line
 				iBarOffsetX = 0;
-				iBarWidth = iPosEnd - iBarOffsetX;
+				iBarWidth = bRTL ? $this.width() - oEndMarkerPosition.left : oEndMarkerPosition.left;
 			} else if (i === 0) { //first line for non-wrapped tile
-				iBarOffsetX = iOffset;
-				iBarWidth = iParentWidth - iBarOffsetX;
+				iBarOffsetX = bRTL ? oStyleData.availableWidth - oStyleData.positionLeft : oStyleData.positionLeft;
+				iBarWidth = iAvailableWidth - iBarOffsetX;
 			} else if (bLineBreak && i === 1) { //first line for wrapped tile
 				iBarOffsetX = 0;
-				iBarWidth = iParentWidth - iBarOffsetX;
+				iBarWidth = iAvailableWidth;
 			} else {
 				iBarOffsetX = 0;
-				iBarWidth = iParentWidth;
+				iBarWidth = iAvailableWidth;
 			}
-			iBarOffsetY = i * cHeight + iBarPaddingTop;
+			iBarOffsetY = i * iHeight + iBarPaddingTop;
 
-			oData.lines.push({
+			oStyleData.lines.push({
 				offset: {
 					x: iBarOffsetX,
 					y: iBarOffsetY
 				},
 				width: iBarWidth,
-				height: cLineHeight
+				height: iLineHeight
 			});
 		}
-		return oData;
+		return oStyleData;
+	};
+
+	/**
+	 * Calculates all style and caches it if it has changed.
+	 * @returns {boolean} True if the data has changed, false if no changes have been detected by jQuery.sap.equal
+	 * @private
+	 */
+	GenericTile.prototype._getStyleData = function() {
+		var oStyleData = this._calculateStyleData();
+
+		if (!jQuery.sap.equal(this._oStyleData, oStyleData)) {
+			delete this._oStyleData;
+
+			//cache style data in order for it to be reused by other functions (e.g. _getBoundingBox)
+			this._oStyleData = oStyleData;
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Generates the animation events with namespaces.
+	 *
+	 * @returns {string} A string containing the animation events with instance-specific namespaces
+	 * @private
+	 */
+	GenericTile.prototype._getAnimationEvents = function() {
+		return "transitionend.sapMGT$id animationend.sapMGT$id".replace(/\$id/g, jQuery.sap.camelCase(this.getId()));
+	};
+
+	/**
+	 * Triggers and update of the hover style of the tile in compact LineMode.
+	 * Also attaches the UIArea's transitionend and animationend events to an event handler in order for
+	 * the tile's hover style to be updated after e.g. a sap.m.NavContainer causes the whole page to be flipped.
+	 * This is done in order to avoid miscalculations.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._updateHoverStyle = function() {
+		if (!this._getStyleData()) {
+			return;
+		}
+
+		this._clearAnimationUpdateQueue();
+		this._cHoverStyleUpdates = -1;
+		this._oAnimationEndCallIds = {};
+		if (this._oStyleData && this._oStyleData.lineBreak) {
+			this._$RootNode = jQuery(this.getUIArea().getRootNode());
+
+			//attach browser event handlers to wait for transitions and animations to end
+			this._$RootNode.on(this._getAnimationEvents(), this._queueAnimationEnd.bind(this));
+		}
+
+		this._queueAnimationEnd();
+	};
+
+	/**
+	 * Handles every animationend or transitionend event and adds the new event to a queue, only the last element of which
+	 * is to be executed in order to update the tile's hover style.
+	 *
+	 * @param {jQuery.Event} [oEvent] The animationend or transitionend event object
+	 * @private
+	 */
+	GenericTile.prototype._queueAnimationEnd = function(oEvent) {
+		if (oEvent) {
+			var $Target = jQuery(oEvent.target);
+
+			if ($Target.is(".sapMGT, .sapMGT *")) { //exclude other GenericTiles and all of their contents
+				return false; //stop bubbling and prevent default behaviour
+			}
+		}
+
+		this._cHoverStyleUpdates++;
+
+		var sCallId = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [ this._cHoverStyleUpdates ]);
+		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = sCallId;
+	};
+
+	/**
+	 * Executes the actual hover style update of the tile if the given queueIndex is the last item in the Mutex queue.
+	 *
+	 * @param {int} hoverStyleUpdateCount The action's index in the mutex queue
+	 * @private
+	 */
+	GenericTile.prototype._handleAnimationEnd = function(hoverStyleUpdateCount) {
+		delete this._oAnimationEndCallIds[hoverStyleUpdateCount]; //delayedCall is finished and its ID can be removed
+
+		if (this._cHoverStyleUpdates === hoverStyleUpdateCount) {
+			this._getStyleData();
+			LineModeRenderer._updateHoverStyle.call(this);
+		}
+	};
+
+	/**
+	 * Clears all delayed calls which have been started by this control.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._clearAnimationUpdateQueue = function() {
+		for (var k in this._oAnimationEndCallIds) {
+			jQuery.sap.clearDelayedCall(this._oAnimationEndCallIds[k]);
+			delete this._oAnimationEndCallIds[k];
+		}
+	};
+
+	/**
+	 * Calculates the number of lines in the compact line tile by simply dividing the tile's entire height by the
+	 * tile's line height.
+	 *
+	 * @returns {number} The number of lines
+	 * @private
+	 */
+	GenericTile.prototype._getLineCount = function() {
+		var oClientRect = this.getDomRef().getBoundingClientRect(),
+			cHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"); //height including gap between lines
+
+		return Math.round(oClientRect.height / cHeight);
 	};
 
 	/**
@@ -300,9 +447,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._getBoundingBox = function() {
-		if (!this._oStyleData) {
-			this._oStyleData = this._getStyleData();
-		}
+		this._getStyleData();
 		if (jQuery.isEmptyObject(this._oStyleData)) {
 			var oPos = this.$().position();
 			return {
@@ -313,7 +458,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			};
 		} else if (this._oStyleData.lines.length > 0) {
 			return {
-				x: this._oStyleData.startX, //this x-offset is browser-dependent
+				x: this._oStyleData.positionLeft, //this x-offset is browser-dependent
 				y: this._oStyleData.lines[0].offset.y,
 				width: this._oStyleData.lines[0].width,
 				height: this._oStyleData.lines[0].height * this._oStyleData.lines.length
@@ -336,13 +481,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			for (i = 0; i < aSiblings.length; i++) {
 				var oSibling = aSiblings[i];
 				if (oSibling instanceof sap.m.GenericTile && oSibling.getMode() === library.GenericTileMode.LineMode) {
-					LineModeRenderer._updateHoverStyle.call(oSibling);
+					oSibling._updateHoverStyle();
 				}
 			}
 		}
 	};
 
 	GenericTile.prototype.exit = function() {
+		if (this._sParentResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sParentResizeListenerId = null;
+		}
+
+		if (this._$RootNode) {
+			this._$RootNode.off(this._getAnimationEvents());
+			this._$RootNode = null;
+		}
+
+		//stop any currently running queue
+		this._clearAnimationUpdateQueue();
+
 		this._oWarningIcon.destroy();
 		if (this._oImage) {
 			this._oImage.destroy();
@@ -361,7 +519,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this.getMode() === library.GenericTileMode.LineMode) {
 			this.addStyleClass("sapMGTLineModePress");
 		}
-		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
+		if (Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
 		}
 	};
@@ -385,7 +543,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this.getMode() === library.GenericTileMode.LineMode) {
 			this.removeStyleClass("sapMGTLineModePress");
 		}
-		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
+		if (Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
 			this.$().focus();
 		}
 	};
@@ -397,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype.ontap = function(oEvent) {
 		if (this.getState() !== sap.m.LoadState.Disabled) {
-			if (sap.ui.Device.browser.internet_explorer) {
+			if (Device.browser.internet_explorer) {
 				this.$().focus();
 			}
 			this.firePress();
@@ -441,7 +599,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		//If these properties are being changed, update all sibling controls that are GenericTiles in LineMode
 		var aLineModeProperties = [ "state", "subheader", "header" ];
-		if (aLineModeProperties.indexOf(sPropertyName) !== -1) {
+		if (this.getMode() === library.GenericTileMode.LineMode && aLineModeProperties.indexOf(sPropertyName) !== -1) {
 			this._bUpdateLineTileSiblings = true;
 		}
 		return this;
