@@ -92,8 +92,8 @@ sap.ui.define([
 			items: [],
 			indexOfMarkedTableItem: -1,
 			markedTableItem: null,
-			isMoveDownButtonEnabled: false,
-			isMoveUpButtonEnabled: false,
+// isMoveDownButtonEnabled: false,
+// isMoveUpButtonEnabled: false,
 			showOnlySelectedItems: false,
 			countOfSelectedItems: 0,
 			countOfItems: 0
@@ -799,44 +799,45 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._reindexModelItemsByTableIndex = function(oData) {
-		oData.countOfSelectedItems = 0;
-		oData.countOfItems = 0;
-		oData.items.forEach(function(oModelItem, iTableIndex) {
-			oModelItem.tableIndex = iTableIndex;
-			oData.countOfItems++;
-			if (oModelItem.persistentSelected) {
-				oData.countOfSelectedItems++;
-			}
-		});
+// oData.countOfSelectedItems = 0;
+// oData.countOfItems = 0;
+// oData.items.forEach(function(oModelItem, iTableIndex) {
+// oModelItem.tableIndex = iTableIndex;
+// oData.countOfItems++;
+// if (oModelItem.persistentSelected) {
+// oData.countOfSelectedItems++;
+// }
+// });
 	};
 
 	/**
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
-		aModelItems.sort(function(a, b) {
-			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-				return -1;
-			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && b.persistentSelected === true) {
-				return 1;
-			} else if (a.persistentSelected === true && b.persistentSelected === true) {
-				if (a.persistentIndex < b.persistentIndex) {
-					return -1;
-				} else if (a.persistentIndex > b.persistentIndex) {
-					return 1;
-				} else {
-					return 0;
-				}
-			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-				if (a.text < b.text) {
-					return -1;
-				} else if (a.text > b.text) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
+// aModelItems.sort(function(a, b) {
+// if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
+// return -1;
+// } else if ((a.persistentSelected === false || a.persistentSelected === undefined) && b.persistentSelected === true) {
+// return 1;
+// } else if (a.persistentSelected === true && b.persistentSelected === true) {
+// if (a.persistentIndex < b.persistentIndex) {
+// return -1;
+// } else if (a.persistentIndex > b.persistentIndex) {
+// return 1;
+// } else {
+// return 0;
+// }
+// } else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected ===
+// undefined)) {
+// if (a.text < b.text) {
+// return -1;
+// } else if (a.text > b.text) {
+// return 1;
+// } else {
+// return 0;
+// }
+// }
+// });
 	};
 
 	/**
@@ -919,94 +920,99 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._createToolbar = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+//		var oModel = this.getModel("$sapmP13nSelectionPanel");
 		var that = this;
-		var oMoveDownButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			enabled: {
-				path: '/isMoveDownButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Down");
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
-		});
-		oMoveDownButton.setModel(oModel);
-
-		var oMoveUpButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			enabled: {
-				path: '/isMoveUpButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Up");
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
-		});
-		oMoveUpButton.setModel(oModel);
-
-		var oMoveToBottomButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			enabled: {
-				path: '/isMoveDownButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Bottom");
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
-		});
-		oMoveToBottomButton.setModel(oModel);
-
-		var oMoveToTopButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			enabled: {
-				path: '/isMoveUpButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Top");
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
-		});
-		oMoveToTopButton.setModel(oModel);
-
-		var oShowSelectedButton = new sap.m.Button({
-			text: {
-				path: '/showOnlySelectedItems',
-				formatter: function(bShowOnlySelectedItems) {
-					return bShowOnlySelectedItems ? that._oRb.getText('COLUMNSPANEL_SHOW_ALL') : that._oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
-				}
-			},
-			press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High
-			})
-		});
-		oShowSelectedButton.setModel(oModel);
+// var oMoveDownButton = new sap.m.OverflowToolbarButton({
+// icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+// text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+// tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+// enabled: {
+// path: '/isMoveDownButtonEnabled'
+// },
+// press: function() {
+// that._moveMarkedTableItem("Down");
+// },
+// layoutData: new sap.m.OverflowToolbarLayoutData({
+// moveToOverflow: true,
+// priority: sap.m.OverflowToolbarPriority.High,
+// group: 1
+// }),
+// visible: false
+// });
+// oMoveDownButton.setModel(oModel);
+//
+// var oMoveUpButton = new sap.m.OverflowToolbarButton({
+// icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
+// text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
+// tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
+// enabled: {
+// path: '/isMoveUpButtonEnabled'
+// },
+// press: function() {
+// that._moveMarkedTableItem("Up");
+// },
+// layoutData: new sap.m.OverflowToolbarLayoutData({
+// moveToOverflow: true,
+// priority: sap.m.OverflowToolbarPriority.High,
+// group: 1
+// }),
+// visible: false
+// });
+// oMoveUpButton.setModel(oModel);
+//
+// var oMoveToBottomButton = new sap.m.OverflowToolbarButton({
+// icon: sap.ui.core.IconPool.getIconURI("expand-group"),
+// text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+// tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+// enabled: {
+// path: '/isMoveDownButtonEnabled'
+// },
+// press: function() {
+// that._moveMarkedTableItem("Bottom");
+// },
+// layoutData: new sap.m.OverflowToolbarLayoutData({
+// moveToOverflow: true,
+// priority: sap.m.OverflowToolbarPriority.Low,
+// group: 2
+// }),
+// visible: false
+// });
+// oMoveToBottomButton.setModel(oModel);
+//
+// var oMoveToTopButton = new sap.m.OverflowToolbarButton({
+// icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
+// text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+// tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+// enabled: {
+// path: '/isMoveUpButtonEnabled'
+// },
+// press: function() {
+// that._moveMarkedTableItem("Top");
+// },
+// layoutData: new sap.m.OverflowToolbarLayoutData({
+// moveToOverflow: true,
+// priority: sap.m.OverflowToolbarPriority.Low,
+// group: 2
+// }),
+// visible: false
+// });
+// oMoveToTopButton.setModel(oModel);
+//
+// var oShowSelectedButton = new sap.m.Button({
+// text: {
+// path: '/showOnlySelectedItems',
+// formatter: function(bShowOnlySelectedItems) {
+// return bShowOnlySelectedItems ? that._oRb.getText('COLUMNSPANEL_SHOW_ALL') : that._oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
+// }
+// },
+// press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
+// layoutData: new sap.m.OverflowToolbarLayoutData({
+// moveToOverflow: true,
+// priority: sap.m.OverflowToolbarPriority.High
+// }),
+// visible: false
+// });
+// oShowSelectedButton.setModel(oModel);
 
 		var iLiveChangeTimer = 0;
 		var oSearchField = new SearchField(this.getId() + "-searchField", {
@@ -1037,7 +1043,8 @@ sap.ui.define([
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
-				new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
+				new sap.m.ToolbarSpacer(), oSearchField
+			// , oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
 			]
 		});
 		this.addAggregation("content", oToolbar);
