@@ -2503,7 +2503,9 @@ sap.ui.define([
         var value2 = oConditionGrid.value2;
 
         var bValue1Empty = value1 && (value1.getVisible() && !this._getValueTextFromField(value1, oConditionGrid.oFormatter));
+        var bValue1State = value1 && value1.getVisible() && value1.getValueState && value1.getValueState();
         var bValue2Empty = value2 && (value2.getVisible() && !this._getValueTextFromField(value2, oConditionGrid.oFormatter));
+        var bValue2State = value2 && value2.getVisible() && value2.getValueState && value2.getValueState();
 
         var sOperation = oConditionGrid.operation.getSelectedKey();
 
@@ -2519,6 +2521,8 @@ sap.ui.define([
                     value2.setValueStateText(this._sValidationDialogFieldMessage);
                 }
 
+                bValid = false;
+            } else if (bValue1State !== sap.ui.core.ValueState.None || bValue2State !== sap.ui.core.ValueState.None) {
                 bValid = false;
             } else {
                 value1.setValueState(sap.ui.core.ValueState.None);
