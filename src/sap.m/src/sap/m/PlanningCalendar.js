@@ -483,6 +483,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			//set default value
 			oStartDate = new Date();
 		}
+
+		if (!(oStartDate instanceof Date)) {
+			throw new Error("Date must be a JavaScript date object; " + this);
+		}
+
 		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.Week) {
 			oStartDate = CalendarUtils.getFirstDateOfWeek(oStartDate);
 		}
@@ -494,10 +499,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 we need to make sure the today button is up-to date, as it depends on the view type*/
 			this._updateTodayButtonState();
 			return this;
-		}
-
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
 		var iYear = oStartDate.getFullYear();
@@ -774,27 +775,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 						oDateInterval._adjustFocusedDateUponMonthChange = function(oFocusedDate, iChosenMonth) {
 							var oNextMonth = new UniversalDate(oFocusedDate.getTime()),
-								oLocale = sap.ui.getCore().getConfiguration().getLocale(),
-								iFirstDayOfWeek = new sap.ui.core.LocaleData(oLocale).getFirstDayOfWeek(),
-								iCurrentDay,
-								iDelta,
 								bIsTheNextMonthVisibleAsWell;
 
+							oNextMonth.setDate(1);
 							oNextMonth.setMonth(oNextMonth.getMonth() + 1);
 							bIsTheNextMonthVisibleAsWell = this._oPlanningCalendar._dateMatchesVisibleRange(oNextMonth, sap.ui.unified.CalendarIntervalType.Week);
 
 							//handle the border-case where end of the month and begin of the next month
-							if (!bIsTheNextMonthVisibleAsWell && iChosenMonth === oNextMonth.getMonth()) {
+							if (bIsTheNextMonthVisibleAsWell && iChosenMonth === oNextMonth.getMonth()) {
 								return;
 							}
+							oFocusedDate.setUTCMonth(iChosenMonth);
 							oFocusedDate.setUTCDate(1);
-							iCurrentDay = oFocusedDate.getUTCDay();
-							iDelta = iFirstDayOfWeek - iCurrentDay;
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + iDelta);
+						};
 
-							if (oFocusedDate.getTime() !== this._oPlanningCalendar.getStartDate().getTime()) {
-								this._oPlanningCalendar.fireStartDateChange();
-							}
+						oDateInterval._focusDateExtend = function (oDate, bOtherMonth, bNoEvent) {
+							this._setStartDate(oDate, false, true);
+							return !bNoEvent;//if not already fired
 						};
 					}
 					if (oMinDate) {

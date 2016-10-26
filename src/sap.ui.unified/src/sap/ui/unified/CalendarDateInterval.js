@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oDatesRow = this.getAggregation("month")[0];
 			if (!oStartDate) {
 				// use focused date as start date
-				_setStartDate.call(this, this._oFocusedDate, false, true);
+				this._setStartDate(this._oFocusedDate, false, true);
 			}else if (!oDatesRow.checkDateFocusable(CalendarUtils._createLocalDate(this._oFocusedDate))) {
 				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
 			}
@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var iDay = Math.ceil((oOldDate.getTime() - oStartDate.getTime()) / (1000 * 3600 * 24));
 			oStartDate = this._newUniversalDate(oDate);
 			oStartDate.setUTCDate( oStartDate.getUTCDate() - iDay);
-			_setStartDate.call(this, oStartDate, false, true);
+			this._setStartDate(oStartDate, false, true);
 			if (!bNoEvent) {
 				return true; // fire startDateChange event in caller at end of processing
 			}
@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// check if still in valid range
 			if (this._oUTCStartDate.getTime() < this._oMinDate.getTime()) {
 				jQuery.sap.log.warning("start date < minDate -> minDate will be start date", this);
-				_setStartDate.call(this, this._newUniversalDate(this._oMinDate), true, true);
+				this._setStartDate(this._newUniversalDate(this._oMinDate), true, true);
 			} else {
 				var oEndDate = new UniversalDate(this._oUTCStartDate.getTime());
 				oEndDate.setUTCDate(oEndDate.getUTCDate() + this._getDays() - 1);
@@ -352,7 +352,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					jQuery.sap.log.warning("end date > maxDate -> start date will be changed", this);
 					var oStartDate = new UniversalDate(this._oMaxDate.getTime());
 					oStartDate.setUTCDate(oStartDate.getUTCDate() - this._getDays() + 1);
-					_setStartDate.call(this, oStartDate, true, true);
+					this._setStartDate(oStartDate, true, true);
 				}
 			}
 		}
@@ -471,7 +471,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate.setUTCDate(oStartDate.getUTCDate() - iDays);
 			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - iDays);
 			this._setFocusedDate(oFocusedDate);
-			_setStartDate.call(this, oStartDate, true);
+			this._setStartDate(oStartDate, true);
 			break;
 
 		case 1: // month picker
@@ -513,7 +513,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate.setUTCDate(oStartDate.getUTCDate() + iDays);
 			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + iDays);
 			this._setFocusedDate(oFocusedDate);
-			_setStartDate.call(this, oStartDate, true);
+			this._setStartDate(oStartDate, true);
 			break;
 
 		case 1: // month picker
@@ -603,7 +603,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	function _setStartDate(oStartDate, bSetFocusDate, bNoEvent){
+	/**
+	 * Sets given start date as date in local.
+	 *
+	 * @param oStartDate Date that should be taken to create the local date.
+	 * E.g. if the date is Dec 21th 1981 00:00:00 GMT, the local date (CEST) would be
+	 * Dec 20th, 1981 22:00:00
+	 * @param bSetFocusDate if true, sets this date as focused date
+	 * @param bNoEvent describes whether the startDateChange event was previously thrown
+	 * @private
+	*/
+	CalendarDateInterval.prototype._setStartDate = function (oStartDate, bSetFocusDate, bNoEvent) {
 
 		var oMaxDate = this._newUniversalDate(this._oMaxDate);
 		oMaxDate.setUTCDate(oMaxDate.getUTCDate() - this._getDays() + 1);
@@ -642,7 +652,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this.fireStartDateChange();
 		}
 
-	}
+	};
+
 
 	function _getStartDate(){
 
