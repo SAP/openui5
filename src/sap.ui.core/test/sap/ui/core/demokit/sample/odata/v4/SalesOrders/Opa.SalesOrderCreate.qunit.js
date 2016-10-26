@@ -166,16 +166,25 @@ sap.ui.require([
 			// Relative list bindings show correct data when switching to a different context
 			When.onTheMainPage.selectSalesOrderWithId("0500000000");
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
-			When.onTheMainPage.selectSalesOrderItemWithItem("0000000010");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkContactNameInRow(0, "Karl");
 			Then.onTheMainPage.checkContactNameInRow(1, "Harald");
-			When.onTheMainPage.selectSalesOrderItemWithItem("0000000020");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000020");
 			Then.onTheMainPage.checkContactNameInRow(0, "Dagmar");
 			Then.onTheMainPage.checkContactNameInRow(1, "Ursula");
 			Then.onTheMainPage.checkContactNameInRow(2, "Foo");
-			When.onTheMainPage.selectSalesOrderItemWithItem("0000000010");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkContactNameInRow(0, "Karl");
 			Then.onTheMainPage.checkContactNameInRow(1, "Harald");
+
+			// Filter on relative list binding (table without extended change detection)
+			When.onTheMainPage.selectSalesOrderWithId("0500000000");
+			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
+			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
+			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
+			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
 		}
 
 		// delete the last created SalesOrder again

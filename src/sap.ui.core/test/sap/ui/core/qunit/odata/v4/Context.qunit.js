@@ -723,4 +723,28 @@ sap.ui.require([
 		assert.strictEqual(oContext.oBinding, undefined);
 		assert.strictEqual(oContext.oModel, undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate", function (assert) {
+		var oModel = {
+				getDependentBindings : function () {}
+			},
+			oBinding1 = {
+				checkUpdate : function () {}
+			},
+			oBinding2 = {
+				checkUpdate : function () {}
+			},
+			oParentBinding = {},
+			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns([oBinding1, oBinding2]);
+		this.mock(oBinding1).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding2).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oContext.checkUpdate();
+	});
 });

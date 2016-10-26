@@ -2,6 +2,8 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
@@ -12,8 +14,8 @@ sap.ui.require([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
 ],
-function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interactable, Properties,
-		TestUtils) {
+function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath,
+		Interactable, Properties, TestUtils) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -156,6 +158,18 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 						viewName : sViewName
 					});
 				},
+				filterSalesOrderItemsByProductID : function (sValue) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderItemsTable) {
+							// Note: filter cannot be triggered via UI; field is disabled
+							oSalesOrderItemsTable.getBinding("items")
+								.filter(new Filter("Product/ProductID", FilterOperator.EQ, sValue));
+						},
+						viewName : sViewName
+					});
+				},
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -273,14 +287,14 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 						}
 					});
 				},
-				selectSalesOrderItemWithItem : function (sItem) {
+				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						id : /--SalesOrderLineItems-/,
-						matchers : new Properties({text: sItem}),
+						matchers : new Properties({text: sPosition}),
 						success : function (aControls) {
 							aControls[0].$().tap();
-							Opa5.assert.ok(true, "Sales Order Item selected: " + sItem);
+							Opa5.assert.ok(true, "Sales Order Item selected: " + sPosition);
 						},
 						viewName : sViewName
 					});
@@ -492,6 +506,17 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
 							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
 								sExpectedItem, "Item position in row " + iRow);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "PhoneNumber",
+						success : function (oPhoneNumberInput) {
+							Opa5.assert.strictEqual(oPhoneNumberInput.getValue(),
+								sExpectedPhoneNumber);
 						},
 						viewName : sViewName
 					});

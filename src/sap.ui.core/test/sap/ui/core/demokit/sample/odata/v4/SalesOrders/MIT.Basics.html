@@ -63,5 +63,16 @@
 			<li><b>Check:</b> The contacts shown in the <code>Supplier Contact Information</code>
 				table are different from the ones shown for the first sales order item.</li>
 		</ol>
+		<h3>Filter on relative list binding (with backend only)</h3>
+		Note: Test runs on sales order items table which is non-growing and therefore does not use
+		extended change detection.
+		<ol>
+			<li>Select the first sales order</li>
+			<li>In the <code>Filter by ProductID</code> field in the header of the
+				<code>Sales Order Line Items</code> table, enter the product ID of some line item
+				displayed in the table.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains exactly one
+				row with the sales order item having the product ID entered as filter.</li>
+		</ol>
 	</body>
 </html>

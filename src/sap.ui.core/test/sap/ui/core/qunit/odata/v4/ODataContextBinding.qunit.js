@@ -1594,6 +1594,29 @@ sap.ui.require([
 			.then();
 	});
 
+	//*********************************************************************************************
+	QUnit.test("checkUpdate", function (assert) {
+		var oBinding = this.oModel.bindContext("/Employees(ID='1')"),
+			oDependent0 = {checkUpdate : function () {}},
+			oDependent1 = {checkUpdate : function () {}};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
+		this.mock(ContextBinding.prototype).expects("checkUpdate").withExactArgs()
+			.returns("unused");
+
+		// code under test
+		assert.strictEqual(oBinding.checkUpdate(), "unused");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkUpdate(true);
+		}, new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate must not be called "
+			+ "with parameters"));
+	});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
