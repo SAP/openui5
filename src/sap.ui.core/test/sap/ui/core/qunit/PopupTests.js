@@ -828,6 +828,27 @@ QUnit.asyncTest("Opened / closed", function(assert) {
 // }, 50);
 // });
 
+QUnit.test("Destroy popup before open animation finishes", function(assert) {
+	this.oPopup.setDurations(20, 0);
+	var done = assert.async();
+	var fnOpened = function(oEvent) {
+		assert.ok(false, "'opened' event should be fired");
+	};
+	var fnClosed = function(oEvent) {
+		assert.ok(true, "close event should be fired when destroy");
+	};
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open();
+	this.oPopup.destroy();
+
+	setTimeout(function() {
+		assert.ok(!this.oPopup.isOpen(), "Popup is closed");
+		done();
+	}.bind(this), 50);
+});
+
 QUnit.module("Parent / Child Popups", {
 	setup : function() {
 		this.oChildOpener = jQuery.sap.domById("popup2-btn");
@@ -1300,4 +1321,30 @@ QUnit.test("RTL with 'my' set to 'CenterBottom', changing position again after p
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.open();
+});
+
+QUnit.test("Open two modal popups and destroy the second one. Blocklayer should stay", function(assert) {
+	var done = assert.async();
+	this.oPopup.setModal(true);
+
+	var oPopup2 = new sap.ui.core.Popup(jQuery.sap.domById("popup2"));
+	oPopup2.setModal(true);
+
+	var fnOpened = function() {
+		oPopup2.destroy();
+	};
+
+	var fnClosed = function() {
+		var $DomRefBL = jQuery.sap.byId("sap-ui-blocklayer-popup");
+		assert.equal($DomRefBL.css("visibility"), "visible", "blocklayer is still visible");
+
+		done();
+	};
+
+	oPopup2.attachOpened(fnOpened);
+	oPopup2.attachClosed(fnClosed);
+
+	// act
+	this.oPopup.open();
+	oPopup2.open();
 });

@@ -755,6 +755,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._opened = function() {
+		// If the popup's state is changed again after 'open' function is called,
+		// for example, the 'close' is called before the opening animation finishes,
+		// it's needed to immediately return from this function.
+		if (this.eOpenState !== sap.ui.core.OpenState.OPENING) {
+			return;
+		}
+
 		// internal status that any animation has been finished should set to true;
 		this.bOpen = true;
 
@@ -1047,10 +1054,6 @@ sap.ui.define([
 		} else if ((this._durations.close === 0) || (this._durations.close > 0)) {
 			iRealDuration = this._durations.close;
 		}
-
-		if (iRealDuration === 0 && this.eOpenState == sap.ui.core.OpenState.OPENING) {
-			return;
-		} // do not allowed immediate closing while opening
 
 		//if(this.eOpenState != sap.ui.core.OpenState.OPEN) return; // this is the more conservative approach: to only close when the Popup is OPEN
 
@@ -2018,14 +2021,10 @@ sap.ui.define([
 			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
 		}
+		// close the popup without any animation
+		this.close(0);
 
-		this.close();
 		this.oContent = null;
-
-		// also hide the blocklayer synchronously instead of waiting for the closing animation
-		if (this._bModal) {
-			this._hideBlockLayer();
-		}
 
 		if (this._bFollowOf) {
 			this.setFollowOf(null);
@@ -2050,6 +2049,8 @@ sap.ui.define([
 			this._oBottomShieldLayer = null;
 			this._iBottomShieldRemoveTimer = null;
 		}
+
+		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
@@ -2299,11 +2300,9 @@ sap.ui.define([
 
 		// prevent HTML page from scrolling
 		jQuery("html").addClass("sapUiBLyBack");
-
 	};
 
 	Popup.prototype._hideBlockLayer = function() {
-
 		// a dialog was closed so pop his z-index from the stack
 		Popup.blStack.pop();
 
