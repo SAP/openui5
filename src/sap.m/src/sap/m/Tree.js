@@ -155,7 +155,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 
 		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "Tree.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
 
-		if (oBinding && oBinding.expandToLevel) {
+		if (oBinding && oBinding.expandToLevel && oBinding.getNumberOfExpandedLevels) {
+			if (oBinding.getNumberOfExpandedLevels() > iLevel) {
+				oBinding.collapseToLevel(0);
+			}
 			oBinding.expandToLevel(iLevel);
 		}
 
