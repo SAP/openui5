@@ -4,7 +4,7 @@
 //************************************************************************
 
 jQuery.sap.require("sap.ui.table.TableUtils");
-var ColumnUtils = sap.ui.table.TableUtils.ColumnUtils;
+var ColumnUtils = sap.ui.table.TableUtils.Column;
 var TableUtils = sap.ui.table.TableUtils;
 
 
@@ -68,8 +68,8 @@ QUnit.module("Misc", {
 });
 
 QUnit.test("Connection to TableUtils", function(assert) {
-	assert.ok(!!sap.ui.table.TableUtils.ColumnUtils, "ColumnUtils namespace available");
-	assert.ok(sap.ui.table.TableUtils.ColumnUtils.TableUtils === sap.ui.table.TableUtils, "Dependency forwarding of TableUtils correct");
+	assert.ok(!!sap.ui.table.TableUtils.Column, "ColumnUtils namespace available");
+	assert.ok(sap.ui.table.TableUtils.Column.TableUtils === sap.ui.table.TableUtils, "Dependency forwarding of TableUtils correct");
 });
 
 QUnit.test("No Header Spans", function(assert) {
@@ -492,5 +492,211 @@ QUnit.test("moveColumnTo() - Prevent movement", function(assert) {
 });
 
 
+QUnit.module("Column Widths", {
+	beforeEach: function() {
+		createTables();
+	},
+	afterEach: function() {
+		destroyTables();
+	}
+});
 
+QUnit.test("getMinColumnWidth", function(assert) {
+	var bDesktop = sap.ui.Device.system.desktop;
+	sap.ui.Device.system.desktop = true;
+	assert.equal(ColumnUtils.getMinColumnWidth(), 48, "Desktop column width");
+	ColumnUtils._iColMinWidth = null;
+	sap.ui.Device.system.desktop = false;
+	assert.equal(ColumnUtils.getMinColumnWidth(), 88, "Mobile column width");
+	sap.ui.Device.system.desktop = bDesktop;
+});
 
+QUnit.test("resizeColumn", function(assert) {
+	oTable.setFixedColumnCount(0);
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
+	oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
+	sap.ui.getCore().applyChanges();
+
+	var aVisibleColumns = oTable._getVisibleColumns();
+
+	var aOriginalColumnWidths = [];
+	for (var i = 0; i < aVisibleColumns.length; i++) {
+		var oColumn = aVisibleColumns[i];
+		aOriginalColumnWidths.push(parseInt(oColumn.getWidth(), 10));
+	}
+
+	function assertUnchanged(aExcludedColumns) {
+		for (var i = 0; i < aVisibleColumns.length; i++) {
+			if (aExcludedColumns && aExcludedColumns.indexOf(i) !== -1) {
+				continue;
+			}
+			var oColumn = aVisibleColumns[i];
+			assert.strictEqual(parseInt(oColumn.getWidth(), 10), aOriginalColumnWidths[i],
+				"Column " + (i + 1) + " has its original width of " + aOriginalColumnWidths[i] + "px");
+		}
+	}
+
+	function assertColumnWidth(iColumnIndex, iWidth) {
+		var iActualColumnWidth = parseInt(aVisibleColumns[iColumnIndex].getWidth(), 10);
+		assert.strictEqual(iActualColumnWidth, iWidth,
+			"Column " + (iColumnIndex + 1) + " width is " + iActualColumnWidth + "px and should be " + iWidth + "px");
+	}
+
+	// Invalid input should not change the column widths.
+	ColumnUtils.resizeColumn();
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable);
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable, 1);
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable, aVisibleColumns.length, 1);
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable, -1, 1);
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable, 0, 0);
+	assertUnchanged();
+	ColumnUtils.resizeColumn(oTable, 0, -1);
+	assertUnchanged();
+
+	// Column 4
+	ColumnUtils.resizeColumn(oTable, 3, 150, false);
+	assertColumnWidth(3, 150);
+	assertUnchanged([3]);
+	ColumnUtils.resizeColumn(oTable, 3, aOriginalColumnWidths[3], false);
+	assertUnchanged();
+
+	// Column 1 to 3
+	ColumnUtils.resizeColumn(oTable, 0, 434, false, 3);
+	var iNewWidth = Math.round(434 / 3);
+	assertColumnWidth(0, iNewWidth);
+	assertColumnWidth(1, iNewWidth);
+	assertColumnWidth(2, iNewWidth);
+	assertUnchanged([0, 1, 2]);
+	ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+	assertUnchanged();
+
+	// Column 1 to 3 - Column 2 not resizable
+	aVisibleColumns[1].setResizable(false);
+	ColumnUtils.resizeColumn(oTable, 0, 100, false, 3);
+	assertColumnWidth(0, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertColumnWidth(2, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertUnchanged([0, 2]);
+	ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
+	ColumnUtils.resizeColumn(oTable, 2, aOriginalColumnWidths[2], false);
+	assertUnchanged();
+	aVisibleColumns[1].setResizable(true);
+
+	// Column 2 - Not resizable
+	aVisibleColumns[1].setResizable(false);
+	ColumnUtils.resizeColumn(oTable, 1, 50, false);
+	assertUnchanged();
+	aVisibleColumns[1].setResizable(true);
+
+	// Invalid span values default to 1
+	ColumnUtils.resizeColumn(oTable, iNumberOfCols - 1, 150, false, 2);
+	assertColumnWidth(iNumberOfCols - 1, 150);
+	assertUnchanged([iNumberOfCols - 1]);
+	ColumnUtils.resizeColumn(oTable, iNumberOfCols - 1, aOriginalColumnWidths[iNumberOfCols - 1], false, 0);
+	assertUnchanged();
+
+	// Do not decrease column width below the minimum column width value.
+	ColumnUtils.resizeColumn(oTable, 1, 1, false);
+	assertColumnWidth(1, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertUnchanged([1]);
+	ColumnUtils.resizeColumn(oTable, 1, aOriginalColumnWidths[1], false);
+	assertUnchanged();
+
+	ColumnUtils.resizeColumn(oTable, 0, 1, false, 3);
+	assertColumnWidth(0, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertColumnWidth(1, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertColumnWidth(2, sap.ui.table.TableUtils.Column.getMinColumnWidth());
+	assertUnchanged([0, 1, 2]);
+	ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+	assertUnchanged();
+
+	// Fire the ColumnResize event.
+	var oColumnResizeHandler = this.spy();
+	oTable.attachColumnResize(oColumnResizeHandler);
+	ColumnUtils.resizeColumn(oTable, 0, 250);
+	assertColumnWidth(0, 250);
+	assertUnchanged([0]);
+	assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
+	oTable.detachColumnResize(oColumnResizeHandler);
+
+	// Fire the ColumnResize event and prevent execution of the default action.
+	oColumnResizeHandler = this.spy(function(oEvent) {
+		oEvent.preventDefault();
+	});
+	oTable.attachColumnResize(oColumnResizeHandler);
+	ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0]);
+	assertColumnWidth(0, 250);
+	assertUnchanged([0]);
+	assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
+
+	// Do not fire the event.
+	oColumnResizeHandler.reset();
+	ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
+	assertUnchanged();
+	assert.ok(oColumnResizeHandler.notCalled, "ColumnResize handler was not called");
+});
+
+QUnit.test("getColumnWidth", function(assert) {
+	var aVisibleColumns = oTable._getVisibleColumns();
+	var iColumnWidth;
+
+	assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
+
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 0), 100, "Returned 100");
+
+	aVisibleColumns[1].setWidth("123px");
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 1), 123, "Returned 123");
+
+	aVisibleColumns[2].setWidth("2em");
+	var i2emInPixel = oTable._CSSSizeToPixel("2em");
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
+
+	aVisibleColumns[3].setVisible(false);
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column is not visible and width set to 100px");
+
+	aVisibleColumns[3].setWidth("");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"\"");
+
+	aVisibleColumns[3].setWidth("auto");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"auto\"");
+
+	aVisibleColumns[3].setWidth("10%");
+	sap.ui.getCore().applyChanges();
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"10%\"");
+
+	aVisibleColumns[4].setWidth("");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"\"");
+
+	aVisibleColumns[4].setWidth("auto");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"auto\"");
+
+	aVisibleColumns[4].setWidth("10%");
+	sap.ui.getCore().applyChanges();
+	iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
+	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
+		"The width in pixels was correctly retrieved from the DOM in case of a column width specified in percentage");
+});

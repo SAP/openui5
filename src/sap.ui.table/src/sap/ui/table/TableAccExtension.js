@@ -136,8 +136,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Returns whether the given cell is hidden
 		 */
 		isHiddenCell : function($Cell, oCell) {
-			var bGroup = TableUtils.isInGroupingRow($Cell);
-			var bSum = TableUtils.isInSumRow($Cell);
+			var bGroup = TableUtils.Grouping.isInGroupingRow($Cell);
+			var bSum = TableUtils.Grouping.isInSumRow($Cell);
 			var bSupportStyleClass = !!oCell && !!oCell.hasStyleClass;
 
 			var bIsRowHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
@@ -297,12 +297,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				aDescriptions = [],
 				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"];
 
-			if (TableUtils.isInGroupingRow($Cell)) {
+			if (TableUtils.Grouping.isInGroupingRow($Cell)) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 			}
 
-			if (TableUtils.isInSumRow($Cell)) {
+			if (TableUtils.Grouping.isInSumRow($Cell)) {
 				var iLevel = $Cell.parent().data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -351,8 +351,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		modifyAccOfROWHEADER : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
-				bGroupHeader = TableUtils.isInGroupingRow($Cell),
-				bSum = TableUtils.isInSumRow($Cell),
+				bGroupHeader = TableUtils.Grouping.isInGroupingRow($Cell),
+				bSum = TableUtils.Grouping.isInSumRow($Cell),
 				oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")],
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [],
 				aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
@@ -646,6 +646,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 							if (mParams && mParams.row) {
 								if (mParams.row._bHasChildren) {
 									mAttributes["title"] = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
 								} else {
 									mAttributes["aria-label"] = oTable._oResBundle.getText("TBL_LEAF");
 								}
@@ -673,6 +674,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				case TableAccExtension.ELEMENTTYPES.TABLEFOOTER: //The table footer area
 				case TableAccExtension.ELEMENTTYPES.TABLESUBHEADER: //The table toolbar and extension areas
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
+					break;
+
+				case "PRESENTATION":
+					mAttributes["role"] = "presentation";
 					break;
 			}
 

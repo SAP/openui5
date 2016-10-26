@@ -22,6 +22,19 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 
 	Cache._entries = {};
 
+	Cache._switches = {};
+
+	/**
+	 * Get the list of the switched-on business functions from the flex response
+	 *
+	 * @returns {object} map which has switched-on business functions as its keys
+	 *
+	 * @public
+	 */
+	Cache.getSwitches = function () {
+		return Cache._switches;
+	};
+
 	/**
 	 * Indicates if the cache is active or not (for testing)
 	 *
@@ -84,7 +97,11 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			if (oCacheEntry.file) {
 				Utils.log.error('sap.ui.fl.Cache: Cached changes for component ' + sComponentName + ' overwritten.');
 			}
-
+			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
+			    mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
+				Cache._switches[sValue] = true;
+			    });
+			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
 		}, function (err) {

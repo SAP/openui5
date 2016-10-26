@@ -413,6 +413,7 @@ sap.ui.define([
 			// make sure that the object is registered before initializing
 			// and to deregister the object in case of errors
 			(function() {
+				var bCreated = false;
 
 				try {
 					// registers the object in the Core
@@ -431,16 +432,16 @@ sap.ui.define([
 
 					// apply the settings
 					that.applySettings(mSettings, oScope);
+					bCreated = true;
 
-				} catch (ex) {
+					// use try finally here since catch leads to the console pointing to the wrong location of the error
+					// (not the original error's location but to this constructor)
+				} finally {
 
 					// unregisters the object in the Core
-					if (that.deregister) {
+					if (!bCreated && that.deregister) {
 						that.deregister();
 					}
-
-					// forward the exception
-					throw ex;
 
 				}
 
@@ -685,7 +686,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sClassName name of the class to be created
 	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ManagedObjectMetadata.
+	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to <code>sap.ui.base.ManagedObjectMetadata</code>.
 	 * @return {function} the created class / constructor function
 	 *
 	 * @public

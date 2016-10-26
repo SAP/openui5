@@ -1,8 +1,8 @@
 <html>
  <head>
   <title>QUnit TestSuite for sap.ui.table</title>
-  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-  <script language="javascript">
+  <script src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+  <script>
 
   /**
    * Add test pages to this test suite function.
@@ -24,7 +24,9 @@
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/ClientTreeBindingAdapter.qunit.html");
 
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableUtils.qunit.html");
-	  suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableColumnUtils.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableRendererUtils.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableColumnUtils.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableMenuUtils.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableGrouping.qunit.html");
 
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableExtension.qunit.html");

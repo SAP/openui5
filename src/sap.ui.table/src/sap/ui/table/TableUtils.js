@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './TableMenuUtils', 'sap/ui/Device', './library'],
+	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, TableMenuUtils, Device, library) {
 	"use strict";
 
 	// shortcuts
@@ -23,7 +23,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	var TableUtils = {
 
 		Grouping: TableGrouping, //Make grouping utils available here
-		ColumnUtils: TableColumnUtils, //Make column utils available here
+		Column: TableColumnUtils, //Make column utils available here
+		Menu: TableMenuUtils, //Make menu utils available here
 
 		/*
  		 * Known basic cell types in the table
@@ -84,10 +85,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		areAllRowsSelected: function(oTable) {
 			if (oTable == null) {
-				return null;
+				return false;
 			}
 
-			return oTable._getRowCount() === oTable.getSelectedIndices().length;
+			var iSelectableRowCount = oTable._getSelectableRowCount();
+			return iSelectableRowCount > 0 && iSelectableRowCount === oTable.getSelectedIndices().length;
 		},
 
 		/**
@@ -128,37 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 			var oType = sap.ui.require(sType);
 			return !!(oType && (oObject instanceof oType));
-		},
-
-		/**
-		 * Toggles the expand / collapse state of the group which contains the given Dom element.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {Object} oRef DOM reference of an element within the table group header
-		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @return {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
-		 * @private
-		 */
-		toggleGroupHeader : function(oTable, oRef, bExpand) {
-			var $Ref = jQuery(oRef),
-				$GroupRef;
-
-			if ($Ref.hasClass("sapUiTableTreeIcon")) {
-				$GroupRef = $Ref.closest("tr");
-			} else {
-				$GroupRef = $Ref.closest(".sapUiTableGroupHeader");
-			}
-
-			var oBinding = oTable.getBinding("rows");
-			if ($GroupRef.length > 0 && oBinding) {
-				var iRowIndex = oTable.getFirstVisibleRow() + parseInt($GroupRef.data("sap-ui-rowindex"), 10);
-				var bIsExpanded = TableGrouping.toggleGroupHeader(oTable, iRowIndex, bExpand);
-				var bChanged = bIsExpanded === true || bIsExpanded === false;
-				if (bChanged && oTable._onGroupHeaderChanged) {
-					oTable._onGroupHeaderChanged(iRowIndex, bIsExpanded);
-				}
-				return bChanged;
-			}
-			return false;
 		},
 
 		/**
@@ -212,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				var oCellInfo = this.getCellInfo($Cell[0]);
 
 				if (oCellInfo !== null
-					&& !TableUtils.isInGroupingRow($Cell[0])
+					&& !TableUtils.Grouping.isInGroupingRow($Cell[0])
 					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && this.isRowSelectionAllowed(oTable))
 					|| (oCellInfo.type === this.CELLTYPES.ROWHEADER && this.isRowSelectorSelectionAllowed(oTable)))) {
 
@@ -282,13 +253,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return iHeaderRows;
 		},
 
-		/**
+		/* *
 		 * Returns the height of the defined row, identified by its row index.
 		 * @param {Object} oTable current table object
 		 * @param {int} iRowIndex the index of the row which height is needed
 		 * @private
 		 * @return {int}
-		 */
+		 * /
 		getRowHeightByIndex : function(oTable, iRowIndex) {
 			var iRowHeight = 0;
 
@@ -307,7 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			return iRowHeight;
-		},
+		},*/
 
 		/**
 		 * Checks whether all conditions for pixel-based scrolling (Variable Row Height) are fulfilled.
@@ -400,38 +371,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Returns whether the given cell is located in a group header.
-		 * @param {Object} oCellRef DOM reference of table cell
-		 * @return {boolean}
-		 * @private
-		 */
-		isInGroupingRow : function(oCellRef) {
-			var oInfo = TableUtils.getCellInfo(oCellRef);
-			if (oInfo && oInfo.type === TableUtils.CELLTYPES.DATACELL) {
-				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
-			} else if (oInfo && oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
-				return oInfo.cell.hasClass("sapUiTableGroupHeader");
-			}
-			return false;
-		},
-
-		/**
-		 * Returns whether the given cell is located in a analytical summary row.
-		 * @param {Object} oCellRef DOM reference of table cell
-		 * @return {boolean}
-		 * @private
-		 */
-		isInSumRow : function(oCellRef) {
-			var oInfo = TableUtils.getCellInfo(oCellRef);
-			if (oInfo && oInfo.type === TableUtils.CELLTYPES.DATACELL) {
-				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
-			} else if (oInfo && oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
-				return oInfo.cell.hasClass("sapUiAnalyticalTableSum");
-			}
-			return false;
-		},
-
-		/**
 		 * Returns whether column with the given index (in the array of visible columns (see Table._getVisibleColumns()))
 		 * is a fixed column.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
@@ -498,6 +437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		/**
 		 * Returns the index and span information of a column header cell.
+		 *
 		 * @param {jQuery|HtmlElement} oCell The column header cell.
 		 * @returns {{index: int, span: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table column header cell.
 		 * @private
@@ -514,6 +454,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return {
 					index: parseInt($Cell.data("sap-ui-colindex"), 10),
 					span: parseInt($Cell.attr("colspan") || 1, 10)
+				};
+			} else {
+				return null;
+			}
+		},
+
+		/**
+		 * Returns the row index and column index of a data cell.
+		 *
+		 * @param {jQuery|HtmlElement} oCell The data cell.
+		 * @returns {{rowIndex: int, columnIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table data cell.
+		 */
+		getDataCellInfo: function(oCell) {
+			if (oCell == null) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell);
+
+			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+				var sCellId = $Cell.prop("id"); // Example: __table0-rows-row3-col2
+				var aCellIdAreas = sCellId.split("-");
+
+				return {
+					rowIndex: parseInt(aCellIdAreas[2].slice(3), 10),
+					columnIndex: parseInt(aCellIdAreas[3].slice(3), 10)
 				};
 			} else {
 				return null;
@@ -553,34 +520,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Returns all interactive elements in a data cell.
-		 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
-		 * @returns {jQuery|null} Returns null if the passed cell is not a cell or does not contain any interactive elements.
-		 * @private
-		 */
-		getInteractiveElements : function(oCell) {
-			if (oCell == null) {
-				return null;
-			}
-
-			var $Cell = jQuery(oCell);
-			var oCellInfo = this.getCellInfo($Cell);
-
-			if (oCellInfo !== null && oCellInfo.type === this.CELLTYPES.DATACELL) {
-				var $InteractiveElements = $Cell.find(":sapFocusable");
-				if ($InteractiveElements.length > 0) {
-					return $InteractiveElements;
-				}
-			}
-
-			return null;
-		},
-
-		/**
 		 * Returns the data cell which is the parent of the specified element.
+		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
 		 * @param {jQuery|HTMLElement} oElement An element inside a table data cell.
-		 * @returns {jQuery|null} Returns null if the passed element is not inside a data cell.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the passed element is not inside a data cell.
 		 * @private
 		 */
 		getParentDataCell: function(oTable, oElement) {
@@ -720,63 +664,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Scrolls the data in the table forward or backward by manipulating the property <code>firstVisibleRow</code>.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {boolean} bDown Whether to scroll down or up
-		 * @param {boolean} bPage Whether scrolling should be page wise or a single step (only possibe with navigation mode <code>Scrollbar</code>)
-		 * @private
-		 */
-		scroll : function(oTable, bDown, bPage) {
-			var bScrolled = false;
-			var iRowCount = oTable._getRowCount();
-			var iVisibleRowCount = oTable.getVisibleRowCount();
-			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
-			var iSize = bPage ? iScrollableRowCount : 1;
-
-			if (bDown) {
-				if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
-					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
-					bScrolled = true;
-				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
-					bScrolled = true;
-				}
-			}
-
-			return bScrolled;
-		},
-
-		/**
-		 * Scrolls the data in the table to the end or to the beginning by manipulating the property <code>firstVisibleRow</code>.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {boolean} bDown Whether to scroll down or up
-		 * @returns {boolean} True if scrolling was actually performed
-		 * @private
-		 */
-		scrollMax : function(oTable, bDown) {
-			var bScrolled = false;
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
-
-			if (bDown) {
-				var iFirstVisibleRow = oTable._getRowCount() - this.getNonEmptyVisibleRowCount(oTable);
-				if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
-					oTable.setFirstVisibleRow(iFirstVisibleRow);
-					bScrolled = true;
-				}
-			} else {
-				if (iFirstVisibleScrollableRow > 0) {
-					oTable.setFirstVisibleRow(0);
-					bScrolled = true;
-				}
-			}
-
-			return bScrolled;
-		},
-
-		/**
 		 * Checks whether the cell of the given DOM reference is in the first row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef Cell DOM Reference
@@ -904,526 +791,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Resizes one or more visible columns by the given amount of pixels.
-		 *
-		 * In case a column span is specified:
-		 * The span covers only visible columns. If columns directly after the column with index <code>iColumnIndex</code> are invisible they
-		 * will be skipped and not be considered for resizing.
-		 * The new width <code>iWidth</code> will be equally applied among all resizable columns in the span of visible columns,
-		 * considering the minimum column width. The actual resulting width might differ due to rounding errors and the minimum column width.
-		 *
-		 * Resizing of a column won't be performed if the ColumnResize event is fired
-		 * and execution of the default action is prevented in the event handler.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of a column. Must the the index of a visible column.
-		 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
-		 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
-		 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.
+		 * Checks if the given CSS width is not fix.
+		 * @param {string} sWidth
+		 * @returns {boolean} true if the width is flexible
 		 * @private
 		 */
-		resizeColumn: function(oTable, iColumnIndex, iWidth, bFireEvent, iColumnSpan) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0 ||
-				iWidth == null || iWidth <= 0) {
-				return;
-			}
-			if (iColumnSpan == null || iColumnSpan <= 0) {
-				iColumnSpan = 1;
-			}
-			if (bFireEvent == null) {
-				bFireEvent = true;
-			}
-
-			var aColumns = oTable.getColumns();
-			if (iColumnIndex >= aColumns.length || !aColumns[iColumnIndex].getVisible()) {
-				return;
-			}
-
-			var aVisibleColumns = [];
-			for (var i = iColumnIndex; i < aColumns.length; i++) {
-				var oColumn = aColumns[i];
-
-				if (oColumn.getVisible()) {
-					aVisibleColumns.push(oColumn);
-
-					// Consider only the required amount of visible columns.
-					if (aVisibleColumns.length === iColumnSpan) {
-						break;
-					}
-				}
-			}
-
-			var aResizableColumns = [];
-			for (var i = 0; i < aVisibleColumns.length; i++) {
-				var oVisibleColumn = aVisibleColumns[i];
-				if (oVisibleColumn.getResizable()) {
-					aResizableColumns.push(oVisibleColumn);
-				}
-			}
-			if (aResizableColumns.length === 0) {
-				return;
-			}
-
-			var iSpanWidth = 0;
-			for (var i = 0; i < aVisibleColumns.length; i++) {
-				var oVisibleColumn = aVisibleColumns[i];
-				iSpanWidth += this.getColumnWidth(oTable, oVisibleColumn.getIndex());
-			}
-
-			var iPixelDelta = iWidth - iSpanWidth;
-			var iSharedPixelDelta = Math.round(iPixelDelta / aResizableColumns.length);
-
-			// Resize all resizable columns. Share the width change (pixel delta) between them.
-			for (var i = 0; i < aResizableColumns.length; i++) {
-				var oResizableColumn = aResizableColumns[i];
-				var iColumnWidth = this.getColumnWidth(oTable, oResizableColumn.getIndex());
-
-				var iNewWidth = iColumnWidth + iSharedPixelDelta;
-				if (iNewWidth < oTable._iColMinWidth) {
-					iNewWidth = oTable._iColMinWidth;
-				}
-
-				var iWidthChange = iNewWidth - iColumnWidth;
-
-				// Distribute any remaining delta to the remaining columns.
-				if (Math.abs(iWidthChange) < Math.abs(iSharedPixelDelta)) {
-					var iRemainingColumnCount = aResizableColumns.length - (i + 1);
-					iPixelDelta -= iWidthChange;
-					iSharedPixelDelta = Math.round(iPixelDelta / iRemainingColumnCount);
-				}
-
-				if (iWidthChange !== 0) {
-					var bExecuteDefault = true;
-
-					if (bFireEvent) {
-						bExecuteDefault = oTable.fireColumnResize({
-							column: oResizableColumn,
-							width: iNewWidth
-						});
-					}
-
-					if (bExecuteDefault) {
-						oResizableColumn.setWidth(iNewWidth + "px");
-					}
-				}
-			}
+		isVariableWidth: function(sWidth) {
+			return !sWidth || sWidth == "auto" || sWidth.toString().match(/%$/);
 		},
 
 		/**
-		 * Returns the width of a visible column in pixels.
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of a column. Must be a visible column.
-		 * @returns {int|null} Returns <code>null</code> if <code>iColumnIndex</code> is out of bound.
+		 * Returns the index of the first fixed buttom row in the <code>rows</code> aggregation.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {int} The index of the first fixed buttom row in the <code>rows</code> aggregation, or <code>-1</code>.
 		 * @private
 		 */
-		getColumnWidth: function(oTable, iColumnIndex) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return null;
-			}
+		getFirstFixedButtomRowIndex: function(oTable) {
+			var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
+			var oBinding = oTable.getBinding("rows");
+			var iFirstFixedButtomIndex = -1;
 
-			var aColumns = oTable.getColumns();
-			if (iColumnIndex >= aColumns.length) {
-				return null;
-			}
+			if (oBinding && iFixedBottomRowCount > 0) {
+				var iVisibleRowCount = oTable.getVisibleRowCount();
+				var iFirstVisibleRow = oTable._getSanitizedFirstVisibleRow();
 
-			var oColumn = aColumns[iColumnIndex];
-
-			return oTable._CSSSizeToPixel(oColumn.getWidth());
-		},
-
-		/**
-		 * Opens the context menu of a column or a data cell.
-		 * If a column header cell or an element inside a column header cell is passed as the parameter <code>oElement</code>,
-		 * the context menu of this column will be opened. If a data cell or an element inside a data cell is passed, then the context menu
-		 * of this data cell will be opened.
-		 * The context menu will not be opened, if the configuration of the table does not allow it, or one of the event handlers attached to the
-		 * events <code>ColumnSelect</code> or <code>CellContextmenu</code> calls preventDefault().
-		 *
-		 * On mobile devices, when trying to open a column context menu, an column header cell menu is created instead with buttons to actually open
-		 * the column context menu or to resize the column. If this function is called when this cell menu already exists, then it is closed
-		 * and the column context menu is opened.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {jQuery|HtmlElement} oElement The header or data cell, or an element inside, for which to open the context menu.
-		 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
-		 * @param {boolean} [bFireEvent=true] If <code>true</code>, an event will be fired.
-		 * 									  Fires the <code>ColumnSelect</code> event when a column context menu should be opened.
-		 * 									  Fires the <code>CellContextmenu</code> event when a data cell context menu should be opened.
-		 * @private
-		 *
-		 * @see	openColumnContextMenu
-		 * @see closeColumnContextMenu
-		 * @see	openDataCellContextMenu
-		 * @see closeDataCellContextMenu
-		 * @see	applyColumnHeaderCellMenu
-		 * @see removeColumnHeaderCellMenu
-		 */
-		openContextMenu: function(oTable, oElement, bHoverFirstMenuItem, bFireEvent) {
-			if (oTable == null || oElement == null) {
-				return;
-			}
-			if (bFireEvent == null) {
-				bFireEvent = true;
-			}
-
-			var $Target = jQuery(oElement);
-
-			var $TableCell = this.getCell(oTable, $Target);
-			if ($TableCell === null) {
-				return;
-			}
-
-			var oCellInfo = this.getCellInfo($TableCell);
-
-			if (oCellInfo.type === this.CELLTYPES.COLUMNHEADER) {
-				var iColumnIndex = this.getColumnHeaderCellInfo($TableCell).index;
-				var bCellHasMenuButton = $TableCell.find(".sapUiTableColDropDown").length > 0;
-
-				if (sap.ui.Device.system.desktop || bCellHasMenuButton) {
-					this.removeColumnHeaderCellMenu(oTable, iColumnIndex);
-					var bExecuteDefault = true;
-
-					if (bFireEvent) {
-						bExecuteDefault = oTable.fireColumnSelect({
-							column: oTable._getVisibleColumns()[iColumnIndex]
-						});
-					}
-
-					if (bExecuteDefault) {
-						this.openColumnContextMenu(oTable, iColumnIndex, bHoverFirstMenuItem);
-					}
+				if (oTable._iBindingLength >= iVisibleRowCount) {
+					iFirstFixedButtomIndex = iVisibleRowCount - iFixedBottomRowCount;
 				} else {
-					this.applyColumnHeaderCellMenu(oTable, iColumnIndex);
-				}
-
-			} else if (oCellInfo.type === this.CELLTYPES.DATACELL) {
-				// TODO: Think of a better way to get the indices.
-				var sCellId = $TableCell.prop("id");
-				var aCellIdAreas = sCellId.split("-");
-				var iRowIndex = parseInt(aCellIdAreas[2].slice(3), 10);
-				var iColumnIndex = parseInt(aCellIdAreas[3].slice(3), 10);
-				var bExecuteDefault = true;
-
-				if (bFireEvent) {
-					var oColumn = oTable.getColumns()[iColumnIndex];
-					var oRow = oTable.getRows()[iRowIndex];
-					var oCell =  oRow.getCells()[iColumnIndex];
-
-					var oRowBindingContext;
-					var oRowBindingInfo = oTable.getBindingInfo("rows");
-					if (oRowBindingInfo != null) {
-						oRowBindingContext = oRow.getBindingContext(oRowBindingInfo.model);
+					var iIdx = oTable._iBindingLength - iFixedBottomRowCount - iFirstVisibleRow;
+					if (iIdx >= 0 && (iFirstVisibleRow + iIdx) < oTable._iBindingLength) {
+						iFirstFixedButtomIndex = iIdx;
 					}
-
-					var mParams = {
-						rowIndex: oRow.getIndex(),
-						columnIndex: iColumnIndex,
-						columnId: oColumn.getId(),
-						cellControl: oCell,
-						rowBindingContext: oRowBindingContext,
-						cellDomRef: $TableCell[0]
-					};
-
-					bExecuteDefault = oTable.fireCellContextmenu(mParams);
-				}
-
-				if (bExecuteDefault) {
-					this.openDataCellContextMenu(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem);
-				}
-			}
-		},
-
-		/**
-		 * Opens the context menu of a column.
-		 * If context menus of other columns are open, they will be closed.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of the column to open the context menu on.
-		 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see closeColumnContextMenu
-		 */
-		openColumnContextMenu: function(oTable, iColumnIndex, bHoverFirstMenuItem) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return;
-			}
-			if (bHoverFirstMenuItem == null) {
-				bHoverFirstMenuItem = false;
-			}
-
-			var oColumns = oTable.getColumns();
-			if (iColumnIndex >= oColumns.length) {
-				return;
-			}
-
-			var oColumn = oColumns[iColumnIndex];
-			if (!oColumn.getVisible()) {
-				return;
-			}
-
-			// If column menus of other columns are open, close them.
-			for (var i = 0; i < oColumns.length; i++) {
-				if (oColumns[i] !== oColumn) {
-					this.closeColumnContextMenu(oTable, i);
 				}
 			}
 
-			oColumn._openMenu(oColumn.getDomRef(), bHoverFirstMenuItem);
-		},
-
-		/**
-		 * Closes the context menu of a column.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of the column to close the context menu on.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see openColumnContextMenu
-		 */
-		closeColumnContextMenu: function(oTable, iColumnIndex) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return;
-			}
-
-			var oColumns = oTable.getColumns();
-			if (iColumnIndex >= oColumns.length) {
-				return;
-			}
-
-			var oColumn = oColumns[iColumnIndex];
-			var oMenu = oColumn.getMenu();
-
-			oMenu.close();
-		},
-
-		/**
-		 * Opens the context menu of a data cell.
-		 * If a context menu of another data cell is open, it will be closed.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The column index of the data cell to open the context menu on.
-		 * @param {int} iRowIndex The row index of the data cell to open the context menu on.
-		 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see closeDataCellContextMenu
-		 */
-		openDataCellContextMenu: function(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0 ||
-				iRowIndex == null || iRowIndex < 0 || iRowIndex >= TableUtils.getNonEmptyVisibleRowCount(oTable)) {
-				return;
-			}
-			if (bHoverFirstMenuItem == null) {
-				bHoverFirstMenuItem = false;
-			}
-
-			var oColumns = oTable.getColumns();
-			if (iColumnIndex >= oColumns.length) {
-				return;
-			}
-
-			var oColumn = oColumns[iColumnIndex];
-			if (!oColumn.getVisible()) {
-				return;
-			}
-
-			// Currently only filtering is possible in the default cell context menu.
-			if (oTable.getEnableCellFilter() && oColumn.isFilterableByMenu()) {
-				var oRow = oTable.getRows()[iRowIndex];
-
-				// Create the menu instance the first time it is needed.
-				if (oTable._oCellContextMenu == null) {
-
-					if (oTable._Menu == null) {
-						// TODO consider to load them async (should be possible as this method ends with an "open" call which is async by nature
-						oTable._Menu = sap.ui.requireSync("sap/ui/unified/Menu");
-						oTable._MenuItem = sap.ui.requireSync("sap/ui/unified/MenuItem");
-					}
-
-					oTable._oCellContextMenu = new oTable._Menu(oTable.getId() + "-cellcontextmenu");
-
-					var oCellContextMenuItem = new oTable._MenuItem({
-						text: oTable._oResBundle.getText("TBL_FILTER")
-					});
-
-					oCellContextMenuItem._onSelect = function (oColumn, iRowIndex) {
-						// "this" is the table instance.
-						var oRowContext = this.getContextByIndex(iRowIndex);
-						var sFilterProperty = oColumn.getFilterProperty();
-						var sFilterValue = oRowContext.getProperty(sFilterProperty);
-
-						if (this.getEnableCustomFilter()) {
-							this.fireCustomFilter({
-								column: oColumn,
-								value: sFilterValue
-							});
-						} else {
-							this.filter(oColumn, sFilterValue);
-						}
-					};
-					oCellContextMenuItem.attachSelect(oCellContextMenuItem._onSelect.bind(oTable, oColumn, oRow.getIndex()));
-
-					oTable._oCellContextMenu.addItem(oCellContextMenuItem);
-					oTable.addDependent(oTable._oCellContextMenu);
-
-				// If the menu already was created, only update the menu item.
-				} else {
-					var oMenuItem = oTable._oCellContextMenu.getItems()[0];
-					oMenuItem.mEventRegistry.select[0].fFunction = oMenuItem._onSelect.bind(oTable, oColumn, oRow.getIndex());
-				}
-
-				if (oTable._Popup == null) {
-					oTable._Popup = sap.ui.requireSync("sap/ui/core/Popup");
-				}
-
-				// Open the menu below the cell if is is not already open.
-				var oCell =  oRow.getCells()[iColumnIndex];
-				var $Cell =  TableUtils.getParentDataCell(oTable, oCell.getDomRef());
-
-				if ($Cell !== null && !TableUtils.isInGroupingRow($Cell)) {
-					var eCell = $Cell[0];
-					var Dock = oTable._Popup.Dock;
-
-					var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== eCell;
-					if (bMenuOpenAtAnotherDataCell) {
-						this.closeDataCellContextMenu(oTable);
-					}
-
-					oTable._oCellContextMenu.open(bHoverFirstMenuItem, eCell, Dock.BeginTop, Dock.BeginBottom, eCell, "none none");
-				}
-			}
-		},
-
-		/**
-		 * Closes the currently open data cell context menu.
-		 * Index information are not required as there is only one data cell context menu object and therefore only this one can be open.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see openDataCellContextMenu
-		 */
-		closeDataCellContextMenu: function(oTable) {
-			if (oTable == null) {
-				return;
-			}
-
-			var oMenu = oTable._oCellContextMenu;
-			var bMenuOpen = oMenu != null && oMenu.bOpen;
-
-			if (bMenuOpen) {
-				oMenu.close();
-			}
-		},
-
-		/**
-		 * Applies a cell menu on a column header cell.
-		 * Hides the column header cell and inserts an element containing two buttons in its place. One button to open the column context menu and
-		 * one to resize the column. These are useful on touch devices.
-		 *
-		 * <b>Note: Multi Headers are currently not fully supported.</b>
-		 * In case of a multi column header the menu will be applied in the first row of the column header. If this column header cell is a span,
-		 * then the index of the first column of this span must be provided.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The column index of the column header to insert the cell menu in.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see removeColumnHeaderCellMenu
-		 */
-		applyColumnHeaderCellMenu: function(oTable, iColumnIndex) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return;
-			}
-
-			var oColumns = oTable.getColumns();
-			if (iColumnIndex >= oColumns.length) {
-				return;
-			}
-
-			var oColumn = oColumns[iColumnIndex];
-
-			if (oColumn.getVisible() && (oColumn.getResizable() || oColumn._menuHasItems())) {
-				var $Column = oColumn.$();
-				var $ColumnCell = $Column.find(".sapUiTableColCell");
-				var bCellMenuAlreadyExists = $Column.find(".sapUiTableColCellMenu").length > 0;
-
-				if (!bCellMenuAlreadyExists) {
-					$ColumnCell.hide();
-
-					var sColumnContextMenuButton = "";
-					if (oColumn._menuHasItems()) {
-						sColumnContextMenuButton = "<div class='sapUiTableColDropDown'></div>";
-					}
-
-					var sColumnResizerButton = "";
-					if (oColumn.getResizable()) {
-						sColumnResizerButton = "<div class='sapUiTableColResizer''></div>";
-					}
-
-					var $ColumnCellMenu = jQuery("<div class='sapUiTableColCellMenu'>" + sColumnContextMenuButton + sColumnResizerButton + "</div>");
-
-					$Column.append($ColumnCellMenu);
-
-					$Column.on("focusout",
-						function(TableUtils, oTable, iColumnIndex) {
-							TableUtils.removeColumnHeaderCellMenu(oTable, iColumnIndex);
-							this.off("focusout");
-						}.bind($Column, this, oTable, iColumnIndex)
-					);
-				}
-			}
-		},
-
-		/**
-		 * Removes a cell menu from a column header cell.
-		 * Removes the cell menu from the dom and unhides the column header cell.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The column index of the column header to remove the cell menu from.
-		 * @private
-		 *
-		 * @see openContextMenu
-		 * @see applyColumnHeaderCellMenu
-		 */
-		removeColumnHeaderCellMenu: function(oTable, iColumnIndex) {
-			if (oTable == null ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return;
-			}
-
-			var oColumns = oTable.getColumns();
-			if (iColumnIndex >= oColumns.length) {
-				return;
-			}
-
-			var oColumn = oColumns[iColumnIndex];
-			var $Column = oColumn.$();
-			var $ColumnCellMenu = $Column.find(".sapUiTableColCellMenu");
-			var bCellMenuExists = $ColumnCellMenu.length > 0;
-
-			if (bCellMenuExists) {
-				var $ColumnCell = $Column.find(".sapUiTableColCell");
-				$ColumnCell.show();
-				$ColumnCellMenu.remove();
-			}
+			return iFirstFixedButtomIndex;
 		}
+
 	};
 
 	TableGrouping.TableUtils = TableUtils; // Avoid cyclic dependency
 	TableColumnUtils.TableUtils = TableUtils; // Avoid cyclic dependency
+	TableMenuUtils.TableUtils = TableUtils; // Avoid cyclic dependency
 
 	return TableUtils;
 

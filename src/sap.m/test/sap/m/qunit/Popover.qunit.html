@@ -4,8 +4,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>qUnit Page for sap.m.Popover</title>
 
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
@@ -13,12 +13,12 @@
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<style>
 		#popoverHolder {
@@ -397,14 +397,14 @@
 		test("vertical calculation of Popover positioning should be correct", function () {
 			var testCase = function (offset, outerHeight, height, placement, expectedPlace) {
 				var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({top: offset, height: outerHeight});
-
+				var stubOffsetTop = sinon.stub(jQuery.fn, "offset").returns({top: offset});
 				var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
-				var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
 
 				var oPopover3 = new sap.m.Popover({
 					placement: placement
 				});
 
+				var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 
 				oPopover3._calcPlacement();
@@ -413,6 +413,7 @@
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
+				stubOffsetTop.restore();
 				stubOuterHeight.restore();
 				stubWindowHeight.restore();
 			};
@@ -459,14 +460,15 @@
 		test("Vertical (top/bottom) calculation and flip functionality", function () {
 			var testCase = function (offset, outerHeight, height, placement, expectedPlace) {
 				var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({top: offset, height: outerHeight});
-
+				var stubOffsetTop = sinon.stub(jQuery.fn, "offset").returns({top: offset});
 				var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
-				var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
+
 
 				var oPopover3 = new sap.m.Popover({
 					placement: placement
 				});
 
+				var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 
 				oPopover3._calcPlacement();
@@ -475,6 +477,7 @@
 
 				stubOpenByRef.restore();
 				stubOffset.restore();
+				stubOffsetTop.restore();
 				stubOuterHeight.restore();
 				stubWindowHeight.restore();
 			};
@@ -529,7 +532,7 @@
 				oPopover3._calcPlacement();
 
 				strictEqual(oPopover3._oCalcedPos, expectedPlace);
-
+				
 				stubOpenByRef.restore();
 				stubOffset.restore();
 				stubOuterWidth.restore();
@@ -563,10 +566,14 @@
 					width: outerWidth,
 					height: outerHeight
 				});
+
+				var stubOffsetTop = sinon.stub(jQuery.fn, "offset").returns({top: offsetTop});
 				var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
-				var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
+				var stubViewportWidth = sinon.stub(jQuery.fn, "width").returns(width);
+				var stubViewportHeight = sinon.stub(jQuery.fn, "height").returns(height);
 				var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
-				var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
+
+
 				var stubPopover = sinon.stub(sap.m.Popover.prototype, "$").returns(
 						{
 							outerWidth: sinon.stub().returns(200),
@@ -576,15 +583,19 @@
 					placement: sap.m.PlacementType.Auto
 				});
 
+				var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
+
 				var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 				oPopover3._calcPlacement();
 
 				strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
+				stubOffsetTop.restore();
 				stubOpenByRef.restore();
 				stubOffset.restore();
 				stubOuterWidth.restore();
-				stubWindowWidth.restore();
+				stubViewportHeight.restore();
+				stubViewportWidth.restore();
 				stubOuterHeight.restore();
 				stubWindowHeight.restore();
 				stubPopover.restore();

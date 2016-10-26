@@ -50,6 +50,7 @@ sap.ui.define([], function() {
 				ignore : true
 			},
 			form : {
+				inHiddenTree : true,
 				getIndex : function(oSimpleForm, oFormContainer) {
 					var iIndex = 0;
 					var aContent = oSimpleForm.getContent();
@@ -250,9 +251,9 @@ sap.ui.define([], function() {
 					createContainer : function(oElement){
 						var sType = oElement.getMetadata().getName();
 						var oCreateContainerMetadata;
-			            if (sType === "sap.ui.layout.form.FormElement"){
+						if (sType === "sap.ui.layout.form.FormElement"){
 							return;
-			            } else if (sType === "sap.ui.layout.form.SimpleForm") {
+						} else if (sType === "sap.ui.layout.form.SimpleForm") {
 							oCreateContainerMetadata = {
 								changeType : "addSimpleFormGroup",
 								isEnabled : function (oSimpleForm) {
@@ -278,32 +279,6 @@ sap.ui.define([], function() {
 									var sParentElementId = oTitle.getParent().getId();
 
 									return sParentElementId;
-								},
-								getContainerIndex : function(oSimpleForm, oFormContainer) {
-									var oForm = oSimpleForm.getAggregation("form");
-									var aFormContainers = oForm.getFormContainers();
-									var iIndex = 0;
-									var oLastFormContainer = aFormContainers[aFormContainers.length - 1];
-									var aContent = oSimpleForm.getContent();
-
-									var iStart = -1;
-									var oTitle = oLastFormContainer.getTitle();
-									if (oTitle !== null) {
-										aContent.some(function(oField, index) {
-											if (oField === oTitle) {
-												iStart = index;
-											}
-											if (iStart >= 0 && index > iStart) {
-												if (oField instanceof sap.ui.core.Title) {
-													iIndex = index;
-													return true;
-												}
-											}
-										});
-										iIndex = (!iIndex) ? aContent.length : iIndex;
-									}
-
-									return iIndex;
 								}
 							};
 						} else if (sType === "sap.ui.layout.form.FormContainer") {
@@ -327,29 +302,6 @@ sap.ui.define([], function() {
 									var sParentElementId = oTitle.getParent().getId();
 
 									return sParentElementId;
-								},
-								getContainerIndex : function(oSimpleForm, oFormContainer) {
-									var iIndex = 0;
-									var aContent = oFormContainer.getParent().getParent().getContent();
-
-									var iStart = -1;
-									var oTitle = oFormContainer.getTitle();
-									if (oTitle !== null) {
-										aContent.some(function(oField, index) {
-											if (oField === oTitle) {
-												iStart = index;
-											}
-											if (iStart >= 0 && index > iStart) {
-												if (oField instanceof sap.ui.core.Title) {
-													iIndex = index;
-													return true;
-												}
-											}
-										});
-										iIndex = (!iIndex) ? aContent.length : iIndex;
-									}
-
-									return iIndex;
 								}
 							};
 						}

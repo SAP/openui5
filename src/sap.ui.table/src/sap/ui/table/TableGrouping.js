@@ -137,6 +137,90 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			return null;
 		},
 
+		/**
+		 * Toggles the expand / collapse state of the group which contains the given Dom element.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {Object} oRef DOM reference of an element within the table group header
+		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
+		 * @return {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
+		 * @private
+		 */
+		toggleGroupHeaderByRef : function(oTable, oRef, bExpand) {
+			var $Ref = jQuery(oRef);
+			var $GroupRef;
+
+			if ($Ref.hasClass("sapUiTableTreeIcon") || (TableGrouping.isTreeMode(oTable) && $Ref.hasClass("sapUiTableTdFirst"))) {
+				$GroupRef = $Ref.closest("tr", oTable.getDomRef());
+			} else {
+				$GroupRef = $Ref.closest(".sapUiTableGroupHeader", oTable.getDomRef());
+			}
+
+			var oBinding = oTable.getBinding("rows");
+			if ($GroupRef.length > 0 && oBinding) {
+				var iGroupHeaderRowIndex = $GroupRef.data("sap-ui-rowindex");
+				var oRow = oTable.getRows()[iGroupHeaderRowIndex];
+
+				if (oRow != null) {
+					var iAbsoluteRowIndex = oRow.getIndex();
+					var bIsExpanded = TableGrouping.toggleGroupHeader(oTable, iAbsoluteRowIndex, bExpand);
+					var bChanged = bIsExpanded === true || bIsExpanded === false;
+
+					if (bChanged && oTable._onGroupHeaderChanged) {
+						oTable._onGroupHeaderChanged(iAbsoluteRowIndex, bIsExpanded);
+					}
+
+					return bChanged;
+				}
+			}
+
+			return false;
+		},
+
+		/**
+		 * Returns whether the given cell is located in a group header.
+		 * @param {Object} oCellRef DOM reference of table cell
+		 * @return {boolean}
+		 * @private
+		 */
+		isInGroupingRow : function(oCellRef) {
+			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
+			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
+				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
+			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER) {
+				return oInfo.cell.hasClass("sapUiTableGroupHeader");
+			}
+			return false;
+		},
+
+		/**
+		 * Returns whether the passed row is a group header row.
+		 *
+		 * @param {jQuery|HTMLElement} oRow The row to check.
+		 * @returns {boolean} Returns <code>true</code>, if <code>oRow</code> is a group header row.
+		 */
+		isGroupingRow: function(oRow) {
+			if (!oRow) {
+				return false;
+			}
+			return jQuery(oRow).hasClass("sapUiTableGroupHeader");
+		},
+
+		/**
+		 * Returns whether the given cell is located in a analytical summary row.
+		 * @param {Object} oCellRef DOM reference of table cell
+		 * @return {boolean}
+		 * @private
+		 */
+		isInSumRow : function(oCellRef) {
+			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
+			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
+				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
+			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER) {
+				return oInfo.cell.hasClass("sapUiAnalyticalTableSum");
+			}
+			return false;
+		},
+
 		/*
 		 * Update / Cleanup of Rows
 		 */
@@ -183,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {object} $Row jQuery representation of the row elements
 		 * @param {object} $RowHdr jQuery representation of the row header elements
-		 * @param {integer} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
+		 * @param {int} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
 		 * @private
 		 */
 		_setIndent : function(oTable, $Row, $RowHdr, iIndent) {
@@ -263,9 +347,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
 
 				if (oTable._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", ($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset) + "px");
+					$GroupHeaderMenuButton.css("right", ($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset - 5) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", ($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset) + "px");
+					$GroupHeaderMenuButton.css("left", ($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset - 5) + "px");
 				}
 			}
 
@@ -479,7 +563,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				},
 				isGroupHeader: function(iIndex) {
 					var oContext = aContexts[iIndex];
-					return oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader;
+					return (oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true;
 				},
 				getTitle: function(iIndex) {
 					var oContext = aContexts[iIndex];

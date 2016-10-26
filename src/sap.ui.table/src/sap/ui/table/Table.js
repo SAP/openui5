@@ -23,7 +23,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode,
 		SelectionBehavior = library.SelectionBehavior,
-		SharedDomRef = library.SharedDomRef,
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
@@ -648,7 +647,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
 						var iScrollTop = 0;
-						var oVSb = that.getDomRef(SharedDomRef.VerticalScrollBar);
+						var oVSb = that._getScrollExtension().getVerticalScrollbar();
 						if (oVSb) {
 							iScrollTop = oVSb.scrollTop;
 						}
@@ -666,13 +665,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		// basic selection model (by default the table uses multi selection)
 		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
-
-		// minimum width of a table column in pixel:
-		// should at least be larger than the paddings for cols and cells!
-		this._iColMinWidth = 20;
-		if ('ontouchstart' in document) {
-			this._iColMinWidth = 88;
-		}
 
 		this._aTableHeaders = [];
 
@@ -880,7 +872,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableCntWidth = oSapUiTableCnt.clientWidth;
 		}
 
-		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
+		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll:not(.sapUiTableCHT)");
 		if (oSapUiTableCtrlScroll) {
 			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.clientWidth;
 		}
@@ -890,24 +882,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oSizes.tableRowHdrScrWidth = oSapUiTableRowHdrScr.clientWidth;
 		}
 
-		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr");
+		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
 		if (oCtrlScrDomRef) {
 			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
 		}
 
-		var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+		var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 		if (oHsb) {
 			oSizes.tableHSbScrollLeft = oHsb.scrollLeft;
 		}
 
-		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlFixed");
+		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlScrFixed:not(.sapUiTableCHA) > .sapUiTableCtrlFixed");
 		if (oCtrlFixed) {
 			oSizes.tableCtrlFixedWidth = oCtrlFixed.clientWidth;
 		}
 
 		var iFixedColumnCount = this.getProperty("fixedColumnCount");
 		var iFixedHeaderWidthSum = 0;
-		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
+		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
 			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
@@ -1089,7 +1081,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (!this._ignoreInvalidateOfChildControls) {
 			this._bInvalid = true;
 			var vReturn = Control.prototype.invalidate.call(this);
-			TableUtils.ColumnUtils.invalidateColumnUtils(this);
+			TableUtils.Column.invalidateColumnUtils(this);
 		}
 
 		return vReturn;
@@ -1134,6 +1126,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		TableUtils.deregisterResizeHandler(this, "");
+
+		// the only place to fix the minimum column width
+		function setMinColWidths(oTable) {
+			var table = oTable.getDomRef();
+
+			function isFixNeeded(col) {
+				var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
+				var minWidth = col._minWidth || iAbsoluteMinWidth;
+				var colWidth = col.getWidth();
+				var aColHeaders;
+				var colHeader;
+				var domWidth;
+				// if a column has variable width, check if its current width of the
+				// first corresponding <th> element in less than minimum and store it
+				if (TableUtils.isVariableWidth(colWidth)) {
+					aColHeaders = table.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
+					colHeader = aColHeaders[0];
+					domWidth = colHeader && colHeader.offsetWidth;
+					if (domWidth) {
+						if (domWidth <= minWidth) {
+							// tolerance of -5px to make the resizing smooother
+							return {headers : aColHeaders, newWidth: Math.max(domWidth, minWidth - 5, iAbsoluteMinWidth) + "px"};
+						} else if (colHeader && colHeader.style.width != colWidth) {
+							// reset the minimum style width that was set previously
+							return {headers : aColHeaders, newWidth: colWidth};
+						}
+					}
+				}
+				return null;
+			}
+			// adjust widths of all found column headers
+			oTable.getColumns().map(isFixNeeded).forEach(function(oCol) {
+				if (oCol) {
+					Array.prototype.forEach.call(oCol.headers, function (header) {
+							header.style.width = oCol.newWidth;
+					});
+				}
+			});
+		}
+		setMinColWidths(this);
 
 		var oTableSizes = this._collectTableSizes();
 
@@ -1201,24 +1233,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oDomRef && iFixedBottomRows > 0) {
 			var $sapUiTableFixedPreBottomRow = jQuery(oDomRef).find(".sapUiTableFixedPreBottomRow");
 			$sapUiTableFixedPreBottomRow.removeClass("sapUiTableFixedPreBottomRow");
+			var $sapUiTableFixedFirstBottomRow = jQuery(oDomRef).find(".sapUiTableFixedFirstBottomRow");
+			$sapUiTableFixedFirstBottomRow.removeClass("sapUiTableFixedFirstBottomRow");
 
-			var oBinding = this.getBinding("rows");
+			var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedButtomRowIndex(this);
+			var aRows = this.getRows();
+			var $rowDomRefs;
 
-			if (oBinding) {
-				var iVisibleRowCount = this.getVisibleRowCount();
-				var bIsPreBottomRow = false;
-				var aRows = this.getRows();
-				var iFirstVisibleRow = this._getSanitizedFirstVisibleRow();
-				for (var i = 0; i < aRows.length; i++) {
-					var $rowDomRefs = aRows[i].getDomRefs(true);
-					if (this._iBindingLength >= iVisibleRowCount) {
-						bIsPreBottomRow = (i == iVisibleRowCount - iFixedBottomRows - 1);
-					} else {
-						bIsPreBottomRow = (iFirstVisibleRow + i) == (this._iBindingLength - iFixedBottomRows - 1) && (iFirstVisibleRow + i) < this._iBindingLength;
-					}
-
-					$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
-				}
+			if (iFirstFixedButtomRowIndex >= 0 && iFirstFixedButtomRowIndex < aRows.length) {
+				$rowDomRefs = aRows[iFirstFixedButtomRowIndex].getDomRefs(true);
+				$rowDomRefs.row.addClass("sapUiTableFixedFirstBottomRow", true);
+			}
+			if (iFirstFixedButtomRowIndex >= 1 && iFirstFixedButtomRowIndex < aRows.length) {
+				$rowDomRefs = aRows[iFirstFixedButtomRowIndex - 1].getDomRefs(true);
+				$rowDomRefs.row.addClass("sapUiTableFixedPreBottomRow", true);
 			}
 		}
 	};
@@ -1970,7 +1998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// add the horizontal scrollbar
 		if (iColsWidth > oTableSizes.tableCtrlScrWidth) {
 			// show the scrollbar
-			if (!$this.hasClass("sapUiTableHScr")) {
+			if (!this._getScrollExtension().isHorizontalScrollbarVisible()) {
 				$this.addClass("sapUiTableHScr");
 
 				if (!!Device.browser.safari) {
@@ -2000,7 +2028,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		} else {
 			// hide the scrollbar
-			if ($this.hasClass("sapUiTableHScr")) {
+			if (this._getScrollExtension().isHorizontalScrollbarVisible()) {
 				$this.removeClass("sapUiTableHScr");
 				if (!!Device.browser.safari) {
 					// min-width on table elements does not work for safari
@@ -2015,7 +2043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateVSb = function(iScrollTop) {
-		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
@@ -2042,7 +2070,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateVSbRange = function() {
-		var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
 		}
@@ -2291,7 +2319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._getVirtualScrollRange = function() {
 		var iMaxScrollRange = this._getTotalScrollRange() - this._getVSbHeight();
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxScrollRange = iMaxScrollRange - this._getDefaultRowHeight() * this.getVisibleRowCount();
+			iMaxScrollRange = iMaxScrollRange - this._iRowHeightsDelta;
 		}
 		return Math.max(1, iMaxScrollRange);
 	};
@@ -2376,7 +2404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._CSSSizeToPixel = function(sCSSSize, bReturnWithUnit) {
-		var sPixelValue = this._iColMinWidth;
+		var sPixelValue = TableUtils.Column.getMinColumnWidth();
 
 		if (sCSSSize) {
 			if (jQuery.sap.endsWith(sCSSSize, "px")) {
@@ -2591,7 +2619,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
 			var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
 
-			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
+			var oHsb = this._getScrollExtension().getHorizontalScrollbar();
 			if (iOffsetRight > 0) {
 				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 2;
 			} else if (iOffsetLeft < 0) {
@@ -2744,196 +2772,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._iSourceRowIndex = undefined;
 
-	};
-
-
-	// =============================================================================
-	// COLUMN EVENT HANDLING
-	// =============================================================================
-
-	/**
-	 *
-	 * @param oColumn
-	 * @param sWidth
-	 * @private
-	 */
-	Table.prototype._resizeDependentColumns = function(oColumn, sWidth) {
-		var that = this;
-		// Adjust columns only if the columns have percentage values
-		if (this._checkPercentageColumnWidth()) {
-			var aVisibleColumns = this._getVisibleColumns();
-			//var oLastVisibleColumn = aVisibleColumns[aVisibleColumns.length - 1]; // NOT USED!
-			//var bAllFollowingColumnsFlexible = true; // NOT USED!
-
-			var iColumnIndex;
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				if (oColumn === oCurrentColumn) {
-					iColumnIndex = iIndex;
-				//} else if (iColumnIndex !== undefined && !oCurrentColumn.getFlexible()) { // NOT REQUIRED?
-					//bAllFollowingColumnsFlexible = false;
-				}
-			});
-
-			var iOthersWidth = 0;
-			var iLastIndex = aVisibleColumns.length - 1;
-			var iTotalPercentage;
-			if (iColumnIndex === undefined) {
-				iTotalPercentage = 0;
-			} else {
-				iTotalPercentage = parseInt(sWidth,10);
-			}
-			var iPercentages = 0;
-			var aOtherColumns = [];
-
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				var iColumnPercentage = that._getColumnPercentageWidth(oCurrentColumn);
-				if ((((iColumnIndex === iLastIndex && iIndex < iColumnIndex) || ((iColumnIndex !== iLastIndex) && iIndex > iColumnIndex)) && oCurrentColumn.getFlexible()) || iColumnIndex === undefined) {
-					iOthersWidth += oCurrentColumn.$().outerWidth();
-					iPercentages += iColumnPercentage;
-					aOtherColumns.push(oCurrentColumn);
-				} else if (iIndex !== iColumnIndex) {
-					iTotalPercentage += iColumnPercentage;
-				}
-			});
-
-			var iCalcPercentage = iTotalPercentage;
-			jQuery.each(aOtherColumns, function(iIndex, oCurrentColumn){
-				var iColumnPercentage = that._getColumnPercentageWidth(oCurrentColumn);
-				var iNewWidth = Math.round((100 - iCalcPercentage) / iPercentages * iColumnPercentage);
-				if (iIndex === aOtherColumns.length - 1) {
-					iNewWidth = 100 - iTotalPercentage;
-				} else {
-					iTotalPercentage += iNewWidth;
-				}
-				// foolproof the above calculation logic
-				if (!isFinite(iNewWidth) || iNewWidth <= 0) {
-					iNewWidth = 1;
-				}
-				that._updateColumnWidth(oCurrentColumn, iNewWidth + "%");
-			});
-		} else if (!this._hasOnlyFixColumnWidths()) {
-
-			var aVisibleColumns = this._getVisibleColumns(),
-				iAvailableSpace = this.$().find(".sapUiTableCtrl").width(),
-				iColumnIndex,
-				iRightColumns = 0,
-				iLeftWidth = 0,
-				iRightWidth = 0,
-				iNonFixedColumns = 0;
-
-			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
-				//Check columns if they are fixed = they have a pixel width
-				if (!jQuery.sap.endsWith(oCurrentColumn.getWidth(), "px")
-					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "em")
-					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "rem")) {
-					iNonFixedColumns++;
-					return false;
-				}
-				//if iColumnIndex is defined we already found our column and all other columns are right of that one
-				if (iColumnIndex != undefined) {
-					iRightWidth += that._CSSSizeToPixel(oCurrentColumn.getWidth());
-					iRightColumns++;
-				} else if (oColumn !== oCurrentColumn) {
-					iLeftWidth += that._CSSSizeToPixel(oCurrentColumn.getWidth());
-				}
-				if (oColumn === oCurrentColumn) {
-					iColumnIndex = iIndex;
-					//Use new width of column
-					iLeftWidth += that._CSSSizeToPixel(sWidth);
-				}
-			});
-			//If there are non fixed columns we don't do this
-			if (iNonFixedColumns > 0 || (iLeftWidth + iRightWidth > iAvailableSpace)) {
-				return;
-			}
-			//Available space is all space right of the modified columns
-			iAvailableSpace -= iLeftWidth;
-			for (var i = iColumnIndex + 1; i < aVisibleColumns.length; i++) {
-				//Calculate new column width based on previous percentage width
-				var oColumn = aVisibleColumns[i],
-					iColWidth = this._CSSSizeToPixel(oColumn.getWidth()),
-					iPercent = iColWidth / iRightWidth * 100,
-					iNewWidth = iAvailableSpace / 100 * iPercent;
-				this._updateColumnWidth(oColumn, Math.round(iNewWidth) + 'px');
-			}
-		}
-	};
-
-	/**
-	 *
-	 * @param oColumn
-	 * @returns {*}
-	 * @private
-	 */
-	Table.prototype._getColumnPercentageWidth = function(oColumn) {
-		var sColumnWidth = oColumn.getWidth();
-		var iColumnPercentage = parseInt(oColumn.getWidth(),10);
-		var iTotalWidth = this.$().find(".sapUiTableCtrl").width();
-		if (jQuery.sap.endsWith(sColumnWidth, "px") || jQuery.sap.endsWith(sColumnWidth, "em") || jQuery.sap.endsWith(sColumnWidth, "rem")) {
-			iColumnPercentage = Math.round(100 / iTotalWidth * iColumnPercentage);
-		} else if (!jQuery.sap.endsWith(sColumnWidth, "%")) {
-			iColumnPercentage = Math.round(100 / iTotalWidth * oColumn.$().width());
-		}
-		return iColumnPercentage;
-	};
-
-	/**
-	 *
-	 * @param oColumn
-	 * @param sWidth
-	 * @private
-	 */
-	Table.prototype._updateColumnWidth = function(oColumn, sWidth, bFireEvent) {
-		// forward the event
-		var bExecuteDefault = true;
-		if (bFireEvent) {
-			bExecuteDefault = this.fireColumnResize({
-				column: oColumn,
-				width: sWidth
-			});
-		}
-
-		// set the width of the column (when not cancelled)
-		if (bExecuteDefault) {
-			oColumn.setProperty("width", sWidth, true);
-			this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').css('width', sWidth);
-		}
-
-		return bExecuteDefault;
-	};
-
-	/**
-	 * Check if at least one column has a percentage value.
-	 * @private
-	 */
-	Table.prototype._checkPercentageColumnWidth = function() {
-		var aColumns = this.getColumns();
-		var bHasPercentageColumns = false;
-		jQuery.each(aColumns, function(iIndex, oColumn) {
-			if (jQuery.sap.endsWith(oColumn.getWidth(), "%")) {
-				bHasPercentageColumns = true;
-				return false;
-			}
-		});
-		return bHasPercentageColumns;
-	};
-
-	/**
-	 * Check if table has only non flexible columns with fixed widths and only then
-	 * the table adds a dummy column to fill the rest of the width instead of resizing
-	 * the columns to fit the complete table width.
-	 * @private
-	 */
-	Table.prototype._hasOnlyFixColumnWidths = function() {
-		var bOnlyFixColumnWidths = true;
-		jQuery.each(this.getColumns(), function(iIndex, oColumn) {
-			var sWidth = oColumn.getWidth();
-			if (oColumn.getFlexible() || !sWidth || sWidth.substr(-2) !== "px") {
-				bOnlyFixColumnWidths = false;
-				return false;
-			}
-		});
-		return bOnlyFixColumnWidths;
 	};
 
 
@@ -3197,6 +3035,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this.getSelectionMode() === library.SelectionMode.None) {
+			return this;
+		}
+
 		this._oSelection.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
@@ -3213,6 +3055,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this.getSelectionMode() === library.SelectionMode.None) {
+			return this;
+		}
+
 		this._oSelection.setSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};

@@ -454,7 +454,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				return;
 			}
 
-			var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/", sFontFace;
+			var sFontPath = jQuery.sap.getModulePath("sap.ui.core.themes.base", "/fonts/"), sFontFace;
 
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +

@@ -44,7 +44,7 @@ function(jQuery, Test, DesignTime, ElementTest) {
 					type : "string"
 				},
 				create : {
-					type : "function"
+					type : "any" //function
 				},
 				timeout : {
 					type : "int",
@@ -293,7 +293,7 @@ function(jQuery, Test, DesignTime, ElementTest) {
 						this.addTest(mAggregationTest.children,
 							false,
 							"Overlay too small",
-							"Aggregation Overlay is too small to be accessible",
+							"Aggregation Overlay is too small to be accessible, please ensure to render it big enough that it can be reach by a user. If content is needed, provide a create method for this element",
 							Test.STATUS.PARTIAL_SUPPORTED
 						);
 					}

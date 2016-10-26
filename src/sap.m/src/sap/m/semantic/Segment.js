@@ -72,10 +72,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 			}
 		}
 
-		var iContainerInsertIndex = this.getEndIndex();
-		var iLocalInsertIndex = this._aContent.length;
+		var iContainerInsertIndex = this.getEndIndex(),
+			iLocalInsertIndex = this._aContent.length,
+			sAggregationMethod  = "insert" + fnCapitalize(this._sContainerAggregationName);
 
-		this._oContainer.insertAggregation(this._sContainerAggregationName, oControl, iContainerInsertIndex, bSuppressInvalidate);
+		this._oContainer[sAggregationMethod](oControl, iContainerInsertIndex, bSuppressInvalidate);
 		this._aContent.splice(iLocalInsertIndex, 0, oControl);
 
 		return oControl;
@@ -96,11 +97,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 
 	Segment.prototype.removeContent = function (oControl, bSuppressInvalidate) {
 
-		var iLocalIndex = jQuery.inArray(oControl, this._aContent);
+		var iLocalIndex = jQuery.inArray(oControl, this._aContent),
+			sAggregationMethod  = "remove" + fnCapitalize(this._sContainerAggregationName);
+
 		if (iLocalIndex > -1) {
 			this._aContent.splice(iLocalIndex, 1);
 
-			return this._oContainer.removeAggregation(this._sContainerAggregationName, oControl, bSuppressInvalidate);
+			return this._oContainer[sAggregationMethod](oControl, bSuppressInvalidate);
 		}
 	};
 
@@ -109,10 +112,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 		var aRemovedContent = [],
 			aGlobalContent = this._oContainer.getAggregation(this._sContainerAggregationName),
 			iStartIndex = this.getStartIndex(),
-			iEndIndex = this.getEndIndex();
+			iEndIndex = this.getEndIndex(),
+			sAggregationMethod  = "remove" + fnCapitalize(this._sContainerAggregationName);
 
 		for (var i = iStartIndex; i < iEndIndex; i++) {
-			var oItem = this._oContainer.removeAggregation(this._sContainerAggregationName, aGlobalContent[i], bSuppressInvalidate); //TODO: test index consistency upon iteration+removal
+			var oItem = this._oContainer[sAggregationMethod](aGlobalContent[i], bSuppressInvalidate); //TODO: test index consistency upon iteration+removal
 			if (oItem) {
 				aRemovedContent.push(oItem);
 			}
@@ -132,10 +136,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 
 	Segment.prototype._insertContent = function (oControl, iIndex, bSuppressInvalidate) {
 
-		var iInsertIndexInContainer = Math.min(this.getStartIndex() + iIndex, this.getEndIndex());
+		var iInsertIndexInContainer = Math.min(this.getStartIndex() + iIndex, this.getEndIndex()),
+			sAggregationMethod  = "insert" + fnCapitalize(this._sContainerAggregationName);
+
 		iInsertIndexInContainer = Math.max(iInsertIndexInContainer, 0);
 
-		this._oContainer.insertAggregation(this._sContainerAggregationName, oControl, iInsertIndexInContainer, bSuppressInvalidate);
+		this._oContainer[sAggregationMethod](oControl, iInsertIndexInContainer, bSuppressInvalidate);
 		this._aContent.splice(iIndex, 0, oControl);
 
 		return oControl;
@@ -149,6 +155,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 			}
 		}
 	};
+
+	function fnCapitalize(sName) {
+		return sName.charAt(0).toUpperCase() + sName.substring(1);
+	}
 
 	return Segment;
 

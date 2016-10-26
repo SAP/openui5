@@ -4,16 +4,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.m.Button</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true" data-sap-ui-language="en"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true" data-sap-ui-language="en"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -23,7 +23,7 @@
 }
 </style>
 
-<script type="text/javascript">
+<script>
 
 	var b1, b2, b4, b5, b6, b7, b8, b9, b10, msg;
 
@@ -471,6 +471,25 @@
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
 		strictEqual(oInfo.description, "Search", "Description");
+		oButton.destroy();
+	});
+
+	test("AriaLabeledBy when the Button is associated with Label", function() {
+		var oLabel = new sap.m.Label("L1", {
+			text:'Label'
+		});
+		var oButton = new sap.m.Button("B1",{
+			text:'Hello World',
+			ariaLabelledBy: "L1"
+		});
+
+		oLabel.placeAt("qunit-fixture");
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+
+		oLabel.destroy();
 		oButton.destroy();
 	});
 

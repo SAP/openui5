@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <title>Test Page for sap.m.RatingIndicator</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -206,11 +207,11 @@
 		// check selected width
 		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
 		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "256px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
+		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "238px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
 
 		// check unselected width
-		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "126px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "104px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
+		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "118px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
+		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "96px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
 		strictEqual(oRating2.$().children(".sapMRIUnselWrapper").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "0%" on ' + oRating2);
 
 		// check visibility false = no rendering
@@ -368,7 +369,7 @@
 			return ( result > oRating4.getMaxValue() ? oRating4.getMaxValue() : result );
 		};
 
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
+		strictEqual(oRating4.getValue(), calculateRatingValue() + 1, "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
 
 		setEventValue(180);
 		oRating4.ontouchstart(oEventTouchStart);

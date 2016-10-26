@@ -12,13 +12,13 @@
     <!-- SAPUI5 Bootstrap:                                                     -->
     <!-- Extend the "libs" property if you like to import additional libraries  -->
     <!-- ********************************************************************** -->
+    <script src="../shared-config.js"></script>
     <script id="sap-ui-bootstrap"
-            type="text/javascript"
+
             data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.unified"
-            data-sap-ui-theme="sap_bluecrystal"
             src="../../../../../resources/sap-ui-core.js"></script>
 
-    <script type="text/javascript">
+    <script>
 
         var createData = function() {
             var oDataSetA = {lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"};
@@ -83,7 +83,7 @@
                         iScrollAutomationIntervalId = null;
                     } else {
                         iScrollAutomationIntervalId = window.setInterval(function() {
-                            var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+                            var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
                             oVsb.scrollTop = oVsb.scrollTop + iScrollSpeed;
                         }, 50);
                     }
@@ -100,7 +100,7 @@
                         iReverseScrollAutomationIntervalId = null;
                     } else {
                         iReverseScrollAutomationIntervalId = window.setInterval(function() {
-                            var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+                            var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
                             oVsb.scrollTop = oVsb.scrollTop - iScrollSpeed;
                         }, 50);
                     }

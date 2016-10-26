@@ -10,18 +10,17 @@
 	<meta charset="utf-8">
 
 	<title>qUnit Page for sap.ui.table.Table</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 	    data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table" >
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
 
 	<script>
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -271,7 +270,19 @@
 		checkSelection("MultiToggle - After 5th selection", [2]);
 		triggerSelectionOnRow(0, true, true, false);
 		checkSelection("MultiToggle - After 6th selection", [0, 2]);
-		triggerSelectionOnRow(4, true, false, true);
+		if (oTable._getKeyboardExtension()._legacy) {
+			triggerSelectionOnRow(4, true, false, true);
+		} else {
+			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
+			oCell.focus();
+			qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
+		}
+		//debugger;
 		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(2, false, false, true);
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
@@ -551,7 +562,7 @@
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("Hide one column in fixed area", function(assert) {
@@ -561,7 +572,7 @@
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(2), "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css('margin-left'), getExpectedHScrollLeftMargin(2), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("Hide one column in scroll area", function(assert) {
@@ -571,7 +582,7 @@
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
 		assert.equal($table.find('.sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
-		assert.equal(jQuery(oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar)).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
+		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css('margin-left'), getExpectedHScrollLeftMargin(3), "Horizontal scrollbar has correct left margin");
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
@@ -604,8 +615,10 @@
 	});
 
 	QUnit.test("Scrollbars can be accessed by inheriting controls", function(assert) {
-		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
-		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		var oScrollExtension = oTable._getScrollExtension();
+		var oHsb = oScrollExtension.getHorizontalScrollbar();
+		var oVsb = oScrollExtension.getVerticalScrollbar();
+
 		assert.ok(oHsb);
 		assert.ok(oVsb);
 
@@ -639,14 +652,14 @@
 	});
 
 	QUnit.test("ScrollTop on init is as expected", function(assert) {
-		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 		assert.ok(oVsb);
 		var iDefaultHeight = oTable._getDefaultRowHeight();
 		assert.ok(oVsb.scrollTop > iDefaultHeight - 2 && oVsb.scrollTop < iDefaultHeight + 2, "ScrollTop is correct: " + oVsb.scrollTop);
 	});
 
 	QUnit.test("ScrollTop after scrolling to last row is as expected", function(assert) {
-		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 		assert.ok(oVsb);
 
 		oTable.setFirstVisibleRow(200);
@@ -688,7 +701,7 @@
 		assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
 		assert.ok(iRowHeightsDelta > iHeight - 25 && iRowHeightsDelta < iHeight + 25, "RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
 
-		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 		assert.ok(oVsb);
 
 		var done = assert.async();
@@ -1387,18 +1400,18 @@
 		var oModel;
 		oTable.attachRowSelectionChange(function(){
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
-			
+
 			oTable.attachEventOnce("_rowsUpdated", function() {
 				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-				
+
 				oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					start();
 				});
-				
+
 				oModel.setData({modelData: aData});
 			});
-			
+
 			oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData({modelData: []});
 			oTable.setModel(oModel);
@@ -1481,7 +1494,7 @@
 	QUnit.test("test onAfterRendering function with variableRowHeightEnabled=true", function(assert) {
 		oTable._bVariableRowHeightEnabled = true;
 		var oEvent = jQuery.Event();
-		var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 		oTable.onAfterRendering(oEvent);
 		assert.equal(oVSb.scrollTop, 0, "scrollTop value is available");
 	});
@@ -1533,6 +1546,7 @@
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable._getSanitizedFirstVisibleRow(true), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		oTable.setVisibleRowCount(250);
+		sap.ui.getCore().applyChanges();
 		oTable._updateFixedBottomRows();
 		assert.ok(oTable._iBindingLength < oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
 		oTable.setVisibleRowCount(7);
@@ -1638,10 +1652,6 @@
 		var sOldColumnWidth = oColumn.getWidth();
 		oTable.autoResizeColumn(0);
 		assert.ok(oColumn.getWidth() !== sOldColumnWidth, "Columns should have been resized");
-	});
-
-	QUnit.test("test _getColumnPercentageWidth function", function(assert) {
-		assert.equal(oTable._getColumnPercentageWidth(oTable.getColumns()[0]), 21, "Column percentage width calculated");
 	});
 
 	QUnit.test("Check for table focus", function(assert) {
@@ -1754,19 +1764,6 @@
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 0, "Selection interval is not set on the table");
 		oTable.setSelectionInterval(2, 6);
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 5, "Selection invterval is set to 5 on the table");
-	});
-
-	QUnit.test("test _resizeDependentColumns function", function(assert) {
-		// defining all columns with fixed width
-		oTable.getColumns()[3].setWidth("150px");
-		oTable.getColumns()[5].setWidth("75px");
-		oTable.getColumns()[6].setWidth("100px");
-		oTable._resizeDependentColumns(null);
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setWidth("20%");
-		var oOldColumnWidth = oTable.getColumns()[1].getWidth();
-		oTable._resizeDependentColumns(oColumn, "20%");
-		assert.ok(oTable.getColumns()[1].getWidth() !== oOldColumnWidth, "Column widths were adapted to depending on the first column resize percentage");
 	});
 
 	QUnit.test("test _attachBindingLister function", function(assert) {

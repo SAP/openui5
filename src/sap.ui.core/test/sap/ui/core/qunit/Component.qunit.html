@@ -185,6 +185,31 @@
 		equal(sNestedComponentId, oNestedControl._sOwnerId, "The nested control has the correct component context"); // INTERNAL ONLY!
 	});
 
+	QUnit.module("Destruction");
+
+	QUnit.test("Should destroy dependencies when the constructor is throwing an error", function (assert) {
+		var fnDestroySpy, fnDone = assert.async();
+
+		sap.ui.require(["samples/components/routing/Component"], function (RoutingComponent) {
+			var FailingComponent = RoutingComponent.extend("sample.components.ComponentThatThrows", {
+				init: function () {
+					RoutingComponent.prototype.init.apply(this, arguments);
+
+					fnDestroySpy = sinon.spy(this._oRouter, "destroy");
+
+					throw new Error();
+				}
+			});
+
+
+			assert.throws(function () {
+				new FailingComponent();
+			});
+			sinon.assert.calledOnce(fnDestroySpy);
+			fnDone();
+		});
+	});
+
 	QUnit.module("Routing", {
 		beforeEach : function () {
 			// System under test
@@ -301,25 +326,25 @@
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
-				return ("/anylocation/manifest.json" !== url && "/anyotherlocation1/manifest.json" !== url && "/anyotherlocation2/manifest.json" !== url);
+				return ("/anylocation/manifest.json?sap-language=EN" !== url && "/anyotherlocation1/manifest.json?sap-language=EN" !== url && "/anyotherlocation2/manifest.json?sap-language=EN" !== url);
 			});
 
 			oServer.autoRespond = true;
-			oServer.respondWith("GET", "/anylocation/manifest.json", [
+			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oManifest)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation1/manifest.json", [
+			oServer.respondWith("GET", "/anyotherlocation1/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest1)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation2/manifest.json", [
+			oServer.respondWith("GET", "/anyotherlocation2/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"

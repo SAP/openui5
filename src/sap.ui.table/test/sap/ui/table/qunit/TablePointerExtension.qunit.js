@@ -275,7 +275,7 @@ QUnit.asyncTest("Resize via Resize Button", function(assert) {
 	var $Resizer = oTable.$("rsz");
 	var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
 	sap.ui.Device.system.desktop = false;
-	sap.ui.table.TableUtils.openContextMenu(oTable, oColumn.getDomRef(), false);
+	sap.ui.table.TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef(), false);
 	var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
 	var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
 	qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
@@ -341,12 +341,12 @@ QUnit.asyncTest("Columnheader", function(assert){
 
 QUnit.test("Scrollbar", function(assert){
 	var oEvent = jQuery.Event({type : "mousedown"});
-	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+	oEvent.target = oTable._getScrollExtension().getHorizontalScrollbar();
 	oEvent.button = 0
 	jQuery(oEvent.target).trigger(oEvent);
 	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on horizontal scrollbar");
 	oEvent = jQuery.Event({type : "mousedown"});
-	oEvent.target = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+	oEvent.target = oTable._getScrollExtension().getVerticalScrollbar();
 	oEvent.button = 0
 	jQuery(oEvent.target).trigger(oEvent);
 	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on vertical scrollbar");

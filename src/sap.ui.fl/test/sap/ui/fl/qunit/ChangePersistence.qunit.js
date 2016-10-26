@@ -58,43 +58,6 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
-	QUnit.test("setMergedChanges should set the list of merged changes", function(assert) {
-		var aMergedChanges = ["change1stub", "change2stub"];
-
-		this.oChangePersistence.setMergedChanges(aMergedChanges);
-
-		assert.equal(this.oChangePersistence._aMergedChanges, aMergedChanges, "changes were set");
-	});
-
-	QUnit.test("addMergedChanges should add a list of merged changes to the list of already merged changes", function(assert) {
-		var aMergedChanges = ["change1stub", "change2stub"];
-		this.oChangePersistence._aMergedChanges = aMergedChanges;
-		var aAddedMergedChanges = ["change3stub", "change4stub"];
-		var aExpectedMergedChanges = ["change1stub", "change2stub", "change3stub", "change4stub"];
-
-		this.oChangePersistence.addMergedChanges(aAddedMergedChanges);
-
-		assert.deepEqual(this.oChangePersistence._aMergedChanges, aExpectedMergedChanges, "changes were added");
-	});
-
-	QUnit.test("getMergedChanges should retrieve the list of merged changes", function(assert) {
-		var aMergedChanges = ["change1stub", "change2stub"];
-		this.oChangePersistence._aMergedChanges = aMergedChanges;
-
-		var aRetrievedMergedChanges = this.oChangePersistence.getMergedChanges();
-
-		assert.equal(aRetrievedMergedChanges, aMergedChanges, "changes were retrieved");
-	});
-
-	QUnit.test("clearUnmergedChanges should clear the list of merged changes", function(assert) {
-		var aMergedChanges = ["change1stub", "change2stub"];
-		this.oChangePersistence._aMergedChanges = aMergedChanges;
-
-		this.oChangePersistence.clearMergedChanges();
-
-		assert.equal(this.oChangePersistence._aMergedChanges.length, 0, "changes list was cleared");
-	});
-
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
@@ -133,7 +96,7 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
-	QUnit.test("getChangesMapForComponent shall return the a map of changes for the component", function(assert) {
+	QUnit.test("loadChangesMapForComponent shall return the a map of changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 		    {
@@ -153,7 +116,10 @@ jQuery.sap.require("sap.m.Button");
 			}
 			]}}));
 
-		return this.oChangePersistence.getChangesMapForComponent().then(function(mChanges) {
+		return this.oChangePersistence.loadChangesMapForComponent().then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
 			assert.ok(mChanges);
 			assert.ok(mChanges["controlId"]);
 			assert.ok(mChanges["anotherControlId"]);
@@ -207,96 +173,6 @@ jQuery.sap.require("sap.m.Button");
 			assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
 			assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change1Button2";}), false);
 			assert.strictEqual(changes.some(function(oChange){return oChange.getId() === "change2Button1";}), false);
-		});
-	});
-
-	QUnit.test("getUnmergedChangesForView shall return the changes that are prefixed with the same view but not already merged", function(assert) {
-		var change1Button1 = new Change({
-			fileName:"change1Button1",
-			fileType: "change",
-			namespace: "aNamespace",
-			layer: "VENDOR",
-			selector:{
-				id: "view1--view2--button1"
-			}
-		});
-
-		var change2Button1 = new Change({
-			fileName:"change2Button1",
-			fileType: "change",
-			namespace: "bNamespace",
-			layer: "VENDOR",
-			selector: {
-				id: "view1--view2--button1"
-			}
-		});
-
-		var change1Button2 = new Change({
-			fileName:"change1Button2",
-			fileType: "change",
-			namespace: "cNamespace",
-			layer: "VENDOR",
-			selector: {
-				id: "view1--button2"
-			}
-		});
-
-		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(
-			Promise.resolve([change1Button1, change2Button1, change1Button2])
-		);
-
-		this.oChangePersistence.setMergedChanges(["VENDOR/bNamespace/change2Button1.change"]);
-
-		var mPropertyBag = {viewId: "view1--view2"};
-
-		return this.oChangePersistence.getUnmergedChangesForView("view1--view2", mPropertyBag).then(function(changes) {
-			assert.equal(changes.length, 1);
-			assert.equal(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
-		});
-	});
-
-	QUnit.test("getUnmergedChangesForComponent shall return the changes that are prefixed with the same view but not already mereged", function(assert) {
-
-		var change1Button1 = new Change({
-			fileName:"change1Button1",
-			fileType: "change",
-			namespace: "aNamespace",
-			layer: "VENDOR",
-			selector:{
-				id: "view1--view2--button1"
-			}
-		});
-
-		var change2Button1 = new Change({
-			fileName:"change2Button1",
-			fileType: "change",
-			namespace: "bNamespace",
-			layer: "VENDOR",
-			selector: {
-				id: "view1--view2--button1"
-			}
-		});
-
-		var change1Button2 = new Change({
-			fileName:"change1Button2",
-			fileType: "change",
-			namespace: "cNamespace",
-			layer: "VENDOR",
-			selector: {
-				id: "view1--button2"
-			}
-		});
-
-		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(
-			Promise.resolve([change1Button1, change2Button1, change1Button2])
-		);
-
-		this.oChangePersistence.setMergedChanges(["VENDOR/bNamespace/change2Button1.change"]);
-
-		return this.oChangePersistence.getUnmergedChangesForComponent("comp").then(function(changes) {
-			assert.equal(changes.length, 2);
-			assert.equal(changes.some(function(oChange){return oChange.getId() === "change1Button1";}), true);
-			assert.equal(changes.some(function(oChange){return oChange.getId() === "change1Button2";}), true);
 		});
 	});
 

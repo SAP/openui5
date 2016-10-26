@@ -150,6 +150,30 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		return this;
 	};
 
+	Tree.prototype.expandToLevel = function (iLevel) {
+		var oBinding = this.getBinding("items");
+
+		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "Tree.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
+
+		if (oBinding && oBinding.expandToLevel) {
+			oBinding.expandToLevel(iLevel);
+		}
+
+		return this;
+	};
+
+	Tree.prototype.collapseAll = function () {
+		var oBinding = this.getBinding("items");
+
+		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "Tree.collapseAll is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
+
+		if (oBinding) {
+			oBinding.collapseToLevel(0);
+		}
+
+		return this;
+	};
+
 	return Tree;
 
 }, /* bExport= */ true);

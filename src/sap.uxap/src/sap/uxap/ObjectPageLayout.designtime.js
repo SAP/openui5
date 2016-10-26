@@ -28,10 +28,7 @@ sap.ui.define([],
 					}
 				},
 				actions : {
-					move : "moveElements",
-					reveal : {
-						changeType : "unstashControl"
-					}
+					move : "moveElements"
 				}
 			}
 		},

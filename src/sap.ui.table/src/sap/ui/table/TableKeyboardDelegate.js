@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		}
 
 		if (iTargetIndex != undefined) {
-			TableUtils.ColumnUtils.moveColumnTo(oColumn, iTargetIndex);
+			TableUtils.Column.moveColumnTo(oColumn, iTargetIndex);
 		}
 	};
 
@@ -151,11 +151,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * Hook which is called by the keyboard extension when the table should be set to action mode
 	 * @see TableKeyboardExtension#setActionMode
 	 */
-	TableKeyboardDelegate.prototype.enterActionMode = function(oArgs) {
-		var $Focusable = oArgs.$Dom;
+	TableKeyboardDelegate.prototype.enterActionMode = function($Focusable) {
 		var bEntered = false;
 
-		if ($Focusable.length > 0) {
+		if ($Focusable && $Focusable.length > 0) {
 
 			var $Tabbables = $Focusable.filter(":sapTabbable");
 			var oExtension = this._getKeyboardExtension();
@@ -194,11 +193,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * Hook which is called by the keyboard extension when the table should leave the action mode
 	 * @see TableKeyboardExtension#setActionMode
 	 */
-	TableKeyboardDelegate.prototype.leaveActionMode = function(oArgs) {
+	TableKeyboardDelegate.prototype.leaveActionMode = function(oEvent) {
 		 // TODO: update ItemNavigation position otherwise the position is strange!
 		 //       EDIT AN SCROLL!
 
-		var oEvent = oArgs.event;
 		var oExtension = this._getKeyboardExtension();
 
 		// in the navigation mode we use the item navigation
@@ -243,7 +241,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		// When clicking into a focusable control we enter the action mode
 		// When clicking anywhere else in the table we leave the action mode
 		var $Dom = this.$().find(".sapUiTableCtrl td :focus");
-		this._getKeyboardExtension().setActionMode($Dom.length > 0, {$Dom: $Dom, event: oEvent});
+
+		var bEnterActionMode = $Dom.length > 0;
+		if (bEnterActionMode) {
+			this._getKeyboardExtension().setActionMode(true, $Dom);
+		} else {
+			this._getKeyboardExtension().setActionMode(false, oEvent);
+		}
 	};
 
 
@@ -302,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			return;
 		}
 
-		if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+		if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 			oEvent.preventDefault();
 			return;
 		}
@@ -310,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
 			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		} else {
 			this._onSelect(oEvent);
 		}
@@ -345,7 +349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2 ||
 			oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
 			if ($this.find(".sapUiTableCtrl td:focus").length > 0) {
-				this._getKeyboardExtension().setActionMode(true, {$Dom: $this.find(".sapUiTableCtrl td:focus").find(":sapFocusable")});
+				this._getKeyboardExtension().setActionMode(true, $this.find(".sapUiTableCtrl td:focus").find(":sapFocusable"));
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -397,11 +401,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
 			// SHIFT + 10 should open the context menu
 			oEvent.preventDefault();
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS) {
-			TableUtils.toggleGroupHeader(this, oEvent.target, true);
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {
-			TableUtils.toggleGroupHeader(this, oEvent.target, false);
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
 		}
 	};
 
@@ -421,7 +425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
 			oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
 
-			TableUtils.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
 
@@ -429,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 * handle the ESCAPE key to leave the action mode
 	 */
 	TableKeyboardDelegate.prototype.onsapescape = function(oEvent) {
-		this._getKeyboardExtension().setActionMode(false, {event: oEvent});
+		this._getKeyboardExtension().setActionMode(false, oEvent);
 	};
 
 	/*
@@ -531,7 +535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		if (!this._getKeyboardExtension().isInActionMode() && TableUtils.isLastScrollableRow(this, oEvent.target)) {
 			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount()) {
 				oEvent.stopImmediatePropagation(true);
-				TableUtils.scroll(this, true, false);
+				this._getScrollExtension().scroll(true, false);
 			}
 		}
 		oEvent.preventDefault();
@@ -553,20 +557,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
 		if (oEvent.shiftKey) {
-			var iFocusedRow = TableKeyboardDelegate._getFocusedRowIndex(this);
-			var bIsFocusedRowSelected = TableKeyboardDelegate._isFocusedRowSelected(this);
-			if (bIsFocusedRowSelected === true) {
-				this.addSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
-			} else if (bIsFocusedRowSelected === false) {
-				this.removeSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
-			}
+			if (this.getSelectionMode() === library.SelectionMode.Single || this.getSelectionMode() === library.SelectionMode.None) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				oEvent.preventDefault();
+			} else {
+				var iFocusedRow = TableKeyboardDelegate._getFocusedRowIndex(this);
+				var bIsFocusedRowSelected = TableKeyboardDelegate._isFocusedRowSelected(this);
+				if (bIsFocusedRowSelected === true) {
+					this.addSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
+				} else if (bIsFocusedRowSelected === false) {
+					this.removeSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
+				}
 
-			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-				TableUtils.scroll(this, true, false);
+				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
+					this._getScrollExtension().scroll(true, false);
+				}
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + DOWN.
-			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+			if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -578,25 +587,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 	 */
 	TableKeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
 		if (oEvent.shiftKey) {
-			var iFocusedRow = TableKeyboardDelegate._getFocusedRowIndex(this);
-			var bIsFocusedRowSelected = TableKeyboardDelegate._isFocusedRowSelected(this);
+			if (this.getSelectionMode() === library.SelectionMode.Single || this.getSelectionMode() === library.SelectionMode.None) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				oEvent.preventDefault();
+			} else {
+				var iFocusedRow = TableKeyboardDelegate._getFocusedRowIndex(this);
+				var bIsFocusedRowSelected = TableKeyboardDelegate._isFocusedRowSelected(this);
 
-			if (bIsFocusedRowSelected === true) {
-				this.addSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
-			} else if (bIsFocusedRowSelected === false) {
-				this.removeSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
-			}
-
-			if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-				// Prevent that focus jumps to header in this case.
-				if (this.getFirstVisibleRow() != 0) {
-					oEvent.stopImmediatePropagation(true);
+				if (bIsFocusedRowSelected === true) {
+					this.addSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
+				} else if (bIsFocusedRowSelected === false) {
+					this.removeSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
 				}
-				TableUtils.scroll(this, false, false);
+
+				if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
+					// Prevent that focus jumps to header in this case.
+					if (this.getFirstVisibleRow() != 0) {
+						oEvent.stopImmediatePropagation(true);
+					}
+					this._getScrollExtension().scroll(false, false);
+				}
 			}
 		} else if (oEvent.altKey) {
 			// Toggle group header on ALT + UP.
-			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+			if (TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target)) {
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
@@ -611,7 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			if (this.getFirstVisibleRow() != 0) {
 				oEvent.stopImmediatePropagation(true);
 			}
-			TableUtils.scroll(this, false, false);
+			this._getScrollExtension().scroll(false, false);
 		}
 		oEvent.preventDefault();
 	};
@@ -646,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 				oEvent.stopImmediatePropagation(true);
 			} else {
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-					TableUtils.scroll(this, true, true);
+					this._getScrollExtension().scroll(true, true);
 				}
 
 				var iFixedBottomRowsOffset = this.getFixedBottomRowCount();
@@ -725,7 +739,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 					oEvent.stopImmediatePropagation(true);
 
 					if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-						TableUtils.scroll(this, false, true);
+						this._getScrollExtension().scroll(false, true);
 					}
 				}
 			}

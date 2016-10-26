@@ -94,11 +94,17 @@ sap.ui.require(["jquery.sap.global",
 	if (Cache._isSupportedEnvironment()) {
 		Cache.reset().then(function() {
 
-			var sLocation = window.location.host + window.location.pathname;
+			var sLocation = window.location.host + window.location.pathname,
+				sBuildTimeStamp = "12345"
+
+			sinon.stub(sap.ui, "getVersionInfo").returns(Promise.resolve({
+				libraries: [{
+					buildTimestamp: "12345"
+				}]
+			}));
 
 			function getKeyParts(aKeys, sManifest) {
-				var sBuildTimeStamp = sap.ui.getVersionInfo().buildTimestamp,
-					sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
+				var sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
 					sHashCode = jQuery.sap.hashCode(sManifest || "");
 				return "_" + sLanguageTag + "_" + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 			}

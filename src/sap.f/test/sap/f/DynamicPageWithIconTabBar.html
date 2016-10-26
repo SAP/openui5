@@ -3,14 +3,13 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>DynamicPage with IconTabBar</title>
-	<script type="text/javascript"
-			src="../../../resources/sap-ui-core.js"
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_belize">
+			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout">
 	</script>
-	<script type="text/javascript" src="DynamicPageUtility.js"></script>
-	<script type="text/javascript">
+	<script src="DynamicPageUtility.js"></script>
+	<script>
 		jQuery.sap.require("sap.ui.core.format.NumberFormat");
 		var oFloat = sap.ui.core.format.NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2});
 

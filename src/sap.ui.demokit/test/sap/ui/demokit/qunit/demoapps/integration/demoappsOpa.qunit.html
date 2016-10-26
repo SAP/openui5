@@ -23,14 +23,17 @@
 			sap.ui.require([
 						'sap/ui/test/opaQunit',
 						'sap/ui/test/Opa5',
+						'sap/ui/test/Opa',
 						'sap/ui/test/matchers/Properties',
+						'sap/ui/test/matchers/BindingPath',
 						'sap/ui/test/actions/Press'
 					],
-					function (opaTest, Opa5, Properties, Press) {
+					function (opaTest, Opa5, Opa, Properties, BindingPath, Press) {
 						"use strict";
 
 						Opa5.extendConfig({
-							viewNamespace: "sap.ui.demokit.demoapps.view."
+							viewNamespace: "sap.ui.demokit.demoapps.view.",
+							autoWait: true
 						});
 
 						opaTest("Should see at least 4 tiles", function (Given, When) {
@@ -58,7 +61,76 @@
 								success: function (aTiles) {
 									Opa5.assert.strictEqual(aTiles.length, 1, "One tile was of the type monitor");
 								}
-							})
+							});
+						});
+
+						opaTest("Should be able to download all apps", function (Given, When, Then) {
+							var fnCreateArchive;
+							var fnHandleError;
+
+							When.waitFor({
+								controlType: "sap.m.App",
+								success:function (aApp) {
+									var oController = aApp[0].getParent().getController();
+									fnCreateArchive = sinon.stub(oController, "_createArchive", $.noop());
+									fnHandleError = sinon.stub(oController, "_handleError", $.noop());
+								}
+							});
+
+							var oDownloadTile = {
+								viewName: "Root",
+								controlType: "sap.m.StandardTile",
+								matchers: new Properties({
+									type: "Monitor"
+								}),
+								actions: new Press()
+							};
+							When.waitFor(oDownloadTile);
+
+							When.waitFor({
+								viewName: "Root",
+								controlType: "sap.m.ListItemBase",
+								success: function (aListItems) {
+									When.waitFor({
+										viewName: "Root",
+										controlType: "sap.m.Button",
+										matchers: new Properties({ text: "Cancel" }),
+										actions: new Press()
+									});
+
+									aListItems.forEach(function (oListItem) {
+										Then.waitFor({
+											success: function () {
+												sinon.assert.notCalled(fnHandleError);
+
+												if (fnHandleError.callCount > 0) {
+													Opa.stopQueue();
+												}
+											}
+										});
+
+										When.waitFor(oDownloadTile);
+
+										When.waitFor({
+											viewName: "Root",
+											controlType: "sap.m.ListItemBase",
+											matchers: new BindingPath({path: oListItem.getBindingContext().getPath()}),
+											actions: new Press()
+										});
+									});
+
+									Then.waitFor({
+										success: function () {
+											sinon.assert.notCalled(fnHandleError);
+											Opa5.assert.ok(true, "All downloads worked");
+											fnHandleError.restore();
+											fnCreateArchive.restore();
+										}
+									})
+								}
+							});
+
+
 						});
 
 						QUnit.start();

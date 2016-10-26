@@ -5,10 +5,10 @@
 sap.ui.test.qunit.delayTestStart(500);
 
 QUnit.module("Initialization", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function() {
+	afterEach: function() {
 		destroyTables();
 	}
 });
@@ -35,10 +35,10 @@ QUnit.test("_debug()", function(assert) {
 
 
 QUnit.module("Destruction", {
-	setup: function() {
+	beforeEach: function() {
 		createTables();
 	},
-	teardown: function() {
+	afterEach: function() {
 		oTable = null;
 		oTreeTable.destroy();
 		oTreeTable = null;
@@ -52,23 +52,61 @@ QUnit.test("destroy()", function(assert) {
 	assert.ok(!oExtension._delegate, "Delegate cleared");
 });
 
-QUnit.module("Horizontal scrolling", {
-	before: function() {
-		this.sOriginalWidth = document.getElementById("content").style.width;
-	},
+QUnit.module("Scrollbars", {
 	beforeEach: function() {
+		this.sOriginalWidth = document.getElementById("content").style.width;
+		this.sOriginalHeight = document.getElementById("content").style.height;
+
 		document.getElementById("content").style.width = "300px";
+		document.getElementById("content").style.height = "100px";
+
 		createTables();
-		oTable._getScrollExtension()._debug();
-		this.oHSb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+
+		this.oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+		this.oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+	},
+	afterEach: function() {
+		document.getElementById("content").style.width = this.sOriginalWidth;
+		document.getElementById("content").style.height = this.sOriginalHeight;
+		destroyTables();
+	}
+});
+
+QUnit.test("Horizontal scrollbar visibility", function(assert) {
+	assert.ok(this.oHSb.offsetWidth > 0 && this.oHSb.offsetHeight > 0, "Table content does not fit width -> Horizontal scrollbar is visible");
+
+	destroyTables();
+	document.getElementById("content").style.width = this.sOriginalWidth;
+	createTables();
+	assert.ok(this.oHSb.offsetWidth === 0 && this.oHSb.offsetHeight === 0, "Table content fits width -> Horizontal scrollbar is not visible");
+});
+
+QUnit.test("Vertical scrollbar visibility", function(assert) {
+	assert.ok(this.oVSb.offsetWidth > 0 && this.oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
+
+	destroyTables();
+	document.getElementById("content").style.height = this.sOriginalHeight;
+	createTables();
+	assert.ok(this.oVSb.offsetWidth === 0 && this.oVSb.offsetHeight === 0, "Table content fits height -> Vertical scrollbar is not visible");
+});
+
+QUnit.module("Horizontal scrolling", {
+	beforeEach: function() {
+		this.sOriginalWidth = document.getElementById("content").style.width;
+		document.getElementById("content").style.width = "300px";
+
+		createTables();
+
+		this.oScrollExtension = oTable._getScrollExtension();
+		this.oScrollExtension._debug();
+
+		this.oHSb = this.oScrollExtension.getHorizontalScrollbar();
 		this.oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
 		this.oContentScroll = oTable.getDomRef("sapUiTableCtrlScr");
 	},
 	afterEach: function() {
-		destroyTables();
-	},
-	after: function() {
 		document.getElementById("content").style.width = this.sOriginalWidth;
+		destroyTables();
 	},
 	assertSynchronization: function(assert, iScrollPosition) {
 		if (iScrollPosition == null) {
@@ -81,15 +119,6 @@ QUnit.module("Horizontal scrolling", {
 		assert.ok(bIsSynchronized, "Scroll positions are synchronized at position " + iScrollPosition +
 			" [HSb: " + this.oHSb.scrollLeft + ", Header: " + this.oHeaderScroll.scrollLeft + ", Content: " + this.oContentScroll.scrollLeft + "]");
 	}
-});
-
-QUnit.test("Scrollbar visibility", function(assert) {
-	assert.ok(this.oHSb.offsetWidth > 0 && this.oHSb.offsetHeight > 0, "Table content does not fit width -> Horizontal scrollbar is visible");
-
-	destroyTables();
-	document.getElementById("content").style.width = this.sOriginalWidth;
-	createTables();
-	assert.ok(this.oHSb.offsetWidth === 0 && this.oHSb.offsetHeight === 0, "Table content fits width -> Horizontal scrollbar is not visible");
 });
 
 QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
@@ -131,7 +160,7 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 	}
 });
 
-QUnit.asyncTest("Imitating Arrow and Home/End key navigation", function(assert) {
+QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
 	var that = this;
 	var iNumberOfCols = oTable.getColumns().length;
 	var iAssertionDelay = 75;
@@ -294,17 +323,36 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	var oTarget;
 	var iCurrentScrollPosition = this.oHSb.scrollLeft;
 
-	function scrollWithMouseWheel(oTarget, iScrollDelta, iExpectedScrollPosition) {
+	function scrollWithMouseWheel(oTarget, iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 		return new Promise(
 			function(resolve) {
-				qutils.triggerEvent("wheel", oTarget, {
-					shiftKey: true,
-					deltaX: iScrollDelta
-				});
+				var oEvent = jQuery.Event({type: "wheel"});
+				oEvent.shiftKey = true;
+				oEvent.deltaX = iScrollDelta;
+				oEvent.originalEvent.shiftKey = true;
+				oEvent.originalEvent.deltaX = iScrollDelta;
+
+				jQuery(oTarget).trigger(oEvent);
 
 				window.setTimeout(function() {
 					that.assertSynchronization(assert, iExpectedScrollPosition);
+
+					if (!bValidTarget) {
+						assert.ok(!oEvent.isDefaultPrevented(), "Target does not support mousewheel scrolling: Default action was not prevented");
+						assert.ok(!oEvent.isPropagationStopped(), "Target does not support mousewheel scrolling: Propagation was not stopped");
+					} else if (iCurrentScrollPosition === 0 && iScrollDelta < 0) {
+						assert.ok(!oEvent.isDefaultPrevented(), "Scroll position is already at the beginning: Default action was not prevented");
+						assert.ok(!oEvent.isPropagationStopped(), "Scroll position is already at the beginning: Propagation was not stopped");
+					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.clientWidth && iScrollDelta > 0) {
+						assert.ok(!oEvent.isDefaultPrevented(), "Scroll position is already at the end: Default action was not prevented");
+						assert.ok(!oEvent.isPropagationStopped(), "Scroll position is already at the end: Propagation was not stopped");
+					} else {
+						assert.ok(oEvent.isDefaultPrevented(), "Default action was prevented");
+						assert.ok(oEvent.isPropagationStopped(), "Propagation was stopped");
+					}
+
 					iCurrentScrollPosition = iExpectedScrollPosition;
+
 					resolve();
 				}, iAssertionDelay);
 			}
@@ -312,44 +360,46 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	}
 
 	oTarget = getCell(0, 0); // Cell in fixed column.
-	scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150).then(function() {
-		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50);
+	scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150, true).then(function() {
+		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150);
+		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50);
+		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50, true);
 	}).then(function() {
 
 		oTarget = getCell(2, 2); // Cell in scrollable column.
-		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150);
+		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50);
+		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150);
+		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50);
+		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50, true);
+	}).then(function() {
+		return scrollWithMouseWheel(oTarget, -50, 0, true);
 	}).then(function() {
 
 		oTarget = getSelectAll();
-		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition);
+		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition, false);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition);
+		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition, false);
 	}).then(function() {
 
 		oTarget = getColumnHeader(1);
-		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition);
+		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition, false);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition);
+		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition, false);
 	}).then(function() {
 
 		oTarget = getRowHeader(0);
-		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150);
+		return scrollWithMouseWheel(oTarget, 150, iCurrentScrollPosition + 150, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50);
+		return scrollWithMouseWheel(oTarget, 50, iCurrentScrollPosition + 50, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150);
+		return scrollWithMouseWheel(oTarget, -150, iCurrentScrollPosition - 150, true);
 	}).then(function() {
-		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50);
+		return scrollWithMouseWheel(oTarget, -50, iCurrentScrollPosition - 50, true);
 	}).then(function() {
 		QUnit.start();
 	});
@@ -413,7 +463,7 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 		return touchMove(oTarget, -50, iCurrentScrollPosition - 50);
 	}).then(function() {
 
-		oTarget = getCell(2, 2); // Cell in scrollable coumn.
+		oTarget = getCell(2, 2); // Cell in scrollable column.
 		touchStart(oTarget, 200);
 		return touchMove(oTarget, 150, iCurrentScrollPosition + 150);
 	}).then(function() {
@@ -451,4 +501,190 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 		delete document.ontouchstart;
 		QUnit.start();
 	});
+});
+
+QUnit.module("Public methods", {
+	beforeEach: function() {
+		this.sOriginalWidth = document.getElementById("content").style.width;
+		this.sOriginalHeight = document.getElementById("content").style.height;
+
+		document.getElementById("content").style.width = "300px";
+		document.getElementById("content").style.height = "100px";
+
+		createTables();
+
+		this.oScrollExtension = oTable._getScrollExtension();
+		this.oHSb = this.oScrollExtension.getHorizontalScrollbar();
+		this.oVSb = this.oScrollExtension.getVerticalScrollbar();
+	},
+	afterEach: function() {
+		document.getElementById("content").style.width = this.sOriginalWidth;
+		document.getElementById("content").style.height = this.sOriginalHeight;
+		destroyTables();
+	}
+});
+
+QUnit.test("scroll", function(assert) {
+	var iVisibleRowCount = 5;
+	var iFixedTop = 2;
+	var iFixedBottom = 1;
+	var iNotVisibleRows = iNumberOfRows - iVisibleRowCount;
+	var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
+	var iPages = Math.ceil((iNumberOfRows - iFixedTop - iFixedBottom) / iPageSize);
+	var i;
+
+	oTable.setVisibleRowCount(iVisibleRowCount);
+	oTable.setFixedRowCount(iFixedTop);
+	oTable.setFixedBottomRowCount(iFixedBottom);
+	sap.ui.getCore().applyChanges();
+
+	var bScrolled = false;
+
+	for (i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(true, false);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(true, false);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	for (i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(false, false);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(false, false);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+
+	var iPos = 0;
+	for (i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(true, true);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos + iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.min(iPos, iNotVisibleRows), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(true, true);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	iPos = iNotVisibleRows;
+	for (i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(false, true);
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos - iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.max(iPos, 0), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = this.oScrollExtension.scroll(false, true);
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+});
+
+QUnit.test("scrollMax", function(assert) {
+	var bScrolled;
+
+	/* More data rows than visible rows */
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = this.oScrollExtension.scrollMax(true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = this.oScrollExtension.scrollMax(false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = this.oScrollExtension.scrollMax(true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = this.oScrollExtension.scrollMax(false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* More data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = this.oScrollExtension.scrollMax(true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = this.oScrollExtension.scrollMax(false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = this.oScrollExtension.scrollMax(true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = this.oScrollExtension.scrollMax(false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+});
+
+QUnit.test("getHorizontalScrollbar", function(assert) {
+	assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar), "Returned: Horizontal scrollbar element");
+
+	this.stub(this.oScrollExtension, "getTable").returns(undefined);
+	assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), null, "Returned null: The ScrollExtension has no reference to the table");
+});
+
+QUnit.test("getVerticalScrollbar", function(assert) {
+	assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar), "Returned: Vertical scrollbar element");
+
+	this.stub(this.oScrollExtension, "getTable").returns(undefined);
+	assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), null, "Returned null: The ScrollExtension has no reference to the table");
+});
+
+QUnit.test("isHorizontalScrollbarVisible", function(assert) {
+	assert.ok(this.oScrollExtension.isHorizontalScrollbarVisible(), "Table content does not fit width -> Horizontal scrollbar is visible");
+
+	destroyTables();
+	document.getElementById("content").style.width = this.sOriginalWidth;
+	createTables();
+	assert.ok(!this.oScrollExtension.isHorizontalScrollbarVisible(), "Table content fits width -> Horizontal scrollbar is not visible");
+});
+
+QUnit.test("isVerticalScrollbarVisible", function(assert) {
+	assert.ok(this.oScrollExtension.isVerticalScrollbarVisible(), "Table content does not fit height -> Vertical scrollbar is visible");
+
+	destroyTables();
+	document.getElementById("content").style.height = this.sOriginalHeight;
+	createTables();
+	assert.ok(!this.oScrollExtension.isVerticalScrollbarVisible(), "Table content fits height -> Vertical scrollbar is not visible");
 });

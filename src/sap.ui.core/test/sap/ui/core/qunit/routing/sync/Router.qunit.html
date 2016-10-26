@@ -1308,7 +1308,7 @@
 					// only shells will be used
 					controlAggregation: "pages",
 					viewName: "foo",
-					controlId: this.oApp.getId()
+					controlId: this.oApp.getId(),
 				};
 
 			},
@@ -1689,6 +1689,141 @@
 			};
 			assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef);
 
+		});
+
+		QUnit.test("home route declaration", function(assert) {
+			// Arrange
+			var sHomeTitle = "HOME",
+				sProductTitle = "PRODUCT",
+				done = assert.async(),
+				oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			this.oRouterConfig = {
+				home : {
+					pattern: "",
+					target: "home"
+				},
+				product : {
+					pattern : "product",
+					target: "product"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: sHomeTitle
+				},
+				product: {
+					title: sProductTitle
+				}
+			};
+
+			this.oDefaults = {
+				// only shells will be used
+				controlAggregation: "pages",
+				viewName: "foo",
+				controlId: this.oApp.getId(),
+				homeRoute: "home"
+			};
+
+			this.oOwner = {
+				getManifestEntry: function() {
+					return "HOME";
+				}
+			};
+
+			hasher.setHash(this.oRouterConfig.product.pattern);
+
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+			this.oRouter._oOwner = this.oOwner;
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			this.oRouter.attachRouteMatched(function() {
+				// Assert
+				var aHistoryRef = {
+					hash: "",
+					isHome: true,
+					title: "HOME"
+				};
+
+				assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef, "Home route attached to history.");
+				assert.strictEqual(this.oRouter.getTitleHistory().length, 2, "Product route attached to history");
+				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
+				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+				assert.deepEqual(oParameters.history[oParameters.history.length - 1], aHistoryRef, "history state is correctly updated");
+				done();
+
+			}.bind(this));
+
+			// Act
+			this.oRouter.initialize();
+		});
+
+		QUnit.test("Home Route declaration with dynamic parts", function(assert) {
+			// Arrange
+			var sHomeTitle = "HOME",
+				sProductTitle = "PRODUCT",
+				done = assert.async(),
+				oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			this.oRouterConfig = {
+				home : {
+					pattern: "home/{testid}",
+					target: "home"
+				},
+				product : {
+					pattern : "/product",
+					target: "product"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: sHomeTitle
+				},
+				product: {
+					title: sProductTitle
+				}
+			};
+
+			this.oDefaults = {
+				// only shells will be used
+				controlAggregation: "pages",
+				viewName: "foo",
+				controlId: this.oApp.getId(),
+				homeRoute: "home"
+			};
+
+			this.spy = sinon.spy(jQuery.sap.log, "error");
+
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+			this.oRouter.attachTitleChanged(fnEventSpy);
+
+			hasher.setHash(this.oRouterConfig.product.pattern);
+
+			this.oRouter.attachRouteMatched(function() {
+				// Assert
+				sinon.assert.calledWith(this.spy, "Routes with dynamic parts cannot be resolved as home route.");
+				assert.strictEqual(oParameters.history.length, 0, "Home route shouldn't be added to history.");
+				assert.deepEqual(this.oRouter.getTitleHistory()[0], {
+					hash: "/product",
+					title: "PRODUCT"
+				}, "Product route is added to history.");
+				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
+				assert.strictEqual(oParameters.title, sProductTitle, "Did pass product title value to the event parameters");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oRouter.initialize();
 		});
 
 		module("component");

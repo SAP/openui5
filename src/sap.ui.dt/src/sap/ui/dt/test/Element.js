@@ -38,15 +38,11 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 	 */
 	ElementTest.getInfo = function(oElement) {
 		var oMetadata = oElement.getMetadata();
-		var oElementDesignTimeMetadata = oMetadata.getDesignTime();
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 
 		return {
 			metadata : oMetadata,
-			designTimeMetadata : oElementDesignTimeMetadata,
-			overlay : oElementOverlay,
-			overlayDesignTimeMetadata : oDesignTimeMetadata
+			overlay : oElementOverlay
 		};
 	};
 

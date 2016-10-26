@@ -46,11 +46,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	{
 		constructor : function(sId, mSettings) {
 
+			var bCreated = false;
 			try {
 				Component.apply(this, arguments);
-			} catch (e) {
-				this._destroyCreatedInstances();
-				throw e;
+				bCreated = true;
+			} finally {
+				if (!bCreated) {
+					this._destroyCreatedInstances();
+				}
 			}
 
 		},
@@ -475,10 +478,22 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	};
 
 	/**
-	 * The method to create the content (UI Control Tree) of the Component.
-	 * This method has to be overwritten in the implementation of the component
-	 * if the root view is not declared in the component metadata.
+	 * Hook method to create the content (UI Control Tree) of this component.
 	 *
+	 * The default implementation in this class reads the name (and optionally type) of a root view from the
+	 * descriptor for this component (path <code>/sap.ui5/rootView</code>) or, for backward compatibility,
+	 * just the name from static component metadata (property <code>rootView</code>). When no type is specified,
+	 * it defaults to XML. The method then calls the {@link sap.ui.view view factory} to instantiate the root
+	 * view and returns the result.
+	 *
+	 * When there is no root view configuration, <code>null</code> will be returned.
+	 *
+	 * This method can be overwritten by subclasses if the default implementation doesn't fit their needs.
+	 * Subclasses are not limited to views as return type but may return any control, but only a single control
+	 * (can be the root of a larger control tree, however).
+	 *
+	 * @returns {sap.ui.core.mvc.View|sap.ui.core.Control} Root control of the UI tree or <code>null</code> if none is configured
+	 * @throws {Error} When the root view configuration could not be interpreted; subclasses might throw errors also for other reasons
 	 * @public
 	 */
 	UIComponent.prototype.createContent = function() {

@@ -5,13 +5,12 @@
 	<meta charset="utf-8">
 	<title>sap.m.MaskInput Testsuite example</title>
 
+	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 	</script>
-	<script type="text/javascript">
+	<script>
 		var ruleCollection = [
 			{name: "allCharactersRule", rule: new sap.m.MaskInputRule("allCharactersRule", { maskFormatSymbol: "~", regex: "[^_]"})},
 			{name: "defaultRule", rule: new sap.m.MaskInputRule("defaultRule")},

@@ -330,8 +330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		var bEnabled = false;
 		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
 			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
-			//TODO: remove second _getSelectableRowCount Call!
-			if (oTable._getSelectableRowCount() == 0 || oTable._getSelectableRowCount() !== oTable.getSelectedIndices().length) {
+			if (!TableUtils.areAllRowsSelected(oTable)) {
 				rm.addClass("sapUiTableSelAll");
 			}
 			rm.addClass("sapUiTableSelAllEnabled");
@@ -461,9 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	TableRenderer._addFixedRowCSSClasses = function(rm, oTable, iIndex) {
 		var iFixedRowCount = oTable.getFixedRowCount();
-		var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
-		var iVisibleRowCount = oTable.getVisibleRowCount();
-		var iFirstVisibleRow = oTable.getFirstVisibleRow();
+		var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedButtomRowIndex(oTable);
 
 		if (iFixedRowCount > 0) {
 			if (iIndex < iFixedRowCount) {
@@ -475,20 +472,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			}
 		}
 
-		if (iFixedBottomRowCount > 0) {
-			var bIsPreBottomRow = false;
-			var oBinding = oTable.getBinding("rows");
-			if (oBinding) {
-				if (oTable._iBindingLength >= iVisibleRowCount) {
-					bIsPreBottomRow = (iIndex == iVisibleRowCount - iFixedBottomRowCount - 1);
-				} else {
-					bIsPreBottomRow = (iFirstVisibleRow + iIndex) == (oTable._iBindingLength - iFixedBottomRowCount - 1) && (oTable.getFirstVisibleRow() + iIndex) < oTable._iBindingLength;
-				}
-			}
-
-			if (bIsPreBottomRow) {
-				rm.addClass("sapUiTableFixedPreBottomRow");
-			}
+		if (iFirstFixedButtomRowIndex >= 0 && iFirstFixedButtomRowIndex === iIndex) {
+			rm.addClass("sapUiTableFixedFirstBottomRow");
+		} else if (iFirstFixedButtomRowIndex >= 1 && iFirstFixedButtomRowIndex - 1 === iIndex) {
+			rm.addClass("sapUiTableFixedPreBottomRow");
 		}
 	};
 
@@ -643,6 +630,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		if (iStartRow == 0) {
 			rm.addClass("sapUiTableCtrlFirstCol");
 		}
+		if (bHeader) {
+			rm.addClass("sapUiTableCHTHR"); // marker for the column header row
+		}
 		rm.writeClasses();
 		rm.write(">");
 
@@ -667,13 +657,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			}
 		}
 
-		for (var col = iStartColumn, count = iEndColumn; col < count; col++) {
+		// never render the dummy column if the table is empty or it is the fixed columns table
+		var bRenderDummyColumn = !bFixedTable && iEndColumn > iStartColumn;
+
+		for (var col = iStartColumn; col < iEndColumn; col++) {
 			var oColumn = aCols[col];
+			var sWidth = oColumn.getWidth();
+			if (TableUtils.isVariableWidth(sWidth)) {
+				// if some of the columns have variable width, they serve as the dummy column
+				// and take available place. Do not render a dummy column in this case.
+				bRenderDummyColumn = false;
+			}
+
 			var suffix = bHeader ? "_hdr" : "_col";
 			if (oColumn && oColumn.shouldRender()) {
 				rm.write("<th");
-				rm.addStyle("width", oColumn.getWidth());
-				rm.writeStyles();
+				if (sWidth) {
+					rm.addStyle("width", sWidth);
+					rm.writeStyles();
+				}
 				if (iStartRow == 0) {
 					oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH", {column: oColumn});
 					rm.writeAttribute("id", oTable.getId() + suffix + col);
@@ -693,8 +695,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 
 		// dummy column to fill the table width
-		if (!bFixedTable && oTable._hasOnlyFixColumnWidths() && aCols.length > 0) {
-			rm.write("<th></th>");
+		if (bRenderDummyColumn) {
+			rm.write("<th");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write("></th>");
 		}
 
 		rm.write("</tr>");
@@ -703,13 +707,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write("<tbody>");
 
 		var aVisibleColumns = oTable._getVisibleColumns();
-		var bHasOnlyFixedColumns = oTable._hasOnlyFixColumnWidths();
 
 		// render the table rows
 		var aRows = oTable.getRows();
 		if (bHeader) {
 			for (var row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bHasOnlyFixedColumns);
+				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bRenderDummyColumn);
 			}
 		} else {
 			// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
@@ -718,7 +721,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			// check whether the row can be clicked to change the selection
 			var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
 			for (var row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed);
+				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed);
 			}
 		}
 		rm.write("</tbody>");
@@ -790,11 +793,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 
 		if (!bFixedTable && bHasOnlyFixedColumns && aColumns.length > 0) {
-			rm.write("<td");
-			rm.addClass("sapUiTableTDDummy");
-			rm.writeClasses();
-			rm.write(">");
-			rm.write("</td>");
+			rm.write('<td class="sapUiTableTDDummy"');
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write('></td>');
 		}
 		rm.write("</tr>");
 	};
@@ -862,11 +863,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
 		}
 		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
-			rm.write("<td");
-			rm.addClass("sapUiTableTDDummy");
-			rm.writeClasses();
-			rm.write(">");
-			rm.write("</td>");
+			rm.write('<td class="sapUiTableTDDummy"');
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
+			rm.write('></td>');
 		}
 		rm.write("</tr>");
 	};
@@ -946,6 +945,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.addClass("sapUiTableVSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
+		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
 		rm.addStyle("max-height", oTable._getVSbHeight() + "px");
 
 		if (oTable.getFixedRowCount() > 0) {

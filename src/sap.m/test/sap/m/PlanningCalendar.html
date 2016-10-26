@@ -7,14 +7,13 @@
 		<title>PlanningCalendar - sap.m</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.PlanningCalendar.gif">
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.unified"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m, sap.ui.unified">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 			items: [
@@ -43,6 +42,7 @@
 
 		var app = new sap.m.App("myApp");
 
+		var oEventLabel = new sap.m.Label({text: "Events log"});
 		function createFooter(){
 			return new sap.m.Bar({
 				contentMiddle: [new sap.m.Button({
@@ -50,7 +50,8 @@
 					press: function(){
 						app.to("page1");
 					}
-				})]
+				})],
+				contentRight: [oEventLabel]
 			});
 		};
 
@@ -140,6 +141,10 @@
 
 		};
 
+		var handleStartDateChange = function(oEvent) {
+			var oDf = sap.ui.core.format.DateFormat.getTimeInstance("HH:mm:ss");
+			oEventLabel.setText("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
+		};
 		var handleLegend = function(oEvent){
 			oDialog.open();
 		};
@@ -637,7 +642,8 @@
 			                 oVisSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
-			intervalSelect: handleAddAppointment
+			intervalSelect: handleAddAppointment,
+			startDateChange: handleStartDateChange,
 		});
 
 		var oInput = new sap.m.Input("I1", {

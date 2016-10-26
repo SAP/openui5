@@ -3,10 +3,10 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>RatingIndicator - sap.m</title>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal">
+			src="../../../../resources/sap-ui-core.js">
 	</script>
 	<script>
 
@@ -84,6 +84,26 @@
 					content: [
 						new sap.m.VBox({
 							items: [
+								new sap.m.Label({text:'Large active rating'}),
+								new sap.m.RatingIndicator("largeActiveRI", {
+									iconSize: "2rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text:'Normal active rating'}),
+								new sap.m.RatingIndicator("normalActiveRI", {
+									iconSize: "1.375rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text:'Small active rating'}),
+								new sap.m.RatingIndicator("smallActiveRI", {
+									iconSize: "1rem",
+									value: 2.5
+								}),
+								new sap.m.Label({text:'Extra Small active rating'}),
+								new sap.m.RatingIndicator("extrasmallActiveRI", {
+									iconSize: "0.75rem",
+									value: 2.5
+								}),
 								new sap.m.Label({text: 'Active rating:', labelFor: sActiveRatingId}),
 								new sap.m.RatingIndicator(sActiveRatingId, {
 									value: 2.5,

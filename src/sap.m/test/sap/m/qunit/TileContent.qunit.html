@@ -5,19 +5,18 @@
 <title>Test Page for sap.m.TileContent</title>
 
 <!-- UI5 Bootstrap -->
-<script src="../../../../resources/sap-ui-core.js"
-	type="text/javascript" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-theme="sap_bluecrystal">
+<script src="../shared-config.js"></script>
+<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m">
 </script>
 <!-- QUnit libraries -->
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-<script type="text/javascript">
+<script>
 
 	QUnit.module("sap.m.TileContent", {
 		beforeEach : function() {

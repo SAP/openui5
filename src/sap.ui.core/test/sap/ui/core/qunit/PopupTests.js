@@ -36,12 +36,13 @@ QUnit.test("Initial Check", function(assert) {
 
 QUnit.module("Basics", {
 	beforeEach : function() {
-		if (!this.oPopup) {
-			this.oDomRef = jQuery.sap.domById("popup");
-			this.oPopup = new sap.ui.core.Popup(this.oDomRef);
-		}
+		this.oDomRef = jQuery.sap.domById("popup");
+		this.oPopup = new sap.ui.core.Popup(this.oDomRef);
 
 		this.$Ref = jQuery.sap.byId("popup");
+	},
+	afterEach : function() {
+		this.oPopup.destroy();
 	}
 });
 
@@ -57,20 +58,20 @@ QUnit.test("Check If PopupSupport Was Loaded Properly", function(assert) {
 });
 
 QUnit.test("Check Amount of Public Methods", function(assert) {
-	var oPopup1DomRef = jQuery.sap.domById("popup1"),
-			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef),
-			iMethodsCount1 = oPopup1.getMetadata()._aPublicMethods.length,
-
-			oPopup2DomRef = jQuery.sap.domById("popup2"),
-			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef),
-			iMethodsCount2 = oPopup2.getMetadata()._aPublicMethods.length;
+	var oPopup1DomRef = jQuery.sap.domById("popup1");
+	var oPopup1 = new sap.ui.core.Popup(oPopup1DomRef);
+	var iMethodsCount1 = oPopup1.getMetadata()._aPublicMethods.length;
+	var oPopup2DomRef = jQuery.sap.domById("popup2");
+	var oPopup2 = new sap.ui.core.Popup(oPopup2DomRef);
+	var iMethodsCount2 = oPopup2.getMetadata()._aPublicMethods.length;
 
 	assert.equal(iMethodsCount1, iMethodsCount2, "Both Popups must have the same amount of public methods");
 });
 
-QUnit.asyncTest("Open Popup", function(assert) {
-	expect(7);
+QUnit.test("Open Popup", function(assert) {
+	assert.expect(7);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -78,7 +79,7 @@ QUnit.asyncTest("Open Popup", function(assert) {
 		assert.equal(this.$Ref.css("display"), "block", "Popup should be 'display:block' after opening");
 		assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' after opening");
 		assert.equal(this.$Ref.css("opacity"), "1", "Popup should be 'opacity:1' after opening");
-		start();
+		done();
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -88,19 +89,20 @@ QUnit.asyncTest("Open Popup", function(assert) {
 	this.oPopup.open();
 });
 
-QUnit.asyncTest("Close Popup", function(assert) {
-	expect(3);
+QUnit.test("Close Popup", function(assert) {
+	assert.expect(3);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.close(0);
-	}
+	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed);
 
 		assert.equal(this.oPopup.isOpen(), false, "Popup should be closed after closing");
 		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' after closing");
 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' after closing");
-		start();
+		done();
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -175,10 +177,8 @@ QUnit.test("Check 'onAfterRendering' with control and DOM element", function(ass
 
 QUnit.module("Focus", {
 	beforeEach : function() {
-		if (!this.oPopup) {
-			this.oDomRef = jQuery.sap.domById("popup");
-			this.oPopup = new sap.ui.core.Popup(this.oDomRef);
-		}
+		this.oDomRef = jQuery.sap.domById("popup");
+		this.oPopup = new sap.ui.core.Popup(this.oDomRef);
 
 		this.$Ref = jQuery.sap.byId("popup");
 	},
@@ -211,9 +211,10 @@ QUnit.module("Focus", {
 	}
 });
 
-QUnit.asyncTest("Initial Focus in non-modal mode, auto", function(assert) {
-	expect(2);
+QUnit.test("Initial Focus in non-modal mode, auto", function(assert) {
+	assert.expect(2);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -226,8 +227,8 @@ QUnit.asyncTest("Initial Focus in non-modal mode, auto", function(assert) {
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed, this);
 
-		start();
-	}
+		done();
+	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
@@ -235,9 +236,10 @@ QUnit.asyncTest("Initial Focus in non-modal mode, auto", function(assert) {
 });
 
 
-QUnit.asyncTest("Initial Focus in non-modal mode, set", function(assert) {
-	expect(2);
+QUnit.test("Initial Focus in non-modal mode, set", function(assert) {
+	assert.expect(2);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -250,7 +252,7 @@ QUnit.asyncTest("Initial Focus in non-modal mode, set", function(assert) {
 	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed, this);
-		start();
+		done();
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -261,9 +263,10 @@ QUnit.asyncTest("Initial Focus in non-modal mode, set", function(assert) {
 });
 
 
-QUnit.asyncTest("Initial Focus in modal mode, auto", function(assert) {
-	expect(2);
+QUnit.test("Initial Focus in modal mode, auto", function(assert) {
+	assert.expect(2);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -275,8 +278,8 @@ QUnit.asyncTest("Initial Focus in modal mode, auto", function(assert) {
 	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed, this);
-		start();
-	}
+		done();
+	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
@@ -285,9 +288,10 @@ QUnit.asyncTest("Initial Focus in modal mode, auto", function(assert) {
 });
 
 
-QUnit.asyncTest("Initial Focus in modal mode, set", function(assert) {
-	expect(2);
+QUnit.test("Initial Focus in modal mode, set", function(assert) {
+	assert.expect(2);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -301,8 +305,8 @@ QUnit.asyncTest("Initial Focus in modal mode, set", function(assert) {
 	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed, this);
-		start();
-	}
+		done();
+	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
@@ -310,13 +314,13 @@ QUnit.asyncTest("Initial Focus in modal mode, set", function(assert) {
 	this.oPopup.open();
 });
 
-QUnit.asyncTest("Check if focus is inside the Popup", function(assert) {
-	expect(2);
-	var oPopupDomRef = jQuery.sap.domById("popup"),
-			oPopup = new sap.ui.core.Popup(oPopupDomRef),
-			oButtonInside = jQuery.sap.domById("popupcontent"),
-			oButtonOustide = jQuery.sap.domById("focusableElement");
-
+QUnit.test("Check if focus is inside the Popup", function(assert) {
+	assert.expect(2);
+	var done = assert.async();
+	var oPopupDomRef = jQuery.sap.domById("popup");
+	var oPopup = new sap.ui.core.Popup(oPopupDomRef);
+	var oButtonInside = jQuery.sap.domById("popupcontent");
+	var oButtonOustide = jQuery.sap.domById("focusableElement");
 	var fnOpened = function() {
 		oPopup.detachOpened(fnOpened, this);
 
@@ -327,13 +331,14 @@ QUnit.asyncTest("Check if focus is inside the Popup", function(assert) {
 		assert.ok(!oPopup._isFocusInsidePopup(), "Focus is outside of the Popup");
 
 		oPopup.close(0);
-		start();
+		done();
 	};
 
 	// act
 	oPopup.attachOpened(fnOpened, this);
 	oPopup.open();
 });
+
 
 QUnit.test("Check if focus is set back to the opener after closing", function(assert) {
 	var done = assert.async();
@@ -389,33 +394,33 @@ QUnit.test("Check if focus is set back to the opener after closing", function(as
 });
 
 QUnit.test("Open two modal popups and close the second one, the focus should stay in the first popup after block layer gets focus", function(assert) {
-	var done = assert.async(),
-		oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1")),
-		fnAfterSecondPopupOpen = function() {
-			oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
-			oSecondPopup.attachClosed(fnAfterSecondPopupClosed);
+	var done = assert.async();
+	var oSecondPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup1"));
+	var fnAfterSecondPopupOpen = function() {
+		oSecondPopup.detachOpened(fnAfterSecondPopupOpen);
+		oSecondPopup.attachClosed(fnAfterSecondPopupClosed);
 
-			oSecondPopup.close();
-		},
-		fnAfterSecondPopupClosed = function() {
-			oSecondPopup.destroy();
-			assert.ok(this.oPopup.isOpen(), "the first popup is still open");
+		oSecondPopup.close();
+	};
+	var fnAfterSecondPopupClosed = function() {
+		oSecondPopup.destroy();
+		assert.ok(this.oPopup.isOpen(), "the first popup is still open");
 
-			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
-			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
+		var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+		assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
 
-			jQuery.sap.focus($BlockLayer[0]);
+		jQuery.sap.focus($BlockLayer[0]);
 
-			jQuery.sap.delayedCall(0, this, function() {
-				assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+		jQuery.sap.delayedCall(0, this, function() {
+			assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
 
-				this.oPopup.attachClosed(function() {
-					done();
-				});
-
-				this.oPopup.close();
+			this.oPopup.attachClosed(function() {
+				done();
 			});
-		}.bind(this);
+
+			this.oPopup.close();
+		});
+	}.bind(this);
 
 	this.oPopup.setModal(true);
 	oSecondPopup.setModal(true);
@@ -427,10 +432,8 @@ QUnit.test("Open two modal popups and close the second one, the focus should sta
 
 QUnit.module("Animation", {
 	beforeEach : function() {
-		if (!this.oPopup) {
-			this.oDomRef = jQuery.sap.domById("popup");
-			this.oPopup = new sap.ui.core.Popup(this.oDomRef);
-		}
+		this.oDomRef = jQuery.sap.domById("popup");
+		this.oPopup = new sap.ui.core.Popup(this.oDomRef);
 
 		this.$Ref = jQuery.sap.byId("popup");
 
@@ -445,6 +448,7 @@ QUnit.module("Animation", {
 		this.oSpyDuringOpen.restore();
 		this.oSpyClosed.restore();
 		this.oSpyDuringClose.restore();
+		this.oPopup.destroy();
 	}
 });
 
@@ -486,14 +490,15 @@ QUnit.test("Close Popup Without Animation", function(assert) {
 	this.oPopup.open(0);
 });
 
-QUnit.asyncTest("Open Animation", function(assert) {
-	expect(4);
+QUnit.test("Open Animation", function(assert) {
+	assert.expect(4);
 
+	var done = assert.async();
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
 		this.oPopup.close(0);
-		start();
+		done();
 	};
 
 	var that = this;
@@ -509,30 +514,32 @@ QUnit.asyncTest("Open Animation", function(assert) {
 	}, 1000);
 });
 
-QUnit.asyncTest("Closing Animation", function(assert) {
-	expect(8);
+QUnit.test("Closing Animation", function(assert) {
+	assert.expect(8);
+	var done = assert.async();
 	var fnOpened = function() {
-			this.oPopup.detachOpened(fnOpened, this);
+		this.oPopup.detachOpened(fnOpened, this);
 
-			var that = this;
-			equal(this.$Ref.css("opacity"), "1", "Popup must be 'opacity:1' when open");
-			this.oPopup.close(2000);
+		var that = this;
+		equal(this.$Ref.css("opacity"), "1", "Popup must be 'opacity:1' when open");
+		this.oPopup.close(2000);
 
-			setTimeout(function() {
-				assert.equal(that.oPopup.isOpen(), true, "Popup should still be 'open' while closing");
-				assert.equal(that.$Ref.css("display"), "block", "Popup should be 'display:block' while closing");
-				assert.equal(that.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' while closing");
-				var opacity = parseFloat(that.$Ref.css("opacity"));
-				assert.ok((opacity>0.1 && opacity<0.9), "Popup opacity should be somewhere between 0.1 and 0.9 in the middle of the closing animation, but was: " + opacity);
-			}, 1000);
+		setTimeout(function() {
+			assert.equal(that.oPopup.isOpen(), true, "Popup should still be 'open' while closing");
+			assert.equal(that.$Ref.css("display"), "block", "Popup should be 'display:block' while closing");
+			assert.equal(that.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' while closing");
+			var opacity = parseFloat(that.$Ref.css("opacity"));
+			assert.ok((opacity>0.1 && opacity<0.9), "Popup opacity should be somewhere between 0.1 and 0.9 in the middle of the closing animation, but was: " + opacity);
+		}, 1000);
 	};
+
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed, this);
 
 		assert.equal(this.oPopup.isOpen(), false, "Popup should not be 'open' after closing");
 		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' after closing");
 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' after closing");
-		start();
+		done();
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -551,7 +558,7 @@ QUnit.test("Check the order of function calls during open/close - with animation
 		assert.ok(this.oSpyDuringOpen.calledOnce, "Popup.prototype._duringOpen function should have been called");
 
 		this.oPopup.close();
-	}
+	};
 
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed);
@@ -561,7 +568,7 @@ QUnit.test("Check the order of function calls during open/close - with animation
 		assert.ok(this.oSpyDuringClose.calledOnce, "Popup.prototype._duringClose function should have been called");
 
 		done();
-	}
+	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
@@ -580,7 +587,7 @@ QUnit.test("Check the order of function calls during open/close - with no animat
 		assert.ok(this.oSpyDuringOpen.calledOnce, "Popup.prototype._duringOpen function should have been called");
 
 		this.oPopup.close(0);
-	}
+	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed);
 
@@ -589,7 +596,7 @@ QUnit.test("Check the order of function calls during open/close - with no animat
 		assert.ok(this.oSpyDuringClose.calledOnce, "no further call before/during opening should have happened");
 
 		done();
-	}
+	};
 
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
@@ -608,7 +615,7 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 		assert.ok(this.oSpyDuringOpen.calledOnce, "no further call before/during opening should have happened");
 
 		this.oPopup.close();
-	}
+	};
 	var fnClosed = function() {
 		this.oPopup.detachClosed(fnClosed);
 
@@ -617,7 +624,7 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 		assert.ok(this.oSpyDuringClose.calledOnce, "no further call before/during closing should have happened");
 
 		done();
-	}
+	};
 
 	this.oPopup.setAnimations(function($Ref, iRealDuration, fnOpenCallback) {
 		assert.ok(typeof(fnOpenCallback) === "function", "OpenCallback handler is provided");
@@ -634,9 +641,12 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 
 /*
  * Created internal BCP ticket: 1570771493
+ *
+ * Tests are commented out as focus testing with QUnit is not stable.
+ * This should rather be covered by a Selenium test.
  */
 // asyncTest("AutoClose (and setDurations)", function() {
-// 	expect(7);
+// 	assert.expect(7);
 // 	var fnOpened = function() {
 // 		this.oPopup.detachOpened(fnOpened, this);
 //
@@ -703,12 +713,13 @@ QUnit.test("Check the order of function calls during open/close with custom anim
 
 QUnit.module("Event", {
 	beforeEach : function() {
-		if (!this.oPopup) {
-			this.oDomRef = jQuery.sap.domById("popup");
-			this.oPopup = new sap.ui.core.Popup(this.oDomRef);
-		}
+		this.oDomRef = jQuery.sap.domById("popup");
+		this.oPopup = new sap.ui.core.Popup(this.oDomRef);
 
 		this.$Ref = jQuery.sap.byId("popup");
+	},
+	afterEach : function() {
+		this.oPopup.destroy();
 	}
 });
 
@@ -758,8 +769,9 @@ QUnit.test("Event registration and deregistration", function(assert) {
 	this.oPopup.open(0);
 });
 
-QUnit.asyncTest("Opened / closed", function(assert) {
-	expect(2);
+QUnit.test("Opened / closed", function(assert) {
+	assert.expect(2);
+	var done = assert.async();
 	var fnOpened = function(oEvent) {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -770,47 +782,17 @@ QUnit.asyncTest("Opened / closed", function(assert) {
 		this.oPopup.detachClosed(fnClosed, this);
 
 		assert.equal(oEvent.sId, "closed", "the last event should have been 'closed'");
-		start();
-	}
+		done();
+	};
 	this.oPopup.setDurations(0, 20);
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
 	this.oPopup.open();
 });
 
-// // opening is triggered in this test but will not complete, so the event will only be raised in the next test
-// test("Event: opened event only AFTER opening, part 1",0, function() {
-// 	this.oPopup.setDurations(200, 100);
-// 	this.oPopup.open();
-// });
-//
-// // this test captures the event caused by opening the popup in the last test
-// asyncTest("Event: opened event only AFTER opening, part 2", function() {
-// 	expect(3);
-// 	setTimeout(function() {
-// 		equal(lastEvent, "closed", "the last event should be 'closed' because 'opened' must not be raised yet");
-// 		setTimeout(function() {
-//   			equal(lastEvent, "opened", "'opened' must have been raised last - coming in from the previous test call");
-//   			start();
-// 		}, 120);
-// }, 100);
-// });
-
-// asyncTest("Event: closed event only AFTER closing", function() { // kept simpler for closing...
-// 	expect(3); // including the event handler
-// 	this.oPopup.close();
-//
-// 	setTimeout(function() {
-// 		equal(lastEvent, "opened", "the last event should still be 'opened' because 'closed' must not be raised yet");
-// 		setTimeout(function() {
-// 			equal(lastEvent, "closed", "the last event must now be 'closed' because the popup has closed in the meanwhile");
-// 			start();
-// 		}, 100);
-// }, 50);
-// });
 
 QUnit.module("Parent / Child Popups", {
-	setup : function() {
+	beforeEach : function() {
 		this.oChildOpener = jQuery.sap.domById("popup2-btn");
 
 		oDomRef = jQuery.sap.domById("popup");
@@ -820,7 +802,7 @@ QUnit.module("Parent / Child Popups", {
 		this.oParentPop = new sap.ui.core.Popup(oDomRef);
 	},
 
-	teardown : function() {
+	afterEach : function() {
 		delete this.oChildOpener;
 		this.oChildPop.destroy();
 
@@ -828,11 +810,12 @@ QUnit.module("Parent / Child Popups", {
 	}
 });
 
-QUnit.asyncTest("Autoclose popup opened from another autoclose popup", function(assert) {
-	var oPopup1DomRef = jQuery.sap.domById("popup1"),
-			oPopup2DomRef = jQuery.sap.domById("popup2"),
-			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef),
-			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef);
+QUnit.test("Autoclose popup opened from another autoclose popup", function(assert) {
+	var done = assert.async();
+	var oPopup1DomRef = jQuery.sap.domById("popup1");
+	var oPopup2DomRef = jQuery.sap.domById("popup2");
+	var oPopup1 = new sap.ui.core.Popup(oPopup1DomRef);
+	var oPopup2 = new sap.ui.core.Popup(oPopup2DomRef);
 
 	oPopup1.setAutoClose(true);
 	oPopup1.setPosition(sap.ui.core.Popup.Dock.CenterCenter, sap.ui.core.Popup.Dock.CenterCenter, window, "0 0", "fit");
@@ -856,19 +839,18 @@ QUnit.asyncTest("Autoclose popup opened from another autoclose popup", function(
 		oPopup1.destroy();
 		oPopup2.destroy();
 
-		start();
+		done();
 	}, 200);
 });
 
-QUnit.asyncTest("Child registered at parent", function(assert) {
-	that = this;
-
-	fnParentOpened = function() {
+QUnit.test("Child registered at parent", function(assert) {
+	var that = this;
+	var done = assert.async();
+	var fnParentOpened = function() {
 		that.oParentPop.detachOpened(fnParentOpened);
 		that.oChildPop.open(0, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, that.oChildOpener, "0 0", "fit");
 	};
-
-	fnChildOpened = function() {
+	var fnChildOpened = function() {
 		that.oChildPop.detachOpened(fnChildOpened);
 
 		assert.ok(that.oChildPop.isInPopup(that.oChildPop._oPosition.of), "Child belongs to parent");
@@ -876,13 +858,12 @@ QUnit.asyncTest("Child registered at parent", function(assert) {
 
 		that.oChildPop.close(0);
 	};
-
-	fnChildClosed = function() {
+	var fnChildClosed = function() {
 		that.oChildPop.detachClosed(fnChildClosed);
 
 		assert.ok(!that.oParentPop.getChildPopups().length, "Parent has no child");
 
-		start();
+		done();
 	};
 
 	this.oParentPop.attachOpened(fnParentOpened);
@@ -891,10 +872,12 @@ QUnit.asyncTest("Child registered at parent", function(assert) {
 	this.oParentPop.open();
 });
 
-QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(assert) {
+QUnit.test("Increase z-index: Child must not be re-rendered", function(assert) {
+	var done = assert.async();
 	var oDelegate = {
 		onBeforeRendering : function() {}
-	}
+	};
+
 	this.oRenderingStub = sinon.stub(oDelegate, "onBeforeRendering");
 
 	var oButton = new sap.m.Button({
@@ -911,7 +894,7 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 		} else {
 			return -1;
 		}
-	}
+	};
 
 	var fnParentOpened = function() {
 		this.oParentPop.detachOpened(fnParentOpened);
@@ -944,7 +927,7 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 		assert.equal(this.oRenderingStub.callCount, 1, "'onBeforeRendering' shouldn't have been called after increasing the z-index for child");
 
 		oChildPop.destroy();
-		start();
+		done();
 	}.bind(this);
 
 	this.oParentPop.attachOpened(fnParentOpened);
@@ -953,63 +936,60 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 });
 
 QUnit.module("BlockLayer", {
-	afterEach : function() {
-		sap.ui.getCore().applyChanges();
+	beforeEach: function() {
+		this.oPopup = new sap.ui.core.Popup(jQuery.sap.domById("popup"), /*bModal*/ true);
+	},
+	afterEach: function() {
+		this.oPopup.destroy();
 	}
 });
 
 QUnit.test("Check if the BlockLayer is displayed", function(assert) {
 	var done = assert.async();
-	var oPopupDomRef = jQuery.sap.domById("popup"),
-		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
 
-	this.oSpyShowBL = sinon.spy(oPopup, "_showBlockLayer");
-	this.oSpyHideBL = sinon.spy(oPopup, "_hideBlockLayer");
+	this.oSpyShowBL = sinon.spy(this.oPopup, "_showBlockLayer");
+	this.oSpyHideBL = sinon.spy(this.oPopup, "_hideBlockLayer");
 
 	var fnOpened = function() {
-		oPopup.detachOpened(fnOpened);
+		this.oPopup.detachOpened(fnOpened);
 
 		assert.ok(this.oSpyShowBL.calledOnce, "_showBlockLayer called within Popup");
 		assert.ok(jQuery("html").hasClass("sapUiBLyBack"), "CSS class added to HTML-tag");
 
 		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
-		var $oPopup = oPopup._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var $oPopup = this.oPopup._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
 
 		assert.ok($oDomRefBL.length, "BlockLayer added to DOM");
 		var iBLIndex = parseInt($oDomRefBL.css("z-index"), 10);
 		var iPopupIndex = parseInt($oPopup.css("z-index"), 10);
 		assert.ok(iBLIndex && iPopupIndex && iBLIndex < iPopupIndex, "Z-index of BlockLayer must be smaller than the popup's z-index");
 
-		oPopup.close();
+		this.oPopup.close();
 	};
 
 	var fnClosed = function() {
-		oPopup.detachClosed(fnClosed);
+		this.oPopup.detachClosed(fnClosed);
 
 		assert.ok(this.oSpyHideBL.calledOnce, "_showBlockLayer called within Popup");
 
 		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
 		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class removed from HTML-tag");
 		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
-
 		done();
 	};
 
-	oPopup.setDurations(0, 0);
-	oPopup.attachOpened(fnOpened, this);
-	oPopup.attachClosed(fnClosed, this);
-	oPopup.open();
+	this.oPopup.setDurations(0, 0);
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open();
 });
 
 QUnit.test("Check when the layer is being removed", function(assert) {
 	var done = assert.async();
 
-	var oPopupDomRef = jQuery.sap.domById("popup"),
-		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
-
-	var oSpyClose = sinon.spy(oPopup, "close");
-	var oSpyClosed = sinon.spy(oPopup, "_closed");
-	var oSpyHideBlocklayer = sinon.spy(oPopup, "_hideBlockLayer");
+	var oSpyClose = sinon.spy(this.oPopup, "close");
+	var oSpyClosed = sinon.spy(this.oPopup, "_closed");
+	var oSpyHideBlocklayer = sinon.spy(this.oPopup, "_hideBlockLayer");
 
 	var fnOpened = function() {
 		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
@@ -1024,7 +1004,7 @@ QUnit.test("Check when the layer is being removed", function(assert) {
 			assert.equal(oSpyHideBlocklayer.callCount, 0, "'_hideBlockLayer' hasn't been called yet during closing");
 		}.bind(this), 200);
 
-		oPopup.close();
+		this.oPopup.close();
 	}.bind(this);
 
 	var fnClosed = function() {
@@ -1040,29 +1020,26 @@ QUnit.test("Check when the layer is being removed", function(assert) {
 		done();
 	}.bind(this);
 
-	oPopup.setDurations(0, 500);
-	oPopup.attachOpened(fnOpened, this);
-	oPopup.attachClosed(fnClosed, this);
-	oPopup.open();
+	this.oPopup.setDurations(0, 500);
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open();
 });
 
 QUnit.test("Destroy an opened modal popup should hide blocklayer synchronously", function(assert) {
-	var oPopupDomRef = jQuery.sap.domById("popup"),
-		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
-
 	// act
-	oPopup.open();
-	oPopup.destroy();
+	this.oPopup.open();
+	this.oPopup.destroy();
 
 	// assert
 	assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "BlockLayer should be hidden");
 });
 
 QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(assert) {
-	var oPopup1DomRef = jQuery.sap.domById("popup1"),
-			oPopup2DomRef = jQuery.sap.domById("popup2"),
-			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef, /*bModal*/ true),
-			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef, /*bModal*/ true);
+	var oPopup1DomRef = jQuery.sap.domById("popup1");
+	var oPopup2DomRef = jQuery.sap.domById("popup2");
+	var oPopup1 = new sap.ui.core.Popup(oPopup1DomRef, /*bModal*/ true);
+	var oPopup2 = new sap.ui.core.Popup(oPopup2DomRef, /*bModal*/ true);
 
 	var done = assert.async();
 	var fnOpened = function() {
@@ -1090,6 +1067,8 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
 		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class should be removed from HTML-tag");
 
+		oPopup1.destroy();
+		oPopup2.destroy();
 		done();
 	}.bind(this);
 
@@ -1105,8 +1084,6 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 		assert.ok(iZIndex1 && iZIndexBL && iZIndexBL < iZIndex1, "Z-Index of BlockLayer must be smaller than z-index of Popup1 now");
 
 		oPopup1.close();
-		oPopup1.destroy();
-		oPopup2.destroy();
 	}.bind(this);
 
 

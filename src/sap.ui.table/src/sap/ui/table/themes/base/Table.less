@@ -136,11 +136,12 @@
  .sapUiTableCtrlEmptyMsg {
 	position: absolute;
 	top: 50%;
-	margin-top: -0.5em;
+	display: inline-block;
 	left: 0;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 0 1rem;
+	padding: 0.2rem 1rem;
+	transform: translateY(-50%);
 	white-space: pre-wrap;
 }
 
@@ -461,6 +462,10 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	color: @sapUiListTextColor;
 }
 
+.sapUiTableColHdrTr > .sapUiTableCol {
+	position: relative;
+}
+
 .sapUiSizeCozy {
 
 	.sapUiTableCol {
@@ -730,6 +735,10 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	box-sizing: border-box;
 }
 
+.sapUiTableVScr .sapUiTableCtrlScr {
+	border-right: 1px solid @sapUiListVerticalBorderColor;
+}
+
 .sapUiTableCtrlScrFixed {
 	float: left;
 	max-width: 100%;
@@ -815,6 +824,15 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	box-sizing: border-box;
 }
 
+.sapUiTableColHdrTr > td:last-child,
+.sapUiTableTr > td:last-child {
+	border-right: none;
+}
+
+.sapUiTableTr > .sapUiTableTDDummy {
+	border-bottom: none;
+}
+
 .sapUiTableTr > td.sapUiTableTdFirst {
 	padding-left: 2px; /* support for left border in RowOnly selection behavior */
 }
@@ -843,6 +861,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-bottom: 1px solid transparent; /*Hide last row bottom cell border*/
 }
 
+.sapUiTableCtrlFixed .sapUiTableColHdrTr > td:last-child,
 .sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child {
 	border-right: 1px solid @sapUiListTableFixedBorder;
 }
