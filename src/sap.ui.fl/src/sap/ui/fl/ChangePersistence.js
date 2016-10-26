@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/changeHandler/JsControlTreeModifier"
+], function(Change, Utils, $, LRepConnector, Cache, ContextManager, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -19,7 +19,7 @@ sap.ui.define([
 	 */
 	var ChangePersistence = function(sComponentName, oLrepConnector) {
 		this._sComponentName = sComponentName;
-		this._aMergedChanges = [];
+		this._mChanges = undefined;
 
 		if (!this._sComponentName) {
 			Utils.log.error("The Control does not belong to a SAPUI5 component. Personalization and changes for this control might not work as expected.");
@@ -41,26 +41,6 @@ sap.ui.define([
 		return this._sComponentName;
 	};
 
-	ChangePersistence.prototype.getMergedChanges = function () {
-		return this._aMergedChanges;
-	};
-
-	ChangePersistence.prototype.setMergedChanges = function (aMergedChanges) {
-		this._aMergedChanges = aMergedChanges;
-	};
-
-	ChangePersistence.prototype.addMergedChange = function (oChange) {
-		this._aMergedChanges.push(oChange);
-	};
-
-	ChangePersistence.prototype.addMergedChanges = function (aMergedChanges) {
-		this._aMergedChanges = this._aMergedChanges.concat(aMergedChanges);
-	};
-
-	ChangePersistence.prototype.clearMergedChanges = function () {
-		this.setMergedChanges([]);
-	};
-
 	/**
 	 * Creates a new instance of the LRepConnector
 	 *
@@ -76,30 +56,6 @@ sap.ui.define([
 		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, undefined).then(function(oWrappedChangeFileContent) {
 			return oWrappedChangeFileContent.etag;
 		});
-	};
-
-	ChangePersistence.prototype.getUnmergedChangesForComponent = function(mPropertyBag) {
-		return this.getChangesForComponent(mPropertyBag).then(this._getUnmergedChanges.bind(this));
-	};
-
-	ChangePersistence.prototype.getUnmergedChangesForView = function(sViewId, mPropertyBag) {
-		return this.getChangesForView(sViewId, mPropertyBag).then(this._getUnmergedChanges.bind(this));
-	};
-
-	ChangePersistence.prototype._getUnmergedChanges = function(aChanges) {
-		// only work on a copy
-		var aUnmergedChanges = [].concat(aChanges);
-		var aAlreadyMergedChanges = this.getMergedChanges();
-		jQuery.each(aChanges, function (iChangeIndex, oChange) {
-			var sChangeIdentifier = oChange.getFullFileIdentifier();
-			var bChangeIsAlreadyMerged = aAlreadyMergedChanges.indexOf(sChangeIdentifier) !== -1;
-			if (bChangeIsAlreadyMerged) {
-				var iIndexInUnmergedChanges = aUnmergedChanges.indexOf(oChange);
-				aUnmergedChanges.splice(iIndexInUnmergedChanges, 1);
-			}
-		});
-
-		return aUnmergedChanges;
 	};
 
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, oChangeContent) {
@@ -158,37 +114,65 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {sap.ui.core.UIComponent} component containing the control for which the change should be added
+	 * @param {sap.ui.fl.Change} change which should be added into the mapping
+	 * @see sap.ui.fl.Change
+	 * @returns {map} mChanges - map with added change
+	 * @private
+	 */
+	ChangePersistence.prototype._addChangeIntoMap = function (oComponent, oChange) {
+		var oSelector = oChange.getSelector();
+		if (oSelector && oSelector.id) {
+			var sSelectorId = oSelector.id;
+			if (oSelector.idIsLocal) {
+				sSelectorId = oComponent.createId(sSelectorId);
+			}
+
+			if (!this._mChanges) {
+				this._mChanges = {};
+			}
+
+			if (!this._mChanges[sSelectorId]) {
+				this._mChanges[sSelectorId] = [];
+			}
+			this._mChanges[sSelectorId].push(oChange);
+		}
+
+		return this._mChanges;
+	};
+
+	/**
 	 * Calls the backend asynchronously and fetches all changes for the component. If there are any new changes (dirty state) which are not yet saved in the backend, these changes will not be returned
 	 * @param {object} oComponent Component instance, used to prepare the ids (local, etc)
 	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
 	 * @param {object} mPropertyBag.appDescriotor - manifest that belongs to actual component
 	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
 	 * @see sap.ui.fl.Change
-	 * @returns {Promise} resolving with a map of changes
+	 * @returns {Promise} resolving with a getter for the changes map
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesMapForComponent = function (oComponent, mPropertyBag) {
+	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
+
+		var that = this;
 
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
 
 		function createChangeMap(aChanges) {
-			var mChanges = {};
-			jQuery.each(aChanges, function(iIndex, oChange) {
-				var oSelector = oChange.getSelector();
-				if (oSelector && oSelector.id) {
-					var sSelectorId = oSelector.id;
-					if (oSelector.idIsLocal) {
-						sSelectorId = oComponent.createId(sSelectorId);
-					}
-					if (!mChanges[sSelectorId]) {
-						mChanges[sSelectorId] = [];
-					}
-					mChanges[sSelectorId].push(oChange);
-				}
+			aChanges.forEach(function (oChange) {
+				that._addChangeIntoMap(oComponent, oChange);
 			});
-			return mChanges;
-		}
 
+			return that.getChangesMapForComponent.bind(that);
+		}
+	};
+
+	/**
+	 * Getter for the private aggregation containing sap.ui.fl.Change objects mapped by their selector ids.
+	 * @return {map} mChanges mapping with changes sorted by their selector ids
+	 * @public
+	 */
+	ChangePersistence.prototype.getChangesMapForComponent = function () {
+		return this._mChanges;
 	};
 
 	/**
@@ -243,10 +227,11 @@ sap.ui.define([
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
 	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
+	 * @param {object} oComponent Component instance
 	 * @returns {sap.ui.fl.Change} the newly created change object
 	 * @public
 	 */
-	ChangePersistence.prototype.addChange = function(vChange) {
+	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oNewChange;
 		if (vChange instanceof Change){
 			oNewChange = vChange;
@@ -254,6 +239,7 @@ sap.ui.define([
 			oNewChange = new Change(vChange);
 		}
 		this._aDirtyChanges.push(oNewChange);
+		this._addChangeIntoMap(oComponent, oNewChange);
 
 		return oNewChange;
 	};

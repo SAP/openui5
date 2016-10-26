@@ -4,8 +4,8 @@
 
 // Provides object sap.ui.fl.Processor
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/fl/PreprocessorImpl'
-], function(jQuery, BaseObject, PreprocessorImpl) {
+	'jquery.sap.global', 'sap/ui/base/Object'
+], function(jQuery, BaseObject) {
 	'use strict';
 
 	/**
@@ -19,21 +19,6 @@ sap.ui.define([
 	 * @experimental Since 1.27.0
 	 * @implements sap.ui.core.mvc.View.Preprocessor
 	 */
-	var FlexPreprocessor = BaseObject.extend("sap.ui.fl.Preprocessor", {
-	});
-
-	/**
-	 * Asynchronous processing method that should be implemented by the inheriting Preprocessor class.
-	 *
-	 * @param {sap.ui.core.mvc.View} oView view to process
-	 * @returns {jquery.sap.promise} result of the processing, promise if executed asynchronously
-	 *
-	 * @public
-	 */
-	 FlexPreprocessor.process = function(oView){
-		return PreprocessorImpl.process(oView);
-	 };
-
-	 return FlexPreprocessor;
+	return BaseObject.extend("sap.ui.fl.Preprocessor", {});
 
 }, /* bExport= */true);
