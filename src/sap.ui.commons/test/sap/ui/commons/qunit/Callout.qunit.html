@@ -110,15 +110,15 @@
 				ok(isCalloutVisible()==false, "Callout is not visible after close()");
 				start();
 			}, 400);
-		}, 700);
+		}, 900);
 	});
 
 
 	asyncTest("Opened and closed events", function() {
 		// Randomize number of attempts
 		var iRepetitions = 2 + Math.round(Math.random() * 3);
-		// Delay must be >400 - the events are fired after the animations.
-		var iDelay = 500;
+		// Delay must be >= 700 (Tooltipbase open delay (500) + animation duration (200)).
+		var iDelay = 700;
 
 		// Count the number of times the the open and close events should be triggered and
 		// how often they were actually triggered.
