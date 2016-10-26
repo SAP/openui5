@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * The type of the dialog. In theme sap_bluecrystal, the type "message" will limit the dialog's width within 480px on tablet and desktop.
+					 * The type of the dialog. In some themes, the type "message" will limit the dialog's width within 480px on tablet and desktop.
 					 */
 					type: {type: "sap.m.DialogType", group: "Appearance", defaultValue: sap.m.DialogType.Standard},
 
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					subHeader: {type: "sap.m.IBar", multiple: false},
 
 					/**
-					 * CustomHeader is only supported in theme sap_bluecrystal. When it's set, the icon, title and showHeader are properties ignored. Only the customHeader is shown as the header of the dialog.
+					 * CustomHeader is only supported in some themes. When it's set, the icon, title and showHeader are properties ignored. Only the customHeader is shown as the header of the dialog.
 					 * @since 1.15.1
 					 */
 					customHeader: {type: "sap.m.IBar", multiple: false},

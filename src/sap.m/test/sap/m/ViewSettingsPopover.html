@@ -7,13 +7,13 @@
 	<title>ViewSettingsPopover</title>
 
 	<!-- Bootstrap the UI5 core library -->
+	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 	</script>
 
-	<script type="text/javascript">
+	<script>
 		sap.ui.getCore().attachInit(function () {
 			var oVSPopover = new sap.m.ViewSettingsPopover({
 						sortItems: [
