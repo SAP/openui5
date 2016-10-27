@@ -354,8 +354,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		// Update the selected keys cache if an item is removed
 		var oItem = sap.m.ListBase.prototype.removeItem.apply(this, arguments);
 		if (!this._filtering) {
-		oItem && oItem.getSelected() && this.removeSelectedKey(oItem.getKey(), oItem.getText());
-		return oItem;
+			oItem && oItem.getSelected() && this.removeSelectedKey(oItem.getKey(), oItem.getText());
+			return oItem;
 		}
 	};
 
@@ -403,6 +403,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		});
 
 		this._allowRemoveSelections = true;
+
+		/* Represents the active state before opening add facet dialog/opening a popup, because in dialog/
+		 popup FFL.active state can be switched off and on several times. This will help to determine the final active state
+		 of the FacetFilterList after closing the dialog/popup */
+		this._bOriginalActiveState;
 	};
 
 	/**
@@ -516,13 +521,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 				}
 			}
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
-											// possible
+				// possible
 				if (sSearchVal || numberOfsPath > 0) {
 					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
 						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
-							 //notice the single quotes wrapping the value from the UI control!
+							//notice the single quotes wrapping the value from the UI control!
 							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();
 							oUserFilter = new sap.ui.model.Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
@@ -547,7 +552,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 				}
 			} else {
 				jQuery.sap.log.warning("No filtering performed", "The list must be defined with a binding for search to work",
-						this);
+					this);
 			}
 		}
 
@@ -664,11 +669,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Handles the selection of all items at once.
+	 * Handles the selection/deselection of all items at once.
 	 * @param {boolean} bSelected All selected or not
 	 * @private
 	 */
-	FacetFilterList.prototype._handleSelectAll = function(bSelected) {
+	FacetFilterList.prototype._handleSelectAllClick = function(bSelected) {
+		var bActive;
+
 		this._getNonGroupItems().forEach(function (oItem) {
 			if (bSelected) {
 				this._addSelectedKey(oItem.getKey(), oItem.getText());
@@ -678,7 +685,9 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			oItem.setSelected(bSelected, true);
 		}, this);
 
-		this.setActive(this.getActive() || bSelected);
+		// At least one item needs to be selected to consider the list as active or it appeared as active once
+		bActive = this._getOriginalActiveState() || bSelected;
+		this.setActive(bActive);
 		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
 	};
 
@@ -686,11 +695,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * This method overrides runs when setSelected is called from ListItemBase.
 	 * Here we update the selected keys cache based on whether the item is being selected or not.
 	 * We also update the select all checkbox state and list active state based on the selected state of all items taken as a whole.
-	 *
-	 * @param {object } oItem item that needs to be selected
+	 * Note: At this point item's 'selected' state is not yet applied. See {@link sap.m.ListItemBase.setSelected}
+	 * @param {object } oItem item that needs to be selected.
 	 * @param {boolean} bSelect <code>true</code> if selected
 	 */
 	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
+		var bActive;
+
 		if (bSelect) {
 			this._addSelectedKey(oItem.getKey(), oItem.getText());
 		} else {
@@ -698,8 +709,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 
+		/* At least one item needs to be selected to consider the list as active.
+		 When selectedItems == 1 and bSelect is false, that means this is the last item currently being deselected */
+		bActive = this._getOriginalActiveState() || bSelect || this.getSelectedItems().length > 1;
+		this.setActive(bActive);
 
-		this.setActive(this.getActive() || bSelect);
 		!this.getDomRef() && this.getParent() && this.getParent().getDomRef() && this.getParent().invalidate();
 
 		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
@@ -726,6 +740,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	  }
 	};
 
+	FacetFilterList.prototype._getOriginalActiveState = function() {
+		return this._bOriginalActiveState;
+	};
+
+	FacetFilterList.prototype._preserveOriginalActiveState = function () {
+		this._bOriginalActiveState = this.getActive();
+	};
 
 	return FacetFilterList;
 
