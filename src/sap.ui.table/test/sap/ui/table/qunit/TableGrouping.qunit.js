@@ -225,19 +225,19 @@ QUnit.module("Rendering", {
 });
 
 QUnit.test("showGroupMenuButton", function(assert) {
-	var bOrigTouch = sap.ui.Device.support.touch;
+	var bOrigDesktop = sap.ui.Device.system.desktop;
 
-	sap.ui.Device.support.touch = false;
-	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / no touch");
-	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / no touch");
-	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / no touch");
+	sap.ui.Device.system.desktop = false;
+	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / no desktop");
+	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / no desktop");
+	assert.ok(Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / no desktop");
 
-	sap.ui.Device.support.touch = true;
-	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / touch");
-	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / touch");
-	assert.ok(Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / touch");
+	sap.ui.Device.system.desktop = true;
+	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / desktop");
+	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / desktop");
+	assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / desktop");
 
-	sap.ui.Device.support.touch = bOrigTouch;
+	sap.ui.Device.system.desktop = bOrigDesktop;
 });
 
 QUnit.test("_calcGroupIndent", function(assert) {
