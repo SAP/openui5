@@ -429,6 +429,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			sNewValue = oItem.getText();
 		}
 
+		this.fireLiveChange({
+			value: sNewValue,
+			// backwards compatibility
+			newValue: sNewValue
+		});
+
 		// update the input field
 		if (this._bUseDialog) {
 			this._oPopupInput.setValue(sNewValue);
@@ -471,6 +477,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			// for tabular suggestions we call a result filter function
 			sNewValue = this._fnRowResultFilter(oListItem);
 		}
+
+		this.fireLiveChange({
+			value: sNewValue,
+			// backwards compatibility
+			newValue: sNewValue
+		});
 
 		// update the input field
 		if (this._bUseDialog) {
