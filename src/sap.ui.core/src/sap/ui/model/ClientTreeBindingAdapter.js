@@ -177,6 +177,76 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a findNode operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.findNode = function () {
+			this._buildTree();
+			return TreeBindingAdapter.prototype.findNode.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelectedIndex operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.setSelectedIndex = function () {
+			this._buildTree();
+			return TreeBindingAdapter.prototype.setSelectedIndex.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelctionInterval operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.setSelectionInterval = function () {
+			this._buildTree();
+			return TreeBindingAdapter.prototype.setSelectionInterval.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.addSelectionInterval = function () {
+			this._buildTree();
+			TreeBindingAdapter.prototype.addSelectionInterval.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.removeSelectionInterval = function () {
+			this._buildTree();
+			TreeBindingAdapter.prototype.removeSelectionInterval.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.clearSelection = function () {
+			this._buildTree();
+			TreeBindingAdapter.prototype.clearSelection.apply(this, arguments);
+		};
+
+		/**
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.selectAll = function () {
+			this._buildTree();
+			TreeBindingAdapter.prototype.selectAll.apply(this, arguments);
+		};
+
+		/**
 		 * Calculate the request length based on the given information
 		 *
 		 * Because client treebinding knows all of the data from the very beginning, it should simply return the the
