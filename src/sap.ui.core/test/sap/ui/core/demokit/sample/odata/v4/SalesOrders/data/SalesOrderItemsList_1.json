@@ -44,7 +44,8 @@
 					"BusinessPartnerID" : "0100000017",
 					"CompanyName" : "Meliva",
 					"LegalForm" : "AG",
-					"PhoneNumber" : "2208791738"
+					"PhoneNumber" : "2208791738",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -91,7 +92,8 @@
 					"BusinessPartnerID" : "0100000018",
 					"CompanyName" : "Compostela",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "4440238917"
+					"PhoneNumber" : "4440238917",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -138,7 +140,8 @@
 					"BusinessPartnerID" : "0100000019",
 					"CompanyName" : "Pateu",
 					"LegalForm" : "S.A.R.L.",
-					"PhoneNumber" : "6328490087"
+					"PhoneNumber" : "6328490087",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -185,7 +188,8 @@
 					"BusinessPartnerID" : "0100000020",
 					"CompanyName" : "Russian Electronic Trading Company",
 					"LegalForm" : "z.a.o.",
-					"PhoneNumber" : "4050378468"
+					"PhoneNumber" : "4050378468",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -232,7 +236,8 @@
 					"BusinessPartnerID" : "0100000021",
 					"CompanyName" : "Florida Holiday Company",
 					"LegalForm" : "Inc.",
-					"PhoneNumber" : "6065470312"
+					"PhoneNumber" : "6065470312",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -279,7 +284,8 @@
 					"BusinessPartnerID" : "0100000022",
 					"CompanyName" : "Quimica Madrilenos",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "7980023486"
+					"PhoneNumber" : "7980023486",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -326,7 +332,8 @@
 					"BusinessPartnerID" : "0100000023",
 					"CompanyName" : "Getränkegroßhandel Janssen",
 					"LegalForm" : "GmbH",
-					"PhoneNumber" : "3629731486"
+					"PhoneNumber" : "3629731486",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -373,7 +380,8 @@
 					"BusinessPartnerID" : "0100000024",
 					"CompanyName" : "JaTeCo",
 					"LegalForm" : "Inc.",
-					"PhoneNumber" : "3206580974"
+					"PhoneNumber" : "3206580974",
+					"BP_2_CONTACT" : []
 				}
 			}
 		}]
