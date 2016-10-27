@@ -59,7 +59,7 @@ function checkForSnapshot() {
 // getting the libraries data from uilib-collection/pom.xml
 request({
     method: 'GET',      //TODO put the substracted version in the url
-    url: 'http://nexus.wdf.sap.corp:8082/nexus/service/local/repositories/deploy.releases/content/com/sap/ui5/dist/uilib-collection/' + urlVersion + '/uilib-collection-' + urlVersion + '.pom',
+    url: 'http://nexusrel.wdf.sap.corp:8081/nexus/service/local/repositories/deploy.releases/content/com/sap/ui5/dist/uilib-collection/' + urlVersion + '/uilib-collection-' + urlVersion + '.pom',
     strictSSL: false
 }, function (err, response, body) {
     if (!err && response.statusCode == 200) {
