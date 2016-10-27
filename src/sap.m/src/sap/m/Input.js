@@ -540,6 +540,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
+		if (bInteractionChange) {
+			this.fireLiveChange({
+				value: sNewValue,
+				// backwards compatibility
+				newValue: sNewValue
+			});
+		}
+
 		// update the input field
 		if (this._bUseDialog) {
 			this._oPopupInput.setValue(sNewValue);
@@ -709,6 +717,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		this._sSelectedValue = sNewValue;
+
+		if (bInteractionChange) {
+			this.fireLiveChange({
+				value: sNewValue,
+				// backwards compatibility
+				newValue: sNewValue
+			});
+		}
 
 		// update the input field
 		if (this._bUseDialog) {
