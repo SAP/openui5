@@ -271,6 +271,35 @@
 				equal(jQuery("#DP2").children("input").val(), "02+04+2014", "PageDown+shift+ctrl: Value in external format displayed");
 			});
 
+			//BCP 1670441899
+			test("focused element after picker close", function() {
+				var bOrigTouch = sap.ui.Device.support.touch;
+
+				// On a desktop (non-touch) device
+				sap.ui.Device.support.touch = false;
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
+
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal").control(0).fireCancel();
+				equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
+
+				// On a touch device
+				sap.ui.Device.support.touch = true;
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
+
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal").control(0).fireCancel();
+				notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
+
+				sap.ui.Device.support.touch = bOrigTouch;
+			});
+
 			test("change date using calendar", function() {
 				bChange = false;
 				sValue = "";
