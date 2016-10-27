@@ -581,6 +581,34 @@
 
 			});
 
+			//github #1172
+			test("value is updated when we change the century", function() {
+				//arrange
+				var newValue,
+					oDP = new sap.m.DatePicker({
+						value: "05-05-16",
+						valueFormat: "MM-dd-yy",
+						displayFormat: "dd+MM+yyyy",
+						change: function(oEvent) {
+							newValue = oEvent.getParameter("value");
+						}
+					}).placeAt("uiArea2");
+
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oDP.focus();
+				oDP.$().children("input").val("05+05+1916");
+				oDP.onChange();
+
+				//assert
+				strictEqual(newValue, "05-05-16", "change event fired and new value is the same");
+				strictEqual(oDP.getDateValue().getFullYear(), 1916, "new dateValue is correct");
+
+				//clean
+				oDP.destroy();
+			});
+
 			module("ARIA");
 			test("Tooltip and date annoncement should be set correctly at the described by", function() {
 				var sTooltip = "tooltip";
