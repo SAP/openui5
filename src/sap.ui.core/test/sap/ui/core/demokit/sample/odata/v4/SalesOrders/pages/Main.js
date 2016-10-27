@@ -416,9 +416,23 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 						viewName : sViewName
 					});
 				},
-				checkLog : function () {
+				checkLog : function (aExpected) {
 					return this.waitFor({
 						success : function (oControl) {
+							function isExpected(oLog) {
+								if (!aExpected) {
+									return false;
+								}
+								return aExpected.some(function (oExpected, i) {
+									if (oLog.component === oExpected.component &&
+											oLog.level === oExpected.level &&
+											oLog.message.indexOf(oExpected.message) >= 0) {
+										aExpected.splice(i, 1);
+										return true;
+									}
+								});
+							}
+
 							Opa5.getWindow().jQuery.sap.log.getLogEntries()
 								.forEach(function (oLog) {
 									var sComponent = oLog.component || "";
@@ -426,12 +440,27 @@ function (ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath, Interacta
 									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
 											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
 											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-										Opa5.assert.ok(false,
-												"Warning or error found: " + sComponent
+										if (isExpected(oLog)) {
+											Opa5.assert.ok(true,
+												"Expected Warning or error found: " + sComponent
 												+ " Level: " + oLog.level
 												+ " Message: " + oLog.message );
+										} else {
+											Opa5.assert.ok(false,
+												"Unexpected warning or error found: " + sComponent
+												+ " Level: " + oLog.level
+												+ " Message: " + oLog.message );
+										}
 									}
 								});
+							if (aExpected) {
+								aExpected.forEach(function (oExpected) {
+								Opa5.assert.ok(false,
+									"Expected warning or error not logged: " + oExpected.component
+									+ " Level: " + oExpected.level
+									+ " Message: " + oExpected.message );
+								});
+							}
 							Opa5.assert.ok(true, "Log checked");
 						}
 					});

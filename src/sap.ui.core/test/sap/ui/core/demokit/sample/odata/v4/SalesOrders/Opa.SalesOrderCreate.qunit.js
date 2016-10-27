@@ -17,10 +17,15 @@ sap.ui.require([
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Create");
 
 	//*****************************************************************************
-	opaTest("Create, modify and delete - all transient", function (Given, When, Then) {
-		var vRealOData = jQuery.sap.getUriParameters().get("realOData"),
-			bRealOData = /direct|proxy|true/.test(vRealOData),
-			sModifiedNote = "Modified by OPA";
+	opaTest("Create, modify and delete", function (Given, When, Then) {
+		var oExpectedLog = {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
+			},
+			sModifiedNote = "Modified by OPA",
+			vRealOData = jQuery.sap.getUriParameters().get("realOData"),
+			bRealOData = /direct|proxy|true/.test(vRealOData);
 
 		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
 				+ "&sap-language=en"
@@ -120,6 +125,7 @@ sap.ui.require([
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
@@ -129,9 +135,10 @@ sap.ui.require([
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			// do it again, POST is sent again without a change
-			// TODO implement error handling and check the errors on save
+			When.onTheErrorInfo.confirm();
+			// Do it again to ensure that it is retried without update
 			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.changeNote(0, "Valid Note");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
@@ -173,7 +180,8 @@ sap.ui.require([
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog();
+		Then.onTheMainPage.checkLog( bRealOData ? [oExpectedLog, oExpectedLog, oExpectedLog]
+			: undefined);
 		Then.iTeardownMyAppFrame();
 	});
 });
