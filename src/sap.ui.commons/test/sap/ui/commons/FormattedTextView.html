@@ -3,8 +3,9 @@
 
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>FormattedTextView - sap.ui.commons</title>
-<script id="sap-ui-bootstrap" type="text/javascript"
-	data-sap-ui-theme="sap_goldreflection"
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons"
 	src="../../../../resources/sap-ui-core.js"></script>
 
@@ -14,7 +15,7 @@
 }
 </style>
 
-<script type="text/javascript">
+<script>
 	var fnOriginalSetHtmlText;
 
 	var oHtmlText = 'I\'m &lt;u&gt;writing&lt;/u&gt;writing a &lt;strong class="foo"&gt;mail&lt;/strong&gt; to &lt;embed data-index="0" /&gt;<br>';
@@ -129,7 +130,7 @@
 
 	<h4>Text given to FormattedTextView</h4>
 	<div style="border: 1px solid black; overflow: auto">
-		<pre><code><script type="text/javascript">document.write(oHtmlText);</script></code></pre>
+		<pre><code><script>document.write(oHtmlText);</script></code></pre>
 	</div>
 
 	<br>
