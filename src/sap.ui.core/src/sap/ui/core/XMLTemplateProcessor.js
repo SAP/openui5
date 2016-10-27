@@ -502,7 +502,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						} else if (oAggregation) {
 							// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
 							// create a StashedControl for inactive controls, which is not placed in an aggregation
-							if (!bActivate && childNode.getAttribute("stashed") === "true") {
+							if (!bActivate && childNode.getAttribute("stashed") === "true" && !bEnrichFullIds) {
 								StashedControlSupport.createStashedControl(getId(oView, childNode), {
 									stashedAlias: childNode.getAttribute("stashedAlias"),
 									sParentId: mSettings["id"],
@@ -511,10 +511,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 										return handleChild(node, oAggregation, mAggregations, childNode, true);
 									}
 								});
-								// do not create the control, but still enrich the subtree
-								if (bEnrichFullIds) {
-									XMLTemplateProcessor.enrichTemplateIds(childNode, oView);
-								}
 								return;
 							}
 
@@ -566,7 +562,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 						setId(oView, node);
-				} else {
+				} else if (!bEnrichFullIds) {
 					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
 						// for views having a factory function defined we use the factory function!
 						vNewControlInstance = sap.ui.view(mSettings, undefined, oClass._sType);
