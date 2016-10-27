@@ -2697,6 +2697,7 @@
 		var oInfo = oInput.getAccessibilityInfo();
 		ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+		strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
 		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
 		strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
 		strictEqual(oInfo.focusable, true, "Focusable");
