@@ -193,6 +193,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._selectItemByKey = function(oEvent) {
+		var aVisibleItems, oParam,
+			oItem, i, bItemMatched,
+			bPickerOpened = this.isOpen();
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -203,22 +207,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			oEvent.setMarked();
 		}
 
-		var aVisibleItems;
+		aVisibleItems = this._getUnselectedItems(bPickerOpened ? "" : this.getValue());
 
-		if (this.isOpen()) {
-			aVisibleItems = this._getUnselectedItems();
-		} else {
-			aVisibleItems = this._getItemsStartingText(this.getValue());
+		for (i = 0; i < aVisibleItems.length; i++) {
+			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase()) {
+				oItem = aVisibleItems[i];
+				bItemMatched = true;
+				break;
+			}
 		}
 
-		// Only unique value can be take over
-		if (aVisibleItems.length > 1) {
-			this._showWrongValueVisualEffect();
-		}
-
-		if (aVisibleItems.length === 1) {
-			var oItem = aVisibleItems[0];
-			var oParam = {
+		if (bItemMatched) {
+			oParam = {
 				item: oItem,
 				id: oItem.getId(),
 				key: oItem.getKey(),
@@ -228,6 +228,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				listItemUpdated: false
 			};
 
+			this._bPreventValueRemove = false;
+
 			if (this.getValue() === "" || jQuery.sap.startsWithIgnoreCase(oItem.getText(), this.getValue())) {
 				if (this.getListItem(oItem).isSelected()) {
 					this.setValue('');
@@ -235,6 +237,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 					this.setSelection(oParam);
 				}
 			}
+		} else {
+			this._bPreventValueRemove = true;
+			this._showWrongValueVisualEffect();
 		}
 
 		if (oEvent) {
@@ -715,7 +720,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();
-		this.setValue("");
+
+		// resets or not the value of the input depending on the event (enter does not clear the value)
+		!this._bPreventValueRemove && this.setValue("");
 		this._sOldValue = "";
 
 		if (this.isPickerDialog()) {
@@ -2369,6 +2376,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		 *
 		 */
 		this.bItemsUpdated = false;
+
+		// determines if value of the combobox should be empty string after popup's close
+		this._bPreventValueRemove = false;
 		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
