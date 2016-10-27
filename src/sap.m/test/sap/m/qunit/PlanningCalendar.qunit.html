@@ -1060,7 +1060,8 @@
 				var oSearchField = new sap.m.SearchField(),
 						oButton = new sap.m.Button();
 				this.o1Sep2016MidOfWeek = new Date(2016, 8, 1, 1);
-				this.o10Sep2016 = new Date(2016, 8, 10),
+				this.o10Sep2016Morning = new Date(2016, 8, 10, 9);
+				this.o10Sep2016 = new Date(2016, 8, 10);
 				this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 						sap.ui.unified.CalendarIntervalType.Week);
 				this.oPC2.placeAt("uiArea1");
@@ -1518,6 +1519,56 @@
 			//cleanup
 			clock.restore();
 
+		});
+
+		test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", function () {
+			//act
+			var oFakeNow = new Date(2016, 8, 1, 3),
+					clock = sinon.useFakeTimers(oFakeNow.getTime()),
+					aExpectedVisibleHours = [];
+			this.oPC2.setStartDate(this.o10Sep2016Morning);
+			clock.tick(10); //start date is 10st of September 2016 09:00
+
+			//act
+			this._clickTodayButton(this.oPC2);
+			clock.tick(10);
+
+			this._switchToView(sap.ui.unified.CalendarIntervalType.Hour, this.oPC2);
+			clock.tick(10);
+
+			//assert
+			iInterval = jQuery("#" + this.oPC2.getId()).outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1] ? 6 : 12;
+
+			//assert
+			if (iInterval === 12) { //Hours View large
+				aExpectedVisibleHours = [
+							new Date(2016, 7, 29, 9),
+							new Date(2016, 7, 29, 10),
+							new Date(2016, 7, 29, 11),
+							new Date(2016, 7, 29, 12),
+							new Date(2016, 7, 29, 13),
+							new Date(2016, 7, 29, 14),
+							new Date(2016, 7, 29, 15),
+							new Date(2016, 7, 29, 16),
+							new Date(2016, 7, 29, 17),
+							new Date(2016, 7, 29, 18),
+							new Date(2016, 7, 29, 19),
+							new Date(2016, 7, 29, 20)];
+			} else {
+				aExpectedVisibleHours = [
+							new Date(2016, 7, 29, 9),
+							new Date(2016, 7, 29, 10),
+							new Date(2016, 7, 29, 11),
+							new Date(2016, 7, 29, 12),
+							new Date(2016, 7, 29, 13),
+							new Date(2016, 7, 29, 14)];
+			}
+
+			this._assertHoursAreVisible(aExpectedVisibleHours, this.oPC2,
+					"10 Sept 2016, 09:00: Weeks->Today(01 Sep, 00:00)->Hours");
+
+			//cleanup
+			clock.restore();
 		});
 
 		test("'Today' button visibility works only with week view", function () {
