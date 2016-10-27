@@ -26,10 +26,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * control and displays the most important information regarding the
 	 * object that will always remain visible while scrolling.
 	 * <br><br>
+	 * <b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control, but it`s recommended to use controls,
+	 * suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
+	 * <br><br>
 	 * By clicking on the {@link sap.f.DynamicPageTitle DynamicPageTitle},
 	 * the user can switch between the expanded/collapsed states of the
 	 * {@link sap.f.DynamicPageHeader DynamicPageHeader}.
-	 * </ul>
 	 * <br><br>
 	 * <strong><i>Responsive Behavior</i></strong>
 	 * <br><br>
@@ -59,9 +61,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				heading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
 
 				/**
-				 * <code>DynamicPageTitle</code> actions.
+				 * The <code>DynamicPageTitle</code> actions.
+				 * <br><b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control, but it`s recommended to use controls,
+				 * suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
 				 */
-				actions: {type: "sap.m.Button", multiple: true, singularName: "action"},
+				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
 
 				/**
 				 * The content that is displayed in the <code>DynamicPageTitle</code> in collapsed (snapped) state.
