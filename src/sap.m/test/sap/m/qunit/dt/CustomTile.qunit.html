@@ -24,7 +24,9 @@ sap.ui.require([
 ], function (QUnit, ElementEnablementTest) {
 
 	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.CustomTile"
+		type: "sap.m.CustomTile",
+		// timeout is needed because after control is rendered, style computation takes time
+		timeout : 300
 	});
 	oElementEnablementTest.run().then(function(oData) {
 		var oReport = new QUnit({
