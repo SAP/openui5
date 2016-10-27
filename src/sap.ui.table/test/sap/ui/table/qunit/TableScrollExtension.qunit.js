@@ -1,3 +1,7 @@
+// Shortcuts
+jQuery.sap.require("sap.ui.Device");
+var Device = sap.ui.Device;
+
 //************************************************************************
 // Test Code
 //************************************************************************
@@ -326,11 +330,22 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	function scrollWithMouseWheel(oTarget, iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 		return new Promise(
 			function(resolve) {
-				var oEvent = jQuery.Event({type: "wheel"});
+				var sEventType = "wheel";
+
+				if (Device.browser.firefox) {
+					sEventType = "MozMousePixelScroll";
+				}
+
+				var oEvent = jQuery.Event({type: sEventType});
+
 				oEvent.shiftKey = true;
-				oEvent.deltaX = iScrollDelta;
 				oEvent.originalEvent.shiftKey = true;
-				oEvent.originalEvent.deltaX = iScrollDelta;
+
+				if (Device.browser.firefox) {
+					oEvent.originalEvent.detail = iScrollDelta;
+				} else {
+					oEvent.originalEvent.deltaX = iScrollDelta;
+				}
 
 				jQuery(oTarget).trigger(oEvent);
 
