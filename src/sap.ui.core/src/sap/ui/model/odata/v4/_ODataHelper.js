@@ -355,13 +355,14 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataContextBinding} oBinding
 		 *   The OData context binding instance
-		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 * @param {sap.ui.model.Context} oContext
 		 *   The context instance to be used
 		 * @returns {object}
 		 *   The created cache proxy
 		 */
 		createContextCacheProxy : function (oBinding, oContext) {
-			var oCacheProxy;
+			var oCacheProxy,
+				oPathPromise;
 
 			function createCache(sPath) {
 				return _Cache.createSingle(oBinding.oModel.oRequestor,
@@ -369,8 +370,10 @@ sap.ui.define([
 					ODataHelper.getQueryOptions(oBinding, "", oContext));
 			}
 
-			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache,
-				oContext.requestCanonicalPath());
+			oPathPromise = oContext && (oContext.requestCanonicalPath
+				? oContext.requestCanonicalPath()
+				: Promise.resolve(oContext.getPath()));
+			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise);
 			oCacheProxy.promise.then(function (oCache) {
 				oBinding.oCache = oCache;
 			})["catch"](function (oError) {
@@ -674,7 +677,7 @@ sap.ui.define([
 				if (oBinding.oCache) {
 					return oBinding.oCache.hasPendingChanges(sPath);
 				}
-				if (oBinding.oContext) {
+				if (oBinding.oContext && oBinding.oContext.hasPendingChanges) {
 					return oBinding.oContext.hasPendingChanges(
 						_Helper.buildPath(oBinding.sPath, sPath));
 				}
@@ -682,7 +685,7 @@ sap.ui.define([
 			}
 			if (oBinding.oCache) {
 				bResult = oBinding.oCache.hasPendingChanges("");
-			} else if (oBinding.oContext && bAskParent) {
+			} else if (bAskParent && oBinding.oContext && oBinding.oContext.hasPendingChanges) {
 				bResult = oBinding.oContext.hasPendingChanges(oBinding.sPath);
 			}
 			if (bResult) {
@@ -930,14 +933,14 @@ sap.ui.define([
 				// We are asked from a child for a certain path -> only reset own cache or context
 				if (oBinding.oCache) {
 					oBinding.oCache.resetChanges(sPath);
-				} else if (oBinding.oContext) {
+				} else if (oBinding.oContext && oBinding.oContext.resetChanges) {
 					oBinding.oContext.resetChanges(_Helper.buildPath(oBinding.sPath, sPath));
 				}
 				return;
 			}
 			if (oBinding.oCache) {
 				oBinding.oCache.resetChanges("");
-			} else if (oBinding.oContext && bAskParent) {
+			} else if (bAskParent && oBinding.oContext && oBinding.oContext.resetChanges) {
 				oBinding.oContext.resetChanges(oBinding.sPath);
 			}
 			oBinding.oModel.getDependentBindings(oBinding).forEach(function (oDependentBinding) {
