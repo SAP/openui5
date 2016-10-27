@@ -42,6 +42,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 				oTable._oColumnInfo = null;
 			},
 
+			//TBD: @type definitions below does not work with the JSDoc generation -> should be cleaned up
+			//     but not so important because the functions are anyhow private
+
 			/**
 			 * Updates the column info object
 			 * @param {sap.ui.table.Table} oTable instance of the table
