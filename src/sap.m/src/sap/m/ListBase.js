@@ -400,6 +400,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._bUpdating = false;
 		this._bRendering = false;
 		this._bActiveItem = false;
+		this._iItemNeedsHighlight = 0;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -878,6 +879,18 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	// this gets called when items active state is changed
 	ListBase.prototype.onItemActiveChange = function(oListItem, bActive) {
 		this._bActiveItem = bActive;
+	};
+
+	// this gets called when item type column requirement is changed
+	ListBase.prototype.onItemHighlightChange = function(oItem, bNeedsHighlight) {
+		this._iItemNeedsHighlight += (bNeedsHighlight ? 1 : -1);
+
+		// update highlight visibility
+		if (this._iItemNeedsHighlight == 1 && bNeedsHighlight) {
+			this.$("listUl").addClass("sapMListHighlight");
+		} else if (this._iItemNeedsHighlight == 0) {
+			this.$("listUl").removeClass("sapMListHighlight");
+		}
 	};
 
 	// this gets called when selected property of the ListItem is changed
