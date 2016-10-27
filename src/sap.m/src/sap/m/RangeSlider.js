@@ -169,6 +169,8 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         };
 
         RangeSlider.prototype.onAfterRendering = function () {
+            Slider.prototype.onAfterRendering.apply(this, arguments);
+
             var aRange = this.getRange(),
                 fMin = this.getMin(),
                 fMax = this.getMax(),

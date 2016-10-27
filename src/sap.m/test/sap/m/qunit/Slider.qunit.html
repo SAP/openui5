@@ -293,6 +293,7 @@
 				assert.strictEqual(oSlider.getStep(), 1, "By default the slider step is 1");
 				assert.strictEqual(oSlider.getProgress(), true, "By default the slider progress is true");
 				assert.strictEqual(oSlider.getValue(), 0, "By default the slider value is 0");
+				assert.strictEqual(oSlider.getEnableTickmarks(), false, "Default tickmarks visibility");
 				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("role"), "slider", "The role slider is set");
 				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-orientation"), "horizontal", 'The "aria-orientation" attribute is set to "horizontal"');
 				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "0", 'The "aria-valuemin" attribute is set to its default value');
@@ -1915,6 +1916,92 @@
 				assert.strictEqual(oSlider.getValue(), 10);
 
 				// cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.module("Tickmarks");
+
+			QUnit.test("Calculate max visible tickmarks that could fit on the slider with a specified width", function (assert) {
+				var iSliderWidth = 100,
+						oSlider = new sap.m.Slider({"width": iSliderWidth+"px", enableTickmarks: true}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oSlider._getMaxVisibleTickmarks(iSliderWidth), 11, "Should put 11 tickmarks. There's also one additional (the righmost) which is coming as a border of the list.");
+
+				// Cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Calculate max possible tickmarks that could fit on the slider if the width is not taken into account.", function (assert) {
+				var oSlider = new sap.m.Slider({enableTickmarks: true}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oSlider._getMaxPossibleTickmarks(), 100, "Should calculate a tickmark for every possible step.");
+
+				// Act
+				oSlider.setStep(0.5);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oSlider._getMaxPossibleTickmarks(), 100, "Do not allow more than 100 tickmarks per slider. Performance reasons.");
+
+				// Act
+				oSlider.setStep(5);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oSlider._getMaxPossibleTickmarks(), 20, "Should calculate a tickmark for every possible step.");
+
+				// Cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Tickmarks adaptiveness. Combine _getMaxVisibleTickmarks & _getMaxPossibleTickmarks and determine how many tickmarks should be put on the slider", function (assert) {
+				var iSliderWidth = 100,
+					oSlider = new sap.m.Slider({"width": iSliderWidth+"px", enableTickmarks: true}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.strictEqual(oSlider._getTickmarksToRender(iSliderWidth), 11, "Should put 11 tickmarks. There's also one additional (the righmost) which is coming as a border of the list.");
+				assert.strictEqual(oSlider._getTickmarksToRender(1920), 100, "Allow 100 tickmarks at most. Performance reasons.");
+				assert.strictEqual(oSlider._getTickmarksToRender(10), 1, "The leftmost and the rightmost tickmarks should be always visible. The rightmost one is excluded in the calculations, because it comes as a border of the list.");
+
+				// Cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Calculate the distance between tickmarks.", function (assert) {
+				var iSliderWidth = 1000,
+						oSlider = new sap.m.Slider({"width": iSliderWidth+"px", enableTickmarks: true}).placeAt("content"),
+						iTickmarksCount = oSlider._getTickmarksToRender(iSliderWidth);
+				sap.ui.getCore().applyChanges();
+
+
+				// Assert
+				assert.strictEqual(oSlider._calculateTickmarksDistance(iSliderWidth, iTickmarksCount), 1, "The distance for the auto-calculated tickmarks should be 1% for " + iSliderWidth + "px width.");
+				assert.strictEqual(oSlider._calculateTickmarksDistance(iSliderWidth, 10), 10, "The distance between 10 tickmarks should be 10% for " + iSliderWidth + "px width.");
+				assert.strictEqual(oSlider._calculateTickmarksDistance(iSliderWidth, 100), 1, "The distance between 100 tickmarks should be 1% for " + iSliderWidth + "px width.");
+				assert.strictEqual(oSlider._calculateTickmarksDistance(iSliderWidth, 20), 5, "The distance between 20 tickmarks should be 5% for " + iSliderWidth + "px width.");
+				assert.strictEqual(oSlider._calculateTickmarksDistance(iSliderWidth, 50), 2, "The distance between 50 tickmarks should be 2% for " + iSliderWidth + "px width.");
+
+				// Cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Add tickmarks to the DOM.", function (assert) {
+				var iSliderWidth = 1000,
+						oSlider = new sap.m.Slider({"width": iSliderWidth+"px", enableTickmarks: true}).placeAt("content"),
+						iTickmarksCount = oSlider._getTickmarksToRender(iSliderWidth);
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(1);
+
+				// Assert
+				assert.strictEqual(oSlider.$().find(".sapMSliderTick").size(), iTickmarksCount, "Should have put " + iTickmarksCount + " tickmarks into the DOM.");
+
+				// Cleanup
 				oSlider.destroy();
 			});
 		</script>

@@ -66,6 +66,8 @@ sap.ui.define(['jquery.sap.global'],
 			this.renderHandles(oRm, oSlider);
 			oRm.write("</div>");
 
+			this.renderTickmarks(oRm, oSlider);
+
 			this.renderLabels(oRm, oSlider);
 
 			if (oSlider.getName()) {
@@ -206,6 +208,16 @@ sap.ui.define(['jquery.sap.global'],
 				valuemax: oSlider.toFixed(oSlider.getMax()),
 				valuenow: oSlider.toFixed(oSlider.getValue())
 			});
+		};
+
+		SliderRenderer.renderTickmarks = function (oRm, oSlider) {
+			if (!oSlider.getEnableTickmarks()) {
+				return;
+			}
+
+			oRm.write("<ul class=\"sapMSliderTickmarks\">");
+			oRm.write("<li  class=\"sapMSliderTick\" style=\"width: calc(100% - 1px);\"></li>");
+			oRm.write("</ul>");
 		};
 
 		/**
