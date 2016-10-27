@@ -961,8 +961,8 @@
 		oFFL.getItems()[2].setSelected(true);
 		oFF._setButtonText(oFFL);
 
-		equals(oButton.getText(), "List (3)", "Button should not contain the 'All' even if all items are selected");
-		equals(oButton.getTooltip(), "List (3)", "Button tooltip should not contain the 'All' even if all items are selected");
+		equals(oButton.getText(), "List (All)", "Button should contain the 'All' if all items are selected");
+		equals(oButton.getTooltip(), "List (All)", "Button tooltip should contain the 'All' if all items are selected");
 
 		//More than one(but not all) items are selected
 		oFFL.getItems()[0].setSelected(true);
@@ -986,7 +986,7 @@
 		oFFL.destroy();
 	});
 
-	asyncTest("FacetFilterList._updateActiveState", function() {
+	asyncTest("FacetFilterList._updateActiveState for initially non-active lists", function() {
 
 		var oFF = new sap.m.FacetFilter();
 		var oFFL1 = new sap.m.FacetFilterList({
@@ -1036,7 +1036,7 @@
 				strictEqual(oList.getActive(), true, "List should be active after selecting item");
 				oList.getItems()[0].setSelected(false);
 				oList._updateActiveState();
-				strictEqual(oList.getActive(), true, "List should remain active after deselecting item (once active it does not become inactive, rather all selected is assumed)");
+				strictEqual(oList.getActive(), false, "List should not remain active after deselecting last item");
 
 				oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
 
@@ -1054,13 +1054,14 @@
 						var oCheckBox = oCheckboxBar.getContentLeft()[0];
 						strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should be deselected initially");
 
-						oCheckBox.setSelected(true);
+						oCheckBox.fireSelect({"selected": true});
 						oList._updateActiveState();
 						strictEqual(oList.getActive(), true, "List should be active after selecting the select all checkbox");
 
-						oCheckBox.setSelected(false); //Checkbox will not allow deselection once the list is active and there are no selections
+						oCheckBox.fireSelect({"selected": false});//Checkbox allow deselection
+
 						oList._updateActiveState();
-						strictEqual(oList.getActive(), true, "List should still be active after attempting to deselect the select all checkbox");
+						strictEqual(oList.getActive(), false, "List should not be active after deselect the select all checkbox");
 
 						oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
 
@@ -1100,6 +1101,51 @@
 		oFF.openFilterDialog();
 	});
 
+	asyncTest("FacetFilterList._updateActiveState for initially active lists", function() {
+		//prepare
+		var oFF = new sap.m.FacetFilter(),
+		oFFL1 = new sap.m.FacetFilterList({
+			title: "List1"
+		});
+		oFFL1.addItem(new sap.m.FacetFilterItem());
+		oFF.addList(oFFL1);
+
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDialog = oFF._getFacetDialog();
+		oDialog.attachEventOnce("afterOpen", function(oEvent) {
+
+			var oFacetListItem = getDialogFacetList(oFF).getItems()[0];
+			var oNavContainer = oDialog.getContent()[0];
+			oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+				// Verify the active state when an item is selected and then deselected
+				var oList = getDialogFilterItemsList(oFF);
+				//assert
+				strictEqual(oList.getActive(), true, "The list should be active initially");
+				strictEqual(oList.getSelectedItems().length, 0, "The list should not contain any selections initially");
+				//act
+				oList.getItems()[0].setSelected(true);
+				oList._updateActiveState();
+				//assert
+				strictEqual(oList.getActive(), true, "List should be active after selecting item");
+				//act
+				oList.getItems()[0].setSelected(false);
+				oList._updateActiveState();
+				//assert
+				strictEqual(oList.getActive(), true, "List should not remain active after deselecting last item");
+
+				//cleanup
+				start();
+				destroyFF(oFF);
+			});
+
+			// Navigate to the list
+			oFF._navToFilterItemsPage(oFacetListItem);
+		});
+		oFF.openFilterDialog();
+	});
 
 	test("FacetFilterList._search, _getSearchValue", function() {
 
@@ -1720,12 +1766,13 @@
 				//Assert
 				ok(oResetSearchSpy.calledWith(""), "Search value is reset");
 				oFacetFilterList._setSearchValue.restore();
+				destroyFF(oFacetFilter);
 			});
 
 			openPopover(oFacetFilter, 0);
 		});
 		//BCP: 1680160703
-		test("FacetFilterList._handleSelectAll does not inform the list for item selection changes", function() {
+		test("FacetFilterList._handleSelectAllClick does not inform the list for item selection changes", function() {
 			var oFFL = new sap.m.FacetFilterList({
 				items: [
 					new sap.m.FacetFilterItem({
@@ -1748,7 +1795,7 @@
 				oItemSetSelectedSpy = sinon.spy(sap.m.ListItemBase.prototype, "setSelected");
 
 			//act
-			oFFL._handleSelectAll(true);
+			oFFL._handleSelectAllClick(true);
 
 			//assert
 			ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
@@ -3177,7 +3224,7 @@
 		/* Helper functions for the module */
 		var oSCHelper = {
 
-			createFFWithBinding : function(iLists) {
+			createFFWithBinding : function(iLists, bSkipGrowing) {
 				iLists = iLists == undefined ? 1 : iLists;
 				var oFF = new sap.m.FacetFilter({
 					showPersonalization : true
@@ -3185,7 +3232,7 @@
 				for (var i = 0; i < iLists; i++) {
 					var oFFL = new sap.m.FacetFilterList({
 						title : "List" + (i+1),
-						growing : true,
+						growing : !bSkipGrowing,
 						growingThreshold : 3,
 						items : {
 							path : "/values",
@@ -3225,10 +3272,10 @@
 				});
 			},
 
-			createFFWithModel : function() {
+			createFFWithModel : function(bSkipGrowing) {
 				// Need a model and binding to test search
-				var oFF = oSCHelper.createFFWithBinding();
-				oFF.getLists()[0].setModel(oSCHelper.createModel())
+				var oFF = oSCHelper.createFFWithBinding(undefined, bSkipGrowing);
+				oFF.getLists()[0].setModel(oSCHelper.createModel());
 				return oFF;
 			}
 		}
@@ -3419,6 +3466,11 @@
 			oFFL.getItems()[1].setSelected(false);
 			oKeys = oFFL.getSelectedKeys();
 			equal(Object.getOwnPropertyNames(oKeys).length, 0, "There are no keys selected");
+			strictEqual(oFFL.getActive(), false, 'FacetFilterList is not set to "active" when no key is selected');
+
+			oFFL.getItems()[1].setSelected(true);
+			oKeys = oFFL._handleSelectAllClick(false);
+			strictEqual(oFFL.getActive(), false, 'FacetFilterList is not set to "active" when selectAll is unchecked');
 
 			var oItem = oFFL.getItems()[0];
 			oItem.setSelected(true);
@@ -3502,7 +3554,7 @@
 		});
 
 		test("Update button text when items are preselected", function() {
-			var oFF = oSCHelper.createFFWithModel();
+			var oFF = oSCHelper.createFFWithModel(true);
 			var oFFL = oFF.getLists()[0];
 
 			oFFL.setSelectedKeys({
@@ -3514,7 +3566,7 @@
 
 			var oButton = oFF._getButtonForList(oFFL);
 			strictEqual(oButton.getText().indexOf("Val4") > -1, true,
-					"Selected item is not in the model but is displayed on the button");
+					"Selected item is displayed on the button");
 
 			oFFL.setSelectedKeys({
 				"4" : "Val4",
@@ -3532,13 +3584,7 @@
 			oFF.rerender();
 			sap.ui.getCore().applyChanges();
 			strictEqual(oButton.getText().indexOf("Val4") > -1, true,
-					"Selected item is not in the model and the model is filtered to another item");
-
-			oFFL.setGrowing(false);
-			oFF.rerender();
-			sap.ui.getCore().applyChanges();
-			strictEqual(oButton.getText().indexOf("Val4") > -1, true,
-					"Selected item is not in the model and the model is filtered to another item");
+					"Selected item isd isplayed on the button");
 
 			destroyFF(oFF);
 		});
@@ -3998,4 +4044,3 @@
 	<ol id="qunit-tests"></ol></div>
 </body>
 </html>
-

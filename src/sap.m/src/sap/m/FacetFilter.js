@@ -297,6 +297,11 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oDialog = this._getFacetDialog();
 		var oNavContainer = this._getFacetDialogNavContainer();
 		oDialog.addContent(oNavContainer);
+
+		this.getLists().forEach(function (oList) {
+			oList._preserveOriginalActiveState();
+		});
+
 		//keyboard acc - focus on 1st item of 1st page
 		oDialog.setInitialFocus(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 		oDialog.open();
@@ -432,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	    //initialize the delegate add apply it to the control (only once)
 		if ((!this.oItemNavigation) || this._addDelegateFlag == true) {
-			this.oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+			this.oItemNavigation = new ItemNavigation();
 			this.addDelegate(this.oItemNavigation);
 			this._addDelegateFlag = false;
 		}
@@ -1015,6 +1020,8 @@ oPopover.setContentWidth("30%");
 					that._openPopover(oPopover, oThisButton);
 				};
 
+				oList._preserveOriginalActiveState();
+
 				// TODO: Remove when ie 9 is no longer supported
 				if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 					// Opening popover is delayed so it is called after the previous popover is closed
@@ -1058,14 +1065,13 @@ oPopover.setContentWidth("30%");
 			var aSelectedKeyNames = Object.getOwnPropertyNames(oList._oSelectedKeys);
 			var iLength = aSelectedKeyNames.length;
 
-			if (iLength > 0) {
-
-				if (iLength === 1) { // Use selected item value for button label if only one selected
-					var sSelectedItemText = oList._oSelectedKeys[aSelectedKeyNames[0]];
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), sSelectedItemText ]);
-				} else {
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), iLength ]);
-				}
+			if (iLength === 1) { // Use selected item value for button label if only one selected
+				var sSelectedItemText = oList._oSelectedKeys[aSelectedKeyNames[0]];
+				sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), sSelectedItemText]);
+			} else if (iLength > 0 && iLength === oList._getNonGroupItems().length) {
+				sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [oList.getTitle()]);
+			} else if (iLength > 0) {
+				sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), iLength]);
 			} else {
 				sText = oList.getTitle();
 			}
@@ -1490,7 +1496,7 @@ oPopover.setContentWidth("30%");
 			selected: bSelected,
 			select : function(oEvent) {
 				oCheckbox.setSelected(oEvent.getParameter("selected"));
-				oList._handleSelectAll(oEvent.getParameter("selected"));
+				oList._handleSelectAllClick(oEvent.getParameter("selected"));
 			}
 		});
 
@@ -1504,7 +1510,7 @@ oPopover.setContentWidth("30%");
 		oBar.addEventDelegate({
 			ontap: function(oEvent) {
 				if (oEvent.srcControl === this) {
-					oList._handleSelectAll(oCheckbox.getSelected());
+					oList._handleSelectAllClick(oCheckbox.getSelected());
 				}
 			}
 		}, oBar);
