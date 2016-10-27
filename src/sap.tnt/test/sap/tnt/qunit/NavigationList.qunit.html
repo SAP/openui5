@@ -335,6 +335,7 @@
 		QUnit.test("popup list", function (assert) {
 
 			assert.ok(jQuery('.sapTntNavLIPopup').length == 0, "popup list is not shown");
+			assert.ok(!this.navigationList._popover, "should have no popover reference");
 
 			this.navigationList.setExpanded(false);
 			sap.ui.getCore().applyChanges();
@@ -348,6 +349,22 @@
 			this.clock.tick(500);
 
 			assert.ok(jQuery('.sapTntNavLIPopup').length == 1, "popup list is shown");
+			assert.ok(this.navigationList._popover, "should save popover reference");
+
+			var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
+			var popover = $groupItem.closest('.sapMPopover').control()[0];
+
+			assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
+
+			$groupItem.trigger('tap');
+
+			sap.ui.getCore().applyChanges();
+
+			// wait 500ms
+			this.clock.tick(500);
+
+			assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.CLOSED, "should change popover status to CLOSED");
+			assert.ok(!this.navigationList._popover, "should clean popover reference");
 		});
 
 	</script>
