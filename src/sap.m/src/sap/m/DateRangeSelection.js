@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
 	 * @param {string} sValue The new value of the input.
-	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
 	 * @name sap.m.DateRangeSelection#setValue
 	 * @function
@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 	 *
 	 * @param {object} oDateValue New value for property <code>dateValue</code>
-	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
 	 * @name sap.m.DateRangeSelection#setDateValue
 	 * @function
