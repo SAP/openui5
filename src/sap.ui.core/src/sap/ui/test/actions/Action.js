@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global FocusEvent, document */
+/*global FocusEvent, MouseEvent, document */
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
@@ -139,6 +139,55 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 			this._createAndDispatchFocusEvent("focusout", oDomRef);
 			this._createAndDispatchFocusEvent("blur", oDomRef);
 			this._createAndDispatchFocusEvent("deactivate", oDomRef);
+		},
+
+		/**
+		 * Create the correct event object for a mouse event
+		 * @param sName the mouse event name
+		 * @param oDomRef the domref on that the event is going to be triggered
+		 * @private
+		 */
+		_createAndDispatchMouseEvent: function (sName, oDomRef) {
+			var oOffset = $(oDomRef).offset(),
+				x = oOffset.x,
+				y = oOffset.y;
+
+			// See file jquery.sap.events.js for some insights to the magic
+			var oMouseEventObject = {
+				bubbles: true,
+				cancelable: true,
+				identifier: 1,
+				// Well offset should be fine here
+				pageX: x,
+				pageY: y,
+				// ignore scrolled down stuff in OPA
+				clientX: x,
+				clientY: y,
+				// Assume stuff is over the whole screen
+				screenX: x,
+				screenY: y,
+				target: oDomRef,
+				radiusX: 1,
+				radiusY: 1,
+				rotationAngle: 0,
+				// left mouse button
+				button: 0,
+				// include the type so jQuery.event.fixHooks can copy properties properly
+				type: sName
+			};
+
+			var oMouseEvent;
+			if (Device.browser.phantomJS || (Device.browser.msie && (Device.browser.version < 12))) {
+				oMouseEvent = document.createEvent("MouseEvent");
+				oMouseEvent.initMouseEvent(sName, true, true, window, 0,
+					oMouseEventObject.screenX, oMouseEventObject.screenY,
+					oMouseEventObject.clientX, oMouseEventObject.clientY,
+					false, false, false, false,
+					oMouseEventObject.button, oDomRef);
+			}  else {
+				oMouseEvent = new MouseEvent(sName, oMouseEventObject);
+			}
+			oDomRef.dispatchEvent(oMouseEvent);
 		},
 
 		_createAndDispatchFocusEvent: function (sName, oDomRef) {
