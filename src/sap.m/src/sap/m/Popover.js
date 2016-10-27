@@ -483,10 +483,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				that._deregisterContentResizeHandler();
 				Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 				that.removeDelegate(that._oRestoreFocusDelegate);
-
-				if (document.activeElement && !this.restoreFocus && !this._bModal && !Device.system.tablet) {
-					 document.activeElement.blur();
-				}
 			};
 		};
 
@@ -757,7 +753,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					(this._oPreviousFocus.sFocusId === document.activeElement.id);
 
 				// restore previous focus, if the current control isn't the same control as
-				if (!bSameFocusElement && this.oPopup.restoreFocus) {
+				if (!bSameFocusElement) {
 					Popup.applyFocusInfo(this._oPreviousFocus);
 					this._oPreviousFocus = null;
 				}
@@ -902,6 +898,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			Device.resize.detachHandler(this._fnOrientationChange);
 
 			InstanceManager.removePopoverInstance(this);
+
+			// If the popover is closed, the focused element has to be blurred on mobile device to close the on
+			// screen keyboard when the element isn't visible
+			if (!this.oPopup._bModal && !Device.system.desktop && document.activeElement && !jQuery(document.activeElement).is(":visible")) {
+				 document.activeElement.blur();
+			}
+
 			this.fireAfterClose({openBy: this._oOpenBy});
 		};
 

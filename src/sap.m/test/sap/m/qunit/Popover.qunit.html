@@ -856,8 +856,6 @@
 
 			this.stub(sap.ui.Device, "system", oSystem);
 
-			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", true);
-
 			var oButton = new sap.m.Button();
 			oButton.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -1981,17 +1979,19 @@
 
 		QUnit.module("Integration");
 
-		QUnit.test("Don't call a blur on tablet", function (assert) {
+		QUnit.test("Focus should be taken out of Popover after closed on tablet", function (assert) {
 			this.stub(sap.ui.Device, "system", {
 				desktop: false,
 				phone: false,
 				tablet: true,
 				combi: false
 			});
-			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", false);
+
+			var oInput = new sap.m.Input();
 
 			var oPopover = new sap.m.Popover({
-				title: "Title text"
+				title: "Title text",
+				content: [oInput]
 			});
 			var oButton = new sap.m.Button({
 				text: "Open Popover"
@@ -2001,17 +2001,46 @@
 
 			oPopover.openBy(oButton);
 			this.clock.tick(500);
-			sap.ui.getCore().applyChanges();
-
-			var spy = this.spy(document.activeElement, "blur");
+			assert.ok(jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
 
 			oPopover.close();
 			this.clock.tick(500);
 
+			assert.ok(!jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
 
-			assert.ok(!spy.callCount, "Blur shouldn't be called");
+			oPopover.destroy();
+			oButton.destroy();
+		});
 
-			spy.restore();
+		QUnit.test("Focus should be taken out of Popover after closed on mobile", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false,
+				combi: false
+			});
+
+			var oInput = new sap.m.Input();
+
+			var oPopover = new sap.m.Popover({
+				title: "Title text",
+				content: [oInput]
+			});
+			var oButton = new sap.m.Button({
+				text: "Open Popover"
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oPopover.openBy(oButton);
+			this.clock.tick(500);
+			assert.ok(jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
+
+			oPopover.close();
+			this.clock.tick(500);
+
+			assert.ok(!jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
+
 			oPopover.destroy();
 			oButton.destroy();
 		});
