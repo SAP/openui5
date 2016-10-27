@@ -531,13 +531,13 @@ var oData = [
 			tooltip: "Icon",
 			items: [
 				new sap.ui.core.Item({ key: "0", text: "CollapseAll" }),
-				new sap.ui.core.Item({ key: "1", text: "ExpandToLevel3" })
+				new sap.ui.core.Item({ key: "1", text: "ExpandToLevel1" })
 			],
 			selectedItem: "0",
 			change: function(oControlEvent){
 				var sItem = oControlEvent.getParameter("selectedItem").getText();
-				if (sItem === "ExpandToLevel3") {
-					oTree.expandToLevel(3);
+				if (sItem === "ExpandToLevel1") {
+					oTree.expandToLevel(1);
 				} else {
 					oTree.collapseAll();
 				}
