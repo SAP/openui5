@@ -811,6 +811,55 @@
 		oInput.destroy();
 	});
 
+	test("Suggestion on Desktop with live change event handler", function(){
+		var fnCallback = this.spy(),
+				aNames = ["abcTom", "abcPhilips", "abcAnna"],
+				aItemAdded = [],
+				i;
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			liveChange: fnCallback
+		});
+
+		// stub the returnObject function from ObjectPool.prototype in order to trace the event parameter
+		this.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.attachSuggest(function(){
+			for(i = 0 ; i < aNames.length ; i++){
+				if(jQuery.inArray(aNames[i], aItemAdded) === -1){
+					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));
+					aItemAdded.push(aNames[i]);
+				}
+			}
+		});
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("abc").trigger("input");
+
+		this.clock.tick(300);
+
+		oPopup = oInput._oSuggestionPopup;
+		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		ok(oPopup.isOpen(), "Suggestion Popup is open now");
+
+		var oItem = oInput._oSuggestionPopup.getContent()[0].getItems()[0];
+		ok(oItem, "Item should be created");
+
+		oItem.focus();
+		oItem.$().trigger("tap");
+
+		this.clock.tick(50);
+
+		equal(fnCallback.callCount, 2, "live change event handler called twice");
+		var spyCall = fnCallback.getCall(1);
+		equal(spyCall.args[0].getParameter("value"), "abcTom", "live change event fired with the right parameter");
+		oInput.destroy();
+	});
+
 	test("Suggestion on Desktop with change event handler (focus on next input)", function(){
 		var fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
