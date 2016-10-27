@@ -123,9 +123,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Enables/Disables the Edit pushbutton.
-				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
-				 * If the value is false, the edit function is not available.
+				 * Enables/Disables the Delete pushbutton.
+				 * If the value is true, the Delete pushbutton is enabled and the delete function can be used.
+				 * If the value is false, the Delete function is not available.
 				 */
 				enableDelete : {
 					type : "boolean",
