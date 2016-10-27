@@ -32,7 +32,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -112,7 +112,9 @@ sap.ui.define([
 					iPos = sPath.indexOf("(...)"),
 					bDeferred = iPos >= 0;
 
-				ContextBinding.call(this, oModel, sPath); // context is set below
+
+				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
+					mParameters);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -122,13 +124,13 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = undefined;
+				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+					mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (!this.bRelative || bDeferred || mParameters) {
-					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
+				if (!this.bRelative || bDeferred || mParameters
+					|| oContext && !oContext.getBinding) {
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
@@ -177,7 +179,7 @@ sap.ui.define([
 		var that = this;
 
 		// a context binding without path can simply delegate to its parent context.
-		if (this.sPath === "") {
+		if (this.sPath === "" && this.oContext["delete"]) {
 			return this.oContext["delete"](sGroupId);
 		}
 		if (this.hasPendingChanges()) {
@@ -452,7 +454,7 @@ sap.ui.define([
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
 						that.mQueryOptions, false, true);
 				}
-				if (that.bRelative) {
+				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available
 					iIndex = that.sPath.lastIndexOf("/");
@@ -494,7 +496,7 @@ sap.ui.define([
 			if (!this.oContext) {
 				throw new Error("Unresolved binding: " + this.sPath);
 			}
-			if (this.oContext.isTransient()) {
+			if (this.oContext.isTransient && this.oContext.isTransient()) {
 				throw new Error("Execute for transient context not allowed: "
 					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
@@ -505,6 +507,10 @@ sap.ui.define([
 		}
 		return this._requestOperationMetadata().then(function (oOperationMetaData) {
 			if (that.bRelative) {
+				if (!that.oContext.getBinding) {
+					return createCacheAndRequest(oOperationMetaData,
+						that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/");
+				}
 				return that.getContext().requestCanonicalPath().then(function (sPath) {
 					return createCacheAndRequest(oOperationMetaData, sPath + "/");
 				});
@@ -540,7 +546,7 @@ sap.ui.define([
 				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
 			}
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchAbsoluteValue) {
 			return this.oContext.fetchAbsoluteValue(sPath);
 		}
 		return _SyncPromise.resolve();
@@ -584,7 +590,7 @@ sap.ui.define([
 				throw oError;
 			});
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchValue) {
 			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
 		return _SyncPromise.resolve();
@@ -611,7 +617,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.getGroupId = function () {
-		return this.sGroupId || (this.bRelative && this.oContext && this.oContext.getGroupId())
+		return this.sGroupId
+			|| (this.bRelative && this.oContext && this.oContext.getGroupId
+					&& this.oContext.getGroupId())
 			|| this.oModel.getGroupId();
 	};
 
@@ -625,7 +633,8 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId())
+			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
+					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
 	};
 
@@ -675,7 +684,8 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported for absolute bindings.
+	 * Refresh is supported for bindings which are not relative to a
+	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -704,7 +714,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.refresh = function (sGroupId) {
-		if (this.bRelative) {
+		if (!_ODataHelper.isRefreshable(this)) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		if (this.hasPendingChanges()) {
@@ -736,7 +746,7 @@ sap.ui.define([
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
-				if (this.bRelative) {
+				if (this.bRelative && this.oContext.getBinding) {
 					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
 					this.mCacheByContext = undefined;
 				} else {
@@ -780,7 +790,7 @@ sap.ui.define([
 	 * Sets the (base) context which is used when the binding path is relative.
 	 * Fires a change event if the bound context is changed.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -800,7 +810,7 @@ sap.ui.define([
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
-					if (!this.oOperation && this.mQueryOptions) {
+					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
 						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
 					}
 				}

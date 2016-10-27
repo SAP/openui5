@@ -533,44 +533,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createContextCacheProxy", function (assert) {
-		var oBinding = {
-				oModel : {oRequestor : {}},
-				sPath : "SO_2_BP"
-			},
-			sCanonicalPath = "/SalesOrderList('1')",
-			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
-			oContext = {
-				requestCanonicalPath : function () {}
-			},
-			oCache = {},
-			oCacheProxy = {
-				promise : Promise.resolve(oCache)
-			},
-			oPathPromise = Promise.resolve(sCanonicalPath),
-			mQueryOptions = {};
+	[true, false].forEach(function (bBaseContext) {
+		QUnit.test("createContextCacheProxy", function (assert) {
+			var oBinding = {
+					oModel : {oRequestor : {}},
+					sPath : "SO_2_BP"
+				},
+				sCanonicalPath = "/SalesOrderList('1')",
+				sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
+				oContext = bBaseContext
+					? { getPath : function () {return sCanonicalPath;} }
+					: { requestCanonicalPath : function () {} },
+				oCache = {},
+				oCacheProxy = {
+					promise : Promise.resolve(oCache)
+				},
+				oPathPromise = Promise.resolve(sCanonicalPath),
+				mQueryOptions = {};
 
-		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
-			.returns(mQueryOptions);
-		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
-			.returns("/" + sCachePath);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
-				sinon.match.same(mQueryOptions))
-			.returns(oCache);
-		this.mock(_ODataHelper).expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
-				sinon.match.same(oPathPromise))
-			.callsArgWith(1, sCanonicalPath)
-			.returns(oCacheProxy);
+			if (bBaseContext) {
+				this.mock(Promise).expects("resolve").withExactArgs(sCanonicalPath)
+					.returns(oPathPromise);
+			} else {
+				this.mock(oContext).expects("requestCanonicalPath").withExactArgs()
+					.returns(oPathPromise);
+			}
+			this.mock(_ODataHelper).expects("getQueryOptions")
+				.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+				.returns(mQueryOptions);
+			this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
+				.returns("/" + sCachePath);
+			this.mock(_Cache).expects("createSingle")
+				.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
+					sinon.match.same(mQueryOptions))
+				.returns(oCache);
+			this.mock(_ODataHelper).expects("createCacheProxy")
+				.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+					sinon.match.same(oPathPromise))
+				.callsArgWith(1, sCanonicalPath)
+				.returns(oCacheProxy);
 
-		// code under test
-		assert.strictEqual(_ODataHelper.createContextCacheProxy(oBinding, oContext), oCacheProxy);
+			// code under test
+			assert.strictEqual(_ODataHelper.createContextCacheProxy(oBinding, oContext),
+				oCacheProxy);
 
-		return oCacheProxy.promise.then(function () {
-			assert.strictEqual(oBinding.oCache, oCache);
+			return oCacheProxy.promise.then(function () {
+				assert.strictEqual(oBinding.oCache, oCache);
+			});
 		});
 	});
 	// TODO extend createContextCacheProxy to createContextCache to be called everywhere ODCB
@@ -1512,6 +1521,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChanges(sPath): without cache, base context", function (assert) {
+		assert.strictEqual(
+			_ODataHelper.hasPendingChanges({oContext : {}}, undefined, "foo"),
+			false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(bAskParent): with cache", function (assert) {
 		var oChild1 = {},
 			oChild2 = {},
@@ -1636,6 +1652,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChanges(sPath): without cache, base context", function (assert) {
+		_ODataHelper.resetChanges({oContext : {}}, undefined, "foo");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetChanges(bAskParent): with cache", function (assert) {
 		var oChild1 = {},
 			oChild2 = {},
@@ -1692,6 +1713,21 @@ sap.ui.require([
 		_ODataHelper.resetChanges(oBinding, false);
 
 		oContextMock.expects("resetChanges").withExactArgs(oBinding.sPath);
+
+		//code under test
+		_ODataHelper.resetChanges(oBinding, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges(bAskParent): without cache, base context", function (assert) {
+		var oBinding = {
+				oContext : {},
+				oModel : {
+					getDependentBindings : function () {
+						return [];
+					}
+				}
+			};
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, true);
