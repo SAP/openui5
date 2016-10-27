@@ -938,35 +938,53 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("hasPendingChanges, cancelChanges and running batch requests", function (assert) {
 		var oBatchMock = this.mock(_Batch),
+			oBatchRequest1,
+			oBatchRequest2,
+			oBatchRequest3,
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
 			oRequestor = _Requestor.create(sServiceUrl);
 
+		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
+			var jqXHR = new jQuery.Deferred();
 			oJQueryMock.expects("ajax")
 				.withArgs(sServiceUrl + "$batch")
-				.returns(createMock(assert, "body", "OK"));
-			oBatchMock.expects("deserializeBatchResponse")
-				.withExactArgs(null, "body")
-				.returns([{}]);
+				.returns(jqXHR);
+			return jqXHR;
 		}
+
+		// resolves the mock for the jQuery.ajax for the batch
+		function resolveBatch(jqXHR) {
+			Promise.resolve().then(function () {
+				oBatchMock.expects("deserializeBatchResponse")
+					.withExactArgs(null, "body")
+					.returns([{}]);
+
+				jqXHR.resolve("body", "OK", { // mock jqXHR for success handler
+					getResponseHeader : function () { return null; }
+				});
+			});
+		}
+
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", "groupId");
-		expectBatch();
+		oBatchRequest1 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId"));
 		assert.strictEqual(oRequestor.hasPendingChanges(), false,
 			"a running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
-		expectBatch();
+		oBatchRequest2 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), true,
 				"the batch with the second PATCH is still running");
+			resolveBatch(oBatchRequest3);
 		}));
 
 		// code under test
@@ -979,13 +997,15 @@ sap.ui.require([
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "bar"});
-		expectBatch();
+		oBatchRequest3 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), false);
 			oRequestor.cancelChanges("groupId");
 		}));
 
+		resolveBatch(oBatchRequest1);
+		resolveBatch(oBatchRequest2);
 		return Promise.all(aPromises);
 	});
 
