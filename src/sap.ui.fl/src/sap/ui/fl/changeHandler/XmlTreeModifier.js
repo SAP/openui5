@@ -198,8 +198,11 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 			}
 		};
 
-		jQuery.extend(true, XmlTreeModifier, BaseTreeModifier);
-
-		return XmlTreeModifier;
+		return jQuery.sap.extend(
+			true /* deep extend */,
+			{} /* target object, to avoid changing of original modifier */,
+			BaseTreeModifier,
+			XmlTreeModifier
+		);
 	},
 	/* bExport= */true);
