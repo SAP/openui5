@@ -84,8 +84,10 @@
 		afterEach : function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
-
-			this.applyTheme(this.sStartTheme);
+			QUnit.stop();
+			this.applyTheme(this.sStartTheme, function () {
+				QUnit.start();
+			});
 		}
 	});
 
@@ -355,27 +357,13 @@
 		//Arrange
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 
-		if (sap.ui.getCore().isThemeApplied()) {
-			fnThemeApplied.call(this);
-		} else {
-			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-			var done = assert.async();
-		}
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
 
-
-		function fnThemeApplied(oEvent) {
-			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
-			//Act
-			this.oGenericTile.invalidate();
-			sap.ui.getCore().applyChanges();
-
-			//Assert
-			assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOnce, "The hover style is updated when the control is rendered.");
-			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
-			if (done) {
-				done();
-			}
-		}
+		//Assert
+		assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOnce, "The hover style is updated when the control is rendered.");
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
 	QUnit.test("Function _getStyleData returns object with necessary fields", function(assert) {
@@ -385,37 +373,23 @@
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
 
-		if (sap.ui.getCore().isThemeApplied()) {
-			fnThemeApplied.call(this);
-		} else {
-			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-			var done = assert.async();
-		}
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+		var oData = this.oGenericTile._getStyleData();
 
+		//Assert
+		assert.notEqual(oData.rtl, undefined, "The field rtl is available.");
+		assert.notEqual(oData.startX, undefined, "The field startX is available.");
+		assert.notEqual(oData.lines, undefined, "The field lines is available.");
+		assert.ok(oData.lines.length >= 1, "There are lines available.");
+		assert.notEqual(oData.lines[0].width, undefined, "The field lines[0].width is available.");
+		assert.notEqual(oData.lines[0].height, undefined, "The field lines[0].height is available.");
+		assert.notEqual(oData.lines[0].offset.x, undefined, "The field lines[0].offset.x is available.");
+		assert.notEqual(oData.lines[0].offset.y, undefined, "The field lines[0].offset.y is available.");
 
-		function fnThemeApplied(oEvent) {
-			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
-			//Act
-			this.oGenericTile.invalidate();
-			sap.ui.getCore().applyChanges();
-			var oData = this.oGenericTile._getStyleData();
-
-			//Assert
-			assert.notEqual(oData.rtl, undefined, "The field rtl is available.");
-			assert.notEqual(oData.startX, undefined, "The field startX is available.");
-			assert.notEqual(oData.lines, undefined, "The field lines is available.");
-			assert.ok(oData.lines.length >= 1, "There are lines available.");
-			assert.notEqual(oData.lines[0].width, undefined, "The field lines[0].width is available.");
-			assert.notEqual(oData.lines[0].height, undefined, "The field lines[0].height is available.");
-			assert.notEqual(oData.lines[0].offset.x, undefined, "The field lines[0].offset.x is available.");
-			assert.notEqual(oData.lines[0].offset.y, undefined, "The field lines[0].offset.y is available.");
-
-			//Cleanup
-			oStubGetPixelValue.restore();
-			if (done) {
-				done();
-			}
-		}
+		//Cleanup
+		oStubGetPixelValue.restore();
 	});
 
 	QUnit.test("Function _getBoundingBox creates styleData when nothing exists yet", function(assert) {
@@ -454,33 +428,19 @@
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
 
-		if (sap.ui.getCore().isThemeApplied()) {
-			fnThemeApplied.call(this);
-		} else {
-			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-			var done = assert.async();
-		}
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+		var oBoundingBox = this.oGenericTile._getBoundingBox();
 
+		//Assert
+		assert.ok(oBoundingBox.x >= 0, "The field 'x' is available.");
+		assert.ok(oBoundingBox.y >= 0, "The field 'y' is available.");
+		assert.ok(oBoundingBox.width >= 0, "The field 'width' is available.");
+		assert.ok(oBoundingBox.height >= 0, "The field 'height' is available.");
 
-		function fnThemeApplied(oEvent) {
-			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
-			//Act
-			this.oGenericTile.invalidate();
-			sap.ui.getCore().applyChanges();
-			var oBoundingBox = this.oGenericTile._getBoundingBox();
-
-			//Assert
-			assert.ok(oBoundingBox.x >= 0, "The field 'x' is available.");
-			assert.ok(oBoundingBox.y >= 0, "The field 'y' is available.");
-			assert.ok(oBoundingBox.width >= 0, "The field 'width' is available.");
-			assert.ok(oBoundingBox.height >= 0, "The field 'height' is available.");
-
-			//Cleanup
-			oStubGetPixelValue.restore();
-			if (done) {
-				done();
-			}
-		}
+		//Cleanup
+		oStubGetPixelValue.restore();
 	});
 
 	QUnit.test("Hover style update on resize", function(assert) {
@@ -488,31 +448,17 @@
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 		sinon.spy(this.oGenericTile, "_getStyleData");
 
-		if (sap.ui.getCore().isThemeApplied()) {
-			fnThemeApplied.call(this);
-		} else {
-			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-			var done = assert.async();
-		}
+		//Act
+		this.oParent.setWidth("500px");
+		this.oParent.invalidate();
+		sap.ui.getCore().applyChanges();
 
-		function fnThemeApplied(oEvent) {
-			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
+		//Assert
+		assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "_updateHoverStyle is called once.");
+		assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData is called once.");
 
-			//Act
-			this.oParent.setWidth("500px");
-			this.oParent.invalidate();
-			sap.ui.getCore().applyChanges();
-
-			//Assert
-			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "_updateHoverStyle is called once.");
-			assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData is called once.");
-
-			//Cleanup
-			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
-			if (done) {
-				done();
-			}
-		}
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
 	QUnit.test("Hover style update of siblings on state change", function(assert) {
@@ -1054,7 +1000,7 @@
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				header : "header text of GenericTile",
-				subheader : "subheader text of GenericTile",
+				subheader : "subheader text",
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			}).placeAt("qunit-fixture");
 			// stub function _getAriaAndTooltipText of the content
@@ -1070,117 +1016,119 @@
 		afterEach : function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
+			QUnit.stop();
+			jQuery.sap.delayedCall(0, this, QUnit.start); // needed for to slow down until the tile is rendered
 		}
 	});
 
 	QUnit.test("GenericTile no tooltip provided by the control", function(assert) {
 		//Arrange
-		var sAriaLabel = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.$().trigger("mouseenter");
+		var sAriaLabel = "header text of GenericTile\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
-		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, null, "Tooltip of GenericTile is consistent");
+		assert.equal(sGenericTileTooltip, null, "No truncated text, no tooltip");
 		assert.equal(sGenericTileAriaLabel, sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("GenericTile with an explicit tooltip set by user", function(assert) {
+	QUnit.test("Explicit tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip("tooltip");
 		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
-		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
 		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip of GenericTile is consistent");
 		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicit tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("GenericTile with space tooltip set by user", function(assert) {
+	QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		this.oGenericTile.setTooltip("tooltip");
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
+		//Act
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, "tooltip", "User tooltip overwrites the header and subheader text");
+	});
+
+	QUnit.test("Suppress tooltip with space tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
-		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.$().trigger("mouseenter");
+		var sConsistentTooltip = "header text of GenericTile\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
-		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
 		assert.equal(sGenericTileTooltip, null, "GenericTile rendered without tooltip");
 		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("Tooltip for GenericTile with short header text", function(assert) {
+	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
-		$Tile.trigger("mouseenter");
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("subheader text of GenericTile");
+		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
-		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
-		//Assert
-		assert.equal(sGenericTileTooltip, null, "No truncated text, no tooltip");
-	});
-
-	QUnit.test("Tooltip set by user for GenericTile with short header text", function(assert) {
-		//Arrange
-		this.oGenericTile.setTooltip("tooltip");
 		this.oGenericTile.$().trigger("mouseenter");
-		sap.ui.getCore().applyChanges();
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
-		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip set by user is applied");
+		assert.equal(sGenericTileTooltip, null, "GenericTile rendered without tooltip");
 	});
 
-	QUnit.test("Tooltip for GenericTile with long (truncated) header text", function(assert) {
-		if (sap.ui.getCore().isThemeApplied()) {
-			fnThemeApplied.call(this);
-		} else {
-			sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-			var done = assert.async();
-		}
-
-		function fnThemeApplied(oEvent) {
-			sap.ui.getCore().detachThemeChanged(fnThemeApplied);
-
-			//Arrange
-			this.oGenericTile.setHeader("A long long long long long long long long long long");
-
-			//Act
-			this.oGenericTile.invalidate();
-			sap.ui.getCore().applyChanges();
-			this.oGenericTile.$().trigger("mouseenter");
-			var sTooltip = this.oGenericTile.$()[0].getAttribute("title");
-
-			//Assert
-			assert.equal(sTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
-			if (done) {
-				done();
-			}
-		}
-	});
-
-	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
+	QUnit.test("Tooltip for GenericTile with short header text, long subheader text", function(assert) {
 		//Arrange
-		this.oGenericTile.setHeader("A long long long long long long long long long long");
-		this.oGenericTile.setTooltip("tooltip");
-		this.oGenericTile.$().trigger("mouseenter");
+		this.oGenericTile.setSubheader("A long long subheader text");
 		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
-		assert.equal(this.oGenericTile.getHeader(), "A long long long long long long long long long long", "GenericTile has truncated header");
-		assert.equal(sGenericTileTooltip, "tooltip", "User tooltip overwrites the header text");
+		assert.equal(sGenericTileTooltip, "A long long subheader text", "Truncated text for subheader has tooltip");
+	});
+
+	QUnit.test("Tooltip for GenericTile with long header text, short subheader text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
+		//Act
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long header text", "Truncated text for header has tooltip");
+	});
+
+	QUnit.test("Tooltip for GenericTile with long header text, long subheader text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
+		//Act
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long header text\nA long long subheader text", "Truncated text for header and subheader has tooltip");
 	});
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
 		//Arrange
 		var $Tile = this.oGenericTile.$();
-		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		sap.ui.getCore().applyChanges();
 		$Tile.trigger("mouseenter");
 		$Tile.trigger("mouseleave");
-		sap.ui.getCore().applyChanges();
 		//Act
-		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
 		assert.equal(sGenericTileTooltip, null, "Truncated text tooltip is removed");
 	});
