@@ -3616,6 +3616,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {
+		//TBD: Use async APIs instead (should be possible because anyhow a Promise is returned)
 		var Export = sap.ui.requireSync("sap/ui/core/util/Export");
 
 		mSettings = mSettings || {};
