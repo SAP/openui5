@@ -504,7 +504,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 							// create a StashedControl for inactive controls, which is not placed in an aggregation
 							if (!bActivate && childNode.getAttribute("stashed") === "true") {
 								StashedControlSupport.createStashedControl(getId(oView, childNode), {
-									stashedAlias: childNode.getAttribute("stashedAlias"),
 									sParentId: mSettings["id"],
 									sParentAggregationName: oAggregation.name,
 									fnCreate: function() {
