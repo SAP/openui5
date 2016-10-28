@@ -185,9 +185,7 @@ sap.ui.define([
 							that.aContexts[i]
 								= Context.create(that.oModel, that, that.sPath + "/" + i, i);
 						} else if (!that.bUseExtendedChangeDetection) {
-							that.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
-								oBinding.checkUpdate();
-							});
+							oContext.checkUpdate();
 						}
 					}
 					that.aContexts.pop();
@@ -366,6 +364,7 @@ sap.ui.define([
 				if (sPathWithIndex in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sPathWithIndex];
 					delete this.mPreviousContextsByPath[sPathWithIndex];
+					this.aContexts[i].checkUpdate();
 				} else {
 					this.aContexts[i] = Context.create(oModel, this, sPathWithIndex, i);
 				}
@@ -1131,6 +1130,25 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.toString = function () {
 		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
+	};
+
+	/*
+	 * Checks dependent bindings for updates and delegates to
+	 * {@link sap.ui.model.ListBinding#checkUpdate}.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataListBinding.prototype.checkUpdate = function () {
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.checkUpdate();
+		});
+		return ListBinding.prototype.checkUpdate.apply(this);
 	};
 
 	/**

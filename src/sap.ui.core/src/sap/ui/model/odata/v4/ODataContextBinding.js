@@ -308,6 +308,25 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/*
+	 * Checks dependent bindings for updates and delegates to
+	 * {@link sap.ui.model.ContextBinding#checkUpdate}.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataContextBinding.prototype.checkUpdate = function () {
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.checkUpdate();
+		});
+		return ContextBinding.prototype.checkUpdate.apply(this);
+	};
+
 	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.

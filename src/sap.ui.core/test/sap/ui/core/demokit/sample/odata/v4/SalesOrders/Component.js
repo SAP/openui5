@@ -96,6 +96,9 @@ sap.ui.define([
 					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_0.json"
 					},
+					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=Product/ProductID%20eq%20'HT-1001'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_0_changedFilter.opa.json"
+					},
 					"SalesOrderList('0500000001')?custom-option=value&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_1.json"
 					},
