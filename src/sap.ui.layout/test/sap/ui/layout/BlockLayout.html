@@ -23,10 +23,9 @@
 
 			var fnCreateForm = function () {
 				return new sap.ui.layout.form.SimpleForm({
-					minWidth: 1024,
-					maxContainerCols: 2,
 					editable: true,
 					backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+					layout: sap.ui.layout.form.SimpleFormLayout.GridLayout,
 					content: [
 						new sap.ui.core.Title({ // this starts a new group
 							text: "Editable Form"
@@ -131,6 +130,13 @@
 					content: [
 						new sap.ui.layout.BlockLayoutRow({
 							content: [
+								fnCreateCell(1, "Green is good for u"),
+								oCell4
+							],
+							accentCells: [oCell4]
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: [
 								oCell1,
 								oCell2,
 								fnCreateCell(2, "Custom", null, "Right")
@@ -145,13 +151,6 @@
 								fnCreateCell(1, "<Escaped?>")
 							],
 							accentCells: [oCell3]
-						}),
-						new sap.ui.layout.BlockLayoutRow({
-							content: [
-								fnCreateCell(1, "Green is good for u"),
-								oCell4
-							],
-							accentCells: [oCell4]
 						}),
 						new sap.ui.layout.BlockLayoutRow({
 							scrollable: true,
@@ -186,7 +185,7 @@
 					showNavButton: jQuery.device.is.phone,
 					navButtonText: "Back",
 					navButtonPress: function () {
-						app.backDetail();
+						sap.ui.getCore().byId("block-layout-demo").backDetail();
 					},
 					content: [oBlockLayout]
 				});
@@ -197,33 +196,29 @@
 					title: sBackground + " BlockLayout",
 					type: "Active",
 					press: function () {
-						app.toDetail("area-" + sBackground.toLowerCase());
+						sap.ui.getCore().byId("block-layout-demo").toDetail("area-" + sBackground.toLowerCase());
 					}
 				})
 			};
 
-			var i,
-					layoutTypes = ["Default", "Light", "Mixed", "Accent", "Dashboard"],
-					app = new sap.m.SplitApp();
+			var aLayoutTypes = ["Default", "Light", "Mixed", "Accent", "Dashboard"];
 
+			var aMasterPageItems = [],
+					aDetailPages = [];
 
-			var masterPage = new sap.m.Page({
-				title: "Navigation",
-				content: [new sap.m.List({items: []})]
+			aLayoutTypes.forEach(function (sLayoutType) {
+				aMasterPageItems.push(fnCreateListItem(sLayoutType));
+				aDetailPages.push(fnCreatePage(sLayoutType, fnCreateBlockLayout(sLayoutType, sTextLorem)));
 			});
 
-			app.addMasterPage(masterPage);
-
-			for (i = 0; i < layoutTypes.length; i++) {
-				masterPage.getContent()[0].addItem(fnCreateListItem(layoutTypes[i]));
-				app.addDetailPage(
-						fnCreatePage(layoutTypes[i],
-								fnCreateBlockLayout(layoutTypes[i], sTextLorem)
-						)
-				);
-			}
-
-			app.placeAt("content");
+			new sap.m.SplitApp({
+				id: "block-layout-demo",
+				masterPages: [new sap.m.Page({
+					title: "Navigation",
+					content: [new sap.m.List({items: aMasterPageItems})]
+				})],
+				detailPages: aDetailPages
+			}).placeAt("content");
 		});
 	</script>
 </head>
