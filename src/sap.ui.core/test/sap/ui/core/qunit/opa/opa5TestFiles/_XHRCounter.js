@@ -1,7 +1,8 @@
 sap.ui.define([
 	"unitTests/utils/loggerInterceptor",
-	"sap/ui/core/util/MockServer"
-], function (loggerInterceptor, MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/ui/Device"
+], function (loggerInterceptor, MockServer, Device) {
 
 	jQuery.sap.unloadResources("sap/ui/test/_XHRCounter.js", false, true, true);
 	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test._XHRCounter");
@@ -109,6 +110,11 @@ sap.ui.define([
 
 		var oSecondXhr = new XMLHttpRequest();
 		var fnSendAfterSinon = oSecondXhr.send;
+
+		if (Device.browser.firefox) {
+			fnSendBeforeSinon = fnSendBeforeSinon.toString();
+			fnSendAfterSinon = fnSendAfterSinon.toString();
+		}
 
 		assert.strictEqual(fnSendBeforeSinon, fnSendAfterSinon, "the xhr send function is reused");
 	});
