@@ -462,12 +462,18 @@ sap.ui.define([
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
+	 * If you want {@link #requestObject} to read fresh data, call
+	 * <code>oContext.getBinding().refresh()</code> first.
+	 *
 	 * @param {string} [sPath=""]
 	 *   A relative path within the JSON structure
 	 * @returns {Promise}
 	 *   A promise on the requested value
 	 *
 	 * @public
+	 * @see #getBinding
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
+	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestObject = function (sPath) {
