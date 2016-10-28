@@ -1040,6 +1040,7 @@ sap.ui.require([
 					undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
+			oRequestor.request("POST", "ActionImport('42')", "groupId", {}, {foo: "bar"}),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
 				oPostData, undefined, fnCancelPost).then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
@@ -1051,18 +1052,9 @@ sap.ui.require([
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
+		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
-				sinon.match({
-					method : "GET",
-					url : "Employees"
-				})
-			]).returns(Promise.resolve([
-				{responseText: "{}"},
-				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
-			]));
 		sinon.spy(oRequestor, "cancelChangeRequests");
 
 		// code under test
@@ -1073,8 +1065,24 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
 		sinon.assert.calledOnce(fnCancelPost);
-		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
+		sinon.assert.calledWithExactly(oRequestor.cancelChangeRequests, sinon.match.func,
+			"groupId");
+
+		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "POST",
+					url : "ActionImport('42')"
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			]).returns(Promise.resolve([{}, {}]));
+
 		oRequestor.submitBatch("groupId");
 
 		return oPromise;
