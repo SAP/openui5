@@ -7,17 +7,17 @@
 // [Label "Brand Color"]
 // [Description "The color which builds your brand"]
 // [Tags "Quick", "Base", "Color"]
-@sapBrandColor: #427cac;
+@sapBrandColor: @sapPrimary2;
 
 // [Label "Highlight Color"]
 // [Description "The color which is used to highlight screen elements"]
 // [Tags "Quick", "Base", "Content", "Color"]
-@sapHighlightColor: #427cac;
+@sapHighlightColor: @sapBrandColor;
 
 // [Label "Base Color"]
 // [Description "The color which is used to derive the most dominant background colors"]
 // [Tags "Quick", "Base", "Color"]
-@sapBaseColor: #eff4f9;
+@sapBaseColor: @sapPrimary3;
 
 // [Label "Shell Header Color"]
 // [Description "The color of the shell header bar"]
@@ -26,12 +26,12 @@
 
 // [Description "The default background color of this theme"]
 // [Tags "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: #fafafa;
+@sapBackgroundColorDefault: @sapPrimary5;
 
 // [Label "Background Color"]
 // [Description "The main background color of the screen"]
 // [Tags "Quick", "Base", "Color"]
-@sapBackgroundColor: #fafafa;
+@sapBackgroundColor: @sapPrimary5;
 
 // [Label "Font Family"]
 // [Description "The preferred font family"]
@@ -46,7 +46,7 @@
 // [Label "Text Color"]
 // [Description "The preferred text color"]
 // [Tags "Quick", "Base", "Content", "Color", "Font"]
-@sapTextColor: #333;
+@sapTextColor: @sapPrimary7;
 
 // [Label "Link Color"]
 // [Description "The color of the link text"]
@@ -201,7 +201,7 @@
 // [Label "Content Icon Color"]
 // [Description "The color of icons."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_IconColor: darken(@sapPrimary2, 10);
+@sapContent_IconColor: darken(@sapHighlightColor, 10);
 
 // [Label "Content Icon Contrast Color"]
 // [Description "The alternative icon color switched to by a threshold to keep contrast for icons."]
@@ -296,7 +296,7 @@
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
 // [Tags "Base", "Shell", "Color"]
-@sapShell_Background: #c8d9e7;
+@sapShell_Background: darken(desaturate(@sapBaseColor,6),11);
 
 // [Label "Shell Background Image/Gradient"]
 // [Description "The background image or gradient of the shell."]
@@ -331,7 +331,7 @@
 // [Label "Shell Text Color"]
 // [Description "The color of texts in the shell."]
 // [Tags "Base", "Shell", "Color", "Font"]
-@sapShell_TextColor: darken(@sapPrimary2, 10); // no contrast function allowed because background can be gradient
+@sapShell_TextColor: darken(@sapBrandColor, 10); // no contrast function allowed because background can be gradient
 
 // [Label "Shell Favicon"]
 // [Description "The URI to the favorite or shortcut icon displayed for the shell."]
@@ -361,7 +361,7 @@
 // [Label "Button Text Color"]
 // [Description "The color of texts on buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_TextColor: contrast(@sapButton_Background, darken(@sapPrimary2, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); //should be #346187
+@sapButton_TextColor: contrast(@sapButton_Background, darken(@sapHighlightColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); //should be #346187
 
 // [Label "Button Hover Background Color"]
 // [Description "The background color of buttons on hover."]
@@ -376,12 +376,12 @@
 // [Label "Button Hover Text Color"]
 // [Description "The color of texts on buttons on hover."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, darken(@sapPrimary2, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, darken(@sapHighlightColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Emphasized_Background: lighten(saturate(@sapPrimary2, 10), 10);
+@sapButton_Emphasized_Background: lighten(saturate(@sapHighlightColor, 10), 10);
 
 // [Label "Emphasized Button Border Color"]
 // [Description "The border color of emphasized buttons."]
