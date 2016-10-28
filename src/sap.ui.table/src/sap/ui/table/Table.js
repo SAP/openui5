@@ -801,7 +801,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableTr");
 			for (var i = 0; i < aRowItems.length; i++) {
 				aRowItems[i].style.height = sRowHeight;
 			}
@@ -813,19 +813,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._resetColumnHeaderHeights = function() {
-
 		if (this.getColumnHeaderHeight()) {
 			return; // height is set fixed in renderer
 		}
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aRowItems = oDomRef.querySelectorAll("tr.sapUiColHdrTr");
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableColHdrTr");
 			for (var i = 0; i < aRowItems.length; i++) {
 				aRowItems[i].style.height = null;
 			}
 		}
-
 	};
 
 	/**
