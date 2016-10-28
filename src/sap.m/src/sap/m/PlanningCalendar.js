@@ -1374,8 +1374,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	function _handleTodayPress(oEvent) {
+		var oDate = new Date(),
+			oStartDate;
 
-		this.setStartDate(new Date());
+		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.Week) {
+			//clicking of today in week view should not point to the current hour, but to the one defined by app. developer
+			oStartDate = this.getStartDate();
+			oDate.setHours(oStartDate.getHours());
+			oDate.setMinutes(oStartDate.getMinutes());
+			oDate.setSeconds(oStartDate.getSeconds());
+		}
+		this.setStartDate(oDate);
 		this.fireStartDateChange();
 
 	}
