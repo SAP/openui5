@@ -122,9 +122,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Enables/Disables the Edit button.
-				 * If the value is true, the Edit button is enabled and the edit function can be used.
-				 * If the value is false, the edit function is not available.
+				 * Enables/Disables the Delete button.
+				 * If the value is true, the Delete button is enabled and the delete function can be used.
+				 * If the value is false, the delete function is not available.
 				 */
 				enableDelete : {
 					type : "boolean",
