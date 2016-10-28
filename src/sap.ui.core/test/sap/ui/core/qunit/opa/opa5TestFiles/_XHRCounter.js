@@ -75,6 +75,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should return that there is an open xhr when 1 of 2 request have been responded", function (assert) {
+		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
 		createAndSendXHR("/foo");
 		createAndSendXHR("/bar");
 		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
@@ -149,6 +150,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
+		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
 		var oXHR1 = createAndSendXHR("/foo");
 		var oXHR2 = createAndSendXHR("/bar");
 		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
@@ -159,6 +161,12 @@ sap.ui.define([
 		var oSecondRequestPromise = whenRequestDone(oXHR2);
 		var oFirstRequestDone = Promise.race([oFirstRequestPromise, oSecondRequestPromise]);
 		oFirstRequestDone.then(function () {
+			if (false && Device.browser.msie) {
+				// Promise race is behaving differently in IE 11:
+				// it gets resolved when the first request is done, but the second request arrives before the then of the promise is called
+				// since the polyfill we use seems to not completely work the same way...
+				return;
+			}
 			assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
 		});
 		// both done
