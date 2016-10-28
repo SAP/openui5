@@ -9,6 +9,7 @@
 	<script
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-language="en"
 			data-sap-ui-libs="sap.m">
 	</script>
 
@@ -28,11 +29,13 @@
 			"sap/ui/test/actions/EnterText",
 			"sap/m/Input",
 			"sap/m/SearchField",
+			"sap/m/DatePicker",
 			"sap/m/TextArea"
 		], function(
 				EnterText,
 				Input,
 				SearchField,
+				DatePicker,
 				TextArea)
 		{
 			"use strict";
@@ -49,7 +52,18 @@
 				changeEvent: "change",
 				liveChangeEventParameter: "value",
 				changeEventParameter: "value"
-			},{
+			}, {
+				Control: DatePicker,
+				textInControl: "1",
+				textToEnter: "1/12/15",
+				changeEvent: "change",
+				changeEventParameter: "value"
+			}, {
+				// something invalid
+				Control: DatePicker,
+				changeEvent: "change",
+				changeEventParameter: "value"
+			}, {
 				Control: TextArea,
 				changeEvent: "change",
 				liveChangeEventParameter: "value",
@@ -61,18 +75,20 @@
 				changeEventParameter: "query"
 			}].forEach(function (testInfo) {
 				var oControl,
-					iLiveChangeCalls,
 					fnChangeTriggered,
 					fnLiveChangeTriggered,
 					fnOnSapFocusInSpy,
 					fnOnSapFocusLeaveSpy;
 
+
+				var sTextToEnter = testInfo.textToEnter || "foO";
+				var sTextInControl = testInfo.textInControl || "A";
+
 				function createControl () {
 					// Arrange
 					oControl = new testInfo.Control({
-								value: "A"
+								value: sTextInControl
 							});
-					iLiveChangeCalls = 0;
 					fnChangeTriggered = assert.async();
 					fnLiveChangeTriggered = assert.async();
 
@@ -95,36 +111,45 @@
 					return oControl;
 				}
 
-				QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
-					this.oControl = createControl();
+				function checkLiveChange (bClearValue) {
+					var sStartValue = bClearValue ? "" : sTextInControl,
+						sValueToCheck = sStartValue,
+						iLiveChangeCalls = 0;
 
-					// System under Test
-					var oEnterTextAction = new EnterText({
-						text: "foO",
-						clearTextFirst: false
-					});
-
-					oControl.attachLiveChange(function (oEvent) {
+					return function (oEvent) {
+						var iLiveChangeCharPosition = bClearValue ? iLiveChangeCalls - 1 : iLiveChangeCalls;
+						sValueToCheck += sTextToEnter.charAt(iLiveChangeCharPosition) || "";
 						iLiveChangeCalls++;
 						sinon.assert.calledOnce(fnOnSapFocusInSpy);
 						sinon.assert.notCalled(fnOnSapFocusLeaveSpy);
 
-						if (iLiveChangeCalls === 1) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Af");
-						}
+						assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), sValueToCheck);
 
-						if (iLiveChangeCalls === 2) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Afo");
-						}
-
-						if (iLiveChangeCalls === 3) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "AfoO");
+						if (iLiveChangeCalls === (sTextToEnter.length - sStartValue.length)) {
 							fnLiveChangeTriggered();
 						}
-					}, this);
+					}
+				}
+
+				function testBody (assert, bClearText) {
+					this.oControl = createControl();
+
+					// System under Test
+					var oEnterTextAction = new EnterText({
+						text: sTextToEnter,
+						clearTextFirst: bClearText
+					});
+
+					if (testInfo.liveChangeEventParameter) {
+						oControl.attachLiveChange(checkLiveChange(bClearText), this);
+					} else {
+						fnLiveChangeTriggered();
+					}
 
 					oControl.attachEvent(testInfo.changeEvent, function (oEvent) {
-						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), "AfoO", "Change event was correct");
+						var sExpected = bClearText ? "" : sTextInControl;
+						sExpected += sTextToEnter;
+						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), sExpected, "Change event was correct");
 
 						setTimeout(function () {
 							sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
@@ -134,50 +159,14 @@
 
 					// Act
 					oEnterTextAction.executeOn(oControl);
+				}
+
+				QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
+					testBody.call(this, assert, false);
 				});
 
 				QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
-					// Arrange
-					this.oControl = createControl();
-
-					// System under Test
-					var oEnterTextAction = new EnterText({
-						text: "foO"
-					});
-
-					oControl.attachLiveChange(function (oEvent) {
-						iLiveChangeCalls++;
-						sinon.assert.calledOnce(fnOnSapFocusInSpy);
-						sinon.assert.notCalled(fnOnSapFocusLeaveSpy);
-
-						if (iLiveChangeCalls === 1) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "");
-						}
-
-						if (iLiveChangeCalls === 2) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "f");
-						}
-
-						if (iLiveChangeCalls === 3) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "fo");
-						}
-
-						if (iLiveChangeCalls === 4) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "foO");
-							fnLiveChangeTriggered();
-						}
-					}, this);
-
-					oControl.attachEvent(testInfo.changeEvent, function (oEvent) {
-						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), "foO");
-						setTimeout(function () {
-							sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
-							fnChangeTriggered();
-						},0);
-					});
-
-					// Act
-					oEnterTextAction.executeOn(oControl);
+					testBody.call(this, assert, true);
 				});
 
 			});
