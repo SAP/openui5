@@ -397,6 +397,7 @@ sap.ui.require([
 			return Promise.all([oCacheProxy.promise, oCacheProxy.read("$auto", "foo")])
 				.then(function (aResult) {
 					assert.strictEqual(aResult[0], oCache);
+					assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
 					assert.strictEqual(aResult[1], oReadResult);
 			});
 		});
