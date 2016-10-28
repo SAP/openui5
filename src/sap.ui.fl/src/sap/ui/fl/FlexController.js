@@ -333,7 +333,10 @@ sap.ui.define([
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 
 		if (!oChangeHandler) {
-			throw (new Error("A change handler for the given change type does not exist."));
+			if (oChange && oControl) {
+				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
+			}
+			return;
 		}
 
 		var aCustomData = oModifier.getAggregation(oControl, "customData") || [];
@@ -352,7 +355,13 @@ sap.ui.define([
 		});
 
 		if (aAppliedChanges.indexOf(sChangeId) === -1) {
-			oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+			try {
+				oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+			} catch (ex) {
+				this._setMergeError(true);
+				Utils.log.error("Change could not be applied. Merge error detected.");
+				throw ex;
+			}
 
 			if (oAppliedChangeCustomData) {
 				oModifier.setProperty(oAppliedChangeCustomData, "value", sAppliedChanges + "," + sChangeId);
@@ -392,7 +401,7 @@ sap.ui.define([
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 		if (!oChangeHandler) {
 			if (oChange && oControl) {
-				Utils.log.warning("Change handler implementation for change not found - Change ignored");
+				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			}
 			return;
 		}
@@ -584,10 +593,7 @@ sap.ui.define([
 		var oManifest = oComponent.getManifestObject();
 		ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 			.then(function(fnGetChangesMap) {
-				var mChanges = fnGetChangesMap();
-				if (Object.keys(mChanges).length !== 0) {
-					oComponent.addPropagationListener(FlexController.applyChangesOnControl.bind(this, fnGetChangesMap, oComponent));
-				}
+				oComponent.addPropagationListener(FlexController.applyChangesOnControl.bind(this, fnGetChangesMap, oComponent));
 			}
 		);
 	};

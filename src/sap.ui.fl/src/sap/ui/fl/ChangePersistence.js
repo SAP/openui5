@@ -19,7 +19,7 @@ sap.ui.define([
 	 */
 	var ChangePersistence = function(sComponentName, oLrepConnector) {
 		this._sComponentName = sComponentName;
-		this._mChanges = undefined;
+		this._mChanges = {};
 
 		if (!this._sComponentName) {
 			Utils.log.error("The Control does not belong to a SAPUI5 component. Personalization and changes for this control might not work as expected.");
@@ -126,10 +126,6 @@ sap.ui.define([
 			var sSelectorId = oSelector.id;
 			if (oSelector.idIsLocal) {
 				sSelectorId = oComponent.createId(sSelectorId);
-			}
-
-			if (!this._mChanges) {
-				this._mChanges = {};
 			}
 
 			if (!this._mChanges[sSelectorId]) {
