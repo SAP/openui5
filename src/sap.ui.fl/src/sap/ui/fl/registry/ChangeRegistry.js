@@ -360,6 +360,7 @@ sap.ui.define([
 				jQuery.each(oControlReg, function(sChangeType, oRegistryItem) {
 					var bIsChangeTypeEnabled = that._oSettings.isChangeTypeEnabled(sChangeType, sLayer);
 					if (!bIsChangeTypeEnabled) {
+						Utils.log.warning("Change type " + sChangeType + " not enabled for layer " + sLayer);
 						delete oControlReg[sChangeType];
 					}
 				});

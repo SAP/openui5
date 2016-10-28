@@ -85,31 +85,27 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		this.oFlexController.applyChange(null, null);
 	});
 
-	QUnit.test('createAndApplyChange shall crash if no change handler can be found', function (assert){
+	QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert){
 
+		var oUtilsLogStub = this.stub(Utils.log, "warning");
+		var exceptionThrown = false;
 		var oChangeSpecificData = {};
+		var oControlType = {};
 		var oControl = {};
+		var oChange = {};
+
 		this.stub(this.oFlexController, "_getChangeHandler").returns(undefined);
-
-		assert.throws(function(){
-			this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
-		}.bind(this));
-	});
-
-	QUnit.test('createAndApplyChange shall crash if no change handler can be found', function (assert){
-
-		var exceptionThrown;
-		var oChangeSpecificData = {};
-		var oControl = {};
-		this.stub(this.oFlexController, "_getChangeHandler").returns(undefined);
+		this.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
+		this.stub(this.oFlexController, "addChange").returns(oChange);
 
 		try {
 			this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
 		} catch (ex) {
-			exceptionThrown = ex;
+			exceptionThrown = true;
 		}
 
-		assert.ok(exceptionThrown, "Exception thrown");
+		assert.equal(exceptionThrown, false, "no exception was thrown");
+		assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
 	});
 
 	QUnit.test('_resolveGetChangesForView does not crash, if change can be created and applied', function (assert){
