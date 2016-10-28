@@ -6,12 +6,10 @@ sap.ui.define([
 
 		Opa5.createPageObjects({
 			onTheProduct: {
-
+				viewName: "Product",
 				actions: {
-
 					iAddTheDisplayedProductToTheCart: function () {
 						return this.waitFor({
-							viewName: "Product",
 							controlType: "sap.m.Button",
 							matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://add"}),
 							actions : new Press(),
