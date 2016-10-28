@@ -48,7 +48,7 @@ sap.ui.define([
 			// function is wrapped in QUnits onerror function the exception needs to be thrown in a setTimeout
 			// to make sure the QUnit onerror can run to the end
 			setTimeout(function () {
-				throw "OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine;
+				throw new Error("OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine);
 			}, 0);
 			return vReturnValue;
 		};
