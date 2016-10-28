@@ -335,6 +335,7 @@ sap.ui.define([
 							oBinding.mCacheByContext[sCanonicalPath]
 							|| fnCreateCache(sCanonicalPath, aResult[1])
 						: fnCreateCache(sCanonicalPath, aResult[1]);
+					oCache.$canonicalPath = sCanonicalPath;
 					return oCache;
 				});
 

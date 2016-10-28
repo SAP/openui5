@@ -160,6 +160,11 @@ sap.ui.require([
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
 			When.onTheMainPage.sortByGrossAmount();
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+			// Proper update of details on second sort (selection is kept)
+			When.onTheMainPage.selectFirstSalesOrder();
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortByGrossAmount();
+			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
 		}
 
 		if (!bRealOData) {
