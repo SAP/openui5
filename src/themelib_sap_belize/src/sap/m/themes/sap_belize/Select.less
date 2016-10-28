@@ -39,7 +39,7 @@
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
 	.sapMSltLabel, .sapMSltIcon {
 		outline-offset: -3px;
 		outline: @sapUiContentFocusColor dotted 1px;
@@ -52,7 +52,7 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
+	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
 		.sapMSltLabel {
 			&:before {
 				content: " ";
