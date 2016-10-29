@@ -160,7 +160,14 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * As <code>sap.ui.core.Element</code> "bubbles up" the invalidate, changes to children
 	 * potentially result in rerendering of the whole sub tree.
 	 *
-	 * @param {object} oOrigin
+	 * The <code>oOrigin</code> parameter was introduced to allow parent controls to limit
+	 * their rerendering to certain areas that have been invalidated by their children.
+	 * As there is no strong guideline for control developers to provide the parameter, it is
+	 * not a reliable source of information. It is therefore not recommended in general to use
+	 * it, only in scenarios where a control and its descendants know each other very well
+	 * (e.g. complex controls where parent and children have the same code owner).
+	 *
+	 * @param {sap.ui.core.ManagedObject} [oOrigin] Child control for which the method was called
 	 * @protected
 	 */
 	Control.prototype.invalidate = function(oOrigin) {
