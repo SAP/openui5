@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 		/**
 		 * Loads the included CSS and JavaScript resources. The resources will be
-		 * resoloved relative to the component location.
+		 * resolved relative to the component location.
 		 *
 		 * @private
 		 */

@@ -10,23 +10,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	/**
 	 * Creates and initializes a new control with the given <code>sId</code> and settings.
 	 *
-	 * The set of allowed entries in the <code>mSettings</code> object depends on the concrete
-	 * subclass and is described there. See {@link sap.ui.core.Element} for a general description of this
-	 * argument.
-	 *
-	 * The settings supported by Control are:
-	 * <ul>
-	 * <li>Properties
-	 * <ul>
-	 * <li>{@link #getBusy busy} : boolean (default: false)</li>
-	 * <li>{@link #getBusyIndicatorDelay busyIndicatorDelay} : int (default: 1000)</li>
-	 * </ul>
-	 * </li>
-	 * </ul>
-	 *
-	 * @param {string} [sId] optional id for the new control; generated automatically if no non-empty id is given
+	 * @param {string} [sId] Optional ID for the new control; generated automatically if no non-empty ID is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
-	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new control
+	 * @param {object} [mSettings] Object with initial settings for the new control
 	 * @public
 	 *
 	 * @class Base Class for Controls.
@@ -326,18 +312,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * Allows binding handlers for any native browser event to the root HTML element of this Control. This internally handles
 	 * DOM element replacements caused by re-rendering.
 	 *
-	 * IMPORTANT:
+	 * <b>IMPORTANT:</b></br>
 	 * This should be only used as FALLBACK when the Control events do not cover a specific use-case! Always try using
 	 * SAPUI5 control events, as e.g. accessibility-related functionality is then provided automatically.
-	 * E.g. when working with a sap.ui.commons.Button, always use the Button's "press" event, not the native "click" event, because
+	 * E.g. when working with a <code>sap.ui.commons.Button</code>, always use the Button's "press" event, not the native "click" event, because
 	 * "press" is also guaranteed to be fired when certain keyboard activity is supposed to trigger the Button.
 	 *
-	 * In the event handler, "this" refers to the Control - not to the root DOM element like in jQuery. While the DOM element can
+	 * In the event handler, <code>this</code> refers to the Control - not to the root DOM element like in jQuery. While the DOM element can
 	 * be used and modified, the general caveats for working with SAPUI5 control DOM elements apply. In particular the DOM element
 	 * may be destroyed and replaced by a new one at any time, so modifications that are required to have permanent effect may not
-	 * be done. E.g. use Control.addStyleClass() instead if the modification is of visual nature.
+	 * be done. E.g. use {@link Control.prototype.addStyleClass} instead if the modification is of visual nature.
 	 *
-	 * Use detachBrowserEvent() to remove the event handler(s) again.
+	 * Use {@link #detachBrowserEvent} to remove the event handler(s) again.
 	 *
 	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
 	 * @param {function} [fnHandler] A function to execute each time the event is triggered.
@@ -385,7 +371,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *
 	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
 	 * @param {function} [fnHandler] The function that is to be no longer executed.
-	 * @param {object} [oListener] The context object that was given in the call to attachBrowserEvent.
+	 * @param {object} [oListener] The context object that was given in the call to <code>attachBrowserEvent</code>.
 	 * @public
 	 */
 	Control.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
@@ -859,7 +845,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * If <code>vFieldGroupIds</code> is not given it checks whether at least one field group ID is given for this control.
 	 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
 	 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
-	 * The comma delimiter can be used to seperate multiple field group IDs in one string.
+	 * The comma delimiter can be used to separate multiple field group IDs in one string.
 	 *
 	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 	 * @return {boolean} true if a field group ID matches
@@ -888,11 +874,13 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	};
 
 	/**
-	 * Triggers the validateFieldGroup event for this control.
-	 * Called by sap.ui.core.UIArea if a field group should be validated after is loses the focus or a validation key combibation was pressed.
-	 * The validation key is defined in the UI area <code>UIArea._oFieldGroupValidationKey</code>
+	 * Triggers the <code>validateFieldGroup</code> event for this control.
 	 *
-	 * See {@link sap.ui.core.Control#attachValidateFieldGroup}.
+	 * Called by <code>sap.ui.core.UIArea</code> if a field group should be validated after it lost
+	 * the focus or when the key combination was pressed that was configured to trigger validation
+	 * (defined in the UI area member <code>UIArea._oFieldGroupValidationKey</code>).
+	 *
+	 * See {@link #attachValidateFieldGroup}.
 	 *
 	 * @public
 	 */

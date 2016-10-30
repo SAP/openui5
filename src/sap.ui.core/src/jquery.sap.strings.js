@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * Placeholders have the form <code>{ integer }</code>, where any occurrence of
 	 * <code>{0}</code> is replaced by the value with index 0 in <code>aValues</code>,
-	 * <code>{1}</code> y the value with index 1 in <code>aValues</code> etc.
+	 * <code>{1}</code> by the value with index 1 in <code>aValues</code> etc.
 	 *
 	 * To avoid interpretation of curly braces as placeholders, any non-placeholder fragment
 	 * of the pattern can be enclosed in single quotes. The surrounding single quotes will be
@@ -242,10 +242,10 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * Example Pattern Strings:
 	 * <pre>
-	 *   jQuery.sap.formatMessage("Say {0}", ["Hello"]) -> "Say Hello"  // normal use case
-	 *   jQuery.sap.formatMessage("Say '{0}'", ["Hello"]) -> "Say {0}"  // escaped placeholder
-	 *   jQuery.sap.formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'" // doubled single quote
-	 *   jQuery.sap.formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'" // doubled single quote in quoted fragment
+	 *   jQuery.sap.formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
+	 *   jQuery.sap.formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
+	 *   jQuery.sap.formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
+	 *   jQuery.sap.formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
 	 * </pre>
 	 *
 	 * In contrast to java.util.MessageFormat, format types or format styles are not supported.
