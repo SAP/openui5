@@ -238,9 +238,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getCombinedDateTimePattern: function(sDateStyle, sTimeStyle, sCalendarType) {
 			jQuery.sap.assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
 			jQuery.sap.assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
-			var sDateTimePattern = this.getDateTimePattern(sDateStyle),
-				sDatePattern = this.getDatePattern(sDateStyle),
-				sTimePattern = this.getTimePattern(sTimeStyle);
+			var sDateTimePattern = this.getDateTimePattern(sDateStyle, sCalendarType),
+				sDatePattern = this.getDatePattern(sDateStyle, sCalendarType),
+				sTimePattern = this.getTimePattern(sTimeStyle, sCalendarType);
 			return sDateTimePattern.replace("{0}", sTimePattern).replace("{1}", sDatePattern);
 		},
 
