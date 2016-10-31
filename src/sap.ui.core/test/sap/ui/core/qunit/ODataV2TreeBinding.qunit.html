@@ -2182,6 +2182,17 @@
 		});
 	});
 
+	module("ODataTreeBinding - General Databinding", {
+		setup: function() {
+			oAnnotationMockServer.start();
+			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
+		},
+		teardown: function() {
+			oAnnotationMockServer.stop();
+			delete oModel;
+		}
+	});
+
 	asyncTest("Relative Binding", function() {
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("Result", null, null, {
@@ -2254,11 +2265,61 @@
 				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
 
-				// reset context
-				// This call previously produced an error!
-				oBinding.setContext(null);
+				start();
+			};
+
+			// binding is relative?
+			ok(oBinding.isRelative(), "Binding is relative");
+
+			// initial check without a context set
+			oBinding.attachChange(handler0);
+			var aRootContexts = oBinding.getRootContexts();
+			deepEqual(aRootContexts, [], "Initial root context call has no return value without a context");
+
+			// set context for the binding to make it absolute
+			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
+			oModel.createBindingContext(sContextPath, null, function (oCreatedContext) {
+				oBinding.setContext(oCreatedContext);
+			});
+
+		});
+	});
+
+	asyncTest("Relative Binding - setContext(undefined)", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("Result", null, null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+
+			var oContext;
+
+			// Change-Handler for the setContext call
+			var handler0 = function () {
+				oBinding.detachChange(handler0);
+
+				oBinding.attachChange(handler1);
+				oBinding.getRootContexts();
+			};
+
+			// Change-Handler for the data-request
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+
+				// Simple checks
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+
+				// Explicit check if setting the context to undefined breaks the binding
 				oBinding.setContext(undefined);
-				
+
 				start();
 			};
 
