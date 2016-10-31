@@ -461,12 +461,12 @@
 
 		});
 
-		QUnit.test("metadata v2 with cacheToken", function(assert) {
+		QUnit.test("metadata v2 with cacheTokens", function(assert) {
 
 			this.oComponent = sap.ui.component({
 				name: "sap.ui.test.v2models.parent",
 				asyncHints: {
-					cacheToken: {
+					cacheTokens: {
 						dataSources: {
 							"/path/to/odata/service": "1476971059",
 							"/path/to/odata/service/with/trailing/slash/": "1476971462",
@@ -1412,7 +1412,7 @@
 			}.bind(this));
 		});
 
-		QUnit.test("Early model instantiation (with cacheToken)", function(assert) {
+		QUnit.test("Early model instantiation (with cacheTokens)", function(assert) {
 
 			this.stubGetUriParameters();
 
@@ -1420,7 +1420,7 @@
 				manifestUrl: "/anylocation/manifest.json",
 				async: true,
 				asyncHints: {
-					cacheToken: {
+					cacheTokens: {
 						dataSources: {
 							"/path/to/odata/service1": "1476348072",
 							"/path/to/odata/service2": "1476361076",
