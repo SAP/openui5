@@ -218,9 +218,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			}
 
-			if (mSettings && typeof mSettings._cacheToken === "object") {
-				this._mCacheToken = mSettings._cacheToken;
-				delete mSettings._cacheToken;
+			if (mSettings && typeof mSettings._cacheTokens === "object") {
+				this._mCacheTokens = mSettings._cacheTokens;
+				delete mSettings._cacheTokens;
 			}
 
 			// registry of models from manifest
@@ -704,7 +704,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			dataSources: mDataSources,
 			component: this,
 			mergeParent: true,
-			cacheToken: this._mCacheToken
+			cacheTokens: this._mCacheTokens
 		});
 
 		if (!mAllModelConfigurations) {
@@ -980,7 +980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var oComponent = mOptions.component;
 		var oManifest = mOptions.manifest || oComponent.getManifestObject();
 		var bMergeParent = mOptions.mergeParent;
-		var mCacheToken = mOptions.cacheToken || {};
+		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.toString() : oManifest.getComponentName();
 
 		if (!mOptions.models) {
@@ -1078,8 +1078,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						oModelConfig.uri = oDataSource.uri;
 						bIsDataSourceUri = true;
 
-						if (mCacheToken.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
-							var sCacheToken = mCacheToken.dataSources[oDataSource.uri];
+						if (mCacheTokens.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+							var sCacheToken = mCacheTokens.dataSources[oDataSource.uri];
 							if (sCacheToken) {
 
 								// Lazy initialize settings and metadataUrlParams objects
@@ -1131,8 +1131,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 							var oAnnotationUri = new URI(oAnnotation.uri);
 
-							if (mCacheToken.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
-								var sCacheToken = mCacheToken.dataSources[oAnnotation.uri];
+							if (mCacheTokens.dataSources && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+								var sCacheToken = mCacheTokens.dataSources[oAnnotation.uri];
 								if (sCacheToken) {
 
 									// set sapbc cache token (override existing value)
@@ -1473,7 +1473,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			var oInstance = new oClass(jQuery.extend({}, mSettings, {
 				id: sId,
 				componentData: oComponentData,
-				_cacheToken: vConfig.asyncHints && vConfig.asyncHints.cacheToken
+				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens
 			}));
 			jQuery.sap.assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
@@ -1855,7 +1855,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						dataSources: oManifestDataSources,
 						manifest: oManifest,
 						componentData: oConfig.componentData,
-						cacheToken: hints.cacheToken
+						cacheTokens: hints.cacheTokens
 					});
 
 					if (mAllModelConfigurations) {
