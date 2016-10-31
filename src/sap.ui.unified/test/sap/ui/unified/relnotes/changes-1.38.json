@@ -353,6 +353,12 @@
         "type": "FIX",
         "text": "sap.ui.unified.Currency: Correct alignment in RTL",
         "references": []
+      },
+      {
+        "id": "3593a776b0b07be9c71e06732279cc188959bd9d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
       }
     ]
   }
