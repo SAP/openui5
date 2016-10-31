@@ -31,24 +31,27 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 	MultiInputRenderer.openInputTag = function(oRm, oControl) {
 
-		if (oControl.getEnableMultiLineMode() || oControl._bUseDialog){
+		oRm.write('<div id="' + oControl.getId() + '-border"');
+		oRm.addClass('sapMMultiInputBorder');
+
+		if (oControl.getEnableMultiLineMode() || oControl._bUseDialog ) {
 
 			oControl._isMultiLineMode = true;
 
-			// add multi-line css to the boarder if the multi-line mode is on
-			if ( !oControl._bUseDialog && oControl._bShowIndicator === false ) {
-				oRm.write("<div id=\"" + oControl.getId() + "-border\" class=\"sapMMultiInputBorder sapMMultiInputMultiModeBorder\">");
+			if (oControl.getEditable()) {
+				// add multi-line css to the border if the multi-line mode is on
+				if ( !oControl._bUseDialog && oControl._bShowIndicator === false ) {
+					oRm.addClass('sapMMultiInputMultiModeBorder');
+				} else {
+					oControl._showIndicator();
+				}
 			} else {
-				oControl._showIndicator();
-
-				//render the single line
-				oRm.write("<div id=\"" + oControl.getId() + "-border\" class=\"sapMMultiInputBorder\">");
+				oControl._showAllTokens();
 			}
-
-		} else {
-			oRm.write("<div id=\"" + oControl.getId() + "-border\" class=\"sapMMultiInputBorder\">");
-
 		}
+
+		oRm.writeClasses();
+		oRm.write('>');
 
 		MultiInputRenderer._renderTokens(oRm, oControl);
 		MultiInputRenderer._renderInput(oRm, oControl);
@@ -89,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	};
 
 	MultiInputRenderer.addInnerStyles = function(oRm, oControl) {
-		if (oControl._bUseDialog && oControl.getTokens().length > 1) {
+		if (oControl._isMultiLineMode && oControl._bShowIndicator === true && oControl.getTokens().length > 1) {
 			oRm.addStyle("opacity", 0);
 		}
 	};
