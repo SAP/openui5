@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sap.ui5.tools.maven.Version;
 
 public class MyReleaseButton {
 
@@ -56,9 +55,9 @@ public class MyReleaseButton {
   public static void getFileOSLocation(String libDatajsonLocation){
 	  jsonLocation = libDatajsonLocation;
   }
-  
-  public static boolean checkRelOperation(ReleaseOperation release){
-	  	return release == ReleaseOperation.MilestoneDevelopment || release == ReleaseOperation.MinorRelease;
+  //TODO Y1 RENAME
+  public static boolean checkForMilestoneOrPatchDev(ReleaseOperation release){
+	  	return release == ReleaseOperation.MilestoneDevelopment || release == ReleaseOperation.PatchDevelopment;
   }
     
   public static void fromJSONtoMap(String fileName, String filePath) throws FileNotFoundException{	  
@@ -255,7 +254,7 @@ public class MyReleaseButton {
     	
         processingTypes.add(ProcessingTypes.Sapui5CoreVersion);
       }
-      if(checkRelOperation(relOperation)){
+      if(checkForMilestoneOrPatchDev(relOperation)){
     	  processingTypes.add(ProcessingTypes.SAPUI5DocuVersion);
       }
     } else if (file.getName().endsWith(".library")) {
@@ -425,10 +424,15 @@ public class MyReleaseButton {
     toQ = newOSGiVersion;
     toR = newMavenVersion.endsWith("-SNAPSHOT") ? "/repositories/build.snapshots.unzip/" : "/repositories/build.milestones.unzip/";
     
-    if(checkRelOperation(relOperation)){
-       	toV = new Version(newVersion).nextVersion(ReleaseOperation.MilestoneDevelopment).toString();
-  	    toD = "[";
-  	    toD += newVersion.endsWith(SNAPSHOT_SUFFIX) ? newVersion + ",2.0.0-SNAPSHOT)" : newVersion + "-SNAPSHOT," + toV + ")";  
+    if(checkForMilestoneOrPatchDev(relOperation)){
+    	toD = "[";
+
+    	if (relOperation == ReleaseOperation.MilestoneDevelopment){
+    		 toD += new Version(newVersion).decreaseMinorSnapshot() + ",2.0.0-SNAPSHOT)";
+    	} else if(relOperation == ReleaseOperation.PatchDevelopment) {
+	    		toV = new Version(oldVersion).increaseMinorSnapshot().toString();
+	    		toD += new Version(oldVersion).milestoneSnapshotVersion() + "," + toV + ")";
+    	}
     }
 
     if (oldOSGiVersion.endsWith(".qualifier")) {

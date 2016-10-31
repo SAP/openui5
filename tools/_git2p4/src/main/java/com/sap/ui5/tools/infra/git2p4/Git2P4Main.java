@@ -329,7 +329,7 @@ public class Git2P4Main {
       contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, true));
     } else if (op.equals(ReleaseOperation.MinorRelease)){
     	Version fromRangeVersion = new Version(toVersion).previousMinor();
-    	Version toRangeVersion = new Version(toVersion).nextMinorSnapshot();
+    	Version toRangeVersion = new Version(toVersion).increaseMinorSnapshot();
     	versionRange = "[" + fromRangeVersion + "," + toRangeVersion + ")";
     	contributorsVersions.put("contributorsRange", versionRange);
     	contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, false));
