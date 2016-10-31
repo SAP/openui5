@@ -540,7 +540,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange) {
+		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
 			this.fireLiveChange({
 				value: sNewValue,
 				// backwards compatibility
@@ -718,7 +718,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange) {
+		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
 			this.fireLiveChange({
 				value: sNewValue,
 				// backwards compatibility
@@ -1091,6 +1091,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// setValue isn't used because here is too early to modify the lastValue of input
 		this._$input.val(sNewValue);
+
+		this.fireLiveChange({
+			value: sNewValue,
+			// backwards compatibility
+			newValue: sNewValue
+		});
 
 		// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 		this._sSelectedSuggViaKeyboard = sNewValue;
