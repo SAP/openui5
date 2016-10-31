@@ -55,7 +55,7 @@ public class MyReleaseButton {
   public static void getFileOSLocation(String libDatajsonLocation){
 	  jsonLocation = libDatajsonLocation;
   }
-  //TODO Y1 RENAME
+
   public static boolean checkForMilestoneOrPatchDev(ReleaseOperation release){
 	  	return release == ReleaseOperation.MilestoneDevelopment || release == ReleaseOperation.PatchDevelopment;
   }

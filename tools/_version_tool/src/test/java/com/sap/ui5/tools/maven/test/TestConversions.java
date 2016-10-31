@@ -106,7 +106,7 @@ public class TestConversions {
   public void testSnapshotToRelease() throws Exception {
     final String scenario = "SnapshotToRelease";
     String destPath = setup(scenario);
-    MyReleaseButton.setRelOperation(ReleaseOperation.MinorRelease);
+    MyReleaseButton.setRelOperation(ReleaseOperation.PatchRelease);
     MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0", "rel-0.10" });
     compare(scenario);
   }
@@ -116,8 +116,9 @@ public class TestConversions {
   public void testReleaseToSnapshot() throws Exception {
     final String scenario = "ReleaseToSnapshot";
     String destPath = setup(scenario);
-    MyReleaseButton.setRelOperation(ReleaseOperation.MilestoneDevelopment);
+    MyReleaseButton.setRelOperation(ReleaseOperation.PatchRelease);
     MyReleaseButton.main(new String[] { destPath, "0.10.0-SNAPSHOT", "0.10.0", "rel-0.10"  });
+    MyReleaseButton.setRelOperation(ReleaseOperation.MilestoneDevelopment);
     MyReleaseButton.main(new String[] { destPath, "0.10.0", "0.11.0-SNAPSHOT", "rel-0.10" });
     compare(scenario);
   }

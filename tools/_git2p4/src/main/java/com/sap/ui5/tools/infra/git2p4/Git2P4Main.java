@@ -3,6 +3,8 @@ package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -217,17 +219,12 @@ public class Git2P4Main {
     }
 
     if(op.equals(ReleaseOperation.MilestoneDevelopment)){
-    Runtime p = Runtime.getRuntime();
-
-    // Getting the location of the getSnapshotVersion.js file     
-   File fileLoc = new File("");
-   String sp = File.separator;      
-   String jsLocation = fileLoc.getAbsolutePath();   
-   jsLocation += sp +"tools" + sp +"_git2p4" + sp +"resources";  
-   MyReleaseButton.getFileOSLocation(jsLocation);
-   
-     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions  )   
-   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);
+    	Runtime p = Runtime.getRuntime();       
+	   String jsLocation = extractSnapshotVersionJs().getParent();	   
+	   MyReleaseButton.getFileOSLocation(jsLocation);	  
+	   
+	     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions  )
+	   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);	   
     }
     
     if ( guess && git2p4.interactive ) {
@@ -303,6 +300,15 @@ public class Git2P4Main {
 
     exitcode = suspiciousRepositories.size();
   }
+
+private static File extractSnapshotVersionJs() throws IOException {
+	File file = new File("getSnapshotVersion.js");
+    if (!file.exists()) {
+         InputStream link = (Git2P4Main.class.getClassLoader().getResourceAsStream("getSnapshotVersion.js"));
+         Files.copy(link, file.getAbsoluteFile().toPath());
+    }
+    return file.getAbsoluteFile();
+}
 
 
   private static Properties retrieveLatestVersions(String fromVersion, String toVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
