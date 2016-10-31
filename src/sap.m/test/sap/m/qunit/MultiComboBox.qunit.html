@@ -4289,6 +4289,68 @@
 		this.clock.reset();
 	});
 
+	module("Focus handling");
+
+	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", function(assert) {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: true,
+			phone: false,
+			tablet: true
+		});
+
+		var oButton = new sap.m.Button({
+			press: function() {
+				oMultiComboBox.invalidate();
+			}
+		}).placeAt("MultiComboBox-content"),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Example"
+					})
+				]
+			}).placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+
+		oButton.focus();
+		// we need to render the list once
+		oMultiComboBox.open();
+		this.clock.tick(500);
+		oMultiComboBox.close();
+		this.clock.tick(500);
+
+		oButton.firePress();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus should stay on the button");
+
+		oMultiComboBox.destroy();
+		oButton.destroy();
+	});
+
+	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', function(assert) {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content"),
+			oStub = sinon.stub(sap.m.MultiComboBox.prototype, "onfocusin");
+
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(500);
+
+		assert.ok(!oStub.called, "onfocusin of the MCB should not be triggered after dialog is opened");
+
+		oMultiComboBox.destroy();
+	});
+
 	module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
