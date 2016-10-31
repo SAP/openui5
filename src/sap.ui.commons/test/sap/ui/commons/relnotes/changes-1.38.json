@@ -354,6 +354,12 @@
         "type": "FIX",
         "text": "sap.ui.commons.Paginator: onsapenter is now handled",
         "references": []
+      },
+      {
+        "id": "340b7eeede369e9d9bbde1a3815591606c432bc3",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": []
       }
     ]
   }
