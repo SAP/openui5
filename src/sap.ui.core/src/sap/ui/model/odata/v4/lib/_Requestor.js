@@ -133,11 +133,14 @@ sap.ui.define([
 	 *   to be canceled (returns <code>true</code>) or not.
 	 * @param {string} [sGroupId]
 	 *   The group the change request is related to
+	 * @returns {boolean}
+	 *   Whether at least one request has been canceled
 	 *
 	 * @private
 	 */
 	Requestor.prototype.cancelChangeRequests = function (fnFilter, sGroupId) {
-		var that = this;
+		var bCanceled = false,
+			that = this;
 
 		function cancelGroupChangeRequests(sGroupId0) {
 			var aBatchQueue = that.mBatchQueue[sGroupId0],
@@ -157,6 +160,7 @@ sap.ui.define([
 					oError.canceled = true;
 					oChangeRequest.$reject(oError);
 					aChangeSet.splice(i, 1);
+					bCanceled = true;
 				}
 			}
 			deleteEmptyGroup(that, sGroupId0);
@@ -171,6 +175,7 @@ sap.ui.define([
 				cancelGroupChangeRequests(sGroupId);
 			}
 		}
+		return bCanceled;
 	};
 
 	/**
@@ -262,13 +267,18 @@ sap.ui.define([
 	 * @param {Promise} oPromise
 	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
 	 *   with property <code>canceled = true</code>.
+	 * @throws {Error}
+	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
 	 * @private
 	 */
 	Requestor.prototype.removePatch = function (oPromise) {
-		this.cancelChangeRequests(function (oChangeRequest) {
-			return oChangeRequest.$promise === oPromise;
-		});
+		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
+				return oChangeRequest.$promise === oPromise;
+			});
+		if (!bCanceled) {
+			throw new Error("Cannot reset the changes, the batch request is running");
+		}
 	};
 
 	/**
@@ -278,11 +288,16 @@ sap.ui.define([
 	 *   The ID of the group containing the request
 	 * @param {object} oBody
 	 *   The body of the request
+	 * @throws {Error}
+	 *   If the request is not in the queue, assuming that it has been submitted already
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		this.cancelChangeRequests(function (oChangeRequest) {
+		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
 			return oChangeRequest.body === oBody;
 		}, sGroupId);
+		if (!bCanceled) {
+			throw new Error("Cannot reset the changes, the batch request is running");
+		}
 	};
 
 	/**
