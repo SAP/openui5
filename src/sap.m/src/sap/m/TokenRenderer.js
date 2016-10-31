@@ -36,6 +36,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMTokenSelected");
 		}
 
+		if (!oControl.getEditable()) {
+			oRm.addClass("sapMTokenReadOnly");
+		}
+
 		oRm.writeClasses();
 
 		// add tooltip if available
