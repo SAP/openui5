@@ -563,6 +563,8 @@
 		QUnit.test("Media Query Handler - Tablet", function(assert) {
 			// Arrange
 			sap.ui.Device.system.tablet = true;
+			var isCombiDevice = sap.ui.Device.system.combi;
+			sap.ui.Device.system.combi = false; // Otherwise test fails on combi devices.
 
 			// Act
 			this.toolPage._mediaQueryHandler();
@@ -571,11 +573,14 @@
 			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Tablet mode");
 
 			sap.ui.Device.system.tablet = false;
+			sap.ui.Device.system.combi = isCombiDevice;
 		});
 
 		QUnit.test("Media Query Handler - Phone", function(assert) {
 			// Arrange
 			sap.ui.Device.system.phone = true;
+			var isCombiDevice = sap.ui.Device.system.combi;
+			sap.ui.Device.system.combi = false; // Otherwise test fails on combi devices.
 
 			// Act
 			this.toolPage._mediaQueryHandler();
@@ -585,7 +590,7 @@
 			assert.strictEqual(this.toolPage.getAggregation('sideContent').getExpanded(), true, "SideContent should be expanded in Phone mode");
 
 			sap.ui.Device.system.phone = false;
-
+			sap.ui.Device.system.combi = isCombiDevice;
 		});
 
 	</script>
