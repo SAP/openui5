@@ -46,7 +46,7 @@ sap.ui.define([
 	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type
 	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type or a single instance
 	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
-	 * <li>for 0..n associations, an array of instances of the associated type or of Ids is accepted
+	 * <li>for 0..n associations, an array of instances of the associated type or of IDs is accepted
 	 * <li>for events either a function (event handler) is accepted or an array of length 2
 	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
 	 * </ul>
@@ -112,7 +112,7 @@ sap.ui.define([
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
 	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link #bindAggregation} (and unbound again
-	 * using {@link #unbindAggregation}. For each context in the model collection, a corresponding object will be created in the
+	 * using {@link #unbindAggregation}). For each context in the model collection, a corresponding object will be created in the
 	 * managed aggregation, either by cloning a template object or by calling a factory function.
 	 *
 	 * Aggregations also control the databinding context of bound objects: by default, aggregated objects inherit all models
@@ -158,7 +158,7 @@ sap.ui.define([
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
 	 * When a ManagedObject is cloned, all listeners registered for any event in the clone source are also registered to the
-	 * clone. Later changes are not reflect in any direction (neither from source to clone nor vice versa).
+	 * clone. Later changes are not reflected in any direction (neither from source to clone nor vice versa).
 	 *
 	 *
 	 * <a name="lowlevelapi"><b>Low Level APIs:</b></a><br>
@@ -698,12 +698,15 @@ sap.ui.define([
 	/**
 	 * Creates a new ManagedObject from the given data.
 	 *
-	 * If vData is a managed object already, that object is returned.
-	 * If vData is an object (literal), then a new object is created with vData as settings.
-	 * The type of the object is either determined by a "Type" entry in the vData or
-	 * by a type information in the oKeyInfo object
-	 * @param {sap.ui.base.ManagedObject|object} vData the data to create the object from
-	 * @param {object} oKeyInfo
+	 * If <code>vData</code> is a managed object already, that object is returned.
+	 * If <code>vData</code> is an object (literal), then a new object is created with <code>vData</code>
+	 * as settings. The type of the object is either determined by a property of name <code>Type</code>
+	 * (capital 'T') in the <code>vData</code> or by a property <code>type</code> (lower case 't')
+	 * in the <code>oKeyInfo</code> object. In both cases, the type can be specified by name (dot separated
+	 * name of the class) or by the constructor function of the class.
+	 *
+	 * @param {sap.ui.base.ManagedObject|object} <code>vData</code> the data to create the object from
+	 * @param {object} [oKeyInfo]
 	 * @param {object} [oScope] Scope object to resolve types and formatters in bindings
 	 * @public
 	 * @static
@@ -735,7 +738,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Optional StashedControlSupport dependecy
+	 * Optional StashedControlSupport dependency
 	 * @private
 	 */
 	var StashedControlSupport;
@@ -1211,7 +1214,7 @@ sap.ui.define([
 	// ######################################################################################################
 
 	/**
-	 * Sets the associatied object for the given managed association of cardinality '0..1' and
+	 * Sets the associated object for the given managed association of cardinality '0..1' and
 	 * marks this ManagedObject as changed.
 	 *
 	 * The associated object can either be given by itself or by its id. If <code>null</code> or
@@ -1262,7 +1265,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the content of the association wit hthe given name.
+	 * Returns the content of the association with the given name.
 	 *
 	 * For associations of cardinality 0..1, a single string with the ID of an associated
 	 * object is returned (if any). For cardinality 0..n, an array with the IDs of the
@@ -1365,9 +1368,9 @@ sap.ui.define([
 	 * marked as changed. Otherwise <code>undefined</code> is returned.
 	 *
 	 * If the same object was added multiple times to the same association, only a single
-	 * occurence of it will be removed by this method. If the object is not found or if the
+	 * occurrence of it will be removed by this method. If the object is not found or if the
 	 * parameter can't be interpreted neither as a ManagedObject (or id) nor as an index in
-	 * the assocation, nothing will be removed. The same is true if an index is given and if
+	 * the association, nothing will be removed. The same is true if an index is given and if
 	 * that index is out of range for the association.
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
@@ -1956,7 +1959,7 @@ sap.ui.define([
 		//
 		// The destroy() method on the children calls _removeChild() on this instance
 		// to properly remove each child from the bookkeeping by executing the named
-		// removeXYZ() method. But as the aggegation is deleted here already,
+		// removeXYZ() method. But as the aggregation is deleted here already,
 		// _removeChild() doesn't find the child in the bookkeeping and therefore
 		// refuses to work. As a result, side effects from removeXYZ() are missing.
 		//
@@ -2373,7 +2376,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} the binding info object or an unescaped string or undefined.
 	 *     If a binding info is returned, it contains at least a path property
-	 *     or nested bindings (parts) and, dependant of the binding type,
+	 *     or nested bindings (parts) and, depending on the binding type,
 	 *     additional properties
 	 *
 	 * @private
@@ -2411,7 +2414,7 @@ sap.ui.define([
 	 * @param {string} sName the name of the property or aggregation
 	 *
 	 * @returns {object} the binding info object, containing at least a path property
-	 *                   and, dependant of the binding type, additional properties
+	 *                   and, depending on the binding type, additional properties
 	 *
 	 * @protected
 	 */
@@ -2567,40 +2570,94 @@ sap.ui.define([
 	};
 
 	/**
-	 * Bind a property to the model.
-	 * The Setter for the given property will be called with the value retrieved
-	 * from the data model.
-	 * This is a generic method which can be used to bind any property to the
-	 * model. A managed object may flag properties in the metamodel with
-	 * bindable="bindable" to get typed bind methods for a property.
-	 * A composite property binding which may have multiple paths (also known as Calculated Fields) can be declared using the parts parameter.
-	 * Note a composite binding is read only (One Way).
+	 * Binds a property to the model.
 	 *
-	 * @param {string} sName the name of the property
-	 * @param {object} oBindingInfo the binding information
-	 * @param {string} oBindingInfo.path the binding path
-	 * @param {string} [oBindingInfo.model] the model identifier
-	 * @param {function} [oBindingInfo.formatter] the formatter function
-	 * @param {boolean} [oBindingInfo.useRawValues] determines if the parameters in the formatter functions should be passed as raw values or not. In this case
-	 *                  the specified type for the binding is not used and the values are not formatted. Note: use this flag only when using multiple bindings.
-	 *                  If you use only one binding and want raw values then simply don't specify a type for that binding.
-	 * @param {sap.ui.model.Type|string} [oBindingInfo.type] the sap.ui.model.Type object or class name
-	 * @param {string} [oBindingInfo.targetType] the target type to be used by the type, for example
-	 *                 "boolean" or "string" or "any"; defaults to the property's type
-	 * @param {object} [oBindingInfo.formatOptions] the format options to be used
-	 * @param {object} [oBindingInfo.constraints] the constraints for this value
-	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
-	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
-	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.PropertyBinding</code>.
-	 * @param {object} [oBindingInfo.parts] object for definding a read only composite binding which may have multiple binding paths also in different models.
+	 * The Setter for the given property will be called with the value retrieved from the data model.
+	 * When the binding mode is <code>OneTime</code>, the property will be set only once. When it is
+	 * <code>OneWay</code>, the property will be updated whenever the corresponding data in the model changes.
+	 * In mode <code>TwoWay</code>, changes to the property (not originating in the model) will be
+	 * reported back to the model (typical use case: user interaction changes the value of a control).
+	 *
+	 * This is a generic method which can be used to bind any property to the model. A managed
+	 * object may flag any property in its metadata with <code>bindable="bindable"</code> to additionally
+	 * provide named methods to bind and unbind the corresponding property.
+	 *
+	 *
+	 * <b>Composite Binding</b><br>
+	 * A composite property binding which combines data from multiple model paths can be declared using
+	 * the <code>parts</code> parameter instead of <code>path</code>. The <code>formatter</code> function
+	 * or a {@link sap.ui.model.CompositeType composite type} then can be used to combine the parts,
+	 * Properties with a composite binding are also known as "calculated fields".
+	 *
+	 * Example:
 	 * <pre>
 	 *   oTxt.bindValue({
 	 *     parts: [
-	 *       {path: "/firstName", type: new sap.ui.model.type.String()},
+	 *       {path: "/firstName", type: "sap.ui.model.type.String"},
 	 *       {path: "myModel2>/lastName"}
 	 *     ]
 	 *   });
 	 * </pre>
+	 *
+	 * Note that a composite binding will be forced into mode <code>OneWay</code> when one of the
+	 * binding parts is not in mode <code>TwoWay</code>.
+	 *
+	 *
+	 * <b>Formatter Functions</b><br>
+	 * When a formatter function is specified for the binding or for a binding part, it will be
+	 * called with the value of the bound model property. After setting the initial property value,
+	 * the formatter function will only be called again when the bound model property changes
+	 * (simple property binding) or when at least one of the bound model properties changes
+	 * (formatter function of a composite binding). Note that a binding only monitors the
+	 * bound model data for changes. Dependencies of the formatter implementation to other model
+	 * data is not known to the binding and changes won't be detected.
+	 *
+	 * When the formatter for a property binding (simple or composite) is called, the managed object
+	 * will be given as <code>this</code> context. For formatters of binding parts in a composite
+	 * binding, this is not the case.
+	 *
+	 * @param {string} sName
+	 *            Name of the property to bind
+	 * @param {object} oBindingInfo
+	 *            Binding information
+	 * @param {string} oBindingInfo.path
+	 *            Path in the model to bind to, either an absolute path or relative to the binding
+	 *            context for the corresponding model
+	 * @param {string} [oBindingInfo.model]
+	 *            Name of the model to bind against or <code>undefined</code> for the default model
+	 * @param {function} [oBindingInfo.formatter]
+	 *            Function to convert model data into a property value
+	 * @param {boolean} [oBindingInfo.useRawValues]
+	 *            Whether the parameters to the formatter function should be passed as raw values.
+	 *            In this case the specified types for the binding parts are not used and the values
+	 *            are not formatted.
+	 *
+	 *            <b>Note</b>: use this flag only when using multiple bindings. If you use only one
+	 *            binding and want raw values then simply don't specify a type for that binding.
+	 * @param {sap.ui.model.Type|string} [oBindingInfo.type]
+	 *            A type object or the name of a type class to create such a type object; the type
+	 *            will be used for converting model data to a property value (aka "formatting") and
+	 *            vice versa (in binding mode <code>TwoWay</code>, aka "parsing")
+	 * @param {string} [oBindingInfo.targetType]
+	 *            Target type to be used by the type when formatting model data, for example "boolean"
+	 *            or "string" or "any"; defaults to the property's type
+	 * @param {object} [oBindingInfo.formatOptions]
+	 *            Format options to be used for the type; only taken into account when the type is
+	 *            specified by its name - a given type object won't be modified
+	 * @param {object} [oBindingInfo.constraints]
+	 *            Additional constraints to be used when constructing a type object from a type name,
+	 *            ignored when a type object is given
+	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default]
+	 *            Binding mode to be used for this property binding (e.g. one way)
+	 * @param {object} [oBindingInfo.parameters]
+	 *            Map of parameters which is passed to the binding; the supported parameters are listed
+	 *            in the corresponding model-specific implementation of <code>sap.ui.model.PropertyBinding</code>.
+	 * @param {object[]} [oBindingInfo.parts]
+	 *            Array of binding info objects for the parts of a composite binding; the structure of
+	 *            each binding info is the same as described for the <code>oBindingInfo</code> as a whole.
+	 *
+	 *            <b>Note</b>: recursive composite bindings are currently not supported
+	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
@@ -2614,7 +2671,7 @@ sap.ui.define([
 			throw new Error("Property \"" + sName + "\" does not exist in " + this);
 		}
 
-		// old API compatbility (sName, sPath, _vFormat, _sMode)
+		// old API compatibility (sName, sPath, _vFormat, _sMode)
 		if (typeof oBindingInfo == "string") {
 			oBindingInfo = {
 				parts: [ {
@@ -2693,7 +2750,7 @@ sap.ui.define([
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
 			clType,
-			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entitites?
+			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entities?
 			sInternalType = oPropertyInfo._iKind === /* PROPERTY */ 0 ? oPropertyInfo.type : oPropertyInfo.altTypes[0],
 			that = this,
 			aBindings = [],
@@ -2964,10 +3021,10 @@ sap.ui.define([
 	 * @param {boolean} [oBindingInfo.templateShareable=true] option to enable that the template will be shared which means that it won't be destroyed or cloned automatically
 	 * @param {function} oBindingInfo.factory the factory function
 	 * @param {number} oBindingInfo.startIndex the first entry of the list to be created
-	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the sizelimit of the model)
+	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
-	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve udpate behaviour in models, where a key is not already available.
+	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve update behaviour in models, where a key is not already available.
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
 	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
@@ -3306,7 +3363,7 @@ sap.ui.define([
 
 	/**
 	 * Generic method which can be called, when an aggregation needs to be refreshed.
-	 * This method does not make any change on the aggregtaion, but just calls the
+	 * This method does not make any change on the aggregation, but just calls the
 	 * getContexts method to trigger fetching of new data.
 	 *
 	 * @private
@@ -3660,7 +3717,7 @@ sap.ui.define([
 	/**
 	 * Get the binding context of this object for the given model name.
 	 *
-	 * If the object does not have a binding context set on itself and has no own Model set,
+	 * If the object does not have a binding context set on itself and has no own model set,
 	 * it will use the first binding context defined in its parent hierarchy.
 	 *
 	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
@@ -3705,7 +3762,7 @@ sap.ui.define([
 	 * with that name is removed from this ManagedObject. If an ancestor (parent, UIArea or Core) has a model
 	 * with that name, this ManagedObject will immediately inherit that model from its ancestor.
 	 *
-	 * All local bindings that depend on the given model name, are updated (created if the model references
+	 * All local bindings that depend on the given model name are updated (created if the model references
 	 * became complete now; updated, if any model reference has changed; removed if the model references
 	 * became incomplete now).
 	 *
@@ -3939,38 +3996,39 @@ sap.ui.define([
 	/**
 	 * Clones a tree of objects starting with the object on which clone is called first (root object).
 	 *
-	 * The ids within the newly created clone tree are derived from the original ids by appending
+	 * The IDs within the newly created clone tree are derived from the original IDs by appending
 	 * the given <code>sIdSuffix</code> (if no suffix is given, one will be created; it will be
 	 * unique across multiple clone calls).
 	 *
 	 * The <code>oOptions</code> configuration object can have the following properties:
 	 * <ul>
-	 * <li>The boolean value <code>cloneChildren</code> specifies wether associations/aggregations will be cloned</li>
+	 * <li>The boolean value <code>cloneChildren</code> specifies whether associations/aggregations will be cloned</li>
 	 * <li>The boolean value <code>cloneBindings</code> specifies if bindings will be cloned</li>
 	 * </ul>
 	 *
 	 * For each cloned object the following settings are cloned based on the metadata of the object and the defined options:
 	 * <ul>
-	 * <li>all properties that are not bound. If cloneBinding is false even these properties will be cloned;
-	 * the values are used by reference, they are not cloned</li>
-	 * <li>all aggregated objects that are not bound. If cloneBinding is false even the ones that are bound will be cloned;
-	 * they are all cloned recursively using the same <code>sIdSuffix</code></li>
+	 * <li>all properties that are not bound. If <code>cloneBinding</code> is <code>false</code>,
+	 *     even these properties will be cloned; the values are used by reference, they are not cloned</li>
+	 * <li>all aggregated objects that are not bound. If <code>cloneBinding</code> is <code>false</code>,
+	 *     even the ones that are bound will be cloned; they are all cloned recursively using the same
+	 *     <code>sIdSuffix</code></li>
 	 * <li>all associated controls; when an association points to an object inside the cloned object tree,
 	 *     then the cloned association will be modified to that it points to the clone of the target object.
 	 *     When the association points to a managed object outside of the cloned object tree, then its
 	 *     target won't be changed.</li>
-	 * <li>all models set via setModel(); used by reference </li>
-	 * <li>all property and aggregation bindings (if cloneBindings is true); the pure binding infos (path, model name) are
-	 *     cloned, but all other information like template control or factory function,
-	 *     data type or formatter function are copied by reference. The bindings themselves
-	 *     are created anew as they are specific for the combination (object, property, model).
+	 * <li>all models set via <code>setModel()</code>; used by reference </li>
+	 * <li>all property and aggregation bindings (if <code>cloneBindings</code> is <code>true</code>);
+	 *     the pure binding information (path, model name) is cloned, but all other information like
+	 *     template control or factory function, data type or formatter function are copied by reference.
+	 *     The bindings themselves are created anew as they are specific for the combination (object, property, model).
 	 *     As a result, any later changes to a binding of the original object are not reflected
 	 *     in the clone, but changes to e.g the type or template etc. are.</li>
 	 * </ul>
 	 *
 	 * Each clone is created by first collecting the above mentioned settings and then creating
 	 * a new instance with the normal constructor function. As a result, any side effects of
-	 * mutator methods (setProperty etc.) or init hooks are repeated during clone creation.
+	 * mutator methods (<code>setProperty</code> etc.) or init hooks are repeated during clone creation.
 	 * There is no need to override <code>clone()</code> just to reproduce these internal settings!
 	 *
 	 * Custom controls however can override <code>clone()</code> to implement additional clone steps.
@@ -3978,13 +4036,15 @@ sap.ui.define([
 	 * returned clone accordingly.
 	 *
 	 * Applications <b>must never provide</b> the second parameter <code>aLocaleIds</code>.
-	 * It is determined automatically for the root object (and its non-existance also serves as
+	 * It is determined automatically for the root object (and its non-existence also serves as
 	 * an indicator for the root object). Specifying it will break the implementation of <code>clone()</code>.
 	 *
-	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object id
+	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object ID
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @param {Object} [oOptions] configuration object
-	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @param {boolean} [cloneChildren=true] Whether associations and aggregations will be cloned
+	 * @param {boolean} [cloneBindings=true] Whether bindings will be cloned
+	 * @returns {sap.ui.base.ManagedObject} Reference to the newly created clone
 	 * @protected
 	 */
 	ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
@@ -4091,7 +4151,7 @@ sap.ui.define([
 
 		/* Clone element bindings: Clone the objects not the parameters
 		 * Context will only be updated when adding the control to the control tree;
-		 * Maybe we have to call updateBindingcontext() here?
+		 * Maybe we have to call updateBindingContext() here?
 		 */
 		for (sName in this.mObjectBindingInfos) {
 			oClone.mObjectBindingInfos[sName] = jQuery.extend({}, this.mObjectBindingInfos[sName]);
@@ -4145,13 +4205,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches to the internal _modifyAggregation event for a given aggregation.
-	 * The event monitors set, added, removed, destroyed operations methods for the aggregation.
+	 * Attaches to the internal <code>_modifyAggregation</code> event for a given aggregation.
+	 * The event monitors set, added, removed, destroyed operations for the aggregation.
 	 *
 	 * If no aggregation name is provided the event is fired for modifications on all aggregations of the object.
 	 *
 	 * @param {string}
-	 *            sAggregationName the name of the aggregation to monitor or null to monitor all aggregations
+	 *            sAggregationName the name of the aggregation to monitor or <code>null</code> to monitor all aggregations
 	 * @param {object}
 	 *            [oData] An object that will be passed to the handler along with the event object when the event is fired
 	 * @param {function}
@@ -4242,8 +4302,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Update all localization dependant objects that this managedObject can reach,
-	 * except for its children (which will be updated from the Core).
+	 * Update all localization dependent objects that this managed object can reach,
+	 * except for its aggregated children (which will be updated by the Core).
 	 *
 	 * To make the update work as smooth as possible, it happens in two phases:
 	 * <ol>
@@ -4252,7 +4312,7 @@ sap.ui.define([
 	 * </ol>
 	 * This separation is necessary as the models for the bindings might be updated
 	 * in some ManagedObject or in the Core and the order in which the objects are visited
-	 * is not defined (Core.mElements order)
+	 * is not defined (order of Core.mElements)
 	 *
 	 * @private
 	 */
@@ -4296,48 +4356,59 @@ sap.ui.define([
 
 
 	/**
-	 * Searches and returns an array of child elements and controls which are
-	 * referenced within an aggregation or aggregations of child elements/controls.
-	 * This can be either done recursive or not. Optionally a condition function can be passed that
-	 * returns true if the object should be added to the array.
-	 * <br>
+	 * Searches and returns all aggregated objects that pass the given check function.
+	 *
+	 * When the search is done recursively (<code>bRecursive === true</code>), it will be
+	 * executed depth-first and ancestors will be added to the result array before their descendants.
+	 *
+	 * If no check function is given, all aggregated objects will pass the check and be added
+	 * to the result array.
+	 *
 	 * <b>Take care: this operation might be expensive.</b>
+	 *
 	 * @param {boolean}
-	 *          bRecursive true, if all nested children should be returned.
+	 *          bRecursive Whether the whole aggregation tree should be searched
 	 * @param {boolean}
-	 *          fnCondition if given, the object is passed as a parameter to the.
-	 * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
+	 *          [fnCondition] Objects for which this function returns a falsy value will not be added
+	 *          to the result array
+	 * @returns {sap.ui.base.ManagedObject[]} Array of aggregated objects that passed the check
 	 * @public
 	 */
 	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
+
 		if (fnCondition && typeof fnCondition !== "function") {
 			fnCondition = null;
 		}
-		function fFindObjects(oObject) {
-			for (var n in oObject.mAggregations) {
-				var a = oObject.mAggregations[n];
-				if (jQuery.isArray(a)) {
-					for (var i = 0; i < a.length; i++) {
-						if (!fnCondition || fnCondition(a[i])) {
+
+		function fnFindObjects(oObject) {
+			var a, i, n;
+
+			for ( n in oObject.mAggregations ) {
+				a = oObject.mAggregations[n];
+				if ( Array.isArray(a) ) {
+					for ( i = 0; i < a.length; i++ ) {
+						if ( !fnCondition || fnCondition(a[i]) ) {
 							aAggregatedObjects.push(a[i]);
 						}
-						if (bRecursive) {
-							fFindObjects(a[i]);
+						if ( bRecursive ) {
+							fnFindObjects(a[i]);
 						}
 					}
 				} else if (a instanceof ManagedObject) {
-					if (!fnCondition || fnCondition(a)) {
+					if ( !fnCondition || fnCondition(a) ) {
 						aAggregatedObjects.push(a);
 					}
-					if (bRecursive) {
-						fFindObjects(a);
+					if ( bRecursive ) {
+						fnFindObjects(a);
 					}
 				}
 			}
 		}
-		fFindObjects(this);
+
+		fnFindObjects(this);
+
 		return aAggregatedObjects;
 
 	};

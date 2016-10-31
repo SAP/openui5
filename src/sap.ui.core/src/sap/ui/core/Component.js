@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Utility function which adds SAP-specific search parameters to an URI instance
+	 * Utility function which adds SAP-specific search parameters to an URI instance.
 	 *
 	 * @param {object} oUriParams See {@link jQuery.sap.getUriParameters}
 	 * @param {URI} oUri URI.js instance
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @param {object} mDefinitions Map with definitions to check
 	 * @param {object} mDefinitionSource Object to extend with definition - source mapping
 	 * @param {object} mSourceData Actual map with definitions
-	 * @param {object} oSource Corresponding source object which should be assigened to the definitions-source map
+	 * @param {object} oSource Corresponding source object which should be assigned to the definitions-source map
 	 * @private
 	 */
 	function mergeDefinitionSource(mDefinitions, mDefinitionSource, mSourceData, oSource) {
@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 	/**
 	 * Calls the function <code>fn</code> once and marks all ManagedObjects
-	 * created during that call as "owned" by the given id.
+	 * created during that call as "owned" by the given ID.
 	 *
 	 * @param {function} fn Function to execute
 	 * @param {string} sOwnerId Id of the owner
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *            no non-empty ID is given. Note: this can be omitted, no matter
 	 *            whether <code>mSettings</code> are given or not!
 	 * @param {object}
-	 *            [mSettings] Optional map or JSON-object with initial settings for the
+	 *            [mSettings] Optional object with initial settings for the
 	 *            new Component instance
 	 * @public
 	 *
@@ -963,7 +963,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 
 	/**
-	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" mainfest entries.
+	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" manifest entries.
 	 * Result can be handed over to {@link sap.ui.core.Component._createManifestModels} in order to create instances.
 	 *
 	 * @param {object} mOptions Configuration object (see below)
@@ -1374,7 +1374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * Callback handler which will be executed once a component instance has
 	 * been created by {#link sap.ui.component}. The component instance and the
 	 * configuration object will be passed into the registered function.
-	 * For async scenarios (vConfig.async = true) a Promise can be provided as
+	 * For async scenarios (<code>vConfig.async = true</code>) a Promise can be provided as
 	 * return value from the callback handler to delay resolving the Promise
 	 * returned by {@link sap.ui.component}.
 	 * In synchronous scenarios the return value will be ignored.
@@ -1421,10 +1421,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * @param {string|object} vConfig ID of an existing Component or the configuration object to create the Component
 	 * @param {string} vConfig.name Name of the Component to load
-	 * @param {string} [vConfig.url] Alternate location from where to load the Component. If a manifestUrl is given, this url specifies the location of the final component defined via that manifest, otherwise it specifies the location of the component defined via its name <code>vConfig.name>/code>.
+	 * @param {string} [vConfig.url] Alternate location from where to load the Component. If a <code>manifestUrl</code> is given, this URL specifies the location of the final component defined via that manifest, otherwise it specifies the location of the component defined via its name <code>vConfig.name>/code>.
 	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
 	 * @param {string} [vConfig.id] sId of the new Component
-	 * @param {object} [vConfig.settings] mSettings of the new Component
+	 * @param {object} [vConfig.settings] Settings of the new Component
 	 * @param {boolean} [vConfig.async=false] Indicates whether the Component creation should be done asynchronously (experimental setting)
 	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
@@ -1566,7 +1566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
 	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
-	 * Instead of specifing just the name of a component or library in the hints, an object might be given that contains a
+	 * Instead of specifying just the name of a component or library in the hints, an object might be given that contains a
 	 * mandatory <code>name</code> property and, optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>
 	 * and/or a <code>lazy</code> property. When <code>lazy</code> is set to a truthy value, only a necessary <code>registerModulePath</code>
 	 * will be executed, but the corresponding component or lib won't be preloaded. For preload bundles, also an object might be given

@@ -360,8 +360,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * For the hostname component, we are checking for valid DNS hostnames according to RFC 952 / RFC 1123:
 	 *
 	 * <pre>
-	 * <hname> ::= <name>*["."<name>]
-	 * <name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+	 * hname         = name *("." name)
+	 * name          = let-or-digit ( *( let-or-digit-or-hyphen ) let-or-digit )
 	 * </pre>
 	 *
 	 *
@@ -369,24 +369,24 @@ sap.ui.define(['jquery.sap.global'],
 	 * against the most commonly used parts of RFC 6068:
 	 *
 	 * <pre>
-	 * mailtoURI    = "mailto:" [ to ] [ hfields ]
-	 * to           = addr-spec *("," addr-spec )
-	 * hfields      = "?" hfield *( "&" hfield )
-	 * hfield       = hfname "=" hfvalue
-	 * hfname       = *qchar
-	 * hfvalue      = *qchar
-	 * addr-spec    = local-part "@" domain
-	 * local-part   = dot-atom-text              // not accepted: quoted-string
-	 * domain       = dot-atom-text              // not accepted: "[" *dtext-no-obs "]"
-	 * dtext-no-obs = %d33-90 / ; Printable US-ASCII
-	 *                %d94-126  ; characters not including
-	 *                          ; "[", "]", or "\"
-	 * qchar        = unreserved / pct-encoded / some-delims
-	 * some-delims  = "!" / "$" / "'" / "(" / ")" / "*"
-	 *              / "+" / "," / ";" / ":" / "@"
+	 * mailtoURI     = "mailto:" [ to ] [ hfields ]
+	 * to            = addr-spec *("," addr-spec )
+	 * hfields       = "?" hfield *( "&" hfield )
+	 * hfield        = hfname "=" hfvalue
+	 * hfname        = *qchar
+	 * hfvalue       = *qchar
+	 * addr-spec     = local-part "@" domain
+	 * local-part    = dot-atom-text              // not accepted: quoted-string
+	 * domain        = dot-atom-text              // not accepted: "[" *dtext-no-obs "]"
+	 * dtext-no-obs  = %d33-90 / ; Printable US-ASCII
+	 *                 %d94-126  ; characters not including
+	 *                           ; "[", "]", or "\"
+	 * qchar         = unreserved / pct-encoded / some-delims
+	 * some-delims   = "!" / "$" / "'" / "(" / ")" / "*"
+	 *               / "+" / "," / ";" / ":" / "@"
 	 *
 	 * Note:
-	 * A number of characters that can appear in <addr-spec> MUST be
+	 * A number of characters that can appear in &lt;addr-spec> MUST be
 	 * percent-encoded.  These are the characters that cannot appear in
 	 * a URI according to [STD66] as well as "%" (because it is used for
 	 * percent-encoding) and all the characters in gen-delims except "@"

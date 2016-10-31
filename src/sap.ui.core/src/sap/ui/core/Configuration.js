@@ -527,11 +527,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * maps the following non-BCP47 SAP logon codes to a BCP47 substitute:
 		 * <pre>
 		 *    "ZH"  -->  "zh-Hans"         // script 'Hans' added to distinguish it from zh-Hant
-		 *    "ZF"  -->  "zh-Hant"         // ZF ist not a valid ISO639 code, use the compliant language + script 'Hant'
+		 *    "ZF"  -->  "zh-Hant"         // ZF is not a valid ISO639 code, use the compliant language + script 'Hant'
 		 "    "1Q"  -->  "en-US-x-saptrc"  // special language code for supportability (tracing),
-		 *                                    represented as en-US with a priate extension
+		 *                                    represented as en-US with a private extension
 		 *    "2Q"  -->  "en-US-x-sappsd"  // special language code for supportability (pseudo translation),
-		 *                                    represented as en-US with a priate extension
+		 *                                    represented as en-US with a private extension
 		 * </pre>
 		 *
 		 * @return {string} The language string as configured
@@ -658,6 +658,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		isUI5CacheOn: function () {
 			return this["xx-cache-use"];
 		},
+
 		/**
 		 * Enables/Disables the Cache configuration.
 		 * @experimental
@@ -796,7 +797,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag;
 		 *   case doesn't matter and underscores can be used instead of a dashes to separate
-		 *   components (compatibility with Java Locale Ids)
+		 *   components (compatibility with Java Locale IDs)
 		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
 		 * @public
 		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
@@ -813,7 +814,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * List of languages that the SAPUI5 core deliveres.
+		 * List of languages that the SAPUI5 core delivers.
 		 *
 		 * Might return undefined if the information is not available.
 		 *
@@ -831,7 +832,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the accessibility mode is used or not
+		 * Returns whether the accessibility mode is used or not.
 		 * @return {boolean} whether the accessibility mode is used or not
 		 * @public
 		 */
@@ -841,7 +842,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Returns whether the framework automatically adds automatically
-		 * the ARIA role 'application' to the html body or not.
+		 * the ARIA role 'application' to the HTML body or not.
 		 * @return {boolean}
 		 * @since 1.27.0
 		 * @public
@@ -851,7 +852,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the animations are globally used
+		 * Returns whether the animations are globally used.
 		 * @return {boolean} whether the animations are globally used
 		 * @public
 		 */
@@ -874,7 +875,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the Fiori2Adaptation is on
+		 * Returns whether the Fiori2Adaptation is on.
 		 * @return {boolean|string} false - no adaptation, true - full adaptation, comma-separated list - partial adaptation
 		 * Possible values: style, collapse, title, back, hierarchy
 		 * @public
@@ -915,7 +916,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the page runs in debug mode
+		 * Returns whether the page runs in debug mode.
 		 * @return {boolean} whether the page runs in debug mode
 		 * @public
 		 */
@@ -924,7 +925,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the UI5 control inspector is displayed
+		 * Returns whether the UI5 control inspector is displayed.
 		 * Has only an effect when the sap-ui-debug module has been loaded
 		 * @return {boolean} whether the UI5 control inspector is displayed
 		 * @public
@@ -934,7 +935,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether the text origin information is collected
+		 * Returns whether the text origin information is collected.
 		 * @return {boolean} whether the text info is collected
 		 * @public
 		 */
@@ -943,7 +944,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns whether there should be an exception on any duplicate element IDs
+		 * Returns whether there should be an exception on any duplicate element IDs.
 		 * @return {boolean} whether there should be an exception on any duplicate element IDs
 		 * @public
 		 */
@@ -953,6 +954,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Whether a trace view should be shown or not.
+		 *
 		 * Has only an effect when the sap-ui-debug module has been loaded
 		 * either by explicitly loading it or by setting the 'debug' option to true.
 		 * @return {boolean} whether a trace view should be shown
@@ -986,7 +988,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Return whether the activation of the controller code is suppressed
+		 * Return whether the activation of the controller code is suppressed.
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.13.2
@@ -998,7 +1000,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Return whether the controller code is deactivated. During design mode the
+		 * Return whether the controller code is deactivated. During design mode the.
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
@@ -1010,7 +1012,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * The name of the application to start or empty
+		 * The name of the application to start or empty.
 		 *
 		 * @returns {string} name of the application
 		 * @public
@@ -1022,7 +1024,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * The name of the root component to start or empty
+		 * The name of the root component to start or empty.
 		 *
 		 * @returns {string} name of the root component
 		 * @public
@@ -1033,7 +1035,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Base URLs to AppCacheBuster Etag-Index files
+		 * Base URLs to AppCacheBuster ETag-Index files.
 		 *
 		 * @returns {string[]} array of base URLs
 		 * @public
@@ -1045,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		/**
 		 * The loading mode (sync|async|batch) of the AppCacheBuster (sync is default)
 		 *
-		 * @returns {string} sync | async
+		 * @returns {string} "sync" | "async"
 		 * @public
 		 * @experimental Since 1.12.5
 		 */
@@ -1066,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Flag, whether the customizing is disabled or not
+		 * Flag, whether the customizing is disabled or not.
 		 *
 		 * @returns {boolean} true if customizing is disabled
 		 * @private
@@ -1077,7 +1079,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Flag, representing the status of the view cache
+		 * Flag, representing the status of the view cache.
 		 * @see {sap.ui.xmlview}
 		 *
 		 * @returns {boolean} true if view cache is enabled
@@ -1100,7 +1102,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Currently active preload mode for libraries or falsy value
+		 * Currently active preload mode for libraries or falsy value.
 		 *
 		 * @returns {string} preload mode
 		 * @private
@@ -1111,7 +1113,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Flag whether a Component should load the manifest first
+		 * Flag whether a Component should load the manifest first.
 		 *
 		 * @returns {boolean} true if a Component should load the manifest first
 		 * @public
@@ -1122,7 +1124,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Currently active preload mode for components or falsy value
+		 * Currently active preload mode for components or falsy value.
 		 *
 		 * @returns {string} component preload mode
 		 * @private
@@ -1188,7 +1190,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Flag if statistics are requested
+		 * Flag if statistics are requested.
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked
 		 * So its active if set by URL parameter or by TechnicalInfo property
@@ -1208,7 +1210,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Return whether native scrolling should be suppressed on touch devices
+		 * Return whether native scrolling should be suppressed on touch devices.
 		 *
 		 * @returns {boolean} whether native scrolling is suppressed on touch devices
 		 * @since 1.20.0
@@ -1220,7 +1222,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Return whether type validation is handled by core
+		 * Return whether type validation is handled by core.
 		 *
 		 * @returns {boolean} whether whether type validation is handled by core
 		 * @since 1.28.0
@@ -1412,6 +1414,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Defines the preferred format pattern for the given date format style.
+		 *
 		 * Calling this method with a null or undefined pattern removes a previously set pattern.
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
@@ -1444,6 +1447,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Defines the preferred format pattern for the given time format style.
+		 *
 		 * Calling this method with a null or undefined pattern removes a previously set pattern.
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
@@ -1476,6 +1480,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Defines the string to be used for the given number symbol.
+		 *
 		 * Calling this method with a null or undefined symbol removes a previously set symbol string.
 		 * Note that an empty string is explicitly allowed.
 		 *
@@ -1500,6 +1505,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 		/**
 		 * Defines the day used as the first day of the week.
+		 *
 		 * The day is set as an integer value between 0 (Sunday) and 6 (Saturday).
 		 * Calling this method with a null or undefined symbol removes a previously set value.
 		 *
