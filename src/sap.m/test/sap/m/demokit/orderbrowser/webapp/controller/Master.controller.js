@@ -4,10 +4,11 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
+		"sap/ui/model/Sorter",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
 		"sap/ui/demo/orderbrowser/model/formatter"
-	], function (BaseController, JSONModel, Filter, FilterOperator, GroupHeaderListItem, Device, formatter) {
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.orderbrowser.controller.Master", {
@@ -97,7 +98,7 @@ sap.ui.define([
 				var sQuery = oEvent.getParameter("query");
 
 				if (sQuery) {
-					this._oListFilterState.aSearch = [new Filter("OrderID", FilterOperator.Contains, sQuery)];
+					this._oListFilterState.aSearch = [new Filter("Customer/CompanyName", FilterOperator.Contains, sQuery)];
 				} else {
 					this._oListFilterState.aSearch = [];
 				}
@@ -113,8 +114,6 @@ sap.ui.define([
 			onRefresh : function () {
 				this._oList.getBinding("items").refresh();
 			},
-
-
 
 			/**
 			 * Event handler for the list selection event
@@ -152,11 +151,110 @@ sap.ui.define([
 
 			/**
 			 * Event handler for navigating back.
-			 * We navigate back in the browser historz
+			 * We navigate back in the browser history
 			 * @public
 			 */
 			onNavBack : function() {
 				history.go(-1);
+			},
+
+			/**
+			 * Event handler for sorting of master list.
+			 * We sort by the selected key = path in the data model. If the sort field is a date, we sort with descending order.
+			 * @public
+			 */
+			onSort : function(oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				var sKey = oSelectedItem.getKey();
+
+				// Convention: The item key is the name of the entry in the data model to sort by.
+				var sPath = sKey;
+				var bDescending = false;
+
+				// Show latest dates first.
+				if(sKey === "OrderDate" || sKey === "ShippedDate") {
+					bDescending = true;
+				}
+
+				var oSorter = new Sorter(sKey, bDescending);
+				this._oList.getBinding("items").sort(oSorter);
+			},
+
+			// TODO document
+			onFilter : function(oEvent) {
+				// TODO implement
+				sap.m.MessageToast.show("List filtering still to be implemented...");
+			},
+
+			/**
+			 * Event handler for grouping of master list.
+			 * Returns (where relevant: localized) group titles for the list.
+			 * @public
+			 */
+			onGroup : function(oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				var sKey = oSelectedItem.getKey();
+
+				var oSorter = null;
+
+				switch (sKey) {
+				// Customer: Every customer gets their own group, with the group name being the customer name.
+				case "CompanyName":
+					oSorter = new Sorter("Customer/CompanyName", false, function(oContext) {
+						var sCompanyName = oContext.getProperty("Customer/CompanyName");
+    					return {
+    						key: sCompanyName,
+    						text: sCompanyName
+    					};
+					});
+					break;
+				// Order date: Grouping by period (= same year + month), in descending order.
+				case "OrderPeriod":
+					oSorter = new Sorter("OrderDate", true, function (oContext) {
+						var oDate = oContext.getProperty("OrderDate"),
+    						iYear = oDate.getFullYear(),
+    						iMonth = oDate.getMonth() + 1;
+
+    					return {
+    						key: iYear + '/' + iMonth,
+    						text: this.getResourceBundle().getText("masterGroupTitleOrderedInPeriod", [ iMonth, iYear ])
+    					};
+					}.bind(this));
+					break;
+				/*
+				 * Shipping date: Grouping by period (= same year + month), in descending order.
+				 * Note: If not yet shipped, field "ShippedDate" is empty. Due to server-side sorting, where an empty date
+				 * is treated as the lowest possible date, orders without shipments are displayed at the very end of the list.
+				 */ 
+				case "ShippedPeriod":
+					oSorter = new Sorter("ShippedDate", true, function (oContext) {
+						var oDate = oContext.getProperty("ShippedDate");
+						// Special handling needed because shipping date may be empty (=> not yet shipped).
+						if(oDate != null) {
+							var iYear = oDate.getFullYear(),
+								iMonth = oDate.getMonth() + 1;
+							
+							return {
+								key: iYear + '/' + iMonth,
+								text: this.getResourceBundle().getText("masterGroupTitleShippedInPeriod", [ iMonth, iYear ])
+							};
+						}
+						else {
+							return {
+								key: 0,
+								text: this.getResourceBundle().getText("masterGroupTitleNotShippedYet")
+							};
+						}
+					}.bind(this));
+					break;
+				case "NO_GROUPING":
+				default:
+					// Use default sorter. (TODO Keep in sync with sorted in view.xml!)
+					oSorter = new Sorter("OrderID", false);
+					break;
+				}
+
+				this._oList.getBinding("items").sort(oSorter);
 			},
 
 			/* =========================================================== */
