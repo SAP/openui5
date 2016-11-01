@@ -947,9 +947,12 @@ sap.ui.define([
 	 * called for figuring out responsive scenarios
 	 */
 	AnchorBar.prototype.onAfterRendering = function () {
+		var oSelectedButton;
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
 		}
+
+		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
 
 		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
@@ -962,8 +965,9 @@ sap.ui.define([
 		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
 
 		//restore state from previous rendering
-		if (this.getSelectedButton()) {
-			this.setSelectedButton(this.getSelectedButton());
+		if (oSelectedButton) {
+			this.setSelectedButton(oSelectedButton);
+			this._setAnchorButtonsTabFocusValues(oSelectedButton);
 		}
 
 		//initial state
