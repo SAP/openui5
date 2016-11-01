@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.ui.unified.sample.CurrencyInTable.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns="sap.m">
+        <Table id="idProductsTable"
+            items="{
+                path: '/modelData'
+            }">
+            <columns>
+                <Column>
+                    <Text text="Products" />
+                </Column>
+                <Column hAlign="Right">
+                    <Text text="Price" />
+                </Column>
+            </columns>
+            <items>
+                <ColumnListItem>
+                    <cells>
+                        <ObjectIdentifier
+                            text="{product}"/>
+                        <u:Currency
+                                value="{price}"  currency="EUR" maxPrecision="0" useSymbol="false" />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+</mvc:View>
