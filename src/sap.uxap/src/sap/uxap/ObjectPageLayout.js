@@ -2037,8 +2037,16 @@ sap.ui.define([
 		this._iStoredScrollPosition = this._oScroller.getScrollTop();
 		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
 
-		if (this.getSections().indexOf(this._oStoredSection) === -1) {
-			this._oStoredSection = null;
+		// If there was a stored section, check if it still exists and if not - set it to null
+		// Note: not only sections, but subsections should be checked as well - hence this._aSectionBases is used
+		if (this._oStoredSection) {
+			var aSectionBasesIds = this._aSectionBases.map(function (oSectionBase) {
+				return oSectionBase.getId();
+			});
+
+			if (aSectionBasesIds.indexOf(this._oStoredSection.getId()) === -1) {
+				this._oStoredSection = null;
+			}
 		}
 
 		this._oCurrentTabSection = null;
