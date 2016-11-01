@@ -921,15 +921,15 @@ sap.ui.define([
 			oSettings = {},
 			aSections = this.getParent().getSections(),
 			aSubSections = [this.getDomRef()],
-			aCurruntSubSections;
+			aCurrentSubSections;
 
 		//this is needed in order to be sure that next F6 group will be found in sub sections
 		aSections.forEach(function (oSection) {
-			aCurruntSubSections = oSection.getSubSections().map(function (oSubSection) {
+			aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
 				return oSubSection.$().attr("tabindex", -1)[0];
 			});
 
-			aSubSections = aSubSections.concat(aCurruntSubSections);
+			aSubSections = aSubSections.concat(aCurrentSubSections);
 		});
 		oSettings.scope = aSubSections;
 
