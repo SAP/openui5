@@ -350,7 +350,7 @@ sap.ui.define([
 		this._applyUxRules();
 
 		// If we are on the first true rendering : first time we render the page with section and blocks
-		if ((this.getSections().length == 0 || !jQuery.isEmptyObject(this._oSectionInfo)) && this._bFirstRendering) {
+		if ((this.getSections().length === 0 || !jQuery.isEmptyObject(this._oSectionInfo)) && this._bFirstRendering) {
 			this._preloadSectionsOnBeforeFirstRendering();
 			this._bFirstRendering = false;
 		}
