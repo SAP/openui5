@@ -842,11 +842,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Create a clone of this Element.
 	 *
-	 * Calls <code>ManagedObject#clone</code> and additionally clones event delegates.
+	 * Calls {@link sap.ui.base.ManagedObject#clone} and additionally clones event delegates.
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @return {sap.ui.core.Element} reference to the newly created clone
 	 * @protected
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){
