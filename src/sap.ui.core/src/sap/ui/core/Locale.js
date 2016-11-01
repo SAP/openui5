@@ -46,11 +46,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			constructor : function(sLocaleId) {
 				BaseObject.apply(this);
 				var aResult = rLocale.exec(sLocaleId.replace(/_/g, "-"));
-
 				// If the given Locale string cannot be parsed by the regular expression above we
 				// should at least tell the developer why the core fails to load.
-				if (aResult === null) {
-					throw "The given language does not adhere to BCP-47.";
+				if (aResult === null ) {
+					throw "The given language '" + sLocaleId + "' does not adhere to BCP-47.";
 				}
 
 				this.sLocaleId = sLocaleId;
@@ -234,8 +233,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			 * @return {string} a language code that should
 			 * @public
 			 * @since 1.17.0
+			 * @deprecated As of 1.44, use {@link sap.ui.core.Configuration#getSAPLogonLanguage} instead
+			 *   as that class allows to configure a SAP Logon language.
 			 */
 			getSAPLogonLanguage : function() {
+
 				var sLanguage = this.sLanguage || "",
 					m;
 
@@ -317,11 +319,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 *
 		 * As of 3/2013 this is true for all supported locales/regions of UI5.
 		 *
+		 * @param {string|sap.ui.core.Locale} vLanguage Locale or language to check
 		 * @private
 		 */
-		Locale._impliesRTL = function(sLanguage) {
-			var oLocale = new Locale(sLanguage);
-			sLanguage = oLocale.getLanguage() || "";
+		Locale._impliesRTL = function(vLanguage) {
+			var oLocale = vLanguage instanceof Locale ? vLanguage : new Locale(vLanguage);
+			var sLanguage = oLocale.getLanguage() || "";
 			sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
 			var sRegion = oLocale.getRegion() || "";
 
