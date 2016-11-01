@@ -448,17 +448,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			//initialize support info stack
 			if (this.oConfiguration["xx-support"] !== null) {
+				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
+
 				var fnCallbackSupportInfo = function(Support) {
 					Support.initializeSupportMode(that.oConfiguration["xx-support"]);
 					oSyncPoint2.finishTask(iSupportInfoTask);
 				};
-				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
+
 				if (bAsync) {
 					sap.ui.require(["sap/ui/core/support/Support"], fnCallbackSupportInfo);
 				} else {
 					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
 				}
+
+				var iRulesBootTask = oSyncPoint2.startTask("support rules init");
+				this.loadLibrary("sap.ui.support", true).then(function () {
+					sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
+						Bootstrap.initSupportRules(that.oConfiguration.getSupportMode());
+						oSyncPoint2.finishTask(iRulesBootTask);
+					});
+				});
 			}
+
 			oSyncPoint2.finishTask(iCreateTasksTask);
 		},
 
