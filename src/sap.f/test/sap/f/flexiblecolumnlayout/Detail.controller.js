@@ -4,29 +4,20 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	return Controller.extend("flexibleColumnLayout.Detail", {
+	return Controller.extend("flexiblecolumnlayout.Detail", {
 		onInit: function () {
-			this.bus = sap.ui.getCore().getEventBus();
+			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 		handleDetailPress: function () {
-			this.bus.publish("flexible", "setDetailDetailPage");
+			var sFullScreen = this.getOwnerComponent().isFullScreen() ? "fs" : "";
+			this.oRouter.navTo("detailDetail", {fs: sFullScreen});
 		},
-		handleAddSnapped: function () {
-			this.getView().byId("detailPage").getTitle().addSnappedContent(new sap.m.MessageStrip({text: "This is new snapped"}))
+		handleFullScreen: function () {
+			var sFullScreen = this.getOwnerComponent().isFullScreen() ? "" : "fs";
+			this.oRouter.navTo("detail", {fs: sFullScreen});
 		},
-		handleAddExpanded: function () {
-			this.getView().byId("detailPage").getTitle().addExpandedContent(new sap.m.MessageStrip({text: "This is new expanded"}))
-		},
-		handleToggleFooterPress: function () {
-			this.getView().byId("detailPage").setShowFooter(!this.getView().byId("detailPage").getShowFooter());
-		},
-
-		// Unified navigation via the bus - not all pages see the component/router directly
-		handleNextPress: function () {
-			this.bus.publish("flexible", "navigate", {pageName: "page2"});
-		},
-		handleBackPress: function () {
-			this.bus.publish("flexible", "navigate", {pageName: "page1"});
+		handleClose: function () {
+			this.oRouter.navTo("master");
 		}
 	});
 }, true);

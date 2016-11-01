@@ -34,16 +34,7 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			// Begin column container
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-beginColumn-container");
-			oRm.addClass("sapFFCLContainer");
-			oRm.writeClasses();
-			oRm.write(">");
-			if (oControl.getBeginColumn()) {
-				oRm.renderControl(oControl.getBeginColumn());
-			}
-			oRm.write("</div>");
+			oRm.renderControl(oControl._getBeginColumn());
 
 			// Arrow - collapse begin
 			oRm.renderControl(oBeginColumnBackArrow);
@@ -63,16 +54,7 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			// Mid column container
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-midColumn-container");
-			oRm.addClass("sapFFCLContainer");
-			oRm.writeClasses();
-			oRm.write(">");
-			if (oControl.getMidColumn()) {
-				oRm.renderControl(oControl.getMidColumn());
-			}
-			oRm.write("</div>");
+			oRm.renderControl(oControl._getMidColumn());
 
 			// Arrow - expand begin
 			oRm.renderControl(oMidColumnForwardArrow);
@@ -94,16 +76,7 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			// End column container
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-endColumn-container");
-			oRm.addClass("sapFFCLContainer");
-			oRm.writeClasses();
-			oRm.write(">");
-			if (oControl.getEndColumn()) {
-				oRm.renderControl(oControl.getEndColumn());
-			}
-			oRm.write("</div>");
+			oRm.renderControl(oControl._getEndColumn());
 
 			// Arrow - right
 			oRm.renderControl(oEndColumnForwardArrow);

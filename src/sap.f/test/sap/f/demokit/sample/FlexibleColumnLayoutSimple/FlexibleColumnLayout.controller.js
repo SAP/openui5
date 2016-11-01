@@ -30,8 +30,8 @@ sap.ui.define([
 				});
 			}
 
-			this.oFlexibleColumnLayout.setMidColumn(this.detailView);
-			this.oFlexibleColumnLayout.setEndColumn(null);
+			this.oFlexibleColumnLayout.addMidColumnPage(this.detailView);
+			this.oFlexibleColumnLayout.setShowMidColumn(true);
 		},
 
 		// Lazy loader for the end page - only on demand (when the user clicks)
@@ -45,7 +45,8 @@ sap.ui.define([
 				});
 			}
 
-			this.oFlexibleColumnLayout.setEndColumn(this.detailDetailView);
+			this.oFlexibleColumnLayout.addEndColumnPage(this.detailDetailView);
+			this.oFlexibleColumnLayout.setShowEndColumn(true);
 		}
 
 	});
