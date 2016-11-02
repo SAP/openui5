@@ -45,7 +45,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkNote(0, sModifiedNote);
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		Then.onTheMainPage.checkID(0, "");
-		When.onTheMainPage.selectSalesOrderWithId("");
+		Then.onTheMainPage.checkSalesOrderSelected(0);
 		When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
 		Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
 		When.onTheMainPage.deleteSelectedSalesOrder();

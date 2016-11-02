@@ -166,7 +166,7 @@ sap.ui.define([
 		if (!oContext.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()),
+		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.iIndex),
 			function (iIndex) {
 				var i,
 					oNextContext;
@@ -428,7 +428,7 @@ sap.ui.define([
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
 	};
 
 	/**
@@ -973,7 +973,7 @@ sap.ui.define([
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			if (oDependentBinding.getContext().getIndex() >= 0) {
+			if (!oDependentBinding.getContext().created()) {
 				oDependentBinding.refreshInternal(sGroupId);
 			}
 		});

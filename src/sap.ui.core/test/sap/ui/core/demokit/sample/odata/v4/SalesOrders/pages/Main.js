@@ -510,6 +510,19 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				checkSalesOrderSelected : function (iRow) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var aTableItems = oSalesOrderTable.getItems();
+
+							Opa5.assert.strictEqual(oSalesOrderTable.getSelectedItem(),
+								aTableItems[iRow]);
+						},
+						viewName : sViewName
+					});
+				},
 				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
 					return this.waitFor({
 						controlType : "sap.m.Input",

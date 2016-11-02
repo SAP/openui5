@@ -71,6 +71,22 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getIndex() adds 1 when there is a created context", function (assert) {
+		var oBinding = {},
+			oContext;
+
+		oContext = Context.create(null/*oModel*/, oBinding, "/foo", 42);
+
+		assert.strictEqual(oContext.getIndex(), 42);
+
+		// simulate ODataListBinding#create
+		oBinding.aContexts = [];
+		oBinding.aContexts[-1] = {};
+
+		assert.strictEqual(oContext.getIndex(), 43);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("path must be absolute", function (assert) {
 		assert.throws(function () {
 			Context.create(null, null, "foo");

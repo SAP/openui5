@@ -295,7 +295,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context's index within the binding's collection.
+	 * Returns the context's index within the binding's collection. The return value changes if a
+	 * new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create} or deleted
+	 * again.
 	 *
 	 * @returns {number}
 	 *   The context's index within the binding's collection or <code>undefined</code> if the
@@ -305,6 +307,9 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.getIndex = function () {
+		if (this.oBinding.aContexts && this.oBinding.aContexts[-1]) {
+			return this.iIndex + 1;
+		}
 		return this.iIndex;
 	};
 
