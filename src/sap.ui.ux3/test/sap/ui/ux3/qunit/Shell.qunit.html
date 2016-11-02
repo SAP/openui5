@@ -9,18 +9,17 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.ui.ux3.Shell</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 		</script>
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<style>
 		#myShell > .sapUiUx3ShellBg,
@@ -43,7 +42,7 @@
 
 		</style>
 
-		<script language="javascript">
+		<script>
 			function worksetItemSelectedEventHandler(oEvent) {
 				ok(true, "This text means the event handler has been executed."); // this test tests by just being counted in the respective test
 				var id = oEvent.getParameter("id");
@@ -235,7 +234,7 @@
     		oShell.destroy();
     		oShell = new sap.ui.ux3.Shell("myShell", {
           appIcon:"http://www.sap.com/global/images/SAPLogo.gif", // put the SAP logo into the header
-          appTitle:"My First GoldReflection App",                 // give a title
+          appTitle:"My First UX3 App",                 // give a title
           showInspectorTool:false,
           worksetItems:[                                          // add some items to the top navigation
               new sap.ui.ux3.NavigationItem("wi_home",{text:"H",subItems:[  // the "Home" workcenter also gets three sub-items
