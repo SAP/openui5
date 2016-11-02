@@ -10,12 +10,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new Panel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Panel control is a container for controls which has a header and content.
-	 * The header is always visible while the content can be collapsed if the Panel is expandable.
+	 * A container control which has a header and content.
+	 * <h3>Overview</h3>
+	 * The panel is a container for grouping and displaying information. It can be collapsed to save space on the screen.
+	 * <h4>Guidelines:</h4>
+	 * <ul>
+	 * <li>Nesting two or more panels is not recommended.</li>
+	 * <li>Do not stack too many panels on one page.</li>
+	 * </ul>
+	 * <h3>Structure</h3>
+	 * A panel consists of a title bar with a header text or header toolbar, an info toolbar (optional), and a content area.
+	 * Using the <code>headerToolbar</code> aggregation, you can add a toolbar with any toolbar content (i.e. custom buttons, spacers, titles) inside the title bar.
+	 *
+	 * There are two types of panels: fixed and expandable. Expendable panels are enabled by the <code>expandable</code> property.
+	 * Furthermore you can define an expand animation with the property <code>expandAnimation</code>.
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>You need to group or display information and want to give users the option of hiding this information.</li>
+	 * <li>You want to show additional information on demand (for example, a panel could show optional input fields for an advanced search).</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>If the width of the panel is set to 100% (default), the panel and its children are resized responsively, depending on its parent container.</li>
+	 * <li>If the panel has a fixed defined height, it will take up the space, even if the panel is collapsed.</li>
+	 * <li>When the panel is expandable, an arrow icon (pointing to the right) appears in front of the header.</li>
+	 * <li>When the animation is activated, expand/collapse uses a smooth animation to open or close the content area.</li>
+	 * <li>When the panel expands/collapses, the arrow icon rotates 90 degrees clockwise/counter-clockwise.</li>
+	 * <li>When the height uses the default property <code>auto</code>, the height of the content area is automatically adjusted to match the height of its content.</li>
+	 * <li>When the height of the panel is set to a fixed size, the content area can be scrolled through.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -107,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events: {
 
 			/**
-			 * Indicates that the panel will expand or collapse
+			 * Indicates that the panel will expand or collapse.
 			 * @since 1.22
 			 */
 			expand: {
