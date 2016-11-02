@@ -44,7 +44,8 @@
 			"sap/m/semantic/FullscreenPage",
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
-			"sap/ui/test/opaQunit"
+			"sap/ui/test/opaQunit",
+			"sap/ui/thirdparty/hasher"
 		],
 		function(Press,
 				 Button,
@@ -67,7 +68,8 @@
 				 FullscreenPage,
 				 DetailPage,
 				 CheckBox,
-				 opaTest){
+				 opaTest,
+				 hasher){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -149,6 +151,26 @@
 							oPressAction.executeOn(oControl);
 						});
 					});
+
+			QUnit.test("Should follow a link", function (assert) {
+				var sExpectedHash = "expectedHash";
+				var fnDone = assert.async();
+				hasher.init();
+				hasher.setHash("");
+				hasher.changed.addOnce(function () {
+					assert.strictEqual(hasher.getHash(), sExpectedHash);
+					fnDone();
+				});
+				var oLink = new Link({
+					href : "#" + sExpectedHash
+				});
+				oLink.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				aControlsToClean.push(oLink);
+
+				new Press().executeOn(oLink);
+			});
 
 			QUnit.test("Should request focus and trigger a 'press' event on an sap.m.StandardListItem of type 'active'", function(assert) {
 				var done = assert.async();
