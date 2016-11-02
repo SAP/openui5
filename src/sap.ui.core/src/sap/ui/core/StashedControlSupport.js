@@ -87,7 +87,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 */
 		StashedControl.prototype.clone = function() {
 			var c = Element.prototype.clone.apply(this, arguments);
-			c.stashedAlias = this.stashedAlias;
 			stashedControls[c.getId()] = c;
 			return c;
 		};
