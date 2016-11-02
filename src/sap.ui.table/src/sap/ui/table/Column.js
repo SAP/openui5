@@ -5,8 +5,8 @@
 // Provides control sap.ui.table.Column.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup', 'sap/ui/core/RenderManager',
 		'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/Type',
-		'sap/ui/model/type/String', './TableUtils', './library'],
-function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library) {
+		'sap/ui/model/type/String', './TableUtils', './library', './ColumnMenu'],
+function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu) {
 	"use strict";
 
 	// shortcuts
@@ -466,12 +466,9 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	 * @return {sap.ui.table.ColumnMenu} The created column menu.
 	 */
 	Column.prototype._createMenu = function() {
-		var ColumnMenu = sap.ui.requireSync("sap/ui/table/ColumnMenu");
-
 		if (!this._defaultMenu) {
 			this._defaultMenu = new ColumnMenu(this.getId() + "-menu", {ariaLabelledBy: this});
 		}
-
 		return this._defaultMenu;
 	};
 
