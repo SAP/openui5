@@ -1,10 +1,19 @@
 package com.sap.ui5.tools.infra.git2p4;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,14 +31,24 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import static java.nio.file.StandardCopyOption.*;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.Version;
 import com.sap.ui5.tools.maven.LastRunInfo;
 import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
+import com.sap.ui5.tools.maven.XMLUtils;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
@@ -48,7 +67,7 @@ public class Git2P4Main {
   static String resumeAfter = null;
   static boolean applyContributorsVersions = false; 
   private static boolean skipContributorsVersions = false;
-
+  static String sp = File.separator;
   static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -93,7 +112,7 @@ public class Git2P4Main {
   }
   
   static Context context = new Context();
-  private static ProcessingFilter filter = new ProcessingFilter(); 
+  private static ProcessingFilter filter = new ProcessingFilter();
   
   static void updateRepository(Mapping repo) throws IOException {
     git.setRepository(repo.gitRepository);
@@ -171,7 +190,7 @@ public class Git2P4Main {
 
   static void modifyVersions(ReleaseOperation op, String branch, String fromVersion, String toVersion) throws IOException {
 
-    boolean guess = false;
+   boolean guess = false;
     
     // first ensure branch and op
     if ( branch != null && op == null ) {
@@ -203,6 +222,7 @@ public class Git2P4Main {
 
     if ( toVersion == null && op != null ) {
       // Note: might throw an exception if the operation doesn't match the current (from) version 
+ 
       toVersion = new Version(fromVersion).nextVersion(op).toString();
     }
     
@@ -219,7 +239,7 @@ public class Git2P4Main {
     }
 
     if(op.equals(ReleaseOperation.MilestoneDevelopment)){
-    	Runtime p = Runtime.getRuntime();       
+       Runtime p = Runtime.getRuntime();       
 	   String jsLocation = extractSnapshotVersionJs().getParent();	   
 	   MyReleaseButton.getFileOSLocation(jsLocation);	  
 	   
@@ -263,8 +283,13 @@ public class Git2P4Main {
       } else if ( !branch.equals("master") && !toVersion.endsWith("-SNAPSHOT") && !toVersion.endsWith(".0") ) {
         label = "patch";
       }
-
-      git.commit("VERSION CHANGE ONLY\n\nUpdate versions to next " + label + " version " + toVersion);
+     
+      if(op == ReleaseOperation.ChangeObjectId){
+    	  git.commit("[INTERNAL] Update ObjectIdsjson file with " + fromVersion);
+      } else {
+    	  git.commit("VERSION CHANGE ONLY\n\nUpdate versions to next " + label + " version " + toVersion);  
+      }
+      
 
       git.log(1);
 
@@ -327,7 +352,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     }
 
     Log.println("Contributors version range: " + versionRange);
-    Properties contributorsVersions = new Properties();
+    Properties contributorsVersions = new Properties();    
     if (op.equals(ReleaseOperation.PatchDevelopment)||op.equals(ReleaseOperation.MilestoneDevelopment)){
       //set all contributors versions to version range
       contributorsVersions.put("contributorsRange", versionRange);
@@ -582,8 +607,17 @@ private static File extractSnapshotVersionJs() throws IOException {
         ));
   }
 
-    
-
+  private static void createUI5DistRepackageMappings(File repositoryRoot, String p4depotPrefix, String branch) {
+	    mappings.clear();
+	    mappings.add(new Mapping(
+	        "/sapui5/sapui5.dist.repackage.git",
+	        new File(repositoryRoot, "sapui5.dist.repackage"),
+	        null,
+	        null,
+	        null
+	        ));
+	  }   
+ 
   private static String getPerforceCodelineForBranch(String branch) {
     
     Matcher m = Pattern.compile("(?:rel-)?([0-9]+\\.[0-9]+)|master").matcher(branch);
@@ -591,6 +625,53 @@ private static File extractSnapshotVersionJs() throws IOException {
       return m.group(1) == null ? "dev" : (m.group(1) + "_COR");
     }
     throw new IllegalArgumentException("branch " + branch + " doesn't match a known pattern ('x.y' or 'rel-x.y')");
+  }
+  
+  private static void readAndCopyFromURL(File dataFromUrl, String url) throws MalformedURLException, IOException{
+
+  	TrustManager[] trustAllCerts = new TrustManager[]{
+		        new X509TrustManager() {
+		            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		                return null;
+		            }
+		            public void checkClientTrusted(
+		                java.security.cert.X509Certificate[] certs, String authType) {
+		            }
+		            public void checkServerTrusted(
+		                java.security.cert.X509Certificate[] certs, String authType) {
+		            }
+		        }
+		    };
+
+		    // Install the all-trusting trust manager
+		    try {
+		        SSLContext sc = SSLContext.getInstance("SSL");
+		        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		    } catch (Exception e) {
+		    	System.out.println(e);
+		    }
+		    
+		BufferedInputStream in = null;
+	    FileOutputStream fout = null;
+
+	    try {
+	        in = new BufferedInputStream(new URL(url).openStream());
+	        fout = new FileOutputStream(dataFromUrl);
+
+	        final byte data[] = new byte[1024];
+	        int count;
+	        while ((count = in.read(data, 0, 1024)) != -1) {
+	            fout.write(data, 0, count);
+	        }
+	    } finally {
+	        if (in != null) {
+	            in.close();
+	        }
+	        if (fout != null) {
+	            fout.close();
+	        }
+	    }  
   }
   
   private static void usage(String errormsg) {
@@ -605,6 +686,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     System.out.println("Commands:");
     System.out.println(" transfer [-b <branch>] [options] <range>   transfer commits from a set of Git repositories to Perforce");
     System.out.println(" version-change [-b <branch>]               update the version infos in branch <branch> from <from> to <to>");
+    System.out.println(" objectId-change [-b <branch>]               update the version infos in dist.repackage branch <branch> from <from> to <to> and replaces the content in ObjectIds.json with the received file from --file");    
     System.out.println(" milestone-release                          special 'version-change' cmd for a milestone release build in master");
     System.out.println(" minor-release                              special 'version-change' cmd for a minor release build in master");
     System.out.println(" major-release                              special 'version-change' cmd for a major release build in master");
@@ -625,6 +707,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     System.out.println(" --includes             List of paths, relative to root, to be included from transport");
     System.out.println(" --excludes             List of paths, relative to root, to be excluded from transport");
     
+    System.out.println(" --file            Gets a Data from input arguments as String Could be File or URL type");
     System.out.println(" -ra, --resume-after    Commit after which to resume the transport (must be a full SHA1)");
     System.out.println(" --no-auto-resume       Do NOT automatically resume after last commit");
     System.out.println(" -opt, --optimize-diffs Remove 'scatter' in diffs (e.g. whitespace changes or RCS keyword expansion)");
@@ -649,7 +732,6 @@ private static File extractSnapshotVersionJs() throws IOException {
     System.out.println(" -lt, --log-file-template   file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
     System.out.println(" --preview                  do not push to gerrit");
     System.out.println(" --do-not-use-last-commit   use range instead of last commit written in .version-tool.xml file");
-    
     System.out.println();
 
     if ( errormsg != null ) {
@@ -658,6 +740,8 @@ private static File extractSnapshotVersionJs() throws IOException {
   }
 
   public static void main0(String[] args) throws IOException {
+	final String objectIdChange= "objectId-change";
+	String sp = File.separator;
     String template = null;
     String command = "transfer";
     boolean autoResume = true;
@@ -669,7 +753,8 @@ private static File extractSnapshotVersionJs() throws IOException {
     String gitRepository = null;
     ReleaseOperation op = null;
     boolean useLastCommit = true;
-    
+    String fileAddress = null;
+    File receivedFile = new File("");
     String[] argsForTrace = new String[args.length];
     System.arraycopy(args, 0, argsForTrace, 0, args.length);
 
@@ -724,6 +809,8 @@ private static File extractSnapshotVersionJs() throws IOException {
         }
       } else if ( "--git-repository".equals(args[i]) ) {
         gitRepository = args[++i];
+      } else if("--file".equals(args[i])){    	  
+    	  fileAddress =args[++i];
       } else if ( "--includes".equals(args[i]) ) {
         if ( mappings.size() != 1 ) {
           throw new RuntimeException("includes can only be specified for an (already defined) single src root");
@@ -786,7 +873,10 @@ private static File extractSnapshotVersionJs() throws IOException {
       } else if ( "patch-development".equals(args[i]) || "patch-dev".equals(args[i]) ) {
         op = ReleaseOperation.PatchDevelopment;
         command = "version-change";
-      } else if ( "tag".equals(args[i]) ) {
+      }  else if (objectIdChange.equals(args[i])) {
+    	  command = objectIdChange;
+    	  op = ReleaseOperation.ChangeObjectId;
+      }else if ( "tag".equals(args[i]) ) {
         command = "tag";
       } else if ( "--fromVersion".equals(args[i]) ) {
         fromVersion = args[++i];
@@ -806,7 +896,7 @@ private static File extractSnapshotVersionJs() throws IOException {
         git.setGitHttpsPort(args[++i]);
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
-      } else if ( args[i].startsWith("-") ) {
+       } else if ( args[i].startsWith("-") ) {
         throw new IllegalArgumentException("unsupported option " + args[i]);
       } else if ( command != null ) {
         context.range = args[i];
@@ -815,11 +905,21 @@ private static File extractSnapshotVersionJs() throws IOException {
       }
     }
    
+    if(objectIdChange.equals(command)){
+
+    	String path = receivedFile.getAbsolutePath()  + sp +"tools" + sp +"_git2p4" + sp +"resources" + sp + "ObjectIds.json";
+      	receivedFile = new File(path);
+      	receivedFile.createNewFile();
+      	readAndCopyFromURL(receivedFile, fileAddress);
+      	
+  	  MyReleaseButton.setFile(receivedFile);
+    }
+    
     MyReleaseButton.setRelOperation(op);
 	
     Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
-    Log.println("command: " + command);
+    
     
     if ( "noop".equals(command) ) {
       return;
@@ -857,106 +957,112 @@ private static File extractSnapshotVersionJs() throws IOException {
       }
     } else if ( "uxap".equals(mappingSet) ) {
     	createUI5UXAPMappings(gitDir, p4depotPath, branch);
+    } else if ( "dist-abap-smp".equals(mappingSet) ) {
+
+		createUI5DistRepackageMappings(gitDir, null, branch);
+    	
     } else if ( "galilei".equals(mappingSet) ) {
     	createUI5GalileiMappings(gitDir, p4depotPath, branch);
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
-
+    Log.println("command: " + command);
     context.mappings = mappings;
-    // clone & fetch repositories
-    for(Mapping repoMapping : mappings) {
-      updateRepository(repoMapping);
-    }
-
-    if ( "version-change".equals(command) ) {
-      modifyVersions(op, branch, fromVersion, toVersion);
-      return;
-    }
-
-    if ( "tag".equals(command) ) {
-      createVersionTags(branch, fromVersion);
-      return;
-    }
     
-    if ( RELEASE_NOTES.equals(command) && context.range == null ) {
-      Version version = context.version = new Version(fromVersion == null ? findVersion(branch) : fromVersion);
-      context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
-    }
-    
-    if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {	
-      throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
-    }
+        // clone & fetch repositories
+    	for(Mapping repoMapping : mappings) {
+    	      updateRepository(repoMapping);
+    	    }
 
-    // collect commits across repositories
-    for(Mapping repoMapping : mappings) {
-      collect(repoMapping, RELEASE_NOTES.equals(command) && useLastCommit, branch);
-    }
-    int index=0;
-    for(GitClient.Commit commit : allCommits) {
-      Log.println((index++) + ": [" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
-    }
+    	    if ( "version-change".equals(command) || objectIdChange.equals(command)) {    	    	
+    	      modifyVersions(op, branch, fromVersion, toVersion);
+    	      return;
+    	    }
 
-    if ( "transfer".equals(command) || (resumeAfter == null && autoResume) ) {
-      p4.login();
-    }
+    	    if ( "tag".equals(command) ) {
+    	      createVersionTags(branch, fromVersion);
+    	      return;
+    	    }
+    	    
+    	    if ( RELEASE_NOTES.equals(command) && context.range == null ) {
+    	      Version version = context.version = new Version(fromVersion == null ? findVersion(branch) : fromVersion);
+    	      context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
+    	    }
+    	    
+    	    if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {	
+    	      throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
+    	    }
 
-    // autoresume
-    if ( resumeAfter == null && autoResume ) {
-      // analyze the submitted changelists in perforce to find the last commitID
-      String lastCommit = git2p4.findLastCommit(p4depotPath);
-      // if one is found check whether it exists in the current commits
-      if ( lastCommit != null ) {
-        for(GitClient.Commit commit : allCommits) {
-          if ( lastCommit.equals(commit.getId()) ) {
-            // use only existing ids as resumeID (otherwise nothing would be transferred)
-            resumeAfter = lastCommit;
-            Log.println("resume after " + resumeAfter);
-            break;
-          }
-        }
-        if ( resumeAfter == null ) {
-          throw new IllegalStateException("could not find last perforce commit in list of git changes: " + lastCommit);
-        }
-      }
-    }
+    	    // collect commits across repositories
+    	    for(Mapping repoMapping : mappings) {
+    	      collect(repoMapping, RELEASE_NOTES.equals(command) && useLastCommit, branch);
+    	    }
+    	    int index=0;
+    	    for(GitClient.Commit commit : allCommits) {
+    	      Log.println((index++) + ": [" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
+    	    }
 
-    if ( "list".equals(command) ) {
-      return;
-    }
+    	    if ( "transfer".equals(command) || (resumeAfter == null && autoResume) ) {
+    	      p4.login();
+    	    }
 
-    if ( RELEASE_NOTES.equals(command) ) {
-      context.branch = branch;
-      new ReleaseNotes().execute(context);
-      return;
-    }
-    
-    if ( "splitLogs".equals(command) ) {
-      SplitLogs.run(template, allCommits);
-      return;
-    }
+    	    // autoresume
+    	    if ( resumeAfter == null && autoResume ) {
+    	      // analyze the submitted changelists in perforce to find the last commitID
+    	      String lastCommit = git2p4.findLastCommit(p4depotPath);
+    	      // if one is found check whether it exists in the current commits
+    	      if ( lastCommit != null ) {
+    	        for(GitClient.Commit commit : allCommits) {
+    	          if ( lastCommit.equals(commit.getId()) ) {
+    	            // use only existing ids as resumeID (otherwise nothing would be transferred)
+    	            resumeAfter = lastCommit;
+    	            Log.println("resume after " + resumeAfter);
+    	            break;
+    	          }
+    	        }
+    	        if ( resumeAfter == null ) {
+    	          throw new IllegalStateException("could not find last perforce commit in list of git changes: " + lastCommit);
+    	        }
+    	      }
+    	    }
 
-    for(GitClient.Commit commit : allCommits) {
+    	    if ( "list".equals(command) ) {
+    	      return;
+    	    }
 
-      if ( resumeAfter != null ) {
-        if ( resumeAfter.equals(commit.getId()) ) {
-          resumeAfter = null;
-        }
-        Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " ... skip");
-        continue;
-      }
-      Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " " + commit.getSummary());
+    	    if ( RELEASE_NOTES.equals(command) ) {
+    	      context.branch = branch;
+    	      new ReleaseNotes().execute(context);
+    	      return;
+    	    }
+    	    
+    	    if ( "splitLogs".equals(command) ) {
+    	      SplitLogs.run(template, allCommits);
+    	      return;
+    	    }
 
-      if ( template != null ) {
-        String filename = template.replace("#", commit.getId());
-        Log.setLogFile(new File(filename), true);
-      }
-      p4change = git2p4.run(commit, p4change);
-      if ( template != null ) {
-        Log.restorePrevious();
-      }
-    }
-  }
+    	    for(GitClient.Commit commit : allCommits) {
+
+    	      if ( resumeAfter != null ) {
+    	        if ( resumeAfter.equals(commit.getId()) ) {
+    	          resumeAfter = null;
+    	        }
+    	        Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " ... skip");
+    	        continue;
+    	      }
+    	      Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " " + commit.getSummary());
+
+    	      if ( template != null ) {
+    	        String filename = template.replace("#", commit.getId());
+    	        Log.setLogFile(new File(filename), true);
+    	      }
+    	      p4change = git2p4.run(commit, p4change);
+    	      if ( template != null ) {
+    	        Log.restorePrevious();
+    	      }
+    	    }
+    }  
+
   
   private static int exitcode = 0;
   public static void main(String[] args) throws IOException {
