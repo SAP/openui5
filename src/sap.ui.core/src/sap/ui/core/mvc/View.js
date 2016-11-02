@@ -560,7 +560,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 		}
 		oClone = Control.prototype.clone.call(this, sIdSuffix, aLocalIds, {cloneChildren:false, cloneBindings: true});
+
+		// If one of the clones event listeners is the template controller, change it to the views new controller
+		// This prevents the cloned view from firing events on the template views controller
+		var sEvent, aEventListeners, j;
+		for (sEvent in oClone.mEventRegistry) {
+			// ManagedObject already cloned mEventRegistry over to the new object, so we'll work on that
+			aEventListeners = oClone.mEventRegistry[sEvent];
+
+			for (j = aEventListeners.length - 1; j >= 0; j--) {
+				if (aEventListeners[j].oListener === this.getController()) {
+					aEventListeners[j] = {
+						oListener: oClone.getController(),
+						fFunction: aEventListeners[j].fFunction,
+						oData: aEventListeners[j].oData
+					};
+				}
+			}
+		}
+
 		oClone.applySettings(mSettings);
+
 		return oClone;
 	};
 
