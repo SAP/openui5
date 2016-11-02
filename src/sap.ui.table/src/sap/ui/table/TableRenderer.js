@@ -169,8 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 
 		// set the default design of the toolbar
-		var Toolbar = sap.ui.require("sap/m/Toolbar");
-		if ( Toolbar && oToolbar instanceof Toolbar ) {
+		if (TableUtils.isInstanceOf(oToolbar, "sap/m/Toolbar")) {
 			oToolbar.setDesign(Parameters.get("sapUiTableToolbarDesign"), true);
 		}
 
