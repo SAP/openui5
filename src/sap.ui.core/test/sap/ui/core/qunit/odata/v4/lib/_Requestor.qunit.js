@@ -1196,6 +1196,24 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("removePatch after submitBatch", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/Service/");
+
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"});
+
+		this.mock(oRequestor).expects("request").withArgs("POST", "$batch")
+			.returns(Promise.resolve([{}]));
+
+		oRequestor.submitBatch("groupId");
+
+		// code under test
+		assert.throws(function () {
+			oRequestor.removePatch(oPromise);
+		}, new Error("Cannot reset the changes, the batch request is running"));
+	});
+
+	//*****************************************************************************************
 	QUnit.test("removePost", function (assert) {
 		var oBody = {},
 			fnCancel1 = sinon.spy(),
@@ -1227,9 +1245,7 @@ sap.ui.require([
 					url : "Products",
 					body: {Name : "bar"}
 				})
-			]).returns(Promise.resolve([
-				{responseText : "{}"}
-			]));
+			]).returns(Promise.resolve([{}]));
 
 		// code under test
 		oRequestor.submitBatch("groupId");
@@ -1262,6 +1278,24 @@ sap.ui.require([
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
 		return oTestPromise;
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost after submitBatch", function (assert) {
+		var oPayload = {},
+			oRequestor = _Requestor.create("/Service/");
+
+		oRequestor.request("POST", "Products", "groupId", {}, oPayload);
+
+		this.mock(oRequestor).expects("request").withArgs("POST", "$batch")
+			.returns(Promise.resolve([{}]));
+
+		oRequestor.submitBatch("groupId");
+
+		// code under test
+		assert.throws(function () {
+			oRequestor.removePost("groupId", oPayload);
+		}, new Error("Cannot reset the changes, the batch request is running"));
 	});
 
 	//*********************************************************************************************
