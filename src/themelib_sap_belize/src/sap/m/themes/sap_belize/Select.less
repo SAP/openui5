@@ -40,52 +40,32 @@
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
-	.sapMSltLabel, .sapMSltIcon {
-		outline-offset: -3px;
-		outline: @sapUiContentFocusColor dotted 1px;
-	}
+	outline-offset: -3px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
 
-	&.sapMSltPressed > .sapMSltIcon {
-		outline-color: @sapUiContentContrastFocusColor;
-	}
+html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState).sapMSltPressed:focus {
+	outline-color: @sapUiContentContrastFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
-		.sapMSltLabel {
-			&:before {
-				content: " ";
-				position: absolute;
-				border: 1px dotted @sapUiContentFocusColor;
-				top: 2px;
-				right: 2px;
-				bottom: 2px;
-				left: 2px;
-				pointer-events: none;
-			}
-		}
+	  	outline: none;
 
-		&.sapMSltIconOnly:before {
-			content: " ";
+		&:before {
+			content: "";
 			position: absolute;
 			border: 1px dotted @sapUiContentFocusColor;
-			top: 2px;
-			right: 2px;
-			bottom: 2px;
-			left: 2px;
+			top: 1px;
+			right: 1px;
+			bottom: 1px;
+			left: 1px;
 			pointer-events: none;
 		}
 
-		&.sapMSltPressed.sapMSltIconOnly:before {
-			content: " ";
-			position: absolute;
+		&.sapMSltIconOnly.sapMSltPressed:before {
 			border: 1px dotted @sapUiContentContrastFocusColor;
-			top: 2px;
-			right: 2px;
-			bottom: 2px;
-			left: 2px;
-			pointer-events: none;
 		}
 	}
 }
