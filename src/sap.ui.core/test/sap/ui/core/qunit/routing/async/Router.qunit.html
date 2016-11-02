@@ -2048,6 +2048,131 @@
 				}.bind(this));
 			});
 
+			QUnit.test("App home indicator for later navigations", function(assert) {
+			// Arrange
+			var sHomeTitle = "HOME",
+				sProductTitle = "PRODUCT",
+				done = assert.async();
+
+			this.oRouterConfig = {
+				home : {
+					pattern: "",
+					target: "home"
+				},
+				product : {
+					pattern : "/product",
+					target: "product"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: sHomeTitle
+				},
+				product: {
+					title: sProductTitle
+				}
+			};
+
+			this.oDefaults = {
+				// only shells will be used
+				controlAggregation: "pages",
+				viewName: "foo",
+				controlId: this.oApp.getId(),
+				homeRoute: "home",
+				async: true
+			};
+
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+			hasher.setHash(this.oRouterConfig.product.pattern);
+
+			this.oRouter.attachTitleChanged(function() {
+
+				if (arguments[0].mParameters.name !== "home") {
+					hasher.setHash(this.oRouterConfig.home.pattern);
+				} else {
+					// Assert
+					assert.strictEqual(arguments[0].mParameters.history.length, 2, "Home and Product route should be added to history.");
+					assert.strictEqual(arguments[0].mParameters.isHome, true);
+					assert.strictEqual(arguments[0].mParameters.history[0].isHome, true);
+					assert.strictEqual(this.oRouter.getTitleHistory()[0].isHome, true);
+					done();
+				}
+
+			}.bind(this));
+
+			// Act
+			this.oRouter.initialize();
+		});
+
+		QUnit.test("App home indicator for later navigations with dynamic parts", function(assert) {
+			// Arrange
+			var sHomeTitle = "HOME",
+				sProductTitle = "PRODUCT",
+				done = assert.async();
+
+			this.oRouterConfig = {
+				home : {
+					pattern: "home/{testId}",
+					target: "home"
+				},
+				product : {
+					pattern : "/product",
+					target: "product"
+				}
+			};
+
+			this.oTargetConfig = {
+				home: {
+					title: sHomeTitle
+				},
+				product: {
+					title: sProductTitle
+				}
+			};
+
+			this.oDefaults = {
+				// only shells will be used
+				controlAggregation: "pages",
+				viewName: "foo",
+				controlId: this.oApp.getId(),
+				homeRoute: "home",
+				async: true
+			};
+
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+			hasher.setHash(this.oRouterConfig.product.pattern);
+
+			this.oRouter.attachTitleChanged(function() {
+
+				var oRefProductRoute = {
+					"hash": "/product",
+					"title": "PRODUCT"
+				};
+
+				var oRefHomeRoute = {
+					"hash": "home/{testId}",
+					"title": "HOME"
+				};
+
+				if (arguments[0].mParameters.name !== "home") {
+					hasher.setHash(this.oRouterConfig.home.pattern);
+				} else {
+					// Assert
+					assert.strictEqual(arguments[0].mParameters.history.length, 1, "Product route should be added to history.");
+					assert.deepEqual(this.oRouter.getTitleHistory()[0], oRefProductRoute);
+					assert.deepEqual(this.oRouter.getTitleHistory()[1], oRefHomeRoute);
+					assert.strictEqual(this.oRouter.getTitleHistory().length, 2, "Home route should be added to history.");
+					done();
+				}
+			}.bind(this));
+
+			// Act
+			this.oRouter.initialize();
+		});
+
 			QUnit.module("component");
 
 			QUnit.test("Should create a view with an component", function () {
