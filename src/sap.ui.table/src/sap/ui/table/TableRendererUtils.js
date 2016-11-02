@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 		 * @param {object} oConfig the configuration of the start tag
 		 *
 		 * @param {string} [oConfig.tag] 					The tag type which should be used. If nothing is given <code>div</code> is used.
-		 * @param {string|[string]} [oConfig.classname] 	CSS class(es) which should be added to the element.
+		 * @param {string|string[]} [oConfig.classname] 	CSS class(es) which should be added to the element.
 		 * @param {string} [oConfig.id]						The id which should be used. The id is automatically prefixed with the id of the <code>oTable</code>
 		 * 													of with the id of <code>oConfig.element</code> (if given).
 		 * @param {sap.ui.core.Element} [oConfig.element]	If an id is given, the id is prefixed with the id of <code>oConfig.element</code>. If no id is given
