@@ -170,6 +170,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 	};
 
+	/**
+	 * Returns aria accessibility role for the control.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String}
+	 */
+	InputRenderer.getAriaRole = function(oControl) {
+		return "";
+	};
+
 	InputRenderer.getAccessibilityState = function(oControl) {
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);

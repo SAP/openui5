@@ -288,9 +288,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.getAccessibilityState = function(oControl) {
 		var sAriaLabelledBy = this.getAriaLabelledBy(oControl),
 			sAriaDescribedBy = this.getAriaDescribedBy(oControl),
-			mAccessibilityState = {
-				role: this.getAriaRole(oControl)
-			};
+			sRole = this.getAriaRole(oControl),
+			mAccessibilityState = { };
+
+		if (sRole) {
+			mAccessibilityState.role = sRole;
+		}
 
 		if (oControl.getValueState() === sap.ui.core.ValueState.Error) {
 			mAccessibilityState.invalid = true;
