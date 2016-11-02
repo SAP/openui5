@@ -40,9 +40,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			/**
 			 * Specifies if the total values should be displayed in the group headers or on bottom of the row. Does not affect the total sum.
-			 * @deprecated As of version 1.44.0
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>sumOnTop</code> instead.
 			 *
-			 * Please use the corresponding binding parameter <code>sumOnTop</code> instead, for example
+			 * Example:
 			 * <pre>
 			 *   oTable.bindRows({
 			 *      path: "...",
@@ -59,9 +59,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			/**
 			 * Number of levels, which should be opened initially (on first load of data).
-			 * @deprecated As of version 1.44.0
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead.
 			 *
-			 * Please use the corresponding binding parameter <code>numberOfExpandedLevels</code> instead, for example
+			 * Example:
 			 * <pre>
 			 *   oTable.bindRows({
 			 *      path: "...",
@@ -79,9 +79,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			/**
 			 * The kind of auto expansion algorithm, e.g. optimized filter conditions, per level requests, ...
 			 * Must be a value of <code>sap.ui.table.TreeAutoExpandMode</code>.
-			 * @deprecated As of version 1.44.0
+			 * @deprecated As of version 1.44.0, please use the corresponding binding parameter <code>autoExpandMode</code> instead.
 			 *
-			 * Please use the corresponding binding parameter <code>autoExpandMode</code> instead, for example
+			 * Example:
 			 * <pre>
 			 *   oTable.bindRows({
 			 *      path: "...",
@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * Collapses all nodes (and lower if collapseRecursive is activated)
 	 *
-	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @return {sap.ui.table.AnalyticalTable} a reference on the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -769,7 +769,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 *
 	 * @param {int} iIndex
 	 *         Index of the row to return the context from.
-	 * @type object
+	 * @return {object} The context of a row by its index
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1029,7 +1029,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * Returns the total size of the data entries.
 	 *
-	 * @type int
+	 * @return {int} The total size of the data entries
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1103,6 +1103,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {boolean} true if the index is selected, false otherwise
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.isIndexSelected = TreeTable.prototype.isIndexSelected;
 
@@ -1115,6 +1116,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.setSelectedIndex = TreeTable.prototype.setSelectedIndex;
 
@@ -1129,6 +1131,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {int[]} an array containing all selected indices
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.getSelectedIndices = TreeTable.prototype.getSelectedIndices;
 
@@ -1143,6 +1146,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.setSelectionInterval = TreeTable.prototype.setSelectionInterval;
 
@@ -1160,6 +1164,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.addSelectionInterval = TreeTable.prototype.addSelectionInterval;
 
@@ -1174,6 +1179,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.removeSelectionInterval = TreeTable.prototype.removeSelectionInterval;
 
@@ -1188,6 +1194,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.selectAll = TreeTable.prototype.selectAll;
 
@@ -1198,6 +1205,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {int[]} an array containing all selected indices (ascending ordered integers)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.getSelectedIndex = TreeTable.prototype.getSelectedIndex;
 
@@ -1207,6 +1215,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	AnalyticalTable.prototype.clearSelection = TreeTable.prototype.clearSelection;
 
