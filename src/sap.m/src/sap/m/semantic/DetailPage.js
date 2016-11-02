@@ -271,5 +271,9 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 		return ShareMenuPage.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
+	DetailPage.prototype.getSemanticRuleSet = function() {
+		return sap.m.semantic.SemanticRuleSetType.Classic; //this page should only use the Classic ruleset (no other rules are specified for this page for now)
+	};
+
 	return DetailPage;
 }, /* bExport= */ true);
