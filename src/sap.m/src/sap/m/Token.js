@@ -120,18 +120,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._deleteIcon.setUseIconTooltip(false);
 	};
 
-	Token.prototype.setEditable = function(bEditable){
-		this.setProperty("editable", bEditable);
-		if (bEditable) {
-			this.removeStyleClass("sapMTokenReadOnly");
-			this.$().attr("aria-readonly", "true");
-		} else {
-			this.addStyleClass("sapMTokenReadOnly");
-			this.$().attr("aria-readonly", "false");
-
-		}
-	};
-
 	/**
 	 * Handles the touch start event on the token.
 	 *
