@@ -158,6 +158,26 @@
 			oSemanticPage.destroy();
 		});
 
+		test("Header hidden when no header content", function () {
+			var oConfig = {},
+				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
+
+			strictEqual(oSemanticPage._getPage().getShowHeader(), false, "header not shown");
+
+			oSemanticPage.destroy();
+		});
+
+		test("Header shown when there is header content", function () {
+			var oConfig = {
+						title: "Test"
+					},
+					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
+
+			strictEqual(oSemanticPage._getPage().getShowHeader(), true, "header is shown");
+
+			oSemanticPage.destroy();
+		});
+
 		module("Properties");
 
 		test("Semantic page properties have correct default values", function () {
