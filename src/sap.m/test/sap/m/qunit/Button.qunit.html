@@ -24,6 +24,7 @@
 </style>
 
 <script type="text/javascript">
+	sinon.config.useFakeTimers = true;
 
 	var b1, b2, b4, b5, b6, b7, b8, b9, b10, msg;
 
@@ -364,6 +365,27 @@
 		oButton.destroy();
 	});
 
+	test("For safari the button should gain explicitly focus after a tap", function() {
+		// Arrange
+		// stub the browser to be only safari
+		this.stub(sap.ui.Device, "browser", {
+			safari: true
+		});
+
+		var oButton = new sap.m.Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture");
+		oRenderSpy = this.spy(oButton, "focus");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oButton.ontap({ setMarked:  jQuery.noop });
+		this.clock.tick(1000);
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 1, "The button is focused after a tap");
+
+		// Cleanup
+		oButton.destroy();
+	});
 
 	test("Check type conversation if text property is changed (non-string value)", function() {
 		// Arrange
