@@ -16,16 +16,13 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 		var sAriaDescribedBy = InputRenderer.getAriaDescribedBy.apply(this, arguments);
 
-		if (oControl.getTokens().length > 0) {
-			if (sAriaDescribedBy) {
-				sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaMultiInputContainTokenId;
-			} else {
-				sAriaDescribedBy = oControl._sAriaMultiInputContainTokenId;
-			}
+		if (sAriaDescribedBy) {
+			sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaMultiInputContainTokenId;
+		} else {
+			sAriaDescribedBy = oControl._sAriaMultiInputContainTokenId;
 		}
 
 		return sAriaDescribedBy;
-
 	};
 
 
