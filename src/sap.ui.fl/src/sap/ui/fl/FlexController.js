@@ -246,7 +246,7 @@ sap.ui.define([
 
 		var oGetFlexSettingsPromise = FlexSettings.getInstance(this.getComponentName(), mPropertyBag);
 		return oGetFlexSettingsPromise.then(
-			this._oChangePersistence.getChangesForView.bind(this, mPropertyBag.viewId, mPropertyBag),
+			this._oChangePersistence.getChangesForView.bind(this._oChangePersistence, mPropertyBag.viewId, mPropertyBag),
 			this._handlePromiseChainError.bind(this, mPropertyBag.view)
 		).then(
 			this._resolveGetChangesForView.bind(this, mPropertyBag)
