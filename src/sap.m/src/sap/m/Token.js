@@ -191,10 +191,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		this.setProperty("selected", bSelected, true);
 
-		if (bSelected) {
-			this.fireSelect();
-		}
-
 		return this;
 	};
 
