@@ -53,8 +53,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -344,7 +344,7 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 * @throws {Error}
-	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *   If the resulting group ID is neither '$auto' nor '$direct'
 	 *
 	 * @private
 	 */
@@ -413,8 +413,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
 	 *   with an instance of <code>Error</code> in case of failure.
@@ -690,8 +690,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
 	 *   binding is not supported.

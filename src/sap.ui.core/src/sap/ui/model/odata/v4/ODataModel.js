@@ -243,8 +243,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -336,8 +336,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -380,8 +380,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -639,8 +639,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
-	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
-	 *   {@link #submitBatch}
+	 *   '$auto', '$direct' or application group IDs as specified in {@link #submitBatch}
 	 * @throws {Error}
 	 *   If the given group ID is invalid or if there are pending changes, see
 	 *   {@link #hasPendingChanges}
@@ -739,7 +738,7 @@ sap.ui.define([
 	 *   The application group ID, which is a non-empty string consisting of alphanumeric
 	 *   characters from the basic Latin alphabet, including the underscore. If it is
 	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
-	 *   default <code>updateGroupId</code> is "$auto", which is invalid here.
+	 *   default <code>updateGroupId</code> is '$auto', which is invalid here.
 	 * @throws {Error}
 	 *   If the given group ID is not an application group ID or if change requests for the given
 	 *   group ID are running.
