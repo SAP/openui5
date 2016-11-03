@@ -123,16 +123,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cancels all change requests in the batch queue of the given group or in all batch queues,
-	 * if no <code>sGroupId</code> is given, for which the given filter function returns
-	 * <code>true</code>. For these change requests the <code>$cancel</code> callback is called and
-	 * the related promises are rejected with an error having property <code>canceled = true</code>.
+	 * Cancels all change requests for which the <code>$cancel</code> callback is defined and the
+	 * given filter function returns <code>true</code>. For these requests the callback is called
+	 * and the related promises are rejected with an error having property
+	 * <code>canceled = true</code>.
 	 *
 	 * @param {function} fnFilter
 	 *   A filter function which gets a change request as parameter and determines whether it has
 	 *   to be canceled (returns <code>true</code>) or not.
 	 * @param {string} [sGroupId]
-	 *   The group the change request is related to
+	 *   The ID of the group from which the requests shall be canceled; if not given all groups
+	 *   are processed
 	 * @returns {boolean}
 	 *   Whether at least one request has been canceled
 	 *
@@ -153,8 +154,8 @@ sap.ui.define([
 			// restore changes in reverse order to get the same initial state
 			for (i = aChangeSet.length - 1; i >= 0; i--) {
 				oChangeRequest = aChangeSet[i];
-				if (fnFilter(oChangeRequest)) {
-					oChangeRequest.$cancel(); // all PATCH and POST have a $cancel
+				if (oChangeRequest.$cancel && fnFilter(oChangeRequest)) {
+					oChangeRequest.$cancel();
 					oError = new Error("Request canceled: " + oChangeRequest.method + " "
 						+ oChangeRequest.url + "; group: " + sGroupId0);
 					oError.canceled = true;
@@ -179,9 +180,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cancels all change requests (all PATCH and all POST requests) for a given group.
-	 * All pending requests are rejected with an error with property <code>canceled = true</code>.
-	 * PATCHes are canceled in reverse order to properly undo stacked changes.
+	 * Cancels change requests for a given group. All pending change requests that have a
+	 * <code>$cancel</code> callback are rejected with an error with property
+	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
+	 * changes (like multiple PATCHes for the same property).
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
@@ -196,7 +198,6 @@ sap.ui.define([
 				+ "', the batch request is running");
 		}
 		this.cancelChangeRequests(function () {
-			// change set contains only PATCH and POST requests; cancel all
 			return true;
 		}, sGroupId);
 	};
@@ -217,10 +218,13 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if there are pending changes
 	 */
 	Requestor.prototype.hasPendingChanges = function () {
-		var sGroupId;
+		var sGroupId, bPending;
 
 		for (sGroupId in this.mBatchQueue) {
-			if (this.mBatchQueue[sGroupId][0].length > 0) {
+			bPending = this.mBatchQueue[sGroupId][0].some(function (oRequest) {
+				return oRequest.$cancel;
+			});
+			if (bPending) {
 				return true;
 			}
 		}
@@ -262,7 +266,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the pending PATCH request for the given promise from its group.
+	 * Removes the pending PATCH request for the given promise from its group. Only requests for
+	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
 	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
@@ -282,7 +287,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the pending POST request with the given body from the given group.
+	 * Removes the pending POST request with the given body from the given group. Only requests for
+	 * which the <code>$cancel</code> callback is defined are removed.
+	 *
+	 * The request's promise is rejected with an error with property <code>canceled = true</code>.
 	 *
 	 * @param {string} sGroupId
 	 *   The ID of the group containing the request
@@ -328,7 +336,8 @@ sap.ui.define([
 	 *   the group ID is "$direct") or via {@link #submitBatch}
 	 * @param {function} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
-	 *   queue; for <code>sMethod</code> === 'PATCH' or 'POST' the parameter is mandatory
+	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this
+	 *   callback is given
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
