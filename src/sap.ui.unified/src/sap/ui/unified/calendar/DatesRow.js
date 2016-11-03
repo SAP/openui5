@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				break;
 			}
 
-			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
+			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true, _outsideBorder: true});
 
 		}
 
