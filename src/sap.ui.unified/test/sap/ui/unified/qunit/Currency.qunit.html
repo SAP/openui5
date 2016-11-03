@@ -517,6 +517,39 @@
 				oControl.destroy();
 			});
 
+			module("Currency value text direction");
+
+			test("Currency value dir in LTR", function() {
+				var dirText,
+					oCurrency = new sap.ui.unified.Currency({id: "cDir", value: 100, currency: "EUR"});
+
+				oCurrency.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
+				strictEqual(dirText, "ltr", "Text direction should be set to ltr");
+
+				oCurrency.destroy();
+			});
+
+			test("Currency value dir in RTL", function() {
+				var dirText,
+					oCurrency = new sap.ui.unified.Currency({id: "cDir", value: 100, currency: "EUR"}),
+					bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
+				// Arrange
+				sap.ui.getCore().getConfiguration().setRTL(true);
+
+				oCurrency.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
+				strictEqual(dirText, "ltr", "Text direction should be set to ltr in RTL mode");
+
+				// Clean up
+				sap.ui.getCore().getConfiguration().setRTL(bRTL);
+				oCurrency.destroy();
+			});
 		</script>
 
 	</head>
