@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 			var iRow = TableUtils.getRowIndexOfFocusedCell(oTable),
 				iCol = TableUtils.getColumnIndexOfFocusedCell(oTable),
-				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol),
+				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol, false),
 				oInfo = null,
 				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
 				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),

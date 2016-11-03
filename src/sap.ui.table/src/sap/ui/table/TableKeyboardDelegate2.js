@@ -275,7 +275,7 @@ sap.ui.define([
 		}
 
 		var $Cell = TableUtils.getParentDataCell(oTable, oElement);
-		var oDataCellInfo = TableUtils.getDataCellInfo($Cell);
+		var oDataCellInfo = TableUtils.getDataCellInfo(oTable, $Cell);
 		var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
 		var aCells = oRow.getCells();
 		var $InteractiveElements;
@@ -319,7 +319,7 @@ sap.ui.define([
 		}
 
 		var $Cell = TableUtils.getParentDataCell(oTable, oElement);
-		var oDataCellInfo = TableUtils.getDataCellInfo($Cell);
+		var oDataCellInfo = TableUtils.getDataCellInfo(oTable, $Cell);
 		var oRow = oTable.getRows()[oDataCellInfo.rowIndex];
 		var aCells = oRow.getCells();
 		var $InteractiveElements;
@@ -644,7 +644,7 @@ sap.ui.define([
 					return; // Not an interactive element, selector cell, or group row header cell.
 				}
 			} else { // The target is an interactive element inside a data cell.
-				iRowIndex = TableUtils.getDataCellInfo($Cell).rowIndex;
+				iRowIndex = TableUtils.getDataCellInfo(this, $Cell).rowIndex;
 			}
 
 			var oRow = this.getRows()[iRowIndex];
@@ -744,19 +744,13 @@ sap.ui.define([
 			if ($Cell === null) {
 				if (oCellInfo.type === CellType.ROWHEADER) {
 					$Cell = jQuery(oEvent.target);
-
-					var sCellId = $Cell.prop("id"); // Example: __table0-rowsel4
-					var aCellIdAreas = sCellId.split("-");
-
-					iRowIndex = parseInt(aCellIdAreas[1].slice(6), 10);
+					iRowIndex = parseInt($Cell.data("sap-ui-rowindex"), 10);
 					bIsRowHeaderCell = true;
-
 				} else {
 					return; // Not an interactive element, selector cell, or group row header cell.
 				}
-
 			} else { // The target is an interactive element inside a data cell.
-				iRowIndex = TableUtils.getDataCellInfo($Cell).rowIndex;
+				iRowIndex = TableUtils.getDataCellInfo(this, $Cell).rowIndex;
 			}
 
 			var oRow = this.getRows()[iRowIndex];
