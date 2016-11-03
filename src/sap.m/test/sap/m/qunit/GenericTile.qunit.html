@@ -1329,7 +1329,7 @@
 	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
-		this.oGenericTile.setSubheader("subheader text of GenericTile");
+		this.oGenericTile.setSubheader("A long long subheader text");
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.$().trigger("mouseenter");
@@ -1397,8 +1397,8 @@
 	QUnit.module("Tooltip handling in LineMode", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
-				header : "header text of GenericTile",
-				subheader : "subheader text of GenericTile",
+				header : "header",
+				subheader : "subheader",
 				mode: "LineMode",
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			});
@@ -1411,9 +1411,9 @@
 				return "ARIA and tooltip text of TileContent 2";
 			};
 
-			this.oParent = new sap.m.FlexBox({
+			this.oParent = new sap.m.ScrollContainer({
 				width: "100px",
-				items: [ this.oGenericTile ]
+				content: [ this.oGenericTile ]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -1425,74 +1425,110 @@
 
 	QUnit.test("GenericTile no tooltip provided by the control", function(assert) {
 		//Arrange
-		var sAriaLabel = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 
 		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+
 		//Assert
-		assert.equal(this.oGenericTile.$().attr("title"), null, "Tooltip of GenericTile is consistent");
-		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(this.oGenericTile.$().attr("title"), null, "No truncated text, no tooltip");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("GenericTile with an explicit tooltip set by user", function(assert) {
+	QUnit.test("Explicit tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip("tooltip");
+		sap.ui.getCore().applyChanges();
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		this.oGenericTile.$().trigger("mouseenter");
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip of GenericTile is consistent");
 		assert.equal(this.oGenericTile.$().attr("aria-label"), this.oGenericTile.$().attr("title"), "Explicit tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("GenericTile with space tooltip set by user", function(assert) {
+	QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
-		this.oGenericTile.setTooltip(" ");
-		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		this.oGenericTile.setTooltip("tooltip");
+		sap.ui.getCore().applyChanges();
 
 		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "User tooltip overwrites the header and subheader texts");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), this.oGenericTile.$().attr("title"), "Explicit tooltip of GenericTile is identical with ARIA-label");
+	});
+
+	QUnit.test("Suppress tooltip with space tooltip set by user with short header text, short subheader text", function(assert) {
+		//Arrange
+		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), null, "GenericTile rendered without tooltip");
-		assert.equal(this.oGenericTile.$().attr("aria-label"), sConsistentTooltip, "GenericTile has correct ARIA-label");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("Tooltip for GenericTile with short header text", function(assert) {
+	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
-
-		//Act
-		$Tile.trigger("mouseenter");
+		var sAriaLabel = "A long long long long long long long long long long header text\nA long long subheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.equal(this.oGenericTile.$().attr("title"), null, "No truncated text, no tooltip");
-	});
-
-	QUnit.test("Tooltip set by user for GenericTile with short header text", function(assert) {
-		//Arrange
-		this.oGenericTile.setTooltip("tooltip");
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
-		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip set by user is applied");
+		assert.equal(this.oGenericTile.$().attr("title"), null, "GenericTile rendered without tooltip");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
+	QUnit.test("Tooltip for GenericTile with short header text, long subheader text", function(assert) {
 		//Arrange
-		this.oGenericTile.setHeader("A long long long long long long long long long long");
-		this.oGenericTile.setTooltip("tooltip");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		sap.ui.getCore().applyChanges();
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
-		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "User tooltip overwrites the header text");
+		assert.equal(this.oGenericTile.$().attr("title"), "A long long subheader text", "Truncated text for subheader has tooltip");
+	});
+
+	QUnit.test("Tooltip for GenericTile with long header text, short subheader text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile._oTitle.invalidate(); // needs to invalidate since the sap.m.Text doesn't invalidate (on purpose)
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "A long long long long long long long long long long header text", "Truncated text for header has tooltip");
+	});
+
+	QUnit.test("Tooltip for GenericTile with long header text, long subheader text", function(assert) {
+		//Arrange
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setSubheader("A long long subheader text");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
+
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "A long long long long long long long long long long header text\nA long long subheader text", "Truncated texts for header and for subheader have tooltips");
 	});
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
