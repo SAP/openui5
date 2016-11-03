@@ -6,30 +6,6 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	var fnGetFormElementState = function(oFormElement) {
-		var that = this;
-
-		var aControlsState = [];
-
-		var oLabel = oFormElement.getLabel();
-		var aControls = oFormElement.getFields();
-		if (oLabel) {
-			aControls = [oLabel].concat(aControls);
-		}
-
-		aControls.forEach(function(oControl) {
-			aControlsState.push({
-				element : oControl,
-				visible : oControl.getVisible(),
-				index : that.getContent().indexOf(oControl)
-			});
-		});
-
-		return {
-			elementsState : aControlsState
-		};
-	};
-
 	return {
 		name : function (oElement){
 			var sType = oElement.getMetadata().getName();
@@ -122,28 +98,6 @@ sap.ui.define([], function() {
 									} else {
 										return;
 									}
-								},
-								getState : function (oControl) {
-									var oState = {
-										oTitle : oControl.getTitle(),
-										oldValue : oControl.getTitle().getText()
-									};
-									return oState;
-								},
-								restoreState : function (oControl, oState) {
-									oState.oTitle.setText(oState.oldValue);
-									var sBindingValue = "";
-									var oBindingInfo = oState.oTitle.getBindingInfo("text");
-									if (oBindingInfo) {
-										sBindingValue = oBindingInfo.binding.getValue();
-										if (sBindingValue === oState.oldValue) {
-											var oBinding = oState.oTitle.getBinding("text");
-											if (oBinding) {
-												oBinding.resume();
-											}
-										}
-									}
-									return true;
 								}
 							};
 						} else if (sType === "sap.ui.layout.form.FormElement"){
@@ -152,28 +106,6 @@ sap.ui.define([], function() {
 								isEnabled : bIsEnabled,
 								domRef : function (oControl){
 									return oControl.getLabel().getDomRef();
-								},
-								getState : function (oControl) {
-									var oState = {
-										oLabel : oControl.getLabel(),
-										oldValue : oControl.getLabel().getText()
-									};
-									return oState;
-								},
-								restoreState : function (oControl, oState) {
-									oState.oLabel.setText(oState.oldValue);
-									var sBindingValue = "";
-									var oBindingInfo = oState.oLabel.getBindingInfo("text");
-									if (oBindingInfo) {
-										sBindingValue = oBindingInfo.binding.getValue();
-										if (sBindingValue === oState.oldValue) {
-											var oBinding = oState.oLabel.getBinding("text");
-											if (oBinding) {
-												oBinding.resume();
-											}
-										}
-									}
-									return true;
 								}
 							};
 						}
@@ -211,46 +143,6 @@ sap.ui.define([], function() {
 									var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 									return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 								}
-							},
-							getState : function(oRemovedElement) {
-								var that = this;
-
-								if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
-									return fnGetFormElementState.call(this, oRemovedElement);
-								} else {
-									var aElementsState = [];
-									var oTitleOrToolbar = oRemovedElement.getTitle() || oRemovedElement.getToolbar();
-									aElementsState.push({
-										element : oTitleOrToolbar,
-										index : this.getContent().indexOf(oTitleOrToolbar)
-									});
-
-									oRemovedElement.getFormElements().forEach(function(oFormElement) {
-										aElementsState = aElementsState.concat(fnGetFormElementState.call(that, oFormElement).elementsState);
-									});
-
-									return {
-										elementsState : aElementsState
-									};
-								}
-							},
-							restoreState : function(oRemovedElement, oState) {
-								var that = this;
-								if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
-									oState.elementsState.forEach(function(oElementState) {
-										oElementState.element.setVisible(oElementState.visible);
-									});
-								} else {
-									oState.elementsState.forEach(function(oElementState) {
-										if (oElementState.visible) {
-											oElementState.element.setVisible(oElementState.visible);
-										}
-										if (oElementState.index !== undefined) {
-											that.removeContent(oElementState.element);
-											that.insertContent(oElementState.element, oElementState.index);
-										}
-									});
-								}
 							}
 						};
 					},
@@ -273,12 +165,6 @@ sap.ui.define([], function() {
 									}
 									return true;
 								},
-								restoreState : function (oElement) {
-									oElement.destroy();
-									return true;
-								},
-								getState: function (oElement) {
-								},
 								containerTitle : "GROUP_CONTROL_NAME",
 								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
@@ -295,12 +181,6 @@ sap.ui.define([], function() {
 										return false;
 									}
 									return true;
-								},
-								restoreState : function (oElement) {
-									oElement.destroy();
-									return true;
-								},
-								getState: function (oElement) {
 								},
 								containerTitle : "GROUP_CONTROL_NAME",
 								getCreatedContainerId : function(sNewControlID) {
