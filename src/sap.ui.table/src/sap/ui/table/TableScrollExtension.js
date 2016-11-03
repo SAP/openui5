@@ -542,6 +542,11 @@ sap.ui.define([
 			}
 
 			return false;
+		},
+
+		updateVSbMaxHeight: function() {
+			var oTable = this.getTable();
+			oTable.getDomRef(SharedDomRef.VerticalScrollBar).style.maxHeight = oTable._getVSbHeight() + "px";
 		}
 	});
 
