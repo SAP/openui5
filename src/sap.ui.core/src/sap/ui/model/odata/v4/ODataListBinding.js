@@ -501,7 +501,7 @@ sap.ui.define([
 				return this.fetchValue(sPath, undefined, iIndex);
 			}
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchAbsoluteValue) {
 			return this.oContext.fetchAbsoluteValue(sPath);
 		}
 		return _SyncPromise.resolve();

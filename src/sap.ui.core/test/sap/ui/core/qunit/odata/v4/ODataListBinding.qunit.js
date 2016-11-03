@@ -1679,6 +1679,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue: relative binding, base context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/TEAMS('42')"),
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
+
+		// code under test, binding resolved
+		assert.strictEqual(oBinding.fetchAbsoluteValue("/TEAMS('42')").getResult(), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding, unresolved", function (assert) {
 		this.oModel.bindList("TEAM_2_EMPLOYEES").fetchValue("bar", {}, 42).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
