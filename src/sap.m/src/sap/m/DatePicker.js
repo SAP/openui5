@@ -781,7 +781,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 		}
 
 		// compare with the old known value
-		if (oDate !== this.getDateValue()) {
+		if (this._lastValue !== sValue
+			|| (oDate && this.getDateValue() && oDate.getFullYear() !== this.getDateValue().getFullYear())) {
 			// remember the last value on change
 			this._lastValue = sValue;
 
