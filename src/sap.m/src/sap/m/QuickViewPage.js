@@ -572,6 +572,11 @@ sap.ui.define([
 					mNavContext.quickView._clearContainerHeight();
 
 					this._createPage();
+
+					// in some cases the popover has display:none style here,
+					// which delays the simple form re-arranging and an unwanted scrollbar might appear.
+					mNavContext.popover.$().css('display', 'block');
+
 					mNavContext.quickView._restoreFocus();
 				}
 			};
