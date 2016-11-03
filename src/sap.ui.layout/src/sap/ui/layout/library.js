@@ -78,6 +78,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"unhideSimpleFormField": "sap/ui/layout/changeHandler/UnhideSimpleForm",
 					"removeSimpleFormGroup": "sap/ui/layout/changeHandler/HideSimpleForm",
 					"addSimpleFormGroup": "sap/ui/layout/changeHandler/AddSimpleFormGroup"
+				},
+				"sap.ui.layout.HorizontalLayout": {
+					"moveElements": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
 				}
 			}
 		}
