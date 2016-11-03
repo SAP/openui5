@@ -43,7 +43,6 @@ sap.ui.define([
 				// to ensure that no dependent data for the newly created SO is fetched
 				// unless it is persisted in backend
 				oSalesOrderContext = undefined;
-				oSalesOrdersTable.setSelectedItem(oSalesOrdersTable.getItems()[0]);
 			}
 			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
 
@@ -123,9 +122,12 @@ sap.ui.define([
 
 			oView.getModel("ui").setProperty("/bCreateSalesOrderPending", true);
 
-			oCreateSalesOrderDialog.setBindingContext(oContext);
+			// select the newly created one
+			oView.byId("SalesOrders").setSelectedItem(
+				oView.byId("SalesOrders").getItems()[oContext.getIndex()]);
 			this._setSalesOrderBindingContext(oContext);
 
+			oCreateSalesOrderDialog.setBindingContext(oContext);
 			oCreateSalesOrderDialog.open();
 
 			// Note: this promise fails only if the transient entity is deleted
