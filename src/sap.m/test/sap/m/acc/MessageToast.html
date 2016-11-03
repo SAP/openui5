@@ -11,12 +11,45 @@
 	<script>
 		var oPage = new sap.m.Page("myPage", {
 			title: "Mobile MessageToast control",
-			content: [new sap.m.Button({
-				text: "Show",
-				press: function () {
-					sap.m.MessageToast.show("Message toast control test page.");
-				}
-			})]
+			content: [
+				new sap.m.Button({
+					text: "Show",
+					press: function () {
+						sap.m.MessageToast.show("Message toast control test page.");
+					}
+				}),
+
+				new sap.m.Button({
+					text: "Custom content",
+					press: function () {
+
+							// text control for display in toast
+							var oContentText1 = new sap.m.Text({
+								text: "Something's just happened",
+								textAlign: "Center"
+							}),
+
+							// button control for display in toast
+							oContentButton1 = new sap.m.Button({
+								text: "Undo",
+								type: "Emphasized",
+								press: function (oEvent) {
+									// close the toast - the user has interacted with it, it is no longer needed
+									sap.m.MessageToast.close(oEvent.getSource());
+									// call the function the button is to trigger
+									sap.m.MessageToast.show("Action button pressed");
+								}
+							// add space between the buttons
+							}).addStyleClass("sapUiSmallMarginBegin");
+
+							// show the MessageToast
+							sap.m.MessageToast.show([oContentText1, oContentButton1], {
+								autoClose: false,
+							});
+					}
+					// add space between the buttons
+				}).addStyleClass("sapUiSmallMarginBegin")
+			]
 		});
 
 		var oApp = new sap.m.App("myApp", {

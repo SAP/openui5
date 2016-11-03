@@ -36,6 +36,26 @@
 				return $DomRef.css("box-sizing") || $DomRef.css("-webkit-box-sizing") || $DomRef.css("-moz-box-sizing");
 			};
 
+			var getContentElements = function($DomRef) {
+				// return jQuery object of elements for controls rendered in MessageToast
+				// current implementation: MessageToast child: sap.m.Flexbox, grandchild: flexbox item, great-granchild: control passed to MessageToast.show in oContent. The elements we're interested in are those of the controls in oContent
+				return $DomRef.children().children().children();
+			};
+
+			var wait = function(oClock, iTime) {
+				// reusable pattern for fake timer tick
+				// default clock and time
+				var iTime = iTime ? iTime : 2000,
+					oClock = oClock ? oClock : sinon.useFakeTimers();
+				oClock.tick(iTime);
+				oClock.restore();
+			};
+
+			var getToasts = function() {
+				// helper function to get reference to all currently open message toasts - storing this as a variable is fine unless a toast is closed, or a new one opened - -in which case we need to get the elements again
+				return jQuery(".sapMMessageToast");
+			};
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
@@ -44,11 +64,14 @@
 
 			QUnit.test("rendering", function(assert) {
 
+				// use fake timers instead of asynch test.
+				var oClock = sinon.useFakeTimers();
+
 				// act
-				sap.m.MessageToast.show("message toast");
+				sap.m.MessageToast.show("message toast 1");
 
 				// arrange
-				var $MessageToast = jQuery(".sapMMessageToast").eq(0);
+				var $MessageToast = getToasts().eq(0);
 
 				// assert
 				assert.ok($MessageToast.length, "The message toast HTML DIV element exist");
@@ -56,18 +79,146 @@
 				assert.strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
 				assert.strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
 				assert.strictEqual($MessageToast.attr("aria-label"), " ", "The aria-labelledby is set");
-				assert.strictEqual($MessageToast.text(), "message toast", "The message toast displays the correct text");
 				assert.strictEqual(getBoxSizing($MessageToast), "border-box", "Is using old box model");
 				assert.strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");
 				assert.strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
 				assert.strictEqual($MessageToast.css("text-overflow"), "ellipsis", "ellipsis");
 				assert.strictEqual($MessageToast.attr("role"), "alert", "The role is set");
 				assert.strictEqual($MessageToast.css("white-space"), "pre-line", "The message has the correct white-space style for supporting line break");
+
+				// wait for render - use fake timers instead of asynch test.
+				wait(oClock);
+
+				// content has a single element with text
+				assert.strictEqual(getContentElements($MessageToast).text(), "message toast 1", "The message toast displays the correct text");
+
+				// cleanup - remove message toast, we're finished with it. enables us to refer to a new message toast later without grabbing this one
+				$MessageToast.remove();
+			});
+
+			QUnit.test("Custom content - single control", function(assert) {
+
+				// assert
+
+				// use fake timers instead of asynch test.
+				var oClock = sinon.useFakeTimers();
+
+				// button control for display in toast
+				oContentButton1 = new sap.m.Button({
+						text: "button 1",
+						type: "Emphasized"
+					}
+				// add space between the buttons
+				).addStyleClass("sapUiSmallMarginBegin");
+
+				// act
+				sap.m.MessageToast.show(oContentButton1);
+
+				// wait for render - use fake timers instead of asynch test.
+				wait(oClock);
+
+				// get all child elements
+				var $Content = getContentElements(getToasts());
+
+				// assert
+
+				assert.ok(oContentButton1.getDomRef(), "Button is rendered");
+				assert.strictEqual(oContentButton1.getDomRef(), $Content.get(0), "Button 1 DomRef rendered as the toast's content");
+				assert.strictEqual($Content.get().length, 1, "Ensure there aren't further elements");
+
+				// cleanup
+				getToasts().remove();
+
+			});
+
+			QUnit.test("Custom content - multiple controls", function(assert) {
+
+				// arrange
+
+				// use fake timers instead of asynch test.
+				var oClock = sinon.useFakeTimers();
+
+				// text control for display in toast
+				var oContentText1 = new sap.m.Text({
+					text: "message toast 4",
+					textAlign: "Center"
+				}),
+
+				// button control for display in toast
+				oContentButton2 = new sap.m.Button({
+						text: "button 2",
+						type: "Emphasized"
+					}
+				// add space between the buttons
+				).addStyleClass("sapUiSmallMarginBegin");
+
+				// act
+				sap.m.MessageToast.show([oContentText1, oContentButton2]);
+
+				// wait for render - use fake timers instead of asynch test.
+				wait(oClock);
+
+				// get just content elements from toast
+				var $Content = getContentElements(getToasts());
+
+				// assert
+				assert.ok(oContentText1.getDomRef(), "Text 1 is rendered");
+				assert.ok(oContentButton2.getDomRef(), "Button 2 is rendered");
+				assert.strictEqual(oContentText1.getDomRef(), $Content.get(0), "Text 1 DomRef rendered as the toast's first content element");
+				assert.strictEqual(oContentButton2.getDomRef(), $Content.get(1), "Button 2 DomRef rendered as the toast's second content element");
+				assert.strictEqual($Content.get().length, 2, "Ensure there aren't further elements");
+
+				// cleanup
+				getToasts().remove();
 			});
 
 			/* =========================================================== */
 			/* API module                                                  */
 			/* =========================================================== */
+
+			QUnit.module("API methods");
+
+			QUnit.test("Close", function(assert) {
+
+				// Test that MessageToast.close closes the correct message toast
+
+				// arrange
+
+				// Check there's no toast
+				assert.strictEqual(getToasts().length, 0, "check there are no open toasts before we start")
+
+				// Show 2 toasts, close one, then the second
+				var oContentButton3 = new sap.m.Button({text: "button 3"}),
+				oContentButton4 = new sap.m.Button({
+					text: "button 4",
+					press: function(oEvent){
+						sap.m.MessageToast.close(oEvent.getSource());
+					}
+				});
+
+				var oClock = sinon.useFakeTimers();
+
+				sap.m.MessageToast.show(oContentButton3, {duration: 10000, animationDuration: 0});
+				sap.m.MessageToast.show(oContentButton4, {duration: 10000, animationDuration: 0});
+
+				wait(oClock);
+
+				//Check we have two toasts open
+				assert.strictEqual(getToasts().length, 2, "both toasts are open");
+
+				//Close the first one
+				sap.m.MessageToast.close(oContentButton3);
+
+				//Check toast with button 4 is the only one left
+				assert.strictEqual(getToasts().length, 1, "one toast has closed");
+				assert.strictEqual(getContentElements(getToasts()).get(0), oContentButton4.getDomRef(), "toast with button 4 is still open");
+
+				//Close toast with button 4 by firing press event
+				oContentButton4.firePress();
+
+				// check the second toast closed
+				assert.strictEqual(getToasts().length, 0, "both toasts have closed");
+			});
 
 			QUnit.module("Validate options");
 
@@ -345,7 +496,7 @@
 					var fnAddPopoverInstanceSpy = sinon.spy(sap.m.InstanceManager, "addPopoverInstance");
 
 					// act
-					sap.m.MessageToast.show("message toast", {
+					sap.m.MessageToast.show("message toast 2", {
 						my: "end top",
 						at: "end top",
 						closeOnBrowserNavigation: bCloseOnBrowserNavigation
@@ -412,7 +563,7 @@
 					var fnCloseSpy = sinon.spy();
 
 					// act
-					sap.m.MessageToast.show("message toast", {
+					sap.m.MessageToast.show("message toast 3", {
 						my: "center center",
 						at: "center center",
 						onClose: fnCloseSpy
