@@ -483,8 +483,8 @@ sap.ui.define([
 	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
 	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
 	 * with an Error object, the POST request is automatically added again to the same batch
-	 * group (for application group IDs) or parked (for $auto or $direct). Parked POST requests are
-	 * repeated with the next update of the entity data.
+	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
+	 * are repeated with the next update of the entity data.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID

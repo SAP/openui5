@@ -137,12 +137,12 @@ sap.ui.define([
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must be
-	 *   "$auto" or "$direct"
+	 *   '$auto' or '$direct'
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
 	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
-	 *   context's binding, if the resulting group ID is neither "$auto" nor "$direct", or if the
+	 *   context's binding, if the resulting group ID is neither '$auto' nor '$direct', or if the
 	 *   deletion on the server fails.
 	 *   <p>
 	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
