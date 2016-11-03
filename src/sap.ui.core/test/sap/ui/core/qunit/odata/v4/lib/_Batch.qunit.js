@@ -196,9 +196,9 @@ sap.ui.require([
 			},
 			"SALARY" : {
 				"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
-				"BASIC_SALARY_CURR" : "",
+				"BASIC_SALARY_CURR" : "EUR",
 				"YEARLY_BONUS_AMOUNT" : 0.00,
-				"BONUS_CURR" : ""
+				"BONUS_CURR" : "EUR"
 			}
 		},
 		oNewTeamBody =  {
@@ -1223,9 +1223,9 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					},
 					"SALARY" : {
 						"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
-						"BASIC_SALARY_CURR" : "",
+						"BASIC_SALARY_CURR" : "EUR",
 						"YEARLY_BONUS_AMOUNT" : 0.00,
-						"BONUS_CURR" : ""
+						"BONUS_CURR" : "EUR"
 					}
 				})
 			}],
