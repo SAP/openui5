@@ -780,11 +780,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			sValue = this._formatValue(oDate, true);
 		}
 
-		var iCurrentTimestamp = oDate ? oDate.getTime() : undefined;
-		var iPreviousTimestamp = this.getDateValue() ? this.getDateValue().getTime() : undefined;
-
 		// compare with the old known value
-		if (iCurrentTimestamp !== iPreviousTimestamp) {
+		if (this._lastValue !== sValue
+			|| (oDate && this.getDateValue() && oDate.getFullYear() !== this.getDateValue().getFullYear())) {
 			// remember the last value on change
 			this._lastValue = sValue;
 
