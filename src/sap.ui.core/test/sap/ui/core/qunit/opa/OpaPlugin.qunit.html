@@ -700,6 +700,24 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnWaitSpy);
 	});
 
+	QUnit.test("Should not call the autoWaiter or interactable if visible is false", function (assert) {
+		// Arrange
+		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
+			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+
+		// Act
+		var oResult = this.oPlugin.getFilterdControls({
+			autoWait: true,
+			visible: false,
+			id: this.oButton.getId()
+		});
+
+		// Assert
+		sinon.assert.notCalled(fnWaitSpy);
+		sinon.assert.notCalled(fnInteractableSpy);
+		assert.strictEqual(oResult.getId() ,this.oButton.getId());
+	});
+
 	QUnit.module("Should know if it is looking for a Control", {
 		beforeEach: function () {
 			// System under Test
