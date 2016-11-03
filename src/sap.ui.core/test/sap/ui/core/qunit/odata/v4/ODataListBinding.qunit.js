@@ -132,15 +132,15 @@ sap.ui.require([
 	/**
 	 * Simulates a context object.
 	 *
-	 * @param {number} iIndex
-	 *   The index of the context
+	 * @param {number} bCreated
+	 *   Whether the context has been created
 	 * @returns {object}
-	 *   An object with a function <code>getIndex</code> which returns the given <code>iIndex</code>
+	 *   An object with a mock function <code>created</code>
 	 */
-	function getContextMock(iIndex) {
+	function getContextMock(bCreated) {
 		return {
-			getIndex : function () {
-				return iIndex;
+			created : function () {
+				return bCreated ? Promise.resolve() : undefined;
 			}
 		};
 	}
@@ -1329,11 +1329,11 @@ sap.ui.require([
 					refresh : function () {}
 				},
 				oChild0 = {
-					getContext : getContextMock.bind(undefined, 0),
+					getContext : getContextMock.bind(undefined, false),
 					refreshInternal : function () {}
 				},
 				oChild1 = {
-					getContext : getContextMock.bind(undefined, 1),
+					getContext : getContextMock.bind(undefined, false),
 					refreshInternal : function () {}
 				},
 				oContext,
@@ -1381,7 +1381,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: no own cache", function (assert) {
 		var oChild0 = {
-				getContext : getContextMock.bind(undefined, 0),
+				getContext : getContextMock.bind(undefined, false),
 				refreshInternal : function () {}
 			},
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
@@ -1417,11 +1417,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: dependent bindings with transient contexts", function (assert) {
 		var oChild0 = {
-				getContext : getContextMock.bind(undefined, 0),
+				getContext : getContextMock.bind(undefined, false),
 				refreshInternal : function () {}
 			},
 			oChild1 = {
-				getContext : getContextMock.bind(undefined, -1),
+				getContext : getContextMock.bind(undefined, true),
 				refreshInternal : function () {}
 			},
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
@@ -2910,7 +2910,7 @@ sap.ui.require([
 			assert.strictEqual(oContext.getModel(), this.oModel);
 			assert.strictEqual(oContext.getBinding(), oBinding);
 			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/-1");
-			assert.strictEqual(oContext.getIndex(), -1);
+			assert.strictEqual(oContext.getIndex(), 0, "view coordinates!");
 			assert.strictEqual(oContext.isTransient(), true);
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
 			assert.ok(bChangeFired, "Change event fired");
