@@ -3,14 +3,14 @@
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Fullscreen Routing sample</title>
+	<title>Split-Screen routing sample</title>
 
 	<script
 			src='../../../../../../../resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_bluecrystal'
 			data-sap-ui-libs='sap.m'
 			data-sap-ui-bindingSyntax='complex'
-			data-sap-ui-resourceroots='{"sap.ui.core.sample.RoutingFullscreen.routingApp": "./routingApp"}'>
+			data-sap-ui-resourceroots='{"sap.ui.core.sample.RoutingMasterDetail.routingApp": "./routingApp"}'>
 	</script>
 
 
@@ -19,7 +19,7 @@
 		sap.ui.getCore().attachInit(function() {
 			new sap.ui.core.ComponentContainer({
 				height : "100%",
-				name : "sap.ui.core.sample.RoutingFullscreen.routingApp"
+				name : "sap.ui.core.sample.RoutingMasterDetail.routingApp"
 			}).placeAt("content");
 		});
 	</script>
