@@ -21,5 +21,10 @@
 				showHandleTooltip="false"
 				inputsAsTooltips="true"
 				class="sapUiSmallMarginBottom" />
+
+		<Text text="Slider with tickmarks"/>
+		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom" width="400px"/>
+		<Slider enableTickmarks="true" class="sapUiSmallMarginBottom" width="400px"/>
+		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom" width="400px"/>
 	</l:VerticalLayout>
 </mvc:View>
