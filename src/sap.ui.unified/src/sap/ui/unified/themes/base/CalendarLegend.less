@@ -19,10 +19,12 @@
 }
 
 .sapUiUnifiedLegendDescription {
+	float: left;
 	vertical-align: middle;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
+	word-wrap: break-word;
+	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
+	(the square in front of the legend description) */
+	width: calc(100% - 24px);
 	cursor: default;
 }
 
