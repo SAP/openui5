@@ -6,14 +6,35 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         "use strict";
 
         /**
-         * Constructor for a new <code>sap.m.RangeSlider</code>.
+         * Constructor for a new <code>RangeSlider</code>.
          *
-         * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-         * @param {object} [mSettings] Initial settings for the new control.
+         * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+         * @param {object} [mSettings] Initial settings for the new control
          *
          * @class
-         * A range slider is a user interface control that enables the user
-         * to select a value range in a predifined numerical interval.
+         * A control that shows an interval and two handles to select a range on the interval.
+         * <h3>Overview</h3>
+         *
+         * A {@link sap.m.RangeSlider} control represents a numerical interval and two handles to select a sub-range within it.
+         * The purpose of the control is to enable visual selection of sub-ranges within a given interval.
+         *
+         * <b>Notes:</b>
+         * <ul>
+         * <li>The RangeSlider extends the functionality of the {@link sap.m.Slider Slider}</li>
+         * <li>The right and left handle can be moved individually and their positions could therefore switch.</li>
+         * <li>The entire range can be moved along the interval.</li>
+         * <li>The right and left handle can select the same value</li>
+         * </ul>
+         *
+         *
+         * <h3>Usage</h3>
+         *
+         * The most common usecase is to select and move sub-ranges on a continuous numerical scale.
+         *
+         *
+         * <h3>Responsive Behavior</h3>
+         *
+         * You can move the currently selected range by clicking on it and dragging it along the interval.
          * @extends sap.m.Slider
          *
          * @author SAP SE
