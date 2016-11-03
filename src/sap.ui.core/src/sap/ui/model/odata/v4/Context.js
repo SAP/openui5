@@ -418,7 +418,7 @@ sap.ui.define([
 
 	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
-	 * by {@link #created} is not yet fulfilled.
+	 * by {@link #created} is not yet resolved or rejected.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient

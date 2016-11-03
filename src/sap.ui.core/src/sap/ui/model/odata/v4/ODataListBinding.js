@@ -270,39 +270,37 @@ sap.ui.define([
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
-	 * possible after the create has been successfully sent to the server and you have called
-	 * {@link #refresh} at the binding or the new entity is deleted in between.
+	 * possible after the creation of the entity has been successfully sent to the server and you
+	 * have called {@link #refresh} at the binding or the new entity is deleted in between.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
 	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}. The update group ID
 	 * must not be "$auto" or "$direct".
 	 *
 	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
-	 * again. As long as the context is transient, {@link #resetChanges} and a call to
+	 * again. As long as the context is transient (see
+	 * {@link sap.ui.model.odata.v4.Context#isTransient}), {@link #resetChanges} and a call to
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
 	 * also delete the created context together with other changes.
 	 *
-	 * If the create on the server fails, the create will be repeated automatically with the next
-	 * call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * If the creation of the entity on the server failed, the creation is repeated automatically
+	 * with the next call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 *
 	 * @param {object} [oInitialData={}]
-	 *   The initial data for the created entity. If the create has not yet been sent successfully
-	 *   to the server, updates modify this data.
+	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The context object for the created entity.
+	 *   The context object for the created entity
 	 * @throws {Error}
 	 *   If the binding already contains an entity created via this function, or {@link #create} on
-	 *   this binding is not supported, or the update group ID is either "$auto" or "$direct".
+	 *   this binding is not supported.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.Context#isTransient
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData) {
 		var oContext,
 			sCreatePath,
 			sResolvedPath,
-			sUpdateGroupId,
 			that = this;
 
 		if (this.aContexts[-1]) {
@@ -311,15 +309,10 @@ sap.ui.define([
 		if (!this.oCache) {
 			throw new Error("Create on this binding is not supported");
 		}
-		sUpdateGroupId = this.getUpdateGroupId();
-		if (sUpdateGroupId === "$auto" || sUpdateGroupId === "$direct") {
-			throw new Error("Create for update group '" + sUpdateGroupId + "' is not supported");
-		}
-
 		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 		sCreatePath = sResolvedPath.slice(1);
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			this.oCache.create(sUpdateGroupId, sCreatePath, "", oInitialData, function () {
+			this.oCache.create(this.getUpdateGroupId(), sCreatePath, "", oInitialData, function () {
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
