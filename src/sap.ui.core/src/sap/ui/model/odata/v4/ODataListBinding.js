@@ -364,12 +364,14 @@ sap.ui.define([
 			}
 		}
 		// destroy previous contexts which are not reused
-		sap.ui.getCore().addPrerenderingTask(function () {
-			Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-				that.mPreviousContextsByPath[sPath].destroy();
-				delete that.mPreviousContextsByPath[sPath];
+		if (Object.keys(this.mPreviousContextsByPath).length) {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+					that.mPreviousContextsByPath[sPath].destroy();
+					delete that.mPreviousContextsByPath[sPath];
+				});
 			});
-		});
+		}
 		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 			this.iMaxLength = Infinity;
 		}

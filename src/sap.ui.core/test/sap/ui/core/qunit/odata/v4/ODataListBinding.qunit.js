@@ -257,8 +257,8 @@ sap.ui.require([
 
 		aPreviousContexts = oBinding.aContexts;
 		// set members which should be reset to arbitrary values
-		oBinding.createContexts({start : 0, length : 2}, 2, ChangeReason.Change, false);
-		oBinding.createContexts({start : 3, length : 1}, 1, ChangeReason.Change, false);
+		oBinding.createContexts({start : 0, length : 2}, 2);
+		oBinding.createContexts({start : 3, length : 1}, 1);
 		oBinding.iCurrentBegin = 10; oBinding.iCurrentEnd = 19;
 		oBinding.iMaxLength = 42;
 		oBinding.bLengthFinal = true;
@@ -2620,12 +2620,20 @@ sap.ui.require([
 		this.mock(mPreviousContextsByPath["/EMPLOYEES/0"]).expects("destroy").withExactArgs();
 
 		// code under test
-		oBinding.createContexts(oRange, iResultLength, "Refresh", true/*bDataRequested*/);
+		oBinding.createContexts(oRange, iResultLength);
 
 		assert.strictEqual(oBinding.aContexts[1], oContext1);
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
 		assert.strictEqual(oBinding.aContexts[3], oContext3);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createContexts, no prerendering task if no previous contexts", function (assert) {
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+
+		// code under test
+		this.oModel.bindList("/EMPLOYEES", {}).createContexts({start : 1, length : 1}, 0);
 	});
 
 	//*********************************************************************************************
@@ -2657,8 +2665,8 @@ sap.ui.require([
 
 				oBinding.bUseExtendedChangeDetection = bUseExtendedChangeDetection;
 				// [0, 1, 2, undefined, 4, 5]
-				oBinding.createContexts({start : 0, length : 3}, 3, ChangeReason.Change, false);
-				oBinding.createContexts({start : 4, length : 10}, 2, ChangeReason.Change, false);
+				oBinding.createContexts({start : 0, length : 3}, 3);
+				oBinding.createContexts({start : 4, length : 10}, 2);
 				assert.strictEqual(oBinding.iMaxLength, 6);
 				aPreviousContexts = oBinding.aContexts.slice();
 
@@ -3005,7 +3013,7 @@ sap.ui.require([
 			oResult = {value : [{}, {}, {}]};
 
 		oBinding.enableExtendedChangeDetection(false);
-		oBinding.createContexts({length : 3, start : 0}, 3, "Reason");
+		oBinding.createContexts({length : 3, start : 0}, 3);
 
 		this.mock(oBinding.oCache).expects("create")
 			.withExactArgs("update", "EMPLOYEES", "", undefined, sinon.match.func, sinon.match.func)
@@ -3034,7 +3042,7 @@ sap.ui.require([
 			oContext;
 
 		// initialize with 3 contexts and bLengthFinal===true
-		oBinding.createContexts({length : 4, start : 0}, 3, "Reason");
+		oBinding.createContexts({length : 4, start : 0}, 3);
 
 		// remove request mock, all operations on client
 		oBinding.oCache.oRequestor.request.restore();
