@@ -470,7 +470,14 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			this._iNewColPos = this._iDnDColIndex;
 
+			oEvent.preventDefault(); // Avoid default actions e.g. scrolling on mobile devices
+
 			var oPos = ReorderHelper.findColumnForPosition(this, iLocationX);
+
+			if ( !oPos.id ) { //Special handling for dummy column (in case the other columns does not occupy the whole space)
+				this._iNewColPos = iOldColPos;
+				return;
+			}
 
 			// do scroll if needed
 			var iScrollTriggerAreaWidth = 40,
