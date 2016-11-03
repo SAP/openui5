@@ -24,7 +24,8 @@
 				"category": "Display",
 				"since": "1.22",
 				"samples": [
-					"sap.ui.unified.sample.Currency"
+					"sap.ui.unified.sample.Currency",
+					"sap.ui.unified.sample.CurrencyInTable"
 				]
 			},
 			{
@@ -95,6 +96,11 @@
 				"id": "sap.ui.unified.sample.Currency",
 				"name": "Currency",
 				"description": "Display Currencies with proper Alignment"
+			},
+			{
+				"id": "sap.ui.unified.sample.CurrencyInTable",
+				"name": "Currency in Table",
+				"description": "Display Currencies in Table"
 			},
 			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",
