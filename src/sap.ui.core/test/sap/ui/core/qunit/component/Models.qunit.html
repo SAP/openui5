@@ -78,8 +78,8 @@
 			stubGetUriParameters: function(mMockParams) {
 				var oGetParameterStub = sinon.stub();
 
-				oGetParameterStub.withArgs('sap-client').returns('foo');
-				oGetParameterStub.withArgs('sap-server').returns('bar');
+				oGetParameterStub.withArgs('sap-client').returns(mMockParams && mMockParams.sapClient || 'foo');
+				oGetParameterStub.withArgs('sap-server').returns(mMockParams && mMockParams.sapServer || 'bar');
 				oGetParameterStub.withArgs('sap-system').returns(mMockParams && mMockParams.sapSystem);
 
 				if (mMockParams && mMockParams["preload-component-models"]) {
@@ -89,11 +89,23 @@
 				this.oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns({
 					get: oGetParameterStub
 				});
+
+				var sSAPLanguage = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+
+				this.oConfigurationStub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getSAPParam');
+				this.oConfigurationStub.withArgs('sap-language').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
+				this.oConfigurationStub.withArgs('sap-client').returns(mMockParams && mMockParams.sapClient || 'foo');
+				this.oConfigurationStub.withArgs('sap-server').returns(mMockParams && mMockParams.sapServer || 'bar');
+				this.oConfigurationStub.withArgs('sap-system').returns(mMockParams && mMockParams.sapSystem);
 			},
 			restoreGetUriParameters: function() {
 				if (this.oGetUriParametersStub && this.oGetUriParametersStub.restore) {
 					this.oGetUriParametersStub.restore();
 					this.oGetUriParametersStub = null;
+				}
+				if (this.oConfigurationStub && this.oConfigurationStub.restore) {
+					this.oConfigurationStub.restore();
+					this.oConfigurationStub = null;
 				}
 			},
 			assertModelInstances: function(mClasses) {
@@ -112,6 +124,28 @@
 					QUnit.assert.ok(oModel && oModel.bDestroyed,
 						'Expected model "' + sName + '" to be destroyed');
 				}
+			},
+			assertModelFromManifest: function(assert, options) {
+
+				var oManifest = new sap.ui.core.Manifest(options.manifest, {
+					componentName: "sap.ui.core.test.component.models",
+					baseUrl: "./path/to/manifest/manifest.json",
+					process: false
+				});
+
+				// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
+				var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
+				var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+
+				var oModelConfigurations = sap.ui.core.Component._createManifestModelConfigurations({
+					dataSources: oManifestDataSources,
+					models: oManifestModels,
+					manifest: oManifest,
+					cacheTokens: options.cacheTokens
+				});
+
+				assert.deepEqual(oModelConfigurations, options.expected,
+					"Model configuration created from manifest should be as expected.");
 			}
 		};
 		// Binds all the helper functions to the test instance
@@ -161,13 +195,17 @@
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 7);
+			sinon.assert.callCount(this.modelSpy.odataV2, 8);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ],
-				headers: { "Cache-Control": "max-age=500" }
+				annotationURI: [
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+					'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo'
+				],
+				headers: { "Cache-Control": "max-age=500" },
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "old-uri-syntax"
@@ -177,7 +215,8 @@
 
 			// model: ""
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar'
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel"
@@ -190,17 +229,26 @@
 			// model: "invalid-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1' ]
+				annotationURI: [ '/path/to/odata/annotations/1?sap-language=EN&sap-client=foo' ],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
-												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
-												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
-												]
+				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+											],
+				metadataUrlParams: { "sap-language": "EN" }
+			});
+
+			// model: "v2-ODataModel-SAPClient" with SAP client
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service/with/sapclient/?sap-client=100&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/with/sapclient/?sap-client=200&sap-language=EN' ],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// sap.ui.model.odata.v4.ODataModel
@@ -358,19 +406,24 @@
 			// model: "v2-ODataModel" with a trailing slash and URL Parameters
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/trailing/slash;o=BLA_123/?sap-client=foo&sap-server=bar',
-				annotationURI: ['/path/to/odata/service/with/trailing/slash;o=BLA_123/annotations.xml', 'v2models/parent/path/to/local/odata/annotations/2'],
+				annotationURI: [
+					'/path/to/odata/service/with/trailing/slash;o=BLA_123/annotations.xml?sap-language=EN&sap-client=foo',
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+				],
 				useBatch: true,
 				refreshAfterChange: true,
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=BLA_123/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service;o=BLA_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
-												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
-												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
-												]
+				annotationURI: ["/path/to/other/odata/service;o=BLA_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+												"v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+												],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			//JSON Model, should not have an origin
@@ -425,19 +478,24 @@
 			// model: "v2-ODataModel" with a trailing slash and URL Parameters
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/trailing/slash;o=STARTUP456/?sap-client=foo&sap-server=bar',
-				annotationURI: ['/path/to/odata/service/with/trailing/slash;o=STARTUP456/annotations.xml', 'v2models/parent/path/to/local/odata/annotations/2'],
+				annotationURI: [
+					'/path/to/odata/service/with/trailing/slash;o=STARTUP456/annotations.xml?sap-language=EN&sap-client=foo',
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+				],
 				useBatch: true,
 				refreshAfterChange: true,
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=STARTUP456/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service;o=STARTUP456/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
-												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
-												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
-												]
+				annotationURI: ["/path/to/other/odata/service;o=STARTUP456/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+												"v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+												],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			//JSON Model, should not have an origin
@@ -471,7 +529,9 @@
 							"/path/to/odata/service": "1476971059",
 							"/path/to/odata/service/with/trailing/slash/": "1476971462",
 							"/path/to/odata/service/with/trailing/slash/annotations.xml": "1476971136",
-							"path/to/local/odata/annotations/2": "1476971160"
+							"/path/to/odata/annotations/with/sapclient/": "1476971188",
+							"path/to/local/odata/annotations/2": "1476971160",
+							"/path/to/odata/annotations/with/sapclient/": "1476971199"
 						}
 					}
 				}
@@ -499,12 +559,92 @@
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/trailing/slash/',
 				metadataUrlParams: {
+					"sap-language": "EN"
+				},
+				annotationURI: [
+					'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-language=EN',
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN'
+				],
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "v2-ODataModel-SAPClient" with SAP client
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(7), {
+				serviceUrl: '/path/to/odata/service/with/sapclient/?sap-client=100',
+				annotationURI: [ '/path/to/odata/annotations/with/sapclient/?sap-client=200&sap-language=EN' ],
+				metadataUrlParams: { 'sap-language': 'EN' }
+			});
+
+			//JSON Model, should not have an origin
+			// model: json
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json');
+
+			//ResourceModel should also not have an origin attached
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+
+		QUnit.test("metadata v2 with cacheTokens (sap-client as URI parameter)", function(assert) {
+			this.stubGetUriParameters();
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.parent",
+				asyncHints: {
+					cacheTokens: {
+						dataSources: {
+							"/path/to/odata/service": "1476971059",
+							"/path/to/odata/service/with/trailing/slash/": "1476971462",
+							"/path/to/odata/service/with/trailing/slash/annotations.xml": "1476971136",
+							"path/to/local/odata/annotations/2": "1476971160"
+						}
+					}
+				}
+			});
+
+			// V1 ODataModel should not be affected by cache tokens
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+				annotationURI: [
+					'/path/to/odata/annotations/1',
+					'v2models/parent/path/to/local/odata/annotations/2'
+				],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+			// Model without "dataSource" reference should not be affected by cache tokens
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "v2-ODataModel-ServiceOrigin"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service/with/trailing/slash/?sap-client=foo&sap-server=bar',
+				metadataUrlParams: {
 					"sap-context-token": "1476971462",
 					"sap-language": "EN"
 				},
 				annotationURI: [
-					'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-context-token=1476971136&sap-language=EN',
-					'v2models/parent/path/to/local/odata/annotations/2?sap-context-token=1476971160&sap-language=EN'
+					'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-language=EN&sap-client=foo&sap-context-token=1476971136',
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo&sap-context-token=1476971160'
 				],
 				useBatch: true,
 				refreshAfterChange: true,
@@ -512,7 +652,7 @@
 
 			//JSON Model, should not have an origin
 			// model: json
-			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json');
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
@@ -553,17 +693,18 @@
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 7);
+			sinon.assert.callCount(this.modelSpy.odataV2, 8);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
 				annotationURI: [
-					'v2models/parent/path/to/local/odata/annotations/2',
-					'/path/to/odata/annotations/1',
-					'v2models/extension/path/to/local/extension/annotation'
+					'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+					'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
+					'v2models/extension/path/to/local/extension/annotation?sap-language=EN&sap-client=foo'
 				],
-				headers: { "Cache-Control": "max-age=360" }
+				headers: { "Cache-Control": "max-age=360" },
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "old-uri-syntax"
@@ -573,7 +714,8 @@
 
 			// model: ""
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-				serviceUrl: '/path/to/default/extension/datasource?sap-client=foo&sap-server=bar'
+				serviceUrl: '/path/to/default/extension/datasource?sap-client=foo&sap-server=bar',
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel"
@@ -586,17 +728,19 @@
 			// model: "invalid-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1' ]
+				annotationURI: [ '/path/to/odata/annotations/1?sap-language=EN&sap-client=foo' ],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
-												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
-												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
-												]
+				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+												],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 			// sap.ui.model.json.JSONModel
@@ -921,13 +1065,17 @@
 
 
 				// sap.ui.model.odata.v2.ODataModel
-				sinon.assert.callCount(this.modelSpy.odataV2, 7);
+				sinon.assert.callCount(this.modelSpy.odataV2, 8);
 
 				// model: "default-with-annotations"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 					serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-					annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ],
-					headers: { "Cache-Control": "max-age=500" }
+					annotationURI: [
+						'v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+						'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo'
+					],
+					headers: { "Cache-Control": "max-age=500" },
+					metadataUrlParams: { "sap-language": "EN" }
 				});
 
 				// model: "old-uri-syntax"
@@ -937,7 +1085,8 @@
 
 				// model: ""
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-					serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar'
+					serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
+					metadataUrlParams: { "sap-language": "EN" }
 				});
 
 				// model: "v2-ODataModel"
@@ -950,17 +1099,19 @@
 				// model: "invalid-annotations"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 					serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-					annotationURI: [ '/path/to/odata/annotations/1' ]
+					annotationURI: [ '/path/to/odata/annotations/1?sap-language=EN&sap-client=foo' ],
+					metadataUrlParams: { "sap-language": "EN" }
 				});
 
 			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
-												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
-												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
-												]
+				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+												],
+				metadataUrlParams: { "sap-language": "EN" }
 			});
 
 				// sap.ui.model.json.JSONModel
@@ -1218,11 +1369,11 @@
 				oServer.xhr.useFilters = true;
 				oServer.xhr.filters = [];
 				oServer.xhr.addFilter(function(method, url) {
-					return ("/anylocation/manifest.json?sap-language=EN" !== url && !/should\/cause\/an\/error\/library-preload\.json$/.test(url));
+					return (!/^\/anylocation\/manifest\.json\?sap-language=EN(&sap-client=foo)?$/.test(url) && !/should\/cause\/an\/error\/library-preload\.json$/.test(url));
 				});
 
 				oServer.autoRespond = true;
-				oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+				oServer.respondWith("GET", /^\/anylocation\/manifest\.json\?sap-language=EN(&sap-client=foo)?$/, [
 					200,
 					{
 						"Content-Type": "application/json"
@@ -1263,7 +1414,8 @@
 							// model: "odata1"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 								serviceUrl: "/path/to/odata/service1",
-								annotationURI: ["/path/to/odata/annotations/1"]
+								annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+								metadataUrlParams: { "sap-language": "EN" }
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1343,7 +1495,8 @@
 							// model: "odata1"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 								serviceUrl: "/path/to/odata/service1;o=XXX",
-								annotationURI: ["/path/to/odata/annotations/1"]
+								annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+								metadataUrlParams: { "sap-language": "EN" }
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1448,7 +1601,7 @@
 						"sap-language": "EN"
 					},
 					annotationURI: [
-						"/path/to/odata/annotations/1?sap-context-token=1476348278&sap-language=EN"
+						"/path/to/odata/annotations/1?sap-language=EN&sap-client=foo&sap-context-token=1476348278"
 					]
 				});
 
@@ -1469,7 +1622,7 @@
 						"sap-language": "bar"
 					},
 					annotationURI: [
-						"/path/to/odata/annotations/2?sap-language=abc&sap-context-token=1476365059"
+						"/path/to/odata/annotations/2?sap-language=abc&sap-client=foo&sap-context-token=1476365059"
 					]
 				});
 
@@ -1536,7 +1689,8 @@
 				// model: "odata"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 					serviceUrl: "/path/to/odata/service1",
-					annotationURI: ["/path/to/odata/annotations/1"]
+					annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+					metadataUrlParams: { "sap-language": "EN" }
 				});
 
 				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
@@ -1595,7 +1749,8 @@
 				// model: "odata"
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 					serviceUrl: "/path/to/odata/service1",
-					annotationURI: ["/path/to/odata/annotations/1"]
+					annotationURI: ["/path/to/odata/annotations/1?sap-language=EN"],
+					metadataUrlParams: { "sap-language": "EN" }
 				});
 
 				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
@@ -1626,6 +1781,1705 @@
 					"sap.ui.core.Component");
 
 			}.bind(this));
+		});
+
+
+		QUnit.module("sap.ui.model.v2.ODataModel", {
+			beforeEach: function() {
+				bindHelper.apply(this);
+
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+
+			},
+			afterEach: function() {
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
+			}
+		});
+
+		QUnit.test("Basic", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.ui5": {
+						"models": {
+							"": {
+								"type": "sap.ui.model.odata.v2.ODataModel",
+								"uri": "/foo"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"settings": [
+							{
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With settings", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.ui5": {
+						"models": {
+							"": {
+								"type": "sap.ui.model.odata.v2.ODataModel",
+								"settings": {
+									"serviceUrl": "/foo",
+									"useBatch": true,
+									"refreshAfterChange": true
+								}
+							},
+						}
+					}
+				},
+				expected: {
+					"": {
+						"settings": [
+							{
+								"serviceUrl": "/foo",
+								"useBatch": true,
+								"refreshAfterChange": true
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.module("sap.ui.model.v2.ODataModel (with dataSource)", {
+			beforeEach: function() {
+				bindHelper.apply(this);
+
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+
+			},
+			afterEach: function() {
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
+			}
+		});
+
+		QUnit.test("Basic", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With settings (model)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"useBatch": true,
+									"refreshAfterChange": true
+								}
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"useBatch": true,
+								"refreshAfterChange": true,
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With settings (dataSource)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"maxAge": 500
+								}
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"headers": {
+									"Cache-Control": "max-age=500"
+								},
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-language already present)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-language=FOO",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-language=BAR",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-language=BAZ",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=BAR",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ"
+								],
+								"serviceUrl": "/foo?sap-language=FOO"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-language=FOO",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.module("sap.ui.model.v2.ODataModel (with sap-client/sap-server as URI Parameters)", {
+			beforeEach: function() {
+				bindHelper.apply(this);
+
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+
+				this.stubGetUriParameters();
+			},
+			afterEach: function() {
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
+				this.restoreGetUriParameters();
+			}
+		});
+
+		QUnit.test("Basic", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-client/sap-server already present)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-client=999&sap-server=XXX",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-client=888",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-client=777",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-client=888&sap-language=EN",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777&sap-language=EN"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=999&sap-server=XXX"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=999&sap-server=XXX",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-language already present)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-language=FOO",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-language=BAR",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-language=BAZ",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo"
+								],
+								"serviceUrl": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens)", {
+			beforeEach: function() {
+				bindHelper.apply(this);
+
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			},
+			afterEach: function() {
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
+			}
+		});
+
+		QUnit.test("Basic", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but sap-client parameter is missing
+						"/foo": "1400000001",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"/foo?sap-client=foo&sap-server=bar": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// One warning should be logged (serviceUrl)
+			sinon.assert.callCount(this.oLogWarningSpy, 1);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo). " +
+				"Missing \"sap-client\" parameter",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.test("With annotations", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but sap-client parameter is missing
+						"/foo": "1400000001",
+
+						// Valid, but sap-client parameter is missing
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid, but sap-client parameter is missing
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// Three warnings should be logged (serviceUrl + 2x annotationURIs)
+			sinon.assert.callCount(this.oLogWarningSpy, 3);
+
+			// Annotation1
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-language=EN). " +
+				"Missing \"sap-client\" URI parameter",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Annotation2
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-language=EN). " +
+				"Missing \"sap-client\" URI parameter",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo). " +
+				"Missing \"sap-client\" parameter",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens / with sap-client/sap-server as URI Parameters)", {
+			beforeEach: function() {
+				bindHelper.apply(this);
+
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+
+				this.stubGetUriParameters();
+			},
+			afterEach: function() {
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
+				this.restoreGetUriParameters();
+			}
+		});
+
+		QUnit.test("Basic", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo"
+							}
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo": "1400000001",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"/foo?sap-client=foo&sap-server=bar": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"metadataUrlParams": {
+									"sap-context-token": "1400000001",
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo": "1400000001",
+
+						// Valid
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-context-token": "1400000001",
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-client/sap-server already present with same value in URI)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-client=foo&sap-server=bar",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-client=foo",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-client=foo",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo?sap-client=foo&sap-server=bar": "1400000001",
+
+						// Valid
+						"/path/to/odata/annotation/1?sap-client=foo": "1400000002",
+
+						// Valid
+						"path/to/local/odata/annotation/2?sap-client=foo": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2?sap-client=foo": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-client=foo&sap-language=EN&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-client=foo&sap-language=EN&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-context-token": "1400000001",
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-client/sap-server already present with different value in URI)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-client=999&sap-server=XXX",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-client=888",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-client=777",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but should not be added as provided sap-client differs from config
+						"/foo?sap-client=999&sap-server=XXX": "1400000001",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"/path/to/odata/annotation/1?sap-client=888": "1400000002",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"path/to/local/odata/annotation/2?sap-client=777": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-client=888&sap-language=EN",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777&sap-language=EN"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=999&sap-server=XXX"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=999&sap-server=XXX",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// Three warnings should be logged (serviceUrl + 2x annotationURIs)
+			sinon.assert.callCount(this.oLogWarningSpy, 3);
+
+			// Annotation1
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-client=888&sap-language=EN). " +
+				"URI parameter \"sap-client=888\" must be identical with configuration \"sap-client=foo\"",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Annotation2
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-client=777&sap-language=EN). " +
+				"URI parameter \"sap-client=777\" must be identical with configuration \"sap-client=foo\"",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-client=999&sap-server=XXX). " +
+				"URI parameter \"sap-client=999\" must be identical with configuration \"sap-client=foo\"",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.test("With annotations (sap-client already present with same value in metadataUrlParams)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"metadataUrlParams": {
+										"sap-client": "foo"
+									}
+								}
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but should not be added as provided sap-client differs from config
+						"/foo": "1400000001",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-context-token": "1400000001",
+									"sap-client": "foo",
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-client already present with different value in metadataUrlParams)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"metadataUrlParams": {
+										"sap-client": "999"
+									}
+								}
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but should not be added as provided sap-client differs from config
+						"/foo": "1400000001",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid, but should not be added as provided sap-client differs from config
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-client": "999",
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// One warning should be logged (serviceUrl)
+			sinon.assert.callCount(this.oLogWarningSpy, 1);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-client=foo&sap-server=bar). " +
+				"Parameter metadataUrlParams[\"sap-client\"] = \"999\" must be identical with configuration \"sap-client=foo\"",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.test("With annotations (sap-language already present in URI)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-language=FOO",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-language=BAR",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-language=BAZ",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo?sap-language=FOO": "1400000001",
+
+						// Valid
+						"/path/to/odata/annotation/1?sap-language=BAR": "1400000002",
+
+						// Valid
+						"path/to/local/odata/annotation/2?sap-language=BAZ": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-context-token": "1400000001"
+								},
+								"serviceUrl": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-language already present in metadataUrlParams)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"metadataUrlParams": {
+										"sap-language": "FOO"
+									}
+								}
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo": "1400000001",
+
+						// Valid
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-language": "FOO",
+									"sap-context-token": "1400000001"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-context-token already present with same value in URI)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-context-token=1400000001",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-context-token=1400000002",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-context-token=1400000003",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"/foo?sap-context-token=1400000001": "1400000001",
+
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"/path/to/odata/annotation/1?sap-context-token=1400000002": "1400000002",
+
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"path/to/local/odata/annotation/2?sap-context-token=1400000003": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// One warning should be logged (serviceUrl)
+			sinon.assert.callCount(this.oLogWarningSpy, 1);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar). " +
+				"Model URI already contains parameter \"sap-context-token=1400000001\"",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.test("With annotations (sap-context-token already present with different value in URI)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo?sap-context-token=1400000001",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1?sap-context-token=1400000002",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2?sap-context-token=1400000003",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData"
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"/foo?sap-context-token=1400000001": "1400000111",
+
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"/path/to/odata/annotation/1?sap-context-token=1400000002": "1400000222",
+
+						// Valid, but should not be a real world use case. Just to test that the parameter won't be added twice.
+						"path/to/local/odata/annotation/2?sap-context-token=1400000003": "1400000333",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003": "1500000111"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-context-token=1400000222&sap-language=EN&sap-client=foo",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000333&sap-language=EN&sap-client=foo"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN"
+								},
+								"serviceUrl": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// Three warnings should be logged (serviceUrl + 2x annotationURIs)
+			sinon.assert.callCount(this.oLogWarningSpy, 3);
+
+			// Annotation1
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Overriding existing \"sap-context-token=1400000002\" with provided value \"1400000222\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo).",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Annotation2
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Overriding existing \"sap-context-token=1400000003\" with provided value \"1400000333\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo).",
+				"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Ignoring provided \"sap-context-token=1400000111\" for model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar). " +
+				"Model URI already contains parameter \"sap-context-token=1400000001\"",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
+		});
+
+		QUnit.test("With annotations (sap-context-token already present with same value in metadataUrlParams)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"metadataUrlParams": {
+										"sap-context-token": "1400000001"
+									}
+								}
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo": "1400000001",
+
+						// Valid
+						"/path/to/odata/annotation/1": "1400000002",
+
+						// Valid
+						"path/to/local/odata/annotation/2": "1400000003",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN",
+									"sap-context-token": "1400000001"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors or warnings should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+			sinon.assert.callCount(this.oLogWarningSpy, 0);
+		});
+
+		QUnit.test("With annotations (sap-context-token already present with different value in metadataUrlParams)", function(assert) {
+			this.assertModelFromManifest(assert, {
+				manifest: {
+					"sap.app": {
+						"dataSources": {
+							"OData": {
+								"uri": "/foo",
+								"settings": {
+									"annotations": [ "Annotation1", "Annotation2" ],
+								}
+							},
+							"Annotation1": {
+								"uri": "/path/to/odata/annotation/1",
+								"type": "ODataAnnotation"
+							},
+							"Annotation2": {
+								"uri": "path/to/local/odata/annotation/2",
+								"type": "ODataAnnotation"
+							},
+						}
+					},
+					"sap.ui5": {
+						"models": {
+							"": {
+								"dataSource": "OData",
+								"settings": {
+									"metadataUrlParams": {
+										"sap-context-token": "1400000001"
+									}
+								}
+							}
+						}
+					}
+				},
+				cacheTokens: {
+					dataSources: {
+						// Valid
+						"/foo": "1400000111",
+
+						// Valid
+						"/path/to/odata/annotation/1": "1400000222",
+
+						// Valid
+						"path/to/local/odata/annotation/2": "1400000333",
+
+						// Invalid (lookup is based on URI from manifest, not the final one)
+						"path/to/manifest/path/to/local/odata/annotation/2": "1500000111"
+					}
+				},
+				expected: {
+					"": {
+						"dataSource": "OData",
+						"settings": [
+							{
+								"annotationURI": [
+									"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000222",
+									"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000333"
+								],
+								"metadataUrlParams": {
+									"sap-language": "EN",
+									"sap-context-token": "1400000111"
+								},
+								"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
+							}
+						],
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "/foo?sap-client=foo&sap-server=bar",
+						"uriSettingName": "serviceUrl"
+					}
+				}
+			});
+
+			// No errors should be logged
+			sinon.assert.callCount(this.oLogErrorSpy, 0);
+
+			// One warning should be logged (sap-context-token will be overridden with new value)
+			sinon.assert.callCount(this.oLogWarningSpy, 1);
+
+			// Model (serviceUrl)
+			sinon.assert.calledWithExactly(this.oLogWarningSpy,
+				"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for model \"\" (/foo?sap-client=foo&sap-server=bar).",
+				"[\"sap.ui5\"][\"models\"][\"\"]",
+				"sap.ui.core.test.component.models"
+			);
+
 		});
 
 	});
