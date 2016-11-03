@@ -34,7 +34,7 @@ sap.ui.define([
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
 				this._oList = oList;
-				
+
 				// Remember initial sorter, to be able to "remove" a user-selected sorter
 				// and return to the default as defined in the XML view.
 				var oInitialSorter = oList.getBindingInfo("items").sorter;

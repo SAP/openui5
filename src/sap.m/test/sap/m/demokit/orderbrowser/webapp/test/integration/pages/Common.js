@@ -69,7 +69,7 @@ sap.ui.define([
 			},
 
 			theUnitNumbersShouldHaveTwoDecimals : function (sControlType, sViewName, sSuccessMsg, sErrMsg) {
-				var rTwoDecimalPlaces =  /^-?\d+\.\d{2}$/;
+				var rTwoDecimalPlaces = /^-?\d+\.\d{2}$/;
 
 				return this.waitFor({
 					controlType : sControlType,

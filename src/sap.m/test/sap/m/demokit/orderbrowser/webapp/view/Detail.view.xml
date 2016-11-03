@@ -2,6 +2,7 @@
 	controllerName="sap.ui.demo.orderbrowser.controller.Detail"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
 	xmlns:semantic="sap.m.semantic">
 
 	<semantic:DetailPage
@@ -15,22 +16,73 @@
 		<semantic:content>
 			<ObjectHeader
 				id="objectHeader"
-				title="{OrderID}"
->
+				title="{
+					parts: [
+						'i18n>commonItemTitle',
+						'OrderID'
+					],
+					formatter: 'jQuery.sap.formatMessage'
+				}"
+				number="{
+					path: 'detailView>/totalOrderAmount',
+					formatter: '.formatter.currencyValue'
+				}"
+				numberUnit="{detailView>/currency}">
+				<attributes>
+					<ObjectAttribute title="{i18n>commonCustomerName}" text="{Customer/CompanyName}" />
+					<ObjectAttribute title="{i18n>detailOrderDate}" text="{
+						path: 'OrderDate',
+						type: 'sap.ui.model.type.Date',
+						formatOptions: { style: 'medium' }
+					}" />
+					<ObjectAttribute
+						title="{i18n>commonItemShipped}"
+						text="{= ${ShippedDate}
+									? ${ path: 'ShippedDate',
+										 type: 'sap.ui.model.type.Date',
+										 formatOptions: { style: 'medium' } }
+									: ${i18n>commonItemNotYetShipped} }" />
+				</attributes>
 			</ObjectHeader>
 			<IconTabBar
 				id="iconTabBar"
 				class="sapUiResponsiveContentPadding">
 				<items>
-					<IconTabFilter
-						id="iconTabBarFilter1"
-						icon="sap-icon://hint"
-						tooltip="{i18n>detailIconTabBarInfo}">
+					<IconTabFilter id="iconTabFilterShipping" icon="sap-icon://shipping-status" tooltip="{i18n>detailIconTabBarShipping}">
+						<VBox class="sapUiSmallMargin">
+							<f:SimpleForm id="SimpleFormShipAddress"
+								minWidth="1024"
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								title="{i18n>detailShippingAddressTitle}"
+								labelSpanL="3"
+								labelSpanM="3"
+								emptySpanL="4"
+								emptySpanM="4"
+								columnsL="1"
+								columnsM="1" >
+								<f:content>
+									<Label text="{i18n>detailShippingName}" />
+									<Text text="{ShipName}" />
+									<Label text="{i18n>detailShippingStreet}" />
+									<Text text="{ShipAddress}" />
+									<Label text="{i18n>detailShippingZIPCodeCity}" />
+									<Text text="{ShipPostalCode} {ShipCity}" />
+									<Label text="{i18n>detailShippingRegion}" />
+									<Text text="{ShipRegion}" />
+									<Label text="{i18n>detailShippingCountry}" />
+									<Text text="{ShipCountry}" />
+								</f:content>
+							</f:SimpleForm>
+						</VBox>
 					</IconTabFilter>
 					<IconTabFilter
-						id="iconTabBarFilter2"
+						id="iconTabBarFilterAttachment"
 						icon="sap-icon://attachment"
 						tooltip="{i18n>detailIconTabBarAttachments}">
+						<VBox class="sapUiSmallMargin">
+						</VBox>
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
@@ -57,19 +109,40 @@
 						minScreenWidth="Tablet"
 						demandPopin="true"
 						hAlign="Right">
-						<Text text="{i18n>detailLineItemTableUnitNumberColumn}"/>
+						<Text text="{i18n>detailLineItemTableUnitPriceColumn}"/>
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Right">
+						<Text text="{i18n>detailLineItemTableUnitQuantityColumn}"/>
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Right">
+						<Text text="{i18n>detailLineItemTableTotalColumn}"/>
 					</Column>
 				</columns>
 				<items>
 					<ColumnListItem>
 						<cells>
 							<ObjectIdentifier
-								title="{OrderID}"
-								text="{OrderID}"/>
+								title="{Product/ProductName}"
+								text="{ProductID}"/>
 							<ObjectNumber
 								number="{
-									path: 'Quantity',
+									path: 'UnitPrice',
 									formatter: '.formatter.currencyValue'
+								}"
+								unit="{detailView>/currency}"/>
+							<ObjectAttribute
+								text="{Quantity}"/>
+							<ObjectNumber
+								number="{
+									parts:[{path: 'Quantity'}, {path: 'UnitPrice'}],
+									formatter: '.formatter.calculateItemTotal',
+									type: 'sap.ui.model.type.Currency'
 								}"
 								unit="{detailView>/currency}"/>
 						</cells>
