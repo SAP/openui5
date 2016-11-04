@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
-               function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, UniversalDate, library) {
+			'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
+			function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, UniversalDate, library) {
 	"use strict";
 
 	/*
@@ -953,24 +953,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/*
 	 * called from the calendar in multi-month case to update the interval visualization
 	 * for all months.
+	 *
+	 * @param {Date} oDate selected date
 	 */
-	Month.prototype._updateSelection = function(){
+	Month.prototype._updateSelection = function(oDate){
+		var aSelectedDates = this.getSelectedDates(),
+			sCalendarType = this.getPrimaryCalendarType(),
+			oStartDate,
+			oEndDate = aSelectedDates[0] ? aSelectedDates[0].getEndDate() : undefined;
 
-		var aSelectedDates = this.getSelectedDates();
+		//if there's a selected day while it's single selection or there's not oDate parameter passed, oStartDate is the selected date
+		//oterwise it's the passed oDate parameter
+		oStartDate = (aSelectedDates.length > 0 && this.getSingleSelection()) || !oDate ?
+		aSelectedDates[0].getStartDate() : oDate;
 
-		if (aSelectedDates.length > 0 && this.getSingleSelection()) {
-			var sCalendarType = this.getPrimaryCalendarType();
-			var oStartDate = aSelectedDates[0].getStartDate();
-			if (oStartDate) {
-				oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, sCalendarType);
-			}
-			var oEndDate = aSelectedDates[0].getEndDate();
-			if (oEndDate) {
-				oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, sCalendarType);
-			}
-			_updateSelection.call(this, oStartDate, oEndDate);
+		if (oStartDate) {
+			oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, sCalendarType);
+		}
+		if (oEndDate) {
+			oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, sCalendarType);
 		}
 
+		_updateSelection.call(this, oStartDate, oEndDate);
 	};
 
 	/*
@@ -1461,9 +1465,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oStartDate;
 		var sCalendarType = this.getPrimaryCalendarType();
 
-		if (oParent && oParent.getSelectedDates) {
-			// if used in Calendar use the aggregation of this one
-			oAggOwner = oParent;
+		if (oParent) {
+			oParent._oSelectedDay = new UniversalDate(oDate.getTime());
+			if (oParent.getSelectedDates){
+				// if used in Calendar use the aggregation of this one
+				oAggOwner = oParent;
+			}
 		}
 
 		/* eslint-disable no-lonely-if */
@@ -1546,6 +1553,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		return true;
 
 	}
+	/*
+	 * Toggles the selected class for the currently selected date.
+	 *
+	 * @param {Date} oStartDate start of a range
+	 * @param {Date} oEndDate end of a range
+	 * @private
+	 */
 
 	function _updateSelection(oStartDate, oEndDate){
 
@@ -1558,15 +1572,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (!oEndDate) {
 			// start of interval or single date
 			var sYyyymmdd = this._oFormatYyyymmdd.format(oStartDate.getJSDate(), true);
+
 			for ( i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				bStart = false;
 				bEnd = false;
+
 				if ($DomRef.attr("data-sap-day") == sYyyymmdd) {
-					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
-					bStart = true;
-				} else if ($DomRef.hasClass("sapUiCalItemSel")) {
+					if ($DomRef.hasClass("sapUiCalItemSel")){
+						$DomRef.removeClass("sapUiCalItemSel");
+						$DomRef.attr("aria-selected", "false");
+						/*
+						Focus is needed for consistent behavior in order to focus a deselected day in the corresponding calendar
+						ex: The user deselects Nov 28th from the calendar of December.
+						If we do not explicitly put a focus on the Nov 28th in the November's calendar, the focus is
+						kept on the last interactable day, part of the corresponding calendar but not on the Nov 28 in the November's calendar.
+						 */
+						$DomRef.focus();
+					} else {
+						$DomRef.addClass("sapUiCalItemSel");
+						/*
+						Focus is needed for consistent behavior in order to focus a selected day in the corresponding calendar
+						ex: The user selects Nov 28th from the calendar of December.
+						If we do not explicitly put a focus on the Nov 28th in the November's calendar, the focus is
+						kept on the last interactable day, part of the corresponding calendar but not on the Nov 28 in the November's calendar.
+						 */
+						$DomRef.focus();
+						$DomRef.attr("aria-selected", "true");
+						bStart = true;
+					}
+
+					// we must add here a check for the single selection because if we're on multiple selection
+					// the corresponding selection class will be removed for the selected days in the other calendar
+				} else if ($DomRef.hasClass("sapUiCalItemSel") && this.getSingleSelection()) {
 					$DomRef.removeClass("sapUiCalItemSel");
 					$DomRef.attr("aria-selected", "false");
 				}
