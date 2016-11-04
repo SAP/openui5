@@ -8,25 +8,18 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 		/**
 		 * @class
-		 * A message toast notification offers simple feedback about an operation in a pop-up.
-		 * Toasts automatically disappear after a timeout unless the user moves the mouse over
-		 * the toast or taps on it. In this case the toast will remain on the screen and can
-		 * be closed when the user moves the mouse out or taps out of the toast.
-		 * Toasts appears close the bottom of the screen, centered horizontally, but you can change
-		 * this position which is not dependent on the default values of the position settings.
-		 * The default position applies as long as the application does not do any position setting.
-		 * Position settings are "my", "at", "of" and "offset".
-		 *
-		 * If the configured message contains HTML code or script tags, those will be escaped.<br>
-		 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will be visualized.
-		 *
-		 * Beware that only one message toast can be shown at a time in the same place.
-		 * If you want to have multiple message toasts visible at the same time, you need to position
-		 * the message toasts in different places.
-		 * This positioning needs to be handled in the application logic.
-		 *
-		 * Message toast example:
-		 *
+		 * A small, non-disruptive popup for messages.
+		 * <h3>Overview</h3>
+		 * A message toast is a small, non-disruptive popup for success or information messages that disappears automatically after a few seconds.
+		 * Toasts automatically disappear after a timeout unless the user moves the mouse over the toast or taps on it.
+		 * <h4>Notes:</h4>
+		 * <ul>
+		 * <li>If the configured message contains HTML code or script tags, those will be escaped.</li>
+		 * <li>Line breaks (\r\n, \n\r, \r, \n) will be visualized.</li>
+		 * <li>Only one message toast can be shown at a time in the same place.</li>
+		 * </ul>
+		 * <h4>Example:</h4>
+		 * Here is an example of a MessageToast with all default options:
 		 * <pre>
 		 * sap.m.MessageToast.show("This message should appear in the message toast", {
 		 *     duration: 3000,                  // default
@@ -43,12 +36,29 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 *     closeOnBrowserNavigation: true   // default
 		 * });
 		 * </pre>
+		 * <h3>Usage</h3>
+		 * <h4>When to use:</h4>
+		 * <ul>
+		 * <li>You want to display a short success of information message.</li>
+		 * <li>You do not want to interrupt users while they are performing an action.</li>
+		 * <li>You want to confirm a successful action.</li>
+		 * </ul>
+		 * <h4>When not to use:</h4>
+		 * <ul>
+		 * <li>You want to display an error or warning message.</li>
+		 * <li>You want to interrupt users while they are performing an action.</li>
+		 * <li>You want to make sure that users read the message before they leave the page.</li>
+		 * <li>You want users to be able to copy some part of the message text. (In this case, show a success {@link sap.m.Dialog Message Dialog}.)</li>
+		 * </ul>
+		 * <h3>Responsive Behavior</h3>
+		 * The message toast has the same behavior on all devices. However, you can adjust the width of the control, for example, for use on a desktop device.
 		 *
 		 * @author SAP SE
-		 * @since 1.9.2
+		 * @version ${version}
 		 *
 		 * @namespace
 		 * @public
+		 * @since 1.9.2
 		 * @alias sap.m.MessageToast
 		 */
 		var MessageToast = {};
