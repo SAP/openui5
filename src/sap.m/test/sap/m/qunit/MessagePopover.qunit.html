@@ -565,6 +565,27 @@
 			assert.strictEqual(aItems[4].getInfoState(), ValueState.None, "The value state should be None in case of information message.");
 		});
 
+		QUnit.module("MessagePopoveritem Public API", {
+			setup: function() {
+				this.oMessagePopoverItem = new sap.m.MessagePopoverItem();
+			}, teardown: function() {
+				this.oMessagePopoverItem.destroy();
+			}
+		});
+
+		QUnit.test("setType() should set the correct type to the item", function(assert) {
+			this.oMessagePopoverItem.setType(sap.ui.core.MessageType.Error);
+			assert.strictEqual(this.oMessagePopoverItem.getType(), "Error", "Error type should be set");
+			this.oMessagePopoverItem.setType(sap.ui.core.MessageType.Warning);
+			assert.strictEqual(this.oMessagePopoverItem.getType(), "Warning", "Warning type should be set");
+			this.oMessagePopoverItem.setType(sap.ui.core.MessageType.Success);
+			assert.strictEqual(this.oMessagePopoverItem.getType(), "Success", "Success type should be set");
+			this.oMessagePopoverItem.setType(sap.ui.core.MessageType.Information);
+			assert.strictEqual(this.oMessagePopoverItem.getType(), "Information", "Information type should be set");
+			this.oMessagePopoverItem.setType(sap.ui.core.MessageType.None);
+			assert.strictEqual(this.oMessagePopoverItem.getType(), "Information", "Information type should be set, None is not supported");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
