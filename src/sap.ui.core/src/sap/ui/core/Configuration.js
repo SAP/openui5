@@ -1049,7 +1049,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @returns {string} "sync" | "async"
 		 * @public
-		 * @experimental Since 1.12.5
 		 */
 		getAppCacheBusterMode : function() {
 			return this["xx-appCacheBusterMode"];
@@ -1060,8 +1059,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * <code>handleURL</code>, <code>onIndexLoad</code> or <code>onIndexLoaded</code>.
 		 *
 		 * @returns {object} object containing the callback functions for the AppCacheBuster
-		 * @public
-		 * @experimental Since 1.27.0
+		 * @sap-restricted
 		 */
 		getAppCacheBusterHooks : function() {
 			return this["xx-appCacheBusterHooks"];
