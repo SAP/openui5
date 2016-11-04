@@ -237,6 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setAggregation("yearPicker",oYearPicker);
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
+		this._oSelectedDay = undefined; //needed for a later usage here after its assignment in the Month.js
 
 	};
 
@@ -1757,8 +1758,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aMonths = this.getAggregation("month");
 			for (var i = 0; i < aMonths.length; i++) {
 				var oMonth = aMonths[i];
+
 				if (oMonth.getId() != oEvent.oSource.getId()) {
-					oMonth._updateSelection();
+					oMonth._updateSelection(this._oSelectedDay);
 				}
 			}
 		}
