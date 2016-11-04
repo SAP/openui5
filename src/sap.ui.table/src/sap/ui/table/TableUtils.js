@@ -519,8 +519,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			if (bIdxInColumnAgg) {
 				if (oColumn.shouldRender()) {
-					for (var i = 0; i < aColumns.length; i++) {
-						if (aColumns[i] === oColumn) {
+					var aVisibleColumns = oTable._getVisibleColumns();
+					for (var i = 0; i < aVisibleColumns.length; i++) {
+						if (aVisibleColumns[i] === oColumn) {
 							oCell = oRow && oRow.getCells()[i];
 							break;
 						}
