@@ -57,6 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 	}});
 
+	/* 24 hours as milliseconds */
+	var i24_HOURS = 1000 * 3600 * 24;
+
 	CalendarDateInterval.prototype.init = function(){
 
 		Calendar.prototype.init.apply(this, arguments);
@@ -317,18 +320,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 * Overrides the <code>Calendar#_focusDateExtend</code> in order to handle the focused date in a custom way.
+	 *
+	 * Set start date according to new focused date. If focused date is not in current rendered date interval
+	 * new focused date should have the same position like the old one
+	 *
+	 * @param {Date} oDate the date to focus
+	 * @param {boolean} bOtherMonth determines whether the function is called due navigation outside the visible
+	 * date range
+	 * @param {boolean} bNoEvent hint to skip firing <code>startDateChange</code> event. If set to <code>true</code>,
+	 * the parent is supposed to take care for firing.
+	 * @returns {boolean} whether the parent should fire the <code>startDateChange</code> event
+	 * @private
+	 */
 	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth, bNoEvent) {
-
-		// set start date according to new focused date
-		// only if focused date is not in current rendered date interval
-		// new focused date should have the same position like the old one
 		if (bOtherMonth) {
-			var oOldDate = this._getFocusedDate();
-			var oStartDate = _getStartDate.call(this);
-			var iDay = Math.ceil((oOldDate.getTime() - oStartDate.getTime()) / (1000 * 3600 * 24));
-			oStartDate = this._newUniversalDate(oDate);
-			oStartDate.setUTCDate( oStartDate.getUTCDate() - iDay);
-			this._setStartDate(oStartDate, false, true);
+			var oOldFocusedDate = this._getFocusedDate();
+			var oOldStartDate = _getStartDate.call(this);
+			var iDay = Math.ceil((oOldFocusedDate.getTime() - oOldStartDate.getTime()) / (i24_HOURS));
+			var oNewStartDate = this._newUniversalDate(oDate);
+			oNewStartDate.setUTCDate(oNewStartDate.getUTCDate() - iDay);
+			this._setStartDate(oNewStartDate, false, true);
+
 			if (!bNoEvent) {
 				return true; // fire startDateChange event in caller at end of processing
 			}

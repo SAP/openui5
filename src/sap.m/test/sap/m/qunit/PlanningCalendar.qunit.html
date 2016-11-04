@@ -1064,6 +1064,8 @@
 				this.o10Sep2016 = new Date(2016, 8, 10);
 				this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 						sap.ui.unified.CalendarIntervalType.Week);
+				this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+				this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
 				this.oPC2.placeAt("uiArea1");
 				sap.ui.getCore().applyChanges();
 			},
@@ -1202,6 +1204,10 @@
 				}.bind(this));
 			},
 
+			_assertFocus: function (oTarget) {
+				strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
+			},
+
 			_formatDate: function(oDate) {
 				return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY"}).format(oDate);
 			},
@@ -1264,27 +1270,41 @@
 			_navForward: function(oPC) {
 				var sIdBackButton = oPC.getId() + "-" +  this._getIntervalPrefix(oPC) + "--Head-next";
 				qutils.triggerEvent("click", sIdBackButton);
+			},
+
+			_navFocusPrev: function (oTarget) {
+				qutils.triggerKeydown(oTarget.id, "ARROW_LEFT");
+				sap.ui.getCore().applyChanges();
+				return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
+			},
+
+			_navFocusNext: function (oTarget) {
+				qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
+				sap.ui.getCore().applyChanges();
+				return this.oPC2IntervalRow._oItemNavigation.getFocusedDomRef();
 			}
 		});
 
-		asyncTest("keyboard navigation", function() {
-			// test here only interaction between rows, other things arre tested on CalendarRow
+		test("keyboard navigation", function(assert) {
+			// test here only interaction between rows, other things are tested on CalendarRow
+			var fnDone = assert.async();
+
 			jQuery("#PC1-R1A1").focus();
 			equal(document.activeElement.id, "PC1-R1A1", "Appointment1 focused");
-			qutils.triggerKeyboardEvent("PC1-R1A1", "END");
+			qutils.triggerKeydown("PC1-R1A1", "END");
 			equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
 
-			qutils.triggerKeyboardEvent("PC1-R2A1", "HOME");
+			qutils.triggerKeydown("PC1-R2A1", "HOME");
 			sap.ui.getCore().applyChanges();
 
 			setTimeout(function(){
 				equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
-				qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_DOWN");
+				qutils.triggerKeydown("PC1-R1A1", "ARROW_DOWN");
 				equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
-				qutils.triggerKeyboardEvent("PC1-R1A1", "ARROW_UP");
+				qutils.triggerKeydown("PC1-R1A1", "ARROW_UP");
 				sap.ui.getCore().applyChanges();
 				equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
-				start();
+				fnDone();
 			}, 0);
 
 		});
@@ -1316,7 +1336,7 @@
 					this.oPC2, "StartDate modified afterwards");
 		});
 
-		test("Navigation backward", function() {
+		test("Navigation backward via back button", function() {
 			//act
 			this._navBackward(this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
 
@@ -1346,7 +1366,48 @@
 					this.oPC2, "Navigating back twice");
 		});
 
-		test("Navigation forward", function() {
+
+		test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
+			var $Days = this.oPC2IntervalRow.$("days"),
+					aDays = $Days.children(),
+					oNextTarget = aDays[0],
+					oSelf = this,
+					fnDone = assert.async();
+            //Focus 29th of Aug (week 29 Aug - 4 Sep), 2016 and move left via keyboard 4 times, expect 22 -28 Aug 2016
+			//act
+			aDays.eq(0).focus();
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oNextTarget = oSelf._navFocusPrev(oNextTarget);
+				oSelf._assertFocus(oNextTarget);
+				setTimeout(function () {
+					oNextTarget = oSelf._navFocusPrev(oNextTarget);
+					oSelf._assertFocus(oNextTarget);
+					setTimeout(function () {
+						oNextTarget = oSelf._navFocusPrev(oNextTarget);
+						oSelf._assertFocus(oNextTarget);
+						setTimeout(function () {
+							oNextTarget = oSelf._navFocusPrev(oNextTarget);
+							oSelf._assertFocus(oNextTarget);
+							setTimeout(function () {
+								oSelf._assertDatesAreVisible([
+									new Date(2016, 7, 22),
+									new Date(2016, 7, 23),
+									new Date(2016, 7, 24),
+									new Date(2016, 7, 25),
+									new Date(2016, 7, 26),
+									new Date(2016, 7, 27),
+									new Date(2016, 7, 28)
+								], oSelf.oPC2, "Navigated to the correct viewport");
+								fnDone();
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		});
+
+		test("Navigation forward via forward button", function() {
 			//act
 			this._navForward(this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
 
@@ -1376,8 +1437,49 @@
 					this.oPC2, "Navigating forward twice");
 		});
 
+		test("Navigation forward via keyboard right (outside the current visible area)", function(assert) {
+			var $Days = this.oPC2IntervalRow.$("days"),
+					aDays = $Days.children(),
+					oNextTarget = aDays[aDays.length-1],
+					oSelf = this,
+					fnDone = assert.async();
+			//Focus 4th of Sep, 2016 (week 29 Aug-4 Sep) and move right via keyboard 4 times, expect 5 -11 Sep 2016
+			//act
+			aDays.eq(aDays.length-1).focus();
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				oNextTarget = oSelf._navFocusNext(oNextTarget);
+				oSelf._assertFocus(oNextTarget);
+				setTimeout(function () {
+					oNextTarget = oSelf._navFocusNext(oNextTarget);
+					oSelf._assertFocus(oNextTarget);
+					setTimeout(function () {
+						oNextTarget = oSelf._navFocusNext(oNextTarget);
+						oSelf._assertFocus(oNextTarget);
+						setTimeout(function () {
+							oNextTarget = oSelf._navFocusNext(oNextTarget);
+							oSelf._assertFocus(oNextTarget);
+							setTimeout(function () {
+								oSelf._assertDatesAreVisible([
+									new Date(2016, 8, 5),
+									new Date(2016, 8, 6),
+									new Date(2016, 8, 7),
+									new Date(2016, 8, 8),
+									new Date(2016, 8, 9),
+									new Date(2016, 8, 10),
+									new Date(2016, 8, 11)
+								], oSelf.oPC2, "Navigated to the correct viewport");
+								fnDone();
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		});
+
 		test("Navigation backward and forward", function() {
-            var i;
+			var i;
 			//act
 			for (i = 0; i < 10; i++) {
 				this._navForward(this.oPC2);
@@ -1683,6 +1785,31 @@
 			oClock.restore();
 		});
 
+		test("Week view - click on different dates keeps the focus and week", function() {
+			//Prepare
+			var aWeekDays = this.oPC2IntervalRow.$("days").children();
+
+			//Act
+			aWeekDays.eq(1).focus();
+			sap.ui.getCore().applyChanges();
+			aWeekDays.eq(2).focus();
+			sap.ui.getCore().applyChanges();
+			aWeekDays.eq(3).focus();
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			this._assertFocus(aWeekDays[3]);
+			//assert initial state
+			this._assertDatesAreVisible([
+						new Date(2016, 7, 29),
+						new Date(2016, 7, 30),
+						new Date(2016, 7, 31),
+						new Date(2016, 8, 1),
+						new Date(2016, 8, 2),
+						new Date(2016, 8, 3),
+						new Date(2016, 8, 4)],
+					this.oPC2, "Initial week should not be changed");
+		});
 
 		module("ARIA");
 
