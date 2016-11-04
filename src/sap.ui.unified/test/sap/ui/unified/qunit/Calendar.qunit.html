@@ -60,7 +60,7 @@
 				width: "400px",
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+							   new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
 				legend: "Legend1",
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
@@ -74,26 +74,33 @@
 				maxDate: new Date("2015", "1", "25"),
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "5")})],
 				disabledDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "10")}),
-				                new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "10"), endDate: new Date("2015", "1", "20")})],
+								new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "10"), endDate: new Date("2015", "1", "20")})],
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea3");
 			oCal3.setLocale("de-DE");
+
+			var oCal4 = new sap.ui.unified.Calendar("Cal4",{
+				months: 2,
+				minDate: new Date("2016", "10", "1"),
+				startDateChange: handleStartDateChange,
+				singleSelection: false
+			}).placeAt("uiArea4");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 
 			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 				items: [
-				        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
-				        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
-				        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
-				        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
-				        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
-				        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
-				        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
-				        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
-				        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
-				        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"}),
-				        ]
+						new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
+						new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
+						new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
+						new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
+						new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
+						new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
+						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
+						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
+						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
+						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"}),
+						]
 			});
 
 			qutils.delayTestStart();
@@ -562,6 +569,35 @@
 				equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
 			});
 
+			test("Multiple selection", function() {
+				var $selectedDate = jQuery("#Cal4--Month0-20161130"),
+					$selectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161130"),
+					$otherSelectedDate,
+					$otherSelectedDateFromTheOtherMonth;
+
+				$selectedDate.focus();
+				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+                ok($selectedDate.hasClass("sapUiCalItemSel"),
+                        "30th of November is selected in the calendar of November");
+				ok($selectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
+						"30th of November is also selected in the calendar of December");
+
+				$otherSelectedDate = jQuery("#Cal4--Month0-20161129");
+				$otherSelectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161129");
+				$otherSelectedDate.focus();
+				qutils.triggerKeydown($otherSelectedDate, jQuery.sap.KeyCodes.ENTER);
+                ok($otherSelectedDate.hasClass("sapUiCalItemSel"),
+                        "29th of November is selected in the calendar of November");
+				ok($otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
+						"29th of November is also selected in the calendar of December");
+
+				$otherSelectedDate.focus();
+				qutils.triggerKeydown($otherSelectedDate, jQuery.sap.KeyCodes.ENTER);
+				ok(!$otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
+						"Both selected 29th of November are deselected successfully");
+
+			});
+
 		</script>
 
 	</head>
@@ -577,5 +613,7 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
 	</body>
 </html>
