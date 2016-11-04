@@ -273,48 +273,99 @@
 		});
 
 		QUnit.test("Read 'sap-ui-legacy-number-format' from URL", function(assert) {
-			var aUrlNumberFormats = [' ', 'X', 'x', 'Y', 'y']; // number formats from URL
-			var aConfigNumberFormats = [' ', 'X', 'X', 'Y', 'Y']; // resulting number formats
 
 			var oSpySetLegacyNumberFormat = sinon.spy(sap.ui.core.Configuration.FormatSettings.prototype, "setLegacyNumberFormat");
 
-			for (var i = 0; i < aUrlNumberFormats.length; i++) {
-				this.oGetParameterStub.returns({mParams: {'sap-ui-legacy-number-format': aUrlNumberFormats[i]}, get: function() { return null; }});
-				this.oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(this.oGetParameterStub());
+			[
+				{ param: '', expected: undefined },
+				{ param: ' ', expected: ' ' },
+				{ param: 'X', expected: 'X' },
+				{ param: 'x', expected: 'X' },
+				{ param: 'Y', expected: 'Y' },
+				{ param: 'y', expected: 'Y' }
+			].forEach(function (data) {
 
-				this.oConfig = new sap.ui.core.Configuration();
-				assert.equal(oSpySetLegacyNumberFormat.callCount, i+1, "setLegacyNumberFormat with value: '" + aUrlNumberFormats[i] + "' must be called");
-				assert.equal(this.oConfig.getFormatSettings().getLegacyNumberFormat(), aConfigNumberFormats[i], "Value of number format must be '" + aConfigNumberFormats[i] + "'.");
+				// setup
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyNumberFormat.reset();
+				
+				// call method under test
+				var oConfig = new sap.ui.core.Configuration();
+				
+				// verify results
+				assert.equal(oSpySetLegacyNumberFormat.callCount, 1, "setLegacyNumberFormat with value: '" + data.param + "' must be called");
+				assert.equal(oConfig.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
 
-				this.oGetUriParametersStub.restore();
-				this.oConfig.destroy();
-			}
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+
+			});
 		});
 
 		QUnit.test("Read 'sap-ui-legacy-date-format' from URL", function(assert) {
-			this.oGetParameterStub.returns({mParams: {'sap-ui-legacy-date-format': '1'}, get: function() { return null; }});
+
 			var oSpySetLegacyDateFormat = sinon.spy(sap.ui.core.Configuration.FormatSettings.prototype, "setLegacyDateFormat");
 
-			this.oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(this.oGetParameterStub());
+			[
+				{ param: '', expected: undefined },
+				{ param: '1', expected: '1' },
+				{ param: '2', expected: '2' },
+				{ param: '3', expected: '3' },
+				{ param: '4', expected: '4' },
+				{ param: '5', expected: '5' },
+				{ param: '6', expected: '6' },
+				{ param: '7', expected: '7' },
+				{ param: '8', expected: '8' },
+				{ param: '9', expected: '9' },
+				{ param: 'A', expected: 'A' },
+				{ param: 'B', expected: 'B' },
+				{ param: 'C', expected: undefined }, // Note: C is currently ignored
+				{ param: 'a', expected: 'A' },
+				{ param: 'b', expected: 'B' },
+				{ param: 'c', expected: undefined }, // Note: C is currently ignored
+			].forEach(function (data) {
 
-			this.oConfig = new sap.ui.core.Configuration();
-			assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must be called one time");
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyDateFormat.reset();
+				
+				var oConfig = new sap.ui.core.Configuration();
+			
+				assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must have been called one time");
+				assert.equal(oConfig.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 
-			this.oGetUriParametersStub.restore();
-			this.oConfig.destroy();
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+				
+			});
 		});
 
 		QUnit.test("Read 'sap-ui-legacy-time-format' from URL", function(assert) {
-			this.oGetParameterStub.returns({mParams: {'sap-ui-legacy-time-format': '1'}, get: function() { return null; }});
 			var oSpySetLegacyTimeFormat = sinon.spy(sap.ui.core.Configuration.FormatSettings.prototype, "setLegacyTimeFormat");
 
-			this.oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(this.oGetParameterStub());
+			[
+				{ param: '', expected: undefined },
+				{ param: '0', expected: '0' },
+				{ param: '1', expected: '1' },
+				{ param: '2', expected: '2' },
+				{ param: '3', expected: '3' },
+				{ param: '4', expected: '4' },
+			].forEach(function (data) {
 
-			this.oConfig = new sap.ui.core.Configuration();
-			assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
+				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-time-format=' + encodeURIComponent(data.param));
+				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				oSpySetLegacyTimeFormat.reset();
 
-			this.oGetUriParametersStub.restore();
-			this.oConfig.destroy();
+				var oConfig = new sap.ui.core.Configuration();
+
+				assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
+				assert.equal(oConfig.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
+
+				oGetUriParametersStub.restore();
+				oConfig.destroy();
+
+			});
 		});
 
  	</script>

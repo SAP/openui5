@@ -344,13 +344,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				}
 				// handle legacy URL params through format settings
 				if (oUriParams.mParams['sap-ui-legacy-date-format']) {
-					this.oFormatSettings.setLegacyDateFormat(oUriParams.mParams['sap-ui-legacy-date-format']);
+					this.oFormatSettings.setLegacyDateFormat(oUriParams.get('sap-ui-legacy-date-format'));
 				}
 				if (oUriParams.mParams['sap-ui-legacy-time-format']) {
-					this.oFormatSettings.setLegacyTimeFormat(oUriParams.mParams['sap-ui-legacy-time-format']);
+					this.oFormatSettings.setLegacyTimeFormat(oUriParams.get('sap-ui-legacy-time-format'));
 				}
 				if (oUriParams.mParams['sap-ui-legacy-number-format']) {
-					this.oFormatSettings.setLegacyNumberFormat(oUriParams.mParams['sap-ui-legacy-number-format']);
+					this.oFormatSettings.setLegacyNumberFormat(oUriParams.get('sap-ui-legacy-number-format'));
 				}
 			}
 
