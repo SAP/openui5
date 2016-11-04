@@ -7,31 +7,31 @@
 // [Label "Brand Color"]
 // [Description "The color which builds your brand"]
 // [Tags "Quick", "Base", "Color"]
-@sapBrandColor: #000;
+@sapBrandColor: @sapHC_HighlightBackground;
 
 // [Label "Highlight Color"]
 // [Description "The color which is used to highlight screen elements"]
 // [Tags "Quick", "Base", "Content", "Color"]
-@sapHighlightColor: #7a5100;
+@sapHighlightColor: @sapBrandColor;
 
 // [Label "Base Color"]
 // [Description "The color which is used to derive the most dominant background colors"]
 // [Tags "Quick", "Base", "Color"]
-@sapBaseColor: #000;
+@sapBaseColor: @sapHC_StandardBackground;
 
 // [Label "Shell Header Color"]
 // [Description "The color of the shell header bar"]
 // [Tags "Quick", "Base", "Color"]
-@sapShellColor: #000;
+@sapShellColor: @sapHC_StandardBackground;
 
 // [Description "The default background color of this theme"]
 // [Tags "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: #000;
+@sapBackgroundColorDefault: @sapHC_StandardBackground;
 
 // [Label "Background Color"]
 // [Description "The main background color of the screen"]
 // [Tags "Quick", "Base", "Color"]
-@sapBackgroundColor: #000;
+@sapBackgroundColor: @sapHC_StandardBackground;
 
 // [Label "Font Family"]
 // [Description "The preferred font family"]
@@ -46,12 +46,12 @@
 // [Label "Text Color"]
 // [Description "The preferred text color"]
 // [Tags "Quick", "Base", "Content", "Color", "Font"]
-@sapTextColor: #fff;
+@sapTextColor: @sapHC_StandardForeground;
 
 // [Label "Link Color"]
 // [Description "The color of the link text"]
 // [Tags "Quick", "Base", "Content", "Color", "Font", "Link"]
-@sapLinkColor: #fff;
+@sapLinkColor: @sapHC_StandardForeground;
 
 // [Label "Company Logo"]
 // [Description "The URI to the logo of your company"]
@@ -80,7 +80,7 @@
 
 
 /* Background Colors */
-@sapHC_StandardBackground: #000;
+@sapHC_StandardBackground: #000000;
 @sapHC_HighlightBackground: #7A5100;
 @sapHC_HighlightAltBackground: #0F5D94;
 @sapHC_ReducedBackground: #585858;
@@ -98,6 +98,69 @@
 @sapHC_PositiveColor: #99CC99;
 @sapHC_NeutralColor: #FFFFFF;
 
+/* ACCENT COLORS */
+@sapAccentColor1: #ffc847;
+@sapAccentColor2: #ed884a;
+@sapAccentColor3: #db9292;
+@sapAccentColor4: #e269c9;
+@sapAccentColor5: #8ca7d5;
+@sapAccentColor6: #6bd3ff;
+@sapAccentColor7: #7fc6c6;
+@sapAccentColor8: #b2e484;
+
+
+/* Semantic Background Colors */
+@sapErrorBackground:   @sapHC_StandardBackground;
+@sapWarningBackground: @sapHC_StandardBackground;
+@sapSuccessBackground: @sapHC_StandardBackground;
+@sapNeutralBackground: @sapHC_StandardBackground;
+
+
+/* Semantic Border Colors */
+@sapErrorBorderColor:   @sapErrorColor;
+@sapWarningBorderColor: @sapWarningColor;
+@sapSuccessBorderColor: @sapSuccessColor;
+
+
+/* Semantic Foreground Elements */
+@sapNegativeElementColor: @sapNegativeColor;
+@sapCriticalElementColor: @sapCriticalColor;
+@sapPositiveElementColor: @sapPositiveColor;
+@sapNeutralElementColor:  @sapNeutralColor;
+
+
+/* Semantic Text */
+@sapNegativeTextColor:  @sapNegativeColor;
+@sapCriticalTextColor:  @sapCriticalColor;
+@sapPositiveTextColor:  @sapPositiveColor;
+@sapNeutralTextColor:   @sapNeutralColor;
+
+
+/* Semantic Foreground Colors */
+
+// [Label "Negative Color"]
+// [Description "The color for elements showing negative state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapNegativeColor: @sapHC_NegativeColor;
+
+// [Label "Critical Color"]
+// [Description "The color for elements showing critical state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapCriticalColor: @sapHC_CriticalColor;
+
+// [Label "Positive Color"]
+// [Description "The color for elements showing positive state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapPositiveColor: @sapHC_PositiveColor;
+
+// [Label "Informative Color"]
+// [Description "The color for elements showing informative state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapNeutralColor: @sapHC_NeutralColor;
+
+@sapErrorColor:   @sapNegativeColor;
+@sapWarningColor: @sapCriticalColor;
+@sapSuccessColor: @sapPositiveColor;
 
 
 /* ===================================== */
@@ -307,7 +370,7 @@
 // [Label "Button Text Color"]
 // [Description "The color of texts on buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_TextColor: contrast(@sapButton_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); //should be #346187
+@sapButton_TextColor: contrast(@sapButton_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Button Hover Background Color"]
 // [Description "The background color of buttons on hover."]
@@ -474,7 +537,7 @@
 // [Label "Group Title Text Color"]
 // [Description "The text color of the group title. The text color of the title of a group."]
 // [Tags "Base", "Group", "Color", "Font"]
-@sapGroup_TitleTextColor: contrast(@sapBackgroundColor, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); // #333
+@sapGroup_TitleTextColor: contrast(@sapBackgroundColor, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Group Title Font Size"]
 // [Description "The font size of the group title."]
@@ -534,7 +597,7 @@
 // [Label "List Border Color"]
 // [Description "The color of the border in a list separating the entries."]
 // [Tags "Base", "List", "Color"]
-@sapList_BorderColor: @sapHC_StandardForeground;
+@sapList_BorderColor: @sapHC_ReducedAltForeground;
 
 // [Label "List Grid Thickness"]
 // [Description "The thickness of the border in a list separating the entries."]
@@ -660,94 +723,94 @@
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_1: #5cbae6;
+@sapChart_OrderedColor_1: #30a7df;
 
 // [Label "Chart Ordered Color 2"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_2: #b6d957;
+@sapChart_OrderedColor_2: #a3ce2f;
 
 // [Label "Chart Ordered Color 3"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_3: #fac364;
+@sapChart_OrderedColor_3: #f8b033;
 
 // [Label "Chart Ordered Color 4"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_4: #8cd3ff;
+@sapChart_OrderedColor_4: #cb73b8;
 
 // [Label "Chart Ordered Color 5"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_5: #d998cb;
+@sapChart_OrderedColor_5: #efc619;
 
 // [Label "Chart Ordered Color 6"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_6: #f2d249;
+@sapChart_OrderedColor_6: #b9b088;
 
 // [Label "Chart Ordered Color 7"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_7: #93b9c6;
+@sapChart_OrderedColor_7: #30a7df;
 
 // [Label "Chart Ordered Color 8"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_8: #ccc5a8;
+@sapChart_OrderedColor_8: #a3ce2f;
 
 // [Label "Chart Ordered Color 9"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_9: #52bacc;
+@sapChart_OrderedColor_9: #f8b033;
 
 // [Label "Chart Ordered Color 10"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_10: #dbdb46;
+@sapChart_OrderedColor_10: #cb73b8;
 
 // [Label "Chart Ordered Color 11"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_11: #98aafb;
+@sapChart_OrderedColor_11: #efc619;
 
 // [Label "Chart Color 'Bad'"]
 // [Description "This color is to visualize a 'Bad' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Bad: #d32030;
+@sapChart_Bad: @sapHC_NegativeColor;
 
 // [Label "Chart Color 'Critical'"]
 // [Description "This color is to visualize a 'Critical' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Critical: #e17b24;
+@sapChart_Critical: @sapHC_CriticalColor;
 
 // [Label "Chart Color 'Good'"]
 // [Description "This color is to visualize a 'Good' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Good: #61a656;
+@sapChart_Good: @sapHC_PositiveColor;
 
 // [Label "Chart Color 'Neutral'"]
 // [Description "This color is to visualize a 'Neutral' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Neutral: #848f94;
+@sapChart_Neutral: @sapHC_NeutralColor;
 
 // [Label "Chart Color Sequence 1"]
 // [Description "This color is the base chart color of the sequence 1"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_1: #27a3dd;
+@sapChart_Sequence_1: #5cbae5;
 
 // [Label "Chart Color Sequence 2"]
 // [Description "This color is the base chart color of the sequence 2"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_2: #9dc62d;
+@sapChart_Sequence_2: #c6e17d;
 
 // [Label "Chart Color Sequence 3"]
 // [Description "This color is the base chart color of the sequence 3"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_3: #f8ac29;
+@sapChart_Sequence_3: #ffab1d;
 
 // [Label "Chart Color Sequence 'Neutral'"]
 // [Description "This color is the base chart color of the sequence 'Neutral'"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_Neutral: #848f94;
+@sapChart_Sequence_Neutral: @sapChart_Neutral;

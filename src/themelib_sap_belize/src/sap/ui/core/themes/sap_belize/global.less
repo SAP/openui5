@@ -536,7 +536,7 @@
 @sapUiButtonRejectTextColor: contrast(@sapUiButtonRejectBackground, @sapUiNegativeText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonLiteBackground: transparent;
 @sapUiButtonLiteBorderColor: transparent;
-@sapUiButtonLiteTextColor: @sapUiButtonTextColor;
+@sapUiButtonLiteTextColor: contrast(@sapUiButtonLiteBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonLiteHoverBackground: fade(darken(@sapUiButtonHoverBackground, 22), 50);
 @sapUiButtonLiteHoverBorderColor: @sapUiButtonLiteHoverBackground;
 @sapUiButtonLiteActiveBackground: @sapUiButtonActiveBackground;
