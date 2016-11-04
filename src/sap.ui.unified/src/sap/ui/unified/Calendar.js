@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setAggregation("header",oHeader);
 
 		var oMonth = this._createMonth(this.getId() + "--Month0");
-		oMonth.attachEvent("focus", _handleFocus, this);
+		oMonth.attachEvent("focus", this._handleFocus, this);
 		oMonth.attachEvent("select", _handleSelect, this);
 		oMonth.attachEvent("_renderMonth", _handleRenderMonth, this);
 		oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
@@ -539,7 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (aMonths.length < iMonths) {
 			for (i = aMonths.length; i < iMonths; i++) {
 				oMonth = this._createMonth(this.getId() + "--Month" + i);
-				oMonth.attachEvent("focus", _handleFocus, this);
+				oMonth.attachEvent("focus", this._handleFocus, this);
 				oMonth.attachEvent("select", _handleSelect, this);
 				oMonth.attachEvent("_renderMonth", _handleRenderMonth, this);
 				oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
@@ -1303,6 +1303,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	* Handles focusing of a date by clicking on it or with keyboard navigation.
+	* @param {object} oEvent the event
+	* @private
+	*/
+	Calendar.prototype._handleFocus = function (oEvent) {
+
+		var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), this.getPrimaryCalendarType());
+		var bOtherMonth = oEvent.getParameter("otherMonth");
+		var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+
+		if (bRestoreOldDate) {
+			// in multimonth mode stay at the last focused date
+			if (!jQuery.sap.equal(this._getFocusedDate(), oDate)) {
+				_renderMonth.call(this, false, false, true);
+			}
+		} else {
+			_focusDate.call(this, oDate, bOtherMonth);
+		}
+	};
+
 	/*
 	 * sets the date in the used Month controls
 	 * @param {sap.ui.unified.Calendar} this Calendar instance
@@ -1767,22 +1788,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _handleFocus (oEvent){
-
-		var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), this.getPrimaryCalendarType());
-		var bOtherMonth = oEvent.getParameter("otherMonth");
-		var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
-
-		if (bRestoreOldDate) {
-			// in multimonth mode stay at the last focused date
-			if (!jQuery.sap.equal(this._getFocusedDate(), oDate)) {
-				_renderMonth.call(this, false, false, true);
-			}
-		} else {
-			_focusDate.call(this, oDate, bOtherMonth);
-		}
-
-	}
 
 	function _handleBindMousemove (oEvent){
 
