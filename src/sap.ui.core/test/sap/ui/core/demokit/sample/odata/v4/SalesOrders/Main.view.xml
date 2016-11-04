@@ -269,7 +269,7 @@
 						<core:Title text="Sales Order"/>
 					</form:title>
 					<Label text="Sales Order ID" />
-					<Text text="{SalesOrderID}" />
+					<Text id="Details_SalesOrderID" text="{SalesOrderID}" />
 					<Label text="Created At" />
 					<Text text="{CreatedAt}" />
 					<Label text="Changed At" />

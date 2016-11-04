@@ -272,6 +272,42 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataContextBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		if (this.oCache && this.bRelative && this.oContext.fetchCanonicalPath) {
+			this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				if (that.oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
+					that.refreshInternal();
+				} else {
+					updateDependents();
+				}
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update " + that, sClassName, oError);
+			});
+		} else {
+			updateDependents();
+		}
+	};
+
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
@@ -309,25 +345,6 @@ sap.ui.define([
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
-
-	/*
-	 * Checks dependent bindings for updates and delegates to
-	 * {@link sap.ui.model.ContextBinding#checkUpdate}.
-	 *
-	 * @throws {Error} If called with parameters
-	 */
-	// @override
-	ODataContextBinding.prototype.checkUpdate = function () {
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate "
-				+ "must not be called with parameters");
-		}
-
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.checkUpdate();
-		});
-		return ContextBinding.prototype.checkUpdate.apply(this);
-	};
 
 	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the

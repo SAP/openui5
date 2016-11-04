@@ -287,6 +287,16 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						}
 					});
 				},
+				selectFirstSalesOrder : function () {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : /--SalesOrders_ID-/,
+						success : function (aControls) {
+							aControls[0].$().tap();
+						},
+						viewName : sViewName
+					});
+				},
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -491,6 +501,21 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderIdInDetailsChanged : function () {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : "Details_SalesOrderID",
+						success : function (oText) {
+							Opa5.assert.notStrictEqual(
+								oText.getText(),
+								sap.ui.test.Opa.getContext().firstSalesOrderId,
+								"Current sales order ID in 'Sales Order Details'" + oText.getText()
+									+ ", previous " + sap.ui.test.Opa.getContext().firstSalesOrderId
+							);
 						},
 						viewName : sViewName
 					});

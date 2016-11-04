@@ -267,6 +267,43 @@ sap.ui.define([
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataListBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			that._fireChange({reason: ChangeReason.Change});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		if (this.oCache && this.bRelative && this.oContext.fetchCanonicalPath) {
+			this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				if (that.oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
+					that.refreshInternal();
+				} else {
+					updateDependents();
+				}
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update " + that, sClassName, oError);
+			});
+		} else {
+			updateDependents();
+		}
+	};
+
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
@@ -1130,25 +1167,6 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.toString = function () {
 		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
-	};
-
-	/*
-	 * Checks dependent bindings for updates and delegates to
-	 * {@link sap.ui.model.ListBinding#checkUpdate}.
-	 *
-	 * @throws {Error} If called with parameters
-	 */
-	// @override
-	ODataListBinding.prototype.checkUpdate = function () {
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
-				+ "must not be called with parameters");
-		}
-
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.checkUpdate();
-		});
-		return ListBinding.prototype.checkUpdate.apply(this);
 	};
 
 	/**
