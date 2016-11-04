@@ -88,17 +88,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					}
 
 				} else if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.DATACELL) {
-					// TODO: Think of a better way to get the indices.
-					var sCellId = $TableCell.prop("id");
-					var aCellIdAreas = sCellId.split("-");
-					var iRowIndex = parseInt(aCellIdAreas[2].slice(3), 10);
-					var iColumnIndex = parseInt(aCellIdAreas[3].slice(3), 10);
+					var oCellIndices = MenuUtils.TableUtils.getDataCellInfo(oTable, $TableCell);
+					var iRowIndex = oCellIndices.rowIndex;
+					var iColumnIndex = oCellIndices.columnIndex;
 					var bExecuteDefault = true;
 
 					if (bFireEvent) {
-						var oColumn = oTable.getColumns()[iColumnIndex];
-						var oRow = oTable.getRows()[iRowIndex];
-						var oCell =  oRow.getCells()[iColumnIndex];
+						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);
+						var oRow = oRowColCell.row;
 
 						var oRowBindingContext;
 						var oRowBindingInfo = oTable.getBindingInfo("rows");
@@ -109,8 +106,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						var mParams = {
 							rowIndex: oRow.getIndex(),
 							columnIndex: iColumnIndex,
-							columnId: oColumn.getId(),
-							cellControl: oCell,
+							columnId: oRowColCell.column.getId(),
+							cellControl: oRowColCell.cell,
 							rowBindingContext: oRowBindingContext,
 							cellDomRef: $TableCell[0]
 						};
