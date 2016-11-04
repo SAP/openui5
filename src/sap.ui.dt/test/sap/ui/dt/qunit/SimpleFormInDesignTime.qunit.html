@@ -142,6 +142,26 @@
 				});
 			});
 
+			QUnit.test("when rename is called in a simpleForm without Title", function(assert) {
+				var that = this;
+				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
+					var fnRename = oDesignTime.aggregations.form.actions.rename;
+					var oFirstFormContainer = that.oSimpleForm.getAggregation("form").getFormContainers()[0];
+					that.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
+					assert.equal(fnRename(oFirstFormContainer).isEnabled, false, "then the rename should not be enabled");
+				});
+			});
+
+			QUnit.test("when remove is called in a simpleForm without Title", function(assert) {
+				var that = this;
+				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
+					var fnRemove = oDesignTime.aggregations.form.actions.remove;
+					var oFirstFormContainer = that.oSimpleForm.getAggregation("form").getFormContainers()[0];
+					that.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
+					assert.equal(fnRemove(oFirstFormContainer).isEnabled, true, "then the rename should not be enabled");
+				});
+			});
+
 			</script>
 	</head>
 	<body>

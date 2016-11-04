@@ -60,21 +60,26 @@ sap.ui.define([
 				}
 			});
 		} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
+			var oTitle = oControl.getAggregation("form").getFormContainers()[0].getTitle();
 			aContent.some(function (oField, index) {
-				if (oField === oRemovedElement) {
-					iStart = index;
-				}
-				if (iStart >= 0 && index > iStart) {
-					if ((oModifier.getControlType(oField) === "sap.ui.core.Title") ||
+				if (!oTitle) {
+					oModifier.setVisible(oField, false);
+				} else {
+					if (oField === oRemovedElement) {
+						iStart = index;
+					}
+					if (iStart >= 0 && index > iStart) {
+						if ((oModifier.getControlType(oField) === "sap.ui.core.Title") ||
 							(oModifier.getControlType(oField) === "sap.m.Title") ||
 							(oModifier.getControlType(oField) === "sap.m.Toolbar")) {
-						if (iStart === 0) {
-							oModifier.removeAggregation(oControl, "content", oField, oView);
-							oModifier.insertAggregation(oControl, "content", oField, 0, oView);
+							if (iStart === 0) {
+								oModifier.removeAggregation(oControl, "content", oField, oView);
+								oModifier.insertAggregation(oControl, "content", oField, 0, oView);
+							}
+							return true;
+						} else {
+							oModifier.setVisible(oField, false);
 						}
-						return true;
-					} else {
-						oModifier.setVisible(oField, false);
 					}
 				}
 			});
