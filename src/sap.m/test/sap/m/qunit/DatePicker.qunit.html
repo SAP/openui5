@@ -66,7 +66,8 @@
 
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData({
-				dateValue: new Date("2015", "10", "23")
+				dateValue: new Date("2015", "10", "23"),
+				dateValue1: new Date("2015", "10", "23")
 			});
 			sap.ui.getCore().setModel(oModel);
 
@@ -98,7 +99,7 @@
 			var oDP7 = new sap.m.DatePicker("DP7", {
 				width: "250px",
 				value: {
-					path: "/dateValue",
+					path: "/dateValue1",
 					type: new sap.ui.model.type.Date({style: "short", strictParsing: true, calendarType: "Islamic"})}
 				}).placeAt("uiArea6");
 
@@ -117,8 +118,8 @@
 				equal(oDP5.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP5: DateValue set");
 				equal(oDP6.getValue(), "11/23/15", "DP6: Value in format from binding set");
 				equal(oDP6.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP6: DateValue set");
-				equal(oDP7.getValue(), "2/10/1437 AH", "DP6: Value in format from binding set");
-				equal(oDP7.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP6: DateValue set");
+				equal(oDP7.getValue(), "2/10/1437 AH", "DP7: Value in format from binding set");
+				equal(oDP7.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP7: DateValue set");
 			});
 
 			test("calendar and popup", function() {
