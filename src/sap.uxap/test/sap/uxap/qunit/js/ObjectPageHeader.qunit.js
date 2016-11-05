@@ -1,15 +1,14 @@
 (function ($, QUnit) {
 	"use strict";
 
-	var core = sap.ui.getCore();
-
 	sinon.config.useFakeTimers = true;
 
 	jQuery.sap.registerModulePath("view", "view");
 
 	sap.ui.controller("viewController", {});
 
-	var viewController = new sap.ui.controller("viewController"),
+	var core = sap.ui.getCore(),
+		viewController = new sap.ui.controller("viewController"),
 		oHeaderView = sap.ui.xmlview("UxAP-ObjectPageHeader", {
 			viewName: "view.UxAP-ObjectPageHeader",
 			controller: viewController
@@ -117,6 +116,33 @@
 		this._oHeader.destroyBreadCrumbsLinks();
 
 		assert.ok(oNewLink.bIsDestroyed, "There breadcrumbs are destroyed");
+	});
+
+	QUnit.module("API");
+
+	QUnit.test("setObjectTitle", function (assert) {
+		var sHeaderTitle = "myTitle",
+			sHeaderNewTitle = "myNewTitle",
+			oHeaderTitle =  new sap.uxap.ObjectPageHeader({
+			isObjectTitleAlwaysVisible: false,
+			objectTitle: sHeaderTitle
+		}),
+		oNotifyParentSpy = this.spy(oHeaderTitle, "_notifyParentOfChanges"),
+		oObjectPageWithHeaderOnly = new sap.uxap.ObjectPageLayout({
+			showTitleInHeaderContent:true,
+			headerTitle: oHeaderTitle
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oHeaderTitle.getObjectTitle(), sHeaderTitle, "The initial title text is set correctly: " + sHeaderTitle);
+		assert.ok(!oNotifyParentSpy.called, "_notifyParentOfChanges not called on first rendering");
+
+		oHeaderTitle.setObjectTitle(sHeaderNewTitle);
+		assert.equal(oHeaderTitle.getObjectTitle(), sHeaderNewTitle, "The new title text is set correctly: " + sHeaderNewTitle);
+		assert.equal(oNotifyParentSpy.callCount, 1, "_notifyParentOfChanges called once after runtime change of the title text");
+
+		oObjectPageWithHeaderOnly.destroy();
 	});
 
 	QUnit.module("Action buttons", {
