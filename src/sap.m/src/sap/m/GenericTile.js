@@ -689,6 +689,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
+	 * Returns true if subheader text is truncated, otherwise false.
+	 *
+	 * @private
+	 * @returns {boolean} true or false
+	 */
+	GenericTile.prototype._isSubheaderTextTruncated = function() {
+		var $SubheaderContainer = this.$("subHdr-text");
+		if ($SubheaderContainer && $SubheaderContainer.length && $SubheaderContainer[0].offsetWidth < $SubheaderContainer[0].scrollWidth) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	/**
 	 * Sets tooltip for GenericTile when the content inside is MicroChart or the header text is truncated.
 	 * The tooltip set by user will overwrite the tooltip from Control.
 	 *
@@ -699,9 +714,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		var bIsFirst = true;
 		var aTiles = this.getTileContent();
 
-		// when header text truncated, set header text as tooltip
+		// when header text is truncated, set header text as tooltip
 		if (this._isHeaderTextTruncated()) {
 			sTooltip = this._oTitle.getText();
+			bIsFirst = false;
+		}
+
+		// when subheader text is truncated, set subheader text as tooltip
+		if (this._isSubheaderTextTruncated()) {
+			sTooltip += (bIsFirst ? "" : "\n") + this.getSubheader();
 			bIsFirst = false;
 		}
 
