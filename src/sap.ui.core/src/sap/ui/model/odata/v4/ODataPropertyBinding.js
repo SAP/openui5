@@ -378,6 +378,9 @@ sap.ui.define([
 		var sResolvedPath = this.sPath,
 			oContext = this.oContext;
 
+		if (this.oCache) {
+			this.oCache.setActive(false);
+		}
 		if (oContext && !(oContext.fetchValue)) {
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 		}
@@ -432,7 +435,7 @@ sap.ui.define([
 
 		_ODataHelper.checkGroupId(sGroupId);
 
-		this.oCache.refresh();
+		this.makeCache();
 		this.refreshInternal(sGroupId);
 	};
 

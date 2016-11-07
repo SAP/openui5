@@ -264,11 +264,10 @@ sap.ui.define([
 		 * Creates a cache using the given function and sets it at the binding. If the given
 		 * SyncPromises are not fulfilled yet, it temporarily sets a proxy acting as substitute.
 		 * If there is already a cache for the canonical path in the binding's
-		 * <code>mCacheByContext</code>, it is used and no cache is created.
+		 * <code>mCacheByContext</code>, it is activated again and used, no cache is created.
 		 *
-		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
-		 * to deregister all listening property bindings at the cache, because they are not able to
-		 * deregister themselves afterwards.
+		 * If there is already a cache for the binding, it is deactivated, so that pending read
+		 * requests do not deliver results to the binding any more.
 		 *
 		 * If the path promise or the filter promise fail, an error is reported to the model and
 		 * the proxy is not replaced, so that subsequent reads fail.
@@ -291,7 +290,7 @@ sap.ui.define([
 				oPromise;
 
 			if (oBinding.oCache) {
-				oBinding.oCache.deregisterChange();
+				oBinding.oCache.setActive(false);
 			}
 
 			oPromise = _SyncPromise.all([vCanonicalPath, oFilterPromise]).then(function (aResult) {
@@ -299,19 +298,24 @@ sap.ui.define([
 
 				// do not create if a cache proxy was created, but the cache now has another one
 				if (!oCacheProxy || oBinding.oCache === oCacheProxy) {
-					oBinding.mCacheByContext = oBinding.mCacheByContext || {};
-					oBinding.oCache = sCanonicalPath
-						? oBinding.mCacheByContext[sCanonicalPath] =
-							oBinding.mCacheByContext[sCanonicalPath]
-							|| fnCreateCache(sCanonicalPath, aResult[1])
-						: fnCreateCache(sCanonicalPath, aResult[1]);
-					oBinding.oCache.$canonicalPath = sCanonicalPath;
+					if (sCanonicalPath) {
+						oBinding.mCacheByContext = oBinding.mCacheByContext || {};
+						oBinding.oCache = oBinding.mCacheByContext[sCanonicalPath];
+						if (oBinding.oCache) {
+							oBinding.oCache.setActive(true);
+						} else {
+							oBinding.mCacheByContext[sCanonicalPath] = oBinding.oCache
+								= fnCreateCache(sCanonicalPath, aResult[1]);
+							oBinding.oCache.$canonicalPath = sCanonicalPath;
+						}
+					} else {
+						oBinding.oCache = fnCreateCache(sCanonicalPath, aResult[1]);
+					}
 				}
 			});
 
 			if (!oPromise.isFulfilled()) {
 				oBinding.oCache = oCacheProxy = {
-					deregisterChange : function () {},
 					hasPendingChanges : function () {
 						return false;
 					},
@@ -325,8 +329,8 @@ sap.ui.define([
 							return oBinding.oCache.read.apply(oBinding.oCache, aReadArguments);
 						});
 					},
-					refresh : function () {},
 					resetChanges : function () {},
+					setActive : function () {},
 					update : function () {
 						throw new Error("PATCH request not allowed");
 					}
@@ -365,8 +369,11 @@ sap.ui.define([
 			var vCanonicalPath, mQueryOptions;
 
 			function createCache(sPath) {
+				var sBindingPath = (oBinding.oOperation && oBinding.oOperation.sResourcePath)
+						|| oBinding.sPath;
+
 				return _Cache.createSingle(oBinding.oModel.oRequestor,
-					_Helper.buildPath(sPath, oBinding.sPath).slice(1), mQueryOptions);
+					_Helper.buildPath(sPath, sBindingPath).slice(1), mQueryOptions);
 			}
 
 			if (!oBinding.bRelative) {

@@ -1588,6 +1588,57 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache: setActive and read", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList",
+			oCache = _Cache.create(oRequestor, sResourcePath),
+			oResult = {
+				"@odata.context" : "#SalesOrderList",
+				value : [{row: 0}, {row: 1}]
+			};
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=2", "$direct", undefined,
+				undefined, undefined)
+			.returns(Promise.resolve(oResult));
+
+		oPromise = oCache.read(0, 2, "$direct");
+		oCache.setActive(false);
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+			assert.strictEqual(oError.canceled, true);
+
+			oCache.setActive(true);
+			oCache.read(0, 2, "$direct").then(function (oReadResult) {
+				assert.deepEqual(oReadResult, oResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache: setActive and registered changes", function (assert) {
+		var oRequestor = _Requestor.create("/"),
+			oCache = _Cache.create(oRequestor, "/SalesOrderList");
+
+		oCache.mChangeListeners = {"foo" : "bar"};
+
+		// code under test
+		oCache.setActive(true);
+
+		assert.deepEqual(oCache.mChangeListeners, {"foo" : "bar"});
+
+		// code under test
+		oCache.setActive(false);
+
+		assert.deepEqual(oCache.mChangeListeners, {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache: post", function (assert) {
 		var fnDataRequested = sinon.spy(),
 			sGroupId = "group",
@@ -1610,9 +1661,6 @@ sap.ui.require([
 			.returns(Promise.resolve(oResult2));
 
 		// code under test
-		assert.throws(function () {
-			oCache.refresh();
-		}, /Refresh not allowed when using POST/);
 		assert.throws(function () {
 			oCache.read();
 		}, /Read before a POST request/);
@@ -1691,112 +1739,6 @@ sap.ui.require([
 			});
 		});
 	}
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache.refresh - basics", function (assert) {
-		var oCache,
-			oPromise,
-			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees('1')";
-
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
-			.returns(Promise.resolve({}));
-
-		oCache = _Cache.createSingle(oRequestor, sResourcePath);
-		oPromise = oCache.read();
-
-		return oPromise.then(function () {
-			oCache.refresh();
-			assert.strictEqual(oCache.oPromise, undefined, "Cached promise is cleared");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache.refresh - cancel pending requests", function (assert) {
-		var oCache,
-			aPromises = [],
-			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees('1')";
-
-		this.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath, undefined, undefined, undefined, undefined)
-			.onFirstCall().returns(Promise.resolve({}))
-			.onSecondCall().returns(Promise.resolve({}));
-
-		oCache = _Cache.createSingle(oRequestor, sResourcePath);
-
-		aPromises.push(oCache.read().then(function () {
-			assert.ok(false, "Refresh shall cancel this read");
-		}).catch(function (oError) {
-			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
-			assert.strictEqual(oError.message,
-				"Refresh canceled pending request: /~/Employees('1')");
-		}));
-
-		oCache.refresh();
-		// a read after refresh triggers a second request; if read fails test framework protocols
-		// the failure: Promise rejected during SingleCache.refresh...
-		aPromises.push(oCache.read());
-		return Promise.all(aPromises);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_Cache.refresh - basics", function (assert) {
-		var oCache,
-			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees";
-
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20", undefined, undefined,
-				undefined, undefined)
-			.returns(Promise.resolve(createResult(0, 10)));
-
-		oCache = _Cache.create(oRequestor, sResourcePath);
-
-		// read 20 but receive only 10 to simulate a short read to set iMaxElements
-		return oCache.read(0, 20).then(function () {
-			var aElements = oCache.aElements;
-
-			oCache.refresh();
-			assert.strictEqual(oCache.sContext, undefined, "sContext after refresh");
-			assert.strictEqual(oCache.iMaxElements, Infinity, "iMaxElements after refresh");
-			assert.strictEqual(oCache.aElements.length, 0, "aElements after refresh");
-			assert.notStrictEqual(oCache.aElements, aElements,
-				"different aElements arrays after refresh");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_Cache.refresh - cancel pending requests", function (assert) {
-		var oCache,
-			aPromises = [],
-			oRequestor = _Requestor.create("/~/"),
-			sResourcePath = "Employees";
-
-		this.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10", undefined, undefined,
-				undefined, undefined)
-			.returns(Promise.resolve(createResult(0, 10)));
-
-		oCache = _Cache.create(oRequestor, sResourcePath);
-
-		aPromises.push(oCache.read(0, 10).then(function () {
-			assert.ok(false, "Refresh shall cancel this read");
-		}).catch(function (oError) {
-			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
-			assert.strictEqual(oError.message,
-				"Refresh canceled pending request: /~/Employees?$skip=0&$top=10");
-			// Elements for read after refresh must not be removed from the elements array
-			assert.strictEqual(oCache.aElements[9], "j", "elements array must not be cleared");
-		}));
-
-		oCache.refresh();
-		// a read after refresh triggers a second request; if read fails test framework protocols
-		// the failure: Promise rejected during _Cache.refresh...
-		aPromises.push(oCache.read(0, 10));
-		return Promise.all(aPromises);
-	});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache.toString", function (assert) {
@@ -2310,47 +2252,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache:deregisterChange", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.create(oRequestor, "Employees");
-
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", "Employees?$skip=0&$top=1", "$direct", undefined, undefined,
-				undefined)
-			.returns(Promise.resolve({value: [{foo: "", bar: ""}]}));
-
-		return Promise.all([
-			oCache.read(0, 1, "$direct", "foo", undefined, {}),
-			oCache.read(0, 1, "$direct", "bar", undefined, {})
-		]).then(function () {
-			// code under test
-			oCache.deregisterChange();
-
-			assert.deepEqual(oCache.mChangeListeners, {});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("SingleCache:deregisterChange", function (assert) {
-		var oRequestor = _Requestor.create("/~/"),
-			oCache = _Cache.createSingle(oRequestor, "Employees('42')");
-
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("GET", "Employees('42')", "$direct", undefined, undefined, undefined)
-			.returns(Promise.resolve({foo: "", bar: ""}));
-
-		return Promise.all([
-			oCache.read("$direct", "foo", undefined, {}),
-			oCache.read("$direct", "bar", undefined, {})
-		]).then(function () {
-			// code under test
-			oCache.deregisterChange();
-
-			assert.deepEqual(oCache.mChangeListeners, {});
-		});
-	});
-
-	//*********************************************************************************************
 	[200, 404, 500].forEach(function (iStatus) {
 		QUnit.test("SingleCache#_delete: nested list, status: " + iStatus, function (assert) {
 			var sEtag = 'W/"19770724000000.0000000"',
@@ -2531,6 +2432,53 @@ sap.ui.require([
 				assert.strictEqual(oError.message, "Must not delete twice: Equipments('0')");
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: setActive", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList('1')",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath),
+			oResult = {row : 0};
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "$direct", undefined,
+				undefined, undefined)
+			.returns(Promise.resolve(oResult));
+
+		oPromise = oCache.read("$direct");
+		oCache.setActive(false);
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+			assert.strictEqual(oError.canceled, true);
+
+			oCache.setActive(true);
+			oCache.read("$direct").then(function (oReadResult) {
+				assert.deepEqual(oReadResult, oResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: setActive and registered changes", function (assert) {
+		var oRequestor = _Requestor.create("/"),
+			oCache = _Cache.createSingle(oRequestor, "/SalesOrderList('1'");
+
+		oCache.mChangeListeners = {"foo" : "bar"};
+
+		// code under test
+		oCache.setActive(true);
+
+		assert.deepEqual(oCache.mChangeListeners, {"foo" : "bar"});
+
+		// code under test
+		oCache.setActive(false);
+
+		assert.deepEqual(oCache.mChangeListeners, {});
+	});
 });
 //TODO: resetCache if error in update?
-//TODO: always delete the cache when refreshing a binding and remove method refresh in the caches

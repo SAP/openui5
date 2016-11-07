@@ -375,10 +375,9 @@ sap.ui.require([
 				oCacheProxy = _ODataHelper.createCache(oBinding, createCache, oPathPromise,
 					oFilterPromise);
 
-				assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
 				assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
-				assert.strictEqual(typeof oCacheProxy.refresh, "function");
 				assert.strictEqual(typeof oCacheProxy.resetChanges, "function");
+				assert.strictEqual(typeof oCacheProxy.setActive, "function");
 				assert.throws(function () {
 					oCacheProxy.post();
 				}, "POST request not allowed");
@@ -395,14 +394,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCache: deregister change listeners", function (assert) {
+	QUnit.test("createCache: deactivates previous cache", function (assert) {
 		var oBinding = {};
 
 		// code under test
 		_ODataHelper.createCache(oBinding, function () {});
 
-		oBinding.oCache = { deregisterChange : function () {} };
-		this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
+		oBinding.oCache = { setActive : function () {} };
+		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		_ODataHelper.createCache(oBinding, function () {});
@@ -412,9 +411,10 @@ sap.ui.require([
 	QUnit.test("createCache: use same cache for same path, async", function (assert) {
 		var oBinding = {},
 			oCache = {
-				deregisterChange : function () {},
+				setActive : function () {},
 				read : function () { return Promise.resolve({}); }
 			},
+			oCacheMock = this.mock(oCache),
 			oPathPromise = Promise.resolve("p"),
 			createCache = this.spy(function () { return oCache; });
 
@@ -424,6 +424,8 @@ sap.ui.require([
 		return oBinding.oCache.read().then(function () {
 			assert.strictEqual(oBinding.oCache, oCache);
 
+			oCacheMock.expects("setActive").withExactArgs(false);
+			oCacheMock.expects("setActive").withExactArgs(true);
 			// code under test
 			_ODataHelper.createCache(oBinding, createCache, oPathPromise);
 
@@ -437,7 +439,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("createCache: use same cache for same path, sync", function (assert) {
 		var oBinding = {},
-			oCache = {deregisterChange : function () {}},
+			oCache = {setActive : function () {}},
+			oCacheMock = this.mock(oCache),
 			oPathPromise = _SyncPromise.resolve("p"),
 			createCache = this.spy(function () { return oCache; });
 
@@ -445,6 +448,9 @@ sap.ui.require([
 		_ODataHelper.createCache(oBinding, createCache, oPathPromise);
 
 		assert.strictEqual(oBinding.oCache, oCache);
+
+		oCacheMock.expects("setActive").withExactArgs(false);
+		oCacheMock.expects("setActive").withExactArgs(true);
 
 		// code under test
 		_ODataHelper.createCache(oBinding, createCache, oPathPromise);
@@ -456,7 +462,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("createCache: create new cache for empty canonical path", function (assert) {
 		var oBinding = {},
-			oCache = {deregisterChange : function () {}},
+			oCache = {setActive : function () {}},
 			createCache = this.spy(function () { return oCache; });
 
 		// code under test

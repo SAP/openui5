@@ -997,12 +997,8 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		this.sRefreshGroupId = sGroupId;
 		if (this.oCache) {
-			if (this.bRelative && this.oContext.getBinding) {
-				this.oCache = _ODataHelper.createListCache(this, this.oContext);
-				this.mCacheByContext = undefined;
-			} else {
-				this.oCache.refresh();
-			}
+			this.oCache = _ODataHelper.createListCache(this, this.oContext);
+			this.mCacheByContext = undefined;
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
@@ -1085,13 +1081,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
-				if (this.oCache) {
-					this.oCache.deregisterChange();
-					this.oCache = undefined;
-				}
-				if (oContext) {
-					this.oCache = _ODataHelper.createListCache(this, oContext);
-				}
+				this.oCache = _ODataHelper.createListCache(this, oContext);
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {
