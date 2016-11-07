@@ -397,6 +397,7 @@ sap.ui.require([
 			return Promise.all([oCacheProxy.promise, oCacheProxy.read("$auto", "foo")])
 				.then(function (aResult) {
 					assert.strictEqual(aResult[0], oCache);
+					assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
 					assert.strictEqual(aResult[1], oReadResult);
 			});
 		});
@@ -509,7 +510,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheProxy: requestFilter fails", function (assert) {
+	QUnit.test("createCacheProxy: fetchFilter fails", function (assert) {
 		var oBinding = {},
 			oError = new Error("request filter failure"),
 			oCacheProxy;
@@ -533,44 +534,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createContextCacheProxy", function (assert) {
-		var oBinding = {
-				oModel : {oRequestor : {}},
-				sPath : "SO_2_BP"
-			},
-			sCanonicalPath = "/SalesOrderList('1')",
-			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
-			oContext = {
-				requestCanonicalPath : function () {}
-			},
-			oCache = {},
-			oCacheProxy = {
-				promise : Promise.resolve(oCache)
-			},
-			oPathPromise = Promise.resolve(sCanonicalPath),
-			mQueryOptions = {};
+	[true, false].forEach(function (bBaseContext) {
+		QUnit.test("createContextCacheProxy", function (assert) {
+			var oBinding = {
+					oModel : {oRequestor : {}},
+					sPath : "SO_2_BP"
+				},
+				sCanonicalPath = "/SalesOrderList('1')",
+				sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
+				oContext = bBaseContext
+					? { getPath : function () {return sCanonicalPath;} }
+					: { requestCanonicalPath : function () {} },
+				oCache = {},
+				oCacheProxy = {
+					promise : Promise.resolve(oCache)
+				},
+				oPathPromise = Promise.resolve(sCanonicalPath),
+				mQueryOptions = {};
 
-		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
-			.returns(mQueryOptions);
-		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
-			.returns("/" + sCachePath);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
-				sinon.match.same(mQueryOptions))
-			.returns(oCache);
-		this.mock(_ODataHelper).expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
-				sinon.match.same(oPathPromise))
-			.callsArgWith(1, sCanonicalPath)
-			.returns(oCacheProxy);
+			if (bBaseContext) {
+				this.mock(Promise).expects("resolve").withExactArgs(sCanonicalPath)
+					.returns(oPathPromise);
+			} else {
+				this.mock(oContext).expects("requestCanonicalPath").withExactArgs()
+					.returns(oPathPromise);
+			}
+			this.mock(_ODataHelper).expects("getQueryOptions")
+				.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+				.returns(mQueryOptions);
+			this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
+				.returns("/" + sCachePath);
+			this.mock(_Cache).expects("createSingle")
+				.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
+					sinon.match.same(mQueryOptions))
+				.returns(oCache);
+			this.mock(_ODataHelper).expects("createCacheProxy")
+				.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+					sinon.match.same(oPathPromise))
+				.callsArgWith(1, sCanonicalPath)
+				.returns(oCacheProxy);
 
-		// code under test
-		assert.strictEqual(_ODataHelper.createContextCacheProxy(oBinding, oContext), oCacheProxy);
+			// code under test
+			assert.strictEqual(_ODataHelper.createContextCacheProxy(oBinding, oContext),
+				oCacheProxy);
 
-		return oCacheProxy.promise.then(function () {
-			assert.strictEqual(oBinding.oCache, oCache);
+			return oCacheProxy.promise.then(function () {
+				assert.strictEqual(oBinding.oCache, oCache);
+			});
 		});
 	});
 	// TODO extend createContextCacheProxy to createContextCache to be called everywhere ODCB
@@ -680,7 +690,7 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oBinding), "",
 					sinon.match.same(oFixture.bRelative ? oContext : undefined))
 				.returns(mQueryOptions);
-			this.mock(_ODataHelper).expects("requestFilter")
+			this.mock(_ODataHelper).expects("fetchFilter")
 				.withExactArgs(sinon.match.same(oBinding),
 					sinon.match.same(oFixture.bRelative ? oContext : undefined),
 					sinon.match.same(oBinding.aApplicationFilters),
@@ -903,13 +913,13 @@ sap.ui.require([
 		{op : FilterOperator.EndsWith, result : "endswith(SupplierName,'SAP')"},
 		{op : FilterOperator.StartsWith, result : "startswith(SupplierName,'SAP')"}
 	].forEach(function (oFixture) {
-		QUnit.test("requestFilter: " + oFixture.op + " --> " + oFixture.result, function (assert) {
+		QUnit.test("fetchFilter: " + oFixture.op + " --> " + oFixture.result, function (assert) {
 			var oBinding = {
 					sPath : "/SalesOrderList('4711')/SO_2_ITEMS",
 					oModel : {
 						oMetaModel : {
 							getMetaContext : function () {},
-							requestObject : function () {}
+							fetchObject : function () {}
 						},
 						resolve : function () {}
 					}
@@ -924,9 +934,9 @@ sap.ui.require([
 				.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
 			oMetaModelMock.expects("getMetaContext")
 				.withExactArgs(oBinding.sPath).returns(oMetaContext);
-			oMetaModelMock.expects("requestObject")
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("SupplierName", oMetaContext)
-				.returns(Promise.resolve(oPropertyMetadata));
+				.returns(_SyncPromise.resolve(oPropertyMetadata));
 			oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 				.returns("'SAP'");
 			if (oFixture.op === FilterOperator.BT) {
@@ -934,18 +944,16 @@ sap.ui.require([
 					.returns("'XYZ'");
 			}
 
-			return _ODataHelper.requestFilter(oBinding, undefined, [oFilter], [], undefined)
-				.then(function (sFilterValue) {
-					assert.strictEqual(sFilterValue, oFixture.result);
-				});
+			assert.strictEqual(
+				_ODataHelper.fetchFilter(oBinding, undefined, [oFilter], [], undefined)
+					.getResult(),
+				oFixture.result);
 		});
 	});
-	//TODO refactor requestFilter -> fetchFilter: SyncPromise is faster if already resolved; we do
-	// not create a microtask if it is not needed
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
-		QUnit.test("requestFilter: dynamic and static filters, "
+		QUnit.test("fetchFilter: dynamic and static filters, "
 				+ (bRelative ? "relative" : "absolute") + " binding", function (assert) {
 			var oBinding = {
 					sPath : bRelative ? "BP_2_SO" : "/SalesOrderList",
@@ -954,7 +962,7 @@ sap.ui.require([
 							getMetaContext : function (sPath) {
 								return { path : sPath }; // path === metapath
 							},
-							requestObject : function () {}
+							fetchObject : function () {}
 						},
 						resolve : function () {}
 					}
@@ -970,40 +978,38 @@ sap.ui.require([
 			this.mock(oBinding.oModel).expects("resolve").twice()
 				.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 				.returns(sResolvedPath);
-			oMetaModelMock.expects("requestObject")
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("BuyerName", {path : sResolvedPath})
-				.returns(Promise.resolve({$Type : "Edm.String"}));
-			oMetaModelMock.expects("requestObject")
+				.returns(_SyncPromise.resolve({$Type : "Edm.String"}));
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("GrossAmount", {path : sResolvedPath})
-				.returns(Promise.resolve({$Type : "Edm.Decimal"}));
+				.returns(_SyncPromise.resolve({$Type : "Edm.Decimal"}));
 			oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 				.returns("'SAP'");
 			oHelperMock.expects("formatLiteral").withExactArgs(12345, "Edm.Decimal")
 				.returns(12345);
 
-			return _ODataHelper.requestFilter(oBinding, oContext, [oFilter0, oFilter1], [],
-					"GrossAmount ge 1000")
-				.then(function (sFilterValue) {
-					assert.strictEqual(sFilterValue,
-						"(BuyerName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)");
-				});
+			assert.strictEqual(
+				_ODataHelper.fetchFilter(oBinding, oContext, [oFilter0, oFilter1], [],
+					"GrossAmount ge 1000").getResult(),
+				"(BuyerName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)");
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestFilter: static filter only", function (assert) {
+	QUnit.test("fetchFilter: static filter only", function (assert) {
 		var oBinding = {
 				sPath : "/SalesOrderList"
 			};
 
-		return _ODataHelper.requestFilter(oBinding, undefined, [], [], "GrossAmount ge 1000")
-			.then(function (sFilterValue) {
-				assert.strictEqual(sFilterValue, "GrossAmount ge 1000");
-			});
+		assert.strictEqual(
+			_ODataHelper.fetchFilter(oBinding, undefined, [], [], "GrossAmount ge 1000")
+				.getResult(),
+			"GrossAmount ge 1000");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestFilter: error invalid operator", function (assert) {
+	QUnit.test("fetchFilter: error invalid operator", function (assert) {
 		var oBinding = {
 				sPath : "/SalesOrderList",
 				oModel : {
@@ -1011,7 +1017,7 @@ sap.ui.require([
 						getMetaContext : function (sPath) {
 							return { path : sPath }; // path === metapath
 						},
-						requestObject : function () {}
+						fetchObject : function () {}
 					},
 					resolve : function () {}
 				}
@@ -1021,13 +1027,13 @@ sap.ui.require([
 
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
-		this.mock(oBinding.oModel.oMetaModel).expects("requestObject")
+		this.mock(oBinding.oModel.oMetaModel).expects("fetchObject")
 			.withExactArgs("BuyerName", {path : oBinding.sPath})
-			.returns(Promise.resolve(oPropertyMetadata));
+			.returns(_SyncPromise.resolve(oPropertyMetadata));
 		this.mock(_Helper).expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 			.returns("'SAP'");
 
-		return _ODataHelper.requestFilter(oBinding, undefined, [oFilter], [], undefined)
+		return _ODataHelper.fetchFilter(oBinding, undefined, [oFilter], [], undefined)
 			.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -1037,7 +1043,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestFilter: error no metadata for filter path", function (assert) {
+	QUnit.test("fetchFilter: error no metadata for filter path", function (assert) {
 		var sPath = "/SalesOrderList/BuyerName",
 			oMetaContext = {
 				getPath : function () { return sPath; }
@@ -1047,7 +1053,7 @@ sap.ui.require([
 				oModel : {
 					oMetaModel : {
 						getMetaContext : function () { return oMetaContext; },
-						requestObject : function () {}
+						fetchObject : function () {}
 					},
 					resolve : function () {}
 				}
@@ -1056,11 +1062,11 @@ sap.ui.require([
 
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
-		this.mock(oBinding.oModel.oMetaModel).expects("requestObject")
+		this.mock(oBinding.oModel.oMetaModel).expects("fetchObject")
 			.withExactArgs("BuyerName", oMetaContext)
-			.returns(Promise.resolve(undefined));
+			.returns(_SyncPromise.resolve(undefined));
 
-		return _ODataHelper.requestFilter(oBinding, undefined, [oFilter], [], undefined)
+		return _ODataHelper.fetchFilter(oBinding, undefined, [oFilter], [], undefined)
 			.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -1079,7 +1085,7 @@ sap.ui.require([
 			result : "(path0 eq foo or path0 eq bar) and path1 eq path1Value"
 		}
 	].forEach(function (oFixture) {
-		QUnit.test("requestFilter: flat filter '" + oFixture.result + "'", function (assert) {
+		QUnit.test("fetchFilter: flat filter '" + oFixture.result + "'", function (assert) {
 			var oBinding = {
 					sPath : "/SalesOrderList",
 					oModel : {
@@ -1087,7 +1093,7 @@ sap.ui.require([
 							getMetaContext : function (sPath) {
 								return { path : sPath }; // path === metapath
 							},
-							requestObject : function () {}
+							fetchObject : function () {}
 						},
 						resolve : function (sPath) {
 							return sPath;
@@ -1113,7 +1119,7 @@ sap.ui.require([
 				aFilters.push(new Filter(sPath, FilterOperator.EQ, sValue));
 				if (!mRequestObjectByPath[sPath]) { // Edm type request happens only once per path
 					mRequestObjectByPath[sPath] = true;
-					oMetaModelMock.expects("requestObject")
+					oMetaModelMock.expects("fetchObject")
 						.withExactArgs(sPath, {path : "/SalesOrderList"})
 						.returns(Promise.resolve(oPropertyMetadata));
 				}
@@ -1121,7 +1127,7 @@ sap.ui.require([
 					.returns(sValue);
 			});
 
-			return _ODataHelper.requestFilter(oBinding, undefined, aFilters, [], undefined)
+			return _ODataHelper.fetchFilter(oBinding, undefined, aFilters, [], undefined)
 				.then(function (sFilterValue) {
 					assert.strictEqual(sFilterValue, oFixture.result);
 				});
@@ -1129,7 +1135,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestFilter: hierarchical filter", function (assert) {
+	QUnit.test("fetchFilter: hierarchical filter", function (assert) {
 		var oBinding = {
 				sPath : "/Set",
 				oModel : {
@@ -1137,13 +1143,14 @@ sap.ui.require([
 						getMetaContext : function (sPath) {
 							return { path : sPath }; // path === metapath
 						},
-						requestObject : function () {}
+						fetchObject : function () {}
 					},
 					resolve : function (sPath) {
 						return sPath;
 					}
 				}
 			},
+			oFilterPromise,
 			aFilters = [
 				new Filter("p0.0", FilterOperator.EQ, "v0.0"),
 				new Filter({
@@ -1166,34 +1173,36 @@ sap.ui.require([
 			oPropertyMetadata = {$Type : "Edm.String"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("requestObject").withExactArgs("p0.0", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p1.0", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p1.1", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p1.1", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p2.0", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p2.0", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p2.1", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p2.1", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p2.2", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p2.2", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p3.0", {path : "/Set"})
-		.returns(oPromise);
+		oMetaModelMock.expects("fetchObject").withExactArgs("p3.0", {path : "/Set"})
+			.returns(oPromise);
 
-		return _ODataHelper.requestFilter(oBinding, undefined, aFilters, [], undefined)
-			.then(function (sFilterValue) {
-				assert.strictEqual(sFilterValue,
-					"p0.0 eq 'v0.0'"
-					+ " and (p1.0 eq 'v1.0' or p1.1 eq 'v1.1')"
-					+ " and (p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2')"
-					+ " and p3.0 eq 'v3.0'"
-				);
-			});
+		oFilterPromise = _ODataHelper.fetchFilter(oBinding, undefined, aFilters, [], undefined);
+
+		assert.strictEqual(oFilterPromise.isFulfilled(), false);
+		return oFilterPromise.then(function (sFilterValue) {
+			assert.strictEqual(sFilterValue,
+				"p0.0 eq 'v0.0'"
+				+ " and (p1.0 eq 'v1.0' or p1.1 eq 'v1.1')"
+				+ " and (p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2')"
+				+ " and p3.0 eq 'v3.0'"
+			);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestFilter: application and control filter", function (assert) {
+	QUnit.test("fetchFilter: application and control filter", function (assert) {
 		var aAppFilters = [new Filter("p0.0", FilterOperator.EQ, "v0.0")],
 			oBinding = {
 				sPath : "/Set",
@@ -1202,7 +1211,7 @@ sap.ui.require([
 						getMetaContext : function (sPath) {
 							return { path : sPath }; // path === metapath
 						},
-						requestObject : function () {}
+						fetchObject : function () {}
 					},
 					resolve : function (sPath) {
 						return sPath;
@@ -1214,12 +1223,12 @@ sap.ui.require([
 			oPropertyMetadata = {$Type : "Edm.String"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("requestObject").withExactArgs("p0.0", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", {path : "/Set"})
 			.returns(oPromise);
-		oMetaModelMock.expects("requestObject").withExactArgs("p1.0", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", {path : "/Set"})
 			.returns(oPromise);
 
-		return _ODataHelper.requestFilter(oBinding, undefined, aAppFilters, aControlFilters,
+		return _ODataHelper.fetchFilter(oBinding, undefined, aAppFilters, aControlFilters,
 				"p2.0 eq 'v2.0'")
 			.then(function (sFilterValue) {
 				assert.strictEqual(sFilterValue,
@@ -1228,7 +1237,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("requestFilter: filter with encoded path", function (assert) {
+	QUnit.skip("fetchFilter: filter with encoded path", function (assert) {
 		// TODO encode in the filter or not?
 		var aAppFilters = [new Filter("AmountIn%E2%82%AC", FilterOperator.GT, "10000")],
 			oBinding = {
@@ -1239,7 +1248,7 @@ sap.ui.require([
 							// decoded path === metapath
 							return { path : decodeURIComponent(sPath) };
 						},
-						requestObject : function () {}
+						fetchObject : function () {}
 					},
 					resolve : function (sPath) {
 						return sPath;
@@ -1250,10 +1259,10 @@ sap.ui.require([
 			oPropertyMetadata = {$Type : "Edm.Decimal"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("requestObject").withExactArgs("AmountIn€", {path : "/Set"})
+		oMetaModelMock.expects("fetchObject").withExactArgs("AmountIn€", {path : "/Set"})
 			.returns(oPromise);
 
-		return _ODataHelper.requestFilter(oBinding, undefined, aAppFilters, [], undefined)
+		return _ODataHelper.fetchFilter(oBinding, undefined, aAppFilters, [], undefined)
 			.then(function (sFilterValue) {
 				assert.strictEqual(sFilterValue, "AmountIn€ gt 10000");
 			});
@@ -1512,6 +1521,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChanges(sPath): without cache, base context", function (assert) {
+		assert.strictEqual(
+			_ODataHelper.hasPendingChanges({oContext : {}}, undefined, "foo"),
+			false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(bAskParent): with cache", function (assert) {
 		var oChild1 = {},
 			oChild2 = {},
@@ -1636,6 +1652,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChanges(sPath): without cache, base context", function (assert) {
+		_ODataHelper.resetChanges({oContext : {}}, undefined, "foo");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetChanges(bAskParent): with cache", function (assert) {
 		var oChild1 = {},
 			oChild2 = {},
@@ -1692,6 +1713,21 @@ sap.ui.require([
 		_ODataHelper.resetChanges(oBinding, false);
 
 		oContextMock.expects("resetChanges").withExactArgs(oBinding.sPath);
+
+		//code under test
+		_ODataHelper.resetChanges(oBinding, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges(bAskParent): without cache, base context", function (assert) {
+		var oBinding = {
+				oContext : {},
+				oModel : {
+					getDependentBindings : function () {
+						return [];
+					}
+				}
+			};
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, true);

@@ -51,5 +51,36 @@
 				The first sales order in the sales orders still has a gross amount
 				greater than 1000.</li>
 		</ol>
+		<h3>Read data for relative list bindings</h3>
+		<ol>
+			<li>Select the first sales order</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table is not empty.
+				All items displayed in the table have the ID of the selected sales order in the
+				column <code>Sales Order ID</code></li>
+			<li>Select the first sales order item</li>
+			<li><b>Check:</b> The <code>Supplier Contact Information</code> list is not empty.</li>
+			<li>Select the second sales order item</li>
+			<li><b>Check:</b> The contacts shown in the <code>Supplier Contact Information</code>
+				table are different from the ones shown for the first sales order item.</li>
+		</ol>
+		<h3>Filter on relative list binding (with backend only)</h3>
+		Note: Test runs on sales order items table which is non-growing and therefore does not use
+		extended change detection.
+		<ol>
+			<li>Select the first sales order</li>
+			<li>In the <code>Filter by ProductID</code> field in the header of the
+				<code>Sales Order Line Items</code> table, enter the product ID of some line item
+				displayed in the table.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains exactly one
+				row with the sales order item having the product ID entered as filter.</li>
+		</ol>
+		<h3>Sort on list binding updates or refreshes dependent bindings (with backend only)</h3>
+		<ol>
+			<li>Select the first sales order</li>
+			<li>Change sort order of sales orders by clicking the <code>Gross Amount</code>
+				column header.</li>
+			<li><b>Check:</b> The Sales Order Details display the details for the sales order
+				selected after sorting: The Sales Order ID is the same.</li>
+		</ol>
 	</body>
 </html>

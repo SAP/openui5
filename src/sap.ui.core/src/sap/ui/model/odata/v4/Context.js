@@ -100,6 +100,17 @@ sap.ui.define([
 		});
 
 	/**
+	 * Updates all dependent bindings of this context.
+	 *
+	 * @private
+	 */
+	Context.prototype.checkUpdate = function () {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.checkUpdate();
+		});
+	};
+
+	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
 	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
 	 * represented by this context is transient.
@@ -126,12 +137,12 @@ sap.ui.define([
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must be
-	 *   "$auto" or "$direct"
+	 *   '$auto' or '$direct'
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
 	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
-	 *   context's binding, if the resulting group ID is neither "$auto" nor "$direct", or if the
+	 *   context's binding, if the resulting group ID is neither '$auto' nor '$direct', or if the
 	 *   deletion on the server fails.
 	 *   <p>
 	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
@@ -284,7 +295,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context's index within the binding's collection.
+	 * Returns the context's index within the binding's collection. The return value changes if a
+	 * new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create} or deleted
+	 * again.
 	 *
 	 * @returns {number}
 	 *   The context's index within the binding's collection or <code>undefined</code> if the
@@ -294,6 +307,9 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.getIndex = function () {
+		if (this.oBinding.aContexts && this.oBinding.aContexts[-1]) {
+			return this.iIndex + 1;
+		}
 		return this.iIndex;
 	};
 
@@ -407,7 +423,7 @@ sap.ui.define([
 
 	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
-	 * by {@link #created} is not yet fulfilled.
+	 * by {@link #created} is not yet resolved or rejected.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient
@@ -451,12 +467,18 @@ sap.ui.define([
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
+	 * If you want {@link #requestObject} to read fresh data, call
+	 * <code>oContext.getBinding().refresh()</code> first.
+	 *
 	 * @param {string} [sPath=""]
 	 *   A relative path within the JSON structure
 	 * @returns {Promise}
 	 *   A promise on the requested value
 	 *
 	 * @public
+	 * @see #getBinding
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
+	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestObject = function (sPath) {

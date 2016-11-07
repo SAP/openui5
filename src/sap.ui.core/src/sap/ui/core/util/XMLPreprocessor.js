@@ -161,6 +161,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * The function <code>foo</code> is called with arguments such that <code>
 			 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 			 * holds.
+			 * This use is not supported within an expression binding, that is, <code>&lt;Text
+			 * text="{= ${parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'} }"/></code>
+			 * does not work as expected because the property <code>requiresIContext = true</code>
+			 * is ignored.
 			 *
 			 * To distinguish those two use cases, just check whether
 			 * <code>oInterface.getModel() === undefined</code>, in which case the formatter is
@@ -740,7 +744,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						 * which override currently known variables of the same name in
 						 * <code>this</code> parent interface or replace them altogether. Each
 						 * variable name becomes a named model with a corresponding object binding
-						 * and can be used inside the XML template in the usual way, that is with a
+						 * and can be used inside the XML template in the usual way, that is, with a
 						 * binding expression like <code>"{var>some/relative/path}"</code> (see
 						 * example).
 						 *

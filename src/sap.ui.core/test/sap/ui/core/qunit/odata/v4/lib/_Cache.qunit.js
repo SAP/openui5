@@ -763,11 +763,13 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/~/"),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			oCreatePromise,
+			oError = new Error(),
+			fnErrorCallback = sinon.spy(),
 			oFailedPostPromise,
+			fnRejectPost,
 			oRequestExpectation1,
 			oRequestExpectation2,
 			oRequestorMock = this.mock(oRequestor),
-			fnRejectPost,
 			fnResolvePost;
 
 		function checkUpdateAndDeleteFailure() {
@@ -805,7 +807,8 @@ sap.ui.require([
 				fnRejectPost = reject;
 			}));
 
-		oCreatePromise = oCache.create("updateGroup", "Employees", "");
+		oCreatePromise = oCache.create("updateGroup", "Employees", "", {}, undefined,
+			fnErrorCallback);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = oRequestorMock.expects("request");
@@ -821,9 +824,10 @@ sap.ui.require([
 
 			checkUpdateAndDeleteFailure();
 
-			fnRejectPost(new Error());
+			fnRejectPost(oError);
 
 			oFailedPostPromise.then(undefined, function () {
+				assert.ok(fnErrorCallback.calledWithExactly(oError));
 				checkUpdateSuccess("with restarted POST").then(function () {
 					// simulate a submitBatch leading to a successful POST
 					oRequestExpectation2.args[0][5]();
@@ -843,10 +847,54 @@ sap.ui.require([
 				.returns(Promise.resolve({}));
 
 			// code under test
-			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1")
-				.then(function () {
-					assert.ok(true, "Update patches after successful create");
-				});
+			return oCache.update("updateGroup", "foo", "baz2", "Employees", "-1");
+		});
+	});
+
+	//*********************************************************************************************
+	["$direct", "$auto"].forEach(function (sUpdateGroupId) {
+		QUnit.test("create: relocate on failed POST for " + sUpdateGroupId, function (assert) {
+			var oRequestor = _Requestor.create("/~/"),
+				oCache = _Cache.create(oRequestor, "Employees"),
+				oFailedPostPromise = Promise.reject(new Error()),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("POST", "Employees", sUpdateGroupId, null, sinon.match.object,
+					sinon.match.func, sinon.match.func)
+				.returns(oFailedPostPromise);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("POST", "Employees", "$parked." + sUpdateGroupId, null,
+					sinon.match.object, sinon.match.func, sinon.match.func)
+				.returns(Promise.resolve({Name: "John Doe", Age: 47}));
+
+			// code under test
+			oCache.create(sUpdateGroupId, "Employees", "", {Name: null});
+
+			return oFailedPostPromise.then(undefined, function () {
+				var aPromises = [],
+					sWrongGroupId = sUpdateGroupId === "$direct" ? "$auto" : "$direct";
+
+				// code under test - try to update via wrong $direct/auto group
+				aPromises.push(oCache.update(sWrongGroupId, "Name", "John Doe", "n/a", "-1")
+					.then(undefined, function(oError) {
+						assert.strictEqual(oError.message, "The entity will be created via group '"
+							+ sUpdateGroupId + "'. Cannot patch via group '" + sWrongGroupId + "'");
+					}));
+
+				oRequestorMock.expects("relocate")
+					.withExactArgs("$parked." + sUpdateGroupId, oCache.aElements[-1],
+						sUpdateGroupId);
+
+				// code under test - first update -> relocate
+				aPromises.push(oCache.update(sUpdateGroupId, "Name", "John Doe", "n/a", "-1"));
+
+				// code under test - second update -> do not relocate again
+				aPromises.push(oCache.update(sUpdateGroupId, "Name", "John Doe1", "n/a", "-1"));
+
+				return Promise.all(aPromises);
+			});
 		});
 	});
 
@@ -1404,7 +1452,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update, hasPendingChanges and refresh", function (assert) {
+	QUnit.test("update, hasPendingChanges and resetChanges", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -1429,11 +1477,10 @@ sap.ui.require([
 			assert.ok(false);
 		}
 
-		function rejected(oError) {
-			assert.strictEqual(oError.canceled, true);
+		function rejected(oError0) {
+			assert.strictEqual(oError0, oError);
 		}
 
-		oError.canceled = true;
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId", undefined,
 				undefined, undefined)
@@ -1470,7 +1517,7 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/1"), false);
 
 			// code under test
-			oCache.refresh();
+			oCache.resetChanges("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -2164,7 +2211,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: update, hasPendingChanges and refresh", function (assert) {
+	QUnit.test("SingleCache: update, hasPendingChanges and resetChanges", function (assert) {
 		var oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
 			oPatchPromise1 = Promise.reject(oError),
@@ -2220,7 +2267,7 @@ sap.ui.require([
 			assert.strictEqual(oCache.hasPendingChanges("bar"), false);
 
 			// code under test
-			oCache.refresh();
+			oCache.resetChanges("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -2486,3 +2533,4 @@ sap.ui.require([
 	});
 });
 //TODO: resetCache if error in update?
+//TODO: always delete the cache when refreshing a binding and remove method refresh in the caches

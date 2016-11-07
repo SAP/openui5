@@ -69,8 +69,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -116,6 +116,7 @@ sap.ui.define([
 				this.sChangeReason = undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
+				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
@@ -165,7 +166,7 @@ sap.ui.define([
 		if (!oContext.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.getIndex()),
+		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.iIndex),
 			function (iIndex) {
 				var i,
 					oNextContext;
@@ -184,9 +185,7 @@ sap.ui.define([
 							that.aContexts[i]
 								= Context.create(that.oModel, that, that.sPath + "/" + i, i);
 						} else if (!that.bUseExtendedChangeDetection) {
-							that.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
-								oBinding.checkUpdate();
-							});
+							oContext.checkUpdate();
 						}
 					}
 					that.aContexts.pop();
@@ -268,41 +267,78 @@ sap.ui.define([
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataListBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			that._fireChange({reason: ChangeReason.Change});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		if (this.oCache && this.bRelative && this.oContext.fetchCanonicalPath) {
+			this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				if (that.oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
+					that.refreshInternal();
+				} else {
+					updateDependents();
+				}
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update " + that, sClassName, oError);
+			});
+		} else {
+			updateDependents();
+		}
+	};
+
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
-	 * possible after the create has been successfully sent to the server and you have called
-	 * {@link #refresh} at the binding or the new entity is deleted in between.
+	 * possible after the creation of the entity has been successfully sent to the server and you
+	 * have called {@link #refresh} at the binding or the new entity is deleted in between.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
-	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}. The update group ID
-	 * must not be "$auto" or "$direct".
+	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *
 	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
-	 * again. As long as the context is transient, {@link #resetChanges} and a call to
+	 * again. As long as the context is transient (see
+	 * {@link sap.ui.model.odata.v4.Context#isTransient}), {@link #resetChanges} and a call to
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
 	 * also delete the created context together with other changes.
 	 *
-	 * If the create on the server fails, the create will be repeated automatically with the next
-	 * call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * If the creation of the entity on the server failed, the creation is repeated for application
+	 * group IDs with the next call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. For
+	 * '$auto' or '$direct', the creation is repeated automatically with the next update for the
+	 * entity.
 	 *
 	 * @param {object} [oInitialData={}]
-	 *   The initial data for the created entity. If the create has not yet been sent successfully
-	 *   to the server, updates modify this data.
+	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The context object for the created entity.
+	 *   The context object for the created entity
 	 * @throws {Error}
 	 *   If the binding already contains an entity created via this function, or {@link #create} on
-	 *   this binding is not supported, or the update group ID is either "$auto" or "$direct".
+	 *   this binding is not supported.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.Context#isTransient
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData) {
 		var oContext,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			sUpdateGroupId,
+			sCreatePath,
+			sResolvedPath,
 			that = this;
 
 		if (this.aContexts[-1]) {
@@ -311,16 +347,17 @@ sap.ui.define([
 		if (!this.oCache) {
 			throw new Error("Create on this binding is not supported");
 		}
-		sUpdateGroupId = this.getUpdateGroupId();
-		if (sUpdateGroupId === "$auto" || sUpdateGroupId === "$direct") {
-			throw new Error("Create for update group '" + sUpdateGroupId + "' is not supported");
-		}
+		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		sCreatePath = sResolvedPath.slice(1);
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			this.oCache.create(sUpdateGroupId, sResolvedPath.slice(1), "", oInitialData, function () {
+			this.oCache.create(this.getUpdateGroupId(), sCreatePath, "", oInitialData, function () {
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
-		}));
+			}, function (oError) {
+				that.oModel.reportError("POST on '" + sCreatePath
+					+ "' failed; will be repeated automatically", sClassName, oError);
+			}));
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});
@@ -347,27 +384,32 @@ sap.ui.define([
 			i,
 			bNewLengthFinal,
 			oModel = this.oModel,
-			sResolvedPath = oModel.resolve(this.sPath, oContext),
+			sPath = oModel.resolve(this.sPath, oContext),
+			sPathWithIndex,
 			that = this;
 
 		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				if (this.aPreviousContexts[i]) {
-					this.aContexts[i] = this.aPreviousContexts[i];
-					delete this.aPreviousContexts[i];
+				sPathWithIndex = sPath + "/" + i;
+				if (sPathWithIndex in this.mPreviousContextsByPath) {
+					this.aContexts[i] = this.mPreviousContextsByPath[sPathWithIndex];
+					delete this.mPreviousContextsByPath[sPathWithIndex];
+					this.aContexts[i].checkUpdate();
 				} else {
-					this.aContexts[i] = Context.create(oModel, this, sResolvedPath + "/" + i, i);
+					this.aContexts[i] = Context.create(oModel, this, sPathWithIndex, i);
 				}
 			}
 		}
 		// destroy previous contexts which are not reused
-		sap.ui.getCore().addPrerenderingTask(function () {
-			that.aPreviousContexts.forEach(function (oPreviousContext) {
-				oPreviousContext.destroy();
+		if (Object.keys(this.mPreviousContextsByPath).length) {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+					that.mPreviousContextsByPath[sPath].destroy();
+					delete that.mPreviousContextsByPath[sPath];
+				});
 			});
-			that.aPreviousContexts = [];
-		});
+		}
 		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 			this.iMaxLength = Infinity;
 		}
@@ -403,7 +445,7 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 * @throws {Error}
-	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *   If the resulting group ID is neither '$auto' nor '$direct'
 	 *
 	 * @private
 	 */
@@ -419,7 +461,7 @@ sap.ui.define([
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
 	};
 
 	/**
@@ -499,7 +541,7 @@ sap.ui.define([
 				return this.fetchValue(sPath, undefined, iIndex);
 			}
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchAbsoluteValue) {
 			return this.oContext.fetchAbsoluteValue(sPath);
 		}
 		return _SyncPromise.resolve();
@@ -620,9 +662,10 @@ sap.ui.define([
 			bDataRequested = false,
 			bFireChange = false,
 			sGroupId,
-			iStartInModel, // in model coordinates
 			oPromise,
 			oRange,
+			bRefreshEvent = !!this.sChangeReason,
+			iStartInModel, // in model coordinates
 			that = this;
 
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
@@ -666,7 +709,9 @@ sap.ui.define([
 						that.fireDataRequested();
 				});
 			} else {
-				oPromise = oContext.fetchValue(this.sPath);
+				oPromise = oContext.fetchValue(this.sPath).then(function (aResult) {
+					return aResult.slice(oRange.start, oRange.start + oRange.length);
+				});
 			}
 			oPromise.then(function (vResult) {
 				var aResult,
@@ -679,6 +724,12 @@ sap.ui.define([
 					// Note: aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.;
 					// fetchDiff() of course works with view coordinates; everything is fine here!
 					return _ODataHelper.fetchDiff(that, aResult, iStart, iLength)
+						.then(function (oDiff) {
+							// make sure "refresh" is followed by async "change"
+							return bRefreshEvent && !bFireChange
+								? Promise.resolve(oDiff)
+								: oDiff;
+						})
 						.then(function (oDiff) {
 							that.oDiff = oDiff;
 							if (that.createContexts(oRange, iResultLength) && bFireChange) {
@@ -722,7 +773,7 @@ sap.ui.define([
 					+ iLength + ")");
 			}
 			aContexts.dataRequested = !this.oDiff;
-			aContexts.diff = this.oDiff ? this.oDiff.aDiff :  [];
+			aContexts.diff = this.oDiff ? this.oDiff.aDiff : [];
 		}
 		this.oDiff = undefined;
 		return aContexts;
@@ -908,8 +959,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes or {@link #refresh} on
 	 *   this binding is not supported.
@@ -955,7 +1006,7 @@ sap.ui.define([
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			if (oDependentBinding.getContext().getIndex() >= 0) {
+			if (!oDependentBinding.getContext().created()) {
 				oDependentBinding.refreshInternal(sGroupId);
 			}
 		});
@@ -972,7 +1023,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.reset = function (sChangeReason) {
-		this.aPreviousContexts = this.aContexts || [];
+		var that = this;
+
+		if (this.aContexts) {
+			this.aContexts.forEach(function (oContext) {
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+			});
+		}
 		this.aContexts = [];
 		// the range for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
@@ -988,6 +1045,10 @@ sap.ui.define([
 
 	/**
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
+	 *
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
 	 *
 	 * @public
 	 * @since 1.40.1

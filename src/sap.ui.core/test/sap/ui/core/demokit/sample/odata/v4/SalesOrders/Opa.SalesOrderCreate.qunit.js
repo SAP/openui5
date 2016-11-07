@@ -17,10 +17,15 @@ sap.ui.require([
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Create");
 
 	//*****************************************************************************
-	opaTest("Create, modify and delete - all transient", function (Given, When, Then) {
-		var vRealOData = jQuery.sap.getUriParameters().get("realOData"),
-			bRealOData = /direct|proxy|true/.test(vRealOData),
-			sModifiedNote = "Modified by OPA";
+	opaTest("Create, modify and delete", function (Given, When, Then) {
+		var oExpectedLog = {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
+			},
+			sModifiedNote = "Modified by OPA",
+			vRealOData = jQuery.sap.getUriParameters().get("realOData"),
+			bRealOData = /direct|proxy|true/.test(vRealOData);
 
 		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
 				+ "&sap-language=en"
@@ -40,7 +45,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkNote(0, sModifiedNote);
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		Then.onTheMainPage.checkID(0, "");
-		When.onTheMainPage.selectSalesOrderWithId("");
+		Then.onTheMainPage.checkSalesOrderSelected(0);
 		When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
 		Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
 		When.onTheMainPage.deleteSelectedSalesOrder();
@@ -115,11 +120,12 @@ sap.ui.require([
 		Then.onTheMainPage.checkID(0);
 
 		if (bRealOData) {
-			// Cancel/resume failed creation of a sales order
+			// Cancel or resume a failed creation of a sales order
 			// Create a sales order with invalid note, save, cancel
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
@@ -129,9 +135,10 @@ sap.ui.require([
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			// do it again, POST is sent again without a change
-			// TODO implement error handling and check the errors on save
+			When.onTheErrorInfo.confirm();
+			// Do it again to ensure that it is retried without update
 			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.changeNote(0, "Valid Note");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
@@ -153,11 +160,42 @@ sap.ui.require([
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
 			When.onTheMainPage.sortByGrossAmount();
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
+			// Proper update of details on second sort (selection is kept)
+			When.onTheMainPage.selectFirstSalesOrder();
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortByGrossAmount();
+			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
+		}
+
+		if (!bRealOData) {
+			// Relative list bindings show correct data when switching to a different context
+			When.onTheMainPage.selectSalesOrderWithId("0500000000");
+			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+			Then.onTheMainPage.checkContactNameInRow(0, "Karl");
+			Then.onTheMainPage.checkContactNameInRow(1, "Harald");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000020");
+			Then.onTheMainPage.checkContactNameInRow(0, "Dagmar");
+			Then.onTheMainPage.checkContactNameInRow(1, "Ursula");
+			Then.onTheMainPage.checkContactNameInRow(2, "Foo");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+			Then.onTheMainPage.checkContactNameInRow(0, "Karl");
+			Then.onTheMainPage.checkContactNameInRow(1, "Harald");
+
+			// Filter on relative list binding (table without extended change detection)
+			When.onTheMainPage.selectSalesOrderWithId("0500000000");
+			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
+			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
+			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
+			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
 		}
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog();
+		Then.onTheMainPage.checkLog( bRealOData ? [oExpectedLog, oExpectedLog, oExpectedLog]
+			: undefined);
 		Then.iTeardownMyAppFrame();
 	});
 });

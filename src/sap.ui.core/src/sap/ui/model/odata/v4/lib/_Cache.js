@@ -205,24 +205,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Removes all pending PATCH requests.
-	 *
-	 * @param {_Cache} oCache The cache
-	 */
-	function removePatchRequests(oCache) {
-		var i,
-			sPath,
-			aPromises;
-
-		for (sPath in oCache.mPatchRequests) {
-			aPromises = oCache.mPatchRequests[sPath];
-			for (i = 0; i < aPromises.length; i++) {
-				oCache.oRequestor.removePatch(aPromises[i]);
-			}
-		}
-	}
-
-	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
 	 * A refresh cancels all pending requests. Their promises are rejected with an error that has a
@@ -279,13 +261,13 @@ sap.ui.define([
 	 *
 	 * @param {_Cache} oCache The cache
 	 * @param {string} sPath The path
+	 * @throws {Error}
+	 *   If one of the requests is currently running
 	 */
 	function resetChanges(oCache, sPath) {
 		var i,
 			sRequestPath,
-			aPromises,
-			sTransientGroup =
-				oCache.aElements && oCache.aElements[-1] && oCache.aElements[-1]["@$ui5.transient"];
+			aPromises;
 
 		for (sRequestPath in oCache.mPatchRequests) {
 			if (isSubPath(sRequestPath, sPath)) {
@@ -295,9 +277,6 @@ sap.ui.define([
 				}
 				delete oCache.mPatchRequests[sRequestPath];
 			}
-		}
-		if (sTransientGroup && sPath === "") {
-			oCache.oRequestor.removePost(sTransientGroup, oCache.aElements[-1]);
 		}
 	}
 
@@ -327,6 +306,7 @@ sap.ui.define([
 		var oBody, // the body for the PATCH request
 			mHeaders, // the headers for the PATCH request
 			vOldValue, // the old value of the property
+			sParkedGroupId,
 			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
 			sTransientGroup,
 			// the path that is updated; the promise is registered here
@@ -353,6 +333,10 @@ sap.ui.define([
 		if (sTransientGroup === true) {
 			throw new Error("No 'update' allowed while waiting for server response");
 		}
+		if (sTransientGroup && sTransientGroup.indexOf("$parked.") === 0) {
+			sParkedGroupId = sTransientGroup;
+			sTransientGroup = sTransientGroup.slice(8);
+		}
 		if (sTransientGroup && sTransientGroup !== sGroupId) {
 			throw new Error("The entity will be created via group '" + sTransientGroup
 				+ "'. Cannot patch via group '" + sGroupId + "'");
@@ -376,6 +360,10 @@ sap.ui.define([
 		if (sTransientGroup) {
 			// When updating a transient entity, _Helper.updateCache has already updated the POST
 			// request, because the request body is a reference into the cache.
+			if (sParkedGroupId) {
+				oCacheData["@$ui5.transient"] = sTransientGroup;
+				oCache.oRequestor.relocate(sParkedGroupId, oCacheData, sTransientGroup);
+			}
 			return Promise.resolve({});
 		}
 		// send and register the PATCH request
@@ -493,7 +481,10 @@ sap.ui.define([
 
 	/**
 	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
-	 * group with the given ID.
+	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
+	 * with an Error object, the POST request is automatically added again to the same batch
+	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
+	 * are repeated with the next update of the entity data.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -505,12 +496,14 @@ sap.ui.define([
 	 *   The initial entity data
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a POST request fails
 	 * @returns {Promise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
-	 *   and the entity has been marked as non-transient.
+	 *   and the entity has been marked as non-transient
 	 */
 	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData,
-			fnCancelCallback) {
+			fnCancelCallback, fnErrorCallback) {
 		var that = this;
 
 		// Clean-up when the create has been canceled.
@@ -524,9 +517,9 @@ sap.ui.define([
 			oEntityData["@$ui5.transient"] = true;
 		}
 
-		function request() {
-			oEntityData["@$ui5.transient"] = sGroupId; // mark as transient (again)
-			return that.oRequestor.request("POST", sPostPath, sGroupId, null, oEntityData,
+		function request(sPostGroupId) {
+			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
+			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
 					delete oEntityData["@$ui5.transient"];
@@ -534,9 +527,14 @@ sap.ui.define([
 					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
 				}, function (oError) {
 					if (oError.canceled) {
+						// for cancellation no error is reported via fnErrorCallback
 						throw oError;
 					}
-					return request();
+					if (fnErrorCallback) {
+						fnErrorCallback(oError);
+					}
+					return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
+						? "$parked." + sPostGroupId : sPostGroupId);
 				});
 		}
 
@@ -547,7 +545,7 @@ sap.ui.define([
 		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
 		oEntityData["@odata.etag"] = undefined;
 		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return request();
+		return request(sGroupId);
 	};
 
 	/**
@@ -677,13 +675,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
+	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
+	 * pending changes from {@link #update} or {@link #create}.
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
 		this.iMaxElements = Infinity;
 		this.aElements = [];
-		removePatchRequests(this);
 	};
 
 	/**
@@ -691,8 +689,19 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   The path
+	 * @throws {Error}
+	 *   If there is a change which has been sent to the server and for which there is no response
+	 *   yet.
 	 */
 	CollectionCache.prototype.resetChanges = function (sPath) {
+		var sTransientGroup;
+
+		if (sPath === "" && this.aElements[-1]) {
+			sTransientGroup = this.aElements[-1]["@$ui5.transient"];
+			if (sTransientGroup) {
+				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
+			}
+		}
 		resetChanges(this, sPath);
 	};
 
@@ -900,7 +909,7 @@ sap.ui.define([
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
-	 * @param {function()} [fnDataRequested]
+	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back end request is sent.
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]
@@ -959,7 +968,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
+	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
+	 * pending changes from {@link #update} or {@link #create}.
 	 *
 	 * @throws {Error}
 	 *   If the cache is using POST requests
@@ -969,13 +979,15 @@ sap.ui.define([
 			throw new Error("Refresh not allowed when using POST");
 		}
 		this.oPromise = undefined;
-		removePatchRequests(this);
 	};
 
 	/**
 	 * Resets all pending changes below the given path.
 	 * @param {string} [sPath]
 	 *   The path
+	 * @throws {Error}
+	 *   If there is a change which has been sent to the server and for which there is no response
+	 *   yet.
 	 */
 	SingleCache.prototype.resetChanges = function (sPath) {
 		resetChanges(this, sPath);

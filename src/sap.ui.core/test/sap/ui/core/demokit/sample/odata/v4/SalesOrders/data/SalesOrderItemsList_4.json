@@ -44,7 +44,8 @@
 					"BusinessPartnerID" : "0100000025",
 					"CompanyName" : "Tessile Casa Di Roma",
 					"LegalForm" : "Srl",
-					"PhoneNumber" : "4580963184"
+					"PhoneNumber" : "4580963184",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -91,7 +92,8 @@
 					"BusinessPartnerID" : "0100000026",
 					"CompanyName" : "Vente Et Réparation de Ordinateur",
 					"LegalForm" : "S.A.R.L.",
-					"PhoneNumber" : "1012697341"
+					"PhoneNumber" : "1012697341",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -138,7 +140,8 @@
 					"BusinessPartnerID" : "0100000027",
 					"CompanyName" : "Developement Para O Governo",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "7345697824"
+					"PhoneNumber" : "7345697824",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -185,7 +188,8 @@
 					"BusinessPartnerID" : "0100000028",
 					"CompanyName" : "Brazil Technologies",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "469614115"
+					"PhoneNumber" : "469614115",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -232,7 +236,8 @@
 					"BusinessPartnerID" : "0100000029",
 					"CompanyName" : "C.R.T.U.",
 					"LegalForm" : "Ltd.",
-					"PhoneNumber" : "6839542781"
+					"PhoneNumber" : "6839542781",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -279,7 +284,8 @@
 					"BusinessPartnerID" : "0100000030",
 					"CompanyName" : "Jologa",
 					"LegalForm" : "GmbH",
-					"PhoneNumber" : "6714954542"
+					"PhoneNumber" : "6714954542",
+					"BP_2_CONTACT" : []
 				}
 			}
 		}]

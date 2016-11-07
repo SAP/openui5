@@ -44,7 +44,8 @@
 					"BusinessPartnerID" : "0100000011",
 					"CompanyName" : "Alpine Systems",
 					"LegalForm" : "AG",
-					"PhoneNumber" : "6623612804"
+					"PhoneNumber" : "6623612804",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -91,7 +92,8 @@
 					"BusinessPartnerID" : "0100000012",
 					"CompanyName" : "New Line Design",
 					"LegalForm" : "Ltd.",
-					"PhoneNumber" : "2589436180"
+					"PhoneNumber" : "2589436180",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -138,7 +140,8 @@
 					"BusinessPartnerID" : "0100000013",
 					"CompanyName" : "HEPA Tec",
 					"LegalForm" : "GmbH",
-					"PhoneNumber" : "4507867136"
+					"PhoneNumber" : "4507867136",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -185,7 +188,8 @@
 					"BusinessPartnerID" : "0100000014",
 					"CompanyName" : "Anav Ideon",
 					"LegalForm" : "Ltd.",
-					"PhoneNumber" : "5850428367"
+					"PhoneNumber" : "5850428367",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -232,7 +236,8 @@
 					"BusinessPartnerID" : "0100000015",
 					"CompanyName" : "Robert Brown Entertainment",
 					"LegalForm" : "Ltd.",
-					"PhoneNumber" : "7609448173"
+					"PhoneNumber" : "7609448173",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -279,7 +284,8 @@
 					"BusinessPartnerID" : "0100000016",
 					"CompanyName" : "Mexican Oil Trading Company",
 					"LegalForm" : "S.A.",
-					"PhoneNumber" : "6879342945"
+					"PhoneNumber" : "6879342945",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -326,7 +332,8 @@
 					"BusinessPartnerID" : "0100000000",
 					"CompanyName" : "SAP",
 					"LegalForm" : "SE",
-					"PhoneNumber" : "0622734567"
+					"PhoneNumber" : "0622734567",
+					"BP_2_CONTACT" : []
 				}
 			}
 		},
@@ -373,7 +380,8 @@
 					"BusinessPartnerID" : "0100000001",
 					"CompanyName" : "Becker Berlin",
 					"LegalForm" : "GmbH",
-					"PhoneNumber" : "3088530"
+					"PhoneNumber" : "3088530",
+					"BP_2_CONTACT" : []
 				}
 			}
 		}]
