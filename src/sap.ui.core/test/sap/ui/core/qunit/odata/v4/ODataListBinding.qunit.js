@@ -80,9 +80,7 @@ sap.ui.require([
 	 *   the promise which is fulfilled as specified
 	 */
 	function createResult(iLength, iStart, bDrillDown) {
-		//TODO "cache proxy" does not respect contract of _Cache w.r.t. _SyncPromise as return value
-		// of #read
-		return /*_SyncPromise.resolve(*/Promise.resolve(createData(iLength, iStart, bDrillDown));
+		return _SyncPromise.resolve(Promise.resolve(createData(iLength, iStart, bDrillDown)));
 	}
 
 	/**
@@ -221,7 +219,7 @@ sap.ui.require([
 	QUnit.test("toString", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oV4Context = {
-				requestCanonicalPath : function () {},
+				fetchCanonicalPath : function () {},
 				toString : function () {return "/TEAMS(Team_ID='TEAM01')";}
 			},
 			oBaseContext = {
@@ -377,18 +375,20 @@ sap.ui.require([
 			mQueryOptions = {"$orderby" : "bar"},
 			oV4Context = {getBinding : function () {}};
 
+		// absolute binding and binding with base context result in the same cache
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions").twice()
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters),
 				sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
 			.returns(mQueryOptions);
-		oHelperMock.expects("buildOrderbyOption")
+		oHelperMock.expects("buildOrderbyOption").twice()
 			.withExactArgs([], mQueryOptions.$orderby)
 			.returns(mQueryOptions.$orderby);
-		this.mock(_Cache).expects("create")
+		this.mock(_Cache).expects("create").twice()
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				sinon.match.same(mQueryOptions));
+				sinon.match.same(mQueryOptions))
+			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
 		// code under test
@@ -557,7 +557,7 @@ sap.ui.require([
 		oHelperMock.expects("buildOrderbyOption").never();
 		this.mock(_Cache).expects("create").never();
 		// no mock because oBinding is unknown in advance, even when the stub is called
-		this.stub(_ODataHelper, "createListCacheProxy", function (_oBinding, oContext) {
+		this.stub(_ODataHelper, "createListCache", function (_oBinding, oContext) {
 			oBindingForCreateListCacheProxy = _oBinding;
 			assert.strictEqual(oContext, undefined);
 			return oCacheProxy;
@@ -861,7 +861,7 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 			{$select : "ID"});
-		this.mock(_ODataHelper).expects("createListCacheProxy")
+		this.mock(_ODataHelper).expects("createListCache")
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 			.returns(oCacheProxy);
 
@@ -936,7 +936,7 @@ sap.ui.require([
 
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
-		this.mock(_ODataHelper).expects("createCacheProxy").never();
+		this.mock(_ODataHelper).expects("createCache").never();
 
 		oListBinding.setContext(oContext);
 	});
@@ -1346,7 +1346,7 @@ sap.ui.require([
 				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 			}
 			if (oFixture.bRelative) {
-				oHelperMock.expects("createListCacheProxy").returns(oCache);
+				oHelperMock.expects("createListCache").returns(oCache);
 			} else {
 				this.mock(_Cache).expects("create").returns(oCache);
 			}
@@ -1355,7 +1355,7 @@ sap.ui.require([
 				oFixture.bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 				oContext, undefined, undefined, {/*mParameters*/});
 			if (oFixture.bRelative && !oFixture.bBaseContext) {
-				oHelperMock.expects("createListCacheProxy")
+				oHelperMock.expects("createListCache")
 					.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
 					.returns(oCache);
 				this.mock(oCache).expects("refresh").never();
@@ -1711,7 +1711,7 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath).getResult(), undefined);
 
-			this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheProxy);
+			this.mock(_ODataHelper).expects("createListCache").returns(oCacheProxy);
 			oBinding.setContext(oContext);
 			this.mock(oContext).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
 
@@ -1727,7 +1727,7 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
 			oResult = {};
 
-		this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheProxy);
+		this.mock(_ODataHelper).expects("createListCache").returns(oCacheProxy);
 		oBinding.setContext(oContext);
 
 		this.mock(oBinding).expects("fetchValue")
@@ -2115,7 +2115,7 @@ sap.ui.require([
 			oListBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
 			this.mock(oListBinding).expects("hasPendingChanges").returns(false);
 			this.spy(_ODataHelper, "toArray");
-			this.mock(_ODataHelper).expects("createListCacheProxy")
+			this.mock(_ODataHelper).expects("createListCache")
 				.twice() // from setContext and sort
 				.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
 				.returns(oCacheProxy);
@@ -2156,7 +2156,7 @@ sap.ui.require([
 
 		oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 		//avoid cache creation
-		this.mock(_ODataHelper).expects("createListCacheProxy").returns(/*oCacheProxy*/{});
+		this.mock(_ODataHelper).expects("createListCache").returns(/*oCacheProxy*/{});
 		oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 			{$$operationMode : OperationMode.Server});
 		this.mock(oListBinding).expects("hasPendingChanges").withExactArgs().returns(true);
@@ -2190,7 +2190,7 @@ sap.ui.require([
 					$$operationMode : OperationMode.Server
 				});
 				if (bRelative) {
-					oHelperMock.expects("createListCacheProxy")
+					oHelperMock.expects("createListCache")
 						.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 						.returns(oCacheProxy);
 				}
@@ -2198,7 +2198,7 @@ sap.ui.require([
 
 				oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
-				oHelperMock.expects("createListCacheProxy")
+				oHelperMock.expects("createListCache")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 					.returns(oCacheProxy);
 				this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Filter);
@@ -2226,7 +2226,7 @@ sap.ui.require([
 
 		oBinding.mCacheByContext = {};
 
-		this.mock(_ODataHelper).expects("createListCacheProxy")
+		this.mock(_ODataHelper).expects("createListCache")
 			.withExactArgs(sinon.match.same(oBinding), undefined);
 
 		// Code under test
@@ -2347,7 +2347,7 @@ sap.ui.require([
 			}
 
 			if (oFixture.sTarget) {
-				this.mock(_ODataHelper).expects("createListCacheProxy")
+				this.mock(_ODataHelper).expects("createListCache")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oTargetContext))
 					.returns(oTargetCacheProxy);
 			}
@@ -2893,7 +2893,7 @@ sap.ui.require([
 				oExpectation;
 
 			if (oFixture.bRelative) {
-				oExpectation = this.mock(_ODataHelper).expects("createListCacheProxy")
+				oExpectation = this.mock(_ODataHelper).expects("createListCache")
 					.returns(_Cache.create(this.oModel.oRequestor, "EMPLOYEES", {}));
 				oBinding = this.oModel.bindList("EMPLOYEES", oBindingContext);
 				assert.ok(oExpectation.calledWithExactly(oBinding, oBindingContext));
@@ -3139,7 +3139,7 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
 			oPathPromise = Promise.resolve("/TEAMS('8192')/TEAM_2_EMPLOYEES");
 
-		this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createListCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$select : "Name"});
 
@@ -3164,7 +3164,7 @@ sap.ui.require([
 			oDependent1 = {checkUpdate : function () {}},
 			oPathPromise = Promise.resolve(sPath);
 
-		this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createListCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$select : "Name"});
 
@@ -3190,7 +3190,7 @@ sap.ui.require([
 			oError = {},
 			oPathPromise = Promise.reject(oError);
 
-		this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createListCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$select : "Name"});
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()

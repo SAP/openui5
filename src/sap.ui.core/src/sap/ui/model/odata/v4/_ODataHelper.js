@@ -261,153 +261,146 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a cache proxy acting as substitute for a cache while it waits for the
-		 * resolution of the given promise which resolves with a canonical path; it then creates the
-		 * "real" cache using the given function.
-		 *
-		 * If there is no cache for the canonical path in the binding's
-		 * <code>mCacheByContext</code>, creates the cache by calling the given function
-		 * <code>fnCreateCache</code> with the canonical path. If the binding's cache is not the
-		 * cache proxy, the promise resolves with the binding's cache in order to ensure a cache
-		 * proxy associated with a binding is only replaced by the corresponding cache.
+		 * Creates a cache using the given function and sets it at the binding. If the given
+		 * SyncPromises are not fulfilled yet, it temporarily sets a proxy acting as substitute.
+		 * If there is already a cache for the canonical path in the binding's
+		 * <code>mCacheByContext</code>, it is used and no cache is created.
 		 *
 		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
 		 * to deregister all listening property bindings at the cache, because they are not able to
 		 * deregister themselves afterwards.
 		 *
+		 * If the path promise or the filter promise fail, an error is reported to the model and
+		 * the proxy is not replaced, so that subsequent reads fail.
+		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
-		 *   oBinding The relative binding
-		 * @param {function} fnCreateCache Function to create the cache which is called with the
-		 *   canonical path and the $filter value as parameter and returns the cache.
-		 * @param {Promise} [oPathPromise] Promise which resolves with a canonical path for the
-		 *   cache
-		 * @param {Promise} [oFilterPromise] Promise which resolves with a value for the $filter
-		 *   query option to be used when creating the cache
-		 * @returns {object} The cache proxy with the following properties
-		 *   deregisterChange: method does nothing
-		 *   hasPendingChanges: method returns false
-		 *   post: method throws an error as the cache proxy does not support write operations
-		 *   promise: promise fulfilled with the cache or rejected with the error on requesting the
-		 *     canonical path or creating the cache
-		 *   read: method delegates to the cache's read method
-		 *   refresh: method does nothing
-		 *   update: method throws an error as the cache proxy does not support write operations
+		 *   oBinding The binding
+		 * @param {function} fnCreateCache
+		 *   Function to create the cache which is called with the canonical path and the $filter
+		 *   value as parameter and returns the cache.
+		 * @param {String|_SyncPromise} [vCanonicalPath]
+		 *   The canonical path for the cache or a promise resolving with it
+		 * @param {_SyncPromise} [oFilterPromise]
+		 *   Promise which resolves with a value for the $filter query option to be used when
+		 *   creating the cache
+		 * @returns {object}
+		 *   The created cache or cache proxy (allows for easier testing)
 		 */
-		createCacheProxy : function (oBinding, fnCreateCache, oPathPromise, oFilterPromise) {
-			var oCacheProxy;
+		createCache : function (oBinding, fnCreateCache, vCanonicalPath, oFilterPromise) {
+			var oCacheProxy,
+				oPromise;
 
 			if (oBinding.oCache) {
 				oBinding.oCache.deregisterChange();
 			}
-			oCacheProxy = {
-				deregisterChange : function () {},
-				hasPendingChanges : function () {
-					return false;
-				},
-				post : function () {
-					throw new Error("POST request not allowed");
-				},
-				read : function () {
-					var aReadArguments = arguments;
 
-					return this.promise.then(function (oCache) {
-						return oCache.read.apply(oCache, aReadArguments);
-					});
-				},
-				refresh : function () {},
-				resetChanges : function () {},
-				update : function () {
-					throw new Error("PATCH request not allowed");
-				}
-			};
+			oPromise = _SyncPromise.all([vCanonicalPath, oFilterPromise]).then(function (aResult) {
+				var sCanonicalPath = aResult[0];
 
-			oCacheProxy.promise = Promise.all([oPathPromise, oFilterPromise])
-				.then(function (aResult) {
-					var oCache,
-						sCanonicalPath = aResult[0];
-
-					if (oBinding.oCache !== oCacheProxy) {
-						return oBinding.oCache;
-					}
+				// do not create if a cache proxy was created, but the cache now has another one
+				if (!oCacheProxy || oBinding.oCache === oCacheProxy) {
 					oBinding.mCacheByContext = oBinding.mCacheByContext || {};
-					oCache = sCanonicalPath
+					oBinding.oCache = sCanonicalPath
 						? oBinding.mCacheByContext[sCanonicalPath] =
 							oBinding.mCacheByContext[sCanonicalPath]
 							|| fnCreateCache(sCanonicalPath, aResult[1])
 						: fnCreateCache(sCanonicalPath, aResult[1]);
-					oCache.$canonicalPath = sCanonicalPath;
-					return oCache;
-				});
+					oBinding.oCache.$canonicalPath = sCanonicalPath;
+				}
+			});
 
-			return oCacheProxy;
+			if (!oPromise.isFulfilled()) {
+				oBinding.oCache = oCacheProxy = {
+					deregisterChange : function () {},
+					hasPendingChanges : function () {
+						return false;
+					},
+					post : function () {
+						throw new Error("POST request not allowed");
+					},
+					read : function () {
+						var aReadArguments = arguments;
+
+						return oPromise.then(function () {
+							return oBinding.oCache.read.apply(oBinding.oCache, aReadArguments);
+						});
+					},
+					refresh : function () {},
+					resetChanges : function () {},
+					update : function () {
+						throw new Error("PATCH request not allowed");
+					}
+				};
+			}
+
+			oPromise["catch"](function (oError) {
+				//Note: this may also happen if the promise to read data for the canonical path's
+				// key predicate is rejected with a canceled error
+				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+					"sap.ui.model.odata.v4._ODataHelper", oError);
+			});
+
+			return oBinding.oCache;
 		},
 
 		/**
-		 * Creates a cache proxy for the given context binding using {@link #.createCacheProxy}.
-		 * Returns the proxy (allowing for easier testing) which itself applies the final cache
-		 * directly to the binding.
+		 * Creates a cache for the given context binding using {@link #.createCache}.
 		 *
 		 * This is meant to be a private method of ODataContextBinding which is hidden here to
 		 * prevent accidental usage.
 		 *
 		 * Note that the context is given as a parameter and oBinding.oContext is unused because
 		 * the binding's setContext calls this method before calling the superclass to ensure that
-		 * the cache proxy is already created when the events are fired.
+		 * the cache is already created when the events are fired.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataContextBinding} oBinding
 		 *   The OData context binding instance
-		 * @param {sap.ui.model.Context} oContext
-		 *   The context instance to be used
+		 * @param {sap.ui.model.Context} [oContext]
+		 *   The context instance to be used, may be omitted for absolute bindings
 		 * @returns {object}
-		 *   The created cache proxy
+		 *   The created cache, cache proxy or undefined if none is required (allows for easier
+		 *   testing)
 		 */
-		createContextCacheProxy : function (oBinding, oContext) {
-			var oCacheProxy,
-				oPathPromise;
+		createContextCache : function (oBinding, oContext) {
+			var vCanonicalPath, mQueryOptions;
 
 			function createCache(sPath) {
 				return _Cache.createSingle(oBinding.oModel.oRequestor,
-					_Helper.buildPath(sPath, oBinding.sPath).slice(1),
-					ODataHelper.getQueryOptions(oBinding, "", oContext));
+					_Helper.buildPath(sPath, oBinding.sPath).slice(1), mQueryOptions);
 			}
 
-			oPathPromise = oContext && (oContext.requestCanonicalPath
-				? oContext.requestCanonicalPath()
-				: Promise.resolve(oContext.getPath()));
-			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise);
-			oCacheProxy.promise.then(function (oCache) {
-				oBinding.oCache = oCache;
-			})["catch"](function (oError) {
-				//Note: this may also happen if the promise to read data for the canonical path's
-				// key predicate is rejected with a canceled error
-				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
-					"sap.ui.model.odata.v4._ODataHelper", oError);
-			});
-			return oCacheProxy;
+			if (!oBinding.bRelative) {
+				oContext = undefined; // must be ignored for absolute bindings
+			} else if (!oContext || oContext.fetchCanonicalPath && !oBinding.mQueryOptions) {
+				return undefined; // no need for an own cache
+			}
+			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
+			vCanonicalPath = oContext && (oContext.fetchCanonicalPath
+				? oContext.fetchCanonicalPath() : oContext.getPath());
+			return ODataHelper.createCache(oBinding, createCache, vCanonicalPath);
 		},
 
 		/**
-		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}.
-		 * Ensures that sort and filter parameters are added to the query string. Returns the proxy
-		 * (allowing for easier testing) which itself applies the final cache directly to the
-		 * binding.
+		 * Creates a cache for the given list binding using {@link #.createCache}.
+		 * Ensures that sort and filter parameters are added to the query string.
 		 *
 		 * This is meant to be a private method of ODataListBinding which is hidden here to prevent
 		 * accidental usage.
 		 *
 		 * Note that the context is given as a parameter and oBinding.oContext is unused because
 		 * the binding's setContext calls this method before calling the superclass to ensure that
-		 * the cache proxy is already created when the events are fired.
+		 * the cache is already created when the events are fired.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The OData list binding instance
 		 * @param {sap.ui.model.Context} [oContext]
 		 *   The context instance to be used, may be omitted for absolute bindings
 		 * @returns {object}
-		 *   The created cache proxy or undefined if none is required
+		 *   The created cache, cache proxy or undefined if none is required (allows for easier
+		 *   testing)
 		 */
-		createListCacheProxy : function (oBinding, oContext) {
-			var oCacheProxy, oFilterPromise, oPathPromise, mQueryOptions;
+		createListCache : function (oBinding, oContext) {
+			var vCanonicalPath, oFilterPromise, mQueryOptions;
 
 			function createCache(sPath, sFilter) {
 				var sOrderby = ODataHelper.buildOrderbyOption(oBinding.aSorters,
@@ -418,36 +411,24 @@ sap.ui.define([
 					ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby, sFilter));
 			}
 
-			if (oBinding.bRelative) {
-				if (!oContext
-						|| oContext.requestCanonicalPath
+			if (!oBinding.bRelative) {
+				oContext = undefined; // must be ignored for absolute bindings
+			} else if (!oContext
+					|| oContext.fetchCanonicalPath
 						&& !oBinding.mQueryOptions
 						&& !oBinding.aSorters.length
 						&& !oBinding.aFilters.length
 						&& !oBinding.aApplicationFilters.length) {
-					return undefined; // no need for an own cache
-				}
-			} else {
-				oContext = undefined; // must be ignored for absolute bindings
+				return undefined; // no need for an own cache
 			}
 			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
-			oPathPromise = oContext && (oContext.requestCanonicalPath
-				? oContext.requestCanonicalPath()
-				: Promise.resolve(oContext.getPath()));
+			vCanonicalPath = oContext && (oContext.fetchCanonicalPath
+				? oContext.fetchCanonicalPath() : oContext.getPath());
 			oFilterPromise = ODataHelper.fetchFilter(oBinding, oContext,
 				oBinding.aApplicationFilters, oBinding.aFilters,
 				mQueryOptions && mQueryOptions.$filter);
-			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise,
+			return ODataHelper.createCache(oBinding, createCache, vCanonicalPath,
 				oFilterPromise);
-			oCacheProxy.promise.then(function (oCache) {
-				oBinding.oCache = oCache;
-			})["catch"](function (oError) {
-				//Note: this may also happen if the promise to read data for the canonical path's
-				// key predicate is rejected with a canceled error
-				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
-					"sap.ui.model.odata.v4._ODataHelper", oError);
-			});
-			return oCacheProxy;
 		},
 
 		/**

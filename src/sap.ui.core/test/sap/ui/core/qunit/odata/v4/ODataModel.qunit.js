@@ -15,6 +15,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
@@ -22,8 +23,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString, ODataUtils,
-		OperationMode, _ODataHelper, Context, _MetadataRequestor, _Requestor, ODataContextBinding,
-		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
+		OperationMode, _ODataHelper, Context, _MetadataRequestor, _Requestor, _SyncPromise,
+		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -325,10 +327,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
-		var oCacheProxy = {
-				promise : Promise.resolve({})
-			},
-			oError = new Error(),
+		var oError = new Error(),
 			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
 			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
@@ -341,8 +340,7 @@ sap.ui.require([
 			oPropertyBinding2 = oModel.bindProperty("Team_Id");
 
 		// cache proxy for oRelativeContextBinding
-		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
-		this.mock(_ODataHelper).expects("createCacheProxy").twice().returns(oCacheProxy);
+		this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
 		oRelativeContextBinding.setContext(oContext);
 		oListBinding3.setContext(oBaseContext);
 		this.mock(oPropertyBinding2).expects("makeCache");
@@ -360,20 +358,19 @@ sap.ui.require([
 		// check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
 		// check: no refresh on binding with relative path
+		this.mock(oRelativeContextBinding).expects("refresh").never();
 		this.mock(oPropertyBinding).expects("refresh").never();
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
-		return oCacheProxy.promise.then(function () {
-			// code under test
-			oModel.refresh("myGroup");
+		// code under test
+		oModel.refresh("myGroup");
 
-			oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
-			// code under test
-			assert.throws(function () {
-				oModel.refresh("$Invalid");
-			}, oError);
-		});
+		// code under test
+		assert.throws(function () {
+			oModel.refresh("$Invalid");
+		}, oError);
 	});
 
 	//*********************************************************************************************
