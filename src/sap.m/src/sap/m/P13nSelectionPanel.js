@@ -931,6 +931,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Down");
+//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+//		if (!oModelData.isMoveDownButtonEnabled) {
+//			oModelData.markedTableItem.focus();
+//		}
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -950,6 +954,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Up");
+//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+//		if (!oModelData.isMoveUpButtonEnabled) {
+//			oModelData.markedTableItem.focus();
+//		}
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -969,6 +977,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Bottom");
+//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+//		if (!oModelData.isMoveDownButtonEnabled) {
+//			oModelData.markedTableItem.focus();
+//		}
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -988,6 +1000,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Top");
+//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+//		if (!oModelData.isMoveUpButtonEnabled) {
+//			oModelData.markedTableItem.focus();
+//		}
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,

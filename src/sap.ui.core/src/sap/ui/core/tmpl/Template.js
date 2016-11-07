@@ -89,9 +89,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 	};
 
 	/**
-	 * Returns the registered template for the given id, if any.
+	 * Returns the registered template for the given ID, if any.
 	 * @param {string} sId
-	 * @return {sap.ui.core.tmpl.Template} the template for the given id
+	 * @return {sap.ui.core.tmpl.Template} the template for the given ID
 	 * @public
 	 */
 	Template.byId = function(sId) {
@@ -360,10 +360,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 
 
 	/**
-	 * Creates a Template for the given id, dom reference or a configuration object.
-	 * If no parameter is defined this function makes a lookup of DOM elements
+	 * Creates a Template for the given ID, DOM reference or a configuration object.
+	 *
+	 * If no parameter is defined, this function makes a lookup of DOM elements
 	 * which are specifying a type attribute. If the value of this type attribute
-	 * matches an registered type then the content of this DOM element will be
+	 * matches a registered type then the content of this DOM element will be
 	 * used to create a new <code>Template</code> instance.
 	 *
 	 * If you want to lookup all kind of existing and known templates and parse them
@@ -413,18 +414,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 	 *   });
 	 * </pre>
 	 *
-	 * The properties of the configuration object are the following:
-	 * <ul>
-	 * <li><code>id</code> - the ID of the Template / the ID  of the DOM element containing the source of the Template</li>
-	 * <li><code>domref</code> - the DOM element containing the source of the Template</li>
-	 * <li><code>type</code> - the type of the Template</li>
-	 * <li><code>src</code> - the URL to lookup the template</li> (<i>experimental!</i>)
-	 * <li><code>control</code> - the fully qualified name of the control to declare</li> (<i>experimental!</i>)
-	 * </ul>
-	 *
-	 * @param {string|DomRef|object} [oTemplate] the id or the DOM reference to the template to lookup or an configuration object containing the src, type and eventually the id of the Template.
+	 * @param {string|DomRef|object} [oTemplate] the ID or the DOM reference to the template to lookup or a configuration object containing the src, type and eventually the ID of the Template.
+	 * @param {string} oTemplate.id - the ID of the Template / the ID  of the DOM element containing the source of the Template</li>
+	 * @param {Element} oTemplate.domref - the DOM element containing the source of the Template</li>
+	 * @param {string} [oTemplate.type] - the type of the Template</li>
+	 * @param {string} [oTemplate.src] - the URL to lookup the template</li> (<i>experimental!</i>)
+	 * @param {string} oTemplate.control - the fully qualified name of the control to declare</li> (<i>experimental!</i>)
 	 * @return {sap.ui.core.tmpl.Template | sap.ui.core.tmpl.Template[]} the created Template instance
-	 *         or in case of usage without parametes any array of templates is returned
+	 *         or in case of usage without parameters any array of templates is returned
 	 *
 	 * @public
 	 * @static

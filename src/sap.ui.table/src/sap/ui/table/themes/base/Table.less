@@ -831,6 +831,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableTr > .sapUiTableTDDummy {
 	border-bottom: none;
+	background: darken(@sapUiListBackground,2.5);
 }
 
 .sapUiTableTr > td.sapUiTableTdFirst {
@@ -866,15 +867,15 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-right: 1px solid @sapUiListTableFixedBorder;
 }
 
-.sapUiTableTr.sapUiTableRowHvr > td {
+.sapUiTableTr.sapUiTableRowHvr > td:not(.sapUiTableTDDummy) {
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiTableTr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td {
+.sapUiTableTr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td:not(.sapUiTableTDDummy) {
 	background-color: @sapUiListSelectionBackgroundColor;
 }
 
-.sapUiTableTr.sapUiTableRowHvr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td {
+.sapUiTableTr.sapUiTableRowHvr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td:not(.sapUiTableTDDummy) {
 	background-color: @sapUiListSelectionHoverBackground;
 }
 

@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			resourceBundleUrl : 'sap.ui.core.URI',
 
 			/**
-			 * Locale that should be used to load a resourcebundle for this view
+			 * Locale that should be used to load a resource bundle for this view
 			 */
 			resourceBundleLocale : 'string', // should be something like 'languageTag'
 
@@ -660,9 +660,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * Register a preprocessor for all views of a specific type.
 	 *
 	 * The preprocessor can be registered for several stages of view initialization, which are
-	 * dependant from the view type, e.g. "raw", "xml" or already initialized "controls". If there is a preprocessor
+	 * dependent on the view type, e.g. "raw", "xml" or already initialized "controls". If there is a preprocessor
 	 * passed to or activated at the view instance already, that one is used. When several preprocessors are registered
-	 * for one hook, it has to be made sure that they do not conflict when beeing processed serially.
+	 * for one hook, it has to be made sure that they do not conflict when being processed serially.
 	 *
 	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
 	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
@@ -755,7 +755,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
 	 * <li>The view loading mode <code>vView.async</code> must be a boolean and defines if the view source is loaded
-	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and rerenderd with the
+	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and re-rendered with the
 	 * loaded view content.</li>
 	 * <li><code>vView.preprocessors</code></li> can hold a map from the specified preprocessor type (e.g. "xml") to an array of
 	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
@@ -763,7 +763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
 	 * {@link sap.ui.core.mvc.View.Preprocessor.process}. Do not set properties starting with underscore like <code>_sProperty</code>
 	 * property, these are reserved for internal purposes. When several preprocessors are provided for one hook, it has to be made
-	 * sure that they do not conflict when beeing processed serially.
+	 * sure that they do not conflict when being processed serially.
 	 *
 	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
 	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.

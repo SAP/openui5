@@ -511,10 +511,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @private
 		 */
 		Select.prototype.onBeforeOpen = function(oControlEvent) {
-			var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
+			var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()],
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
-			// add the active state to the Select's field
-			this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
+			// add the active and expanded states to the field
+			this.addStyleClass(CSS_CLASS + "Pressed");
+			this.addStyleClass(CSS_CLASS + "Expanded");
 
 			// close value state message before opening the picker
 			this.closeValueStateMessage();
@@ -558,7 +560,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 *
 		 */
 		Select.prototype.onBeforeClose = function(oControlEvent) {
-			var oDomRef = this.getFocusDomRef();
+			var oDomRef = this.getFocusDomRef(),
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			if (oDomRef) {
 
@@ -575,8 +578,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				}
 			}
 
-			// remove the active state of the Select's field
-			this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
+			// remove the active and expanded states of the field
+			this.removeStyleClass(CSS_CLASS + "Pressed");
+			this.removeStyleClass(CSS_CLASS + "Expanded");
 		};
 
 		/**

@@ -25,9 +25,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oSimpleForm.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
-			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
-
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},
 				getLocalId: function (sString) {return sString;}
@@ -42,7 +39,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 					"id": "SimpleForm"
 				},
 				"content": {
-					"elementSelector": this.oFormElement.getLabel().getId()
+					"elementSelector": this.oLabel0.getId()
 				},
 				"changeType": "hideSimpleFormField"
 			};
@@ -54,7 +51,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				},
 				"content": {
 					"elementSelector": {
-						"id": this.oFormElement.getLabel().getId(),
+						"id": this.oLabel0.getId(),
 						"idIsLocal": true
 					}
 				},
@@ -68,7 +65,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				},
 				"content": {
 					"elementSelector": {
-						"id": this.oFormElement.getLabel().getId(),
+						"id": this.oLabel0.getId(),
 						"idIsLocal": false
 					}
 				},
@@ -91,7 +88,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		//Call CUT
 		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
+		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.HideSimpleForm with a new change format", {
@@ -109,9 +106,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oSimpleForm.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
-			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
-
 			this.oMockedComponent = {
 				createId: function (sString) {return "component---" + sString;},
 				getLocalId: function (sString) {return sString.substring("component---".length);}
@@ -127,7 +121,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				},
 				"content": {
 					"elementSelector": {
-						"id": this.oFormElement.getLabel().getId()
+						"id": this.oLabel0.getId()
 					}
 				},
 				"changeType": "hideSimpleFormField"
@@ -155,7 +149,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				},
 				"content": {
 					"elementSelector": {
-						id : this.oFormElement.getLabel().getId(),
+						id : this.oLabel0.getId(),
 						idIsLocal: false
 					}
 				},
@@ -177,21 +171,21 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		//Call CUT
 		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
+		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing local ids", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithLocalIdsWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
+		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing global ids", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
+		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {

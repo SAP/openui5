@@ -3,19 +3,10 @@
 /* ============================================= */
 
 .sapMToken {
-	font-size: @sapMFontMediumSize;
 	background: @sapUiButtonBackground;
 	border: 1px solid darken(@sapUiButtonBackground, 10);
 	border-radius: 0.125rem;
 	color: @sapUiDarkText;
-	padding-left: 0.375rem;
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
-	height: 1.625rem;
-}
-
-.sapMToken.sapMTokenReadOnly {
-	padding: 0.25rem 0.375rem;
 }
 
 html.sap-desktop .sapMToken:hover {
@@ -24,28 +15,17 @@ html.sap-desktop .sapMToken:hover {
 	border-radius: 0.125rem;
 }
 
-.sapMToken:focus {
-	outline: 0.0625rem dotted @sapUiFocus;
+html.sap-desktop .sapMToken:focus {
+	outline: 0.0625rem dotted @sapUiInvertedFocus;
 	outline-offset: -3px;
-	outline-color: @sapUiInvertedFocus;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMToken:focus{
-		position: relative;
-		outline: none;
-	}
-
-	.sapMTokenText:before {
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		right: 2px;
-		bottom: 2px;
-		border: 0.0625rem dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
-		content: "";
-		pointer-events: none;
+	.sapMToken:focus {
+		.sapMTokenText:before {
+			border: 1px dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
 	}
 }
 
@@ -68,26 +48,7 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover,
 }
 
 .sapMTokenIcon {
-	padding: 0.2rem 0.5rem;
-	font-size: @sapMFontLargeSize;
-	color: @sapUiElement;
-	vertical-align: middle;
-}
-
-.sapUiSizeCompact .sapMToken {
-	padding-left: 0.25rem;
-	padding-bottom: 0.1rem;
-	height: 1.25rem;
-}
-
-.sapUiSizeCompact .sapMToken.sapMTokenReadOnly {
-	padding: 0.1rem 0.25rem;
-}
-
-.sapUiSizeCompact .sapMTokenIcon {
-	font-size: @sapMFontSmallSize;
-	padding: 0.15rem 0.25rem;
-	vertical-align: baseline;
+	color: @sapUiContentIconColor;
 }
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {

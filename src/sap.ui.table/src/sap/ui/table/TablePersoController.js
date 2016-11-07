@@ -397,6 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		// include the mobile library to re-use the sap.m.TablePersoDialog
 		sap.ui.getCore().loadLibrary("sap.m");
+		//TBD: Use async APIs instead (should be possible because open the dialog could be delayed)
 		var TablePersoDialog = sap.ui.requireSync("sap/m/TablePersoDialog");
 
 		// create and open the dialog

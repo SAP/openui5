@@ -170,6 +170,12 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveToTopButton.getEnabled()) {
+				this._oMoveToTopButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
@@ -199,6 +205,12 @@ sap.ui.define([
 				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
+			}
+
+			if (this._oMoveUpButton.getEnabled()) {
+				this._oMoveUpButton.focus();
+			} else {
+				this._oSelectedItem.focus();
 			}
 		}
 	};
@@ -232,6 +244,12 @@ sap.ui.define([
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
 			}
+
+			if (this._oMoveDownButton.getEnabled()) {
+				this._oMoveDownButton.focus();
+			} else {
+				this._oSelectedItem.focus();
+			}
 		}
 	};
 
@@ -263,6 +281,12 @@ sap.ui.define([
 				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
 				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
 				this._afterMoveItem();
+			}
+
+			if (this._oMoveToBottomButton.getEnabled()) {
+				this._oMoveToBottomButton.focus();
+			} else {
+				this._oSelectedItem.focus();
 			}
 		}
 	};

@@ -16,7 +16,13 @@ sap.ui.define([
 				}
 
 				return parseFloat(sValue).toFixed(2);
+			},
+
+			calculateItemTotal : function (iQuantity, fPrice) {
+				var fTotal = iQuantity * fPrice;
+				return fTotal.toFixed(2);
 			}
+
 		};
 
 	}

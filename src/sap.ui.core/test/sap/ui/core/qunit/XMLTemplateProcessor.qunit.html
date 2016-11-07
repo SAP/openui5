@@ -34,6 +34,7 @@
 			<Panel id="panel">
 				<content>
 					<Button text="Button" id="button"></Button>
+					<Button text="StashedButton" id="stashedButton" stashed="true"></Button>
 				</content>
 			</Panel>
 		</mvc:View>
@@ -79,6 +80,15 @@
 					assert.ok(!this.oView.byId("button"), "no control has been created yet");
 					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
 					assert.ok(this.oView.byId("button"), "button control is created");
+				}.bind(this));
+			});
+
+			QUnit.test("do not create stashed Controls", function() {
+				return this.oView.loaded().then(function() {
+					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(!this.oView.byId("stashedButton"), "no stashed control has been created yet");
+					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+					assert.ok(this.oView.byId("stashedButton"), "stashed button control is created");
 				}.bind(this));
 			});
 

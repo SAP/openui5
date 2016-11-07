@@ -8,7 +8,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/HT-6100.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -34,7 +35,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/HT-6120.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -60,7 +62,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/HT-7777.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -86,7 +89,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants_small.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -112,7 +116,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -138,7 +143,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <LightBoxItem
@@ -164,7 +170,8 @@
             <HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                 <Image src="test-resources/sap/ui/demokit/explored/img/nature/elephant.jpg"
                        decorative="false"
-                       width="170px">
+                       width="170px"
+                       densityAware="false">
                     <detailBox>
                         <LightBox>
                             <imageContent>

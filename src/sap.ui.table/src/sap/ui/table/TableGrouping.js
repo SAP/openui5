@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				return oTable._bShowGroupMenuButton;
 			}
 
-			if (Device.support.touch && TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			if (!Device.system.desktop && TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
 				oTable._bShowGroupMenuButton = true;
 			} else {
 				oTable._bShowGroupMenuButton = false;

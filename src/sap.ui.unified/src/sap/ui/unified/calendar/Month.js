@@ -1139,6 +1139,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/*
+	 * returns whether the month names are too long to fit in the "boxes"
+	 */
+	Month.prototype._isMonthNameLong = function(aWeekHeaders){
+		// check day names
+		var i;
+		var oWeekDay;
+		var bCompact = this.$().parents().hasClass('sapUiSizeCompact');
+
+		for (i = 0; i < aWeekHeaders.length; i++) {
+			oWeekDay = aWeekHeaders[i];
+			// since browsers return different values of clientWidth and scrollWidth we give a tolerance before truncating
+			// and we don't give this tolerance if we are in Compact mode
+			if (Math.abs(oWeekDay.clientWidth - oWeekDay.scrollWidth) > 1 || ((oWeekDay.clientWidth < oWeekDay.scrollWidth) && bCompact)) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+
 	function _initItemNavigation(){
 
 		var oDate = this._getDate();
@@ -1681,19 +1702,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (!this._bNamesLengthChecked) {
 			// only once - cannot change by rerendering - only by theme change
 			var oWeekDay;
-
-			// check day names
 			var aWeekHeaders = this.$().find(".sapUiCalWH");
-			var bTooLong = false;
+			var bTooLong = this._isMonthNameLong(aWeekHeaders);
 			var i = 0;
-
-			for (i = 0; i < aWeekHeaders.length; i++) {
-				oWeekDay = aWeekHeaders[i];
-				if (Math.abs(oWeekDay.clientWidth - oWeekDay.scrollWidth) > 1) {
-					bTooLong = true;
-					break;
-				}
-			}
 
 			if (bTooLong) {
 				this._bLongWeekDays = false;

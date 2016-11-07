@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DateRangeSelection.
-sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
-	function(jQuery, DatePicker, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'],
+	function(jQuery, Device, DatePicker, library) {
 	"use strict";
 
 	/**
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
 	 * @param {string} sValue The new value of the input.
-	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
 	 * @name sap.m.DateRangeSelection#setValue
 	 * @function
@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 	 *
 	 * @param {object} oDateValue New value for property <code>dateValue</code>
-	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
 	 * @name sap.m.DateRangeSelection#setDateValue
 	 * @function
@@ -739,8 +739,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 					sValue = this.getValue();
 					_fireChange.call(this, true);
-					this._curpos = sValue.length;
-					this._$input.cursorPos(this._curpos);
+					if (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+						this._curpos = sValue.length;
+						this._$input.cursorPos(this._curpos);
+					}
 				}else if (!this._bValid){
 					// wrong input before open calendar
 					sValue = this._formatValue( oDate1, oDate2 );
@@ -753,15 +755,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					}
 				}
 
-				//To prevent opening keyboard on mobile device after dates are selected
-				if (sap.ui.Device.browser.mobile) {
-					window.document.activeElement.blur();
-				}
-
 				// close popup and focus input after change event to allow application to reset value state or similar things
 				this._oPopup.close();
-				this._bFocusNoPopup = true;
-				this.focus();
 			}
 		}
 	};

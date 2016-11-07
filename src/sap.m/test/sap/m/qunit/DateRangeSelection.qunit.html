@@ -148,6 +148,38 @@
 
 			});
 
+			test("focused element after picker close", function() {
+				var bOrigTouch = sap.ui.Device.support.touch;
+
+				// On a desktop (non-touch) device
+				sap.ui.Device.support.touch = false;
+				qutils.triggerEvent("click", "DRS2-icon");
+				jQuery("#DRS2-cal--Month0-20140406").focus();
+				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DRS2-cal--Month0-20140409").focus();
+				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
+
+				qutils.triggerEvent("click", "DRS2-icon");
+				jQuery("#DRS2-cal").control(0).fireCancel();
+				equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
+
+				// On a touch device
+				sap.ui.Device.support.touch = true;
+				qutils.triggerEvent("click", "DRS2-icon");
+				jQuery("#DRS2-cal--Month0-20140406").focus();
+				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DRS2-cal--Month0-20140409").focus();
+				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
+
+				qutils.triggerEvent("click", "DRS2-icon");
+				jQuery("#DRS2-cal").control(0).fireCancel();
+				notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
+
+				sap.ui.Device.support.touch = bOrigTouch;
+			});
+
 			test("Control destroy", function() {
 				strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 3, "Before destroy DateRangeSelection is available");
 				oDRS1.destroy();

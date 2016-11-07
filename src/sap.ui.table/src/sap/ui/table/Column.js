@@ -5,8 +5,8 @@
 // Provides control sap.ui.table.Column.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup', 'sap/ui/core/RenderManager',
 		'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/Type',
-		'sap/ui/model/type/String', './TableUtils', './library'],
-function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library) {
+		'sap/ui/model/type/String', './TableUtils', './library', './ColumnMenu'],
+function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu) {
 	"use strict";
 
 	// shortcuts
@@ -38,21 +38,29 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			/**
 			 * Width of the column in css units.
 			 * Default value is "auto". See https://www.w3.org/TR/CSS2/tables.html#width-layout
-			 * <p>Minimal column width is 48px.
-			 * <p>Note: this property may be changed by the user action or by the application
-			 * configuration/personalization.
+			 * <p>Minimal column width is device dependent, for example on desktop devices the column can not be smaller than 48px.
+			 * <p>This property may be changed by the user action or by the application configuration/personalization.
 			 * <p>If a user adjusts the column width manually, the resulting value is always set in pixels.
-			 * In addition, other columns with width "auto" become a fixed minimum width and do not shrink
-			 * after the resize.
+			 * In addition, other columns with width "auto" become a fixed minimum width and do not shrink after the resize.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * Defines the minimum width of a column in pixels.
+			 * <p>This property only has an effect if the given column width is flexible, for example with width "auto".
+			 * <p>This property only influences the automatic behavior. If a user adjusts the column width manually, the column width can become smaller.
+			 * <p>Minimal column width is device dependent, for example on desktop devices the column can not be smaller than 48px.
+			 *
+			 * @since 1.44.1
+			 */
+			minWidth : {type : "int", group : "Dimension", defaultValue : 0},
 
 			/**
 			 * If the table is wider than the sum of widths of the visible columns, the columns will be
 			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
 			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
 			 * created at the end of the table.
-			 * @deprecated Since version 1.44. This property has no effect
+			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in comination with property <code>width="auto" </code> instead.
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -466,12 +474,9 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	 * @return {sap.ui.table.ColumnMenu} The created column menu.
 	 */
 	Column.prototype._createMenu = function() {
-		var ColumnMenu = sap.ui.requireSync("sap/ui/table/ColumnMenu");
-
 		if (!this._defaultMenu) {
 			this._defaultMenu = new ColumnMenu(this.getId() + "-menu", {ariaLabelledBy: this});
 		}
-
 		return this._defaultMenu;
 	};
 

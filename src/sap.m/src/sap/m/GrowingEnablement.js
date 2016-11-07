@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		// creates list item from the factory
 		createListItem : function(oContext, oBindingInfo) {
 			this._iRenderedDataItems++;
-			var oItem = oBindingInfo.factory("", oContext);
+			var oItem = oBindingInfo.factory(sap.ui.base.ManagedObjectMetadata.uid(), oContext);
 			return oItem.setBindingContext(oContext, oBindingInfo.model);
 		},
 

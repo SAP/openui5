@@ -339,8 +339,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		var oAggregations = fnClass.getMetadata().getAllAggregations();
 
 		$element.children().each(function() {
-			// check for an aggregation tag of in case of a sepcifiying the
-			// aggregration on the parent control this will be used in case
+			// check for an aggregation tag of in case of a specifying the
+			// aggregation on the parent control this will be used in case
 			// of no meta tag was found
 			var $child = jQuery(this);
 			var sAggregation = $child.attr("data-sap-ui-aggregation");

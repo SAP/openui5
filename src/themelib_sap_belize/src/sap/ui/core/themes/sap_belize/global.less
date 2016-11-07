@@ -536,7 +536,7 @@
 @sapUiButtonRejectTextColor: contrast(@sapUiButtonRejectBackground, @sapUiNegativeText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonLiteBackground: transparent;
 @sapUiButtonLiteBorderColor: transparent;
-@sapUiButtonLiteTextColor: @sapUiButtonTextColor;
+@sapUiButtonLiteTextColor: contrast(@sapUiButtonLiteBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonLiteHoverBackground: fade(darken(@sapUiButtonHoverBackground, 22), 50);
 @sapUiButtonLiteHoverBorderColor: @sapUiButtonLiteHoverBackground;
 @sapUiButtonLiteActiveBackground: @sapUiButtonActiveBackground;
@@ -548,7 +548,7 @@
 @sapUiButtonActionSelectBackground: @sapUiPageFooterBackground;
 @sapUiButtonActionSelectBorderColor: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 8), lighten(@sapUiButtonActionSelectBackground, 12));
 @sapUiButtonLiteActionSelectHoverBackground: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 3), lighten(@sapUiButtonActionSelectBackground, 5));
-@sapUiToggleButtonPressedBackground: darken(@sapUiButtonActiveBackground, 10);
+@sapUiToggleButtonPressedBackground: darken(@sapUiSelected, 10);
 @sapUiToggleButtonPressedBorderColor:  darken(@sapUiToggleButtonPressedBackground, 5);
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiToggleButtonPressedHoverBackground: lighten(@sapUiToggleButtonPressedBackground, 10);
@@ -587,7 +587,7 @@
 @sapUiListGroupHeaderBackground: @sapUiListBackground;
 @sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 5);
 @sapUiListTableGroupHeaderBorderColor: darken(@sapUiListBorderColor, 10);
-@sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiContentMarkerTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListTableFooterBorder: darken(@sapUiListBorderColor, 10);
 @sapUiListTableFixedBorder: darken(@sapUiListBorderColor, 30);
 @sapUiListTableTextSize: 0.875rem;

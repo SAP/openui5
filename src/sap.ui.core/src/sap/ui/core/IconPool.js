@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		};
 
 		/**
-		 * Returns all name of icons that are registerd under the given collection.
+		 * Returns all name of icons that are registered under the given collection.
 		 * @param {string} collectionName the name of collection where icon names are retrieved.
 		 * @return {array} An array contains all of the registered icon names under the given collection.
 		 * @static

@@ -4398,7 +4398,7 @@
 
 		QUnit.module("setEditable()");
 
-		// BSP: 1570011983
+		// BSP 1570011983
 		QUnit.test("it should set the display of the combobox arrow button to none", function(assert) {
 
 			// system under test
@@ -4411,7 +4411,31 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.strictEqual(jQuery(oComboBox.getDomRef("arrow")).css("display"), "none");
+			assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("display"), "none");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.module("disabled");
+
+		// BSP 1670516606
+		QUnit.test("it should show the default mouse pointer when disabled", function(assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBoxTextField({
+				enabled: false
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("cursor"), "default");
+
+			// cleanup
+			oComboBox.destroy();
 		});
 
 		QUnit.module("loadItems");

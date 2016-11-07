@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.m.PlanningCalendar
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CalendarUtils - sap.ui.unified</title>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+
+	<!-- Test functions -->
+	<script>
+		jQuery.sap.require("sap.ui.unified.calendar.CalendarUtils");
+		var CalendarUtils = sap.ui.unified.calendar.CalendarUtils;
+
+		module("getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
+			beforeEach: function () {
+				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+					return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+				});
+			},
+			afterEach: function () {
+				this.oStub.restore();
+			}
+		});
+
+		test("getFirstDateOfWeek for US border case where the first day of week is in the previous year", function() {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 0, 1, 0)).toString(), new Date(2015, 11, 27, 0).toString(),
+					"1 Jan 2016->27 Dec 2015");
+		});
+
+		test("getFirstDateOfWeek() for date at the middle of the month", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 4, 18, 0)).toString(), new Date(2016, 4, 15, 0).toString(),
+					"18 May 2016->15 May 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 4, 1, 0)).toString(), new Date(2016, 4, 1, 0).toString(),
+					"1 May 2016->1 May 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 9, 1, 0)).toString(), new Date(2016, 8, 25, 0).toString(),
+					"1 Oct 2016->25 Sep 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 5, 1, 0)).toString(), new Date(2016, 4, 29, 0).toString(),
+					"1 Jun 2016->29 May 2016");
+		});
+
+
+		module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
+			beforeEach: function () {
+				this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+					return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+				});
+			},
+			afterEach: function () {
+				this.oStub.restore();
+			}
+		});
+
+        test("getFirstDateOfWeek for non US border case where the first day of week is in the previous year", function() {
+            equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 0, 1, 0)).toString(), new Date(2015, 11, 28, 0).toString(),
+                    "1 Jan 2016->28 Dec 2015");
+        });
+
+		test("getFirstDateOfWeek() for date at the middle of the month", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 4, 18, 0)).toString(), new Date(2016, 4, 16, 0).toString(),
+					"18 May 2016->16 May 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 1, 1, 0), true).toString(), new Date(2016, 1, 1, 0).toString(),
+					"1 Feb 2016->1 Feb 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 4, 1, 0), true).toString(), new Date(2016, 3, 25, 0).toString(),
+					"1 May 2016->25 Apr 2016");
+		});
+
+		test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function () {
+			equal(CalendarUtils.getFirstDateOfWeek(new Date(2016, 11, 1, 0), true).toString(), new Date(2016, 10, 28, 0).toString(),
+					"1 Dec 2016->25 Nov 2016");
+		});
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.m.PlanningCalendar</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="uiArea1"></div>
+</body>
+</html>

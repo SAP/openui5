@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableMenuUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
-	function(jQuery, Device, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/core/Popup', './library'],
+	function(jQuery, Device, Menu, MenuItem, Popup, library) {
 		"use strict";
 
 		/**
@@ -88,17 +88,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 					}
 
 				} else if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.DATACELL) {
-					// TODO: Think of a better way to get the indices.
-					var sCellId = $TableCell.prop("id");
-					var aCellIdAreas = sCellId.split("-");
-					var iRowIndex = parseInt(aCellIdAreas[2].slice(3), 10);
-					var iColumnIndex = parseInt(aCellIdAreas[3].slice(3), 10);
+					var oCellIndices = MenuUtils.TableUtils.getDataCellInfo(oTable, $TableCell);
+					var iRowIndex = oCellIndices.rowIndex;
+					var iColumnIndex = oCellIndices.columnIndex;
 					var bExecuteDefault = true;
 
 					if (bFireEvent) {
-						var oColumn = oTable.getColumns()[iColumnIndex];
-						var oRow = oTable.getRows()[iRowIndex];
-						var oCell =  oRow.getCells()[iColumnIndex];
+						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);
+						var oRow = oRowColCell.row;
 
 						var oRowBindingContext;
 						var oRowBindingInfo = oTable.getBindingInfo("rows");
@@ -109,8 +106,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 						var mParams = {
 							rowIndex: oRow.getIndex(),
 							columnIndex: iColumnIndex,
-							columnId: oColumn.getId(),
-							cellControl: oCell,
+							columnId: oRowColCell.column.getId(),
+							cellControl: oRowColCell.cell,
 							rowBindingContext: oRowBindingContext,
 							cellDomRef: $TableCell[0]
 						};
@@ -232,15 +229,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 					// Create the menu instance the first time it is needed.
 					if (oTable._oCellContextMenu == null) {
 
-						if (oTable._Menu == null) {
-							// TODO consider to load them async (should be possible as this method ends with an "open" call which is async by nature
-							oTable._Menu = sap.ui.requireSync("sap/ui/unified/Menu");
-							oTable._MenuItem = sap.ui.requireSync("sap/ui/unified/MenuItem");
-						}
+						oTable._oCellContextMenu = new Menu(oTable.getId() + "-cellcontextmenu");
 
-						oTable._oCellContextMenu = new oTable._Menu(oTable.getId() + "-cellcontextmenu");
-
-						var oCellContextMenuItem = new oTable._MenuItem({
+						var oCellContextMenuItem = new MenuItem({
 							text: oTable._oResBundle.getText("TBL_FILTER")
 						});
 
@@ -270,24 +261,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 						oMenuItem.mEventRegistry.select[0].fFunction = oMenuItem._onSelect.bind(oTable, oColumn, oRow.getIndex());
 					}
 
-					if (oTable._Popup == null) {
-						oTable._Popup = sap.ui.requireSync("sap/ui/core/Popup");
-					}
-
 					// Open the menu below the cell if is is not already open.
 					var oCell =  oRow.getCells()[iColumnIndex];
 					var $Cell =  MenuUtils.TableUtils.getParentDataCell(oTable, oCell.getDomRef());
 
 					if ($Cell !== null && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
 						var oCell = $Cell[0];
-						var Dock = oTable._Popup.Dock;
 
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {
 							MenuUtils.closeDataCellContextMenu(oTable);
 						}
 
-						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Dock.BeginTop, Dock.BeginBottom, oCell, "none none");
+						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell, "none none");
 					}
 				}
 			},

@@ -472,7 +472,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			});
 		}
 
-		if (this._bUseDialog) {
+		if (this._bUseDialog && this.getEditable()) {
 			// click event has to be used in order to focus on the input in dialog
 			// do not open suggestion dialog by click over the value help icon
 			this.$().on("click", jQuery.proxy(function (oEvent) {
@@ -579,6 +579,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		this._sSelectedValue = sNewValue;
+
+		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
+			this.fireLiveChange({
+				value: sNewValue,
+				// backwards compatibility
+				newValue: sNewValue
+			});
+		}
 
 		// update the input field
 		if (this._bUseDialog) {
@@ -749,6 +757,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		this._sSelectedValue = sNewValue;
+
+		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
+			this.fireLiveChange({
+				value: sNewValue,
+				// backwards compatibility
+				newValue: sNewValue
+			});
+		}
 
 		// update the input field
 		if (this._bUseDialog) {
@@ -1115,6 +1131,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// setValue isn't used because here is too early to modify the lastValue of input
 		this._$input.val(sNewValue);
+
+		this.fireLiveChange({
+			value: sNewValue,
+			// backwards compatibility
+			newValue: sNewValue
+		});
 
 		// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 		this._sSelectedSuggViaKeyboard = sNewValue;

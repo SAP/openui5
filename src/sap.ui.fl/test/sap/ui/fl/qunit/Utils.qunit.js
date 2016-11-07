@@ -642,6 +642,7 @@ jQuery.sap.require("sap.m.Button");
 
 	QUnit.test("getAppComponentForControl searches further for the app component if the passed component is not of the type application", function () {
 		var oComponent = new sap.ui.core.UIComponent();
+		var oParentComponent = {};
 		var oSapAppEntry = {
 			type: "definitelyNotAnApplication"
 		};
@@ -654,11 +655,12 @@ jQuery.sap.require("sap.m.Button");
 		var bCalled = false;
 
 		var oStub = this.stub(Utils, "getAppComponentForControl");
+		var oGetComponentForControlStub = this.stub(Utils, "_getComponentForControl").returns(oParentComponent);
 
 		var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
 
 		assert.ok(oStub.calledOnce, "the function was called once");
-		assert.equal(oStub.firstCall.args[0], oComponent, "the function was called with the component the first time");
+		assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 	});
 
 	QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function () {

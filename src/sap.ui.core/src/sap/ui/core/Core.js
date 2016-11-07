@@ -930,28 +930,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Optionally allows restricting the setting to parts of a theme covering specific control libraries.
 	 *
 	 * Example:
-	 * <code>
-	 *   core.setThemeRoot("my_theme", "http://mythemeserver.com/allThemes");
-	 *   core.applyTheme("my_theme");
-	 * </code>
-	 * will cause the following file to be loaded:
-	 * <code>http://mythemeserver.com/allThemes/sap/ui/core/themes/my_theme/library.css</code>
-	 * (and the respective files for all used control libraries, like <code>http://mythemeserver.com/allThemes/sap/ui/commons/themes/my_theme/library.css</code>
-	 * if the sap.ui.commons library is used)
+	 * <pre>
+	 *   sap.ui.getCore().setThemeRoot("my_theme", "https://mythemeserver.com/allThemes");
+	 *   sap.ui.getCore().applyTheme("my_theme");
+	 * </pre>
 	 *
-	 * If parts of the theme are at different locations (e.g. because you provide a standard theme like "sap_goldreflection" for a custom control library and
-	 * this self-made part of the standard theme is at a different location than the UI5 resources), you can also specify for which control libraries the setting
+	 * will cause the following file to be loaded (assuming that the bootstrap is configured to load
+	 *  libraries <code>sap.m</code> and <code>sap.ui.layout</code>):
+	 * <pre>
+	 *   https://mythemeserver.com/allThemes/sap/ui/core/themes/my_theme/library.css
+	 *   https://mythemeserver.com/allThemes/sap/ui/layout/themes/my_theme/library.css
+	 *   https://mythemeserver.com/allThemes/sap/m/themes/my_theme/library.css
+	 * </pre>
+	 *
+	 * If parts of the theme are at different locations (e.g. because you provide a standard theme
+	 * like "sap_belize" for a custom control library and this self-made part of the standard theme is at a
+	 * different location than the UI5 resources), you can also specify for which control libraries the setting
 	 * should be used, by giving an array with the names of the respective control libraries as second parameter:
-	 * <code>core.setThemeRoot("sap_goldreflection", ["my.own.library"], "http://mythemeserver.com/allThemes");</code>
-	 * This will cause the Gold Reflection theme to be loaded normally from the UI5 location, but the part for styling the "my.own.library" controls will be loaded from:
-	 * <code>http://mythemeserver.com/allThemes/my/own/library/themes/sap_goldreflection/library.css</code>
+	 * <pre>
+	 *   sap.ui.getCore().setThemeRoot("sap_belize", ["my.own.library"], "https://mythemeserver.com/allThemes");
+	 * </pre>
 	 *
-	 * If the custom theme should be loaded initially (via bootstrap attribute), the "themeRoots" property of the window["sap-ui-config"] object must be used instead
-	 * of Core.setThemeRoot(...) in order to configure the theme location early enough.
+	 * This will cause the Belize theme to be loaded from the UI5 location for all standard libs.
+	 * Resources for styling the <code>my.own.library</code> controls will be loaded from the configured
+	 * location:
+	 * <pre>
+	 *   https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/sap_belize/library.css
+	 *   https://openui5.hana.ondemand.com/resources/sap/ui/layout/themes/sap_belize/library.css
+	 *   https://openui5.hana.ondemand.com/resources/sap/m/themes/sap_belize/library.css
+	 *   https://mythemeserver.com/allThemes/my/own/library/themes/sap_belize/library.css
+	 * </pre>
 	 *
-	 * @param {string} sThemeName the name of the theme for which to configure the location
-	 * @param {string[]} [aLibraryNames] the optional library names to which the configuration should be restricted
-	 * @param {string} sThemeBaseUrl the base URL below which the CSS file(s) will be loaded from
+	 * If the custom theme should be loaded initially (via bootstrap attribute), the <code>themeRoots</code>
+	 * property of the <code>window["sap-ui-config"]</code> object must be used instead of calling
+	 * <code>sap.ui.getCore().setThemeRoot(...)</code> in order to configure the theme location early enough.
+	 *
+	 * @param {string} sThemeName Name of the theme for which to configure the location
+	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
+	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
 	 * @return {sap.ui.core.Core} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
@@ -1267,12 +1283,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Returns a new instance of the RenderManager interface.
+	 * Returns a new instance of the RenderManager for exclusive use by the caller.
 	 *
-	 * @return {sap.ui.core.RenderManager} the new instance of the RenderManager interface.
+	 * The caller must take care to destroy the render manager when it is no longer needed.
+	 * Calling this method before the Core has been {@link #isInitialized initialized},
+	 * is not recommended.
+	 *
+	 * @return {sap.ui.core.RenderManager} New instance of the RenderManager
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
+		jQuery.sap.assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
 		var oRm = new RenderManager();
 		oRm._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		return oRm.getInterface();
@@ -1849,11 +1870,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {object} oLibInfo Info object for the library
 	 * @param {string} [oLibInfo.name] Name of the library; when given it must match the name by which the library has been loaded
 	 * @param {string} oLibInfo.version Version of the library
-	 * @param {string[]} [oLibInfo.dependencies=[]] List of libraries that this library depends on; names are in dot notation (e.g ."sap.ui.core")
-	 * @param {string[]} [oLibInfo.types=[]] List of names of types that this library provides; names are in dot notation (e.g ."sap.ui.core.CSSSize")
-	 * @param {string[]} [oLibInfo.interfaces=[]] List of names of interface types that this library provides; names are in dot notation (e.g ."sap.ui.core.PopupInterface")
-	 * @param {string[]} [oLibInfo.controls=[]] Names of control types that this library provides; names are in dot notation (e.g ."sap.ui.core.ComponentContainer")
-	 * @param {string[]} [oLibInfo.elements=[]] Names of element types that this library provides (excluding controls); names are in dot notation (e.g ."sap.ui.core.Item")
+	 * @param {string[]} [oLibInfo.dependencies=[]] List of libraries that this library depends on; names are in dot notation (e.g. "sap.ui.core")
+	 * @param {string[]} [oLibInfo.types=[]] List of names of types that this library provides; names are in dot notation (e.g. "sap.ui.core.CSSSize")
+	 * @param {string[]} [oLibInfo.interfaces=[]] List of names of interface types that this library provides; names are in dot notation (e.g. "sap.ui.core.PopupInterface")
+	 * @param {string[]} [oLibInfo.controls=[]] Names of control types that this library provides; names are in dot notation (e.g. "sap.ui.core.ComponentContainer")
+	 * @param {string[]} [oLibInfo.elements=[]] Names of element types that this library provides (excluding controls); names are in dot notation (e.g. "sap.ui.core.Item")
 	 * @param {boolean} [oLibInfo.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
 	 *                        When set to true, no library.css will be loaded for this library
 	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the UI5 core framework.
@@ -2368,11 +2389,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * The 'ThemeChanged' event is fired when
+	 * Fired after a theme has been applied.
+	 *
+	 * More precisely, this event is fired when any of the following conditions is met:
 	 * <ul>
-	 *   <li>the theme has been initially applied (only fired if theme is not already applied on core init)
-	 *   <li>the theme has been changed and is now applied (see {@link #applyTheme})
-	 *   <li>a library has been loaded and its theme has been applied (only if library is loaded after core init)
+	 *   <li>the initially configured theme has been applied after core init</li>
+	 *   <li>the theme has been changed and is now applied (see {@link #applyTheme})</li>
+	 *   <li>a library has been loaded dynamically after core init (e.g. with
+	 *       <code>sap.ui.getCore().loadLibrary(...)</code> and the current theme
+	 *       has been applied for it</li>
 	 * </ul>
 	 *
 	 * @name sap.ui.core.Core#ThemeChanged
@@ -2385,7 +2410,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 
 	 /**
-	 * Attach event-handler <code>fnFunction</code> to the 'ThemeChanged' event of this <code>sap.ui.core.Core</code>.
+	 * Attach event-handler <code>fnFunction</code> to the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
@@ -2399,7 +2424,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'ThemeChanged' event of this <code>sap.ui.core.Core</code>.
+	 * Detach event-handler <code>fnFunction</code> from the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *
@@ -2414,7 +2439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Fire event 'ThemeChanged' to attached listeners.
+	 * Fire event <code>ThemeChanged</code> to attached listeners.
 	 *
 	 * @param {object} [mParameters] Parameters to pass along with the event
 	 * @param {object} [mParameters.theme] Theme name

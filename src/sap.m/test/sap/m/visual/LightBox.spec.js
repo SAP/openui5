@@ -18,15 +18,18 @@ describe('sap.m.LightBox', function() {
 
     // LightBox very big picture test
 
-    it('should show body with lightBox - very big image', function () {
-        element(by.id('image2')).click();
-        expect(takeScreenshot(element(by.id('body')))).toLookAs('lb-very-big-picture-body');
-    });
+	//Discussed with team Belasitsa - tests will be commented until further research on how to guarantee
+	//that the image will be fully loaded before taking screenshot
 
-    it('should show lightBox only - very big image', function () {
-        expect(takeScreenshot(element(by.id('lB2')))).toLookAs('lb-very-big-picture');
-        element(by.id('lB2-closeButton')).click();
-    });
+	// it('should show body with lightBox - very big image', function () {
+	// 	element(by.id('image2')).click();
+	// 	expect(takeScreenshot(element(by.id('body')))).toLookAs('lb-very-big-picture-body');
+	// });
+	//
+	// it('should show lightBox only - very big image', function () {
+	// 	expect(takeScreenshot(element(by.id('lB2')))).toLookAs('lb-very-big-picture');
+	// 	element(by.id('lB2-closeButton')).click();
+	// });
 
     // LightBox big horizontal picture test
 

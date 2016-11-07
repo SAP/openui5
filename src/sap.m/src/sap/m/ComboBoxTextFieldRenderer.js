@@ -174,7 +174,12 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.addButtonClasses = function(oRm, oControl) {
-			oRm.addClass(ComboBoxTextFieldRenderer.CSS_CLASS_COMBOBOXTEXTFIELD + "Arrow");
+			var CLASS = ComboBoxTextFieldRenderer.CSS_CLASS_COMBOBOXTEXTFIELD + "Arrow";
+			oRm.addClass(CLASS);
+
+			if (!oControl.getEnabled()) {
+				oRm.addClass(CLASS + "Disabled");
+			}
 		};
 
 		return ComboBoxTextFieldRenderer;

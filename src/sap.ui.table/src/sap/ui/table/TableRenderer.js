@@ -169,8 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 
 		// set the default design of the toolbar
-		var Toolbar = sap.ui.require("sap/m/Toolbar");
-		if ( Toolbar && oToolbar instanceof Toolbar ) {
+		if (TableUtils.isInstanceOf(oToolbar, "sap/m/Toolbar")) {
 			oToolbar.setDesign(Parameters.get("sapUiTableToolbarDesign"), true);
 		}
 
@@ -880,7 +879,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.writeAttribute("tabindex", "-1");
 			rm.writeAttribute("data-sap-ui-colid", oColumn.getId());
 
-			var bIsFirstColumn = aVisibleColumns.length > 0 && aVisibleColumns[0] === oColumn;
+			var nColumns = aVisibleColumns.length;
+			var bIsFirstColumn = nColumns > 0 && aVisibleColumns[0] === oColumn;
+			var bIsLastColumn = nColumns > 0 && aVisibleColumns[nColumns - 1] === oColumn;
 
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "DATACELL", {
 				index: iColIndex,
@@ -898,6 +899,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.addClass("sapUiTableTd");
 			if (bIsFirstColumn) {
 				rm.addClass("sapUiTableTdFirst");
+			}
+			if (bIsLastColumn) {
+				rm.addClass("sapUiTableTdLast");
 			}
 			// grouping support to show/hide values of grouped columns
 			if (oColumn.getGrouped()) {

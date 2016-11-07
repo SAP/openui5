@@ -196,10 +196,10 @@
 					</Wizard>
 				</content>
 				<footer>
-					<Toolbar>
+					<OverflowToolbar>
 						<ToolbarSpacer/>
 						<Button text="Cancel" press="handleWizardCancel"/>
-					</Toolbar>
+					</OverflowToolbar>
 				</footer>
 			</Page>
 		</pages>

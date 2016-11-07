@@ -69,6 +69,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
 	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding; defaults to the model's default operation mode when not specified
 	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
 	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
@@ -1755,18 +1756,24 @@ sap.ui.define(['jquery.sap.global',
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 
-			// reset the internal binding variables when changing the context
-			this.resetData();
-
-			// If binding is initial or not a relative binding, nothing to do here
+			// If binding is not a relative binding, nothing to do here
 			if (!this.isRelative()) {
 				return;
 			}
 
-			// only initialize the context
-			if (oContext) {
-				this._initialize();
-				this._fireChange();
+			// resolving the path makes sure that we can safely analyze the metadata
+			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+			if (sResolvedPath) {
+				this.resetData();
+				this._initialize(); // triggers metadata/annotation check
+				this._fireChange({ reason: ChangeReason.Context });
+			} else {
+				// path could not be resolved, but some data was already available, so we fire a context-change
+				if (!jQuery.isEmptyObject(this.oAllKeys) || !jQuery.isEmptyObject(this.oKeys) || !jQuery.isEmptyObject(this._aNodes)) {
+					this.resetData();
+					this._fireChange({ reason: ChangeReason.Context });
+				}
 			}
 		}
 	};

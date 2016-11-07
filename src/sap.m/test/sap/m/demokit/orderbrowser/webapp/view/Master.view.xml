@@ -7,7 +7,13 @@
 
 	<semantic:MasterPage
 		id="page"
-		title="{masterView>/title}"
+		title="{
+			parts: [
+				'i18n>masterTitleCount',
+				'masterView>/titleCount'
+			],
+			formatter: 'jQuery.sap.formatMessage'
+		}"
 		navButtonPress="onNavBack"
 		showNavButton="true">
 		<semantic:subHeader>
@@ -34,10 +40,11 @@
 				id="list"
 				items="{
 					path: '/Orders',
+					parameters: {expand: 'Customer'},
 					sorter: {
 						path: 'OrderID',
-						descending: false
-						},
+						descending: true
+					},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"
@@ -62,12 +69,48 @@
 					<ObjectListItem
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
 						press="onSelectionChange"
-						title="{OrderID}"
->
+						title="{
+							parts: [
+								'i18n>commonItemTitle',
+								'OrderID'
+							],
+							formatter: 'jQuery.sap.formatMessage'
+						}"
+						number="{
+							path: 'OrderDate',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: { style: 'short' }
+						}">
+						<attributes>
+							<ObjectAttribute title="{i18n>commonCustomerName}" id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute title="{i18n>commonItemShipped}"
+								text="{= ${ShippedDate}
+									? ${ path: 'ShippedDate',
+										 type: 'sap.ui.model.type.Date',
+										 formatOptions: { style: 'medium' } }
+									: ${i18n>commonItemNotYetShipped} }" />
+						</attributes>
 					</ObjectListItem>
 				</items>
 			</List>
 		</semantic:content>
+
+		<semantic:group>
+			<semantic:GroupSelect change="onGroup">
+				<core:Item key="NO_GROUPING" text="{i18n>masterGroupNoGrouping}" />
+				<core:Item key="CompanyName" text="{i18n>masterGroupCustomer}" />
+				<core:Item key="OrderPeriod" text="{i18n>masterGroupOrderPeriod}" />
+				<core:Item key="ShippedPeriod" text="{i18n>masterGroupShippedPeriod}" />
+			</semantic:GroupSelect>
+		</semantic:group>
+
+		<semantic:filter>
+			<semantic:FilterSelect change="onFilter">
+				<core:Item key="NoFilter" text="{i18n>masterFilterNoFilter}" />
+				<core:Item key="Shipped" text="{i18n>masterFilterShipped}" />
+				<core:Item key="NotShipped" text="{i18n>masterFilterNotShipped}" />
+			</semantic:FilterSelect>
+		</semantic:filter>
 
 	</semantic:MasterPage>
 

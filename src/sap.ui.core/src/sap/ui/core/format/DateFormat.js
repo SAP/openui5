@@ -69,9 +69,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			// If style is mixed ("medium/short") split it and pass both parts separately
 			var iSlashIndex = sStyle.indexOf("/");
 			if (iSlashIndex > 0) {
-				return oLocaleData.getCombinedDateTimePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1));
+				return oLocaleData.getCombinedDateTimePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
 			} else {
-				return oLocaleData.getCombinedDateTimePattern(sStyle, sStyle);
+				return oLocaleData.getCombinedDateTimePattern(sStyle, sStyle, sCalendarType);
 			}
 		},
 		oRequiredParts: {

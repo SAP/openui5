@@ -1074,12 +1074,12 @@
 		 * A Logging API for JavaScript.
 		 *
 		 * Provides methods to manage a client-side log and to create entries in it. Each of the logging methods
-		 * {@link jQuery.sap.log.#debug}, {@link jQuery.sap.log.#info}, {@link jQuery.sap.log.#warning},
-		 * {@link jQuery.sap.log.#error} and {@link jQuery.sap.log.#fatal} creates and records a log entry,
+		 * {@link jQuery.sap.log.debug}, {@link jQuery.sap.log.info}, {@link jQuery.sap.log.warning},
+		 * {@link jQuery.sap.log.error} and {@link jQuery.sap.log.fatal} creates and records a log entry,
 		 * containing a timestamp, a log level, a message with details and a component info.
 		 * The log level will be one of {@link jQuery.sap.log.Level} and equals the name of the concrete logging method.
 		 *
-		 * By using the {@link jQuery.sap.log#setLevel} method, consumers can determine the least important
+		 * By using the {@link jQuery.sap.log.setLevel} method, consumers can determine the least important
 		 * log level which should be recorded. Less important entries will be filtered out. (Note that higher numeric
 		 * values represent less important levels). The initially set level depends on the mode that UI5 is running in.
 		 * When the optimized sources are executed, the default level will be {@link jQuery.sap.log.Level.ERROR}.
@@ -1097,7 +1097,7 @@
 		 * {@link jQuery.sap.log.Logger#getLevel} allows to retrieve the currently effective log level for a given
 		 * component.
 		 *
-		 * {@link jQuery.sap.log#getLog} returns an array of the currently collected log entries.
+		 * {@link jQuery.sap.log.getLogEntries} returns an array of the currently collected log entries.
 		 *
 		 * Furthermore, a listener can be registered to the log. It will be notified whenever a new entry
 		 * is added to the log. The listener can be used for displaying log entries in a separate page area,
@@ -1226,10 +1226,11 @@
 
 			/**
 			 * Allows to add a new LogListener that will be notified for new log entries.
+			 *
 			 * The given object must provide method <code>onLogEntry</code> and can also be informed
 			 * about <code>onDetachFromLog</code> and <code>onAttachToLog</code>
 			 * @param {object} oListener The new listener object that should be informed
-			 * @return {jQuery.sap.log.Logger} The global logger
+			 * @return {jQuery.sap.log} The global logger
 			 * @public
 			 * @static
 			 */
@@ -1241,7 +1242,7 @@
 			/**
 			 * Allows to remove a registered LogListener.
 			 * @param {object} oListener The new listener object that should be removed
-			 * @return {jQuery.sap.log.Logger} The global logger
+			 * @return {jQuery.sap.log} The global logger
 			 * @public
 			 * @static
 			 */
@@ -1267,7 +1268,6 @@
 		 * @deprecated Since 1.1.2. To avoid confusion with getLogger, this method has been renamed to {@link jQuery.sap.log.getLogEntries}.
 		 * @function
 		 * @public
-		 * @static
 		 */
 		jQuery.sap.log.getLog = jQuery.sap.log.getLogEntries;
 
@@ -3326,14 +3326,14 @@
 		 *
 		 * The remainder of the resource name is appended to the URL.
 		 *
-		 * <b>Unified Resource Names</b>
+		 * <b>Unified Resource Names</b><br>
 		 * Several UI5 APIs use <i>Unified Resource Names (URNs)</i> as naming scheme for resources that
 		 * they deal with (e.h. Javascript, CSS, JSON, XML, ...). URNs are similar to the path
 		 * component of an URL:
 		 * <ul>
 		 * <li>they consist of a non-empty sequence of name segments</li>
 		 * <li>segments are separated by a forward slash '/'</li>
-		 * <li>name segments consist of URL path segment characters only. It is recommened to use only ASCII
+		 * <li>name segments consist of URL path segment characters only. It is recommended to use only ASCII
 		 * letters (upper or lower case), digits and the special characters '$', '_', '-', '.')</li>
 		 * <li>the empty name segment is not supported</li>
 		 * <li>names consisting of dots only, are reserved and must not be used for resources</li>
@@ -3346,7 +3346,7 @@
 		 * where the extension '.js' is always omitted (see {@link sap.ui.define}, {@link sap.ui.require}).
 		 *
 		 *
-		 * <b>Relationship to old Module Name Syntax</b>
+		 * <b>Relationship to old Module Name Syntax</b><br>
 		 *
 		 * Older UI5 APIs that deal with resources (like {@link jQuery.sap.registerModulePath},
 		 * {@link jQuery.sap.require} and {@link jQuery.sap.declare}) used a dot-separated naming scheme
@@ -3706,11 +3706,11 @@
 		 * If the module name was omitted from that call, it will be substituted by the name that was used to
 		 * request the module. As a preparation step, the dependencies as well as their transitive dependencies,
 		 * will be loaded. Then, the module value will be determined: if a static value (object, literal) was
-		 * given, that value will be the module value. If a function was given, that function will be called
-		 * (providing the module values of the declared dependencies as parameters to the function) and its
-		 * return value will be used as module value. The framework internally associates the resulting value
-		 * with the module name and provides it to the original requestor of the module. Whenever the module
-		 * is requested again, the same value will be returned (modules are executed only once).
+		 * given as <code>vFactory</code>, that value will be the module value. If a function was given, that
+		 * function will be called (providing the module values of the declared dependencies as parameters
+		 * to the function) and its return value will be used as module value. The framework internally associates
+		 * the resulting value with the module name and provides it to the original requester of the module.
+		 * Whenever the module is requested again, the same value will be returned (modules are executed only once).
 		 *
 		 * <i>Example:</i><br>
 		 * The following example defines a module "SomeClass", but doesn't hard code the module name.
@@ -3775,13 +3775,13 @@
 		 * <b>Note:</b> the order in which the dependency modules are <i>executed</i> is <b>not</b>
 		 * defined by the order in the dependencies array! The execution order is affected by dependencies
 		 * <i>between</i> the dependency modules as well as by their current state (whether a module
-		 * already has been loaded or not). Neither module implementations nor dependants that require
+		 * already has been loaded or not). Neither module implementations nor dependents that require
 		 * a module set must make any assumption about the execution order (other than expressed by
 		 * their dependencies). There is, however, one exception with regard to third party libraries,
 		 * see the list of limitations further down below.
 		 *
 		 * <b>Note:</b>a static module value (a literal provided to <code>sap.ui.define</code>) cannot
-		 * depend on the module values of the depency modules. Instead, modules can use a factory function,
+		 * depend on the module values of the dependency modules. Instead, modules can use a factory function,
 		 * calculate the static value in that function, potentially based on the dependencies, and return
 		 * the result as module value. The same approach must be taken when the module value is supposed
 		 * to be a function.
@@ -3846,8 +3846,8 @@
 		 * it can access the value via its global name (if the module supports such a usage).
 		 *
 		 * Note that UI5 temporarily deactivates an existing AMD loader while it executes third party modules
-		 * known to support AMD. This sounds contradictarily at a first glance as UI5 wants to support AMD,
-		 * but for now it is necessary to fully support UI5 apps that rely on global names for such modules.
+		 * known to support AMD. This sounds contradictorily at a first glance as UI5 wants to support AMD,
+		 * but for now it is necessary to fully support UI5 applications that rely on global names for such modules.
 		 *
 		 * Example:
 		 * <pre>
@@ -3874,7 +3874,7 @@
 		 * This has two reasons: first, it avoids the impression that <code>sap.ui.define</code> is
 		 * an exact implementation of an AMD loader. And second, it allows the coexistence of an AMD
 		 * loader (requireJS) and <code>sap.ui.define</code> in one application as long as UI5 or
-		 * apps using UI5 are not fully prepared to run with an AMD loader</li>
+		 * applications using UI5 are not fully prepared to run with an AMD loader</li>
 		 * <li><code>sap.ui.define</code> currently loads modules with synchronous XHR calls. This is
 		 * basically a tribute to the synchronous history of UI5.
 		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly it not part of
@@ -3897,11 +3897,11 @@
 		 *     to ensure proper execution order for such modules currently is to rely on the order in the
 		 *     dependency array. Obviously, this only works as long as <code>sap.ui.define</code> uses
 		 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>
-		 * <li>it was discussed to enfore asynchronous execution of the module factory function (e.g. with a
+		 * <li>it was discussed to enforce asynchronous execution of the module factory function (e.g. with a
 		 *     timeout of 0). But this would have invalidated the current migration scenario where a
 		 *     sync <code>jQuery.sap.require</code> call can load a <code>sap.ui.define</code>'ed module.
 		 *     If the module definition would not execute synchronously, the synchronous contract of the
-		 *     require call would be broken (default behavior in existing UI5 apps)</li>
+		 *     require call would be broken (default behavior in existing UI5 applications)</li>
 		 * <li>a single file must not contain multiple calls to <code>sap.ui.define</code>. Multiple calls
 		 *     currently are only supported in the so called 'preload' files that the UI5 merge tooling produces.
 		 *     The exact details of how this works might be changed in future implementations and are not
@@ -4231,7 +4231,7 @@
 		 * @param {string} sName unified resource name of a resource or the name of a preload group to be removed
 		 * @param {boolean} [bPreloadGroup=true] whether the name specifies a preload group, defaults to true
 		 * @param {boolean} [bUnloadAll] Whether all matching resources should be unloaded, even if they have been executed already.
-		 * @param {boolean} [bDeleteExports] Whether exportss (global variables) should be destroyed as well. Will be done for UI5 module names only.
+		 * @param {boolean} [bDeleteExports] Whether exports (global variables) should be destroyed as well. Will be done for UI5 module names only.
 		 * @experimental Since 1.16.3 API might change completely, apps must not develop against it.
 		 * @private
 		 */

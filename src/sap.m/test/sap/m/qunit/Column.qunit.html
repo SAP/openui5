@@ -296,7 +296,12 @@
 				minScreenWidth : "1px"
 			}),
 			parent = new sap.m.Table({
-				columns : sut
+				columns : sut,
+				items: new sap.m.ColumnListItem({
+					cells: new sap.m.Text({
+						text: "cell"
+					})
+				})
 			});
 
 		//Act
@@ -306,14 +311,14 @@
 
 		//Assert
 		strictEqual(parent.$().find("td").css("display"), "table-cell");
-		strictEqual(parent.$().find("th").css("display"), "table-cell");
+		strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
 
 		//Act
 		sut.setDisplay($("table")[0], false);
 
 		//Assert
-		strictEqual(parent.$().find("td").css("display"), "none");
-		strictEqual(parent.$().find("th").css("display"), "none");
+		strictEqual(parent.$().find("td").eq(1).css("display"), "none");
+		strictEqual(parent.$().find("th").eq(1).css("display"), "none");
 
 		//Cleanup
 		parent.destroy();

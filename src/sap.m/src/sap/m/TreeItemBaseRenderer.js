@@ -29,10 +29,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 
 	TreeItemBaseRenderer.renderContentFormer = function(rm, oLI) {
-		// render expand/collapse arrow
+		this.renderHighlight(rm, oLI);
 		this.renderExpander(rm, oLI);
-		ListItemBaseRenderer.renderContentFormer.call(this, rm, oLI);
-
+		this.renderMode(rm, oLI, -1);
 	};
 
 	TreeItemBaseRenderer.renderExpander = function(rm, oLI) {

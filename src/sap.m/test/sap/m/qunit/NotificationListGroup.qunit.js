@@ -20,6 +20,7 @@
     //================================================================================
     // Notification List Group API
     //================================================================================
+
     QUnit.module('API', {
         setup: function() {
             this.NotificationListGroup = new sap.m.NotificationListGroup();
@@ -250,6 +251,21 @@
         // assert
         assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.None, 'The priority should be set to "None".');
     });
+
+	QUnit.test('Expand button in group without notifications', function(assert) {
+	    // arrange
+		var expandCollapseButton = this.NotificationListGroup.getAggregation('_collapseButton');
+
+	    // assert
+	    assert.strictEqual(expandCollapseButton.getEnabled(), false, 'Should be disabled');
+
+		// act
+		this.NotificationListGroup.setEnableCollapseButtonWhenEmpty(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(expandCollapseButton.getEnabled(), true, 'Should be enabled when "enableCollapseButtonWhenEmpty" is set to "true"');
+	});
 
     //================================================================================
     // Notification List Group rendering methods

@@ -421,14 +421,68 @@ sap.ui.define(['jquery.sap.global'],
 		}());
 
 	/**
-	 * Calculate delta of old list and new list
-	 * This implements the algorithm described in "A Technique for Isolating Differences Between Files"
-	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268)
-	 * @public
+	 * Calculate delta of old list and new list.
+	 *
+	 * This function implements the algorithm described in "A Technique for Isolating Differences Between Files"
+	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268).
+	 *
+	 * Items in the arrays are not compared directly. Instead, a substitute symbol is determined for each item
+	 * by applying the provided function <code>fnSymbol</code> to it. Items with strictly equal symbols are
+	 * assumed to represent the same logical item:
+	 * <pre>
+	 *   fnSymbol(a) === fnSymbol(b)   <=>   a 'is logically the same as' b
+	 * </pre>
+	 * As an additional constraint, casting the symbols to string should not modify the comparison result.
+	 * If this second constraint is not met, this method might report more diffs than necessary.
+	 *
+	 * If no symbol function is provided, a default implementation is used which applies <code>JSON.stringify</code>
+	 * to non-string items and reduces the strings to a hash code. It is not guaranteed that this default
+	 * implementation fulfills the above constraint in all cases, but it is a compromise between implementation
+	 * effort, generality and performance. If items are known to be non-stringifiable (e.g. because they may
+	 * contain cyclic references) or when hash collisions are likely, an own <code>fnSymbol</code> function
+	 * must be provided.
+	 *
+	 * The result of the diff is a sequence of update operations, each consisting of a <code>type</code>
+	 * (either <code>"insert"</code> or <code>"delete"</code>) and an <code>index</code>.
+	 * By applying the operations one after the other to the old array, it can be transformed to an
+	 * array whose items are equal to the new array.
+	 *
+	 * Sample implementation of the update
+	 * <pre>
+	 *
+	 *  function update(aOldArray, aNewArray) {
+	 *
+	 *    // calculate the diff
+	 *    var aDiff = jQuery.sap.arraySymbolDiff(aOldArray, aNewArray, __provide_your_symbol_function_here__);
+	 *
+	 *    // apply update operations
+	 *    aDiff.forEach( function(op) {
+	 *
+	 *      // invariant: aOldArray and aNewArray now are equal up to (excluding) op.index
+	 *
+	 *      switch ( op.type ) {
+	 *      case 'insert':
+	 *        // new array contains a new (or otherwise unmapped) item, add it here
+	 *        aOldArray.splice(op.index, 0, aNewArray[op.index]);
+	 *        break;
+	 *      case 'delete':
+	 *        // an item is no longer part of the array (or has been moved to another position), remove it
+	 *        aOldArray.splice(op.index, 1);
+	 *        break;
+	 *      default:
+	 *        throw new Error('unexpected diff operation type');
+	 *      }
+	 *
+	 *    });
+	 *  }
+	 *
+	 * </pre>
+	 *
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
-	 * @param {function} [fnSymbol] Function to get entry symbol
-	 * @return {Array} List of changes
+	 * @param {function} [fnSymbol] Function to calculate substitute symbols for array items
+	 * @return {Array.<{type:string,index:int}>} List of update operations
+	 * @public
 	 */
 	jQuery.sap.arraySymbolDiff = function(aOld, aNew, fnSymbol){
 		var mSymbols = {},
@@ -563,12 +617,13 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Calculate delta of old list and new list
+	 * Calculate delta of old list and new list.
+	 *
 	 * This partly implements the algorithm described in "A Technique for Isolating Differences Between Files"
 	 * but instead of working with hashes, it does compare each entry of the old list with each entry of the new
 	 * list, which causes terrible performane on large datasets.
 	 *
-	 * @deprecated
+	 * @deprecated As of 1.38, use {@link jQuery.sap.arraySymbolDiff} instead if applicable
 	 * @public
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array

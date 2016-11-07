@@ -36,6 +36,12 @@ sap.ui.define([
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
+		// this is needed to trigger a refresh of a simpleform! Otherwise simpleForm content and visualization are not in sync
+		oModifier.removeAllAggregation(oControl, "content");
+		for (var i = 0; i < aContent.length; ++i) {
+			oModifier.insertAggregation(oControl, "content", aContent[i], i);
+		}
+
 		if (oChangeDefinition.changeType === "hideSimpleFormField") {
 			aContent.some(function (oField, index) {
 				if (oField === oRemovedElement) {

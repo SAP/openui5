@@ -25,7 +25,8 @@ sap.ui.require([
 ], function (QUnit, ElementEnablementTest) {
 
 	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.SplitContainer"
+		type: "sap.m.SplitContainer",
+		timeout : 300
 	});
 	oElementEnablementTest.run().then(function(oData) {
 		var oReport = new QUnit({

@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		/**
 		 * Creates an instance of the Locale.
 		 *
-		 * @class Locale represents a locale setting, consisting of a language, script, region, variants, extensions and private use section
+		 * @class Locale represents a locale setting, consisting of a language, script, region, variants, extensions and private use section.
 		 *
 		 * @param {string} sLocaleId the locale identifier, in format en-US or en_US.
 		 *
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale script or null if none was specified.
+			 * Get the locale script or <code>null</code> if none was specified.
 			 *
 			 * Note that the case might differ from the original language tag
 			 * (Upper case first letter and lower case reminder enforced as
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale region or null if none was specified.
+			 * Get the locale region or <code>null</code> if none was specified.
 			 *
 			 * Note that the case might differ from the original script tag
 			 * (Upper case is enforced as recommended by BCP47/ISO3166-1).
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale variants as a single string or null.
+			 * Get the locale variants as a single string or <code>null</code>.
 			 *
 			 * Multiple variants are separated by a dash '-'.
 			 *
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale extension as a single string or null.
+			 * Get the locale extension as a single string or <code>null</code>.
 			 *
 			 * The extension always consists of a singleton character (not 'x'),
 			 * a dash '-' and one or more extension token, each separated
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale private use section or null.
+			 * Get the locale private use section or <code>null</code>.
 			 *
 			 * @return {string} the private use section
 			 * @public
@@ -180,9 +180,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			/**
-			 * Get the locale private use section
+			 * Get the locale private use section as an array of tokens.
 			 *
-			 * @return {string} the private use section
+			 * The leading singleton and the separating dashes are not part of the result.
+			 * If there is no private use section in the locale tag, an empty array is returned.
+			 *
+			 * @return {string[]} the tokens of the private use section
 			 * @public
 			 */
 			getPrivateUseSubtags : function() {
@@ -315,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * There is no mean to define RTL=false for a language/region, when RTL=true for
 		 * the language alone.
 		 *
-		 * As of 3/2013 this is true for all supported locales/regions of UI5.
+		 * As of 3/2013 this is true for all locales/regions supported by UI5.
 		 *
 		 * @private
 		 */

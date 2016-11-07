@@ -801,7 +801,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableTr");
 			for (var i = 0; i < aRowItems.length; i++) {
 				aRowItems[i].style.height = sRowHeight;
 			}
@@ -813,19 +813,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._resetColumnHeaderHeights = function() {
-
 		if (this.getColumnHeaderHeight()) {
 			return; // height is set fixed in renderer
 		}
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aRowItems = oDomRef.querySelectorAll("tr.sapUiColHdrTr");
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableColHdrTr");
 			for (var i = 0; i < aRowItems.length; i++) {
 				aRowItems[i].style.height = null;
 			}
 		}
-
 	};
 
 	/**
@@ -1025,6 +1023,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
 		if (oEvent && oEvent.isMarked("insertTableRows")) {
+			this._getScrollExtension().updateVSbMaxHeight();
 			return;
 		}
 
@@ -1129,11 +1128,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		// the only place to fix the minimum column width
 		function setMinColWidths(oTable) {
-			var table = oTable.getDomRef();
+			var oTableRef = oTable.getDomRef();
+			var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
+			var aNotFixedVariableColumns = [];
+
+			function calcNewWidth(iDomWidth, iMinWidth) {
+				if (iDomWidth <= iMinWidth) {
+					// tolerance of -5px to make the resizing smooother
+					return Math.max(iDomWidth, iMinWidth - 5, iAbsoluteMinWidth) + "px";
+				}
+				return -1;
+			}
 
 			function isFixNeeded(col) {
-				var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
-				var minWidth = col._minWidth || iAbsoluteMinWidth;
+				var minWidth = Math.max(col._minWidth || 0, iAbsoluteMinWidth, col.getMinWidth());
 				var colWidth = col.getWidth();
 				var aColHeaders;
 				var colHeader;
@@ -1141,29 +1149,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// if a column has variable width, check if its current width of the
 				// first corresponding <th> element in less than minimum and store it
 				if (TableUtils.isVariableWidth(colWidth)) {
-					aColHeaders = table.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
+					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
 					colHeader = aColHeaders[0];
 					domWidth = colHeader && colHeader.offsetWidth;
 					if (domWidth) {
 						if (domWidth <= minWidth) {
-							// tolerance of -5px to make the resizing smooother
-							return {headers : aColHeaders, newWidth: Math.max(domWidth, minWidth - 5, iAbsoluteMinWidth) + "px"};
+							return {headers : aColHeaders, newWidth: calcNewWidth(domWidth, minWidth)};
 						} else if (colHeader && colHeader.style.width != colWidth) {
+							aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 							// reset the minimum style width that was set previously
 							return {headers : aColHeaders, newWidth: colWidth};
 						}
 					}
+					aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 				}
 				return null;
 			}
-			// adjust widths of all found column headers
-			oTable.getColumns().map(isFixNeeded).forEach(function(oCol) {
-				if (oCol) {
-					Array.prototype.forEach.call(oCol.headers, function (header) {
-							header.style.width = oCol.newWidth;
+
+			function adaptColWidth(oColInfo) {
+				if (oColInfo) {
+					Array.prototype.forEach.call(oColInfo.headers, function (header) {
+							header.style.width = oColInfo.newWidth;
 					});
 				}
-			});
+			}
+
+			// adjust widths of all found column headers
+			oTable._getVisibleColumns().map(isFixNeeded).forEach(adaptColWidth);
+
+			//Check the rest of the flexible non-adapted columns
+			//Due to adaptations they could be smaller now.
+			if (aNotFixedVariableColumns.length) {
+				var iDomWidth;
+				for (var i = 0; i < aNotFixedVariableColumns.length; i++) {
+					iDomWidth = aNotFixedVariableColumns[i].header && aNotFixedVariableColumns[i].header.offsetWidth;
+					aNotFixedVariableColumns[i].newWidth = calcNewWidth(iDomWidth, aNotFixedVariableColumns[i].minWidth);
+					if (aNotFixedVariableColumns[i].newWidth >= 0) {
+						adaptColWidth(aNotFixedVariableColumns[i]);
+					}
+				}
+			}
 		}
 		setMinColWidths(this);
 
@@ -3618,6 +3643,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {
+		//TBD: Use async APIs instead (should be possible because anyhow a Promise is returned)
 		var Export = sap.ui.requireSync("sap/ui/core/util/Export");
 
 		mSettings = mSettings || {};

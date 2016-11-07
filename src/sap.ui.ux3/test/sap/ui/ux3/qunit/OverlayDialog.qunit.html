@@ -9,9 +9,9 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.ui.ux3.OverlayDialog</title>
 
-		<script id="sap-ui-bootstrap" type="text/javascript"
-				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 
 		</script>
@@ -19,18 +19,18 @@
 		<link rel="stylesheet"
 			  href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 			  media="screen"/>
-		<script type="text/javascript"
+		<script
 				src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript"
+		<script
 				src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript"
+		<script
 				src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-		<script type="text/javascript"
+		<script
 				src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 
 		<!-- Test help functions -->
-		<script type="text/javascript">
+		<script>
 			function closeEventHandler(oEvent) {
 				ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
 			}
@@ -43,7 +43,7 @@
 		</script>
 
 		<!-- Control initialization -->
-		<script type="text/javascript">
+		<script>
 			var oOverlayDialog;
 			oOverlayDialog = new sap.ui.ux3.OverlayDialog("myOverlayDialog", {
 				close: closeEventHandler,
@@ -57,7 +57,7 @@
 		</script>
 
 		<!-- Test functions -->
-		<script type="text/javascript">
+		<script>
 
 			module("Appearance");
 

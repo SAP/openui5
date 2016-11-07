@@ -921,15 +921,15 @@ sap.ui.define([
 			oSettings = {},
 			aSections = this.getParent().getSections(),
 			aSubSections = [this.getDomRef()],
-			aCurruntSubSections;
+			aCurrentSubSections;
 
 		//this is needed in order to be sure that next F6 group will be found in sub sections
 		aSections.forEach(function (oSection) {
-			aCurruntSubSections = oSection.getSubSections().map(function (oSubSection) {
+			aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
 				return oSubSection.$().attr("tabindex", -1)[0];
 			});
 
-			aSubSections = aSubSections.concat(aCurruntSubSections);
+			aSubSections = aSubSections.concat(aCurrentSubSections);
 		});
 		oSettings.scope = aSubSections;
 
@@ -947,9 +947,12 @@ sap.ui.define([
 	 * called for figuring out responsive scenarios
 	 */
 	AnchorBar.prototype.onAfterRendering = function () {
+		var oSelectedButton;
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
 		}
+
+		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
 
 		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
@@ -962,8 +965,9 @@ sap.ui.define([
 		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
 
 		//restore state from previous rendering
-		if (this.getSelectedButton()) {
-			this.setSelectedButton(this.getSelectedButton());
+		if (oSelectedButton) {
+			this.setSelectedButton(oSelectedButton);
+			this._setAnchorButtonsTabFocusValues(oSelectedButton);
 		}
 
 		//initial state

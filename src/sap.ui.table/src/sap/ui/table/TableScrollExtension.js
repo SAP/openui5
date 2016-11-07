@@ -92,7 +92,7 @@ sap.ui.define([
 			// For interaction detection.
 			jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 
-			if (oScrollExtension._bIsScrolledByKeyboard) {
+			if (oScrollExtension._bIsScrolledVerticallyByKeyboard) {
 				return;
 			}
 
@@ -193,6 +193,7 @@ sap.ui.define([
 					}
 
 					oScrollExtension._bIsScrolledVerticallyByWheel = true;
+					oScrollExtension._bIsScrolledVerticallyByKeyboard = false;
 					oVSb.scrollTop += iRowsPerStep * this._getScrollingPixelsForRow();
 				}
 			}
@@ -205,7 +206,7 @@ sap.ui.define([
 		onVerticalScrollbarMouseDown: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
 			oScrollExtension._bIsScrolledVerticallyByWheel = false;
-			oScrollExtension._bIsScrolledByKeyboard = false;
+			oScrollExtension._bIsScrolledVerticallyByKeyboard = false;
 		}
 	};
 
@@ -293,7 +294,7 @@ sap.ui.define([
 			this._type = sTableType;
 			this._delegate = ExtensionDelegate;
 			this._bIsScrolledVerticallyByWheel = false;
-			this._bIsScrolledByKeyboard = false;
+			this._bIsScrolledVerticallyByKeyboard = false;
 
 			// Register the delegate
 			oTable.addEventDelegate(this._delegate, oTable);
@@ -432,7 +433,7 @@ sap.ui.define([
 			}
 
 			if (bScrolled && bIsKeyboardScroll) {
-				this._bIsScrolledByKeyboard = true;
+				this._bIsScrolledVerticallyByKeyboard = true;
 			}
 
 			return bScrolled;
@@ -470,7 +471,7 @@ sap.ui.define([
 			}
 
 			if (bScrolled && bIsKeyboardScroll) {
-				this._bIsScrolledByKeyboard = true;
+				this._bIsScrolledVerticallyByKeyboard = true;
 			}
 
 			return bScrolled;
@@ -542,6 +543,11 @@ sap.ui.define([
 			}
 
 			return false;
+		},
+
+		updateVSbMaxHeight: function() {
+			var oTable = this.getTable();
+			oTable.getDomRef(SharedDomRef.VerticalScrollBar).style.maxHeight = oTable._getVSbHeight() + "px";
 		}
 	});
 

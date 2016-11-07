@@ -12,14 +12,19 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * List binding implementation for oData format
+	 * List binding implementation for oData format.
 	 *
-	 * @param {sap.ui.model.Model} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {array} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
+	 * @param {sap.ui.model.odata.ODataModel} oModel Model that this list binding belongs to
+	 * @param {string} sPath Path into the model data, relative to the given <code>oContext</code>
+	 * @param {sap.ui.model.Context} oContext Context that the <code>sPath</code> is based on
+	 * @param {array} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {array} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] A map which contains additional parameters for the binding
+	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
+	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
+	 * @param {map} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
+	 *           if not specified, the default count mode of the <code>oModel</code> is applied
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.ODataListBinding

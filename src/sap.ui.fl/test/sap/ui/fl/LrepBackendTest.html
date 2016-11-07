@@ -1,16 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Lrep Backendtest</title>
 
+    <script src="shared-config.js"></script>
     <script id="sap-ui-bootstrap"
-        type="text/javascript"
         src="../../../../resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-noconflict="true"
         data-sap-ui-libs="sap.ui.fl">
     </script>
-    <script type="text/javascript">
+    <script>
 		jQuery.sap.require("sap.ui.fl.LrepConnector");
 		if (!window.location.origin) {
 			window.location.origin = window.location.protocol + "//" + window.location.host;

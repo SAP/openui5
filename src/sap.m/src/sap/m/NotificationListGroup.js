@@ -44,7 +44,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				/**
 				 * Determines if the group header/footer of the empty group will be always shown. By default groups with 0 notifications are not shown.
 				 */
-				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false}
+				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false},
+
+				/**
+				 * Determines if the collapse/expand button should be enabled for an empty group.
+				 */
+				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false}
 			},
 			defaultAggregation : "items",
 			aggregations: {
@@ -163,12 +168,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
 		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
-		var disableExpandLink = this.getShowEmptyGroup() && (this._getVisibleItemsCount() === 0);
+		var collapseButtonText = this.getCollapsed() ? expandText : collapseText;
+		var collapseButton = this.getAggregation('_collapseButton');
 
-		//Making sure the Expand/Collapse link text is set correctly
-		this.getAggregation('_collapseButton').setText(this.getCollapsed() ? expandText : collapseText).setEnabled(!disableExpandLink);
-
-
+		collapseButton.setText(collapseButtonText, true);
+		collapseButton.setEnabled(this._getCollapseButtonEnabled(), true);
 	};
 
 	NotificationListGroup.prototype.clone = function () {
@@ -230,6 +234,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	};
 
 	/**
+	 * Gets the number of visible NotificationListItems inside the group
+	 * @returns {number} The number of visible notifications
+	 * @private
+	 */
+	NotificationListGroup.prototype._getVisibleItemsCount = function () {
+		/** @type [sap.m.NotificationListItem] */
+		var items = this.getItems();
+		var result = 0;
+
+		items.forEach(function (item) {
+			if (item.getVisible()) {
+				result += 1;
+			}
+		});
+
+		return result;
+	};
+
+	/**
+	 * Gets what the state (enabled/disabled) of the collapse button should be
+	 * @returns {boolean} Should the collapse button be enabled
+	 * @private
+	 */
+	NotificationListGroup.prototype._getCollapseButtonEnabled = function () {
+		if (this._getVisibleItemsCount() > 0) {
+			return true;
+		}
+
+		return this.getEnableCollapseButtonWhenEmpty();
+	};
+
+	/**
 	 * Compares two priorities and returns the higher one.
 	 * @param {sap.ui.core.Priority} firstPriority First priority string to be compared
 	 * @param {sap.ui.core.Priority} secondPriority Second priority string to be compared
@@ -255,18 +291,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
 		return firstPriority;
 	}
-		NotificationListGroup.prototype._getVisibleItemsCount = function() {
-		var aItems = this.getItems(),
-			result = 0;
-		aItems.forEach(function (item) {
-			if (item.getVisible()) {
-				result++;
-			}
-		});
-
-		return result;
-
-	};
 
 	return NotificationListGroup;
 }, /* bExport= */ true);

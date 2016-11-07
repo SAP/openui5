@@ -48,6 +48,8 @@
 	aFooterControls.reverse();
 	aFooterControls.push(new sap.m.Label({text: "Column widths:"}));
 	aFooterControls.reverse();
+	aFooterControls.push(new sap.m.Label({text: "Column Min Width:"}));
+	aFooterControls.push(new sap.m.Input("MinWidthInput", {value: "0", width: "4rem", change: setWidths}));
 	aFooterControls.push(new sap.m.Button({
 		text: "set",
 		press: setWidths
@@ -69,6 +71,7 @@
 		var cols = oTable.getColumns();
 		aInputs.forEach(function(input, i){
 			cols[i].setWidth(input.getValue());
+			cols[i].setMinWidth(parseInt(sap.ui.getCore().byId("MinWidthInput").getValue(), 10));
 		});
 	}
 

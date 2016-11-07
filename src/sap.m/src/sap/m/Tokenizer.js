@@ -156,8 +156,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function scrolls the tokens to the end
 	 *
 	 * @public
-	 * @param {boolean}
-	 *          bInitialize indicates if we should reset the 'scroll-to-end-pending' flag; if true we would reset this flag
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
 
@@ -479,7 +477,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getSelectedTokens().length === 0) {
 			this.onsapprevious(oEvent);
 		} else if (this.getEditable()) {
-			this.removeSelectedTokens();
+			this._removeSelectedTokens();
 		}
 
 		oEvent.preventDefault();
@@ -496,7 +494,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Tokenizer.prototype.onsapdelete = function(oEvent) {
 		if (this.getEditable()) {
-			this.removeSelectedTokens();
+			this._removeSelectedTokens();
 		}
 	};
 
@@ -769,12 +767,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (fValidateCallback) {
 			fValidateCallback(true);
 		}
-
-		this.fireTokenChange({
-			addedTokens : [oToken],
-			removedTokens : [],
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
 	};
 
 	/**
@@ -847,18 +839,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oToken.attachDelete(this._onDeleteToken, this);
 		oToken.attachPress(this._onTokenPress, this);
 
-		oToken.setEditable = function (bEnabled) {
-			//ReadOnly css is handled by Token, using overwrite for further developing
-			//in case the token in tokenizer has different design for editable property
-			sap.m.Token.prototype.setEditable.apply(oToken, arguments);
-		};
-
 		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
-
-		this.fireTokenChange({
-			token : oToken,
-			type : Tokenizer.TokenChangeType.Added
-		});
 
 		return this;
 	};
@@ -872,17 +853,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 
-		this.fireTokenChange({
-			token : oToken,
-			type : Tokenizer.TokenChangeType.Removed
-		});
-
 		return oToken;
 	};
 
 	Tokenizer.prototype.setTokens = function(aTokens) {
-		var oldTokens = this.getTokens();
-		this.removeAllTokens(false);
+		this.removeAllTokens();
 
 		var i;
 		for (i = 0; i < aTokens.length; i++) {
@@ -891,18 +866,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this.invalidate();
 		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
-
-		this.fireTokenChange({
-			addedTokens : aTokens,
-			removedTokens : oldTokens,
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
 	};
 
-	Tokenizer.prototype.removeAllTokens = function(bFireEvent) {
-		var i, length, token, tokens;
-		tokens = this.getTokens();
-		length = tokens.length;
+	Tokenizer.prototype.removeAllTokens = function() {
+		var i,
+			tokens = this.getTokens(),
+			length = tokens.length,
+			token;
+
+
 		for (i = 0; i < length; i++) {
 			token = tokens[i];
 			token.detachDelete(this._onDeleteToken, this);
@@ -910,21 +882,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.removeAllAggregation("tokens");
+	};
 
-		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
-			return;
+	/**
+	 * Removes all selected tokens. If tokens are removed fires a tokenChange event.
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._removeSelectedTokens = function() {
+		var tokensToBeDeleted = this.getSelectedTokens(),
+			length = tokensToBeDeleted.length,
+			oToken;
+
+		if (length > 0) {
+			for (var i = 0; i < length; i++) {
+				oToken = tokensToBeDeleted[i];
+				this.removeToken(oToken);
+				this.fireTokenChange({
+					token: oToken,
+					type : Tokenizer.TokenChangeType.Removed
+				});
+			}
+
+			this.scrollToEnd();
+
+			this._doSelect();
+
+			this.fireTokenChange({
+				addedTokens : [],
+				removedTokens : tokensToBeDeleted,
+				type : Tokenizer.TokenChangeType.TokensChanged
+			});
 		}
-
-		this.fireTokenChange({
-			addedTokens : [],
-			removedTokens : tokens,
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
-
-		this.fireTokenChange({
-			tokens : tokens,
-			type : Tokenizer.TokenChangeType.RemovedAll
-		});
 	};
 
 	/**
@@ -934,9 +923,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.Tokenizer} - this for chaining
 	 */
 	Tokenizer.prototype.removeSelectedTokens = function() {
-		var tokensToBeDeleted = this.getSelectedTokens();
-		var token, i, length;
-		length = tokensToBeDeleted.length;
+		var tokensToBeDeleted = this.getSelectedTokens(),
+			token,
+			i,
+			length = tokensToBeDeleted.length;
+
 		if (length === 0) {
 			return this;
 		}
@@ -949,12 +940,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.scrollToEnd();
-
-		this.fireTokenChange({
-			addedTokens : [],
-			removedTokens : tokensToBeDeleted,
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
 
 		this._doSelect();
 
@@ -994,10 +979,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.Token[]} - array of selected tokens or empty array
 	 */
 	Tokenizer.prototype.getSelectedTokens = function() {
-		var aSelectedTokens = [];
-		var i, length, token, tokens;
-		tokens = this.getTokens();
-		length = tokens.length;
+		var aSelectedTokens = [],
+			tokens = this.getTokens(),
+			i,
+			token,
+			length = tokens.length;
+
 		for (i = 0; i < length; i++) {
 			token = tokens[i];
 			if (token.getSelected()) {
@@ -1014,13 +1001,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param oEvent
 	 */
 	Tokenizer.prototype._onDeleteToken = function(oEvent) {
-		var token = oEvent.getParameter("token");
-		if (token) {
-			token.destroy();
+		var oToken = oEvent.getParameter("token");
+		if (oToken) {
+			oToken.destroy();
 			this.fireTokenChange({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenChangeType.TokensChanged
+				token : oToken,
+				type : Tokenizer.TokenChangeType.Removed
 			});
 
 			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput && !this.getParent()._bUseDialog) {
@@ -1028,9 +1014,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var $oParent = this.getParent().$();
 				$oParent.find("input").focus();
 			}
-
 		}
-
 	};
 
 	/**
@@ -1049,12 +1033,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var tokens = this.getTokens();
 		var length = tokens.length;
 		for (var i = 0; i < length; i++) {
-			var currentToken = tokens[i];
-			currentToken.setEditable(bEditable);
+			tokens[i].setEditable(bEditable);
 		}
 
 		return this;
-
 	};
 
 	/**

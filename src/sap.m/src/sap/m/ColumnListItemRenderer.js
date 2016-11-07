@@ -42,6 +42,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("</tr>");
 	};
 
+	// render type highlight always within a cell
+	ColumnListItemRenderer.renderHighlight = function(rm, oLI) {
+		rm.write('<td class="sapMListTblHighlightCell">');
+
+		// let the list item base render the highlight
+		ListItemBaseRenderer.renderHighlight.apply(this, arguments);
+
+		rm.write('</td>');
+	};
+
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
 		rm.write('<td class="sapMListTblNavCol"');
@@ -252,10 +262,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.writeClasses();
 		rm.write(">");
 
+		this.renderHighlight(rm, oLI);
+
 		// cell
 		rm.write("<td");
 		rm.writeAttribute("id", oLI.getId() + "-subcell");
-		rm.writeAttribute("colspan", oTable.getColCount());
+		rm.writeAttribute("colspan", oTable.getColCount() - 1);
 		rm.write("><div class='sapMListTblSubCnt'>");
 
 		var aCells = oLI.getCells(),

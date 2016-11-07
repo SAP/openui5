@@ -20,9 +20,9 @@ sap.ui.define([
 	/**
 	 * Creates an instance of the RenderManager.
 	 *
-	 * Applications or controls should not call RenderManager on their own but use the
-	 * {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
-	 * method to retrieve a private instance.
+	 * Applications or controls must not call the <code>RenderManager</code> constructor on their own
+	 * but should use the {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
+	 * method to create an instance for their exclusive use.
 	 *
 	 * @class RenderManager that will take care for rendering Controls.
 	 *
@@ -50,7 +50,7 @@ sap.ui.define([
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends Object
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -112,7 +112,7 @@ sap.ui.define([
 		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
 		 * @param {string} sText
-		 * @param {boolean} bLineBreaks Whether to convert linebreaks into <br> tags
+		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 		 * @public
 		 */
@@ -274,43 +274,62 @@ sap.ui.define([
 		}
 
 		/**
-		 * Cleans up the rendering state of the given control with rendering it.
+		 * Cleans up the rendering state of the given control without rendering it.
 		 *
 		 * A control is responsible for the rendering of all its child controls.
-		 * But in some cases it makes sense that a control does not render all its
-		 * children based on a filter condition. For example, a Carousel control only renders
-		 * the current visible parts (and maybe some parts before and after the visible area)
-		 * for performance reasons.
-		 * If a child that has been rendered before should not be rendered anymore because the filter
-		 * condition is no longer met, this child must be removed correctly (e.g. by deregistering event handlers).
+		 * But in some cases it makes sense that a control only renders a subset of its children
+		 * based on some criterion. For example, a typical carousel control might, for performance
+		 * reasons, only render the currently visible children (and maybe some child before and
+		 * after the visible area to facilitate slide-in / slide-out animations), but not all children.
+		 * This leads to situations where a child had been rendered before, but shouldn't be rendered
+		 * anymore after an update of the carousel's position. The DOM related state of that child then
+		 * must be cleaned up correctly, e.g. by de-registering resize handlers or native event handlers.
+		 * <code>cleanupControlWithoutRendering</code> helps with that task by triggering the same
+		 * activities that the normal rendering triggers before the rendering of a control
+		 * (e.g. it fire the <code>BeforeRendering</code> event). It just doesn't call the renderer
+		 * and the control will not receive an <code>AfterRendering</code> event.
 		 *
-		 * The following example shows how renderControl and cleanupControlWithoutRendering should
-		 * be used:
+		 * The following example shows how <code>renderControl</code> and <code>cleanupControlWithoutRendering</code>
+		 * should be used:
 		 *
 		 * <pre>
-		 * render = function(rm, ctrl){
-		 *   ...
-		 *   var aAggregatedControls = //...
-		 *   for ( var i = 0; i &lt; aAggregatedControls.length; i++ ) {
-		 *      if ( ... some filter expression ... ) {
-		 *         rm.renderControl(aAggregatedControls[i]);
-		 *      } else {
-		 *         rm.cleanupControlWithoutRendering(aAggregatedControls[i]);
-		 *      }
-		 *   }
-		 *   ...
-		 * }
+		 *   CarouselRenderer.render = function(rm, oCarousel){
+		 *
+		 *     ...
+		 *
+		 *     oCarousel.getPages().forEach( oPage ) {
+		 *        if ( oCarousel.isPageToBeRendered( oPage ) ) {
+		 *           rm.renderControl( oPage ); // onBeforeRendering, render, later onAfterRendering
+		 *        } else {
+		 *           rm.cleanupControlWithoutRendering( oPage ); // onBeforeRendering
+		 *        }
+		 *     }
+		 *
+		 *     ...
+		 *
+		 *   };
 		 * </pre>
 		 *
-		 * <b>Note:</b><br>
-		 * The method does not remove the DOM of the given control. The caller of this method has to take over the
-		 * responsibility to clean up the DOM of the control afterwards.
+		 * <h3>DOM Removal</h3>
+		 * The method does not remove the DOM of the given control. The caller of this method has
+		 * to take care to remove it at some later point in time. It should indeed be <i>later</i>,
+		 * not <i>before</i> as the <code>onBeforeRendering</code> hook of the control might need
+		 * access to the old DOM for a proper cleanup.
 		 *
-		 * For parents, which are rendered with the normal mechanism as shown in the example above, that requirement
-		 * is fulfilled, because the control is not added to the rendering buffer (renderControl is not called) and
-		 * the DOM is replaced when the rendering cycle is finalized.
+		 * For parents which are rendered with the normal mechanism as shown in the example above,
+		 * the removal of the old child DOM is guaranteed. The whole DOM of the parent control
+		 * (including the DOM of the no longer rendered child) will be replaced with new DOM (no
+		 * longer containing the child) when the rendering cycle finishes.
 		 *
-		 * @param {sap.ui.core.Control} oControl the control that should be cleaned up
+		 * <b>Note:</b>: the functionality of this method is different from the default handling for
+		 * invisible controls (controls with <code>visible == false</code>). The standard rendering
+		 * for invisible controls still renders a placeholder DOM. This allows re-rendering of the
+		 * invisible control once it becomes visible again without a need to render its parent, too.
+		 * Children that are cleaned up with this method here, are supposed to have no more DOM at all.
+		 * Rendering them later on therefore requires an involvement (typically: a rendering) of
+		 * their parent.
+		 *
+		 * @param {sap.ui.core.Control} oControl Control that should be cleaned up
 		 * @public
 		 * @since 1.22.9
 		 */
@@ -575,7 +594,8 @@ sap.ui.define([
 		 * @param {Element} oTargetDomNode Node in the DOM where the buffer should be flushed into
 		 * @param {boolean} bDoNotPreserve Determines whether the content is preserved (<code>false</code>) or not (<code>true</code>)
 		 * @param {boolean|int} vInsert Determines whether the buffer of the target DOM node is expanded (<code>true</code>) or
-		 *                  replaced (<code>false</code>), or the new entry is inserted at a specific position (<code>int</code>)
+		 *                  replaced (<code>false</code>), or the new entry is inserted at a specific position
+		 *                  (value of type <code>int</code>)
 		 * @public
 		 */
 		this.flush = function(oTargetDomNode, bDoNotPreserve, vInsert) {
@@ -1037,8 +1057,8 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
-	 * @param {array|string} aClasses Additional classes that are added to the rendered tag
-	 * @param {object} mAttributes Additional attributes that will be added to the rendered tag
+	 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
+	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
 	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 * @public
 	 */
@@ -1196,7 +1216,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Helper to enforce a repaint for a given dom node.
+	 * Helper to enforce a repaint for a given DOM node.
 	 *
 	 * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
 	 * @param {Element} vDomNode a DOM node or ID of a DOM node

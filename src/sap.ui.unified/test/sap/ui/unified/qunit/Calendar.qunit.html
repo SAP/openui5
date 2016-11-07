@@ -309,6 +309,29 @@
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
 			});
 
+			test("check if Month names are too long to fit", function() {
+				var oCalM = new sap.ui.unified.Calendar("CalM", {}),
+					month = oCalM.getAggregation("month"),
+					aMonthHeadersShort = [{clientWidth:123, scrollWidth:123}], //array with values that will fit inside "month boxes"
+					aMonthHeadersLong = [{clientWidth:156, scrollWidth:145}], //array with values that will not fit inside "month boxes"
+					monthSpy = this.spy(month[0], "_isMonthNameLong");
+
+				//arrange
+				jQuery("#uiArea1").addClass("sapUiSizeCompact");
+				oCalM.placeAt("uiArea1");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				assert.equal(monthSpy.callCount, 1, "The function was called once");
+				assert.equal(month[0]._isMonthNameLong(aMonthHeadersShort), false, "Month names are fitting inside the boxes, no need of using short one");
+				assert.equal(month[0]._isMonthNameLong(aMonthHeadersLong), true, "Month names are not fitting inside the boxes, we shoud use short one");
+
+				// clean up
+				jQuery("#uiArea1").removeClass("sapUiSizeCompact");
+				oCalM.destroy();
+			});
+
+
 			module("Interaction");
 
 			test("month switch", function() {

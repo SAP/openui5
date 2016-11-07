@@ -1,7 +1,7 @@
-@sapHighlightColor: #91c8f6;
-@sapBaseColor: #3f5161;
-@sapBackgroundColor: #3f5161;
-@sapTextColor: #fafafa;
+@sapHighlightColor: lighten(saturate(@sapBrandColor,40),30);
+@sapBaseColor: @sapPrimary1;
+@sapBackgroundColor: @sapPrimary1;
+@sapTextColor: @sapPrimary5;
 @sapLinkColor: lighten(#0070b1, 40);
 
 @sapErrorBackground:   darken(@sapNegativeColor, 60); // #550000
@@ -20,7 +20,7 @@
 
 @sapTitleColor: @sapTextColor;
 
-@sapContent_IconColor: #cae4fb;
+@sapContent_IconColor: lighten(@sapHighlightColor, 12);
 @sapContent_ContrastIconColor: darken(@sapPrimary1, 8);
 @sapContent_NonInteractiveIconColor: lighten(@sapBaseColor, 35);
 @sapContent_MarkerIconColor: lighten(@sapAccentColor5, 10);
@@ -33,14 +33,14 @@
 @sapContent_ForegroundBorderColor: lighten(@sapBaseColor, 30);
 @sapContent_ForegroundTextColor: @sapTextColor;
 
-@sapShell_Background: #658aa2;
-@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 17), 23), lighten(saturate(@sapShell_Background, 25), 23));
-@sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 17), 23), lighten(saturate(@sapShell_Background, 25), 23));
+@sapShell_Background: lighten(saturate(@sapBaseColor, 4), 20.3);
+@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));
+@sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));
 @sapShell_TextColor: lighten(@sapTextColor, 2);
 
 @sapButton_Background: lighten(@sapBaseColor, 2);
 @sapButton_BorderColor: lighten(@sapButton_Background, 36);
-@sapButton_TextColor: #cae4fb;
+@sapButton_TextColor: lighten(@sapHighlightColor, 12);
 @sapButton_Hover_Background: lighten(@sapButton_Background, 6);
 @sapButton_Emphasized_Background: lighten(saturate(@sapPrimary2, 10), 10);
 @sapButton_Emphasized_BorderColor: darken(@sapButton_Emphasized_Background, 5);
@@ -48,7 +48,7 @@
 
 @sapField_Background: lighten(@sapBaseColor, 5);
 @sapField_BorderColor: lighten(@sapField_Background, 20);
-@sapField_TextColor: #fff;
+@sapField_TextColor: lighten(@sapTextColor, 2);
 @sapField_ReadOnly_Background: transparent;
 @sapField_ReadOnly_BorderColor: @sapField_BorderColor;
 @sapField_RequiredColor: lighten(@sapAccentColor3, 18);

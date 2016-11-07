@@ -5,9 +5,6 @@ var TableUtils = sap.ui.table.TableUtils;
 jQuery.sap.require("sap.ui.table.TableKeyboardDelegate2");
 var TableKeyboardDelegate2 = sap.ui.table.TableKeyboardDelegate2;
 
-jQuery.sap.require("sap.ui.Device");
-var Device = sap.ui.Device;
-
 //************************************************************************
 // Helper Functions
 //************************************************************************

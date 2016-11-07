@@ -80,7 +80,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.ToolbarDesign",
-			"sap.m.VerticalPlacementType"
+			"sap.m.VerticalPlacementType",
+			"sap.m.semantic.SemanticRuleSetType"
 		],
 		interfaces: [
 			"sap.m.IBar",
@@ -2320,6 +2321,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		None : "None"
+
+	};
+
+
+	/**
+	 * Declares the type of semantic ruleset that will govern the styling and positioning of semantic content.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.44
+	 */
+	sap.m.semantic.SemanticRuleSetType = {
+
+		/**
+		 * The default ruleset type, for which the Share Menu is always in the footer of the page.
+		 * @public
+		 */
+		Classic : "Classic",
+
+		/**
+		 * Offers an optimized user experience, with displaying the Share Menu in the header, rather than the footer, for Fullscreen mode.
+		 * @public
+		 */
+		Optimized : "Optimized"
 
 	};
 

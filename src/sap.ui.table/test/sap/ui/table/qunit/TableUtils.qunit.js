@@ -310,17 +310,71 @@ QUnit.test("toggleRowSelection", function(assert) {
 });
 
 QUnit.test("getRowColCell", function(assert) {
-	var oInfo = TableUtils.getRowColCell(oTable, 0, 0);
+	oTable.getColumns()[2].setVisible(false);
+	sap.ui.getCore().applyChanges();
+
+	var oInfo = TableUtils.getRowColCell(oTable, 0, 0, false);
 	assert.strictEqual(oInfo.row, oTable.getRows()[0], "Row 0");
 	assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 0");
 	assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 0,0");
 	assert.strictEqual(oInfo.cell.getText(), "A1", "Cell 0,0");
 
-	oInfo = TableUtils.getRowColCell(oTable, 1, 1);
+	oInfo = TableUtils.getRowColCell(oTable, 1, 1, false);
 	assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
 	assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 1");
 	assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 1,1");
 	assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 1,1");
+
+	oInfo = TableUtils.getRowColCell(oTable, 2, 2, false);
+	assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
+	assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 3 (Visible Column 2)");
+	assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,2");
+	assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
+
+	oInfo = TableUtils.getRowColCell(oTable, 1, 1, true);
+	assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+	assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 1");
+	assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 1,1");
+	assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 1,1");
+
+	oInfo = TableUtils.getRowColCell(oTable, 2, 2, true);
+	assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
+	assert.strictEqual(oInfo.column, oTable.getColumns()[2], "Column 2");
+	assert.ok(!oInfo.cell, "Cell 2,2");
+
+	oInfo = TableUtils.getRowColCell(oTable, 2, 3, true);
+	assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
+	assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 3 (Visible Column 2)");
+	assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,2");
+	assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
+});
+
+QUnit.test("getDataCellInfo", function(assert) {
+	oTable.getColumns()[2].setVisible(false);
+	sap.ui.getCore().applyChanges();
+
+	var oCell;
+	var oInfo = TableUtils.getDataCellInfo(oTable, oCell);
+	assert.ok(!oInfo, "No Cell given");
+
+	oCell = getRowHeader(0);
+	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
+	assert.ok(!oInfo, "No Data Cell given");
+
+	oCell = getCell(0, 0);
+	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index of cell: 0");
+	assert.strictEqual(oInfo.columnIndex, 0, "Column Index of cell: 0");
+
+	oCell = getCell(1, 1);
+	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
+	assert.strictEqual(oInfo.rowIndex, 1, "Row Index of cell: 1");
+	assert.strictEqual(oInfo.columnIndex, 1, "Column Index of cell: 1");
+
+	oCell = getCell(2, 2);
+	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
+	assert.strictEqual(oInfo.rowIndex, 2, "Row Index of cell: 2");
+	assert.strictEqual(oInfo.columnIndex, 3, "Column Index of cell: 3");
 });
 
 QUnit.test("getFirstFixedButtomRowIndex", function(assert) {

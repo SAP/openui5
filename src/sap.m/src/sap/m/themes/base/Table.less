@@ -85,6 +85,25 @@ tr.sapMListTblHeaderNone > th {
 	display: block;
 }
 
+.sapMListTblHighlightCol {
+	width: 0;
+	padding: 0;
+}
+
+.sapMListTblHighlightCol + .sapMListTblHeaderCell,
+.sapMListTblHighlightCell + .sapMListTblCell {
+	padding: 1rem;
+}
+
+.sapMListHighlight .sapMListTblHighlightCol{
+	width: 0.375rem;
+}
+
+.sapMListTblHighlightCell {
+	padding: 0;
+	position: relative;
+}
+
 /* responsive table approach */
 @media screen and (max-width: 1119px) {
 	.sapMListTblCell.sapMSize-xxlarge{

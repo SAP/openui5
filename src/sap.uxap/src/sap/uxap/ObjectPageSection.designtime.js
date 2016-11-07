@@ -18,16 +18,7 @@ sap.ui.define([],
 		},
 		actions : {
 			remove : {
-				changeType : "stashControl",
-				getState : function(oObjectPageSection) {
-					return {
-						control : oObjectPageSection,
-						visible : oObjectPageSection.getVisible()
-					};
-				},
-				restoreState : function(oObjectPageSection, oState) {
-					oState.control.setVisible(oState.visible);
-				}
+				changeType : "stashControl"
 			},
 			reveal : {
 				changeType : "unstashControl"

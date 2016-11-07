@@ -4,10 +4,12 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
+		"sap/ui/model/Sorter",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
-		"sap/ui/demo/orderbrowser/model/formatter"
-	], function (BaseController, JSONModel, Filter, FilterOperator, GroupHeaderListItem, Device, formatter) {
+		"sap/ui/demo/orderbrowser/model/formatter",
+		"sap/ui/demo/orderbrowser/model/GroupState"
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, GroupState) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.orderbrowser.controller.Master", {
@@ -31,8 +33,13 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-
 				this._oList = oList;
+
+				// Remember initial sorter, to be able to "remove" a user-selected sorter
+				// and return to the default as defined in the XML view.
+				var oInitialSorter = oList.getBindingInfo("items").sorter;
+				this._oGroupState = new GroupState(oInitialSorter, this.getResourceBundle());
+
 				// keeps the filter and search state
 				this._oListFilterState = {
 					aFilter : [],
@@ -97,7 +104,7 @@ sap.ui.define([
 				var sQuery = oEvent.getParameter("query");
 
 				if (sQuery) {
-					this._oListFilterState.aSearch = [new Filter("OrderID", FilterOperator.Contains, sQuery)];
+					this._oListFilterState.aSearch = [new Filter("Customer/CompanyName", FilterOperator.Contains, sQuery)];
 				} else {
 					this._oListFilterState.aSearch = [];
 				}
@@ -113,8 +120,6 @@ sap.ui.define([
 			onRefresh : function () {
 				this._oList.getBinding("items").refresh();
 			},
-
-
 
 			/**
 			 * Event handler for the list selection event
@@ -152,11 +157,53 @@ sap.ui.define([
 
 			/**
 			 * Event handler for navigating back.
-			 * We navigate back in the browser historz
+			 * We navigate back in the browser history
 			 * @public
 			 */
 			onNavBack : function() {
 				history.go(-1);
+			},
+
+			/**
+			 * Adds/changes/removes a filter according to the user selection in the footer
+			 * of the master list.
+			 * Note: In addition, there can be another filter based on the search field.
+			 * Both optional filters are combined in _applyFilterSearch().
+			 */
+			onFilter : function(oEvent) {
+				var sKey = oEvent.getSource().getSelectedItem().getKey();
+				var oFilter = null;
+				switch (sKey) {
+					case "Shipped":
+						oFilter = new Filter("ShippedDate", FilterOperator.NE, null);
+						break;
+					case "NotShipped":
+						oFilter = new Filter("ShippedDate", FilterOperator.EQ, null);
+						break;
+					case "NoFilter":
+					default:
+						oFilter = null;
+				}
+
+				if (oFilter) {
+					this._oListFilterState.aFilter = [ oFilter ];
+				}
+				else {
+					this._oListFilterState.aFilter = [];
+				}
+				this._applyFilterSearch();
+			},
+
+			/**
+			 * Event handler for selection of another grouping option.
+			 * @param {sap.ui.base.Event} oEvent the search field event
+			 * @public
+			 */
+			onGroup : function (oEvent) {
+				var sKey = oEvent.getSource().getSelectedItem().getKey(),
+					aSorters = this._oGroupState.groupBy(sKey);
+
+				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/* =========================================================== */
@@ -169,10 +216,8 @@ sap.ui.define([
 					isFilterBarVisible: false,
 					filterBarLabel: "",
 					delay: 0,
-					title: this.getResourceBundle().getText("masterTitleCount", [0]),
-					noDataText: this.getResourceBundle().getText("masterListNoDataText"),
-					sortBy: "OrderID",
-					groupBy: "None"
+					titleCount: 0,
+					noDataText: this.getResourceBundle().getText("masterListNoDataText")
 				});
 			},
 
@@ -219,11 +264,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_updateListItemCount : function (iTotalItems) {
-				var sTitle;
 				// only update the counter if the length is final
 				if (this._oList.getBinding("items").isLengthFinal()) {
-					sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
-					this.getModel("masterView").setProperty("/title", sTitle);
+					this.getModel("masterView").setProperty("/titleCount", iTotalItems);
 				}
 			},
 
@@ -242,15 +285,6 @@ sap.ui.define([
 					// only reset the no data text to default when no new search was triggered
 					oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 				}
-			},
-
-			/**
-			 * Internal helper method to apply both group and sort state together on the list binding
-			 * @param {sap.ui.model.Sorter[]} aSorters an array of sorters
-			 * @private
-			 */
-			_applyGroupSort : function (aSorters) {
-				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/**

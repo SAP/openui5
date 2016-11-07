@@ -18,8 +18,6 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @class
 	 * The <code>sap.m.FlexBox</code> control builds the container for a flexible box layout.
 	 *
-	 * Browser support:
-	 * This control is not supported in Internet Explorer 9!
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
