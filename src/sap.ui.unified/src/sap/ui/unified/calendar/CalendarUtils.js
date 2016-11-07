@@ -210,6 +210,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				oDate.getHours(), oDate.getMinutes(), oDate.getSeconds())).getJSDate();
 		};
 
+		/**
+		 * Calculates the number of weeks for a given year using the current locale settings
+		 * @param {number} iYear The target year of interest in format (YYYY)
+		 * @returns {number} The number of weeks for the given year
+		 * @private
+		 */
+		CalendarUtils._getNumberOfWeeksForYear = function (iYear) {
+			var sLocale = sap.ui.getCore().getConfiguration().getFormatLocale(),
+				oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale(sLocale)),
+				o1stJan = new Date(Date.UTC(iYear, 0, 1)),
+				i1stDay = o1stJan.getUTCDay(),
+				iNumberOfWeeksInYear = 52;
+
+			//This is valid for all the regions where Sunday is the first day of the week
+			if (oLocaleData.getFirstDayOfWeek() === 0) {
+				if (i1stDay === 5 || i1stDay === 6) {
+					iNumberOfWeeksInYear = 53;
+				}
+			} else {
+				if (i1stDay === 3 || i1stDay === 4) {
+					iNumberOfWeeksInYear = 53;
+				}
+			}
+
+			return iNumberOfWeeksInYear;
+		};
+
 		return CalendarUtils;
 
 	}, /* bExport= */ true);

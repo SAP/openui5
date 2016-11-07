@@ -1844,9 +1844,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
 		var oYearPicker = this.getAggregation("yearPicker");
 		var oDate = CalendarUtils._createUniversalUTCDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
+		var iYear = oYearPicker.getYear();
 
-		oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
-		oFocusedDate = oDate;
+		if (this._adjustFocusedDateUponYearChange) {//hook (currently used by PlanningCalendar)
+			this._adjustFocusedDateUponYearChange(oFocusedDate, iYear);
+		} else {
+			oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
+			oFocusedDate = oDate;
+		}
 
 		_focusDate.call(this, oFocusedDate, true);
 
