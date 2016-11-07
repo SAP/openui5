@@ -2582,6 +2582,48 @@
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog: Focus of \"Select All\" is fully visible",
         "references": []
+      },
+      {
+        "id": "e89ca4f2ac72ad7f9dd1e6f3a304526874db20e0",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE for 1.38 and 1.40 fixed",
+        "references": []
+      },
+      {
+        "id": "44f345f490839c92223b95bdc537c3d5d83d8e85",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
+        "references": []
+      },
+      {
+        "id": "8ef12d70a6977b14fac90085fec22454b2db153f",
+        "type": "FIX",
+        "text": "sap.m.Input:  liveChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "b4962cb3fed6464c490b78c8460010de6333e717",
+        "type": "FIX",
+        "text": "sap.m.Link hand cursor not always visible fixed",
+        "references": []
+      },
+      {
+        "id": "0e5bf9e7c4b20449300a8377b9380ad65ed9d97e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Layouting recatored with flexbox",
+        "references": []
+      },
+      {
+        "id": "af8d035ccbd0c4385383ddce3765e5ec28dc681f",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Focus outline adapted",
+        "references": []
+      },
+      {
+        "id": "c19aa438f1079744d0d06f247ee7c48a0d6029c9",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
       }
     ]
   }

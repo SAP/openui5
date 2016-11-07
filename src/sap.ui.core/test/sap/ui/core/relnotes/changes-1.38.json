@@ -1713,6 +1713,12 @@
         "type": "FIX",
         "text": "v2.ODataModel: bindElement status code 204",
         "references": []
+      },
+      {
+        "id": "8183db1020d8a2eada2b5aa8ed0e129208252628",
+        "type": "FIX",
+        "text": "jQuery.sap.global: Added fix for Firefox sync/async XHR issue",
+        "references": []
       }
     ]
   }

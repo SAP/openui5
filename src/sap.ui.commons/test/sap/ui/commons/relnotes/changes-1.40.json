@@ -521,5 +521,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "cf97b0a8882831721935381c610cb8ab6df0ae19",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": []
+      }
+    ]
   }
 }

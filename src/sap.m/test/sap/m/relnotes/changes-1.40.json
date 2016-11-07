@@ -5028,6 +5028,72 @@
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog: Focus of \"Select All\" is fully visible",
         "references": []
+      },
+      {
+        "id": "e065b04c82cf6c12184a1a6165e57c3bf83c42b0",
+        "type": "FIX",
+        "text": "m.DatePicker: The picker calendar value is updated correctly after changes in the input",
+        "references": []
+      },
+      {
+        "id": "b4f6bb64e77729d02290996b59a1b2fbd906bf42",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE for 1.38 and 1.40 fixed",
+        "references": []
+      },
+      {
+        "id": "0e5d485f9d8a36b651c0e8d9119c7ba18f816de9",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
+        "references": []
+      },
+      {
+        "id": "7a31b8e78bf428d2ca3db808ab6ece06b938e251",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Show full subheader in tooltip if truncated on tile",
+        "references": []
+      },
+      {
+        "id": "aa65b9aaba3cf42c5b3e1321d47934968f64ebc8",
+        "type": "FIX",
+        "text": "sap.m.Input:  liveChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "7ad325483b3712af7d5cadc7e21eba3656bebb17",
+        "type": "FIX",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
+        "references": []
+      },
+      {
+        "id": "750f90b5257102d74e4a96c11ab35399a38b8ac8",
+        "type": "FIX",
+        "text": "sap.m.Input: liveChange is fired when navigate through suggestions",
+        "references": []
+      },
+      {
+        "id": "9018d95fd4f579cfb32f1120bbc15c4ab439c9ad",
+        "type": "FIX",
+        "text": "sap.m.Link hand cursor not always visible fixed",
+        "references": []
+      },
+      {
+        "id": "ee0952c101e19f4b26f2839b67cff99a101efd28",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: ARIA support is now correct",
+        "references": []
+      },
+      {
+        "id": "48220482330ab1beb5a3d4cdea585dffd836a7f3",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
+      },
+      {
+        "id": "53ff69514c5f891a8eb43252e2ae37fdfc33631c",
+        "type": "FIX",
+        "text": "m.TimePicker: Updated jsdoc of precision properties introduced in 1.40",
+        "references": []
       }
     ]
   }

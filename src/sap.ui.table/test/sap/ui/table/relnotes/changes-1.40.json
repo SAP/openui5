@@ -1166,6 +1166,24 @@
         "type": "FIX",
         "text": "sap.ui.table.Table: reset scroll position to 0 when no scrollbar is visible",
         "references": []
+      },
+      {
+        "id": "56d2852c66c3f4461e6909ccd4d1714f4ab190c0",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "122c039fa8d3f95812648f376cb847b1d76bb0ac",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable/AnalyticalTable: Clear select all state before execute selectAll command",
+        "references": []
+      },
+      {
+        "id": "23521a9edb3e7490d35f4652080c083da56f80af",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fix Row selection in SelectionMode \"Single\" and \"None\".",
+        "references": []
       }
     ]
   }

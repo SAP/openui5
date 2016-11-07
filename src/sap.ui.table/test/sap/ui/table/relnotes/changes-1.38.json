@@ -802,6 +802,24 @@
         "type": "FIX",
         "text": "sap.ui.table.Table: reset scroll position to 0 when no scrollbar is visible",
         "references": []
+      },
+      {
+        "id": "a060004576fbb82af4676bd8de545ad242baafe4",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable/AnalyticalTable: Clear select all state before execute selectAll command",
+        "references": []
+      },
+      {
+        "id": "f12fd1a4f0971acb66e3e09b317e38e6a453b933",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fix Row selection in SelectionMode \"Single\" and \"None\".",
+        "references": []
+      },
+      {
+        "id": "bb44be442029c5dcdb290cdf226cef337ecfb24d",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Focus visualization of treeicon in HCB theme",
+        "references": []
       }
     ]
   }

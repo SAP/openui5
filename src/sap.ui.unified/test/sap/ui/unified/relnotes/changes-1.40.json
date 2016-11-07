@@ -518,5 +518,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "da0cfbd3c46f3b6b65f2c505961f961024cd62aa",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
+      }
+    ]
   }
 }
