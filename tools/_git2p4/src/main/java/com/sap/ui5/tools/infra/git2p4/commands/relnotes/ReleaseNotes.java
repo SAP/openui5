@@ -280,8 +280,10 @@ public class ReleaseNotes {
           }
         }
       }
-      if (removeEmptyVersions(uiLibraryNotes) || 
-          removeDuplicates(uiLibraryNotes) || (uiLibVersion.notes.size() > notesSizeBefore)){
+      boolean removeEmptyVersions = removeEmptyVersions(uiLibraryNotes, uiLibVersion);
+      boolean removeDuplicates = removeDuplicates(uiLibraryNotes);
+      if (removeEmptyVersions || 
+          removeDuplicates || (uiLibVersion.notes.size() > notesSizeBefore)){
         saveToFile(uiLibraryNotes, file);
       } else {
         Log.println("No changes for '" + lib + "' library");
@@ -289,12 +291,14 @@ public class ReleaseNotes {
       copyPrevNotes(file.getParentFile(), lib);
     }
     
-    private boolean removeEmptyVersions(UILibNotes uiLibraryNotes){
+    private boolean removeEmptyVersions(UILibNotes uiLibraryNotes, LibVersion uiLibVersion){
       boolean result = false;
       for (Object key: uiLibraryNotes.versions.keySet().toArray()){
         if (uiLibraryNotes.versions.get(key).notes.size() == 0){
+          if (!uiLibraryNotes.versions.get(key).equals(uiLibVersion)){
+            result = true;
+          }
           uiLibraryNotes.versions.remove(key);
-          result = true;
         }
       }
       return result;
