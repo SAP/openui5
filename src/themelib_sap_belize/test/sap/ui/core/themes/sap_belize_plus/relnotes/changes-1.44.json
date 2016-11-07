@@ -237,5 +237,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "45062452e3e0a78657a60c13821fa3de93c0ff3c",
+        "type": "FIX",
+        "text": "sap.m.Bar: sap.m.Text and sap.m.Lable has correct color and shadow in Belize",
+        "references": []
+      },
+      {
+        "id": "c728fbdb29342fc0e580985adc37ea4ab744e83b",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "f40cb410ecf29c0e3f6959983b5ef1afc02306ec",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: context selector in the button caused focus to not appear in IE",
+        "references": []
+      },
+      {
+        "id": "d9215394e7e17e25f39c29098c6f645b0bd41e6b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      },
+      {
+        "id": "a1e1f545c84fdab0482b1268fcb9050ea8bc4c36",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeaderContent: fix placeholder icon representation",
+        "references": []
+      }
+    ]
   }
 }

@@ -51,5 +51,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "ba3835b71457fb7781b05a80b7453121d5981d68",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
+      },
+      {
+        "id": "d9215394e7e17e25f39c29098c6f645b0bd41e6b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      },
+      {
+        "id": "ba46f5a1c45f26c1ec63a6fa882305b37eb81ba8",
+        "type": "FIX",
+        "text": "sap.ui.unified.MenuTextFieldItem: Process enter key on keyup like for other Menuitems instead of keydown",
+        "references": []
+      }
+    ]
   }
 }

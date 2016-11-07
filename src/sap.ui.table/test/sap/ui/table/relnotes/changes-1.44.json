@@ -231,5 +231,70 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "24777b33b91e726053d692eb72aa7e0b945ff123",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Column: New property minWidth",
+        "references": []
+      },
+      {
+        "id": "0f9524df35fac410940028db066826559a9605b8",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "fa3d804fb03e862865817da7b8b48557b89d7bab",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Avoid exception when opening the cell context menu",
+        "references": []
+      },
+      {
+        "id": "ce940d25a0785e6370a29503c0928b84f5c25923",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Exception while column reordering when dummy column exists",
+        "references": []
+      },
+      {
+        "id": "95211a871bcdbc43a8682cedd50ad3f73f5f9c58",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Smaller fixes",
+        "references": []
+      },
+      {
+        "id": "3a45652a486a30a4c98ad46839d3f4e700867b41",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Group Header Menu Buttons should only appear on tablets/phones",
+        "references": []
+      },
+      {
+        "id": "d50364062bf3a3c078c2a6f6822895f824dba8a7",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Mousewheel scrolling",
+        "references": []
+      },
+      {
+        "id": "825481942398ea2a5255b5f00368d6bdeffb627e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable/AnalyticalTable: Clear select all state before execute selectAll command",
+        "references": []
+      },
+      {
+        "id": "3c63f0f4693da0e82c183ad0887697bb6fe1c5e6",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fix Row selection in SelectionMode \"Single\" and \"None\".",
+        "references": []
+      },
+      {
+        "id": "6c215b6a40057b3fc09e9abfb3b6974e8e971573",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Screenreader Announcement of tree icon",
+        "references": []
+      }
+    ]
   }
 }

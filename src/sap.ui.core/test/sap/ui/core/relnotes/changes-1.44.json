@@ -465,5 +465,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "0f9524df35fac410940028db066826559a9605b8",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "d429acd85f44acb21b8819b2a5983ede2510a20e",
+        "type": "FIX",
+        "text": "LocaleData: Fixed getCombinedPattern for different calendar type",
+        "references": []
+      },
+      {
+        "id": "09671bdd33752e584bc9280482800d9549ba36b5",
+        "type": "FIX",
+        "text": "core/Router: always consider isHome title indicator",
+        "references": []
+      },
+      {
+        "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      },
+      {
+        "id": "b3b6c34a00b4331056f27d29eb913772171f03aa",
+        "type": "FIX",
+        "text": "sap.ui.test.action.Press Link default behavior is executed",
+        "references": []
+      },
+      {
+        "id": "84d5108894d183638bb5c3ef8199649dc13e3dd7",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Relative Binding",
+        "references": []
+      }
+    ]
   }
 }

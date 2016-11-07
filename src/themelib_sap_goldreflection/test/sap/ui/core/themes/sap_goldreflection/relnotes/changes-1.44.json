@@ -39,5 +39,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
+      }
+    ]
   }
 }

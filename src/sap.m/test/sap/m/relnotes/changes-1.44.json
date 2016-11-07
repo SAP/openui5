@@ -753,5 +753,94 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "f088a9e708daf4ab590ed686e5a45290cfb7382e",
+        "type": "FEATURE",
+        "text": "sap.m.Slider: Revised: Tickmarks implementation",
+        "references": []
+      },
+      {
+        "id": "52d23758f05ace6cec5efa05dd22af23dffd5950",
+        "type": "FIX",
+        "text": "m.DatePicker: OnChange compares previous and old value correctly",
+        "references": []
+      },
+      {
+        "id": "4bc724a3c4d0b8176b5a3c41163462fc59b20bb3",
+        "type": "FIX",
+        "text": "m.DatePicker: The picker calendar value is updated correctly after changes in the input",
+        "references": []
+      },
+      {
+        "id": "fc5f787bf417fcbbd3f47440f1f8277f9dd1820d",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
+        "references": []
+      },
+      {
+        "id": "1bf293c7948ba63b6090ec22d6fb7946f48864a8",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Show full subheader in tooltip if truncated on tile",
+        "references": []
+      },
+      {
+        "id": "38cc07a2a43f1667be8a5dde648f90fd4b503686",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Expanding is correct if no tab is selected",
+        "references": []
+      },
+      {
+        "id": "da75955f30dd9a3c5bd25790586a01e8d242bac0",
+        "type": "FIX",
+        "text": "sap.m.Input:  liveChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "3ce08e544fc59e46d3e92f01b1633a136d79cb5b",
+        "type": "FIX",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
+        "references": []
+      },
+      {
+        "id": "59b2fc9c8cff5b577ef8c9dccc40890ba610b87f",
+        "type": "FIX",
+        "text": "sap.m.Input: liveChange is fired when navigate through suggestions",
+        "references": []
+      },
+      {
+        "id": "01f3de66828c43b98138188a33e4bcd5d6424801",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Returning the focus to the input after rendering the list removed",
+        "references": []
+      },
+      {
+        "id": "b5dd12097f3e0680075d0132bfd5a2eca686ffd0",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: ARIA support is now correct",
+        "references": []
+      },
+      {
+        "id": "ae22bafe142da20e4f7365524353f8ab24b74ee3",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Content size is now adapted correctly",
+        "references": []
+      },
+      {
+        "id": "9daa330ea7d3be0e5bb7a823d9b49c42538b1c10",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
+      },
+      {
+        "id": "2159a0d769ec726ae0f74b42db0f366080051bdc",
+        "type": "FIX",
+        "text": "m.TimePicker: Updated jsdoc of precision properties introduced in 1.40",
+        "references": []
+      }
+    ]
   }
 }

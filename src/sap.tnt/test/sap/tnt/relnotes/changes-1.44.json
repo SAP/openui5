@@ -33,5 +33,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "e935cc226c2e8ec13dc5c2af120562e66823317e",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "references": []
+      }
+    ]
   }
 }
