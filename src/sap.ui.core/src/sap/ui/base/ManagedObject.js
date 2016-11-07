@@ -3206,14 +3206,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Generic method which is called, whenever an aggregation binding is changed.
-	 * This method deletes all elements in this aggregation and recreates them
-	 * according to the data model.
-	 * In case a managed object needs special handling for a aggregation binding, it can create
-	 * a typed update-method (e.g. "updateRows") which will be used instead of the
-	 * default behaviour.
+	 * Generic method which is called whenever an aggregation binding has changed.
 	 *
-	 * @private
+	 * Depending on the type of the list binding and on additional configuration, this method either
+	 * destroys all elements in the aggregation <code>sName</code> and recreates them anew
+	 * or tries to reuse as many existing objects as possible. It is up to the method which
+	 * strategy it uses.
+	 *
+	 * In case a managed object needs special handling for an aggregation binding, it can create
+	 * a named update method (e.g. <code>update<i>Rows</i></code> for an aggregation <code>rows</code>)
+	 * which then will be called by the framework instead of this generic method.
+	 *
+	 * Subclasses should call this method only in the implementation of such a named update method
+	 * and for no other purposes. The framework might change the conditions under which the method
+	 * is called and the method implementation might rely on those conditions.
+	 *
+	 * @param {string} sName name of the aggregation to update
+	 * @protected
 	 */
 	ManagedObject.prototype.updateAggregation = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -3364,9 +3373,14 @@ sap.ui.define([
 	/**
 	 * Generic method which can be called, when an aggregation needs to be refreshed.
 	 * This method does not make any change on the aggregation, but just calls the
-	 * getContexts method to trigger fetching of new data.
+	 * <code>getContexts</code> method of the binding to trigger fetching of new data.
 	 *
-	 * @private
+	 * Subclasses should call this method only in the implementation of a named refresh method
+	 * and for no other purposes. The framework might change the conditions under which the method
+	 * is called and the method implementation might rely on those conditions.
+	 *
+	 * @param {string} sName name of the aggregation to refresh
+	 * @protected
 	 */
 	ManagedObject.prototype.refreshAggregation = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
