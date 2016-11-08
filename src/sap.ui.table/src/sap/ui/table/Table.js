@@ -2045,6 +2045,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				} else {
 					$sapUiTableHSb.css('margin-left', iScrollPadding + 'px');
 				}
+				// if the data area has been updated after a vertical resize, its scrollLeft can be reset to 0;
+				// at the same time, prevoiusly scrolled header and HSB still have scrollLeft > 0
+				// adjust it
+				var $dataSrollArea = $this.find(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
+				var iScrollLeft = $sapUiTableHSb.scrollLeft();
+				if ($dataSrollArea.scrollLeft() != iScrollLeft) {
+					$dataSrollArea.scrollLeft(iScrollLeft);
+				}
 			}
 
 			var oHSbContent = this.getDomRef("hsb-content");
