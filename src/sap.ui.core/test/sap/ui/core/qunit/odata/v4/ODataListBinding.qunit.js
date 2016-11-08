@@ -2679,8 +2679,8 @@ sap.ui.require([
 					.returns(oPromise);
 				this.mock(oBinding).expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Remove});
-				this.mock(oBinding.aContexts[2]).expects("destroy");
-				this.mock(oBinding.aContexts[5]).expects("destroy");
+				this.mock(oBinding.aContexts[2]).expects("destroy").never();
+				this.mock(oBinding.aContexts[5]).expects("destroy").never();
 				if (!bUseExtendedChangeDetection) {
 					this.mock(oBinding.aContexts[1]).expects("checkUpdate").withExactArgs();
 					this.mock(oBinding.aContexts[4]).expects("checkUpdate").withExactArgs();
@@ -2700,8 +2700,11 @@ sap.ui.require([
 				assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[4]);
 				assert.strictEqual(oBinding.aContexts.length, 5);
 				assert.strictEqual(oBinding.iMaxLength, 5);
-			}
-		);
+				assert.strictEqual(oBinding.mPreviousContextsByPath[aPreviousContexts[2].getPath()],
+					aPreviousContexts[2]);
+				assert.strictEqual(oBinding.mPreviousContextsByPath[aPreviousContexts[5].getPath()],
+					aPreviousContexts[5]);
+		});
 	});
 	// TODO check the row of a pending update with higher index
 	// TODO _delete uses previous contexts and does not create new contexts

@@ -179,7 +179,7 @@ sap.ui.define([
 						oContext = that.aContexts[i];
 						oNextContext = that.aContexts[i + 1];
 						if (oContext && !oNextContext) {
-							oContext.destroy();
+							that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 							delete that.aContexts[i];
 						} else if (!oContext && oNextContext) {
 							that.aContexts[i]
