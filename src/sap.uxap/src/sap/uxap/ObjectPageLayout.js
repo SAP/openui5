@@ -2027,17 +2027,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the renderer function that will rerender the ContentHeader when something is changed in the ObjectPageHeader Title
-	 *
+	 * Re-renders the <code>ObjectPageHeaderContent</code> when <code>ObjectPageHeader</code> Title changes.
 	 * @private
 	 */
 	ObjectPageLayout.prototype._headerTitleChangeHandler = function () {
+		var oRm;
 
-		if (!this.getShowTitleInHeaderContent() || this._bFirstRendering) {
+		if (!this.getShowTitleInHeaderContent()) {
 			return;
 		}
 
-		var oRm = sap.ui.getCore().createRenderManager();
+		oRm = sap.ui.getCore().createRenderManager();
 		this.getRenderer()._rerenderHeaderContentArea(oRm, this);
 		this._getHeaderContent().invalidate();
 		oRm.destroy();
