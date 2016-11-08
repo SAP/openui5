@@ -17,7 +17,7 @@
 	padding: 2rem;
 }
 
-html.sap-phone *, html.sap-tablet * {   /* FIXME!!! (star rule with any-parent selector...) */
+html.sap-phone *, html.sap-tablet:not(.sap-desktop) * {   /* FIXME!!! (star rule with any-parent selector...) */
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -26,7 +26,7 @@ html.sap-phone *, html.sap-tablet * {   /* FIXME!!! (star rule with any-parent s
 }
 
 html.sap-phone input, html.sap-phone textarea, html.sap-phone [contenteditable=true], html.sap-phone [contenteditable=true] > div, html.sap-phone .sapUiSelectable,
-html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditable=true], html.sap-tablet [contenteditable=true] > div , html.sap-tablet .sapUiSelectable {
+html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) textarea, html.sap-tablet:not(.sap-desktop) [contenteditable=true], html.sap-tablet:not(.sap-desktop) [contenteditable=true] > div , html.sap-tablet:not(.sap-desktop) .sapUiSelectable {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
