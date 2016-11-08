@@ -6,35 +6,39 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         "use strict";
 
         /**
-         * Constructor for a new RangeSlider.
+         * Constructor for a new <code>RangeSlider</code>.
          *
          * @param {string} [sId] ID for the new control, generated automatically if no ID is given
          * @param {object} [mSettings] Initial settings for the new control
          *
          * @class
          * <strong><i>Overview</i></strong>
-         * <br><br>
+         *
          * A {@link sap.m.RangeSlider} control represents a numerical interval and two handles to select a sub-range within it.
          * The purpose of the control is to enable visual selection of sub-ranges within a given interval.
-         * <br><br>
+         *
          * <strong>Notes:</strong>
-         * <ul><li>The RangeSlider extends the functionality of the {@link sap.m.Slider Slider}</li>
+         * <ul>
+         * <li>The RangeSlider extends the functionality of the {@link sap.m.Slider Slider}</li>
          * <li>The right and left handle can be moved individually and their positions could therefore switch.</li>
          * <li>The entire range can be moved along the interval.</li>
          * <li>The right and left handle can select the same value</li>
          * </ul>
          * <strong><i>Usage</i></strong>
-         * <br><br>
+         *
          * The most common usecase is to select and move sub-ranges on a continuous numerical scale.
-         * <br><br>
+         *
          * <strong><i>Responsive Behavior</i></strong>
-         * <br><br>
+         *
          * You can move the currently selected range by clicking on it and dragging it along the interval.
+         * @extends sap.m.Slider
+         *
          * @author SAP SE
          * @version ${version}
          *
          * @constructor
          * @public
+         * @since 1.38
          * @alias sap.m.RangeSlider
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
