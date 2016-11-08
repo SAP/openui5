@@ -800,6 +800,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
+		if (!oRow) {
+			return;
+		}
 		rm.write("<tr");
 		if (oRow._bDummyRow) {
 			rm.addStyle("opacity", "0");
