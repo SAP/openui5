@@ -1063,10 +1063,10 @@
 				this.o10Sep2016 = new Date(2016, 8, 10);
 				this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 						sap.ui.unified.CalendarIntervalType.Week);
-				this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-				this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
 				this.oPC2.placeAt("uiArea1");
 				sap.ui.getCore().applyChanges();
+				this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+				this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
 			},
 			afterEach: function() {
 				if (!bSkipDestroy) {
@@ -1403,6 +1403,44 @@
 						}, 0);
 					}, 0);
 				}, 0);
+			}, 0);
+		});
+
+		test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", function(assert) {
+			//prepare
+			var oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+					sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion(),
+					$Days,
+					aDays,
+					oNextTarget,
+					oSelf = this,
+					fnDone = assert.async();
+
+			sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+			this.oPC2.setStartDate(new Date("2014", "10", "5", "08", "00"));
+			this.oPC2.rerender();
+
+			$Days = this.oPC2IntervalRow.$("days");
+			aDays = $Days.children();
+			oNextTarget = aDays[0];
+
+			//Act - focus 2nd of Nov (week 02 Nov - 8 Nov), 2014 and move left via keyboard once, expect 26 Oct - 1 Nov 2014
+			aDays.eq(0).focus();
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oNextTarget = oSelf._navFocusPrev(oNextTarget);
+				oSelf._assertFocus(oNextTarget);
+					oSelf._assertDatesAreVisible([
+						new Date(2014, 9, 26),
+						new Date(2014, 9, 27),
+						new Date(2014, 9, 28),
+						new Date(2014, 9, 29),
+						new Date(2014, 9, 30),
+						new Date(2014, 9, 31),
+						new Date(2014, 10, 1)
+					], oSelf.oPC2, "Navigated to the correct viewport");
+					sap.ui.getCore().getConfiguration().setFormatLocale(sOriginalFormatLocale);
+					fnDone();
 			}, 0);
 		});
 
