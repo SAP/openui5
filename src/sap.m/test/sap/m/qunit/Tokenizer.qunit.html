@@ -11,16 +11,11 @@
 
 </script>
 
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-<script
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -231,24 +226,22 @@
 		tokenizer1.removeAllTokens();
 	});
 
-	test("tokens event not fired on API call", function() {
-		var bEventFired = false;
-		tokenizer1.attachTokenChange(function(args) {
-			bEventFired = true;
-		});
+    test("tokens change event", function() {
+        var eventType;
+        tokenizer1.attachTokenChange(function(args) {
+            eventType = args.getParameter("type");
+        });
 
-		var token1 = new sap.m.Token();
-		tokenizer1.addToken(token1);
-		strictEqual(bEventFired, false, "event should not be fired when addToken is called programatically");
-		bEventFired = false;
+        var token1 = new sap.m.Token();
+        tokenizer1.addToken(token1);
+        equals(eventType, sap.m.Tokenizer.TokenChangeType.Added, "added event raised");
 
-		tokenizer1.removeToken(token1);
-		strictEqual(bEventFired, false, "event should not be fired when removeToken is called programatically");
-		bEventFired = false;
+        tokenizer1.removeToken(token1);
+        equals(eventType, sap.m.Tokenizer.TokenChangeType.Removed, "removed event raised");
 
-		tokenizer1.removeAllTokens();
-		strictEqual(bEventFired, false, "event should not be fired when removeAllTokens is called programatically");
-	});
+        tokenizer1.removeAllTokens();
+        equals(eventType, sap.m.Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
+    });
 
 	test("getSelectedTokens", function() {
 		var token1 = new sap.m.Token({
