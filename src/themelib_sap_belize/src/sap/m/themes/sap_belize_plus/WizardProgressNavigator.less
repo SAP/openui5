@@ -3,31 +3,21 @@
 /* Belize Plus theme                              */
 /* ============================================== */
 
-.sapMWizardProgressNav {
-	background: @sapUiObjectHeaderBackground;
-	border-bottom: solid 0.125rem lighten(@sapUiObjectHeaderBackground, 8);
-}
+@_sap_m_WizardProgressNavigator_NavAnchorCircleHoverColor: darken(@sapUiObjectHeaderBackground, 5); 
 
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+/*.sapContrastPlus .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle,
+.sapContrastPlus.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
 	background: darken(@sapUiObjectHeaderBackground, 5);
-}
+}*/
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	& .sapMWizardProgressNavAnchor::after {
-		background: @sapUiSelected;
-	}
-
-	& .sapMWizardProgressNavAnchorCircle {
-		background: @sapUiHighlight;
-	}
-}
-
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+.sapContrastPlus .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"],
+.sapContrastPlus.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 	.sapMWizardProgressNavAnchorTitle {
 		color: lighten(@sapUiGroupTitleTextColor, 20);
 	}
 }
 
-.sapMWizardProgressNavAnchorTitle:hover {
+.sapContrastPlus .sapMWizardProgressNavAnchorTitle:hover,
+.sapContrastPlus.sapMWizardProgressNavAnchorTitle:hover {
 	color: lighten(@sapUiGroupTitleTextColor, 10);
 }
