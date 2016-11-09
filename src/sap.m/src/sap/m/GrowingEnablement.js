@@ -461,8 +461,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			// process the diff
 			if (!aContexts.length) {
-				// no context, destroy only if items exists
-				aItems.length && this.destroyListItems();
+				// no context, destroy list items
+				this.destroyListItems();
 			} else if (!this._oContainerDomRef) {
 				// no dom ref for compatibility reason start from scratch
 				this.rebuildListItems(aContexts, oBindingInfo);
