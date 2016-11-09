@@ -163,3 +163,13 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 		font-size: @sapMFontMediumSize;
 	}
 }
+
+.sapContrast .sapMSLIInfo,
+.sapContrast.sapMSLIInfo {
+	text-shadow: @sapUiShadowText;
+}
+
+.sapContrast .sapMLIBSelected.sapMLIBHoverable .sapMSLIDescription,
+.sapContrast.sapMLIBSelected.sapMLIBHoverable .sapMSLIDescription {
+	color: lighten(@sapUiContentLabelColor, 4);
+}
