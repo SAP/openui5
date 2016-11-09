@@ -895,7 +895,8 @@
 			"sap.m.sample.MultiInputValidators",
 			"sap.m.sample.MultiInputMultiLine",
 			"sap.m.sample.MultiInputDatabinding",
-			"sap.m.sample.MultiInputMaxTokens"
+			"sap.m.sample.MultiInputMaxTokens",
+			"sap.m.sample.MultiInputTokenUpdate"
 		  ]
 		},
 		{
@@ -1820,6 +1821,11 @@
 			"id": "sap.m.sample.MultiInputMaxTokens",
 			"name": "MultiInput with Max Tokens",
 			"description": "Number of Tokens in MultiInput cannot exceed the maxToken number."
+		},
+		{
+			"id": "sap.m.sample.MultiInputTokenUpdate",
+			"name": "MultiInput tokenUpdate event example",
+			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated"
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",
