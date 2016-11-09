@@ -156,6 +156,26 @@ sap.ui.define([
 				aggregationRole: {
 					type: "string",
 					defaultValue: null
+				},
+
+				/**
+				 * Defines href.
+				 *
+				 * @since 1.46.0
+				 */
+				href: {
+					type: "string",
+					defaultValue: null
+				},
+
+				/**
+				 * Defines press handler.
+				 *
+				 * @since 1.46.0
+				 */
+				press: {
+					type: "object",
+					defaultValue: null
 				}
 			}
 		}
