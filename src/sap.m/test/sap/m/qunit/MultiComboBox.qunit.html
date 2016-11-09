@@ -14,8 +14,7 @@
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -1026,7 +1025,7 @@
 
 		// assertions
 		deepEqual(aItems, [oItem]);
-		deepEqual(oMultiComboBox.getAggregation("items"), null);
+		deepEqual(oMultiComboBox.getAggregation("items"), []);
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);

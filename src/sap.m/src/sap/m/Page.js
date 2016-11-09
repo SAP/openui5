@@ -11,12 +11,27 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		/**
 		 * Constructor for a new Page.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A page is a basic container for a mobile application screen. Usually one page is displayed at a time (in landscape mode or on tablets depending on the layout two pages might be displayed side-by-side).
+		 * A container control that holds one whole screen of an application.
 		 * @extends sap.ui.core.Control
+		 * <h3>Overview</h3>
+		 * The sap.m.Page is a container control that holds one whole screen of an application.
+		 * The page has three distinct areas that can hold content - a header, content area and a footer.
+		 * <h3>Structure</h3>
+		 * <h4>Header</h4>
+		 * The top most area of the page is occupied by the header. The standard header includes a navigation button and a title.
+		 * Alternatively, you can create your own custom header, which is defined in the <code>customHeader</code> aggregation.
+		 * <h4>Content</h4>
+		 * The content occupies the main part of the page. Only the content area is scrollable by default.
+		 * This can be prevented by setting  <code>enableScrolling</code> to <code>false</code>.
+		 * <h4>Footer</h4>
+		 * The footer is optional and occupies the fixed bottom part of the page. Alternatively, the footer can be floating above the bottom part of the content.
+		 * This is enabled with the <code>floatingFooter</code> property.
+		 *
+		 * <b>Note:</b> All accessibility information for the different areas and their corresponding ARIA roles is set in the aggregation <code>landmarkInfo</code> of type {@link sap.m.PageAccessibleLandmarkInfo}
 		 *
 		 * @author SAP SE
 		 * @version ${version}

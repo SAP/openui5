@@ -1362,14 +1362,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes a ManagedObject from the association named <code>sAssociationName</code>.
+	 * Removes a <code>ManagedObject</code> from the association named <code>sAssociationName</code>.
 	 *
-	 * If an object is removed, the Id of that object is returned and this ManagedObject is
-	 * marked as changed. Otherwise <code>undefined</code> is returned.
+	 * If an object is removed, the ID of that object is returned and this <code>ManagedObject</code> is
+	 * marked as changed. Otherwise <code>null</code> is returned.
 	 *
 	 * If the same object was added multiple times to the same association, only a single
 	 * occurrence of it will be removed by this method. If the object is not found or if the
-	 * parameter can't be interpreted neither as a ManagedObject (or id) nor as an index in
+	 * parameter can't be interpreted neither as a <code>ManagedObject</code> (or ID) nor as an index in
 	 * the association, nothing will be removed. The same is true if an index is given and if
 	 * that index is out of range for the association.
 	 *
@@ -1378,13 +1378,13 @@ sap.ui.define([
 	 * Use the concrete method remove<i>XYZ</i> for association 'XYZ' instead.
 	 *
 	 * @param {string}
-	 *            sAssociationName the string identifying the association the ManagedObject should be removed from.
+	 *            sAssociationName the string identifying the association the <code>ManagedObject</code> should be removed from.
 	 * @param {int | string | sap.ui.base.ManagedObject}
-	 *            vObject the position or ID of the ManagedObject to remove or the ManagedObject itself; if <code>vObject</code> is invalid input,
+	 *            vObject the position or ID of the <code>ManagedObject</code> to remove or the <code>ManagedObject</code> itself; if <code>vObject</code> is invalid input,
 	 *            a negative value or a value greater or equal than the current size of the association, nothing is removed
 	 * @param {boolean}
-	 *            [bSuppressInvalidate] if true, the managed object is not marked as changed
-	 * @return the ID of the removed ManagedObject or null
+	 *            [bSuppressInvalidate] if <code>true</code>, the managed object is not marked as changed
+	 * @returns {string|null} ID of the removed <code>ManagedObject</code> or <code>null</code>
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {

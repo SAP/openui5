@@ -260,6 +260,8 @@ sap.ui.define([
 	ObjectPageHeader.prototype._iAvailablePercentageForActions = 0.3;
 
 	ObjectPageHeader.prototype.init = function () {
+		this._bFirstRendering = true;
+
 		if (!this.oLibraryResourceBundle) {
 			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
@@ -402,7 +404,10 @@ sap.ui.define([
 		if (this.getProperty(sPropertyName) !== newValue) {
 			aArguments.unshift(sPropertyName);
 			this.setProperty.apply(this, aArguments);
-			this._notifyParentOfChanges();
+
+			if (!this._bFirstRendering) {
+				this._notifyParentOfChanges();
+			}
 		}
 
 		return this;
@@ -415,7 +420,10 @@ sap.ui.define([
 			aArguments.unshift(sPropertyName);
 			this.setProperty.apply(this, aArguments);
 			this._destroyObjectImage();
-			this._notifyParentOfChanges();
+
+			if (!this._bFirstRendering) {
+				this._notifyParentOfChanges();
+			}
 		}
 
 		return this;
@@ -459,8 +467,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * get current title and if it is different from the new one rerender the HeaderContent
-	 * @param {string} sTitle title string
+	 * get current title and if it is different from the new one re-render the HeaderContent
+	 * @param {string} sNewTitle title string
 	 * @return {*} this
 	 */
 	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
@@ -620,6 +628,7 @@ sap.ui.define([
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
 		this._attachDetachActionButtonsHandler(false);
+		this._bFirstRendering = false;
 	};
 
 	/**
@@ -912,12 +921,14 @@ sap.ui.define([
 	/*************************************************************************************/
 
 	/**
-	 * rerender the title in the ContentHeader if something in it is changed
+	 * Notifies the parent control, when <code>ObjectPageHeader> changes.
 	 * @private
 	 */
 	ObjectPageHeader.prototype._notifyParentOfChanges = function () {
-		if (this.getParent() && typeof this.getParent()._headerTitleChangeHandler === "function") {
-			this.getParent()._headerTitleChangeHandler();
+		var oParent = this.getParent();
+
+		if (oParent && typeof oParent._headerTitleChangeHandler === "function") {
+			oParent._headerTitleChangeHandler();
 		}
 	};
 
