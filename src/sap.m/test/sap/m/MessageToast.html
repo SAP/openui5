@@ -196,18 +196,6 @@
 			oApp.addPage(oPage1);
 			oApp.placeAt("body");
 
-			jQuery(function() {	// $(document).ready(handler);
-				jQuery.sap.require("sap.m.MessageToast");
-
-				// To show a message toast on Android 2.3 inside a document ready callback,
-				// a wrapping setTimeout() function is required to avoid centering problems.
-				setTimeout(function() {
-
-					// message toast basic example
-					sap.m.MessageToast.show("Message toast control test page.\nMessage on a new row.");
-
-				}, 0);
-			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
