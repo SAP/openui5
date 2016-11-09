@@ -3,21 +3,6 @@
 /* Belize Plus theme                              */
 /* ============================================== */
 
-@_sap_m_WizardProgressNavigator_NavAnchorCircleHoverColor: darken(@sapUiObjectHeaderBackground, 5); 
-
-/*.sapContrastPlus .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle,
-.sapContrastPlus.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-	background: darken(@sapUiObjectHeaderBackground, 5);
-}*/
-
-.sapContrastPlus .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"],
-.sapContrastPlus.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
-	.sapMWizardProgressNavAnchorTitle {
-		color: lighten(@sapUiGroupTitleTextColor, 20);
-	}
-}
-
-.sapContrastPlus .sapMWizardProgressNavAnchorTitle:hover,
-.sapContrastPlus.sapMWizardProgressNavAnchorTitle:hover {
-	color: lighten(@sapUiGroupTitleTextColor, 10);
-}
+@_sap_m_WizardProgressNavigator_NavAnchorCircleHoverColor: darken(@sapUiObjectHeaderBackground, 5);
+@_sap_m_WizardProgressNavigator_NavAnchorTitleSelectedTextColor: lighten(@sapUiGroupTitleTextColor, 20);
+@_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor: lighten(@sapUiGroupTitleTextColor, 10);

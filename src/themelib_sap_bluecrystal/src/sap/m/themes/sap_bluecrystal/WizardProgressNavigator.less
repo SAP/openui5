@@ -1,6 +1,10 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* BlueCrystal theme                              */
+/* ============================================== */
+
 .sapMWizardProgressNav {
 	background: @sapUiGroupContentBackground;
-	font-size: @sapMFontMediumSize;
 	border-color: @sapUiGroupContentBorderColor;
 }
 
@@ -8,8 +12,12 @@
 	background: @sapUiButtonHoverBackground;
 }
 
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"]:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiHighlight;
+}
+
 .sapMWizardProgressNavAnchor:focus {
-	outline: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: 1px;
 }
 
@@ -19,28 +27,16 @@
 	border-color: @sapUiSegmentedButtonSelectedBackground;
 }
 
-.sapMWizardProgressNavAnchorIcon {
-	font-size: @sapMFontLargeSize;
-}
-
 .sapMWizardProgressNavAnchorTitle {
 	background: @sapUiGroupContentBackground;
 }
 
-.sapMWizardProgressNavStep::after {
-	border-bottom-color: @sapUiSelected;
+.sapMWizardProgressNavAnchorTitle:hover {
+	color: darken(@sapUiGroupTitleTextColor, 10);
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	& .sapMWizardProgressNavAnchor::after {
-		background: @sapUiSelected;
-	}
-
-	& .sapMWizardProgressNavAnchorCircle {
-		color: @sapUiSegmentedButtonSelectedTextColor;
-		background: @sapUiSegmentedButtonSelectedBackground;
-		border: none;
-	}
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiHighlight;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
