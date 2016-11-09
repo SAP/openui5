@@ -438,9 +438,14 @@ sap.ui.require([
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+
 		},
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
+			this.oLogMock.verify();
 		}
 	});
 	//*********************************************************************************************
@@ -552,15 +557,14 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		var sSemanticsValue = oFixture.sSemantics + ";type=" + oFixture.sTypes;
 		QUnit.test("getV4TypesForV2Semantics: " + sSemanticsValue, function (assert) {
-			var oLogMock = this.mock(jQuery.sap.log),
-				bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
+			var bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
 				oType = { "name" : "Foo" },
 				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
 
-			oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
+			this.oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
 				.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 				.returns(true);
-			oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
+			this.oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
 				.withExactArgs("Unsupported type for sap:semantics: " + oFixture.oExpectedMessage,
 					"Foo.bar", sLoggingModule);
 
@@ -619,8 +623,7 @@ sap.ui.require([
 	[false, true].forEach(function (bIsLoggable) {
 		QUnit.test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable,
 			function (assert) {
-				var oLogMock = this.mock(jQuery.sap.log),
-					oType = {
+				var oType = {
 						"name" : "Foo",
 						"property" : [
 							{
@@ -639,10 +642,10 @@ sap.ui.require([
 					Utils.liftSAPData(oProperty, "Property");
 				});
 
-				oLogMock.expects("isLoggable")
+				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
+				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar", sLoggingModule);
@@ -656,8 +659,7 @@ sap.ui.require([
 	[false, true].forEach(function (bIsLoggable) {
 		QUnit.test("addSapSemantics: unsupported sap:semantics type, log = " + bIsLoggable,
 			function (assert) {
-				var oLogMock = this.mock(jQuery.sap.log),
-					oType = {
+				var oType = {
 						"name" : "Foo",
 						"property" : [
 							{
@@ -675,10 +677,10 @@ sap.ui.require([
 				oType.property.forEach(function (oProperty) {
 					Utils.liftSAPData(oProperty, "Property");
 				});
-				oLogMock.expects("isLoggable")
+				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
+				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
@@ -736,11 +738,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("addFilterRestriction: adding valid filter-restrictions", function (assert) {
 		var aFilterRestrictions,
-			oLogMock = this.mock(jQuery.sap.log),
 			oEntitySet = {},
 			oProperty;
-
-		oLogMock.expects("warning").never();
 
 		[
 			{i : "single-value", o : "SingleValue"},
@@ -777,17 +776,16 @@ sap.ui.require([
 	[false, true].forEach(function (bIsLoggable) {
 		QUnit.test("addFilterRestriction: unsupported sap:filter-restriction, log = " + bIsLoggable,
 			function (assert) {
-				var oLogMock = this.mock(jQuery.sap.log),
-					oEntitySet = { entityType : "Baz" },
+				var oEntitySet = { entityType : "Baz" },
 					oProperty = {
 						"name" : "Foo",
 						"sap:filter-restriction" : "Bar"
 					};
 
-				oLogMock.expects("isLoggable")
+				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
+				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported sap:filter-restriction: " + "Bar", "Baz.Foo",
@@ -972,7 +970,7 @@ sap.ui.require([
 				}
 
 				if (oFixture.withWarning) {
-					this.mock(jQuery.sap.log).expects("warning")
+					this.oLogMock.expects("warning")
 						.withExactArgs("Inconsistent service",
 							"Use either 'sap:creatable' or 'sap:creatable-path'"
 								+ " at navigation property 'mySchema.Type/inconsistent'",
@@ -1064,7 +1062,7 @@ sap.ui.require([
 			},
 			sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
 
-		this.mock(jQuery.sap.log).expects("warning")
+		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent service",
 				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'Foo.Bar'",
 				sLoggingModule);

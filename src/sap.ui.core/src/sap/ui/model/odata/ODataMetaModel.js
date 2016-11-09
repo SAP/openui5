@@ -180,6 +180,9 @@ sap.ui.define([
 				function load() {
 					var oData;
 
+					if (that.bDestroyed) {
+						throw new Error("Meta model already destroyed");
+					}
 					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
@@ -444,7 +447,7 @@ sap.ui.define([
 
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
-		return this.oModel.destroy.apply(this.oModel, arguments);
+		return this.oModel && this.oModel.destroy.apply(this.oModel, arguments);
 	};
 
 	/**
