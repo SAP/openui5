@@ -21,6 +21,7 @@ sap.ui.define([
 		timeout = -1,
 		isStopped,
 		oDeferred,
+		isEmptyQueueStarted,
 		oValidator = new _ParameterValidator({
 			errorPrefix: "sap.ui.test.Opa#waitFor"
 		});
@@ -343,6 +344,12 @@ sap.ui.define([
 	 * @public
 	 */
 	Opa.emptyQueue = function emptyQueue () {
+		if (isEmptyQueueStarted) {
+			throw new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.");
+		}
+
+		isEmptyQueueStarted = true;
+
 		oDeferred = $.Deferred();
 		isStopped = false;
 
@@ -391,6 +398,7 @@ sap.ui.define([
 		}).always(function () {
 			timeout = -1;
 			oDeferred = null;
+			isEmptyQueueStarted = false;
 		});
 	};
 
