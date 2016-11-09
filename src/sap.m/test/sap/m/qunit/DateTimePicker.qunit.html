@@ -278,6 +278,26 @@
 				strictEqual(oInfo.description, "2014-03-26-10-32-30 Placeholder Date and Time Tooltip", "Description");
 				oInput.destroy();
 			});
+			module("Calendar and TimePicker");
+
+			test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function() {
+				//Prepare
+				var oDTP = new sap.m.DateTimePicker().placeAt("uiArea7");
+
+				//Act
+				oDTP._createPopup();
+				oDTP._createPopupContent();
+				var oRenderSpy = this.spy(oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0], "focus");
+				sap.ui.getCore().applyChanges();
+				oDTP._openPopup();
+				oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0].fireTap({ setMarked:  jQuery.noop });
+
+				// Assert
+				strictEqual(oRenderSpy.callCount, 1, "The slider's value is focused after a tap");
+
+				oRenderSpy.restore();
+				oDTP.destroy();
+			});
 
 		</script>
 
@@ -300,5 +320,7 @@
 		<div id="uiArea5"></div>
 		<br>
 		<div id="uiArea6"></div>
+		<br>
+		<div id="uiArea7"></div>
 	</body>
 </html>
