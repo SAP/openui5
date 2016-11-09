@@ -517,6 +517,12 @@ sap.ui.define([
 			return null;
 		},
 
+		/**
+		 * Checks whether the horizontal scrollbar is visible.
+		 *
+		 * @returns {boolean} Returns <code>true</code>, if the horizontal scrollbar is visible.
+		 * @private
+		 */
 		isHorizontalScrollbarVisible: function() {
 			var oTable = this.getTable();
 
@@ -531,6 +537,12 @@ sap.ui.define([
 			return false;
 		},
 
+		/**
+		 * Checks whether the vertical scrollbar is visible.
+		 *
+		 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
+		 * @private
+		 */
 		isVerticalScrollbarVisible: function() {
 			var oTable = this.getTable();
 
