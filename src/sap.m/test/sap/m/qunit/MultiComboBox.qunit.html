@@ -3153,23 +3153,102 @@
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
 		// act - 'alg' + OpenList + Enter
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "alg");
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+		this.clock.tick(500);
+
+		// assertions
+		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
+
+	test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function() {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		};
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		// system under test
+		var oItem1, oItem2;
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [oItem1 = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}), oItem2 = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Alg"
+			})]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+
+		// act - 'alg' + OpenList + Enter
+		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "alg");
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
 		// assertions
-		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
 
 		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
+
+	test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'al' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function() {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		};
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		// system under test
+		var oItem1, oItem2;
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [oItem1 = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}), oItem2 = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Alg"
+			})]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+
+		// act - 'al' + OpenList + Enter
+		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "al");
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
+		this.clock.tick(500);
+
+		// assertions
+		deepEqual(oMultiComboBox.getSelectedItems(), [], "should not select anything");
+		strictEqual(oMultiComboBox.getValue(), "al", "Value should not be deleted");
+
+		// cleanup
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		this.clock.tick(500);
 		oMultiComboBox.destroy();
 		this.clock.reset();
 	});
