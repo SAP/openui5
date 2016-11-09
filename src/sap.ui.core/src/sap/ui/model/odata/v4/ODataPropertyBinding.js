@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./_ODataHelper",
-	"./lib/_Cache"
-], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _ODataHelper, _Cache) {
+	"./lib/_Cache",
+	"./ODataBinding"
+], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _ODataHelper, _Cache,
+		asODataBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -63,9 +65,15 @@ sap.ui.define([
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
+	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
 	 */
 	var ODataPropertyBinding
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
@@ -94,6 +102,8 @@ sap.ui.define([
 				publicMethods : []
 			}
 		});
+
+	asODataBinding(ODataPropertyBinding.prototype);
 
 	/**
 	 * The 'change' event is fired when the binding is initialized or refreshed or its type is
@@ -292,36 +302,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the binding that is used for read requests.
-	 *
-	 * @returns {string}
-	 *   The group ID
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.getGroupId = function () {
-		return this.sGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getGroupId
-					&& this.oContext.getGroupId())
-			|| this.oModel.getGroupId();
-	};
-
-	/**
-	 * Returns the group ID of the binding that is used for update requests.
-	 *
-	 * @returns {string}
-	 *   The update group ID
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.getUpdateGroupId = function () {
-		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
-					&& this.oContext.getUpdateGroupId())
-			|| this.oModel.getUpdateGroupId();
-	};
-
-	/**
 	 * Returns the current value.
 	 *
 	 * @returns {any}
@@ -353,20 +333,6 @@ sap.ui.define([
 			return this.oContext.hasPendingChanges(this.sPath);
 		}
 		return false;
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#isInitial
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataPropertyBinding.prototype.isInitial = function () {
-		throw new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial");
 	};
 
 	/**
@@ -412,64 +378,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes this binding. A refresh retrieves data from the server using the given group ID and
-	 * fires a change event when new data is available.
-	 * Refresh is supported for bindings which are not relative to a V4
-	 * {@link sap.ui.model.odata.v4.Context}.
-	 *
-	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
-	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
-	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @throws {Error}
-	 *   If the given group ID is invalid or refresh on this binding is not supported.
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#refresh
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataPropertyBinding.prototype.refresh = function (sGroupId) {
-		if (!_ODataHelper.isRefreshable(this)) {
-			throw new Error("Refresh on this binding is not supported");
-		}
-
-		this.oModel.checkGroupId(sGroupId);
-
-		this.makeCache(this.oContext);
-		this.refreshInternal(sGroupId);
-	};
-
-	/**
-	 * Internal method to refresh the binding, called by {@link #refresh} and also by a parent list
-	 * binding during its refresh.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh
-	 *
-	 * @private
+	 * @override sap.ui.model.odata.v4.ODataBinding#refreshInternal
+	 * @inheritdoc
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId) {
+		this.makeCache(this.oContext);
 		this.checkUpdate(true, ChangeReason.Refresh, sGroupId);
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#resume
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataPropertyBinding.prototype.resume = function () {
-		throw new Error("Unsupported operation: v4.ODataPropertyBinding#resume");
 	};
 
 	/**
@@ -571,20 +485,6 @@ sap.ui.define([
 				// do not update this.vValue!
 			}
 		}
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#suspend
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataPropertyBinding.prototype.suspend = function () {
-		throw new Error("Unsupported operation: v4.ODataPropertyBinding#suspend");
 	};
 
 	/**

@@ -13,12 +13,13 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
+	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString,
-		_ODataHelper, Context, _Cache, _Helper, _SyncPromise, ODataModel, ODataPropertyBinding,
-		TestUtils) {
+		_ODataHelper, Context, _Cache, _Helper, _SyncPromise, asODataBinding, ODataModel,
+		ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -128,6 +129,18 @@ sap.ui.require([
 				oBinding.attachChange(changeHandler);
 			});
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("mixin", function (assert) {
+		var oBinding = this.oModel.bindProperty("ID"),
+			oMixin = {};
+
+		asODataBinding(oMixin);
+
+		Object.keys(oMixin).forEach(function (sKey) {
+			assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -794,66 +807,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh", function (assert) {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", undefined,
-				{$$groupId : "$direct"});
-
-		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("foo");
-		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
-		this.mock(_Cache).expects("createSingle").withExactArgs(
-				sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
-				sinon.match.same(oBinding.mQueryOptions), true);
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("foo");
-
-		// code under test
-		oBinding.refresh("foo");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh on relative binding is not supported", function (assert) {
-		var oBinding = this.oModel.bindProperty("Name");
-
-		// no cache for relative bindings
-		this.oSandbox.mock(_Cache).expects("createSingle").never();
-
-		assert.throws(function () {
-			oBinding.refresh();
-		}, new Error("Refresh on this binding is not supported"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshInternal", function (assert) {
-		var oContext = {
-				getPath : function () {return "";}
-			},
-			oBinding = this.oModel.bindProperty("PRODUCT_2_BP", oContext);
-
-		this.oSandbox.mock(oBinding).expects("checkUpdate")
-			.withExactArgs(true, ChangeReason.Refresh, "groupId");
-
-		// code under test
-		oBinding.refreshInternal("groupId");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("Name");
 
 		assert.throws(function () {
 			oPropertyBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
-
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.isInitial();
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.resume();
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#resume"));
-
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.suspend();
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#suspend"));
 	});
 
 	//*********************************************************************************************
@@ -954,68 +913,6 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getGroupId(), "baz");
 			assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getGroupId: relative bindings", function (assert) {
-		var oBinding = this.oModel.bindProperty("relative"),
-			oContext = Context.create(this.oModel, {}, "/absolute");
-
-		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
-
-		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromModel");
-
-		this.stub(oContext, "fetchValue").returns(_SyncPromise.resolve("foo"));
-		this.stub(this.oModel.getMetaModel(), "requestUI5Type")
-			.returns(Promise.resolve(new TypeString()));
-		oBinding.setContext(oContext);
-		this.mock(oContext).expects("getGroupId").withExactArgs().returns("fromContext");
-
-		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromContext");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getGroupId: relative bindings with base context", function (assert) {
-		var oContext = this.oModel.createBindingContext("/absolute"),
-			oBinding = this.oModel.bindProperty("relative", oContext);
-
-		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
-
-		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromModel");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getUpdateGroupId: relative bindings", function (assert) {
-		var oBinding = this.oModel.bindProperty("relative"),
-			oContext = Context.create(this.oModel, {}, "/absolute");
-
-		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
-
-		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
-
-		this.stub(oContext, "fetchValue").returns(_SyncPromise.resolve("foo"));
-		this.stub(this.oModel.getMetaModel(), "requestUI5Type")
-			.returns(Promise.resolve(new TypeString()));
-		oBinding.setContext(oContext);
-		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("fromContext");
-
-		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getUpdateGroupId: relative bindings with base context", function (assert) {
-		var oContext = this.oModel.createBindingContext("/absolute"),
-			oBinding = this.oModel.bindProperty("relative", oContext);
-
-		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
-
-		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 	});
 
 	//*********************************************************************************************
