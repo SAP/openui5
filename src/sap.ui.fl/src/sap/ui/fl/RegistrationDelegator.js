@@ -84,7 +84,8 @@ sap.ui.define([
 		RegistrationDelegator.registerLoadComponentEventHandler();
 		RegistrationDelegator.registerExtensionProvider();
 		RegistrationDelegator.registerChangesInComponent();
-		RegistrationDelegator.registerXMLPreprocessor();
+		//Temporary disable the XMLPreprocessor
+		//RegistrationDelegator.registerXMLPreprocessor();
 	};
 
 	return RegistrationDelegator;
