@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		/**
 		 * Retrieves the first date of the same week in which is the given date.
-		 * This function does not imply any knowledge of UTC. It works with dates in local timezone.
+		 * This function works with date values in UTC to produce timezone agnostic results.
 		 * <br><br>
 		 * The US weeks at the end of December and at the beginning of January(53th and 0th), are not considered.
 		 * If a given date is in the beginning of January (e.g. Friday, 2 Jan 2015, week 0), the function will return
@@ -194,20 +194,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		CalendarUtils.getFirstDateOfWeek = function (oDate) {
 			var oUniversalDate = new UniversalDate(oDate),
 				oFirstDateOfWeek,
-				oWeekNumber;
+				oWeek;
 
-			oWeekNumber = UniversalDate.getWeekByDate(oUniversalDate.getCalendarType(), oUniversalDate.getFullYear(),
-				oUniversalDate.getMonth(), oUniversalDate.getDate());
+			oWeek = UniversalDate.getWeekByDate(oUniversalDate.getCalendarType(), oUniversalDate.getUTCFullYear(),
+				oUniversalDate.getUTCMonth(), oUniversalDate.getUTCDate());
 
-			if (oWeekNumber.week === 0 && sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().getRegion() === "US") {
-				oWeekNumber.year--;
-				oWeekNumber.week = 52;
+			if (oWeek.week === 0 && sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().getRegion() === "US") {
+				oWeek.year--;
+				oWeek.week = 52;
 			}
-			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(oUniversalDate.getCalendarType(), oWeekNumber.year,
-				oWeekNumber.week);
+			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(oUniversalDate.getCalendarType(), oWeek.year, oWeek.week);
 
-			return new UniversalDate(new Date(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day,
-				oDate.getHours(), oDate.getMinutes(), oDate.getSeconds())).getJSDate();
+			return new UniversalDate(Date.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day,
+				oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds())).getJSDate();
 		};
 
 		/**

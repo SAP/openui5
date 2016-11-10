@@ -130,6 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				oTempUniversalFocusedDate = new UniversalDate(oFocusedDate.getTime()),
 				oNewWeekNumber;
 
+			//Start one week before and find the first date that is sharing the same week as the current
 			oTempUniversalFocusedDate.setFullYear(iChosenYear);
 			oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() - 7);
 			oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
@@ -140,17 +141,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				 * When we try to navigate from 53rd week of the year to year that don't have 53 weeks in it
 				 * always navigate to the last (52nd) week of the target year
 				 */
-				while (oNewWeekNumber.week !== 51) {
-					oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
-					oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
-						oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
-				}
-			} else {
-				while (oWeekNumber.week !== oNewWeekNumber.week) {
-					oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
-					oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
-						oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
-				}
+				oWeekNumber.week = 51;
+			}
+
+			while (oWeekNumber.week !== oNewWeekNumber.week) {
+				oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
+				oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
+					oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
 			}
 
 			oFocusedDate.getJSDate().setTime(oTempUniversalFocusedDate.getJSDate().getTime());
