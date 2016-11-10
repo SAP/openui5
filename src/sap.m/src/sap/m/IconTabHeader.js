@@ -266,19 +266,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (var i = 0; i < aTabFilters.length; i++) {
 			oTabFilter = aTabFilters[i];
 
-			// oSelectItem = oTabFilter.clone();
-			oSelectItem = new IconTabFilter({
-				visible: oTabFilter.getVisible(),
-				enabled: oTabFilter.getEnabled(),
-				icon: oTabFilter.getIcon(),
-				text: oTabFilter.getText(),
-				count: oTabFilter.getCount(),
-				iconColor: oTabFilter.getIconColor(),
-				iconDensityAware : oTabFilter.getIconDensityAware(),
-				textDirection: oTabFilter.getTextDirection(),
-				tooltip: oTabFilter.getTooltip()
-			});
-
+			oSelectItem = oTabFilter.clone();
 			oSelectItem._tabFilter = oTabFilter;
 			oSelectList.addItem(oSelectItem);
 
