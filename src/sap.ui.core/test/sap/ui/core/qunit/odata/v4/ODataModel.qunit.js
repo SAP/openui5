@@ -278,22 +278,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "?foo=bar"].forEach(function (sQuery) {
-		QUnit.skip("create", function (assert) {
-			var oEmployeeData = {},
-				oModel = createModel(sQuery),
-				oPromise = {};
-
-			this.mock(oModel.oRequestor).expects("request")
-				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
-				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
-					sinon.match.same(oEmployeeData)).returns(oPromise);
-
-			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
