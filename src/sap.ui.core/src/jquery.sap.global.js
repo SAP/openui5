@@ -3719,7 +3719,7 @@
 		 *   sap.ui.define(['./Helper', 'sap/m/Bar'], function(Helper,Bar) {
 		 *
 		 *     // create a new class
-		 *     var SomeClass = function();
+		 *     var SomeClass = function() {};
 		 *
 		 *     // add methods to its prototype
 		 *     SomeClass.prototype.foo = function() {
@@ -3801,7 +3801,7 @@
 		 *
 		 *   // define a class Something as AMD module
 		 *   sap.ui.define('Something', [], function() {
-		 *     var Something = function();
+		 *     var Something = function() {};
 		 *     return Something;
 		 *   });
 		 *
