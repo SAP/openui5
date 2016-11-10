@@ -2393,7 +2393,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Use when you need to display the name of the user who locked the object.
 		 * @public
 		 */
-		LockedBy : "LockedBy"
+		LockedBy : "LockedBy",
+
+		/**
+		 * UnsavedBy type
+		 * Use when you need to display the name of the user whos changes were unsaved.
+		 * @public
+		 */
+		UnsavedBy : "UnsavedBy"
 	};
 
 

@@ -21,8 +21,11 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * <li><code>Locked</code>
 	 * <li><code>LockedBy</code>
 	 * <li><code>Unsaved</code>
+	 * <li><code>UnsavedBy</code>
 	 * </ul>
-	 * <b>Note</b>: Use the <code>LockedBy</code> type when you need to display the name of the user who locked the object, otherwise use <code>Locked</code>.
+	 * <b>Note</b>: Use the <code>LockedBy/UnsavedBy</code> type along with the <code>additionalInfo</code> property to display the name of the user who locked/changed the object.
+	 * If <code>additionalInfo</code> property is not set when using <code>LockedBy/UnsavedBy</code> types, the string "Locked by another user"/"Unsaved changes by another user" will be displayed.
+	 * If you don't want to display name of the user, simply use the <code>Locked/Unsaved</code> types.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -41,12 +44,13 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			properties: {
 
 				/**
-				 * Sets one of the predefined types.<br>
+				 * Sets one of the predefined types.
+				 *
 				 * <b>Note</b>: If the <code>visibility</code> property is not specified explicitly, every <code>type</code> comes with predefined one as follows:
 				 * <ul>
 				 *                 <li>For <code>Flagged</code> and <code>Favorite</code> the icon is visible and the text is not displayed</li>
 				 *                 <li>For <code>Draft</code> the text is visible and the icon is not displayed</li>
-				 *                 <li>For <code>Locked</code>, <code>LockedBy</code> and <code>Unsaved</code> - on screens larger than 600px both icon and text are visible, otherwise only the icon</li>
+				 *                 <li>For <code>Locked</code>, <code>LockedBy</code>, <code>Unsaved</code> and <code>UnsavedBy</code> - on screens larger than 600px both icon and text are visible, otherwise only the icon</li>
 				 *
 				 * </ul>
 				 */
@@ -65,7 +69,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 
 				/**
 				 * Sets additional information to the displayed <code>type</code>.
-				 * For example, you can display additional text 'by User' for type <code>locked</code>.<br><br>
+				 *
 				 * <b>Note:</b> If no type is set, the additional information will not be displayed.
 				 */
 				additionalInfo: {type: "string", group: "Misc", defaultValue: ""}
@@ -197,6 +201,22 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			},
 			text: {
 				value: oRB.getText("OM_LOCKED_BY"),
+				visibility: {
+					small: false,
+					large: true
+				}
+			}
+		},
+		UnsavedBy: {
+			icon: {
+				src: "sap-icon://user-edit",
+				visibility: {
+					small: true,
+					large: true
+				}
+			},
+			text: {
+				value: oRB.getText("OM_UNSAVED_BY"),
 				visibility: {
 					small: false,
 					large: true
@@ -358,6 +378,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		var oType = ObjectMarker.M_PREDEFINED_TYPES[this.getType()],
 			oInnerControl = this._getInnerControl(),
 			sAdditionalInfo = this.getAdditionalInfo(),
+			sType = this.getType(),
 			sText;
 
 		// If we have no inner control at this stage we don't need to adjust
@@ -366,11 +387,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		}
 
 		if (oType) {
-			if (this.getType() === "LockedBy") {
-				sText = (sAdditionalInfo) ? oRB.getText('OM_LOCKED_BY', [sAdditionalInfo]) : oType.text.value;
-			} else {
-				sText = (sAdditionalInfo) ? oType.text.value + " " + sAdditionalInfo : oType.text.value;
-			}
+			sText = this._getMarkerText(oType, sType, sAdditionalInfo);
 		}
 
 		if (this._isIconVisible()) {
@@ -394,6 +411,24 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		}
 
 		return true;
+	};
+
+	/**
+	 * Gets the marker text.
+	 *
+	 * @returns {String}, concatenated from type and additionalInfo text
+	 * @private
+	 */
+	ObjectMarker.prototype._getMarkerText = function (oType, sType, sAdditionalInfo) {
+
+		switch (sType) {
+			case "LockedBy":
+				return (sAdditionalInfo === "") ? oRB.getText('OM_LOCKED_BY_ANOTHER_USER') : oRB.getText('OM_LOCKED_BY', [sAdditionalInfo]);
+			case "UnsavedBy":
+				return (sAdditionalInfo === "") ? oRB.getText('OM_UNSAVED_BY_ANOTHER_USER') : oRB.getText('OM_UNSAVED_BY', [sAdditionalInfo]);
+			default:
+				return (sAdditionalInfo === "") ? oType.text.value : oType.text.value + " " + sAdditionalInfo;
+		}
 	};
 
 	/**
