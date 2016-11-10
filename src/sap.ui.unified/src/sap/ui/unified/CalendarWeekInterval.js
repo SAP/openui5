@@ -112,6 +112,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		};
 
 		/**
+		 * Overrides the Calendar#_adjustFocusedDateUponYearChange function.
+		 * @param {UniversalDate} oFocusedDate the focused date that this function will adjust
+		 * @param {number} iChosenYear The new year
+		 * @desc The purpose of this function is the following:
+		 * 1. Takes the same week of the chosen year (as the passed focused date refers to its own year)
+		 * 2. Calculates its first day in order to display the correct viewport according to the week of interest
+		 * 3. Sets this date as both start date and focused date
+		 * @private
+		 */
+		CalendarWeekInterval.prototype._adjustFocusedDateUponYearChange = function(oFocusedDate, iChosenYear) {
+			if (!(oFocusedDate && oFocusedDate instanceof UniversalDate)) {
+				return;
+			}
+
+			var oWeekNumber = UniversalDate.getWeekByDate(oFocusedDate.getCalendarType(), oFocusedDate.getFullYear(), oFocusedDate.getMonth(), oFocusedDate.getDate()),
+				oTempUniversalFocusedDate = new UniversalDate(oFocusedDate.getTime()),
+				oNewWeekNumber;
+
+			oTempUniversalFocusedDate.setFullYear(iChosenYear);
+			oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() - 7);
+			oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
+				oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
+
+			if (oWeekNumber.week === 52 && CalendarUtils._getNumberOfWeeksForYear(iChosenYear) < 53) {
+				/**
+				 * When we try to navigate from 53rd week of the year to year that don't have 53 weeks in it
+				 * always navigate to the last (52nd) week of the target year
+				 */
+				while (oNewWeekNumber.week !== 51) {
+					oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
+					oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
+						oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
+				}
+			} else {
+				while (oWeekNumber.week !== oNewWeekNumber.week) {
+					oTempUniversalFocusedDate.setDate(oTempUniversalFocusedDate.getDate() + 1);
+					oNewWeekNumber =  UniversalDate.getWeekByDate(oTempUniversalFocusedDate.getCalendarType(), oTempUniversalFocusedDate.getFullYear(),
+						oTempUniversalFocusedDate.getMonth(), oTempUniversalFocusedDate.getDate());
+				}
+			}
+
+			oFocusedDate.getJSDate().setTime(oTempUniversalFocusedDate.getJSDate().getTime());
+
+		};
+
+		/**
 		 * Overrides the Calendar#_focusDateExtend in order to handle focused date in a custom way.
 		 *
 		 * This function checks for special focus date (set by others) in order to focus this particular date.
