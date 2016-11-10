@@ -1,19 +1,14 @@
-/* ====================================================== */
-/* CSS for control sap.m/ActionSelect BlueCrystal theme   */
-/* ====================================================== */
+/* =================================== */
+/* CSS for control sap.m/ActionSelect  */
+/* BlueCrystal theme                   */
+/* =================================== */
 
 /* ----------------------------- */
 /* button                        */
 /* ----------------------------- */
 
 .sapMActionSelectPicker .sapMBtn {
-	display: block;
-	width: 100%;
-	height: 2.5rem;
-	padding: 0;
-	border-top-width: 0;
-	border-bottom-width: 0.0625rem;
-	text-shadow: 0 1px 0 @sapUiDarkShadowTint;
+	text-shadow: 0 1px 0 @sapUiContentShadowColor;
 }
 
 .sapMActionSelectPicker .sapMBtnDisabled {
@@ -29,7 +24,6 @@
  	border-top: 0;
  	border-left: 0;
  	border-right: 0;
- 	border-bottom: 1px solid @sapUiButtonActionSelectBorderColor;
 }
 
 /* override standard buttons inside the action select */
@@ -48,11 +42,11 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtnDefault:not(.sapMBtnActive):hov
 }
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn:focus > .sapMBtnDefault {
-	outline-color: @sapUiInvertedFocus;
+	outline-color: @sapUiContentContrastFocusColor;
 }
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtnFocusDiv {
-	border-color:    @sapUiInvertedFocus;
+	border-color:    @sapUiContentContrastFocusColor;
 }
 
 /* ============================================================================ */
