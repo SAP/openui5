@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (!jQuery.sap.equal(this._oStyleData, oStyleData)) {
 			delete this._oStyleData;
 
-			//cache style data in order for it to be reused by other functions (e.g. _getBoundingBox)
+			//cache style data in order for it to be reused by other functions
 			this._oStyleData = oStyleData;
 			return true;
 		}
@@ -433,30 +433,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Calculates the bounding box of the tile for use in drag&drop scenarios.
+	 * Provides an interface to the tile's layout information consistent in all modes and content densities.
 	 *
-	 * @returns {object} The bounding box object as a rectangle with offset (x, y) and dimensions (width, height)
-	 * @private
+	 * @returns {object[]} An array containing all of the tile's bounding rectangles
+	 * @experimental since 1.44.1 This method's implementation is subject to change
+	 * @protected
 	 */
-	GenericTile.prototype._getBoundingBox = function() {
-		this._getStyleData();
-		if (jQuery.isEmptyObject(this._oStyleData)) {
-			var oPos = this.$().position();
-			return {
-				x: oPos.left,
-				y: oPos.top,
-				width: this.$().outerWidth(true),
-				height: this.$().outerHeight(true)
-			};
-		} else if (this._oStyleData.lines.length > 0) {
-			return {
-				x: this._oStyleData.positionLeft, //this x-offset is browser-dependent
-				y: this._oStyleData.lines[0].offset.y,
-				width: this._oStyleData.lines[0].width,
-				height: this._oStyleData.lines[0].height * this._oStyleData.lines.length
-			};
+	GenericTile.prototype.getBoundingRects = function() {
+		var oPosition = this.$().position();
+		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact()) {
+			this._getStyleData();
+			var aRects = [];
+
+			for (var i = 0; i < this._oStyleData.lines.length; i++) {
+				aRects[i] = this._oStyleData.lines[i];
+
+				if (this._oStyleData.rtl) {
+					aRects[i].offset.x = this._oStyleData.availableWidth - aRects[i].width; //turn x-coordinate back around
+				}
+				aRects[i].offset.y += oPosition.top; //add style helper top to make coordinate relative to tile, instead of style helper
+			}
+			return aRects;
+		} else {
+			return [ {
+				offset: {
+					x: oPosition.left,
+					y: oPosition.top
+				},
+				width: this.$().width(),
+				height: this.$().height()
+			} ];
 		}
-		return {};
 	};
 
 	/**

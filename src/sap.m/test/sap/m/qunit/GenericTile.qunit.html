@@ -456,57 +456,6 @@
 		assert.equal(this.oGenericTile._oStyleData, null, "Style data has not been updated.");
 	});
 
-	QUnit.test("Function _getBoundingBox creates styleData when nothing exists yet", function(assert) {
-		//Arrange
-		this.oGenericTile._oStyleData = null;
-		sinon.spy(this.oGenericTile, "_getStyleData");
-
-		//Act
-		var oBoundingBox = this.oGenericTile._getBoundingBox();
-
-		//Assert
-		assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData has been called once.");
-	});
-
-	QUnit.test("Function _getBoundingBox returns object with necessary fields in cozy mode", function(assert) {
-		//Arrange
-		this.oGenericTile._isCompact.returns(false);
-
-		//Act
-		this.oGenericTile.invalidate();
-		sap.ui.getCore().applyChanges();
-		this.oGenericTile._oStyleData = {};
-		var oBoundingBox = this.oGenericTile._getBoundingBox();
-
-		//Assert
-		assert.ok(oBoundingBox.x >= 0, "The field 'x' is available.");
-		assert.ok(oBoundingBox.y >= 0, "The field 'y' is available.");
-		assert.ok(oBoundingBox.width >= 0, "The field 'width' is available.");
-		assert.ok(oBoundingBox.height >= 0, "The field 'height' is available.");
-	});
-
-	QUnit.test("Function _getBoundingBox returns object with necessary fields in compact mode", function(assert) {
-		//Arrange
-		var oStubGetPixelValue = sinon.stub(sap.m.GenericTileLineModeRenderer, "_getCSSPixelValue");
-		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(30);
-		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
-		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
-
-		//Act
-		this.oGenericTile.invalidate();
-		sap.ui.getCore().applyChanges();
-		var oBoundingBox = this.oGenericTile._getBoundingBox();
-
-		//Assert
-		assert.ok(oBoundingBox.x >= 0, "The field 'x' is available.");
-		assert.ok(oBoundingBox.y >= 0, "The field 'y' is available.");
-		assert.ok(oBoundingBox.width >= 0, "The field 'width' is available.");
-		assert.ok(oBoundingBox.height >= 0, "The field 'height' is available.");
-
-		//Cleanup
-		oStubGetPixelValue.restore();
-	});
-
 	QUnit.test("Hover style update on resize", function(assert) {
 		//Arrange
 		//Act
@@ -755,6 +704,106 @@
 		assert.equal(jQuery.sap.clearDelayedCall.firstCall.args[0], 100, "Correct first ID has been cleared.");
 		assert.equal(jQuery.sap.clearDelayedCall.secondCall.args[0], 200, "Correct second ID has been cleared.");
 		assert.deepEqual(this.oGenericTile._oAnimationEndCallIds, {}, "All IDs have been removed from the object.");
+	});
+
+	QUnit.module("Protected method getBoundingRects", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				state: sap.m.LoadState.Loaded,
+				subheader: "Expenses By Region",
+				header: "Comparative Annual Totals",
+				mode: sap.m.GenericTileMode.LineMode
+			});
+
+			//stub this function on order to not queue any updates which might influence the other tests
+			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+
+			this.oGenericTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("getBoundingRects in compact tile creates styleData when nothing exists yet", function(assert) {
+		//Arrange
+		this.oGenericTile._oStyleData = null;
+		sinon.spy(this.oGenericTile, "_getStyleData");
+		sinon.stub(this.oGenericTile, "_calculateStyleData").returns({
+			lines: []
+		});
+		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+
+		//Act
+		var aBoundingRects = this.oGenericTile.getBoundingRects();
+
+		//Assert
+		assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData has been called once.");
+	});
+
+	QUnit.test("getBoundingRects in cozy tile returns object with necessary fields in cozy mode", function(assert) {
+		//Arrange
+		sinon.stub(this.oGenericTile, "_isCompact").returns(false);
+
+		//Act
+		var aBoundingRects = this.oGenericTile.getBoundingRects();
+
+		//Assert
+		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
+		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
+		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
+		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
+	});
+
+	QUnit.test("getBoundingRects returns object with necessary fields in compact mode", function(assert) {
+		//Arrange
+		var oStubGetPixelValue = sinon.stub(sap.m.GenericTileLineModeRenderer, "_getCSSPixelValue");
+		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(30);
+		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
+		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
+		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+		var aBoundingRects = this.oGenericTile.getBoundingRects();
+
+		//Assert
+		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
+		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
+		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
+		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
+
+		//Cleanup
+		oStubGetPixelValue.restore();
+	});
+
+	QUnit.test("Correct offset in RTL", function() {
+		//Arrange
+		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+		this.oGenericTile._oStyleData = {
+			availableWidth: 1000,
+			rtl: true,
+			lines: [ {
+				offset: {
+					x: 100,
+					y: 100
+				},
+				width: 50
+			} ]
+		};
+		sinon.stub(this.oGenericTile, "_getStyleData");
+
+		//Act
+		var aBoundingRects = this.oGenericTile.getBoundingRects();
+
+		//Assert
+		assert.equal(aBoundingRects.length, 1, "One line has been returned.");
+		assert.equal(aBoundingRects[0].offset.x, 950, "Horizontal position has been converted from right to left.");
 	});
 
 	QUnit.module("Rendering tests for failing state", {
