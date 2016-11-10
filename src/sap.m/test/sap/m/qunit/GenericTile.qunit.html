@@ -298,6 +298,7 @@
 				mode: sap.m.GenericTileMode.LineMode
 			});
 			sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+			sinon.stub(this.oGenericTile, "_checkContentDensity");
 
 			//stub this function on order to not queue any updates which might influence the other tests
 			sinon.stub(this.oGenericTile, "_updateHoverStyle");
@@ -308,6 +309,7 @@
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.oGenericTile._updateHoverStyle.reset();
+			this.oGenericTile._checkContentDensity.reset();
 		},
 		afterEach: function() {
 			this.oGenericTile.destroy();
@@ -330,6 +332,36 @@
 		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found.");
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "Expenses By Region", "SubHeader was correct.");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+	});
+
+	QUnit.test("Tile attached interval timer after rendering", function(assert) {
+		//Arrange
+		sinon.spy(sap.ui.getCore(), "attachIntervalTimer");
+
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.ui.getCore().attachIntervalTimer.callCount, 1);
+
+		//Cleanup
+		sap.ui.getCore().attachIntervalTimer.restore();
+	});
+
+	QUnit.test("Tile is invalidated on content density change", function(assert) {
+		//Arrange
+		var done = assert.async();
+
+		//Act
+		this.oParent.$().addClass("sapUiSizeCompact");
+
+		jQuery.sap.delayedCall(250, null, function() {
+			//Assert
+			assert.equal(this.oGenericTile._checkContentDensity.callCount, 1, "Content density check has been executed.");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("All elements found in failed state", function(assert) {
@@ -428,6 +460,19 @@
 		oStubGetPixelValue.restore();
 	});
 
+	QUnit.test("_calculateStyleData returns null if no rendering was done", function(assert) {
+		//Arrange
+		var oTile = new sap.m.GenericTile({
+			mode: sap.m.GenericTileMode.LineMode
+		});
+
+		//Act
+		var oStyleData = oTile._calculateStyleData();
+
+		//Assert
+		assert.equal(oStyleData, null, "In case no rendering happened, this function returns null.");
+	});
+
 	QUnit.test("Function _getStyleData updates internal object on change", function(assert) {
 		//Arrange
 		var oStubCalculateStyleData = sinon.stub(this.oGenericTile, "_calculateStyleData").returns({ field: "value" });
@@ -457,13 +502,22 @@
 
 	QUnit.test("Hover style update on resize", function(assert) {
 		//Arrange
+		sinon.stub(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
+		var done = assert.async();
+
 		//Act
 		this.oParent.setWidth("500px");
 		this.oParent.invalidate();
 		sap.ui.getCore().applyChanges();
 
-		//Assert
-		assert.equal(this.oGenericTile._updateHoverStyle.callCount, 1, "Function _updateHoverStyle is called once.");
+		jQuery.sap.delayedCall(100, null, function() {
+			//Assert
+			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "Renderer function _updateHoverStyle is called once.");
+
+			//Cleanup
+			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("Hover style update of siblings on state change", function(assert) {
@@ -476,7 +530,7 @@
 			mode: sap.m.GenericTileMode.LineMode
 		});
 		this.oParent.addItem(oSiblingTile);
-		sinon.stub(oSiblingTile, "_isCompact").returns(true);
+		this.oParent.addStyleClass("sapUiSizeCompact");
 		sap.ui.getCore().applyChanges();
 
 		this.oGenericTile._updateHoverStyle.restore(); //restore stub in order to use spy
@@ -764,6 +818,7 @@
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
 		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+		jQuery("#qunit-fixture").addClass("sapUiSizeCompact");
 
 		//Act
 		this.oGenericTile.invalidate();
@@ -773,12 +828,13 @@
 		//Assert
 		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
 		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
-		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.ok(aBoundingRects[0].offset.y, "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 
 		//Cleanup
 		oStubGetPixelValue.restore();
+		jQuery("#qunit-fixture").removeClass("sapUiSizeCompact");
 	});
 
 	QUnit.test("Correct offset in RTL", function() {
