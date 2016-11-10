@@ -16,6 +16,7 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
 
@@ -41,9 +42,14 @@
 	});
 
 	QUnit.test("Icon rendered", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(this.oImageContent, "_setPointerOnImage");
+		//Act
 		this.oImageContent.setSrc("sap-icon://travel-expense");
 		sap.ui.getCore().applyChanges();
+		//Assert
 		assert.ok(jQuery.sap.domById("img-cnt-icon-image"), "Icon was rendered successfully");
+		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnImage has been called");
 	});
 
 	QUnit.module("Tooltip test", {
@@ -147,6 +153,7 @@
 		//Assert
 		assert.equal(this.oImageContent.$().attr("tabindex"), "0", "Attribute has been added successfully because press handler was available");
 		assert.ok(this.oImageContent.$().hasClass("sapMPointer"), "Class has been added successfully because press handler was available");
+		assert.ok(this.oImageContent.getAggregation("_content").hasStyleClass("sapMPointer"), "Class has been successfully added to the inner Image");
 	});
 
 	QUnit.test("Detach events", function(assert) {
@@ -157,6 +164,7 @@
 		//Assert
 		assert.notOk(this.oImageContent.$().attr("tabindex"), "Attribute has been removed successfully");
 		assert.notOk(this.oImageContent.$().hasClass("sapMPointer"), "Class has been removed successfully");
+		assert.notOk(this.oImageContent.getAggregation("_content").hasStyleClass("sapMPointer"), "Class has been successfully removed from the inner Image");
 	});
 </script>
 </head>
