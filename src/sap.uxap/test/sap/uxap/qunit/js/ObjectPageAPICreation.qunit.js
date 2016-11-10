@@ -232,6 +232,7 @@
 
 		assert.ok(oSelectedBtn, "anchorBar has selected button");
 		assert.strictEqual(oExpected.sSelectedTitle, oSelectedBtn.getText(), "section is selected in anchorBar");
+		assert.strictEqual(oExpected.oSelectedSection.getId(), oObjectPage.getSelectedSection(), "section is selected in objectPage");
 		assert.ok(oObjectPage.$().find("#" + oExpected.oSelectedSection.getId() + "*").length, "section is rendered");
 	}
 
@@ -252,13 +253,26 @@
 		}, this.iLoadingDelay);
 	});
 
-	QUnit.test("select another section", function (assert) {
+	QUnit.test("scrollTo another section", function (assert) {
 		//act
 		this.oObjectPage.scrollToSection(this.oSecondSection.getId(), 0, null, true);
 
 		var oExpected = {
 			oSelectedSection: this.oSecondSection,
 			sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
+		};
+
+		//check
+		sectionIsSelected(this.oObjectPage, assert, oExpected);
+	});
+
+	QUnit.test("select another section", function (assert) {
+		//act
+		this.oObjectPage.setSelectedSection(this.oFirstSection.getId());
+
+		var oExpected = {
+			oSelectedSection: this.oFirstSection,
+			sSelectedTitle: this.oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
 		};
 
 		//check
