@@ -89,6 +89,7 @@ sap.ui.define([
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 
 		var oModel = new JSONModel({
+			linkPressMap: {},
 			items: [],
 			indexOfMarkedTableItem: -1,
 			markedTableItem: null,
@@ -529,6 +530,7 @@ sap.ui.define([
 			columnKey: oItem.getColumnKey(),
 			visible: true,
 			text: oItem.getText(),
+			href: oItem.getHref(),
 			tooltip: oItem.getTooltip(),
 
 			originalIndex: iIndex,
@@ -541,6 +543,7 @@ sap.ui.define([
 			tableIndex: undefined
 		};
 
+		oModel.getData().linkPressMap[oItem.getText() + "---" + oItem.getHref()] = oItem.getPress();
 		oModel.getData().items.splice(iIndex, 0, oModelItem);
 	};
 
@@ -902,8 +905,16 @@ sap.ui.define([
 				templateShareable: false,
 				template: new sap.m.ColumnListItem({
 					cells: [
-						new sap.m.Text({
-							text: "{text}"
+						new sap.m.Link({
+							text: "{text}",
+							href: "{href}",
+							// target: "{target}",
+							press: function(oEvent) {
+								var fOnLinkPress = this.getModel("$sapmP13nSelectionPanel").getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
+								if (fOnLinkPress) {
+									fOnLinkPress(oEvent);
+								}
+							}
 						})
 					],
 					visible: "{visible}",
@@ -920,7 +931,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._createToolbar = function() {
-//		var oModel = this.getModel("$sapmP13nSelectionPanel");
+// var oModel = this.getModel("$sapmP13nSelectionPanel");
 		var that = this;
 // var oMoveDownButton = new sap.m.OverflowToolbarButton({
 // icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
@@ -931,10 +942,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Down");
-//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
-//		if (!oModelData.isMoveDownButtonEnabled) {
-//			oModelData.markedTableItem.focus();
-//		}
+// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// if (!oModelData.isMoveDownButtonEnabled) {
+// oModelData.markedTableItem.focus();
+// }
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -954,10 +965,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Up");
-//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
-//		if (!oModelData.isMoveUpButtonEnabled) {
-//			oModelData.markedTableItem.focus();
-//		}
+// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// if (!oModelData.isMoveUpButtonEnabled) {
+// oModelData.markedTableItem.focus();
+// }
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -977,10 +988,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Bottom");
-//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
-//		if (!oModelData.isMoveDownButtonEnabled) {
-//			oModelData.markedTableItem.focus();
-//		}
+// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// if (!oModelData.isMoveDownButtonEnabled) {
+// oModelData.markedTableItem.focus();
+// }
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
@@ -1000,10 +1011,10 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Top");
-//		var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
-//		if (!oModelData.isMoveUpButtonEnabled) {
-//			oModelData.markedTableItem.focus();
-//		}
+// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// if (!oModelData.isMoveUpButtonEnabled) {
+// oModelData.markedTableItem.focus();
+// }
 // },
 // layoutData: new sap.m.OverflowToolbarLayoutData({
 // moveToOverflow: true,
