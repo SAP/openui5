@@ -1,24 +1,7 @@
-/* ============================================= */
-/* CSS for control sap.m/ActionSheet.control     */
-/* BlueCrystal theme                             */
-/* ============================================= */
-.sapMActionSheetMixedButtons .sapMActionSheetButtonNoIcon .sapMBtnContent {
-	margin-left: 1.625rem;
-}
-
-.sapMActionSheetButton > .sapMBtnInner {
-	text-align: start;
-}
-
-html[data-sap-ui-browser^=ie] .sapMActionSheetButton > .sapMBtnInner,
-html[data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
-	text-align: left;
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetButton > .sapMBtnInner,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
-	text-align: right;
-}
+/* ================================== */
+/* CSS for control sap.m/ActionSheet  */
+/* BlueCrystal theme                  */
+/* ================================== */
 
 .sapMActionSheetButton > .sapMBtnInner.sapMBtnTransparent .sapUiIcon {
 	color: @sapUiButtonFooterTextColor;
@@ -28,31 +11,18 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 /* ====== BEGIN ====== */
 /*Style for ActionSheet shown as a dialog sliding in from bottom*/
 /* ====== ====== ===== */
-.sapMDialog.sapMActionSheetDialog {
-	background-color: transparent;
-	border-radius: 0;
-	box-shadow: none;
-	border: none;
-}
 
 .sapMDialog.sapMActionSheetDialog > section {
-	border-radius: 0;
 	background-color: @sapUiPageFooterBackground;
 }
 
 .sapMActionSheetDialogWithTitle > section {
-	box-shadow: 0px -20px 30px 2px fade(@sapUiDarkShadowTint, 15);
-}
-
-.sapMActionSheetDialog .sapMActionSheetButton {
-	width: 100%;
-	padding-left: 0.25rem;
-	padding-right: 0.25rem;
+	box-shadow: 0px -20px 30px 2px fade(@sapUiContentShadowColor, 15);
 }
 
 .sapMActionSheetDialog .sapMBtnInner {
 	color: @sapUiButtonFooterTextColor;
-	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
+	text-shadow: 0 -0.0625rem 0 fade(@sapUiContentShadowColor, 60);
 	box-sizing: border-box;
 	vertical-align: top;
 }
@@ -60,10 +30,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 .sapMActionSheetDialog .sapMBtnAccept > .sapMBtnInner,
 .sapMActionSheetDialog .sapMBtnReject > .sapMBtnInner {
 	border-bottom: none;
-}
-
-.sapMActionSheetDialog .sapMActionSheetButton.sapMActionSheetCancelButton > .sapMBtnInner {
-	text-align: center;
 }
 
 .sapMActionSheetDialog .sapMActionSheetButton.sapMActionSheetCancelButton > .sapMBtnInner {
@@ -77,29 +43,14 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 	background: transparent;
 	box-shadow: none;
 	color: @sapUiButtonFooterTextColor;
-	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
-}
-
-.sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
-	text-align: start;
-}
-
-html[data-sap-ui-browser^=ie] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
-html[data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
-	text-align: left;
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
-	text-align: right;
+	text-shadow: 0 -0.0625rem 0 fade(@sapUiContentShadowColor, 60);
 }
 
 .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
 	color: @sapUiButtonFooterTextColor;
-	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
-	font-size: 0.875rem;
-	margin: 0 1rem 0 1rem;
+	text-shadow: 0 -0.0625rem 0 fade(@sapUiContentShadowColor, 60);
 }
+
 /* ====== END ====== */
 /*Style for ActionSheet shown as a dialog sliding in from bottom*/
 /* ====== ====== ===== */
@@ -137,7 +88,7 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHea
 
 .sapMActionSheetPopover .sapMBtnInner {
 	color: @sapUiButtonFooterTextColor;
-	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
+	text-shadow: 0 -0.0625rem 0 fade(@sapUiContentShadowColor, 60);
 	box-sizing: border-box;
 	vertical-align: top;
 }
