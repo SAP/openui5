@@ -627,6 +627,18 @@
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier: margin inside table + cleanup selectors",
         "references": []
+      },
+      {
+        "id": "05ab80d90d2d0f0877163769a0a790e4b53095a6",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: context selector in the button caused focus to not appear in IE",
+        "references": []
+      },
+      {
+        "id": "15278ae2a01e6b43c6ecbf034dc1f63d16d6ec72",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeaderContent: fix placeholder icon representation",
+        "references": []
       }
     ]
   }

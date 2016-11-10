@@ -67,5 +67,22 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "565bfb4ffb0859546ea0fafbce94a767583228f6",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": []
+      },
+      {
+        "id": "3660102bbf1c226f19cf2ceae0b439e5664e3a93",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
   }
 }

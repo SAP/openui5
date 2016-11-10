@@ -233,5 +233,46 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "055f951ef2a088fda03b9ab97360d5506ef899d5",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "feb4f7b3569d75dc11dcd833e7af49e6d4193cfa",
+        "type": "FIX",
+        "text": "sap.ui.table.*: rowSelectionChange Event not triggered",
+        "references": []
+      },
+      {
+        "id": "2cfceef78d26f8fadc9c4c768f49e3100f81e3d6",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: reset scroll position to 0 when no scrollbar is visible",
+        "references": []
+      },
+      {
+        "id": "9b660d74823480945196f3ed0b6065a5e5eb36d4",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable/AnalyticalTable: Clear select all state before execute selectAll command",
+        "references": []
+      },
+      {
+        "id": "ec5b819a34ad5f11b5c2df40a033252430e5f3fa",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fix Row selection in SelectionMode \"Single\" and \"None\".",
+        "references": []
+      },
+      {
+        "id": "11245aede0f8a8ac782e150f599df6ee007d3e2d",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Screenreader Announcement of tree icon",
+        "references": []
+      }
+    ]
   }
 }

@@ -652,6 +652,12 @@
         "type": "FIX",
         "text": "sap.ui.table.*: Scrollbar appearence on mobile devices",
         "references": []
+      },
+      {
+        "id": "e89ca4f2ac72ad7f9dd1e6f3a304526874db20e0",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE for 1.38 and 1.40 fixed",
+        "references": []
       }
     ]
   }

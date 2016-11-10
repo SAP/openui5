@@ -1276,5 +1276,148 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "8bf145fdcae3e8f0b258309fb982bb1dc8008f1f",
+        "type": "FIX",
+        "text": "m.DatePicker: OnChange compares previous and old value correctly",
+        "references": []
+      },
+      {
+        "id": "3eae1bfed63f9870f16e8a1170124b860593a72f",
+        "type": "FIX",
+        "text": "m.DatePicker: The picker calendar value is updated correctly after changes in the input",
+        "references": []
+      },
+      {
+        "id": "22e04f9555963d78dca08e5b28e4429479642aac",
+        "type": "FIX",
+        "text": "sap.m.Button: Button name is read when associated with Label",
+        "references": []
+      },
+      {
+        "id": "af5900994fc9c152f89f1ce10c079ba696c99954",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE fixed",
+        "references": []
+      },
+      {
+        "id": "454c595537a80607d93428ae2fffce9f46d25953",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: Time part is visually aligned on phones",
+        "references": []
+      },
+      {
+        "id": "adf4035a13721a7bebc627bc6d9c85772035af5b",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Initial focus issue fixed",
+        "references": []
+      },
+      {
+        "id": "bb5386db9342736a39d4edadbf53b33dac095357",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
+        "references": []
+      },
+      {
+        "id": "61b4f0a6daf31f377e41b44698b58aeed653d6eb",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Show full subheader in tooltip if truncated on tile",
+        "references": []
+      },
+      {
+        "id": "55148d18a66ecb4c731be8b5c10c4d79db61c385",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Expanding is correct if no tab is selected",
+        "references": []
+      },
+      {
+        "id": "6749bf7766c75c7d035eca1d0163aad6c7fe0823",
+        "type": "FIX",
+        "text": "sap.m.Input:  liveChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "f7eb830cc6e2e368e52ab3872e8b0c8ffc794df1",
+        "type": "FIX",
+        "text": "sap.m.Input:  suggestionItemSelected event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "4db55e4d5cb55c7d95cd9a66af72f3e92bf9dec1",
+        "type": "FIX",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
+        "references": []
+      },
+      {
+        "id": "167c4b8e08df1a68c29c683f9c245987d670e874",
+        "type": "FIX",
+        "text": "sap.m.Input: liveChange is fired when navigate through suggestions",
+        "references": []
+      },
+      {
+        "id": "b54b82974bfb3072748749e56bddfa755ac22832",
+        "type": "FIX",
+        "text": "sap.m.Link hand cursor not always visible fixed",
+        "references": []
+      },
+      {
+        "id": "4c56aa7a152b721fa3500da95bbdee99746acd04",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Returning the focus to the input after rendering the list removed",
+        "references": []
+      },
+      {
+        "id": "6fa5f216ab550a1aae9fb8aa78a7099faaf3c044",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: ARIA support is now correct",
+        "references": []
+      },
+      {
+        "id": "984e6cda17aefc16ba051c3433d59d6bc4b58787",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Belize theme in compact mode issue fixed",
+        "references": []
+      },
+      {
+        "id": "adb23abc3b69adea615f20b112881b52cc1c9b16",
+        "type": "FIX",
+        "text": "sap.m.Panel - IN RTL expand arrow was pointing top, it points bottom now",
+        "references": []
+      },
+      {
+        "id": "92767a0ce2e3cbcf114188241d6aa845d5de9d54",
+        "type": "FIX",
+        "text": "sap.m.Popover - Popover has incorrect positioning on iPad when it\u0027s on the bottom of the page",
+        "references": []
+      },
+      {
+        "id": "2a3524512a1ba225a24b13579c47bb82d3c675e4",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Content size is now adapted correctly",
+        "references": []
+      },
+      {
+        "id": "e9a1925bfa73704bf5f4b469a754aababdaf65a8",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "references": []
+      },
+      {
+        "id": "47bcac170acfcf6538e991b38a498ade858466dc",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Focus of \"Select All\" is fully visible",
+        "references": []
+      },
+      {
+        "id": "23cc1d4cc0338cecfd994da74b94d3f3c245e0a9",
+        "type": "FIX",
+        "text": "m.TimePicker: Updated jsdoc of precision properties introduced in 1.40",
+        "references": []
+      }
+    ]
   }
 }

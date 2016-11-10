@@ -1173,6 +1173,18 @@
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier: margin inside table + cleanup selectors",
         "references": []
+      },
+      {
+        "id": "b4f6bb64e77729d02290996b59a1b2fbd906bf42",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE for 1.38 and 1.40 fixed",
+        "references": []
+      },
+      {
+        "id": "86b0416b109cf6d1317a64937c8c89cb7e7feb98",
+        "type": "FIX",
+        "text": "sap.m.Popover compact mode arrow style",
+        "references": []
       }
     ]
   }

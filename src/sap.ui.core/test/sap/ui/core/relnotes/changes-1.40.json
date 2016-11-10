@@ -3476,6 +3476,30 @@
         "type": "FIX",
         "text": "v2.ODataModel: bindElement status code 204",
         "references": []
+      },
+      {
+        "id": "56d2852c66c3f4461e6909ccd4d1714f4ab190c0",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "bfbe024a128d5de94ed16639ddc3eeb76f372693",
+        "type": "FIX",
+        "text": "LocaleData: Fixed getCombinedPattern for different calendar type",
+        "references": []
+      },
+      {
+        "id": "2b70e568a50e0ed037beb7a2f36e50db06516bb3",
+        "type": "FIX",
+        "text": "OPA was sometimes failing to start an IFrame in firefox when mockserver was present",
+        "references": []
+      },
+      {
+        "id": "14dd06f9c3c458fc9d3b2a834cb3f95ac281ce76",
+        "type": "FIX",
+        "text": "jQuery.sap.global: Added fix for Firefox sync/async XHR issue",
+        "references": []
       }
     ]
   }

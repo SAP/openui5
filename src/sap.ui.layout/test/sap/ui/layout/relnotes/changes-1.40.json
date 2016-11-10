@@ -456,5 +456,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "b22c666cf229e9a1d821a45c69c10b3597d95adc",
+        "type": "FIX",
+        "text": "Temporarily disable change handler tests for layout",
+        "references": []
+      }
+    ]
   }
 }
