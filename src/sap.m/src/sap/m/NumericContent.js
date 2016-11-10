@@ -250,9 +250,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.internet_explorer) {
-			this.$().focus();
-		}
 		this.firePress();
 	};
 
