@@ -2254,6 +2254,58 @@
 				oIconTabBar.destroy();
 			});
 
+			test("tab reordering", function() {
+
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					enableTabReordering: true,
+					items: [
+						new sap.m.IconTabFilter({
+							id: 'tabReorder1',
+							text: "First tab",
+							count: "3",
+							content: [
+								new sap.m.Button({ text: "Text 1" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							id: 'tabReorder2',
+							text: "Second tab",
+							count: "1",
+							content: [
+								new sap.m.Button({ text: "Text 2" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							id: 'tabReorder3',
+							text: "Third tab",
+							count: "Count",
+							content: [
+								new sap.m.Button({ text: "Text 3" })
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab = jQuery('#tabReorder1');
+				var mOffset = $tab.offset();
+
+				ok (oIconTabBar.getItems()[0].getText() == 'First tab', 'First Tab is "First Tab"');
+
+				qutils.triggerMouseEvent($tab, "mousedown", 0, 0, mOffset.left + 10, mOffset.top + 10);
+				qutils.triggerMouseEvent($tab, "mousemove", 0, 0, mOffset.left + 200, mOffset.top + 10);
+				qutils.triggerMouseEvent($tab, "mouseup");
+
+				ok (oIconTabBar.getItems()[0].getText() != 'First tab', 'First Tab is not "First Tab"');
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			function getIconTabBarWithOverflowList() {
 				var aTabItems = [];
 				for (var i = 0; i < 30; i++) {
