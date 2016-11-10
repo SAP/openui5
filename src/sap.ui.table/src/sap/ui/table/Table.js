@@ -1032,6 +1032,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.onAfterRendering = function(oEvent) {
 		if (oEvent && oEvent.isMarked("insertTableRows")) {
 			this._getScrollExtension().updateVSbMaxHeight();
+			this._updateVSbRange();
 			return;
 		}
 
