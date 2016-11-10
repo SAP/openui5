@@ -1556,10 +1556,12 @@
 		});
 
 		test("Navigation (year picker) - the calendar should show the same calendar week in the picked year", function(){
+			/**
+			 * The initial start date of PlanningCalendar in this test is 1st of September 2017 (CW#35)
+			 */
+
 			//act
-			/* 1st of September is calendar week #35
-			 CW#35 2017 is 28 August - 03 September*/
-			this._switchToYear(this.oPC2, 2017);
+			this._switchToYear(this.oPC2, 2017); //CW#35 28 August 2017 - 3 September 2017
 			//assert
 			this._assertDatesAreVisible([
 						new Date(2017, 7, 28),
@@ -1572,7 +1574,7 @@
 					this.oPC2, "Year 2016->2017");
 
 			//act
-			this._switchToYear(this.oPC2, 2015); //CW#35 24 August - 30 August
+			this._switchToYear(this.oPC2, 2015); //CW#35 24 August 2015 - 30 August 2015
 			//aseert
 			this._assertDatesAreVisible([
 						new Date(2015, 7, 24),
@@ -1583,6 +1585,268 @@
 						new Date(2015, 7, 29),
 						new Date(2015, 7, 30)],
 					this.oPC2, "Year 2017->2015");
+
+			/**
+			 * These are some corner case dates for week number calculation (based on first day of week)
+			 * =============================================================================================
+			 * |   year   |   week number   |   week day index (ISO8601)  |   Expected first date of week  |
+			 * =============================================================================================
+			 * |                                    Locale en-GB                                           |
+			 * =============================================================================================
+			 * |   2007   |       52        |             1               |        24 December 2007        |
+			 * |   2006   |       52        |             1               |        25 December 2006        |
+			 * |   2010   |       52        |             1               |        27 December 2010        |
+			 * |   2008   |       52        |             1               |        22 December 2006        |
+			 * |   2007   |       52        |             1               |        24 December 2006        |
+			 * |   2015   |       53        |             1               |        28 December 2015        |
+			 * |   2009   |       53        |             1               |        28 December 2009        |
+			 * |   2004   |       53        |             1               |        27 December 2004        |
+			 * |   1999   |       52        |             1               |        27 December 1999        |
+			 * =============================================================================================
+			 * |                                    Locale en-US                                           |
+			 * =============================================================================================
+			 * |   2008   |       52        |             1               |        21 December 2006        |
+			 * |   2006   |       52        |             1               |        24 December 2006        |
+			 * |   2011   |       52        |             1               |        18 December 2006        |
+			 * |   2007   |       52        |             1               |        23 December 2006        |
+			 * |   2011   |       53        |             1               |        25 December 2006        |
+			 * |   2005   |       53        |             1               |        25 December 2006        |
+			 * |   2000   |       53        |             1               |        24 December 2006        |
+			 * |   2002   |       52        |             1               |        22 December 2006        |
+			 */
+			//act
+			this.oPC2.setStartDate(new Date(2007, 11, 30)); //CW#52 24 December 2007 - 30 December 2007
+			sap.ui.getCore().applyChanges();
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2007, 11, 24),
+						new Date(2007, 11, 25),
+						new Date(2007, 11, 26),
+						new Date(2007, 11, 27),
+						new Date(2007, 11, 28),
+						new Date(2007, 11, 29),
+						new Date(2007, 11, 30)],
+					this.oPC2, "Year 2015->2007 (setter)");
+			//act
+			this._switchToYear(this.oPC2, 2006); //CW#52 25 December 2006 - 31 December 2006
+			sap.ui.getCore().applyChanges();
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2006, 11, 25),
+						new Date(2006, 11, 26),
+						new Date(2006, 11, 27),
+						new Date(2006, 11, 28),
+						new Date(2006, 11, 29),
+						new Date(2006, 11, 30),
+						new Date(2006, 11, 31)],
+					this.oPC2, "Year 2007->2006");
+
+			//act
+			this._switchToYear(this.oPC2, 2010); //CW#52 27 December 2010 - 2 January 2011
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2010, 11, 27),
+						new Date(2010, 11, 28),
+						new Date(2010, 11, 29),
+						new Date(2010, 11, 30),
+						new Date(2010, 11, 31),
+						new Date(2011, 0, 1),
+						new Date(2011, 0, 2)],
+					this.oPC2, "Year 2006->2010");
+
+			//act
+			this._switchToYear(this.oPC2, 2008); //CW#52 22 December 2008 - 28 December 2008
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2008, 11, 22),
+						new Date(2008, 11, 23),
+						new Date(2008, 11, 24),
+						new Date(2008, 11, 25),
+						new Date(2008, 11, 26),
+						new Date(2008, 11, 27),
+						new Date(2008, 11, 28)],
+					this.oPC2, "Year 2010->2008");
+
+			//act
+			this._switchToYear(this.oPC2, 2007); //CW#52 24 December 2007 - 30 December 2007
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2007, 11, 24),
+						new Date(2007, 11, 25),
+						new Date(2007, 11, 26),
+						new Date(2007, 11, 27),
+						new Date(2007, 11, 28),
+						new Date(2007, 11, 29),
+						new Date(2007, 11, 30)],
+					this.oPC2, "Year 2008->2007");
+
+			//act
+			this.oPC2.setStartDate(new Date(2015, 11, 30)); //CW#53 28 December 2015 - 3 January 2016
+			sap.ui.getCore().applyChanges();
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2015, 11, 28),
+						new Date(2015, 11, 29),
+						new Date(2015, 11, 30),
+						new Date(2015, 11, 31),
+						new Date(2016, 0, 1),
+						new Date(2016, 0, 2),
+						new Date(2016, 0, 3)],
+					this.oPC2, "Year 2007->2015 (setter): Navigate to CW53 of 2015");
+
+			//act
+			this._switchToYear(this.oPC2, 2009); //CW#53 28 December 2009 - 3 January 2010
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2009, 11, 28),
+						new Date(2009, 11, 29),
+						new Date(2009, 11, 30),
+						new Date(2009, 11, 31),
+						new Date(2010, 0, 1),
+						new Date(2010, 0, 2),
+						new Date(2010, 0, 3)],
+					this.oPC2, "Year 2015->2009");
+
+			//act
+			this._switchToYear(this.oPC2, 2004); //CW#53 27 December 2004 - 2 January 2005
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2004, 11, 27),
+						new Date(2004, 11, 28),
+						new Date(2004, 11, 29),
+						new Date(2004, 11, 30),
+						new Date(2004, 11, 31),
+						new Date(2005, 0, 1),
+						new Date(2005, 0, 2)],
+					this.oPC2, "Year 2009->2004");
+
+			//Switch from 53rd week to a year that don't have 53rd week in it
+			this._switchToYear(this.oPC2, 1999); //CW#52 27 December 1999 - 2 January 2000
+			//assert
+			this._assertDatesAreVisible([
+						new Date(1999, 11, 27),
+						new Date(1999, 11, 28),
+						new Date(1999, 11, 29),
+						new Date(1999, 11, 30),
+						new Date(1999, 11, 31),
+						new Date(2000, 0, 1),
+						new Date(2000, 0, 2)],
+					this.oPC2, "Year 2004->1999 : navigation from 53rd week to year that don't have 53rd week in it");
+
+			//Temporary changing the locale to 'en-US'
+			sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+			/**
+			 * Changing the locale for the same period (27 Dec 1999 - 02 Jan 2000) results in a week shift
+			 * so we are now in the first week rather than the 52nd and thus we need to align it
+			 */
+			this.oPC2.setStartDate(new Date(this.oPC2.getStartDate().setDate(25)));
+			sap.ui.getCore().applyChanges();
+			//act
+			this._switchToYear(this.oPC2, 2008); //CW#52 21 December 2008 - 27 December 2008
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2008, 11, 21),
+						new Date(2008, 11, 22),
+						new Date(2008, 11, 23),
+						new Date(2008, 11, 24),
+						new Date(2008, 11, 25),
+						new Date(2008, 11, 26),
+						new Date(2008, 11, 27)],
+					this.oPC2, "Year 2007->2008 (en-US)");
+
+			//act
+			this._switchToYear(this.oPC2, 2006); //CW#52 24 December 2006 - 30 December 2006
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2006, 11, 24),
+						new Date(2006, 11, 25),
+						new Date(2006, 11, 26),
+						new Date(2006, 11, 27),
+						new Date(2006, 11, 28),
+						new Date(2006, 11, 29),
+						new Date(2006, 11, 30)],
+					this.oPC2, "Year 2008->2006 (en-US)");
+
+			//act
+			this._switchToYear(this.oPC2, 2011); //CW#52 18 December 2011 - 24 December 2011
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2011, 11, 18),
+						new Date(2011, 11, 19),
+						new Date(2011, 11, 20),
+						new Date(2011, 11, 21),
+						new Date(2011, 11, 22),
+						new Date(2011, 11, 23),
+						new Date(2011, 11, 24)],
+					this.oPC2, "Year 2006->2011 (en-US)");
+
+			//act
+			this._switchToYear(this.oPC2, 2007); //CW#52 23 December 2007 - 29 December 2007
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2007, 11, 23),
+						new Date(2007, 11, 24),
+						new Date(2007, 11, 25),
+						new Date(2007, 11, 26),
+						new Date(2007, 11, 27),
+						new Date(2007, 11, 28),
+						new Date(2007, 11, 29)],
+					this.oPC2, "Year 2011->2007 (en-US)");
+
+			//act
+			this.oPC2.setStartDate(new Date(2011, 11, 27)); //CW#53 25 December 2011 - 31 December 2011
+			sap.ui.getCore().applyChanges();
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2011, 11, 25),
+						new Date(2011, 11, 26),
+						new Date(2011, 11, 27),
+						new Date(2011, 11, 28),
+						new Date(2011, 11, 29),
+						new Date(2011, 11, 30),
+						new Date(2011, 11, 31)],
+					this.oPC2, "Year 2007->2011 (en-US) (setter): Navigate to CW53 of 2011");
+
+			//act
+			this._switchToYear(this.oPC2, 2005); //CW#53 25 December 2005 - 31 December 2005
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2005, 11, 25),
+						new Date(2005, 11, 26),
+						new Date(2005, 11, 27),
+						new Date(2005, 11, 28),
+						new Date(2005, 11, 29),
+						new Date(2005, 11, 30),
+						new Date(2005, 11, 31)],
+					this.oPC2, "Year 2011->2005 (en-US)");
+
+			//act
+			this._switchToYear(this.oPC2, 2000); //CW#53 24 December 2000 - 30 December 2000
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2000, 11, 24),
+						new Date(2000, 11, 25),
+						new Date(2000, 11, 26),
+						new Date(2000, 11, 27),
+						new Date(2000, 11, 28),
+						new Date(2000, 11, 29),
+						new Date(2000, 11, 30)],
+					this.oPC2, "Year 2005->2000 (en-US)");
+
+			//Switch from 53rd week to a year that don't have 53rd week in it
+			this._switchToYear(this.oPC2, 2002); //CW#52 22 December 2002 - 28 December 2002
+			//assert
+			this._assertDatesAreVisible([
+						new Date(2002, 11, 22),
+						new Date(2002, 11, 23),
+						new Date(2002, 11, 24),
+						new Date(2002, 11, 25),
+						new Date(2002, 11, 26),
+						new Date(2002, 11, 27),
+						new Date(2002, 11, 28)],
+					this.oPC2, "Year 2000->2002 (en-US): navigation from 53rd week to year that don't have 53rd week in it");
+			//restoring locale to en-GB
+			sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
 		});
 
 		test("'Today' button should be disabled when current day is visible", function() {
