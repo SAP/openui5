@@ -2026,6 +2026,12 @@
         "type": "FIX",
         "text": "sap.m.WizardProgressNavigator: aria-disabled attribute should not be placed for previous active step",
         "references": []
+      },
+      {
+        "id": "9f6678728986068890c91efe954cb39042362b16",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: aria-disabled attribute should not be placed for previous active step",
+        "references": []
       }
     ]
   },
