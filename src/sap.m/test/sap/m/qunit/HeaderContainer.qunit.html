@@ -320,6 +320,53 @@ jQuery.sap.initMobile();
 			assert.equal(this.oHeaderContainer._oArrowNext.getType(), "Transparent", "Next button is transparent");
 		});
 
+		QUnit.module("General focus issues", {
+			afterEach : function () {
+				this.oHeaderContainer.destroy();
+				this.oHeaderContainer = null;
+			}
+		});
+
+		QUnit.test("FocusAgain Event of ItemNavigation on IE", function(assert) {
+			//Arrange
+			sap.ui.Device.browser.msie = true;
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				content : [
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout()
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
+			sap.ui.getCore().applyChanges();
+			//Act
+			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
+			//Assert
+			assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("FocusAgain"), "Event handler for Event FocusAgain has been attached on Msie.");
+			assert.equal(this.oHeaderContainer._handleFocusAgain.called, true,  "FocusAgain Event of ItemNavigation is run on Msie.");
+		});
+
+		QUnit.test("FocusAgain Event of ItemNavigation on Edge", function(assert) {
+			//Arrange
+			sap.ui.Device.browser.edge = true;
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				content : [
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout()
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
+			sap.ui.getCore().applyChanges();
+			//Act
+			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
+			//Assert
+			assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("FocusAgain"), "Event handler for Event FocusAgain has been attached on Edge.");
+			assert.equal(this.oHeaderContainer._handleFocusAgain.called, true,  "FocusAgain Event of ItemNavigation is run on Edge.");
+		});
+
 	} //End of sap.ui.Device.system.desktop
 
 	QUnit.module("Padding removed when scrolling to begin and end", {
