@@ -162,10 +162,11 @@ sap.ui.define([
 			// Take over columnsItem data
 			oModelItem.persistentIndex = oColumnsItem.getIndex();
 			oModelItem.persistentSelected = oColumnsItem.getVisible();
-			// Sort the table items only by persistentIndex
+			// 1. Sort the table items only by persistentIndex
 			this._sortModelItemsByPersistentIndex(oData.items);
-			// Re-Index only the tableIndex
-			this._reindexModelItemsByTableIndex(oData);
+			// 2. Re-Index only the tableIndex
+			this._updateModelItemsTableIndex(oData);
+			this._updateCounts(oData);
 		}, this);
 		oModel.refresh();
 
@@ -201,10 +202,11 @@ sap.ui.define([
 		this.addAggregation("items", oItem);
 		// Take over item data into model
 		this._includeModelItem(oItem, -1);
-		// Sort the table items when the item has been added programmatically (Note: columnsItems could be already existing)
+		// 1. Sort the table items when the item has been added programmatically (Note: columnsItems could be already existing)
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index the tableIndex
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index the tableIndex
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		return this;
 	};
 
@@ -215,10 +217,11 @@ sap.ui.define([
 		this.insertAggregation("items", oItem, iIndex);
 		// Take over item data into model
 		this._includeModelItem(oItem, iIndex);
-		// Sort the table items when the item has been added programmatically (Note: columnsItems could be already existing)
+		// 1. Sort the table items when the item has been added programmatically (Note: columnsItems could be already existing)
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index the tableIndex
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index the tableIndex
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		return this;
 	};
 
@@ -230,10 +233,11 @@ sap.ui.define([
 
 			// Remove item data from model
 			oModel.getData().items.splice(iIndex, 1);
-			// Sort the table items when the item has been removed programmatically (Note: columnsItems could be already existing)
+			// 1. Sort the table items when the item has been removed programmatically (Note: columnsItems could be already existing)
 			this._sortModelItemsByPersistentIndex(oData.items);
-			// Re-Index the tableIndex
-			this._reindexModelItemsByTableIndex(oData);
+			// 2. Re-Index the tableIndex
+			this._updateModelItemsTableIndex(oData);
+			this._updateCounts(oData);
 		}
 		oItem = this.removeAggregation("items", oItem);
 		return oItem;
@@ -270,10 +274,11 @@ sap.ui.define([
 		oModelItem.persistentIndex = oColumnsItem.getIndex();
 		oModelItem.persistentSelected = oColumnsItem.getVisible();
 		oModelItem.persistentWidth = oColumnsItem.getWidth();
-		// Sort the table only by persistentIndex
+		// 1. Sort the table only by persistentIndex
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index only the tableIndex
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index only the tableIndex
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		return this;
 	};
 
@@ -290,10 +295,11 @@ sap.ui.define([
 		oModelItem.persistentIndex = oColumnsItem.getIndex();
 		oModelItem.persistentSelected = oColumnsItem.getVisible();
 		oModelItem.persistentWidth = oColumnsItem.getWidth();
-		// Sort the table only by persistentIndex
+		// 1. Sort the table only by persistentIndex
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index only the tableIndex
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index only the tableIndex
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		return this;
 	};
 
@@ -310,10 +316,11 @@ sap.ui.define([
 		oModelItem.persistentIndex = -1;
 		oModelItem.persistentSelected = undefined;
 		oModelItem.persistentWidth = undefined;
-		// Sort the table items when the columnsItem has been removed programmatically
+		// 1. Sort the table items when the columnsItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		return oColumnsItem;
 	};
 
@@ -331,10 +338,11 @@ sap.ui.define([
 			oModelItem.persistentSelected = undefined;
 			oModelItem.persistentWidth = undefined;
 		}, this);
-		// Sort the table items when the columnsItem has been removed programmatically
+		// 1. Sort the table items when the columnsItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		var aColumnsItems = this.removeAllAggregation("columnsItems");
 		return aColumnsItems;
 	};
@@ -353,10 +361,11 @@ sap.ui.define([
 			oModelItem.persistentSelected = undefined;
 			oModelItem.persistentWidth = undefined;
 		}, this);
-		// Sort the table items when the columnsItem has been removed programmatically
+		// 1. Sort the table items when the columnsItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-		// Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._reindexModelItemsByTableIndex(oData);
+		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		this.destroyAggregation("columnsItems");
 		return this;
 	};
@@ -565,22 +574,10 @@ sap.ui.define([
 
 		// Do not sort after user interaction as the table should not be sorted once selected items has been rendered
 
-// // Re-Index only the persistentIndex after user interaction
-// this._reindexModelItemsByPersistentIndex(oData);
-// oModel.refresh();
-		// Check whether the 'persistentIndex' should be re-indexed or not
-		var oModelItem = this._getModelItemByTableItem(oTableItem);
-		var aSelectedModelItems = this._getSelectedModelItems();
-		var iIndex = aSelectedModelItems.indexOf(oModelItem);
-		aSelectedModelItems.splice(iIndex, 1);
-		var oLastSelectedModelItem = aSelectedModelItems.slice(-1)[0];
-
-		if (oModelItem.persistentSelected && oLastSelectedModelItem && oModelItem.originalIndex < oLastSelectedModelItem.originalIndex) {
-			this._reindexModelItemsByPersistentIndex(oData);
-			oModel.refresh();
-		} else {
-			oModelItem.persistentIndex = oModelItem.persistentSelected ? oModelItem.originalIndex : -1;
-		}
+		// Re-Index only the persistentIndex after user interaction
+		this._updateModelItemsPersistentIndex(oData);
+		this._updateCounts(oData);
+		oModel.refresh();
 
 		this._notifyChange();
 	};
@@ -699,7 +696,9 @@ sap.ui.define([
 		// Do not sort after user action as the table should not be sorted once selected items has been rendered
 
 		// Re-Index the persistentIndex and tableIndex
-		this._reindexModelItemsByPersistentIndexAndTableIndex(oData);
+		this._updateModelItemsPersistentIndex(oData);
+		this._updateModelItemsTableIndex(oData);
+		this._updateCounts(oData);
 		oModel.refresh();
 
 		return true;
@@ -763,32 +762,22 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	P13nSelectionPanel.prototype._reindexModelItemsByPersistentIndexAndTableIndex = function(oData) {
-		var iPersistentIndex = -1;
-		oData.countOfSelectedItems = 0;
-		oData.countOfItems = 0;
+	P13nSelectionPanel.prototype._updateModelItemsTableIndex = function(oData) {
 		oData.items.forEach(function(oModelItem, iTableIndex) {
-			oModelItem.persistentIndex = -1;
-			if (oModelItem.persistentSelected) {
-				oData.countOfSelectedItems++;
-				iPersistentIndex++;
-				oModelItem.persistentIndex = iPersistentIndex;
-			}
 			oModelItem.tableIndex = iTableIndex;
-			oData.countOfItems++;
 		});
 	};
 
 	/**
+	 * Updates 'persistentIndex' of model items.
+	 *
 	 * @private
 	 */
-	P13nSelectionPanel.prototype._reindexModelItemsByPersistentIndex = function(oData) {
+	P13nSelectionPanel.prototype._updateModelItemsPersistentIndex = function(oData) {
 		var iPersistentIndex = -1;
-		oData.countOfSelectedItems = 0;
 		oData.items.forEach(function(oModelItem) {
 			oModelItem.persistentIndex = -1;
 			if (oModelItem.persistentSelected) {
-				oData.countOfSelectedItems++;
 				iPersistentIndex++;
 				oModelItem.persistentIndex = iPersistentIndex;
 			}
@@ -796,18 +785,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates count of selected items.
+	 *
 	 * @private
 	 */
-	P13nSelectionPanel.prototype._reindexModelItemsByTableIndex = function(oData) {
-// oData.countOfSelectedItems = 0;
-// oData.countOfItems = 0;
-// oData.items.forEach(function(oModelItem, iTableIndex) {
-// oModelItem.tableIndex = iTableIndex;
-// oData.countOfItems++;
-// if (oModelItem.persistentSelected) {
-// oData.countOfSelectedItems++;
-// }
-// });
+	P13nSelectionPanel.prototype._updateCounts = function(oData) {
+		oData.countOfSelectedItems = 0;
+		oData.countOfItems = 0;
+		oData.items.forEach(function(oModelItem) {
+			oData.countOfItems++;
+			if (oModelItem.persistentSelected) {
+				oData.countOfSelectedItems++;
+			}
+		});
 	};
 
 	/**
