@@ -82,9 +82,9 @@ sap.ui.define([
 	// ----------------------- Overwrite Method -----------------
 
 	P13nSelectionPanel.prototype.init = function() {
-		this.setType(sap.m.P13nPanelType.selection);
-
 		var that = this;
+		this._iLiveChangeTimer = 0;
+		this._iSearchTimer = 0;
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 
@@ -93,8 +93,8 @@ sap.ui.define([
 			items: [],
 			indexOfMarkedTableItem: -1,
 			markedTableItem: null,
-// isMoveDownButtonEnabled: false,
-// isMoveUpButtonEnabled: false,
+			// isMoveDownButtonEnabled: false,
+			// isMoveUpButtonEnabled: false,
 			showOnlySelectedItems: false,
 			countOfSelectedItems: 0,
 			countOfItems: 0
@@ -102,6 +102,8 @@ sap.ui.define([
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapmP13nSelectionPanel");
+
+		this.setType(sap.m.P13nPanelType.selection);
 
 		this._createTable();
 		this._createToolbar();
@@ -150,7 +152,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.onBeforeRendering = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		// Synchronize columnsItems and items
@@ -179,13 +181,13 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.onAfterRendering = function() {
-		var that = this, iLiveChangeTimer = 0;
+		var that = this;
 
 		// adapt scroll-container very first time to the right size of the browser
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
-			window.clearTimeout(iLiveChangeTimer);
-			iLiveChangeTimer = window.setTimeout(function() {
+			window.clearTimeout(this._iLiveChangeTimer);
+			this._iLiveChangeTimer = window.setTimeout(function() {
 				that._fnHandleResize();
 
 // // following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
@@ -197,7 +199,7 @@ sap.ui.define([
 	// ----------------------- Overwrite Methods of Item Aggregation ----------------------
 
 	P13nSelectionPanel.prototype.addItem = function(oItem) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		this.addAggregation("items", oItem);
@@ -212,7 +214,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.insertItem = function(oItem, iIndex) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		this.insertAggregation("items", oItem, iIndex);
@@ -229,7 +231,7 @@ sap.ui.define([
 	P13nSelectionPanel.prototype.removeItem = function(oItem) {
 		var iIndex = this.indexOfItem(oItem);
 		if (iIndex > -1) {
-			var oModel = this.getModel("$sapmP13nSelectionPanel");
+			var oModel = this._getInternalModel();
 			var oData = oModel.getData();
 
 			// Remove item data from model
@@ -245,7 +247,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.removeAllItems = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var aItems = this.removeAllAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
@@ -253,7 +255,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.destroyItems = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		this.destroyAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
@@ -263,7 +265,7 @@ sap.ui.define([
 // ----------------------- Overwrite Methods of ColumnsItem Aggregation ---------------------
 
 	P13nSelectionPanel.prototype.addColumnsItem = function(oColumnsItem) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		this.addAggregation("columnsItems", oColumnsItem);
@@ -284,7 +286,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.insertColumnsItem = function(oColumnsItem, iIndex) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
@@ -305,7 +307,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.removeColumnsItem = function(oColumnsItem) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
@@ -326,7 +328,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.removeAllColumnsItems = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		// Remove columnsItem data
@@ -349,7 +351,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype.destroyColumnsItems = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 
 		// Remove columnsItem data
@@ -389,9 +391,12 @@ sap.ui.define([
 		this._oTable = null;
 
 		// destroy model and its data
-		if (this.getModel("$sapmP13nSelectionPanel")) {
-			this.getModel("$sapmP13nSelectionPanel").destroy();
+		if (this._getInternalModel()) {
+			this._getInternalModel().destroy();
 		}
+
+		window.clearTimeout(this._iLiveChangeTimer);
+		window.clearTimeout(this._iSearchTimer);
 	};
 
 	// ----------------------- Private Methods -----------------------------------------
@@ -400,7 +405,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._syncModel2Panel = function() {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 
 		// ColumnsItems
 		oData.items.forEach(function(oModelItem) {
@@ -432,7 +437,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._moveMarkedTableItem = function(sDirection) {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 		if (!oData.markedTableItem || oData.indexOfMarkedTableItem < 0) {
 			// No table item is marked
 			return;
@@ -474,7 +479,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._filterModelItemsBySearchText = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var sSearchText = this._getSearchText();
 
 		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
@@ -528,7 +533,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._includeModelItem = function(oItem, iIndex) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 		// TODO: unittest für den Fall, dass includeItem(oItem, i) mit i>oData.items.length
 
@@ -552,8 +557,8 @@ sap.ui.define([
 			tableIndex: undefined
 		};
 
-		oModel.getData().linkPressMap[oItem.getText() + "---" + oItem.getHref()] = oItem.getPress();
-		oModel.getData().items.splice(iIndex, 0, oModelItem);
+		oData.linkPressMap[oItem.getText() + "---" + oItem.getHref()] = oItem.getPress();
+		oData.items.splice(iIndex, 0, oModelItem);
 	};
 
 	/**
@@ -567,7 +572,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._onSelectionChange = function(oEvent) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 		var oTableItem = oEvent.getParameter("listItem");
 
@@ -591,7 +596,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._onSwitchButtonShowSelected = function() {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 
 		// Switch the button text
 		oData.showOnlySelectedItems = !oData.showOnlySelectedItems;
@@ -612,7 +617,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._onExecuteSearch = function() {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
@@ -639,7 +644,7 @@ sap.ui.define([
 	 */
 	P13nSelectionPanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
 		var iIndex = -1;
-		this.getModel("$sapmP13nSelectionPanel").getData().items.some(function(oModelItem, iIndex_) {
+		this._getInternalModel().getData().items.some(function(oModelItem, iIndex_) {
 			if (oModelItem.columnKey === sColumnKey) {
 				iIndex = iIndex_;
 				return true;
@@ -653,24 +658,8 @@ sap.ui.define([
 	 */
 	P13nSelectionPanel.prototype._getModelItemByColumnKey = function(sColumnKey) {
 		var oModelItem = null;
-		this.getModel("$sapmP13nSelectionPanel").getData().items.some(function(oModelItem_) {
+		this._getInternalModel().getData().items.some(function(oModelItem_) {
 			if (oModelItem_.columnKey === sColumnKey) {
-				oModelItem = oModelItem_;
-				return true;
-			}
-		});
-		return oModelItem;
-	};
-
-	/**
-	 * @private
-	 */
-	P13nSelectionPanel.prototype._getModelItemByTableItem = function(oTableItem) {
-		var oModelItem = null;
-		// Note: visible model items are in sync with visible table items.
-		var iIndex = this._getVisibleTableItems().indexOf(oTableItem);
-		this.getModel("$sapmP13nSelectionPanel").getData().items.some(function(oModelItem_, iIndex_) {
-			if (iIndex === iIndex_) {
 				oModelItem = oModelItem_;
 				return true;
 			}
@@ -687,7 +676,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._moveModelItems = function(iIndexFrom, iIndexTo) {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 		if (iIndexFrom < 0 || iIndexTo < 0 || iIndexFrom > oData.items.length - 1 || iIndexTo > oData.items.length - 1) {
 			return false;
@@ -711,7 +700,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
 		oModel.getData().items.forEach(function(oModelItem) {
 			if (oModelItem.persistentSelected) {
@@ -741,7 +730,7 @@ sap.ui.define([
 	 */
 	P13nSelectionPanel.prototype._getVisibleModelItems = function() {
 		var aVisibleModelItems = [];
-		this.getModel("$sapmP13nSelectionPanel").getData().items.forEach(function(oModelItem) {
+		this._getInternalModel().getData().items.forEach(function(oModelItem) {
 			if (oModelItem.visible) {
 				aVisibleModelItems.push(oModelItem);
 			}
@@ -754,12 +743,21 @@ sap.ui.define([
 	 */
 	P13nSelectionPanel.prototype._getSelectedModelItems = function() {
 		var aSelectedModelItems = [];
-		this.getModel("$sapmP13nSelectionPanel").getData().items.forEach(function(oModelItem) {
+		this._getInternalModel().getData().items.forEach(function(oModelItem) {
 			if (oModelItem.persistentSelected) {
 				aSelectedModelItems.push(oModelItem);
 			}
 		});
 		return aSelectedModelItems;
+	};
+
+	/**
+	 * @private
+	 */
+	P13nSelectionPanel.prototype._getModelItemByTableItem = function(oTableItem) {
+		// Note: visible model items are in sync with visible table items.
+		var iIndex = this._getVisibleTableItems().indexOf(oTableItem);
+		return this._getVisibleModelItems()[iIndex];
 	};
 
 	/**
@@ -837,7 +835,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._switchMarkedTableItemTo = function(oTableItem) {
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 
 		if (oData.markedTableItem === oTableItem) {
 			return;
@@ -900,7 +898,7 @@ sap.ui.define([
 							href: "{href}",
 							// target: "{target}",
 							press: function(oEvent) {
-								var fOnLinkPress = this.getModel("$sapmP13nSelectionPanel").getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
+								var fOnLinkPress = this._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
 								if (fOnLinkPress) {
 									fOnLinkPress(oEvent);
 								}
@@ -914,14 +912,14 @@ sap.ui.define([
 				})
 			}
 		});
-		this._oTable.setModel(this.getModel("$sapmP13nSelectionPanel"));
+		this._oTable.setModel(this._getInternalModel());
 	};
 
 	/**
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._createToolbar = function() {
-// var oModel = this.getModel("$sapmP13nSelectionPanel");
+// var oModel = this._getInternalModel();
 		var that = this;
 // var oMoveDownButton = new sap.m.OverflowToolbarButton({
 // icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
@@ -932,7 +930,7 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Down");
-// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// var oModelData = this._getInternalModel().getData();
 // if (!oModelData.isMoveDownButtonEnabled) {
 // oModelData.markedTableItem.focus();
 // }
@@ -955,7 +953,7 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Up");
-// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// var oModelData = this._getInternalModel().getData();
 // if (!oModelData.isMoveUpButtonEnabled) {
 // oModelData.markedTableItem.focus();
 // }
@@ -978,7 +976,7 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Bottom");
-// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// var oModelData = this._getInternalModel().getData();
 // if (!oModelData.isMoveDownButtonEnabled) {
 // oModelData.markedTableItem.focus();
 // }
@@ -1001,7 +999,7 @@ sap.ui.define([
 // },
 // press: function() {
 // that._moveMarkedTableItem("Top");
-// var oModelData = this.getModel("$sapmP13nSelectionPanel").getData();
+// var oModelData = this._getInternalModel().getData();
 // if (!oModelData.isMoveUpButtonEnabled) {
 // oModelData.markedTableItem.focus();
 // }
@@ -1031,14 +1029,13 @@ sap.ui.define([
 // });
 // oShowSelectedButton.setModel(oModel);
 
-		var iLiveChangeTimer = 0;
 		var oSearchField = new SearchField(this.getId() + "-searchField", {
 			liveChange: function(oEvent) {
 				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 				// execute search after user stops typing for 300ms
-				window.clearTimeout(iLiveChangeTimer);
+				window.clearTimeout(that._iSearchTimer);
 				if (iDelay) {
-					iLiveChangeTimer = window.setTimeout(function() {
+					that._iSearchTimer = window.setTimeout(function() {
 						that._onExecuteSearch();
 					}, iDelay);
 				} else {
@@ -1085,7 +1082,7 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype._isFilteredByShowSelected = function() {
-		return this.getModel("$sapmP13nSelectionPanel").getData().showOnlySelectedItems;
+		return this._getInternalModel().getData().showOnlySelectedItems;
 	};
 
 	P13nSelectionPanel.prototype._isColumnsItemEqualToModelItem = function(oColumnsItem, oModelItem) {
@@ -1096,7 +1093,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._updateControlLogic = function() {
-		var oModel = this.getModel("$sapmP13nSelectionPanel");
+		var oModel = this._getInternalModel();
 		var oData = oModel.getData();
 		var bIsSearchActive = this._isFilteredBySearchText();
 		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
@@ -1115,6 +1112,10 @@ sap.ui.define([
 		oModel.refresh();
 	};
 
+	P13nSelectionPanel.prototype._getInternalModel = function() {
+		return this.getModel("$sapmP13nSelectionPanel");
+	};
+
 	/**
 	 * @private
 	 */
@@ -1131,7 +1132,7 @@ sap.ui.define([
 	P13nSelectionPanel.prototype._showAll = function() {
 		jQuery.sap.log.info("ModelItems: columnKey originalIndex  tableIndex_isVisible  persistentIndex_isPersistent        TableItems: current");
 		jQuery.sap.log.info("--------------------------------------------------------------");
-		var oData = this.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = this._getInternalModel().getData();
 		var aTableItems = this._oTable.getItems();
 		var iLength = Math.max(oData.items.length, this._oTable.getItems().length);
 		for (var i = 0; i < iLength; i++) {

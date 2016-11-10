@@ -61,7 +61,7 @@
 		strictEqual(oSelectionPanel.getType(), sap.m.P13nPanelType.selection);
 		deepEqual(oSelectionPanel.getItems(), []);
 		deepEqual(oSelectionPanel.getColumnsItems(), []);
-		deepEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items, []);
+		deepEqual(oSelectionPanel._getInternalModel().getData().items, []);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -99,13 +99,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -140,13 +140,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -184,13 +184,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -229,11 +229,11 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -272,11 +272,11 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -314,7 +314,7 @@
 		]);
 		strictEqual(oSelectionPanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items.length, 0);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
@@ -350,7 +350,7 @@
 		// assertions
 		strictEqual(oSelectionPanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items.length, 0);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
@@ -390,13 +390,13 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ColumnsItem has not been changed
 		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
 		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
@@ -438,13 +438,13 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, true);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ColumnsItem has not been changed
 		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
 		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
@@ -489,13 +489,13 @@
 
 		// assertions
 		// The table items order has been changed to: A, B, C
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].columnKey, oItemA.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].columnKey, oItemA.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[0].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[1].persistentSelected, undefined);
-		strictEqual(oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData().items[2].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
+		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
 		// Index of ColumnsItem has not been changed
 		strictEqual(oSelectionPanel.getColumnsItems().length, 0);
 
@@ -528,7 +528,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = false;
 		oData.items[0].persistentIndex = -1;
 		var oPayload = oSelectionPanel.getOkPayload();
@@ -560,7 +560,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = true;
 		oData.items[0].persistentIndex = 0;
 		var oPayload = oSelectionPanel.getOkPayload();
@@ -592,7 +592,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = undefined;
 		oData.items[0].persistentIndex = 1;
 		var oPayload = oSelectionPanel.getOkPayload();
@@ -622,7 +622,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = true;
 		oData.items[0].persistentIndex = 1;
 		var oPayload = oSelectionPanel.getOkPayload();
@@ -661,7 +661,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = true;
 		oData.items[0].persistentIndex = 1;
 		var oPayload = oSelectionPanel.getOkPayload();
@@ -701,7 +701,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var oData = oSelectionPanel.getModel("$sapmP13nSelectionPanel").getData();
+		var oData = oSelectionPanel._getInternalModel().getData();
 		oData.items[0].persistentSelected = false;
 		oData.items[0].persistentIndex = -1;
 		var oPayload = oSelectionPanel.getOkPayload();
