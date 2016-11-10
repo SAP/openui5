@@ -17,6 +17,8 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
 	jQuery.sap.initMobile();
@@ -50,6 +52,37 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+	});
+
+	QUnit.test("The Icon's cursor is pointer if press event is attached", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+		// Act
+		this.oNumericContent.attachPress(function () {});
+		// Assert
+		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
+		assert.ok(this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class was added");
+	});
+
+	QUnit.test("The Icon's cursor is default if press event is detached", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+		function onPress () {};
+		// Act
+		this.oNumericContent.attachPress(onPress);
+		this.oNumericContent.detachPress(onPress);
+		// Assert
+		assert.equal(oSpy.callCount, 2, "setPointerOnIcon was called.");
+		assert.ok(!this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class not present");
+	});
+
+	QUnit.test("setIcon calls _setPointerOnIcon", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+		// Act
+		this.oNumericContent.setIcon();
+		// Assert
+		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
 	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
