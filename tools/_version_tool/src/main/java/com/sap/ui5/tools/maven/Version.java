@@ -164,11 +164,16 @@ public class Version {
       newPatch++;
       newSuffix = SNAPSHOT_SUFFIX;
       break;
-      
     case ChangeObjectId:
     	newPatch++;
         newSuffix = SNAPSHOT_SUFFIX;
         break;    	
+    case NextSnapshot:
+      if ( !isSnapshot() ) {
+        throw new IllegalArgumentException("can only switch to next snapshot development from snapshot version, but is " + this);
+      }
+      newPatch++;
+      break;
     }
   
 	  

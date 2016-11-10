@@ -10,11 +10,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.FileLock;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,8 +33,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.text.html.HTMLEditorKit.Parser;
 
-import static java.nio.file.StandardCopyOption.*;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,7 +52,6 @@ import com.sap.ui5.tools.maven.XMLUtils;
 import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
-import com.sap.ui5.tools.maven.XMLUtils;
 
 public class Git2P4Main {
 
@@ -381,7 +373,8 @@ private static File extractSnapshotVersionJs() throws IOException {
 
     Log.println("Contributors version range: " + versionRange);
     Properties contributorsVersions = new Properties();    
-    if (op.equals(ReleaseOperation.PatchDevelopment)||op.equals(ReleaseOperation.MilestoneDevelopment)){
+    if (op.equals(ReleaseOperation.PatchDevelopment)||op.equals(ReleaseOperation.MilestoneDevelopment)||
+        op.equals(ReleaseOperation.NextSnapshot)){
       //set all contributors versions to version range
       contributorsVersions.put("contributorsRange", versionRange);
       //set to snapshot core version 
@@ -648,7 +641,7 @@ private static File extractSnapshotVersionJs() throws IOException {
 
   private static String getPerforceCodelineForBranch(String branch) {
     
-    Matcher m = Pattern.compile("(?:rel-)?([0-9]+\\.[0-9]+)|master").matcher(branch);
+    Matcher m = Pattern.compile("((?:stage/)?rel-)?([0-9]+\\.[0-9]+(\\.[0-9]+)?)|master").matcher(branch);
     if ( m.matches() ) {
       return m.group(1) == null ? "dev" : (m.group(1) + "_COR");
     }
@@ -900,6 +893,9 @@ private static File extractSnapshotVersionJs() throws IOException {
         command = "version-change";
       } else if ( "patch-development".equals(args[i]) || "patch-dev".equals(args[i]) ) {
         op = ReleaseOperation.PatchDevelopment;
+        command = "version-change";
+      } else if ( "next-snapshot".equals(args[i])) {
+        op = ReleaseOperation.NextSnapshot;
         command = "version-change";
       }  else if (objectIdChange.equals(args[i])) {
     	  command = objectIdChange;

@@ -215,7 +215,8 @@ public class MyReleaseButton {
 	  PatchRelease,
 	  MilestoneDevelopment,
 	  PatchDevelopment,
-	  ChangeObjectId
+	  ChangeObjectId,
+	  NextSnapshot
 	}
   
   public enum ProcessingTypes {
