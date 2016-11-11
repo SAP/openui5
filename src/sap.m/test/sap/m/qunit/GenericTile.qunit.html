@@ -298,7 +298,6 @@
 				header: "Comparative Annual Totals",
 				mode: sap.m.GenericTileMode.LineMode
 			});
-			sinon.stub(this.oGenericTile, "_isCompact").returns(true);
 			sinon.stub(this.oGenericTile, "_checkContentDensity");
 
 			//stub this function on order to not queue any updates which might influence the other tests
@@ -308,6 +307,7 @@
 				width: "100px",
 				items: [ this.oGenericTile ]
 			}).placeAt("qunit-fixture");
+			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
 			this.oGenericTile._updateHoverStyle.reset();
 			this.oGenericTile._checkContentDensity.reset();
@@ -818,7 +818,7 @@
 		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(30);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
-		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
 
 		//Act
 		this.oGenericTile.invalidate();
