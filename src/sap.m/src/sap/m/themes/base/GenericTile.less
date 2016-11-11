@@ -105,7 +105,6 @@
 	width: 100%;
 	margin-top: -0.125rem;
 	margin-bottom: -0.125rem;
-	overflow: hidden;
 	pointer-events: all;
 }
 
@@ -122,6 +121,11 @@
 
 .sapMGTLineMode .sapMGTHdrTxt {
 	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	line-height: 1.25rem;
 }
 
 .sapMGTLineMode .sapMGTHdrTxt:after {
@@ -131,7 +135,8 @@
 
 .sapMGTLineMode .sapMGTSubHdrTxt {
 	line-height: auto;
-	white-space: normal;
+	display: inline-block;
+	max-width: 100%;
 }
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
@@ -374,7 +379,7 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 		line-height: 1.063rem;
 	}
 
-	.sapMGTSubHdrTxt {
+	.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
 		line-height: 1.063rem;
 	}
 

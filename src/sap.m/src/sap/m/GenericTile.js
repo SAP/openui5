@@ -874,14 +874,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} true or false
 	 */
 	GenericTile.prototype._isHeaderTextTruncated = function() {
-		var oDom, iMaxHeight;
-		oDom = this.getAggregation("_titleText").getDomRef("inner");
-		iMaxHeight = this.getAggregation("_titleText").getClampHeight(oDom);
-
-		if (oDom && iMaxHeight < oDom.scrollHeight) {
-			return true;
+		var oDom, iMaxHeight, $Header, iWidth;
+		if (this.getMode() === library.GenericTileMode.LineMode) {
+			$Header = this.$("hdr-text");
+			if ($Header.length > 0) {
+				iWidth = Math.ceil($Header[0].getBoundingClientRect().width);
+				return ($Header[0] && iWidth < $Header[0].scrollWidth);
+			} else {
+				return false;
+			}
 		} else {
-			return false;
+			oDom = this.getAggregation("_titleText").getDomRef("inner");
+			iMaxHeight = this.getAggregation("_titleText").getClampHeight(oDom);
+			return (iMaxHeight < oDom.scrollHeight);
 		}
 	};
 
@@ -892,9 +897,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} true or false
 	 */
 	GenericTile.prototype._isSubheaderTextTruncated = function() {
-		var $SubheaderContainer = this.$("subHdr-text");
-		if ($SubheaderContainer && $SubheaderContainer.length && $SubheaderContainer[0].offsetWidth < $SubheaderContainer[0].scrollWidth) {
-			return true;
+		var $Subheader = this.$("subHdr-text"), iWidth;
+		if ($Subheader.length > 0) {
+			iWidth = Math.ceil($Subheader[0].getBoundingClientRect().width);
+			return ($Subheader[0] && iWidth < $Subheader[0].scrollWidth);
 		} else {
 			return false;
 		}
