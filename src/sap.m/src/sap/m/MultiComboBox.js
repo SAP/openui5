@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
-	function(jQuery, Bar, InputBase, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
+	function(jQuery, Bar, InputBase, ComboBoxTextField, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -2361,7 +2361,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	MultiComboBox.prototype.init = function() {
-		InputBase.prototype.init.apply(this, arguments);
+		ComboBoxTextField.prototype.init.apply(this, arguments);
 
 		// initialize list
 		this.createList();
