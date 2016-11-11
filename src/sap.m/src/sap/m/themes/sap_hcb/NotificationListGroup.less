@@ -1,13 +1,19 @@
-.sapMNLG-Header .sapMNLB-Priority {
-  top: calc(~"-1rem - 1px");
+.sapMNLG-Collapsed .sapMNLG-SubHeader > .sapMNLB-Priority {
+  top: 0.03rem;
 }
 
-.sapMNLG-Footer .sapMNLB-Priority {
-  top: 0;
+.sapMNLG-Body {
+  .sapMNLI:last-child {    
+    border-radius: 0.375rem 0.25rem 0.25rem 0.375rem;
+    .sapMNLB-Priority {
+      padding-top: 0.05rem;
+    }
+  }
 }
+
 
 .sapMNLG-Header .sapMNLB-Priority,
-.sapMNLG-Footer .sapMNLB-Priority {
+.sapMNLG-SubHeader .sapMNLB-Priority {
   &.sapMNLB-None {
     border-top: none;
     border-bottom: 1px solid @sapHCNeutral;
@@ -42,29 +48,6 @@
   }
   &.sapMNLB-High {
     border: none;
-  }
-}
-
-.sapMNLG-Footer .sapMNLB-Priority {
-  top: 0;
-  &.sapMNLB-None {
-    border-top: none;
-    border-bottom: 1px solid @sapHCNeutral;
-  }
-
-  &.sapMNLB-Low {
-    border-top: none;
-    border-bottom: 1px solid @sapHCPositive;
-  }
-
-  &.sapMNLB-Medium {
-    border-top: none;
-    border-bottom: 1px solid @sapHCCritical;
-  }
-
-  &.sapMNLB-High {
-    border-top: none;
-    border-bottom: 1px solid @sapHCNegative;
   }
 }
 
