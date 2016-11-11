@@ -40,7 +40,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Use Enter or Space key to choose the control.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer
-	 * @experimental Since 1.42.0 This is currently under development. The API could be changed at any point in time.
 	 * @since 1.42.0
 	 *
 	 * @author SAP SE
