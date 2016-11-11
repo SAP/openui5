@@ -267,6 +267,41 @@
 		assert.strictEqual(expandCollapseButton.getEnabled(), true, 'Should be enabled when "enableCollapseButtonWhenEmpty" is set to "true"');
 	});
 
+    QUnit.test('Reach max number of notifications', function(assert){
+        //arrange
+        var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
+        var expectedNumberOfNotifications = maxNumberOfNotifications - 1;
+
+        //act
+        for (var index = 0; index < maxNumberOfNotifications; index++) {
+            this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+        }
+
+        //Should trigger rerender to update the _maxNumberReached property in onAfterRendering method.
+        sap.ui.getCore().applyChanges();
+
+        //assert
+        assert.strictEqual(this.NotificationListGroup._maxNumberOfNotifications, expectedNumberOfNotifications, 'Max number of notifications should be displayed.');
+        assert.strictEqual(this.NotificationListGroup._maxNumberReached,  true, 'Max number of shown notifications should be reached.');
+    });
+
+    QUnit.test('Remove notification after reaching max number of notifications', function(assert){
+        //arrange
+        var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100);
+        var lastNotification = new sap.m.NotificationListItem();
+
+        //act
+        for (var index = 0; index < maxNumberOfNotifications; index++) {
+            this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+        }
+
+        this.NotificationListGroup.addItem(lastNotification);
+        this.NotificationListGroup.removeItem(lastNotification);
+
+        //assert
+        assert.strictEqual(this.NotificationListGroup._maxNumberReached,  false, 'Max number of shown notifications should not be reached.');
+    });     
+
     //================================================================================
     // Notification List Group rendering methods
     //================================================================================
@@ -282,6 +317,40 @@
             this.NotificationListGroup.destroy();
         }
     });
+
+    QUnit.test('Max number of notifications message displayed', function(assert) {
+        //arrange
+        var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 1;
+
+        //act
+        for (var index = 0; index < maxNumberOfNotifications; index++) {
+            this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+        }
+
+        //Should trigger rerender on the NotificationListGroup to display the Max Number of Notifications reached message.
+        sap.ui.getCore().applyChanges();
+
+        //assert
+        assert.strictEqual(this.NotificationListGroup.$().find('.sapMNLG-MaxNotifications').length, 1, 'Max number of notifications message should be displayed.');
+    });
+
+    QUnit.test('Max number of notifications message not displayed', function(assert) {
+        //arrange
+        var maxNumberOfNotifications = sap.ui.Device.system.desktop ? 400 : 100;
+        var lastNotification = new sap.m.NotificationListItem();
+
+        //act
+        for (var index = 0; index < maxNumberOfNotifications; index++) {
+            this.NotificationListGroup.addItem(new sap.m.NotificationListItem());
+        }
+
+        this.NotificationListGroup.addItem(lastNotification);
+        this.NotificationListGroup.removeItem(lastNotification);
+
+        //assert
+        assert.strictEqual(this.NotificationListGroup.$().find('.sapMNLG-MaxNotifications').length, 0, 'Max number of notifications message should not be displayed.');
+    });
+
 
     QUnit.test('Control has basic class for the keyboard navigation', function(assert) {
         // assert

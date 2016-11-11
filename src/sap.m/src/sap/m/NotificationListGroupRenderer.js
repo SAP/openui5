@@ -27,6 +27,7 @@ sap.ui.define([], function () {
 	var classNameDescription = 'sapMNLG-Description';
 	var classNameCollapsed = 'sapMNLG-Collapsed';
 	var classNameSingleItemGroup = 'sapMNLGNoHdrFooter';
+	var classMaxNotificationsReached = 'sapMNLG-MaxNotifications';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -270,6 +271,9 @@ sap.ui.define([], function () {
 		oRm.write('<ul class=' + classNameBody + '>');
 
 		this.renderNotifications(oRm, oControl);
+		if (oControl._maxNumberReached) {
+		    this.renderMaxNumberReachedMessage(oRm, oControl);
+		}
 
 		oRm.write('</ul>');
 	};
@@ -292,13 +296,28 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.renderNotifications = function (oRm, oControl) {
 		/** @type {sap.m.NotificationListItem[]} */
-		var notifications = oControl.getAggregation('items');
+		var notifications = oControl.getItems();
+		var notificationsCount = notifications.length;
 
-		if (notifications) {
-			notifications.forEach(function (notification) {
-				oRm.renderControl(notification);
-			});
+		//Notifications render
+		if (notificationsCount) {
+			for (var index = 0; index < oControl._maxNumberOfNotifications; index++) {
+				oRm.renderControl(notifications[index]);
+			}
 		}
+	};
+
+	NotificationListGroupRenderer.renderMaxNumberReachedMessage = function(oRm, oControl) {
+		//notificationsLeft
+		var message = '<span>' + oControl._maxNumberOfNotificationsTitle + '</span> <br>' + oControl._maxNumberOfNotificationsBody;
+		oRm.write('<div');
+		oRm.addClass(classMaxNotificationsReached);
+		oRm.writeClasses();
+		oRm.write('>');
+
+		oRm.write(message);
+
+		oRm.write('</div>');
 	};
 
 	return NotificationListGroupRenderer;
