@@ -666,6 +666,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 				// if some of the columns have variable width, they serve as the dummy column
 				// and take available place. Do not render a dummy column in this case.
 				bRenderDummyColumn = false;
+				// in fixed area, use stored fixed width or 10rem:
+				if (bFixedTable) {
+					sWidth = (oColumn._iFixWidth || 160) + "px";
+				}
 			}
 
 			var suffix = bHeader ? "_hdr" : "_col";
