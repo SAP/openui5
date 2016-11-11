@@ -16,7 +16,7 @@ sap.ui.define([
 		rApplicationGroupID = /^\w+$/,
 		// regular expression converting path to metadata path
 		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g,
-		aSystemQueryOptions = ["$apply", "$expand", "$filter", "$orderby", "$select"];
+		aSystemQueryOptions = ["$apply", "$expand", "$filter", "$orderby", "$search", "$select"];
 
 	/**
 	 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',

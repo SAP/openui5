@@ -161,7 +161,12 @@ sap.ui.require([
 		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {"$apply" : "apply", "$filter" : "foo eq 42", "$orderby" : "bar"},
+		mOptions : {
+			"$apply" : "apply",
+			"$filter" : "foo eq 42",
+			"$orderby" : "bar",
+			"$search" : '"foo bar" AND NOT foobar'
+		},
 		bSystemQueryOptionsAllowed : true
 	}, {
 		mModelOptions : {"custom" : "bar"},

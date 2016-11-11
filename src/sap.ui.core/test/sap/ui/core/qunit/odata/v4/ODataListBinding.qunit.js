@@ -368,6 +368,7 @@ sap.ui.require([
 				"$apply" : "filter(Amount gt 3)",
 				"$expand" : "foo",
 				"$orderby" : "bar",
+				"$search" : '"foo bar" AND NOT foobar',
 				"$select" : "bar",
 				"custom" : "baz"
 			},

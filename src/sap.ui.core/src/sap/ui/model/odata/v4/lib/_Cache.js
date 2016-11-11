@@ -59,6 +59,7 @@ sap.ui.define([
 				case "$apply":
 				case "$filter":
 				case "$orderby":
+				case "$search":
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
@@ -1063,7 +1064,7 @@ sap.ui.define([
 		convertExpand : function (mExpandItems) {
 			var aResult = [];
 
-			if (!mExpandItems || typeof mExpandItems  !== "object") {
+			if (!mExpandItems || typeof mExpandItems !== "object") {
 				throw new Error("$expand must be a valid object");
 			}
 

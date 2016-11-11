@@ -346,6 +346,7 @@ sap.ui.require([
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
+			$search : "EUR",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
@@ -353,6 +354,7 @@ sap.ui.require([
 			$expand : "expand",
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
+			$search : "EUR",
 			$select : "select1,select2"
 		});
 
@@ -363,6 +365,7 @@ sap.ui.require([
 			$expand : oExpand,
 			$filter : "BuyerName eq 'SAP'",
 			$orderby : "GrossAmount asc",
+			$search : "EUR",
 			$select : ["select1", "select2"]
 		}, /*bDropSystemQueryOptions*/true), {
 			foo : "bar",
@@ -377,7 +380,7 @@ sap.ui.require([
 
 		assert.strictEqual(_Cache.convertQueryOptions(undefined), undefined);
 
-		["$format", "$id", "$inlinecount", "$search", "$skip", "$skiptoken", "$top"
+		["$format", "$id", "$inlinecount", "$skip", "$skiptoken", "$top"
 		].forEach(function (sSystemOption) {
 			assert.throws(function () {
 				var mQueryOptions = {};
