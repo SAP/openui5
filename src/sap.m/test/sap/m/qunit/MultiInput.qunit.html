@@ -243,35 +243,40 @@
 	});
 
 	test("token update event", function() {
-		//arrange
-		var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
-			counter = 0;
 
-		multiInput1.addValidator(function(args) {
-			return new sap.m.Token({text : args.text, key : args.text});
-		});
+		if (!sap.ui.Device.browser.internet_explorer) {
+			//arrange
+			var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
+					counter = 0;
 
-		multiInput1.attachTokenUpdate(function(args) {
-			counter++;
-		});
+			multiInput1.addValidator(function (args) {
+				return new sap.m.Token({text: args.text, key: args.text});
+			});
 
-		//act
-		sap.ui.test.qunit.triggerEvent("paste", multiInput1.getFocusDomRef(), {
-			originalEvent : {
-				clipboardData : {
-					getData : function() {
-						return sPastedString;
+			multiInput1.attachTokenUpdate(function (args) {
+				counter++;
+			});
+
+			//act
+			sap.ui.test.qunit.triggerEvent("paste", multiInput1.getFocusDomRef(), {
+				originalEvent: {
+					clipboardData: {
+						getData: function () {
+							return sPastedString;
+						}
 					}
 				}
-			}
-		});
+			});
 
-		this.clock.tick(10);
-		sap.ui.getCore().applyChanges();
+			this.clock.tick(10);
+			sap.ui.getCore().applyChanges();
 
-		//assert
-		equals(counter, 1, "tokenUpdate event should be fired once");
-		equals(multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
+			//assert
+			equals(counter, 1, "tokenUpdate event should be fired once");
+			equals(multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
+		} else {
+			expect(0);
+		}
 	});
 
 	test("test setEditable", function() {
