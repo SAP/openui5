@@ -3,19 +3,4 @@
 /* Belize Plus theme             */
 /* ============================= */
 
-.sapMIBar-CTX .sapMBtnInner {
-	border-color: @sapUiButtonLiteBorderColor;
-}
-
-html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
-html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
-	outline-color:    @sapUiContentContrastFocusColor;
-}
-
-/* ---------------------------------------------------------------------*/
-/* Custom focus outline for IE and Edge:                                */
-/* ---------------------------------------------------------------------*/
-html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv,
-html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
-	border-color:    @sapUiContentContrastFocusColor;
-}
+@_sap_m_Button_EmphasizedFocusColor: @sapUiContentContrastFocusColor;
