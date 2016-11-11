@@ -313,8 +313,7 @@ sap.ui.require([
 			oHelperMock = this.mock(_ODataHelper);
 			oHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-					sinon.match.same(mParameters),
-					sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+					sinon.match.same(mParameters), true)
 				.returns(mQueryOptions);
 			oHelperMock.expects("buildBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)

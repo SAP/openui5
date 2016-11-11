@@ -125,7 +125,7 @@ sap.ui.define([
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-					mParameters, _ODataHelper.aAllowedSystemQueryOptions);
+					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
