@@ -8,50 +8,66 @@ sap.ui.define(function() {
 
 
 	/**
-	* @class
-	* Different modes for executing service operations (filtering, sorting)
-	*
-	* @static
-	* @public
-	* @alias sap.ui.model.odata.OperationMode
-	*/
+	 * Different modes for executing service operations (filtering, sorting)
+	 *
+	 * @enum {string}
+	 * @public
+	 * @alias sap.ui.model.odata.OperationMode
+	 */
 	var OperationMode = {
-			/**
-			 * Operations are executed on the Odata service, by appending corresponding URL parameters ($filter, $orderby).
-			 * Each change in filtering or sorting is triggering a new request to the server.
-			 * @public
-			 */
-			Server: "Server",
+		/**
+		 * Operations are executed on the OData service, by appending corresponding URL parameters
+		 * (<code>$filter</code>, <code>$orderby</code>).
+		 * Each change in filtering or sorting triggers a new request to the server.
+		 * @public
+		 */
+		Server: "Server",
 
-			/**
-			 * Operations are executed on the client, all entries must be avilable to be able to do so.
-			 * The initial request fetches the complete collection, filtering and sorting does not trigger further requests
-			 * @public
-			 */
-			Client: "Client",
+		/**
+		 * Operations are executed on the client, all entries must be available to be able to do so.
+		 * The initial request fetches the complete collection, filtering and sorting does not trigger further requests.
+		 * @public
+		 */
+		Client: "Client",
 
-			/**
-			 * With OperationMode "Auto", operations are either processed on the client or on the server, depending on the given binding threshold.
-			 * Please be aware, that the combination of OperationMode.Auto and CountMode.None is not supported.
-			 *
-			 * There are two possibilities which can happen, when using the "Auto" mode, depending on the configured "CountMode":
-			 * 1. CountMode "Request" and "Both"
-			 * Initially the binding will issue a $count request without any filters/sorters.
-			 * a) If the count is lower or equal to the threshold, the binding will behave like in operation mode "Client", and a data request for all entries is issued.
-			 * b) If the count exceeds the threshold, the binding will behave like in operation mode "Server".
-			 *
-			 * 2. CountModes "Inline" or "InlineRepeat"
-			 * The initial request tries to fetch as many entries as the configured threshold, without any filters/sorters. In addition a $inlinecount is added.
-			 * The binding assumes, that the threshold given by the application can be met. If this is not the case additional data requests might be needed.
-			 * So the application has to have the necessary confidence that the threshold is high enough to make sure, that the data is not requested twice.
-			 *
-			 * a) If this request returns fewer (or just as many) entries as the threshold, the binding will behave exactly like when using
-			 * the "Client" operation mode. Initially configured filters/sorters will be applied afterwards on the client.
-			 * b) If the $inlinecount is higher than the threshold, the binding will behave like in operation mode "Server". In this case a new data request
-			 * containing the initially set filters/sorters will be issued.
-			 * @public
-			 */
-			Auto: "Auto"
+		/**
+		 * With operation mode <code>Auto</code>, operations are either processed on the client or
+		 * on the server. The exact behavior depends on the configured {@link sap.ui.model.odata.CountMode CountMode},
+		 * on the <code>threshold</code> and on the size of the data:
+		 * <ol>
+		 * <li>Count Modes <code>Request</code> and <code>Both</code><br>
+		 * Initially the binding will issue a <code>$count</code> request without any filters/sorters.
+		 *   <ol type="a">
+		 *   <li>If the count is lower or equal to the threshold, the binding will behave like in operation mode
+		 *       <code>Client</code>, and a data request for all entries is issued.</li>
+		 *   <li>If the count exceeds the threshold, the binding will behave like in operation mode <code>Server</code>.</li>
+		 *   </ol>
+		 * </li>
+		 *
+		 * <li>Count Modes <code>Inline</code> or </code>InlineRepeat<code><br>
+		 * The initial request tries to fetch as many entries as configured with the <code>threshold</code> parameter,
+		 * without specifying any filters/sorters. In addition, the query parameter <code>$inlinecount</code> is added.
+		 * The binding assumes, that the threshold given by the application can be met, but it adapts its behavior
+		 * depending on the response:
+		 *   <ol type="a">
+		 *   <li>If the response returns fewer (or just as many) entries as the threshold, the binding will behave exactly
+		 *       like when using the operation mode <code>Client</code>. Initially configured filters/sorters will be
+		 *       applied afterwards on the client.</li>
+		 *   <li>If the <code>$inlinecount</code> is higher than the threshold, the binding will behave like in operation
+		 *       mode <code>Server</code>. In this case a new data request containing the initially set filters/sorters
+		 *       will be issued.</li>
+		 *   </ol>
+		 * It is up to the application to chose an appropriate threshold value. Ideally, it should be high enough
+		 * to fetch all data in the most common scenarios (to avoid a fallback to operation mode <code>Server</code>,
+		 * requiring an additional request), but it also should be low enough to ensure a fast response in case there
+		 * is much more data than expected.
+		 * </li>
+		 * <li>Count mode <code>None</code> is not supported together with operation mode <code>Auto</code></li>
+		 * </ol>
+		 *
+		 * @public
+		 */
+		Auto: "Auto"
 	};
 
 	return OperationMode;

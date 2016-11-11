@@ -69,6 +69,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
 	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding; defaults to the model's default operation mode when not specified
 	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
 	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
