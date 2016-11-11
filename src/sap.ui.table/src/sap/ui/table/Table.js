@@ -1155,8 +1155,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				var colHeader;
 				var domWidth;
 				// if a column has variable width, check if its current width of the
-				// first corresponding <th> element in less than minimum and store it
-				if (TableUtils.isVariableWidth(colWidth)) {
+				// first corresponding <th> element in less than minimum and store it;
+				// do not change freezed columns
+				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
 					colHeader = aColHeaders[0];
 					domWidth = colHeader && colHeader.offsetWidth;
@@ -3267,8 +3268,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oColumn = aCols[i];
 			if (oColumn) {
 				var iColumnIndex = jQuery.inArray(oColumn, this.getColumns());
-				if (!oColumn.getWidth()) {
-					oColumn.setWidth($ths.filter("[data-sap-ui-headcolindex='" + iColumnIndex + "']").width() + "px");
+				if (TableUtils.isVariableWidth(oColumn.getWidth())) {
+					// remember the current column width for the next rendering
+					oColumn._iFixWidth = $ths.filter("[data-sap-ui-headcolindex='" + iColumnIndex + "']").width();
 				}
 			}
 		}
