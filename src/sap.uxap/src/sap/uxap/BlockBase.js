@@ -82,6 +82,9 @@ sap.ui.define([
 
 					/**
 					 * Determines whether the show more button should be shown.
+					 *
+					 * <b>Note:</b> The property will take effect if the <code>BlockBase</code> is inside <ObjectPageSubSection</code>
+					 * and would be ignored in case the <code>BlockBase</code> is nested inside another <code>BlockBase</code>.
 					 */
 					"showSubSectionMore": {type: "boolean", group: "Behavior", defaultValue: false}
 				},
