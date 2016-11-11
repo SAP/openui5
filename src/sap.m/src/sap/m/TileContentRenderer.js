@@ -46,17 +46,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose content should be rendered
 	 */
 	TileContentRenderer._renderContent = function(oRm, oControl) {
-		var oCnt = oControl.getContent();
-		if (oCnt) {
+		var oContent = oControl.getContent();
+		if (oContent) {
 			oRm.write("<div");
 			oRm.addClass("sapMTileCntContent");
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-content");
 			oRm.write(">");
-			if (!oCnt.hasStyleClass("sapMTcInnerMarker")) {
-				oCnt.addStyleClass("sapMTcInnerMarker");
+			if (!oContent.hasStyleClass("sapMTcInnerMarker")) {
+				oContent.addStyleClass("sapMTcInnerMarker");
 			}
-			oRm.renderControl(oCnt);
+			oRm.renderControl(oContent);
 			oRm.write("</div>");
 		}
 	};

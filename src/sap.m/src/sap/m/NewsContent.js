@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The hidden aggregation for the content text.
 				 */
-				"contentTextAgr" : {type : "sap.m.Text", multiple : false, visibility : "hidden"}
+				"_contentText" : {type : "sap.m.Text", multiple : false, visibility : "hidden"}
 			},
 			events : {
 				/**
@@ -63,15 +63,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	* Init function for the control
 	*/
 	NewsContent.prototype.init = function() {
-		this._oContentText = new sap.m.Text(this.getId() + "-content-text", {
+		this._oContentText = new Text(this.getId() + "-content-text", {
 			maxLines : 2
 		});
 		this._oContentText.cacheLineHeight = false;
-		this.setAggregation("contentTextAgr", this._oContentText, true);
-		this.setTooltip("{AltText}"); // TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
+		this.setAggregation("_contentText", this._oContentText, true);
+		this.setTooltip("{AltText}");
 	};
 
 	NewsContent.prototype.onBeforeRendering = function() {
+		this._setPointerOnContentText();
 		this.$().unbind("mouseenter", this._addTooltip);
 		this.$().unbind("mouseleave", this._removeTooltip);
 	};
@@ -90,25 +91,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Removes the control's tooltip in order to prevent screen readers from reading it.
+	 * Removes the control's tooltip in order to prevent s screen reader from reading it.
 	 * @private
 	 */
 	NewsContent.prototype._removeTooltip = function() {
 		this.$().attr("title", null);
 	};
 
+	/**
+	 * Sets CSS class 'sapMPointer' for the internal Icon if needed.
+	 * @private
+	 */
+	NewsContent.prototype._setPointerOnContentText = function() {
+		var oText = this.getAggregation("_contentText");
+		if (oText && this.hasListeners("press")) {
+			oText.addStyleClass("sapMPointer");
+		} else if (oText && oText.hasStyleClass("sapMPointer")) {
+			oText.removeStyleClass("sapMPointer");
+		}
+	};
+
 	/* --- Getters and Setters --- */
 
 	/**
-	 * Returns the Alttext
+	 * Returns the AltText
 	 *
 	 * @returns {String} The AltText text
 	 */
 	NewsContent.prototype.getAltText = function() {
 		var sAltText = "";
 		var bIsFirst = true;
-		if (this.getAggregation("contentTextAgr").getText()) {
-			sAltText += this.getAggregation("contentTextAgr").getText();
+		if (this.getAggregation("_contentText").getText()) {
+			sAltText += this.getAggregation("_contentText").getText();
 			bIsFirst = false;
 		}
 		if (this.getSubheader()) {
@@ -178,40 +192,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Attaches an event handler to the event with the given identifier for the current control
-	 *
-	 * @param {string} eventId The identifier of the event to listen for
-	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is fired
-	 * @param {function} functionToCall The handler function to call when the event occurs.
-	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
-	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.
-	 * Handlers must not change the content of the event. The second argument is the specified oData instance (if present).
-	 * @param {object} [listener] The object that wants to be notified when the event occurs (this context within the handler function).
-	 * If it is not specified, the handler function is called in the context of the event provider.
-	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
-	 */
 	NewsContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
 		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
+			this._setPointerOnContentText();
 		}
 		return this;
 	};
 
-	/**
-	 * Removes a previously attached event handler from the event with the given identifier for the current control.
-	 * The passed parameters must match those used for registration with #attachEvent beforehand.
-	 *
-	 * @param {string} eventId The identifier of the event to detach from
-	 * @param {function} functionToCall The handler function to detach from the event
-	 * @param {object} [listener] The object that wanted to be notified when the event occurred
-	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
-	 */
 	NewsContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
 		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
+			this._setPointerOnContentText();
 		}
 		return this;
 	};

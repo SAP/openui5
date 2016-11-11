@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 				decorative : false
 			}, Image);
 			this.setAggregation("_content", oImage, true);
+			this._setPointerOnImage();
 		}
 
 		if (sDescription) {
@@ -80,10 +81,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 		}
 	};
 
-	/* --- Event Handling --- */
-
 	/**
-	 * Handler for tap event
+	 * Sets CSS class 'sapMPointer' for the internal Icon if needed.
+	 * @private
+	 */
+	ImageContent.prototype._setPointerOnImage = function() {
+		var oImage = this.getAggregation("_content");
+		if (oImage && this.hasListeners("press")) {
+			oImage.addStyleClass("sapMPointer");
+		} else if (oImage && oImage.hasStyleClass("sapMPointer")) {
+			oImage.removeStyleClass("sapMPointer");
+		}
+	};
+
+	/* --- Event Handling --- */
+	/**
+	 * Handler for user tap (click on desktop, tap on touch devices) event
 	 *
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
@@ -106,11 +119,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 		}
 	};
 
-
 	ImageContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
 		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
+			this._setPointerOnImage();
 		}
 		return this;
 	};
@@ -119,6 +132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
+			this._setPointerOnImage();
 		}
 		return this;
 	};
