@@ -77,7 +77,7 @@
 					<TileContent unit="Unit" footer="Footer">
 						<content>
 							<NewsContent
-								contentText="Status Loading"
+								contentText="Status Loading - no press event"
 								subheader="Subheader">
 							</NewsContent>
 						</content>
@@ -91,7 +91,7 @@
 					<TileContent unit="Unit" footer="Footer">
 						<content>
 							<NewsContent
-								contentText="Status Loaded"
+								contentText="Status Loaded - with press event"
 								subheader="Subheader">
 							</NewsContent>
 						</content>
@@ -100,7 +100,7 @@
 			</GenericTile>
 		</tiles>
 	</SlideTile>
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled - no press event"
 		subheader="Subheader" frameType="OneByOne" state="Disabled">
 		<tileContent>
 			<TileContent footer="Footer" unit="Unit">
