@@ -1,14 +1,14 @@
 {
 	"_version": "1.4.0",
 	"sap.app": {
-		"id": "${project.artifactId}",
+		"id": "sap.ui.demo.orderbrowser",
 		"type": "application",
 		"resources": "resources.json",
 		"i18n": "i18n/i18n.properties",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
+		"title": "Order Browser",
+		"description": "Demo app using the master-detail pattern, allowing to browse through a list of orders",
 		"applicationVersion": {
-			"version": "${project.version}"
+			"version": "1.0.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -24,10 +24,6 @@
 			"id": "sap.ui.ui5-template-plugin.2masterdetail",
 			"version": "1.38.3"
 		}
-	},
-	"sap.fiori": {
-		"registrationIds": [],
-		"archeType": "transactional"
 	},
 	"sap.ui": {
 		"technology": "UI5",
@@ -56,7 +52,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "${sap.ui5.dist.version}",
+			"minUI5Version": "1.38.0",
 			"libs": {
 				"sap.ui.core": {
 					"minVersion": "1.38.0"
