@@ -209,7 +209,7 @@
 		{
 			"control": "sap.m.MultiComboBox",
 			"url": "../MultiComboBox.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.sap.m.NavContainer",
@@ -339,7 +339,7 @@
 		{
 			"control": "sap.m.RatingIndicator",
 			"url": "RatingIndicator.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.ResponsivePopover",
@@ -440,7 +440,7 @@
 		{
 			"control": "sap.m.TextArea",
 			"url": "../TextArea.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.Tokenizer",
