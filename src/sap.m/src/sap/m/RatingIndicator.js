@@ -278,28 +278,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return jQuery('html').hasClass('sapUiSizeCondensed');
 	};
 
-		/**
-		 * Get icon size label
-		 *
-		 * @private
-		 */
-		RatingIndicator.prototype._getIconSizeLabel = function (iPxIconSize) {
-			switch (true) {
-				case (iPxIconSize >= 32):
-					return "L";
-				case (this._iPxIconSize >= 22):
-					return "M";
-				case (this._iPxIconSize >= 16):
-					return "S";
-				case (this._iPxIconSize >= 12):
-					return "XS";
-				default:
-					return "M";
-			}
-		};
+	/**
+	 * Get icon size label
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype._getIconSizeLabel = function (iPxIconSize) {
+		switch (true) {
+			case (iPxIconSize >= 32):
+				return "L";
+			case (this._iPxIconSize >= 22):
+				return "M";
+			case (this._iPxIconSize >= 16):
+				return "S";
+			case (this._iPxIconSize >= 12):
+				return "XS";
+			default:
+				return "M";
+		}
+	};
 
-		RatingIndicator.prototype._toPx = function (cssSize) {
-			cssSize = cssSize || 0;
+	RatingIndicator.prototype._toPx = function (cssSize) {
+		cssSize = cssSize || 0;
 		var scopeVal = RatingIndicator._pxCalculations[cssSize],
 			scopeTest;
 

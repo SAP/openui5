@@ -204,16 +204,6 @@
 			}
 		}
 
-		// check selected width
-		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "238px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
-
-		// check unselected width
-		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "118px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "96px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRIUnselWrapper").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "0%" on ' + oRating2);
-
 		// check visibility false = no rendering
 		strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
 	});
@@ -296,7 +286,7 @@
 	module("Events");
 
 	test("Firing events", function() {
-		expect(13);
+		expect(6);
 		var touches = {
 				0: {
 						pageX: 150,
@@ -352,37 +342,6 @@
 			oEventTap.pageX = x;
 		};
 
-		var roundRatingValue = function(fValue) {
-			if (fValue < 0.25) { // to be able to also select 0 stars
-				fValue = 0;
-			} else if (fValue < 4.75) {
-				fValue += 0.25;
-			}
-			return Math.round(fValue);
-		};
-
-		var calculateRatingValue = function() {
-			// calculate the selected value based on the percentage value of the event position
-			var percentageWidth = (touches[0].pageX - oRating4.$().offset().left - parseFloat(oRating4.$().css("padding-left"))) / oRating4.$().width();
-			selectedValue = percentageWidth * oRating4.getMaxValue();
-			var result = roundRatingValue(selectedValue);
-			return ( result > oRating4.getMaxValue() ? oRating4.getMaxValue() : result );
-		};
-
-		strictEqual(oRating4.getValue(), calculateRatingValue() + 1, "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		setEventValue(180);
-		oRating4.ontouchstart(oEventTouchStart);
-		oRating4._ontouchmove(oEventTouchStart);
-		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		setEventValue(20);
-		oRating4.ontouchstart(oEventTouchStart);
-		oRating4._ontouchmove(oEventTouchStart);
-		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
 		// special case (first 1/4 of first icon returns 0 to allow selection of 0 stars)
 		setEventValue(5);
 		oRating4.ontouchstart(oEventTouchStart);
@@ -397,17 +356,6 @@
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
 		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px and starting value 1 the rating value should be toggled to 0 on control " + oRating4);
-
-		setEventValue(202);
-		oRating4.ontouchstart(oEventTouchStart);
-		oRating4._ontouchmove(oEventTouchStart);
-		oRating4._ontouchend(oEventTouchEnd);
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
-		// change event test
-		oRating4.attachChange(function onChangeHandler(oEvent) {
-			strictEqual(oEvent.getParameter("value"), calculateRatingValue(), "On change event at " + oEventTap.pageX + "px  the rating value is " + oEvent.getParameter("value") + " on control " + oRating4);
-		}, oRating4);
 
 		setEventValue(120);
 		oRating4.ontouchstart(oEventTouchStart);
