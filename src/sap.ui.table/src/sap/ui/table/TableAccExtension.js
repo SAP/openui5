@@ -464,7 +464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					if (!TableUtils.Grouping.isTreeMode(oTable)) { // Otherwise there are strange announcements of the whole content in AnlyticalTable
 						mAttributes["role"] = ["rowheader"];
 					}
-					if (oTable.getSelectionMode() !== SelectionMode.None) {
+					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);

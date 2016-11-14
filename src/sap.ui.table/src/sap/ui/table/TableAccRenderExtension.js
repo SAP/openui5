@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 
-			_writeAccText(oRm, oRow.getId(), "rowselecttext", sText, ["sapUiTableAriaRowSel"]);
+			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow._bHidden ? "" : sText, ["sapUiTableAriaRowSel"]);
 		}
 
 	});
