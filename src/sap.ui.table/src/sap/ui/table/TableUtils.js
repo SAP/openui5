@@ -557,6 +557,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 
+			oTable._bIsScrolledByKeyboard = bScrolled;
+
 			return bScrolled;
 		},
 
