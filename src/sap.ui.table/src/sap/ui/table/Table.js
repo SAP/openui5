@@ -2058,10 +2058,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// if the data area has been updated after a vertical resize, its scrollLeft can be reset to 0;
 				// at the same time, prevoiusly scrolled header and HSB still have scrollLeft > 0
 				// adjust it
-				var $dataSrollArea = $this.find(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
-				var iScrollLeft = $sapUiTableHSb.scrollLeft();
-				if ($dataSrollArea.scrollLeft() != iScrollLeft) {
-					$dataSrollArea.scrollLeft(iScrollLeft);
+				var $dataScrollArea = $this.find(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
+				var iScrollLeft = $this.find(".sapUiTableCtrlScr.sapUiTableCHA").scrollLeft();
+				if ($dataScrollArea.scrollLeft() != iScrollLeft) {
+					$dataScrollArea.scrollLeft(iScrollLeft);
 				}
 			}
 
