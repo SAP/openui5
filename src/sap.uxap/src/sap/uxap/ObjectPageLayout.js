@@ -414,17 +414,22 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection;
+		var oSectionToSelect = this._oStoredSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection,
+			sFirstVisibleSectionID, sSectionToSelectID;
 
 		this._bDomReady = true;
-
 		this._adjustHeaderHeights();
 
-		if (this.getUseIconTabBar() && oSectionToSelect) {
-			this._setSelectedSectionId(oSectionToSelect.getId());
-			this._setCurrentTabSection(oSectionToSelect);
-		} else if (sap.ui.getCore().byId(this.getSelectedSection())) {
-			this.scrollToSection(this.getSelectedSection());
+		if (oSectionToSelect) {
+			sSectionToSelectID = oSectionToSelect.getId();
+			sFirstVisibleSectionID = this._oFirstVisibleSection && this._oFirstVisibleSection.getId();
+
+			if (this.getUseIconTabBar()) {
+				this._setSelectedSectionId(sSectionToSelectID);
+				this._setCurrentTabSection(oSectionToSelect);
+			} else if (sSectionToSelectID !== sFirstVisibleSectionID) {
+				this.scrollToSection(sSectionToSelectID);
+			}
 		}
 
 		this._initAnchorBarScroll();
