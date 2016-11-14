@@ -48,11 +48,30 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		}
 	});
 
+	var I_TOUCH_DRAG_START_THRESHOLD_DISTANCE = 7;
+
+	var bPreventScrollOnTouch = false;
+
+	// previous target overlay drag enter was called for
+	var oPreviosTargetOverlayForTouch;
+
+	/*
+	 * @private
+	 */
+	DragDrop.prototype._preventScrollOnTouch = function(oEvent) {
+		if (bPreventScrollOnTouch) {
+			oEvent.preventDefault();
+		}
+	};
+
 	/*
 	 * @private
 	 */
 	DragDrop.prototype.init = function() {
 		Plugin.prototype.init.apply(this, arguments);
+
+		// We want to prevent the page from scrolling before getting to its children (=> useCapture "true")
+		document.addEventListener('touchmove', this._preventScrollOnTouch, true);
 
 		this._mElementOverlayDelegate = {
 			"onAfterRendering" : this._checkMovable
@@ -75,6 +94,8 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	DragDrop.prototype.exit = function() {
 		Plugin.prototype.exit.apply(this, arguments);
 
+		document.removeEventListener('touchmove', this._preventScrollOnTouch);
+
 		delete this._mElementOverlayDelegate;
 		delete this._mAggregationOverlayDelegate;
 		delete this._dragScrollHandler;
@@ -95,8 +116,8 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 
 		oOverlay.attachBrowserEvent("dragover", this._onDragOver, this);
 		oOverlay.attachBrowserEvent("dragenter", this._onDragEnter, this);
+		oOverlay.attachBrowserEvent("dragleave", this._onDragLeave, this);
 	};
-
 
 	/**
 	 * @override
@@ -122,7 +143,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 
 		oOverlay.detachBrowserEvent("dragover", this._onDragOver, this);
 		oOverlay.detachBrowserEvent("dragenter", this._onDragEnter, this);
-
+		oOverlay.detachBrowserEvent("dragleave", this._onDragLeave, this);
 	};
 
 	/**
@@ -146,6 +167,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
 		oOverlay.attachBrowserEvent("drag", this._onDrag, this);
 		oOverlay.attachBrowserEvent("dragend", this._onDragEnd, this);
+		oOverlay.attachBrowserEvent("touchstart", this._onTouchStart, this);
 	};
 
 	/**
@@ -154,8 +176,9 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._detachDragEvents = function(oOverlay) {
 		oOverlay.detachBrowserEvent("dragstart", this._onDragStart, this);
-		oOverlay.detachBrowserEvent("dragend", this._onDragEnd, this);
 		oOverlay.detachBrowserEvent("drag", this._onDrag, this);
+		oOverlay.detachBrowserEvent("dragend", this._onDragEnd, this);
+		oOverlay.detachBrowserEvent("touchstart", this._onTouchStart, this);
 	};
 
 	/**
@@ -183,6 +206,12 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnter = function(oOverlay, oEvent) { };
+
+	/**
+	 * @return {boolean} return true to omit event.preventDefault
+	 * @protected
+	 */
+	DragDrop.prototype.onDragLeave = function(oOverlay, oEvent) { };
 
 	/**
 	 * @return {boolean} return true to omit event.preventDefault
@@ -249,6 +278,154 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 
 		this.showGhost(oOverlay, oEvent);
 		this.onDragStart(oOverlay, oEvent);
+	};
+
+	DragDrop.prototype._attachTouchDragEvents = function(oOverlay) {
+		oOverlay.attachBrowserEvent("touchmove", this._onTouchMove, this);
+		oOverlay.attachBrowserEvent("touchend", this._onTouchEnd, this);
+	};
+
+	DragDrop.prototype._detachTouchDragEvents = function(oOverlay) {
+		oOverlay.detachBrowserEvent("touchmove", this._onTouchMove, this);
+		oOverlay.detachBrowserEvent("touchend", this._onTouchEnd, this);
+	};
+
+	DragDrop.prototype._onTouchStart = function(oEvent) {
+
+		var touchStartX = oEvent.touches[0].pageX;
+		var touchStartY = oEvent.touches[0].pageY;
+
+		var fnTouchMoveHandler, fnTouchEndHandler;
+
+		var oTouchedOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+
+	    var fnDetachTouchHandlers = function() {
+			oTouchedOverlay.detachBrowserEvent("touchmove", fnTouchMoveHandler, this);
+			oTouchedOverlay.detachBrowserEvent("touchend", fnTouchEndHandler, this);
+	    };
+
+	    var fnGetMoveDistance = function(touchMoveX, touchMoveY) {
+			var distanceX = touchStartX - touchMoveX;
+			var distanceY = touchStartY - touchMoveY;
+	        return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+	    };
+
+	    fnTouchMoveHandler = function(oEvent) {
+			var touchMoveX = oEvent.touches[0].pageX;
+			var touchMoveY = oEvent.touches[0].pageY;
+			var movedDistance = fnGetMoveDistance(touchMoveX, touchMoveY);
+
+			if (movedDistance > I_TOUCH_DRAG_START_THRESHOLD_DISTANCE) {
+				this.onDragStart(oTouchedOverlay);
+				fnDetachTouchHandlers.call(this);
+				this._attachTouchDragEvents(oTouchedOverlay);
+			}
+		};
+
+	    fnTouchEndHandler = function(oEvent) {
+			fnDetachTouchHandlers.call(this);
+			bPreventScrollOnTouch = false;
+		};
+
+		bPreventScrollOnTouch = true;
+
+		oEvent.stopPropagation();
+		oTouchedOverlay.attachBrowserEvent("touchmove", fnTouchMoveHandler, this);
+		oTouchedOverlay.attachBrowserEvent("contextmenu", fnTouchEndHandler, this);
+		oTouchedOverlay.attachBrowserEvent("touchend", fnTouchEndHandler, this);
+	};
+
+	DragDrop.prototype._getTargetOverlay = function(oElement) {
+		if (oElement && ElementUtil.isInstanceOf(oElement, "sap.ui.dt.Overlay")) {
+
+			// target overlay is the overlay that we could drop on and therefore have to fire events for
+			var oTargetOverlay;
+			// is overlay a targetZone AggregationOverlay
+			if (ElementUtil.isInstanceOf(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
+				oTargetOverlay = oElement;
+			} else if (OverlayUtil.isInTargetZoneAggregation(oElement)) {
+				oTargetOverlay = oElement;
+			}
+
+			return oTargetOverlay ? oTargetOverlay : this._getTargetOverlay(oElement.getParent());
+		}
+	};
+
+	DragDrop.prototype._findTargetOverlayFromCoordinates = function(pageX, pageY) {
+		var oDomNode = document.elementFromPoint(pageX, pageY);
+
+		var oElement = oDomNode ? sap.ui.getCore().byId(oDomNode.id) : undefined;
+
+		return this._getTargetOverlay(oElement);
+
+	};
+
+	DragDrop.prototype._onTouchMove = function(oEvent) {
+		var oDraggedOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+
+		this.onDrag(oDraggedOverlay);
+
+		// changedTouches will have the information related to the moved finger, because it’s what caused the event "touchmove"
+		var aTouches = oEvent.touches || oEvent.changedTouches;
+
+		var pageX = aTouches[0].pageX;
+		var pageY = aTouches[0].pageY;
+
+		var oTargetOverlay = this._findTargetOverlayFromCoordinates(pageX, pageY);
+
+		if (!oTargetOverlay) {
+			return;
+		}
+
+		if (oTargetOverlay !== oPreviosTargetOverlayForTouch) {
+			if (oPreviosTargetOverlayForTouch) {
+				if (ElementUtil.isInstanceOf(oPreviosTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
+					this.onAggregationDragLeave(oPreviosTargetOverlayForTouch);
+				} else {
+					this.onDragLeave(oPreviosTargetOverlayForTouch);
+				}
+			}
+			oPreviosTargetOverlayForTouch = oTargetOverlay;
+
+			if (ElementUtil.isInstanceOf(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+				this.onAggregationDragEnter(oTargetOverlay);
+			} else {
+				this.onDragEnter(oTargetOverlay, oEvent);
+			}
+		}
+
+		if (ElementUtil.isInstanceOf(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+			this.onAggregationDragOver(oTargetOverlay);
+		} else {
+			this.onDragOver(oTargetOverlay);
+		}
+
+		oEvent.stopPropagation();
+	};
+
+	DragDrop.prototype._getValidTargetZoneAggregationOverlay = function(oOverlay) {
+		if (ElementUtil.isInstanceOf(oOverlay, "sap.ui.dt.AggregationOverlay") && oOverlay.getTargetZone()) {
+			return oOverlay;
+		} else {
+			return this._getValidTargetZoneAggregationOverlay(oOverlay.getParent());
+		}
+	};
+
+	DragDrop.prototype._onTouchEnd = function(oEvent) {
+		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+
+		var oAggregationOverlay = this._getValidTargetZoneAggregationOverlay(oOverlay);
+
+		if (oAggregationOverlay) {
+			this.onAggregationDrop(oAggregationOverlay);
+		}
+
+		this.onDragEnd(oOverlay);
+		this._detachTouchDragEvents(oOverlay);
+
+		oPreviosTargetOverlayForTouch = undefined;
+
+		bPreventScrollOnTouch = false;
 	};
 
 	/**
@@ -377,6 +554,21 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
 			if (!this.onDragEnter(oOverlay, oEvent)) {
+				oEvent.stopPropagation();
+			}
+		}
+
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * @private
+	 */
+	DragDrop.prototype._onDragLeave = function(oEvent) {
+		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
+			//if "true" returned, propagation won't be canceled
+			if (!this.onDragLeave(oOverlay, oEvent)) {
 				oEvent.stopPropagation();
 			}
 		}

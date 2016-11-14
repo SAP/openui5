@@ -27,20 +27,46 @@
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		/* global QUnit sinon */
+
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.plugin.DragDrop");
 
-		function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, sDomDragEvent, assert){
-			done = assert.async();
+		var sandbox = sinon.sandbox.create();
+
+		function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay){
+			var done = assert.async();
+
 			this.oDragDrop[sHandlerFunctionName] = function(oOverlayInHandler) {
 				assert.ok(true, "handler was called");
-				assert.equal(oOverlay, oOverlayInHandler, "correct overlay passed to the handler");
+				if (oTargetOverlay) {
+					assert.equal(oTargetOverlay, oOverlayInHandler, "correct overlay passed to the handler");
+				}  else {
+					assert.equal(oOverlay, oOverlayInHandler, "correct overlay passed to the handler");
+				}
 				done();
 			};
-			oOverlay.$().trigger(sDomDragEvent);
+
+			if (aDomDragEvents.length) {
+				for (var i = 0; i < aDomDragEvents.length; i++) {
+					if (mFakeTouchEvents) {
+						var oEventData = mFakeTouchEvents[aDomDragEvents[i]];
+						var oEvent;
+						if ( oEventData ) {
+							oEvent = jQuery.Event(aDomDragEvents[i], oEventData);
+							oOverlay.$().trigger(oEvent);
+						}
+					} else {
+						oOverlay.$().trigger(aDomDragEvents[i]);
+					}
+				}
+			}
 		}
 
 		QUnit.module("Given that an DragDrop is initialized ", {
@@ -49,7 +75,6 @@
 				this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oButton]});
 				this.oLayout.placeAt("content");
 				sap.ui.getCore().applyChanges();
-
 
 				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout, designTimeMetadata : {}});
 				this.oLayoutOverlay.placeInOverlayContainer();
@@ -62,6 +87,53 @@
 				this.oDragDrop.registerElementOverlay(this.oButtonOverlay);
 				this.oDragDrop.registerAggregationOverlay(this.oAggregationOverlay);
 				this.oAggregationOverlay.setTargetZone(true);
+
+				this.mFakeTouchEvents = {
+					touchstart: {
+						touches: [{
+							pageX:5,
+							pageY:5
+						}],
+						originalEvent: {
+							touches: [{
+								pageX:5,
+								pageY:5
+							}]
+						}
+					},
+					touchmove: {
+						touches: [{
+							pageX:10,
+							pageY:10
+						}],
+						originalEvent: {
+							touches: [{
+								pageX:10,
+								pageY:10
+							}]
+						}
+					},
+					touchend: {
+						touches: [{
+							pageX:10,
+							pageY:10
+						}],
+						originalEvent: {
+							touches: [{
+								pageX:10,
+								pageY:10
+							}],
+							changedTouches: [{
+								pageX: 10,
+								pageY: 10
+							}]
+						},
+						changedTouches: [{
+							pageX:10,
+							pageY:10
+						}]
+					}
+				};
 			},
 			afterEach : function() {
 				this.oLayout.destroy();
@@ -69,42 +141,225 @@
 			}
 		});
 
+		QUnit.test("when the touchstart is triggered on an overlay and touchmove is being listened", function(assert) {
+			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, ["touchstart", "touchmove"], assert, this.mFakeTouchEvents);
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oButtonOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and dragover is triggered on an element overlay", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oButtonOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and drag is triggered", function(assert) {
+			testDragAndDropEventHandlerTriggering.call(this, "onDrag", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents);
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragenter is triggered on an aggregation overlay", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oAggregationOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragover is triggered on an aggregation overlay", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oAggregationOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchend is triggered on an overlay and aggregationdrop is triggered on an aggregation overlay", function(assert) {
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDrop", this.oButtonOverlay, ["touchstart", "touchmove", "touchend"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+		});
+
+		QUnit.test("when the touchend is triggered on an overlay and dragend is triggered on an element overlay", function(assert) {
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnd", this.oButtonOverlay, ["touchstart", "touchmove", "touchend"], assert, this.mFakeTouchEvents);
+		});
+
 		QUnit.test("when the dragstart triggered on overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, "dragstart", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, ["dragstart"], assert);
 		});
 
 		QUnit.test("when the dragend triggered on overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDragEnd", this.oButtonOverlay, "dragend", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnd", this.oButtonOverlay, ["dragend"], assert);
 		});
 
 		QUnit.test("when the drag triggered on overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onDrag", this.oButtonOverlay, "drag", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onDrag", this.oButtonOverlay, ["drag"], assert);
 		});
 
 		QUnit.test("when the dragenter triggered on overlay in droppable aggregation", function(assert) {
-			this.oAggregationOverlay.setTargetZone(true);
-			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, "dragenter", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, ["dragenter"], assert);
 		});
 
 		QUnit.test("when the dragover triggered on overlay in droppable aggregation", function(assert) {
-			this.oAggregationOverlay.setTargetZone(true);
-			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, "dragover", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, ["dragover"], assert);
+		});
+
+		QUnit.test("when the dragleave triggered on overlay in droppable aggregation", function(assert) {
+			testDragAndDropEventHandlerTriggering.call(this, "onDragLeave", this.oButtonOverlay, ["dragleave"], assert);
 		});
 
 		QUnit.test("when the dragenter triggered on aggregation overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oAggregationOverlay, "dragenter", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oAggregationOverlay, ["dragenter"], assert);
 		});
 
 		QUnit.test("when the dragover triggered on aggregation overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oAggregationOverlay, "dragover", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oAggregationOverlay, ["dragover"], assert);
 		});
 
 		QUnit.test("when the dragleave triggered on aggregation overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragLeave", this.oAggregationOverlay, "dragleave", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragLeave", this.oAggregationOverlay, ["dragleave"], assert);
 		});
 
 		QUnit.test("when the drop triggered on aggregation overlay", function(assert) {
-			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDrop", this.oAggregationOverlay, "drop", assert);
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDrop", this.oAggregationOverlay, ["drop"], assert);
+		});
+
+		QUnit.module("Given that an DragDrop touchevents are initialized ", {
+			beforeEach : function() {
+				this.oButton = new sap.m.Button();
+				this.oLayout1 = new sap.ui.layout.VerticalLayout({content : [this.oButton]});
+				this.oLayout2 = new sap.ui.layout.VerticalLayout({content : [this.oLayout1]});
+				this.oLayout2.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				this.oLayout1Overlay = new sap.ui.dt.ElementOverlay({element : this.oLayout1, designTimeMetadata : {}});
+
+				this.oLayout2Overlay = new sap.ui.dt.ElementOverlay({element : this.oLayout2, designTimeMetadata : {}});
+				this.oLayout2Overlay.placeInOverlayContainer();
+				this.oAggregationOverlay = this.oLayout2Overlay.getAggregationOverlay("content");
+				this.oButtonOverlay = new sap.ui.dt.ElementOverlay({element : this.oButton, designTimeMetadata : {}});
+				this.oButtonOverlay.setMovable(true);
+
+				sap.ui.getCore().applyChanges();
+				this.oDragDrop = new sap.ui.dt.plugin.DragDrop();
+				this.oDragDrop.registerElementOverlay(this.oButtonOverlay);
+				this.oDragDrop.registerElementOverlay(this.oLayout1Overlay);
+				this.oDragDrop.registerAggregationOverlay(this.oAggregationOverlay);
+				this.oAggregationOverlay.setTargetZone(true);
+
+				this.mFakeTouchEvents = {
+					touchstart: {
+						touches: [{
+							pageX:5,
+							pageY:5
+						}],
+						originalEvent: {
+							touches: [{
+								pageX:5,
+								pageY:5
+							}]
+						}
+					},
+					touchmove: {
+						touches: [{
+							pageX:10,
+							pageY:10
+						}],
+						originalEvent: {
+							touches: [{
+								pageX:10,
+								pageY:10
+							}]
+						}
+					}
+				};
+			},
+			afterEach : function() {
+				this.oLayout2.destroy();
+				this.oDragDrop.destroy();
+			}
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay (go to the parent) which is in the target zone", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oButtonOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oLayout1Overlay);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and dragover is triggered on an element overlay (go to the parent) which is in the target zone", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oButtonOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+
+			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oLayout1Overlay);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragenter is triggered on an aggregation overlay which has a target zone", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oAggregationOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+
+			sandbox.restore();
+		});
+
+		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragover is triggered on an aggregation overlay which has a target zone", function(assert) {
+			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+
+			var fakeIdStub = {
+			  id: this.oAggregationOverlay.getId()
+			};
+
+			fnElementFromPointStub.returns(fakeIdStub);
+
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oButtonOverlay, ["touchstart", "touchmove", "touchmove"], assert, this.mFakeTouchEvents, this.oAggregationOverlay);
+
+			sandbox.restore();
 		});
 
 		if (!sap.ui.Device.browser.webkit) {
