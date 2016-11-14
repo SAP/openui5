@@ -1,11 +1,7 @@
-/* ============================================= */
-/* CSS for control sap.m/Button.control          */
-/* BlueCrystal theme                             */
-/* ============================================= */
-
-.sapMBtn {
-	background-color: @sapUiButtonLiteBackground;
-}
+/* ============================= */
+/* CSS for control sap.m/Button  */
+/* BlueCrystal theme             */
+/* ============================= */
 
 .sapMBtnGradient(@color) {
 	background-color: @color;
@@ -16,21 +12,8 @@
 }
 
 .sapMBtnInner {
-	background-color: @sapUiButtonBackground;
-	border:           1px solid @sapUiButtonBorderColor;
 	border-radius:    0.125rem;
-	color:            @sapUiButtonTextColor;
-	text-shadow:      0 1px 0 @sapUiLightShadowTint;
 	.sapMBtnGradient(@sapUiButtonBackground);
-}
-
-.sapMBtnIcon {
-	color:            @sapUiButtonIconColor;
-}
-
-.sapMBtn:hover > .sapMBtnHoverable {
-	background-image: none;
-	background-color: @sapUiButtonHoverBackground;
 }
 
 /* ---------------------------------------------------------------------*/
@@ -38,18 +21,18 @@
 /* ---------------------------------------------------------------------*/
 
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
-	outline:          1px dotted @sapUiFocus;
+	outline:          1px dotted @sapUiContentFocusColor;
 	outline-offset:   -3px; /* see the global focus specification */
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus > .sapMFocusable,
 html.sap-desktop .sapMBtnInverted.sapMBtn:focus > .sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
-	outline-color:    @sapUiInvertedFocus;
+	outline-color:    @sapUiContentContrastFocusColor;
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
-	outline-color:    @sapUiFocus;
+	outline-color:    @sapUiContentFocusColor;
 }
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline for IE and Edge:                                */
@@ -71,17 +54,17 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 }
 
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           1px dashed @sapUiFocus;
+	border:           1px dashed @sapUiContentFocusColor;
 }
 
 .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
 .sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv,
 .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
-	border-color:    @sapUiInvertedFocus;
+	border-color:    @sapUiContentContrastFocusColor;
 }
 
 .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
-	border-color:    @sapUiFocus;
+	border-color:    @sapUiContentFocusColor;
 }
 
 /* ---------------------------------------------------------------------*/
@@ -89,123 +72,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 /* ---------------------------------------------------------------------*/
 
 .sapMBtnDisabled {
-	text-shadow:      none;
-	cursor:           default;
 	opacity:          0.5;
-}
-
-:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
-	background-image: none;
-	background-color: @sapUiButtonActiveBackground;
-	border-color:     @sapUiButtonActiveBorderColor;
-	color:            @sapUiButtonActiveTextColor;
-	text-shadow:      none;
-}
-
-:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon {
-	color:            @sapUiButtonActiveTextColor;
-}
-
-/* ---------------------------------------------------------------------*/
-/* Special buttons have the same look on a page and in a header/footer. */
-/* ---------------------------------------------------------------------*/
-
-span.sapMBtnInner.sapMBtnAccept {
-	background-image: none;
-	background-color: @sapUiButtonAcceptBackground;
-	border-color:     @sapUiButtonAcceptBorderColor;
-	color:            @sapUiButtonAcceptTextColor;
-	text-shadow:      none;
-}
-
-span.sapMBtnInner.sapMBtnAccept > .sapMBtnIcon {
-	color:            @sapUiButtonAcceptTextColor;
-}
-
-.sapMBtn:hover > .sapMBtnHoverable.sapMBtnAccept:not(.sapMBtnActive) {
-	background-color: @sapUiButtonAcceptHoverBackground;
-	border-color:     @sapUiButtonAcceptHoverBorderColor;
-}
-
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnAccept.sapMBtnActive {
-	background-color: @sapUiButtonAcceptActiveBackground;
-	border-color:     @sapUiButtonAcceptActiveBorderColor;
-}
-
-/* ---------------------------------------- */
-
-span.sapMBtnInner.sapMBtnReject {
-	background-image: none;
-	background-color: @sapUiButtonRejectBackground;
-	border-color:     @sapUiButtonRejectBorderColor;
-	color:            @sapUiButtonRejectTextColor;
-	text-shadow:      none;
-}
-
-span.sapMBtnInner.sapMBtnReject > .sapMBtnIcon {
-	color:            @sapUiButtonRejectTextColor;
-}
-
-.sapMBtn:hover > .sapMBtnHoverable.sapMBtnReject:not(.sapMBtnActive) {
-	background-color: @sapUiButtonRejectHoverBackground;
-	border-color:     @sapUiButtonRejectHoverBorderColor;
-}
-
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnReject.sapMBtnActive {
-	background-color: @sapUiButtonRejectActiveBackground;
-	border-color:     @sapUiButtonRejectActiveBorderColor;
-}
-
-/* ---------------------------------------- */
-
-span.sapMBtnInner.sapMBtnEmphasized {
-	background-image: none;
-	background-color: @sapUiButtonEmphasizedBackground;
-	border-color:     @sapUiButtonEmphasizedBorderColor;
-	color:            @sapUiButtonEmphasizedTextColor;
-	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
-}
-
-span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
-	color:            @sapUiButtonEmphasizedTextColor;
-}
-
-.sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
-	background-color: @sapUiButtonEmphasizedHoverBackground;
-	border-color:     @sapUiButtonEmphasizedHoverBorderColor;
-}
-
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
-	background-color: @sapUiButtonEmphasizedActiveBackground;
-	border-color:     @sapUiButtonEmphasizedActiveBorderColor;
-	text-shadow:      none;
-}
-
-/* ---------------------------------------------------------------------*/
-/* Transparent buttons looks like normal one in a header/footer.        */
-/* The following rules are overridden in a bar below:                   */
-/* ---------------------------------------------------------------------*/
-
-.sapMBtnTransparent {
-	background-image: none;
-	background-color: @sapUiButtonLiteBackground;
-	border-color:     @sapUiButtonLiteBorderColor;
-	color:            @sapUiButtonLiteTextColor;
-	text-shadow:      none;
-}
-
-html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
-	color:            @sapUiButtonIconColor;
-}
-
-.sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable {
-	background-color: @sapUiButtonLiteHoverBackground;
-}
-
-:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnActive,
-:not(.sapMBtnDisabled):hover > .sapMBtnTransparent.sapMBtnActive {
-	background-color: @sapUiButtonLiteActiveBackground;
-	border-color:     @sapUiButtonLiteActiveBorderColor;
 }
 
 /* ------------------------------------------------ */
@@ -213,41 +80,9 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
 
-.sapMIBar-CTX .sapMBtnInner {
-	border-color: @sapUiButtonLiteBorderColor;
-}
-
-.sapMBar .sapMBtnInner,
-.sapMHeader-CTX .sapMBtnInner,
-.sapMFooter-CTX .sapMBtnInner,
-.sapMSubHeader-CTX .sapMBtnInner {
-	background: @sapUiButtonLiteBackground;
-}
-
-.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
-	background-color: @sapUiButtonActiveBackground;
-}
-
 .sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	background-color: @sapUiButtonFooterHoverBackground;
-	color:            @sapUiButtonFooterTextColor;
-	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
+	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
 	border-color:     transparent;
-}
-
-.sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnAccept:not(.sapMBtnActive) {
-	background-color: @sapUiButtonAcceptHoverBackground;
-	border-color:     @sapUiButtonAcceptHoverBorderColor;
-}
-
-.sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnReject:not(.sapMBtnActive) {
-	background-color: @sapUiButtonRejectHoverBackground;
-	border-color:     @sapUiButtonRejectHoverBorderColor;
-}
-
-.sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
-	background-color: @sapUiButtonEmphasizedHoverBackground;
-	border-color:     @sapUiButtonEmphasizedHoverBorderColor;
 }
 
 .sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized {
@@ -255,7 +90,7 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 	background-color: @sapUiButtonEmphasizedBackground;
 	border-color:     @sapUiButtonEmphasizedBorderColor;
 	color:            @sapUiButtonEmphasizedTextColor;
-	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
+	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
 }
 
 .sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
@@ -269,100 +104,13 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 }
 
 /* Separators between buttons in a footer */
-.sapMFooter-CTX .sapMBtnInner {
-	border-color:     @sapUiButtonLiteBorderColor;
-}
-
-html.sap-desktop .sapMFooter-CTX .sapMBtnInner {
-	border-color:     @sapUiButtonLiteBorderColor;
-}
-
 .sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
 /* Background and text colors for different states */
-.sapMIBar-CTX .sapMBtnInner {
-	color:            @sapUiButtonHeaderTextColor;
-	text-shadow:      0 1px 0 none;
-}
-
-.sapMIBar-CTX .sapMBtnTransparent {
-	color:            @sapUiButtonLiteTextColor;
-	text-shadow:      none;
-}
-
 .sapMFooter-CTX span.sapMBtnInner,
 .sapMIBar-CTX.sapMFooter-CTX .sapMBtnInner > .sapMBtnIcon {
 	color:            @sapUiButtonFooterTextColor;
-	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
-}
-
-.sapMIBar-CTX .sapMBtnDisabled,
-.sapMIBar-CTX .sapMBtnDisabled .sapMBtnContent > .sapMBtnIcon {
-	color:            @sapUiButtonHeaderDisabledTextColor;
-	text-shadow:      none;
-}
-
-.sapMIBar-CTX.sapMFooter-CTX :not(.sapMBtnDisabled) > .sapMBtnActive {
-	background-color: @sapUiButtonActiveBackground;
-	color:            @sapUiButtonActiveTextColor;
-	text-shadow:      none;
-}
-
-/* ------------------------------------------------ */
-/* Buttons in a Toolbar                             */
-/* ------------------------------------------------ */
-
-
-/* transparent Toolbar Context */
-.sapMTB-Transparent-CTX .sapMBtnInner {
-	background-image:     none;
-	background:           @sapUiButtonLiteBackground;
-	border-color:         @sapUiButtonLiteBorderColor;
-}
-
-/* overwrite list's default active state color */
-.sapMLIBActive span.sapMBtnInner {
-	color: @sapUiButtonTextColor;
-}
-
-/* ------------------------------------------------ */
-/* Compact size                                     */
-/* ------------------------------------------------ */
-
-.sapUiSizeCompact {
-	.sapMBtnInner {
-		text-shadow:      none;
-	}
-	.sapMBar-CTX .sapMBtnInner {
-		margin:           0;
-		border-color:     transparent;
-	}
-	.sapMBtnFocusDiv {
-		border-radius:    0;
-	}
-}
-
-/* ------------------------------------------------ */
-/* Condensed size                                   */
-/* ------------------------------------------------ */
-
-.sapUiSizeCondensed .sapUiTableCell {
-	.sapMBtnInner {
-		text-shadow:      none;
-	}
-	.sapMBar-CTX .sapMBtnInner {
-		border-color:     transparent;
-	}
-	.sapMBtnContent {
-		line-height:      1.250rem;
-	}
-	.sapMBtnFocusDiv {
-		left:             0;
-		top:              0;
-		right:            0;
-		bottom:           0;
-		border-radius:    0;
-	}
+	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
 }
