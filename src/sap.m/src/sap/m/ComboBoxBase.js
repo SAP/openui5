@@ -74,12 +74,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		});
 
 		/* =========================================================== */
-		/* Private methods and properties                              */
-		/* =========================================================== */
-
-		/* ----------------------------------------------------------- */
 		/* Private methods                                             */
-		/* ----------------------------------------------------------- */
+		/* =========================================================== */
 
 		/**
 		 * Called whenever the binding of the aggregation items is changed.
@@ -88,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		ComboBoxBase.prototype.updateItems = function(sReason) {
 			this.bItemsUpdated = false;
 
-			// note: for backward compatibility and to keep the old data binding behavior,
+			// for backward compatibility and to keep the old data binding behavior,
 			// the items should be destroyed before calling .updateAggregation("items")
 			this.destroyItems();
 			this.updateAggregation("items");
@@ -112,26 +108,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		};
 
 		/**
-		 * Gets the <code>list</code>.
-		 *
-		 * @returns {sap.m.SelectList} The list instance object or <code>null</code>.
-		 * @protected
-		 */
-		ComboBoxBase.prototype.getList = function() {
-			if (this.bIsDestroyed) {
-				return null;
-			}
-
-			return this._oList;
-		};
-
-		/**
 		 * Fires the {@link #loadItems} event if the data used to display items in the dropdown list
-		 * is not already loaded and enqueue the <code>mOptions</code> into the message queue for processing.
+		 * is not already loaded and enqueue the <code>fnCallBack</code> and <code>mOptions</code> into a message
+		 * queue for processing.
 		 *
 		 * @param {function} [fnCallBack] A callback function to execute after the items are loaded.
 		 * @param {object} [mOptions] Additional options.
-		 * @param {string} [mOptions.id] Identifier of the message.
+		 * @param {string} [mOptions.name] Identifier of the message.
 		 * @param {boolean} [mOptions.busyIndicator=true] Indicate whether the loading indicator is shown in the
 		 * text field after some delay.
 		 * @param {int} [mOptions.busyIndicatorDelay=300] Indicates the delay in milliseconds after which the busy
@@ -191,14 +174,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			this.bProcessingLoadItemsEvent = false;
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
 
-			// restore the busy indicator state to its previous state (if it has not been changed)
-			// note: this is needed to avoid overriding application settings
+			// restore the busy indicator state to its previous state (if it has not been changed),
+			// this is needed to avoid overriding application settings
 			if (this.bInitialBusyIndicatorState !== this.getBusy()) {
 				this.setInternalBusyIndicator(this.bInitialBusyIndicatorState);
 			}
 
-			// restore the busy indicator delay to its previous state (if it has not been changed)
-			// note: this is needed to avoid overriding application settings
+			// restore the busy indicator delay to its previous state (if it has not been changed),
+			// this is needed to avoid overriding application settings
 			if (this.iInitialBusyIndicatorDelay !== this.getBusyIndicatorDelay()) {
 				this.setInternalBusyIndicatorDelay(this.iInitialBusyIndicatorDelay);
 			}
@@ -259,7 +242,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			// indicate whether the items are updated
 			this.bItemsUpdated = false;
 
-			// indicates if the picker is opened by the keyboard or by a click on the arrow button
+			// indicates if the picker is opened by the keyboard or by a click/tap on the downward-facing arrow button
 			this.bOpenedByKeyboardOrButton = false;
 
 			this.bProcessingLoadItemsEvent = false;
@@ -340,7 +323,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
 				oControl = oEvent.srcControl;
 
-
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
@@ -357,16 +339,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 					return;
 				}
 
-				// flag if the button or keyboard have been used for opening the picker
-				this.bOpenedByKeyboardOrButton = true;
-
 				this.loadItems();
+				this.bOpenedByKeyboardOrButton = true;
 				this.open();
 			}
 
 			if (this.isOpen()) {
 
-				// add the active state to the control's field
+				// add the active state to the text field
 				this.addStyleClass(CSS_CLASS + "Pressed");
 			}
 		};
@@ -381,6 +361,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBoxBase.prototype.onsapshow = function(oEvent) {
+
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
@@ -389,9 +370,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent browser address bar to be open in ie9, when F4 is pressed
 			if (oEvent.keyCode === jQuery.sap.KeyCodes.F4) {
-				oEvent.preventDefault();
+				this.onF4(oEvent);
 			}
 
 			if (this.isOpen()) {
@@ -403,6 +383,18 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			this.loadItems();
 			this.bOpenedByKeyboardOrButton = true;
 			this.open();
+		};
+
+		/**
+		 * Handles when the F4  key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @since 1.46
+		 */
+		ComboBoxBase.prototype.onF4 = function(oEvent) {
+
+			// prevent browser address bar to be open in ie, when F4 is pressed
+			oEvent.preventDefault();
 		};
 
 		/**
@@ -421,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 				// mark the event for components that needs to know if the event was handled
 				oEvent.setMarked();
 
-				// note: fix for Firefox
+				// fix for Firefox
 				oEvent.preventDefault();
 
 				this.close();
@@ -453,7 +445,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 
 			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
-			// to prevent the change event from firing when the arrow button is pressed
+			// to prevent the change event from firing when the downward-facing arrow button is pressed
 			if (oRelatedControl === this) {
 				return;
 			}
@@ -488,6 +480,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
 		 */
 		ComboBoxBase.prototype.addContent = function(oPicker) {};
+
+		/**
+		 * Gets the <code>list</code>.
+		 *
+		 * @returns {sap.m.SelectList} The list instance object or <code>null</code>.
+		 * @protected
+		 */
+		ComboBoxBase.prototype.getList = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			}
+
+			return this._oList;
+		};
 
 		/**
 		 * Sets the property <code>_sPickerType</code>.
@@ -999,7 +1005,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		/**
 		 * Indicates whether the control's picker popup is open.
 		 *
-		 * @returns {boolean} Determines whether the control's picker popup is currently open (this includes opening and closing animations).
+		 * @returns {boolean} Determines whether the control's picker popup is currently open
+		 * (this includes opening and closing animations).
 		 * @public
 		 */
 		ComboBoxBase.prototype.isOpen = function() {

@@ -94,12 +94,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		});
 
 		/* =========================================================== */
-		/* Private methods and properties                              */
-		/* =========================================================== */
-
-		/* ----------------------------------------------------------- */
 		/* Private methods                                             */
-		/* ----------------------------------------------------------- */
+		/* =========================================================== */
 
 		function fnHandleKeyboardNavigation(oControl, oItem) {
 
@@ -290,6 +286,50 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			return oTextField;
 		};
 
+		ComboBox.prototype.revertSelection = function() {
+			var sPickerTextFieldValue,
+				oPickerTextField = this.getPickerTextField();
+
+			this.setSelectedItem(this._oSelectedItemBeforeOpen);
+			this.setValue(this._sValueBeforeOpen);
+
+			if (this.getSelectedItem() === null) {
+				sPickerTextFieldValue = this._sValueBeforeOpen;
+			} else {
+				sPickerTextFieldValue = this._oSelectedItemBeforeOpen.getText();
+			}
+
+			oPickerTextField && oPickerTextField.setValue(sPickerTextFieldValue);
+		};
+
+		ComboBox.prototype.filterItems = function(mOptions, aItems) {
+			var sProperty = mOptions.property,
+				sValue = mOptions.value,
+				bEmptyValue = sValue === "",
+				bMatch = false,
+				sMutator = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				aFilteredItems = [],
+				oItem = null;
+
+			aItems = aItems || this.getItems();
+
+			for (var i = 0; i < aItems.length; i++) {
+
+				oItem = aItems[i];
+
+				// the item match with the value
+				bMatch = jQuery.sap.startsWithIgnoreCase(oItem[sMutator](), sValue) || bEmptyValue;
+
+				if (bMatch) {
+					aFilteredItems.push(oItem);
+				}
+
+				this._setItemVisibility(oItem, bMatch);
+			}
+
+			return aFilteredItems;
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -299,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			this.bOpenValueStateMessage = true;
 			this._sValueBeforeOpen = "";
 
-			// The last selected item before opening the picker
+			// the last selected item before opening the picker
 			this._oSelectedItemBeforeOpen = null;
 		};
 
@@ -348,7 +388,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			fnOnAfterRenderingPickerType && fnOnAfterRenderingPickerType.call(this);
 
-			//hide the list while scrolling to selected item, if neccessary
+			// hide the list while scrolling to selected item, if necessary
 			fnSelectedItemOnViewPort.call(this, false);
 		};
 
@@ -370,36 +410,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			}
 		};
 
-		ComboBox.prototype.onBeforeOpenDialog = function() {
-			var oPickerTextField = this.getPickerTextField();
-
-			this._oSelectedItemBeforeOpen = this.getSelectedItem();
-			this._sValueBeforeOpen = this.getValue();
-
-			if (this.getSelectedItem()) {
-				this.filterItems({
-					property: "text",
-					value: ""
-				});
-			}
-			oPickerTextField.setValue(this._sValueBeforeOpen);
-		};
-
-		ComboBox.prototype.revertSelection = function() {
-			var sPickerTextFieldValue,
-				oPickerTextField = this.getPickerTextField();
-
-			this.setSelectedItem(this._oSelectedItemBeforeOpen);
-			this.setValue(this._sValueBeforeOpen);
-			if (this.getSelectedItem() === null) {
-				sPickerTextFieldValue = this._sValueBeforeOpen;
-			} else {
-				sPickerTextFieldValue = this._oSelectedItemBeforeOpen.getText();
-			}
-
-			oPickerTextField && oPickerTextField.setValue(sPickerTextFieldValue);
-		};
-
 		/* =========================================================== */
 		/* Event handlers                                              */
 		/* =========================================================== */
@@ -412,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
 
-			// note: input event can be buggy
+			// notice that the input event can be buggy in some web browsers,
 			// @see sap.m.InputBase#oninput
 			if (oEvent.isMarked("invalid")) {
 				return;
@@ -496,34 +506,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			}
 		};
 
-		ComboBox.prototype.filterItems = function(mOptions, aItems) {
-			var sProperty = mOptions.property,
-				sValue = mOptions.value,
-				bEmptyValue = sValue === "",
-				bMatch = false,
-				sMutator = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
-				aFilteredItems = [],
-				oItem = null;
-
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-
-				oItem = aItems[i];
-
-				// the item match with the value
-				bMatch = jQuery.sap.startsWithIgnoreCase(oItem[sMutator](), sValue) || bEmptyValue;
-
-				if (bMatch) {
-					aFilteredItems.push(oItem);
-				}
-
-				this._setItemVisibility(oItem, bMatch);
-			}
-
-			return aFilteredItems;
-		};
-
 		/**
 		 * Handles the <code>selectionChange</code> event on the list.
 		 *
@@ -554,6 +536,172 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			// deselect the text and move the text cursor at the endmost position
 			setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
+		};
+
+		/**
+		 * This event handler is called before the picker popup is opened.
+		 *
+		 * @protected
+		 */
+		ComboBox.prototype.onBeforeOpen = function() {
+			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
+				oDomRef = this.getFocusDomRef();
+
+			// the dropdown list can be opened by calling the .open() method (without
+			// any end user interaction), in this case if items are not already loaded
+			// and there is an {@link #loadItems} event listener attached, the items should be loaded
+			if (this.hasLoadItemsEventListeners() && !this.bProcessingLoadItemsEvent) {
+				this.loadItems();
+			}
+
+			// add the active state to the control field
+			this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+
+			if (oDomRef) {
+
+				// expose a parent/child contextual relationship to assistive technologies,
+				// notice that the "aria-owns" attribute is set when the list is visible and in view
+				oDomRef.setAttribute("aria-owns", this.getList().getId());
+			}
+
+			// call the hook to add additional content to the list
+			this.addContent();
+			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
+		};
+
+		/**
+		 * This event handler is called before the picker popup is opened.
+		 *
+		 */
+		ComboBox.prototype.onBeforeOpenDropdown = function() {};
+
+		ComboBox.prototype.onBeforeOpenDialog = function() {
+			var oPickerTextField = this.getPickerTextField();
+
+			this._oSelectedItemBeforeOpen = this.getSelectedItem();
+			this._sValueBeforeOpen = this.getValue();
+
+			if (this.getSelectedItem()) {
+				this.filterItems({
+					property: "text",
+					value: ""
+				});
+			}
+
+			oPickerTextField.setValue(this._sValueBeforeOpen);
+		};
+
+		/**
+		 * This event handler is called after the picker popup is opened.
+		 *
+		 */
+		ComboBox.prototype.onAfterOpen = function() {
+			var oDomRef = this.getFocusDomRef(),
+				oItem = this.getSelectedItem();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "true");
+
+				// notice that the "aria-activedescendant" attribute is set when the currently active descendant is
+				// visible and in view
+				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.getId());
+			}
+
+			// if there is a selected item, scroll and show the list
+			fnSelectedItemOnViewPort.call(this, true);
+		};
+
+		/**
+		 * This event handler is called before the picker popup is closed.
+		 *
+		 */
+		ComboBox.prototype.onBeforeClose = function() {
+			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+
+				// notice that the "aria-owns" attribute is removed when the list is not visible and in view
+				oDomRef.removeAttribute("aria-owns");
+
+				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
+				oDomRef.removeAttribute("aria-activedescendant");
+
+				// if the focus is back to the input after closing the picker,
+				// the value state message should be reopen
+				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
+					this.openValueStateMessage();
+				}
+			}
+
+			// remove the active state of the control's field
+			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+		};
+
+		/**
+		 * This event handler is called after the picker popup is closed.
+		 *
+		 */
+		ComboBox.prototype.onAfterClose = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "false");
+			}
+
+			// clear the filter to make all items visible,
+			// notice that to prevent flickering, the filter is cleared
+			// after the close animation is completed
+			this.clearFilter();
+		};
+
+		/**
+		 * Handles properties' changes of items in the aggregation named <code>items</code>.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.28
+		 */
+		ComboBox.prototype.onItemChange = function(oControlEvent) {
+			var sSelectedItemId = this.getAssociation("selectedItem"),
+				sNewValue = oControlEvent.getParameter("newValue"),
+				sProperty = oControlEvent.getParameter("name");
+
+			// if the selected item has changed, synchronization is needed
+			if (sSelectedItemId === oControlEvent.getParameter("id")) {
+
+				switch (sProperty) {
+					case "text":
+
+						if (!this.isBound("value")) {
+							this.setValue(sNewValue);
+						}
+
+						break;
+
+					case "key":
+
+						if (!this.isBound("selectedKey")) {
+							this.setSelectedKey(sNewValue);
+						}
+
+						break;
+
+					// no default
+				}
+			}
+		};
+
+		ComboBox.prototype.onPropertyChange = function(oControlEvent, oData) {
+			var sNewValue = oControlEvent.getParameter("newValue"),
+				sProperty = oControlEvent.getParameter("name"),
+				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				oControl = (oData && oData.srcControl) || this.getPickerTextField();
+
+			// propagate some property changes to the picker text field
+			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b/.test(sProperty) &&
+				oControl && (typeof oControl[sMutator] === "function")) {
+				oControl[sMutator](sNewValue);
+			}
 		};
 
 		/* ----------------------------------------------------------- */
@@ -623,7 +771,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when arrow keys are pressed
+			// prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function navigateToNextSelectableItem() {
@@ -649,7 +797,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when arrow keys are pressed
+			// prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function navigateToPrevSelectableItem() {
@@ -677,7 +825,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when Home key is pressed
+			// prevent document scrolling when Home key is pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function navigateToFirstSelectableItem() {
@@ -704,7 +852,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when End key is pressed
+			// prevent document scrolling when End key is pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function navigateToLastSelectableItem() {
@@ -729,7 +877,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when page down key is pressed
+			// prevent document scrolling when page down key is pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function() {
@@ -760,7 +908,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// note: prevent document scrolling when page up key is pressed
+			// prevent document scrolling when page up key is pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function() {
@@ -783,7 +931,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.onfocusin = function(oEvent) {
 			var bDropdownPickerType = this.getPickerType() === "Dropdown";
 
-			// the arrow is receiving focus
+			// the downward-facing arrow button is receiving focus
 			if (oEvent.target === this.getOpenArea()) {
 
 				// the value state message can not be opened if click on the open area
@@ -837,7 +985,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 
-			if (this.getPickerType() === "Dialog") {
+			if (this.isPickerDialog()) {
 				return;
 			}
 
@@ -1020,107 +1168,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
-		 * This event handler is called before the picker popup is opened.
-		 *
-		 * @protected
-		 */
-		ComboBox.prototype.onBeforeOpen = function() {
-			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
-				oDomRef = this.getFocusDomRef();
-
-			// the dropdown list can be opened by calling the .open() method (without
-			// any end user interaction), in this case if items are not already loaded
-			// and there is an {@link #loadItems} event listener attached, the items should be loaded
-			if (this.hasLoadItemsEventListeners() && !this.bProcessingLoadItemsEvent) {
-				this.loadItems();
-			}
-
-			// add the active state to the control field
-			this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
-
-			if (oDomRef) {
-
-				// expose a parent/child contextual relationship to assistive technologies
-				// note: the "aria-owns" attribute is set when the list is visible and in view
-				oDomRef.setAttribute("aria-owns", this.getList().getId());
-			}
-
-			// call the hook to add additional content to the list
-			this.addContent();
-			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
-		};
-
-		/**
-		 * This event handler is called before the picker popup is opened.
-		 *
-		 */
-		ComboBox.prototype.onBeforeOpenDropdown = function() {};
-
-		/**
-		 * This event handler is called after the picker popup is opened.
-		 *
-		 */
-		ComboBox.prototype.onAfterOpen = function() {
-			var oDomRef = this.getFocusDomRef(),
-				oItem = this.getSelectedItem();
-
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "true");
-
-				// note: the "aria-activedescendant" attribute is set when the currently active descendant is
-				// visible and in view
-				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.getId());
-			}
-
-			// if there is a selected item, scroll and show the list
-			fnSelectedItemOnViewPort.call(this, true);
-		};
-
-		/**
-		 * This event handler is called before the picker popup is closed.
-		 *
-		 */
-		ComboBox.prototype.onBeforeClose = function() {
-			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
-			var oDomRef = this.getFocusDomRef();
-
-			if (oDomRef) {
-
-				// note: the "aria-owns" attribute is removed when the list is not visible and in view
-				oDomRef.removeAttribute("aria-owns");
-
-				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
-				oDomRef.removeAttribute("aria-activedescendant");
-
-				// if the focus is back to the input after closing the picker,
-				// the value state message should be reopen
-				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
-					this.openValueStateMessage();
-				}
-			}
-
-			// remove the active state of the control's field
-			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
-		};
-
-		/**
-		 * This event handler is called after the picker popup is closed.
-		 *
-		 */
-		ComboBox.prototype.onAfterClose = function() {
-			var oDomRef = this.getFocusDomRef();
-
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "false");
-			}
-
-			// clear the filter to make all items visible
-			// note: to prevent flickering, the filter is cleared
-			// after the close animation is completed
-			this.clearFilter();
-		};
-
-		/**
 		 * Indicates whether the provided item is selected.
 		 *
 		 * @param {sap.ui.core.Item} vItem
@@ -1148,55 +1195,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.clearSelection = function() {
 			this.setSelection(null);
-		};
-
-		ComboBox.prototype.onPropertyChange = function(oControlEvent, oData) {
-			var sNewValue = oControlEvent.getParameter("newValue"),
-				sProperty = oControlEvent.getParameter("name"),
-				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
-				oControl = (oData && oData.srcControl) || this.getPickerTextField();
-
-			// propagate some property changes to the picker text field
-			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b/.test(sProperty) &&
-				oControl && (typeof oControl[sMutator] === "function")) {
-				oControl[sMutator](sNewValue);
-			}
-		};
-
-		/**
-		 * Handles properties' changes of items in the aggregation named <code>items</code>.
-		 *
-		 * @param {sap.ui.base.Event} oControlEvent
-		 * @since 1.28
-		 */
-		ComboBox.prototype.onItemChange = function(oControlEvent) {
-			var sSelectedItemId = this.getAssociation("selectedItem"),
-				sNewValue = oControlEvent.getParameter("newValue"),
-				sProperty = oControlEvent.getParameter("name");
-
-			// if the selected item has changed, synchronization is needed
-			if (sSelectedItemId === oControlEvent.getParameter("id")) {
-
-				switch (sProperty) {
-					case "text":
-
-						if (!this.isBound("value")) {
-							this.setValue(sNewValue);
-						}
-
-						break;
-
-					case "key":
-
-						if (!this.isBound("selectedKey")) {
-							this.setSelectedKey(sNewValue);
-						}
-
-						break;
-
-					// no default
-				}
-			}
 		};
 
 		/**
@@ -1308,7 +1306,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oList) {
 
-				// note: currently there is only one aggregation
+				// notice that currently there is only one aggregation
 				return SelectList.prototype.findAggregatedObjects.apply(oList, arguments);
 			}
 
