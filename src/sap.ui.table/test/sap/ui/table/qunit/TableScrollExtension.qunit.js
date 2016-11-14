@@ -703,3 +703,102 @@ QUnit.test("isVerticalScrollbarVisible", function(assert) {
 	createTables();
 	assert.ok(!this.oScrollExtension.isVerticalScrollbarVisible(), "Table content fits height -> Vertical scrollbar is not visible");
 });
+
+
+QUnit.module("Vertical scrolling", {
+	beforeEach: function() {
+		createTables();
+
+		this.oDefaultSetting = {
+			length: 30,
+			visibleRowCount: 10,
+			expectedFirstVisibleRow: 0,
+			tolerance: 0,
+			scrollTop: 0,
+			rowHeight: 50,
+			variableRowHeight: false
+		}
+
+		this.iAssertionDelay = 75;
+	},
+	afterEach: function() {
+		destroyTables();
+	},
+	doTest: function(assert, oSetting) {
+		oSetting = jQuery.extend({}, this.oDefaultSetting, oSetting);
+		oTable.setVisibleRowCount(oSetting.visibleRowCount);
+		oTable.setRowHeight(oSetting.rowHeight);
+		oTable.unbindRows();
+		oTable.bindRows("/rows");
+		oTable._bVariableRowHeightEnabled = oSetting.variableRowHeight;
+		if (oTable._bVariableRowHeightEnabled) {
+			oTable.setFixedRowCount(0);
+			oTable.setFixedBottomRowCount(0);
+			oTable._collectRowHeights = function() {
+				var oDomRef = this.getDomRef();
+				if (!oDomRef) {
+					return [];
+				}
+				var aResult = [];
+				for (var i = 0; i < oSetting.visibleRowCount; i++) {
+					aResult.push(i == 1 ? 70 : oSetting.rowHeight);
+				}
+			}
+		}
+		oTable.getBinding("rows").getLength = function() {
+			return oSetting.length;
+		};
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+			oVSb.scrollTop = oSetting.scrollTop;
+
+			setTimeout(function() {
+				var iExpectedFirstVisibleRow = oSetting.expectedFirstVisibleRow;
+				if (typeof oSetting.expectedFirstVisibleRow === "function") {
+					iExpectedFirstVisibleRow = oSetting.expectedFirstVisibleRow();
+				}
+				if (oSetting.tolerance > 0) {
+					assert.ok(oTable.getFirstVisibleRow() >= iExpectedFirstVisibleRow - oSetting.tolerance , "Check FirstVisibleRow (>)");
+					assert.ok(oTable.getFirstVisibleRow() <= iExpectedFirstVisibleRow + oSetting.tolerance , "Check FirstVisibleRow (<)");
+				} else {
+					assert.strictEqual(oTable.getFirstVisibleRow(), iExpectedFirstVisibleRow, "Check FirstVisibleRow");
+				}
+				QUnit.start();
+			}, this.iAssertionDelay);
+		}, this.iAssertionDelay);
+	}
+});
+
+QUnit.asyncTest("To Middle - small data - no variable row heights", function(assert) {
+	this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
+});
+
+QUnit.asyncTest("To End - small data - no variable row heights", function(assert) {
+	this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
+});
+
+QUnit.asyncTest("To Middle - big data - no variable row heights", function(assert) {
+	this.doTest(assert, {length: 20000000, tolerance: 5200, scrollTop: oTable._iMaxScrollbarHeight / 2, expectedFirstVisibleRow: 10000000});
+});
+
+QUnit.asyncTest("To End - big data - no variable row heights", function(assert) {
+	this.doTest(assert, {length: 20000000, scrollTop: oTable._iMaxScrollbarHeight, expectedFirstVisibleRow: 20000000 - 10});
+});
+
+QUnit.asyncTest("To Middle - small data - variable row heights", function(assert) {
+	this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
+});
+
+QUnit.asyncTest("To End - small data - variable row heights", function(assert) {
+	this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
+});
+
+QUnit.asyncTest("To Middle - big data - variable row heights", function(assert) {
+	this.doTest(assert, {length: 20000000, tolerance: 5200, scrollTop: oTable._iMaxScrollbarHeight / 2, expectedFirstVisibleRow: 10000000});
+});
+
+QUnit.asyncTest("To End - big data - variable row heights", function(assert) {
+	this.doTest(assert, {length: 20000000, scrollTop: oTable._iMaxScrollbarHeight, expectedFirstVisibleRow: 20000000 - 10});
+});
