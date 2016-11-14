@@ -94,6 +94,14 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		}
 	};
 
+	MultiInputRenderer.addControlWidth = function(oRm, oControl) {
+		if (!oControl.getWidth() || oControl.getWidth() === "auto") {
+			oRm.addStyle("width", "100%");
+		} else {
+			InputRenderer.addControlWidth.call(this, oRm, oControl);
+		}
+	};
+
 
 	return MultiInputRenderer;
 
