@@ -79,6 +79,7 @@ sap.ui.define([
 				document.getElementById(sContentScrollId).scrollLeft = iScrollLeft;
 			}
 
+			oScrollExtension._iHorizontalScrollPosition = iScrollLeft;
 			this._determineVisibleCols(this._collectTableSizes());
 		},
 
@@ -111,9 +112,9 @@ sap.ui.define([
 				}
 
 				var iScrollTop = oVSb.scrollTop;
+				oScrollExtension._iVerticalScrollPosition = iScrollTop;
 
 				if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-					oTable._iScrollTop = iScrollTop;
 					oTable._adjustTablePosition(iScrollTop, oTable._aRowHeights);
 				}
 
@@ -207,6 +208,58 @@ sap.ui.define([
 			var oScrollExtension = this._getScrollExtension();
 			oScrollExtension._bIsScrolledVerticallyByWheel = false;
 			oScrollExtension._bIsScrolledVerticallyByKeyboard = false;
+		},
+
+		/**
+		 * Will be called after the table, or the table content, has been rendered.
+		 */
+		onAfterRendering: function() {
+			ExtensionHelper.restoreVerticalScrollPosition(this);
+
+			// The timeout is required because after the first rendering, if visibleRowCountMode is "Auto",
+			// _updateTableSizes is called in a promise, which calls _updateHSb, which sets the width of the horizontal scrollbar.
+			// And that triggers a scroll event, whose handler will reset the horizontal scroll position to 0. Oh yes, this really happens...
+			window.setTimeout(function() {
+				ExtensionHelper.restoreHorizontalScrollPosition(this);
+			}.bind(this), 0);
+		},
+
+		/**
+		 * This function can be used to restore the last horizontal scroll position after rendering has been performed.
+		 * In case it is the initial rendering of the table nothing happens, because there is no scroll position which could be restored.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 */
+		restoreHorizontalScrollPosition: function(oTable) {
+			var oScrollExtension = oTable._getScrollExtension();
+
+			var oHSb = oScrollExtension.getHorizontalScrollbar();
+			if (oHSb !== null && oScrollExtension._iHorizontalScrollPosition !== null) {
+				if (oHSb.scrollLeft !== oScrollExtension._iHorizontalScrollPosition) {
+					oHSb.scrollLeft = oScrollExtension._iHorizontalScrollPosition;
+				} else {
+					var oEvent = jQuery.Event("scroll");
+					oEvent.target = oHSb;
+					this.onHorizontalScrolling.call(oTable, oEvent);
+				}
+			}
+		},
+
+		/**
+		 * This function can be used to restore the last vertical scroll position after rendering has been performed.
+		 * In case it is the initial rendering of the table there is no scroll position which could be restored. The scroll position is then
+		 * calculated depending on the value of <code>firstVisibleRow</code>.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 */
+		restoreVerticalScrollPosition: function(oTable) {
+			var oScrollExtension = oTable._getScrollExtension();
+
+			if (oScrollExtension._iVerticalScrollPosition !== null) {
+				oTable._updateVSbScrollTop(oScrollExtension._iVerticalScrollPosition);
+			} else {
+				oTable._updateVSbScrollTop();
+			}
 		}
 	};
 
@@ -293,8 +346,13 @@ sap.ui.define([
 		_init: function(oTable, sTableType, mSettings) {
 			this._type = sTableType;
 			this._delegate = ExtensionDelegate;
+			this._iHorizontalScrollPosition = null;
+			this._iVerticalScrollPosition = null;
 			this._bIsScrolledVerticallyByWheel = false;
 			this._bIsScrolledVerticallyByKeyboard = false;
+			this._onAfterRenderingEventDelegate = {
+				onAfterRendering: ExtensionHelper.onAfterRendering.bind(oTable)
+			};
 
 			// Register the delegate
 			oTable.addEventDelegate(this._delegate, oTable);
@@ -334,6 +392,9 @@ sap.ui.define([
 			} else {
 				oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
 			}
+
+			// Restoration of scroll positions.
+			oTable.addEventDelegate(this._onAfterRenderingEventDelegate);
 		},
 
 		/*
@@ -368,6 +429,9 @@ sap.ui.define([
 			} else {
 				oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
 			}
+
+			// Restoration of scroll positions.
+			oTable.removeEventDelegate(this._onAfterRenderingEventDelegate);
 		},
 
 		/*
