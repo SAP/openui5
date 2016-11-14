@@ -3540,14 +3540,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		} else if (!this._hasOnlyFixColumnWidths()) {
 
 			var aVisibleColumns = this._getVisibleColumns(),
-				iAvailableSpace = this.$().find(".sapUiTableCtrl").width(),
+				iAvailableSpace = this.$().find(".sapUiTableCtrlScr").width(),
 				iColumnIndex,
 				iRightColumns = 0,
 				iLeftWidth = 0,
 				iRightWidth = 0,
+				iFixedColumnCount = this.getFixedColumnCount(),
 				iNonFixedColumns = 0;
 
+			if (oColumn.getIndex() < iFixedColumnCount) {
+				return; // ignore frozen columns
+			}
+
 			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
+				if (iIndex < iFixedColumnCount) {
+					return; // ignore frozen columns
+				}
 				//Check columns if they are fixed = they have a pixel width
 				if (!jQuery.sap.endsWith(oCurrentColumn.getWidth(), "px")
 					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "em")
