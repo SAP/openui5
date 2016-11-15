@@ -4,9 +4,9 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	return Controller.extend("flexibleColumnLayout.Page3", {
+	return Controller.extend("flexiblecolumnlayout.Page3", {
 		onInit: function () {
-			this.bus = sap.ui.getCore().getEventBus();
+
 		}
 	});
 }, true);

@@ -4,12 +4,12 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	return Controller.extend("flexibleColumnLayout.Page2", {
+	return Controller.extend("flexiblecolumnlayout.Page2", {
 		onInit: function () {
-			this.bus = sap.ui.getCore().getEventBus();
+			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 		handleNextPress: function () {
-			this.bus.publish("flexible", "navigate", {pageName: "page3"});
+			this.oRouter.navTo("page3");
 		}
 	});
 }, true);
