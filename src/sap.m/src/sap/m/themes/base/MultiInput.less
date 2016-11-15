@@ -23,6 +23,29 @@ html.sap-desktop .sapMMultiInputBorder{
 	position: static;
 }
 
+// in general tokens in multi-line or on phone are not visible
+.sapMMultiInput.sapMMultiInputMultiLine .sapMToken,
+html.sap-phone .sapMMultiInput .sapMToken {
+	display: none;
+}
+
+// however tokens in multi-line or phone in read-only multiinput are visible
+.sapMMultiInput.sapMMultiInputMultiLine.sapMInputBaseReadonly .sapMToken,
+html.sap-phone .sapMMultiInput.sapMInputBaseReadonly .sapMToken {
+	display: inline-block;
+}
+
+// the last token in multi-line mode or on phone is always visible
+.sapMMultiInput.sapMMultiInputMultiLine .sapMToken:last-child,
+html.sap-phone .sapMMultiInput .sapMToken:last-child {
+	display: inline-block;
+}
+
+// tokens when multi-line is open are also visible
+.sapMMultiInput.sapMMultiInputMultiLine .sapMMultiInputMultiModeBorder .sapMToken {
+	display: inline-block;
+}
+
 // we need this selector to avoid being overwritten by the input.css
 .sapUiSizeCompact .sapMMultiInput .sapMInputValHelp {
 	display: inline-block;
@@ -69,4 +92,9 @@ html.sap-desktop .sapMMultiInput.sapMFocus .sapMInputBaseInner:focus {
 
 .sapMMultiInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
 	background: transparent;
+}
+
+html.sap-phone .sapMToken:focus,
+html.sap-tablet:not(.sap-desktop) .sapMToken:focus {
+	outline-color: transparent;
 }
