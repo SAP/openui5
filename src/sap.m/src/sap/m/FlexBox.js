@@ -18,6 +18,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @class
 	 * The <code>sap.m.FlexBox</code> control builds the container for a flexible box layout.
 	 *
+	 * Browser support:
+	 * This control is not supported in Internet Explorer 9!
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -148,14 +150,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	};
 
 	FlexBox.prototype.removeItem = function(vItem) {
-		var oItem = this.removeAggregation("items", vItem, true);
-		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
-			if (oItem instanceof sap.m.FlexBox) {
-				oItem.$().remove();
-			} else {
-				oItem.$().parent().remove();
-			}
-		}
+		var oItem = this.removeAggregation("items", vItem);
+
 		this._onItemRemoved(oItem);
 
 		return oItem;
