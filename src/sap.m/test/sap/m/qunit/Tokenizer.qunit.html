@@ -24,18 +24,17 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-	var Tokenizer1;
+	var tokenizer1;
 	var key = "testKey";
 	var text = "testText";
 
-	var oTokenizer = new sap.m.Tokenizer("t1");
-	oTokenizer.placeAt("content");
-
 	module("Basic", {
 		setup : function() {
-			tokenizer1 = sap.ui.getCore().getControl("t1");
+			tokenizer1 = new sap.m.Tokenizer("t1");
+			tokenizer1.placeAt("content");
 		},
 		teardown : function() {
+			tokenizer1.destroy();
 			token1 = null;
 		}
 	});
@@ -65,6 +64,29 @@
 
 		tokenizer1.removeAllValidators();
 		equals(tokenizer1._aTokenValidators.length, 0, "No token validators available");
+	});
+
+	test("clone", function() {
+		//arrange
+		var token1 = new sap.m.Token(),
+			token2 = new sap.m.Token(),
+			token3 = new sap.m.Token(),
+			tokenizer2;
+
+		tokenizer1.addToken(token1);
+		tokenizer1.addToken(token2);
+		tokenizer1.addToken(token3);
+
+		//act
+		tokenizer2 = tokenizer1.clone();
+
+		//assert
+		equals(tokenizer2.getTokens().length, 3, "Clone has 3 tokens");
+		equals(tokenizer2.getTokens()[0].mEventRegistry.press.length, 1, "Cloned token has 1 press handler");
+		equals(tokenizer2.getTokens()[0].mEventRegistry.delete.length, 1, "Cloned token has 1 delete handler");
+
+		//clean-up
+		tokenizer2.destroy();
 	});
 
 	test("tokens aggregation", function() {
@@ -258,9 +280,9 @@
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
 		var token3 = new sap.m.Token();
-		oTokenizer.setTokens([token1, token2, token3]);
+		tokenizer1.setTokens([token1, token2, token3]);
 
-		oTokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		tokenizer1.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
 		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
 		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
 		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
@@ -269,12 +291,12 @@
 		token2.setSelected(false);
 		token3.setSelected(false);
 
-		oTokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		tokenizer1.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
 		equals(token1.getSelected(), true, "Token1 got selected using metaKey+a");
 		equals(token2.getSelected(), true, "Token2 got selected using metaKey+a");
 		equals(token3.getSelected(), true, "Token3 got selected using metaKey+a");
 
-		oTokenizer.removeAllTokens();
+		tokenizer1.removeAllTokens();
 	});
 
 
@@ -387,7 +409,7 @@
 			}
 		}
 
-		var oCopyEvent = jQuery.Event({ 
+		var oCopyEvent = jQuery.Event({
 			type: "copy",
 			clipboardData : {
 				setData : function(sType, sSelectedText) {
@@ -404,8 +426,6 @@
 			//Reset clipboad again
 			window.clipboardData.setData("text", "Hello");
 		}
-
-		tokenizer1.destroyTokens();
 	});
 
 </script>
