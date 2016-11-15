@@ -3322,7 +3322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// table control? (only if the selection behavior is set to row)
 		var oClosestTd, $ClosestTd;
 		if (oEvent.target) {
-			$ClosestTd = jQuery(oEvent.target).closest("td");
+			$ClosestTd = jQuery(oEvent.target).closest(".sapUiTableCtrl > tbody > tr > td");
 			if ($ClosestTd.length > 0) {
 				oClosestTd = $ClosestTd[0];
 			}
