@@ -124,7 +124,7 @@ sap.ui.define([
 
 				if (!this.bRelative || oContext && !oContext.getBinding || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
+						mParameters, true);
 				}
 				if (!this.bRelative) {
 					if (this.aApplicationFilters.length > 0) {

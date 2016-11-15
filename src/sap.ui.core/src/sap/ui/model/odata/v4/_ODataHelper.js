@@ -16,7 +16,8 @@ sap.ui.define([
 	var ODataHelper,
 		rApplicationGroupID = /^\w+$/,
 		// regular expression converting path to metadata path
-		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
+		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g,
+		aSystemQueryOptions = ["$apply", "$expand", "$filter", "$orderby", "$select"];
 
 	/**
 	 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
@@ -65,8 +66,6 @@ sap.ui.define([
 	}
 
 	ODataHelper = {
-		aAllowedSystemQueryOptions : ["$apply", "$expand", "$filter", "$orderby", "$select"],
-
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
 		 * parameters are those with a key starting with '$$', i.e. OData query options provided as
@@ -167,8 +166,8 @@ sap.ui.define([
 		 *   Map of query options specified for the model
 		 * @param {object} [mOptions={}]
 		 *   Map of query options
-		 * @param {string[]} [aAllowed=[]]
-		 *   Names of allowed system query options
+		 * @param {boolean} [bSystemQueryOptionsAllowed=false]
+		 *   Whether system query options are allowed
 		 * @param {boolean} [bSapAllowed=false]
 		 *   Whether Custom query options starting with "sap-" are allowed
 		 * @throws {Error}
@@ -176,7 +175,8 @@ sap.ui.define([
 		 * @returns {object}
 		 *   The map of query options
 		 */
-		buildQueryOptions : function (mModelOptions, mOptions, aAllowed, bSapAllowed) {
+		buildQueryOptions : function (mModelOptions, mOptions, bSystemQueryOptionsAllowed,
+				bSapAllowed) {
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
 
 			/**
@@ -204,7 +204,7 @@ sap.ui.define([
 			function validateSystemQueryOption(sOption, vValue) {
 				var sPath;
 
-				if (!aAllowed || aAllowed.indexOf(sOption) < 0) {
+				if (!bSystemQueryOptionsAllowed || aSystemQueryOptions.indexOf(sOption) < 0) {
 					throw new Error("System query option " + sOption + " is not supported");
 				}
 				if (sOption === "$expand") {
@@ -757,8 +757,7 @@ sap.ui.define([
 				}
 			});
 
-			return ODataHelper.buildQueryOptions(oBinding.oModel.mUriParameters, oResult,
-				ODataHelper.aAllowedSystemQueryOptions);
+			return ODataHelper.buildQueryOptions(oBinding.oModel.mUriParameters, oResult, true);
 		},
 
 		/**

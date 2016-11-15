@@ -42,12 +42,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("aAllowedSystemQueryOptions", function (assert) {
-		assert.deepEqual(_ODataHelper.aAllowedSystemQueryOptions,
-			["$apply", "$expand", "$filter", "$orderby", "$select"]);
-	});
-
-	//*********************************************************************************************
 	[{
 		sKeyPredicate : "('42')",
 		oEntityInstance : {"ID" : "42"},
@@ -165,19 +159,19 @@ sap.ui.require([
 	[{
 		mModelOptions : {"sap-client" : "111"},
 		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
-		aAllowed : ["$expand", "$select"]
+		bSystemQueryOptionsAllowed : true
+	}, {
+		mOptions : {"$apply" : "apply", "$filter" : "foo eq 42", "$orderby" : "bar"},
+		bSystemQueryOptionsAllowed : true
 	}, {
 		mModelOptions : {"custom" : "bar"},
-		mOptions : {"custom" : "foo"},
-		aAllowed : []
+		mOptions : {"custom" : "foo"}
 	}, {
 		mModelOptions : undefined,
-		mOptions : undefined,
-		aAllowed : undefined
+		mOptions : undefined
 	}, {
 		mModelOptions : null,
 		mOptions : {"sap-client" : "111"},
-		aAllowed : null,
 		bSapAllowed : true
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
@@ -185,8 +179,8 @@ sap.ui.require([
 				mOriginalModelOptions = clone(o.mModelOptions),
 				mOriginalOptions = clone(o.mOptions);
 
-			mOptions = _ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.aAllowed,
-				o.bSapAllowed);
+			mOptions = _ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions,
+				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
 
 			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
 			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
@@ -213,7 +207,7 @@ sap.ui.require([
 		assert.deepEqual(_ODataHelper.buildQueryOptions({}, {
 			$expand : "foo",
 			$select : "bar"
-		}, ["$expand", "$select"]), {
+		}, true), {
 			$expand : oExpand,
 			$select : aSelect
 		});
@@ -223,37 +217,36 @@ sap.ui.require([
 	[{
 		mModelOptions : {},
 		mOptions : {"$foo" : "foo"},
-		aAllowed : ["$expand", "$select"],
+		bSystemQueryOptionsAllowed : true,
 		error : "System query option $foo is not supported"
 	}, {
 		mModelOptions : {},
 		mOptions : {"@alias" : "alias"},
-		aAllowed : ["$expand", "$select"],
+		bSystemQueryOptionsAllowed : true,
 		error : "Parameter @alias is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : true}},
-		aAllowed : undefined,
 		error : "System query option $expand is not supported"
 	}, {
 		mModelOptions : undefined,
-		mOptions : {"$expand" : {"foo" : {"$select" : "bar"}}},
-		aAllowed : ["$expand"],
-		error : "System query option $select is not supported"
+		mOptions : {"$expand" : {"foo" : {"$unknown" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $unknown is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
-		aAllowed : ["$expand", "$select"],
+		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"sap-foo" : "300"},
-		aAllowed : undefined,
 		error : "Custom query option sap-foo is not supported"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {
-				_ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.aAllowed);
+				_ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions,
+					o.bSystemQueryOptionsAllowed);
 			}, new Error(o.error));
 		});
 	});
@@ -1419,8 +1412,7 @@ sap.ui.require([
 		].forEach(function (oFixture, i) {
 			oODataHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oBinding.oModel.mUriParameters),
-					oFixture.mResult ? sinon.match.same(oFixture.mResult) : undefined,
-					sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+					oFixture.mResult ? sinon.match.same(oFixture.mResult) : undefined, true)
 				.returns(mResultingQueryOptions);
 			// code under test
 			assert.strictEqual(_ODataHelper.getQueryOptions(oBinding, oFixture.sQueryPath),

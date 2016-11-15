@@ -147,7 +147,7 @@ sap.ui.define([
 					this.sOperationMode = mParameters.operationMode;
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
 					this.mUriParameters
-						= _ODataHelper.buildQueryOptions(null, oUri.query(true), null, true);
+						= _ODataHelper.buildQueryOptions(null, oUri.query(true), false, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {

@@ -379,8 +379,7 @@ sap.ui.require([
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions").twice()
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters),
-				sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+				sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildOrderbyOption").twice()
 			.withExactArgs([], mQueryOptions.$orderby)
@@ -491,8 +490,7 @@ sap.ui.require([
 			this.spy(_ODataHelper, "mergeQueryOptions");
 			oHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oModel.mUriParameters),
-					sinon.match.same(oFixture.mParameters),
-					sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+					sinon.match.same(oFixture.mParameters), true)
 				.returns(oFixture.buildQueryOptionResult);
 			oHelperMock.expects("buildOrderbyOption")
 				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : [],
@@ -551,8 +549,7 @@ sap.ui.require([
 		oHelperMock.expects("toArray").withExactArgs(undefined).returns([]);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mQueryParameters),
-				sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+				sinon.match.same(mQueryParameters), true)
 			.returns(mExpectedbuildQueryOptions);
 		oHelperMock.expects("buildOrderbyOption").never();
 		this.mock(_Cache).expects("create").never();
@@ -597,8 +594,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				undefined, sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), undefined, true)
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",

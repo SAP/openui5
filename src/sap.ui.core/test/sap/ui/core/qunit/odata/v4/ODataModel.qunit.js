@@ -127,7 +127,7 @@ sap.ui.require([
 		oMetaModel = oModel.getMetaModel();
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs(null, {}, null, true)
+			.withExactArgs(null, {}, false, true)
 			.returns(mModelOptions);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
@@ -157,7 +157,7 @@ sap.ui.require([
 			mModelOptions = {};
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs(null, {"sap-client" : "111"}, null, true)
+			.withExactArgs(null, {"sap-client" : "111"}, false, true)
 			.returns(mModelOptions);
 
 		// code under test
