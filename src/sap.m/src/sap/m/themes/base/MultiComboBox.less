@@ -3,6 +3,35 @@
 /* Base theme                           */
 /* ==================================== */
 
+.sapMMultiComboBox.sapMInputBase {
+	&:not(.sapMInputBaseReadonly) {
+		background-color: @sapUiFieldBackground;
+	}
+
+	& .sapMMultiComboBoxInputInner {
+		background-color: transparent;
+	}
+}
+
+.sapMMultiComboBoxFocus .sapMMultiComboBoxBorder::after {
+	border: 1px dotted @sapUiContentFocusColor;
+	content: "";
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	bottom: 2px;
+	left: 2px;
+	pointer-events: none;
+}
+
+.sapMMultiComboBox.sapMComboBoxTextFieldReadonly {
+	background-color: @sapUiFieldReadOnlyBackground;
+}
+
+.sapMMultiComboBox.sapMMultiComboBoxFocus .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline: none;
+}
+
 li.sapMMultiComboBoxItem .sapMCbBg {
 	top: 0;
 	bottom: 0;
@@ -18,60 +47,42 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 /* BorderDiv                      */
 /* ------------------------------ */
 
-.sapMMultiComboBoxBorder {
-	white-space: nowrap;
-	position: relative;
-	height: 100%;
-}
-
-.sapMMultiComboBox .sapMTokenizerScrollContainer {
-	padding-left: 0.75rem;
-}
-
 /* on the desktop we hide the overflow */
 html.sap-desktop .sapMMultiComboBoxBorder {
 	overflow: hidden;
 }
 
-.sapUiSizeCompact .sapMMultiComboBox .sapMTokenizerScrollContainer {
-	padding-left: 0.1875rem;
+.sapMMultiComboBoxBorder {
+	height: 100%;
+	display: flex;
+	display: -ms-flexbox;
+
+	&.sapMMultiComboBoxBorder .sapMTokenizer {
+		&:not(.sapMTokenizerEmpty) .sapMTokenizerScrollContainer {
+			padding-left: 0.375rem;
+		}
+	}
 }
 
 /* ------------------------------ */
-/* InputDiv and ShadowDiv         */
+/*             InputDiv           */
 /* ------------------------------ */
 
 .sapMMultiComboBoxInputContainer {
-	overflow:hidden;
-	position: absolute;
-	display: inline;
-	right: 0;
-	height: 100%;
+	flex-grow: 1;
+
+	& .sapMMultiComboBoxInputInner {
+		padding-right: 0.375rem;
+		min-width: 5.125rem;
+		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
+	}
 }
 
-.sapUiSizeCompact .sapMMultiComboBoxInputContainer > input,
-.sapUiSizeCompact .sapMMultiComboBoxShadowDiv {
-	padding-left: 0.1875rem; //0.25 - 0.0625 margin of last token
-	padding-right: 0.25rem;
-	min-width: 1.5rem;
-}
-
-.sapMMultiComboBoxInputContainer > input,
-.sapMMultiComboBoxShadowDiv {
-	padding-left: 0.125rem; //0.375 - 0.25 margin of last token
-	padding-right: 0.375rem;
-	min-width: 2.25rem;
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-}
-
-.sapMMultiComboBoxShadowDiv {
-	display: inline;
-	visibility: collapse;
-	white-space: nowrap;
-	position: absolute;
-	top: 0;
-	left: 0;
+.sapUiSizeCompact {
+	.sapMMultiComboBoxInputContainer .sapMMultiComboBoxInputInner {
+		min-width: 3.75rem;
+	}
 }
 
 /* Keep placeholder invisible, when at least one token is chosen */

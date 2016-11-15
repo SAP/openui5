@@ -148,8 +148,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -182,8 +180,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -304,8 +300,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				this.focus();
 			}
 		}
-
-		this._setContainerSizes();
 	};
 
 	/**
@@ -315,7 +309,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		this.addStyleClass("sapMFocus");
+		this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
+
+		// !this.getEditable() && this.addStyleClass("test");
 
 		if (oEvent.target === this.getOpenArea()) {
 			// force the focus to stay in the input field
@@ -326,11 +322,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		if (!this.isOpen() && this.shouldValueStateMessageBeOpened()) {
 			this.openValueStateMessage();
 		}
-	};
-
-	MultiComboBox.prototype.onsapescape = function(oEvent) {
-		ComboBoxBase.prototype.onsapescape.apply(this, arguments);
-		this._setContainerSizes();
 	};
 
 	/**
@@ -497,8 +488,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 
 		this.filterItems(aItemsToCheck, sValue);
-
-		this._setContainerSizes();
 
 		// First do manipulations on list items and then let the list render
 		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
@@ -1054,39 +1043,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	// --------------------------- End ------------------------------------
 
 	/**
-	 * Calculate available width for the tokenizer
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._setContainerSizes = function() {
-		var $MultiComboBox = this.$(),
-			bHasTokens = !!this._oTokenizer.getTokens().length;
-
-		if (!$MultiComboBox.length) {
-			return;
-		}
-
-		var DOT_CSS_CLASS_MULTICOMBOBOX = this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX,
-			$InputContainer = $MultiComboBox.find(DOT_CSS_CLASS_MULTICOMBOBOX + "InputContainer"),
-			$ShadowDiv = $MultiComboBox.children(DOT_CSS_CLASS_MULTICOMBOBOX + "ShadowDiv"),
-			iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
-
-		$ShadowDiv.text(this.getValue());
-
-		var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true),
-			iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth,
-			iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded,
-			iIconWidth = jQuery(this.getOpenArea()).outerWidth(true),
-			sTokenizerScrollWidth = (this._oTokenizer.getScrollWidth() / parseFloat(sap.m.BaseFontSize)) + "rem",
-			sDesktopInputWidth = ((iAvailableInnerSpace > 0 ? iInputWidthMinimalNeeded : iAvailableWidth ) / parseFloat(sap.m.BaseFontSize)) + "rem",
-			sInputWidth = this.isPickerDialog() ? "3rem" : sDesktopInputWidth;
-
-		this._oTokenizer.$().css("width","calc(100% - " + sInputWidth + ")");
-		$InputContainer.css("width", "calc(100% - " + (bHasTokens ? sTokenizerScrollWidth : "0px") + ")");
-		$InputContainer.css("min-width", sInputWidth);
-	};
-
-	/**
 	 * Get token instance for a specific item
 	 *
 	 * @param {sap.ui.core.Item} oItem
@@ -1528,14 +1484,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
-	/* =========================================================== */
-	/* Lifecycle methods */
-	/* =========================================================== */
-
-	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		this._setContainerSizes();
-	};
-
 	/**
 	 * Required adaptations after rendering of List.
 	 *
@@ -1566,7 +1514,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
-		this.removeStyleClass("sapMFocus");
+		this.removeStyleClass("sapMMultiComboBoxFocus");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 
