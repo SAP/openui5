@@ -174,15 +174,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * sort messages by type 'Error', 'Warning', 'Success', 'Info'
+	 * sort messages by type 'Error', 'Warning', 'Success', 'Information'
 	 *
-	 * @param {map|sap.ui.core.message.Message[]} mMessages Map or array of Messages to be sorted (in order of severity) by their type property
+	 * @param {map|sap.ui.core.message.Message[]} vMessages Map or array of Messages to be sorted (in order of severity) by their type property
 	 * @private
 	 */
-	MessageManager.prototype._sortMessages = function(mMessages) {
-		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
-		jQuery.each(mMessages, function(sTarget, aMessages){
-			if (!aMessages.length === 0) {
+	MessageManager.prototype._sortMessages = function(vMessages) {
+		var mSortOrder = { 'Error': 0, 'Warning':1, 'Success':2, 'Information':3 };
+
+		if (Array.isArray(vMessages)) {
+			vMessages = { "ignored": vMessages };
+		}
+
+		jQuery.each(vMessages, function(sTarget, aMessages){
+			if (aMessages.length > 0) {
 				aMessages.sort(function(a, b){
 					return mSortOrder[a.type] - mSortOrder[b.type];
 				});
