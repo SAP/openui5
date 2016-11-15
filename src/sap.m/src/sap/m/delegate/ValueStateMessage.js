@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				$DomRef.addClass("sapMValueStateMessageTop");
 			}
 
-			$Control.addAriaDescribedBy(this.getId());
+			jQuery(oControl.getFocusDomRef()).addAriaDescribedBy(this.getId());
 		};
 
 		/**
