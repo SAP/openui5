@@ -375,20 +375,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {String} The tooltip and ARIA label text
 	 */
 	GenericTile.prototype._getAriaAndTooltipText = function() {
-		var sTooltip;
+		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
 		switch (this.getState()) {
 			case sap.m.LoadState.Disabled :
 				return "";
 			case sap.m.LoadState.Loading :
-				return this._sLoading;
+				return sAriaText + "\n" + this._sLoading;
 			case sap.m.LoadState.Failed :
-				return this._oFailedText.getText();
+				return sAriaText + "\n" + this._oFailedText.getText();
 			default :
-				sTooltip = (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
-				if (jQuery.trim(sTooltip).length === 0) { // If the string is empty or just whitespace, IE renders an empty tooltip (e.g. "" + "\n" + "")
+				if (jQuery.trim(sAriaText).length === 0) { // If the string is empty or just whitespace, IE renders an empty tooltip (e.g. "" + "\n" + "")
 					return "";
 				} else {
-					return sTooltip;
+					return sAriaText;
 				}
 		}
 	};
