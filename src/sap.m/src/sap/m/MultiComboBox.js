@@ -673,8 +673,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * This event handler will be called before the MultiComboBox's Pop-up is closed.
 	 *
 	 */
-	MultiComboBox.prototype.onBeforeClose = function() {
+	MultiComboBox.prototype.onBeforeClose = function () {
 		ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
+
+		this.fireSelectionFinish({
+			selectedItems: this.getSelectedItems()
+		});
 	};
 
 	/**
@@ -692,10 +696,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		// resets or not the value of the input depending on the event (enter does not clear the value)
 		!this._bPreventValueRemove && this.setValue("");
 		this._sOldValue = "";
-
-		this.fireSelectionFinish({
-			selectedItems: this.getSelectedItems()
-		});
 	};
 
 	/**
