@@ -374,6 +374,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	Tokenizer.prototype.invalidate = function(oOrigin) {
+		var oParent = this.getParent();
+		if (oParent instanceof sap.m.MultiInput) {
+			oParent.invalidate(oOrigin);
+		} else {
+			Control.prototype.invalidate.call(this, oOrigin);
+		}
+	};
+
 	/**
 	 * Handles the copy event
 	 *
@@ -1016,15 +1025,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				removedTokens : [token],
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
-
-			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput && !this.getParent()._bUseDialog) {
-				// not set focus to MultiInput in phone mode
-				var $oParent = this.getParent().$();
-				$oParent.find("input").focus();
-			}
-
 		}
-
 	};
 
 	/**

@@ -80,6 +80,29 @@
 		equals(tokenizer1._aTokenValidators.length, 0, "No token validators available");
 	});
 
+	test("clone", function() {
+		//arrange
+		var token1 = new sap.m.Token(),
+			token2 = new sap.m.Token(),
+			token3 = new sap.m.Token(),
+			tokenizer2;
+
+		tokenizer1.addToken(token1);
+		tokenizer1.addToken(token2);
+		tokenizer1.addToken(token3);
+
+		//act
+		tokenizer2 = tokenizer1.clone();
+
+		//assert
+		equals(tokenizer2.getTokens().length, 3, "Clone has 3 tokens");
+		equals(tokenizer2.getTokens()[0].mEventRegistry.press.length, 1, "Cloned token has 1 press handler");
+		equals(tokenizer2.getTokens()[0].mEventRegistry.delete.length, 1, "Cloned token has 1 delete handler");
+
+		//clean-up
+		tokenizer2.destroy();
+	});
+
 	test("tokens aggregation", function() {
 		var token1 = new sap.m.Token();
 		var token2 = new sap.m.Token();
