@@ -229,7 +229,7 @@ QUnit.asyncTest("Resize via Drag&Drop", function(assert) {
 	var $Resizer = oTable.$("rsz");
 
 	// resizer should be way out of screen when the table gets rendered
-	assert.equal(oTable.$("rsz").position().left, "0", "Resizer is at the correct initial position");
+	assert.equal(oTable.$("rsz").position().left, "-5", "Resizer is at the correct initial position");
 
 	assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
 	assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
