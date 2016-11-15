@@ -24,7 +24,7 @@ sap.ui.define([
    *     </li>
    *     <li>
    *         combination of text and key is not possible
-   *     <\li>
+   *     </li>
    * </ul>
    *
    * @extends sap.ui.test.matchers.Matcher
@@ -40,7 +40,7 @@ sap.ui.define([
       publicMethods : [ "isMatching" ],
       properties : {
         /**
-         * The text of the (@link sap.m.Label) which have the labelFor property.
+         * The text of the {@link sap.m.Label} which have the labelFor property.
          */
         text : {
           type : "string"
