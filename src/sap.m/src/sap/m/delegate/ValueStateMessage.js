@@ -85,6 +85,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 			oPopup.setContent(oMessageDomRef);
 			oPopup.close(0);
+			if (oPopup.getContent()) {
+				oPopup.getContent().style.maxWidth = oControl.getDomRef().offsetWidth + "px";
+			} else {
+				oPopup.getContent().style.maxWidth = "";
+			}
 			oPopup.open(
 				this.getOpenDuration(),
 				mDock.BeginTop,
