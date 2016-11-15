@@ -700,6 +700,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a cache for the binding using the given context.
+	 *
+	 * The context is given as a parameter and this.oContext is unused because setContext calls
+	 * this method before calling the superclass to ensure that the cache is already created when
+	 * the events are fired.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, may be omitted for absolute bindings
+	 * @returns {object}
+	 *   The created cache, cache proxy or undefined if none is required (allows for easier testing)
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.makeCache = function (oContext) {
+		var vCanonicalPath, mQueryOptions, that = this;
+
+		function createCache(sPath) {
+			var sBindingPath = (that.oOperation && that.oOperation.sResourcePath) || that.sPath;
+
+			return _Cache.createSingle(that.oModel.oRequestor,
+				_Helper.buildPath(sPath, sBindingPath).slice(1), mQueryOptions);
+		}
+
+		if (!this.bRelative) {
+			oContext = undefined; // must be ignored for absolute bindings
+		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
+			return undefined; // no need for an own cache
+		}
+		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
+			? oContext.fetchCanonicalPath() : oContext.getPath());
+		return _ODataHelper.createCache(this, createCache, vCanonicalPath);
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for bindings which are not relative to a
@@ -764,7 +799,7 @@ sap.ui.define([
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
-				this.oCache = _ODataHelper.createContextCache(this, this.oContext);
+				this.oCache = this.makeCache(this.oContext);
 				this.mCacheByContext = undefined;
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
@@ -829,7 +864,7 @@ sap.ui.define([
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
-						this.oCache = _ODataHelper.createContextCache(this, oContext);
+						this.oCache = this.makeCache(oContext);
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
