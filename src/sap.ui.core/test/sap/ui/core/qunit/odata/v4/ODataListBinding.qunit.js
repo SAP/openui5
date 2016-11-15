@@ -176,7 +176,6 @@ sap.ui.require([
 			var oCache = {
 					hasPendingChanges : function () { return false; },
 					read : function () {},
-					refresh : function () {},
 					toString : function () { return "/service/EMPLOYEES"; }
 				};
 
@@ -1320,10 +1319,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("refreshInternal: " + (oFixture.bRelative ? "relative, " : "absolute, ")
 				+ (oFixture.bBaseContext ? "base context" : "V4 context"), function (assert) {
-			var oCache = {
-					deregisterChange : function () {},
-					refresh : function () {}
-				},
+			var oCache = {},
 				oChild0 = {
 					getContext : getContextMock.bind(undefined, false),
 					refreshInternal : function () {}
@@ -1346,19 +1342,14 @@ sap.ui.require([
 			} else {
 				this.mock(_Cache).expects("create").returns(oCache);
 			}
-
 			oListBinding = this.oModel.bindList(
 				oFixture.bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 				oContext, undefined, undefined, {/*mParameters*/});
-			if (oFixture.bRelative && !oFixture.bBaseContext) {
-				oHelperMock.expects("createListCache")
-					.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
-					.returns(oCache);
-				this.mock(oCache).expects("refresh").never();
-				oListBinding.mCacheByContext = {};
-			} else {
-				this.mock(oCache).expects("refresh");
-			}
+
+			oHelperMock.expects("createListCache")
+				.withExactArgs(sinon.match.same(oListBinding), sinon.match.same(oContext))
+				.returns(oCache);
+			oListBinding.mCacheByContext = {};
 
 			this.mock(oListBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			this.mock(this.oModel).expects("getDependentBindings")
@@ -1463,20 +1454,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh: invalid application group", function (assert) {
 		var oBinding,
-			oCache = {
-				refresh : function () {}
-			},
+			oCache = {},
 			oError = new Error();
 
 		this.mock(_Cache).expects("create").returns(oCache);
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
-		this.mock(oCache).expects("refresh").never();
 
 		// code under test
 		assert.throws(function () {
 			oBinding.refresh("$Invalid");
+
+			assert.strictEqual(oBinding.oCache, oCache);
 		}, oError);
 	});
 
@@ -1490,31 +1480,6 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh cancels pending getContexts", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			oError = new Error(),
-			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.mock(oListBinding),
-			oReadPromise = Promise.reject(oError);
-
-		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
-			sClassName, sinon.match({canceled : true}));
-		// change event during getContexts
-		oListBindingMock.expects("_fireChange").never();
-		oListBindingMock.expects("fireDataReceived").withExactArgs(undefined);
-		oError.canceled = true;
-		oCacheMock.expects("read").withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
-			.callsArg(4).returns(oReadPromise);
-		oCacheMock.expects("refresh");
-
-		oListBinding.getContexts(0, 10);
-		oListBinding.refresh();
-
-		return oReadPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
@@ -2328,7 +2293,7 @@ sap.ui.require([
 			var oModel = this.oModel,
 				oInitialContext = createContext(oFixture.sInit, "/EMPLOYEES(ID='1')"),
 				oBinding  = oModel.bindList("Equipments", oInitialContext),
-				oTargetCacheProxy = {},
+				oTargetCache = oFixture.sTarget ? {} : undefined,
 				oTargetContext = createContext(oFixture.sTarget, "/EMPLOYEES(ID='2')");
 
 			function createContext(sType, sPath) {
@@ -2342,20 +2307,14 @@ sap.ui.require([
 				return undefined;
 			}
 
-			if (oFixture.sTarget) {
-				this.mock(_ODataHelper).expects("createListCache")
-					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oTargetContext))
-					.returns(oTargetCacheProxy);
-			}
-			if (oBinding.oCache) {
-				this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
-			}
+			this.mock(_ODataHelper).expects("createListCache")
+				.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oTargetContext))
+				.returns(oTargetCache);
 
 			// code under test
 			oBinding.setContext(oTargetContext);
 
-			assert.strictEqual(oBinding.oCache,
-				oFixture.sTarget ? oTargetCacheProxy : undefined);
+			assert.strictEqual(oBinding.oCache, oTargetCache);
 		});
 	});
 

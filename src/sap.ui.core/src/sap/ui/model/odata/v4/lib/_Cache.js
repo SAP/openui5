@@ -207,8 +207,6 @@ sap.ui.define([
 	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
-	 * A refresh cancels all pending requests. Their promises are rejected with an error that has a
-	 * property <code>canceled</code> which is set to <code>true</code>.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 	 *   The cache
@@ -230,14 +228,8 @@ sap.ui.define([
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
 			.then(function (oResult) {
-				var i, iResultLength = oResult.value.length, oError;
+				var i, iResultLength = oResult.value.length;
 
-				if (aElements !== oCache.aElements) {
-					oError = new Error("Refresh canceled pending request: "
-						+ oCache.oRequestor.getServiceUrl() + sResourcePath);
-					oError.canceled = true;
-					throw oError;
-				}
 				oCache.sContext = oResult["@odata.context"];
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
@@ -396,6 +388,7 @@ sap.ui.define([
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
 		var sQuery = Cache.buildQueryString(mQueryOptions);
 
+		this.bActive = true;
 		this.sContext = undefined;    // the "@odata.context" from the responses
 		this.aElements = [];          // the available elements
 		this.iMaxElements = Infinity; // the max. number of elements if known, Infinity otherwise
@@ -549,22 +542,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
-	 * are deregistered.
+	 * Deregisters the given change listener.
 	 *
-	 * @param {number} [iIndex]
+	 * @param {number} iIndex
 	 *   The collection index
-	 * @param {string} [sPath]
+	 * @param {string} sPath
 	 *   The path
-	 * @param {object} [oListener]
+	 * @param {object} oListener
 	 *   The change listener
 	 */
 	CollectionCache.prototype.deregisterChange = function (iIndex, sPath, oListener) {
-		if (arguments.length) {
-			removeByPath(this.mChangeListeners, iIndex + "/" + sPath, oListener);
-		} else {
-			this.mChangeListeners = {};
-		}
+		removeByPath(this.mChangeListeners, iIndex + "/" + sPath, oListener);
 	};
 
 	/**
@@ -606,8 +594,8 @@ sap.ui.define([
 	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
 	 *   returned and the requested range is reset to undefined.
 	 *
-	 *   A {@link #refresh} cancels all pending requests. Their promises are rejected with an error
-	 *   that has a property <code>canceled</code> which is set to <code>true</code>.
+	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
@@ -651,7 +639,14 @@ sap.ui.define([
 
 		// Note: this.aElements[-1] cannot be a promise...
 		return _SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
-			var oResult;
+			var oError,
+				oResult;
+
+			if (!that.bActive) {
+				oError = new Error("Response discarded: cache is inactive");
+				oError.canceled = true;
+				throw oError;
+			}
 
 			if (sPath !== undefined) {
 				addByPath(that.mChangeListeners, iIndex + "/" + sPath, oListener);
@@ -675,16 +670,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
-	 * pending changes from {@link #update} or {@link #create}.
-	 */
-	CollectionCache.prototype.refresh = function () {
-		this.sContext = undefined;
-		this.iMaxElements = Infinity;
-		this.aElements = [];
-	};
-
-	/**
 	 * Resets all pending changes below the given path.
 	 *
 	 * @param {string} [sPath]
@@ -703,6 +688,20 @@ sap.ui.define([
 			}
 		}
 		resetChanges(this, sPath);
+	};
+
+	/**
+	 * Sets the active state of the cache. If the cache becomes inactive, all change listeners are
+	 * deregistered.
+	 *
+	 * @param {boolean} bActive
+	 *   Whether the cache shell be active
+	 */
+	CollectionCache.prototype.setActive = function (bActive) {
+		this.bActive = bActive;
+		if (!bActive) {
+			this.mChangeListeners = {};
+		}
 	};
 
 	/**
@@ -760,6 +759,7 @@ sap.ui.define([
 	 *   error.
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
+		this.bActive = true;
 		this.mChangeListeners = {};
 		this.mPatchRequests = {};
 		this.bPost = bPost;
@@ -831,20 +831,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
-	 * are deregistered.
+	 * Deregisters the given change listener.
 	 *
-	 * @param {string} [sPath]
+	 * @param {string} sPath
 	 *   The path
-	 * @param {object} [oListener]
+	 * @param {object} oListener
 	 *   The change listener
 	 */
 	SingleCache.prototype.deregisterChange = function (sPath, oListener) {
-		if (arguments.length) {
-			removeByPath(this.mChangeListeners, this.bSingleProperty ? "value" : sPath, oListener);
-		} else {
-			this.mChangeListeners = {};
-		}
+		removeByPath(this.mChangeListeners, this.bSingleProperty ? "value" : sPath, oListener);
 	};
 
 	/**
@@ -919,8 +914,8 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
-	 *   A {@link #refresh} cancels a pending request. Its promise is rejected with an error that
-	 *   has a property <code>canceled</code> which is set to <code>true</code>.
+	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   arrives.
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet
 	 */
@@ -934,21 +929,18 @@ sap.ui.define([
 				throw new Error("Read before a POST request");
 			}
 			oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath, sGroupId,
-					undefined, undefined, fnDataRequested)
-				.then(function (oResult) {
-					var oError;
-
-					if (that.oPromise !== oPromise) {
-						oError = new Error("Refresh canceled pending request: "
-							+ that);
-						oError.canceled = true;
-						throw oError;
-					}
-					return oResult;
-				}));
+					undefined, undefined, fnDataRequested));
 			this.oPromise = oPromise;
 		}
 		return this.oPromise.then(function (oResult) {
+			var oError;
+
+			if (!that.bActive) {
+				oError = new Error("Response discarded: cache is inactive");
+				oError.canceled = true;
+				throw oError;
+			}
+
 			if (that.bSingleProperty) {
 				// 204 No Content: map undefined to null
 				oResult = oResult ? oResult.value : null;
@@ -968,20 +960,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending requests from {@link #read}. There must not be any
-	 * pending changes from {@link #update} or {@link #create}.
-	 *
-	 * @throws {Error}
-	 *   If the cache is using POST requests
-	 */
-	SingleCache.prototype.refresh = function () {
-		if (this.bPost) {
-			throw new Error("Refresh not allowed when using POST");
-		}
-		this.oPromise = undefined;
-	};
-
-	/**
 	 * Resets all pending changes below the given path.
 	 * @param {string} [sPath]
 	 *   The path
@@ -991,6 +969,19 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.resetChanges = function (sPath) {
 		resetChanges(this, sPath);
+	};
+
+	/**
+	 * Sets the active state of the cache.
+	 *
+	 * @param {boolean} bActive
+	 *   Whether the cache shell be active
+	 */
+	SingleCache.prototype.setActive = function (bActive) {
+		this.bActive = bActive;
+		if (!bActive) {
+			this.mChangeListeners = {};
+		}
 	};
 
 	/**

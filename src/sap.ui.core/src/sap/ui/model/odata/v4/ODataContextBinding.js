@@ -139,7 +139,8 @@ sap.ui.define([
 						this.oOperation = {
 							bAction : undefined,
 							oMetadataPromise : undefined,
-							mParameters : {}
+							mParameters : {},
+							sResourcePath : undefined
 						};
 						if (iPos !== sPath.length - 5) {
 							throw new Error(
@@ -460,7 +461,6 @@ sap.ui.define([
 				iIndex,
 				aOperationParameters,
 				aParameters,
-				sPath = (sPathPrefix + that.sPath).slice(1),
 				oPromise;
 
 			sGroupId = sGroupId || that.getGroupId();
@@ -468,8 +468,8 @@ sap.ui.define([
 			if (that.oOperation.bAction) {
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
-					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
-						that.mQueryOptions, false, true);
+					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, false, true);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
@@ -498,8 +498,9 @@ sap.ui.define([
 						}
 					});
 				}
+				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
 				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-					sPath.replace("...", aParameters.join(',')), that.mQueryOptions);
+					(sPathPrefix + that.oOperation.sResourcePath).slice(1), that.mQueryOptions);
 				oPromise = that.oCache.read(sGroupId);
 			}
 			return oPromise;
@@ -763,12 +764,8 @@ sap.ui.define([
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
-				if (this.bRelative && this.oContext.getBinding) {
-					this.oCache = _ODataHelper.createContextCache(this, this.oContext);
-					this.mCacheByContext = undefined;
-				} else {
-					this.oCache.refresh();
-				}
+				this.oCache = _ODataHelper.createContextCache(this, this.oContext);
+				this.mCacheByContext = undefined;
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
 		}
