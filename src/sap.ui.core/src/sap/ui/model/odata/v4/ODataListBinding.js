@@ -97,7 +97,7 @@ sap.ui.define([
 				var oBindingParameters,
 					sOrderby;
 
-				ListBinding.call(this, oModel, sPath);
+				ListBinding.call(this, oModel, sPath, undefined, undefined, undefined, mParameters);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -123,10 +123,9 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
 
-				if (!this.bRelative || oContext && !oContext.getBinding || mParameters) {
-					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, true);
-				}
+				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+					mParameters, true);
+
 				if (!this.bRelative) {
 					if (this.aApplicationFilters.length > 0) {
 						this.oCache = this.makeCache();
@@ -1227,7 +1226,7 @@ sap.ui.define([
 		if (this.bRelative) {
 			if (!oContext
 					|| oContext.fetchCanonicalPath
-					&& !this.mQueryOptions
+					&& !this.mParameters
 					&& !this.aSorters.length
 					&& !this.aFilters.length
 					&& !this.aApplicationFilters.length) {

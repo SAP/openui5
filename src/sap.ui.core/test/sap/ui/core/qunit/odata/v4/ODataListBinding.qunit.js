@@ -376,7 +376,7 @@ sap.ui.require([
 
 		// absolute binding and binding with base context result in the same cache
 		oHelperMock = this.mock(_ODataHelper);
-		oHelperMock.expects("buildQueryOptions").twice()
+		oHelperMock.expects("buildQueryOptions").thrice()
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
@@ -397,7 +397,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oV4Context);
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
-		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -413,7 +414,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oBaseContext);
 		assert.strictEqual(oBinding.getPath(), "EMPLOYEES");
-		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -425,12 +427,15 @@ sap.ui.require([
 		oHelperMock.expects("buildOrderbyOption").never();
 
 		// code under test
-		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
+		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM", undefined, undefined, undefined,
+			mParameters);
 
 		assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache property is set");
 		assert.strictEqual(oBinding.oCache, undefined, "oCache property is undefined");
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -585,7 +590,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList without OData query options", function (assert) {
-		var oContext = {},
+		var oBinding,
+			oContext = {},
 			mQueryOptions = {};
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
@@ -596,7 +602,10 @@ sap.ui.require([
 				sinon.match.same(mQueryOptions));
 
 		// code under test
-		this.oModel.bindList("/EMPLOYEES", oContext);
+		oBinding = this.oModel.bindList("/EMPLOYEES", oContext);
+
+		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
+		assert.strictEqual(oBinding.mParameters, undefined);
 	});
 
 	//*********************************************************************************************
