@@ -117,5 +117,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "2829fe90e1583125c86c16e0478ead4552d42c98",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "references": []
+      },
+      {
+        "id": "9a7b753dfd64fe3f294a88aa098ee3094a257f5f",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
+      }
+    ]
   }
 }
