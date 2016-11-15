@@ -190,7 +190,7 @@ sap.ui.require([
 			}
 
 			if (oFixture.sTarget === "base") {
-				this.mock(_ODataHelper).expects("createContextCacheProxy")
+				this.mock(_ODataHelper).expects("createContextCache")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oTargetContext))
 					.returns(oTargetCacheProxy);
 			}
@@ -227,7 +227,7 @@ sap.ui.require([
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
-		this.mock(_ODataHelper).expects("createContextCacheProxy")
+		this.mock(_ODataHelper).expects("createContextCache")
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 			.returns(oCacheProxy);
 
@@ -259,7 +259,10 @@ sap.ui.require([
 		var oBinding,
 			oContext = this.oModel.createBindingContext("/TEAMS('TEAM_01')");
 
-		this.mock(_Cache).expects("createSingle").never();
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+					"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"})
+			.returns({});
 
 		//code under test
 		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext);
@@ -388,7 +391,7 @@ sap.ui.require([
 				oHelperMock = this.mock(_ODataHelper);
 
 			if (bRelative) {
-				oHelperMock.expects("createContextCacheProxy").returns(oCache);
+				oHelperMock.expects("createContextCache").returns(oCache);
 			} else {
 				this.mock(_Cache).expects("createSingle").returns(oCache);
 			}
@@ -396,7 +399,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindContext(bRelative ? "TEAM_2_MANAGER" : "/EMPLOYEES(ID='1')",
 				oContext, {});
 			if (bRelative) {
-				oHelperMock.expects("createContextCacheProxy")
+				oHelperMock.expects("createContextCache")
 					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 					.returns(oCache);
 				this.mock(oCache).expects("refresh").never();
@@ -713,7 +716,7 @@ sap.ui.require([
 
 			oContextMock.expects("fetchCanonicalPath")
 				.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-			this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+			this.mock(_ODataHelper).expects("createCache").returns(oCache);
 			oBinding.setContext(oContext);
 
 			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
@@ -744,7 +747,7 @@ sap.ui.require([
 
 				this.mock(oContext).expects("fetchCanonicalPath")
 					.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-				this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+				this.mock(_ODataHelper).expects("createCache").returns(oCache);
 				oBinding.setContext(oContext);
 
 				this.mock(oCache).expects("read").withArgs("myGroup", oFixture.rel)
@@ -1816,7 +1819,7 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
 			oPathPromise = Promise.resolve("/TEAMS('8192')/TEAM_2_MANAGER");
 
-		this.mock(_ODataHelper).expects("createContextCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createContextCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
@@ -1840,7 +1843,7 @@ sap.ui.require([
 			oDependent1 = {checkUpdate : function () {}},
 			oPathPromise = Promise.resolve(sPath);
 
-		this.mock(_ODataHelper).expects("createContextCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createContextCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
@@ -1866,7 +1869,7 @@ sap.ui.require([
 			oError = {},
 			oPathPromise = Promise.reject(oError);
 
-		this.mock(_ODataHelper).expects("createContextCacheProxy").returns(oCacheTeam1);
+		this.mock(_ODataHelper).expects("createContextCache").returns(oCacheTeam1);
 		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext, {$select : "Name"});
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise));

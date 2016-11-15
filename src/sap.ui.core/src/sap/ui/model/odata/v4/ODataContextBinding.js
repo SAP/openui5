@@ -764,7 +764,7 @@ sap.ui.define([
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
 				if (this.bRelative && this.oContext.getBinding) {
-					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
+					this.oCache = _ODataHelper.createContextCache(this, this.oContext);
 					this.mCacheByContext = undefined;
 				} else {
 					this.oCache.refresh();
@@ -832,7 +832,7 @@ sap.ui.define([
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
-						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
+						this.oCache = _ODataHelper.createContextCache(this, oContext);
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"

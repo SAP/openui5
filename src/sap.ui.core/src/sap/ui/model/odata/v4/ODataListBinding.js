@@ -128,7 +128,7 @@ sap.ui.define([
 				}
 				if (!this.bRelative) {
 					if (this.aApplicationFilters.length > 0) {
-						this.oCache = _ODataHelper.createListCacheProxy(this);
+						this.oCache = _ODataHelper.createListCache(this);
 					} else {
 						sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
 							this.mQueryOptions && this.mQueryOptions.$orderby);
@@ -619,7 +619,7 @@ sap.ui.define([
 			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 		}
 		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+		this.oCache = _ODataHelper.createListCache(this, this.oContext);
 		this.reset(ChangeReason.Filter);
 
 		return this;
@@ -998,7 +998,7 @@ sap.ui.define([
 		this.sRefreshGroupId = sGroupId;
 		if (this.oCache) {
 			if (this.bRelative && this.oContext.getBinding) {
-				this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+				this.oCache = _ODataHelper.createListCache(this, this.oContext);
 				this.mCacheByContext = undefined;
 			} else {
 				this.oCache.refresh();
@@ -1090,7 +1090,7 @@ sap.ui.define([
 					this.oCache = undefined;
 				}
 				if (oContext) {
-					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
+					this.oCache = _ODataHelper.createListCache(this, oContext);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
@@ -1138,7 +1138,7 @@ sap.ui.define([
 
 		this.aSorters = _ODataHelper.toArray(vSorters);
 		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+		this.oCache = _ODataHelper.createListCache(this, this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
 	};
