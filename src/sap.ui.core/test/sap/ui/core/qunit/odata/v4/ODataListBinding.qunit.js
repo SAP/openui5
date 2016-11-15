@@ -513,8 +513,8 @@ sap.ui.require([
 			assert.deepEqual(oBinding.mQueryOptions, mExpectedQueryOptions,
 				"Query options are not modified by dynamic sorters");
 			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.aSorters));
-			assert.ok(_ODataHelper.mergeQueryOptions.calledWithExactly(oBinding.mQueryOptions,
-				oFixture.buildOrderbyResult), "mergeQueryOptions called");
+			sinon.assert.calledWithExactly(_ODataHelper.mergeQueryOptions, oBinding.mQueryOptions,
+				oFixture.buildOrderbyResult, "");
 		});
 	});
 

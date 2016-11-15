@@ -94,8 +94,7 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
-				var oBindingParameters,
-					sOrderby;
+				var oBindingParameters;
 
 				ListBinding.call(this, oModel, sPath, undefined, undefined, undefined, mParameters);
 
@@ -127,14 +126,7 @@ sap.ui.define([
 					mParameters, true);
 
 				if (!this.bRelative) {
-					if (this.aApplicationFilters.length > 0) {
-						this.oCache = this.makeCache();
-					} else {
-						sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-							this.mQueryOptions && this.mQueryOptions.$orderby);
-						this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-							_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
-					}
+					this.oCache = this.makeCache();
 				}
 
 				this.reset();
