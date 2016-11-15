@@ -193,7 +193,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			};
 
 			var fnIsTitleOrToolbar = function(aElements, iIndex) {
-				if (iIndex >= aElements.length) {
+				if (iIndex >= aElements.length || iIndex === -1) {
 					return true;
 				}
 				var sType = aElements[iIndex].getMetadata().getName();

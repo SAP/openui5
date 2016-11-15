@@ -6,6 +6,17 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	var fnHasContent = function(oFormContainer) {
+		if (oFormContainer.getTitle()) {
+			return true;
+		} else {
+			var oSimpleForm = oFormContainer.getParent().getParent();
+			return oSimpleForm.getContent().some(function(oControl) {
+				return oControl.getVisible();
+			});
+		}
+	};
+
 	return {
 		name : function (oElement){
 			var sType = oElement.getMetadata().getName();
@@ -86,7 +97,7 @@ sap.ui.define([], function() {
 						var bIsEnabled = true;
 						var oRenameMetadata;
 						if (sType === "sap.ui.layout.form.FormContainer"){
-							if (oElement.getToolbar && oElement.getToolbar()) {
+							if (oElement.getToolbar() || !oElement.getTitle()) {
 								bIsEnabled = false;
 							}
 							oRenameMetadata = {
@@ -118,7 +129,9 @@ sap.ui.define([], function() {
 						var bIsEnabled = true;
 						if (sType === "sap.ui.layout.form.FormContainer"){
 							sChangeType = "removeSimpleFormGroup";
-							bIsEnabled = !!oRemovedElement.getTitle() || !!oRemovedElement.getToolbar();
+							if (!oRemovedElement.getToolbar() && !fnHasContent.call(this, oRemovedElement)) {
+								bIsEnabled = false;
+							}
 						} else if (sType === "sap.ui.layout.form.FormElement"){
 							sChangeType = "hideSimpleFormField";
 						}
