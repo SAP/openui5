@@ -23,9 +23,11 @@
                         <ObjectIdentifier
                             text="{product}"/>
                         <ObjectMarker
-                                type="{type}"/>
+                                type="{type}"
+                                additionalInfo="{additionalInfo}"/>
                         <ObjectMarker
                                 type="{type}"
+                                additionalInfo="{additionalInfo}"
                                 press="onPress"/>
                     </cells>
                 </ColumnListItem>
