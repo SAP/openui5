@@ -492,10 +492,8 @@
 
 			//Assert
 			strictEqual(callCount, 1, "Did call the callback function once");
-			deepEqual(aArguments, {
-				foo : "foo",
-				bar : "bar"
-			}, "Did pass foo bar as parameter it was: " + aArguments);
+			strictEqual(aArguments.foo, "foo", "parameter foo is passed");
+			strictEqual(aArguments.bar, "bar", "parameter bar is passed");
 
 			//Cleanup
 			router.destroy();

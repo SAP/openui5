@@ -29,6 +29,11 @@ sap.ui.define([], function() {
 					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
 				});
 
+				// do not forward the route config to navigation
+				if (vData) {
+					delete vData.routeConfig;
+				}
+
 				return oReturnValue;
 
 			}
