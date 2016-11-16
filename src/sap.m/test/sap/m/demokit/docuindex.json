@@ -395,7 +395,8 @@
 			"sap.m.sample.IconTabSeparator",
 			"sap.m.sample.IconTabBarOverflowSelectList",
 			"sap.m.sample.IconTabBarBackgroundDesign",
-			"sap.m.sample.IconTabFilterCustomization"
+			"sap.m.sample.IconTabFilterCustomization",
+			"sap.m.sample.IconTabBarDragDrop"
 		  ]
 		},
 		{
@@ -1551,7 +1552,7 @@
 		},
 	 	{
 		  "id": "sap.m.sample.IconTabBarOverflowSelectList",
-		  "name": "Icon Tab - Overflow Select List",
+		  "name": "Icon Tab Bar - Overflow Select List",
 		  "description": "In this example when some of the tab items are not visible, they are displayed in an overflow select list for easier selection."
 	    },
 		{
@@ -1563,6 +1564,11 @@
 		  "id": "sap.m.sample.IconTabFilterCustomization",
 		  "name": "Icon Tab Bar - Tab Filter Customization",
 		  "description": "This example shows how the tab filters can be customized."
+		},
+		{
+		  "id": "sap.m.sample.IconTabBarDragDrop",
+		  "name": "Icon Tab Bar - Tabs drag and drop",
+		  "description": "This example shows how the tab filters can be reordered with drag and drop. Works only on desktop devices."
 		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",

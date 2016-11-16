@@ -82,7 +82,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Default is "Solid".
 			 * @since 1.44
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid},
+
+			/**
+			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+			 * @since 1.46
+			 */
+			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		aggregations : {
 
@@ -117,6 +123,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	EnabledPropagator.apply(IconTabHeader.prototype, [true]);
 
+	IconTabHeader.ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
 	IconTabHeader.SCROLL_STEP = 264; // how many pixels to scroll with every overflow arrow click
 
 	IconTabHeader.prototype.init = function() {
@@ -205,6 +212,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		var oSelectList = this._getSelectList();
+		this._setSelectListItems();
 
 		this._oPopover.removeAllContent();
 		this._oPopover.addContent(oSelectList);
@@ -451,8 +459,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		this._setSelectListItems();
-
 		// Deregister resize event before re-rendering
 		if (this._sResizeListenerNoFlexboxSupportId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
@@ -630,9 +636,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return null;
 	};
 
-	IconTabHeader.prototype.onAfterRendering = function() {
-		var oHeadDomRef = this.getDomRef("head");
+	IconTabHeader.prototype._initItemNavigation = function() {
+		//use ItemNavigation for keyboardHandling
+		var that = this,
+			oHeadDomRef = this.getDomRef("head"),
+			aItems = this.getItems(),
+			aTabDomRefs = [],
+			iSelectedDomIndex = -1;
 
+		// find a collection of all tabs
+		aItems.forEach(function(oItem) {
+			if (oItem instanceof sap.m.IconTabFilter) {
+				var oItemDomRef = that.getFocusDomRef(oItem);
+				jQuery(oItemDomRef).attr("tabindex", "-1");
+				aTabDomRefs.push(oItemDomRef);
+				if (oItem === that.oSelectedItem) {
+					iSelectedDomIndex = aTabDomRefs.indexOf(oItemDomRef);
+				}
+			}
+		});
+
+		//Initialize the ItemNavigation
+		if (!this._oItemNavigation) {
+			this._oItemNavigation = new ItemNavigation();
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this);
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
+			this.addDelegate(this._oItemNavigation);
+		}
+
+		//Reinitialize the ItemNavigation after rendering
+		this._oItemNavigation.setRootDomRef(oHeadDomRef);
+		this._oItemNavigation.setItemDomRefs(aTabDomRefs);
+		this._oItemNavigation.setSelectedIndex(iSelectedDomIndex);
+	};
+
+	IconTabHeader.prototype.onAfterRendering = function() {
 		// initialize scrolling
 		if (this._oScroller) {
 			this._oScroller.setIconTabBar(this, jQuery.proxy(this._afterIscroll, this), jQuery.proxy(this._scrollPreparation, this));
@@ -661,36 +699,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		//use ItemNavigation for keyboardHandling
-		var aItems = this.getItems();
-		var aTabDomRefs = [];
-		var iSelectedDomIndex = -1;
-		var that = this;
-
-		// find a collection of all tabs
-		aItems.forEach(function(oItem) {
-			if (oItem instanceof sap.m.IconTabFilter) {
-				var oItemDomRef = that.getFocusDomRef(oItem);
-				jQuery(oItemDomRef).attr("tabindex", "-1");
-				aTabDomRefs.push(oItemDomRef);
-				if (oItem === that.oSelectedItem) {
-					iSelectedDomIndex = aTabDomRefs.indexOf(oItem);
-				}
-			}
-		});
-
-		//Initialize the ItemNavigation
-		if (!this._oItemNavigation) {
-			this._oItemNavigation = new ItemNavigation();
-			this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this);
-			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
-			this.addDelegate(this._oItemNavigation);
-		}
-
-		//Reinitialize the ItemNavigation after rendering
-		this._oItemNavigation.setRootDomRef(oHeadDomRef);
-		this._oItemNavigation.setItemDomRefs(aTabDomRefs);
-		this._oItemNavigation.setSelectedIndex(iSelectedDomIndex);
+		this._initItemNavigation();
 
 		// overflow button doesn't have tab stop
 		if (this.getShowOverflowSelectList()) {
@@ -762,9 +771,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
+
 		var aItems = this.getTabFilters();
 
 		var oItem = Control.prototype.removeAggregation.apply(this, arguments);
+
+		// don't change selected item while drag-drop
+		if (this._oDragContext) {
+			return oItem;
+		}
 
 		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
@@ -1008,6 +1023,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sTargetId = oEvent.target.id,
 			oControl = oEvent.srcControl,
 			sControlId;
+
+		if (this._oDragContext && this._oDragContext.movedTabIndexes.length) {
+			return;
+		}
 
 		if (oControl instanceof  Button) {
 			return;
@@ -1329,6 +1348,210 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*           end: event handlers                               */
 	/* =========================================================== */
 
+	/* =========================================================== */
+	/*           start: tab drag-drop                              */
+	/* =========================================================== */
+
+	/**
+	 * Listens to the mousedown events for starting tab drag & drop.
+	 * @private
+	 */
+	IconTabHeader.prototype.onmousedown = function(oEvent) {
+		if (!this.getEnableTabReordering()) {
+			return;
+		}
+
+		var bIsTouchMode = !!oEvent.originalEvent["touches"];
+		if (bIsTouchMode) {
+			return;
+		}
+
+		var $target = jQuery(oEvent.target);
+
+		// start drag and drop
+		var $tab = $target.closest(".sapMITBFilter, .sapMITBAll");
+		if ($tab.length === 1) {
+			this._onTabMoveStart($tab, oEvent);
+		}
+	};
+
+	IconTabHeader.prototype._onTabMoveStart = function($tab, oEvent) {
+		var iIndex = this._getItemIndex($tab),
+			$children = this.$().find('.sapMITBHead').children(),
+			iWidth = $tab.outerWidth(true),
+			$document = jQuery(document);
+
+		oEvent.preventDefault();
+		$tab.zIndex(this.$().zIndex() + 10);
+
+		this._oDragContext = {
+			index: jQuery.inArray($tab[0], $children),
+			tabIndex : iIndex,
+			startX: oEvent.pageX,
+			$tab: $tab,
+			tab: this.getItems()[iIndex],
+			tabWidth: iWidth,
+			tabCenter: $tab.position().left + iWidth / 2,
+			movedTabIndexes: []
+		};
+
+		this._oScroller.setHorizontal(false);
+
+		$document.mousemove(jQuery.proxy(this._onTabMove, this));
+		$document.mouseup(jQuery.proxy(this._onTabMoved, this));
+	};
+
+	IconTabHeader.prototype._onTabMove = function(oEvent) {
+		var oDragContext = this._oDragContext;
+		if (!oDragContext) {
+			return;
+		}
+
+		var iPageX = oEvent.pageX,
+			iDx = iPageX - oDragContext.startX,
+			$child,
+			iX,
+			iOffset,
+			bReorder,
+			$children = this.$().find('.sapMITBHead').children(),
+			aMovedTabIndexes = oDragContext.movedTabIndexes,
+			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
+		oDragContext.$tab.css({left: iDx});
+
+		for (var i = 0; i < $children.length; i++) {
+
+			if (i == oDragContext.index) {
+				continue;
+			}
+
+			$child = jQuery($children[i]);
+			iX = $child.position().left;
+			iOffset = parseFloat($child.css('left'));
+
+			if (!isNaN(iOffset)) {
+				iX -= iOffset;
+			}
+
+			if (i < oDragContext.index != bRTL) {
+				bReorder = iX + $child.outerWidth(true) > oDragContext.tabCenter + iDx;
+				this._onAnimateTab($child, oDragContext.tabWidth, bReorder, aMovedTabIndexes, i);
+			} else {
+				bReorder = iX < oDragContext.tabCenter + iDx;
+				this._onAnimateTab($child, -oDragContext.tabWidth, bReorder, aMovedTabIndexes, i);
+			}
+		}
+	};
+
+	IconTabHeader.prototype._onAnimateTab = function($child, iDragOffset, bReorder, aMovedTabIndexes, iIndex) {
+		var iIndexInArray = jQuery.inArray(iIndex, aMovedTabIndexes),
+			bInArray = iIndexInArray != -1;
+
+		if (bReorder && !bInArray) {
+			$child.stop(true, true);
+			$child.animate({left : iDragOffset}, IconTabHeader.ANIMATION_DURATION);
+			aMovedTabIndexes.push(iIndex);
+		} else if (!bReorder && bInArray) {
+			$child.stop(true, true);
+			$child.animate({left : 0}, IconTabHeader.ANIMATION_DURATION);
+			aMovedTabIndexes.splice(iIndexInArray, 1);
+		}
+	};
+
+	IconTabHeader.prototype._onTabMoved = function(oEvent) {
+		var oDragContext = this._oDragContext;
+		if (!oDragContext) {
+			return;
+		}
+
+		var aMovedTabIndexes = oDragContext.movedTabIndexes;
+		if (aMovedTabIndexes.length > 0) {
+			var $tab = oDragContext.$tab,
+				$children = this.$().find('.sapMITBHead').children(),
+				iNewIndex = aMovedTabIndexes[aMovedTabIndexes.length - 1],
+				iNewTabIndex = this._getItemIndex(jQuery($children[iNewIndex]));
+
+			this.removeAggregation('items', oDragContext.tab, true);
+			this.insertAggregation('items', oDragContext.tab, iNewTabIndex, true);
+
+			if (iNewIndex > oDragContext.index) {
+				$tab.insertAfter(jQuery($children[iNewIndex]));
+			} else {
+				$tab.insertBefore(jQuery($children[iNewIndex]));
+			}
+
+			this._initItemNavigation();
+			jQuery.sap.delayedCall(100, this, function () {
+				$tab.focus();
+			});
+		}
+
+		this._stopMoving();
+	};
+
+	IconTabHeader.prototype._stopMoving = function() {
+		var oDragContext = this._oDragContext,
+			$tab = oDragContext.$tab,
+			$children = this.$().find('.sapMITBHead').children();
+
+		$tab.css('z-index', '');
+		$children.stop(true, true);
+		$children.css('left', '');
+
+		this._oDragContext = null;
+
+		var $document = jQuery(document);
+
+		$document.unbind("mousemove", this._onTabMove);
+		$document.unbind("mouseup", this._onTabMoved);
+
+		this._oScroller.setHorizontal(true);
+		this._enableTextSelection();
+	};
+
+	IconTabHeader.prototype._getItemIndex = function($tab) {
+
+		var sId = $tab.attr('id'),
+			aTabs = this.getItems();
+
+		for (var i = 0; i < aTabs.length; i++) {
+			if (aTabs[i].getId() == sId) {
+				return i;
+			}
+		}
+
+		return -1;
+	};
+
+	/**
+	 * Disables text selection on the document (disabled for Dnd).
+	 * @private
+	 */
+	IconTabHeader.prototype._disableTextSelection = function (oElement) {
+		// prevent text selection
+		jQuery(oElement || document.body).
+			attr("unselectable", "on").
+			addClass('sapMITBNoSelection').
+			bind("selectstart", function(oEvent) {
+				oEvent.preventDefault();
+				return false;
+			});
+	};
+
+	/**
+	 * Enables text selection on the document (disabled for Dnd).
+	 * @private
+	 */
+	IconTabHeader.prototype._enableTextSelection = function (oElement) {
+		jQuery(oElement || document.body).
+			attr("unselectable", "off").
+			removeClass('sapMITBNoSelection').
+			unbind("selectstart");
+	};
+
+	/* =========================================================== */
+	/*           end: tab drag-drop  ..                            */
+	/* =========================================================== */
 
 	return IconTabHeader;
 
