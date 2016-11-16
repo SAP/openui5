@@ -293,7 +293,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		},
 		isTabletScenario: function () {
 
-			if (sap.ui.Device.system.tablet) {
+			if (!sap.ui.Device.system.desktop && sap.ui.Device.system.tablet) {
 				return true;
 			}
 
