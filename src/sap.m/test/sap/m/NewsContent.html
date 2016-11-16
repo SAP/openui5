@@ -51,16 +51,17 @@
 		sap.m.MessageToast.show("The news content is pressed.");
 	};
 
-	var oNC = new sap.m.NewsContent("configurable-news-content-", {
-		contentText : "{/contentText}",
-		subheader : "{/subheader}",
-		tooltip : "{/tooltip}",
-		press : fnPress
-	});
-	oNC.addStyleClass("sapUiSmallMargin");
+	var oTC = new sap.m.TileContent({
+		content: new sap.m.NewsContent("configurable-news-content-", {
+			contentText : "{/contentText}",
+			subheader : "{/subheader}",
+			tooltip : "{/tooltip}",
+			press : fnPress
+		})
+	}).addStyleClass("sapUiSmallMargin");
 
 	var oFlexBox = new sap.m.FlexBox("flexbox", {
-		items : [oNC],
+		items : [oTC],
 		alignItems: "Start",
 		justifyContent: "SpaceAround"
 	});
