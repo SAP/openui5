@@ -1817,10 +1817,10 @@ if (typeof window.sap.ui !== "object") {
 			}
 		} else if (device.support.matchmedia && device.support.orientation) { //most desktop browsers and windows phone/tablet which not support orientationchange
 			return !!window.matchMedia("(orientation: landscape)").matches;
-		} else { //otherwise compare the width and height of window
-			var size = windowSize();
-			return size[0] > size[1];
 		}
+		//otherwise compare the width and height of window
+		var size = windowSize();
+		return size[0] > size[1];
 	}
 
 	function handleMobileOrientationResizeChange(evt) {
