@@ -750,6 +750,8 @@ QUnit.module("Vertical scrolling", {
 		};
 		sap.ui.getCore().applyChanges();
 
+		var iDelay = this.iAssertionDelay;
+
 		setTimeout(function() {
 			var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 			oVSb.scrollTop = oSetting.scrollTop;
@@ -766,8 +768,8 @@ QUnit.module("Vertical scrolling", {
 					assert.strictEqual(oTable.getFirstVisibleRow(), iExpectedFirstVisibleRow, "Check FirstVisibleRow");
 				}
 				QUnit.start();
-			}, this.iAssertionDelay);
-		}, this.iAssertionDelay);
+			}, iDelay);
+		}, iDelay);
 	}
 });
 
