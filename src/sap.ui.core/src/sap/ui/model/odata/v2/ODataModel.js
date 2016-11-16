@@ -2529,10 +2529,11 @@ sap.ui.define([
 	 * Submit of a single request.
 	 *
 	 * @param {object} oRequest The request object
+	 * @param {boolean} [bRefreshAfterChange] Enable/Disable updates of all bindings if the given request is a change request
 	 * @returns {object} Handle for the request, providing at least an <code>abort</code> method
 	 * @private
 	 */
-	ODataModel.prototype._submitSingleRequest = function(oRequest) {
+	ODataModel.prototype._submitSingleRequest = function(oRequest, bRefreshAfterChange) {
 		var that = this,
 			oRequestHandle,
 			mChangeEntities = {},
@@ -2560,7 +2561,7 @@ sap.ui.define([
 				}
 				if (oRequest.request.requestUri.indexOf("$count") === -1) {
 					that.checkUpdate(false, false, mGetEntities);
-					if (that.bRefreshAfterChange){
+					if (bRefreshAfterChange){
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
@@ -2771,9 +2772,10 @@ sap.ui.define([
 	 * @param {function} fnSuccess The success callback function
 	 * @param {function} fnError The error callback function
 	 * @param {object} requestHandle Handle for the requests
+	 * @param {boolean} bRefreshAfterChange Enable/Disable updates of all bindings after change operations for the given requests
 	 * @private
 	 */
-	ODataModel.prototype._pushToRequestQueue = function(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle) {
+	ODataModel.prototype._pushToRequestQueue = function(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange) {
 		var oRequestGroup = mRequests[sGroupId],
 			sRequestKey = oRequest.key ? oRequest.key : oRequest.method + ":" + oRequest.requestUri;
 
@@ -2791,12 +2793,12 @@ sap.ui.define([
 			var oStoredRequest = oGroupEntry.request;
 
 			if (!oRequest.key) {
-			oGroupEntry.parts.push({
-				request:	oRequest,
-				fnSuccess:	fnSuccess,
-				fnError:	fnError,
-				requestHandle:	requestHandle
-			});
+				oGroupEntry.parts.push({
+					request:	oRequest,
+					fnSuccess:	fnSuccess,
+					fnError:	fnError,
+					requestHandle:	requestHandle
+				});
 			}
 
 			if (oRequest.method === "GET") {
@@ -2821,6 +2823,7 @@ sap.ui.define([
 		} else {
 			var oGroupEntry = {
 				request: oRequest,
+				bRefreshAfterChange: bRefreshAfterChange,
 				parts: [{
 					request:	oRequest,
 					fnSuccess:	fnSuccess,
@@ -2847,7 +2850,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Request queue processing
+	 * Collects all entities or entity types that shall be refreshed
 	 *
 	 * @param {object} oGroup The batchGroup
 	 * @param {map} mChangedEntities A map containing the changed entities of the bacthGroup
@@ -2861,15 +2864,17 @@ sap.ui.define([
 		if (oGroup.changes) {
 			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 				for (var i = 0; i < aChangeSet.length; i++) {
-					var oRequest = aChangeSet[i].request,
-						sKey = oRequest.requestUri.split('?')[0];
-					if (oRequest.method === "POST" || oRequest.method === "DELETE") {
-						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
-						if (oEntityMetadata) {
-							mEntityTypes[oEntityMetadata.entityType] = true;
+					if (aChangeSet[i].bRefreshAfterChange) {
+						var oRequest = aChangeSet[i].request,
+							sKey = oRequest.requestUri.split('?')[0];
+						if (oRequest.method === "POST" || oRequest.method === "DELETE") {
+							var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
+							if (oEntityMetadata) {
+								mEntityTypes[oEntityMetadata.entityType] = true;
+							}
+						} else {
+							mChangedEntities[sKey] = true;
 						}
-					} else {
-						mChangedEntities[sKey] = true;
 					}
 				}
 			});
@@ -2919,18 +2924,19 @@ sap.ui.define([
 
 		if (this.bUseBatch) {
 			//auto refresh for batch / for single requests we refresh after the request was successful
-			if (that.bRefreshAfterChange) {
-				jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
-					if (sRequestGroupId === sGroupId || !sGroupId) {
-						var mChangedEntities = {},
-							mEntityTypes = {};
-						that._collectChangedEntities(oRequestGroup, mChangedEntities, mEntityTypes);
+			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
+				if (sRequestGroupId === sGroupId || !sGroupId) {
+					var mChangedEntities = {},
+						mEntityTypes = {};
+					that._collectChangedEntities(oRequestGroup, mChangedEntities, mEntityTypes);
+
+					if (Object.keys(mChangedEntities).length || Object.keys(mEntityTypes).length) {
 						that.bIncludeInCurrentBatch = true;
 						that._refresh(false, sRequestGroupId, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = false;
 					}
-				});
-			}
+				}
+			});
 			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
 				if (sRequestGroupId === sGroupId || !sGroupId) {
 					var aReadRequests = [], aBatchGroup = [], oChangeSet, aChanges;
@@ -2990,7 +2996,7 @@ sap.ui.define([
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								checkAbort(aChangeSet[i], oWrappedSingleRequestHandle);
 								if (aChangeSet[i].parts.length > 0) {
-									oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aChangeSet[i]);
+									oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aChangeSet[i], aChangeSet[i].bRefreshAfterChange);
 									aRequestHandles.push(oWrappedSingleRequestHandle.oRequestHandle);
 								}
 							}
@@ -3649,6 +3655,7 @@ sap.ui.define([
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
 			aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests,
+			bRefreshAfterChange = this.bRefreshAfterChange,
 			that = this;
 
 		if (mParameters) {
@@ -3671,7 +3678,7 @@ sap.ui.define([
 		sMethod = sMethod ? sMethod : this.sDefaultUpdateMethod;
 		sETag = sETag || this._getETag(sPath, oContext, oData);
 
-		return this._processRequest(function() {
+		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
 
@@ -3679,7 +3686,7 @@ sap.ui.define([
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		});
@@ -3716,6 +3723,7 @@ sap.ui.define([
 		var oRequest, sUrl, oEntityMetadata,
 		oContext, fnSuccess, fnError, mUrlParams, mRequests,
 		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId,
+		bRefreshAfterChange = this.bRefreshAfterChange,
 		that = this;
 
 		// The object parameter syntax has been used.
@@ -3749,7 +3757,7 @@ sap.ui.define([
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		});
@@ -3781,6 +3789,7 @@ sap.ui.define([
 		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sGroupId,
 		sChangeSetId, sETag,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
+		bRefreshAfterChange = this.bRefreshAfterChange,
 		that = this;
 
 		if (mParameters) {
@@ -3822,7 +3831,7 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		});
@@ -3876,6 +3885,7 @@ sap.ui.define([
 			fnReject,
 			pContextCreated,
 			oRequestHandle,
+			bRefreshAfterChange = this.bRefreshAfterChange,
 			oData = {};
 
 		if (mParameters) {
@@ -3901,7 +3911,7 @@ sap.ui.define([
 				fnReject = reject;
 		});
 
-		oRequestHandle = this._processRequest(function() {
+		oRequestHandle = this._processRequest(function(requestHandle) {
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
 			jQuery.sap.assert(oFunctionMetadata, that + ": Function " + sFunctionName + " not found in the metadata !");
 			if (!oFunctionMetadata) {
@@ -3959,7 +3969,7 @@ sap.ui.define([
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		});
@@ -4086,7 +4096,7 @@ sap.ui.define([
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError, requestHandle);
+			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError, requestHandle, false);
 
 			return oRequest;
 		}
@@ -4291,6 +4301,7 @@ sap.ui.define([
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
 			bAborted = false, sMethod, mChangedEntities,
+			bRefreshAfterChange = this.bRefreshAfterChange,
 			mParams,
 			that = this;
 
@@ -4324,7 +4335,8 @@ sap.ui.define([
 						}
 					};
 					if (oGroupInfo.groupId in that.mDeferredGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle);
+						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId,
+							oRequest, mParams.success, mParams.error, oRequestHandle, bRefreshAfterChange);
 					}
 				}
 			});
@@ -4557,13 +4569,16 @@ sap.ui.define([
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 
+
+		var bRefreshAfterChange = this.bRefreshAfterChange;
 		this.oMetadata.loaded().then(function() {
 			oRequestHandle = {
 				abort: function() {
 					oRequest._aborted = true;
 				}
 			};
-			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle);
+			that._pushToRequestQueue(mRequests, oGroupInfo.groupId,
+				oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle, bRefreshAfterChange);
 			that._processRequestQueueAsync(that.mRequests);
 		});
 
@@ -4801,6 +4816,7 @@ sap.ui.define([
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
+			bRefreshAfterChange = this.bRefreshAfterChange,
 			that = this;
 
 		if (mParameters) {
@@ -4889,7 +4905,8 @@ sap.ui.define([
 			}
 
 			that.oMetadata.loaded().then(function() {
-				that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle);
+				that._pushToRequestQueue(mRequests, sGroupId,
+					sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle, bRefreshAfterChange);
 				that._processRequestQueueAsync(that.mRequests);
 			});
 			return oCreatedContext;
