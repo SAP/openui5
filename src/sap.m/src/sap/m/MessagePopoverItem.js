@@ -26,6 +26,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * @alias sap.m.MessagePopoverItem
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
+
 		var MessagePopoverItem = Item.extend("sap.m.MessagePopoverItem", /** @lends sap.m.MessagePopoverItem.prototype */ {
 			metadata: {
 				library: "sap.m",
@@ -114,6 +115,23 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 			this.setProperty("description", sDescription, true);
 
 			return this;
+		};
+
+		/**
+		 * Sets type of the MessagePopoverItem.
+		 * <b>Note:</b> if you set the type to None it will be handled and rendered as Information.
+		 *
+		 * @param {sap.ui.core.MessageType} sType Type of Message
+		 * @returns {sap.m.MessagePopoverItem} The MessagePopoverItem
+		 * @public
+		 */
+		MessagePopoverItem.prototype.setType = function (sType) {
+			if (sType === sap.ui.core.MessageType.None) {
+				sType = sap.ui.core.MessageType.Information;
+				jQuery.sap.log.warning("The provided None type is handled and rendered as Information type");
+			}
+
+			return this.setProperty("type", sType, true);
 		};
 
 		return MessagePopoverItem;
