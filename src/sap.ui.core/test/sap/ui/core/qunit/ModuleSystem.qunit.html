@@ -32,6 +32,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script >
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.registerResourcePath("testlibs", "testdata/libraries/");
 
 
 		//****************************************************
@@ -386,6 +387,100 @@
 
 		});
 
+		//****************************************************
+		// loadJSResourceAsync
+		//****************************************************
+
+		QUnit.module("loadJSResourceAsync", {
+			beforeEach: function() {
+				this.scriptsWith = function(rPattern) {
+					var count = 0;
+					jQuery("head>script").each(function(i, script) {
+						if ( script.src && rPattern.test(script.src) ) {
+							count++;
+						}
+					});
+					return count;
+				} 
+			}
+		});
+
+		QUnit.test("successful call", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/library-preload.js");
+			return p.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib1/library-preload.js'), "resource should have been loaded");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/library-preload\.js$/), 1, "script tag for lib should exist");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+
+		});
+
+		QUnit.test("failing call", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing.js");
+			return p.then(function() {
+				assert.ok(false, "promise must not succeed");
+			}, function() {
+				assert.ok(true, "promise should fail");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing\.js$/), 1, "script tag should exist");
+			});
+
+		});
+
+		QUnit.test("failing call (ignore errors)", function(assert) {
+			var that = this;
+			var p = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib1/non-existing-ignored.js", true);
+			return p.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.equal(that.scriptsWith(/scenario1\/lib1\/non-existing-ignored\.js$/), 1, "script tag should exist");
+			}, function() {
+				assert.ok(false, "promise must not fail");
+			});
+
+		});
+
+		QUnit.test("multiple calls (succeeding)", function(assert) {
+			var that = this;
+			var p1 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/library-preload.js");
+			var p2 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/library-preload.js");
+			p1 = p1.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib3/library-preload.js'), "resource should have been loaded");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+			p2 = p2.then(function() {
+				assert.ok(true, "promise should succeed");
+				assert.ok(jQuery.sap.isResourceLoaded('testlibs/scenario1/lib3/library-preload.js'), "resource should have been loaded");
+			}, function() {
+				assert.ok(false, "promise should not fail");
+			});
+			return Promise.all([p1,p2]).then(function() {
+				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
+			});
+		});
+
+		QUnit.test("multiple calls (failing)", function(assert) {
+			var that = this;
+			var p1 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/non-existing.js");
+			var p2 = jQuery.sap._loadJSResourceAsync("testlibs/scenario1/lib3/non-existing.js", true);
+			p1 = p1.then(function() {
+				assert.ok(false, "promise must not succeed");
+			}, function() {
+				assert.ok(true, "promise should fail");
+			});
+			p2 = p2.then(function() {
+				assert.ok(true, "promise should succeed"); // ignore errors!
+			}, function() {
+				assert.ok(false, "promise must not fail");
+			});
+			return Promise.all([p1,p2]).then(function() {
+				assert.equal(that.scriptsWith(/scenario1\/lib3\/library-preload\.js$/), 1, "only one script tag for lib should exist");
+			});
+		});
 
 		//****************************************************
 		// loadResource tests

@@ -36,11 +36,17 @@
 	function unloadResources() {
 		// unload libs and components (not an API)
 		jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/lib2/library-preload.js', false, true, true);
 		jQuery.sap.unloadResources('sap.test.lib3.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/lib3/library-preload.js', false, true, true);
 		jQuery.sap.unloadResources('sap.test.lib4.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/lib4/library-preload.js', false, true, true);
 		jQuery.sap.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/mycomp/Component-preload.js', false, true, true);
 		jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload.js', false, true, true);
 		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload.js', false, true, true);
 		// undo module path registration (official API)
 		jQuery.sap.registerResourcePath("sap/test");
 		jQuery.sap.registerResourcePath("sap/test/lib2");
