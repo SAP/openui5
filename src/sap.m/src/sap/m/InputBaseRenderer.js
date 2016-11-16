@@ -31,9 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// outer styles
 		this.addOuterStyles(oRm, oControl);
 
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		}
+		this.addControlWidth(oRm, oControl);
 
 		oRm.writeStyles();
 
@@ -374,6 +372,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 */
 	InputBaseRenderer.addOuterStyles = function(oRm, oControl) {};
 
+
+	/**
+	 * This method is reserved for derived class to set width inline style
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addControlWidth = function(oRm, oControl) {
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		}
+	};
 	/**
 	 * This method is reserved for derived classes to add extra classes for input container.
 	 *
