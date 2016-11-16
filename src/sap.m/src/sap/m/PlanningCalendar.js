@@ -445,15 +445,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @private
 	 */
 	PlanningCalendar.prototype._dateMatchesVisibleRange = function(oDate, sViewKey) {
-		var	oView = _getView.call(this, sViewKey, !this._bBeforeRendering),
-			iIntervals = _getIntervals.call(this, oView),
+		var	oView = this._getView(sViewKey, !this._bBeforeRendering),
+			iIntervals = this._getIntervals(oView),
 			oUniversalDate = CalendarUtils._createUniversalUTCDate(oDate),
 			oUniversalStartDate =  CalendarUtils._createUniversalUTCDate(this.getStartDate()),
 			oUniversalEndDate = CalendarUtils._createUniversalUTCDate(this.getStartDate());
 
 		oUniversalEndDate.setUTCDate(oUniversalEndDate.getUTCDate() + iIntervals);
 
-		return oUniversalDate.getTime() >= oUniversalStartDate && oUniversalDate.getTime() <= oUniversalEndDate;
+		return oUniversalDate.getTime() >= oUniversalStartDate && oUniversalDate.getTime() < oUniversalEndDate;
 	};
 
 	PlanningCalendar.prototype.onAfterRendering = function(oEvent){
@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._sResizeListener = sap.ui.core.ResizeHandler.register(this, this._resizeProxy);
 		}
 
-		_updateCurrentTimeVisualization.call(this, false); // CalendarRow sets visualization onAfterRendering
+		this._updateCurrentTimeVisualization(false); // CalendarRow sets visualization onAfterRendering
 
 	};
 
@@ -552,7 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this.getDomRef()) {
 			// only set timer, CalendarRow will be rerendered, so no update needed here
-			_updateCurrentTimeVisualization.call(this, false);
+			this._updateCurrentTimeVisualization(false);
 		}
 
 		return this;
@@ -720,14 +720,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oStartDate = this.getStartDate();
 		var oMinDate = this.getMinDate();
 		var oMaxDate = this.getMaxDate();
-		var oView = _getView.call(this, sKey, !this._bBeforeRendering);
+		var oView = this._getView(sKey, !this._bBeforeRendering);
 
 		if (!oView) {
 			this._bCheckView = true;
 			this.invalidate(); // view not exist now, maybe added later, so rerender
 		} else {
 			var sIntervalType = oView.getIntervalType();
-			var iIntervals = _getIntervals.call(this, oView);
+			var iIntervals = this._getIntervals(oView);
 
 			this._bCheckView = false; // no additional check needed
 
@@ -838,7 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this.getDomRef()) {
 				// only set timer, CalendarRow will be rerendered, so no update needed here
-				_updateCurrentTimeVisualization.call(this, false);
+				this._updateCurrentTimeVisualization(false);
 			}
 		}
 
@@ -945,9 +945,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._oTimeInterval || this._oDateInterval || this._oMonthInterval || this._oWeekInterval) {
 			var sKey = this.getViewKey();
-			var oView = _getView.call(this, sKey);
+			var oView = this._getView(sKey);
 			var sIntervalType = oView.getIntervalType();
-			var iIntervals = _getIntervals.call(this, oView);
+			var iIntervals = this._getIntervals(oView);
 			oCalendarRow.setIntervalType(sIntervalType);
 			oCalendarRow.setIntervals(iIntervals);
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
@@ -984,9 +984,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._oTimeInterval || this._oDateInterval || this._oMonthInterval || this._oWeekInterval) {
 			var sKey = this.getViewKey();
-			var oView = _getView.call(this, sKey);
+			var oView = this._getView(sKey);
 			var sIntervalType = oView.getIntervalType();
-			var iIntervals = _getIntervals.call(this, oView);
+			var iIntervals = this._getIntervals(oView);
 			oCalendarRow.setIntervalType(sIntervalType);
 			oCalendarRow.setIntervals(iIntervals);
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
@@ -1203,7 +1203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// DateRange changed -> only invalidate calendar control
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
-				var oView = _getView.call(this, sKey);
+				var oView = this._getView(sKey);
 				var sIntervalType = oView.getIntervalType();
 
 				switch (sIntervalType) {
@@ -1356,6 +1356,118 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 * Gets the correct <code>PlanningCalendarView</code> interval depending on the screen size
+	 * @param {PlanningCalendarView} oView - Target view
+	 * @returns {number} Interval for the target view that corresponds to the screen size
+	 * @private
+	 */
+	PlanningCalendar.prototype._getIntervals = function (oView) {
+		var iIntervals = 0;
+
+		switch (this._iSize) {
+			case 0:
+				iIntervals = oView.getIntervalsS();
+				break;
+
+			case 1:
+				iIntervals = oView.getIntervalsM();
+				break;
+
+			default:
+				iIntervals = oView.getIntervalsL();
+				break;
+		}
+
+		return iIntervals;
+
+	};
+
+	/**
+	 * Gets a <code>PlanningCalendarView</code> by a given view key
+	 * @param {string} sKey - <code>PlanningCalendarView</code> key
+	 * @param {boolean} bNoError
+	 * @returns {*}
+	 * @private
+	 */
+	PlanningCalendar.prototype._getView = function (sKey, bNoError) {
+
+		var aViews = _getViews.call(this);
+		var oView;
+
+		for (var i = 0; i < aViews.length; i++) {
+			oView = aViews[i];
+			if (oView.getKey() != sKey) {
+				oView = undefined;
+			}else {
+				break;
+			}
+		}
+
+		if (!oView && !bNoError) {
+			throw new Error("PlanningCalendarView with key " + sKey + "not assigned " + this);
+		}
+
+		return oView;
+
+	};
+
+	/**
+	 *
+	 * @param bUpdateRows
+	 * @private
+	 */
+	PlanningCalendar.prototype._updateCurrentTimeVisualization = function (bUpdateRows) {
+
+		if (this._sUpdateCurrentTime) {
+			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
+			this._sUpdateCurrentTime = undefined;
+		}
+
+		if (bUpdateRows) {
+			var aRows = this.getRows();
+			for (var i = 0; i < aRows.length; i++) {
+				var oRow = aRows[i];
+				oRow.getCalendarRow().updateCurrentTimeVisualization();
+			}
+		}
+
+		// set timer only if date is in visible area or one hour before
+		var oNowDate = new Date();
+		var oStartDate = this.getStartDate();
+		var sKey = this.getViewKey();
+		var oView = this._getView(sKey);
+		var sIntervalType = oView.getIntervalType();
+		var iIntervals = this._getIntervals(oView);
+		var iTime = 0;
+		var iStartTime = 0;
+		var iEndTime = 0;
+
+		switch (sIntervalType) {
+			case sap.ui.unified.CalendarIntervalType.Hour:
+				iTime = 60000;
+				iStartTime = oStartDate.getTime() - 3600000;
+				iEndTime = oStartDate.getTime() + iIntervals * 3600000;
+				break;
+
+			case sap.ui.unified.CalendarIntervalType.Day:
+			case sap.ui.unified.CalendarIntervalType.Week:
+				iTime = 1800000;
+				iStartTime = oStartDate.getTime() - 3600000;
+				iEndTime = oStartDate.getTime() + iIntervals * 86400000;
+				break;
+
+			default:
+				iTime = -1; // not needed
+				break;
+		}
+
+		if (oNowDate.getTime() <= iEndTime && oNowDate.getTime() >= iStartTime && iTime > 0) {
+			this._sUpdateCurrentTime = jQuery.sap.delayedCall(iTime, this, '_updateCurrentTimeVisualization', [true]);
+		}
+
+	};
+
 	function _changeIntervalType(oEvent) {
 
 		this.setViewKey(oEvent.getParameter("selectedItem").getKey());
@@ -1404,7 +1516,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		// calculate end date
 		var oEndDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 		var sKey = this.getViewKey();
-		var oView = _getView.call(this, sKey);
+		var oView = this._getView(sKey);
 		var sIntervalType = oView.getIntervalType();
 
 		switch (sIntervalType) {
@@ -1458,9 +1570,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		_determineSize.call(this, oEvent.size.width);
 		if (iOldSize != this._iSize) {
 			var sKey = this.getViewKey();
-			var oView = _getView.call(this, sKey);
+			var oView = this._getView(sKey);
 			var sIntervalType = oView.getIntervalType();
-			var iIntervals = _getIntervals.call(this, oView);
+			var iIntervals = this._getIntervals(oView);
 			for (i = 0; i < aRows.length; i++) {
 				oRow = aRows[i];
 				var oCalendarRow = oRow.getCalendarRow();
@@ -1506,57 +1618,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oRow = aRows[i];
 				oRow.getCalendarRow().handleResize();
 			}
-		}
-
-	}
-
-	function _updateCurrentTimeVisualization(bUpdateRows){
-
-		if (this._sUpdateCurrentTime) {
-			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
-			this._sUpdateCurrentTime = undefined;
-		}
-
-		if (bUpdateRows) {
-			var aRows = this.getRows();
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
-				oRow.getCalendarRow().updateCurrentTimeVisualization();
-			}
-		}
-
-		// set timer only if date is in visible area or one hour before
-		var oNowDate = new Date();
-		var oStartDate = this.getStartDate();
-		var sKey = this.getViewKey();
-		var oView = _getView.call(this, sKey);
-		var sIntervalType = oView.getIntervalType();
-		var iIntervals = _getIntervals.call(this, oView);
-		var iTime = 0;
-		var iStartTime = 0;
-		var iEndTime = 0;
-
-		switch (sIntervalType) {
-		case sap.ui.unified.CalendarIntervalType.Hour:
-			iTime = 60000;
-			iStartTime = oStartDate.getTime() - 3600000;
-			iEndTime = oStartDate.getTime() + iIntervals * 3600000;
-			break;
-
-		case sap.ui.unified.CalendarIntervalType.Day:
-		case sap.ui.unified.CalendarIntervalType.Week:
-			iTime = 1800000;
-			iStartTime = oStartDate.getTime() - 3600000;
-			iEndTime = oStartDate.getTime() + iIntervals * 86400000;
-			break;
-
-		default:
-			iTime = -1; // not needed
-		break;
-		}
-
-		if (oNowDate.getTime() <= iEndTime && oNowDate.getTime() >= iStartTime && iTime > 0) {
-			this._sUpdateCurrentTime = jQuery.sap.delayedCall(iTime, this, _updateCurrentTimeVisualization, [true]);
 		}
 
 	}
@@ -1715,28 +1776,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _getView(sKey, bNoError) {
-
-		var aViews = _getViews.call(this);
-		var oView;
-
-		for (var i = 0; i < aViews.length; i++) {
-			oView = aViews[i];
-			if (oView.getKey() != sKey) {
-				oView = undefined;
-			}else {
-				break;
-			}
-		}
-
-		if (!oView && !bNoError) {
-			throw new Error("PlanningCalendarView with key " + sKey + "not assigned " + this);
-		}
-
-		return oView;
-
-	}
-
 	function _updateSelectItems() {
 
 		var aViews = _getViews.call(this);
@@ -1770,28 +1809,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._oIntervalTypeSelect.addItem(oItem);
 			}
 		}
-
-	}
-
-	function _getIntervals(oView) {
-
-		var iIntervals = 0;
-
-		switch (this._iSize) {
-		case 0:
-			iIntervals = oView.getIntervalsS();
-			break;
-
-		case 1:
-			iIntervals = oView.getIntervalsM();
-			break;
-
-		default:
-			iIntervals = oView.getIntervalsL();
-		break;
-		}
-
-		return iIntervals;
 
 	}
 

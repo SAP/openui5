@@ -1320,7 +1320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				_renderMonth.call(this, false, false, true);
 			}
 		} else {
-			_focusDate.call(this, oDate, bOtherMonth);
+			this._focusDate(oDate, bOtherMonth);
 		}
 	};
 
@@ -1595,12 +1595,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}else if (_getMonths.call(this) > 1) {
 			// on rerendering focus might be set on wrong month
-			_focusDate.call(this, this._getFocusedDate(), true, true);
+			this._focusDate(this._getFocusedDate(), true, true);
 		}
 
 	}
 
-	function _focusDate (oDate, bOtherMonth, bNoEvent){
+	Calendar.prototype._focusDate = function (oDate, bOtherMonth, bNoEvent){
 
 		// if a date should be focused thats out of the borders -> focus the border
 		var oFocusedDate;
@@ -1633,7 +1633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this.fireStartDateChange();
 		}
 
-	}
+	};
 
 	function _setHeaderText (oDate){
 
@@ -1833,7 +1833,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
-		_focusDate.call(this, oFocusedDate, true);
+		this._focusDate(oFocusedDate, true);
 
 		_hideMonthPicker.call(this);
 
@@ -1853,7 +1853,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oFocusedDate = oDate;
 		}
 
-		_focusDate.call(this, oFocusedDate, true);
+		this._focusDate(oFocusedDate, true);
 
 		_hideYearPicker.call(this);
 
@@ -1877,7 +1877,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (aMonths.length > 1) {
 			// restore focus
-			_focusDate.call(this, this._getFocusedDate(), true, true);
+			this._focusDate(this._getFocusedDate(), true, true);
 		}
 		this._bDateRangeChanged = undefined;
 

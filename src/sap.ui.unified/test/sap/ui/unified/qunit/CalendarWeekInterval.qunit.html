@@ -1,0 +1,381 @@
+<!-- Tested control/class: sap.ui.unified.CalendarWeekInterval -->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>CalendarWeekInterval - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.CalendarTimeInterval.gif">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m,sap.ui.unified"
+				data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<!-- Sinon JS -->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<!--[if IE]>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script>
+			jQuery.sap.require("sap.ui.unified.calendar.CalendarUtils");
+			var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
+				UniversalDate = sap.ui.core.date.UniversalDate;
+
+			module("Events", {
+				beforeEach: function () {
+					this.oPC = new sap.m.PlanningCalendar('pc1', {
+						startDate: new Date(2015, 0, 1, 8, 0, 0),
+						viewKey: "Week",
+						rows: [
+							new sap.m.PlanningCalendarRow("pc1-Row1", {
+								icon: "sap-icon://employee",
+								title: "Max Mustermann",
+								text: "Musterteam",
+								tooltip: "Header tooltip",
+								intervalHeaders: [
+									new sap.ui.unified.CalendarAppointment("pc1-row1-R1H1",{
+										startDate: new Date(2015, 0, 1, 9, 0),
+										endDate: new Date(2015, 0, 1, 11, 0),
+										type: sap.ui.unified.CalendarDayType.Type02,
+										title: "SAPUI5",
+										tooltip: "Test",
+										icon: "sap-icon://sap-ui5"
+									})
+								],
+								appointments: [
+									new sap.ui.unified.CalendarAppointment("pc1-row1-R1A1", {
+										startDate: new Date(2015, 0, 1, 8, 0),
+										endDate: new Date(2015, 0, 1, 9, 0),
+										type: sap.ui.unified.CalendarDayType.Type01,
+										title: "App 1",
+										icon: "../../ui/unified/images/m_01.png",
+										tooltip: "Tooltip",
+										text: "Text"
+									}),
+									new sap.ui.unified.CalendarAppointment("pc1-row1-R1A2", {
+										startDate: new Date(2015, 0, 1, 7, 0),
+										endDate: new Date(2015, 0, 1, 11, 0),
+										type: sap.ui.unified.CalendarDayType.Type02,
+										title: "App 2",
+										icon: "sap-icon://home",
+										tooltip: "Tooltip",
+										text: "Text",
+										tentative: true
+									}),
+									new sap.ui.unified.CalendarAppointment("pc1-row1-R1A3", {
+										startDate: new Date(2015, 0, 2, 8, 30),
+										endDate: new Date(2015, 0, 2, 9, 30),
+										type: sap.ui.unified.CalendarDayType.Type03,
+										title: "App3",
+										icon: "sap-icon://home",
+										tooltip: "Tooltip"
+									}),
+									new sap.ui.unified.CalendarAppointment("pc1-row1-R1A4", {
+										startDate: new Date(2014, 6, 1),
+										endDate: new Date(2014, 6, 2),
+										type: sap.ui.unified.CalendarDayType.Type04,
+										title: "Meeting 4",
+										tooltip: "Tooltip 4",
+										selected: true
+									})
+								]
+							}),
+							new sap.m.PlanningCalendarRow("pc1-Row2", {
+								icon: "../../ui/unified/images/m_01.png",
+								title: "Edward",
+								text: "the great",
+								tooltip: "Header tooltip",
+								nonWorkingDays: [2,3],
+								nonWorkingHours: [11, 12],
+								intervalHeaders: [
+									new sap.ui.unified.CalendarAppointment("pc1-row2-R2H1",{
+										startDate: new Date(2015, 0, 2),
+										endDate: new Date(2015, 0, 2, 23, 59),
+										type: sap.ui.unified.CalendarDayType.Type01,
+										title: "SAPUI5",
+										tooltip: "Test",
+										icon: "sap-icon://sap-ui5"
+									})
+								],
+								appointments: [
+									new sap.ui.unified.CalendarAppointment("pc1-row2-R2A1", {
+										startDate: new Date(2015, 0, 1),
+										endDate: new Date(2015, 0, 2, 23, 59),
+										type: sap.ui.unified.CalendarDayType.Type01,
+										title: "App 1",
+										tooltip: "Tooltip",
+										text: "Text"
+									})
+								]
+							})
+						],
+						specialDates: [
+							new sap.ui.unified.DateTypeRange("pc1-SD1", {
+								startDate: new Date(2015, 0, 6),
+								type: sap.ui.unified.CalendarDayType.Type01,
+								tooltip: "Heilige 3 Könige"
+							}),
+							new sap.ui.unified.DateTypeRange("pc1-SD2", {
+								startDate: new Date(2015, 0, 1, 12, 0),
+								endDate: new Date(2015, 0, 1, 14, 0),
+								type: sap.ui.unified.CalendarDayType.Type02,
+								tooltip: "Lunch"
+							})
+						],
+						toolbarContent: [new sap.m.SearchField(), new sap.m.Button()],
+						appointmentSelect: function(oEvent){
+							console.log("Appointment select event fired");
+						},
+						startDateChange: function(oEvent){
+							console.log("Start date change event fired");
+						},
+						rowSelectionChange:  function(oEvent){
+							console.log("Row selection change event fired");
+						},
+						viewChange: function(oEvent){
+							console.log("ViewChange event fired");
+						},
+						intervalSelect: function (oEvent) {
+							console.log("IntervalSelect event fired");
+						}
+					});
+					this.oPC.placeAt('uiArea1');
+					sap.ui.getCore().applyChanges();
+					this.sut = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+					this.sutMonth = this.sut.getAggregation("month")[0];
+				},
+				afterEach: function () {
+					this.oPC.destroy();
+					this.oPC = undefined;
+				}
+			});
+
+			test("'_handleFocus()' has correct output", function () {
+				//prepare
+				var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
+					_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
+					_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
+					oDate = CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 2, 19, 15, 0));
+				//act
+				this.sutMonth.fireFocus({
+					date : oDate,
+					otherMonth : false,
+					restoreOldDate : false
+				});
+				//assert
+				strictEqual(_handleFocusCalendarDateSpy.callCount, 1, "CalendarDateInterval '_handleFocus()' was called for first time");
+				strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
+				strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called for first time");
+				//act
+				this.sutMonth.fireFocus({
+					date : CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 2, 19, 15, 0)),
+					otherMonth : false,
+					restoreOldDate : false,
+					_outsideBorder: true
+				});
+				strictEqual(_handleFocusCalendarDateSpy.callCount, 2, "CalendarDateInterval '_handleFocus()' was called for second time");
+				strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
+				strictEqual(_focusDateExtendWeekDateSpy.callCount, 2, "CalendarWeekInterval '_focusDateExtend()' was not called");
+			});
+
+			test("'_focusDateExtend()' has correct output", function () {
+				//prepare
+				var _focusDateExtendSpy = this.spy(this.sut, "_focusDateExtend"),
+					oExpectedDate = CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 3, 12, 0, 0));
+
+				//act
+				this.sut._focusDate(oExpectedDate, false, true);
+				//assert
+				strictEqual(_focusDateExtendSpy.callCount, 1, "'_focusDateExtend()' was called once");
+				ok(_focusDateExtendSpy.calledWith(oExpectedDate, false, true), "'_focusDateExtend()' was called with the correct parameters");
+				//act
+				this.sut._focusDate(oExpectedDate, true, false);
+				//assert
+				strictEqual(_focusDateExtendSpy.callCount, 2, "'_focusDateExtend()' was called twice");
+				ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
+			});
+
+			test("'_adjustFocusedDateUponYearChange()' has correct output", function () {
+				/**
+				 * These are some corner case dates for week number calculation (based on first day of week)
+				 * =============================================================================================
+				 * |   year   |   week number   |   week day index (ISO8601)  |   Expected first date of week  |
+				 * =============================================================================================
+				 * |                                    Locale en-GB                                           |
+				 * =============================================================================================
+				 * |   2007   |       52        |             1               |        24 December 2007        |
+				 * |   2006   |       52        |             1               |        25 December 2006        |
+				 * |   2010   |       52        |             1               |        27 December 2010        |
+				 * |   2008   |       52        |             1               |        22 December 2008        |
+				 * |   2007   |       52        |             1               |        24 December 2007        |
+				 * |   2015   |       53        |             1               |        28 December 2015        |
+				 * |   2009   |       53        |             1               |        28 December 2009        |
+				 * |   2004   |       53        |             1               |        27 December 2004        |
+				 * |   1999   |       52        |             1               |        27 December 1999        |
+				 * =============================================================================================
+				 * |                                    Locale en-US                                           |
+				 * =============================================================================================
+				 * |   2008   |       52        |             1               |        21 December 2008        |
+				 * |   2006   |       52        |             1               |        24 December 2006        |
+				 * |   2011   |       52        |             1               |        18 December 2011        |
+				 * |   2007   |       52        |             1               |        23 December 2007        |
+				 * |   2011   |       53        |             1               |        25 December 2011        |
+				 * |   2005   |       53        |             1               |        25 December 2005        |
+				 * |   2000   |       53        |             1               |        24 December 2000        |
+				 * |   2002   |       52        |             1               |        22 December 2002        |
+				 */
+				//prepare
+				var oTestData = {
+						"en-US": {
+							"oTestDate": CalendarUtils._createUniversalUTCDate(new Date(2011, 11, 28)),
+							"o53to53Test": [
+								{
+									oTargetYear: 2005,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2005, 11, 25))
+								},
+								{
+									oTargetYear: 2000,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2000, 11, 24))
+								}
+							],
+							"o53to52Test": [
+								{
+									oTargetYear: 2000,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2000, 11, 24))
+								}
+							],
+							"o52to52Test": [
+								{
+									oTargetYear: 2002,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2002, 11, 22))
+								},
+								{
+									oTargetYear: 2008,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2008, 11, 21))
+								},
+								{
+									oTargetYear: 2006,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2006, 11, 24))
+								},
+								{
+									oTargetYear: 2011,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2011, 11, 18))
+								},
+								{
+									oTargetYear: 2007,
+									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 23))
+								}
+							]
+						},
+						"en-GB": {
+							"oTestDate": CalendarUtils._createUniversalUTCDate(new Date(2015, 11, 30)),
+							"o53to53Test": [
+								{ oTargetYear: 2009, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2009, 11, 28)) },
+								{ oTargetYear: 2004, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2004, 11, 27)) }
+							],
+							"o53to52Test": [
+								{ oTargetYear: 1999, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(1999, 11, 27)) }
+							],
+							"o52to52Test": [
+								{ oTargetYear: 2007, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 24)) },
+								{ oTargetYear: 2006, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2006, 11, 25)) },
+								{ oTargetYear: 2010, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2010, 11, 27)) },
+								{ oTargetYear: 2008, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2008, 11, 22)) },
+								{ oTargetYear: 2007, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 24)) }
+							]
+						}
+					},
+					iIndex,
+					oTestDate,
+					oTestFocusedDateFullYear,
+					oTargetYear,
+					oExpectedFirstDate,
+					fnRestartTestEnv = function () {
+						iIndex = null;
+						oTestDate = null;
+						oTestFocusedDateFullYear = null;
+						oTargetYear = null;
+						oExpectedFirstDate = null;
+					},
+					fnPerformTestCase = function (sLocaleId, sTestName) {
+						for (var iIndex = 0; iIndex < oTestData[sLocaleId][sTestName].length; iIndex++) {
+							oTestDate = oTestData[sLocaleId]["oTestDate"];
+							oTestFocusedDateFullYear = oTestDate.getUTCFullYear();
+							oTargetYear = oTestData[sLocaleId][sTestName][iIndex]["oTargetYear"];
+							oExpectedFirstDate = oTestData[sLocaleId][sTestName][iIndex]["oExpectedFirstDate"];
+
+							this.sut._adjustFocusedDateUponYearChange(oTestDate, oTargetYear);
+							//assert
+							strictEqual(oTestDate.getTime(), oExpectedFirstDate.getTime(),
+								sTestName + ": '_adjustFocusedDateUponMonthChange()' calculated correctly oFocusedDate when trying to navigate from " + oTestFocusedDateFullYear + " to " + oTargetYear + " for en-US locale");
+						}
+						fnRestartTestEnv();
+					}.bind(this);
+
+				/* en-US locale */
+
+				/* Case 1: When going from CW53 to CW53 weeks in it the focused date is the first day of the target's CW#53 */
+				//act
+				this.sutMonth.fireFocus({
+					date : oTestData["en-US"].oTestDate,
+					otherMonth : false,
+					restoreOldDate : false,
+					_outsideBorder: true
+				});
+				fnPerformTestCase("en-US", "o53to53Test");
+				/* Case 2: When going from CW53 to a year that don't have 53 weeks in it the focused date is the first day of the target's CW#52 */
+				//act
+				fnPerformTestCase("en-US", "o53to52Test");
+				//assert
+				/* Case 3: When going from any week (except the 53rd) to other year the focused date is the first day of the same week */
+				//act
+				fnPerformTestCase("en-US", "o52to52Test");
+
+				/* en-GB locale */
+
+				/* Case 1: When going from CW53 to CW53 weeks in it the focused date is the first day of the target's CW#53 */
+				//act
+				sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
+				this.sutMonth.fireFocus({
+					date : oTestData["en-GB"].oTestDate,
+					otherMonth : false,
+					restoreOldDate : false,
+					_outsideBorder: true
+				});
+				fnPerformTestCase("en-GB", "o53to53Test");
+				/* Case 2: When going from CW53 to a year that don't have 53 weeks in it the focused date is the first day of the target's CW#52 */
+				//act
+				fnPerformTestCase("en-GB", "o53to52Test");
+				//assert
+				/* Case 3: When going from any week (except the 53rd) to other year the focused date is the first day of the same week */
+				//act
+				fnPerformTestCase("en-GB", "o52to52Test");
+				//restore locale to en-US
+				sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+				sap.ui.getCore().applyChanges();
+			});
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.CalendarWeekInterval</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+		<br>
+		<div id="uiArea3"></div>
+	</body>
+</html>
