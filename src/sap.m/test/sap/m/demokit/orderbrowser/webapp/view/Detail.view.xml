@@ -49,7 +49,7 @@
 				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter id="iconTabFilterShipping" icon="sap-icon://shipping-status" tooltip="{i18n>detailIconTabBarShipping}">
-						<VBox class="sapUiSmallMargin">
+						<VBox>
 							<f:SimpleForm id="SimpleFormShipAddress"
 								minWidth="1024"
 								maxContainerCols="2"
@@ -63,7 +63,7 @@
 								columnsL="1"
 								columnsM="1" >
 								<f:content>
-									<Label text="{i18n>detailShippingName}" />
+									<Label text="{i18n>detailName}" />
 									<Text text="{ShipName}" />
 									<Label text="{i18n>detailShippingStreet}" />
 									<Text text="{ShipAddress}" />
@@ -81,7 +81,33 @@
 						id="iconTabBarFilterAttachment"
 						icon="sap-icon://attachment"
 						tooltip="{i18n>detailIconTabBarAttachments}">
-						<VBox class="sapUiSmallMargin">
+						<VBox>
+						</VBox>
+					</IconTabFilter>
+					<IconTabFilter id="iconTabFilterProcessor" icon="sap-icon://employee" tooltip="{i18n>detailIconTabBarProcessor}">
+						<VBox>
+							<f:SimpleForm id="SimpleFormProcessorInfo"
+								minWidth="1024"
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="3"
+								labelSpanM="3"
+								emptySpanL="4"
+								emptySpanM="4"
+								columnsL="1"
+								columnsM="1">
+								<f:content>
+									<Label text="{i18n>detailName}" />
+									<Text text="{Employee/FirstName} {Employee/LastName}" />
+									<Label text="{i18n>detailProcessorEmployeeID}" />
+									<Text text="{Employee/EmployeeID}" />
+									<Label text="{i18n>detailProcessorJobTitle}" />
+									<Text text="{Employee/Title}" />
+									<Label text="{i18n>detailProcessorPhone}" />
+									<Link text="{Employee/HomePhone}" press="_onHandleTelephonePress" />
+								</f:content>
+							</f:SimpleForm>
 						</VBox>
 					</IconTabFilter>
 				</items>

@@ -135,7 +135,7 @@ sap.ui.define([
 				this.getView().bindElement({
 					path : sObjectPath,
 					parameters: {
-						expand: "Customer,Order_Details/Product"
+						expand: "Customer,Order_Details/Product,Employee"
 					},
 					events: {
 						change : this._onBindingChange.bind(this),
@@ -198,6 +198,11 @@ sap.ui.define([
 				oViewModel.setProperty("/busy", true);
 				// Restore original busy indicator delay for the detail view
 				oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
+			},
+
+			_onHandleTelephonePress : function (oEvent){
+				var sNumber = oEvent.getSource().getText();
+				sap.m.URLHelper.triggerTel(sNumber);
 			}
 
 		});
