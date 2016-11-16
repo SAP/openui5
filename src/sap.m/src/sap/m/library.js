@@ -1026,6 +1026,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines the scopes of GenericTile enabling the developer to implement different "flavors" of tiles.
+	 *
+	 * @enum {string}
+	 * @experimental since 1.46.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @public
+	 */
+	sap.m.GenericTileScope = {
+		/**
+		 * Default scope where no new functionalities are added to the tile.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Action scope where a "remove" and "more" icon are added to the tile as an overlay.
+		 * @public
+		 */
+		Action: "Action"
+	};
+
+	/**
 	 * Different levels for headers
 	 *
 	 * @enum {string}

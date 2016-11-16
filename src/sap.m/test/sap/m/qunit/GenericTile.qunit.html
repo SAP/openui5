@@ -22,6 +22,50 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 
+	QUnit.module("Default values", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Default value of mode", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("mode"), sap.m.GenericTileMode.ContentMode);
+	});
+	QUnit.test("Default value of header", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("header"), "");
+	});
+	QUnit.test("Default value of subheader", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("subheader"), "");
+	});
+	QUnit.test("Default value of failedText", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("failedText"), "");
+	});
+	QUnit.test("Default value of size", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("size"), sap.m.Size.Auto);
+	});
+	QUnit.test("Default value of frameType", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("frameType"), sap.m.FrameType.OneByOne);
+	});
+	QUnit.test("Default value of backgroundImage", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("backgroundImage"), "");
+	});
+	QUnit.test("Default value of headerImage", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("headerImage"), "");
+	});
+	QUnit.test("Default value of state", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("state"), sap.m.LoadState.Loaded);
+	});
+	QUnit.test("Default value of imageDescription", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("imageDescription"), "");
+	});
+	QUnit.test("Default value of scope", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("scope"), sap.m.GenericTileScope.Default);
+	});
+
 	QUnit.module("Rendering tests", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
@@ -1767,32 +1811,70 @@
 	});
 
 	QUnit.test("No press event test", function(assert) {
+		//Arrange
+		//Act
+		this.oGenericTile.$().trigger('tap');
+
+		//Assert
 		assert.equal(this.hasAttribute("tabindex", this.oGenericTile), true, "GenericTile can have focus no matter it has press event or not");
 		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
-		this.oGenericTile.$().trigger('tap');
 		assert.notOk(this.ftnPressHandler.calledOnce, "no press event is triggered");
 	});
 
 	QUnit.test("Press event tap test", function(assert) {
-		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		//Arrange
+		this.oGenericTile.attachEvent("press", handlePress);
+
+		//Act
 		this.oGenericTile.$().trigger('tap');
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when mouse click");
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.ok(true, "Press event is triggered on mouse click.");
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Default, "Press event has correct parameter 'scope'.");
+			assert.equal(oEvent.getParameter("action"), "Default", "Press event has correct parameter 'action'.");
+		}
 	});
 
 	QUnit.test("Press event enter up test", function(assert) {
+		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event('keyup');
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
 		this.oGenericTile.$().trigger(e);
+
+		//Assert
 		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when enter up");
 	});
 
 	QUnit.test("Press event enter down test", function(assert) {
+		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event('keydown');
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
 		this.oGenericTile.$().trigger(e);
+
+		//Assert
 		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when enter down")
+	});
+
+	QUnit.test("Press event with correct parameters", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Action);
+		this.oGenericTile.attachEvent("press", handlePress);
+
+		//Act
+		this.oGenericTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Action, "Press event has correct parameter 'scope'.");
+			assert.equal(oEvent.getParameter("action"), "Default", "Press event has correct parameter 'action'.");
+		}
 	});
 </script>
 </head>
