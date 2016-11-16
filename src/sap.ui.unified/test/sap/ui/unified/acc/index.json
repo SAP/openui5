@@ -12,8 +12,23 @@
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
+			"control" : "sap.ui.unified.CalendarLegend",
+			"url" : "../CalendarLegend.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarMonthInterval",
+			"url" : "../CalendarMonthInterval.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
 			"control" : "sap.ui.unified.CalendarTimeInterval",
 			"url" : "../CalendarTimeInterval.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.Currency",
+			"url" : "../Currency.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
