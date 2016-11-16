@@ -62,9 +62,7 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticCo
 		var sIconUrl = MultiSelectAction._PRESSED_STATE_TO_ICON_MAP[bPressed];
 		var sIconTooltip = MultiSelectAction._ACC_TOOLTIP_TO_ICON_MAP[bPressed];
 		this._getControl().setIcon(sIconUrl);
-		var sId = SemanticConfiguration.getAriaId("sap.m.semantic.MultiSelectAction");
 		this._getControl().setTooltip(sIconTooltip);
-		sap.ui.getCore().byId(sId).$().text(sIconTooltip);
 	};
 
 	return MultiSelectAction;
