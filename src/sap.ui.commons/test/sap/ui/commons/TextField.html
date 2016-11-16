@@ -7,10 +7,10 @@
 		<title>TextField - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextField.gif">
 
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				type="text/javascript"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../resources/sap-ui-core.js"
 				>
@@ -18,7 +18,7 @@
 
 		<script src="../../../../resources/sap-ui-debug.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			function toggleTextEditEnabled(oControlEvent){
 				var oInput = sap.ui.getCore().getControl("input2");
@@ -111,7 +111,7 @@
 				case ('edding'):
 					oTextArea.setHeight('40px');
 					break;
-				case ('sap_goldreflection'):
+				case ('sap_bluecrystal'):
 					oTextArea.setHeight("22px");
 					break;
 				}
@@ -296,7 +296,7 @@
 					case ('edding'):
 						oTA.setHeight("40px");
 						break;
-					case ('sap_goldreflection'):
+					case ('sap_bluecrystal'):
 						oTA.setHeight("22px");
 						break;
 				}
