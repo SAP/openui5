@@ -66,6 +66,11 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
+			"control": "sap.m.DateRangeSelection",
+			"url": "../DateRangeSelection.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
 			"control": "sap.m.DateTimeInput",
 			"url": "../DateTimeInput.html",
 			"appComponent": "CA-UI5-CTR-BAL"
