@@ -1120,6 +1120,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._updateVSb(this._iScrollTop);
+		if (this._iScrollLeft) {
+			this.getDomRef(SharedDomRef.HorizontalScrollBar).scrollLeft = this._iScrollLeft;
+		}
 
 		this._updateGroupHeader();
 
@@ -3054,6 +3057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				window.clearTimeout(this._mTimeouts.hScrollUpdateTimer);
 			}
 			this._mTimeouts.hScrollUpdateTimer = window.setTimeout(function() {
+				this._iScrollLeft = this.getDomRef(SharedDomRef.HorizontalScrollBar).scrollLeft;
 				var oTableSizes = this._collectTableSizes();
 				this._syncHeaderAndContent(oTableSizes);
 				this._determineVisibleCols(oTableSizes);
