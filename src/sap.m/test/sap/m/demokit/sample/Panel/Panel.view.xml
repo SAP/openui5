@@ -3,7 +3,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Panel width="auto" class="sapUiResponsiveMargin">
+	<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="Panel with picture"/>
