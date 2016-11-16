@@ -775,8 +775,10 @@
 	});
 
 	QUnit.test("Remove Item", function() {
+		ok((this.oItem1.getDomRef().parentElement.parentElement === this.oBox.getDomRef()), "Item 1 is present");
 		this.oBox.removeItem(this.oItem1);
-		ok(!this.oItem1.getDomRef(), "Item 1 should have been removed");
+		sap.ui.getCore().applyChanges();
+		ok((this.oItem1.getDomRef().parentElement.parentElement !== this.oBox.getDomRef()), "Item 1 should have been removed");
 	});
 
 	QUnit.test("Remove All Items", function() {
