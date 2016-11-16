@@ -641,7 +641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
 					}
 					if (that._bBindingLengthChanged) {
-						that._updateVSb();
+						that._updateVSbScrollTop();
 					}
 					that._toggleVSb();
 
@@ -1075,7 +1075,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._updateTableSizes();
 		}
 
-		this._updateVSb(this._iScrollTop);
+		this._updateVSbTop();
 
 		// needed for the column resize ruler
 		this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
@@ -1428,7 +1428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
 			if (!bOnScroll) {
-				this._updateVSb();
+				this._updateVSbScrollTop();
 			}
 		}
 
@@ -2056,14 +2056,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				} else {
 					$sapUiTableHSb.css('margin-left', iScrollPadding + 'px');
 				}
-				// if the data area has been updated after a vertical resize, its scrollLeft can be reset to 0;
-				// at the same time, prevoiusly scrolled header and HSB still have scrollLeft > 0
-				// adjust it
-				var $dataScrollArea = $this.find(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
-				var iScrollLeft = $this.find(".sapUiTableCtrlScr.sapUiTableCHA").scrollLeft();
-				if ($dataScrollArea.scrollLeft() != iScrollLeft) {
-					$dataScrollArea.scrollLeft(iScrollLeft);
-				}
 			}
 
 			var oHSbContent = this.getDomRef("hsb-content");
@@ -2086,14 +2078,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Update the vertical scrollbar position
 	 * @private
 	 */
-	Table.prototype._updateVSb = function(iScrollTop) {
+	Table.prototype._updateVSbTop = function() {
 		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
-		}
-
-		if (iScrollTop === undefined) {
-			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
 		}
 
 		var oTableCCnt = this.getDomRef("tableCCnt");
@@ -2104,6 +2092,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				iTop += this._iVsbTop;
 			}
 			oVSb.style.top = iTop + "px";
+		}
+	};
+
+	Table.prototype._updateVSbScrollTop = function(iScrollTop) {
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
+		if (!oVSb) {
+			return;
+		}
+
+		if (iScrollTop === undefined) {
+			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
 		}
 
 		oVSb.scrollTop = iScrollTop;
@@ -2133,7 +2132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var isVSbRequired = this._isVSbRequired();
 			if (!isVSbRequired) {
 				// reset scroll position to zero when Scroll Bar disappe
-				this._updateVSb(0);
+				this._updateVSbScrollTop(0);
 			}
 			$this.toggleClass("sapUiTableVScr", isVSbRequired);
 		}

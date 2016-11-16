@@ -94,6 +94,59 @@ QUnit.test("Vertical scrollbar visibility", function(assert) {
 	assert.ok(this.oVSb.offsetWidth === 0 && this.oVSb.offsetHeight === 0, "Table content fits height -> Vertical scrollbar is not visible");
 });
 
+QUnit.test("Restoration of scrolling positions", function(assert) {
+	var iAssertionDelay = 100;
+	var done = assert.async();
+
+	function assertScrollPositions(sAction, iHorizontalScrollPosition, iVerticalScrollPosition) {
+		var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+
+		assert.strictEqual(oHSb.scrollLeft, iHorizontalScrollPosition, sAction + ":  The horizontal scroll position is " + iHorizontalScrollPosition);
+		assert.ok(oHSb.scrollLeft === oTable.getDomRef("sapUiTableColHdrScr").scrollLeft && oHSb.scrollLeft === oTable.getDomRef("sapUiTableCtrlScr").scrollLeft,
+				  sAction + ":  The horizontal scroll positions are synchronized");
+		assert.strictEqual(oVSb.scrollTop, iVerticalScrollPosition, sAction + ":  The vertical scroll position is " + iVerticalScrollPosition);
+	}
+
+	new Promise(function(resolve) {
+		window.setTimeout(function() {
+			assertScrollPositions("Initial", 0, 0);
+			oTable._getScrollExtension().getHorizontalScrollbar().scrollLeft = 50;
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 55;
+			resolve();
+		}, iAssertionDelay);
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				assertScrollPositions("Scrolled", 50, 55);
+				oTable.rerender();
+				resolve();
+			}, iAssertionDelay);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				assertScrollPositions("Rerendered", 50, 55);
+				oTable._updateTableSizes();
+				resolve();
+			}, iAssertionDelay);
+		});
+	}).then(function() {
+		return new Promise(function(resolve) {
+			window.setTimeout(function() {
+				assertScrollPositions("Content updated", 50, 55);
+				oTable.invalidate();
+				resolve();
+			}, iAssertionDelay);
+		});
+	}).then(function() {
+		window.setTimeout(function() {
+			assertScrollPositions("Invalidated", 50, 55);
+			done();
+		}, iAssertionDelay);
+	});
+});
+
 QUnit.module("Horizontal scrolling", {
 	beforeEach: function() {
 		this.sOriginalWidth = document.getElementById("content").style.width;
