@@ -930,8 +930,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
 		if (TableUtils.Grouping.isTreeMode(oTable) && bIsFirstColumn) {
-			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1'");
-			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oCell.getParent()});
+			var oRow = oCell.getParent();
+			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1' id='" + oRow.getId() + "-treeicon'");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});
 			rm.write(">&nbsp;</span>");
 		}
 		rm.renderControl(oCell);
