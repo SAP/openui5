@@ -700,7 +700,7 @@ sap.ui.define([
 			return vResult;
 		}
 
-		this._adjustLayout();
+		this._adjustLayoutDeferred();
 		return vResult;
 	};
 
