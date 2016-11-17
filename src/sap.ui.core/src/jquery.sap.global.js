@@ -32,11 +32,11 @@
 		return;
 	}
 
-	// The native Promise in MS Edge is not fully compliant with the ES6 spec for promises.
-	// It executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
-	// We therefore enforce the use of the es6-promise polyfill also in MS Edge, it works properly.
+	// The native Promise in MS Edge and Apple Safari is not fully compliant with the ES6 spec for promises.
+	// MS Edge executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
+	// We therefore enforce the use of the es6-promise polyfill also in MS Edge and Safari, which works properly.
 	// @see jQuery.sap.promise
-	if (Device.browser.edge) {
+	if (Device.browser.edge || Device.browser.safari) {
 		window.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
 	}
 
@@ -310,7 +310,97 @@
 		// of the XHR object, which delays execution of the asynchronous event handlers, until
 		// the synchronous request is completed.
 		(function() {
-			var bSyncRequestOngoing = false;
+			var bSyncRequestOngoing = false,
+				bPromisesQueued = false;
+
+			// Overwrite setTimeout and Promise handlers to delay execution after
+			// synchronous request is completed
+			var _then = Promise.prototype.then,
+				_catch = Promise.prototype.catch,
+				_timeout = window.setTimeout,
+				_interval = window.setInterval,
+				oQueue;
+			function addPromiseHandler(fnHandler) {
+				// Collect all promise handlers and execute within the same timeout,
+				// to avoid them to be split among several tasks
+				if (!bPromisesQueued) {
+					bPromisesQueued = true;
+					oQueue = new Promise(function(resolve, reject) {
+						_timeout(function() {
+							resolve();
+							bPromisesQueued = false;
+						}, 0);
+					});
+				}
+				_then.call(oQueue, fnHandler);
+			}
+			function wrapPromiseHandler(fnHandler, oScope, bCatch) {
+				if (typeof fnHandler !== "function") {
+					return fnHandler;
+				}
+				return function() {
+					var aArgs = Array.prototype.slice.call(arguments);
+					// If a sync request is ongoing or other promises are still queued,
+					// the execution needs to be delayed
+					if (bSyncRequestOngoing || bPromisesQueued) {
+						return new Promise(function(resolve, reject) {
+							// The try catch is needed to differentiate whether resolve or
+							// reject needs to be called.
+							addPromiseHandler(function() {
+								var oResult;
+								try {
+									oResult = fnHandler.apply(window, aArgs);
+									resolve(oResult);
+								} catch (oException) {
+									reject(oException);
+								}
+							});
+						});
+					}
+					return fnHandler.apply(window, aArgs);
+				};
+			}
+			/*eslint-disable no-extend-native*/
+			Promise.prototype.then = function(fnThen, fnCatch) {
+				var fnWrappedThen = wrapPromiseHandler(fnThen),
+					fnWrappedCatch = wrapPromiseHandler(fnCatch);
+				return _then.call(this, fnWrappedThen, fnWrappedCatch);
+			};
+			Promise.prototype.catch = function(fnCatch) {
+				var fnWrappedCatch = wrapPromiseHandler(fnCatch);
+				return _catch.call(this, fnWrappedCatch);
+			};
+			/*eslint-enable no-extend-native*/
+
+			// If there are promise handlers waiting for execution at the time the
+			// timeout fires, start another timeout to postpone timer execution after
+			// promise execution.
+			function wrapTimerHandler(fnHandler) {
+				var fnWrappedHandler = function() {
+					var aArgs;
+					if (bPromisesQueued) {
+						aArgs = [fnWrappedHandler, 0].concat(arguments);
+						_timeout.apply(window, aArgs);
+					} else {
+						fnHandler.apply(window, arguments);
+					}
+				};
+				return fnWrappedHandler;
+			}
+			// setTimeout and setInterval can have arbitrary number of additional
+			// parameters, which are passed to the handler function when invoked.
+			window.setTimeout = function(fnHandler) {
+				var aArgs = Array.prototype.slice.call(arguments),
+					fnWrappedHandler = wrapTimerHandler(fnHandler);
+				aArgs[0] = fnWrappedHandler;
+				return _timeout.apply(window, aArgs);
+			};
+			window.setInterval = function(fnHandler) {
+				var aArgs = Array.prototype.slice.call(arguments),
+					fnWrappedHandler = wrapTimerHandler(fnHandler, true);
+				aArgs[0] = fnWrappedHandler;
+				return _interval.apply(window, aArgs);
+			};
 
 			// Replace the XMLHttpRequest object with a proxy, that overrides the constructor to
 			// return a proxy of the XHR instance
@@ -343,7 +433,7 @@
 								bDelay = true;
 							}
 							if (bDelay) {
-								setTimeout(callHandler, 0);
+								_timeout(callHandler, 0);
 								return true;
 							}
 							return callHandler();
