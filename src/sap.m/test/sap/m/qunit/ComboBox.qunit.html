@@ -2826,6 +2826,7 @@
 
 			// act
 			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the close animation is completed
 
 			// assert
 			assert.strictEqual(oPicker.getShowHeader(), false);
@@ -4796,7 +4797,6 @@
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
-				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
 				assert.ok(oComboBox.$("inner").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "InnerWidthExtraPadding"));
@@ -4806,11 +4806,8 @@
 				assert.ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow"), 'The arrow button has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Arrow"');
 				assert.ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 				assert.strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-				assert.strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
-				assert.ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");
-				assert.ok(oComboBox.$("buttonlabel").hasClass("sapUiInvisibleText"));
-				assert.ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "ButtonLabel"));
-				assert.strictEqual(getComputedStyle(oComboBox.getDomRef("buttonlabel")).getPropertyValue("display"), "none");
+				assert.strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getAggregation("_buttonLabelText").getId());
+				assert.ok(oComboBox.getAggregation("_buttonLabelText").getDomRef(), "The button label exists");
 
 				// cleanup
 				oComboBox.destroy();
@@ -8534,6 +8531,7 @@
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
 				srcControl: oPickerTextField
 			});
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
 			// assert
 			assert.strictEqual(oPickerTextField.getValue(), sExpectedValue);
@@ -9428,6 +9426,7 @@
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
 			sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, jQuery.sap.KeyCodes.ENTER);
 			oComboBox.close();
+			this.clock.tick(1000);
 
 			// assert
 			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
@@ -9504,6 +9503,7 @@
 				srcControl: oPickerTextField
 			});
 			sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, jQuery.sap.KeyCodes.ENTER);
+			this.clock.tick(1000);
 
 			// assert
 			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
@@ -9709,6 +9709,29 @@
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
 			assert.strictEqual(oInfo.editable, false, "Editable");
+			oComboBox.destroy();
+		});
+
+		QUnit.test("Role combobox should be on the wrapper div of the input", function(assert) {
+			var oComboBox = new sap.m.ComboBox();
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oComboBox.getDomRef().getAttribute("role"), "combobox", "should be combobox");
+			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
+			oComboBox.destroy();
+		});
+
+		QUnit.test("Arrow down button should be a span with a role button", function(assert) {
+			var oComboBox = new sap.m.ComboBox(),
+				oArrowSpan;
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oArrowSpan = oComboBox.getDomRef("arrow");
+
+			assert.strictEqual(oArrowSpan.tagName.toLowerCase(), "span", "tag should be span");
+			assert.strictEqual(oArrowSpan.getAttribute("role"), "button", "role should be button");
 			oComboBox.destroy();
 		});
 
