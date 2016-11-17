@@ -295,14 +295,11 @@ function(jQuery) {
 	 */
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
 		oNode = jQuery(oNode).get(0);
-		oTarget = jQuery(oTarget).get(0);
 
 		var oCopy = oNode.cloneNode(true);
 		this.copyComputedStyles(oNode, oCopy);
 
-		var $copy = jQuery(oCopy);
-
-		jQuery(oTarget).append($copy);
+		jQuery(oTarget).append(oCopy);
 	};
 
 	return DOMUtil;

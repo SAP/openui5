@@ -55,7 +55,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			 * keyboard support and screen-reader support.
 			 */
 			fields : {type : "sap.ui.core.Control", multiple : true, singularName : "field"}
-		}
+		},
+		designTime : true
 	}});
 
 	FormElement.prototype.init = function(){

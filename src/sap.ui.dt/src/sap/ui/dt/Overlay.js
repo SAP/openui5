@@ -435,19 +435,27 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.getGeometry = function(bForceCalculation) {
 		if (bForceCalculation || !this._mGeometry) {
-			var oDomRef = this.getAssociatedDomRef();
-			var mGeometry = DOMUtil.getGeometry(oDomRef, this.isRoot());
+			var $DomRef = this.getAssociatedDomRef();
+			var aChildrenGeometry;
 
-			if (!mGeometry) {
-				var aChildrenGeometry = [];
-				this.getChildren().forEach(function(oChildOverlay) {
-					aChildrenGeometry.push(oChildOverlay.getGeometry(true));
+			// dom Ref is either jQuery object with one/multiple elements
+			if ($DomRef) {
+				var bIsRoot = this.isRoot();
+				aChildrenGeometry = jQuery.makeArray($DomRef).map(function($element) {
+					return DOMUtil.getGeometry($element, bIsRoot);
 				});
-				mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
+			} else {
+				aChildrenGeometry = this.getChildren().map(function(oChildOverlay) {
+					return oChildOverlay.getGeometry(true);
+				});
 			}
 
-			// cache geometry
-			this._mGeometry = mGeometry;
+			if (aChildrenGeometry.length) {
+				// cache geometry
+				this._mGeometry = aChildrenGeometry.length > 1 ? OverlayUtil.getGeometry(aChildrenGeometry) : aChildrenGeometry[0];
+			} else {
+				delete this._mGeometry;
+			}
 		}
 
 		return this._mGeometry;
