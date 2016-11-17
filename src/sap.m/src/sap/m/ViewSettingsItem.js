@@ -72,14 +72,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 * @param {string} sValue The value of the property
 	 * @param {boolean} bSupressInvalidation
 	 */
-	ViewSettingsItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation) {
+	ViewSettingsItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation, bFireEvent) {
 		sap.ui.base.ManagedObject.prototype.setProperty.apply(this, arguments);
 
-		this.fireItemPropertyChanged({
-			changedItem     : this,
-			propertyKey     : sName,
-			propertyValue   : vValue
-		});
+		bFireEvent = bFireEvent === undefined ? true : bFireEvent;
+
+		if (bFireEvent) {
+			this.fireItemPropertyChanged({
+				changedItem: this,
+				propertyKey: sName,
+				propertyValue: vValue
+			});
+		}
 	};
 
 	return ViewSettingsItem;
