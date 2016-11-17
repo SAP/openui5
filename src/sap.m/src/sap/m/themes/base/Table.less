@@ -102,6 +102,11 @@ tr.sapMListTblHeaderNone > th {
 .sapMListTblHighlightCell {
 	padding: 0;
 	position: relative;
+	overflow: hidden;
+}
+
+.sapMLIBNativeOutline > .sapMListTblHighlightCell > .sapMLIBHighlight {
+	height: 40rem; /* IE11 cannot stretch the height of the cell content */
 }
 
 /* responsive table approach */
