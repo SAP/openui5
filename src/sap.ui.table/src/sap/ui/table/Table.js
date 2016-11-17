@@ -1562,6 +1562,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
+	Table.prototype.setRowHeight = function(iRowHeight) {
+		this.setProperty("rowHeight", iRowHeight);
+		this._iTableRowContentHeight = undefined;
+		return this;
+	};
+
 	/**
 	 * Sets a new tooltip for this object. The tooltip can either be a simple string
 	 * (which in most cases will be rendered as the <code>title</code> attribute of this
