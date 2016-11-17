@@ -1875,7 +1875,9 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	function handleMobileTimeout() {
-		if (bOrientationchange && bResize) {
+		// with ios split view, the browser fires only resize event and no orientationchange when changing the size of a split view
+		// therefore the following if needs to be adapted with additional check of iPad with version greater or equal 9 (splitview was introduced with iOS 9)
+		if (bResize && (bOrientationchange || (device.system.tablet && device.os.ios && device.os.version >= 9))) {
 			handleOrientationChange();
 			handleResizeChange();
 			bOrientationchange = false;
