@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @author d046011
+	 * @author SAP SE
 	 * @namespace
 	 */
 	var ImageRenderer = {

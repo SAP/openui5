@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global',
 	 *   		Marker interface for controls which are suitable as view rendering for a DataSet.
 	 *
 	 *
-	 * @author d049080
+	 * @author SAP SE
 	 * @name sap.ui.ux3.DataSetView
 	 * @interface
 	 * @public
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * This entries are used to set the visibility status of a NotificationBar
 	 *
-	 * @author SAP
+	 * @author SAP SE
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
