@@ -4,7 +4,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 
 		var PageController = Controller.extend("sap.m.sample.NewsContent.Page", {
 			press : function(evt) {
-				MessageToast.show("The generic tile is pressed.");
+				MessageToast.show("The news content is pressed.");
 			}
 		});
 
