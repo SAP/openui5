@@ -4,13 +4,13 @@
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
 	xmlns:sap="http://www.sap.com/Protocols/SAPData">
 	<edmx:Reference
-		Uri="http://wdfn31650697a.emea.global.corp.sap:8080/uilib-sample/proxy/https/ldai6er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='ER3_003')/$value"
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='ER3_003')/$value"
 		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
 			Alias="Common" />
 	</edmx:Reference>
 	<edmx:Reference
-		Uri="http://wdfn31650697a.emea.global.corp.sap:8080/uilib-sample/proxy/https/ldai6er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='ER3_003')/$value"
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='ER3_003')/$value"
 		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"
 			Alias="UI" />
