@@ -780,7 +780,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		function collectHeights(row, index) {
 			var currentValue = aRowItemHeights[index] || 0;
-			aRowItemHeights[index] = Math.max(currentValue, row.getBoundingClientRect().height, iDefaultRowHeight);
+			var rowHeight = row.getBoundingClientRect().height;
+			var diff = iDefaultRowHeight - rowHeight;
+			if (Device.browser.chrome && diff < 1 && diff > 0 && window.devicePixelRatio != 1) {
+				// In Chrome with zoom!=100% the height of the table rows behaves differently than divs (row selector)
+				// see https://bugs.chromium.org/p/chromium/issues/detail?id=661991
+				// -> Allow that rowheight is minimal smaller than the default row height
+				aRowItemHeights[index] = Math.max(currentValue, rowHeight);
+			} else {
+				aRowItemHeights[index] = Math.max(currentValue, rowHeight, iDefaultRowHeight);
+			}
 		}
 
 		[].forEach.call(aFixedRowItems, collectHeights);
