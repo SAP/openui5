@@ -34,20 +34,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
 	};
 
-	// Returns aria accessibility role
-	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
-		return oLI.getTable() ? "" : "option";
-	};
-
-	// Returns the inner aria describedby ids for the accessibility
-	GroupHeaderListItemRenderer.getAriaDescribedBy = function(oLI) {
-		// announce group header first
-		var sDescribedBy = this.getAriaAnnouncement("group_header"),
-			sBaseDescribedBy = ListItemBaseRenderer.getAriaDescribedBy.call(this, oLI) || "";
-
-		return sDescribedBy + " " + sBaseDescribedBy;
-	};
-
 	/**
 	 * Renders the attributes for the given list item, using the provided
 	 * {@link sap.ui.core.RenderManager}.

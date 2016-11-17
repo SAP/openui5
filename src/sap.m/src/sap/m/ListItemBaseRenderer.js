@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaLabelledBy = function(oLI) {
-		if (oLI.getAriaLabelledBy().length) {
+		if (!oLI.getContentAnnouncement && oLI.getAriaLabelledBy().length) {
 			return oLI.getId();
 		}
 	};
@@ -268,6 +268,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaDescribedBy = function(oLI) {
+		if (oLI.getContentAnnouncement) {
+			return "";
+		}
+
 		var aDescribedBy = [],
 			sType = oLI.getType(),
 			mType = sap.m.ListType;

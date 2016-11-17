@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Table.
-sap.ui.define(['jquery.sap.global', './ListBase', './library'],
-	function(jQuery, ListBase, library) {
+sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library'],
+	function(jQuery, ListBase, ListItemBase, library) {
 	"use strict";
 
 
@@ -69,10 +69,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	// class name for the navigation items
 	Table.prototype.sNavItemClass = "sapMListTblRow";
 
+	// announce details for the initial focus
+	Table.prototype.bAnnounceDetails = true;
+
 	Table.prototype.init = function() {
-		this._hasPopin = false;
 		this._iItemNeedsColumn = 0;
-		this._selectAllCheckBox = null;
 		ListBase.prototype.init.call(this);
 	};
 
@@ -335,14 +336,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 	// updates the type column visibility and sets the aria flag
 	Table.prototype._setTypeColumnVisibility = function(bVisible) {
-		var $Table = jQuery(this.getTableDomRef()),
-			$TypeColumnHeader = this.$("tblHeadNav"),
-			iTypeColumnIndex = $TypeColumnHeader.index() + 1,
-			$TypeColumnCells = $Table.find("tr > td:nth-child(" + iTypeColumnIndex + ")");
-
-		$Table.toggleClass("sapMListTblHasNav", bVisible);
-		$TypeColumnHeader.attr("aria-hidden", !bVisible);
-		$TypeColumnCells.attr("aria-hidden", !bVisible);
+		jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
 	};
 
 	// notify all columns with given action and param
@@ -369,12 +363,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			} else {
 				this.removeSelections(false, true);
 			}
-		}, this).setTabIndex(-1).addEventDelegate({
-			onAfterRendering: function() {
-				// hide this from the screen readers
-				this._selectAllCheckBox.getFocusDomRef().setAttribute("aria-hidden", "true");
-			}
-		}, this));
+		}, this).setTabIndex(-1));
 	};
 
 	/*
@@ -440,12 +429,39 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		return !!jQuery(oEvent.target).closest($Footer, this.getTableDomRef()).length;
 	};
 
-	// this gets called after navigation items are focused
-	Table.prototype.onNavigationItemFocus = function(oEvent) {
-		var aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oItemDomRef = aItemDomRefs[oEvent.getParameter("index")];
+	// returns accessibility role
+	Table.prototype.getAccessibilityType = function() {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TABLE");
+	};
 
-		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
+	Table.prototype._setHeaderAnnouncement = function() {
+		var sAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
+		this.getColumns(true).forEach(function(oColumn, i) {
+			var oHeader = oColumn.getHeader();
+			if (oHeader && oHeader.getVisible()) {
+				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
+			}
+		});
+
+		this.updateInvisibleText(sAnnouncement);
+	};
+
+	Table.prototype._setFooterAnnouncement = function() {
+		var sAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_FOOTER_ROW") + " ";
+		this.getColumns(true).forEach(function(oColumn, i) {
+			var oFooter = oColumn.getFooter();
+			if (oFooter && oFooter.getVisible()) {
+				// announce header as well
+				var oHeader = oColumn.getHeader();
+				if (oHeader && oHeader.getVisible()) {
+					sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
+				}
+
+				sAnnouncement += ListItemBase.getAccessibilityText(oFooter) + " ";
+			}
+		});
+
+		this.updateInvisibleText(sAnnouncement);
 	};
 
 	// keyboard handling
@@ -498,6 +514,25 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		} else if (sTargetId == this.getId("trigger")) {
 			this.focusPrevious();
 			oEvent.preventDefault();
+		}
+	};
+
+	Table.prototype.onfocusin = function(oEvent) {
+		var oTarget = oEvent.target;
+		if (oTarget.id === this.getId("tblHeader")) {
+			this._setHeaderAnnouncement();
+		} else if (oTarget.id === this.getId("tblFooter")) {
+			this._setFooterAnnouncement();
+		} else if (oTarget.id == this.getId("nodata")) {
+			this.updateInvisibleText(this.getNoDataText(), oTarget);
+		}
+
+		ListBase.prototype.onfocusin.call(this, oEvent);
+	};
+
+	Table.prototype.onsapfocusleave = function(oEvent) {
+		if (this._oItemNavigation && !this.getNavigationRoot().contains(oEvent.target)) {
+			this.bAnnounceDetails = true;
 		}
 	};
 

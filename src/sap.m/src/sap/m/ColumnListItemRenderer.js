@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 	// render type highlight always within a cell
 	ColumnListItemRenderer.renderHighlight = function(rm, oLI) {
-		rm.write('<td class="sapMListTblHighlightCell">');
+		rm.write('<td class="sapMListTblHighlightCell" aria-hidden="true">');
 
 		// let the list item base render the highlight
 		ListItemBaseRenderer.renderHighlight.apply(this, arguments);
@@ -54,13 +54,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
-		rm.write('<td class="sapMListTblNavCol"');
-
-		if (!oLI._needsTypeColumn()) {
-			rm.writeAttribute("aria-hidden", "true");
-		}
-
-		rm.write('>');
+		rm.write('<td class="sapMListTblNavCol" aria-hidden="true">');
 
 		// let the list item base render the type
 		ListItemBaseRenderer.renderType.apply(this, arguments);
@@ -70,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
-		rm.write('<td class="sapMListTblSelCol">');
+		rm.write('<td class="sapMListTblSelCol" aria-hidden="true">');
 
 		// let the list item base render the mode control
 		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
@@ -85,26 +79,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	// Returns aria accessibility role
 	ColumnListItemRenderer.getAriaRole = function(oLI) {
 		return "";
-	};
-
-	// Returns the inner aria labelledby ids for the accessibility
-	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
-		var oTable = oLI.getTable(),
-			sAriaLabelledBy = ListItemBaseRenderer.getAriaLabelledBy.call(this, oLI) || "";
-
-		if (!oTable || !oTable.hasPopin()) {
-			return sAriaLabelledBy;
-		}
-
-		var sId = oLI.getId();
-		if (!sAriaLabelledBy) {
-			sAriaLabelledBy = sId;
-		} else if (sAriaLabelledBy.indexOf(sId) == -1) {
-			sAriaLabelledBy = sId + " " + sAriaLabelledBy;
-		}
-
-		// when table has pop-in let the screen readers announce it
-		return sAriaLabelledBy + " " + sId + "-sub";
 	};
 
 	/**
