@@ -3,8 +3,8 @@
 */
 
 // Provides control sap.m.ViewSettingsDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField'],
-function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField', './List', './StandardListItem'],
+function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, List, StandardListItem) {
 	"use strict";
 
 	var LIST_ITEM_SUFFIX = "-list-item";
@@ -191,6 +191,37 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		this._oContentItem                  = null;
 		this._oPreviousState                = {};
 		this._sCustomTabsButtonsIdPrefix    = '-custom-button-';
+
+		/* setup a name map between the sortItems
+		 aggregation and a sap.m.List with items
+		 the list itself will not be created right now */
+		this._aggregationToListItems("sortItems", {
+			text: {
+				listProp: "title"
+			},
+			selected: {
+			}
+		}, {
+			type : sap.m.ListType.Active
+		}, {
+			mode : sap.m.ListMode.SingleSelectLeft,
+			includeItemInSelection : true,
+			selectionChange : function(oEvent) {
+				var oListItem = oEvent.getParameter('listItem'),
+					aItems = this.getSortItems(),
+					oVSItemToSelect = this._getVSItem(oListItem),
+					i;
+
+				oVSItemToSelect.setProperty('selected', oEvent.getParameter('selected'), true, false);
+				this.setAssociation('selectedSortItem', oVSItemToSelect, true);
+
+				for (i = 0; i < aItems.length; i++) {
+					if (oVSItemToSelect !== aItems[i]) {
+						aItems[i].setProperty('selected', false, true, false);
+					}
+				}
+			}.bind(this)
+		});
 	};
 
 	ViewSettingsDialog.prototype.exit = function() {
@@ -269,9 +300,13 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		if (this._sortList) {
 			this._sortList.destroy();
 			this._sortList = null;
+		}
+
+		if (this._ariaSortListInvisibleText) {
 			this._ariaSortListInvisibleText.destroy();
 			this._ariaSortListInvisibleText = null;
 		}
+
 		if (this._sortOrderList) {
 			this._sortOrderList.destroy();
 			this._sortOrderList = null;
@@ -318,6 +353,76 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			this._filterDetailList.destroy();
 			this._filterDetailList = null;
 		}
+	};
+
+	ViewSettingsDialog.prototype._aggregationToListItems = function(sAggregationName, oItemPropertyMap, oListItemInitials, oListOptions) {
+		var sType = this._getListType(sAggregationName),
+			sListName = "_" + sType + "List";
+
+		if (!this.mToList) {
+			this.mToList = {};
+		}
+
+		this.mToList[sType] = {
+			"itemPropertyMap": oItemPropertyMap,
+			"listItemOptions": oListItemInitials,
+			"listOptions": oListOptions,
+			"listName": sListName
+		};
+	};
+
+	ViewSettingsDialog.prototype._getListType = function(sAggregationName) {
+		return sAggregationName.replace('Items', '');
+	};
+
+	ViewSettingsDialog.prototype._createList = function(sType) {
+		var sListId = this.getId() + "-" + sType + "list",
+			oList = new List(sListId, this.mToList[sType].listOptions);
+
+		this[this.mToList[sType].listName] = oList;
+
+		return oList;
+	};
+
+	ViewSettingsDialog.prototype._getList = function(sType) {
+		if (!this.mToList || !this.mToList[sType]) {
+			return;
+		}
+
+		return this[this.mToList[sType].listName];
+	};
+
+	ViewSettingsDialog.prototype._createListItem = function(sType, oVSItem) {
+		var oOptions = this.mToList[sType].listItemOptions,
+			mItemPropertyMap = this.mToList[sType].itemPropertyMap,
+			sListProp;
+
+		for (var sProperty in mItemPropertyMap) {
+			if (mItemPropertyMap.hasOwnProperty(sProperty)) {
+				sListProp = mItemPropertyMap[sProperty].listProp || sProperty;
+				oOptions[sListProp] = this._createListItemPropertyValue(sType, sProperty, oVSItem);
+			}
+		}
+
+		return new StandardListItem(oOptions).data('item', oVSItem);
+	};
+
+	ViewSettingsDialog.prototype._createListItemPropertyValue = function(sType, sPropertyName, oVSItem) {
+		var vVal = oVSItem.getMetadata().getAllProperties()[sPropertyName].get(oVSItem),
+			fn = this.mToList[sType].itemPropertyMap[sPropertyName].fn;
+		return fn ? fn(vVal) : vVal;
+	};
+
+	ViewSettingsDialog.prototype._getListItem = function(sType, oVSItem) {
+		var aListItems = this._getList(sType).getItems().filter(function(oItem) {
+			return oItem.data('item') === oVSItem;
+		});
+
+		return aListItems.length ? aListItems[0] : null;
+	};
+
+	ViewSettingsDialog.prototype._getVSItem = function(oListItem) {
+		return oListItem.data('item');
 	};
 
 	/**
@@ -445,8 +550,23 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @returns {object} This instance for chaining
 	 */
 	ViewSettingsDialog.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		sap.ui.base.ManagedObject.prototype.addAggregation.apply(this, arguments);
-		return this._attachItemEventHandlers(sAggregationName, oObject);
+		Control.prototype.addAggregation.apply(this, arguments);
+
+		var sType = this._getListType(sAggregationName);
+		if (this.mToList[sType]) {
+			var oListItem = this._createListItem(sType, oObject);
+			var oList = this._getList(sType);
+			if (!oList) {
+				oList = this._createList(sType);
+			}
+
+			oList.addItem(oListItem);
+			this._attachItemPropertyChange(sType, oObject);
+		} else {
+			this._attachItemEventHandlers(sAggregationName, oObject);
+		}
+
+		return this;
 	};
 
 	/**
@@ -459,8 +579,107 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 */
 	ViewSettingsDialog.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-		sap.ui.base.ManagedObject.prototype.insertAggregation.apply(this, arguments);
-		return this._attachItemEventHandlers(sAggregationName, oObject);
+		Control.prototype.insertAggregation.apply(this, arguments);
+
+		var sType = this._getListType(sAggregationName);
+		if (this.mToList[sType]) {
+			var oListItem = this._createListItem(sType, oObject);
+			var oList = this._getList(sType);
+			if (!oList) {
+				oList = this._createList(sType);
+			}
+			oList.insertItem(oListItem, iIndex);
+			this._attachItemPropertyChange(sType, oObject);
+		} else {
+			this._attachItemEventHandlers(sAggregationName, oObject);
+		}
+
+		return this;
+	};
+
+	ViewSettingsDialog.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		restoreCustomTabContentAggregation.call(this, sAggregationName, vObject);
+
+		var vRemovedObject = Control.prototype.removeAggregation.apply(this, arguments);
+
+		var sType = this._getListType(sAggregationName);
+		if (this.mToList[sType]) {
+			var oListItem = this._getListItem(sType, vRemovedObject);
+			var oList = this._getList(sType);
+			var oRemovedListItem = oList.removeItem(oListItem);
+			oRemovedListItem.destroy();
+			this._detachItemPropertyChange(vRemovedObject);
+		}
+
+		return vRemovedObject;
+	};
+
+	ViewSettingsDialog.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+		// custom tabs aggregation needs special handling - make sure it happens
+		restoreCustomTabContentAggregation.call(this);
+
+		var vRemovedObjects = Control.prototype.removeAllAggregation.apply(this, arguments);
+
+		var sType = this._getListType(sAggregationName);
+		if (this.mToList[sType]) {
+			var oList = this._getList(sType);
+			var oRemovedListItems = oList.removeAllItems();
+
+			oRemovedListItems.forEach(function(oItem) {
+				oItem.destroy();
+			});
+
+			vRemovedObjects.forEach(function(oItem) {
+				this._detachItemPropertyChange(oItem);
+			}, this);
+		}
+
+		return vRemovedObjects;
+	};
+
+	ViewSettingsDialog.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+		restoreCustomTabContentAggregation.call(this);
+
+		Control.prototype.destroyAggregation.apply(this, arguments);
+
+		var sType = this._getListType(sAggregationName);
+		if (this.mToList[sType]) {
+			var oList = this._getList(sType);
+			if (oList) {
+				oList.destroyItems();
+			}
+		}
+
+		return this;
+	};
+
+	ViewSettingsDialog.prototype._detachItemPropertyChange = function(oVSItem) {
+		delete sap.ui.base.EventProvider.getEventList(oVSItem)["itemPropertyChanged"];
+	};
+
+	ViewSettingsDialog.prototype._attachItemPropertyChange = function(sType, oVSItem) {
+		oVSItem.attachEvent('itemPropertyChanged', function fnHandleItemPropertyChanged(oEvent) {
+			var oListItem,
+				sProp,
+				sListProp,
+				vVal,
+				fn,
+				vListPropVal;
+
+			oListItem = this._getListItem(sType, oVSItem);
+			sProp = oEvent.getParameter('propertyKey');
+
+			if (!this.mToList[sType].itemPropertyMap[sProp]) {
+				return;
+			}
+
+			sListProp = this.mToList[sType].itemPropertyMap[sProp].listProp || sProp;
+			vVal = oEvent.getParameter('propertyValue');
+			fn = this.mToList[sType].itemPropertyMap[sProp].fn;
+			vListPropVal = fn ? fn(vVal) : vVal;
+
+			oListItem.getMetadata().getAllProperties()[sListProp].set(oListItem, vListPropVal);
+		}, this);
 	};
 
 	/**
@@ -470,15 +689,15 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 */
 	ViewSettingsDialog.prototype._attachItemEventHandlers = function(sAggregationName, oObject) {
 		// perform the following logic only for the items aggregations, except custom tabs
-		if (sAggregationName !== 'sortItems' && sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
+		if (sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
 			return this;
 		}
 
-		var sType = sAggregationName.replace('Items', ''); // extract "filter"/"group"/"sort"
+		var sType = sAggregationName.replace('Items', ''); // extract "filter"/"group"
 		sType = sType.charAt(0).toUpperCase() + sType.slice(1); // capitalize
 
 
-		// Attach 'itemPropertyChaged' handler, that will re-initiate (specific) dialog content
+		// Attach 'itemPropertyChanged' handler, that will re-initiate (specific) dialog content
 		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
 			/* If the the changed item was a 'sap.m.ViewSettingsItem'
 			 * then threat it differently as filter detail item.
@@ -507,7 +726,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 					}
 				}
 			} else {
-				// call _initFilterContent and _initFilterItems methods, where "Filter" might be also "Group" or "Sort"
+				// call _initFilterContent and _initFilterItems methods, where "Filter" might be also "Group"
 				if (typeof this['_init' + sType + 'Content'] === 'function') {
 					this['_init' + sType + 'Content']();
 				}
@@ -547,10 +766,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @returns {ViewSettingsDialog} this instance for chaining
 	 */
 	ViewSettingsDialog.prototype.updateAggregation = function (sAggregationName) {
-		sap.ui.base.ManagedObject.prototype.updateAggregation.apply(this, arguments);
+		Control.prototype.updateAggregation.apply(this, arguments);
 
 		// perform the following logic only for the items aggregations, except custom tabs
-		if (sAggregationName !== 'sortItems' && sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
+		if (sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
 			return this;
 		}
 
@@ -1368,29 +1587,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	};
 
 	/**
-	 * Create list item instance for each sort item.
-	 * @private
-	 */
-	ViewSettingsDialog.prototype._initSortItems = function() {
-		var aSortItems,
-		    oListItem;
-		this._sortList.destroyItems();
-		aSortItems = this.getSortItems();
-
-		if (aSortItems.length) {
-			aSortItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem({
-					id: oItem.getId() + LIST_ITEM_SUFFIX,
-					title : oItem.getText(),
-					type : sap.m.ListType.Active,
-					selected : oItem.getSelected()
-				}).data("item", oItem);
-				this._sortList.addItem(oListItem);
-			}, this);
-		}
-	};
-
-	/**
 	 * Creates and initializes the sort content controls.
 	 * @private
 	 */
@@ -1427,22 +1623,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT").concat(":")
 		});
 
-		this._sortList = new sap.m.List(this.getId() + "-sortlist", {
-			mode : sap.m.ListMode.SingleSelectLeft,
-			includeItemInSelection : true,
-			selectionChange : function(oEvent) {
-				var oSelectedSortItem = sap.ui.getCore().byId(that.getSelectedSortItem());
-				var item = oEvent.getParameter("listItem").data("item");
-				if (item) {
-					if (oSelectedSortItem) {
-						oSelectedSortItem.setSelected(!oEvent.getParameter("listItem").getSelected());
-					}
-					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
-				}
-				that.setAssociation("selectedSortItem", item, true);
-			},
-			ariaLabelledBy: this._ariaSortListInvisibleText
-		});
+		this._sortList.addAriaLabelledBy(this._ariaSortListInvisibleText);
 
 		this._sortContent = [ this._ariaSortOrderInvisibleText, this._sortOrderList, this._ariaSortListInvisibleText, this._sortList ];
 	};
@@ -1658,7 +1839,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		// sort
 		if (bSort) {
 			this._initSortContent();
-			this._initSortItems();
 		}
 
 		// group
@@ -2588,50 +2768,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	/* =========================================================== */
 	/* end: event handlers */
 	/* =========================================================== */
-
-
-	/**
-	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
-	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
-	 * @param {int | string | sap.ui.base.ManagedObject} vObject The position or ID of the ManagedObject that should be removed or that ManagedObject itself
-	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
-	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
-	 */
-	ViewSettingsDialog.prototype.removeAggregation = function (sAggregationName, vObject, bSuppressInvalidate) {
-		// custom tabs aggregation needs special handling - make sure it happens
-		restoreCustomTabContentAggregation.call(this, sAggregationName, vObject);
-
-		return sap.ui.core.Control.prototype.removeAggregation.call(this, sAggregationName, vObject,
-			bSuppressInvalidate);
-	};
-
-	/**
-	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
-	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
-	 * @param {int | string | sap.ui.base.ManagedObject} vObject tThe position or ID of the ManagedObject that should be removed or that ManagedObject itself
-	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
-	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
-	 */
-	ViewSettingsDialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-		// custom tabs aggregation needs special handling - make sure it happens
-		restoreCustomTabContentAggregation.call(this);
-
-		return sap.ui.core.Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
-	};
-
-	/**
-	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
-	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
-	 * @param {int | string | sap.ui.base.ManagedObject} vObject tThe position or ID of the ManagedObject that should be removed or that ManagedObject itself
-	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
-	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
-	 */
-	ViewSettingsDialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		// custom tabs aggregation needs special handling - make sure it happens
-		restoreCustomTabContentAggregation.call(this);
-
-		return sap.ui.core.Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
-	};
 
 	/**
 	 * Handle the "content" aggregation of a custom tab, as the items in it might be transferred to the dialog page

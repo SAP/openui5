@@ -1028,7 +1028,7 @@
 					subHeader = this.oVSD._subHeader;
 
 				// check if all internal controls are not initialized yet
-				strictEqual(sortList, undefined, "sort list is not initialized yet");
+				notEqual(sortList, undefined, "sort list was initialized");
 				strictEqual(ariaSortListInvisibleText, undefined, "sort list aria label is not initialized yet");
 				strictEqual(sortOrderList, undefined, "sort order list is not initialized yet");
 				strictEqual(ariaSortOrderInvisibleText, undefined, "sort order list aria label is not initialized yet");
@@ -1584,7 +1584,7 @@
 				listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
 				vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
-				ok(spySortItem.calledWithExactly('selected', true, true), "Set sort item as selected should be called with suppress Invalidation flag=true");
+				ok(spySortItem.calledWithExactly('selected', true, true, false), "Set sort item as selected should be called with suppress Invalidation flag=true and bFireEvent=false");
 				ok(spySortItem.calledOnce, "setSelected should be called only once");
 
 				ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
@@ -2068,7 +2068,6 @@
 
 					this.oVSD.getModel().setProperty('/sortData', oSecondData);
 
-					strictEqual(jQuery(sTitleSelector).length, 3, 'Starting with four items.');
 					setTimeout(function () {
 						strictEqual(jQuery(sTitleSelector).length, 4, 'Item was successfully added.');
 						oSecondData.unshift({
@@ -2090,8 +2089,8 @@
 		test("Change filter items in the model", function () {
 			var done = assert.async();
 
-			this.oVSD._switchToPage(2);
 			this.oVSD.open();
+			this.oVSD._switchToPage(2);
 
 			var aItems = this.oVSD._filterList.getItems();
 			var oItem = aItems[0];
@@ -2202,8 +2201,8 @@
 		test("Change group items in the model", function () {
 			var done = assert.async();
 
-			this.oVSD._switchToPage(1);
 			this.oVSD.open();
+			this.oVSD._switchToPage(1);
 
 			var aItems = this.oVSD._groupList.getItems();
 			var oItem = aItems[0];
@@ -2368,11 +2367,11 @@
 			this.oVSD.open();
 			this.oVSD._switchToPage(0);
 			aSortItems = this.oVSD.getSortItems();
-			sItemToSelect = aSortItems[1].getId();
+			oListItem = this.oVSD._getListItem("sort", aSortItems[1]);
 
 			setTimeout(function () {
-				this.clickOnItem(sItemToSelect + "-list-item");
-				this.checkItemFocus(sItemToSelect + "-list-item");
+				this.clickOnItem(oListItem.getId());
+				this.checkItemFocus(oListItem.getId());
 				done();
 			}.bind(this), 500);
 		});
