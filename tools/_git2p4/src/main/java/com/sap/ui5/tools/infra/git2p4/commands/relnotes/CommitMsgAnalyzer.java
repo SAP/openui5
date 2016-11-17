@@ -21,7 +21,7 @@ class CommitMsgAnalyzer {
   private static final Pattern CSS_ID_MONOLITHIC = Pattern.compile("([0-9]{10})([0-9]{10})([0-9]{4})");
   private static final Pattern CSS_ID_SEPARATED = Pattern.compile("(?:([0-9]{1,10})\\s+)?([0-9]{1,10})(?:\\s+([0-9]{4}))?");
   private static final Pattern INTERNAL = Pattern.compile("\\[\\s*INTERNAL\\s*\\]", Pattern.CASE_INSENSITIVE);
-  private static final Pattern TYPE_TEXT = Pattern.compile(".*\\[(.+)\\][ ]*(.+)[\"]*");
+  private static final Pattern TYPE_TEXT = Pattern.compile("\\[(.+?)\\](.*)");
   private static final Pattern GITHUB_REF = Pattern.compile("github.com/SAP/openui5/issues/([0-9]+)");
   
   public static class CSS {
