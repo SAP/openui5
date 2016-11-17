@@ -3,12 +3,9 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate2', './TableKeyboardDelegate'],
-	function(jQuery, TableExtension, ItemNavigation, TableUtils, NewKeyboardDelegate, OldKeyboardDelegate) {
+sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate2'],
+	function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate) {
 	"use strict";
-
-	var sKeyboard = jQuery.sap.getUriParameters().get('sap-ui-xx-table-oldkeyboard');
-	var bLegacy = sKeyboard === "true" || sKeyboard === "TRUE" || sKeyboard === "x" || sKeyboard === "X";
 
 	/*
 	 * Wrapper for event handling of the item navigation.
@@ -203,12 +200,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
 			this._type = sTableType;
-			this._legacy = bLegacy;
-			var TableKeyboardDelegate = NewKeyboardDelegate;
-			if (bLegacy) {
-				jQuery.sap.log.warning("The old keyboard handling of sap.ui.table.Table is deprecated and will be deactivated soon.");
-				TableKeyboardDelegate = OldKeyboardDelegate;
-			}
 			this._delegate = new TableKeyboardDelegate(sTableType);
 			this._actionMode = false;
 
