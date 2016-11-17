@@ -128,6 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/service/S
 	 * @param {object} oServiceContext Context for which the service is created
 	 * @param {object} oServiceContext.scopeObject Object that is in scope (e.g. component instance)
 	 * @param {string} oServiceContext.scopeType Type of object that is in scope (e.g. component, ...)
+	 * @param {string} oServiceContext.settings The service settings
 	 * @return {Promise} Promise which resolves with the new Service instance.
 	 * @protected
 	 */

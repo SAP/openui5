@@ -812,8 +812,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// cache the promise to avoid redundant creation
 			this._mServices[sLocalServiceAlias].promise = new Promise(function(fnResolve, fnReject) {
 
+				var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
+
 				// lookup the factoryName in the manifest
-				var sServiceFactoryName = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/factoryName");
+				var sServiceFactoryName = oServiceManifestEntry.factoryName;
 				if (!sServiceFactoryName) {
 					fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
 					return;
@@ -822,11 +824,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				// lookup the factory in the registry
 				var oServiceFactory = ServiceFactoryRegistry.get(sServiceFactoryName);
 				if (oServiceFactory) {
-
 					// create a new Service instance with the current Component as context
 					oServiceFactory.createInstance({
 						scopeObject: this,
-						scopeType: "component"
+						scopeType: "component",
+						settings: oServiceManifestEntry.settings || {}
 					}).then(function(oServiceInstance) {
 						if (!this.bIsDestroyed) {
 							// store the created Service instance and interface
