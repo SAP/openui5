@@ -209,6 +209,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object
 			if (InstanceManager.hasOpenDialog()) {
 				InstanceManager.closeAllDialogs();
 			}
+
+			// close open LightBoxes
+			if (InstanceManager.hasOpenLightBox()) {
+				InstanceManager.closeAllLightBoxes();
+			}
 		};
 
 		return TargetHandler;
