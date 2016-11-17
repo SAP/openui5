@@ -264,19 +264,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Panel.prototype._setContentHeight = function () {
-		if (this.getHeight() === "auto") {
+		var iAdjustedContentHeight,
+		thisDomRef = this.getDomRef(),
+		oPanelContent = thisDomRef && thisDomRef.querySelector(".sapMPanelContent");
+
+		if (this.getHeight() === "auto" || !oPanelContent) {
 			return;
 		}
 
-		var thisDomRef = this.getDomRef();
-
 		// 'offsetTop' measures the vertical space occupied by siblings before this one
 		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
-		var iOffsetTop = thisDomRef.querySelector(".sapMPanelContent").offsetTop;
-		var iAdjustedContentHeight = thisDomRef.clientHeight - iOffsetTop;
-
-		thisDomRef.querySelector(".sapMPanelContent")
-			.style.height = iAdjustedContentHeight + 'px';
+		iAdjustedContentHeight = thisDomRef.clientHeight - oPanelContent.offsetTop;
+		oPanelContent.style.height = iAdjustedContentHeight + 'px';
 	};
 
 	Panel.prototype._toggleExpandCollapse = function () {
