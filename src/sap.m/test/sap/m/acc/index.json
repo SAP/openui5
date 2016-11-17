@@ -131,6 +131,11 @@
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
+			"control": "sap.m.Image",
+			"url": "../Image.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
 			"control": "sap.m.InputBase",
 			"url": "../InputBase.html",
 			"appComponent": "CA-UI5-CTR-ROD"

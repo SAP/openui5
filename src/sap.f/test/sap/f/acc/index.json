@@ -4,6 +4,11 @@
 			"control": "sap.f.DynamicPage",
 			"url": "DynamicPage.html",
 			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.f.FlexibleColumnLayout",
+			"url": "../FlexibleColumnLayout.html",
+			"appComponent": "CA-UI5-CTR-PIR"
 		}
 	]
 }
