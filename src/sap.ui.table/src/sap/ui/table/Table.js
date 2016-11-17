@@ -613,6 +613,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._iRowHeightsDelta = 0;
 		this._iRenderedFirstVisibleRow = 0;
 
+		this._aSortedColumns = [];
+
 		var that = this;
 
 		this._performUpdateRows = function(sReason) {
@@ -2844,23 +2846,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Gets sorted columns.
+	 * Gets sorted columns in the order of which the sort API at the table or column was called.
+	 * Sorting on binding level is not reflected here.
+	 *
+	 * @see sap.ui.table.Table#sort
+	 * @see sap.ui.table.Column#sort
 	 *
 	 * @return Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getSortedColumns = function() {
-
-		return this._aSortedColumns;
-
+		// ensure that _aSortedColumns can't be altered by accident
+		return this._aSortedColumns.slice();
 	};
 
 	/**
 	 * Sorts the given column ascending or descending.
 	 *
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be sorted
+	 * @param {sap.ui.table.Column | undefined} oColumn
+	 *         column to be sorted or undefined to clear sorting
 	 * @param {sap.ui.table.SortOrder} oSortOrder
 	 *         sort order of the column (if undefined the default will be ascending)
 	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
@@ -2869,6 +2874,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.sort = function(oColumn, oSortOrder, bAdd) {
+		if (!oColumn) {
+			// mimic the list binding sort API, if no column is provided, just restore the default sorting
+			// make sure to also update the sorted property to correctly indicate sorted columns
+			for (var i = 0; i < this._aSortedColumns.length; i++) {
+				this._aSortedColumns[i].setSorted(false);
+			}
+
+			var oBinding = this.getBinding("rows");
+			if (oBinding) {
+				oBinding.sort();
+			}
+
+			this._aSortedColumns = [];
+		}
+
 		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
 			oColumn.sort(oSortOrder === SortOrder.Descending, bAdd);
 		}

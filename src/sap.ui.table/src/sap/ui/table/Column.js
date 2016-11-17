@@ -671,13 +671,16 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 					aSorters.push(aSortedCols[i]._oSorter);
 				}
 
-				if (oTable.isBound("rows")) {
+				var oBinding = oTable.getBinding("rows");
+				if (oBinding) {
 					// sort the binding
-					oTable.getBinding("rows").sort(aSorters);
+					oBinding.sort(aSorters);
 
 					if (this._afterSort) {
 						this._afterSort();
 					}
+				} else {
+					jQuery.sap.log.warning("Sorting not performed because no binding present", this);
 				}
 			}
 		}
