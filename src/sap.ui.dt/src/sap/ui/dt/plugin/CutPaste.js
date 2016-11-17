@@ -151,7 +151,7 @@ sap.ui.define([
 			this.getElementMover().buildMoveEvent();
 		}
 
-		// focus get invalidated, see https://support.wdf.sap.corp/sap/support/message/1580061207
+		// focus get invalidated, see BCP 1580061207
 		setTimeout(function(){
 			oCutOverlay.focus();
 		},0);
