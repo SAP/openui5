@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 			// response handler which uses the custom properties we added to the xhr to retrieve information from the response headers
 			function handleResponse() {
-				if (this.readyState === 4 && this.pendingInteraction) {
+				if (this.readyState === 4 && this.pendingInteraction && !this.pendingInteraction.completed) {
 					// enrich interaction with information
 					var sContentLength = this.getResponseHeader("content-length"),
 						bCompressed = this.getResponseHeader("content-encoding") === "gzip",
@@ -218,8 +218,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 				if (!vField) {
 					vField = vField === 0 ? "0" : "";
 				} else if (typeof vField === "number") {
+					var iField = vField;
 					vField = Math.round(vField).toString();
-					if (vField.length > iLength) {
+					// Calculation of figures may be erroneous because incomplete performance entries lead to negative
+					// numbers. In that case we set a -1, so the "dirty" record can be identified as such.
+					if (vField.length > iLength || iField < 0) {
 						vField = "-1";
 					}
 				} else {
