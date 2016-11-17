@@ -177,7 +177,7 @@ sap.ui.define([
 						} else if (!oContext && oNextContext) {
 							that.aContexts[i]
 								= Context.create(that.oModel, that, that.sPath + "/" + i, i);
-						} else if (!that.bUseExtendedChangeDetection) {
+						} else {
 							oContext.checkUpdate();
 						}
 					}
@@ -611,95 +611,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Computes the "diff" needed for extended change detection for the given list binding and
-	 * the given start index and length.
-	 *
-	 * @param {object[]} aData
-	 *   The array of OData entities read in the last request, can be undefined if no data is
-	 *   available e.g. in case of a missing $expand in the binding's parent binding
-	 * @param {number} iStart
-	 *   The start index of the range for which the OData entities have been read; must be 0 in
-	 *   case of extended change detection because in this case controls only get contexts with
-	 *   start index 0 and it is unclear how ECD is supposed to work with start index !== 0
-	 * @param {number} iLength
-	 *   The length of the range for which the OData entities have been read
-	 * @returns {_SyncPromise}
-	 *   A promise resolving with an object with the properties iLength echoing the parameter
-	 *   and aDiff with the array of differences in aData compared to data retrieved in
-	 *   previous requests. It resolves with undefined if the binding does not use extended
-	 *   change detection or if key properties are not available (for a collection valued
-	 *   structural property) or missing in the data so that the diff cannot be computed.
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.fetchDiff = function (aData, iStart, iLength) {
-		var oMetaModel,
-			oMetaContext,
-			aNewData,
-			sResolvedPath,
-			that = this;
-
-		/**
-		 * Compares previous and new data; stores new data as previous data at the binding.
-		 *
-		 * @returns {object[]} The diff array
-		 */
-		function diff() {
-			var aDiff = jQuery.sap.arraySymbolDiff(that.aPreviousData, aNewData);
-
-			that.aPreviousData = aNewData;
-			return {aDiff : aDiff, iLength : iLength};
-		}
-
-		if (!this.bUseExtendedChangeDetection) {
-			return _SyncPromise.resolve();
-		}
-
-		if (!aData) {
-			return _SyncPromise.resolve({aDiff : [], iLength : iLength});
-		}
-
-		if (this.bDetectUpdates) {
-			// don't use function reference JSON.stringify in map: 2. and 3. parameter differ
-			aNewData = aData.map(function (oEntity) {
-				return JSON.stringify(oEntity);
-			});
-			return _SyncPromise.resolve(diff());
-		}
-
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-		oMetaModel = this.oModel.getMetaModel();
-		oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
-		return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
-			var mMissingKeys = {};
-
-			if (aKeys) {
-				aNewData = aData.map(function (oEntity) {
-					return aKeys.reduce(function (oPreviousData, sKey) {
-						oPreviousData[sKey] = oEntity[sKey];
-						if (oEntity[sKey] === undefined) {
-							mMissingKeys[sKey] = true;
-						}
-						return oPreviousData;
-					}, {} /*initial value oPreviousData*/);
-				});
-			}
-			if (Object.keys(mMissingKeys).length > 0 || !aKeys) {
-				that.aPreviousData = [];
-				jQuery.sap.log.warning("Disable extended change detection as"
-						+ " diff computation failed: " + that,
-					!aKeys
-						? "Type for path " + sResolvedPath + " has no keys"
-						: "Missing key(s): " + Object.keys(mMissingKeys),
-					sClassName);
-				return undefined;
-			}
-
-			return diff();
-		});
-	};
-
-	/**
 	 * Requests a $filter query option value for the this binding; the value is computed from the
 	 * given arrays of dynamic application and control filters and the given static filter.
 	 *
@@ -1026,52 +937,52 @@ sap.ui.define([
 				});
 			} else {
 				oPromise = oContext.fetchValue(this.sPath).then(function (aResult) {
-					return aResult.slice(oRange.start, oRange.start + oRange.length);
+					// aResult may be undefined e.g. in case of a missing $expand in parent binding
+					return aResult ? aResult.slice(oRange.start, oRange.start + oRange.length) : [];
 				});
 			}
+			if (oPromise.isFulfilled() && bRefreshEvent) {
+				// make sure "refresh" is followed by async "change"
+				oPromise = Promise.resolve(oPromise);
+			}
 			oPromise.then(function (vResult) {
-				var aResult,
+				var bContextsCreated,
+					aResult,
 					iResultLength;
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
 					iResultLength = aResult ? aResult.length : 0;
-					// Note: aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.;
-					// fetchDiff() of course works with view coordinates; everything is fine here!
-					return that.fetchDiff(aResult, iStart, iLength)
-						.then(function (oDiff) {
-							// make sure "refresh" is followed by async "change"
-							return bRefreshEvent && !bFireChange
-								? Promise.resolve(oDiff)
-								: oDiff;
-						})
-						.then(function (oDiff) {
-							that.oDiff = oDiff;
-							if (that.createContexts(oRange, iResultLength) && bFireChange) {
-								that._fireChange({reason: sChangeReason});
-							}
-							if (bDataRequested) {
-								that.fireDataReceived();
-							}
-						});
-				} else if (bDataRequested) { // fire dataReceived even if the result is irrelevant
+					bContextsCreated = that.createContexts(oRange, iResultLength);
+					if (that.bUseExtendedChangeDetection) {
+						that.oDiff = {
+							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
+							aDiff: that.getDiff(aResult, iStartInModel),
+							iLength : iLength
+						};
+					}
+					if (bFireChange && bContextsCreated) {
+						that._fireChange({reason: sChangeReason});
+					}
+				}
+				if (bDataRequested) {
 					that.fireDataReceived();
 				}
 			}, function (oError) {
 				// cache shares promises for concurrent read
 				if (bDataRequested) {
-					that.oModel.reportError("Failed to get contexts for "
-							+ that.oModel.sServiceUrl
-							+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
-							+ " with start index " + iStart + " and length " + iLength,
-						sClassName, oError);
 					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				}
+				throw oError;
 			})["catch"](function (oError) {
-				jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+				that.oModel.reportError("Failed to get contexts for "
+						+ that.oModel.sServiceUrl
+						+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
+						+ " with start index " + iStart + " and length " + iLength,
+					sClassName, oError);
 			});
-			// If the diff has not been calculated yet, we're asynchronous and have to fire a change
+			// in case of asynchronous processing ensure to fire a change event
 			bFireChange = true;
 		}
 		this.iCurrentBegin = iStartInModel;
@@ -1125,6 +1036,40 @@ sap.ui.define([
 			aContexts.push(undefined);
 		}
 		return aContexts;
+	};
+
+	/**
+	 * Computes the "diff" needed for extended change detection.
+	 *
+	 * @param {object[]} aResult
+	 *   The array of OData entities read in the last request
+	 * @param {number} iStartInModel
+	 *   The start index in model coordinates of the range for which the OData entities have been
+	 *   read
+	 * @returns {object}
+	 *   The array of differences which is
+	 *   <ul>
+	 *   <li>the comparison of aResult with the data retrieved in the previous request, in case of
+	 *   <code>this.bDetectUpdates === true</code></li>
+	 *   <li>the comparison of current context paths with the context paths of the previous request,
+	 *   in case of <code>this.bDetectUpdates === false</code></li>
+	 *   </ul>
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getDiff = function (aResult, iStartInModel) {
+		var aDiff,
+			aNewData,
+			that = this;
+
+		aNewData = aResult.map(function (oEntity, i) {
+			return that.bDetectUpdates
+				? JSON.stringify(oEntity)
+				: that.aContexts[iStartInModel + i].getPath();
+		});
+		aDiff = jQuery.sap.arraySymbolDiff(this.aPreviousData, aNewData);
+		this.aPreviousData = aNewData;
+		return aDiff;
 	};
 
 	/**
