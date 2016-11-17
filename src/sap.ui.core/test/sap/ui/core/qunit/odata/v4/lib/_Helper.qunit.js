@@ -450,6 +450,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("toArray", function (assert) {
+		var oObject = {},
+			aObjects = [oObject];
+
+		assert.deepEqual(_Helper.toArray(), []);
+		assert.deepEqual(_Helper.toArray(null), []);
+		assert.deepEqual(_Helper.toArray(""), [""]);
+		assert.deepEqual(_Helper.toArray("foo"), ["foo"]);
+		assert.deepEqual(_Helper.toArray(oObject), aObjects);
+		assert.strictEqual(_Helper.toArray(aObjects), aObjects);
+	});
+
+	//*********************************************************************************************
 	// Integration Tests with real backend
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {

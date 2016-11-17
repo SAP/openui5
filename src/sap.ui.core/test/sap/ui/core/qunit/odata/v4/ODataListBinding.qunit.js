@@ -487,7 +487,7 @@ sap.ui.require([
 				oHelperMock = this.mock(_ODataHelper),
 				oModel = oFixture.oModel || this.oModel;
 
-			this.spy(_ODataHelper, "toArray");
+			this.spy(_Helper, "toArray");
 			this.spy(ODataListBinding.prototype, "mergeQueryOptions");
 			oHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oModel.mUriParameters),
@@ -509,7 +509,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.isGrouped(), oFixture.grouped, "grouping");
 			assert.deepEqual(oBinding.mQueryOptions, mExpectedQueryOptions,
 				"Query options are not modified by dynamic sorters");
-			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.aSorters));
+			assert.ok(_Helper.toArray.calledWithExactly(oFixture.aSorters));
 			sinon.assert.calledWithExactly(oBinding.mergeQueryOptions, oBinding.mQueryOptions,
 				oFixture.buildOrderbyResult, "");
 		});
@@ -541,14 +541,14 @@ sap.ui.require([
 			mExpectedbuildQueryOptions = {},
 			oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
 			aFilters = [oFilter],
-			oHelperMock = this.mock(_ODataHelper),
+			oHelperMock = this.mock(_Helper),
 			mQueryParameters = {
 				$$operationMode : OperationMode.Server
 			};
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(undefined).returns([]);
-		oHelperMock.expects("buildQueryOptions")
+		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mQueryParameters), true)
 			.returns(mExpectedbuildQueryOptions);
@@ -2075,7 +2075,7 @@ sap.ui.require([
 
 			oBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
 			this.mock(oBinding).expects("hasPendingChanges").returns(false);
-			this.spy(_ODataHelper, "toArray");
+			this.spy(_Helper, "toArray");
 			this.mock(oBinding).expects("makeCache").twice() // from setContext and sort
 				.withExactArgs(sinon.match.same(oContext)).returns(oCacheProxy);
 			this.spy(oBinding, "reset");
@@ -2084,8 +2084,8 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.sort(oFixture.vSorters), oBinding, "chaining");
 
-			assert.deepEqual(oBinding.aSorters, _ODataHelper.toArray.returnValues[0]);
-			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.vSorters));
+			assert.deepEqual(oBinding.aSorters, _Helper.toArray.returnValues[0]);
+			assert.ok(_Helper.toArray.calledWithExactly(oFixture.vSorters));
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
 			assert.ok(oBinding.reset.calledWithExactly(), "from setContext");
 			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
@@ -2156,7 +2156,7 @@ sap.ui.require([
 				}
 				oBinding.setContext(oContext);
 
-				this.mock(_ODataHelper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
+				this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
 				oBindingMock.expects("makeCache").on(oBinding)
 					.withExactArgs(sinon.match.same(oContext))

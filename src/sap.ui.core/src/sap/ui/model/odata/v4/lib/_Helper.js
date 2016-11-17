@@ -264,6 +264,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Converts given value to an array.
+		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
+		 * non-array value is wrapped with an array and an array is returned as it is.
+		 *
+		 * @param {any} [vElement]
+		 *   The element to be converted into an array.
+		 * @returns {Array}
+		 *   The array for the given element.
+		 */
+		toArray : function (vElement) {
+			if (vElement === undefined || vElement === null) {
+				return [];
+			}
+			if (Array.isArray(vElement)) {
+				return vElement;
+			}
+			return [vElement];
+		},
+
+		/**
 		 * Updates the cache with the object sent to the PATCH request or the object returned by the
 		 * PATCH response. Fires change events for all changed properties. The function recursively
 		 * handles modified, added or removed structural properties and fires change events for all

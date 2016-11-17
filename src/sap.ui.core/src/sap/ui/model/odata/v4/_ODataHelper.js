@@ -467,26 +467,6 @@ sap.ui.define([
 			oBinding.oModel.getDependentBindings(oBinding).forEach(function (oDependentBinding) {
 				ODataHelper.resetChanges(oDependentBinding, false);
 			});
-		},
-
-		/**
-		 * Converts given value to an array.
-		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
-		 * non-array value is wrapped with an array and an array is returned as it is.
-		 *
-		 * @param {any} [vElement]
-		 *   The element to be converted into an array.
-		 * @returns {Array}
-		 *   The array for the given element.
-		 */
-		toArray : function (vElement) {
-			if (vElement === undefined || vElement === null) {
-				return [];
-			}
-			if (Array.isArray(vElement)) {
-				return vElement;
-			}
-			return [vElement];
 		}
 	};
 

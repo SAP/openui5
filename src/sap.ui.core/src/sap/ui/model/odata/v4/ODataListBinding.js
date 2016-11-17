@@ -136,7 +136,7 @@ sap.ui.define([
 					throw new Error("Unsupported operation mode: " + this.sOperationMode);
 				}
 
-				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
+				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
 				this.oDiff = undefined;
@@ -145,7 +145,7 @@ sap.ui.define([
 				this.aPreviousData = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
-				this.aSorters = _ODataHelper.toArray(vSorters);
+				this.aSorters = _Helper.toArray(vSorters);
 
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 					mParameters, true);
@@ -917,9 +917,9 @@ sap.ui.define([
 		}
 
 		if (sFilterType === FilterType.Control) {
-			this.aFilters = _ODataHelper.toArray(vFilters);
+			this.aFilters = _Helper.toArray(vFilters);
 		} else {
-			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
+			this.aApplicationFilters = _Helper.toArray(vFilters);
 		}
 		this.mCacheByContext = undefined;
 		this.oCache = this.makeCache(this.oContext);
@@ -1540,7 +1540,7 @@ sap.ui.define([
 			throw new Error("Cannot sort due to pending changes");
 		}
 
-		this.aSorters = _ODataHelper.toArray(vSorters);
+		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
 		this.oCache = this.makeCache(this.oContext);
 		this.reset(ChangeReason.Sort);

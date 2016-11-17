@@ -10,10 +10,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/odata/v4/lib/_SyncPromise"
 ], function (jQuery, Context, Filter, FilterOperator, _ODataHelper, _Cache, _Helper, _Parser,
-		_SyncPromise, Sorter) {
+		_SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0 */
 	"use strict";
@@ -558,19 +557,6 @@ sap.ui.require([
 		return oBinding.oCache.read("$auto", "foo").catch(function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("toArray", function (assert) {
-		var oSorter = new Sorter("foo", true),
-			aSorters = [oSorter];
-
-		assert.deepEqual(_ODataHelper.toArray(), []);
-		assert.deepEqual(_ODataHelper.toArray(null), []);
-		assert.deepEqual(_ODataHelper.toArray(""), [""]);
-		assert.deepEqual(_ODataHelper.toArray("foo"), ["foo"]);
-		assert.deepEqual(_ODataHelper.toArray(oSorter), aSorters);
-		assert.strictEqual(_ODataHelper.toArray(aSorters), aSorters);
 	});
 
 	//*********************************************************************************************
