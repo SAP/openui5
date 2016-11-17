@@ -1098,6 +1098,40 @@
 		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
 	});
 
+	QUnit.asyncTest("Sort Icon", function(assert) {
+		creatSortingTableData();
+		var aColumns = oTable.getColumns();
+
+		var fnHandler = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+
+			assert.equal(aSortedColumns.length, 2, "Two columns sorted");
+			assert.ok(aColumns[0].getSorted(), "First column sorted");
+			assert.ok(aColumns[1].getSorted(), "Second column sorted");
+
+			oTable.detachEvent("_rowsUpdated", fnHandler);
+			oTable.attachEvent("_rowsUpdated", fnHandler2);
+			// remove sorting
+			oTable.sort();
+		};
+
+		var fnHandler2 = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+
+			assert.equal(aSortedColumns.length, 0, "No column sorted");
+
+			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+
+			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			QUnit.start();
+		};
+
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.sort(aColumns[0], sap.ui.table.SortOrder.Ascending, false);
+		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
+	});
+
 	QUnit.asyncTest("remove column", function(assert) {
 		creatSortingTableData();
 		var oRemovedColumn;
