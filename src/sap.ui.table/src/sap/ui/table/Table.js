@@ -1316,6 +1316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (mFocusInfo && mFocusInfo.customId) {
 			this.$().find("#" + mFocusInfo.customId).focus();
 		} else {
+			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);
 		}
 		return this;
