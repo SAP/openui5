@@ -22,9 +22,9 @@
   border-radius: 0.25rem 0 0 0;
 }
 // Header styles =======================================================================================================
-
 .sapMNLG-Header {
   padding-bottom: 0.375rem;
+  border-radius: 0.25rem 0 0;
   .sapMNLG-Title {
     padding-right: 1.75rem;
   }
@@ -52,8 +52,7 @@
 
 // SubHeader styles =======================================================================================================
 
-.sapMNLG-SubHeader .sapMTB {
-  
+.sapMNLG-SubHeader .sapMTB {  
   .sapMBtn {
     margin-left: 0.25rem;
     padding: 0;
@@ -97,6 +96,17 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
     box-shadow: none;
     border-bottom: none;
     border-radius: 0;
+  }
+  .sapMNLG-MaxNotifications {
+    border-radius: 0 0 0.25rem 0.25rem;
+    padding: 1.5rem 0.5rem 1rem;
+    text-align: center;
+    line-height: 1.5rem;
+    span {
+     font-weight: bold;
+      margin: 0;
+      padding: 0;
+    }
   }
 }
 
@@ -143,3 +153,5 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 .sapMNLGNoHdrFooter {
   padding-top: 0 !important;
 }
+
+// Max Number of Notifications ====================================================================================================

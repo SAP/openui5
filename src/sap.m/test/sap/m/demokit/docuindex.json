@@ -262,7 +262,8 @@
 		  "samples": [
 		  	"sap.m.sample.NotificationListGroup",
 		  	"sap.m.sample.NotificationListGroupBindings",
-		  	"sap.m.sample.NotificationListGroupLazyLoading"
+		  	"sap.m.sample.NotificationListGroupLazyLoading",
+		  	"sap.m.sample.MaxNumberOfNotificationsReached"
 		  ]
 		},
 		{
@@ -2299,6 +2300,11 @@
 		  "id": "sap.m.sample.NotificationListGroupLazyLoading",
 		  "name": "Notification List Group with lazy loading of the notifications",
 		  "description": "Notification List Group with lazy loading of the notifications."
+	    },
+	    {
+		  "id": "sap.m.sample.MaxNumberOfNotificationsReached",
+		  "name": "Notification List Group with max number of notifications reached",
+		  "description": "Notification List Group with max number of notifications reached. The group will render the max amount of notificatons, depending on device type allowed and then show a warning messge."
 	    },
 		{
 		  "id": "sap.m.sample.Dialog",
