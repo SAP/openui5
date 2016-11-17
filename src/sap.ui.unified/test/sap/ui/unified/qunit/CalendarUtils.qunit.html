@@ -146,6 +146,47 @@
 				this._fnRegularYearTest(iYear);
 			}, this);
 		});
+
+		module("Calculate week number");
+
+		test("Week number when locale is valid en-US", function() {
+			// prepare
+			var iWeekNumber_enUS,
+				iWeekNumber_enUS_custom,
+				oDate,
+				oLocale,
+				oLocaleData;
+
+			oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+			oLocale = new sap.ui.core.Locale('en-US');
+			oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+
+			// act
+			iWeekNumber_enUS = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US-x-sapufmt', oLocaleData);
+			iWeekNumber_enUS_custom = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US', oLocaleData);
+
+			// assert
+			strictEqual(iWeekNumber_enUS, 47, "The week is 47 for 17.11.2016 when locale is en-US-x-sapufmt");
+			strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
+		});
+
+		test("Week number when locale is en-GB", function() {
+			// prepare
+			var iWeekNumber,
+				oDate,
+				oLocale,
+				oLocaleData;
+
+			oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+			oLocale = new sap.ui.core.Locale('en-GB');
+			oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+
+			// act
+			iWeekNumber = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-GB', oLocaleData);
+
+			// assert
+			strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");
+		});
 	</script>
 
 </head>
