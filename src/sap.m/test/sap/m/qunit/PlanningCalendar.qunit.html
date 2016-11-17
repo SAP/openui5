@@ -2128,6 +2128,45 @@
 			strictEqual(jQuery("#PC1-DateInt--Month0-20150102").attr("aria-label"), sExpectedAria, "Correct week day and date aria are written");
 		});
 
+		module("views", {
+			beforeEach: function () {
+				this.oPC = new sap.m.PlanningCalendar();
+			},
+			afterEach: function () {
+				this.oPC.destroy();
+				this.oPC = null;
+			}
+		});
+
+		test("Toggle view select visibility", function (assert) {
+			// Assert
+			assert.strictEqual(this.oPC._oIntervalTypeSelect.getVisible(), true, "By default the planning calendar is " +
+					"created with multiple predefined views so the internal select control should be visible");
+
+			// Act
+			// Note: adding a view removes all the predefined views leaving us with only one view for the control
+			this.oPC.addView(
+				new sap.m.PlanningCalendarView({
+					key: "test",
+					intervalType: sap.ui.unified.CalendarIntervalType.Day,
+					description: "test",
+					intervalsS: 7,
+					intervalsM: 7,
+					intervalsL: 7
+				})
+			);
+			// Note: updating to the current view key because adding a new view removes all the previous views and
+			// the old key is not valid any more
+			this.oPC.setViewKey("test");
+
+			// Calling here the onBeforeRendering method to force the update without rendering the control
+			this.oPC.onBeforeRendering();
+
+			// Assert
+			assert.strictEqual(this.oPC._oIntervalTypeSelect.getVisible(), false, "When having only one view the view " +
+					"select should not be visible");
+		});
+
 	</script>
 
 </head>

@@ -1771,6 +1771,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
+		// Toggle interval select visibility if only one items is available there should be no select visible
+		this._oIntervalTypeSelect.setVisible(!(aViews.length === 1));
+
 	}
 
 	function _getIntervals(oView) {
