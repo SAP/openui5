@@ -34,8 +34,10 @@
 			new SampleTester(
 				'sap.ui.core',
 				[
+					'sap.ui.core.sample.ViewTemplate.scenario', // fails due to annotations
+					'sap.ui.core.sample.ViewTemplate.scenario.extension', // fails due to annotations
 					'sap.ui.core.sample.ViewTemplate.tiny', // fails due to the need for a proxy
-					'sap.ui.core.sample.View.async' // failes due to delayed rendering cycle
+					'sap.ui.core.sample.View.async' // fails due to delayed rendering cycle
 				]
 			).placeAt('content');
 		});
