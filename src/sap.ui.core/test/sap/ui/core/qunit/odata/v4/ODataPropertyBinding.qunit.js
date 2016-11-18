@@ -223,15 +223,15 @@ sap.ui.require([
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
 			oError = new Error("Unsupported ..."),
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oModelMock = this.mock(this.oModel),
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
-		oHelperMock.expects("buildQueryOptions")
+		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters))
 			.returns(mQueryOptions);
-		this.oSandbox.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
 				sinon.match.same(mQueryOptions), true);
 
@@ -241,7 +241,7 @@ sap.ui.require([
 			"do not propagate unchecked query options");
 
 		//error for invalid parameters
-		oHelperMock.expects("buildQueryOptions").throws(oError);
+		oModelMock.expects("buildQueryOptions").throws(oError);
 
 		assert.throws(function () {
 			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
@@ -798,7 +798,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", undefined,
 				{$$groupId : "$direct"});
 
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("foo");
+		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("foo");
 		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
 		this.mock(_Cache).expects("createSingle").withExactArgs(
 				sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
@@ -924,14 +924,13 @@ sap.ui.require([
 		QUnit.test("$$groupId, $$updateGroupId - sPath: " + sPath, function (assert) {
 			var oBinding,
 				oContext = this.oModel.createBindingContext("/absolute"),
-				oHelperMock = this.oSandbox.mock(_ODataHelper),
-				oModelMock = this.oSandbox.mock(this.oModel),
+				oModelMock = this.mock(this.oModel),
 				mParameters = {};
 
 			oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 			oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-			oHelperMock.expects("buildBindingParameters")
+			oModelMock.expects("buildBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 			// code under test
@@ -939,7 +938,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getGroupId(), "foo");
 			assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-			oHelperMock.expects("buildBindingParameters")
+			oModelMock.expects("buildBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({$$groupId : "foo"});
 			// code under test
@@ -947,7 +946,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getGroupId(), "foo");
 			assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-			oHelperMock.expects("buildBindingParameters")
+			oModelMock.expects("buildBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({});
 			// code under test
@@ -1198,12 +1197,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
 			oModel = new ODataModel({
 				groupId : "$direct",
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			}),
+			oModelMock = this.mock(oModel),
 			oControl = new TestControl({
 				models : oModel,
 				objectBindings : "/SalesOrderList('0500000000')"
@@ -1216,14 +1215,14 @@ sap.ui.require([
 		oControl.applySettings({
 			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
 		});
-		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
+		oModelMock.expects("checkGroupId").withExactArgs(undefined);
 		oContextMock.expects("updateValue").withExactArgs(undefined, "Note", "foo")
 			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
 
-		oHelperMock.expects("checkGroupId").withExactArgs("up");
+		oModelMock.expects("checkGroupId").withExactArgs("up");
 		oContextMock.expects("updateValue").withExactArgs("up", "Note", "bar")
 			.returns(Promise.resolve());
 

@@ -125,14 +125,14 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
 					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
 				if (!this.bRelative || bDeferred || mParameters
 					|| oContext && !oContext.getBinding) {
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+					oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
@@ -507,7 +507,7 @@ sap.ui.define([
 			return oPromise;
 		}
 
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -774,7 +774,7 @@ sap.ui.define([
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot refresh due to pending changes");
 		}
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 
 		this.refreshInternal(sGroupId);
 	};

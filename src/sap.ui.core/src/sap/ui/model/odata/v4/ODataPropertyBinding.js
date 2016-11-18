@@ -77,11 +77,11 @@ sap.ui.define([
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 					["$$groupId", "$$updateGroupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-				this.mQueryOptions = _ODataHelper.buildQueryOptions(this.oModel.mUriParameters,
+				this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
 				this.makeCache(oContext);
 				this.oContext = oContext;
@@ -439,7 +439,7 @@ sap.ui.define([
 			throw new Error("Refresh on this binding is not supported");
 		}
 
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 
 		this.makeCache(this.oContext);
 		this.refreshInternal(sGroupId);
@@ -549,7 +549,7 @@ sap.ui.define([
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
 			if (this.oCache) {
