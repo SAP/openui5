@@ -7,9 +7,8 @@ sap.ui.define([
 	"./lib/_Helper",
 	"./lib/_Parser",
 	"./lib/_SyncPromise",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/Sorter"
-], function (_Cache, _Helper, _Parser, _SyncPromise, OperationMode, Sorter) {
+	"sap/ui/model/odata/OperationMode"
+], function (_Cache, _Helper, _Parser, _SyncPromise, OperationMode) {
 	"use strict";
 
 	var ODataHelper,
@@ -36,30 +35,6 @@ sap.ui.define([
 		}
 		if (!bApplicationGroup) {
 			return sGroupId === undefined || sGroupId === "$auto" || sGroupId === "$direct";
-		}
-		return false;
-	}
-
-	/**
-	 * Checks whether the given data array contains at least one <code>undefined</code> entry
-	 * within given start (inclusive) and given end (exclusive).
-	 *
-	 * @param {object[]} aData
-	 *   The data array
-	 * @param {number} iStart
-	 *   The start index (inclusive) for the search
-	 * @param {number} iEnd
-	 *   The end index (exclusive) for the search
-	 * @returns {boolean}
-	 *   true if given data array contains at least one <code>undefined</code> entry
-	 *   within given start (inclusive) and given end (exclusive).
-	 */
-	function isDataMissing(aData, iStart, iEnd) {
-		var i;
-		for (i = iStart; i < iEnd; i += 1) {
-			if (aData[i] === undefined) {
-				return true;
-			}
 		}
 		return false;
 	}
@@ -114,38 +89,6 @@ sap.ui.define([
 				});
 			}
 			return mResult;
-		},
-
-		/**
-		 * Build the value for the OData V4 '$orderby' system query option from the given sorters
-		 * and the optional static '$orderby' value which is appended to the sorters.
-		 *
-		 * @param {sap.ui.model.Sorter[]} [aSorters]
-		 *   An array of <code>Sorter</code> objects to be converted into corresponding '$orderby'
-		 *   string.
-		 * @param {string} [sOrderbyQueryOption]
-		 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
-		 *   parameter.
-		 * @returns {string}
-		 *   The concatenated '$orderby' system query option
-		 * @throws {Error}
-		 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
-		 */
-		buildOrderbyOption : function (aSorters, sOrderbyQueryOption) {
-			var aOrderbyOptions = [];
-
-			aSorters.forEach(function (oSorter) {
-				if (oSorter instanceof Sorter) {
-					aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
-				} else {
-					throw new Error("Unsupported sorter: '" + oSorter + "' ("
-						+ typeof oSorter + ")");
-				}
-			});
-			if (sOrderbyQueryOption) {
-				aOrderbyOptions.push(sOrderbyQueryOption);
-			}
-			return aOrderbyOptions.join(',');
 		},
 
 		/**
@@ -422,40 +365,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Calculates the index range to be read for the given start, length and threshold.
-		 * Checks if <code>aContexts</code> entries are available for the given index range plus
-		 * half the threshold left and right to it.
-		 *
-		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
-		 *   The contexts to be checked for the requested data
-		 * @param {number} iStart
-		 *   The start index for the data request in model coordinates (starting with 0 or -1)
-		 * @param {number} iLength
-		 *   The number of requested entries
-		 * @param {number} iMaximumPrefetchSize
-		 *   The number of entries to prefetch before and after the given range
-		 * @returns {object}
-		 *   Returns an object with a member <code>start</code> for the start index for the next
-		 *   read and <code>length</code> for the number of entries to be read. The output is in
-		 *   model coordinates (starting with 0 or -1).
-		 */
-		getReadRange : function (aContexts, iStart, iLength, iMaximumPrefetchSize) {
-			if (isDataMissing(aContexts, iStart + iLength,
-					iStart + iLength + iMaximumPrefetchSize / 2)) {
-				iLength += iMaximumPrefetchSize;
-			}
-			if (isDataMissing(aContexts, Math.max(iStart - iMaximumPrefetchSize / 2, 0), iStart)) {
-				iLength += iMaximumPrefetchSize;
-				iStart -= iMaximumPrefetchSize;
-				if (iStart < 0) {
-					iLength += iStart;
-					iStart = 0;
-				}
-			}
-			return {length : iLength, start : iStart};
-		},
-
-		/**
 		 * Checks whether there are pending changes. The function is called in three different
 		 * situations:
 		 * 1. From the binding itself using hasPendingChanges(true): Check the cache or the context,
@@ -518,36 +427,6 @@ sap.ui.define([
 		 */
 		isRefreshable : function (oBinding) {
 			return (!oBinding.bRelative || oBinding.oContext && !oBinding.oContext.getBinding);
-		},
-
-		/**
-		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
-		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
-		 *
-		 * @param {object} [mQueryOptions]
-		 *   The map of query options
-		 * @param {string} [sOrderby]
-		 *   The new value for the query option "$orderby"
-		 * @param {string} [sFilter]
-		 *   The new value for the query option "$filter"
-		 * @returns {object}
-		 *   The merged map of query options
-		 */
-		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
-			var mResult;
-
-			function set(sProperty, sValue) {
-				if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
-					if (!mResult) {
-						mResult = mQueryOptions ? JSON.parse(JSON.stringify(mQueryOptions)) : {};
-					}
-					mResult[sProperty] = sValue;
-				}
-			}
-
-			set("$orderby", sOrderby);
-			set("$filter", sFilter);
-			return mResult || mQueryOptions;
 		},
 
 		/**

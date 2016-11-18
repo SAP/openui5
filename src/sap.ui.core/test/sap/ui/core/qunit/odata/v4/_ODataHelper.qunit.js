@@ -561,42 +561,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildOrderbyOption", function (assert) {
-		var sOrderby = "bar desc";
-
-		// empty sorters
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([]), "");
-		// array of sorters
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")]), "foo",
-			"Sorter array, no query option");
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
-			new Sorter("bar", true)]), "foo,bar desc");
-
-		// with system query option $orderby
-		// empty sorters
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([], sOrderby), sOrderby);
-		// array of sorters
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")], sOrderby),
-			"foo," + sOrderby, "Sorter array, with query option");
-		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
-			new Sorter("baz", true)], sOrderby), "foo,baz desc," + sOrderby);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildOrderbyOption - error", function (assert) {
-		// non Sorter instances throw error
-		assert.throws(function () {
-			_ODataHelper.buildOrderbyOption(["foo"]);
-		}, new Error("Unsupported sorter: 'foo' (string)"));
-		assert.throws(function () {
-			_ODataHelper.buildOrderbyOption([new Sorter("foo"), "", new Sorter("bar", true)]);
-		}, new Error("Unsupported sorter: '' (string)"));
-		assert.throws(function () {
-			_ODataHelper.buildOrderbyOption([new Sorter("foo"), 42, new Sorter("bar", true)]);
-		}, new Error("Unsupported sorter: '42' (number)"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("toArray", function (assert) {
 		var oSorter = new Sorter("foo", true),
 			aSorters = [oSorter];
@@ -607,68 +571,6 @@ sap.ui.require([
 		assert.deepEqual(_ODataHelper.toArray("foo"), ["foo"]);
 		assert.deepEqual(_ODataHelper.toArray(oSorter), aSorters);
 		assert.strictEqual(_ODataHelper.toArray(aSorters), aSorters);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("mergeQueryOptions", function (assert) {
-		[{
-			mQueryOptions: undefined,
-			sOrderBy : undefined,
-			sFilter : undefined
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : undefined
-		}, {
-			mQueryOptions: undefined,
-			sOrderBy : "foo",
-			sFilter : undefined,
-			oResult : {$orderby : "foo"}
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : "foo,bar",
-			sFilter : undefined,
-			oResult : {$orderby : "foo,bar", $select : "Name"}
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : "bar",
-			sFilter : undefined
-		}, {
-			mQueryOptions: undefined,
-			sOrderBy : undefined,
-			sFilter : "foo",
-			oResult : {$filter : "foo"}
-		}, {
-			mQueryOptions: {$filter : "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : "foo,bar",
-			oResult : {$filter : "foo,bar", $select : "Name"}
-		}, {
-			mQueryOptions: {$filter: "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : "bar"
-		}, {
-			mQueryOptions: {$filter: "bar", $orderby : "foo", $select : "Name"},
-			sOrderBy : "foo",
-			sFilter : "bar"
-		}, {
-			mQueryOptions: {$filter: "foo", $orderby : "bar", $select : "Name"},
-			sOrderBy : "foo,bar",
-			sFilter : "bar,baz",
-			oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
-		}].forEach(function (oFixture, i) {
-			var oResult = _ODataHelper.mergeQueryOptions(oFixture.mQueryOptions,
-					oFixture.sOrderBy, oFixture.sFilter);
-			if ("oResult" in oFixture) {
-				assert.deepEqual(oResult, oFixture.oResult, i);
-			} else {
-				assert.strictEqual(oResult, oFixture.mQueryOptions, i);
-			}
-			if (oResult) {
-				assert.ok(oResult.$orderby || !("$orderby" in oResult), i + ": $orderby");
-				assert.ok(oResult.$filter || !("$filter" in oResult), i + ": $filter");
-			}
-		});
 	});
 
 	//*********************************************************************************************
@@ -804,77 +706,6 @@ sap.ui.require([
 		});
 	});
 	//TODO handle encoding in getQueryOptions
-
-	//*********************************************************************************************
-	[{ // no threshold
-		range : [0, 10, 0],
-		expected : {start : 0, length : 10}
-	}, {
-		range : [40, 10, 0],
-		expected : {start : 40, length : 10}
-	}, {
-		current : [[40, 50]],
-		range : [40, 10, 0],
-		expected : {start : 40, length : 10}
-	}, {
-		current : [[50, 110]],
-		range : [100, 20, 0],
-		expected : {start : 100, length : 20}
-	}, { // initial read with threshold
-		range : [0, 10, 100],
-		expected : {start : 0, length : 110}
-	}, { // iPrefetchSize / 2 available on both sides
-		current : [[0, 110]],
-		range : [50, 10, 100],
-		expected : {start : 50, length : 10}
-	}, { // missing a row at the end
-		current : [[0, 110]],
-		range : [51, 10, 100],
-		expected : {start : 51, length : 110}
-	}, { // missing a row before the start
-		current : [[100, 260]],
-		range : [149, 10, 100],
-		expected : {start : 49, length : 110}
-	}, { // missing a row before the start, do not read beyond 0
-		current : [[40, 200]],
-		range : [89, 10, 100],
-		expected : {start : 0, length : 99}
-	}, { // missing data on both sides, do not read beyond 0
-		range : [430, 10, 100],
-		expected : {start : 330, length : 210}
-	}, { // missing data on both sides, do not read beyond 0
-		current : [[40, 100]],
-		range : [89, 10, 100],
-		expected : {start : 0, length : 199}
-	}, { // transient context
-		range : [-1, 10, 1],
-		bTransient : true,
-		expected : {start : -1, length : 11}
-	}].forEach(function (oFixture) {
-		QUnit.test("getReadRange: " + oFixture.range, function (assert) {
-			var aContexts = [],
-				oResult;
-
-			// prepare contexts array
-			if (oFixture.current) {
-				oFixture.current.forEach(function (aRange) {
-					var i, n;
-
-					for (i = aRange[0], n = aRange[1]; i < n; i++) {
-						aContexts[i] = i;
-					}
-				});
-			}
-			if (oFixture.bTransient) {
-				aContexts[-1] = -1;
-			}
-
-			oResult = _ODataHelper.getReadRange(aContexts, oFixture.range[0], oFixture.range[1],
-				oFixture.range[2]);
-
-			assert.deepEqual(oResult, oFixture.expected);
-		});
-	});
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): with cache", function (assert) {
