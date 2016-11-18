@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler' ],
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
 	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer, Device, ResizeHandler) {
 	"use strict";
 
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 * Changes the visualization in order to enable additional actions inside the Generic Tile.
 				 * @experimental since 1.46.0
 				 */
-				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Default }
+				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
 			},
 			aggregations : {
 				/**
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 						/**
 						 * The action that was pressed on the tile.
-						 * Available actions are: Default, Remove, More
+						 * Available actions are: Press and Remove
 						 * @experimental since 1.46.0
 						 */
 						"action": { type: "string" }
@@ -126,6 +126,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			}
 		}
 	});
+
+	GenericTile._Action = {
+			Press : "Press",
+			Remove : "Remove"
+	};
 
 	/* --- Lifecycle Handling --- */
 
@@ -159,6 +164,58 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy.setBusyIndicatorDelay(0);
 	};
 
+	/**
+	 * Creates the content specific for the given scope in order for it to be rendered, if it does not exist already.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._initScopeContent = function() {
+		switch (this.getScope()) {
+			case library.GenericTileScope.Actions:
+				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
+					id: this.getId() + "-action-more",
+					src: "sap-icon://overflow"
+				}).addStyleClass("sapMGTMoreIcon");
+
+				this._oRemoveIcon = this._oRemoveIcon || IconPool.createControlByURI({
+					id: this.getId() + "-action-remove",
+					src: "sap-icon://decline",
+					size: "0.75rem"
+				}).addStyleClass("sapMGTRemoveIcon");
+				break;
+		}
+	};
+
+	GenericTile.prototype.exit = function() {
+		if (this._sParentResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sParentResizeListenerId = null;
+		}
+
+		sap.ui.getCore().detachIntervalTimer(this._checkContentDensity, this);
+
+		if (this._$RootNode) {
+			this._$RootNode.off(this._getAnimationEvents());
+			this._$RootNode = null;
+		}
+
+		//stop any currently running queue
+		this._clearAnimationUpdateQueue();
+
+		this._oWarningIcon.destroy();
+		if (this._oImage) {
+			this._oImage.destroy();
+		}
+		this._oBusy.destroy();
+
+		if (this._oMoreIcon) {
+			this._oMoreIcon.destroy();
+		}
+		if (this._oRemoveIcon) {
+			this._oRemoveIcon.destroy();
+		}
+	};
+
 	GenericTile.prototype.onBeforeRendering = function() {
 		var bSubheader = !!this.getSubheader();
 		if (this.getMode() === library.GenericTileMode.HeaderMode) {
@@ -170,6 +227,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		for (var i = 0; i < iTiles; i++) {
 			this.getTileContent()[i].setDisabled(this.getState() === library.LoadState.Disabled);
 		}
+
+		this._initScopeContent();
 
 		this._generateFailedText();
 
@@ -445,9 +504,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		this._cHoverStyleUpdates++;
-
-		var sCallId = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [ this._cHoverStyleUpdates ]);
-		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = sCallId;
+		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [ this._cHoverStyleUpdates ]);
 	};
 
 	/**
@@ -545,29 +602,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	GenericTile.prototype.exit = function() {
-		if (this._sParentResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sParentResizeListenerId = null;
-		}
-
-		sap.ui.getCore().detachIntervalTimer(this._checkContentDensity, this);
-
-		if (this._$RootNode) {
-			this._$RootNode.off(this._getAnimationEvents());
-			this._$RootNode = null;
-		}
-
-		//stop any currently running queue
-		this._clearAnimationUpdateQueue();
-
-		this._oWarningIcon.destroy();
-		if (this._oImage) {
-			this._oImage.destroy();
-		}
-		this._oBusy.destroy();
-	};
-
 	/* --- Event Handling --- */
 	/**
 	 * Handler for touchstart event
@@ -614,14 +648,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	GenericTile.prototype.ontap = function(oEvent) {
+		var oParams;
 		if (this.getState() !== library.LoadState.Disabled) {
 			if (Device.browser.internet_explorer) {
 				this.$().focus();
 			}
-			this.firePress({
-				scope: this.getScope(),
-				action: "Default"
-			});
+			oParams = this._getEventParams(oEvent);
+			this.firePress(oParams);
 			oEvent.preventDefault();
 		}
 	};
@@ -646,14 +679,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	GenericTile.prototype.onkeyup = function(oEvent) {
+		var oParams;
 		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}
-			this.firePress({
-				scope: this.getScope(),
-				action: "Default"
-			});
+			oParams = this._getEventParams(oEvent);
+			this.firePress(oParams);
 			oEvent.preventDefault();
 		}
 	};
@@ -1097,6 +1129,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		sContentDensity = fnGetContentDensity("hasClass", $DomRef.closest("." + aContentDensityStyleClasses.join(",.")));
 
 		return sContentDensity;
+	};
+
+	/**
+	 * Returns event parameters.
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @returns {object} oParams Event parameters
+	 * @private
+	 */
+	GenericTile.prototype._getEventParams = function(oEvent) {
+		var oParams,
+			sAction = GenericTile._Action.Press,
+			sScope = this.getScope();
+
+		if (sScope === library.GenericTileScope.Actions) {
+			if (oEvent.target.id.indexOf("generic-tile") > -1 || oEvent.target.id.indexOf("-action-more") > -1) {//tap on icon more or on the tile in Actions scope
+				sAction = GenericTile._Action.Press;
+			} else if (oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
+				sAction = GenericTile._Action.Remove;
+			}
+		}
+		oParams = {
+				scope : sScope,
+				action : sAction
+		};
+		return oParams;
 	};
 
 	return GenericTile;

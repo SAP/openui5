@@ -34,18 +34,21 @@
 				subheader: "Subheader",
 				tooltip: "",
 				state: "Loaded",
-				hasPress: true
+				hasPress: true,
+				scope: "Default"
 			};
 		}
 
 		function handlePress(oEvent) {
-			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed.");
+			sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
 		}
 
 		var oModel = new sap.ui.model.json.JSONModel({
 			items: [
 				makeTileData()
-			]
+			],
+			states: Object.keys(sap.m.LoadState),
+			scopes: Object.keys(sap.m.GenericTileScope)
 		});
 
 		var fnCreateTile = function() {
@@ -54,7 +57,8 @@
 				header: "{header}",
 				subheader: "{subheader}",
 				tooltip: "{tooltip}",
-				state: "{state}"
+				state: "{state}",
+				scope: "{scope}"
 			});
 			oTile.addCustomData(new sap.ui.core.CustomData({
 				key: "hasPress",
@@ -75,18 +79,6 @@
 		};
 
 		var fnCreateTileConfig = function(id, context) {
-			var oModeSelect = new sap.m.Select({
-				selectedKey: "{state}"
-			});
-			for (var k in sap.m.LoadState) {
-				if (sap.m.LoadState.hasOwnProperty(k)) {
-					oModeSelect.addItem(new sap.ui.core.Item({
-						key: sap.m.LoadState[k],
-						text: k
-					}));
-				}
-			}
-
 			return new sap.m.Panel(id, {
 				backgroundDesign: "Solid",
 				headerToolbar: new sap.m.OverflowToolbar({
@@ -145,7 +137,27 @@
 								placeholder: "Enter a tooltip..."
 							}),
 							new sap.m.Label({ text: "State" }),
-							oModeSelect,
+							new sap.m.Select({
+								items: {
+									path: "/states",
+									template: new sap.ui.core.Item({
+										key: "{}",
+										text: "{}"
+									})
+								},
+								selectedKey: "{state}"
+							}),
+							new sap.m.Label({ text: "Scope" }),
+							new sap.m.Select({
+								items: {
+									path: "/scopes",
+									template: new sap.ui.core.Item({
+										key: "{}",
+										text: "{}"
+									})
+								},
+								selectedKey: "{scope}"
+							}),
 							new sap.m.Label({ text: "Press Event" }),
 							new sap.m.Switch({
 								state: "{hasPress}"
