@@ -139,19 +139,8 @@ sap.ui.define([
 					title : "Success"
 				});
 			}, function (oError) {
-				// TODO:
-				// As for now create cancelation AND backend errors both result in
-				// a rejected created Promise; differentiation is possible with the canceled flag.
-				// Later on only cancelation is rejected, backend errors will be passed to the
-				// message manager and the POST request will be sent again after new user input
-				if (oError.canceled) {
-					oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
-					return; // delete of transient entity
-				}
-				MessageBox.alert(oError.message, {
-					icon : MessageBox.Icon.ERROR,
-					title : "Unexpected Error"
-				});
+				// delete of transient entity
+				oView.getModel("ui").setProperty("/bCreateSalesOrderPending", false);
 			});
 		},
 

@@ -1,0 +1,29 @@
+{
+	"@odata.context" : "../$metadata#EMPLOYEES",
+	"value" : [{
+		"@odata.etag" : "W/\"20101201000000.0000000\"",
+		"ID" : "6",
+		"Name" : "Susan Bay",
+		"AGE" : 29,
+		"ENTRYDATE" : "2010-12-01",
+		"MANAGER_ID" : "1",
+		"ROOM_ID" : "2",
+		"TEAM_ID" : "TEAM_03",
+		"Is_Manager" : false,
+		"LAST_MODIFIED_AT" : "2010-12-01T00:00:00Z",
+		"LOCATION" : {
+			"COUNTRY" : "Germany",
+			"City" : {
+				"POSTALCODE" : "69190",
+				"CITYNAME" : "Walldorf"
+			}
+		},
+		"SALARY" : {
+			"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
+			"BASIC_SALARY_CURR" : "GBP",
+			"YEARLY_BONUS_AMOUNT" : "15000.00",
+			"BONUS_CURR" : "USD"
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : []
+	} ]
+}

@@ -69,14 +69,32 @@ sap.ui.define([
 					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS;$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
 						source : "TEAMS.json"
 					},
-					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
-						source : "Team1.json"
+					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
+						source : "Team01_skip0_top1.json"
 					},
-					"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
-						source : "Team2.json"
+					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=1&$top=1" : {
+						source : "Team01_skip1_top1.json"
 					},
-					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
-						source : "Team3.json"
+					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
+						source : "Team_no_more_data.json"
+					},
+					"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
+						source : "Team02_skip0_top1.json"
+					},
+					"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=1&$top=1" : {
+						source : "Team02_skip1_top1.json"
+					},
+					"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
+						source : "Team_no_more_data.json"
+					},
+					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
+						source : "Team03_skip0_top1.json"
+					},
+					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=1&$top=1" : {
+						source : "Team03_skip1_top1.json"
+					},
+					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
+						source : "Team_no_more_data.json"
 					}
 				}, "sap/ui/core/sample/odata/v4/ListBinding/data",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");

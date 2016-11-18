@@ -43,9 +43,10 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $expand, $filter, $orderby and $select "5.1 System Query Options"; OData
-	 *   V4 only allows $apply, $filter and $orderby inside resource paths that identify a
-	 *   collection. In our case here, this means you can only use them inside $expand.
+	 *  <li> The $apply, $expand, $filter, $orderby, $search and $select
+	 *   "5.1 System Query Options"; OData V4 only allows $apply, $filter, $orderby, $search and
+	 *   $select inside resource paths that identify a collection.
+	 *   In our case here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -125,7 +126,7 @@ sap.ui.define([
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-					mParameters, _ODataHelper.aAllowedSystemQueryOptions);
+					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
@@ -139,7 +140,8 @@ sap.ui.define([
 						this.oOperation = {
 							bAction : undefined,
 							oMetadataPromise : undefined,
-							mParameters : {}
+							mParameters : {},
+							sResourcePath : undefined
 						};
 						if (iPos !== sPath.length - 5) {
 							throw new Error(
@@ -460,7 +462,6 @@ sap.ui.define([
 				iIndex,
 				aOperationParameters,
 				aParameters,
-				sPath = (sPathPrefix + that.sPath).slice(1),
 				oPromise;
 
 			sGroupId = sGroupId || that.getGroupId();
@@ -468,8 +469,8 @@ sap.ui.define([
 			if (that.oOperation.bAction) {
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
-					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
-						that.mQueryOptions, false, true);
+					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, false, true);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
@@ -498,8 +499,9 @@ sap.ui.define([
 						}
 					});
 				}
+				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
 				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-					sPath.replace("...", aParameters.join(',')), that.mQueryOptions);
+					(sPathPrefix + that.oOperation.sResourcePath).slice(1), that.mQueryOptions);
 				oPromise = that.oCache.read(sGroupId);
 			}
 			return oPromise;
@@ -699,6 +701,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a cache for the binding using the given context.
+	 *
+	 * The context is given as a parameter and this.oContext is unused because setContext calls
+	 * this method before calling the superclass to ensure that the cache is already created when
+	 * the events are fired.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, may be omitted for absolute bindings
+	 * @returns {object}
+	 *   The created cache, cache proxy or undefined if none is required (allows for easier testing)
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.makeCache = function (oContext) {
+		var vCanonicalPath, mQueryOptions, that = this;
+
+		function createCache(sPath) {
+			var sBindingPath = (that.oOperation && that.oOperation.sResourcePath) || that.sPath;
+
+			return _Cache.createSingle(that.oModel.oRequestor,
+				_Helper.buildPath(sPath, sBindingPath).slice(1), mQueryOptions);
+		}
+
+		if (!this.bRelative) {
+			oContext = undefined; // must be ignored for absolute bindings
+		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
+			return undefined; // no need for an own cache
+		}
+		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
+			? oContext.fetchCanonicalPath() : oContext.getPath());
+		return _ODataHelper.createCache(this, createCache, vCanonicalPath);
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for bindings which are not relative to a
@@ -763,12 +800,8 @@ sap.ui.define([
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
-				if (this.bRelative && this.oContext.getBinding) {
-					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
-					this.mCacheByContext = undefined;
-				} else {
-					this.oCache.refresh();
-				}
+				this.oCache = this.makeCache(this.oContext);
+				this.mCacheByContext = undefined;
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
 		}
@@ -832,7 +865,7 @@ sap.ui.define([
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
-						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
+						this.oCache = this.makeCache(oContext);
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"

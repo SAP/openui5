@@ -352,6 +352,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 */
 		addV4Annotation : function (o, oExtension, sTypeClass) {
 			switch (oExtension.name) {
+				case "aggregation-role":
+					if (oExtension.value === "dimension") {
+						o["com.sap.vocabularies.Analytics.v1.Dimension"] = oBoolTrue;
+					} else if (oExtension.value === "measure") {
+						o["com.sap.vocabularies.Analytics.v1.Measure"] = oBoolTrue;
+					}
+					break;
 				case "display-format":
 					if (oExtension.value === "NonNegative") {
 						o["com.sap.vocabularies.Common.v1.IsDigitSequence"] = oBoolTrue;
