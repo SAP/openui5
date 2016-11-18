@@ -321,6 +321,25 @@ QUnit.test("File upload button is visible", function(assert) {
 	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 });
 
+QUnit.test("Focus handling after change event", function(assert) {
+	//Arrange
+	var oFileUploader = this.oUploadCollection._getFileUploader();
+	oFileUploader.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	var oButtonFU = this.oUploadCollection._oHeaderToolbar.getContent()[2].$().find("button");
+	var oStubFUFocus = sinon.stub(jQuery.sap, "focus");
+	sap.ui.getCore().applyChanges();
+
+	//Act
+	//Assert
+	assert.ok(oStubFUFocus.withArgs(oButtonFU), "Set focus on FileUploader called");
+
+	//Restore
+	oStubFUFocus.restore();
+});
+
 QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
 
 	beforeEach : function() {
