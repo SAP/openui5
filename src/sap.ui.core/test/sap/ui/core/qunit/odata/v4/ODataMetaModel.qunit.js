@@ -9,7 +9,6 @@ sap.ui.require([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -19,8 +18,8 @@ sap.ui.require([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, _ODataHelper, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel,
-		ODataModel, PropertyBinding, TestUtils) {
+		MetaModel, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel, ODataModel,
+		PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

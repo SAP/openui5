@@ -8,7 +8,6 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -18,8 +17,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString,
-		_ODataHelper, Context, _Cache, _Helper, _SyncPromise, asODataBinding, ODataModel,
-		ODataPropertyBinding, TestUtils) {
+		Context, _Cache, _Helper, _SyncPromise, asODataBinding, ODataModel, ODataPropertyBinding,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

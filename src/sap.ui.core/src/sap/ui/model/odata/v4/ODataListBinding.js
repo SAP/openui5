@@ -12,14 +12,13 @@ sap.ui.define([
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
-	"./_ODataHelper",
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_SyncPromise",
 	"./ODataParentBinding"
 ], function (jQuery, Binding, ChangeReason, FilterOperator, FilterType, ListBinding, Sorter,
-		OperationMode, _ODataHelper, Context, _Cache, _Helper, _SyncPromise, asODataParentBinding) {
+		OperationMode, Context, _Cache, _Helper, _SyncPromise, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -1253,13 +1252,12 @@ sap.ui.define([
 		} else {
 			oContext = undefined; // must be ignored for absolute bindings
 		}
-		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		mQueryOptions = this.getQueryOptions("", oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
 		oFilterPromise = this.fetchFilter(oContext, this.aApplicationFilters, this.aFilters,
 			mQueryOptions && mQueryOptions.$filter);
-		return _ODataHelper.createCache(this, createCache, vCanonicalPath,
-			oFilterPromise);
+		return this.createCache(createCache, vCanonicalPath, oFilterPromise);
 	};
 
 	/**

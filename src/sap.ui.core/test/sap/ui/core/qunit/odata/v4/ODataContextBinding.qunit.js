@@ -7,7 +7,6 @@ sap.ui.require([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -16,9 +15,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, _ODataHelper, Context,
-		_Cache, _Helper, _SyncPromise, ODataContextBinding, ODataModel, asODataParentBinding,
-		TestUtils) {
+], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper,
+		_SyncPromise, ODataContextBinding, ODataModel, asODataParentBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -571,7 +569,7 @@ sap.ui.require([
 
 			oContextMock.expects("fetchCanonicalPath")
 				.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-			this.mock(_ODataHelper).expects("createCache").returns(oCache);
+			this.mock(oBinding).expects("createCache").returns(oCache);
 			oBinding.setContext(oContext);
 
 			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
@@ -602,7 +600,7 @@ sap.ui.require([
 
 				this.mock(oContext).expects("fetchCanonicalPath")
 					.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-				this.mock(_ODataHelper).expects("createCache").returns(oCache);
+				this.mock(oBinding).expects("createCache").returns(oCache);
 				oBinding.setContext(oContext);
 
 				this.mock(oCache).expects("read").withArgs("myGroup", oFixture.rel)
@@ -1584,8 +1582,8 @@ sap.ui.require([
 			oContext = {},
 			mQueryOptions = {};
 
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), "", undefined)
+		this.mock(oBinding).expects("getQueryOptions")
+			.withExactArgs("", undefined)
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(undefined, oBinding.sPath)
 			.returns(oBinding.sPath);
@@ -1604,7 +1602,7 @@ sap.ui.require([
 	QUnit.test("makeCache: relative, unresolved", function (assert) {
 		var oBinding = this.oModel.bindContext("SO_2_BP");
 
-		this.mock(_ODataHelper).expects("getQueryOptions").never();
+		this.mock(oBinding).expects("getQueryOptions").never();
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(_Cache).expects("createSingle").never();
 
@@ -1619,7 +1617,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("SO_2_BP"),
 			oContext = Context.create(this.oModel, {}, "/SalesOrderList('1')");
 
-		this.mock(_ODataHelper).expects("getQueryOptions").never();
+		this.mock(oBinding).expects("getQueryOptions").never();
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(_Cache).expects("createSingle").never();
 
@@ -1642,8 +1640,8 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+		this.mock(oBinding).expects("getQueryOptions")
+			.withExactArgs("", sinon.match.same(oContext))
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
 			.returns("/" + sCachePath);
@@ -1671,8 +1669,8 @@ sap.ui.require([
 			oCache = {},
 			mQueryOptions = {};
 
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+		this.mock(oBinding).expects("getQueryOptions")
+			.withExactArgs("", sinon.match.same(oContext))
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
 			.returns("/" + sCachePath);

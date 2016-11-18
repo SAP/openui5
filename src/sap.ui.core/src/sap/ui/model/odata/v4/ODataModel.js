@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
-	"./_ODataHelper",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
 	"./lib/_Parser",
@@ -28,7 +27,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
+], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI,
 		_MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataPropertyBinding) {
 
@@ -832,7 +831,7 @@ sap.ui.define([
 		this.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (_ODataHelper.isRefreshable(oBinding)) {
+			if (oBinding.isRefreshable()) {
 				oBinding.refresh(sGroupId);
 			}
 		});

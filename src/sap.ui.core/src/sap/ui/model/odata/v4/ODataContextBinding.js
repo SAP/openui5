@@ -8,14 +8,13 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./_ODataHelper",
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_SyncPromise",
 	"./ODataParentBinding"
-], function (jQuery, Binding, ChangeReason, ContextBinding, _ODataHelper, Context, _Cache, _Helper,
-		_SyncPromise, asODataParentBinding) {
+], function (jQuery, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper, _SyncPromise,
+		asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -668,10 +667,10 @@ sap.ui.define([
 		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
 			return undefined; // no need for an own cache
 		}
-		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		mQueryOptions = this.getQueryOptions("", oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
-		return _ODataHelper.createCache(this, createCache, vCanonicalPath);
+		return this.createCache(createCache, vCanonicalPath);
 	};
 
 	/**
