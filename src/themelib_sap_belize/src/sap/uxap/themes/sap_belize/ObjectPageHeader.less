@@ -3,11 +3,17 @@
 /* Belize theme                               */
 /* ========================================== */
 
-.sapUxAPObjectPageHeader .sapMBar {
-	background-color: @sapUiObjectHeaderBackground;
-	text-shadow: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
+.sapUxAPObjectPageHeader {
+	.sapMBar {
+		background-color: @sapUiObjectHeaderBackground;
+		text-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.sapUxAPObjectPageHeaderLockBtn .sapMBtnTransparent:not(.sapMBtnActive) > .sapMBtnIcon {
+		color:  @sapUiContentMarkerIconColor;
+	}
 }
 
 .sapUxAPObjectPageHeaderIdentifier {
@@ -64,8 +70,7 @@ html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle {
 	font-size: @sapMFontHeader4Size;
 }
 
-.sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent > .sapMBtnIcon,
-.sapUxAPObjectPageHeaderLockBtn .sapMBtnTransparent > .sapMBtnIcon {
+.sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent > .sapMBtnIcon {
 	color:  fade(@sapUiContentIconColor, 5);
 }
 
