@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 	/**
 	 * Constructor for a new sap.ui.layout.form.GridLayout.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 	 *
 	 * <b>Note:</b> If content fields have a <code>width</code> property this will be ignored, as the width of the controls is set by the grid cells.
 	 *
-	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
+	 * This control cannot be used stand-alone, it just renders a <code>Form</code>, so it must be assigned to a <code>Form</code> using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE

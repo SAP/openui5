@@ -8,7 +8,20 @@
 	<VBox class="sapUiSmallMargin">
 		<f:SimpleForm id="SimpleFormToolbar"
 			editable="true"
-			layout="ResponsiveGridLayout" >
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="4"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false" >
 			<f:toolbar>
 				<Toolbar id="TB1">
 					<Title text="Address" level="H4" titleStyle="H4"/>
@@ -30,22 +43,22 @@
 				</Input>
 				<Input value="{HouseNumber}">
 					<layoutData>
-						<l:GridData span="L3 M4 S4" />
+						<l:GridData span="XL2 L1 M3 S4" />
 					</layoutData>
 				</Input>
 				<Label text="ZIP Code/City" />
 				<Input value="{ZIPCode}">
 					<layoutData>
-						<l:GridData span="L3 M4 S4" />
+						<l:GridData span="XL2 L1 M3 S4" />
 					</layoutData>
 				</Input>
 				<Input value="{City}" />
 				<Label text="Country" />
-				<Select width="100%">
+				<Select id="country" selectedKey="{Country}">
 					<items>
-						<core:Item text="Germany" />
-						<core:Item text="USA" />
-						<core:Item text="England" />
+						<core:Item text="England" key="England"/>
+						<core:Item text="Germany" key="Germany"/>
+						<core:Item text="USA" key="USA"/>
 					</items>
 				</Select>
 				<Toolbar>

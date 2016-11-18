@@ -8,13 +8,19 @@
 			editable="false"
 			layout="ResponsiveGridLayout"
 			title="Address"
+			labelSpanXL="4"
 			labelSpanL="4"
 			labelSpanM="12"
+			labelSpanS="12"
 			adjustLabelSpan="false"
+			emptySpanXL="0"
 			emptySpanL="0"
 			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
 			columnsL="2"
-			columnsM="2">
+			columnsM="1"
+			singleContainerFullSize="false" >
 			<f:content>
 				<core:Title text="Office" />
 				<Label text="Name" />
@@ -36,13 +42,18 @@
 			editable="false"
 			layout="ResponsiveGridLayout"
 			title="More"
+			labelSpanXL="4"
 			labelSpanL="4"
 			labelSpanM="12"
+			labelSpanS="12"
 			adjustLabelSpan="false"
+			emptySpanXL="0"
 			emptySpanL="0"
 			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
 			columnsL="2"
-			columnsM="2"
+			columnsM="1"
 			singleContainerFullSize="false">
 			<f:content>
 				<core:Title text="Contact data" />
