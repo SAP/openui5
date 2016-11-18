@@ -1,0 +1,34 @@
+{
+	"@odata.context" : "../$metadata#EMPLOYEES",
+	"value" : [ {
+		"@odata.etag" : "W/\"19770724000000.0000000\"",
+		"ID" : "3",
+		"Name" : "Jonathan Smith",
+		"AGE" : 56,
+		"ENTRYDATE" : "1977-07-24",
+		"MANAGER_ID" : "1",
+		"ROOM_ID" : "2",
+		"TEAM_ID" : "TEAM_01",
+		"Is_Manager" : true,
+		"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+		"LOCATION" : {
+			"COUNTRY" : "Germany",
+			"City" : {
+				"POSTALCODE" : "69190",
+				"CITYNAME" : "Walldorf"
+			}
+		},
+		"SALARY" : {
+			"MONTHLY_BASIC_SALARY_AMOUNT" : "5100.33",
+			"BASIC_SALARY_CURR" : "EUR",
+			"YEARLY_BONUS_AMOUNT" : "10000.00",
+			"BONUS_CURR" : "EUR"
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : [ {
+			"Category" : "Vehicle",
+			"ID" : 5,
+			"Name" : "VW Golf 2.0",
+			"EmployeeId" : "0003"
+		} ]
+	} ]
+}

@@ -66,7 +66,7 @@ sap.ui.require([
 		getCacheMock : function () {
 			var oCache = {
 					read : function () {},
-					refresh : function () {},
+					setActive : function () {},
 					update : function () {}
 				};
 
@@ -272,7 +272,10 @@ sap.ui.require([
 		QUnit.test("change context:" + oFixture.sInit + "->" + oFixture.sTarget, function (assert) {
 			var oBinding,
 				oModel = this.oModel,
-				oCache = {oRequestor : oModel.oRequestor},
+				oCache = {
+					oRequestor : oModel.oRequestor,
+					setActive : function () {}
+				},
 				oCacheMock = this.mock(_Cache),
 				oInitialContext = createContext(oFixture.sInit, "/EMPLOYEES(ID='1')"),
 				oTargetContext = createContext(oFixture.sTarget, "/EMPLOYEES(ID='2')");
@@ -295,8 +298,12 @@ sap.ui.require([
 			//Create Initial Binding
 			oBinding = oModel.bindProperty("Name", oInitialContext);
 
-			assert.strictEqual(oBinding.oCache, oFixture.sInit !== "base" ? undefined : oCache);
-
+			if (oFixture.sInit === "base") {
+				assert.strictEqual(oBinding.oCache, oCache);
+				this.mock(oCache).expects("setActive").withExactArgs(false);
+			} else {
+				assert.strictEqual(oBinding.oCache, undefined);
+			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdate")
 					.withExactArgs(false, "context");
@@ -787,106 +794,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh absolute path", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			oError = new Error(),
-			oBinding,
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
-			sPath = "/EMPLOYEES(ID='1')/Name",
-			oReadPromise = _SyncPromise.resolve("foo"),
-			oTypePromise = Promise.resolve(new TypeString());
+	QUnit.test("refresh", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", undefined,
+				{$$groupId : "$direct"});
 
-		// initial read and after refresh
-		oCacheMock.expects("read")
-			.withExactArgs("$direct", undefined, sinon.match.func, sinon.match.object)
-			.returns(oReadPromise);
-		oCacheMock.expects("refresh").twice();
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").twice()
-			.withExactArgs(sPath)
-			.returns(oTypePromise);
-
-		oBinding = this.oModel.bindProperty(sPath, undefined, {$$groupId : "$direct"});
-
-		this.oSandbox.mock(oBinding).expects("_fireChange").twice()
-			.withExactArgs({reason: ChangeReason.Refresh});
-		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("foo");
+		this.mock(oBinding.oCache).expects("setActive").withExactArgs(false);
+		this.mock(_Cache).expects("createSingle").withExactArgs(
+				sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
+				sinon.match.same(oBinding.mQueryOptions), true);
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("foo");
 
 		// code under test
-		oBinding.refresh();
-
-		oCacheMock.expects("read")
-			.withExactArgs("myGroup", undefined, sinon.match.func, sinon.match.object)
-			.returns(oReadPromise);
-		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
-
-		// code under test
-		oBinding.refresh("myGroup");
-
-		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.refresh("$Invalid");
-		}, oError);
-
-		return Promise.all([oReadPromise, oTypePromise]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh cancels pending read", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			iChangedCount = 0,
-			iDataReceivedCount = 0,
-			done = assert.async(),
-			oError = new Error(),
-			oBinding,
-			sPath = "/EMPLOYEES(ID='1')/Name";
-
-		oError.canceled = true; // simulate canceled cache read
-		// initial read and after refresh
-		oCacheMock.expects("read")
-			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
-			.callsArg(2).returns(_SyncPromise.resolve(Promise.reject(oError)));
-		oCacheMock.expects("read")
-			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
-			.callsArg(2).returns(_SyncPromise.resolve("foo"));
-		oCacheMock.expects("refresh");
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").twice()
-			.withExactArgs(sPath)
-			.returns(Promise.resolve(new TypeString()));
-
-		oBinding = this.oModel.bindProperty(sPath);
-
-		// dataReceived is expected twice w/o error, even for the cancelled request
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getParameter("error"), undefined, "no error");
-			iDataReceivedCount++;
-			if (iDataReceivedCount === 2) {
-				assert.strictEqual(iChangedCount, 1, "only refresh fires change");
-				done();
-			}
-		});
-
-		oBinding.attachChange(function () {
-			iChangedCount++;
-		});
-
-		// trigger read before refresh
-		oBinding.checkUpdate(false);
-		oBinding.refresh();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh on relative binding with base context", function (assert) {
-		var oBinding = this.oModel.bindProperty("relative", this.oModel.createBindingContext("/"));
-
-		this.oSandbox.mock(_ODataHelper).expects("isRefreshable")
-			.withExactArgs(oBinding).returns(true);
-		this.oSandbox.mock(oBinding.oCache).expects("refresh");
-		this.oSandbox.mock(oBinding).expects("refreshInternal");
-
-		// code under test
-		oBinding.refresh();
+		oBinding.refresh("foo");
 	});
 
 	//*********************************************************************************************

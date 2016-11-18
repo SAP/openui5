@@ -1089,5 +1089,24 @@ sap.ui.require([
 
 		assert.notOk("Org.OData.Capabilities.V1.UpdateRestrictions" in oProperty);
 	});
+
+	//*********************************************************************************************
+	[{
+		role : "dimension", term : "com.sap.vocabularies.Analytics.v1.Dimension"
+	}, {
+		role : "measure", term : "com.sap.vocabularies.Analytics.v1.Measure"
+	}].forEach(function (oFixture) {
+		var sRole = oFixture.role;
+
+		QUnit.test("addV4Annotation: sap:aggregation-role = " + sRole, function (assert) {
+			var oExtension = {name : "aggregation-role", value : sRole},
+				oProperty = {name : "Foo.Bar", "sap:aggregation-role" : sRole};
+
+			// code under test
+			Utils.addV4Annotation(oProperty, oExtension, "Property");
+
+			assert.deepEqual(oProperty[oFixture.term], {"Bool" : "true"});
+		});
+	});
 });
 

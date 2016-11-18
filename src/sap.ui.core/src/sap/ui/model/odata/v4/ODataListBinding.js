@@ -7,6 +7,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/odata/OperationMode",
@@ -15,8 +16,8 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (jQuery, Binding, ChangeReason, FilterType, ListBinding, OperationMode, _ODataHelper,
-	Context, _Cache, _Helper, _SyncPromise) {
+], function (jQuery, Binding, ChangeReason, FilterOperator, FilterType, ListBinding, OperationMode,
+		_ODataHelper, Context, _Cache, _Helper, _SyncPromise) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -56,7 +57,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $expand, $filter, $orderby and $select "5.1 System Query Options"
+	 *   <li> The $apply, $expand, $filter, $orderby, $search and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -93,10 +94,9 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
-				var oBindingParameters,
-					sOrderby;
+				var oBindingParameters;
 
-				ListBinding.call(this, oModel, sPath);
+				ListBinding.call(this, oModel, sPath, undefined, undefined, undefined, mParameters);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -122,19 +122,11 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
 
-				if (!this.bRelative || oContext && !oContext.getBinding || mParameters) {
-					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
-				}
+				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+					mParameters, true);
+
 				if (!this.bRelative) {
-					if (this.aApplicationFilters.length > 0) {
-						this.oCache = _ODataHelper.createListCacheProxy(this);
-					} else {
-						sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-							this.mQueryOptions && this.mQueryOptions.$orderby);
-						this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-							_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
-					}
+					this.oCache = this.makeCache();
 				}
 
 				this.reset();
@@ -179,7 +171,7 @@ sap.ui.define([
 						oContext = that.aContexts[i];
 						oNextContext = that.aContexts[i + 1];
 						if (oContext && !oNextContext) {
-							oContext.destroy();
+							that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 							delete that.aContexts[i];
 						} else if (!oContext && oNextContext) {
 							that.aContexts[i]
@@ -548,6 +540,260 @@ sap.ui.define([
 	};
 
 	/**
+	 * Computes the "diff" needed for extended change detection for the given list binding and
+	 * the given start index and length.
+	 *
+	 * @param {object[]} aData
+	 *   The array of OData entities read in the last request, can be undefined if no data is
+	 *   available e.g. in case of a missing $expand in the binding's parent binding
+	 * @param {number} iStart
+	 *   The start index of the range for which the OData entities have been read; must be 0 in
+	 *   case of extended change detection because in this case controls only get contexts with
+	 *   start index 0 and it is unclear how ECD is supposed to work with start index !== 0
+	 * @param {number} iLength
+	 *   The length of the range for which the OData entities have been read
+	 * @returns {_SyncPromise}
+	 *   A promise resolving with an object with the properties iLength echoing the parameter
+	 *   and aDiff with the array of differences in aData compared to data retrieved in
+	 *   previous requests. It resolves with undefined if the binding does not use extended
+	 *   change detection or if key properties are not available (for a collection valued
+	 *   structural property) or missing in the data so that the diff cannot be computed.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchDiff = function (aData, iStart, iLength) {
+		var oMetaModel,
+			oMetaContext,
+			aNewData,
+			sResolvedPath,
+			that = this;
+
+		/**
+		 * Compares previous and new data; stores new data as previous data at the binding.
+		 *
+		 * @returns {object[]} The diff array
+		 */
+		function diff() {
+			var aDiff = jQuery.sap.arraySymbolDiff(that.aPreviousData, aNewData);
+
+			that.aPreviousData = aNewData;
+			return {aDiff : aDiff, iLength : iLength};
+		}
+
+		if (!this.bUseExtendedChangeDetection) {
+			return _SyncPromise.resolve();
+		}
+
+		if (!aData) {
+			return _SyncPromise.resolve({aDiff : [], iLength : iLength});
+		}
+
+		if (this.bDetectUpdates) {
+			// don't use function reference JSON.stringify in map: 2. and 3. parameter differ
+			aNewData = aData.map(function (oEntity) {
+				return JSON.stringify(oEntity);
+			});
+			return _SyncPromise.resolve(diff());
+		}
+
+		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		oMetaModel = this.oModel.getMetaModel();
+		oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
+		return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
+			var mMissingKeys = {};
+
+			if (aKeys) {
+				aNewData = aData.map(function (oEntity) {
+					return aKeys.reduce(function (oPreviousData, sKey) {
+						oPreviousData[sKey] = oEntity[sKey];
+						if (oEntity[sKey] === undefined) {
+							mMissingKeys[sKey] = true;
+						}
+						return oPreviousData;
+					}, {} /*initial value oPreviousData*/);
+				});
+			}
+			if (Object.keys(mMissingKeys).length > 0 || !aKeys) {
+				that.aPreviousData = [];
+				jQuery.sap.log.warning("Disable extended change detection as"
+						+ " diff computation failed: " + that,
+					!aKeys
+						? "Type for path " + sResolvedPath + " has no keys"
+						: "Missing key(s): " + Object.keys(mMissingKeys),
+					sClassName);
+				return undefined;
+			}
+
+			return diff();
+		});
+	};
+
+	/**
+	 * Requests a $filter query option value for the this binding; the value is computed from the
+	 * given arrays of dynamic application and control filters and the given static filter.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used; it is given as a parameter and this.oContext is unused
+	 *   because setContext calls this method (indirectly) before calling the superclass to ensure
+	 *   that the cache proxy is already created when the events are fired.
+	 * @param {sap.ui.model.Filter[]} aApplicationFilters
+	 *   The application filters
+	 * @param {sap.ui.model.Filter[]} aControlFilters
+	 *   The control filters
+	 * @param {string} sStaticFilter
+	 *   The static filter value
+	 * @returns {_SyncPromise} A promise which resolves with the $filter value or "" if the
+	 *   filter arrays are empty and the static filter parameter is not given. It rejects with
+	 *   an error if a filter has an unknown operator or an invalid path.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchFilter = function (oContext, aApplicationFilters,
+			aControlFilters, sStaticFilter) {
+		var aNonEmptyFilters = [],
+			that = this;
+
+		/**
+		 * Concatenates the given $filter values using the given separator; the resulting
+		 * value is enclosed in parentheses if more than one filter value is given.
+		 *
+		 * @param {string[]} aFilterValues The filter values
+		 * @param {string} sSeparator The separator
+		 * @returns {string} The combined filter value
+		 */
+		function combineFilterValues(aFilterValues, sSeparator) {
+			var sFilterValue = aFilterValues.join(sSeparator);
+
+			return aFilterValues.length > 1 ? "(" + sFilterValue + ")" : sFilterValue;
+		}
+
+		/**
+		 * Returns the $filter value for the given single filter using the given Edm type to
+		 * format the filter's operand(s).
+		 *
+		 * @param {sap.ui.model.Filter} oFilter The filter
+		 * @param {string} sEdmType The Edm type
+		 * @returns {string} The $filter value
+		 */
+		function getSingleFilterValue(oFilter, sEdmType) {
+			var sFilter,
+				sValue = _Helper.formatLiteral(oFilter.oValue1, sEdmType),
+				sFilterPath = decodeURIComponent(oFilter.sPath);
+
+			switch (oFilter.sOperator) {
+				case FilterOperator.BT :
+					sFilter = sFilterPath + " ge " + sValue + " and "
+						+ sFilterPath + " le "
+						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
+					break;
+				case FilterOperator.EQ :
+				case FilterOperator.GE :
+				case FilterOperator.GT :
+				case FilterOperator.LE :
+				case FilterOperator.LT :
+				case FilterOperator.NE :
+					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " "
+						+ sValue;
+					break;
+				case FilterOperator.Contains :
+				case FilterOperator.EndsWith :
+				case FilterOperator.StartsWith :
+					sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
+						+ sValue + ")";
+					break;
+				default :
+					throw new Error("Unsupported operator: " + oFilter.sOperator);
+			}
+			return sFilter;
+		}
+
+		/**
+		 * Requests the $filter value for an array of filters; filters with the same path are
+		 * grouped with a logical 'or'.
+		 *
+		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
+		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
+		 *   'or' if not given
+		 * @returns {_SyncPromise} A promise which resolves with the $filter value
+		 */
+		function fetchArrayFilter(aFilters, bAnd) {
+			var aFilterPromises = [],
+				mFiltersByPath = {};
+
+			aFilters.forEach(function (oFilter) {
+				mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
+				mFiltersByPath[oFilter.sPath].push(oFilter);
+			});
+			aFilters.forEach(function (oFilter) {
+				var aFiltersForPath;
+
+				if (oFilter.aFilters) { // array filter
+					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd)
+						.then(function (sArrayFilter) {
+							return "(" + sArrayFilter + ")";
+						})
+					);
+					return;
+				}
+				// single filter
+				aFiltersForPath = mFiltersByPath[oFilter.sPath];
+				if (!aFiltersForPath) { // filter group for path of oFilter already processed
+					return;
+				}
+				delete mFiltersByPath[oFilter.sPath];
+				aFilterPromises.push(fetchGroupFilter(aFiltersForPath));
+			});
+
+			return _SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
+				return aFilterValues.join(bAnd ? " and " : " or ");
+			});
+		}
+
+		/**
+		 * Requests the $filter value for the given group of filters which all have the same
+		 * path and thus refer to the same EDM type; the resulting filter value is
+		 * the $filter values for the single filters in the group combined with a logical 'or'.
+		 *
+		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
+		 * @returns {_SyncPromise} A promise which resolves with the $filter value or rejects
+		 *   with an error if the filter value uses an unknown operator
+		 */
+		function fetchGroupFilter(aGroupFilters) {
+			var oMetaModel = that.oModel.oMetaModel,
+				oMetaContext = oMetaModel.getMetaContext(
+					that.oModel.resolve(that.sPath, oContext)),
+				oPropertyPromise = oMetaModel.fetchObject(aGroupFilters[0].sPath,
+					oMetaContext);
+
+			return oPropertyPromise.then(function (oPropertyMetadata) {
+				var aGroupFilterValues;
+
+				if (!oPropertyMetadata) {
+					throw new Error("Type cannot be determined, no metadata for path: "
+						+ oMetaContext.getPath());
+				}
+
+				aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
+						return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+					});
+
+				return combineFilterValues(aGroupFilterValues, " or ");
+			});
+		}
+
+		return _SyncPromise.all([
+			fetchArrayFilter(aApplicationFilters, /*bAnd*/true),
+			fetchArrayFilter(aControlFilters, /*bAnd*/true)
+		]).then(function (aFilterValues) {
+			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
+			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
+			if (sStaticFilter) { aNonEmptyFilters.push(sStaticFilter); }
+
+			return combineFilterValues(aNonEmptyFilters, ") and (");
+		});
+	};
+
+	/**
 	 * Requests the value for the given path and index; the value is requested from this binding's
 	 * cache or from its context in case it has no cache.
 	 *
@@ -619,7 +865,7 @@ sap.ui.define([
 			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 		}
 		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+		this.oCache = this.makeCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 
 		return this;
@@ -723,7 +969,7 @@ sap.ui.define([
 					iResultLength = aResult ? aResult.length : 0;
 					// Note: aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.;
 					// fetchDiff() of course works with view coordinates; everything is fine here!
-					return _ODataHelper.fetchDiff(that, aResult, iStart, iLength)
+					return that.fetchDiff(aResult, iStart, iLength)
 						.then(function (oDiff) {
 							// make sure "refresh" is followed by async "change"
 							return bRefreshEvent && !bFireChange
@@ -941,6 +1187,56 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a cache for the binding using the given context.
+	 * Ensures that sort and filter parameters are added to the query string.
+	 *
+	 * The context is given as a parameter and this.oContext is unused because setContext calls
+	 * this method before calling the superclass to ensure that the cache is already created when
+	 * the events are fired.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, may be omitted for absolute bindings
+	 * @returns {object}
+	 *   The created cache, cache proxy or undefined if none is required (allows for easier
+	 *   testing)
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.makeCache = function (oContext) {
+		var vCanonicalPath, oFilterPromise, mQueryOptions,
+			that = this;
+
+		function createCache(sPath, sFilter) {
+			var sOrderby = _ODataHelper.buildOrderbyOption(that.aSorters,
+					mQueryOptions && mQueryOptions.$orderby);
+
+			return _Cache.create(that.oModel.oRequestor,
+				_Helper.buildPath(sPath, that.sPath).slice(1),
+				_ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby, sFilter));
+		}
+
+		if (this.bRelative) {
+			if (!oContext
+					|| oContext.fetchCanonicalPath
+					&& !this.mParameters
+					&& !this.aSorters.length
+					&& !this.aFilters.length
+					&& !this.aApplicationFilters.length) {
+				return undefined; // no need for an own cache
+			}
+		} else {
+			oContext = undefined; // must be ignored for absolute bindings
+		}
+		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
+			? oContext.fetchCanonicalPath() : oContext.getPath());
+		oFilterPromise = this.fetchFilter(oContext, this.aApplicationFilters, this.aFilters,
+			mQueryOptions && mQueryOptions.$filter);
+		return _ODataHelper.createCache(this, createCache, vCanonicalPath,
+			oFilterPromise);
+	};
+
+	/**
 	 * Refreshes the binding. All data is thrown away and with the next call of
 	 * {@link #getContexts} the data is requested again from the server.
 	 * Refresh is supported for bindings which are not relative to a V4
@@ -997,12 +1293,8 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		this.sRefreshGroupId = sGroupId;
 		if (this.oCache) {
-			if (this.bRelative && this.oContext.getBinding) {
-				this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
-				this.mCacheByContext = undefined;
-			} else {
-				this.oCache.refresh();
-			}
+			this.oCache = this.makeCache(this.oContext);
+			this.mCacheByContext = undefined;
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
@@ -1085,13 +1377,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
-				if (this.oCache) {
-					this.oCache.deregisterChange();
-					this.oCache = undefined;
-				}
-				if (oContext) {
-					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
-				}
+				this.oCache = this.makeCache(oContext);
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {
@@ -1138,7 +1424,7 @@ sap.ui.define([
 
 		this.aSorters = _ODataHelper.toArray(vSorters);
 		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+		this.oCache = this.makeCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
 	};

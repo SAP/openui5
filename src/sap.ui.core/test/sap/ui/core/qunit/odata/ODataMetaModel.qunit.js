@@ -54,7 +54,7 @@ sap.ui.require([
 					sap:unit="CurrencyCode"/>\
 				<Property Name="PriceScale" Type="Edm.Byte"/>\
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" \
-					sap:unit="WeightUnit" sap:visible="true" />\
+					sap:aggregation-role="measure" sap:unit="WeightUnit" sap:visible="true" />\
 				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
 					sap:semantics="unit-of-measure" sap:visible="false" />\
 				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
@@ -176,6 +176,7 @@ sap.ui.require([
 		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCodeFromAnnotation"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
+		<Annotation Term="com.sap.vocabularies.Analytics.v1.Measure" Bool="false"/>\
 		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightUnit">\
@@ -1407,6 +1408,15 @@ sap.ui.require([
 				}
 
 				// check SAP V2 annotations as V4 annotations
+				// sap:aggregation-role
+				assert.strictEqual(oProductWeightMeasure["sap:aggregation-role"], "measure");
+				delete oProductWeightMeasure["sap:aggregation-role"];
+				assert.deepEqual(
+					oProductWeightMeasure["com.sap.vocabularies.Analytics.v1.Measure"], {
+						"Bool" : (i > 0 ? "false" : "true")
+				}, "sap:aggregation-role -> com.sap.vocabularies.Analytics.v1.Measure");
+				delete oProductWeightMeasure["com.sap.vocabularies.Analytics.v1.Measure"];
+
 				// sap:label
 				assert.deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
 				delete oBusinessPartnerId["sap:label"];

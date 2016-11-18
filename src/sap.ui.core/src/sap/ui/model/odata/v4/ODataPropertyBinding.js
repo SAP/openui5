@@ -83,8 +83,8 @@ sap.ui.define([
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
+				this.makeCache(oContext);
 				this.oContext = oContext;
-				this.makeCache();
 				this.bInitial = true;
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
@@ -372,13 +372,22 @@ sap.ui.define([
 	/**
 	 * Creates the cache for absolute bindings and bindings with a base context.
 	 *
+	 * The context is given as a parameter and this.oContext is unused because setContext may call
+	 * this method before calling the superclass to ensure that the cache is already created when
+	 * the events are fired.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, may be omitted for absolute bindings
+	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.makeCache = function () {
-		var sResolvedPath = this.sPath,
-			oContext = this.oContext;
+	ODataPropertyBinding.prototype.makeCache = function (oContext) {
+		var sResolvedPath = this.sPath;
 
-		if (oContext && !(oContext.fetchValue)) {
+		if (this.oCache) {
+			this.oCache.setActive(false);
+		}
+		if (oContext && !oContext.fetchValue) {
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 		}
 		if (sResolvedPath[0] === "/") {
@@ -432,7 +441,7 @@ sap.ui.define([
 
 		_ODataHelper.checkGroupId(sGroupId);
 
-		this.oCache.refresh();
+		this.makeCache(this.oContext);
 		this.refreshInternal(sGroupId);
 	};
 
@@ -482,7 +491,7 @@ sap.ui.define([
 			}
 			this.oContext = oContext;
 			if (this.bRelative) {
-				this.makeCache();
+				this.makeCache(this.oContext);
 				this.checkUpdate(false, ChangeReason.Context);
 			}
 		}

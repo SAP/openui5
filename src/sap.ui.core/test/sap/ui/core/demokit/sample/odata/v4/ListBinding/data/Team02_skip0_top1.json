@@ -1,0 +1,34 @@
+{
+	"@odata.context" : "../$metadata#EMPLOYEES",
+	"value" : [ {
+		"@odata.etag" : "W/\"20040912000000.0000000\"",
+		"ID" : "4",
+		"Name" : "Peter Burke",
+		"AGE" : 39,
+		"ENTRYDATE" : "2004-09-12",
+		"MANAGER_ID" : "3",
+		"ROOM_ID" : "2",
+		"TEAM_ID" : "TEAM_02",
+		"Is_Manager" : false,
+		"LAST_MODIFIED_AT" : "2004-09-12T00:00:00Z",
+		"LOCATION" : {
+			"COUNTRY" : "Germany",
+			"City" : {
+				"POSTALCODE" : "69190",
+				"CITYNAME" : "Walldorf"
+			}
+		},
+		"SALARY" : {
+			"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
+			"BASIC_SALARY_CURR" : "GBP",
+			"YEARLY_BONUS_AMOUNT" : "15000.00",
+			"BONUS_CURR" : "USD"
+		},
+		"EMPLOYEE_2_EQUIPMENTS" : [ {
+			"Category" : "Vehicle",
+			"ID" : 6,
+			"Name" : "Audi A3 2.5",
+			"EmployeeId" : "0004"
+		} ]
+	} ]
+}
