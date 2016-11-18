@@ -36,20 +36,20 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 		properties : {
 
 			/**
-			 * Width of the column in css units.
-			 * Default value is "auto". See https://www.w3.org/TR/CSS2/tables.html#width-layout
-			 * <p>Minimal column width is device dependent, for example on desktop devices the column can not be smaller than 48px.
-			 * <p>This property may be changed by the user action or by the application configuration/personalization.
+			 * Width of the column in CSS units.
+			 * Default value is <code>auto</code>, see <a href="https://www.w3.org/TR/CSS2/tables.html#width-layout"></a>
+			 * <p>Minimal column width is device-dependent, for example on desktop devices the column will not be smaller than 48px.
+			 * <p>This property can be changed by the user or by the application configuration/personalization.
 			 * <p>If a user adjusts the column width manually, the resulting value is always set in pixels.
-			 * In addition, other columns with width "auto" become a fixed minimum width and do not shrink after the resize.
+			 * In addition, other columns with width <code>auto</code> get a fixed minimum width and do not shrink after the resizing.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
 			 * Defines the minimum width of a column in pixels.
-			 * <p>This property only has an effect if the given column width is flexible, for example with width "auto".
+			 * <p>This property only has an effect if the given column width is flexible, for example with width <code>auto</code>.
 			 * <p>This property only influences the automatic behavior. If a user adjusts the column width manually, the column width can become smaller.
-			 * <p>Minimal column width is device dependent, for example on desktop devices the column can not be smaller than 48px.
+			 * <p>Minimal column width is device-dependent, for example on desktop devices the column will not be smaller than 48px.
 			 *
 			 * @since 1.44.1
 			 */
@@ -60,12 +60,12 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
 			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
 			 * created at the end of the table.
-			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in comination with property <code>width="auto" </code> instead.
+			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property <code>width="auto"</code> instead.
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * If set to true, the column can be resized either using the resize-handle (by mouse) or using
+			 * If set to true, the column can be resized either using the resize bar (by mouse) or using
 			 * the keyboard (SHIFT + Left/Right Arrow keys)
 			 */
 			resizable : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -201,7 +201,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
 
 			/**
-			 * Enables auto-resizing of the column on double-clicking the resizer. The width is determined on the widest
+			 * Enables auto-resizing of the column on double clicking the resize bar. The width is determined on the widest
 			 * currently displayed content. It does not consider rows which are currently not scrolled into view.
 			 * Currently only implemented to work with the following controls:
 			 * <code>sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Input,
@@ -671,13 +671,16 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 					aSorters.push(aSortedCols[i]._oSorter);
 				}
 
-				if (oTable.isBound("rows")) {
+				var oBinding = oTable.getBinding("rows");
+				if (oBinding) {
 					// sort the binding
-					oTable.getBinding("rows").sort(aSorters);
+					oBinding.sort(aSorters);
 
 					if (this._afterSort) {
 						this._afterSort();
 					}
+				} else {
+					jQuery.sap.log.warning("Sorting not performed because no binding present", this);
 				}
 			}
 		}

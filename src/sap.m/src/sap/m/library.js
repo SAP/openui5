@@ -1018,9 +1018,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 */
 		HeaderMode : "HeaderMode",
 		/**
-		 * Line mode (Only header and subtitle is rendered in one line).
+		 * Line mode (Only header and subtitle are rendered continuously spanning multiple lines).
 		 * @since 1.44.0
-		 * @experimental since 1.44.0 LineMode is currently under development
 		 * @public
 		 */
 		LineMode : "LineMode"
@@ -2394,7 +2393,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Use when you need to display the name of the user who locked the object.
 		 * @public
 		 */
-		LockedBy : "LockedBy"
+		LockedBy : "LockedBy",
+
+		/**
+		 * UnsavedBy type
+		 * Use when you need to display the name of the user whos changes were unsaved.
+		 * @public
+		 */
+		UnsavedBy : "UnsavedBy"
 	};
 
 

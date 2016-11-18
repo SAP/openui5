@@ -22,6 +22,35 @@
 @sapHCNeutral: #FFF;
 
 
+// =====================================
+// Background Colors
+// =====================================
+
+@sapUiHcStandardBackground: @sapHCStandardBG;
+@sapUiHcHighlightBackground: @sapHCHighlightBG;
+@sapUiHcHighlightAltBackground: @sapHCHighlightAltBG;
+@sapUiHcReducedBackground: @sapHCReducedBG;
+@sapUiHcReducedAltBackground: @sapHCReducedAltBG;
+
+// =====================================
+// Foreground Colors
+// =====================================
+
+@sapUiHcStandardForeground: @sapHCStandardFG;
+@sapUiHcEnhancedForeground: @sapHCEnhancedFG;
+@sapUiHcReducedForeground: @sapHCReducedFG;
+@sapUiHcReducedAltForeground: @sapHCReducedAltFG;
+
+// =====================================
+// Semantic Colors
+// =====================================
+
+@sapUiHcNegativeColor: @sapHCNegative;
+@sapUiHcCriticalColor: @sapHCCritical;
+@sapUiHcPositiveColor: @sapHCPositive;
+@sapUiHcNeutralColor: @sapHCNeutral;
+
+
 // Semantic Theming Mapping
 @sapUiBrand: #FFFFFF;
 @sapUiHighlight: #7A5100;
@@ -47,14 +76,14 @@
 @sapUiTextTitle: #FFFFFF;
 
 @sapUiContentIconColor: #FFFFFF;
-@sapUiContentContrastIconColor: #000000;
+@sapUiContentContrastIconColor: #FFFFFF;
 @sapUiContentNonInteractiveIconColor: #FFFFFF;
 @sapUiContentMarkerIconColor: #FFFFFF;
 @sapUiContentMarkerTextColor: #FFFFFF;
 @sapUiContentImagePlaceholderBackground: #000000;
 @sapUiContentImagePlaceholderForegroundColor: #999999;
 @sapUiContentFocusColor: #FFFFFF;
-@sapUiContentContrastFocusColor: #000000;
+@sapUiContentContrastFocusColor: #FFFFFF;
 @sapUiContentShadowColor: #FFFFFF;
 @sapUiContentContrastShadowColor: #000000;
 @sapUiContentSearchHighlightColor: #7A5100;
@@ -402,6 +431,8 @@
 @sapUiShellActiveBackground: #7A5100;
 @sapUiShellActiveTextColor: #FFFFFF;
 @sapUiShellHoverToggleBackground: #0F5D94;
+@sapUiShellContainerBackground: @sapUiShellBackground;
+@sapUiShellAltContainerBackground: @sapUiShellBackground;
 
 @sapUiUx3ShellHeaderColor: #000000;
 @sapUiUx3ShellBackgroundColor: #000000;
@@ -529,6 +560,13 @@
 
 @sapUiCalendarColorToday: #FFFFFF;
 
+@sapUiDragAndDropColor: @sapUiContentNonInteractiveIconColor;
+@sapUiDragAndDropBackground: @sapUiGroupContentBackground;
+@sapUiDragAndDropBorderColor: @sapUiContentForegroundBorderColor;
+@sapUiDragAndDropActiveColor: @sapUiContentHelpColor;
+@sapUiDragAndDropActiveBackground: @sapUiGroupContentBackground;
+@sapUiDragAndDropActiveBorderColor: @sapUiContentHelpColor;
+
 @sapUiShadowLevel0: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
 @sapUiShadowLevel1: 0 0.125rem 0.375rem 0 fade(@sapUiContentShadowColor, 20), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
 @sapUiShadowLevel2: 0 0.375rem 0.750rem 0 fade(@sapUiContentShadowColor, 30), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
@@ -646,14 +684,14 @@
 
 
 // Accent
-@sapUiAccent1: @sapHCStandardFG;
-@sapUiAccent2: @sapHCStandardFG;
-@sapUiAccent3: @sapHCStandardFG;
-@sapUiAccent4: @sapHCStandardFG;
-@sapUiAccent5: @sapHCStandardFG;
-@sapUiAccent6: @sapHCStandardFG;
-@sapUiAccent7: @sapHCStandardFG;
-@sapUiAccent8: @sapHCStandardFG;
+@sapUiAccent1: #ffc847;
+@sapUiAccent2: #ed884a;
+@sapUiAccent3: #db9292;
+@sapUiAccent4: #e269c9;
+@sapUiAccent5: #8ca7d5;
+@sapUiAccent6: #6bd3ff;
+@sapUiAccent7: #7fc6c6;
+@sapUiAccent8: #b2e484;
 
 
 @sapUiDarkShadowTint: @sapHCStandardFG;

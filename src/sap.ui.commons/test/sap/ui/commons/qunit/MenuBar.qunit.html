@@ -9,6 +9,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>MenuBar - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.MenuBar.gif">
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -17,12 +18,12 @@
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
-	<script language="javascript">
+	<script>
 
 	var createMenuBar = function(iIdSuffix, oProps){
 		if(!oProps) oProps = {};
@@ -53,7 +54,7 @@
 	</script>
 
 	<!-- Test help functions -->
-	<script language="javascript">
+	<script>
 
 	var checkFocus = function(sId, sText){
 		equals(document.activeElement.id, sId, sText);
@@ -87,7 +88,7 @@
 	</script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 	qutils.delayTestStart();
 

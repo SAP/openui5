@@ -125,10 +125,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oZipFile = new JSZip();
 
 			// zip files
-			var oData = this.getView().getModel().getData();
+			var oData = this.getView().getModel().getData(),
+				iRequiredParentLevels = 0;
 			for (var i = 0 ; i < oData.files.length ; i++) {
 				var oFile = oData.files[i],
-					sRawFileContent = oFile.raw;
+					sRawFileContent = oFile.raw,
+					iFileNestedLevel = oFile.name.split("../").length - 1;
+
+				if (iFileNestedLevel > iRequiredParentLevels) {
+					iRequiredParentLevels = iFileNestedLevel;
+				}
+
+				if (iFileNestedLevel > 0 ) {
+					oFile.name = oFile.name.slice(oFile.name.lastIndexOf("../") + 3);
+				}
 
 				// change the bootstrap URL to the current server for all HTML files of the sample
 				if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
@@ -153,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// iframe examples have a separate index file and a component file to describe it
 			if (!oData.iframe) {
 				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-				oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData)));
+				oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData, iRequiredParentLevels)));
 			}
 
 			// add extra download files
@@ -172,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			File.save(oContent, this._sId, "zip", "application/zip");
 		},
 
-		createIndexFile : function(oData) {
+		createIndexFile : function(oData, iRequiredParentLevels) {
 
 			var sHeight,
 				bScrolling;
@@ -181,7 +191,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var sIndexFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
 			sIndexFile = sIndexFile.replace(/{{TITLE}}/g, oData.name);
+
 			sIndexFile = sIndexFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+
+			var sParentResourcesRoots = "";
+			for (var i = 0; i < iRequiredParentLevels; i++) {
+				sParentResourcesRoots += "\"" + oData.id.substring(0, oData.id.lastIndexOf("."))  + "\" : \"./\", ";
+			}
+			sIndexFile = sIndexFile.replace(/{{PARENT_RESOURCES}}/g, sParentResourcesRoots);
 
 			sHeight = oData.stretch ? 'height : "100%", ' : "";
 			sIndexFile = sIndexFile.replace(/{{HEIGHT}}/g, sHeight);

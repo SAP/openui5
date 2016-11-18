@@ -173,6 +173,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		IconTabBarSelectList.prototype.onsapenter = IconTabBarSelectList.prototype.ontap;
 		IconTabBarSelectList.prototype.onsapspace = IconTabBarSelectList.prototype.ontap;
 
+		/**
+		 * Checks if only an icon should be rendered.
+		 * @private
+		 */
+		IconTabBarSelectList.prototype.checkIconOnly = function (items) {
+			var item,
+				length = items.length;
+
+			for (var i = 0; i < length; i++) {
+
+				item = items[i];
+
+				if (item.getText() || item.getCount()) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+
 		return IconTabBarSelectList;
 
 	}, /* bExport= */ true);

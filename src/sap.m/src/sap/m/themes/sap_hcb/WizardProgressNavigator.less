@@ -1,5 +1,16 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* High Contrast Black theme                      */
+/* ============================================== */
+
 .sapMWizardProgressNavAnchor:focus {
 	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiObjectHeaderBorderColor;
+	}
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {

@@ -31,6 +31,12 @@ sap.ui.define([], function() {
 						view: oViewInfo.view,
 						preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer
 					});
+
+					// do not forward the route config to navigation
+					if (vData) {
+						delete vData.routeConfig;
+					}
+
 					return oViewInfo;
 				});
 			});

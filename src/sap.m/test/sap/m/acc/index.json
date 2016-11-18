@@ -66,6 +66,11 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
+			"control": "sap.m.DateRangeSelection",
+			"url": "../DateRangeSelection.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
 			"control": "sap.m.DateTimeInput",
 			"url": "../DateTimeInput.html",
 			"appComponent": "CA-UI5-CTR-BAL"
@@ -124,6 +129,11 @@
 			"control": "sap.m.IconTabBar",
 			"url": "IconTabBar.html",
 			"appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
+			"control": "sap.m.Image",
+			"url": "../Image.html",
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.InputBase",
@@ -209,7 +219,7 @@
 		{
 			"control": "sap.m.MultiComboBox",
 			"url": "../MultiComboBox.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.sap.m.NavContainer",
@@ -339,7 +349,7 @@
 		{
 			"control": "sap.m.RatingIndicator",
 			"url": "RatingIndicator.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.ResponsivePopover",
@@ -440,7 +450,7 @@
 		{
 			"control": "sap.m.TextArea",
 			"url": "../TextArea.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.Tokenizer",

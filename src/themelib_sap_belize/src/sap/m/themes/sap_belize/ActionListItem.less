@@ -3,46 +3,10 @@
 /* Belize theme                          */
 /* ===================================== */
 
-.sapMALI {
-	height: 3rem;
-}
-
-/*The active indicator of the list is not specific enough to overwrite this style*/
-.sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiButtonActionSelectBackground;
-	border-color: @sapUiButtonActionSelectBorderColor;
-}
-
-html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiButtonActionSelectBackground;
-	border-color: @sapUiButtonActionSelectBorderColor;
-}
-
 .sapMList .sapMLIB.sapMALI:focus {
 	outline-offset: -0.2rem;
 }
 
 .sapMALI > .sapMLIBContent {
 	line-height: 3rem;
-}
-
-.sapMALIText {
-	color: @sapUiButtonFooterTextColor;
-}
-
-html.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
-	background: @sapUiButtonLiteActionSelectHoverBackground;
-}
-
-/* Compact size */
-.sapUiSizeCompact .sapMALI {
-	height: 2rem;
-}
-
-.sapUiSizeCompact .sapMALI > .sapMLIBContent {
-	line-height: 2rem;
-}
-
-.sapUiSizeCompact .sapMALIText {
-	font-size: @sapMFontMediumSize;
 }

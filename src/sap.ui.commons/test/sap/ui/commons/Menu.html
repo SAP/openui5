@@ -5,13 +5,13 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Menu - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Menu.gif">
-		<script src="../../../../resources/sap-ui-core.js"
-				type="text/javascript" id="sap-ui-bootstrap"
+		<script src="shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.ui.commons"
-				data-sap-ui-theme="sap_goldreflection">
+				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 			var alertSelected = function(sId){
 				alert("You selected menu item '" + sId +"'.");
 			};
@@ -113,7 +113,7 @@
 			});
 			oButton2a.placeAt("target4");
 
-			var oButton3 = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection"});
+			var oButton3 = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_bluecrystal"});
 			var bIsTopMenu = false;
 			var fToggleDesign = function(){
 				bIsTopMenu = !bIsTopMenu;
@@ -125,7 +125,7 @@
 			oButton3.placeAt("target5");
 
 			sap.ui.getCore().attachThemeChanged(function(){
-				oButton3.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection");
+				oButton3.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_bluecrystal");
 				bIsTopMenu = true;
 				fToggleDesign();
 			});

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './InputBase', './library'],
-	function(jQuery, InputBase, library) {
+sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/InvisibleText'],
+	function(jQuery, InputBase, library, InvisibleText) {
 		"use strict";
 
 		/**
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 					},
 
 					/**
-					 * Indicates whether the dropdown arrow button is shown.
+					 * Indicates whether the dropdown downward-facing arrow button is shown.
 					 * @since 1.38
 					 */
 					showButton: {
@@ -48,9 +48,26 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 						group: "Appearance",
 						defaultValue: true
 					}
+				},
+				aggregations: {
+					_buttonLabelText: {type : "sap.ui.core.InvisibleText", multiple : false, visibility : "hidden"}
 				}
 			}
 		});
+
+		ComboBoxTextField.prototype.init = function() {
+			InputBase.prototype.init.apply(this, arguments);
+			var oRb, oArrowDownInvisibleLabel;
+
+			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oArrowDownInvisibleLabel = new InvisibleText({
+					text: oRb.getText("COMBOBOX_BUTTON")
+				});
+
+				this.setAggregation("_buttonLabelText", oArrowDownInvisibleLabel, true);
+			}
+		};
 
 		ComboBoxTextField.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
 			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
@@ -179,10 +196,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			return this.getDomRef();
 		};
 
-		/**
-		 * @see sap.ui.core.Control#getAccessibilityInfo
-		 * @protected
-		 */
 		ComboBoxTextField.prototype.getAccessibilityInfo = function() {
 			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");

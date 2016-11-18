@@ -48,7 +48,11 @@ QUnit.test("toggleGroupHeader", function(assert) {
 	doToggle("Changed when force collapse", false, false, true);
 	doToggle("Change when toggle", null, true, true);
 	doToggle("Change when toggle", null, false, true);
-
+	// make the first node a leaf
+	var oData = oTreeTable.getModel().getData();
+	delete oData.tree.rows[0].rows;
+	oTreeTable.getModel().setData(oData);
+	doToggle("Try toggle leaf", null, false, false);
 	oTreeTable.unbindRows();
 	doToggle("No Binding", true, false, false);
 });

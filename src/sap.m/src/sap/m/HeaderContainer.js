@@ -40,7 +40,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Use Enter or Space key to choose the control.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer
-	 * @experimental Since 1.42.0 This is currently under development. The API could be changed at any point in time.
 	 * @since 1.42.0
 	 *
 	 * @author SAP SE
@@ -205,6 +204,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						this.addDelegate(this._oItemNavigation);
 						this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
 						this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
+						if (Device.browser.msie || Device.browser.edge) {
+							this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, this._handleFocusAgain, this);
+						}
 					}
 					this._oItemNavigation.setRootDomRef(oFocusRef);
 					this._oItemNavigation.setItemDomRefs(aDomRefs);
@@ -536,6 +538,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else if (iIndex === this.getContent().length - 1){
 			this._scroll(this.getScrollStep(), this.getScrollTime());
 		}
+	};
+
+	HeaderContainer.prototype._handleFocusAgain = function(oEvt) {
+		oEvt.getParameter("event").preventDefault();
 	};
 
 	/**

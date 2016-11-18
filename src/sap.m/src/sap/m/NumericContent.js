@@ -111,12 +111,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 
 	/* --- Lifecycle methods --- */
 
-	/**
-	* Init function for the control
-	*/
 	NumericContent.prototype.init = function() {
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this.setTooltip("{AltText}"); // TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
+		this.setTooltip("{AltText}");
 	};
 
 	NumericContent.prototype.onBeforeRendering = function() {
@@ -124,9 +121,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		this.$().unbind("mouseleave", this._removeTooltip);
 	};
 
-	/**
-	 * Handler for after rendering
-	 */
 	NumericContent.prototype.onAfterRendering = function() {
 		this.$().bind("mouseenter", this._addTooltip.bind(this));
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
@@ -154,9 +148,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		this.$().attr("title", null);
 	};
 
-	/**
-	 * Exit function for the control
-	 */
 	NumericContent.prototype.exit = function() {
 		if (this._oIcon) {
 			this._oIcon.destroy();
@@ -166,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	/* --- Getters and Setters --- */
 
 	/**
-	 * Returns the Alternative text
+	 * Returns the AltText
 	 *
 	 * @returns {String} The alternative text
 	 */
@@ -199,11 +190,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		return sAltText;
 	};
 
-	/**
-	 * Returns the Tooltip as String
-	 *
-	 * @returns {sap.ui.core.TooltipBase} The Tooltip text
-	 */
 	NumericContent.prototype.getTooltip_AsString = function() {
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
@@ -219,12 +205,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		}
 	};
 
-	/**
-	 * Sets the Icon
-	 *
-	 * @param {sap.ui.core.URI} uri which will be set as header image
-	 * @returns {sap.m.GenericTile} Reference to this in order to allow method chaining
-	 */
 	NumericContent.prototype.setIcon = function(uri) {
 		var bValueChanged = !jQuery.sap.equal(this.getIcon(), uri);
 		if (bValueChanged) {
@@ -239,7 +219,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				}, sap.m.Image);
 			}
 		}
+		this._setPointerOnIcon();
 		return this.setProperty("icon", uri);
+	};
+
+	/**
+	 * Sets CSS class 'sapMPointer' for the internal Icon if needed.
+	 * @private
+	 */
+	NumericContent.prototype._setPointerOnIcon = function() {
+		if (this._oIcon && this.hasListeners("press")) {
+			this._oIcon.addStyleClass("sapMPointer");
+		} else if (this._oIcon && this._oIcon.hasStyleClass("sapMPointer")) {
+			this._oIcon.removeStyleClass("sapMPointer");
+		}
 	};
 
 	/* --- Event Handling --- */
@@ -250,9 +243,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.internet_explorer) {
-			this.$().focus();
-		}
 		this.firePress();
 	};
 
@@ -279,40 +269,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		}
 	};
 
-	/**
-	 * Attaches an event handler to the event with the given identifier for the current control
-	 *
-	 * @param {string} eventId The identifier of the event to listen for
-	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is fired
-	 * @param {function} functionToCall The handler function to call when the event occurs.
-	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
-	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.
-	 * Handlers must not change the content of the event. The second argument is the specified oData instance (if present).
-	 * @param {object} [listener] The object that wants to be notified when the event occurs (this context within the handler function).
-	 * If it is not specified, the handler function is called in the context of the event provider.
-	 * @returns {sap.m.NumericContent} Reference to this in order to allow method chaining
-	 */
 	NumericContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
 		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
+			this._setPointerOnIcon();
 		}
 		return this;
 	};
 
-	/**
-	 * Removes a previously attached event handler from the event with the given identifier for the current control.
-	 * The passed parameters must match those used for registration with #attachEvent beforehand.
-	 *
-	 * @param {string} eventId The identifier of the event to detach from
-	 * @param {function} functionToCall The handler function to detach from the event
-	 * @param {object} [listener] The object that wanted to be notified when the event occurred
-	 * @returns {sap.m.NumericContent} The current object
-	 */
 	NumericContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
 		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
+			this._setPointerOnIcon();
 		}
 		return this;
 	};

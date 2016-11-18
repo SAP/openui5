@@ -1,6 +1,359 @@
+/*******************************************************************************
+/* Due to deprecation of sap_goldreflection with SAPUI5 version 1.38
+/* the less file of base is directly at the top section of this file
+/* and no longer imported within the library.source.less file. This decoupling
+/* of the base theme is introduced with SAPUI5 version 1.46.
+*******************************************************************************/
+
+/*******************************************************************************
+/* Start of base section
+*******************************************************************************/
+
 /* =============================================== */
 /* CSS for control sap.ui.unified/Calendar.control */
-/* Goldreflection                                  */
+/* =============================================== */
+
+.sapUiCal{
+	background: none repeat scroll 0 0 @sapUiListBackground;
+	overflow: hidden;
+	position: relative;
+	outline: none;
+	display: inline-block;
+	white-space: initial; /* To not inherit */
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.sapUiCalInt{
+	box-sizing: border-box;
+}
+
+/* calendar should have only a border if on popup */
+.sapUiCal.sapUiShd{
+	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
+}
+
+/*** HEADER ***/
+.sapUiCalHead{
+	width: 100%;
+	height: @sapUiLineHeight;
+	position: relative;
+	text-align:center;
+	display: inline-block;
+}
+
+.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead{
+	max-width: 40rem;
+}
+
+.sapUiCalHead > button,
+.sapUiCalCancel{
+	background-color: @sapUiButtonLiteBackground;
+	border: none;
+	color: @sapUiButtonTextColor;
+	cursor: pointer;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.sapUiCalHeadB{
+	vertical-align: top;
+}
+
+.sapUiCalHeadBAddText{
+	width: 100%;
+	float: left;
+	color: @sapUiContentLabelColor;
+	font-size: 0.625rem;
+}
+
+.sapUiCalHeadPrev,
+.sapUiCalHeadNext{
+	position: absolute;
+}
+
+.sapUiCalHeadPrev{
+	left: 0;
+}
+
+.sapUiCalHeadNext{
+	right: 0;
+}
+
+/* no default (browser) outline, if device needs focus visualization its defined later */
+.sapUiCalHead > button:focus,
+.sapUiCalCancel:focus{
+	outline: none;
+}
+
+/* hover and focus makes only sense on desktops. On mobile devices it's not needed */
+html.sap-desktop .sapUiCalHead > button:focus,
+html.sap-desktop .sapUiCalCancel:focus{
+	background-color: @sapUiButtonHoverBackground;
+	color: @sapUiButtonHoverTextColor;
+}
+
+html.sap-desktop .sapUiCalHead > button:hover,
+html.sap-desktop .sapUiCalCancel:hover{
+	background-color: @sapUiButtonHoverBackground;
+	color: @sapUiButtonHoverTextColor;
+}
+
+/* once for desktop to overwrite focus and once for all devices needed */
+.sapUiCalHead > button:active,
+.sapUiCalCancel:active,
+html.sap-desktop .sapUiCalHead > button:active,
+html.sap-desktop .sapUiCalHead > button:active > .sapUiCalHeadBAddText,
+html.sap-desktop .sapUiCalCancel:active{
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapUiCalHead > button.sapUiCalDsbl{
+	cursor: default;
+	opacity: .3;
+	filter: alpha(opacity=30);
+}
+
+html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
+.sapUiCalHead > button.sapUiCalDsbl:hover,
+.sapUiCalHead > button.sapUiCalDsbl:active{
+	background-color: @sapUiButtonLiteBackground;
+	color: @sapUiButtonTextColor;
+}
+
+/*** days, months, years ***/
+.sapUiCalMonthView{
+	vertical-align: top;
+}
+
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker{
+	width: 14em;
+	display: inline-block;
+}
+
+.sapUiCal .sapUiCalMonthView,
+.sapUiCal .sapUiCalRow{
+	box-sizing: border-box;
+}
+
+.sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker{
+	width: auto;
+}
+
+.sapUiCalHeadText{
+	text-align: center;
+}
+
+.sapUiCalContentSingle .sapUiCalHeadText{
+	text-align: left;
+	margin-left: 12.5%;
+}
+
+.sapUiCalRow .sapUiCalHeadText{
+	float: left;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	whitespace: nowrap;
+}
+
+.sapUiCalRow div > .sapUiCalHeadText:last-child{
+	float: none; /* if not set, in IE the item line is displayed in the same line */
+}
+
+.sapUiCalItems{
+	display: inline-block;
+	width: 100%;
+	white-space: nowrap;
+}
+
+.sapUiCalWH,
+.sapUiCalItem{
+	display: block;
+	overflow: hidden;
+	float: left;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sapUiCalMonthView .sapUiCalWH,
+.sapUiCalMonthView .sapUiCalItem{
+	width: 12.5%;
+}
+
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalWH,
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalItem{
+	width: 14.2857%;
+}
+
+.sapUiCalItemText{
+	width: 100%;
+	height: 100%;
+	display: inline-block;
+}
+
+.sapUiCalWeekNum{
+	position: absolute;
+	right: 100%;
+	width: 100%;
+	color: @sapUiContentLabelColor;
+	font-size: @sapUiFontSmallSize;
+	cursor: default;
+	pointer-events: none;
+}
+
+.sapUiCalWH{
+	color: @sapUiContentLabelColor;
+	white-space: nowrap;
+}
+
+.sapUiCalItem{
+	color: @sapUiBaseText;
+	background-color: lighten(@sapUiContentForegroundColor,5);
+}
+
+.sapUiCalItemDsbl{
+	color: fade(@sapUiBaseText, 50);
+	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
+}
+
+html.sap-desktop .sapUiCalItem:focus{
+	background-color: darken(@sapUiContentForegroundColor,5);
+}
+
+.sapUiCalMonthView .sapUiCalFirstWDay{
+	clear: both;
+	margin-left: 12.5%;
+	position: relative;
+	overflow: visible;
+}
+
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay{
+	margin-left: 0;
+}
+
+.sapUiCalItemOtherMonth{
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiCalItemNow{
+	color: @sapUiHighlight;
+}
+
+.sapUiCalItemWeekEnd{
+	background-color: @sapUiContentForegroundColor;
+}
+
+.sapUiCalItemWeekEnd.sapUiCalItemDsbl{
+	background-color: fade(@sapUiContentForegroundColor, 50);
+}
+
+.sapUiCalItemSel{
+	background-color: @sapUiSelected;
+}
+
+.sapUiCalContent{
+	position: relative;
+	text-align: center;
+}
+
+.sapUiCalContentOver{
+	background-color: @sapUiBlockLayerBackground;
+	opacity: 0.15;
+	filter: alpha(opacity=60);
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: absolute;
+	outline: 0 none;
+}
+
+.sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalContent > .sapUiCalYearPicker,
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
+	position: absolute;
+	top: @sapUiLineHeight;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: @sapUiListBackground;
+}
+
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow .sapUiCalWH{
+	display: none;
+}
+
+/* Day names inside day */
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem {
+	position: relative;
+}
+
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 33%;
+	width: 100%;
+	color: @sapUiContentLabelColor;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 100%;
+}
+
+.sapUiCalItemTextAmPm{
+	font-size: @sapUiFontSmallSize;
+	vertical-align: top;
+}
+
+.sapUiCalCancel{
+	display: none; /* cancel button only visible on phones */
+	position: absolute;
+}
+
+/* 2 calendar types */
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem {
+	position: relative;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 33%;
+	width: 50%;
+	color: @sapUiContentLabelColor;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 100%;
+}
+
+/* Day, Month and YearPicker on popup */
+.sapUiCalMonthView[data-sap-ui-popup],
+.sapUiCalMonthPicker[data-sap-ui-popup],
+.sapUiCalYearPicker[data-sap-ui-popup]{
+	padding: 1rem;
+}
+
+/*******************************************************************************
+/* End of base section
+/* Start of sap_goldreflection less section
+*******************************************************************************/
+
+/* =============================================== */
+/* CSS for control sap.ui.unified/Calendar.control */
+/* GoldReflection                                  */
 /* =============================================== */
 
 .sapUiCal{

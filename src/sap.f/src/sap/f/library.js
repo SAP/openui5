@@ -27,7 +27,8 @@ sap.ui.define(["jquery.sap.global",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
-			"sap.f.ThreeColumnLayoutType"
+			"sap.f.ThreeColumnLayoutType",
+			"sap.f.FlexibleColumn"
 		],
 		controls: [
 			"sap.f.DynamicPage",
@@ -39,26 +40,60 @@ sap.ui.define(["jquery.sap.global",
 	});
 
 	/**
-	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control
+	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control.
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.42
+	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.f.ThreeColumnLayoutType = {
 
 		/**
-		 * Emphasized last column (endColumn) - column layout 25/25/50
+		 * Emphasized <code>End</code> column (25/25/50).
 		 * @public
 		 */
 		EndColumnEmphasized : "EndColumnEmphasized",
 
 		/**
-		 * Emphasized middle column (midColumn) - column layout 25/50/25
+		 * Emphasized <code>Mid</code> column (25/50/25).
 		 * @public
 		 */
 		MidColumnEmphasized : "MidColumnEmphasized"
+	};
+
+	/**
+	 * Used to reference a column in the context of a FlexibleColumnLayout.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.f.FlexibleColumn = {
+		/**
+		 * No column
+		 * @public
+		 */
+		None: "None",
+
+		/**
+		 * The <code>Begin</code> column.
+		 * @public
+		 */
+		Begin: "Begin",
+
+		/**
+		 * The <code>Mid</code> column.
+		 * @public
+		 */
+		Mid: "Mid",
+
+		/**
+		 * The <code>End</code> column.
+		 * @public
+		 */
+		End: "End"
 	};
 
 	return sap.f;

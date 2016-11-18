@@ -1,9 +1,5 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="flexibleColumnLayout.Master" height="100%">
+<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
 	<Page id="masterPage" title="Master page" backgroundDesign="Transparent">
-		<Text text="Navigation to previous/next pages of the app: "></Text>
-
-		<Button text="To page1" press="handleBackPress"></Button>
-		<Button text="To page2" press="handleNextPress"></Button>
 
 		<Table>
 			<columns>

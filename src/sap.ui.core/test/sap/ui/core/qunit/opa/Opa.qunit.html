@@ -737,6 +737,38 @@ sap.ui.require([
 			});
 		});
 	});
+
+	QUnit.module("Opa Empty queue", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert){
+		// System under Test
+		var oOpa = new Opa();
+
+		oOpa.waitFor({});
+		Opa.emptyQueue();
+		oOpa.waitFor({});
+
+		assert.throws(
+				function() {
+					Opa.emptyQueue();
+				},
+				new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.")
+		);
+
+		// cleanup the OPA queue to avoid side effects on following tests
+		Opa.stopQueue();
+
+		// make sure no exception is thrown now
+		Opa.emptyQueue();
+	});
+
 	QUnit.start();
 });
 </script>

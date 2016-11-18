@@ -485,8 +485,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.addClass("sapUiTableRowHdr");
 		this._addFixedRowCSSClasses(rm, oTable, iRowIndex);
 		var bRowSelected = false;
+		var bRowHidden = false;
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
+			bRowHidden = true;
 		} else {
 			if (oTable.isIndexSelected(oRow.getIndex())) {
 				rm.addClass("sapUiTableRowSel");
@@ -501,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected, rowHidden: bRowHidden});
 
 		var aCellIds = [];
 		jQuery.each(oRow.getCells(), function(iIndex, oCell) {
@@ -666,6 +668,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 				// if some of the columns have variable width, they serve as the dummy column
 				// and take available place. Do not render a dummy column in this case.
 				bRenderDummyColumn = false;
+				// in fixed area, use stored fixed width or 10rem:
+				if (bFixedTable) {
+					sWidth = (oColumn._iFixWidth || 160) + "px";
+				}
 			}
 
 			var suffix = bHeader ? "_hdr" : "_col";
@@ -939,8 +945,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
 		if (TableUtils.Grouping.isTreeMode(oTable) && bIsFirstColumn) {
-			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1'");
-			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oCell.getParent()});
+			var oRow = oCell.getParent();
+			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1' id='" + oRow.getId() + "-treeicon'");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});
 			rm.write(">&nbsp;</span>");
 		}
 		rm.renderControl(oCell);

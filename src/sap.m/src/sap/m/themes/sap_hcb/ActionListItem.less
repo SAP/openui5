@@ -1,22 +1,15 @@
-/* ============================================= */
-/* CSS for control sap.m/ActionListItem.control  */
-/* ============================================= */
+/* ===================================== */
+/* CSS for control sap.m/ActionListItem  */
+/* High Contrast Black theme             */
+/* ===================================== */
 
 /* ------------------------------ */
 /* ActionListItem container       */
 /* ------------------------------ */
-.sapMALI {
-	height: 3rem;
-}
 
 .sapMLIB.sapMALI {
 	border-bottom: 0; /* overrides LIB style */
 	padding: 0 0.25rem; /* overrides LIB style */
-}
-
-/*The active indicator of the list is not specific enough to overwrite this style */
-.sapMList .sapMLIB.sapMALI {
-	background: @sapHCStandardBG; /* overrides LIB style */
 }
 
 .sapMList .sapMLIB.sapMALI:focus {
@@ -29,7 +22,7 @@
 
 .sapMALI > .sapMLIBContent {
 	height: 2.5rem;
-	border: 0.0625rem solid @sapHCStandardFG;
+	border: 0.0625rem solid @sapUiButtonActionSelectBorderColor;
 	border-radius: 0.375rem;
 	box-sizing: border-box;
 	-webkit-box-align: center;
@@ -40,12 +33,12 @@
 
 /* active */
 .sapMLIBActive.sapMLIB.sapMALI > .sapMLIBContent {
-	background: @sapHCHighlightBG;
+	background: @sapUiButtonActiveBackground;
 }
 
 /* focus */
 .sapMList .sapMLIB.sapMALI:focus > .sapMLIBContent {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border: none;
 }
@@ -57,31 +50,10 @@ html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus > .sapMLIBConte
 	border-radius: 0;
 }
 
-/* hover */
-html.sap-desktop .sapMList .sapMLIB.sapMALI:hover > .sapMLIBContent {
-	background: @sapHCHighlightBG;
-}
-
-/* nested text */
-.sapMALIText {
-	color: @sapHCStandardFG;
-	font-weight: normal;
-	line-height: 1.25rem;
-	font-size: 1.125rem;
-	margin: 0 0 0 0.5rem;
-}
-
 /* ------------------------------ */
 /* Compact size                   */
 /* ------------------------------ */
-.sapUiSizeCompact .sapMALI {
-	height: 2rem;
-}
 
 .sapUiSizeCompact .sapMALI > .sapMLIBContent {
 	height: 1.625rem;
-}
-
-.sapUiSizeCompact .sapMALIText {
-	font-size: @sapMFontMediumSize;
 }

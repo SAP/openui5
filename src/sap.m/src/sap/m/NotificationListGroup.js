@@ -109,6 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		});
 
 		this.setAggregation("_collapseButton", _collapseButton, true);
+		this._maxNumberReached = false;
 	};
 
 	//================================================================================
@@ -165,14 +166,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	//================================================================================
 
 	NotificationListGroup.prototype.onBeforeRendering = function() {
+		/** @type {sap.m.NotificationListItem[]} */
+		var notifications = this.getItems();
+		var notificationsCount = notifications.length;
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
 		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
 		var collapseButtonText = this.getCollapsed() ? expandText : collapseText;
 		var collapseButton = this.getAggregation('_collapseButton');
+		this._maxNumberOfNotifications = sap.ui.Device.system.desktop ? 400 : 100;
+		this._maxNumberOfNotificationsTitle = resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', notificationsCount - this._maxNumberOfNotifications);
+		this._maxNumberOfNotificationsBody = resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
 
 		collapseButton.setText(collapseButtonText, true);
 		collapseButton.setEnabled(this._getCollapseButtonEnabled(), true);
+
+		this._maxNumberReached = notificationsCount > this._maxNumberOfNotifications;
 	};
 
 	NotificationListGroup.prototype.clone = function () {

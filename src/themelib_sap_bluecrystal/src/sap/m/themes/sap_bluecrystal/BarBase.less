@@ -1,42 +1,7 @@
-/* ===================================== */
-/* CSS for control sap.m/BarBase.control */
-/* ===================================== */
-
-.sapMIBar .sapMBarChild:first-child {
-	margin-left:0.25rem;
-}
-
-.sapMIBar .sapMBarChild {
-	margin-left:0.25rem;
-}
-
-.sapMIBar > .sapMBarChild:last-child {
-	margin-right: 0.25rem;
-}
-
-.sapMIBar-CTX.sapMFooter-CTX {
-	color: @sapUiPageFooterTextColor;
-	/* 1px down black shadow with 50% opacity */
-	text-shadow: 0em 0.0625em 0em fade(@sapUiDarkShadowTint, 50);
-	background-color: @sapUiPageFooterBackground;
-	background-image: none;
-	border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
-	box-shadow: none;
-}
-
-.sapMIBar.sapMSubHeader-CTX {
-	color: @sapUiPageHeaderTextColor;
-	background-color: @sapUiPageHeaderBackground;
-}
-
-html.sap-desktop .sapMIBar.sapMFooter-CTX {
-	background-color: @sapUiPageFooterBackground;
-}
-
-/* footer separator inside of a SplitContainer control */
-.sapMSplitContainerMaster .sapMFooter-CTX {
-	border-right: 0.0625rem solid @sapUiPageFooterBorderColor;
-}
+/* ============================== */
+/* CSS for control sap.m/BarBase  */
+/* BlueCrystal theme              */
+/* ============================== */
 
 .sapMBarGradient(@color, @alpha:100%) {
 	background-color: fade(@color, @alpha);
@@ -52,18 +17,4 @@ html.sap-desktop .sapMIBar.sapMFooter-CTX {
 	background-color: lighten(@sapUiPageHeaderBackground, 5);
 	filter: none;
 	background-image: none;
-}
-
-.sapMPopup-CTX .sapMIBar.sapMHeader-CTX { /* remove gradient in popups; restore grey header color when in popup on desktop */
-	background-color: @sapUiPageHeaderBackground;
-	filter: none;
-	background-image: none;
-}
-
-html[data-sap-ui-browser*='ie9'] .sapMPageHeader::after {
-	content: "";
-	position: absolute;
-	width:100%;
-	bottom: 0;
-	border-bottom: 0.0625em solid @sapUiPageHeaderBorderColor;
 }

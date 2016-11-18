@@ -1,0 +1,18 @@
+/* ===================================== */
+/* CSS for control sap.m/ColumnListItem  */
+/* Belize High Contrast White theme      */
+/* ===================================== */
+
+html.sap-desktop .sapMListTblRow:focus{
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMListTblRow:focus{
+	outline-width: 3px;
+}
+
+/* set overlapped borders transparent to make focus outline more distinct */
+.sapMListShowSeparatorsNone .sapMListTblFooter > td{
+	border-top-width: 0.188rem;
+}

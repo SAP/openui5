@@ -668,6 +668,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	* Gets the start date as UTC date
+	*
+	* E.g. if the date is Dec 21th 1981 00:00:00 +02:00, the UTC date would be
+	* Dec 21th, 1981 00:00:00 GMT
+	* @private
+	*/
 
 	function _getStartDate(){
 

@@ -23,7 +23,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData,
 				oView = null,
 				oTargetControl = null,
-				bInitial;
+				bInitial,
+				oTargetData;
 
 			if (!oSequencePromise || oSequencePromise === true) {
 				bInitial = true;
@@ -39,6 +40,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			}
 
 			oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
+
+			// make a copy of arguments and forward route config to target
+			oTargetData = jQuery.extend({}, oArguments);
+			oTargetData.routeConfig = oConfig;
 
 			oEventData = {
 				name: oConfig.name,
@@ -68,7 +73,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				}
 			} else {
 				// let targets do the placement + the events
-				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oArguments, this._oConfig.titleTarget, oSequencePromise);
+				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget, oSequencePromise);
 			}
 
 			return oSequencePromise.then(function(oResult) {

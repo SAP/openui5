@@ -60,18 +60,25 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			iLength = this.oModel.iSizeLimit;
 		}
 
-		var aContexts = [];
-		var that = this;
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this,
+			aContexts,
+			oContext,
+			sContextPath;
 
-		if (!this.oModel.isList(this.sPath)) {
-			var oContext = this.oModel.getContext(this.sPath);
+		if (!sResolvedPath) {
+			return [];
+		}
+		if (!this.oModel.isList(sResolvedPath)) {
+			oContext = this.oModel.getContext(sResolvedPath);
 			if (this.bDisplayRootNode) {
 				aContexts = [oContext];
 			} else {
 				aContexts = this.getNodeContexts(oContext, iStartIndex, iLength);
 			}
 		} else {
-			var sContextPath = this._sanitizePath(this.sPath);
+			aContexts = [];
+			sContextPath = this._sanitizePath(sResolvedPath);
 
 			jQuery.each(this.oModel._getObject(sContextPath), function(iIndex, oObject) {
 				that._saveSubContext(oObject, aContexts, sContextPath, iIndex);
@@ -81,7 +88,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 
 			this._setLengthCache(sContextPath, aContexts.length);
 
-			return aContexts.slice(iStartIndex, iStartIndex + iLength);
+			aContexts = aContexts.slice(iStartIndex, iStartIndex + iLength);
 		}
 
 		return aContexts;
@@ -266,11 +273,15 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 * @private
 	 */
 	ClientTreeBinding.prototype.applyFilter = function(){
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
 		this.filterInfo.oParentContext = {};
+		if (!sResolvedPath) {
+			return;
+		}
 		// start with binding path root
-		var oContext = this.oModel.getContext(this.sPath);
+		var oContext = this.oModel.getContext(sResolvedPath);
 		this._applyFilterRecursive(oContext);
 	};
 

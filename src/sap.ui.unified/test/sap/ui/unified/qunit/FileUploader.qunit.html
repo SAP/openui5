@@ -324,6 +324,34 @@
 	 * Test private functions
 	 */
 	module("private functions");
+	test("Testing sending passed files with XHR", function () {
+		var oFileUploader = createFileUploader(),
+			aFiles = {
+				"0": createFakeFile({
+					name:"FileUploader.qunit.html",
+					type:"text/html",
+					size:404450
+				}),
+				"1": createFakeFile({
+					name:"FileUploader2.qunit.html",
+					type:"text/html",
+					size:404450
+				}),
+				"length" : 2
+			},
+			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader._sendFilesWithXHR(aFiles);
+
+		ok(oSpy.called, "XHR request is made");
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 	test("Testing the filename length handling - _isFilenameTooLong", function () {
 		//setup
 		var oFileUploader = createFileUploader({

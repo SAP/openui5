@@ -1214,6 +1214,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		return oNode && oNode.context;
 	};
 
+	/**
+	 * Retrieves the context for a given index.
+	 */
+	ODataTreeBindingFlat.prototype.getNodeByIndex = function (iRowIndex) {
+		if (this.isInitial()) {
+			return;
+		}
+		return this.findNode(iRowIndex);
+	};
 
 	/**
 	 * Checks if an index is expanded

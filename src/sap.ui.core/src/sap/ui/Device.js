@@ -1817,10 +1817,10 @@ if (typeof window.sap.ui !== "object") {
 			}
 		} else if (device.support.matchmedia && device.support.orientation) { //most desktop browsers and windows phone/tablet which not support orientationchange
 			return !!window.matchMedia("(orientation: landscape)").matches;
-		} else { //otherwise compare the width and height of window
-			var size = windowSize();
-			return size[0] > size[1];
 		}
+		//otherwise compare the width and height of window
+		var size = windowSize();
+		return size[0] > size[1];
 	}
 
 	function handleMobileOrientationResizeChange(evt) {
@@ -1875,7 +1875,9 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	function handleMobileTimeout() {
-		if (bOrientationchange && bResize) {
+		// with ios split view, the browser fires only resize event and no orientationchange when changing the size of a split view
+		// therefore the following if needs to be adapted with additional check of iPad with version greater or equal 9 (splitview was introduced with iOS 9)
+		if (bResize && (bOrientationchange || (device.system.tablet && device.os.ios && device.os.version >= 9))) {
 			handleOrientationChange();
 			handleResizeChange();
 			bOrientationchange = false;

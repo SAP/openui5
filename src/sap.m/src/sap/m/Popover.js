@@ -8,26 +8,57 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	function (jQuery, Bar, Button, InstanceManager, library, Control, Popup, ScrollEnablement, Parameters, Device) {
 		"use strict";
 
-
 		/**
-		 * Constructor for a new Popover.
-		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-		 * @param {object} [mSettings] Initial settings for the new control
-		 *
-		 * @class
-		 * Popover is used to present information temporarily but in a way that does not take over the entire screen. The popover content is layered on top of your existing content and it remains visible until the user taps outside of the popover (when modal is set to false) or you explicitly dismiss it (when modal is set to true). The switching between modal and non-modal can also be done when the popover is already opened.
-		 * @extends sap.ui.core.Control
-		 * @implements sap.ui.core.PopupInterface
-		 *
-		 * @author SAP SE
-		 * @version ${version}
-		 *
-		 * @constructor
-		 * @public
-		 * @alias sap.m.Popover
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-		 */
+		* Constructor for a new Popover.
+		*
+		* @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		* @param {object} [mSettings] Initial settings for the new control
+		*
+		* @class
+		* Displays additional information for an object in a compact way.
+		* @extends sap.ui.core.Control
+		* @implements sap.ui.core.PopupInterface
+		* <h3>Overview</h3>
+		* The popover displays additional information for an object in a compact way and without leaving the page. The popover can contain various UI elements such as fields, tables, images, and charts. It can also include actions in the footer.
+		* <h3>Structure</h3>
+		* The popover has three main areas:
+		* <ul>
+		* <li>Header (optional) - with a back button and a title</li>
+		* <li>Content - holds all the controls</li>
+		* <li>Footer (optional) - with additional action buttons</li>
+		* </ul>
+		* <h4>Guidelines</h4>
+		* <ul>
+		* <li>Do not overlap popovers.</li>
+		* <li>You can determine the {@link sap.m.PlacementType placement} of the popover relative to the control that opens it.</li>
+		* <li>Ensure that the content has a basic design and shows only the most important information.</li>
+		* </ul>
+		* <h3>Usage</h3>
+		* <h4>When to use:</h4>
+		* <ul>
+		* <li>You need to define your own structure of controls within the popover.</li>
+		* </ul>
+		* <h4>When not to use:</h4>
+		* <ul>
+		* <li>The {@link sap.m.QucikView QuickView} is more appropriate for your use case.</li>
+		* </ul>
+		* <h3>Responsive Behavior</h3>
+		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover. You can prevent this with the <code>modal</code> property.
+		* The popover can be resized when the <code>resizable</code> property is enabled.
+		*
+		* <ul>
+		* <li>{@link sap.m.Popover} is <u>not</u> responsive on mobile devices - it will always be rendered as a popover and you have to take care of its size and position.</li>
+		* <li>{@link sap.m.ResponsivePopover} is adaptive and responsive. It renders as a dialog with a close button in the header on phones, and as a popover on tablets.</li>
+		* </ul>
+		*
+		* @author SAP SE
+		* @version ${version}
+		*
+		* @constructor
+		* @public
+		* @alias sap.m.Popover
+		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		*/
 		var Popover = Control.extend("sap.m.Popover", /** @lends sap.m.Popover.prototype */ {
 			metadata: {
 

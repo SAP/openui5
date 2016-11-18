@@ -33,39 +33,61 @@
   background-color: @sapUiErrorBorder;
 }
 
-.sapMNLG .sapMNLI {
-  margin-top: 0;
-  border-top: 1px solid @sapUiListBorderColor;
-}
-
-.sapMNLG-Header .sapMNLG-Details {
-  color: @sapUiContentLabelColor;
+.sapMNLG { 
+  .sapMNLG-Header {
+      .sapMNLG-Details {
+        color: @sapUiContentLabelColor;
+      }
+    }
+    .sapMNLI {
+      margin-top: 0;
+      border-top: 1px solid @sapUiListBorderColor;
+    }
+    //Focus Style ================================================================================== 
+    &:focus&::after {
+      border: 1px dotted @sapUiContentFocusColor;
+      position: absolute;
+      content: " ";
+      top: 1px;
+      right: 1px;
+      bottom: 1px;
+      left: 1px;
+      z-index: 2;
+      pointer-events: none;
+    }
 }
 
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
   border: none;
 }
 
-// Focus Styles ========================================================================================================
+.sapMNLG.sapMNLG-Collapsed {
+  .sapMNLG-Header, .sapMNLG-SubHeader {
+    background-color: @sapUiListBackground;
+  }
+}
+.sapMNLG {
+  .sapMNLG-Header, .sapMNLG-SubHeader {
+    background-color: #415a6f;
+  } 
+}
+.sapMNLG-Body {
+  .sapMNLG-MaxNotifications {
+    font-family: @sapUiFontFamily; 
+    font-size: @sapMFontMediumSize;
+    color: @sapUiContentLabelColor;
+    border-top: 1px solid #577086;
+    background: #4c6679;
+    span {
+      font-family: @sapUiFontFamily; 
+      font-size: @sapMFontLargeSize;
+      color: @sapUiBaseText;
+      font-weight: bold;
+    }
+  }
+}
 
+// Focus Style ========================================================================================================
 html.sap-desktop .sapMLIB.sapMNLG:focus {
   outline: none;
-}
-
-.sapMNLG:focus::before {
-  border: 1px dotted @sapUiContentFocusColor;
-  position: absolute;
-  content: " ";
-  top: 1px;
-  right: 1px;
-  bottom: 1px;
-  left: 1px;
-  z-index: 2;
-  pointer-events: none;
-}
-
-// Footer styles =======================================================================================================
-
-.sapMNLG-Footer {
-  border-top: 1px solid @sapUiListBorderColor;
 }

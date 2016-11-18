@@ -21,43 +21,68 @@
   padding-top: @containerPadding;
   border-radius: 0.25rem 0 0 0;
 }
-
-.sapMNLG-Footer > .sapMNLB-Priority {
-  border-radius: 0 0 0 0.25rem;
-}
-
 // Header styles =======================================================================================================
-
 .sapMNLG-Header {
   padding-bottom: 0.375rem;
+  border-radius: 0.25rem 0 0;
+  .sapMNLG-Title {
+    padding-right: 1.75rem;
+  }
+  .sapMNLGTitleUnread {
+    font-weight: bold;
+  }
+  .sapMNLG-Details {
+    padding-top: 0.375rem;
+    font-family: @sapUiFontFamily;
+    font-weight: normal;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+    .sapMNLG-Description {
+      width: 100%;
+      padding-top: 0.375rem;
+    }
+    .sapMText.sapMNLI-Text {
+      display: inline;
+    }
+  }
 }
 
-.sapMNLG-Title {
-  padding-right: 1.75rem;
+// SubHeader styles =======================================================================================================
+
+.sapMNLG-SubHeader .sapMTB {  
+  .sapMBtn {
+    margin-left: 0.25rem;
+    padding: 0;
+    border: none;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
 }
 
-.sapMNLG-Header > .sapMNLGTitleUnread {
-  font-weight: bold;
+
+/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
+  display: block;
+  width: auto;
 }
 
-.sapMNLG-Header .sapMNLG-Details {
-  padding-top: 0.375rem;
-  font-family: @sapUiFontFamily;
-  font-weight: normal;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative
+.sapMNLG-SubHeader > .sapMBtn:first-of-type {
+  float: left;
 }
 
-.sapMNLG-Details .sapMText.sapMNLI-Text {
-  display: inline;
+.sapMNLG-Collapsed .sapMNLG-SubHeader {
+  border-top: 0;
 }
 
-.sapMNLG-Description {
-  width: 100%;
-  padding-top: 0.375rem;
+.sapMNLG-SubHeader > .sapMNLB-Priority {
+  border-radius: 0;
+}
+
+.sapMNLG-Collapsed .sapMNLG-SubHeader > .sapMNLB-Priority {
+  border-radius: 0 0 0 0.25rem;
 }
 
 // Body styles =========================================================================================================
@@ -66,13 +91,23 @@
   position: relative;
   padding-left: 0;
   padding-right: 0;
-}
-
-.sapMNLG-Body .sapMNLI {
-  margin: 0;
-  box-shadow: none;
-  border-bottom: none;
-  border-radius: 0;
+  .sapMNLI {
+    margin: 0;
+    box-shadow: none;
+    border-bottom: none;
+    border-radius: 0;
+  }
+  .sapMNLG-MaxNotifications {
+    border-radius: 0 0 0.25rem 0.25rem;
+    padding: 1.5rem 0.5rem 1rem;
+    text-align: center;
+    line-height: 1.5rem;
+    span {
+     font-weight: bold;
+      margin: 0;
+      padding: 0;
+    }
+  }
 }
 
 .sapMText.sapMNLG-Datetime {
@@ -85,45 +120,14 @@
   display: none;
 }
 
-.sapMNLG-Body .sapMNLI {
-  border-radius: 0;
-}
-
 .sapMNLG-Body > .sapMNLI .sapMNLB-Priority {
   border-radius: 0;
 }
 
-// Footer styles =======================================================================================================
-
-.sapMNLG-Footer {
-  border-top: 1px solid @sapUiExtraLightBorder;
-  height: 3rem;
-  position: relative;
+.sapMNLG-Body > .sapMNLI:last-child .sapMNLB-Priority {
+  border-radius: 0 0 0 0.25rem;
 }
 
-.sapMNLG-Footer .sapMBtn {
-  margin-left: 0.25rem;
-  padding: 0;
-}
-
-.sapMNLG-Footer .sapMTB {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
-html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
-  display: block;
-  width: auto;
-}
-
-.sapMNLG-Footer > .sapMBtn:first-of-type {
-  float: left;
-}
-
-.sapMNLG-Collapsed .sapMNLG-Footer {
-  border-top: 0;
-}
 
 // Compact mode ========================================================================================================
 
@@ -131,7 +135,7 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
   padding-right: 1.25rem;
 }
 
-.sapUiSizeCompact .sapMNLG-Footer {
+.sapUiSizeCompact .sapMNLG-SubHeader {
   padding-top: 0.25rem;
   padding-left: 0.75rem;
   height: 2.5625rem;
@@ -139,7 +143,7 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
   box-sizing: border-box;
 }
 
-.sapUiSizeCompact .sapMNLG-Footer .sapMBtn {
+.sapUiSizeCompact .sapMNLG-SubHeader .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
 }
@@ -149,3 +153,5 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 .sapMNLGNoHdrFooter {
   padding-top: 0 !important;
 }
+
+// Max Number of Notifications ====================================================================================================

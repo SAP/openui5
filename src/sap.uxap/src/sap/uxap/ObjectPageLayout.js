@@ -367,7 +367,7 @@ sap.ui.define([
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {
 			// In case we are not lazy loaded make sure that we connect the blocks properly...
-			aToLoad = this.getUseIconTabBar() ? [this._oSelectedSection || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
+			aToLoad = this.getUseIconTabBar() ? [sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection] : this.getSections(); // for iconTabBar, load only the section that corresponds to first tab
 
 		} else { //lazy loading, so connect first visible subsections
 			var aSectionBasesToLoad = this.getUseIconTabBar() ? this._grepCurrentTabSectionBases() : this._aSectionBases;
@@ -379,7 +379,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-			oSectionToLoad = this._oCurrentTabSection || this._oSelectedSection || this._oFirstVisibleSection;
+			oSectionToLoad = this._oCurrentTabSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection;
 
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
@@ -414,17 +414,22 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var oSectionToSelect = this._oStoredSection || this._oSelectedSection || this._oFirstVisibleSection;
+		var oSectionToSelect = this._oStoredSection || sap.ui.getCore().byId(this.getSelectedSection()) || this._oFirstVisibleSection,
+			sFirstVisibleSectionID, sSectionToSelectID;
 
 		this._bDomReady = true;
-
 		this._adjustHeaderHeights();
 
-		if (this.getUseIconTabBar() && oSectionToSelect) {
-			this._setSelectedSectionId(oSectionToSelect.getId());
-			this._setCurrentTabSection(oSectionToSelect);
-		} else if (this._oSelectedSection) {
-			this.scrollToSection(this._oSelectedSection.getId());
+		if (oSectionToSelect) {
+			sSectionToSelectID = oSectionToSelect.getId();
+			sFirstVisibleSectionID = this._oFirstVisibleSection && this._oFirstVisibleSection.getId();
+
+			if (this.getUseIconTabBar()) {
+				this._setSelectedSectionId(sSectionToSelectID);
+				this._setCurrentTabSection(oSectionToSelect);
+			} else if (sSectionToSelectID !== sFirstVisibleSectionID) {
+				this.scrollToSection(sSectionToSelectID);
+			}
 		}
 
 		this._initAnchorBarScroll();
@@ -571,6 +576,20 @@ sap.ui.define([
 		});
 	};
 
+	ObjectPageLayout.prototype.setSelectedSection = function (sSectionId) {
+
+		if (!sap.ui.getCore().byId(sSectionId)) {
+			jQuery.sap.log.warning("setSelectedSection aborted: unknown section", sSectionId, this);
+			return this;
+		}
+
+		var sOldValue = this.getSelectedSection();
+		if (sSectionId === sOldValue) {
+			return this;
+		}
+		this.scrollToSection(sSectionId);
+		return this.setAssociation("selectedSection", sSectionId, true);
+	};
 
 	/**
 	 * if our container has not set a height, we need to enforce it or nothing will get displayed
@@ -664,8 +683,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			sSelectedSectionId = this.getSelectedSection();
+			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection;
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -681,10 +699,6 @@ sap.ui.define([
 			//ignore hidden sections
 			if (!oSection.getVisible()) {
 				return true;
-			}
-
-			if (oSection.getId() === sSelectedSectionId) {
-				this._oSelectedSection = oSection;
 			}
 
 			this._registerSectionBaseInfo(oSection);
@@ -968,6 +982,7 @@ sap.ui.define([
 
 		if (oAnchorBar && oSelectedSectionInfo.buttonId) {
 			oAnchorBar.setSelectedButton(oSelectedSectionInfo.buttonId);
+			this.setAssociation("selectedSection", sSelectedSectionId, true);
 		}
 	};
 
@@ -990,7 +1005,6 @@ sap.ui.define([
 
 		this._oSectionInfo = {};
 		this._aSectionBases = [];
-		this._oSelectedSection = null;
 	};
 
 	/**
@@ -1029,6 +1043,16 @@ sap.ui.define([
 			return;
 		}
 
+		if (!oSection){
+			jQuery.sap.log.warning("scrollToSection aborted: unknown section", sId, this);
+			return;
+		}
+
+		if (!this._oSectionInfo[sId]) {
+			jQuery.sap.log.warning("scrollToSection aborted: section is hidden by UX rules", sId, this);
+			return;
+		}
+
 		if (this.getUseIconTabBar()) {
 			var oToSelect = ObjectPageSection._getClosestSection(oSection);
 
@@ -1040,6 +1064,7 @@ sap.ui.define([
 
 			this._setCurrentTabSection(oSection);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
+			this.setAssociation("selectedSection", oToSelect.getId(), true);
 		}
 
 		if (bIsTabClicked) {
@@ -1557,6 +1582,7 @@ sap.ui.define([
 
 			if (this._oSectionInfo[sSectionId]) {
 				oAnchorBar.setSelectedButton(this._oSectionInfo[sSectionId].buttonId);
+				this.setAssociation("selectedSection", sSectionId, true);
 				this._setSectionsFocusValues(sSectionId);
 			}
 		}

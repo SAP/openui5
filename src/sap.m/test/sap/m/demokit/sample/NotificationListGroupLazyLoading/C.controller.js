@@ -45,7 +45,7 @@ sap.ui.define([
 			var titles = ['New order request', 'Your vacation has been approved', 'New transaction in queue', 'An new request await your action'];
 			var notificationPriority;
 
-			for (var index = 0; index < 3; index+=1) {
+			for (var index = 0; index < 3; index += 1) {
 				notificationPriority = priorities[randomIndex(priorities.length)];
 
 				notificationGroup.addItem(new sap.m.NotificationListItem({

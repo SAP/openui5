@@ -23,7 +23,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oConfig,
 				oEventData,
 				oView = null,
-				oTargetControl = null;
+				oTargetControl = null,
+				oTargetData;
 
 			// Recursively fire matched event and display views of this routes parents
 			if (this._oParent) {
@@ -34,6 +35,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			}
 
 			oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
+
+			// make a copy of arguments and forward route config to target
+			oTargetData = jQuery.extend({}, oArguments);
+			oTargetData.routeConfig = oConfig;
 
 			oEventData = {
 				name: oConfig.name,
@@ -67,7 +72,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData.targetControl = oTargetControl;
 			} else {
 				// let targets do the placement + the events
-				oRouter._oTargets._display(this._oConfig.target, oArguments, this._oConfig.titleTarget);
+				oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget);
 			}
 
 			if (oConfig.callback) {

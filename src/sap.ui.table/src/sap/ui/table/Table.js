@@ -613,6 +613,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._iRowHeightsDelta = 0;
 		this._iRenderedFirstVisibleRow = 0;
 
+		this._aSortedColumns = [];
+
 		var that = this;
 
 		this._performUpdateRows = function(sReason) {
@@ -641,7 +643,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
 					}
 					if (that._bBindingLengthChanged) {
-						that._updateVSb();
+						that._updateVSbScrollTop();
 					}
 					that._toggleVSb();
 
@@ -778,7 +780,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		function collectHeights(row, index) {
 			var currentValue = aRowItemHeights[index] || 0;
-			aRowItemHeights[index] = Math.max(currentValue, row.getBoundingClientRect().height, iDefaultRowHeight);
+			var rowHeight = row.getBoundingClientRect().height;
+			var diff = iDefaultRowHeight - rowHeight;
+			if (Device.browser.chrome && diff < 1 && diff > 0 && window.devicePixelRatio != 1) {
+				// In Chrome with zoom!=100% the height of the table rows behaves differently than divs (row selector)
+				// see https://bugs.chromium.org/p/chromium/issues/detail?id=661991
+				// -> Allow that rowheight is minimal smaller than the default row height
+				aRowItemHeights[index] = Math.max(currentValue, rowHeight);
+			} else {
+				aRowItemHeights[index] = Math.max(currentValue, rowHeight, iDefaultRowHeight);
+			}
 		}
 
 		[].forEach.call(aFixedRowItems, collectHeights);
@@ -1032,6 +1043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.onAfterRendering = function(oEvent) {
 		if (oEvent && oEvent.isMarked("insertTableRows")) {
 			this._getScrollExtension().updateVSbMaxHeight();
+			this._updateVSbRange();
 			return;
 		}
 
@@ -1074,7 +1086,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._updateTableSizes();
 		}
 
-		this._updateVSb(this._iScrollTop);
+		this._updateVSbTop();
 
 		// needed for the column resize ruler
 		this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
@@ -1155,8 +1167,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				var colHeader;
 				var domWidth;
 				// if a column has variable width, check if its current width of the
-				// first corresponding <th> element in less than minimum and store it
-				if (TableUtils.isVariableWidth(colWidth)) {
+				// first corresponding <th> element in less than minimum and store it;
+				// do not change freezed columns
+				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
 					colHeader = aColHeaders[0];
 					domWidth = colHeader && colHeader.offsetWidth;
@@ -1308,6 +1321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (mFocusInfo && mFocusInfo.customId) {
 			this.$().find("#" + mFocusInfo.customId).focus();
 		} else {
+			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);
 		}
 		return this;
@@ -1425,7 +1439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
 			if (!bOnScroll) {
-				this._updateVSb();
+				this._updateVSbScrollTop();
 			}
 		}
 
@@ -1554,6 +1568,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
 		this._setRowContentHeight(iVisibleRowCount * this._getDefaultRowHeight());
+		return this;
+	};
+
+	Table.prototype.setRowHeight = function(iRowHeight) {
+		this.setProperty("rowHeight", iRowHeight);
+		this._iTableRowContentHeight = undefined;
 		return this;
 	};
 
@@ -2053,14 +2073,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				} else {
 					$sapUiTableHSb.css('margin-left', iScrollPadding + 'px');
 				}
-				// if the data area has been updated after a vertical resize, its scrollLeft can be reset to 0;
-				// at the same time, prevoiusly scrolled header and HSB still have scrollLeft > 0
-				// adjust it
-				var $dataSrollArea = $this.find(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
-				var iScrollLeft = $sapUiTableHSb.scrollLeft();
-				if ($dataSrollArea.scrollLeft() != iScrollLeft) {
-					$dataSrollArea.scrollLeft(iScrollLeft);
-				}
 			}
 
 			var oHSbContent = this.getDomRef("hsb-content");
@@ -2083,14 +2095,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Update the vertical scrollbar position
 	 * @private
 	 */
-	Table.prototype._updateVSb = function(iScrollTop) {
+	Table.prototype._updateVSbTop = function() {
 		var oVSb = this._getScrollExtension().getVerticalScrollbar();
 		if (!oVSb) {
 			return;
-		}
-
-		if (iScrollTop === undefined) {
-			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
 		}
 
 		var oTableCCnt = this.getDomRef("tableCCnt");
@@ -2101,6 +2109,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				iTop += this._iVsbTop;
 			}
 			oVSb.style.top = iTop + "px";
+		}
+	};
+
+	Table.prototype._updateVSbScrollTop = function(iScrollTop) {
+		var oVSb = this._getScrollExtension().getVerticalScrollbar();
+		if (!oVSb) {
+			return;
+		}
+
+		if (iScrollTop === undefined) {
+			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
 		}
 
 		oVSb.scrollTop = iScrollTop;
@@ -2130,7 +2149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var isVSbRequired = this._isVSbRequired();
 			if (!isVSbRequired) {
 				// reset scroll position to zero when Scroll Bar disappe
-				this._updateVSb(0);
+				this._updateVSbScrollTop(0);
 			}
 			$this.toggleClass("sapUiTableVScr", isVSbRequired);
 		}
@@ -2697,7 +2716,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// table control? (only if the selection behavior is set to row)
 		var oClosestTd, $ClosestTd;
 		if (oEvent.target) {
-			$ClosestTd = jQuery(oEvent.target).closest("td");
+			$ClosestTd = jQuery(oEvent.target).closest(".sapUiTableCtrl > tbody > tr > td");
 			if ($ClosestTd.length > 0) {
 				oClosestTd = $ClosestTd[0];
 			}
@@ -2842,23 +2861,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Gets sorted columns.
+	 * Gets sorted columns in the order of which the sort API at the table or column was called.
+	 * Sorting on binding level is not reflected here.
+	 *
+	 * @see sap.ui.table.Table#sort
+	 * @see sap.ui.table.Column#sort
 	 *
 	 * @return Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getSortedColumns = function() {
-
-		return this._aSortedColumns;
-
+		// ensure that _aSortedColumns can't be altered by accident
+		return this._aSortedColumns.slice();
 	};
 
 	/**
 	 * Sorts the given column ascending or descending.
 	 *
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be sorted
+	 * @param {sap.ui.table.Column | undefined} oColumn
+	 *         column to be sorted or undefined to clear sorting
 	 * @param {sap.ui.table.SortOrder} oSortOrder
 	 *         sort order of the column (if undefined the default will be ascending)
 	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
@@ -2867,6 +2889,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.sort = function(oColumn, oSortOrder, bAdd) {
+		if (!oColumn) {
+			// mimic the list binding sort API, if no column is provided, just restore the default sorting
+			// make sure to also update the sorted property to correctly indicate sorted columns
+			for (var i = 0; i < this._aSortedColumns.length; i++) {
+				this._aSortedColumns[i].setSorted(false);
+			}
+
+			var oBinding = this.getBinding("rows");
+			if (oBinding) {
+				oBinding.sort();
+			}
+
+			this._aSortedColumns = [];
+		}
+
 		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
 			oColumn.sort(oSortOrder === SortOrder.Descending, bAdd);
 		}
@@ -3267,8 +3304,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oColumn = aCols[i];
 			if (oColumn) {
 				var iColumnIndex = jQuery.inArray(oColumn, this.getColumns());
-				if (!oColumn.getWidth()) {
-					oColumn.setWidth($ths.filter("[data-sap-ui-headcolindex='" + iColumnIndex + "']").width() + "px");
+				if (TableUtils.isVariableWidth(oColumn.getWidth())) {
+					// remember the current column width for the next rendering
+					oColumn._iFixWidth = $ths.filter("[data-sap-ui-headcolindex='" + iColumnIndex + "']").width();
 				}
 			}
 		}
