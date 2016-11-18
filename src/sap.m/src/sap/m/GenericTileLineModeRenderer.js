@@ -109,12 +109,14 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 			if (oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
-
 			oRm.write("</span>"); //.sapMGTLineModeHelpContainer
+
+			if (oControl.getScope() === GenericTileScope.Actions) {
+				this._renderActionsScope(oRm, oControl);
+			}
 
 			oRm.write("</div>"); //.sapMGTTouchArea
 		}
-
 		oRm.write("</span>"); //.sapMGT
 	};
 

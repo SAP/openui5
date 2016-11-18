@@ -1132,9 +1132,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Returns event parameters.
+	 * Determines the current action depending on the tile's scope.
 	 * @param {sap.ui.base.Event} oEvent which was fired
-	 * @returns {object} oParams Event parameters
+	 * @returns {object} An object containing the tile's scope and the action which triggered the event
 	 * @private
 	 */
 	GenericTile.prototype._getEventParams = function(oEvent) {
@@ -1142,12 +1142,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			sAction = GenericTile._Action.Press,
 			sScope = this.getScope();
 
-		if (sScope === library.GenericTileScope.Actions) {
-			if (oEvent.target.id.indexOf("generic-tile") > -1 || oEvent.target.id.indexOf("-action-more") > -1) {//tap on icon more or on the tile in Actions scope
-				sAction = GenericTile._Action.Press;
-			} else if (oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
-				sAction = GenericTile._Action.Remove;
-			}
+		if (sScope === library.GenericTileScope.Actions && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
+			sAction = GenericTile._Action.Remove;
 		}
 		oParams = {
 				scope : sScope,
