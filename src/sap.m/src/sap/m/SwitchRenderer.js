@@ -96,7 +96,7 @@ sap.ui.define([], function() {
 			if (bAccessibilityEnabled) {
 				this.renderInvisibleElement(oRm, oSwitch, {
 					id: oSwitch.getInvisibleElementId(),
-					text: oSwitch.getInvisibleElementText()
+					text: oSwitch.getInvisibleElementText(bState)
 				});
 			}
 
