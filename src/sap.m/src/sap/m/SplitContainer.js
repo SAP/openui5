@@ -1240,7 +1240,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._bMasterClosing = true;
 			}
 		} else {
-			if ((this._portraitHide() || this._hideMode()) && this._bMasterisOpen) {
+			if ((this._portraitHide() || this._hideMode()) &&
+				(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
 				if (this._isMie9) {
 					_this$.animate({
 						left: "-=320"
