@@ -10,7 +10,7 @@
 					  showEditHeaderButton="true"
 					  editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI="./qunit/img/person.png"
+			<ObjectPageHeader objectImageURI="./img/person.png"
 							  objectTitle="Denise Smith"
 							  objectImageShape="Circle"
 							  objectImageAlt="Denise Smith"
@@ -38,8 +38,8 @@
 			</layout:VerticalLayout>
 
 			<layout:HorizontalLayout>
-				<m:Image src="./qunit/img/linkedin.png"></m:Image>
-				<m:Image src="./qunit/img/Twitter.png"></m:Image>
+				<m:Image src="./img/linkedin.png"></m:Image>
+				<m:Image src="./img/Twitter.png"></m:Image>
 			</layout:HorizontalLayout>
 
 			<layout:VerticalLayout>
@@ -64,7 +64,9 @@
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
 						<blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">goalsSectionSS1</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%;background-color: #DFF0F7;">goalsSectionSS1</html:div>
+							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -74,44 +76,58 @@
 				<subSections>
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
 						<blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">personalSectionSS1</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS1</html:div>
+							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="personalSectionSS2" title="Payment information">
 						<blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">personalSectionSS2</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS2</html:div>
+							</m:Panel>
 						</blocks>
 						<moreBlocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">personalSectionSS2 more block</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS2 more block</html:div>
+							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
-            <ObjectPageSection id="employmentSection" title="Employment">
-                <subSections>
-                    <ObjectPageSubSection id="employmentSectionSS1" title="Job information">
-                        <blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">employmentSectionSS1</html:div>
-                        </blocks>
-                    </ObjectPageSubSection>
+			<ObjectPageSection id="employmentSection" title="Employment">
+				<subSections>
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
+						<blocks>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS1</html:div>
+							</m:Panel>
+						</blocks>
+					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
 						<blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">employmentSectionSS2</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS2</html:div>
+							</m:Panel>
 						</blocks>
 						<moreBlocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">employmentSectionSS2 more block</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS2 more blocks</html:div>
+							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" mode="Collapsed" importance="Low">
 						<blocks>
-							<html:div style="height:300px; background-color: #DFF0F7;">employmentSectionSS3</html:div>
+							<m:Panel height="300px">
+								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS3</html:div>
+							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
-			    </subSections>
+				</subSections>
 			</ObjectPageSection>
 		</sections>
 		<footer>
