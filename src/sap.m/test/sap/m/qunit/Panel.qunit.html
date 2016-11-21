@@ -548,6 +548,22 @@
 		oContainer.destroy();
 	});
 
+	QUnit.test("Container height exception handling", function (assert) {
+		// System under Test + Act
+		var oContainer = new sap.m.Panel({height: "100px"});
+		var oSpy = this.spy(oContainer, "_setContentHeight");
+
+		// Act
+		oContainer._setContentHeight();
+
+		// Assert
+		assert.strictEqual(oSpy.threw(), false, "Should not have thrown any exceptions.");
+
+		// Cleanup
+		oSpy.restore();
+		oContainer.destroy();
+	});
+
 	QUnit.module("ARIA attributes", {
 		setup: function () {
 			this.oPanel = new sap.m.Panel({
