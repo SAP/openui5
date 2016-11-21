@@ -54,7 +54,9 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			oRm.renderControl(oControl._getMidColumn());
+			if (oControl.getAggregation("_midColumnNav")) {
+				oRm.renderControl(oControl._getMidColumn());
+			}
 
 			// Arrow - expand begin
 			oRm.renderControl(oMidColumnForwardArrow);
@@ -76,7 +78,9 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			oRm.renderControl(oControl._getEndColumn());
+			if (oControl.getAggregation("_endColumnNav")) {
+				oRm.renderControl(oControl._getEndColumn());
+			}
 
 			// Arrow - right
 			oRm.renderControl(oEndColumnForwardArrow);
