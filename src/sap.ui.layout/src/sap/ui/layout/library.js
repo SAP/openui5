@@ -83,6 +83,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"moveElements": "default",
 					"hideControl": "default",
 					"unhideControl": "default"
+				},
+				"sap.ui.layout.VerticalLayout": {
+					"moveElements": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
 				}
 			}
 		}
