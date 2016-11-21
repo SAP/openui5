@@ -274,5 +274,46 @@
         "references": []
       }
     ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "7262a9a84bdc1e849c604cb4b2b80e63fcf25516",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Handle Cell click also when MatrixLayout is used in cell",
+        "references": []
+      },
+      {
+        "id": "f841bc7266f3c60ed31d7e87e8bcd6223e7b0110",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Position Resize Bar initially out of visible area",
+        "references": []
+      },
+      {
+        "id": "df85d0f36807bf9fe10cb656e9b2715405138777",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Restore focus on row (e.g. tree icon) after rendering",
+        "references": []
+      },
+      {
+        "id": "eae56d31c8dae622043b6b36a86879cbd50d4b3c",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Enhancements for vertical scrolling with large data and variable row heights.",
+        "references": []
+      },
+      {
+        "id": "5c70a467bc328d0370a60b917c55767dc89f84cb",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Horizontal scroll position is restored after rerendering.",
+        "references": []
+      },
+      {
+        "id": "e3243de2cfb2f19e600c5a8fd1e090cac005fc68",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect column resize",
+        "references": []
+      }
+    ]
   }
 }

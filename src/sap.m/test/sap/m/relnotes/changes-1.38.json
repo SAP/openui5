@@ -2626,5 +2626,64 @@
         "references": []
       }
     ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "e95c3302761a784783c2a15ccf551fb927db9972",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Initial focus issue fixed",
+        "references": []
+      },
+      {
+        "id": "f266f35cffad6ae8bb20b232cc3685b1ef7e9951",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Mouse pointer handling enhanced",
+        "references": []
+      },
+      {
+        "id": "6c3a594a1c7967210205d8fbf13d74a485f59f7b",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: User text selection for failed state corrected",
+        "references": []
+      },
+      {
+        "id": "de8f4d2c0edf2c4ca7d4d1513e0ebb3064c06dde",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Expanding is correct if no tab is selected",
+        "references": []
+      },
+      {
+        "id": "aa9f7f6fc05bfd57f6dd70f789922b71e09a02d9",
+        "type": "FIX",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
+        "references": []
+      },
+      {
+        "id": "4dd454f1ee4eef964d588f70b340f2d8d06e0466",
+        "type": "FIX",
+        "text": "sap.m.Input: liveChange is fired when navigate through suggestions",
+        "references": []
+      },
+      {
+        "id": "ee6fc4da3435833659a4365230497dfb4899dc11",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Returning the focus to the input after rendering the list removed",
+        "references": []
+      },
+      {
+        "id": "e751541d0421b0425836dec7e5d9bfaddc6dd239",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: ARIA support is now correct",
+        "references": []
+      },
+      {
+        "id": "8ffadc39a7ee7c7371d28e66e68d67e57619d11a",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Content size is now adapted correctly",
+        "references": []
+      }
+    ]
   }
 }

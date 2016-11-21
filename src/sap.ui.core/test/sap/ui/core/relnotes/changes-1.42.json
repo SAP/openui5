@@ -706,5 +706,40 @@
         "references": []
       }
     ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "eb3fc477ddaa7cf921750a892f3f7120b4d4b299",
+        "type": "FIX",
+        "text": " Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "2eb3dad8ebe28feb169eb59cb1481bb1c5fa37dd",
+        "type": "FIX",
+        "text": " Device.js: Android orientation mode",
+        "references": []
+      },
+      {
+        "id": "5cf8ca27ccf4fdad80eeb923f6a13b43b43d7143",
+        "type": "FIX",
+        "text": " Device.js: iOS 9 split view adaptions",
+        "references": []
+      },
+      {
+        "id": "81936be8d8d9563d69ea828cb0ba712104b61dc9",
+        "type": "FIX",
+        "text": " MessageManager: Correct Message Sorting Before Propagation",
+        "references": []
+      },
+      {
+        "id": "375aaf7db04438fb6bcc8d6dfe5e787b99e9d3bf",
+        "type": "FIX",
+        "text": " jQuery.sap.properties: reduce processing memory and heap",
+        "references": []
+      }
+    ]
   }
 }

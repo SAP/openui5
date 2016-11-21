@@ -1419,5 +1419,52 @@
         "references": []
       }
     ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "5b6d588d7c5384c8e5885241f0032c4c1a002b10",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Mouse pointer handling enhanced",
+        "references": []
+      },
+      {
+        "id": "c206e1e517a36f4a17030ae1cb7f0a36c62f4aa6",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: User text selection for failed state corrected",
+        "references": []
+      },
+      {
+        "id": "2020f84a1af76c7c6c2b74a5a53e9231aa04cbcd",
+        "type": "FIX",
+        "text": " sap.m.MessagePopoverItem: Type None now fallbacks to type Information",
+        "references": []
+      },
+      {
+        "id": "339d0d8f8a35efa059f357adbb940e3242d4c56d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: onsapenter now selects a value from the picker",
+        "references": []
+      },
+      {
+        "id": "d790c134b04716c757fce7956e1349e6791ce502",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed methods getAggregation and clone",
+        "references": []
+      },
+      {
+        "id": "b63a5c5ee16b3e91314ea06023ca3eccb021c3ab",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Compact visual issues with alignment fixed",
+        "references": []
+      },
+      {
+        "id": "07161ef63afc45bdd09047f688ed739398daa10e",
+        "type": "FIX",
+        "text": " sap.m.Select: enable scrolling to the selected item when the selectList opens",
+        "references": []
+      }
+    ]
   }
 }

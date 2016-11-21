@@ -54,5 +54,16 @@
         "references": []
       }
     ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "5fa802590c0d09da6159deddf3ab833a92c5ab87",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
+      }
+    ]
   }
 }
