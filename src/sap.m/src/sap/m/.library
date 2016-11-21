@@ -45,6 +45,8 @@
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
                 <module>sap/m/UploadCollection</module>
+                <module>sap/m/UploadCollectionItem</module>
+                <module>sap/m/UploadCollectionParameter</module>
             </modules>
         </component>
     </ownership>
