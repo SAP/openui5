@@ -1080,7 +1080,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		} else {
 			oRenderLog.debug("delay initial rendering until theme has been loaded");
 			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-				this.renderPendingUIUpdates("after theme has been loaded");
+				setTimeout(
+					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
+					Device.browser.safari ? 50 : 0
+				);
 			}, this);
 		}
 
