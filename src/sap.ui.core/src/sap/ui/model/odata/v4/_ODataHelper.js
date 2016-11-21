@@ -290,41 +290,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
-		 * and entity instance runtime data.
-		 *
-		 * @param {object} oEntityType
-		 *   Entity type metadata
-		 * @param {object} oEntityInstance
-		 *   Entity instance runtime data
-		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
-		 * @throws {Error}
-		 *   If there is no entity instance or if one key property is undefined
-		 */
-		getKeyPredicate : function (oEntityType, oEntityInstance) {
-			var aKeyProperties = [],
-				bSingleKey = oEntityType.$Key.length === 1;
-
-			if (!oEntityInstance) {
-				throw new Error("No instance to calculate key predicate");
-			}
-			oEntityType.$Key.forEach(function (sName) {
-				var vValue = oEntityInstance[sName];
-
-				if (vValue === undefined) {
-					throw new Error("Missing value for key property '" + sName + "'");
-				}
-				vValue = encodeURIComponent(
-					_Helper.formatLiteral(vValue, oEntityType[sName].$Type)
-				);
-				aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
-			});
-
-			return "(" + aKeyProperties.join(",") + ")";
-		},
-
-		/**
 		 * Returns the query options for the given binding.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}

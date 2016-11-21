@@ -12,13 +12,14 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, _ODataHelper, AnnotationHelper, Context, _SyncPromise, ODataMetaModel,
+		MetaModel, _ODataHelper, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel,
 		ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -1412,10 +1413,10 @@ sap.ui.require([
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oContextMock = this.mock(oContext),
 				oEntityInstance = {},
-				oODataHelperMock = this.mock(_ODataHelper),
+				oMetaModelMock = this.mock(this.oMetaModel),
 				oPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
 				if (oRequest.path) {
@@ -1425,7 +1426,7 @@ sap.ui.require([
 					oContextMock.expects("fetchValue").withExactArgs("")
 						.returns(_SyncPromise.resolve(oEntityInstance));
 				}
-				oODataHelperMock.expects("getKeyPredicate")
+				oMetaModelMock.expects("getKeyPredicate")
 					.withExactArgs(sinon.match.same(mScope[oRequest.entityType]),
 						sinon.match.same(oEntityInstance))
 					.returns(oRequest.predicate);
@@ -1490,7 +1491,7 @@ sap.ui.require([
 					.returns(_SyncPromise.resolve(oFixture.instance));
 			} else {
 				this.mock(oContext).expects("fetchValue").never();
-				this.mock(_ODataHelper).expects("getKeyPredicate").never();
+				this.mock(this.oMetaModel).expects("getKeyPredicate").never();
 			}
 
 			oPromise = this.oMetaModel.fetchCanonicalPath(oContext);
@@ -1889,6 +1890,116 @@ sap.ui.require([
 			oMetaModel._mergeMetadata([oMetadata, oAnnotation]);
 		}, new Error("Overwriting 'com.sap.gateway.default.iwbep.tea_busi.v0001.Department'"
 				+ " with the value defined in '/my/annotation.xml' is not supported"));
+	});
+
+	//*********************************************************************************************
+	[{
+		sKeyPredicate : "('42')",
+		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Sector='DevOps',ID='42')",
+		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
+		oEntityInstance : {
+			"Bar" : 42,
+			"Fo=o" : "Walter\"s Win's"
+		},
+		oEntityType : {
+			"$Key" : ["Bar", "Fo=o"],
+			"Bar" : {
+				"$Type" : "Edm.Int16"
+			},
+			"Fo=o" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
+			var sProperty;
+
+			this.spy(_Helper, "formatLiteral");
+
+			assert.strictEqual(
+				this.oMetaModel.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				oFixture.sKeyPredicate);
+
+			// check that _Helper.formatLiteral() is called for each property
+			for (sProperty in oFixture.oEntityType) {
+				if (sProperty[0] !== "$") {
+					assert.ok(
+						_Helper.formatLiteral.calledWithExactly(
+							oFixture.oEntityInstance[sProperty],
+							oFixture.oEntityType[sProperty].$Type),
+						_Helper.formatLiteral.printf(
+							"_Helper.formatLiteral('" + sProperty + "',...) %C"));
+				}
+			}
+		});
+	});
+	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			assert.throws(function () {
+				this.oMetaModel.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
+			}, new Error("Missing value for key property 'ID'"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: no instance", function (assert) {
+		assert.throws(function () {
+			this.oMetaModel.getKeyPredicate({
+				$Key : ["ID"]
+			}, undefined);
+		}, new Error("No instance to calculate key predicate"));
 	});
 });
 //TODO getContext vs. createBindingContext; map of "singletons" vs. memory leak

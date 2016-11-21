@@ -12,10 +12,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
-	"./_ODataHelper",
+	"./lib/_Helper",
 	"./lib/_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
+		MetaModel, PropertyBinding, _Helper, _SyncPromise) {
 	"use strict";
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
@@ -414,6 +414,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
+		var that = this;
 
 		return this.fetchEntityContainer().then(function (mScope) {
 			var sCandidate, // the encoded candidate for the canonical path in case it's composed
@@ -476,7 +477,7 @@ sap.ui.define([
 			 */
 			function keyPredicate(oEntityInstance, sPath) {
 				try {
-					return _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+					return that.getKeyPredicate(oEntityType, oEntityInstance);
 				} catch (e) {
 					error(e.message, sPath);
 				}
@@ -989,6 +990,41 @@ sap.ui.define([
 
 			return oType;
 		});
+	};
+
+	/**
+	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
+	 * and entity instance runtime data.
+	 *
+	 * @param {object} oEntityType
+	 *   Entity type metadata
+	 * @param {object} oEntityInstance
+	 *   Entity instance runtime data
+	 * @returns {string}
+	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
+	 * @throws {Error}
+	 *   If there is no entity instance or if one key property is undefined
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getKeyPredicate = function (oEntityType, oEntityInstance) {
+		var aKeyProperties = [],
+			bSingleKey = oEntityType.$Key.length === 1;
+
+		if (!oEntityInstance) {
+			throw new Error("No instance to calculate key predicate");
+		}
+		oEntityType.$Key.forEach(function (sName) {
+			var vValue = oEntityInstance[sName];
+
+			if (vValue === undefined) {
+				throw new Error("Missing value for key property '" + sName + "'");
+			}
+			vValue = encodeURIComponent(_Helper.formatLiteral(vValue, oEntityType[sName].$Type));
+			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
+		});
+
+		return "(" + aKeyProperties.join(",") + ")";
 	};
 
 	/**
