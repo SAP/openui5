@@ -532,7 +532,7 @@
 				oPopover3._calcPlacement();
 
 				strictEqual(oPopover3._oCalcedPos, expectedPlace);
-				
+
 				stubOpenByRef.restore();
 				stubOffset.restore();
 				stubOuterWidth.restore();
@@ -1924,6 +1924,26 @@
 			spy.restore();
 			oPopover.destroy();
 			oButton.destroy();
+		});
+
+		QUnit.test("Do not fire close events when destroyed", function (assert) {
+			// Setup
+			var oPopover = new sap.m.Popover(),
+				beforeCloseSpy = this.spy(),
+				afterCloseSpy = this.spy();
+
+			oPopover.attachBeforeClose(beforeCloseSpy);
+			oPopover.attachAfterClose(afterCloseSpy);
+
+			//Act
+			jQuery.sap.delayedCall(1000, oPopover, "destroy");
+			this.clock.tick(1001);
+
+			assert.strictEqual(beforeCloseSpy.called, false, "On destruction do not call beforeClose event");
+			assert.strictEqual(afterCloseSpy.called, false, "On destruction do not call afterClose event");
+
+			//Clean
+			oPopover.destroy();
 		});
 	</script>
 </head>
