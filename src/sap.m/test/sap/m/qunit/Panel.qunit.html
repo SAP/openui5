@@ -128,6 +128,34 @@
 		assert.strictEqual(this.oPanel.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, "should be sap.m.BackgroundDesign.Translucent");
 	});
 
+	QUnit.test("Default accessibleRole", function (assert) {
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Form, "should be sap.m.PanelAccessibleRole.Form");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Region value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Region);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Region, "should set the accessibleRole property to Region");
+		assert.strictEqual(this.oPanel.$().attr("role"), "region", "should set the role attribute in the DOM to region");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Form value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Form);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Form, "should set the accessibleRole property to Form");
+		assert.strictEqual(this.oPanel.$().attr("role"), "form", "should set the role attribute in the DOM to form");
+	});
+
+	QUnit.test("Call to setAccessibleRole() with Complementary value", function (assert) {
+		this.oPanel.setAccessibleRole(sap.m.PanelAccessibleRole.Complementary);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), sap.m.PanelAccessibleRole.Complementary, "should set the accessibleRole property to Complementary");
+		assert.strictEqual(this.oPanel.$().attr("role"), "complementary", "should set the role attribute in the DOM to complementary");
+	});
+
 	QUnit.module("Events", {
 		createPanel: function (options) {
 			this.oPanel = new sap.m.Panel({

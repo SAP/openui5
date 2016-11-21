@@ -16,12 +16,13 @@
 			});
 
 			var panel1 = new sap.m.Panel({
-				headerText : "This is an expandable Panel",
+				headerText : "This is an expandable Panel with landmark role region",
 				width: "auto",
 				expandable: true,
 				content : [
 					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
-				]
+				],
+				accessibleRole: sap.m.PanelAccessibleRole.Region
 			}).addStyleClass("sapUiResponsiveMargin");
 
 			var label2 = new sap.m.Label({ text : "This is a non active infoToolbar" })
@@ -34,8 +35,10 @@
 				}).addAriaLabelledBy(label2),
 				width: "auto",
 				content : [
-					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
-				]
+					new sap.m.Label({ text : "Name", labelFor: "nameInputId" }),
+					new sap.m.Input({id: "nameInputId"})
+				],
+				accessibleRole: sap.m.PanelAccessibleRole.Form
 			}).addStyleClass("sapUiResponsiveMargin");
 
 			var label3 = new sap.m.Label({ text : "This is an active infoToolbar" });
@@ -61,13 +64,23 @@
 					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
 				]
 			}).addStyleClass("sapUiResponsiveMargin");
+			var panel4 = new sap.m.Panel({
+				headerText : "This is an expandable Panel with landmark role complementary",
+				width: "auto",
+				expandable: true,
+				content : [
+					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+				],
+				accessibleRole: sap.m.PanelAccessibleRole.Complementary
+			}).addStyleClass("sapUiResponsiveMargin");
 
 			var page1 = new sap.m.Page("page1", {
 				title: "Panel Control",
 				content:[
 					panel1,
 					panel2,
-					panel3
+					panel3,
+					panel4
 				]
 			});
 
