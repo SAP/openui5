@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Device) {
 	"use strict";
 
 	/**
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Safari doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
 			// This behavior has to be stopped by calling prevent default when the original event is 'mousedown'
 			// and set the focus explicitly to the button.
-			if (sap.ui.Device.browser.safari && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
+			if (Device.browser.safari && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
 				this.focus();
 				oEvent.preventDefault();
 			}
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Button.prototype._isHoverable = function() {
-		return this.getEnabled() && sap.ui.Device.system.desktop;
+		return this.getEnabled() && Device.system.desktop;
 	};
 
 	/**
