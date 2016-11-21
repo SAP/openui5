@@ -53,6 +53,15 @@
                 <module>sap/m/NumericContent</module>
                 <module>sap/m/ImageContent</module>
                 <module>sap/m/HeaderContainer</module>
+                <module>sap/m/GenericTileMode</module>
+                <module>sap/m/GenericTileScope</module>
+                <module>sap/m/Size</module>
+                <module>sap/m/ValueColor</module>
+                <module>sap/m/ValueCSSColor</module>
+                <module>sap/m/FrameType</module>
+                <module>sap/m/UploadCollectionItem</module>
+                <module>sap/m/UploadCollectionParameter</module>
+                <module>sap/m/LoadState</module>
             </modules>
         </component>
         <component>
