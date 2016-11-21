@@ -189,6 +189,7 @@
 					jQuery.sap.fesr.setActive(true);
 					jQuery.sap.interaction.notifyStepStart(null, true);
   			}, afterEach: function() {
+					jQuery.sap.interaction.notifyStepEnd(true);
 					jQuery.sap.fesr.setActive(false);
   			}
 			});
@@ -201,43 +202,36 @@
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 				assert.ok(oMeasurement.busyDuration >= 0, "Global Busy duration is bigger than or equal to zero.");
-    			var spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 				var oReq = new XMLHttpRequest();
-				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
+				var spy = sinon.spy(oReq, "setRequestHeader");
+				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
 				oReq.send();
-				jQuery.sap.interaction.notifyStepEnd(true);
-				jQuery.sap.interaction.notifyStepStart(null, true);
 				var iBusyDurationRequest = parseInt(spy.args[1][1].split(",")[14]);
 				assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 				spy.restore();
 			});
 
-			// TODO check why this test does not work in firefox when executed in testpage
-			// - surprisingly it works if executed standalone
-			if (!sap.ui.Device.browser.firefox) {
-				// Check if global busy indicator measurement works with delay of 100 ms
-				QUnit.test("Busy indicator with delay", function(assert) {
-					sap.ui.core.BusyIndicator.show(100);
-					var done = assert.async();
-					var spy = this.spy;
-					assert.expect(2);
-					setTimeout(function() {
-						sap.ui.core.BusyIndicator.hide();
-						jQuery.sap.interaction.notifyStepEnd(true);
-						jQuery.sap.interaction.notifyStepStart(null, true);
-						var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-						assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
-						var oReq = new XMLHttpRequest();
-						oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
-						oReq.send();
-						jQuery.sap.interaction.notifyStepEnd(true);
-						jQuery.sap.interaction.notifyStepStart(null, true);
-						var iBusyDurationRequest = parseInt(spy.args[spy.thisValues.indexOf(oReq) + 1 ][1].split(",")[14]);
-						assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
-						done();
-					}, 200);
-				});
-			}
+			// Check if global busy indicator measurement works with delay
+			QUnit.test("Busy indicator with delay", function(assert) {
+				sap.ui.core.BusyIndicator.show(1);
+				var done = assert.async();
+				assert.expect(2);
+				setTimeout(function() {
+					sap.ui.core.BusyIndicator.hide();
+					jQuery.sap.interaction.notifyStepEnd(true);
+					jQuery.sap.interaction.notifyStepStart(null, true);
+					var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+					assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
+					var oReq = new XMLHttpRequest();
+					var spy = sinon.spy(oReq, "setRequestHeader");
+					oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
+					oReq.send();
+					var iBusyDurationRequest = parseInt(spy.args[1][1].split(",")[14]);
+					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
+					spy.restore();
+					done();
+				}, 50);
+			});
 
 			QUnit.module("component integration");
 
