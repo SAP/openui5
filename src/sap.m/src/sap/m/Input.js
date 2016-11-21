@@ -477,7 +477,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 *
 	 */
 	Input.prototype._onValueUpdated = function (newValue) {
-		if (newValue === this._sSelectedValue) {
+		if (this._bSelectingItem || newValue === this._sSelectedValue) {
 			return;
 		}
 
@@ -516,6 +516,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			return;
 		}
+
+		this._bSelectingItem = true;
 
 		var iCount = this._iSetCount,
 			sNewValue;
@@ -567,6 +569,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (!sap.ui.Device.support.touch) {
 			this._doSelect();
 		}
+
+		this._bSelectingItem = false;
 	};
 
 	/**
@@ -674,6 +678,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return;
 		}
 
+		this._bSelectingItem = true;
+
 		var oItem,
 			fSuggestionRowValidator = this.getSuggestionRowValidator();
 
@@ -744,6 +750,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (!sap.ui.Device.support.touch) {
 			this._doSelect();
 		}
+
+		this._bSelectingItem = false;
 	};
 
 	/**
