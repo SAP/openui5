@@ -1,0 +1,75 @@
+/* ======================================================== */
+/* CSS for control sap.ui.table.RowAction control           */
+/* ======================================================== */
+
+@_sapUiTableRowActionSize: 1.625rem;
+@_sapUiTableRowActionSizeCozy: 2.5rem;
+@_sapUiTableRowActionSizeCondensed: 1.375rem;
+
+
+.sapUiTableAction {
+	position: relative;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.sapUiTableAction > div {
+	display: inline-block;
+	font-size: 0.75rem;
+	color: @sapUiContentIconColor; /*@sapUiContentNonInteractiveIconColor?*/
+	text-align: center;
+}
+
+.sapUiTableAction,
+.sapUiTableAction > div {
+	display: inline-block;
+	height: @_sapUiTableRowHeight;
+	line-height: @_sapUiTableRowHeight;
+}
+
+.sapUiTableActionIcon {
+	height: @_sapUiTableRowActionSize;
+	width: @_sapUiTableRowActionSize;
+	line-height: @_sapUiTableRowActionSize;
+}
+
+.sapUiSizeCozy {
+
+	.sapUiTableAction,
+	.sapUiTableAction > div {
+		height: @_sapUiTableRowHeightCozy;
+		line-height: @_sapUiTableRowHeightCozy;
+	}
+
+	.sapUiTableActionIcon {
+		height: @_sapUiTableRowActionSizeCozy;
+		width: @_sapUiTableRowActionSizeCozy;
+		line-height: @_sapUiTableRowActionSizeCozy;
+	}
+
+}
+
+.sapUiSizeCondensed {
+
+	.sapUiTableAction,
+	.sapUiTableAction > div {
+		/*min-width: @_sapUiTableRowHeightCondensed;*/
+		height: @_sapUiTableRowHeightCondensed;
+		line-height: @_sapUiTableRowHeightCondensed;
+	}
+
+	.sapUiTableActionIcon {
+		height: @_sapUiTableRowActionSizeCondensed;
+		width: @_sapUiTableRowActionSizeCondensed;
+		line-height: @_sapUiTableRowActionSizeCondensed;
+	}
+
+}
+
+.sapUiTableAction.sapUiTableActionHidden,
+.sapUiTableRowHidden .sapUiTableAction,
+.sapUiTableGroupHeader .sapUiTableAction,
+.sapUiAnalyticalTableSum .sapUiTableAction,
+.sapUiTableAction > div.sapUiTableActionHidden {
+	display: none;
+}

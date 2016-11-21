@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			DATACELL : "DATACELL", // standard data cell (standard, group or sum)
 			COLUMNHEADER : "COLUMNHEADER", // column header
 			ROWHEADER : "ROWHEADER", // row header (standard, group or sum)
+			ROWACTION : "ROWACTION", // cell of the row action column
 			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
 		},
 
@@ -53,6 +54,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return (oTable.getSelectionMode() !== SelectionMode.None
 					&& oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
 					|| TableGrouping.isGroupMode(oTable);
+		},
+
+		/**
+		 * Returns the number of row actions in case the tahe has a row action column, <code>0</code> otherwise
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {int}
+		 * @private
+		 */
+		getRowActionCount : function(oTable) {
+			var oTemplate = oTable.getRowActionTemplate();
+			return oTemplate ? oTemplate._getCount() : 0;
+		},
+
+		/**
+		 * Returns whether the table has a row action column or not
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean}
+		 * @private
+		 */
+		hasRowActions : function(oTable) {
+			return !!oTable.getRowActionTemplate() && TableUtils.getRowActionCount(oTable) > 0;
 		},
 
 		/**
@@ -348,17 +370,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @return {int}
-		 * @private
-		 */
-		getColumnIndexOfFocusedCell : function(oTable) {
-			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return oInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
-		},
-
-		/**
 		 * Returns the index of the row (in the rows aggregation) of the current focused cell
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @return {int}
@@ -429,6 +440,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return {type: TableUtils.CELLTYPES.COLUMNHEADER, cell: $Cell};
 			} else if ($Cell.hasClass("sapUiTableRowHdr")) {
 				return {type: TableUtils.CELLTYPES.ROWHEADER, cell: $Cell};
+			} else if ($Cell.hasClass("sapUiTableRowAction")) {
+				return {type: TableUtils.CELLTYPES.ROWACTION, cell: $Cell};
 			} else if ($Cell.hasClass("sapUiTableColRowHdr")) {
 				return {type: TableUtils.CELLTYPES.COLUMNROWHEADER, cell: $Cell};
 			}
@@ -596,6 +609,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			$Cell = $Element.closest(".sapUiTableRowHdr", oTableElement);
+			if ($Cell.length > 0) {
+				return $Cell;
+			}
+
+			$Cell = $Element.closest(".sapUiTableRowAction", oTableElement);
 			if ($Cell.length > 0) {
 				return $Cell;
 			}

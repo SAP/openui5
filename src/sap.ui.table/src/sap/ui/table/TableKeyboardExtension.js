@@ -81,44 +81,52 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
 			var iTotalColumnCount = iColumnCount;
 			var bHasRowHeader = TableUtils.hasRowHeader(oTable);
+			var bHasRowActions = TableUtils.hasRowActions(oTable);
+			var bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
 
 			// create the list of item dom refs
-			var aItemDomRefs = [];
-			if (oTable.getFixedColumnCount() == 0) {
-				aItemDomRefs = $Table.find(".sapUiTableCtrl:not(.sapUiTableCHT) td[tabindex]").get();
-			} else {
-				var $topLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
-				var $topRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
-				var $middleLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
-				var $middleRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
-				var $bottomLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
-				var $bottomRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
-				for (var i = 0; i < oTable.getVisibleRowCount(); i++) {
-					aItemDomRefs = aItemDomRefs.concat($topLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-					aItemDomRefs = aItemDomRefs.concat($topRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-					aItemDomRefs = aItemDomRefs.concat($middleLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-					aItemDomRefs = aItemDomRefs.concat($middleRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-					aItemDomRefs = aItemDomRefs.concat($bottomLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-					aItemDomRefs = aItemDomRefs.concat($bottomRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				}
+			var aItemDomRefs = [],
+				aRowHdrDomRefs, aRowActionDomRefs, $topLeft, $middleLeft, $bottomLeft;
+
+			if (bHasFixedColumns) {
+				$topLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
+				$middleLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
+				$bottomLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
 			}
 
-			// to later determine the position of the first TD in the aItemDomRefs we keep the
-			// count of TDs => aCount - TDs = first TD (add the row headers to the TD count / except the first one!)
-			var iTDCount = aItemDomRefs.length;
+			var $topRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
+			var $middleRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
+			var $bottomRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
 
-			// add the row header items (if visible)
 			if (bHasRowHeader) {
-				var aRowHdrDomRefs = $Table.find(".sapUiTableRowHdr").get();
-				for (var i = aRowHdrDomRefs.length - 1; i >= 0; i--) {
-					aItemDomRefs.splice(i * iColumnCount, 0, aRowHdrDomRefs[i]);
-					// we ignore the row headers
-					iTDCount++;
-				}
-				// except the first row header
-				iTDCount--;
-				// add the row header to the column count
+				aRowHdrDomRefs = $Table.find(".sapUiTableRowHdr").get();
 				iTotalColumnCount++;
+			}
+
+			if (bHasRowActions) {
+				aRowActionDomRefs = $Table.find(".sapUiTableRowAction").get();
+				iTotalColumnCount++;
+			}
+
+			for (var i = 0; i < oTable.getVisibleRowCount(); i++) {
+				if (bHasRowHeader) {
+					aItemDomRefs.push(aRowHdrDomRefs[i]);
+				}
+				if (bHasFixedColumns) {
+					aItemDomRefs = aItemDomRefs.concat($topLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				}
+				aItemDomRefs = aItemDomRefs.concat($topRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				if (bHasFixedColumns) {
+					aItemDomRefs = aItemDomRefs.concat($middleLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				}
+				aItemDomRefs = aItemDomRefs.concat($middleRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				if (bHasFixedColumns) {
+					aItemDomRefs = aItemDomRefs.concat($bottomLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				}
+				aItemDomRefs = aItemDomRefs.concat($bottomRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				if (bHasRowActions) {
+					aItemDomRefs.push(aRowActionDomRefs[i]);
+				}
 			}
 
 			// add the column headers and select all
@@ -138,6 +146,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 					}
 					if ($ScrollHeaders.length) {
 						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($ScrollHeaders.get(i)).find(".sapUiTableCol").get());
+					}
+
+					if (bHasRowActions) {
+						aHeaderDomRefs.push($Table.find(".sapUiTableRowActionHeader").get(0));
 					}
 				}
 

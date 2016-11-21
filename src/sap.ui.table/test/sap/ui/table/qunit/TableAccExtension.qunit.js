@@ -907,6 +907,36 @@ QUnit.test("_debug()", function(assert) {
 	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
 });
 
+QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", function(assert) {
+	var oExtension = oTable._getAccExtension();
+	oExtension._debug();
+	oTable.getColumns()[1].setVisible(false);
+	oTable.setRowActionCount(2);
+	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	sap.ui.getCore().applyChanges();
+
+	getCell(0, 0, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), 0, "DATACELL 0");
+
+	getCell(0, 2, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), 2, "DATACELL 2");
+
+	getRowHeader(0, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), -1, "ROWHEADER");
+
+	getRowAction(0, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), oTable._getVisibleColumns().length, "ROWHEADER");
+
+	getColumnHeader(0, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), 0, "COLUMNHEADER 0");
+
+	getColumnHeader(2, true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), 2, "COLUMNHEADER 2");
+
+	getSelectAll(true);
+	assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), -1, "COLUMNROWHEADER");
+});
+
 
 
 QUnit.module("No Acc Mode", {

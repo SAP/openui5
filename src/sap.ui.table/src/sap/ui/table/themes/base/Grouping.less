@@ -149,12 +149,20 @@ html[dir=rtl] {
 }
 
 .sapUiTableCtrl tr.sapUiTableGroupHeader,
-.sapUiTableRowHdr.sapUiTableGroupHeader {
+.sapUiTableRowHdr.sapUiTableGroupHeader,
+.sapUiTableRowAction.sapUiTableGroupHeader {
 	background-color: @_sapUiTableGroupHeaderBackground;
 	border-color: @sapUiListBorderColor;
 	color: @sapUiListTableGroupHeaderTextColor;
 }
 
+.sapUiTableRowAction.sapUiTableGroupHeader {
+	border-left-color: transparent;
+}
+
+.sapUiTableRowAction.sapUiTableGroupHeader.sapUiTableFixedPreBottomRow {
+	border-bottom-color: @sapUiListTableFixedBorder;
+}
 
 .sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon,
 .sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon::before,

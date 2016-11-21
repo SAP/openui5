@@ -105,6 +105,24 @@ QUnit.test("areAllRowsSelected", function(assert) {
 	assert.ok(!TableUtils.areAllRowsSelected(oTable), "Not all rows are selected");
 });
 
+QUnit.test("hasRowActions", function(assert) {
+	assert.ok(!TableUtils.hasRowActions(oTable), "Table has no row actions");
+	oTable.setRowActionCount(2);
+	assert.ok(!TableUtils.hasRowActions(oTable), "Table has still no row actions");
+	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	assert.ok(TableUtils.hasRowActions(oTable), "Table has still no row actions");
+});
+
+QUnit.test("getRowActionCount", function(assert) {
+	assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
+	oTable.setRowActionCount(2);
+	assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");
+	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	assert.equal(TableUtils.getRowActionCount(oTable), 2, "Table has 2 row actions");
+	oTable.setRowActionCount(1);
+	assert.equal(TableUtils.getRowActionCount(oTable), 1, "Table has 1 row action");
+});
+
 QUnit.test("hasFixedColumns", function(assert) {
 	assert.ok(TableUtils.hasFixedColumns(oTable), "Table has fixed columns");
 	assert.ok(!TableUtils.hasFixedColumns(oTreeTable), "Table has no fixed columns");
@@ -130,6 +148,10 @@ QUnit.test("isVariableRowHeightEnabled", function(assert) {
 });
 
 QUnit.test("getCellInfo", function(assert) {
+	oTable.setRowActionCount(2);
+	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	sap.ui.getCore().applyChanges();
+
 	var oCell = getCell(0, 0);
 	var oInfo = TableUtils.getCellInfo(oCell);
 	assert.equal(oInfo.type, TableUtils.CELLTYPES.DATACELL, "DATACELL: Type");
@@ -144,6 +166,11 @@ QUnit.test("getCellInfo", function(assert) {
 	oInfo = TableUtils.getCellInfo(oCell);
 	assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWHEADER, "ROWHEADER: Type");
 	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWHEADER: Cell");
+
+	oCell = getRowAction(0);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWACTION, "ROWACTION: Type");
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWACTION: Cell");
 
 	oCell = getSelectAll();
 	oInfo = TableUtils.getCellInfo(oCell);
@@ -401,29 +428,6 @@ QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
 	}
 });
 
-QUnit.test("getColumnIndexOfFocusedCell", function(assert) {
-	oTable.getColumns()[1].setVisible(false);
-	sap.ui.getCore().applyChanges();
-
-	getCell(0, 0, true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 0, "DATACELL 0");
-
-	getCell(0, 2, true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 2, "DATACELL 2");
-
-	getRowHeader(0, true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), -1, "ROWHEADER");
-
-	getColumnHeader(0, true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 0, "COLUMNHEADER 0");
-
-	getColumnHeader(2, true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 2, "COLUMNHEADER 2");
-
-	getSelectAll(true);
-	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), -1, "COLUMNROWHEADER");
-});
-
 QUnit.test("getRowIndexOfFocusedCell", function(assert) {
 	getCell(0, 0, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 0, "DATACELL 0,0");
@@ -598,6 +602,10 @@ QUnit.test("sanitizeSelectionMode", function(assert) {
 });
 
 QUnit.test("getCell", function(assert) {
+	oTable.setRowActionCount(2);
+	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	sap.ui.getCore().applyChanges();
+
 	assert.strictEqual(TableUtils.getCell(), null, "Returned null: Invalid input");
 	assert.strictEqual(TableUtils.getCell(oTable), null, "Returned null: Invalid input");
 	assert.strictEqual(TableUtils.getCell(oTable, oTable.getDomRef()), null, "Returned null: Passed element is not a cell or inside a cell");
@@ -613,6 +621,10 @@ QUnit.test("getCell", function(assert) {
 	oElement = getRowHeader(0);
 	assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Row Header");
 	assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Row Header");
+
+	oElement = getRowAction(0);
+	assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Row Action");
+	assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Row Action");
 
 	oElement = getCell(0, 0);
 	assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Data Cell");

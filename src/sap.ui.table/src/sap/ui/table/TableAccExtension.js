@@ -112,6 +112,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 	var ExtensionHelper = {
 
 		/*
+		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
+		 * In case the focused cell is a row action the given index equals the length of the visible columns.
+		 * This function must not be used if the focus is on a row header.
+		 * @return {int}
+		 */
+		getColumnIndexOfFocusedCell : function(oExtension) {
+			var oTable = oExtension.getTable();
+			var oInfo = TableUtils.getFocusedItemInfo(oTable);
+			return oInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
+		},
+
+		/*
 		 * If the current focus is on a cell of the table, this function returns
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 * {type: <TYPE>, cell: <$CELL>}
@@ -191,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				bIsInitial = false;
 
 			if (oIN) {
-				var iColumnNumber = TableUtils.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
+				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; //+1 -> we want to announce a count and not the index, the action column is handled like a normal column
 				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable);
 				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
@@ -284,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			}
 
 			var iRow = TableUtils.getRowIndexOfFocusedCell(oTable),
-				iCol = TableUtils.getColumnIndexOfFocusedCell(oTable),
+				iCol = ExtensionHelper.getColumnIndexOfFocusedCell(this), // Because we are on a data cell this is the index in the visible columns array
 				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol, false),
 				oInfo = null,
 				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
@@ -790,6 +802,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 			// @see TableUtils.CELLTYPES
 		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 		// @see TableUtils.CELLTYPES
 		ROWHEADER : 		TableUtils.CELLTYPES.ROWHEADER, 		// @see TableUtils.CELLTYPES
+		ROWACTION : 		TableUtils.CELLTYPES.ROWACTION, 		// @see TableUtils.CELLTYPES
 		COLUMNROWHEADER : 	TableUtils.CELLTYPES.COLUMNROWHEADER, 	// @see TableUtils.CELLTYPES
 		ROOT : 				"ROOT", 								// The tables root dom element
 		CONTENT: 			"CONTENT",								// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
