@@ -1786,10 +1786,14 @@
 	});
 
 	QUnit.test("test onfocusin function", function(assert) {
+		var oScrollExtension = oTable._getScrollExtension();
+		oScrollExtension._debug();
+
 		var oEvent = jQuery.Event("focus", {
 			target: oTable.getColumns()[5].getDomRef()
 		});
-		oTable.onfocusin(oEvent);
+
+		oScrollExtension._ExtensionDelegate.onfocusin(oEvent);
 		assert.ok(jQuery(oEvent.target).parent('.sapUiTableColHdrTr').length > 0, "Column header is in focus");
 	});
 
