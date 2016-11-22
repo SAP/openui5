@@ -363,7 +363,7 @@ sap.ui.require([
 		var oBinding,
 			oBaseContext = {getPath : function () {return "/";}},
 			oError = new Error("Unsupported ..."),
-			oHelperMock = this.mock(_ODataHelper),
+			oModelMock = this.mock(this.oModel),
 			mParameters = {
 				"$apply" : "filter(Amount gt 3)",
 				"$expand" : "foo",
@@ -376,7 +376,7 @@ sap.ui.require([
 			oV4Context = {getBinding : function () {}};
 
 		// absolute binding and binding with base context result in the same cache
-		oHelperMock.expects("buildQueryOptions").thrice()
+		oModelMock.expects("buildQueryOptions").thrice()
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
@@ -438,7 +438,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 
 		//error for invalid parameters
-		oHelperMock.expects("buildQueryOptions").throws(oError);
+		oModelMock.expects("buildQueryOptions").throws(oError);
 
 		assert.throws(function () {
 			// code under test
@@ -484,12 +484,11 @@ sap.ui.require([
 		QUnit.test("bindList with sorters: " + oFixture.buildOrderbyResult, function (assert) {
 			var oBinding,
 				mExpectedQueryOptions = JSON.parse(JSON.stringify(oFixture.buildQueryOptionResult)),
-				oHelperMock = this.mock(_ODataHelper),
 				oModel = oFixture.oModel || this.oModel;
 
 			this.spy(_Helper, "toArray");
 			this.spy(ODataListBinding.prototype, "mergeQueryOptions");
-			oHelperMock.expects("buildQueryOptions")
+			this.mock(ODataModel.prototype).expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oModel.mUriParameters),
 					sinon.match.same(oFixture.mParameters), true)
 				.returns(oFixture.buildQueryOptionResult);
@@ -548,7 +547,7 @@ sap.ui.require([
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(undefined).returns([]);
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(this.oModel).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mQueryParameters), true)
 			.returns(mExpectedbuildQueryOptions);
@@ -591,7 +590,7 @@ sap.ui.require([
 			oContext = {},
 			mQueryOptions = {};
 
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(this.oModel).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), undefined, true)
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("create")
@@ -1461,7 +1460,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("create").returns(oCache);
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
@@ -1856,14 +1855,13 @@ sap.ui.require([
 	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
 		var aAllowed = ["$$groupId", "$$operationMode", "$$updateGroupId"],
 			oBinding,
-			oHelperMock = this.mock(_ODataHelper),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {};
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
 				aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
@@ -1872,7 +1870,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
 				aAllowed)
 			.returns({$$groupId : "foo"});
 		// code under test
@@ -1881,7 +1879,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sOperationMode, undefined);
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
 				aAllowed)
 			.returns({});
 		// code under test
@@ -1890,7 +1888,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		// buildBindingParameters also called for relative binding
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
 				aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test

@@ -126,7 +126,7 @@ sap.ui.define([
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 					["$$groupId", "$$operationMode", "$$updateGroupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
 				this.sOperationMode = oBindingParameters.$$operationMode || oModel.sOperationMode;
@@ -147,7 +147,7 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
-				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
 					mParameters, true);
 
 				if (!this.bRelative) {
@@ -1393,7 +1393,7 @@ sap.ui.define([
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot refresh due to pending changes");
 		}
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 
 		this.refreshInternal(sGroupId);
 	};
