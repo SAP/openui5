@@ -30,30 +30,6 @@ sap.ui.define([
 		};
 
 	/**
-	 * Checks whether the given data array contains at least one <code>undefined</code> entry
-	 * within given start (inclusive) and given end (exclusive).
-	 *
-	 * @param {object[]} aData
-	 *   The data array
-	 * @param {number} iStart
-	 *   The start index (inclusive) for the search
-	 * @param {number} iEnd
-	 *   The end index (exclusive) for the search
-	 * @returns {boolean}
-	 *   true if given data array contains at least one <code>undefined</code> entry
-	 *   within given start (inclusive) and given end (exclusive).
-	 */
-	function isDataMissing(aData, iStart, iEnd) {
-		var i;
-		for (i = iStart; i < iEnd; i += 1) {
-			if (aData[i] === undefined) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
 	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} instead!
 	 *
@@ -1183,11 +1159,24 @@ sap.ui.define([
 	 *   model coordinates (starting with 0 or -1).
 	 */
 	ODataListBinding.prototype.getReadRange = function (iStart, iLength, iMaximumPrefetchSize) {
-		if (isDataMissing(this.aContexts, iStart + iLength,
-				iStart + iLength + iMaximumPrefetchSize / 2)) {
+		var aContexts = this.aContexts;
+
+		// Checks whether aContexts contains at least one <code>undefined</code> entry within the
+		// given start (inclusive) and end (exclusive).
+		function isDataMissing(iStart, iEnd) {
+			var i;
+			for (i = iStart; i < iEnd; i += 1) {
+				if (aContexts[i] === undefined) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		if (isDataMissing(iStart + iLength, iStart + iLength + iMaximumPrefetchSize / 2)) {
 			iLength += iMaximumPrefetchSize;
 		}
-		if (isDataMissing(this.aContexts, Math.max(iStart - iMaximumPrefetchSize / 2, 0), iStart)) {
+		if (isDataMissing(Math.max(iStart - iMaximumPrefetchSize / 2, 0), iStart)) {
 			iLength += iMaximumPrefetchSize;
 			iStart -= iMaximumPrefetchSize;
 			if (iStart < 0) {
