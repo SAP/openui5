@@ -809,7 +809,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						// make sure there is not endless loop if oParent has no getParent function
 						oParent = null;
 					}
-				} while (oParent && !oParentDomRef)
+				} while (oParent && !oParentDomRef);
 			}
 
 			// if we found a DOM reference, check for content density
