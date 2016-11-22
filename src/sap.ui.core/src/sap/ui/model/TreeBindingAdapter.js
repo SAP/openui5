@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 
 			// if the binding is running in the OperationMode "Client", make sure the node sections are optimised to load everything
-			if (this.sOperationMode === OperationMode.Client) {
+			if (this.bClientOperation) {
 				oNodeState.sections = [{
 					startIndex: 0,
 					length: iMaxGroupSize
