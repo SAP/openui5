@@ -15,7 +15,7 @@ sap.ui.define([
 			},
 			routing: {
 				config: {
-					async: false,
+					async: true,
 					routerClass: Router,
 					viewType: "XML",
 					viewPath: "flexiblecolumnlayout",

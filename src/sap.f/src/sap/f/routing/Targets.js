@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets'],
-	function(Targets, TargetHandler, Target, asyncTargets, syncTargets) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets'],
+	function(Targets, TargetHandler, Target, asyncTargets) {
 		"use strict";
 
 		/**
@@ -298,28 +298,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		var MobileTargets = Targets.extend("sap.f.routing.Targets", /** @lends sap.f.routing.Targets.prototype */ {
 			constructor: function(oOptions) {
 
-				// If no config is given, set the default value to sync
-				if (!oOptions.config) {
-					oOptions.config = {
-						_async: false
-					};
-				}
-
-				// temporarily: for checking the url param
-				function checkUrl() {
-					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
-						return true;
-					}
-					return false;
-				}
-
-				// Config object doesn't have _async set which means the Targets is instantiated standalone by given a non-empty config object
-				// Assign the oConfig.async to oConfig._async and set the default value to sync
-				if (oOptions.config._async === undefined) {
-					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
-					oOptions.config._async = (oOptions.config.async === undefined) ? checkUrl() : oOptions.config.async;
-				}
+				oOptions.config._async = true;
 
 				if (oOptions.targetHandler) {
 					this._oTargetHandler = oOptions.targetHandler;
@@ -330,7 +309,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 				Targets.prototype.constructor.apply(this, arguments);
 
-				var TargetsStub = oOptions.config._async ? asyncTargets : syncTargets;
+				var TargetsStub = asyncTargets;
 
 				this._super = {};
 				for (var fn in TargetsStub) {

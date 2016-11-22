@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
-	function(Target, asyncTarget, syncTarget) {
+sap.ui.define(['sap/ui/core/routing/Target', './async/Target'],
+	function(Target, asyncTarget) {
 		"use strict";
 
 		/**
@@ -22,24 +22,9 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
 
-				// temporarily: for checking the url param
-				function checkUrl() {
-					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTarget");
-						return true;
-					}
-					return false;
-				}
-
-				// Set the default value to sync
-				if (oOptions._async === undefined) {
-					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
-					oOptions._async = checkUrl();
-				}
-
 				Target.prototype.constructor.apply(this, arguments);
 
-				var TargetStub = oOptions._async ? asyncTarget : syncTarget;
+				var TargetStub = asyncTarget;
 
 				this._super = {};
 				for (var fn in TargetStub) {
