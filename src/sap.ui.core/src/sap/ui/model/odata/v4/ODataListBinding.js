@@ -66,8 +66,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
 	 *   The operation mode for sorting with the model's operation mode as default. Since 1.39.0,
 	 *   the operation mode {@link sap.ui.model.odata.OperationMode.Server} is supported. All other
-	 *   operation modes including <code>undefined</code> lead to an error if 'vSorters' are given
-	 *   or if {@link #sort} is called.
+	 *   operation modes including <code>undefined</code> lead to an error if 'vFilters' or
+	 *   'vSorters' are given or if {@link #filter} or {@link #sort} is called.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -105,21 +105,10 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
-				var oBindingParameters;
-
-				ListBinding.call(this, oModel, sPath, undefined, undefined, undefined, mParameters);
+				ListBinding.call(this, oModel, sPath);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
-				}
-				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-					["$$groupId", "$$operationMode", "$$updateGroupId"]);
-				this.sGroupId = oBindingParameters.$$groupId;
-				this.sOperationMode = oBindingParameters.$$operationMode || oModel.sOperationMode;
-				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-
-				if (!this.sOperationMode && (vSorters || vFilters)) {
-					throw new Error("Unsupported operation mode: " + this.sOperationMode);
 				}
 
 				this.aApplicationFilters = _Helper.toArray(vFilters);
@@ -133,14 +122,14 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
-				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
-					mParameters, true);
+				this.setParameters(jQuery.extend(true, {}, mParameters));
 
 				if (!this.bRelative) {
+					// Note: this.mParameters is ignored for absolute bindings,
+					// but this.mQueryOptions is used --> setParameters() must happen before
 					this.oCache = this.makeCache();
 				}
 
-				this.reset();
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
 			}
@@ -270,6 +259,44 @@ sap.ui.define([
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
+	/**
+	 * Changes this binding's parameters according to the given map of parameters: Parameters with
+	 * an <code>undefined</code> value are removed, the other parameters are set, and missing
+	 * parameters remain unchanged.
+	 *
+	 * @param {object} mParameters
+	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList}
+	 * @throws {Error}
+	 *   If <code>mParameters</code> is missing or contains binding-specific parameters.
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataListBinding.prototype.changeParameters = function (mParameters) {
+		var sKey;
+
+		if (!mParameters) {
+			throw new Error("Missing map of binding parameters");
+		}
+		if (!Object.keys(mParameters).length) {
+			return;
+		}
+
+		for (sKey in mParameters) {
+			if (sKey.indexOf("$$") === 0) {
+				throw new Error("Unsupported parameter: " + sKey);
+			}
+		}
+		for (sKey in mParameters) {
+			if (mParameters[sKey] === undefined) {
+				delete this.mParameters[sKey];
+			} else {
+				this.mParameters[sKey] = mParameters[sKey];
+			}
+		}
+		this.setParameters(this.mParameters, ChangeReason.Change);
 	};
 
 	/**
@@ -1233,7 +1260,7 @@ sap.ui.define([
 		if (this.bRelative) {
 			if (!oContext
 					|| oContext.fetchCanonicalPath
-					&& !this.mParameters
+					&& !Object.keys(this.mParameters).length
 					&& !this.aSorters.length
 					&& !this.aFilters.length
 					&& !this.aApplicationFilters.length) {
@@ -1352,6 +1379,35 @@ sap.ui.define([
 				this.oContext = oContext;
 			}
 		}
+	};
+
+	/**
+	 * Sets this binding's parameters to the given map of parameters.
+	 *
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason for {@link #reset}
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.setParameters = function (mParameters, sChangeReason) {
+		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+				["$$groupId", "$$operationMode", "$$updateGroupId"]);
+
+		this.sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
+		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
+		// Just check for the case that no mode was specified, but sort/filter takes place
+		if (!this.sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
+			throw new Error("Unsupported operation mode: " + this.sOperationMode);
+		}
+
+		this.sGroupId = oBindingParameters.$$groupId;
+		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+		this.mParameters = mParameters;
+		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
+			mParameters, true);
+		this.reset(sChangeReason);
 	};
 
 	/**
