@@ -209,6 +209,29 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	};
 
 	/**
+	 * Gets expander information.
+	 *
+	 * @private
+	 * @since 1.46.0
+	 */
+	TreeItemBase.prototype._updateExpander = function() {
+		if (this._oExpanderControl) {
+			var sSrc = "";
+			if (!this.isLeaf()) {
+				sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
+			}
+			this._oExpanderControl.setSrc(sSrc);
+		}
+	};
+
+	TreeItemBase.prototype.setBindingContext = function() {
+		ListItemBase.prototype.setBindingContext.apply(this, arguments);
+		this._updateExpander();
+
+		return this;
+	};
+
+	/**
 	 * Gets the indentation of the node for rendering purposes.
 	 *
 	 * @returns {Boolean}
