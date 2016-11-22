@@ -679,7 +679,7 @@
 	QUnit.module("Tooltip handling", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
-				header : "header text of GenericTile",
+				header : "Header text",
 				subheader : "subheader text",
 				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
 			}).placeAt("qunit-fixture");
@@ -704,7 +704,7 @@
 	QUnit.test("GenericTile no tooltip provided by the control", function(assert) {
 		//Arrange
 		this.oGenericTile.$().trigger("mouseenter");
-		var sAriaLabel = "header text of GenericTile\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
@@ -744,7 +744,7 @@
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.$().trigger("mouseenter");
-		var sConsistentTooltip = "header text of GenericTile\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sConsistentTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
