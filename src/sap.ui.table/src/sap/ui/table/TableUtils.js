@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			var iSelectableRowCount = oTable._getSelectableRowCount();
-			return iSelectableRowCount > 0 && iSelectableRowCount === oTable.getSelectedIndices().length;
+			return iSelectableRowCount > 0 && iSelectableRowCount === oTable._getSelectedIndicesCount();
 		},
 
 		/**
