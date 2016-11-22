@@ -521,9 +521,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._detailsPage.addEventDelegate({
 				onclick: function(oEvent) {
 					var target = oEvent.target;
-					if (target.nodeName.toUpperCase() === 'A' &&
-						(target.className.indexOf('sapMMsgPopoverItemDisabledLink') !== -1 ||
-						target.className.indexOf('sapMMsgPopoverItemPendingLink') !== -1)) {
+					if (target.nodeName.toUpperCase() === "A" &&
+						(target.className.indexOf("sapMMsgPopoverItemDisabledLink") !== -1 ||
+						target.className.indexOf("sapMMsgPopoverItemPendingLink") !== -1)) {
 
 						oEvent.preventDefault();
 					}
@@ -772,9 +772,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._setTitle = function (oMessagePopoverItem) {
-			this._oMessageTitleText = new Text(this.getId() + 'MessageTitleText', {
+			this._oMessageTitleText = new Text(this.getId() + "MessageTitleText", {
 				text: oMessagePopoverItem.getTitle()
-			}).addStyleClass('sapMMsgPopoverTitleText');
+			}).addStyleClass("sapMMsgPopoverTitleText");
 			this._detailsPage.addAggregation("content", this._oMessageTitleText);
 		};
 
@@ -789,13 +789,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._oLastSelectedItem = oMessagePopoverItem;
 			if (oMessagePopoverItem.getMarkupDescription()) {
 				// description is sanitized in MessagePopoverItem.setDescription()
-				this._oMessageDescriptionText = new HTML(this.getId() + 'MarkupDescription', {
+				this._oMessageDescriptionText = new HTML(this.getId() + "MarkupDescription", {
 					content: "<div class='sapMMsgPopoverDescriptionText'>" + oMessagePopoverItem.getDescription() + "</div>"
 				});
 			} else {
-				this._oMessageDescriptionText = new Text(this.getId() + 'MessageDescriptionText', {
+				this._oMessageDescriptionText = new Text(this.getId() + "MessageDescriptionText", {
 					text: oMessagePopoverItem.getDescription()
-				}).addStyleClass('sapMMsgPopoverDescriptionText');
+				}).addStyleClass("sapMMsgPopoverDescriptionText");
 			}
 
 			this._detailsPage.addContent(this._oMessageDescriptionText);
@@ -814,7 +814,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			jQuery.sap.log.warning("You have entered invalid URL");
 
-			return '';
+			return "";
 		};
 
 		MessagePopover.prototype._queueValidation = function (href) {
@@ -929,8 +929,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 							}
 
 							// Adapt the link style
-							$link.removeClass('sapMMsgPopoverItemPendingLink');
-							$link.toggleClass('sapMMsgPopoverItemDisabledLink', !result.allowed);
+							$link.removeClass("sapMMsgPopoverItemPendingLink");
+							$link.toggleClass("sapMMsgPopoverItemDisabledLink", !result.allowed);
 
 							that.fireUrlValidated();
 						})
@@ -987,7 +987,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				}
 			}.bind(this);
 
-			this._previousIconTypeClass = this._previousIconTypeClass || '';
+			this._previousIconTypeClass = this._previousIconTypeClass || "";
 
 			this.fireItemSelect({
 				item: oMessagePopoverItem,
