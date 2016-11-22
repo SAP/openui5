@@ -1,0 +1,570 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>QUnit Page for sap.m.MessageView</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <script src="../shared-config.js"></script>
+        <script id="sap-ui-bootstrap"
+                src="../../../../resources/sap-ui-core.js"
+                data-sap-ui-noConflict="true"
+                data-sap-ui-libs="sap.m">
+        </script>
+
+        <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+
+        <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+        <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+        <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+        <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+        <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+        <!--<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>-->
+
+        <!-- use the sinon faketimers for this test -->
+        <script>
+            sinon.config.useFakeTimers = true;
+        </script>
+
+        <script>
+            QUnit.module("Public API", {
+                setup: function () {
+                    var that = this;
+
+                    this.oMessageView = new sap.m.MessageView();
+
+                    this.oDialog = new sap.m.Dialog({
+                        title: "Dialog with MessageView",
+                        content: that.oMessageView,
+                        contentHeight: "440px",
+                        contentWidth: "640px",
+                        verticalScrolling: false
+                    });
+
+                    this.oButton = new sap.m.Button({
+                        text: "Show MessageView",
+                        press: function () {
+                            that.oDialog.open();
+                        }
+                    });
+
+                    this.oMockupData = {
+                        messages: [{
+                            type: "Error",
+                            title: "Error message",
+                            subtitle: "Subtitle",
+                            description: "<p>First Error message description</p>"
+                        }, {
+                            type: "Warning",
+                            title: "Warning without description"
+                        }, {
+                            type: "Success",
+                            title: "Success message",
+                            description: "<p>&First Success message description</p>"
+                        }, {
+                            type: "Error",
+                            title: "Error",
+                            description: "<p>Second Error message description</p>"
+                        }, {
+                            type: "Information",
+                            title: "Information message (Long) 1",
+                            description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
+                            longtextUrl: "/something"
+                        }]
+                    };
+
+                    this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
+                            "<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
+                            "<ul>" +
+                            "	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
+                            "	<li>Unordered list item 2</li>" +
+                            "</ul>" +
+                            "<ol>" +
+                            "	<li>Ordered list item 1 <a href=\"/relative/url\">Relative URL</a></li>" +
+                            "	<li>Ordered list item 2</li>" +
+                            "</ol>" +
+                            "<embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>";
+
+                    this.server = sinon.fakeServer.create();
+                    this.server.autoRespond = true;
+                    this.server.xhr.useFilters = true;
+
+                    this.server.xhr.addFilter(function (method, url) {
+                        return !url.match(/something/);
+                    });
+
+                    this.server.respondWith("GET", "/something",
+                            [200, {"Content-Type": "text/html"}, this.mockMarkupDescription]
+                    );
+
+                    this.oMessageTemplate = new sap.m.MessageItem({
+                        type: "{type}",
+                        title: "{title}",
+                        subtitle: "{subtitle}",
+                        counter: 1,
+                        description: "{description}",
+                        longtextUrl: "{longtextUrl}"
+                    });
+
+                    var oModel = new sap.ui.model.json.JSONModel();
+                    oModel.setData(this.oMockupData);
+                    sap.ui.getCore().setModel(oModel);
+
+                    this.oMessageView.bindAggregation("items", {
+                        path: "/messages",
+                        template: this.oMessageTemplate
+                    });
+
+                    this.oButton.placeAt("qunit-fixture");
+                    sap.ui.getCore().applyChanges();
+
+                    this.oButton.firePress();
+                },
+                teardown: function () {
+                    this.oDialog.close();
+
+                    this.oDialog.destroy();
+
+                    this.oMessageView.destroy();
+
+                    this.oButton.destroy();
+
+                    this.oDialog = null;
+
+                    this.oMessageView = null;
+
+                    this.oButton = null;
+
+                    this.oMessageTemplate = null;
+
+                    this.oMockupData = null;
+
+                    this.server.restore();
+                }
+            });
+
+            QUnit.test("setDescription() property", function (assert) {
+                var testItemIndex = 4;
+
+                // A total of 6 assertions are expected
+                assert.expect(6);
+
+                var doneLongtextLoaded = assert.async(),
+                        doneUrlValidated = [assert.async(), assert.async()];
+
+                this.oMessageView.attachLongtextLoaded(function () {
+                    assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
+                    assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
+                    assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
+                    doneLongtextLoaded();
+                    assert.ok(this.oMessageView.getItems()[2].getDescription().indexOf("&") >=0, "Item's description should not be sanitized");
+                }, this);
+
+                var setAsyncURLHandlerSpy = sinon.spy(function (config) {
+                    var allowed = config.url.lastIndexOf("http", 0) < 0;
+                    config.promise.resolve({
+                        allowed: allowed,
+                        id: config.id
+                    });
+                });
+                this.oMessageView.setAsyncURLHandler(setAsyncURLHandlerSpy);
+
+                var callCount = 0;
+                this.oMessageView.attachUrlValidated(function () {
+                    assert.ok(setAsyncURLHandlerSpy.called, "The URL handler should be called - validation is performed");
+                    doneUrlValidated[callCount]();
+                    callCount += 1;
+                });
+
+                this.oDialog.attachAfterOpen(function () {
+                    var oItem = this.oMessageView._oLists["all"].getItems()[testItemIndex].getDomRef();
+                    sap.ui.test.qunit.triggerEvent("tap", oItem);
+                }.bind(this));
+
+
+                var oModel = new sap.ui.model.json.JSONModel();
+                oModel.setData(this.oMockupData);
+                sap.ui.getCore().setModel(oModel);
+
+                this.oMessageView.bindAggregation("items", {
+                    path: "/messages",
+                    template: this.oMessageTemplate
+                });
+
+                this.oButton.firePress();
+                this.clock.tick(500);
+            });
+
+            QUnit.test("setBusy should set the busy state to MessageView", function (assert) {
+                this.oMessageView.setBusy(true);
+
+                assert.ok(this.oMessageView.getBusy(), "busy state should be set true");
+
+                this.oMessageView.setBusy(false);
+
+                assert.ok(!this.oMessageView.getBusy(), "busy state should be set false");
+            });
+
+            QUnit.test("Busy indicator should be shown", function (assert) {
+                var done = assert.async(),
+                        that = this;
+
+                this.oMessageView.setAsyncDescriptionHandler(function (config) {
+                    assert.ok(that.oMessageView._detailsPage.getBusy(), "when there is an async description loading");
+                    config.item.setDescription(that.mockMarkupDescription);
+                    config.promise.resolve();
+                    done();
+                });
+
+                this.oDialog.attachAfterOpen(function () {
+                    var oItem = that.oMessageView._oLists["all"].getItems()[4].getDomRef();
+                    sap.ui.test.qunit.triggerEvent("tap", oItem);
+                });
+
+                this.clock.tick(500);
+            });
+
+            QUnit.test("Items getter", function (assert) {
+                assert.strictEqual(this.oMessageView.getItems().length, 5);
+            });
+
+            QUnit.test("setSubtitle() property", function (assert) {
+                var sInterlListItemDescription, sMessageItemSubtitle;
+
+                sInterlListItemDescription = this.oMessageView._oLists.all.getItems()[0].getDescription();
+                sMessageItemSubtitle = this.oMessageView.getItems()[0].getSubtitle();
+
+                assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the interal listItem should be binded with the subtitle of the MessageItem");
+                assert.strictEqual(sInterlListItemDescription, sMessageItemSubtitle, "Setting a subtitle to MessageItem should set the description of the internal StandardListItem");
+            });
+
+            QUnit.test("setCounter() property", function (assert) {
+                var iMPItemCounter, iInterListItemCounter;
+
+                iMPItemCounter = this.oMessageView.getItems()[0].getCounter();
+                iInterListItemCounter = this.oMessageView._oLists.all.getItems()[0].getCounter();
+
+                assert.strictEqual(iInterListItemCounter, 1, "Internal listItem's counter should be set to 1");
+                assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
+            });
+
+            QUnit.test("No navigation arrow should be shown if there is no description", function () {
+                var oStandardListItem = this.oMessageView._oLists.all.getItems()[1];
+
+                assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
+            });
+
+            QUnit.test("addStyleClass should add class", function (assert) {
+                var $oDomRef = this.oMessageView.$();
+
+                assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+                this.oMessageView.addStyleClass("test");
+
+                assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+            });
+
+            QUnit.test("removeStyleClass should remove class", function (assert) {
+                var $oDomRef = this.oMessageView.$();
+
+                assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+                this.oMessageView.addStyleClass("test");
+
+                assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+                this.oMessageView.removeStyleClass("test");
+
+                assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+            });
+
+            QUnit.test("toggleStyleClass should toggle class", function (assert) {
+                var $oDomRef = this.oMessageView.$();
+
+                assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+
+                this.oMessageView.toggleStyleClass("test");
+
+                assert.ok($oDomRef.hasClass("test"), "should have 'test' class");
+
+                this.oMessageView.toggleStyleClass("test");
+
+                assert.ok(!$oDomRef.hasClass("test"), "should not have 'test' class");
+            });
+
+            QUnit.test("hasStyleClass should check if class is added", function (assert) {
+                var $oDomRef = this.oMessageView.$();
+
+                assert.ok(!this.oMessageView.hasStyleClass("test"), "should not have 'test' class");
+
+                this.oMessageView.addStyleClass("test");
+
+                assert.ok(this.oMessageView.hasStyleClass("test"), "should have 'test' class");
+            });
+
+            QUnit.test("The items in the list should have info state set according to the message type", function(assert) {
+                var ValueState = sap.ui.core.ValueState,
+                        aItems;
+
+                this.oDialog.open();
+                this.clock.tick(500);
+                aItems = this.oMessageView._oLists.all.getItems();
+
+                assert.strictEqual(aItems[0].getInfoState(), ValueState.Error, "The value state should be Error in case of error message.");
+                assert.strictEqual(aItems[1].getInfoState(), ValueState.Warning, "The value state should be Warning in case of warning message.");
+                assert.strictEqual(aItems[2].getInfoState(), ValueState.Success, "The value state should be Success in case of success message.");
+                assert.strictEqual(aItems[4].getInfoState(), ValueState.None, "The value state should be None in case of information message.");
+            });
+
+            QUnit.test("MessageItems type Navigation when there is Description, else Inactive", function (assert) {
+                this.oDialog.open();
+                this.clock.tick(500);
+
+                var aItems = this.oMessageView._oLists.all.getItems();
+
+                assert.ok(aItems[0].getType() === "Navigation" && aItems[0].getDescription(), "An item with description should have type Navigation");
+                assert.ok(aItems[1].getType() === "Inactive" && !aItems[1].getDescription(), "An item without description should have type Inactive");
+            });
+
+            QUnit.test("custom button aggregation", function (assert) {
+                var customButton = new sap.m.Button({
+                    text: "custom btn"
+                });
+
+                this.oMessageView.setHeaderButton(customButton);
+
+                sap.ui.getCore().applyChanges();
+
+                this.oDialog.open();
+
+                var btnId = '#' + customButton.getId();
+                assert.ok(document.querySelectorAll(btnId), "custom header button is rendered");
+
+                customButton.destroy();
+            });
+
+            QUnit.module("Core integration", {
+                setup: function () {
+                    var that = this;
+
+                    var oModel = new sap.ui.model.json.JSONModel({
+                        form: {
+                            name: "Form Name"
+                        }
+                    });
+
+                    sap.ui.getCore().getMessageManager().addMessages(
+                            new sap.ui.core.message.Message({
+                                message: "Invalid order of characters in this name!",
+                                type: sap.ui.core.MessageType.Warning,
+                                target: "/form/name",
+                                processor: oModel
+                            })
+                    );
+
+                    sap.ui.getCore().applyChanges();
+
+                    this.oMessageView = new sap.m.MessageView();
+
+                    this.oDialog = new sap.m.Dialog({
+                        title: "Dialog with MessageView",
+                        content: that.oMessageView,
+                        contentHeight: "440px",
+                        contentWidth: "640px",
+                        verticalScrolling: false
+                    });
+
+                    this.oButton = new sap.m.Button({
+                        text: "Show MessageView",
+                        press: function () {
+                            that.oDialog.open();
+                        }
+                    });
+
+                    this.oButton.placeAt("qunit-fixture");
+
+                    sap.ui.getCore().applyChanges();
+
+                    this.oButton.firePress();
+                },
+                teardown: function () {
+                    sap.ui.getCore().getMessageManager().removeAllMessages();
+
+                    this.oDialog.close();
+
+                    this.oDialog.destroy();
+
+                    this.oMessageView.destroy();
+
+                    this.oButton.destroy();
+
+                    this.oDialog = null;
+
+                    this.oMessageView = null;
+
+                    this.oButton = null;
+                }
+            });
+
+            QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
+                assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
+            });
+
+            QUnit.module("HTML representation", {
+                setup: function () {
+                    var that = this;
+
+                    this.oMessageView = new sap.m.MessageView();
+
+                    this.oButton = new sap.m.Button({
+                        text: "Show MessageView"
+                    });
+
+                    this.oDialog = new sap.m.Dialog({
+                        title: "Dialog with MessageView",
+                        content: that.oMessageView,
+                        contentHeight: "440px",
+                        contentWidth: "640px",
+                        verticalScrolling: false
+                    });
+
+                    this.oButton.placeAt("qunit-fixture");
+
+                    sap.ui.getCore().applyChanges();
+                },
+                teardown: function () {
+                    this.oDialog.close();
+
+                    this.oDialog.destroy();
+
+                    this.oMessageView.destroy();
+
+                    this.oButton.destroy();
+
+                    this.oDialog = null;
+
+                    this.oMessageView = null;
+
+                    this.oButton = null;
+                }
+            });
+
+            QUnit.test("sapMMsgView class should be present", function (assert) {
+                this.oDialog.open();
+
+                var oDomRef = this.oMessageView.getDomRef();
+
+                assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgView"), -1, "sapMMsgView class should present on the HTML element");
+            });
+
+            QUnit.test("MessageItem's with truncated title", function (assert) {
+                var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+                        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
+                        "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
+                        "consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" +
+                        "cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
+                        "proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+                this.oMessageView.addItem(new sap.m.MessageItem({
+                    title: sLongTitle
+                }));
+
+                sap.ui.getCore().applyChanges();
+
+                this.oDialog.open();
+                this.clock.tick(500);
+
+                assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+            });
+
+            QUnit.module("Binding", {
+                setup: function () {
+                    var that = this;
+
+                    this.oButton2 = new sap.m.Button({text: "Press me"});
+
+                    var oMessageTemplate = new sap.m.MessageItem({
+                        title: '{message}'
+                    });
+
+                    this.oMessageView2 = new sap.m.MessageView({
+                        items: {
+                            path: '/',
+                            template: oMessageTemplate
+                        }
+                    });
+
+                    this.oDialog2 = new sap.m.Dialog({
+                        title: "Dialog with MessageView",
+                        content: that.oMessageView2,
+                        contentHeight: "440px",
+                        contentWidth: "640px",
+                        verticalScrolling: false
+                    });
+
+                    this.oMessageView2.setModel(new sap.ui.model.json.JSONModel([{
+                        "code": "APPL_MM_IV_MODEL/021",
+                        "message": "One",
+                        "severity": "error",
+                        "target": "/Headers(NodeKey=guid'e41d2de5-37a0-1ee6-8784-60396f9b5305',State='01')/InvoicingParty"
+                    }]));
+
+                    this.oButton2.placeAt("qunit-fixture");
+
+                    sap.ui.getCore().applyChanges();
+                },
+                teardown: function () {
+                    this.oDialog2.close();
+
+                    this.oDialog2.destroy();
+
+                    this.oMessageView2.destroy();
+
+                    this.oButton2.destroy();
+
+                    this.oDialog2 = null;
+
+                    this.oMessageView2 = null;
+
+                    this.oButton2 = null;
+                }
+            });
+
+            QUnit.test("Updating item's binding should update its property", function (assert) {
+                this.oDialog2.open();
+
+                strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+
+                this.oMessageView2.getModel().setProperty("/0/message", "Two");
+
+                this.clock.tick(500);
+
+                strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+            });
+
+            QUnit.test("Removing all items", function (assert) {
+                var tempObject = {
+                    message: "test"
+                };
+
+                this.oDialog2.open();
+
+                this.clock.tick(500);
+
+                this.oMessageView2.getModel().setData(null);
+                sap.ui.getCore().applyChanges();
+
+                this.oMessageView2.getModel().setData(tempObject);
+                sap.ui.getCore().applyChanges();
+
+                assert.ok(this.oMessageView2.getItems().length);
+
+                tempObject = null;
+            });
+        </script>
+    </head>
+    <body id="body" class="sapUiBody">
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+    </body>
+</html>
