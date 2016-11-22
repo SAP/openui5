@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 		// create the router for the component instance
 		if (vRoutes) {
 			var Router = sap.ui.requireSync("sap/ui/core/routing/Router");
-			var fnRouterConstructor = getConstructorFunctionFor(oRoutingConfig.routerClass || Router);
+			var fnRouterConstructor = getConstructorFunctionFor(this._getRouterClassName() || Router);
 			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets);
 			this._oTargets = this._oRouter.getTargets();
 			this._oViews = this._oRouter.getViews();
@@ -613,6 +613,19 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 */
 	UIComponent.prototype.onAfterRendering = function() {};
 
+	/**
+	 * Determines the router class name by checking the "routing" configuration manifest entry.
+	 * Override to change the criteria for determining the router class.
+	 * @sap-restricted sap.suite.ui.generic.template
+	 * @private
+	 * @returns {string|undefined} Name of the router class to be used, or <code>undefined</code> for the default router.
+	 */
+	UIComponent.prototype._getRouterClassName = function() {
+		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
+			oRoutingConfig = oRoutingManifestEntry.config || {};
+
+		return oRoutingConfig.routerClass;
+	};
 
 	return UIComponent;
 
