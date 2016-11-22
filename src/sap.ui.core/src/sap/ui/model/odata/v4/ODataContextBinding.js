@@ -237,8 +237,7 @@ sap.ui.define([
 			iPos = this.sPath.indexOf("(...)"),
 			bDeferred = iPos >= 0;
 
-		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
-				mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
 
 		if (!this.bRelative || bDeferred || mParameters) {
 			oBindingParameters = this.oModel.buildBindingParameters(mParameters,
@@ -491,7 +490,8 @@ sap.ui.define([
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, true);
+						(sPathPrefix + that.sPath).slice(1, -5),
+						that.getQueryOptions(that.oContext), true);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
@@ -522,7 +522,8 @@ sap.ui.define([
 				}
 				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
 				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.oOperation.sResourcePath).slice(1), that.mQueryOptions);
+					(sPathPrefix + that.oOperation.sResourcePath).slice(1),
+					that.getQueryOptions(that.oContext));
 				oPromise = that.oCache.fetchValue(sGroupId);
 			}
 			return oPromise;
@@ -677,7 +678,7 @@ sap.ui.define([
 		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
 			return undefined; // no need for an own cache
 		}
-		mQueryOptions = this.getQueryOptions("", oContext);
+		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
 		return this.createCache(createCache, vCanonicalPath);

@@ -24,7 +24,7 @@ sap.ui.require([
 		ListBinding, Model, Sorter, OperationMode, Context, _Cache, _Helper, _SyncPromise,
 		ODataListBinding, ODataModel, asODataParentBinding) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -228,7 +228,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("c'tor calls applyParameters", function (assert) {
-		var mParameters = {};
+		var mParameters = {
+				$filter : "foo"
+			};
 
 		this.mock(ODataListBinding.prototype).expects("applyParameters")
 			.withExactArgs(mParameters);
@@ -263,7 +265,7 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns(mBindingParameters);
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
+			.withExactArgs(undefined, mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(oBinding).expects("reset").withExactArgs(undefined);
 
@@ -315,8 +317,7 @@ sap.ui.require([
 			.withExactArgs(mParameters, ["$$groupId", "$$operationMode", "$$updateGroupId"])
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
-			.returns(mQueryOptions);
+			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
 		this.mock(oBinding).expects("makeCache").withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
 
@@ -487,14 +488,14 @@ sap.ui.require([
 
 		// absolute binding and binding with base context result in the same cache
 		oModelMock.expects("buildQueryOptions").thrice()
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
+			.withExactArgs(undefined, mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(ODataListBinding.prototype).expects("buildOrderbyOption").twice()
 			.withExactArgs([], mQueryOptions.$orderby)
 			.returns(mQueryOptions.$orderby);
 		this.mock(_Cache).expects("create").twice()
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				sinon.match.same(mQueryOptions))
+				{"$orderby" : "bar", "sap-client" : "111"})
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -560,28 +561,28 @@ sap.ui.require([
 		aSorters : [new Sorter("foo", true, true)],
 		buildOrderbyResult : "foo desc",
 		buildQueryOptionResult : {},
-		createParameters : {$orderby : "foo desc"},
+		createParameters : {$orderby : "foo desc", "sap-client" : "111"},
 		grouped : true,
 		mParameters : {$$operationMode : OperationMode.Server}
 	}, {
 		aSorters : [new Sorter("foo", true, true)],
 		buildOrderbyResult : "foo desc,bar",
 		buildQueryOptionResult : {$orderby : "bar"},
-		createParameters : {$orderby : "foo desc,bar"},
+		createParameters : {$orderby : "foo desc,bar", "sap-client" : "111"},
 		grouped : true,
 		mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"}
 	}, {
 		aSorters : undefined,
 		buildOrderbyResult : "bar",
-		buildQueryOptionResult : {$orderby : "bar"},
-		createParameters : {$orderby : "bar"},
+		buildQueryOptionResult : {$orderby : "bar", "sap-client" : "111"},
+		createParameters : {$orderby : "bar", "sap-client" : "111"},
 		grouped : false,
 		mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"}
 	}, {
 		aSorters : [new Sorter("foo", true)],
 		buildOrderbyResult : "foo desc",
 		buildQueryOptionResult : {},
-		createParameters : {$orderby : "foo desc"},
+		createParameters : {$orderby : "foo desc", "sap-client" : "111"},
 		grouped : false,
 		oModel : new ODataModel({
 			operationMode : OperationMode.Server,
@@ -598,7 +599,7 @@ sap.ui.require([
 			this.spy(_Helper, "toArray");
 			this.spy(ODataListBinding.prototype, "mergeQueryOptions");
 			this.mock(ODataModel.prototype).expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(oModel.mUriParameters), oFixture.mParameters, true)
+				.withExactArgs(undefined, oFixture.mParameters, true)
 				.returns(oFixture.buildQueryOptionResult);
 			this.mock(ODataListBinding.prototype).expects("buildOrderbyOption")
 				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : [],
@@ -617,7 +618,8 @@ sap.ui.require([
 			assert.deepEqual(oBinding.mQueryOptions, mExpectedQueryOptions,
 				"Query options are not modified by dynamic sorters");
 			assert.ok(_Helper.toArray.calledWithExactly(oFixture.aSorters));
-			sinon.assert.calledWithExactly(oBinding.mergeQueryOptions, oBinding.mQueryOptions,
+			sinon.assert.calledWithExactly(oBinding.mergeQueryOptions,
+				jQuery.extend(this.oModel.mUriParameters, oBinding.mQueryOptions),
 				oFixture.buildOrderbyResult, "");
 		});
 	});
@@ -679,20 +681,23 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("bindList without OData query options", function (assert) {
 		var oBinding,
-			oContext = {},
-			mQueryOptions = {};
+			mBindingQueryOptions = {},
+			mCacheQueryOptions = {},
+			oContext = {};
 
 		this.mock(this.oModel).expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), {}, true)
-			.returns(mQueryOptions);
+			.withExactArgs(undefined, {}, true)
+			.returns(mBindingQueryOptions);
+		this.mock(ODataListBinding.prototype).expects("getQueryOptions")
+			.withExactArgs(undefined).returns(mCacheQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				sinon.match.same(mQueryOptions));
+				sinon.match.same(mCacheQueryOptions));
 
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", oContext);
 
-		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
+		assert.strictEqual(oBinding.mQueryOptions, mBindingQueryOptions);
 		assert.deepEqual(oBinding.mParameters, {});
 	});
 
@@ -3002,7 +3007,7 @@ sap.ui.require([
 					.withExactArgs().returns(oPathPromise);
 			}
 			this.mock(oBinding).expects("getQueryOptions")
-				.withExactArgs("", sinon.match.same(oFixture.bRelative ? oContext : undefined))
+				.withExactArgs(sinon.match.same(oFixture.bRelative ? oContext : undefined))
 				.returns(mQueryOptions);
 			this.mock(oBinding).expects("fetchFilter")
 				.withExactArgs(sinon.match.same(oFixture.bRelative ? oContext : undefined),

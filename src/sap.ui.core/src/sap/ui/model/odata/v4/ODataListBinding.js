@@ -116,7 +116,6 @@ sap.ui.define([
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
@@ -243,8 +242,7 @@ sap.ui.define([
 
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
-			mParameters, true);
+		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
 		this.mParameters = mParameters; //store mParameters at binding after validation
 
 		this.mCacheByContext = undefined;
@@ -1257,7 +1255,7 @@ sap.ui.define([
 		} else {
 			oContext = undefined; // must be ignored for absolute bindings
 		}
-		mQueryOptions = this.getQueryOptions("", oContext);
+		mQueryOptions = this.getQueryOptions(oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
 		oFilterPromise = this.fetchFilter(oContext, this.aApplicationFilters, this.aFilters,

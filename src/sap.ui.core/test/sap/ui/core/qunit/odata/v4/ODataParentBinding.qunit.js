@@ -131,131 +131,157 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		{mQueryOptions : undefined, sPath : "foo", sQueryPath : "delegate/to/context"},
-		{mQueryOptions : undefined, sPath : "foo", sQueryPath : undefined}
-	].forEach(function (oFixture, i) {
-		QUnit.test("getQueryOptions: delegating #" + i, function (assert) {
-			var oBinding = new ODataParentBinding({
-					mQueryOptions : oFixture.mQueryOptions,
-					sPath : oFixture.sPath
-				}),
-				oContext = {
-					getQueryOptions : function () {}
+	QUnit.test("getQueryOptions: own options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					mUriParameters : {}
 				},
-				mResultingQueryOptions = {},
-				sResultPath = "any/path";
+				mQueryOptions : {$select : "foo"}
+			}),
+			oContext = {},
+			mResultingQueryOptions = {};
 
-			this.mock(_Helper).expects("buildPath")
-				.withExactArgs(oBinding.sPath, oFixture.sQueryPath).returns(sResultPath);
-			this.mock(oContext).expects("getQueryOptions")
-				.withExactArgs(sResultPath)
-				.returns(mResultingQueryOptions);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(oBinding.mQueryOptions))
+			.returns(mResultingQueryOptions);
 
-			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, oContext),
-				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
-
-			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, undefined),
-				undefined, "no query options and no context");
-		});
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptions(oContext), mResultingQueryOptions);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: ignores base context", function (assert) {
-		var oBaseContext = {},
-			oBinding = new ODataParentBinding({
-				mQueryOptions : undefined,
-				sPath : "foo"
+	QUnit.test("getQueryOptions: inherited options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					mUriParameters : {}
+				},
+				mQueryOptions : {}
+			}),
+			oContext = {},
+			mInheritedQueryOptions = {},
+			mResultingQueryOptions = {};
+
+		this.mock(oBinding).expects("inheritQueryOptions")
+			.withExactArgs(oContext).returns(mInheritedQueryOptions);
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(mInheritedQueryOptions))
+			.returns(mResultingQueryOptions);
+
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptions(oContext), mResultingQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: no context", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return true; }
 			});
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptions("", oBaseContext), undefined,
-			"no query options and base context ignored");
+		assert.strictEqual(oBinding.inheritQueryOptions(undefined), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: query options and no path", function (assert) {
+	QUnit.test("inheritQueryOptions: base context", function(assert) {
 		var oBinding = new ODataParentBinding({
-				mQueryOptions : {}
+				isRelative : function () { return true; }
+			}),
+			oContext = {};
+
+		// code under test
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: absolute binding with unnecessary context", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return false; }
+			}),
+			oContext = {
+				oBinding : {}
+			};
+
+		// code under test
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions: no parent query options", function(assert) {
+		var oBinding = new ODataParentBinding({
+				isRelative : function () { return true; },
+				sPath : "bindingPath"
 			}),
 			oContext = {
 				getQueryOptions : function () {}
 			};
 
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(oContext).expects("getQueryOptions").never();
+		this.mock(oContext).expects("getQueryOptions")
+			.withExactArgs().returns(undefined);
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptions(undefined, oContext), oBinding.mQueryOptions);
-		assert.strictEqual(oBinding.getQueryOptions("", oContext), oBinding.mQueryOptions);
+		assert.strictEqual(oBinding.inheritQueryOptions(oContext), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptions: find in query options", function (assert) {
-		var mEmployee2EquipmentOptions = {
-				$orderby : "EquipmentId"
-			},
-			mTeam2EmployeeOptions = {
-				"$expand" : {
-					"Employee_2_Equipment" : mEmployee2EquipmentOptions
-				},
-				$orderby : "EmployeeId"
-			},
-			mParameters = {
-				"$expand" : {
-					"Team_2_Employees" : mTeam2EmployeeOptions,
-					"Team_2_Manager" : null,
-					"Team_2_Equipments" : true
-				},
-				"$orderby" : "TeamId",
-				"sap-client" : "111"
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {
-					mUriParameters : {"sap-client" : "111"},
-					buildQueryOptions : function () {}
-				},
-				mQueryOptions : mParameters,
-				sPath : "any/path"
-			}),
-			oContext = {
-				getQueryOptions : function () {}
-			},
-			oModelMock = this.mock(oBinding.oModel),
-			mResultingQueryOptions = {}; // content not relevant
-
-		this.mock(_Helper).expects("buildPath").never();
-		this.mock(oContext).expects("getQueryOptions").never();
-
-		[
-			{sQueryPath : "foo", mResult : undefined},
-			{sQueryPath : "Team_2_Employees", mResult : mTeam2EmployeeOptions},
-			{
-				sQueryPath : "Team_2_Employees/Employee_2_Equipment",
-				mResult : mEmployee2EquipmentOptions
-			},
-			{sQueryPath : "Team_2_Employees/Employee_2_Equipment/foo", mResult : undefined},
-			{sQueryPath : "Team_2_Employees/foo/Employee_2_Equipment", mResult : undefined},
-			{sQueryPath : "Team_2_Manager", mResult : undefined},
-			{sQueryPath : "Team_2_Equipments", mResult : undefined},
-			{
-				sQueryPath : "Team_2_Employees(2)/Employee_2_Equipment('42')",
-				mResult : mEmployee2EquipmentOptions
-			},
-			{
-				sQueryPath : "15/Team_2_Employees/2/Employee_2_Equipment/42",
-				mResult : mEmployee2EquipmentOptions
+	[{ // $select=Bar
+		options : {
+			$select : "Bar"
+		},
+		path : "FooSet/WithoutExpand",
+		result : undefined
+	}, { // $expand(ExpandWithoutOptions)
+		options : {
+			$expand : {
+				ExpandWithoutOptions : true
 			}
-		].forEach(function (oFixture, i) {
-			oModelMock.expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(oBinding.oModel.mUriParameters),
-					oFixture.mResult ? sinon.match.same(oFixture.mResult) : undefined, true)
-				.returns(mResultingQueryOptions);
+		},
+		path : "ExpandWithoutOptions",
+		result : undefined
+	}, { // $expand(FooSet=$select(Bar,Baz))
+		options : {
+			$expand : {
+				FooSet : {
+					$select : ["Bar", "Baz"]
+				}
+			}
+		},
+		path : "FooSet('0815')",
+		result : {
+			$select : ["Bar", "Baz"]
+		}
+	}, {// $expand(FooSet=$expand(BarSet=$select(Baz)))
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : "Baz"
+						}
+					}
+				}
+			}
+		},
+		path : "FooSet('0815')/12/BarSet",
+		result : {
+			$select : "Baz"
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("inheritQueryOptions: V4 context, path=" + oFixture.path, function(assert) {
+			var oBinding = new ODataParentBinding({
+					isRelative : function () { return true; },
+					sPath : oFixture.path
+				}),
+				oContext = {
+					getQueryOptions : function () {}
+				};
+
+			this.mock(oContext).expects("getQueryOptions")
+				.withExactArgs().returns(oFixture.options);
+
 			// code under test
-			assert.strictEqual(oBinding.getQueryOptions(oFixture.sQueryPath, oContext),
-				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
+			assert.deepEqual(oBinding.inheritQueryOptions(oContext), oFixture.result);
 		});
 	});
 	//TODO handle encoding in getQueryOptions
