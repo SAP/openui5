@@ -43,4 +43,7 @@
 	&:focus::after {
 		border: 1px dotted @sapUiContentFocusColor;
 	}
+	html[data-sap-ui-browser^="ie"].sap-desktop &:focus::after {
+		border: 1px dashed @sapUiContentFocusColor;
+	}
 }
