@@ -1,14 +1,7 @@
-@sapUiDtFocusColor : rgba(77, 144, 254, 0.5);
-@sapUiDtTargetZoneColor : green;
+@sapUiDtFocusColor : @sapUiContentFocusColor;
+@sapUiDtTargetZoneColor : @sapUiSelected;
 @sapUiDtSelectionColor : #35F;
 @sapUiDtCuttedColor : white;
-
-#overlay-container {
-	// to prevent overlay's height from expanding the body
-	position: absolute;
-	overflow: hidden;
-	// position is set in code to prevent RTL style conversion
-}
 
 
 .sapUiDtOverlay {
@@ -36,7 +29,7 @@
 	&:focus {
 		&:before {
 			content: " ";
-			border: 2px solid darken(@sapUiSelected, 5);
+			border: 1px dotted @sapUiDtFocusColor;
 		}
 	}
 }

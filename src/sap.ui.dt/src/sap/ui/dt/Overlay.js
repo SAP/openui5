@@ -136,12 +136,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		if (!oOverlayContainer) {
 			oOverlayContainer = jQuery.sap.byId(sOverlayContainerId);
 			if (!oOverlayContainer.length) {
-				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").css({
-					"top" : "0px",
-					"left" : "0px",
-					"right" : "0px",
-					"bottom" : "0px"
-				}).appendTo("body");
+				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
 			}
 		}
 		return oOverlayContainer.get(0);
