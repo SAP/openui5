@@ -23,7 +23,14 @@ sap.ui.define(["sap/ui/fl/RegistrationDelegator"
 		name:"sap.ui.fl",
 		version:"${version}",
 		dependencies:["sap.ui.core","sap.m"],
-		noLibraryCSS: true
+		noLibraryCSS: true,
+		extensions: {
+			"sap.ui.support": {
+				diagnosticPlugins: [
+					"sap/ui/fl/support/Flexibility"
+				]
+			}
+		}
 	});
 
 	RegistrationDelegator.registerAll();
