@@ -67,23 +67,44 @@
 				assert.equal(oCSV.escapeContent(''), '', "Empty string");
 
 				assert.equal(oCSV.escapeContent('abc'), 'abc', "Plain string");
-				assert.equal(oCSV.escapeContent('a;b;c'), 'a;b;c', "Does not contain current separator char");
-				assert.equal(oCSV.escapeContent('a,b,c'), '"a,b,c"', "Contains separator char");
+				assert.equal(oCSV.escapeContent('a;b;c'), '"a;b;c"', "Contains common separator char (;)");
+				assert.equal(oCSV.escapeContent('a\tb\tc'), '"a\tb\tc"', "Contains common separator char (tab)");
+				assert.equal(oCSV.escapeContent('a,b,c'), '"a,b,c"', "Contains actual separator char");
 				assert.equal(oCSV.escapeContent('a"b"c'), '"a""b""c"', "Contains double quote");
 
 				assert.equal(oCSV.escapeContent('a\rb\rc'), '"a\rb\rc"', "Contains new line (CR)");
 				assert.equal(oCSV.escapeContent('a\nb\nc'), '"a\nb\nc"', "Contains new line (LF)");
 				assert.equal(oCSV.escapeContent('a\r\nb\r\nc'), '"a\r\nb\r\nc"', "Contains new line (CRLF)");
 
+				assert.equal(oCSV.escapeContent('=123'), '=123', "No escaping: Number only formula (=)");
+				assert.equal(oCSV.escapeContent('+123'), '+123', "No escaping: Number only formula (+)");
+				assert.equal(oCSV.escapeContent('-123'), '-123', "No escaping: Number only formula (-)");
+				assert.equal(oCSV.escapeContent('@123'), '@123', "No escaping: Number only formula (@)");
+
+				assert.equal(oCSV.escapeContent('=123.456'), '=123.456', "No escaping: Number only formula (=)");
+				assert.equal(oCSV.escapeContent('+123.456'), '+123.456', "No escaping: Number only formula (+)");
+				assert.equal(oCSV.escapeContent('-123.456'), '-123.456', "No escaping: Number only formula (-)");
+				assert.equal(oCSV.escapeContent('@123.456'), '@123.456', "No escaping: Number only formula (@)");
+
+				assert.equal(oCSV.escapeContent('=123.456e7'), '=123.456e7', "No escaping: Number only formula with exponent (=)");
+				assert.equal(oCSV.escapeContent('+123.456E7'), '+123.456E7', "No escaping: Number only formula with exponent (+)");
+				assert.equal(oCSV.escapeContent('-123.456e+7'), '-123.456e+7', "No escaping: Number only formula with exponent (-)");
+				assert.equal(oCSV.escapeContent('@123.456e-7'), '@123.456e-7', "No escaping: Number only formula with exponent (@)");
+
 				assert.equal(oCSV.escapeContent('=FOO'), '\'=FOO', "Formula (=)");
 				assert.equal(oCSV.escapeContent('+FOO'), '\'+FOO', "Formula (+)");
 				assert.equal(oCSV.escapeContent('-FOO'), '\'-FOO', "Formula (-)");
 				assert.equal(oCSV.escapeContent('@FOO'), '\'@FOO', "Formula (@)");
 
-				assert.equal(oCSV.escapeContent('=FOO;BAR'), '\'=FOO;BAR', "Formula (=) with non separator char");
-				assert.equal(oCSV.escapeContent('+FOO;BAR'), '\'+FOO;BAR', "Formula (+) with non separator char");
-				assert.equal(oCSV.escapeContent('-FOO;BAR'), '\'-FOO;BAR', "Formula (-) with non separator char");
-				assert.equal(oCSV.escapeContent('@FOO;BAR'), '\'@FOO;BAR', "Formula (@) with non separator char");
+				assert.equal(oCSV.escapeContent('=123,456'), '"=123,456"', "Number only formula with comma (=)");
+				assert.equal(oCSV.escapeContent('+123,456'), '"+123,456"', "Number only formula with comma (+)");
+				assert.equal(oCSV.escapeContent('-123,456'), '"-123,456"', "Number only formula with comma (-)");
+				assert.equal(oCSV.escapeContent('@123,456'), '"@123,456"', "Number only formula with comma (@)");
+
+				assert.equal(oCSV.escapeContent('=FOO;BAR'), '"\'=FOO;BAR"', "Formula (=) with common separator char");
+				assert.equal(oCSV.escapeContent('+FOO;BAR'), '"\'+FOO;BAR"', "Formula (+) with common separator char");
+				assert.equal(oCSV.escapeContent('-FOO;BAR'), '"\'-FOO;BAR"', "Formula (-) with common separator char");
+				assert.equal(oCSV.escapeContent('@FOO;BAR'), '"\'@FOO;BAR"', "Formula (@) with common separator char");
 
 				assert.equal(oCSV.escapeContent('=FOO,BAR'), '"\'=FOO,BAR"', "Formula (=) with separator char");
 				assert.equal(oCSV.escapeContent('+FOO,BAR'), '"\'+FOO,BAR"', "Formula (+) with separator char");
@@ -122,7 +143,8 @@
 				assert.equal(oCSV.escapeContent(''), '', "Empty string");
 
 				assert.equal(oCSV.escapeContent('abc'), 'abc', "Plain string");
-				assert.equal(oCSV.escapeContent('a,b,c'), 'a,b,c', "Does not contain current separator char");
+				assert.equal(oCSV.escapeContent('a,b,c'), '"a,b,c"', "Contains common separator char (,)");
+				assert.equal(oCSV.escapeContent('a\tb\tc'), '"a\tb\tc"', "Contains common separator char (tab)");
 				assert.equal(oCSV.escapeContent('a;b;c'), '"a;b;c"', "Contains separator char");
 				assert.equal(oCSV.escapeContent('a"b"c'), '"a""b""c"', "Contains double quote");
 
@@ -130,15 +152,35 @@
 				assert.equal(oCSV.escapeContent('a\nb\nc'), '"a\nb\nc"', "Contains new line (LF)");
 				assert.equal(oCSV.escapeContent('a\r\nb\r\nc'), '"a\r\nb\r\nc"', "Contains new line (CRLF)");
 
+				assert.equal(oCSV.escapeContent('=123'), '=123', "No escaping: Number only formula (=)");
+				assert.equal(oCSV.escapeContent('+123'), '+123', "No escaping: Number only formula (+)");
+				assert.equal(oCSV.escapeContent('-123'), '-123', "No escaping: Number only formula (-)");
+				assert.equal(oCSV.escapeContent('@123'), '@123', "No escaping: Number only formula (@)");
+
+				assert.equal(oCSV.escapeContent('=123.456'), '=123.456', "No escaping: Number only formula (=)");
+				assert.equal(oCSV.escapeContent('+123.456'), '+123.456', "No escaping: Number only formula (+)");
+				assert.equal(oCSV.escapeContent('-123.456'), '-123.456', "No escaping: Number only formula (-)");
+				assert.equal(oCSV.escapeContent('@123.456'), '@123.456', "No escaping: Number only formula (@)");
+
+				assert.equal(oCSV.escapeContent('=123.456e7'), '=123.456e7', "No escaping: Number only formula with exponent (=)");
+				assert.equal(oCSV.escapeContent('+123.456e7'), '+123.456e7', "No escaping: Number only formula with exponent (+)");
+				assert.equal(oCSV.escapeContent('-123.456e+7'), '-123.456e+7', "No escaping: Number only formula with exponent (-)");
+				assert.equal(oCSV.escapeContent('@123.456e-7'), '@123.456e-7', "No escaping: Number only formula with exponent (@)");
+
 				assert.equal(oCSV.escapeContent('=FOO'), '\'=FOO', "Formula (=)");
 				assert.equal(oCSV.escapeContent('+FOO'), '\'+FOO', "Formula (+)");
 				assert.equal(oCSV.escapeContent('-FOO'), '\'-FOO', "Formula (-)");
 				assert.equal(oCSV.escapeContent('@FOO'), '\'@FOO', "Formula (@)");
 
-				assert.equal(oCSV.escapeContent('=FOO,BAR'), '\'=FOO,BAR', "Formula (=) with non separator char");
-				assert.equal(oCSV.escapeContent('+FOO,BAR'), '\'+FOO,BAR', "Formula (+) with non separator char");
-				assert.equal(oCSV.escapeContent('-FOO,BAR'), '\'-FOO,BAR', "Formula (-) with non separator char");
-				assert.equal(oCSV.escapeContent('@FOO,BAR'), '\'@FOO,BAR', "Formula (@) with non separator char");
+				assert.equal(oCSV.escapeContent('=123,456'), '"=123,456"', "Number only formula with comma (=)");
+				assert.equal(oCSV.escapeContent('+123,456'), '"+123,456"', "Number only formula with comma (+)");
+				assert.equal(oCSV.escapeContent('-123,456'), '"-123,456"', "Number only formula with comma (-)");
+				assert.equal(oCSV.escapeContent('@123,456'), '"@123,456"', "Number only formula with comma (@)");
+
+				assert.equal(oCSV.escapeContent('=FOO,BAR'), '"\'=FOO,BAR"', "Formula (=) with common separator char");
+				assert.equal(oCSV.escapeContent('+FOO,BAR'), '"\'+FOO,BAR"', "Formula (+) with common separator char");
+				assert.equal(oCSV.escapeContent('-FOO,BAR'), '"\'-FOO,BAR"', "Formula (-) with common separator char");
+				assert.equal(oCSV.escapeContent('@FOO,BAR'), '"\'@FOO,BAR"', "Formula (@) with common separator char");
 
 				assert.equal(oCSV.escapeContent('=FOO;BAR'), '"\'=FOO;BAR"', "Formula (=) with separator char");
 				assert.equal(oCSV.escapeContent('+FOO;BAR'), '"\'+FOO;BAR"', "Formula (+) with separator char");
