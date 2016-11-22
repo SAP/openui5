@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 				// ScrollContainer needs height:100% on the flex item
 				if (oItem instanceof sap.m.ScrollContainer) {
-					oRm.addClass("sapMFlexBoxFit");
+					oRm.addClass("sapMFlexBoxScroll");
 				}
 
 				// Hide invisible items, but leave them in the DOM
