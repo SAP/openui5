@@ -1092,7 +1092,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var oRootNode = oBinding.getGrandTotalContextInfo();
-			return oRootNode ? oRootNode.numberOfLeafs : 0;
+			return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
 		}
 	};
 
