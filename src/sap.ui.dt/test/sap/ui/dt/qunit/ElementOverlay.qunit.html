@@ -145,6 +145,37 @@
 				this.oOverlay.rerender();
 			});
 
+			QUnit.test("when setSelectable, setMovable, setEditable is called on the overlay with undefined", function(assert) {
+				this.oOverlay.setSelectable(undefined);
+				assert.equal(this.oOverlay.isSelectable(), false, 'then the overlay is not selectable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelectable"), false, "the Overlay doesn't have the sapUiDtOverlaySelectable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayFocusable"), false, "the Overlay doesn't have the sapUiDtOverlayFocusable StyleClass");
+
+				this.oOverlay.setMovable(undefined);
+				assert.equal(this.oOverlay.isMovable(), false, 'then the overlay is not movable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayMovable"), false, "the Overlay doesn't have the sapUiDtOverlayMovable StyleClass");
+				this.oOverlay.setMovable(true);
+				assert.equal(this.oOverlay.isMovable(), true, 'then the overlay is movable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayMovable"), true, "the Overlay has the sapUiDtOverlayMovable StyleClass");
+
+				this.oOverlay.setEditable(undefined);
+				assert.equal(this.oOverlay.isEditable(), false, 'then the overlay is not editable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayEditable"), false, "the Overlay doesn't have the sapUiDtOverlayEditable StyleClass");
+				this.oOverlay.setEditable(true);
+				assert.equal(this.oOverlay.isEditable(), true, 'then the overlay is editable');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayEditable"), true, "the Overlay has the sapUiDtOverlayEditable StyleClass");
+			});
+
+			QUnit.test("when setSelected is called on the overlay with undefined", function(assert) {
+				this.oOverlay.setSelectable(true);
+				this.oOverlay.setSelected(undefined);
+				assert.equal(this.oOverlay.isSelectable(), true, 'then the overlay is selectable');
+				assert.equal(this.oOverlay.isSelected(), false, 'then the overlay is not selected');
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelectable"), true, "the Overlay doesn't have the Selectable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlayFocusable"), true, "the Overlay doesn't have the focusable StyleClass");
+				assert.strictEqual(this.oOverlay.hasStyleClass("sapUiDtOverlaySelected"), false, "the Overlay doesn't have the selected StyleClass");
+			});
+
 			QUnit.test("when the overlay is selectable and selected", function(assert) {
 				this.oOverlay.attachSelectionChange(function(oEvent) {
 					assert.ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
@@ -553,11 +584,52 @@
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
 				assert.strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
 				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
+				assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), true, "the Overlay has the right StyleClass");
 
 				assert.strictEqual(this.oFormOverlay.getPublicParentElementOverlay(), this.oOverlay, "getPublicParentElementOverlay for hidden Form returns SimpleForm control");
 				assert.strictEqual(this.oFormOverlay.getPublicParentAggregationOverlay(), this.oOverlay.getAggregationOverlay("form"), "getPublicParentAggregationOverlay for hidden Form returns form aggregation overlay");
 			});
 
+			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored and not inHiddenTree", {
+				beforeEach : function() {
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+						content : [
+							new sap.m.Label({text : "Label"})
+						]
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								aggregations: {
+									form: {
+										ignore : false
+									}
+								}
+							}
+						})
+					});
+					this.oOverlay.placeInOverlayContainer();
+					this.oOverlay.setElement(this.oSimpleForm);
+					this.oSimpleForm.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+					this.oFormOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oSimpleForm.getAggregation("form")
+					});
+					this.oFormOverlay.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oSimpleForm.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("then...", function(assert) {
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
+				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), false, "the aggregation overlay is marked as inHiddenTree");
+				assert.strictEqual(oAggregationOverlay.hasStyleClass("sapUiDtOverlayInHiddenTree"), false, "the Overlay has the right StyleClass");
+			});
 
 			QUnit.module("Given that an Overlay is created for a control with copyDom:true in the designtime Metadata", {
 				beforeEach : function() {

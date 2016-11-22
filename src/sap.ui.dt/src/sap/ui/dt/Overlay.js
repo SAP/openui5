@@ -275,6 +275,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.setFocusable = function(bFocusable) {
+		bFocusable = !!bFocusable;
 		if (this.isFocusable() !== bFocusable) {
 			this.setProperty("focusable", bFocusable);
 			this.toggleStyleClass("sapUiDtOverlayFocusable", bFocusable);
@@ -582,6 +583,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.setInHiddenTree = function(bInHiddenTree) {
+		bInHiddenTree = !!bInHiddenTree;
 		if (bInHiddenTree !== this.isInHiddenTree()) {
 
 			this.toggleStyleClass("sapUiDtOverlayInHiddenTree", bInHiddenTree);
