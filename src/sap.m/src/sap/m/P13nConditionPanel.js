@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
 	 * @alias sap.m.P13nConditionPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -48,8 +49,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the P13nConditionPanel is used on a dialog the
-				 * property should be set to true!
+				 * defines if the mediaQuery or a ContainerResize will be used for layout update.
+				 * When the <code>P13nConditionPanel</code> is used on a dialog the property should be set to <code>true</code>!
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -95,7 +96,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * KeyField value can only be selected once. When you set the property to true the ConditionPanel will automatically offers on the
+				 * KeyField value can only be selected once. When you set the property to <code>true</code> the ConditionPanel will automatically offers on the
 				 * KeyField drop down only the keyFields which are not used. The default behavior is that in each keyField dropdown all keyfields are
 				 * listed.
 				 */
@@ -107,7 +108,7 @@ sap.ui.define([
 
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
-				 * or"Phone" you can set a fixed layout.
+				 * or "Phone" you can set a fixed layout.
 				 */
 				layoutMode: {
 					type: "string",
@@ -145,7 +146,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Content for the ConditionPanel. This property is not public!
+				 * Content for the ConditionPanel. This aggregation is not public!
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -195,7 +196,6 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aConditions array of Conditions.
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.setConditions = function(aConditions) {
 		if (!aConditions) {
@@ -221,7 +221,6 @@ sap.ui.define([
 	 * remove all conditions.
 	 *
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeAllConditions = function() {
 		this._oConditionsMap = {};
@@ -235,10 +234,9 @@ sap.ui.define([
 	/**
 	 * add a single condition.
 	 *
-	 * @param {object} oCondition the new condition of type { "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
-	 *        "keyFieldKey", "value1": "", "value2": ""};
+	 * @param {object} oCondition the new condition of type <code>{ "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
+	 *        "keyFieldKey", "value1": "", "value2": ""};</code>
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.addCondition = function(oCondition) {
 		if (this._bIgnoreSetConditions) {
@@ -253,11 +251,10 @@ sap.ui.define([
 	/**
 	 * insert a single condition.
 	 *
-	 * @param {object} oCondition the new condition of type { "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
-	 *        "keyFieldKey", "value1": "", "value2": ""};
+	 * @param {object} oCondition the new condition of type <code>{ "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
+	 *        "keyFieldKey", "value1": "", "value2": ""};</code>
 	 * @param {int} index of the new condition
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.insertCondition = function(oCondition, index) {
 		if (this._bIgnoreSetConditions) {
@@ -276,7 +273,6 @@ sap.ui.define([
 	 * @param {object} vCondition is the condition which should be removed. can be either a string with the key of the condition of the condition
 	 *        object itself.
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeCondition = function(vCondition) {
 		this._clearConditions();
@@ -296,8 +292,8 @@ sap.ui.define([
 	 * add a single condition into the _oConditionMap.
 	 *
 	 * @private
-	 * @param {object} oCondition the new condition of type { "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
-	 *        "keyFieldKey", "value1": "", "value2": ""};
+	 * @param {object} oCondition the new condition of type <code>{ "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
+	 *        "keyFieldKey", "value1": "", "value2": ""};</code>
 	 */
 	P13nConditionPanel.prototype._addCondition2Map = function(oCondition) {
 		if (!oCondition.key) {
@@ -326,7 +322,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @returns {object[]} array of Conditions
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.getConditions = function() {
 		var oCondition;
@@ -364,9 +359,8 @@ sap.ui.define([
 	 * on the keyfield itself some specific operations and a keyfield is of not of type date or numeric.
 	 *
 	 * @public
-	 * @since 1.26.0
-	 * @param {sap.m.P13nConditionOperation[]} aOperations array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
-	 * @param {string} sType defines the type for which this operations will be used. is sType is not defined the operations will be used as default
+	 * @param {sap.m.P13nConditionOperation[]} aOperations array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
+	 * @param {string} sType defines the type for which this operations will be used. is <code>sType</code> is not defined the operations will be used as default
 	 *        operations.
 	 */
 	P13nConditionPanel.prototype.setOperations = function(aOperation, sType) {
@@ -387,7 +381,6 @@ sap.ui.define([
 	 * add a single operation
 	 *
 	 * @public
-	 * @since 1.26.0
 	 * @param {sap.m.P13nConditionOperation} oOperation
 	 * @param {string} sType defines the type for which this operations will be used.
 	 */
@@ -402,7 +395,6 @@ sap.ui.define([
 	 * remove all operations
 	 *
 	 * @public
-	 * @since 1.26.0
 	 * @param {string} sType defines the type for which all operations should be removed
 	 */
 	P13nConditionPanel.prototype.removeAllOperations = function(sType) {
@@ -416,7 +408,6 @@ sap.ui.define([
 	 * returns the default array of operations
 	 *
 	 * @public
-	 * @since 1.26.0
 	 * @param {string} sType defines the type for which the operations should be returned.
 	 * @returns {sap.m.P13nConditionOperation[]} array of operations
 	 */
@@ -430,8 +421,7 @@ sap.ui.define([
 	 * keyfields.
 	 *
 	 * @public
-	 * @since 1.26.0
-	 * @param {array} aKeyFields array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
+	 * @param {array} aKeyFields array of KeyFields <code>[{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]</code>
 	 */
 	P13nConditionPanel.prototype.setKeyFields = function(aKeyFields) {
 		this._aKeyFields = aKeyFields;
@@ -446,7 +436,6 @@ sap.ui.define([
 	 * add a single KeyField
 	 *
 	 * @public
-	 * @since 1.26.0
 	 * @param {object} oKeyField {key: "CompanyCode", text: "ID"}
 	 */
 	P13nConditionPanel.prototype.addKeyField = function(oKeyField) {
@@ -462,7 +451,6 @@ sap.ui.define([
 	 * removes all KeyFields
 	 *
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeAllKeyFields = function() {
 		this._aKeyFields = [];
@@ -474,8 +462,7 @@ sap.ui.define([
 	 * getter for KeyFields array
 	 *
 	 * @public
-	 * @since 1.26.0
-	 * @returns {object[]} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
+	 * @returns {object[]} array of KeyFields <code>[{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]</code>
 	 */
 	P13nConditionPanel.prototype.getKeyFields = function() {
 		return this._aKeyFields;
@@ -485,7 +472,6 @@ sap.ui.define([
 	 * sets the AlwaysShowAddIcon.
 	 *
 	 * @private
-	 * @since 1.26.0
 	 * @param {boolean} bEnabled makes the Add icon visible for each condition row.
 	 */
 	P13nConditionPanel.prototype.setAlwaysShowAddIcon = function(bEnabled) {
@@ -502,8 +488,8 @@ sap.ui.define([
 	 * sets the LayoutMode. If not set the layout depends on the size of the browser or the container. see ContainerQuery
 	 *
 	 * @private
-	 * @since 1.26.0
 	 * @param {string} sLayoutMode define the layout mode for the condition row. The value can be Desktop, Tablet or Phone.
+	 * @returns {sap.m.P13nConditionPanel} <code>this</code> to allow method chaining
 	 */
 	P13nConditionPanel.prototype.setLayoutMode = function(sLayoutMode) {
 		this.setProperty("layoutMode", sLayoutMode);
@@ -523,10 +509,12 @@ sap.ui.define([
 
 	/**
 	 * sets the ContainerQuery. defines if the mediaQuery or a ContainerResize will be used for layout update. When the P13nConditionPanel is used on
-	 * a dialog the property should be set to true!
+	 * a dialog the property should be set to <code>true</code>!
 	 *
 	 * @private
 	 * @since 1.30.0
+	 * @param {boolean} bEnabled enables or disables the <code>ContainerQuery</code>
+	 * @returns {sap.m.P13nConditionPanel} <code>this</code> to allow method chaining
 	 */
 	P13nConditionPanel.prototype.setContainerQuery = function(bEnabled) {
 		this._unregisterResizeHandler();
@@ -2088,7 +2076,7 @@ sap.ui.define([
 		this._adjustValue1Span(oConditionGrid);
 	};
 
-	/**
+	/*
 	 * toggle the value1 field span between L5 and L3 depending on the selected operation
 	 */
 	P13nConditionPanel.prototype._adjustValue1Span = function(oConditionGrid) {
@@ -2107,7 +2095,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * return the index of the oConditionGrid, the none valid condition will be ignored.
 	 */
 	P13nConditionPanel.prototype._getIndexOfCondition = function(oConditionGrid) {
@@ -2123,7 +2111,7 @@ sap.ui.define([
 		return iIndex + this._iFirstConditionIndex;
 	};
 
-	/**
+	/*
 	 * makes a control valid or invalid, means it gets a warning state and shows a warning message attached to the field.
 	 *
 	 */
@@ -2137,7 +2125,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * change event handler for a value1 and value2 field control
 	 */
 	P13nConditionPanel.prototype._validateFormatFieldValue = function(oEvent) {
@@ -2320,7 +2308,7 @@ sap.ui.define([
 		this._updatePaginatorToolbar();
 	};
 
-	/**
+	/*
 	 * returns the value as text from a Value field.
 	 */
 	P13nConditionPanel.prototype._getValueTextFromField = function(oControl, oFormatter) {
@@ -2433,12 +2421,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and opens a popup message dialog to give the
+	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and can be used to show error message dialog and give the
 	 * user the feedback that some values are wrong or missing.
 	 *
 	 * @private
-	 * @param {function} fnCallback which we call when all conditions are valid or the user ignores the wrong/missing fields by pressing Yes on a
-	 *        message dialog.
+	 * @returns {boolean} <code>True</code> if all conditions are valid, <code>false</code> otherwise.
+	 *
 	 */
 	P13nConditionPanel.prototype.validateConditions = function() {
 		var that = this;

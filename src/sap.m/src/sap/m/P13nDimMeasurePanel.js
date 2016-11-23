@@ -32,8 +32,6 @@ sap.ui.define([
 
 				/**
 				 * Specifies a chart type key.
-				 *
-				 * @since 1.34.0
 				 */
 				chartTypeKey: {
 					type: "string",
@@ -43,8 +41,6 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * List of columns that has been changed.
-				 *
-				 * @since 1.34.0
 				 */
 				dimMeasureItems: {
 					type: "sap.m.P13nDimMeasureItem",
@@ -54,7 +50,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Internal aggregation for the toolbar.
+				 * Internal aggregation for the toolbar content.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -65,8 +61,6 @@ sap.ui.define([
 
 				/**
 				 * Specifies available chart types.
-				 *
-				 * @since 1.34.0
 				 */
 				availableChartTypes: {
 					type: "sap.ui.core.Item",
@@ -623,8 +617,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
-	 *        sSearchText="".
 	 * @private
 	 */
 	P13nDimMeasurePanel.prototype._filterModelItemsBySearchText = function() {

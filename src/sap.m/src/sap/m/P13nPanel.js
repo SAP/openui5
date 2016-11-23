@@ -11,9 +11,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nPanel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class Base type for <code>panels</code> aggregation in P13nDialog control.
+	 * @class Base type for <code>panels</code> aggregation in <code>P13nDialog</code> control.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 * @constructor
@@ -29,8 +29,6 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Title text appears in the panel.
-				 *
-				 * @since 1.26.0
 				 */
 				title: {
 					type: "string",
@@ -52,8 +50,6 @@ sap.ui.define([
 				/**
 				 * Panel type for generic use. Due to extensibility reason the type of <code>type</code> property should be <code>string</code>.
 				 * So it is feasible to add a custom panel without expanding the type.
-				 *
-				 * @since 1.26.0
 				 */
 				type: {
 					type: "string",
@@ -62,9 +58,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Enables the vertical Scrolling on the P13nDialog when the panel is shown.
-				 *
-				 * @since 1.26.0
+				 * Enables the vertical Scrolling on the <code>P13nDialog</code> when the panel is shown.
 				 */
 				verticalScrolling: {
 					type: "boolean",
@@ -100,9 +94,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Aggregation of items
-				 *
-				 * @since 1.26.0
+				 * Defines personalization items (e.g. columns in the <code>P13nColumnsPanel</code>).
 				 */
 				items: {
 					type: "sap.m.P13nItem",
@@ -134,6 +126,7 @@ sap.ui.define([
 	/**
 	 * This method can be overwritten by subclass in order to return a payload for Ok action
 	 *
+	 * @returns {object} Object which describes the state after Ok has been pressed
 	 * @public
 	 * @since 1.26.7
 	 */
@@ -152,6 +145,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method defines the point in time before the panel becomes active.
+	 *
 	 * @public
 	 * @since 1.28.0
 	 */
@@ -178,7 +173,6 @@ sap.ui.define([
 	 * @since 1.28.0
 	 */
 	P13nPanel.prototype.onAfterNavigationFrom = function() {
-		return;
 	};
 
 	return P13nPanel;

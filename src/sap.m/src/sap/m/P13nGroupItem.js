@@ -11,13 +11,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nGroupItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>groupItems</code> aggregation in P13nGroupPanel control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.28.0
 	 * @alias sap.m.P13nGroupItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -30,7 +31,6 @@ sap.ui.define([
 
 				/**
 				 * sap.m.P13nConditionOperation
-				 * @since 1.28.0
 				 */
 				operation: {
 					type: "string",
@@ -40,7 +40,6 @@ sap.ui.define([
 
 				/**
 				 * key of the column
-				 * @since 1.28.0
 				 */
 				columnKey: {
 					type: "string",
@@ -50,7 +49,6 @@ sap.ui.define([
 
 				/**
 				 * make the grouped column as normalcolumn visible
-				 * @since 1.28.0
 				 */
 				showIfGrouped: {
 					type: "boolean",

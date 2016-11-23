@@ -11,9 +11,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class Base type for <code>items</code> aggregation in P13nPanel control.
+	 * @class Base type for <code>items</code> aggregation in <code>P13nPanel</code> control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * @constructor
@@ -30,8 +30,6 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Can be used as input for subsequent actions.
-				 *
-				 * @since 1.26.0
 				 */
 				columnKey: {
 					type: "string",
@@ -40,8 +38,6 @@ sap.ui.define([
 				},
 				/**
 				 * The text to be displayed for the item.
-				 *
-				 * @since 1.26.0
 				 */
 				text: {
 					type: "string",
@@ -51,8 +47,6 @@ sap.ui.define([
 
 				/**
 				 * Defines visibility of column
-				 *
-				 * @since 1.26.0
 				 */
 				visible: {
 					type: "boolean",
@@ -62,8 +56,6 @@ sap.ui.define([
 
 				/**
 				 * data type of the column (text, numeric or date is supported)
-				 *
-				 * @since 1.26.0
 				 */
 				type: {
 					type: "string",
@@ -73,8 +65,6 @@ sap.ui.define([
 
 				/**
 				 * if type==numeric the precision will be used to format the entered value (maxIntegerDigits of the used Formatter)
-				 *
-				 * @since 1.26.0
 				 */
 				precision: {
 					type: "string",
@@ -84,8 +74,6 @@ sap.ui.define([
 
 				/**
 				 * if type==numeric the scale will be used to format the entered value (maxFractionDigits of the used Formatter)
-				 *
-				 * @since 1.26.0
 				 */
 				scale: {
 					type: "string",
@@ -95,8 +83,6 @@ sap.ui.define([
 
 				/**
 				 * specifies the number of characters which can be entered in the value fields of the condition panel
-				 *
-				 * @since 1.26.0
 				 */
 				maxLength: {
 					type: "string",
@@ -106,8 +92,6 @@ sap.ui.define([
 
 				/**
 				 * Defines column width
-				 *
-				 * @since 1.26.0
 				 */
 				width: {
 					type: "string",
@@ -117,8 +101,6 @@ sap.ui.define([
 
 				/**
 				 * the column with isDefault==true will be used as the selected column item on the conditionPanel
-				 *
-				 * @since 1.26.0
 				 */
 				isDefault: {
 					type: "boolean",
@@ -159,7 +141,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines href.
+				 * Defines href of a link.
 				 *
 				 * @since 1.46.0
 				 */
@@ -169,7 +151,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines press handler.
+				 * Defines press handler of a link.
 				 *
 				 * @since 1.46.0
 				 */
