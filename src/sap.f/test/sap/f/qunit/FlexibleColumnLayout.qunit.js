@@ -585,6 +585,10 @@
 
 		assert.ok(!this.oFCL.getAggregation("_midColumnNav"), "Initially no Mid column NavContainer is created");
 
+		var aPages = this.oFCL.getMidColumnPages();
+		assert.ok(!this.oFCL.getAggregation("_midColumnNav"), "Calling getMidColumnPages does not force a NavContainer creation");
+		assert.ok(aPages.constructor === Array && aPages.length === 0, "getMidColumnPages returns an empty array");
+
 		var oEventSpy = this.spy(this.oFCL, "onAfterRendering");
 
 		this.oFCL.addMidColumnPage(oFactory.createPage("mid"));
@@ -602,6 +606,10 @@
 		});
 
 		assert.ok(!this.oFCL.getAggregation("_endColumnNav"), "Initially no End column NavContainer is created");
+
+		var aPages = this.oFCL.getEndColumnPages();
+		assert.ok(!this.oFCL.getAggregation("_endColumnNav"), "Calling getEndColumnPages does not force a NavContainer creation");
+		assert.ok(aPages.constructor === Array && aPages.length === 0, "getEndColumnPages returns an empty array");
 
 		var oEventSpy = this.spy(this.oFCL, "onAfterRendering");
 

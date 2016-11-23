@@ -1273,7 +1273,7 @@ sap.ui.define([
 	// Mid column proxies
 
 	FlexibleColumnLayout.prototype.getMidColumnPages = function () {
-		return this._getMidColumn().getPages();
+		return this.getAggregation("_midColumnNav") ? this._getMidColumn().getPages() : [];
 	};
 
 	FlexibleColumnLayout.prototype.addMidColumnPage = function (oPage) {
@@ -1298,7 +1298,7 @@ sap.ui.define([
 	// End column proxies
 
 	FlexibleColumnLayout.prototype.getEndColumnPages = function () {
-		return this._getEndColumn().getPages();
+		return this.getAggregation("_endColumnNav") ? this._getEndColumn().getPages() : [];
 	};
 
 	FlexibleColumnLayout.prototype.addEndColumnPage = function (oPage) {
