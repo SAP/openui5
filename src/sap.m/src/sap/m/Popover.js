@@ -444,7 +444,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				// Because it's already fired in the sap.m.Popover.prototype.close function.
 				// The event also should not be fired if the focus is still inside the Popup. This could occur when the
 				// autoclose mechanism is fired by the child Popup and is called throught the EventBus
-				if (bBeforeCloseFired !== true && (this.touchEnabled || !this._isFocusInsidePopup())) {
+				// Also when the Popup is being destroyed, its close method is called. We should not fire beforeClose event in that case.
+				if (bBeforeCloseFired !== true && (this.touchEnabled || !this._isFocusInsidePopup()) && this.isOpen()) {
 					that.fireBeforeClose({openBy: that._oOpenBy});
 				}
 
