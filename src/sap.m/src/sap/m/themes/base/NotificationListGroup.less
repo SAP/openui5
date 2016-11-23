@@ -1,5 +1,6 @@
 @containerPadding: 1rem;
 @bottomMargin: 0.5rem;
+@notificationGroupBorderRadius: 0.25rem;
 
 .sapMNLG {
   margin-bottom: @bottomMargin;
@@ -19,12 +20,13 @@
 
 .sapMNLG-Header > .sapMNLB-Priority {
   padding-top: @containerPadding;
-  border-radius: 0.25rem 0 0 0;
+  border-radius: @notificationGroupBorderRadius 0 0 0;
 }
+
 // Header styles =======================================================================================================
 .sapMNLG-Header {
   padding-bottom: 0.375rem;
-  border-radius: 0.25rem 0 0;
+  border-radius: @notificationGroupBorderRadius @notificationGroupBorderRadius 0 0;
   .sapMNLG-Title {
     padding-right: 1.75rem;
   }
@@ -52,7 +54,11 @@
 
 // SubHeader styles =======================================================================================================
 
-.sapMNLG-SubHeader .sapMTB {  
+.sapMNLG .sapMNLG-SubHeader {
+	border-radius: 0 0 @notificationGroupBorderRadius @notificationGroupBorderRadius;
+}
+
+.sapMNLG-SubHeader .sapMTB {
   .sapMBtn {
     margin-left: 0.25rem;
     padding: 0;
@@ -61,7 +67,6 @@
     padding-bottom: 0.25rem;
   }
 }
-
 
 /* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
 html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
@@ -78,11 +83,15 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 }
 
 .sapMNLG-SubHeader > .sapMNLB-Priority {
-  border-radius: 0;
+	border-radius: 0;
 }
 
 .sapMNLG-Collapsed .sapMNLG-SubHeader > .sapMNLB-Priority {
-  border-radius: 0 0 0 0.25rem;
+  border-radius: 0 0 0 @notificationGroupBorderRadius;
+}
+
+.sapMNLG-NoNotifications .sapMNLG-SubHeader > .sapMNLB-Priority {
+  border-radius: 0 0 0 @notificationGroupBorderRadius;
 }
 
 // Body styles =========================================================================================================
@@ -128,7 +137,6 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
   border-radius: 0 0 0 0.25rem;
 }
 
-
 // Compact mode ========================================================================================================
 
 .sapUiSizeCompact .sapMNLG-Title {
@@ -148,10 +156,14 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
   padding: 0;
 }
 
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
+	border: none;
+}
+
 // Single item mode ====================================================================================================
 
-.sapMNLGNoHdrFooter {
-  padding-top: 0 !important;
+.sapMNLG.sapMLIB.sapMNLGNoHdrFooter {
+  padding-top: 0;
 }
 
 // Max Number of Notifications ====================================================================================================

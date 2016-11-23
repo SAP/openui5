@@ -240,6 +240,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		this.getAggregation('_collapseButton').setText(newCollapsedState ? expandText : collapseText, true);
 
 		this.$().toggleClass('sapMNLG-Collapsed', newCollapsedState);
+		this.$().toggleClass('sapMNLG-NoNotifications', this._getVisibleItemsCount() <= 0);
 	};
 
 	/**
