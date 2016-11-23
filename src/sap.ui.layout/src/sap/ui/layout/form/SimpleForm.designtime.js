@@ -68,7 +68,7 @@ sap.ui.define([], function() {
 					return iIndex;
 				},
 				ignore : false,
-				childrenName : function (oElement){
+				childNames : function (oElement){
 					var sType = oElement.getMetadata().getName();
 					if (sType === "sap.ui.layout.form.SimpleForm") {
 						return {
