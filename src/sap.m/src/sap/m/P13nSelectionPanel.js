@@ -894,9 +894,15 @@ sap.ui.define([
 				template: new sap.m.ColumnListItem({
 					cells: [
 						new sap.m.Link({
-							text: "{text}",
 							href: "{href}",
-							// target: "{target}",
+							text: "{text}",
+							target: "{target}",
+							enabled: {
+								path: 'href',
+								formatter: function(oValue) {
+									return !!oValue;
+								}
+							},
 							press: function(oEvent) {
 								var fOnLinkPress = this._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
 								if (fOnLinkPress) {
