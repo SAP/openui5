@@ -34,53 +34,35 @@ sap.ui.define([
 				return;
 			}
 
-			var sTableId = this.getId();
-			var sHsbId = sTableId + "-" + SharedDomRef.HorizontalScrollBar;
-			var sHeaderScrollId = sTableId + "-sapUiTableColHdrScr";
-			var sContentScrollId = sTableId + "-sapUiTableCtrlScr";
-
-			// Prevent that the synchronization of the scrolling positions causes subsequent synchronizations
-			// due to triggering the scroll events of the other scrollable areas.
-			if (oEvent.target.id === sHsbId) {
-				if (oScrollExtension._bHScrollHsbBlocked) {
-					oScrollExtension._bHScrollHsbBlocked = false;
-					return;
-				} else {
-					oScrollExtension._bHScrollHeaderBlocked = true;
-					oScrollExtension._bHScrollContentBlocked = true;
-				}
-			} else if (oEvent.target.id === sHeaderScrollId) {
-				if (oScrollExtension._bHScrollHeaderBlocked) {
-					oScrollExtension._bHScrollHeaderBlocked = false;
-					return;
-				} else {
-					oScrollExtension._bHScrollHsbBlocked = true;
-					oScrollExtension._bHScrollContentBlocked = true;
-				}
-			} else if (oEvent.target.id === sContentScrollId) {
-				if (oScrollExtension._bHScrollContentBlocked) {
-					oScrollExtension._bHScrollContentBlocked = false;
-					return;
-				} else {
-					oScrollExtension._bHScrollHsbBlocked = true;
-					oScrollExtension._bHScrollHeaderBlocked = true;
-				}
-			}
-
-			// Synchronize the scroll positions.
 			var iScrollLeft = oEvent.target.scrollLeft;
-			if (oEvent.target.id !== sHsbId) {
-				document.getElementById(sHsbId).scrollLeft = iScrollLeft;
-			}
-			if (oEvent.target.id !== sHeaderScrollId) {
-				document.getElementById(sHeaderScrollId).scrollLeft = iScrollLeft;
-			}
-			if (oEvent.target.id !== sContentScrollId) {
-				document.getElementById(sContentScrollId).scrollLeft = iScrollLeft;
-			}
+			var iOldScrollLeft = oEvent.target._scrollLeft;
 
-			oScrollExtension._iHorizontalScrollPosition = iScrollLeft;
-			this._determineVisibleCols(this._collectTableSizes());
+			if (iScrollLeft !== iOldScrollLeft) {
+				var aScrollAreas = [
+					this._getScrollExtension().getHorizontalScrollbar(),
+					this.getDomRef("sapUiTableColHdrScr"), // Column header scroll area.
+					this.getDomRef("sapUiTableCtrlScr") // Content scroll area.
+				];
+
+				aScrollAreas = aScrollAreas.filter(function(oScrollTarget) {
+					return oScrollTarget != null;
+				});
+
+				oEvent.target._scrollLeft = iScrollLeft;
+
+				// Synchronize the scroll positions.
+				for (var i = 0; i < aScrollAreas.length; i++) {
+					var oScrollArea = aScrollAreas[i];
+
+					if (oScrollArea !== oEvent.target && oScrollArea.scrollLeft !== iScrollLeft) {
+						oScrollArea.scrollLeft = iScrollLeft;
+						oScrollArea._scrollLeft = iScrollLeft;
+					}
+				}
+
+				oScrollExtension._iHorizontalScrollPosition = iScrollLeft;
+				this._determineVisibleCols(this._collectTableSizes());
+			}
 		},
 
 		/**
@@ -211,20 +193,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Will be called after the table, or the table content, has been rendered.
-		 */
-		onAfterRendering: function() {
-			ExtensionHelper.restoreVerticalScrollPosition(this);
-
-			// The timeout is required because after the first rendering, if visibleRowCountMode is "Auto",
-			// _updateTableSizes is called in a promise, which calls _updateHSb, which sets the width of the horizontal scrollbar.
-			// And that triggers a scroll event, whose handler will reset the horizontal scroll position to 0. Oh yes, this really happens...
-			window.setTimeout(function() {
-				ExtensionHelper.restoreHorizontalScrollPosition(this);
-			}.bind(this), 0);
-		},
-
-		/**
 		 * This function can be used to restore the last horizontal scroll position after rendering has been performed.
 		 * In case it is the initial rendering of the table nothing happens, because there is no scroll position which could be restored.
 		 *
@@ -323,6 +291,19 @@ sap.ui.define([
 					}
 				}
 			}
+		},
+
+		onAfterRendering: function() {
+			ExtensionHelper.restoreVerticalScrollPosition(this);
+
+			// The timeout is required because after the first rendering, if visibleRowCountMode is "Auto",
+			// _updateTableSizes is called in a promise, which calls _updateHSb, which sets the width of the horizontal scrollbar.
+			// And that triggers a scroll event, whose handler will reset the horizontal scroll position to 0. Oh yes, this really happens...
+			jQuery.sap.clearDelayedCall(this._mTimeouts.restoreHorizontalScrollPositionId);
+			this._mTimeouts.restoreHorizontalScrollPositionId = jQuery.sap.delayedCall(0, this, function() {
+				ExtensionHelper.restoreHorizontalScrollPosition(this);
+				delete this._mTimeouts.restoreHorizontalScrollPositionId;
+			}.bind(this));
 		}
 	};
 
@@ -350,9 +331,6 @@ sap.ui.define([
 			this._iVerticalScrollPosition = null;
 			this._bIsScrolledVerticallyByWheel = false;
 			this._bIsScrolledVerticallyByKeyboard = false;
-			this._onAfterRenderingEventDelegate = {
-				onAfterRendering: ExtensionHelper.onAfterRendering.bind(oTable)
-			};
 
 			// Register the delegate
 			oTable.addEventDelegate(this._delegate, oTable);
@@ -392,9 +370,6 @@ sap.ui.define([
 			} else {
 				oTable._getScrollTargets().on("wheel.sapUiTableMouseWheel", ExtensionHelper.onMouseWheelScrolling.bind(oTable));
 			}
-
-			// Restoration of scroll positions.
-			oTable.addEventDelegate(this._onAfterRenderingEventDelegate);
 		},
 
 		/*
@@ -429,9 +404,6 @@ sap.ui.define([
 			} else {
 				oTable._getScrollTargets().off("wheel.sapUiTableMouseWheel");
 			}
-
-			// Restoration of scroll positions.
-			oTable.removeEventDelegate(this._onAfterRenderingEventDelegate);
 		},
 
 		/*
