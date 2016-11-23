@@ -1966,7 +1966,173 @@
 			start();
 		});
 	});
-
+	
+	asyncTest("test setProperty on complex Types (internal): setting same value",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : "88888"
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type not updated");
+			ok(!oModel.hasPendingChanges(), "No pending changes");
+			start();
+		});
+	});
+	
+	asyncTest("test setProperty on complex Types 2 (internal): change value, then setting same value",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : "88888"
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property: complex type updated");
+			ok(oModel.hasPendingChanges(), "Has pending changes");
+			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property: complex type updated");
+			ok(oModel.hasPendingChanges(), "Has pending changes");
+			oModel.setProperty("/Suppliers(0)/Address/Street", "140th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "140th", "set Property: complex type updated");
+			ok(!oModel.hasPendingChanges(), "No pending changes");
+			start();
+		});
+	});
+	
+	asyncTest("test setProperty on complex Types 3 (internal): setting same value",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : {
+							part1: "1",
+							part2: "2",
+						}
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type not updated");
+			ok(!oModel.hasPendingChanges(), "No pending changes");
+			start();
+		});
+	});
+	
+	asyncTest("test setProperty on complex Types 4 (internal): change value, then setting same value",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : {
+							part1: "1",
+							part2: "2",
+						}
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "2");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "2", "set Property: complex type updated");
+			ok(oModel.hasPendingChanges(), "Has pending changes");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "2");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "2", "set Property: complex type updated");
+			ok(oModel.hasPendingChanges(), "Has pending changes");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/part1", "1");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/part1"), "1", "set Property: complex type updated");
+			ok(!oModel.hasPendingChanges(), "No pending changes");
+			start();
+		});
+	});
+	
 	asyncTest("createEntry with complex types which have namespace with . characters", function() {
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
 		oModel.metadataLoaded().then(function() {
