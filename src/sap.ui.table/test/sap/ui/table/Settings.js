@@ -407,6 +407,26 @@
 		return false;
 	};
 
+	window.TABLESETTINGS.showRowActions = function(iCount, iNumberOfActions) {
+		TABLESETTINGS.table.setRowActionCount(iCount);
+		var oRowAction = new sap.ui.table.RowAction();
+		var aActions = [{type: "Navigation"}, {icon: "sap-icon://decline", text: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
+		for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
+			var oItem = new sap.ui.table.RowActionItem({
+				icon: aActions[i].icon,
+				text: aActions[i].text,
+				type: aActions[i].type || "Custom",
+				press: function(oEvent) {
+					var oRow = oEvent.getParameter("row");
+					var oItem = oEvent.getParameter("item");
+					alert("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
+				}
+			});
+			oRowAction.addItem(oItem);
+		}
+		TABLESETTINGS.table.setRowActionTemplate(oRowAction);
+	};
+
 	//*************************
 
 	function setDensity(sDensity, oTable) {

@@ -55,6 +55,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.addClass("sapUiTableEdt"); // editable (background color)
 		}
 
+		if (TableUtils.hasRowActions(oTable)) {
+			var iRowActionCount = TableUtils.getRowActionCount(oTable);
+			rm.addClass(iRowActionCount == 1 ? "sapUiTableRActS" : "sapUiTableRAct");
+		}
+
 		if (TableUtils.isNoDataVisible(oTable)) {
 			rm.addClass("sapUiTableEmpty"); // no data!
 		}
@@ -213,6 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
+		this.renderRowActions(rm, oTable);
 		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 
 		rm.write("<div");
@@ -317,6 +323,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		this.renderTableControlCnt(rm, oTable, false, iFixedColumnCount, aCols.length, false, false, 0, nRows, true);
 
 		rm.write("</div>");
+
+		if (TableUtils.hasRowActions(oTable)) {
+			rm.write("<div class='sapUiTableRowActionHeader'></div>");
+		}
 
 		rm.write("</div>");
 
@@ -451,7 +461,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		// start with the first current top visible row
 		for (var row = 0, count = oTable.getRows().length; row < count; row++) {
-			this.renderRowHdrRow(rm, oTable, oTable.getRows()[row], row);
+			this.renderRowAddon(rm, oTable, oTable.getRows()[row], row, true);
+		}
+
+		rm.write("</div>");
+	};
+
+	TableRenderer.renderRowActions = function(rm, oTable) {
+		if (!TableUtils.hasRowActions(oTable)) {
+			return;
+		}
+		rm.write("<div");
+		rm.writeAttribute("id", oTable.getId() + "-sapUiTableRowActionScr");
+		rm.addClass("sapUiTableRowActionScr");
+		rm.addClass("sapUiTableNoOpacity");
+		rm.writeClasses();
+		rm.write(">");
+
+		// start with the first current top visible row
+		for (var row = 0, count = oTable.getRows().length; row < count; row++) {
+			this.renderRowAddon(rm, oTable, oTable.getRows()[row], row, false);
 		}
 
 		rm.write("</div>");
@@ -478,11 +507,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 	};
 
-	TableRenderer.renderRowHdrRow = function(rm, oTable, oRow, iRowIndex) {
+	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
 		rm.write("<div");
-		rm.writeAttribute("id", oTable.getId() + "-rowsel" + iRowIndex);
+		rm.writeAttribute("id", oTable.getId() + (bHeader ? "-rowsel" : "-rowact") + iRowIndex);
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
-		rm.addClass("sapUiTableRowHdr");
+		rm.addClass(bHeader ? "sapUiTableRowHdr" : "sapUiTableRowAction");
 		this._addFixedRowCSSClasses(rm, oTable, iRowIndex);
 		var bRowSelected = false;
 		var bRowHidden = false;
@@ -503,16 +532,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected, rowHidden: bRowHidden});
+		if (bHeader) {
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected, rowHidden: bRowHidden});
+		}
 
-		var aCellIds = [];
-		jQuery.each(oRow.getCells(), function(iIndex, oCell) {
-			aCellIds.push(oRow.getId() + "-col" + iIndex);
-		});
 
 		rm.writeStyles();
 		rm.write(">");
-		this.writeRowSelectorContent(rm, oTable, oRow, iRowIndex);
+		if (bHeader) {
+			this.writeRowSelectorContent(rm, oTable, oRow, iRowIndex);
+		} else {
+			var oAction = oRow.getAggregation("_rowAction");
+			if (oAction) {
+				rm.renderControl(oAction);
+			}
+		}
 		rm.write("</div>");
 	};
 
@@ -861,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		if (TableUtils.hasRowHeader(oTable) || aCells.length === 0) {
 			rm.write("<td");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
-				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()), //see TableRenderer.renderRowHdrRow
+				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()), //see TableRenderer.renderRowAddon
 				index: iRowIndex
 			});
 			rm.write("></td>");

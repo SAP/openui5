@@ -19,6 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		dependencies : ["sap.ui.core","sap.ui.unified"],
 		types: [
 			"sap.ui.table.NavigationMode",
+			"sap.ui.table.RowActionType",
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
@@ -32,12 +33,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
 			"sap.ui.table.Table",
-			"sap.ui.table.TreeTable"
+			"sap.ui.table.TreeTable",
+			"sap.ui.table.RowAction"
 		],
 		elements: [
 			"sap.ui.table.AnalyticalColumn",
 			"sap.ui.table.Column",
-			"sap.ui.table.Row"
+			"sap.ui.table.Row",
+			"sap.ui.table.RowActionItem"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -92,6 +95,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.NavigationMode.Scrollbar}
 		 */
 		Paginator : "Paginator"
+
+	};
+
+	/**
+	 * Row Action types.
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.RowActionType = {
+
+		/**
+		 * Custom defined Row Action.
+		 * @public
+		 */
+		Custom : "Custom",
+
+		/**
+		 * Navigation Row Action.
+		 * @public
+		 */
+		Navigation : "Navigation"
 
 	};
 

@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	 */
 	var RowHoverHandler = {
 
-		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
+		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableRowAction", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
 
 		initRowHovering : function(oTable) {
 			var $Table = oTable.$();

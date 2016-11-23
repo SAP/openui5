@@ -195,6 +195,21 @@ function getRowHeader(iRow, bFocus, assert) {
 	return jQuery(oCell);
 }
 
+function getRowAction(iRow, bFocus, assert) {
+	var oCell = jQuery.sap.domById(oTable.getId() + "-rowact" + iRow);
+	if (bFocus) {
+		oCell.focus();
+	}
+	if (assert) {
+		if (bFocus) {
+			assert.ok(oCell === document.activeElement, "Row Action " + iRow + " focused");
+		} else {
+			assert.ok(oCell != document.activeElement, "Row Action " + iRow + " not focused");
+		}
+	}
+	return jQuery(oCell);
+}
+
 function getSelectAll(bFocus, assert) {
 	var oCell = jQuery.sap.domById(oTable.getId() + "-selall");
 	if (bFocus) {

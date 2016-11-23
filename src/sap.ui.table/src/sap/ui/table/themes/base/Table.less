@@ -174,7 +174,8 @@
 		display: block;
 	}
 
-	.sapUiTableRowHdr {
+	.sapUiTableRowHdr,
+	.sapUiTableRowAction {
 		opacity: 0;
 	}
 
@@ -274,6 +275,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 .sapUiTableTr > td:focus:not(*:root),
 .sapUiTableCol:focus:not(*:root),
 .sapUiTableRowHdr:focus:not(*:root),
+.sapUiTableRowAction:focus:not(*:root),
 .sapUiTableColRowHdr:focus:not(*:root) {
 	outline-offset: @_sapUiTableFocusOutlineOffset;
 	outline: @_sapUiTableFocusOutlineWidth dotted @sapUiContentFocusColor;
@@ -284,6 +286,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 	.sapUiTableTr > td:focus,
 	.sapUiTableCol:focus,
 	.sapUiTableRowHdr:focus,
+	.sapUiTableRowAction:focus,
 	.sapUiTableColRowHdr:focus {
 		outline-offset: @_sapUiTableFocusOutlineOffset;
 		outline: @_sapUiTableFocusOutlineWidth dotted @sapUiContentFocusColor;
@@ -704,6 +707,112 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 
 /*******************************************************************************
+ * Row Actions
+ ******************************************************************************/
+
+.sapUiTableRowActionHeader {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	box-sizing: border-box;
+	border-left: 1px solid @sapUiListTableFixedBorder;
+	display: none;
+}
+
+.sapUiTableRowActionScr {
+	display: none;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 2 * @_sapUiTableRowHdrWidth;
+	box-sizing: border-box;
+	min-height: @_sapUiTableRowHeight;
+}
+
+.sapUiTableRActS .sapUiTableRowActionHeader,
+.sapUiTableRActS .sapUiTableRowActionScr {
+	width: @_sapUiTableRowHdrWidth;
+}
+
+.sapUiSizeCondensed .sapUiTableRowActionScr {
+	width: 2 * @_sapUiTableRowHdrWidthCondensed;
+	min-height: @_sapUiTableRowHeightCondensed;
+}
+
+.sapUiSizeCondensed .sapUiTableRowActionHeader {
+	width: 2 * @_sapUiTableRowHdrWidthCondensed;
+}
+
+.sapUiSizeCondensed .sapUiTableRActS .sapUiTableRowActionHeader,
+.sapUiSizeCondensed.sapUiTableRActS .sapUiTableRowActionHeader,
+.sapUiSizeCondensed .sapUiTableRActS .sapUiTableRowActionScr,
+.sapUiSizeCondensed.sapUiTableRActS .sapUiTableRowActionScr {
+	width: @_sapUiTableRowHdrWidthCondensed;
+}
+
+.sapUiSizeCozy .sapUiTableRowActionHeader,
+.sapUiSizeCozy .sapUiTableRowActionScr {
+	width: 2 * @_sapUiTableRowHdrWidthCozy;
+	min-height: @_sapUiTableRowHeightCozy;
+}
+
+.sapUiSizeCozy .sapUiTableRowActionHeader {
+	width: 2 * @_sapUiTableRowHdrWidthCozy;
+}
+
+.sapUiSizeCozy .sapUiTableRActS .sapUiTableRowActionHeader,
+.sapUiSizeCozy.sapUiTableRActS .sapUiTableRowActionHeader,
+.sapUiSizeCozy .sapUiTableRActS .sapUiTableRowActionScr,
+.sapUiSizeCozy.sapUiTableRActS .sapUiTableRowActionScr {
+	width: @_sapUiTableRowHdrWidthCozy;
+}
+
+.sapUiTableRAct .sapUiTableRowActionScr,
+.sapUiTableRActS .sapUiTableRowActionScr,
+.sapUiTableRAct .sapUiTableRowActionHeader,
+.sapUiTableRActS .sapUiTableRowActionHeader {
+	display: block;
+}
+
+.sapUiTableRowAction {
+	background-color: @sapUiListBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	border-right: 1px solid @sapUiListVerticalBorderColor;
+	border-left: 1px solid @sapUiListTableFixedBorder;
+	box-sizing: border-box;
+	position: relative;
+	padding: 0 0.5rem;
+}
+
+.sapUiTableRActS .sapUiTableRowAction {
+	padding: 0 0.25rem;
+}
+
+.sapUiTableRowAction.sapUiTableRowSel {
+	background-color: @sapUiListSelectionBackgroundColor;
+}
+
+.sapUiTableRowAction.sapUiTableRowHvr {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiTableRowAction.sapUiTableRowSel.sapUiTableRowHvr {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+.sapUiTableRowAction.sapUiTableFixedPreBottomRow {
+	border-bottom: 1px solid @sapUiListTableFixedBorder;
+}
+
+.sapUiTableRowAction:last-child {
+	border-bottom: 1px solid transparent;
+}
+
+
+
+
+/*******************************************************************************
  * INNER TABLE
  ******************************************************************************/
 
@@ -737,6 +846,16 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableVScr .sapUiTableCtrlScr {
 	border-right: 1px solid @sapUiListVerticalBorderColor;
+}
+
+.sapUiTableRAct .sapUiTableCHA.sapUiTableCtrlScr,
+.sapUiTableRActS .sapUiTableCHA.sapUiTableCtrlScr {
+	border-right: 1px solid transparent;
+}
+
+.sapUiTableRAct .sapUiTableCtrlScr:not(.sapUiTableCHA),
+.sapUiTableRActS .sapUiTableCtrlScr:not(.sapUiTableCHA) {
+	border-right-width: 0px;
 }
 
 .sapUiTableCtrlScrFixed {

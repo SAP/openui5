@@ -987,12 +987,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// select rows
 		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
 		var aRowHeaderItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowHdr");
+		var aRowActionItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowAction");
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
 
 		var a = [];
 
 		a.forEach.call(aRowHeaderItems, updateRow);
+		a.forEach.call(aRowActionItems, updateRow);
 		a.forEach.call(aFixedRowItems, updateRow);
 		a.forEach.call(aScrollRowItems, updateRow);
 
@@ -3396,6 +3398,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 			}
 		}
+		var oRowActionTemplate = this.getRowActionTemplate();
+		if (oRowActionTemplate) {
+			var oRowAction = oRowActionTemplate.clone();
+			oRowAction._setCount(this.getRowActionCount());
+			oRowAction._show = true; //TBD: Remove the _show flag, only needed to protect misuse in dev phase
+			oClone.setAggregation("_rowAction", oRowAction, true);
+		}
 		return oClone;
 	};
 
@@ -3943,6 +3952,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype._updateTableContent = function() {
 		TableUtils.Grouping.updateGroups(this);
+	};
+
+
+	Table.prototype.setRowActionTemplate = function(oTemplate) {
+		//TBD: Once aggregation is available: this.setAggregation("rowActionTemplate", oTemplate);
+		this._rowActionTemplate = oTemplate;
+
+		if (oTemplate) {
+			oTemplate._setCount(this.getRowActionCount());
+		}
+
+		this.invalidate();
+		this.invalidateRowsAggregation();
+		return this;
+	};
+
+	//TBD: Remove getter once the aggregation is available;
+	Table.prototype.getRowActionTemplate = function() {
+		return this._rowActionTemplate;
+	};
+
+	Table.prototype.setRowActionCount = function(iCount) {
+		//TBD: Once property is available: this.setProperty("rowActionTemplate", iCount);
+		this._iRowActionCount = iCount;
+		this.invalidate();
+
+		iCount = this.getRowActionCount();
+		var oRowAction = this.getRowActionTemplate();
+		if (oRowAction) {
+			oRowAction._setCount(iCount);
+		}
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			oRowAction = aRows[i].getAggregation("_rowAction");
+			if (oRowAction) {
+				oRowAction._setCount(iCount);
+			}
+		}
+		return this;
+	};
+
+	//TBD: Remove getter once the property is available;
+	Table.prototype.getRowActionCount = function() {
+		return this._iRowActionCount || 0;
 	};
 
 	return Table;
