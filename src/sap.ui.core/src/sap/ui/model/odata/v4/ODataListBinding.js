@@ -93,14 +93,13 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
-	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resetChanges as #resetChanges
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {

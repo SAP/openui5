@@ -855,7 +855,7 @@ sap.ui.require([
 				oHelperMock = this.mock(_Helper),
 				sPath = (bBaseContext ? "" : "/") + "FunctionImport(...)",
 				oSingleCache = {
-					hasPendingChanges : function () {},
+					hasPendingChangesForPath : function () {},
 					read : function () {},
 					setActive : function () {}
 				},
@@ -994,7 +994,7 @@ sap.ui.require([
 			oCacheMock = this.mock(_Cache),
 			oPostResult = {},
 			oSingleCache = {
-				hasPendingChanges : function () {},
+				hasPendingChangesForPath : function () {},
 				post : function () {},
 				read : function () {}
 			},

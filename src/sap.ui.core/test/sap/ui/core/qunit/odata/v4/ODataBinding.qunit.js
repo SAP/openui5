@@ -140,8 +140,6 @@ sap.ui.require([
 				oModel : {
 					checkGroupId : function () {}
 				},
-
-				hasPendingChanges : function () {},
 				refreshInternal : function () {}
 			});
 
@@ -166,9 +164,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh: pending changes", function (assert) {
-		var oBinding = new ODataBinding({
-				hasPendingChanges : function () {}
-			});
+		var oBinding = new ODataBinding();
 
 		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(true);
@@ -183,8 +179,7 @@ sap.ui.require([
 		var oBinding = new ODataBinding({
 				oModel : {
 					checkGroupId : function () {}
-				},
-				hasPendingChanges : function () {}
+				}
 			}),
 			oError = new Error();
 
@@ -221,259 +216,203 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges(sPath): with cache", function (assert) {
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding),
+			bResult = {/*some boolean*/};
+
+		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges(), true);
+
+		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oBindingMock.expects("hasPendingChangesInDependents").withExactArgs().returns(bResult);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges(), bResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChangesForPath: with cache", function (assert) {
 		var oBinding = new ODataBinding({
 				oCache : {
-					hasPendingChanges : function () {}
+					hasPendingChangesForPath : function () {}
 				}
 			}),
 			oCacheMock = this.mock(oBinding.oCache),
 			oResult = {};
 
 		["foo", ""].forEach(function (sPath) {
-			oCacheMock.expects("hasPendingChanges").withExactArgs(sPath).returns(oResult);
+			oCacheMock.expects("hasPendingChangesForPath").withExactArgs(sPath).returns(oResult);
 
-			assert.strictEqual(oBinding._hasPendingChanges(undefined, sPath), oResult,
-				"path=" + sPath);
+			assert.strictEqual(oBinding.hasPendingChangesForPath(sPath), oResult, "path=" + sPath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges(sPath): without cache", function (assert) {
+	QUnit.test("hasPendingChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
 			oContext = {
-				hasPendingChanges : function () {}
+				hasPendingChangesForPath : function () {}
 			},
 			oContextMock = this.mock(oContext),
 			oHelperMock = this.mock(_Helper),
 			oResult = {};
 
 		//code under test
-		assert.strictEqual(oBinding._hasPendingChanges(undefined, "foo"), false);
-		assert.strictEqual(oBinding._hasPendingChanges(undefined, ""), false);
+		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
+		assert.strictEqual(oBinding.hasPendingChangesForPath(""), false);
 
 		oBinding.oContext = oContext;
 		["foo", ""].forEach(function (sPath) {
 			oHelperMock.expects("buildPath").withExactArgs(oBinding.sPath, sPath)
 				.returns(sBuildPath);
-			oContextMock.expects("hasPendingChanges").withExactArgs(sBuildPath).returns(oResult);
+			oContextMock.expects("hasPendingChangesForPath").withExactArgs(sBuildPath)
+				.returns(oResult);
 
 			//code under test
-			assert.strictEqual(oBinding._hasPendingChanges(undefined, sPath), oResult);
+			assert.strictEqual(oBinding.hasPendingChangesForPath(sPath), oResult);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges(sPath): without cache, base context", function (assert) {
-		assert.strictEqual(
-			new ODataBinding({oContext : {}})._hasPendingChanges(undefined, "foo"),
+	QUnit.test("hasPendingChangesForPath: without cache, base context", function (assert) {
+		assert.strictEqual(new ODataBinding({oContext : {}}).hasPendingChangesForPath("foo"),
 			false);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges(bAskParent): with cache", function (assert) {
-		var oChild1 = new ODataBinding(),
+	QUnit.test("hasPendingChangesInDependents", function (assert) {
+		var oChild1 = new ODataBinding({
+				oCache : {
+					hasPendingChangesForPath : function () {}
+				}
+			}),
 			oChild2 = new ODataBinding(),
 			oBinding = new ODataBinding({
-				oCache : {
-					hasPendingChanges : function () {}
-				},
 				oModel : {
 					getDependentBindings : function () {}
 				}
 			}),
-			oCacheMock = this.mock(oBinding.oCache),
+			oChild1CacheMock = this.mock(oChild1.oCache),
 			oChild1Mock = this.mock(oChild1),
 			oChild2Mock = this.mock(oChild2);
 
-		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+		this.mock(oBinding.oModel).expects("getDependentBindings").exactly(4)
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
-		[false, true].forEach(function (bAskParent) {
-			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
-			oChild1Mock.expects("_hasPendingChanges").never();
-			oChild2Mock.expects("_hasPendingChanges").never();
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		oChild1Mock.expects("hasPendingChangesInDependents").never();
+		oChild2Mock.expects("hasPendingChangesInDependents").never();
 
-			// code under test
-			assert.strictEqual(oBinding._hasPendingChanges(bAskParent), true,
-				"cache returns true, bAskParent=" + bAskParent);
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
 
-			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(false);
-			oChild1Mock.expects("_hasPendingChanges").withExactArgs(false).returns(true);
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
 
-			// code under test
-			assert.strictEqual(oBinding._hasPendingChanges(bAskParent), true,
-				"child1 returns true, bAskParent=" + bAskParent);
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
 
-			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(false);
-			oChild1Mock.expects("_hasPendingChanges").withExactArgs(false).returns(false);
-			oChild2Mock.expects("_hasPendingChanges").withExactArgs(false).returns(false);
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
 
-			// code under test
-			assert.strictEqual(oBinding._hasPendingChanges(bAskParent), false,
-				"all return false, bAskParent=" + bAskParent);
-		});
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), false);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges(bAskParent): without cache", function (assert) {
-		var oBinding = new ODataBinding({
-				sPath : "relative",
-				oModel : {
-					getDependentBindings : function () {}
-				}
-			}),
-			oContext = {
-				hasPendingChanges : function () {}
-			},
-			oContextMock = this.mock(oContext),
-			oResult = {};
+	QUnit.test("resetChanges", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		oBindingMock.expects("resetChangesForPath").withExactArgs("");
+		oBindingMock.expects("resetChangesInDependents").withExactArgs();
 
-		//code under test
-		assert.strictEqual(oBinding._hasPendingChanges(false), false);
-		assert.strictEqual(oBinding._hasPendingChanges(true), false);
-
-		oBinding.oContext = oContext;
-		oContextMock.expects("hasPendingChanges").never();
-
-		//code under test
-		assert.strictEqual(oBinding._hasPendingChanges(false), false);
-
-		oContextMock.expects("hasPendingChanges").withExactArgs(oBinding.sPath).returns(oResult);
-
-		//code under test
-		assert.strictEqual(oBinding._hasPendingChanges(true), oResult);
+		// code under test
+		oBinding.resetChanges();
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_resetChanges(sPath): with cache", function (assert) {
+	QUnit.test("resetChangesForPath: with cache", function (assert) {
 		var oBinding = new ODataBinding({
 				oCache : {
-					resetChanges : function () {}
+					resetChangesForPath : function () {}
 				}
 			}),
 			oCacheMock = this.mock(oBinding.oCache);
 
 		["foo", ""].forEach(function (sPath) {
-			oCacheMock.expects("resetChanges").withExactArgs(sPath);
+			oCacheMock.expects("resetChangesForPath").withExactArgs(sPath);
 
-			oBinding._resetChanges(undefined, sPath);
+			oBinding.resetChangesForPath(sPath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges(sPath): without cache", function (assert) {
+	QUnit.test("resetChangesForPath: without cache", function (assert) {
 		var oBinding = new ODataBinding({
 				sPath : "relative"
 			}),
 			sBuildPath = "~/foo",
 			oContext = {
-				resetChanges : function () {}
+				resetChangesForPath : function () {}
 			},
 			oContextMock = this.mock(oContext),
 			oHelperMock = this.mock(_Helper);
 
 		//code under test
-		oBinding._resetChanges(undefined, "foo");
-		oBinding._resetChanges(undefined, "");
+		oBinding.resetChangesForPath("foo");
+		oBinding.resetChangesForPath("");
 
 		oBinding.oContext = oContext;
 		["foo", ""].forEach(function (sPath) {
 			oHelperMock.expects("buildPath").withExactArgs(oBinding.sPath, sPath)
 				.returns(sBuildPath);
-			oContextMock.expects("resetChanges").withExactArgs(sBuildPath);
+			oContextMock.expects("resetChangesForPath").withExactArgs(sBuildPath);
 
 			//code under test
-			oBinding._resetChanges(undefined, sPath);
+			oBinding.resetChangesForPath(sPath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges(sPath): without cache, base context", function (assert) {
-		new ODataBinding({oContext : {}})._resetChanges(undefined, "foo");
+	QUnit.test("resetChangesForPath: without cache, base context", function (assert) {
+		new ODataBinding({oContext : {}}).resetChangesForPath("foo");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges(bAskParent): with cache", function (assert) {
-		var oChild1 = {
-				_resetChanges : function () {}
-			},
-			oChild2 = {
-				_resetChanges : function () {}
-			},
-			oBinding = new ODataBinding({
+	QUnit.test("resetChangesInDependents", function (assert) {
+		var oChild1 = new ODataBinding({
 				oCache : {
-					resetChanges : function () {}
-				},
-				oModel : {
-					getDependentBindings : function () {}
+					resetChangesForPath : function () {}
 				}
 			}),
-			oCacheMock = this.mock(oBinding.oCache),
-			oChild1Mock = this.mock(oChild1),
-			oChild2Mock = this.mock(oChild2);
-
-		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
-		[false, true].forEach(function (bAskParent) {
-			oCacheMock.expects("resetChanges").withExactArgs("");
-			oChild1Mock.expects("_resetChanges").withExactArgs(false);
-			oChild2Mock.expects("_resetChanges").withExactArgs(false);
-
-			// code under test
-			oBinding._resetChanges(bAskParent);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChanges(bAskParent): without cache", function (assert) {
-		var oBinding = new ODataBinding({
-				sPath : "relative",
+			oChild2 = new ODataBinding(),
+			oBinding = new ODataBinding({
 				oModel : {
 					getDependentBindings : function () {}
-				}
-			}),
-			oContext = {
-				resetChanges : function () {}
-			},
-			oContextMock = this.mock(oContext);
-
-		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(sinon.match.same(oBinding)).returns([]);
-
-		//code under test
-		oBinding._resetChanges(false);
-		oBinding._resetChanges(true);
-
-		oBinding.oContext = oContext;
-		oContextMock.expects("resetChanges").never();
-
-		//code under test
-		oBinding._resetChanges(false);
-
-		oContextMock.expects("resetChanges").withExactArgs(oBinding.sPath);
-
-		//code under test
-		oBinding._resetChanges(true);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChanges(bAskParent): without cache, base context", function (assert) {
-		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {
-					getDependentBindings : function () {
-						return [];
-					}
 				}
 			});
 
-		//code under test
-		oBinding._resetChanges(true);
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
+		this.mock(oChild1.oCache).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild2).expects("resetChangesInDependents").withExactArgs();
+
+		// code under test
+		oBinding.resetChangesInDependents();
 	});
 });

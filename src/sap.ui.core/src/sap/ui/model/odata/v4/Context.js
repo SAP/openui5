@@ -414,9 +414,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.hasPendingChanges = function (sPath) {
-		// since we send a path, bAskParent is not needed and set to undefined
-		return this.oBinding._hasPendingChanges(undefined, _Helper.buildPath(this.iIndex, sPath));
+	Context.prototype.hasPendingChangesForPath = function (sPath) {
+		return this.oBinding.hasPendingChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**
@@ -513,9 +512,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.resetChanges = function (sPath) {
-		// since we send a path, bAskParent is not needed and set to undefined
-		this.oBinding._resetChanges(undefined, _Helper.buildPath(this.iIndex, sPath));
+	Context.prototype.resetChangesForPath = function (sPath) {
+		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**

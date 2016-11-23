@@ -16,90 +16,6 @@ sap.ui.define([
 	function ODataBinding() {}
 
 	/**
-	 * Checks whether there are pending changes. The function is called in three different
-	 * situations:
-	 * 1. From the binding itself using _hasPendingChanges(true): Check the cache or the context,
-	 *    then ask the children using _hasPendingChanges(false)
-	 * 2. From the parent binding using _hasPendingChanges(false): Check the cache, then ask the
-	 *    children using _hasPendingChanges(false)
-	 * 3. From a child binding (via the context) using _hasPendingChanges(undefined, sPath):
-	 *    Check the cache or the context using the (extended) path
-	 *
-	 * @param {boolean} bAskParent
-	 *   If <code>true</code>, ask the parent using the relative path, too; this is only
-	 *   relevant if there is no path
-	 * @param {string} [sPath]
-	 *   The path; if it is defined, only the parent is asked using the relative path
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @private
-	 */
-	ODataBinding.prototype._hasPendingChanges = function (bAskParent, sPath) {
-		var bResult;
-
-		if (sPath !== undefined) {
-			// We are asked from a child for a certain path -> only check own cache or context
-			if (this.oCache) {
-				return this.oCache.hasPendingChanges(sPath);
-			}
-			if (this.oContext && this.oContext.hasPendingChanges) {
-				return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
-			}
-			return false;
-		}
-		if (this.oCache) {
-			bResult = this.oCache.hasPendingChanges("");
-		} else if (bAskParent && this.oContext && this.oContext.hasPendingChanges) {
-			bResult = this.oContext.hasPendingChanges(this.sPath);
-		}
-		if (bResult) {
-			return bResult;
-		}
-		return this.oModel.getDependentBindings(this).some(function (oDependent) {
-			return oDependent._hasPendingChanges(false);
-		});
-	};
-
-	/**
-	 * Resets all pending changes of the binding and possible all dependent bindings. The
-	 * function is called in three different situations:
-	 * 1. From the binding itself using _resetChanges(true): Reset the cache or the context,
-	 *    then the children using _resetChanges(false)
-	 * 2. From the parent binding using _resetChanges(false): Reset the cache, then the children
-	 *    using _resetChanges(false)
-	 * 3. From a child binding (via the context) using _resetChanges(undefined, sPath):
-	 *    Reset the cache or the context using the (extended) path
-	 *
-	 * @param {boolean} bAskParent
-	 *   If <code>true</code>, reset in the parent binding using this binding's relative path;
-	 *   this is only relevant if there is no path given
-	 * @param {string} [sPath]
-	 *   The path; if it is defined, only the parent is asked to reset using the relative path
-	 *
-	 * @private
-	 */
-	ODataBinding.prototype._resetChanges = function (bAskParent, sPath) {
-		if (sPath !== undefined) {
-			// We are asked from a child for a certain path -> only reset own cache or context
-			if (this.oCache) {
-				this.oCache.resetChanges(sPath);
-			} else if (this.oContext && this.oContext.resetChanges) {
-				this.oContext.resetChanges(_Helper.buildPath(this.sPath, sPath));
-			}
-			return;
-		}
-		if (this.oCache) {
-			this.oCache.resetChanges("");
-		} else if (bAskParent && this.oContext && this.oContext.resetChanges) {
-			this.oContext.resetChanges(this.sPath);
-		}
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding._resetChanges(false);
-		});
-	};
-
-	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -127,6 +43,56 @@ sap.ui.define([
 			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
 					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
+	 * meaning updates that have not yet been successfully sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataBinding.prototype.hasPendingChanges = function () {
+		return this.hasPendingChangesForPath("") || this.hasPendingChangesInDependents();
+	};
+
+	/**
+	 * Checks whether there are pending changes for the given path in the binding's cache (which may
+	 * be inherited from the parent).
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes for the path
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
+		if (this.oCache) {
+			return this.oCache.hasPendingChangesForPath(sPath);
+		}
+		if (this.oContext && this.oContext.hasPendingChangesForPath) {
+			return this.oContext.hasPendingChangesForPath(_Helper.buildPath(this.sPath, sPath));
+		}
+		return false;
+	};
+
+	/**
+	 * Checks whether any of the dependent bindings has pending changes.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.hasPendingChangesInDependents = function () {
+		return this.oModel.getDependentBindings(this).some(function (oDependent) {
+			return oDependent.oCache && oDependent.oCache.hasPendingChangesForPath("")
+				|| oDependent.hasPendingChangesInDependents();
+		});
 	};
 
 	/**
@@ -216,6 +182,58 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 * @private
 	 */
+
+	/**
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
+	 *
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
+	 *
+	 * @public
+	 * @since 1.40.1
+	 */
+	ODataBinding.prototype.resetChanges = function () {
+		this.resetChangesForPath("");
+		this.resetChangesInDependents();
+	};
+
+	/**
+	 * Resets pending changes for the given path in the binding's cache (which may be inherited from
+	 * the parent).
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.resetChangesForPath = function (sPath) {
+		if (this.oCache) {
+			this.oCache.resetChangesForPath(sPath);
+		} else if (this.oContext && this.oContext.resetChangesForPath) {
+			this.oContext.resetChangesForPath(_Helper.buildPath(this.sPath, sPath));
+		}
+	};
+
+	/**
+	 * Resets pending changes in all dependent bindings.
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.resetChangesInDependents = function () {
+		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
+			if (oDependent.oCache) {
+				oDependent.oCache.resetChangesForPath("");
+			}
+			oDependent.resetChangesInDependents();
+		});
+	};
 
 	/**
 	 * Method not supported
