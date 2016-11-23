@@ -367,6 +367,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 			if (this.getDomRef()) {
 				setTimeout(function () {
 					that._setContainerSizes();
+					that._tokenizer.scrollToEnd();
 				}, 0);
 			}
 
@@ -374,12 +375,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 			this._isMultiLineMode = false;
 
 			this._showAllTokens();
-			this.setValue("");
+			this._setValueVisible();
 
 			if (this.getDomRef()) {
 				setTimeout(function () {
 					that._setContainerSizes();
-					that._scrollAndFocus();
+					that._tokenizer.scrollToEnd();
 				}, 0);
 			}
 		}
@@ -561,9 +562,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 			$this = this.$(),
 			$border = this.$().find(".sapMMultiInputBorder"),
 			availableWidth,// the space available for the tokenizer, the input/the indicator and the value help icon
-			shadowDiv, // the input's shadow div
 			$indicator,
-			inputMinWidthNeeded = this.getEditable() ? 4 * 16 : 0, // space for input should be at least 4rem for editable and 0 for non-editable
+			inputMinWidthNeeded = 3 * 16, // space for input should be at least 3rem
 			tokenizerWidth,
 			iIndicatorWidth, // the "N More" indicator width
 			iconWidth, // the value help icon width
@@ -587,10 +587,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 		availableWidth = $border.width();
 
 		// calculate minimal needed width for input field
-		shadowDiv = $this.children(".sapMMultiInputShadowDiv")[0];
 		$indicator = $border.find(".sapMMultiInputIndicator");
-
-		jQuery(shadowDiv).text(this.getValue());
 
 		iIndicatorWidth = $indicator.width();
 		tokenizerWidth = this._tokenizer.getScrollWidth();
@@ -602,7 +599,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 			inputMinWidthNeeded = iIndicatorWidth;
 		}
 
-		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator && $border.length > 0) {
+		if (!this._bUseDialog && this.getEditable() && this._isMultiLineMode && !this._bShowIndicator && $border.length > 0) {
 			// PC/tablet AND in multiline mode AND indicator N more is hidden AND sapMMultiInputBorder elem exists
 			tokenizerWidth = availableWidth - iconWidth;
 

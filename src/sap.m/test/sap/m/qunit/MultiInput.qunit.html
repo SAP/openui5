@@ -245,8 +245,12 @@
 	test("test setEditable", function() {
 		var isEditable;
 		multiInput1.setEditable(false);
+
 		isEditable = multiInput1.getEditable();
 		equals(isEditable, false, "MultiInput editable === false");
+		equals(jQuery(multiInput1.getDomRef())
+				.find(".sapMMultiInputInputContainer")
+				.css("visibility"), "visible", "Input should be visible even if MultiInput is disabled");
 
 		multiInput1.setEditable(false);
 		isEditable = multiInput1.getEditable();
