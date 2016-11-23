@@ -16,8 +16,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		*
 		* @class
 		* Displays additional information for an object in a compact way.
-		* @extends sap.ui.core.Control
-		* @implements sap.ui.core.PopupInterface
+		*
 		* <h3>Overview</h3>
 		* The popover displays additional information for an object in a compact way and without leaving the page. The popover can contain various UI elements such as fields, tables, images, and charts. It can also include actions in the footer.
 		* <h3>Structure</h3>
@@ -40,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		* </ul>
 		* <h4>When not to use:</h4>
 		* <ul>
-		* <li>The {@link sap.m.QucikView QuickView} is more appropriate for your use case.</li>
+		* <li>The {@link sap.m.QuickView QuickView} is more appropriate for your use case.</li>
 		* </ul>
 		* <h3>Responsive Behavior</h3>
 		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover. You can prevent this with the <code>modal</code> property.
@@ -51,10 +50,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		* <li>{@link sap.m.ResponsivePopover} is adaptive and responsive. It renders as a dialog with a close button in the header on phones, and as a popover on tablets.</li>
 		* </ul>
 		*
+		* @extends sap.ui.core.Control
+		* @implements sap.ui.core.PopupInterface
 		* @author SAP SE
 		* @version ${version}
 		*
-		* @constructor
 		* @public
 		* @alias sap.m.Popover
 		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
