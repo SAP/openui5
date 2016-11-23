@@ -3,84 +3,24 @@
 /* Belize theme                              */
 /* ========================================= */
 
-@sapUiFormTitleSize: ~"H4";
-@sapUiFormSubTitleSize: ~"H5";
-
-.sapUiFormLayout{
+.sapUiFormLayout {
 	font-family: @sapUiDesktopFontFamily;
-	font-size: @sapUiDesktopFontSize;
 }
 
-.sapUiFormLayout.sapUiFormBackgrTranslucent > section{
+.sapUiFormLayout.sapUiFormBackgrTranslucent > section {
 	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
 }
 
-.sapUiFormLayout.sapUiFormBackgrSolid > section{
+.sapUiFormLayout.sapUiFormBackgrSolid > section {
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapUiForm .sapUiFormTitle{
+.sapUiForm .sapUiFormTitle {
 	border-width: 1px;
-	border-color: @sapGroup_TitleBorderColor;
-	font-family: @sapUiFontHeaderFamily;
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
-	height: 3rem;
-	line-height: 3rem;
-}
-
-.sapUiFormContainerTitle > .sapUiFormTitle{
-	border: none;
-	box-sizing: border-box;
-	margin-bottom: 0.5rem;
-	height: 2rem;
-	line-height: 2rem;
-}
-
-.sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle{
-	height: 3rem;
-	line-height: 3rem;
-}
-
-.sapUiSizeCompact .sapUiFormContainerTitle > .sapUiFormTitle{
-	height: 2rem;
-	line-height: 2rem;
-}
-
-.sapUiFormTitle.sapUiFormTitleEmph{
 	border-color: @sapUiGroupTitleBorderColor;
+	font-family: @sapUiFontHeaderFamily;
 }
 
-.sapUiFormTitle > .sapUiBtn{
+.sapUiFormTitle > .sapUiBtn {
 	bottom: 0.25rem;
-}
-
-/* Title levels - use m-parameter for belize */
-.sapUiFormTitleH1 {
-	font-size: @sapMFontHeader1Size;
-}
-
-.sapUiFormTitleH2 {
-	font-size: @sapMFontHeader2Size;
-}
-
-.sapUiFormTitleH3 {
-	font-size: @sapMFontHeader3Size;
-}
-
-.sapUiFormTitleH4 {
-	font-size: @sapMFontHeader4Size;
-}
-
-.sapUiFormTitleH5 {
-	font-size: @sapMFontHeader5Size;
-}
-
-.sapUiFormTitleH6 {
-	font-size: @sapMFontHeader6Size;
-}
-
-/* Toolbar */
-.sapUiFormContainerToolbar > div:first-child {
-	margin-bottom: 0.5rem;
 }
