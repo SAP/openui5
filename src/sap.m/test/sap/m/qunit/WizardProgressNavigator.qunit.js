@@ -341,6 +341,8 @@
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		},
 		teardown: function () {
 			this.oProgressNavigator.destroy();
@@ -384,18 +386,20 @@
 	});
 
 	QUnit.test("Current step should have aria-label=Selected", function(assert) {
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
+			sSelectedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_SELECTED");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Selected",
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), sSelectedText,
 			"aria-label=Selected should be present on first anchor");
 	});
 
 	QUnit.test("Open steps should have aria-label=Processed", function(assert) {
 		this.oProgressNavigator.nextStep();
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
+			sProcessedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_PROCESSED");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Processed",
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), sProcessedText,
 			"aria-label=Processed should be present on first anchor");
 	});
 
@@ -419,9 +423,10 @@
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
 		this.oProgressNavigator.discardProgress(1);
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
+			sSelectedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_SELECTED");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), "Selected",
+		assert.strictEqual($anchors.eq(0).attr("aria-label"), sSelectedText,
 			"first anchor should have aria-label=Selected");
 
 		assert.strictEqual($anchors.eq(1).attr("aria-label"), undefined,
@@ -429,5 +434,37 @@
 
 		assert.strictEqual($anchors.eq(2).attr("aria-label"), undefined,
 			"third anchor should NOT have aria-label attribute");
+	});
+
+	QUnit.test("WizardProgressNavigator aria-label attribute", function (assert) {
+		var sAriaLabel = this.oProgressNavigator.$().attr("aria-label");
+		var sWizardProgressNavLabel = this.oResourceBundle.getText("WIZARD_LABEL");
+		assert.strictEqual(sAriaLabel, sWizardProgressNavLabel, "'aria-label' attribute should be set to '" + sWizardProgressNavLabel + "'");
+	});
+
+	QUnit.test("WizardProgressNavigator role attribute", function (assert) {
+		var sRole = this.oProgressNavigator.$().attr("role");
+		assert.strictEqual(sRole, "navigation", "'role' attribute should be set to 'navigation'");
+	});
+
+	QUnit.test("WizardProgressNavigator ul element role attribute", function (assert) {
+		var sRole = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("role");
+		assert.strictEqual(sRole, "list", "'role' attribute of the unordered list should be set to 'list'");
+	});
+
+	QUnit.test("WizardProgressNavigator li element role attribute", function (assert) {
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+		for(var i=0; i<$steps.length; i++){
+			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i+1) + " should be set to 'listitem'");
+		}
+	});
+
+	QUnit.test("WizardProgressNavigator anchor element title attribute", function (assert) {
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
+			sStepText = this.oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE");
+		for(var i=0; i<$anchors.length; i++){
+			var sStepTitle = sStepText + " " + (i+1);
+			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i+1) + " should be set to '" + sStepTitle + "'");
+		}
 	});
 }());

@@ -371,6 +371,44 @@
 			}, "Should raise an error.");
 		});
 
+		QUnit.module("Wizard ACC", {
+			sWizardId: "wizard-acc-id",
+			setup: function () {
+				this.oWizard = new sap.m.Wizard(this.sWizardId, {
+					steps: [
+						new sap.m.WizardStep({
+							validated: true,
+							title: "Step 1",
+						}),
+						new sap.m.WizardStep({
+							validated: true,
+							title: "Step 2",
+						}),
+						new sap.m.WizardStep({
+							title: "Step 3"
+						})
+					]
+				});
+
+				this.oWizard.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			},
+			teardown: function () {
+				this.oWizard.destroy();
+				this.oWizard = null;
+				this.oResourceBundle = null;
+			}
+		});
+
+		QUnit.test("Wizard aria-label attribute", function (assert) {
+			var sAriaLabel = jQuery(this.oWizard.getDomRef()).attr("aria-label");
+			var sWizardLabel = this.oResourceBundle.getText("WIZARD_LABEL");
+			assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
