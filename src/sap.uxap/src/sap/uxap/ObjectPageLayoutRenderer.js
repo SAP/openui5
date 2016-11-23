@@ -105,6 +105,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			// Content section
 			oRm.write("<section");
 			oRm.addClass("sapUxAPObjectPageContainer");
+			oRm.writeAttributeEscaped("id", oControl.getId() + "-sectionsContainer");
 			oRm.addClass("ui-helper-clearfix");
 			if (!oAnchorBar) {
 				oRm.addClass("sapUxAPObjectPageContainerNoBar");
