@@ -16,6 +16,58 @@
 	.sapMBtnGradient(@sapUiButtonBackground);
 }
 
+.sapMBtnTransparent {
+	background-image: none;
+	background-color: @sapUiButtonLiteBackground;
+	border-color:     @sapUiButtonLiteBorderColor;
+	color:            @sapUiButtonLiteTextColor;
+}
+
+html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
+	color:            @sapUiButtonIconColor;
+}
+
+.sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable {
+	background-color: @sapUiButtonLiteHoverBackground;
+	border-color:     @sapUiButtonLiteHoverBorderColor;
+	color:            @sapUiButtonLiteTextColor;
+}
+
+:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnActive,
+:not(.sapMBtnDisabled):hover > .sapMBtnTransparent.sapMBtnActive {
+	background-color: @sapUiButtonLiteActiveBackground;
+	border-color:     @sapUiButtonLiteActiveBorderColor;
+	text-shadow:      none;
+}
+
+.sapMIBar-CTX .sapMBtnInner {
+	border-color: @sapUiButtonLiteBorderColor;
+}
+
+.sapMBar .sapMBtnInner,
+.sapMHeader-CTX .sapMBtnInner,
+.sapMFooter-CTX .sapMBtnInner,
+.sapMSubHeader-CTX .sapMBtnInner {
+	background: @sapUiButtonLiteBackground;
+}
+
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable.sapMBtnActive {
+	background-color: @sapUiButtonActiveBackground;
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable {
+	background-color: @sapUiButtonLiteHoverBackground;
+	border-color:     @sapUiButtonLiteHoverBorderColor;
+	color:            @sapUiButtonLiteTextColor;
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
+	background-color: @sapUiButtonFooterHoverBackground;
+	color:            @sapUiButtonFooterTextColor;
+	color:            @sapUiButtonLiteTextColor;
+}
+
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline:                                                */
 /* ---------------------------------------------------------------------*/
