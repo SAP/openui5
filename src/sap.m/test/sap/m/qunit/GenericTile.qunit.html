@@ -63,7 +63,7 @@
 		assert.strictEqual(this.oGenericTile.getProperty("imageDescription"), "");
 	});
 	QUnit.test("Default value of scope", function(assert) {
-		assert.strictEqual(this.oGenericTile.getProperty("scope"), sap.m.GenericTileScope.Default);
+		assert.strictEqual(this.oGenericTile.getProperty("scope"), sap.m.GenericTileScope.Display);
 	});
 
 	QUnit.module("Rendering tests", {
@@ -304,6 +304,53 @@
 
 			done();
 		}.bind(this));
+	});
+
+	QUnit.module("Scope rendering tests", {
+		beforeEach: function() {
+			this.oGenericTile = new sap.m.GenericTile({
+				scope: sap.m.GenericTileScope.Display,
+				header: "This is a header",
+				subheader: "This is a subheader"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Action scope in LineMode/compact", function(assert) {
+		//Arrange
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sinon.spy(sap.m.GenericTileLineModeRenderer, "_renderActionsScope");
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.m.GenericTileLineModeRenderer._renderActionsScope.callCount, 1, "Function _renderActionsScope has been called once");
+		assert.ok(this.oGenericTile.$("actions").length > 0, "Action container has been rendered");
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._renderActionsScope.restore();
+	});
+
+	QUnit.test("Scope content is created on beforeRendering", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sinon.spy(this.oGenericTile, "_initScopeContent");
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile._initScopeContent.callCount, 1, "_initScopeContent has been called once.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode cozy", {
@@ -1011,7 +1058,7 @@
 		}
 	});
 
-	QUnit.test("GenericTile in ContentMode (Default mode)", function(assert) {
+	QUnit.test("GenericTile in ContentMode (Display mode)", function(assert) {
 		// In ContentMode, when the subheader available, the number of header lines should be 2
 		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines and subheader has 1 line");
 
@@ -1123,6 +1170,75 @@
 	/* --------------------------------------- */
 	/* Test internal methods                   */
 	/* --------------------------------------- */
+	QUnit.module("Internal method _getEventParams", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header",
+				subheader : "subheader"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Internal method _getEventParams in scope 'Display'", function(assert) {
+		//Arrange
+		var oParams;
+			oEvent = {
+				target : {
+					id : "dummy"
+				}
+			};
+
+		//Act
+		oParams = this.oGenericTile._getEventParams(oEvent);
+
+		//Assert
+		assert.equal(oParams.scope, sap.m.GenericTileScope.Display, "Event parameter 'scope' is 'Display'");
+		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
+	});
+
+	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'Remove'", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		var oParams;
+			oEvent = {
+				target : {
+					id : "-action-remove"
+				}
+			};
+
+		//Act
+		oParams = this.oGenericTile._getEventParams(oEvent);
+
+		//Assert
+		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
+		assert.equal(oParams.action, sap.m.GenericTile._Action.Remove, "Event parameter 'action' is 'Remove'");
+	});
+
+	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'More'", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		var oParams;
+			oEvent = {
+				target : {
+					id : "-action-more"
+				}
+			};
+
+		//Act
+		oParams = this.oGenericTile._getEventParams(oEvent);
+
+		//Assert
+		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
+		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
+	});
+
 	QUnit.module("Internal methods for ARIA-label and tooltip handling", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
@@ -1818,7 +1934,6 @@
 		//Assert
 		assert.equal(this.hasAttribute("tabindex", this.oGenericTile), true, "GenericTile can have focus no matter it has press event or not");
 		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
-		assert.notOk(this.ftnPressHandler.calledOnce, "no press event is triggered");
 	});
 
 	QUnit.test("Press event tap test", function(assert) {
@@ -1831,8 +1946,8 @@
 		//Assert
 		function handlePress(oEvent) {
 			assert.ok(true, "Press event is triggered on mouse click.");
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Default, "Press event has correct parameter 'scope'.");
-			assert.equal(oEvent.getParameter("action"), "Default", "Press event has correct parameter 'action'.");
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
 		}
 	});
 
@@ -1864,7 +1979,7 @@
 
 	QUnit.test("Press event with correct parameters", function(assert) {
 		//Arrange
-		this.oGenericTile.setScope(sap.m.GenericTileScope.Action);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
 		this.oGenericTile.attachEvent("press", handlePress);
 
 		//Act
@@ -1872,8 +1987,8 @@
 
 		//Assert
 		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Action, "Press event has correct parameter 'scope'.");
-			assert.equal(oEvent.getParameter("action"), "Default", "Press event has correct parameter 'action'.");
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
 		}
 	});
 </script>

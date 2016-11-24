@@ -1040,13 +1040,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Default scope where no new functionalities are added to the tile.
 		 * @public
 		 */
-		Default: "Default",
+		Display: "Display",
 
 		/**
 		 * Action scope where a "remove" and "more" icon are added to the tile as an overlay.
 		 * @public
 		 */
-		Action: "Action"
+		Actions: "Actions"
 	};
 
 	/**

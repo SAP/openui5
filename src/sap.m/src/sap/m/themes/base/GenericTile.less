@@ -174,11 +174,11 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	.sapMGT.sapMGTLineMode {
 		float: none;
 		clear: none;
-		margin-bottom: 0;
+		margin-bottom: 0px;
 
 		display: inline;
 		min-width: 2rem;
-		border-radius: 0;
+		border-radius: 0px;
 		box-shadow: none;
 		background: none !important;
 		border: 1px solid transparent !important;
@@ -228,7 +228,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		width: 1.625rem;
 		vertical-align: top;
 		padding-top: 0.25rem;
-		padding-right: 0;
+		padding-right: 0px;
 		margin-top: 1px;
 		position: relative;
 		left: 0.5rem;
@@ -245,13 +245,43 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		margin-right: 0.5rem;
 	}
 
+	.sapMGTActionsContainer {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		height: 1.625rem;
+		line-height: 1.375rem;
+		z-index: 2;
+
+		&, * {
+			pointer-events: auto;
+		}
+
+		.sapMGTRemoveIcon {
+			width: 1.375rem;
+			height: 1.375rem;
+			box-sizing: border-box;
+
+			border: 1px solid @sapUiButtonBorderColor;
+			border-radius: 50%;
+			background-color: @sapUiButtonBackground;
+			color: @sapUiButtonTextColor;
+
+			&:before {
+				color: @sapUiButtonIconColor;
+				position: relative;
+				top: -1px;
+			}
+		}
+	}
+
 	.sapMGTStartMarker, .sapMGTEndMarker {
 		display: inline-block;
 	}
 
 	.sapMGTStyleHelper {
 		position: absolute;
-		top: 0;
+		top: 0px;
 		width: 100%;
 	}
 
@@ -265,10 +295,10 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 
 		.sapMGTLineStyleHelperInner {
 			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
+			top: 0px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
 		}
 
 		&:not(:last-child) {
@@ -295,19 +325,19 @@ html[dir=rtl] .sapMGTLineMode {
 	pointer-events: none;
 	opacity: 0.8;
 	z-index: 1;
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
+	top: 0px;
+	right: 0px;
+	left: 0px;
+	bottom: 0px;
 }
 
 .sapMGTFocusDiv {
 	position: absolute;
 	pointer-events: none;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
 	border-radius: 0.25rem;
 }
 
@@ -384,7 +414,7 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 	}
 
 	.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
-		line-height: 1.063rem;
+		line-height: 1.1875rem;
 	}
 
 	.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
@@ -417,8 +447,8 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 	}
 
 	.sapMGTHdrContent {
-		height: 3.375rem;
-		margin-top: 0.375rem;
+		height: 3.5rem;
+		margin-top: 0.25rem;
 		margin-left: 0.5625rem;
 		margin-right: 0.5625rem;
 	}
