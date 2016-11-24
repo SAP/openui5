@@ -91,6 +91,10 @@ sap.ui.require([
 					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In" MaxLength="10" \
 						sap:label="ID"/>\
 				</FunctionImport>\
+				<FunctionImport Name="NoArgs" ReturnType="GWSAMPLE_BASIC.Product" \
+					EntitySet="ProductSet" m:HttpMethod="POST" \
+					sap:action-for="GWSAMPLE_BASIC.Product">\
+				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
 				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"\
@@ -1307,6 +1311,10 @@ sap.ui.require([
 				assert.deepEqual(oFunctionImport["sap:action-for"],
 					"GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
+
+				assert.deepEqual(oEntityContainer.functionImport[1]["sap:action-for"],
+					"GWSAMPLE_BASIC.Product");
+				delete oEntityContainer.functionImport[1]["sap:action-for"];
 
 				assert.deepEqual(oNavigationProperty["sap:filterable"], "false");
 				delete oNavigationProperty["sap:filterable"];
