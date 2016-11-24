@@ -307,12 +307,16 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 });
 
 QUnit.asyncTest("Grouping Row", function(assert) {
+	initRowActions(oTable, 1, 1);
+
 	var oRefs = fakeGroupRow(1);
 
 	assert.strictEqual(oRefs.row.attr("aria-expanded"), "true", "aria-expanded set on group row");
 	assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 	assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
 	assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
+	assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
+	assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
 
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
@@ -336,10 +340,13 @@ QUnit.asyncTest("Grouping Row", function(assert) {
 });
 
 QUnit.asyncTest("Sum Row", function(assert) {
+	initRowActions(oTable, 1, 1);
+
 	var oRefs = fakeSumRow(1);
 
 	assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 	assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
+	assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
 
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
@@ -657,6 +664,133 @@ QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 
 
 
+QUnit.module("Row Actions", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+		initRowActions(oTable, 1, 1);
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
+
+function testAriaLabelsForRowAction($Cell, iRow, assert, mParams) {
+	var mParams = mParams || {};
+	var bFirstTime = !!mParams.firstTime;
+	var bFocus = !!mParams.focus;
+	var bRowChange = !!mParams.rowChange;
+	var bColChange = !!mParams.colChange;
+	var bGroup = !!mParams.group;
+	var bSum = !!mParams.sum;
+
+	var aLabels = [];
+	if (bFirstTime && bFocus) {
+		aLabels.push("ARIALABELLEDBY");
+		aLabels.push(oTable.getId() + "-ariadesc");
+		aLabels.push(oTable.getId() + "-ariacount");
+	}
+
+	if (bFocus) {
+		if (bRowChange) {
+			aLabels.push(oTable.getId() + "-rownumberofrows");
+		}
+		if (bColChange) {
+			aLabels.push(oTable.getId() + "-colnumberofcols");
+		}
+		aLabels.push(oTable.getId() + "-rowacthdr");
+		if (iRow == 0) {
+			aLabels.push(oTable.getId() + "-ariarowselected");
+		}
+		if (bGroup) {
+			aLabels.push(oTable.getId() + "-ariarowgrouplabel");
+			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+		} else if (bSum) {
+			aLabels.push(oTable.getId() + "-ariagrouptotallabel");
+			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+		}
+		aLabels.push(oTable.getId() + "-cellacc");
+	} else {
+		aLabels.push(oTable.getId() + "-rowacthdr");
+	}
+
+	assert.strictEqual(
+		($Cell.attr("aria-labelledby") || "").trim(),
+		aLabels.join(" "),
+		"aria-labelledby of row action " + iRow
+	);
+
+	if (bFocus) {
+		var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
+		if (bFirstTime || bRowChange) {
+			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
+		} else {
+			assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
+		}
+	}
+}
+
+QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
+	var $Cell;
+	for (var i = 0; i < 2; i++) {
+		$Cell = getRowAction(i, true, assert);
+		testAriaLabelsForRowAction($Cell, i, assert, {firstTime: i == 0, rowChange: true, colChange: i<2, focus: true});
+	}
+	setFocusOutsideOfTable();
+	setTimeout(function() {
+		testAriaLabelsForRowAction($Cell, 2, assert);
+		QUnit.start();
+	}, 100);
+});
+
+QUnit.asyncTest("aria-labelledby with Focus (Group Row)", function(assert) {
+	fakeGroupRow(1);
+	var $Cell;
+	for (var i = 0; i < 2; i++) {
+		$Cell = getRowAction(i, true, assert);
+		testAriaLabelsForRowAction($Cell, i, assert, {firstTime: i == 0, rowChange: true, colChange: i<2, focus: true, group: i==1});
+	}
+	setFocusOutsideOfTable();
+	setTimeout(function() {
+		testAriaLabelsForRowAction($Cell, 2, assert);
+		QUnit.start();
+	}, 100);
+});
+
+QUnit.asyncTest("aria-labelledby with Focus (Sum Row)", function(assert) {
+	fakeSumRow(1);
+	var $Cell;
+	for (var i = 0; i < 2; i++) {
+		$Cell = getRowAction(i, true, assert);
+		testAriaLabelsForRowAction($Cell, i, assert, {firstTime: i == 0, rowChange: true, colChange: i<2, focus: true, sum: i==1});
+	}
+	setFocusOutsideOfTable();
+	setTimeout(function() {
+		testAriaLabelsForRowAction($Cell, 2, assert);
+		QUnit.start();
+	}, 100);
+});
+
+QUnit.test("aria-labelledby without Focus", function(assert) {
+	setFocusOutsideOfTable();
+	var $Cell;
+	for (var i = 0; i < 2; i++) {
+		$Cell = getRowAction(i, false, assert);
+		testAriaLabelsForRowAction($Cell, i, assert, {rowChange: true, colChange: i<2});
+	}
+	setFocusOutsideOfTable();
+});
+
+QUnit.test("Other ARIA Attributes of Row Action", function(assert) {
+	var $Elem = oTable.$("rowact0");
+	assert.strictEqual($Elem.attr("role"), "gridcell" , "role");
+	checkAriaSelected($Elem.attr("aria-selected"), true, assert);
+	$Elem = oTable.$("rowact1");
+	checkAriaSelected($Elem.attr("aria-selected"), false, assert);
+});
+
+
+
 QUnit.module("SelectAll", {
 	setup: function() {
 		createTables();
@@ -911,8 +1045,7 @@ QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", function(assert) {
 	var oExtension = oTable._getAccExtension();
 	oExtension._debug();
 	oTable.getColumns()[1].setVisible(false);
-	oTable.setRowActionCount(2);
-	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+	initRowActions(oTable, 2, 2);
 	sap.ui.getCore().applyChanges();
 
 	getCell(0, 0, true);

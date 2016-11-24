@@ -190,7 +190,7 @@ sap.ui.define([
 		var $Cell = jQuery(oCell);
 		var oCellInfo = TableUtils.getCellInfo($Cell);
 
-		if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+		if (oCellInfo !== null && (oCellInfo.type === TableUtils.CELLTYPES.DATACELL || oCellInfo.type === TableUtils.CELLTYPES.ROWACTION)) {
 			var $InteractiveElements = $Cell.find(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
 			if ($InteractiveElements.length > 0) {
 				return $InteractiveElements;

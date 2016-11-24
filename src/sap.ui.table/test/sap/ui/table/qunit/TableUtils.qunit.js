@@ -110,7 +110,7 @@ QUnit.test("hasRowActions", function(assert) {
 	oTable.setRowActionCount(2);
 	assert.ok(!TableUtils.hasRowActions(oTable), "Table has still no row actions");
 	oTable.setRowActionTemplate(new sap.ui.table.RowAction());
-	assert.ok(TableUtils.hasRowActions(oTable), "Table has still no row actions");
+	assert.ok(TableUtils.hasRowActions(oTable), "Table has row actions");
 });
 
 QUnit.test("getRowActionCount", function(assert) {

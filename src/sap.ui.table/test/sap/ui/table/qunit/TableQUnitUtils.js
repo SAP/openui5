@@ -244,15 +244,18 @@ function fakeGroupRow(iRow) {
 	var $Row = oTable.$("rows-row" + iRow);
 	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
 	var $RowHdr = oTable.$("rowsel" + iRow);
+	var $RowAct = oTable.$("rowact" + iRow);
 
 	$Row.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, true, true, 1, null);
+	$RowAct.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, true, true, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,
-		hdr: $RowHdr
+		hdr: $RowHdr,
+		act: $RowAct
 	};
 }
 
@@ -261,14 +264,33 @@ function fakeSumRow(iRow) {
 	var $Row = oTable.$("rows-row" + iRow);
 	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
 	var $RowHdr = oTable.$("rowsel" + iRow);
+	var $RowAct = oTable.$("rowact" + iRow);
 
 	$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, false, false, 1, null);
+	$RowAct.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, false, false, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,
-		hdr: $RowHdr
+		hdr: $RowHdr,
+		act: $RowAct
 	};
 }
+
+function initRowActions(oTable, iCount, iNumberOfActions) {
+	oTable.setRowActionCount(iCount);
+	var oRowAction = new sap.ui.table.RowAction();
+	var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
+	for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
+		var oItem = new sap.ui.table.RowActionItem({
+			icon: aActions[i].icon,
+			text: aActions[i].text,
+			type: aActions[i].type || "Custom"
+		});
+		oRowAction.addItem(oItem);
+	}
+	oTable.setRowActionTemplate(oRowAction);
+	sap.ui.getCore().applyChanges();
+};

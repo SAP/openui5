@@ -146,6 +146,10 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	left: -5px;
 }
 
+.sapUiTableColRsz.sapUiTableColRszActive {
+	z-index: 5; /* Ensure be above Row Action Area */
+}
+
 html[dir=rtl] .sapUiTableColRsz {
 	margin-right: -3px;
 	right: -5px; /* it becomes "left" in RTL mode */

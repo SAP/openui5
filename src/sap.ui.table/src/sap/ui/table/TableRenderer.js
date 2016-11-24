@@ -325,7 +325,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write("</div>");
 
 		if (TableUtils.hasRowActions(oTable)) {
-			rm.write("<div class='sapUiTableRowActionHeader'></div>");
+			rm.write("<div class='sapUiTableRowActionHeader' id='" + oTable.getId() + "-rowacthdr'");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWACTIONHEADER");
+			rm.write("><span>");
+			rm.writeEscaped(oTable._oResBundle.getText("TBL_ROW_ACTION_COLUMN_LABEL"));
+			rm.write("</span></div>");
 		}
 
 		rm.write("</div>");
@@ -532,10 +536,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		if (bHeader) {
-			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected, rowHidden: bRowHidden});
-		}
-
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: bRowHidden});
 
 		rm.writeStyles();
 		rm.write(">");

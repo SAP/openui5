@@ -410,7 +410,7 @@
 	window.TABLESETTINGS.showRowActions = function(iCount, iNumberOfActions) {
 		TABLESETTINGS.table.setRowActionCount(iCount);
 		var oRowAction = new sap.ui.table.RowAction();
-		var aActions = [{type: "Navigation"}, {icon: "sap-icon://decline", text: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
+		var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
 		for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
 			var oItem = new sap.ui.table.RowActionItem({
 				icon: aActions[i].icon,

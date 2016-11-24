@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			if (oIN) {
 				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; //+1 -> we want to announce a count and not the index, the action column is handled like a normal column
 				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
-				var iColCount = TableUtils.getVisibleColumnCount(oTable);
+				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (TableUtils.hasRowActions(oTable) ? 1 : 0);
 				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
@@ -431,6 +431,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		},
 
 		/*
+		 * Modifies the labels and descriptions of a row action cell.
+		 * @see ExtensionHelper.performCellModifications
+		 */
+		modifyAccOfROWACTION : function($Cell, bOnCellFocus) {
+			var oTable = this.getTable(),
+				sTableId = oTable.getId(),
+				bGroupHeader = TableUtils.Grouping.isInGroupingRow($Cell),
+				bSum = TableUtils.Grouping.isInSumRow($Cell),
+				iRow = $Cell.attr("data-sap-ui-rowindex"),
+				oRow = oTable.getRows()[iRow],
+				bHidden = ExtensionHelper.isHiddenCell($Cell),
+				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [],
+				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels),
+				aDescriptions = [];
+
+			if (bGroupHeader) {
+				aLabels.push(sTableId + "-ariarowgrouplabel");
+				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+			}
+
+			if (bSum) {
+				var iLevel = $Cell.data("sap-ui-level");
+				if (iLevel == 0) {
+					aLabels.push(sTableId + "-ariagrandtotallabel");
+				} else if (iLevel > 0) {
+					aLabels.push(sTableId + "-ariagrouptotallabel");
+					aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+				}
+			}
+
+			if (!bSum && !bGroupHeader && $Cell.attr("aria-selected") == "true") {
+				aLabels.push(sTableId + "-ariarowselected");
+			}
+
+			var sText = "";
+			if (!bHidden) {
+				var oRowAction = oRow.getAggregation("_rowAction");
+				if (oRowAction) {
+					var oInfo = oRowAction.getAccessibilityInfo();
+					if (oInfo) {
+						aLabels.push(sTableId + "-cellacc");
+						sText = oInfo.description;
+						if (oInfo.focusable) {
+							aDescriptions.push(sTableId + "-toggleedit");
+						}
+					}
+				}
+			}
+
+			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText);
+		},
+
+		/*
 		 * Returns the default aria attibutes for the given element type with the given settings.
 		 * @see TableAccExtension.ELEMENTTYPES
 		 */
@@ -481,6 +534,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						mAttributes["aria-selected"] = "" + bSelected;
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
 						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
+					}
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.ROWACTION:
+					mAttributes["role"] = ["gridcell"];
+					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
+					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
+						var bSelected = mParams && mParams.rowSelected;
+						mAttributes["aria-selected"] = "" + bSelected;
 					}
 					break;
 
@@ -688,6 +750,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
+				case TableAccExtension.ELEMENTTYPES.ROWACTIONHEADER: // The header of the row action column
+					mAttributes["aria-hidden"] = "true";
+					break;
+
 				case "PRESENTATION":
 					mAttributes["role"] = "presentation";
 					break;
@@ -817,6 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
 		TR : 				"TR", 									// The rows
 		TREEICON : 			"TREEICON", 							// The expand/collapse icon in the TreeTable
+		ROWACTIONHEADER : 	"ROWACTIONHEADER", 						// The header of the row action column
 		NODATA :			"NODATA",								// The no data container
 		OVERLAY :			"OVERLAY"								// The overlay container
 	};
@@ -923,14 +990,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 	 * Updates the expand state and level for accessibility in case of grouping
 	 * @public (Part of the API for Table control only!)
 	 */
-	TableAccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, bGroup, bExpanded, iLevel, $TreeIcon) {
+	TableAccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bGroup, bExpanded, iLevel, $TreeIcon) {
 		if (!this._accMode) {
 			return;
 		}
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			aRefs = [$ScrollRow, $ScrollRow.children(), $RowHdr, $FixedRow, $FixedRow ? $FixedRow.children() : null],
+			aRefs = [$ScrollRow, $ScrollRow.children(), $RowHdr, $FixedRow, $FixedRow ? $FixedRow.children() : null, $RowAct],
 			bTreeMode = !!$TreeIcon,
 			oBinding = oTable.getBinding("rows");
 
