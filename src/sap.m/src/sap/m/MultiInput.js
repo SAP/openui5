@@ -1326,12 +1326,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		this._tokenizer.setEditable(bEditable);
 
-		if (bEditable) {
-			this.removeStyleClass("sapMMultiInputNotEditable");
-		} else {
-			this.addStyleClass("sapMMultiInputNotEditable");
-		}
-
 		return this;
 	};
 

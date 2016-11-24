@@ -3,12 +3,12 @@
 /* Belize theme                      */
 /* ================================= */
 
-.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:hover,
-.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:focus {
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:focus {
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder::before {
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
 	border: 1px dotted @sapUiContentFocusColor;
 	content: "";
 	position: absolute;
@@ -19,13 +19,13 @@
 	pointer-events: none;
 }
 
-.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:active {
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:active {
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiButtonActiveTextColor;
 	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputBorder {
+.sapMInputBaseReadonly .sapMMultiInputBorder {
 	background: transparent;
 	border: transparent;
 }
@@ -75,11 +75,11 @@ html.sap-tablet .sapUiSizeCompact .sapMMultiInputMultiModeBorder {
 	overflow-y: auto;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputBorder:hover {
+.sapMInputBaseReadonly .sapMMultiInputBorder:hover {
 	border-color: transparent;
 }
 
-.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder {
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder {
 	border-color: @sapUiFieldFocusBorderColor;
 }
 
