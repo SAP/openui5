@@ -27,7 +27,7 @@ Once you have familiarized with the guidelines, you can go to the [Github issue 
 
 ### Quick Checklist for Bug Reports
 
- * Issue report checklist:
+Issue report checklist:
  * Real, current bug
  * No duplicate
  * Reproducible
