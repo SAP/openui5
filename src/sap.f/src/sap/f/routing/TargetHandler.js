@@ -3,8 +3,8 @@
  */
 
  /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
-	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
+sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object', 'sap/ui/core/routing/History'],
+	function($, InstanceManager, BaseObject, History) {
 		"use strict";
 
 
@@ -121,9 +121,6 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 		/**
 		 * Goes through the queue and adds the last Transition for each container in the queue
-		 * In case of a navContainer or phone mode, only one transition for the container is allowed.
-		 * In case of a splitContainer in desktop mode, two transitions are allowed, one for the master and one for the detail.
-		 * Both transitions will be the same.
 		 * @returns {array} a queue of navigations
 		 * @private
 		 */
