@@ -21,6 +21,7 @@ sap.ui.define([
 				// Model used to manipulate control states. The chosen values make sure,
 				// detail page is busy indication immediately so there is no break in
 				// between the busy indication for loading the view's meta data
+				this._aValidKeys = ["shipping", "processor"];
 				var oViewModel = new JSONModel({
 					busy : false,
 					delay : 0,
@@ -28,7 +29,8 @@ sap.ui.define([
 					// Set fixed currency on view model (as the OData service does not provide a currency).
 					currency : "EUR",
 					// the sum of all items of this order
-					totalOrderAmount: 0
+					totalOrderAmount: 0,
+					selectedTab: ""
 				});
 
 				this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
@@ -109,13 +111,27 @@ sap.ui.define([
 			 * @private
 			 */
 			_onObjectMatched : function (oEvent) {
-				var sObjectId = oEvent.getParameter("arguments").objectId;
+				var oArguments = oEvent.getParameter("arguments");
+				this._sObjectId = oArguments.objectId;
 				this.getModel().metadataLoaded().then( function() {
 					var sObjectPath = this.getModel().createKey("Orders", {
-						OrderID :  sObjectId
+						OrderID :  this._sObjectId
 					});
 					this._bindView("/" + sObjectPath);
 				}.bind(this));
+				var oQuery  = oArguments["?query"];
+				if(oQuery && this._aValidKeys.indexOf(oQuery.tab) >=0){
+					this.getView().getModel("detailView").setProperty("/selectedTab", oQuery.tab);
+					this.getRouter().getTargets().display(oQuery.tab);
+				}
+				else{
+					this.getRouter().navTo("object", {
+						objectId: this._sObjectId,
+						query: {
+							tab: "shipping"
+						}
+					}, true);
+				}
 			},
 
 			/**
@@ -198,6 +214,16 @@ sap.ui.define([
 				oViewModel.setProperty("/busy", true);
 				// Restore original busy indicator delay for the detail view
 				oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
+			},
+			onTabSelect : function(oEvent){
+				var sSelectedTab = oEvent.getParameter("selectedKey");
+				this.getRouter().navTo("object", {
+					objectId: this._sObjectId,
+					query: {
+						tab: sSelectedTab
+					}
+				}, true);// true without history
+
 			},
 
 			_onHandleTelephonePress : function (oEvent){
