@@ -67,7 +67,6 @@
 
 .sapUiTableHdrTitle {
 	font-size: @sapUiFontHeader3Size;
-	color: @sapUiTextTitle;
 	height: 100%;
 	color: @sapUiGroupTitleTextColor;
 }
@@ -221,7 +220,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 		content: '';
 		z-index: 9;
 		/* same as sapUiOverlay */
-		background-color: fade(@sapUiGroupContentBackground, 80%);
+		background-color: fade(@sapUiGroupContentBackground, 80);
 		position: absolute;
 		top: -2px;
 		left: 0;
@@ -598,7 +597,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	}
 
 	.sapUiTableColDropDown:active {
-		color: @sapUiTextInverted;
+		color: @sapUiContentContrastTextColor;
 	}
 
 }
@@ -950,7 +949,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableTr > .sapUiTableTDDummy {
 	border-bottom: none;
-	background: darken(@sapUiListBackground,2.5);
+	background: darken(@sapUiListBackground, 2.5);
 }
 
 .sapUiTableTr > td.sapUiTableTdFirst {
