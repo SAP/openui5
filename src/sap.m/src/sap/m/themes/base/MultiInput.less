@@ -14,7 +14,7 @@
 }
 
 // on the desktop we hide the overflow
-html.sap-desktop .sapMMultiInputBorder{
+html.sap-desktop .sapMMultiInputBorder {
 	overflow: hidden;
 }
 
@@ -59,21 +59,13 @@ html.sap-phone .sapMMultiInput .sapMToken:last-child {
 	right: 0;
 }
 
-.sapMMultiInputTextInput :not(.sapMMultiInputNotEditable){
-	border-radius: 0;
-}
-
-.sapMMultiInputInputContainer {
+.sapMMultiInput .sapMMultiInputInputContainer {
 	position: absolute;
 	top: 0;
 	right: 0;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputInputContainer{
-	visibility: collapse;
-}
-
-.sapMMultiInputShadowDiv{
+.sapMMultiInputShadowDiv {
 	display: inline;
 	visibility: collapse;
 	position: absolute;
@@ -81,7 +73,11 @@ html.sap-phone .sapMMultiInput .sapMToken:last-child {
 	left: 0;
 }
 
-.sapMMultiInputMultiModeInputContainer {
+.sapMMultiInput.sapMInputBaseReadonly .sapMMultiInputInputContainer {
+	position: absolute;
+}
+
+.sapMMultiInputInputContainer.sapMMultiInputMultiModeInputContainer {
 	position: static;
 }
 
