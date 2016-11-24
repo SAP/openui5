@@ -822,12 +822,22 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._cacheDOMElements = function () {
+		this._cacheColumns();
+
+		if (!sap.ui.Device.system.phone) {
+			this._cacheArrows();
+		}
+	};
+
+	FlexibleColumnLayout.prototype._cacheColumns = function () {
 		this._$columns = {
 			begin: this.$("beginColumn"),
 			mid: this.$("midColumn"),
 			end: this.$("endColumn")
 		};
+	};
 
+	FlexibleColumnLayout.prototype._cacheArrows = function () {
 		this._$columnButtons = {
 			beginBack: this.$("beginBack"),
 			midForward: this.$("midForward"),
@@ -1154,7 +1164,7 @@ sap.ui.define([
 			aNeededArrows = [];
 
 		// Stop here if the control isn't rendered yet
-		if (typeof this._$columns === "undefined") {
+		if (typeof this._$columns === "undefined" || sap.ui.Device.system.phone) {
 			return;
 		}
 
