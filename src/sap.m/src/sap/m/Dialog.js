@@ -1045,7 +1045,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this._resizeListenerId = null;
 			}
 
-			sap.ui.Device.resize.detachHandler(this._onResize);
+			sap.ui.Device.resize.detachHandler(this._onResize.bind(this));
 		};
 
 		/**
