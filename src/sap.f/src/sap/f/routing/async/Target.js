@@ -17,6 +17,7 @@ sap.ui.define([], function() {
 		 */
 		_place : function (vData) {
 			var oPromise = this._super._place.apply(this, arguments),
+				oRouteConfig = vData && vData.routeConfig || {},
 				that = this;
 
 			// chain to navigation promise to keep the order of navigations!
@@ -29,10 +30,9 @@ sap.ui.define([], function() {
 						eventData: vData,
 						targetControl: oViewInfo.control,
 						view: oViewInfo.view,
-						preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer,
-						showMidColumn: vData.routeConfig.showMidColumn,
-						showEndColumn: vData.routeConfig.showEndColumn,
-						fullScreenColumn: vData.routeConfig.fullScreenColumn
+						showMidColumn: oRouteConfig.showMidColumn,
+						showEndColumn: oRouteConfig.showEndColumn,
+						fullScreenColumn: oRouteConfig.fullScreenColumn
 					});
 					return oViewInfo;
 				});

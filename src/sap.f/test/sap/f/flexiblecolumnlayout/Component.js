@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/f/routing/Router",
 	"sap/ui/model/json/JSONModel"
-], function (UIComponent, Router, JSONModel) {
+], function (UIComponent, JSONModel) {
 	"use strict";
 
 	var Component = UIComponent.extend("flexiblecolumnlayout.Component", {
@@ -16,7 +15,7 @@ sap.ui.define([
 			routing: {
 				config: {
 					async: true,
-					routerClass: Router,
+					routerClass: "sap.f.routing.Router",
 					viewType: "XML",
 					viewPath: "flexiblecolumnlayout",
 					controlId: "fcl",
