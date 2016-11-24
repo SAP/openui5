@@ -3,6 +3,9 @@
 /* Belize theme                            */
 /* ======================================= */
 
+@_sap_ui_layout_Splitter_BarColor: darken(@sapUiGlobalBackgroundColor, 11);
+@_sap_ui_layout_Splitter_BarHoverColor: darken(@sapUiGlobalBackgroundColor, 21);
+
 html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
 html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	height: 100%;
@@ -16,21 +19,15 @@ html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterO
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar {
-	background-color: darken(@sapUiGlobalBackgroundColor,11);
+	background-color: @_sap_ui_layout_Splitter_BarColor;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: darken(@sapUiGlobalBackgroundColor,21);
+	background-color: @_sap_ui_layout_Splitter_BarHoverColor;
 }
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	background-color: @sapUiHighlight;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline-width: 1px;
-	outline-color: @sapUiContentFocusColor;
-	outline-style: dotted;
 }
 
 .sapUiLoSplitterBarIcon {
@@ -55,4 +52,3 @@ html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterBa
 	width: 100%;
 	border: 1px dotted @sapUiContentFocusColor;
 }
-
