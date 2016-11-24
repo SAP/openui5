@@ -1,3 +1,8 @@
+/* ================================================= */
+/* CSS for control sap.ui.layout/ResponsiveSplitter  */
+/* Base theme                                        */
+/* ================================================= */
+
 .sapUiResponsiveSplitter {
 	width: 100%;
 	height: 100%;
@@ -15,7 +20,8 @@
 		justify-content: center;
 		outline: none;
 		height: 2.5rem;
-		background-color: @sapUiExtraLightBG;
+		background-color: @sapUiPageFooterBackground;
+		border: 1px solid @sapUiPageFooterBorderColor;
 	}
 
 	& .sapUiResponsiveSplitterPage {
@@ -28,10 +34,10 @@
 }
 
 .sapUiResponsiveSplitterPaginatorButton:hover {
-	background-color: @sapUiListHoverBackground;
+	background-color: @sapUiButtonLiteHoverBackground;
 
 	&:after {
-		background-color: @sapUiBrand;
+		background-color: @sapUiContentIconColor;
 	}
 }
 
@@ -43,10 +49,10 @@
 	display: inline-block;
 
 	&:active {
-		background-color: @sapUiHighlight;
+		background-color: @sapUiButtonLiteActiveBackground;
 
 		&:after {
-			background-color: @sapUiInvertedElement;
+			background-color: @sapUiContentContrastIconColor;
 		}
 	};
 
@@ -54,7 +60,7 @@
 		content: "";
 		width: 0.5rem;
 		height: 0.5rem;
-		background-color: @sapUiExtraLightText;
+		background-color: @sapUiContentIconColor;
 		margin: auto;
 		display: block;
 		margin-top: 16px;
@@ -68,7 +74,7 @@
 	&:focus:before {
 		content: "";
 		position: absolute;
-		border: 1px dotted @sapUiFocus;
+		border: 1px dotted @sapUiContentFocusColor;
 		width: 2.125rem;
 		height: 2.125rem;
 		margin: 2px 0 0 2px;
@@ -79,12 +85,19 @@
 	margin-left: 0;
 }
 
-
 .sapUiResponsiveSplitterPaginatorSelectedButton {
 	background-color: transparent;
 
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+
+		&:after {
+			background-color: @sapUiSelected;
+		}
+	}
+
 	&:after {
-		background-color: @sapUiBrand;
+		background-color: @sapUiSelected;
 	}
 }
 
@@ -120,14 +133,14 @@
 .sapUiResponsiveSplitterHiddenBackButton,
  .sapUiResponsiveSplitterHiddenPaginatorButton {
 	display: none !important;
-	background-color: blue;
+	background-color: @sapUiSelected;
 }
 
 .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
-	background-color: @sapUiMediumBorder;
+	background-color: @sapUiGlobalBackgroundColor;
 
 	&:hover {
-		background-color: darken(@sapUiMediumBorder, 10);
+		background-color: @sapUiHighlight;
 	}
 
 	&:active {
@@ -145,15 +158,18 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUi
 		z-index: 1;
 		margin-left: -22px;
 		top: 50%;
+		display:block;
+		position:relative;
+		text-align:center;
 	}
 
 	& .sapUiLoSplitterBarIcon:after {
 		content: "";
 		width: 1.25rem;
 		height: 1.25rem;
-		border-color: @sapUiDarkBorder;
+		border-color: @sapUiContentIconColor;
 		border-width: 0.125rem;
-		background-color: @sapUiExtraLightBG;
+		background-color: @sapUiGlobalBackgroundColor;
 		border-radius: 50%;
 		border-style: solid;
 		display: block;
@@ -166,15 +182,15 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUi
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
 html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
 	& .sapUiLoSplitterBarIcon:after {
-		border-color: @sapUiHighlight;
-		background-color: darken(@sapUiExtraLightBG, 15);
+		border-color: @sapUiContentIconColor;
+		background-color: @sapUiHighlight;
 	}
 }
 
 .sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	&:hover {
-		cursor: n-resize;
+		cursor: row-resize;
 	}
 }
 
@@ -182,7 +198,7 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUi
 .sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 
 	&:hover {
-		cursor: e-resize;
+		cursor: col-resize;
 	}
 }
 
