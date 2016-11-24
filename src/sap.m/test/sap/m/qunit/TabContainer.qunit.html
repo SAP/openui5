@@ -489,6 +489,20 @@
 			strictEqual(sContainerSelectedItem, sSelectSelectedItemText, 'Default selected items is propagated to the select list.');
 		});
 
+		test("Selected item association is cleared when items are destroyed.", function () {
+			//prepare
+			var oTabStripDestroySpy = this.spy(this.oTabContainer._getTabStrip(), "destroyItems");
+			//act
+			this.oTabContainer.destroyItems();
+
+			//assert
+			equal(this.oTabContainer.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
+			equal(oTabStripDestroySpy.callCount, 1, "destroyItems() in TabContainer should call the destryItems() in TabStrip");
+
+			//cleanup
+			oTabStripDestroySpy.restore();
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
