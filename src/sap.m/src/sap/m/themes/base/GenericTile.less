@@ -157,6 +157,7 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	&.sapMGTLineModeContainer, .sapMGTLineModeContainer {
 		padding-right: 1.0rem;
 		box-sizing: border-box;
+		position: relative; /* make the tile's parent <<positioned>>, in order to make JS get the correct offsetParent */
 	}
 
 	.sapMGT.sapMGTLineMode {
