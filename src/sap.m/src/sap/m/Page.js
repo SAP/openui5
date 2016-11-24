@@ -16,7 +16,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 *
 		 * @class
 		 * A container control that holds one whole screen of an application.
-		 * @extends sap.ui.core.Control
+		 *
 		 * <h3>Overview</h3>
 		 * The sap.m.Page is a container control that holds one whole screen of an application.
 		 * The page has three distinct areas that can hold content - a header, content area and a footer.
@@ -33,10 +33,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 *
 		 * <b>Note:</b> All accessibility information for the different areas and their corresponding ARIA roles is set in the aggregation <code>landmarkInfo</code> of type {@link sap.m.PageAccessibleLandmarkInfo}
 		 *
+		 * @extends sap.ui.core.Control
 		 * @author SAP SE
 		 * @version ${version}
 		 *
-		 * @constructor
 		 * @public
 		 * @alias sap.m.Page
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
