@@ -43,7 +43,10 @@ sap.ui.require([
 					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
 					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
-				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
+				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" \
+					FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
+				<NavigationProperty Name="Corrupt" Relationship="NOT.Found" FromRole="F" \
+					ToRole="T"/>\
 			</EntityType>\
 			<EntityType Name="VH_Sex" sap:content-version="1">\
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
@@ -111,7 +114,8 @@ sap.ui.require([
 <edmx:DataServices>\
 <Schema Namespace="zanno4sample_anno_mdl.v1">\
 <Annotations Target="GWSAMPLE_BASIC.BusinessPartner">\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via external annotation: Business Partner" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Label" \
+		String="Label via external annotation: Business Partner" />\
 	<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">\
 		<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">\
 			<PropertyValue Property="TypeName" String="Business Partner"/>\
@@ -277,25 +281,30 @@ sap.ui.require([
 	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.CT_Address" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.CT_Address/City">\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="GWSAMPLE_BASIC.CT_Address/City" />\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Label" \
+		String="GWSAMPLE_BASIC.CT_Address/City" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities">\
 	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet">\
-	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet" />\
+	<Annotation Term="acme.Foo.v1.Foo" \
+		String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet/FromRole_Foo">\
-	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet/FromRole_Foo" />\
+	<Annotation Term="acme.Foo.v1.Foo" \
+		String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet/FromRole_Foo" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
-	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet" />\
+	<Annotation Term="acme.Foo.v1.Foo" \
+		String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo">\
 	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo" />\
 </Annotations>\
 <Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID">\
-	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID" />\
+	<Annotation Term="acme.Foo.v1.Foo" \
+		String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID" />\
 </Annotations>\
 </Schema>\
 </edmx:DataServices>\
@@ -355,7 +364,8 @@ sap.ui.require([
 	<edmx:DataServices m:DataServiceVersion="2.0">\
 		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en">\
 			<!-- mind the XML namespace! -->\
-			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" \
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">\
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
 				</Annotation>\
 			</Annotations>\
@@ -365,18 +375,27 @@ sap.ui.require([
 		',
 		sFARMetadataInvalid = '\
 <?xml version="1.0" encoding="utf-8"?>\
-<!-- fictitious empty response for /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/Invalid -->\
-<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
-	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<!--\
+	fictitious empty response for \
+	/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/Invalid \
+-->\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" \
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" \
+		xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" \
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>\
 	</edmx:Reference>\
-	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" \
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>\
 	</edmx:Reference>\
 	<edmx:DataServices m:DataServiceVersion="2.0">\
-		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" \
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
 			<EntityType Name="FOO" sap:content-version="1"/><!-- TODO remove this! -->\
-			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" \
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
 			</EntityContainer>\
 		</Schema>\
 	</edmx:DataServices>\
@@ -476,7 +495,8 @@ sap.ui.require([
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withMetaModel(assert, fnCodeUnderTest) {
-		return withGivenService(assert, "/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations", fnCodeUnderTest);
+		return withGivenService(assert, "/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
+			fnCodeUnderTest);
 	}
 
 	/**
@@ -1168,12 +1188,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("/dataServices/schema/<i>/annotations dropped", function (assert) {
-		return withGivenService(assert, "/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
-			return oMetaModel.loaded().then(function () {
-				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"),
-					undefined);
+		return withGivenService(assert, "/fake/emptySchemaWithAnnotations", "",
+			function (oMetaModel) {
+				return oMetaModel.loaded().then(function () {
+					assert.strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"),
+						undefined);
+				});
 			});
-		});
 	});
 
 	//*********************************************************************************************
@@ -1995,6 +2016,17 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(null, "ToSupplier"), null);
 			assert.strictEqual(oMetaModel.getODataAssociationSetEnd({}, "ToSupplier"), null);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getODataAssociation*Set*End: set not found", function (assert) {
+		return withGivenService(assert, "/fake/service", "", function (oMetaModel, oModel) {
+				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner");
+
+				assert.strictEqual(
+					oMetaModel.getODataAssociationSetEnd(oEntityType, "Corrupt"),
+					null);
+			});
 	});
 
 	//*********************************************************************************************
