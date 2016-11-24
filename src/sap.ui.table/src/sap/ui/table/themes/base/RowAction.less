@@ -1,7 +1,6 @@
-/* ======================================= */
-/* CSS for control sap.ui.table/RowAction  */
-/* Base theme                              */
-/* ======================================= */
+/* ======================================================== */
+/* CSS for control sap.ui.table.RowAction control           */
+/* ======================================================== */
 
 @_sapUiTableRowActionSize: 1.625rem;
 @_sapUiTableRowActionSizeCozy: 2.5rem;
@@ -17,7 +16,7 @@
 .sapUiTableAction > div {
 	display: inline-block;
 	font-size: 0.75rem;
-	color: @sapUiContentIconColor;
+	color: @sapUiContentIconColor; /*@sapUiContentNonInteractiveIconColor?*/
 	text-align: center;
 }
 
@@ -38,6 +37,7 @@
 
 	.sapUiTableAction,
 	.sapUiTableAction > div {
+		/*min-width: @_sapUiTableRowHeightCondensed;*/
 		height: @_sapUiTableRowHeightCozy;
 		line-height: @_sapUiTableRowHeightCozy;
 	}
