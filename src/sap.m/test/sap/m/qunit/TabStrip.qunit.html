@@ -265,6 +265,32 @@
 			oTabStrip = null;
 		});
 
+		test("Selected item association is cleared when items are destroyed.", function () {
+			//prepare
+			var oTabStrip = new sap.m.TabStrip({
+				items: [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 2"
+					})
+				],
+				hasSelect: true
+			});
+			oTabStrip.setSelectedItem(oTabStrip.getItems()[0]);
+			oTabStrip.placeAt("qunit-fixture");
+
+			//act
+			oTabStrip.destroyItems();
+
+			//assert
+			equal(oTabStrip.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
+
+			//cleanup
+			oTabStrip.destroy();
+		});
+
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
