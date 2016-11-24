@@ -40,6 +40,7 @@ sap.ui.define([], function () {
     NotificationListItemRenderer.render = function (oRm, oControl) {
         if (oControl.getVisible()) {
             var id = oControl.getId();
+            var labelledBy = (id + '-title') + ' ' + (id + '-body') + ' ' + (id + '-info');
 
             oRm.write('<li');
             oRm.addClass(classNameItem);
@@ -51,8 +52,7 @@ sap.ui.define([], function () {
             // ARIA
             oRm.writeAccessibilityState(oControl, {
                 role: "listitem",
-                labelledby: id + '-title',
-                describedby: (id + '-body') + ' ' + (id + '-info')
+                labelledby: labelledBy
             });
 
             oRm.writeClasses();
