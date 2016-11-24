@@ -384,8 +384,8 @@
 						equal(jQuery("#item1").parent().css(sVendorPrefix + 'align-self'), "center", "Item 1 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item2").parent().css(sVendorPrefix + 'align-self'), "baseline", "Item 2 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item3").parent().css(sVendorPrefix + 'align-self'), "stretch", "Item 3 " + sVendorPrefix + "align-self property should be set correctly");
-						// A bug in IE 11 let's it return 'auto' instead of the parent's align-items value when no value for align-self is set
-						if(!navigator.userAgent.match(/Trident.+rv:11\.0/g)) equal(jQuery("#item4").parent().css(sVendorPrefix + 'align-self'), "flex-end", "Item 4 " + sVendorPrefix + "align-self property should be set correctly");
+						// A bug in Edge and IE 11 let's them return 'auto' instead of the parent's align-items value when no value for align-self is set
+						if(!sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie) equal(jQuery("#item4").parent().css(sVendorPrefix + 'align-self'), "flex-end", "Item 4 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'align-self'), "flex-start", "Item 5 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'align-self'), "flex-end", "Item 6 " + sVendorPrefix + "align-self property should be set correctly");
 					});
