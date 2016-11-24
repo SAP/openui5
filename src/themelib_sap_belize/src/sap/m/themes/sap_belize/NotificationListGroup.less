@@ -33,7 +33,7 @@
   background-color: @sapUiErrorBorder;
 }
 
-.sapMNLG { 
+.sapMNLG {
   .sapMNLG-Header {
       .sapMNLG-Details {
         color: @sapUiContentLabelColor;
@@ -43,7 +43,7 @@
       margin-top: 0;
       border-top: 1px solid @sapUiListBorderColor;
     }
-    //Focus Style ================================================================================== 
+    //Focus Style ==================================================================================
     &:focus&::after {
       border: 1px dotted @sapUiContentFocusColor;
       position: absolute;
@@ -57,29 +57,25 @@
     }
 }
 
-.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
-  border: none;
-}
-
 .sapMNLG.sapMNLG-Collapsed {
+	.sapMNLG-Header, .sapMNLG-SubHeader {
+		background-color: @sapUiListBackground;
+	}
+}
+.sapMNLG {
   .sapMNLG-Header, .sapMNLG-SubHeader {
     background-color: @sapUiListBackground;
   }
 }
-.sapMNLG {
-  .sapMNLG-Header, .sapMNLG-SubHeader {
-    background-color: #415a6f;
-  } 
-}
 .sapMNLG-Body {
   .sapMNLG-MaxNotifications {
-    font-family: @sapUiFontFamily; 
+    font-family: @sapUiFontFamily;
     font-size: @sapMFontMediumSize;
     color: @sapUiContentLabelColor;
-    border-top: 1px solid #577086;
-    background: #4c6679;
+    border-top: 1px solid @sapUiListBorderColor;
+    background: @sapUiListBackground;
     span {
-      font-family: @sapUiFontFamily; 
+      font-family: @sapUiFontFamily;
       font-size: @sapMFontLargeSize;
       color: @sapUiBaseText;
       font-weight: bold;
