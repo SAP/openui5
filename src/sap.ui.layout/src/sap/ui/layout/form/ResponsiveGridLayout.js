@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
+	 * The <code>ResponsiveGridLayout</code> control renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
 	 * Using this layout, the <code>Form</code> is rendered in a responsive way.
 	 * Depending on the available space, the <code>FormContainers</code> are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
 	 * This behavior can be influenced by the properties of this layout control.
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
 	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used standalone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
+	 * This control cannot be used stand-alone, it just renders a <code>Form</code>, so it must be assigned to a <code>Form</code> using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
 			 * This is the same for medium and large <code>Forms</code>.
 			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
-			 * (because every <code>FormContainer</code> has its own grid inside).
+			 * (because every <code>FormContainer</code> has its own <code>Grid</code> inside).
 			 *
 			 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
 			 * The number of <code>FormContainers</code> doesn't matter in this case.
@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		var oSource = oEvent.srcControl;
 
 		// if layoutData changed for a Container, Element, or Field call the
-		// onLayoutDataChange function of the parent ResponsiveFlowLayout
+		// onLayoutDataChange function of the parent Grid
 
 		if (oSource instanceof sap.ui.layout.form.FormContainer) {
 			if (this._mainGrid) {
@@ -834,6 +834,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var oLayout = this.__myParentLayout;
 			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
 				return "form";
+			}
+
+		};
+
+		oGrid.getUIArea = function() {
+
+			// as Grid has no parent relationship to Form or layout,
+			// it can not dertermine the UIArea by itself
+			var oLayout = this.__myParentLayout;
+			if (oLayout) {
+				return oLayout.getUIArea();
+			} else {
+				return null;
 			}
 
 		};

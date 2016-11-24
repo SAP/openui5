@@ -10,12 +10,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	/**
 	 * Constructor for a new sap.ui.layout.form.FormLayout.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Base layout to render a <code>Form</code>.
 	 * Other layouts to render a <code>Form</code> must inherit from this one.
+	 *
 	 * <b>Note:</b> This control must not be used to render a <code>Form</code> in productive applications as it does not fulfill any
 	 * design guidelines and usability standards.
 	 * @extends sap.ui.core.Control
@@ -36,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 			/**
 			 * Specifies the background color of the <code>Form</code> content.
 			 *
-			 * The visualization of the different options depends on the used theme.
+			 * <b>Note:</b> The visualization of the different options depends on the theme used.
 			 *
 			 * @since 1.36.0
 			 */
