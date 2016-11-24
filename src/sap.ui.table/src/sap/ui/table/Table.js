@@ -1043,10 +1043,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
-		if (oEvent && oEvent.isMarked("insertTableRows")) {
+		var bEventIsMarked = oEvent && oEvent.isMarked("insertTableRows");
+		if (bEventIsMarked) {
 			this._getScrollExtension().updateVSbMaxHeight();
 			this._updateVSbRange();
-			return;
 		}
 
 		this._bInvalid = false;
@@ -1068,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// enable/disable text selection for column headers
-		if (!this._bAllowColumnHeaderTextSelection) {
+		if (!this._bAllowColumnHeaderTextSelection && !bEventIsMarked) {
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
 		}
 
@@ -1084,17 +1084,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, true));
-		} else if (!this._mTimeouts.onAfterRenderingUpdateTableSizes) {
+		} else {
 			this._updateTableSizes();
 		}
 
-		this._updateVSbTop();
+		if (!bEventIsMarked) {
+			this._updateVSbTop();
 
-		// needed for the column resize ruler
-		this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
+			// needed for the column resize ruler
+			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
 
-		if (this.getBinding("rows")) {
-			this.fireEvent("_rowsUpdated");
+			if (this.getBinding("rows")) {
+				this.fireEvent("_rowsUpdated");
+			}
 		}
 	};
 
@@ -1120,7 +1122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateTableSizes = function(bForceUpdateTableSizes, bSkipHandleRowCountMode) {
-		this._mTimeouts.onAfterRenderingUpdateTableSizes = undefined;
 		var oDomRef = this.getDomRef();
 
 		if (this._bInvalid || !oDomRef) {
@@ -3542,26 +3543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oEvent.setMarked("insertTableRows");
 			oEvent.srcControl = this;
 			this._handleEvent(oEvent);
-
-			// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
-			// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
-			this._initRowDomRefs();
-			this._getKeyboardExtension().invalidateItemNavigation();
-
-			// restore the column icons
-			var aCols = this.getColumns();
-			for (var i = 0, l = aCols.length; i < l; i++) {
-				if (aCols[i].getVisible()) {
-					aCols[i]._restoreIcons();
-				}
-			}
-
-			this._updateTableContent();
-			this._updateTableSizes();
-
 			bReturn = true;
-
-			this._attachEvents();
 		}
 
 		if (!bNoUpdate && !this._bInvalid && this.getBinding("rows")) {
