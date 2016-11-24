@@ -29,9 +29,49 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The OverflowToolbar control is a container based on sap.m.Toolbar, that provides overflow when its content does not fit in the visible area.
+	 * A container control based on {@link sap.m.Toolbar}, that provides overflow when
+	 * its content does not fit in the visible area.
 	 *
-	 * Note: It is recommended that you use OverflowToolbar over {@link sap.m.Toolbar}, unless you want to avoid overflow in favor of shrinking.
+	 * <h3>Overview</h3>
+	 *
+	 * The content of the <code>OverflowToolbar</code> moves into the overflow area from
+	 * right to left when the the available space is not enough in the visible area of
+	 * the container. It can be accessed by the user throught the overflow button that
+	 * opens it in a popover.
+	 * <br><br>
+	 * <b>Note:</b> It is recommended that you use <code>OverflowToolbar</code> over
+	 * {@link sap.m.Toolbar}, unless you want to avoid overflow in favor of shrinking.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * Different behavior and priorities can be set for each control inside the
+	 * <code>OverflowToolbar</code>, such as certain actions to appear only in the
+	 * overflow area or to never move there. For more information, see
+	 * {@link sap.m.OverflowToolbarLayoutData} and {@link sap.m.OverflowToolbarPriority}.
+	 * <br><br>
+	 * Only the following controls can be moved in the overflow area:
+	 * <ul>
+	 * <li>{@link sap.m.Button}</li>
+	 * <li>{@link sap.m.CheckBox}</li>
+	 * <li>{@link sap.m.ComboBox}</li>
+	 * <li>{@link sap.m.DatePicker}</li>
+	 * <li>{@link sap.m.DateTimeInput}</li>
+	 * <li>{@link sap.m.DateTimePicker}</li>
+	 * <li>{@link sap.m.Input}</li>
+	 * <li>{@link sap.m.OverflowToolbarButton}</li>
+	 * <li>{@link sap.m.SearchField}</li>
+	 * <li>{@link sap.m.SegmentedButton}</li>
+	 * <li>{@link sap.m.Select}</li>
+	 * <li>{@link sap.m.TimePicker}</li>
+	 * <li>{@link sap.m.ToggleButton}</li>
+	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
+	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li>
+	 * </ul>
+	 *
+	 * <h3>Responsive behavior</h3>
+	 *
+	 * The height of the toolbar changes on desktop, tablet, and smartphones.
+	 *
 	 * @extends sap.m.Toolbar
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
