@@ -298,6 +298,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelectable = function(bSelectable) {
+		bSelectable = !!bSelectable;
 		if (bSelectable !== this.isSelectable()) {
 
 			if (!bSelectable) {
@@ -320,6 +321,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
+		bSelected = !!bSelected;
 		if (this.isSelectable() && bSelected !== this.isSelected()) {
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
@@ -341,6 +343,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setMovable = function(bMovable) {
+		bMovable = !!bMovable;
 		if (this.getMovable() !== bMovable) {
 			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
 
@@ -358,6 +361,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setEditable = function(bEditable) {
+		bEditable = !!bEditable;
 		if (this.getEditable() !== bEditable) {
 			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
 
