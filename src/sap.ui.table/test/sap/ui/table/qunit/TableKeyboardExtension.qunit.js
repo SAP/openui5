@@ -187,11 +187,11 @@ QUnit.test("Silent Focus", function(assert) {
 QUnit.test("Resize Bar", function(assert) {
 	var oDelegate = {
 		onfocusin : function(oEvent) {
-			assert.ok(oEvent.isMarked("sapUiTableSkipItemNavigation"), "Focus Event is marked to be ignored by the item navigation");
+			assert.ok(false, "The resize bar should not get focus");
 		}
 	};
 	oTable.addEventDelegate(oDelegate);
-	assert.expect(1);
+	assert.expect(0);
 	jQuery.sap.domById(oTable.getId() + "-rsz").focus();
 	oTable.removeEventDelegate(oDelegate);
 });

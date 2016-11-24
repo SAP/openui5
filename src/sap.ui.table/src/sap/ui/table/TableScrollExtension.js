@@ -382,7 +382,7 @@ sap.ui.define([
 			// Horizontal scrolling
 			var $HSb = jQuery(this.getHorizontalScrollbar());
 			var $HeaderScroll = jQuery(oTable.getDomRef("sapUiTableColHdrScr"));
-			var $FixedHeaderScroll = $Table.find(".sapUiTableColHdrFixed");
+			var $FixedHeaderScroll = $Table.find(".sapUiTableCtrlScrFixed.sapUiTableCHA");
 			var $ContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScr"));
 			var $FixedContentScroll = jQuery(oTable.getDomRef("sapUiTableCtrlScrFixed"));
 
