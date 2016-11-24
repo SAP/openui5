@@ -842,5 +842,82 @@
         "references": []
       }
     ]
+  },
+  "1.44.2": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "197cd6755ebb6d9c69c42edc8ff838f0b215121e",
+        "type": "FEATURE",
+        "text": " sap.m.HeaderContainer: Control moved from sap.suite.ui.commons to sap.m",
+        "references": []
+      },
+      {
+        "id": "7a0f6fe5b18ec8162bea2b01e10bb02260f7a24c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Initial focus issue fixed",
+        "references": []
+      },
+      {
+        "id": "8d5b97c8fc72ef567c679b6df1730f171f9a3428",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Make sure ID on flex item is always rendered",
+        "references": []
+      },
+      {
+        "id": "7a1decbe5064f297151149242ff95536b1a090be",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Mouse pointer handling enhanced",
+        "references": []
+      },
+      {
+        "id": "dc5b878a10bf0dda3f0af20bd8be8a4fec9293af",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: User text selection for failed state corrected",
+        "references": []
+      },
+      {
+        "id": "63aea2ebdd3115b67d5039a52c37b6ec043d1ccc",
+        "type": "FIX",
+        "text": " sap.m.MessagePopoverItem: Type None now fallbacks to type Information",
+        "references": []
+      },
+      {
+        "id": "c3fbc33efe8b1c7d7727d0efa912ce8d9950ad17",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: onsapenter now selects a value from the picker",
+        "references": []
+      },
+      {
+        "id": "9048e131647fb4f462df8c5fdf9f0c3921e6bc82",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed methods getAggregation and clone",
+        "references": []
+      },
+      {
+        "id": "28c349b41ebd1f10bb8020be4e015b8ec2916d69",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input value is visible when readonly",
+        "references": []
+      },
+      {
+        "id": "8b23da00059a28797963bf637dd79b4cd3686ed0",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Dot is now positioned correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "b4d031106e2941f2682682c7332e985305429306",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Compact visual issues with alignment fixed",
+        "references": []
+      },
+      {
+        "id": "5c06024f809b6e91a5e772f5f8ebf86737644c51",
+        "type": "FIX",
+        "text": " sap.m.Select: enable scrolling to the selected item when the selectList opens",
+        "references": []
+      }
+    ]
   }
 }

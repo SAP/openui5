@@ -296,5 +296,52 @@
         "references": []
       }
     ]
+  },
+  "1.44.2": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "e2c612c837e73aace66d872b925fff09d476c70e",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Handle Cell click also when MatrixLayout is used in cell",
+        "references": []
+      },
+      {
+        "id": "33e0ff62a055cac3eb5b08dc99c9d5371d22f742",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Hide selection tooltip on row header of empty rows",
+        "references": []
+      },
+      {
+        "id": "031326c96da454d7c7a60a002ed04ef1b05b6e3d",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Position Resize Bar initially out of visible area",
+        "references": []
+      },
+      {
+        "id": "2dc4e778e71d5712707bc861e95d23048b834047",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Restore focus on row (e.g. tree icon) after rendering",
+        "references": []
+      },
+      {
+        "id": "802a0bfe586f7199667cc1557ba17a9fa4f3554a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Horizontal scroll position is restored after rerendering.",
+        "references": []
+      },
+      {
+        "id": "bbc349584708686319b99341459c539c6bce349c",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect horizontal scroll position in RTL mode",
+        "references": []
+      },
+      {
+        "id": "c9e7611410be7a97c4ddac17f12f1787593af83f",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: scrollLeft is reset after vertical resize",
+        "references": []
+      }
+    ]
   }
 }

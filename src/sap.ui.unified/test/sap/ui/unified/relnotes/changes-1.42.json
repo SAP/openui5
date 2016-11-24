@@ -114,5 +114,22 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "a5fa020f4f3cc57db896c76a8ed9e70aed1c0587",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
+      },
+      {
+        "id": "e3aeec59c3f96cec20eab6d87971f2fe7145f460",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
   }
 }

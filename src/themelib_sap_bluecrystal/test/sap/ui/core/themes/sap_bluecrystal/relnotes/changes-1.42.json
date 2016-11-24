@@ -245,5 +245,22 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "d189d6a2809eccf4203f3684f0779947c37f2d0e",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "e3aeec59c3f96cec20eab6d87971f2fe7145f460",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
   }
 }

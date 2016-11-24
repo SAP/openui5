@@ -822,5 +822,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "872619adfc37e0ced8a8f7942c38375e6b692221",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "ed83abb8754b90004ea24093d1cf343cf25e7936",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Position Resize Bar initially out of visible area",
+        "references": []
+      },
+      {
+        "id": "883423b67f67b1809897cba36c8a42f1c05c85be",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect column resize",
+        "references": []
+      }
+    ]
   }
 }

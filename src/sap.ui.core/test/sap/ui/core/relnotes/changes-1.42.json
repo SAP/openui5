@@ -653,5 +653,93 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "055f951ef2a088fda03b9ab97360d5506ef899d5",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "c1fc1d93250da7ca6ccada72811f4495e59097db",
+        "type": "FIX",
+        "text": "LocaleData: Fixed getCombinedPattern for different calendar type",
+        "references": []
+      },
+      {
+        "id": "2713eae290ab005eb6bac5fe9cfb026ee8d0fe5b",
+        "type": "FIX",
+        "text": "ODataAnnotations: Provide lastModified date for annotations",
+        "references": []
+      },
+      {
+        "id": "0ce77229dc99687a01c8ebd4fa9393d59cbd2d65",
+        "type": "FIX",
+        "text": "OPA was sometimes failing to start an IFrame in firefox when mockserver was present",
+        "references": []
+      },
+      {
+        "id": "3660102bbf1c226f19cf2ceae0b439e5664e3a93",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      },
+      {
+        "id": "fb910865769426f5b670c5f50a8fbfa67de28faa",
+        "type": "FIX",
+        "text": "sap.ui.test.action.Press Link default behavior is executed",
+        "references": []
+      },
+      {
+        "id": "b6a88a5e052917939936f5ecacf064ee3c67077c",
+        "type": "FIX",
+        "text": "v2.ODataModel: bindElement status code 204",
+        "references": []
+      },
+      {
+        "id": "7873ca0163faabc2f50f1aa4b3771d068e548e93",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Relative Binding",
+        "references": []
+      }
+    ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "eb3fc477ddaa7cf921750a892f3f7120b4d4b299",
+        "type": "FIX",
+        "text": " Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "2eb3dad8ebe28feb169eb59cb1481bb1c5fa37dd",
+        "type": "FIX",
+        "text": " Device.js: Android orientation mode",
+        "references": []
+      },
+      {
+        "id": "5cf8ca27ccf4fdad80eeb923f6a13b43b43d7143",
+        "type": "FIX",
+        "text": " Device.js: iOS 9 split view adaptions",
+        "references": []
+      },
+      {
+        "id": "81936be8d8d9563d69ea828cb0ba712104b61dc9",
+        "type": "FIX",
+        "text": " MessageManager: Correct Message Sorting Before Propagation",
+        "references": []
+      },
+      {
+        "id": "375aaf7db04438fb6bcc8d6dfe5e787b99e9d3bf",
+        "type": "FIX",
+        "text": " jQuery.sap.properties: reduce processing memory and heap",
+        "references": []
+      }
+    ]
   }
 }

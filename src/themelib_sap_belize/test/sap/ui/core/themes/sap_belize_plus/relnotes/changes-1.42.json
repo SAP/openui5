@@ -329,5 +329,46 @@
         "references": []
       }
     ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "b35cc7f2e9967bf14103f5ab0541f141fa2d9d7d",
+        "type": "FIX",
+        "text": "sap.m.Bar: sap.m.Text and sap.m.Lable has correct color and shadow in Belize",
+        "references": []
+      },
+      {
+        "id": "af5900994fc9c152f89f1ce10c079ba696c99954",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Navigation arrows focus in IE fixed",
+        "references": []
+      },
+      {
+        "id": "d189d6a2809eccf4203f3684f0779947c37f2d0e",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "df1dee4b9de405a23d488959d730a93e18b35729",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: context selector in the button caused focus to not appear in IE",
+        "references": []
+      },
+      {
+        "id": "e3aeec59c3f96cec20eab6d87971f2fe7145f460",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      },
+      {
+        "id": "f370f3b441d25758d01c97efbed32d2ed431cf11",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeaderContent: fix placeholder icon representation",
+        "references": []
+      }
+    ]
   }
 }

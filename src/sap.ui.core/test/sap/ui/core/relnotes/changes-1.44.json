@@ -506,5 +506,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.2": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "80df79aa884fe2131c2f2266319299eedb19e5d8",
+        "type": "FIX",
+        "text": " Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "2dfed6d337e62fc645d2cf328e3a02d179207265",
+        "type": "FIX",
+        "text": " Device.js: Android orientation mode",
+        "references": []
+      },
+      {
+        "id": "f9f164178cab4b489e0c68f2880aef5f506daca4",
+        "type": "FIX",
+        "text": " Device.js: iOS 9 split view adaptions",
+        "references": []
+      },
+      {
+        "id": "657df33cdb4bb40d5a7c61164bdaec3f604c2520",
+        "type": "FIX",
+        "text": " ODataModel (v1/v2): documentation update",
+        "references": []
+      },
+      {
+        "id": "9eb63e347327f9f1db2953012daaa1856fd03079",
+        "type": "FIX",
+        "text": " v2.ODataModel: empty request - setProperty on complex type",
+        "references": []
+      }
+    ]
   }
 }
