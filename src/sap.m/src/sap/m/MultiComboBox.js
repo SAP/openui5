@@ -1023,6 +1023,33 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token") : null;
 	};
 
+
+	MultiComboBox.prototype.updateItems = function (sReason) {
+		var bKeyItemSync, aItems,
+			// Get selected keys should be requested at that point as it
+			// depends on getSelectedItems()- calls it internally
+			aKeys = this.getSelectedKeys();
+
+		var oUpdateItems = ComboBoxBase.prototype.updateItems.apply(this, arguments);
+
+		// It's important to request the selected items after the update,
+		// because the sync breaks there.
+		aItems = this.getSelectedItems();
+
+		// Check if selected keys and selected items are in sync
+		bKeyItemSync = (aItems.length === aKeys.length) && aItems.every(function (oItem) {
+				return oItem && oItem.getKey && aKeys.indexOf(oItem.getKey()) > -1;
+			});
+
+		// Synchronize if sync has been broken by the update
+		if (!bKeyItemSync) {
+			aItems = aKeys.map(this.getItemByKey, this);
+			this.setSelectedItems(aItems);
+		}
+
+		return oUpdateItems;
+	};
+
 	/**
 	 * Get selected items from "aItems".
 	 *
