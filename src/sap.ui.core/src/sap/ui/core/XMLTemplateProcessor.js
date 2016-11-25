@@ -354,7 +354,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				sStyleClasses = "",
 				aCustomData = [],
 				sSupportData = null;
-
 				if (!oClass) {
 					return [];
 				}
@@ -488,14 +487,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 				function handleChild(node, oAggregation, mAggregations, childNode, bActivate) {
 					var oNamedAggregation;
-
 					// inspect only element nodes
 					if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
+
+						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.mdc.fragmentcontrol/1") {
+							mSettings[localName(childNode)] = childNode.querySelector("*");
+							return;
+						}
 
 						// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
 						oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
 						if (oNamedAggregation) {
-
 							// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
 							handleChildren(childNode, oNamedAggregation);
 
