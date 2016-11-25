@@ -131,7 +131,7 @@ sap.ui.define([
 				this.sUpdateGroupId = undefined;
 
 				if (!this.bRelative || bDeferred || mParameters
-					|| oContext && !oContext.getBinding) {
+						|| oContext && !oContext.getBinding) {
 					oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
@@ -148,8 +148,7 @@ sap.ui.define([
 								"The path must not continue after a deferred operation: " + sPath);
 						}
 					} else if (!this.bRelative) {
-						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-							this.mQueryOptions);
+						this.oCache = this.makeCache();
 					}
 				}
 
