@@ -34,8 +34,6 @@ sap.ui.define([
 				/**
 				 * This property determines which panel is initially shown when dialog is opened. Due to extensibility reason the type should be
 				 * <code>string</code>. So it is feasible to add a custom panel without expanding the type.
-				 *
-				 * @since 1.26.0
 				 */
 				initialVisiblePanelType: {
 					type: "string",
@@ -46,8 +44,6 @@ sap.ui.define([
 				/**
 				 * This property determines whether the 'Restore' button is shown inside the dialog. If this property is set to true, clicking the
 				 * 'Reset' button will trigger the <code>reset</code> event sending a notification that model data must be reset.
-				 *
-				 * @since 1.26.0
 				 */
 				showReset: {
 					type: "boolean",
@@ -81,8 +77,6 @@ sap.ui.define([
 
 				/**
 				 * The dialog panels displayed in the dialog.
-				 *
-				 * @since 1.26.0
 				 */
 				panels: {
 					type: "sap.m.P13nPanel",
@@ -94,21 +88,15 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * Event fired if the 'ok' button in P13nDialog is clicked.
-				 *
-				 * @since 1.26.0
+				 * Event fired if the 'ok' button in <code>P13nDialog</code> is clicked.
 				 */
 				ok: {},
 				/**
-				 * Event fired if the 'cancel' button in P13nDialog is clicked.
-				 *
-				 * @since 1.26.0
+				 * Event fired if the 'cancel' button in <code>P13nDialog</code> is clicked.
 				 */
 				cancel: {},
 				/**
-				 * Event fired if the 'reset' button in P13nDialog is clicked.
-				 *
-				 * @since 1.26.0
+				 * Event fired if the 'reset' button in <code>P13nDialog</code> is clicked.
 				 */
 				reset: {}
 			}
@@ -415,7 +403,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Map an item of type sap.m.P13nPanel to an item of type sap.m.IconTabBarFilter
+	 * Map an item of type <code>sap.m.P13nPanel</code> to an item of type <code>sap.m.IconTabBarFilter</code>
 	 *
 	 * @param {sap.m.P13nPanel} oItem
 	 * @returns {sap.m.Button | sap.m.StandardListItem | null}
@@ -519,9 +507,8 @@ sap.ui.define([
 	/**
 	 * Returns visible panel.
 	 *
-	 * @returns {sap.m.P13nPanel | null}
+	 * @returns {sap.m.P13nPanel | null} panel
 	 * @public
-	 * @since 1.26.0
 	 */
 	P13nDialog.prototype.getVisiblePanel = function() {
 		var oPanel = null;
