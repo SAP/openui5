@@ -53,8 +53,6 @@
 			QUnit.test("then", function(assert) {
 				var $container = jQuery("#overlay-container");
 				assert.strictEqual($container.length, 1, "overlay container exists");
-				assert.strictEqual($container.offset().top, 0, "overlay container position is top = 0px");
-				assert.strictEqual($container.offset().left, 0, "overlay container position is left = 0px");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control", {
@@ -116,10 +114,6 @@
 
 				assert.notEqual(oDomRef.className.indexOf("sapUiDtOverlay"), -1, 'and the right CSS class overlay is set to the element');
 				assert.notEqual(oDomRef.className.indexOf("sapUiDtElementOverlay"), -1, 'and the right CSS element overlay class is set to the element');
-
-				var mSize = sap.ui.dt.DOMUtil.getSize(oElementDomRef);
-				assert.equal(oDomRef.offsetWidth, mSize.width, 'and the right width is applied to the overlay');
-				assert.equal(oDomRef.offsetHeight, mSize.height, 'and the right height is applied to the overlay');
 
 				var mElementOffset = jQuery(oDomRef).offset();
 				var mOverlayOffset = jQuery(oDomRef).offset();
@@ -896,7 +890,7 @@
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
 		<div id="content"></div>
+		<ol id="qunit-tests"></ol>
 	</body>
 </html>
