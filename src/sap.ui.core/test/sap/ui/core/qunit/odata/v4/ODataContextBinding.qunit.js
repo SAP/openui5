@@ -947,7 +947,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$kind : "Action"}));
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
-				{"sap-client" : "111"}, false, true)
+				{"sap-client" : "111"}, true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("post")
@@ -1004,7 +1004,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, false, true)
+				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("groupId");
 		oSingleCacheMock.expects("post")
@@ -1058,7 +1058,7 @@ sap.ui.require([
 			oCacheMock.expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 					"EntitySet(ID='1')/navigation1/" + sAction,
-					{"sap-client" : "111"}, false, true)
+					{"sap-client" : "111"}, true)
 				.returns(oSingleCache);
 			this.mock(oBinding.getContext()).expects("getObject")
 				.withExactArgs(sPathPrefix)
@@ -1082,7 +1082,7 @@ sap.ui.require([
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 						"EntitySet(ID='2')/navigation1/" + sAction,
-						{"sap-client" : "111"}, false, true)
+						{"sap-client" : "111"}, true)
 					.returns(oSingleCache);
 				that.mock(oBinding.getContext()).expects("getObject")
 					.withExactArgs(sPathPrefix)

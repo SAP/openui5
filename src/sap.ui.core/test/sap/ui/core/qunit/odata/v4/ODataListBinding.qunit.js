@@ -1578,8 +1578,9 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("/SalesOrderList"),
 			oListener = {};
 
+		this.mock(_Helper).expects("buildPath").withExactArgs(1, "foo").returns("~");
 		this.mock(oBinding.oCache).expects("deregisterChange")
-			.withExactArgs(1, "foo", sinon.match.same(oListener));
+			.withExactArgs("~", sinon.match.same(oListener));
 
 		oBinding.deregisterChange("foo", oListener, 1);
 	});

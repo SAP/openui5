@@ -540,7 +540,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.deregisterChange = function (sPath, oListener, iIndex) {
 		if (this.oCache) {
-			this.oCache.deregisterChange(iIndex, sPath, oListener);
+			this.oCache.deregisterChange(_Helper.buildPath(iIndex, sPath), oListener);
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, iIndex, sPath), oListener);
 		}

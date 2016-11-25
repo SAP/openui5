@@ -480,7 +480,7 @@ sap.ui.define([
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, false, true);
+						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, true);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache

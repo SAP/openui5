@@ -336,8 +336,8 @@ sap.ui.define([
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 		}
 		if (sResolvedPath[0] === "/") {
-			this.oCache = _Cache.createSingle(this.oModel.oRequestor, sResolvedPath.slice(1),
-				this.mQueryOptions, true);
+			this.oCache = _Cache.createProperty(this.oModel.oRequestor, sResolvedPath.slice(1),
+				this.mQueryOptions);
 		} else {
 			this.oCache = undefined;
 		}

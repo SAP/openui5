@@ -63,7 +63,7 @@ sap.ui.require([
 		 * @returns {object}
 		 *   a Sinon mock for the created cache object
 		 */
-		getCacheMock : function () {
+		getSingleCacheMock : function () {
 			var oCache = {
 					read : function () {},
 					setActive : function () {},
@@ -71,6 +71,22 @@ sap.ui.require([
 				};
 
 			this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+			return this.oSandbox.mock(oCache);
+		},
+
+		/**
+		 * Creates a Sinon mock for a cache object with read and refresh method.
+		 * @returns {object}
+		 *   a Sinon mock for the created cache object
+		 */
+		getPropertyCacheMock : function () {
+			var oCache = {
+					read : function () {},
+					setActive : function () {},
+					update : function () {}
+			};
+
+			this.oSandbox.mock(_Cache).expects("createProperty").returns(oCache);
 			return this.oSandbox.mock(oCache);
 		},
 
@@ -173,12 +189,12 @@ sap.ui.require([
 				oCreatedBinding;
 
 			if (bAbsolute) {
-				this.oSandbox.mock(_Cache).expects("createSingle")
+				this.oSandbox.mock(_Cache).expects("createProperty")
 					.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
-						{"sap-client" : "111"}, true)
+						{"sap-client" : "111"})
 					.returns(oCache);
 			} else {
-				this.oSandbox.mock(_Cache).expects("createSingle").never();
+				this.oSandbox.mock(_Cache).expects("createProperty").never();
 			}
 			this.oSandbox.stub(this.oModel, "bindingCreated", function (oBinding) {
 				oCreatedBinding = oBinding;
@@ -210,9 +226,9 @@ sap.ui.require([
 		this.oSandbox.mock(this.oModel).expects("resolve")
 			.withExactArgs(sPath, oContext)
 			.returns(sResolvedPath);
-		this.oSandbox.mock(_Cache).expects("createSingle")
+		this.oSandbox.mock(_Cache).expects("createProperty")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResolvedPath.slice(1),
-				{"sap-client" : "111"}, true)
+				{"sap-client" : "111"})
 			.returns(oCache);
 		this.oSandbox.stub(this.oModel, "bindingCreated", function (oBinding) {
 			oCreatedBinding = oBinding;
@@ -243,9 +259,9 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters))
 			.returns(mQueryOptions);
-		this.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createProperty")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
-				sinon.match.same(mQueryOptions), true);
+				sinon.match.same(mQueryOptions));
 
 		oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 
@@ -294,9 +310,9 @@ sap.ui.require([
 
 			function createContext(sType, sPath) {
 				if (sType === "base") {
-					oCacheMock.expects("createSingle")
+					oCacheMock.expects("createProperty")
 						.withExactArgs(sinon.match.same(oModel.oRequestor),
-							sPath.slice(1) + "/Name", {"sap-client" : "111"}, true)
+							sPath.slice(1) + "/Name", {"sap-client" : "111"})
 						.returns(oCache);
 					return oModel.createBindingContext(sPath);
 				}
@@ -523,9 +539,9 @@ sap.ui.require([
 				if (bAbsolute) { // absolute path: use cache on binding
 					sResolvedPath = sPath;
 					oContextBindingMock.expects("fetchValue").never();
-					oCacheMock.expects("createSingle")
+					oCacheMock.expects("createProperty")
 						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-							sResolvedPath.slice(1), {"sap-client" : "111"}, true)
+							sResolvedPath.slice(1), {"sap-client" : "111"})
 						.returns(oCache);
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
@@ -596,7 +612,7 @@ sap.ui.require([
 				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate"),
 				oTypeError = new Error("Unsupported EDM type...");
 
-			oCacheMock.expects("createSingle").returns(oCache);
+			oCacheMock.expects("createProperty").returns(oCache);
 			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sPath)
 				.returns(Promise.reject(oTypeError));
@@ -635,7 +651,7 @@ sap.ui.require([
 			done = assert.async(),
 			oControl = new TestControl({models : this.oModel});
 
-		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+		this.oSandbox.mock(_Cache).expects("createProperty").returns(oCache);
 		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /path", sClassName, sinon.match.same(oError));
 
@@ -653,7 +669,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with non-primitive resets value", function (assert) {
 		var oBinding,
-			oCacheMock = this.getCacheMock(),
+			oCacheMock = this.getPropertyCacheMock(),
 			bChangeReceived = false,
 			done = assert.async(),
 			sPath = "/EMPLOYEES(ID='1')/Name";
@@ -693,7 +709,7 @@ sap.ui.require([
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			done = assert.async();
 
-		this.getCacheMock().expects("read")
+		this.getPropertyCacheMock().expects("read")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
@@ -716,7 +732,7 @@ sap.ui.require([
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			done = assert.async();
 
-		this.getCacheMock().expects("read")
+		this.getPropertyCacheMock().expects("read")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
@@ -741,7 +757,7 @@ sap.ui.require([
 			oType = new TypeString(),
 			done = assert.async();
 
-		this.getCacheMock().expects("read")
+		this.getPropertyCacheMock().expects("read")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
@@ -772,7 +788,7 @@ sap.ui.require([
 				var oBinding,
 					oError = new Error("failed type"),
 					done = assert.async(),
-					oCacheMock = this.getCacheMock(),
+					oCacheMock = this.getPropertyCacheMock(),
 					oControl = new TestControl({models : this.oModel}),
 					sPath = "/EMPLOYEES(ID='42')/Name";
 
@@ -949,7 +965,7 @@ sap.ui.require([
 	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
 		var oControl;
 
-		this.getCacheMock().expects("read")
+		this.getPropertyCacheMock().expects("read")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
@@ -972,7 +988,7 @@ sap.ui.require([
 	QUnit.test("setValue (binding with cache): forbidden", function (assert) {
 		var oControl;
 
-		this.getCacheMock().expects("read")
+		this.getPropertyCacheMock().expects("read")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
@@ -1000,7 +1016,7 @@ sap.ui.require([
 			oModel = new ODataModel({serviceUrl: "/", synchronizationMode : "None"}),
 			oPropertyBinding,
 			oPropertyBindingCacheMock,
-			fnRead = this.getCacheMock().expects("read");
+			fnRead = this.getPropertyCacheMock().expects("read");
 
 		fnRead.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.callsArg(2).returns(_SyncPromise.resolve("HT-1000's Name"));
@@ -1092,7 +1108,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getSingleCacheMock(),
 			oModel = new ODataModel({
 				groupId : "$direct",
 				serviceUrl : "/service/?sap-client=111",
