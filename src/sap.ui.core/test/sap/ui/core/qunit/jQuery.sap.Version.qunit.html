@@ -4,19 +4,18 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>jQuery.sap.Version</title>
 
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
-				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal">
+				src="../../../../../resources/sap-ui-core.js">
 		</script>
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Initialization -->
-		<script language="javascript">
+		<script>
 			var _core;
 			sap.ui.getCore().registerPlugin({
 				startPlugin: function(oCore, bInit){
@@ -27,7 +26,7 @@
 		</script>
 
 		<!-- Test functions -->
-		<script language="javascript">
+		<script>
 
 		qutils.delayTestStart();
 

@@ -3,7 +3,8 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
 
@@ -12,17 +13,17 @@
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <!--[if IE]>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- Fake Service Implementaton -->
 <script src="analytics/o4aFakeService.js"></script>
@@ -30,7 +31,7 @@
 <script src="analytics/o4aMetadata.js"></script>
 
 <!-- Test functions -->
-<script type="text/javascript">
+<script>
 
 	jQuery.sap.require("sap.ui.model.analytics.odata4analytics");
 	var odata4analytics = sap.ui.model.analytics.odata4analytics;

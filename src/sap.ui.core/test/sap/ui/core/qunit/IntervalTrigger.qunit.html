@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>IntervalTrigger - sap.ui.core</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true">
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true">
 
 </script>
 
@@ -15,11 +15,11 @@
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
 
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
+<script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <style type="text/css">
@@ -33,7 +33,7 @@
 }
 </style>
 
-<script type="text/javascript">
+<script>
 	jQuery.sap.require("sap.ui.core.IntervalTrigger");
 	jQuery.sap.require("sap.ui.commons.Button");
 	jQuery.sap.require("sap.ui.commons.ButtonRenderer");
@@ -114,7 +114,7 @@
 	}
 </script>
 
-<script type="text/javascript">
+<script>
 	module("Basics");
 	test("All listeners registered", function() {
 		expect(1);

@@ -4,14 +4,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Test Page for SAPUI5 jQuery.sap.global functionality</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
-		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" data-marker="42">
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_belize/library.css" data-marker="42">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -150,7 +150,7 @@
 			});
 
 			QUnit.test("don't load twice", function(assert){
-				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css";
+				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_belize/library.css";
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 				assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");

@@ -20,7 +20,7 @@
 			"tablet" : true
 		},
 		"supportedThemes" : [
-			"sap_bluecrystal",
+			"sap_belize",
 			"sap_hcb"
 		],
 		"technology" : "UI5"
