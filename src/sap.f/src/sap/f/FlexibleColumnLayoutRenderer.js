@@ -16,9 +16,9 @@ sap.ui.define([],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			this.renderBeginColumn(oRm, oControl);
-			this.renderMidColumn(oRm, oControl);
-			this.renderEndColumn(oRm, oControl);
+			FCLRenderer.renderBeginColumn(oRm, oControl);
+			FCLRenderer.renderMidColumn(oRm, oControl);
+			FCLRenderer.renderEndColumn(oRm, oControl);
 
 			oRm.write("</div>");
 		};
@@ -37,7 +37,7 @@ sap.ui.define([],
 			oRm.renderControl(oControl._getBeginColumn());
 
 			// Arrow - collapse begin
-			oRm.renderControl(oBeginColumnBackArrow);
+			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
 
 			oRm.write("</div>");
 		};
@@ -59,10 +59,10 @@ sap.ui.define([],
 			}
 
 			// Arrow - expand begin
-			oRm.renderControl(oMidColumnForwardArrow);
+			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
 
 			// Arrow - expand end
-			oRm.renderControl(oMidColumnBackArrow);
+			FCLRenderer.renderArrow(oRm, oMidColumnBackArrow);
 
 			oRm.write("</div>");
 		};
@@ -83,9 +83,15 @@ sap.ui.define([],
 			}
 
 			// Arrow - right
-			oRm.renderControl(oEndColumnForwardArrow);
+			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
 
 			oRm.write("</div>");
+		};
+
+		FCLRenderer.renderArrow = function (oRm, oArrow) {
+			if (!sap.ui.Device.system.phone) {
+				oRm.renderControl(oArrow);
+			}
 		};
 
 		return FCLRenderer;
