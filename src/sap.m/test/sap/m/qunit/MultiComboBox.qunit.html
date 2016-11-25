@@ -4470,6 +4470,85 @@
 		strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
 		oComboBox.destroy();
 	});
+
+
+	QUnit.module("Integrations");
+
+	QUnit.test("Data binding: update model data", function (assert) {
+		var oData = {
+				"ProductCollection": [
+					{
+						"ProductId": "1234567",
+						"Name": "Power Projector 5"
+					},
+					{
+						"ProductId": "123",
+						"Name": "Power Projector 1"
+					}
+					, {
+						"ProductId": "1234",
+						"Name": "Power Projector 2"
+					}
+					, {
+						"ProductId": "12345",
+						"Name": "Power Projector 3"
+					}
+					, {
+						"ProductId": "123456",
+						"Name": "Power Projector 4"
+					}
+				],
+				"selectedCustomKeys": [
+					"1234567"
+				]
+			},
+			oData2 = [
+				{
+					"ProductId": "Zzz1",
+					"Name": "Something absolutely different 1"
+				},
+				{
+					"ProductId": "Zzz2",
+					"Name": "Something absolutely different 2"
+				},
+				{
+					"ProductId": "Zzz3",
+					"Name": "Something absolutely different 3"
+				},
+				{
+					"ProductId": "1234567",
+					"Name": "Power Projector 5"
+				}
+			];
+
+		var oMultiCombo = new sap.m.MultiComboBox({
+			items: {
+				path: '/ProductCollection',
+				template: new sap.ui.core.Item({key: "{ProductId}", text: "{Name}"})
+			},
+			selectedKeys: "{/selectedCustomKeys}"
+		});
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		oMultiCombo.setModel(oModel);
+		oMultiCombo.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys are set to 1 item.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are properly propagated.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are properly propagated.");
+
+		oModel.setProperty("/ProductCollection", oData2);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys remain to 1.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected keys remain to 1.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are not changed as the same item is in the new data.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are not changed as the same item is in the new data.");
+
+		oMultiCombo.destroy();
+		oModel.destroy();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
