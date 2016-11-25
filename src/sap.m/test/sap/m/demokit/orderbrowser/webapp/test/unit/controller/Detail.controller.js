@@ -9,31 +9,23 @@ sap.ui.define([
 				this.oEvent = {
 					getSource: function () {
 						return {
-							getText: function () {
-								return "dummy"
-							}
+							getText: sinon.stub().returns("12345")
 						};
-					},
-					getParameter: function () {
-						return "dummy"
 					}
-				};
-				this.Detail.getRouter = function () {
-					return {
-						navTo: function () {
-							return "router";
-						}
-					};
 				};
 			},
 			afterEach: function () {
 				this.Detail.destroy();
 			}
 		});
-		QUnit.test("should return telephone number in the _onHandleTelephonePress", function (assert) {
+
+		QUnit.test("Should trigger the telephone helper in the _onHandleTelephonePress event", function (assert) {
+			var oStub = sinon.stub(sap.m.URLHelper, "triggerTel");
+
 			this.Detail._onHandleTelephonePress(this.oEvent);
-			var sSpy = Sinon.spy(sap.m.URLHelper.triggerTel);
-			assert.strictEqual(sSpy.callCount, 0, "the telephone action has been triggered");
+
+			assert.ok(oStub.calledWith("12345"), "The function \"sap.m.URLHelper.triggerTel\" was called with the telephone number");
+			assert.strictEqual(oStub.callCount, 1, "the telephone action has been triggered once");
 		});
 
 });
