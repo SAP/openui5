@@ -489,7 +489,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._oList = new sap.m.List(this.getId() + "-list");
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
-		this._cAddItems = 0;
 		this._iUploadStartCallCounter = 0;
 		this.aItems = [];
 		this._aDeletedItemForPendingUpload = [];
@@ -843,15 +842,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			// collect items with the status "uploading"
 			var aUploadingItems = [];
 			for (i = 0; i < cAitems; i++) {
-				if (this.aItems[i] && this.aItems[i]._status === UploadCollection._uploadingStatus && this.aItems[i]._percentUploaded !== 100) {
+				if (this.aItems[i] && this.aItems[i]._status === UploadCollection._uploadingStatus) {
 					aUploadingItems.push(this.aItems[i]);
 				} else if (this.aItems[i] && this.aItems[i]._status !== UploadCollection._uploadingStatus && this.aItems[i]._percentUploaded === 100 && this.getItems().length === 0) {
 					// Skip this rendering because of model refresh only
 					aUploadingItems.push(this.aItems[i]);
 				}
 			}
-			if (aUploadingItems.length === 0) {
+			if (aUploadingItems.length !== 0) {
 				this.aItems = [];
+				this.aItems = this.getItems();
+				this.aItems = aUploadingItems.concat(this.aItems);
+			} else {
 				this.aItems = this.getItems();
 			}
 		} else {
@@ -1564,6 +1566,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (!oItem._status) {
 				//Set default status value -> UploadCollection._displayStatus
 				oItem._status = UploadCollection._displayStatus;
+			} else if (that.getInstantUpload() && that._oItemForDelete &&
+								 that._oItemForDelete._status === UploadCollection._toBeDeletedStatus &&
+								 oItem.getDocumentId() === that._oItemForDelete.documentId) {
+				return false;
 			}
 			if (!oItem._percentUploaded && oItem._status === UploadCollection._uploadingStatus) {
 				//Set default percent uploaded
@@ -1658,16 +1664,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._handleDelete = function(oEvent, oContext) {
 		var oParams = oEvent.getParameters();
-		var aItems = oContext.getAggregation("items");
+		var aItems = oContext.getItems();
 		var sItemId = oParams.id.split("-deleteButton")[0];
-		var index = null;
+		var oItemForDelete;
+		var iIndex;
 		var sCompact = "";
 		var sFileName;
 		var sMessageText;
 		oContext.sDeletedItemId = sItemId;
 		for (var i = 0; i < aItems.length; i++) {
 			if (aItems[i].sId === sItemId) {
-				index = i;
+				iIndex = i;
+				oItemForDelete = {
+					documentId : aItems[i].getDocumentId(),
+					_iLineNumber : iIndex
+				};
 				break;
 			}
 		}
@@ -1684,16 +1695,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 		}
 
-		if (!!aItems[index] && aItems[index].getEnableDelete()) {
+		if (aItems[iIndex] && aItems[iIndex].getEnableDelete()) {
 			// popup delete file
-			sFileName =  aItems[index].getFileName();
+			sFileName =  aItems[iIndex].getFileName();
 			if (!sFileName) {
 				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_WITHOUT_FILENAME_TEXT");
 			} else {
 				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", sFileName);
 			}
-			oContext._oItemForDelete = aItems[index];
-			oContext._oItemForDelete._iLineNumber = index;
+			oContext._oItemForDelete = oItemForDelete;
 			sap.m.MessageBox.show(sMessageText, {
 				title : this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
 				actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
@@ -1710,15 +1720,26 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
-		this._oItemForDelete._status = UploadCollection._toBeDeletedStatus;
+		var aItems = this.getItems();
+		var oItemToBeDeleted;
+		if (this.getInstantUpload()) {
+			for (var i = 0; i < aItems.length; i++) {
+				if (aItems[i].getDocumentId() === this._oItemForDelete.documentId) {
+					oItemToBeDeleted = aItems[i];
+				}
+			}
+		} else {
+			oItemToBeDeleted = aItems[this._oItemForDelete._iLineNumber];
+		}
 		if (oAction === sap.m.MessageBox.Action.OK) {
+			this._oItemForDelete._status = UploadCollection._toBeDeletedStatus;
 			if (this.getInstantUpload()) {
 				// fire event
 				this.fireFileDeleted({
 					// deprecated
-					documentId : this._oItemForDelete.getDocumentId(),
+					documentId : this._oItemForDelete.documentId,
 					// new
-					item : this._oItemForDelete
+					item : oItemToBeDeleted
 				});
 			} else {
 				if (this.aItems.length === 1) {
@@ -1730,9 +1751,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						this.sFocusId = this.aItems[0].getId() + "-cli";
 					}
 				}
-				this._aDeletedItemForPendingUpload.push(this._oItemForDelete);
+				this._aDeletedItemForPendingUpload.push(oItemToBeDeleted);
 				this.aItems.splice(this._oItemForDelete._iLineNumber, 1);
-				this.removeAggregation("items", this._oItemForDelete, false);
+				this.removeAggregation("items", oItemToBeDeleted, false);
 			}
 		}
 	};
@@ -2005,7 +2026,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (oEvent) {
 			var that = this;
 			var sRequestValue, iCountFiles, i, sFileName, oItem, sStatus, sFileSizeFormated, oAttr;
-			this._cAddItems = 0;
 			if (Device.browser.msie && Device.browser.version <= 9) {
 				// FileUploader does not support files parameter for IE9 for the time being
 				var sNewValue = oEvent.getParameter("newValue");
@@ -2102,7 +2122,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					oItem._percentUploaded = 0;
 				}
 				this.aItems.unshift(oItem);
-				this._cAddItems++;
 			} else {
 				this._requestIdValue = this._requestIdValue + 1;
 				sRequestValue = this._requestIdValue.toString();
@@ -2111,7 +2130,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					this._aFileUploadersForPendingUpload.push(this._oFileUploader);
 				}
 				for (i = 0; i < iCountFiles; i++) {
-					oItem = new sap.m.UploadCollectionItem({
+					oItem = new Library.UploadCollectionItem({
 						fileName: oEvent.getParameter("files")[i].name
 					});
 					oItem._status = sStatus;
@@ -2127,7 +2146,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						oItem._percentUploaded = 0;
 					}
 					this.aItems.unshift(oItem);
-					this._cAddItems++;
 				}
 				//headerParameters
 				if (aHeaderParametersAfter) {
