@@ -159,8 +159,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement){
-		//TODO: childrenName is for compatible change; remove the check asap
-		var vChildNames = this.getAggregation(sAggregationName).childNames || this.getAggregation(sAggregationName).childrenName;
+		var vChildNames = this.getAggregation(sAggregationName).childNames;
 		if (typeof vChildNames === "function") {
 			vChildNames = vChildNames.call(null, oElement);
 		}
