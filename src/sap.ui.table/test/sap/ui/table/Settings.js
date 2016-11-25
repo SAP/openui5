@@ -314,6 +314,106 @@
 				}
 			}
 		},
+		ROWACTIONS: {
+			text: "Row Actions",
+			sub: {
+				NAVIGATION : {
+					text: "Navigation",
+					action: function(oTable) {
+						var oTemplate = new sap.ui.table.RowAction({items: [
+							new sap.ui.table.RowActionItem({
+								type: "Navigation",
+								press: fnRowActionPress,
+								visible: {
+									path: "checked",
+									formatter: function(bEnabled) {
+										if (bEnabled === true || bEnabled === false) {
+											return bEnabled;
+										}
+										return true;
+									}
+								}
+							})
+						]});
+						switchRowActions(oTable, 1, oTemplate);
+					}
+				},
+				NAVIGATIONDELETE : {
+					text: "Navigation & Delete",
+					action: function(oTable) {
+						var oTemplate = new sap.ui.table.RowAction({items: [
+							new sap.ui.table.RowActionItem({
+								type: "Navigation",
+								press: fnRowActionPress,
+								visible: {
+									path: "checked",
+									formatter: function(bEnabled) {
+										if (bEnabled === true || bEnabled === false) {
+											return bEnabled;
+										}
+										return true;
+									}
+								}
+							}),
+							new sap.ui.table.RowActionItem({type: "Delete", press: fnRowActionPress})
+						]});
+						switchRowActions(oTable, 2, oTemplate);
+					}
+				},
+				NAVIGATIONCUSTOM : {
+					text: "Navigation & Custom",
+					action: function(oTable) {
+						var oTemplate = new sap.ui.table.RowAction({items: [
+							new sap.ui.table.RowActionItem({
+								type: "Navigation",
+								press: fnRowActionPress,
+								visible: {
+									path: "checked",
+									formatter: function(bEnabled) {
+										if (bEnabled === true || bEnabled === false) {
+											return bEnabled;
+										}
+										return true;
+									}
+								}
+							}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress})
+						]});
+						switchRowActions(oTable, 2, oTemplate);
+					}
+				},
+				MULTI : {
+					text: "Multiple Actions",
+					action: function(oTable) {
+						var oTemplate = new sap.ui.table.RowAction({items: [
+							new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
+						]});
+						switchRowActions(oTable, 2, oTemplate);
+					}
+				},
+				MULTI : {
+					text: "Multiple Actions (1 Column)",
+					action: function(oTable) {
+						var oTemplate = new sap.ui.table.RowAction({items: [
+							new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
+							new sap.ui.table.RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
+						]});
+						switchRowActions(oTable, 1, oTemplate);
+					}
+				},
+				NONE : {
+					text: "No Actions",
+					action: function(oTable) {
+						switchRowActions(oTable, 0, null);
+					}
+				}
+			}
+		}
 	};
 
 	var bInit = false;
@@ -407,27 +507,6 @@
 		return false;
 	};
 
-	window.TABLESETTINGS.showRowActions = function(iCount, iNumberOfActions) {
-		TABLESETTINGS.table.setRowActionCount(iCount);
-		var oRowAction = new sap.ui.table.RowAction();
-		var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
-		for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
-			var oItem = new sap.ui.table.RowActionItem({
-				icon: aActions[i].icon,
-				text: aActions[i].text,
-				visible: i == 0 ? "{checked}" : true,
-				type: aActions[i].type || "Custom",
-				press: function(oEvent) {
-					var oRow = oEvent.getParameter("row");
-					var oItem = oEvent.getParameter("item");
-					alert("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
-				}
-			});
-			oRowAction.addItem(oItem);
-		}
-		TABLESETTINGS.table.setRowActionTemplate(oRowAction);
-	};
-
 	//*************************
 
 	function setDensity(sDensity, oTable) {
@@ -471,5 +550,22 @@
 				break;
 		}
 	}
+
+	function fnRowActionPress(oEvent) {
+		var oRow = oEvent.getParameter("row");
+		var oItem = oEvent.getParameter("item");
+		alert("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
+	}
+
+	function switchRowActions(oTable, iCount, oTemplate) {
+		var oCurrentTemplate = oTable.getRowActionTemplate();
+		if (oCurrentTemplate) {
+			oCurrentTemplate.destroy();
+		}
+
+		oTable.setRowActionTemplate(oTemplate);
+		oTable.setRowActionCount(iCount);
+	}
+
 
 })();
