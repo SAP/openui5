@@ -274,14 +274,19 @@ sap.ui.require([
 				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 				oBinding;
 
+			this.spy(ODataContextBinding.prototype, "makeCache");
 			this.mock(_Cache).expects("createSingle")
 				.exactly(bAbsolute ? 1 : 0)
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
 				}).returns(oCache);
 
+			// code under test
 			oBinding = this.oModel.bindContext(sPath, oContext);
 
+			if (bAbsolute) {
+				sinon.assert.calledOnce(ODataContextBinding.prototype.makeCache);
+			}
 			assert.ok(oBinding instanceof ODataContextBinding);
 			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
@@ -306,6 +311,7 @@ sap.ui.require([
 				mParameters = {},
 				mQueryOptions = {};
 
+			this.spy(ODataContextBinding.prototype, "makeCache");
 			this.mock(this.oModel).expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 					sinon.match.same(mParameters), true)
@@ -318,8 +324,12 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
 					sinon.match.same(mQueryOptions));
 
+			// code under test
 			oBinding = this.oModel.bindContext(sPath, null, mParameters);
 
+			if (sPath[0] === "/") {
+				sinon.assert.calledOnce(ODataContextBinding.prototype.makeCache);
+			}
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 			assert.strictEqual(oBinding.sGroupId, "group");
 			assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
