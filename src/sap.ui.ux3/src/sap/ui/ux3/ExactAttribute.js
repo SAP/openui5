@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	ExactAttribute._MINWIDTH = 70;
 	ExactAttribute._MAXWIDTH = 500;
 
-	ExactAttribute.prototype.onInit = function (){
+	ExactAttribute.prototype.init = function (){
 		this._getAttributesCallCount = 0;
 	};
 
