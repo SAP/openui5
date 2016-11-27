@@ -35,6 +35,15 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
 
 	/**
+	 * Creates a new instance of the ODataAnnotations annotation loader.
+	 *
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
+	 * @param {map} mOptions Obligatory options
+	 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
+	 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
+	 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
+	 * @public
+	 *
 	 * @class Annotation loader for OData V2 services
 	 *
 	 * @author SAP SE
@@ -47,17 +56,7 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	 * @extends sap.ui.base.EventProvider
 	 */
 	var ODataAnnotations = EventProvider.extend("sap.ui.model.odata.v2.ODataAnnotations", /** @lends sap.ui.model.odata.v2.ODataAnnotations.prototype */ {
-		/**
-		 * Creates a new instance of the ODataAnnotations annotation loader.
-		 *
-		 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
-		 * @param {map} mOptions Obligatory options
-		 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
-		 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
-		 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
-		 * @constructor
-		 * @public
-		 */
+
 		constructor : function(oMetadata, mOptions) {
 			// Allow event substription in constructor options
 			EventProvider.apply(this, [ mOptions ]);

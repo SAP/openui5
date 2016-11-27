@@ -110,7 +110,7 @@
 				var sFollowup = oAttribute.getAdditionalData() ? oAttribute.getAdditionalData().followup : null;
 				if(sFollowup){
 					jQuery.ajax({
-						  url: "resources/exactdata/"+sFollowup,
+						  url: "resources/exactdata/" + sFollowup + ".json",
 						  async: !bSyncCalls,
 						  dataType: 'json',
 						  type: "GET",
@@ -127,7 +127,7 @@
 			});
 
 			var oModel = new sap.ui.model.json.JSONModel();
-			oModel.loadData("resources/exactdata/lazy", null, !bSyncCalls);
+			oModel.loadData("resources/exactdata/lazy.json", null, !bSyncCalls);
 
 			oExactBrowser = createBrowserTest({title: "My Attributes", enableListClose: true}, 4);
 			oExactBrowser.bindAggregation("attributes", "/atts", oAttrTemplate);
