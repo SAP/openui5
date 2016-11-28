@@ -1197,6 +1197,102 @@ QUnit.test("Destroy popup during open/close should also clear the close timer of
 	assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
 });
 
+QUnit.module("Autoclose Area", {
+	//Define a simple control with just a plain HTML input
+	beforeEach: function() {
+		this.CustomInput = sap.ui.core.Control.extend("CustomInput", {
+			metadata: {
+				events: {
+					change: {
+						parameters: {
+							value: {type: "string"}
+						}
+					}
+				}
+			},
+			renderer: function (oRm, oControl) {
+				oRm.write("<div");
+				oRm.writeControlData(oControl);
+				oRm.write(">");
+				oRm.write("<input id='" + oControl.getId() + "-input' />");
+				oRm.write("</div>");
+			},
+			getFocusDomRef: function() {
+				return this.getDomRef("input");
+			},
+			onsapenter: function() {
+				this.fireChange({value: "zzz"});
+			}
+		});
+
+		var oPopupDomRef = jQuery.sap.domById("popup1");
+		this.oPopup = new sap.ui.core.Popup(oPopupDomRef);
+		this.oPopup.setAutoClose(true);
+	},
+	afterEach: function() {
+		this.oPopup.destroy();
+		this.oInput.destroy();
+	}
+});
+
+QUnit.test("The DOM element of Autoclose area should be updated when it's rerendered", function(assert) {
+	assert.expect(3);
+
+	var that = this, done = assert.async();
+	// Setup
+	this.oInput = new this.CustomInput({
+		change: function () {
+			that.oPopup.open();
+		}
+	}).placeAt("uiarea");
+
+	sap.ui.getCore().applyChanges();
+
+	var fnClosed = function() {
+		assert.ok(true, "Popup is closed through autoclose");
+		done();
+	};
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened);
+		this.oPopup.attachClosed(fnClosed);
+
+		this.oInput.invalidate();
+		sap.ui.getCore().applyChanges();
+		this.oInput.focus();
+
+		jQuery.sap.byId("focusableElement2").focus();
+	}.bind(this);
+
+	this.oPopup.attachOpened(fnOpened);
+	this.oPopup.setAutoCloseAreas([this.oInput]);
+
+	this.oInput.focus();
+	sap.ui.qunit.QUnitUtils.triggerKeydown(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+	sap.ui.qunit.QUnitUtils.triggerKeyup(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+	assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
+	assert.ok(this.oPopup.isOpen(), "Popup should be opened");
+});
+
+QUnit.test("autoclose area delegate should be removed when popup is destroyed", function(assert) {
+	this.oInput = new this.CustomInput({
+		change: function () {
+			that.oPopup.open();
+		}
+	}).placeAt("uiarea");
+
+	this.oRemoveDelegateSpy = this.spy(this.oInput, "removeEventDelegate");
+
+	sap.ui.getCore().applyChanges();
+
+	this.oPopup.setAutoCloseAreas([this.oInput]);
+
+	this.oPopup.destroy();
+
+	assert.equal(this.oRemoveDelegateSpy.callCount, 1, "Delegate is removed after destroy popup");
+});
+
 QUnit.module("bug fixes", {
 	beforeEach: function() {
 		var oPopupDomRef = jQuery.sap.domById("popup1");
