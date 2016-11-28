@@ -351,6 +351,32 @@
 				ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
+			test("Setting model value to null, unbindValue and set value", function () {
+				// SUT
+				var oCurrency = new sap.ui.unified.Currency({
+					value: '{/value}',
+					currency:'USD'
+
+				});
+				oCurrency.placeAt('qunit-fixture');
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				var oModel = new sap.ui.model.json.JSONModel({value: null});
+				oCurrency.setModel(oModel);
+				// Assert
+				strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+
+				// Act
+				oCurrency.unbindProperty('value');
+				oCurrency.setValue(200);
+				// Assert
+				strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+
+				// Cleanup
+				oCurrency.destroy();
+			});
+
 			module("Control live update", {
 				beforeEach : function () {
 					this.sandbox = sinon.sandbox;
