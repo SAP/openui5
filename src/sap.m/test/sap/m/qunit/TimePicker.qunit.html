@@ -1235,6 +1235,47 @@
 			tp.destroy();
 		});
 
+		test("binding to value property overrides displayFormat property", function() {
+			//sut
+			var tp = new sap.m.TimePicker({
+				value: {
+					path: "/timeValue",
+					type: new sap.ui.model.type.Time({
+						style: "short",
+						strictParsing: true
+					})
+				}
+			});
+
+			//arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				timeValue: new Date(2000, 1, 2, 16, 35, 54)
+			});
+			tp.setModel(oModel);
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			equal(tp.getValue(), "4:35 PM", "the value property is set in and formatted correctly");
+
+			//act
+			qutils.triggerEvent("focusin", tp.getDomRef());
+			//assert
+			equal(tp._getInputValue(), " 4:35 PM", "the value property is formatted correctly (with leading space)");
+
+			//act
+			tp._openPicker();
+			this.clock.tick(1);
+
+			//assert
+			equal(tp._getSliders().getAggregation("_columns").length, 3, "the picker should display 3 sliders");
+
+			//cleanup
+			tp.destroy();
+		});
+
 		module("slider interactions", {
 			_createMouseWheelEvent: function(iWheelSteps) {
 				var oEvent = {};
