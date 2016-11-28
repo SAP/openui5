@@ -118,7 +118,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		 * Navigation Row Action.
 		 * @public
 		 */
-		Navigation : "Navigation"
+		Navigation : "Navigation",
+
+		/**
+		 * Delete Row Action.
+		 * @public
+		 */
+		Delete : "Delete"
 
 	};
 

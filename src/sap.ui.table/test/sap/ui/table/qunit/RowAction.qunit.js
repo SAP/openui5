@@ -4,8 +4,9 @@
 
 sap.ui.test.qunit.delayTestStart(500);
 
-var MENUICON = "sap-icon://drop-down-list";
+var MENUICON = "sap-icon://overflow";
 var NAVICON = "sap-icon://navigation-right-arrow";
+var DELICON = "sap-icon://sys-cancel"
 
 QUnit.module("Rendering", {
 	setup: function() {
@@ -212,6 +213,15 @@ QUnit.test("Type Navigation", function(assert) {
 	}, ["sap-icon://account"], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NAVIGATE")]);
 });
 
+QUnit.test("Type Delete", function(assert) {
+	checkRendering(this, "addItem", assert, function(){
+		this.rowAction.addItem(new sap.ui.table.RowActionItem({type: "Delete"}));
+	}, [DELICON], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_DELETE")]);
+	checkRendering(this, "setIcon", assert, function(){
+		this.rowAction.getItems()[0].setIcon("sap-icon://account");
+	}, ["sap-icon://account"], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_DELETE")]);
+});
+
 
 
 
@@ -222,6 +232,7 @@ QUnit.module("Behavior", {
 		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "A"}));
 		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
 		this.rowAction.placeAt("content");
+		sap.ui.getCore().applyChanges();
 		this.row = {};
 		this.rowAction._getRow = function() {
 			return that.row;
@@ -272,14 +283,34 @@ QUnit.test("Press on second item", function(assert) {
 });
 
 
-QUnit.test("Press on menu item", function(assert) {
+QUnit.test("Press on menu item (click / tab)", function(assert) {
 	this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
 	assert.ok(!this.rowAction.getAggregation("_menu"), "No Menu initialized yet");
 	var oEventParams = null;
 	this.rowAction.getItems()[1].attachPress(function(oEvent) {
 		oEventParams = oEvent.getParameters();
 	});
-	this.aInnerIcons[1].firePress();
+	qutils.triggerEvent(sap.ui.Device.support.touch && !sap.ui.Device.system.desktop ? "tap" : "click", this.aInnerIcons[1].getDomRef());
+	assert.ok(!oEventParams, "Press Event Not Triggered");
+	var oMenu = this.rowAction.getAggregation("_menu");
+	assert.ok(oMenu, "Menu initialized");
+	assert.ok(oMenu.bOpen, "Menu is open");
+	assert.equal(oMenu.getItems().length, 2, "Menu has 2 Items");
+	oMenu.getItems()[0].fireSelect();
+	assert.ok(!!oEventParams, "Press Event Triggered");
+	assert.equal(oEventParams["row"], this.row, "Event Parameter 'row'");
+	assert.equal(oEventParams["item"], this.rowAction.getItems()[1], "Event Parameter 'item'");
+});
+
+
+QUnit.test("Press on menu item (enter)", function(assert) {
+	this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
+	assert.ok(!this.rowAction.getAggregation("_menu"), "No Menu initialized yet");
+	var oEventParams = null;
+	this.rowAction.getItems()[1].attachPress(function(oEvent) {
+		oEventParams = oEvent.getParameters();
+	});
+	qutils.triggerKeyup(this.aInnerIcons[1].getDomRef(), "ENTER");
 	assert.ok(!oEventParams, "Press Event Not Triggered");
 	var oMenu = this.rowAction.getAggregation("_menu");
 	assert.ok(oMenu, "Menu initialized");
@@ -350,4 +381,70 @@ QUnit.test("Item._getText", function(assert) {
 	oItem.setText("T");
 	assert.equal(oItem._getText(false), "T", "No Text or Tooltip set but type (Text preferred)");
 	assert.equal(oItem._getText(true), "TT", "No Text or Tooltip set but type (Tooltip preferred)");
+});
+
+
+
+
+QUnit.module("ACC", {
+	setup: function() {
+		this.rowAction = new sap.ui.table.RowAction();
+		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "A"}));
+		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
+		this.rowAction.placeAt("content");
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function () {
+		this.rowAction.destroy();
+		this.rowAction = null;
+	}
+});
+
+
+QUnit.test("getAccessibilityInfo", function(assert) {
+	assert.equal(this.rowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items");
+	assert.equal(this.rowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items");
+	assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]), "ACCInfo.description: 2 Items");
+	this.rowAction.setVisible(false);
+	assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - invisible");
+	assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - invisible");
+	assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"), "ACCInfo.description: 2 Items - invisible");
+	this.rowAction.setVisible(true);
+	this.rowAction._setCount(0);
+	assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - no Count");
+	assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - no Count");
+	assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"), "ACCInfo.description: 2 Items - no Count");
+	this.rowAction._setCount(2);
+	this.rowAction.getItems()[0].setVisible(false);
+	assert.equal(this.rowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items - 1 invisible");
+	assert.equal(this.rowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items - 1 invisible");
+	assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_SINGLE_ACTION"), "ACCInfo.description: 2 Items - 1 invisible");
+	this.rowAction.destroyItems();
+	assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 0 Items");
+	assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 0 Items");
+	assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"), "ACCInfo.description: 0 Items");
+});
+
+
+QUnit.test("_setIconLabel", function(assert) {
+	this.rowAction._setIconLabel("hello");
+	this.rowAction._setIconLabel("hello2");
+	var aIcons = this.rowAction.getAggregation("_icons");
+	for (var i = 0; i < aIcons.length; i++) {
+		assert.equal(aIcons[i].getAriaLabelledBy().length, 1, "Number of Labels correct for item " + i);
+		assert.equal(aIcons[i].getAriaLabelledBy()[0], "hello2", "Label correct for item " + i);
+	}
+});
+
+
+QUnit.test("Menu Icon", function(assert) {
+	var aIcons = this.rowAction.getAggregation("_icons");
+	for (var i = 0; i < aIcons.length; i++) {
+		assert.ok(!aIcons[i].$().attr("aria-haspopup"), "No aria-haspopup on icon " + i);
+	}
+	this.rowAction.addItem(new sap.ui.table.RowActionItem({type : "Delete"}));
+	assert.ok(!aIcons[0].$().attr("aria-haspopup"), "No aria-haspopup on icon 0");
+	assert.equal(aIcons[1].$().attr("aria-haspopup"), "true", "aria-haspopup on icon 1");
+	this.rowAction._setCount(1);
+	assert.equal(aIcons[0].$().attr("aria-haspopup"), "true", "aria-haspopup on icon 0");
 });

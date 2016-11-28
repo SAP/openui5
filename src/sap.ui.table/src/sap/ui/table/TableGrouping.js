@@ -188,7 +188,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
 				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
-			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER) {
+			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER
+							|| oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWACTION) {
 				return oInfo.cell.hasClass("sapUiTableGroupHeader");
 			}
 			return false;
@@ -217,7 +218,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
 				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
-			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER) {
+			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER
+							|| oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWACTION) {
 				return oInfo.cell.hasClass("sapUiAnalyticalTableSum");
 			}
 			return false;
@@ -307,7 +309,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				$Row = oDomRefs.row,
 				$ScrollRow = oDomRefs.rowScrollPart,
 				$FixedRow = oDomRefs.rowFixedPart,
-				$RowHdr = oDomRefs.rowSelector;
+				$RowHdr = oDomRefs.rowSelector,
+				$RowAct = oDomRefs.rowAction;
 
 			$Row.attr({
 				"data-sap-ui-level" : iLevel
@@ -355,7 +358,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				}
 			}
 
-			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $ScrollRow, $RowHdr, $FixedRow, bChildren, bExpanded, iLevel, $TreeIcon);
+			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bChildren, bExpanded, iLevel, $TreeIcon);
 		},
 
 		/**
@@ -384,7 +387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 					.css(this._bRtlMode ? "margin-right" : "margin-left", "");
 			}
 
-			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, oDomRefs.rowScrollPart, oDomRefs.rowSelector, oDomRefs.rowFixedPart, false, false, -1, $TreeIcon);
+			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, oDomRefs.rowScrollPart, oDomRefs.rowSelector, oDomRefs.rowFixedPart, oDomRefs.rowAction, false, false, -1, $TreeIcon);
 		},
 
 		/**

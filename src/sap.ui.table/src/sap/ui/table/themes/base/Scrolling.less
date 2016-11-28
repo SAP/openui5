@@ -27,6 +27,7 @@
 	overflow-x: hidden;
 	overflow-y: scroll;
 	background-color: @sapUiListBackground;
+	z-index: 4; /* Ensure Scrollbar before Resize/Reorder bars*/
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
@@ -145,6 +146,9 @@ html[data-sap-ui-browser^="ed"] {
 	overflow-y: hidden;
 	background-color: @sapUiListBackground;
 }
+
+.sapUiTableRActS .sapUiTableHSb,
+.sapUiTableRAct .sapUiTableHSb,
 .sapUiTableVScr .sapUiTableHSb {
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 }

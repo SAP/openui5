@@ -127,11 +127,20 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem'],
 		return this;
 	};
 
+	/**
+	 * Fires the press event of this item with the relevant parameters.
+	 * @private
+	 */
 	Item.prototype._doFirePress = function() {
 		var oParent = this.getParent();
 		this.firePress({item: this, row: oParent && oParent._getRow ? oParent._getRow() : null});
 	};
 
+	/**
+	 * Creates, updates and returns the corresponding menu item.
+	 * @returns {sap.ui.unified.MenuItem} The corresponding menu item
+	 * @private
+	 */
 	Item.prototype._getMenuItem = function() {
 		if (!this._menuItem) {
 			var that = this;
@@ -147,6 +156,11 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem'],
 		return this._menuItem;
 	};
 
+	/**
+	 * Computes which icon should be used for this item.
+	 * @returns {string} The name of the icon in the icon font.
+	 * @private
+	 */
 	Item.prototype._getIcon = function() {
 		var oIcon = this.getIcon();
 		if (oIcon) {
@@ -155,9 +169,18 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem'],
 		if (this.getType() == RowActionType.Navigation) {
 			return "sap-icon://navigation-right-arrow";
 		}
+		if (this.getType() == RowActionType.Delete) {
+			return "sap-icon://sys-cancel";
+		}
 		return null;
 	};
 
+	/**
+	 * Computes which text should be used for this item.
+	 * @param {boolean} bPreferTooltip Whether the tooltip or text is preferred
+	 * @returns {string} The item text
+	 * @private
+	 */
 	Item.prototype._getText = function(bPreferTooltip) {
 		var sText = bPreferTooltip ? (this.getTooltip_AsString() || this.getText()) : (this.getText() || this.getTooltip_AsString());
 		if (sText) {
@@ -166,14 +189,28 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem'],
 		if (this.getType() == RowActionType.Navigation) {
 			return this.getParent()._oResBundle.getText("TBL_ROW_ACTION_NAVIGATE");
 		}
+		if (this.getType() == RowActionType.Delete) {
+			return this.getParent()._oResBundle.getText("TBL_ROW_ACTION_DELETE");
+		}
 		return null;
 	};
 
+	/**
+	 * Updates the given icon control with the property values of this item.
+	 * @param {sap.ui.core.Icon} oIcon The icon control to update
+	 * @private
+	 */
 	Item.prototype._syncIcon = function(oIcon) {
 		oIcon.setSrc(this._getIcon());
 		oIcon.setTooltip(this._getText(true));
 	};
 
+	/**
+	 * Informs the parent RowAction control about changes of this item.
+	 * @see sap.ui.table.RowAction#_updateIcons
+	 * @param {boolean} bForce Whether the list of visible items needs to be determined or cache can be used.
+	 * @private
+	 */
 	Item.prototype._updateRowAction = function(bForce) {
 		var oParent = this.getParent();
 		if (oParent && oParent._updateIcons) {

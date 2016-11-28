@@ -107,6 +107,8 @@ QUnit.test("toggleGroupHeaderByRef", function(assert) {
 });
 
 QUnit.test("isInSumRow", function(assert) {
+	initRowActions(oTable, 1, 1);
+
 	fakeSumRow(0);
 
 	assert.ok(TableUtils.Grouping.isInSumRow(getCell(0, 0)), "DATACELL in sum row");
@@ -115,6 +117,9 @@ QUnit.test("isInSumRow", function(assert) {
 	assert.ok(TableUtils.Grouping.isInSumRow(getRowHeader(0)), "ROWHEADER in sum row");
 	assert.ok(!TableUtils.Grouping.isInSumRow(getRowHeader(1)), "ROWHEADER in normal row");
 
+	assert.ok(TableUtils.Grouping.isInSumRow(getRowAction(0)), "ROWACTION in sum row");
+	assert.ok(!TableUtils.Grouping.isInSumRow(getRowAction(1)), "ROWACTION in normal row");
+
 	assert.ok(!TableUtils.Grouping.isInSumRow(getColumnHeader(0)), "COLUMNHEADER");
 	assert.ok(!TableUtils.Grouping.isInSumRow(getSelectAll()), "COLUMNROWHEADER");
 	assert.ok(!TableUtils.Grouping.isInSumRow(null), "null");
@@ -122,6 +127,8 @@ QUnit.test("isInSumRow", function(assert) {
 });
 
 QUnit.test("isInGroupingRow", function(assert) {
+	initRowActions(oTable, 1, 1);
+
 	fakeGroupRow(0);
 
 	assert.ok(TableUtils.Grouping.isInGroupingRow(getCell(0, 0)), "DATACELL in group row");
@@ -129,6 +136,9 @@ QUnit.test("isInGroupingRow", function(assert) {
 
 	assert.ok(TableUtils.Grouping.isInGroupingRow(getRowHeader(0)), "ROWHEADER in group row");
 	assert.ok(!TableUtils.Grouping.isInGroupingRow(getRowHeader(1)), "ROWHEADER in normal row");
+
+	assert.ok(TableUtils.Grouping.isInGroupingRow(getRowAction(0)), "ROWACTION in group row");
+	assert.ok(!TableUtils.Grouping.isInGroupingRow(getRowAction(1)), "ROWACTION in normal row");
 
 	assert.ok(!TableUtils.Grouping.isInGroupingRow(getColumnHeader(0)), "COLUMNHEADER");
 	assert.ok(!TableUtils.Grouping.isInGroupingRow(getSelectAll()), "COLUMNROWHEADER");
