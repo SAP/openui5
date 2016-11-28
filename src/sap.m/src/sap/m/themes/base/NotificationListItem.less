@@ -1,6 +1,8 @@
 @containerPadding: 1rem;
 
-// NotificationListItem
+/* ==========================================================================
+   NotificationListItem
+  ========================================================================== */
 
 .sapMNLI {
   padding: @containerPadding;
@@ -12,13 +14,13 @@
   margin-top: 0.125rem;
 }
 
-// Priority styles =====================================================================================================
+/* ==========================================================================
+   Priority styles
+  ========================================================================== */
 
-.sapMNLI .sapMNLB-Priority {
-  border-radius: 0.1875rem 0 0 0.1875rem;
-}
-
-// Header styles =======================================================================================================
+/* ==========================================================================
+   Header styles
+  ========================================================================== */
 
 .sapMNLI-Header {
   max-height: 2.5rem;
@@ -39,7 +41,9 @@
   font-weight: bold;
 }
 
-// Body styles =========================================================================================================
+/* ==========================================================================
+   Body styles
+  ========================================================================== */
 
 .sapMNLI-Body {
 
@@ -78,7 +82,9 @@
   color: @sapUiLightText;
 }
 
-// Footer styles =======================================================================================================
+/* ==========================================================================
+   Footer styles
+  ========================================================================== */
 
 .sapMNLI-Footer {
   margin-bottom: -1rem;
@@ -103,10 +109,11 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
   display: none;
 }
 
-// Compact mode ========================================================================================================
+/* Compact mode
+  ========================================================================== */
 
 .sapUiSizeCompact .sapMNLI-Footer {
-  margin-bottom: -0.75rem;
+  margin-bottom: -1rem;
   box-sizing: border-box;
   max-height: 2.5rem;
   min-height: 0.75rem;
@@ -119,7 +126,12 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
   padding: 0;
 }
 
-// Styles for calculating text size ====================================================================================
+.sapUiSizeCompact .sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.75rem;
+}
+
+/* Styles for calculating text size
+  ========================================================================== */
 
 .sapMNLI-TextWrapper {
   max-height: 2rem;
@@ -150,7 +162,13 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
   }
 }
 
-// L Size Notification styles
+.sapMNLI-TextWrapper .sapMTextMaxLine {
+  line-height: 1rem;
+}
+
+/* L Size Notification styles
+  ========================================================================== */
+
 .sapMNLI-LSize .sapMNLI-Header .sapMText {
   box-sizing: border-box;
   max-width: 60%;
