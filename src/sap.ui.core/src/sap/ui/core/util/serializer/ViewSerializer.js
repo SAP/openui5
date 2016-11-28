@@ -16,13 +16,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @param {object} [oWindow=window] the window object. Default is the window object the instance of the serializer is running in.
 	 * @param {string} [sDefaultXmlNamespace] defines the default xml namespace
 	 *
-	 * @public
 	 * @class ViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.ViewSerializer
-	 * @experimental Since 1.15.1. The ViewSerializer is still under construction, so some implementation details can be changed in future.
+	 * @private
+	 * @sap-restricted sap.watt com.sap.webide
 	 */
 	var ViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.ViewSerializer", /** @lends sap.ui.core.util.serializer.ViewSerializer.prototype */
 	{
