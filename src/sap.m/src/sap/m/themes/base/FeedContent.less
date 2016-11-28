@@ -1,13 +1,13 @@
-/* ======================================== */
-/* CSS for control sap.m/FeedContent.control */
-/* ======================================== */
+/* ================================== */
+/* CSS for control sap.m/FeedContent  */
+/* Base theme                         */
+/* ================================== */
+
 .sapMFC {
 	outline: none;
 	position: relative;
-
 	width: 20.5rem;
 	height: 3.875rem;
-
 	display: inline-block;
 }
 
@@ -15,7 +15,6 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-
 	height: 2.126rem;
 	max-width: 20.5rem;
 	margin-top: 0.3rem;
@@ -31,21 +30,23 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: 20.5rem;
-
 	line-height: 1.063rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTextColor;
 }
 
 .sapMFCValue {
 	position: relative;
 	overflow: hidden;
 	text-overflow: ellipsis;
-
 	padding-left: 1rem;
 	padding-top: 0.875rem;
 	font-size: 2.5rem;
 	line-height: 3rem;
 	max-width: 20.5rem;
 	float: right;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
 }
 
 .sapMFCCTxt > .sapMText {
@@ -79,4 +80,33 @@
 		line-height: 2.25rem;
 		max-width: 17.75rem;
 	}
+}
+
+.sapMFCCTxt .sapMText {
+	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTitleTextColor;
+}
+
+.sapMFCValue.Neutral {
+	color: @sapUiNeutralText;
+}
+
+.sapMFCValue.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMFCValue.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMFCValue.Error {
+	color: @sapUiNegativeText;
+}
+
+html.sap-desktop .sapMFC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMFC:focus:not([tabindex]) {
+	outline: none;
 }
