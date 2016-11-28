@@ -38,15 +38,13 @@ html.sap-phone .sapMObjStatusIcon {
 .sapUiTableCell .sapMObjStatusIcon .sapUiIcon,
 .sapMListTbl .sapMObjStatusText,
 .sapMListTbl .sapMObjStatusTitle,
-.sapMListTbl .sapMObjStatusIcon .sapUiIcon,
-.sapUiForm .sapMObjStatusIcon .sapUiIcon {
+.sapMListTbl .sapMObjStatusIcon .sapUiIcon {
 	vertical-align: middle;
 }
 
 .sapUiForm .sapMObjStatusIcon,
 .sapUiForm .sapMObjStatusTitle,
 .sapUiForm .sapMObjStatusText {
-	overflow: hidden;
 	display: inline-block;
 	line-height: normal;
 	-webkit-user-select: text;
@@ -55,18 +53,14 @@ html.sap-phone .sapMObjStatusIcon {
 }
 
 /*
-	FIX for 1580155978.
+	FIX for 1580155978 and 1680267289.
 	Fiori design guidelines say that statuses should be specially styled for forms
 	and share looks with other text only controls.
 */
-.sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusIcon,
-.sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusTitle,
-.sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusText {
+.sapUiForm.sapUiFormEdit .sapMObjStatus {
 	line-height: 3rem;
 }
 
-.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusIcon,
-.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusTitle,
-.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus > .sapMObjStatusText {
+.sapUiSizeCompact .sapUiForm.sapUiFormEdit .sapMObjStatus {
 	line-height: 2rem;
 }
