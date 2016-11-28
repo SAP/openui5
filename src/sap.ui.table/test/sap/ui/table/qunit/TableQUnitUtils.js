@@ -235,7 +235,7 @@ function setFocusOutsideOfTable(sId) {
 
 function checkFocus(oCell, assert) {
 	assert.ok(oCell === document.activeElement || oCell.get && oCell.get(0) === document.activeElement,
-		"Focus is on the expected position: " + jQuery(oCell).attr("id") + " == " + jQuery(document.activeElement).attr("id"));
+		"Focus is on: " + jQuery(document.activeElement).attr("id") + ", should be on: " + jQuery(oCell).attr("id"));
 	return jQuery(document.activeElement);
 }
 

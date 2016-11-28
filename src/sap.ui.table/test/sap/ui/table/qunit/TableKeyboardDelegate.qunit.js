@@ -468,82 +468,197 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > Arrow Keys", {
 	afterEach: teardownTest
 });
 
-function _testArrowKeys(assert) {
-	var oElem = setFocusOutsideOfTable("Focus1");
-	simulateTabEvent(oElem, false);
-	oElem = checkFocus(getColumnHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-	oElem = checkFocus(getCell(0, 0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getRowHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getRowHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-	oElem = checkFocus(getSelectAll(), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getSelectAll(), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-	oElem = checkFocus(getSelectAll(), assert);
-
-	var iColIdx;
-	var i;
-
-	for (i = 0; i < iNumberOfCols; i++) {
-		iColIdx = i;
-		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
-		oElem = checkFocus(getColumnHeader(iColIdx), assert);
-	}
-	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
-	oElem = checkFocus(getColumnHeader(iColIdx), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-	oElem = checkFocus(getColumnHeader(iColIdx), assert);
-
-	var oRow, iIdx;
+/**
+ * Navigates all around the table using the arrow keys, takes virtual vertical scrolling into account.
+ * Start from the left top cell -> to the right top cell -> to the right bottom cell -> to the left bottom cell -> to the left top cell.
+ *
+ * @param assert
+ * @param bShowInfo
+ * @private
+ */
+function _testArrowKeys(assert, bShowInfo) {
 	var iVisibleRowCount = oTable.getVisibleRowCount();
+	var iFixedTopRowCount = oTable.getFixedRowCount();
+	var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
+	var bHasColumnHeaders = oTable.getColumnHeaderVisible();
+	var bHasRowHeaders = TableUtils.hasRowHeader(oTable);
+	var bHasRowActions = TableUtils.hasRowActions(oTable);
+	var oElem, i, iRowIndex, oRow;
 
-	for (i = 0; i < iNumberOfRows; i++) {
-		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-		iIdx = i;
-		if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
-			iIdx = iVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
-		} else if (i >= iNumberOfRows - oTable.getFixedBottomRowCount()) {
-			iIdx = i - (iNumberOfRows - iVisibleRowCount);
+	if (bShowInfo == null) {
+		bShowInfo = true;
+	}
+
+	oElem = setFocusOutsideOfTable("Focus1");
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Tab into the table and navigate to the top left cell.");
+	}
+
+	simulateTabEvent(oElem, false);
+
+	if (bHasColumnHeaders) {
+		oElem = checkFocus(getColumnHeader(0), assert);
+	} else {
+		oElem = checkFocus(getCell(0, 0), assert);
+	}
+	if (bHasRowHeaders) {
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
+
+		if (bHasColumnHeaders) {
+			oElem = checkFocus(getSelectAll(), assert);
+		} else {
+			oElem = checkFocus(getRowHeader(0), assert);
 		}
-		oRow = oTable.getRows()[iIdx];
-		oElem = checkFocus(getCell(iIdx, iColIdx), assert);
-		assert.equal(oRow.getIndex(), i, "Row index correct");
+	}
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigating left or up should have no effect if the focus is already at the top left cell.");
+	}
+
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
+	checkFocus(oElem, assert);
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigate right to the top right cell.");
+	}
+
+	for (i = bHasRowHeaders ? 0 : 1; i < iNumberOfCols; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+
+		if (bHasColumnHeaders) {
+			oElem = checkFocus(getColumnHeader(i), assert);
+		} else {
+			oElem = checkFocus(getCell(0, i), assert);
+		}
+	}
+	if (!bHasColumnHeaders && bHasRowActions) {
+		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+		oElem = checkFocus(getRowAction(0), assert);
+	}
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigating right or up should have no effect if the focus is already at the top right cell.");
 	}
 
 	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
-	oElem = checkFocus(getCell(iIdx, iColIdx), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-	oElem = checkFocus(getCell(iIdx, iColIdx), assert);
-	assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index correct");
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
+	checkFocus(oElem, assert);
 
-	for (i = iNumberOfCols - 2; i >= 0; i--) {
-		iColIdx = i;
+	// The row action column header cell should not be accessible by keyboard navigation.
+	if (bHasColumnHeaders && bHasRowActions) {
+		if (bShowInfo) {
+			assert.ok(true, "[INFO] There is a column header and row actions, so we stopped at the rightmost column header cell. Navigate to the top row action cell.");
+		}
+
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+		oElem = checkFocus(getRowAction(0), assert);
+
+		if (bShowInfo) {
+			assert.ok(true, "[INFO] Navigating right or up should have no effect if the focus is already at the top right cell.");
+		}
+
+		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+		checkFocus(oElem, assert);
+		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
+		checkFocus(oElem, assert);
+	}
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigate down to the bottom right cell, taking scrolling into account.");
+	}
+
+	for (i = (bHasColumnHeaders && !bHasRowActions) ? 0 : 1; i < iNumberOfRows; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
+
+		iRowIndex = i;
+		if (i >= iVisibleRowCount - iFixedBottomRowCount && i < iNumberOfRows - iFixedBottomRowCount) {
+			iRowIndex = iVisibleRowCount - iFixedBottomRowCount - 1;
+		} else if (i >= iNumberOfRows - iFixedBottomRowCount) {
+			iRowIndex = i - (iNumberOfRows - iVisibleRowCount);
+		}
+
+		if (bHasRowActions) {
+			oElem = checkFocus(getRowAction(iRowIndex), assert);
+		} else {
+			oElem = checkFocus(getCell(iRowIndex, iNumberOfCols - 1), assert);
+		}
+
+		oRow = oTable.getRows()[iRowIndex];
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
+	}
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigating right or down should have no effect if the focus is already at the bottom right cell.");
+	}
+
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
+	checkFocus(oElem, assert);
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigate left to the bottom left cell.");
+	}
+
+	for (i = iNumberOfCols - (bHasRowActions ? 1 : 2); i >= 0; i--) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-		oElem = checkFocus(getCell(iIdx, iColIdx), assert);
+		oElem = checkFocus(getCell(iVisibleRowCount - 1, i), assert);
+	}
+	if (bHasRowHeaders) {
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
+		oElem = checkFocus(getRowHeader(iVisibleRowCount - 1), assert);
+	}
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigating left or down should have no effect if the focus is already at the bottom left cell.");
 	}
 
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getRowHeader(iIdx), assert);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
+	checkFocus(oElem, assert);
+
+	if (bShowInfo) {
+		assert.ok(true, "[INFO] Navigate up to the top left cell.");
+	}
 
 	for (i = iNumberOfRows - 2; i >= 0; i--) {
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-		iIdx = i;
-		if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - iVisibleRowCount + oTable.getFixedRowCount() + 1) {
-			iIdx = oTable.getFixedRowCount();
-		} else if (i >= iNumberOfRows - iVisibleRowCount + oTable.getFixedRowCount() + 1) {
-			iIdx = i - (iNumberOfRows - iVisibleRowCount);
+
+		iRowIndex = i;
+		if (i >= iFixedTopRowCount && i < iNumberOfRows - iVisibleRowCount + iFixedTopRowCount + 1) {
+			iRowIndex = iFixedTopRowCount;
+		} else if (i >= iNumberOfRows - iVisibleRowCount + iFixedTopRowCount + 1) {
+			iRowIndex = i - (iNumberOfRows - iVisibleRowCount);
 		}
-		oRow = oTable.getRows()[iIdx];
-		oElem = checkFocus(getRowHeader(iIdx), assert);
-		assert.equal(oRow.getIndex(), i, "Row index correct");
+
+		if (bHasRowHeaders) {
+			oElem = checkFocus(getRowHeader(iRowIndex), assert);
+		} else {
+			oElem = checkFocus(getCell(iRowIndex, 0), assert);
+		}
+
+		oRow = oTable.getRows()[iRowIndex];
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
+	}
+	if (bHasColumnHeaders) {
+		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
+
+		if (bHasRowHeaders) {
+			checkFocus(getSelectAll(), assert);
+		} else {
+			checkFocus(getColumnHeader(0), assert);
+		}
 	}
 }
 
-QUnit.test("Default Test Table", function(assert) {
+QUnit.test("Default Test Table - Row Header, Column Header", function(assert) {
 	_testArrowKeys(assert);
 });
 
@@ -560,30 +675,43 @@ QUnit.test("No Row Header", function(assert) {
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
 	sap.ui.getCore().applyChanges();
 
-	var oElem = setFocusOutsideOfTable("Focus1");
-	simulateTabEvent(oElem, false);
-	oElem = checkFocus(getColumnHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getColumnHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-	oElem = checkFocus(getCell(0, 0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	checkFocus(getCell(0, 0), assert);
+	_testArrowKeys(assert);
 });
 
 QUnit.test("No Column Header", function(assert) {
 	oTable.setColumnHeaderVisible(false);
 	sap.ui.getCore().applyChanges();
 
-	var oElem = setFocusOutsideOfTable("Focus1");
-	simulateTabEvent(oElem, false);
-	oElem = checkFocus(getCell(0, 0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-	oElem = checkFocus(getCell(0, 0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-	oElem = checkFocus(getRowHeader(0), assert);
-	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
-	checkFocus(getRowHeader(0), assert);
+	_testArrowKeys(assert);
+});
+
+QUnit.test("Row Actions", function(assert) {
+	oTable.setRowActionCount(1);
+	var oRowAction = new sap.ui.table.RowAction();
+	var oItem = new sap.ui.table.RowActionItem({
+		type: "Navigation"
+	});
+	oRowAction.addItem(oItem);
+	oTable.setRowActionTemplate(oRowAction);
+	sap.ui.getCore().applyChanges();
+
+	_testArrowKeys(assert);
+});
+
+QUnit.test("Column Header, Row Header, Row Actions, Fixed Rows", function(assert) {
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	oTable.setRowActionCount(1);
+	var oRowAction = new sap.ui.table.RowAction();
+	var oItem = new sap.ui.table.RowActionItem({
+		type: "Navigation"
+	});
+	oRowAction.addItem(oItem);
+	oTable.setRowActionTemplate(oRowAction);
+	sap.ui.getCore().applyChanges();
+
+	_testArrowKeys(assert);
 });
 
 QUnit.test("Multi Header", function(assert) {
@@ -626,6 +754,38 @@ QUnit.test("Multi Header", function(assert) {
 	oElem = checkFocus(getSelectAll(), assert);
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
 	checkFocus(getRowHeader(0), assert);
+});
+
+QUnit.test("Multi Header, Row Actions", function(assert) {
+	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+	oTable.getColumns()[1].setHeaderSpan([2, 1]);
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+	oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+	oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
+	oTable.setRowActionCount(1);
+	var oRowAction = new sap.ui.table.RowAction();
+	var oItem = new sap.ui.table.RowActionItem({
+		type: "Navigation"
+	});
+	oRowAction.addItem(oItem);
+	oTable.setRowActionTemplate(oRowAction);
+	sap.ui.getCore().applyChanges();
+
+	var oElem = checkFocus(getColumnHeader(iNumberOfCols - 1, true), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+	checkFocus(oElem, assert);
+	oElem = jQuery.sap.domById(getColumnHeader(iNumberOfCols - 1).attr("id") + "_1");
+	oElem.focus();
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+	checkFocus(oElem, assert);
+
+	oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
+	checkFocus(oElem, assert);
 });
 
 QUnit.module("TableKeyboardDelegate2 - Navigation > Shift+Arrow Keys", {
@@ -1740,6 +1900,13 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > Page Up & Page Down", {
 	afterEach: teardownTest
 });
 
+/**
+ * Navigates down and back up using the PageUp and PageDown keys, including scrolling, in the row header column, and in the first data column.
+ * Start from the top cell -> to the bottom cell -> to the top cell.
+ *
+ * @param assert
+ * @private
+ */
 function _testPageKeys(assert) {
 	var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(oTable);
 	var iPageSize = iNonEmptyVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
@@ -2609,8 +2776,9 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Up & Shift+Down (Rang
 /**
  * A test for range selection and deselection.
  * Start from the middle of the table -> Move up to the top -> Move down to the bottom -> Move up to the starting row.
- * @private
+ *
  * @param assert
+ * @private
  */
 function _testRangeSelection(assert) {
 	var iVisibleRowCount = oTable.getVisibleRowCount();
@@ -3244,7 +3412,8 @@ QUnit.test("Fixed Columns - Move movable columns", function(assert) {
 });
 
 /**
- * Opens a column header conext menu and closes it by pressing the Escape key.
+ * Opens a column header context menu and closes it by pressing the Escape key.
+ *
  * @param sKey The key to press.
  * @param bKeydown Indicates whether to trigger keydown or keyup.
  * @param bShift
@@ -4218,6 +4387,14 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
 	}
 });
 
+/**
+ * Navigates through the whole table, from the first to the last cell including scrolling, using TAB while in action mode.
+ * Navigates back using Shift+TAB.
+ *
+ * @param assert
+ * @param bShowInfo
+ * @private
+ */
 function _testActionModeTabNavigation(assert, bShowInfo) {
 	var done = assert.async();
 	var iVisibleRowCount = oTable.getVisibleRowCount();
