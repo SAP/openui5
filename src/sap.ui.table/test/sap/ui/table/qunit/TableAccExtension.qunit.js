@@ -671,6 +671,23 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	var sId = oTable.getId();
 	var $Cell = getSelectAll(true, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
+		"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+	getRowHeader(0, true, assert); //set row header somewhere else on the table
+	$Cell = getSelectAll(true, assert);
+	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
+		sId + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+	setFocusOutsideOfTable();
+	setTimeout(function() {
+		QUnit.start();
+	}, 100);
+});
+
+QUnit.asyncTest("aria-labelledby with Focus (Single Selection)", function(assert) {
+	oTable.setSelectionMode("Single");
+	sap.ui.getCore().applyChanges();
+	var sId = oTable.getId();
+	var $Cell = getSelectAll(true, assert);
+	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 		"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall" , "aria-labelledby of select all");
 	getRowHeader(0, true, assert); //set row header somewhere else on the table
 	$Cell = getSelectAll(true, assert);
@@ -683,6 +700,16 @@ QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 });
 
 QUnit.test("aria-labelledby without Focus", function(assert) {
+	setFocusOutsideOfTable();
+	var $Cell = getSelectAll(false, assert);
+	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
+		oTable.getId() + "-ariacolrowheaderlabel" , "aria-labelledby of select all");
+	setFocusOutsideOfTable();
+});
+
+QUnit.test("aria-labelledby without Focus (Single Selection)", function(assert) {
+	oTable.setSelectionMode("Single");
+	sap.ui.getCore().applyChanges();
 	setFocusOutsideOfTable();
 	var $Cell = getSelectAll(false, assert);
 	assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
@@ -706,6 +733,20 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 	setFocusOutsideOfTable();
 });
 
+QUnit.test("Other ARIA Attributes SelectAll", function(assert) {
+	var $Elem = getSelectAll(false);
+	assert.strictEqual($Elem.attr("role"), "button" , "role");
+	assert.strictEqual($Elem.attr("aria-pressed"), "false" , "aria-pressed");
+	oTable.selectAll();
+	$Elem = getSelectAll(false);
+	assert.strictEqual($Elem.attr("aria-pressed"), "true" , "aria-pressed");
+	oTable.setSelectionMode("Single");
+	sap.ui.getCore().applyChanges();
+	$Elem = getSelectAll(false);
+	assert.strictEqual($Elem.attr("aria-disabled"), "true" , "aria-disabled")
+});
+
+
 
 
 QUnit.module("Misc", {
@@ -718,6 +759,14 @@ QUnit.module("Misc", {
 	},
 	teardown: function () {
 		destroyTables();
+	}
+});
+
+QUnit.test("ARIA Labels of Column Template", function(assert) {
+	var aColumns = oTable._getVisibleColumns();
+	var aCells = oTable.getRows()[0].getCells();
+	for (var i = 0; i < aCells.length; i++) {
+		assert.strictEqual(aCells[i].getAriaLabelledBy()[0], aColumns[i].getId(), "ArialabelledBy to column header for cell in column " + i);
 	}
 });
 

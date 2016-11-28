@@ -2933,6 +2933,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
+			this._getAccExtension().setSelectAllState(!bClearSelectAll);
 		}
 	};
 
@@ -3042,6 +3043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			this.$("selall").attr('title', this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}
 		return this;
