@@ -120,6 +120,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return this;
 		};
 
+		Currency.prototype.unbindProperty = function(sPropName) {
+			Control.prototype.unbindProperty.apply(this, arguments);
+
+			if (sPropName === "value") {
+				this._bRenderNoValClass = false;
+				if (this.$()) {
+					this.$().toggleClass("sapUiUfdCurrencyNoVal", false);
+				}
+			}
+		};
+
 		/**
 		 * Currency property setter
 		 * @param sValue {String} The ISO 4217 currency code
