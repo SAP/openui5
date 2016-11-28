@@ -318,7 +318,6 @@
 					monthSpy = this.spy(month[0], "_isMonthNameLong");
 
 				//arrange
-				jQuery("#uiArea1").addClass("sapUiSizeCompact");
 				oCalM.placeAt("uiArea1");
 				sap.ui.getCore().applyChanges();
 
@@ -328,7 +327,6 @@
 				assert.equal(month[0]._isMonthNameLong(aMonthHeadersLong), true, "Month names are not fitting inside the boxes, we shoud use short one");
 
 				// clean up
-				jQuery("#uiArea1").removeClass("sapUiSizeCompact");
 				oCalM.destroy();
 			});
 
