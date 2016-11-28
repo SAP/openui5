@@ -518,7 +518,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 * Retrieves the lead selection index. The lead selection index is, among other things, used to determine the
 	 * start/end of a selection range, when using Shift-Click to select multiple entries at once.
 	 *
-	 * @return {int[]} an array containing all selected indices (ascending ordered integers)
+	 * @return {int} index of lead selected row
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
