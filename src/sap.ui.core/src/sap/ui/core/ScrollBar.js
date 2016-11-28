@@ -647,7 +647,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	ScrollBar.prototype.setContentSize = function (sContentSize) {
 
 		// Trigger the rerendering when switching the from step mode.
-		this.setProperty("contentSize", sContentSize);
+		this.setProperty("contentSize", sContentSize, true);
 		this._bStepMode = false;
 		var $SbCnt = this.$("sbcnt");
 		if ($SbCnt) {
