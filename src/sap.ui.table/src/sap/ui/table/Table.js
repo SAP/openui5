@@ -3409,6 +3409,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oRowActionTemplate = this.getRowActionTemplate();
 		if (oRowActionTemplate) {
 			var oRowAction = oRowActionTemplate.clone();
+			oRowAction._setFixedLayout(true);
 			oRowAction._setCount(this.getRowActionCount());
 			oRowAction._setIconLabel(this.getId() + "-rowacthdr");
 			oRowAction._show = true; //TBD: Remove the _show flag, only needed to protect misuse in dev phase

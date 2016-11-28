@@ -415,6 +415,7 @@
 			var oItem = new sap.ui.table.RowActionItem({
 				icon: aActions[i].icon,
 				text: aActions[i].text,
+				visible: i == 0 ? "{checked}" : true,
 				type: aActions[i].type || "Custom",
 				press: function(oEvent) {
 					var oRow = oEvent.getParameter("row");

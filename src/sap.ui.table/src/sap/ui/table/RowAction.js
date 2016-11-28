@@ -237,6 +237,18 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem)
 	};
 
 	/**
+	 * Enables or disables the fixed column layout.
+	 * If enabled, the control tries to keep the position of the icons stable.
+	 * @see #_updateIcons
+	 * @param {boolean} bFixed Whether fixed column layout should be applied.
+	 * @private
+	 */
+	RowAction.prototype._setFixedLayout = function(bFixed) {
+		this._bFixedLayout = !!bFixed;
+		this._updateIcons();
+	};
+
+	/**
 	 * Sets the given ID in the ariaLabelledBy association of the inner icons.
 	 * @param {string} sLabelId ID to be set in the ariaLabelledBy association of the inner icons
 	 * @private
@@ -266,6 +278,8 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem)
 
 		if (sAction == "action") {
 			this._getVisibleItems()[iIdx]._doFirePress();
+		} else if (sAction == "action_fixed") {
+			this._getVisibleItems()[0]._doFirePress();
 		} else if (sAction == "menu") {
 			var oMenu = this.getAggregation("_menu");
 			if (!oMenu) {
@@ -305,6 +319,18 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem)
 		function setMenuAriaOfIcon(iIdx) {
 			aIcons[0].$()[iIdx == 0 ? "attr" : "removeAttr"]("aria-haspopup", iIdx == 0 ? "true" : undefined);
 			aIcons[1].$()[iIdx == 1 ? "attr" : "removeAttr"]("aria-haspopup", iIdx == 1 ? "true" : undefined);
+		}
+
+		if (this._bFixedLayout && this._iLen == 1) {
+			var aAllItems = this.getItems();
+			if (aAllItems.length > 1 && aItems[0] === aAllItems[1]) {
+				aItems[0]._syncIcon(aIcons[1]);
+				jQuery($Icons.get(0)).toggleClass("sapUiTableActionHidden", true);
+				jQuery($Icons.get(1)).toggleClass("sapUiTableActionHidden", false);
+				setMenuAriaOfIcon(-1);
+				this._aActions = ["", "action_fixed"];
+				return;
+			}
 		}
 
 		if (this._iLen == 0 || this._iCount == 0) {

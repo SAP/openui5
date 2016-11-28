@@ -22,6 +22,8 @@
 	font-size: 1rem;
 	color: @sapUiContentIconColor;
 	text-align: center;
+	vertical-align: top;
+	min-width: @_sapUiTableRowActionSize;
 }
 
 .sapUiTableAction,
@@ -41,9 +43,12 @@
 
 	.sapUiTableAction,
 	.sapUiTableAction > div {
-		/*min-width: @_sapUiTableRowHeightCondensed;*/
 		height: @_sapUiTableRowHeightCozy;
 		line-height: @_sapUiTableRowHeightCozy;
+	}
+
+	.sapUiTableAction > div {
+		min-width: @_sapUiTableRowActionSizeCozy;
 	}
 
 	.sapUiTableActionIcon {
@@ -63,6 +68,10 @@
 		font-size: 0.75rem;
 	}
 
+	.sapUiTableAction > div {
+		min-width: @_sapUiTableRowActionSizeCondensed;
+	}
+
 	.sapUiTableActionIcon {
 		height: @_sapUiTableRowActionSizeCondensed;
 		width: @_sapUiTableRowActionSizeCondensed;
@@ -75,6 +84,6 @@
 .sapUiTableRowHidden .sapUiTableAction,
 .sapUiTableGroupHeader .sapUiTableAction,
 .sapUiAnalyticalTableSum .sapUiTableAction,
-.sapUiTableAction > div.sapUiTableActionHidden {
+.sapUiTableAction > div.sapUiTableActionHidden > .sapUiTableActionIcon {
 	display: none;
 }

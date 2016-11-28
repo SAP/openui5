@@ -222,7 +222,22 @@ QUnit.test("Type Delete", function(assert) {
 	}, ["sap-icon://account"], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_DELETE")]);
 });
 
-
+QUnit.test("Fixed Column Layout", function(assert) {
+	checkRendering(this, "addItem", assert, function(){
+		this.rowAction.addItem(new sap.ui.table.RowActionItem({type: "Delete", text: "A"}));
+	}, [DELICON], ["A"]);
+	checkRendering(this, "addItem", assert, function(){
+		this.rowAction.addItem(new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "B"}));
+	}, [DELICON, "sap-icon://search"], ["A", "B"]);
+	checkRendering(this, "addItem", assert, function(){
+		this.rowAction.getItems()[0].setVisible(false);
+	}, ["sap-icon://search"], ["B"]);
+	this.rowAction._setFixedLayout(true);
+	assert.ok(jQuery(this.rowAction.$().children().get(0)).hasClass("sapUiTableActionHidden"), "Icon 1 hidden");
+	assert.ok(!jQuery(this.rowAction.$().children().get(1)).hasClass("sapUiTableActionHidden"), "Icon 2 visible");
+	assert.equal(this.rowAction.getAggregation("_icons")[1].getSrc(), "sap-icon://search", "Icon 2 has correct icon");
+	assert.equal(this.rowAction.getAggregation("_icons")[1].getTooltip_AsString(), "B", "Icon 2 has correct tooltip");
+});
 
 
 QUnit.module("Behavior", {
@@ -276,6 +291,20 @@ QUnit.test("Press on second item", function(assert) {
 	this.rowAction.getItems()[1].attachPress(function(oEvent) {
 		oEventParams = oEvent.getParameters();
 	});
+	this.aInnerIcons[1].firePress();
+	assert.ok(!!oEventParams, "Press Event Triggered");
+	assert.equal(oEventParams["row"], this.row, "Event Parameter 'row'");
+	assert.equal(oEventParams["item"], this.rowAction.getItems()[1], "Event Parameter 'item'");
+});
+
+
+QUnit.test("Press on second item (Fixed Column Layout)", function(assert) {
+	var oEventParams = null;
+	this.rowAction.getItems()[1].attachPress(function(oEvent) {
+		oEventParams = oEvent.getParameters();
+	});
+	this.rowAction._setFixedLayout(true);
+	this.rowAction.getItems()[0].setVisible(false);
 	this.aInnerIcons[1].firePress();
 	assert.ok(!!oEventParams, "Press Event Triggered");
 	assert.equal(oEventParams["row"], this.row, "Event Parameter 'row'");

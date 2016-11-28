@@ -711,6 +711,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	display: none;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
 	background-color: @sapUiListHeaderBackground;
+	width: 2 * @_sapUiTableRowHdrWidth;
 }
 
 .sapUiTableRowActionHeader > span {
@@ -753,10 +754,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 .sapUiSizeCozy .sapUiTableRowActionScr {
 	width: 2 * @_sapUiTableRowHdrWidthCozy;
 	min-height: @_sapUiTableRowHeightCozy;
-}
-
-.sapUiSizeCozy .sapUiTableRowActionHeader {
-	width: 2 * @_sapUiTableRowHdrWidthCozy;
 }
 
 .sapUiSizeCozy .sapUiTableRActS .sapUiTableRowActionHeader,
@@ -867,13 +864,8 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 }
 
-.sapUiTableRAct .sapUiTableCHA.sapUiTableCtrlScr,
-.sapUiTableRActS .sapUiTableCHA.sapUiTableCtrlScr {
-	border-right: 1px solid transparent;
-}
-
-.sapUiTableRAct .sapUiTableCtrlScr:not(.sapUiTableCHA),
-.sapUiTableRActS .sapUiTableCtrlScr:not(.sapUiTableCHA) {
+.sapUiTableRAct .sapUiTableCtrlScr,
+.sapUiTableRActS .sapUiTableCtrlScr {
 	border-right-width: 0px;
 }
 
