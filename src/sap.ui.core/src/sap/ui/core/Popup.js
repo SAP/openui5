@@ -1770,27 +1770,61 @@ sap.ui.define([
 	 * - non-touch environment: if the focus leaves the Popup but immediately enters one of these areas, the Popup does NOT close.
 	 * - touch environment: if user clicks one of these areas, the Popup does NOT close.
 	 *
-	 * @param {DomRef[]} aAutoCloseAreas an array containing DOM elements considered part of the Popup; a value of null removes all previous areas
+	 * @param {DomRef[]|sap.ui.core.Element[]|string[]} aAutoCloseAreas an array containing DOM elements, sap.ui.core.Element
+	 *  or an ID which are considered part of the Popup; a value of null removes all previous areas
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
-		jQuery.sap.assert(aAutoCloseAreas === null || jQuery.isArray(aAutoCloseAreas), "aAutoCloseAreas must be null or an array");
+		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
+		jQuery.sap.assert(jQuery.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
+
+		this._aAutoCloseAreas = [];
+
+		var createDelegate = function (oAutoCloseArea) {
+			return {
+				onBeforeRendering: function() {
+					var oDomRef = oAutocloseArea.getDomRef();
+					if (oDomRef && this.isOpen()) {
+						oDomRef.removeEventListener("blur", this.fEventHandler, true);
+					}
+				},
+				onAfterRendering: function() {
+					var oDomRef = oAutocloseArea.getDomRef();
+					if (oDomRef && this.isOpen()) {
+						oDomRef.addEventListener("blur", this.fEventHandler, true);
+					}
+				}
+			};
+		};
 
 		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
-			var sId = "";
+			var sId = "",
+				oAutocloseArea = aAutoCloseAreas[i],
+				oDelegate,
+				oAreaRef = {};
 
-			if (aAutoCloseAreas[i] instanceof Element) {
-				sId = aAutoCloseAreas[i].getId();
-			} else if (typeof aAutoCloseAreas[i] === "object") {
-				sId = aAutoCloseAreas[i].id;
-			} else if (typeof aAutoCloseAreas[i] === "string") {
-				sId = aAutoCloseAreas[i];
+
+			if (oAutocloseArea instanceof Element) {
+				oDelegate = createDelegate(oAutocloseArea);
+				oAutocloseArea.addEventDelegate(oDelegate, this);
+				sId = oAutocloseArea.getId();
+
+				oAreaRef.delegate = oDelegate;
+			} else if (typeof oAutocloseArea === "object") {
+				sId = oAutocloseArea.id;
+			} else if (typeof oAutocloseArea === "string") {
+				sId = oAutocloseArea;
 			}
+
+			oAreaRef.id = sId;
+			this._aAutoCloseAreas.push(oAreaRef);
+
 			if (jQuery.inArray(sId, this.getChildPopups()) === -1) {
 				this.addChildPopup(sId);
 			}
 		}
+
 		return this;
 	};
 
@@ -1984,6 +2018,19 @@ sap.ui.define([
 			this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
 			this._oBottomShieldLayer = null;
 			this._iBottomShieldRemoveTimer = null;
+		}
+
+		if (this._aAutoCloseAreas) {
+			// remove registered delegate on autoclose areas
+			var oElement;
+			this._aAutoCloseAreas.forEach(function(oAreaRef) {
+				if (oAreaRef.delegate) {
+					oElement = jQuery.sap.byId(oAreaRef.id).control(0);
+					if (oElement) {
+						oElement.removeEventDelegate(oAreaRef.delegate);
+					}
+				}
+			});
 		}
 
 		ManagedObject.prototype.destroy.apply(this, arguments);
