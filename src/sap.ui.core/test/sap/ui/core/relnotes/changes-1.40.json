@@ -3502,5 +3502,34 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "dc3844fe3612f09f1d697e2dc66ecf1c19fb4736",
+        "type": "FIX",
+        "text": " Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "011983004f0b16e50e1c1954d12fe534da4b9e3e",
+        "type": "FIX",
+        "text": " jQuery.sap.properties: reduce processing memory and heap",
+        "references": []
+      },
+      {
+        "id": "5788a95ce5f71daaff2ae2dac0e905cdb3327e28",
+        "type": "FIX",
+        "text": " jquery.sap.trace.qunit: test robustness",
+        "references": []
+      },
+      {
+        "id": "f8e096923536f4af882aa0ce189c52f563043fb1",
+        "type": "FIX",
+        "text": " v2.ODataModel: empty request - setProperty on complex type",
+        "references": []
+      }
+    ]
   }
 }

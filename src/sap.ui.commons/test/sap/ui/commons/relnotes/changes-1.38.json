@@ -362,5 +362,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "b885ae0ec5cd9fa346b580706acb7736137991ce",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
   }
 }

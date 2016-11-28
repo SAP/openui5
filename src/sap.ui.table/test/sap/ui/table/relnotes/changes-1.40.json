@@ -1186,5 +1186,46 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "e75a34a35e80cb585d1e25beb12a5e31b41d9b8a",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix content height when custom row height is defined",
+        "references": []
+      },
+      {
+        "id": "3cb2f9b14d83a74f9e7e5a667e10662e4591cf4f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Restore focus on row (e.g. tree icon) after rendering",
+        "references": []
+      },
+      {
+        "id": "695e83e5e9749c3eceaf7444e95f461d603b4eb3",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Enhancements for vertical scrolling with large data and variable row heights.",
+        "references": []
+      },
+      {
+        "id": "2b6a2333e7a503ae89af74dfd6cbc15f7fa5f9aa",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Horizontal scroll position is restored after rerendering.",
+        "references": []
+      },
+      {
+        "id": "ad383fe20c30c61d4e5afa716486cec92461bb04",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect column resize",
+        "references": []
+      },
+      {
+        "id": "9ec7edf1cba3504acae9d8cb6ac24ed8bccceb17",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect resize of columns with header span",
+        "references": []
+      }
+    ]
   }
 }

@@ -1721,5 +1721,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "872619adfc37e0ced8a8f7942c38375e6b692221",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": []
+      },
+      {
+        "id": "b1ce5cf9f30e3c87f77da7da4c72388463211053",
+        "type": "FIX",
+        "text": "Configuration: improve locale and SAP language code handling",
+        "references": []
+      },
+      {
+        "id": "ba618e5ffa37b837248f76360013a640382c5e86",
+        "type": "FIX",
+        "text": "LocaleData: Fixed getCombinedPattern for different calendar type",
+        "references": []
+      },
+      {
+        "id": "235ddd1ed8f4cfc20d3e2b2d8aa699d878b24164",
+        "type": "FIX",
+        "text": "jQuery.sap.properties: reduce processing memory and heap",
+        "references": []
+      },
+      {
+        "id": "b885ae0ec5cd9fa346b580706acb7736137991ce",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
   }
 }
