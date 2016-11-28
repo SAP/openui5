@@ -13,8 +13,6 @@ sap.ui.define(['jquery.sap.global'],
 		var FormattedTextRenderer = {};
 
 		FormattedTextRenderer.render = function (oRm, oControl) {
-			var sHtml = oControl.getHtmlText();
-
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMFT");
@@ -28,7 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeStyles();
 			oRm.write(">"); // span element
 			// render the remainder of the HTML
-			oRm.write(sHtml);
+			oRm.write(oControl._getDisplayHtml());
 			oRm.write("</div>");
 		};
 
