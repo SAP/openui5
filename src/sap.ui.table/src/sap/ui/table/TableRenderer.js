@@ -373,8 +373,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write("</div>");
 	};
 
-	TableRenderer.renderCol = function(rm, oTable, oColumn, iIndex, iHeader, nSpan, bInvisible) {
+	TableRenderer.renderCol = function(rm, oTable, oColumn, iHeader, nSpan, bLastFixed) {
 		var oLabel,
+			bInvisible = !nSpan,
+			iIndex = oColumn.getIndex(),
 			aLabels = oColumn.getMultiLabels();
 		if (aLabels.length > 0) {
 			oLabel = aLabels[iHeader];
@@ -397,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		if (!bInvisible && nSpan > 1) {
+		if (nSpan > 1) {
 			rm.writeAttribute("colspan", nSpan);
 		}
 
@@ -408,7 +410,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		});
 
 		rm.addClass("sapUiTableCol");
-		if (oTable.getFixedColumnCount() === iIndex + 1) {
+		if (bLastFixed) {
 			rm.addClass("sapUiTableColLastFixed");
 		}
 
@@ -444,7 +446,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	TableRenderer.renderColRsz = function(rm, oTable) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-rsz");
-		rm.writeAttribute("tabindex", "-1");
 		rm.addClass("sapUiTableColRsz");
 		rm.writeClasses();
 		rm.write("></div>");
@@ -802,35 +803,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		//
 		// Render header cells
 		//
-		var aColumns = oTable.getColumns();
-		var oColumn,
-			bInvisible = false,
+		var aColumns,
 			nSpan = 0,
-			headerSpan;
+			iLastVisibleCol = -1;
 
-		for (var iIndex = iStartColumn; iIndex < iEndColumn; iIndex++) {
-			oColumn = aColumns[iIndex];
-			if (oColumn && oColumn.shouldRender()) {
-				if (nSpan < 1) {
-					headerSpan = oColumn.getHeaderSpan();
-					if (jQuery.isArray(headerSpan)) {
-						nSpan = headerSpan[iRow];
-					} else if (headerSpan) {
-						nSpan = parseInt(headerSpan, 10);
-					}
-					if (isNaN(nSpan)) {
-						nSpan = 1;
-					}
-					bInvisible = false;
-				} else {
-					//Render column header but this is invisible because of the span
-					bInvisible = true;
-				}
-				this.renderCol(rm, oTable, oColumn, iIndex, iRow, nSpan, bInvisible);
-				nSpan--;
+		// get columns to render
+		aColumns = oTable.getColumns().slice(iStartColumn, iEndColumn).filter(function(oColumn) {
+			return !!oColumn && oColumn.shouldRender();
+		});
+
+		// collect header spans and find the last visible column header
+		function collectHeaderSpans(oColumn, index) {
+			var headerSpan = oColumn.getHeaderSpan(),
+				colSpan;
+
+			colSpan = jQuery.isArray(headerSpan) ? headerSpan[iRow] : parseInt(headerSpan, 10);
+			if (isNaN(colSpan)) {
+				colSpan = 1;
 			}
-		}
 
+			if (nSpan < 1) {
+				oColumn._nSpan = nSpan = colSpan;
+				iLastVisibleCol = index;
+			} else {
+				//Render column header but this is invisible because of the previous span
+				oColumn._nSpan = 0;
+			}
+			nSpan--;
+		}
+		aColumns.forEach(collectHeaderSpans);
+
+		function renderColumn(oColumn, index) {
+			this.renderCol(rm, oTable, oColumn, iRow, oColumn._nSpan, bFixedTable && (index == iLastVisibleCol));
+			oColumn._nSpan = undefined;
+		}
+		aColumns.forEach(renderColumn.bind(this));
 
 		if (!bFixedTable && bHasOnlyFixedColumns && aColumns.length > 0) {
 			rm.write('<td class="sapUiTableTDDummy"');

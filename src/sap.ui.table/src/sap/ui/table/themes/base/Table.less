@@ -428,17 +428,13 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 }
 
-.sapUiTableColHdrFixed, .sapUiTableColHdrScr {
+.sapUiTableColHdrScr {
 	display: inline-block;
 	vertical-align: top;
 	overflow: hidden;
 	height: 100%;
 	white-space: nowrap;
 	box-sizing: border-box;
-}
-
-.sapUiTableColHdrFixed {
-	max-width: 100%;
 }
 
 .sapUiTableColHdrScr {
@@ -489,10 +485,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 .sapUiTableCol:hover {
 	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
 	color: @sapUiListTextColor;
-}
-
-.sapUiTableColHdrFixed .sapUiTableCol.sapUiTableColLastFixed {
-	border-right: 1px solid @sapUiListTableFixedBorder;
 }
 
 .sapUiTableColCell {
@@ -1011,7 +1003,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	border-bottom: 1px solid transparent; /*Hide last row bottom cell border*/
 }
 
-.sapUiTableCtrlFixed .sapUiTableColHdrTr > td:last-child,
+.sapUiTableCtrlFixed .sapUiTableCol.sapUiTableColLastFixed,
 .sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child {
 	border-right: 1px solid @sapUiListTableFixedBorder;
 }
