@@ -1,6 +1,6 @@
 module("ODataTreeBinding - AutoExpand", {
 	setup: function() {
-		oMockServer.start();
+		fnSetupNewMockServer();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
 	},
 	teardown: function() {
