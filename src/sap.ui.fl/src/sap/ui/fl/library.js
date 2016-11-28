@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/fl/RegistrationDelegator"
 	sap.ui.getCore().initLibrary({
 		name:"sap.ui.fl",
 		version:"${version}",
-		dependencies:["sap.ui.core"],
+		dependencies:["sap.ui.core","sap.m"],
 		noLibraryCSS: true
 	});
 
