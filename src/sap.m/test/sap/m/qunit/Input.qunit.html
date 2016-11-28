@@ -2360,6 +2360,24 @@
 		oInput.destroy();
 	});
 
+	test("Hightlighting", function() {
+		var oInput = createInputWithSuggestions();
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("It").trigger("input");
+
+		this.clock.tick(300);
+
+		var $labels = oInput._oSuggestionPopup.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+
+		equals($labels[0].innerHTML.indexOf('<span'), 0, "Texts is highlighted");
+
+		oInput.destroy();
+	});
+
 	module("Key and Value");
 
 	function createInputWithSuggestions () {
