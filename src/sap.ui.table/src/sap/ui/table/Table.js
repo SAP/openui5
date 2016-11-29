@@ -901,7 +901,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
 		if (oCtrlScrDomRef) {
-			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
+			if (Device.browser.msie && oCtrlScrDomRef.offsetHeight === 0) {
+				// In IE the clientWidth of an element is 0 if its offsetHeight is 0, even if that's not true.
+				// In this case, to still get a useful value, we read the offsetWidth.
+				oSizes.tableCtrlScrWidth = oCtrlScrDomRef.offsetWidth;
+			} else {
+				oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
+			}
 		}
 
 		var oHsb = this._getScrollExtension().getHorizontalScrollbar();
