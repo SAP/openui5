@@ -16,7 +16,54 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The FacetFilter control is used to provide filtering functionality with multiple parameters.
+	 * <strong><i>Overview</i></strong>
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter} control is used to provide filtering functionality
+	 * with multiple parameters and supports the users in finding the information they
+	 * need from potentially very large data sets.
+	 * <br>
+	 * Your app can have dependencies between facets where selection of filter items in
+	 * one facet list limits the list of valid filters in another facet list.
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter FacetFilter} uses
+	 * {@link sap.m.FacetFilterList FacetFilterList} and
+	 * {@link sap.m.FacetFilterItem FacetFilterItem} to model facets and their associated
+	 * filters.
+	 * <br><br>
+	 * <b>Note: </b>{@link sap.m.FacetFilterList FacetFilterList} is a subclass of
+	 * {@link sap.m.List} and supports growing enablement feature via the property
+	 * <code>growing</code>. When you use this feature, be aware that it only works with
+	 * one-way data binding.
+	 * Having growing feature enabled when the <code>items</code> aggregation is bound to
+	 * a model with two-way data binding, may lead to unexpected and/or inconsistent
+	 * behavior across browsers, such as unexpected closing of the list.
+	 * <br><br>
+	 * <strong><i>Usage</i></strong>
+	 * <br><br>
+	 * Use the {@link sap.m.FacetFilter FacetFilter} if your app displays a large list of
+	 * items that can be grouped by multiple parameters, for example products by category
+	 * and supplier. With the {@link sap.m.FacetFilter FacetFilter}, you allow the users
+	 * to dynamically filter the list so it only displays products from the categories and
+	 * suppliers they want to see.
+	 * <br><br>
+	 * <strong><i>Responsive behavior</i></strong>
+	 * <br><br>
+	 * The {@link sap.m.FacetFilter FacetFilter} supports the following two types, which
+	 * can be configured using the control's <code>type</code> property:
+	 * <ul>
+	 * <li>Simple type (default) - only available for desktop and tablet screen sizes.
+	 * The active facets are displayed as individually selectable buttons on the toolbar.</li>
+	 * <li>Light type - automatically enabled on smart phone sized devices, but also
+	 * available for desktop and tablets. The active facets and selected filter items are
+	 * displayed in the summary bar. When the user selects the summary bar, a navigable
+	 * dialog list of all facets is displayed. When the user selects a facet, the dialog
+	 * scrolls to show the list of filters that are available for the selected facet.</li>
+	 * </ul>
+	 * <strong><i>Additional Information</i></strong>
+	 * <br><br>
+	 * For more information, go to <b>Developer Guide</b> section in the Demo Kit and navigate to
+	 * <b>More&nbsp;About&nbsp;Controls</b>&nbsp;>&nbsp;<b>sap.m</b>&nbsp;>&nbsp;<b>Facet&nbsp;Filter</b>
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 * @version ${version}
@@ -327,7 +374,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = null;
 		this._addTarget = null;
 		this._aRows = null; //save item level div
-		this._originalaDomRefs = null;
 
 		this._bundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -420,7 +466,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Sets the start of navigation with keyboard.
 	 * @private
 	 */
-	sap.m.FacetFilter.prototype._startItemNavigation = function() {
+	FacetFilter.prototype._startItemNavigation = function() {
 
 	    //Collect the dom references of the items
 		var oFocusRef = this.getDomRef(),
@@ -473,34 +519,24 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Deletes list category.
 	 * @param {object} oEvent Fired when the Delete key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapdelete = function(oEvent) {
-	//save original DomRefs before deletion
-		if (this._originalaDomRefs == null) {
-			this._originalaDomRefs = this._aDomRefs;
-		}
+	FacetFilter.prototype.onsapdelete = function(oEvent) {
+		var oButton, oList;
 
-	// no deletion on 'Add' button
-		if (oEvent.target.id.indexOf("add") >= 0) {
-			return;
-		}
-
-	//  no deletion - showpersonalization  set to false"
+		//  no deletion - showpersonalization  set to false"
 		if (!this.getShowPersonalization()) {
 			return;
 		}
 
-		var j = -1;
-		for (var i = 0; i < this._originalaDomRefs.length; i++) {
-			if (oEvent.target.id == this._originalaDomRefs[i].id) {
-				j = i;
-				break;
-			}
-		}
-		if (j < 0) {
+		oButton = sap.ui.getCore().byId(oEvent.target.id);
+		if (!oButton) { //not an UI5 object
 			return;
 		}
 
-		var oList = this.getLists()[j];
+		oList = sap.ui.getCore().byId(oButton.getAssociation("list"));
+		// no deletion on button 'Add', "Reset"
+		if (!oList) { //We allow only buttons with attached list.
+			return;
+		}
 
 		// no deletion - showRemoveFacetIcon set to false
 		if (!oList.getShowRemoveFacetIcon()) {
@@ -533,7 +569,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Handles the navigation when using the TAB key.
 	 * @param {object} oEvent Fired when the TAB key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsaptabnext = function(oEvent) {
+	FacetFilter.prototype.onsaptabnext = function(oEvent) {
 		this._previousTarget = oEvent.target;
 
 		if (oEvent.target.parentNode.className == "sapMFFHead" ) { //if focus on category, and then press tab, then focus on reset
@@ -569,7 +605,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @param {object} oEvent Fired when SHIFT + TAB keys are pressed
 	 */
 	//[SHIFT]+[TAB]
-	sap.m.FacetFilter.prototype.onsaptabprevious = function(oEvent) {
+	FacetFilter.prototype.onsaptabprevious = function(oEvent) {
 //		without tabnext, and keep entering shift+tab, focus move to the 1st facetfilter list Button
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget == null) {
 			jQuery(this.$().find(":sapTabbable")[0]).focus();
@@ -593,7 +629,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Moves the focus to the last icon in the category when the END key is pressed.
 	 * @param {object} oEvent Fired when END key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapend = function(oEvent) {
+	FacetFilter.prototype.onsapend = function(oEvent) {
 		if (this._addTarget != null) {
 			jQuery(this._addTarget).focus();
 			oEvent.preventDefault();
@@ -610,7 +646,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Moves the focus to the first icon in the category when the HOME key is pressed.
 	 * @param {object} oEvent Fired when HOME key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsaphome = function(oEvent) {
+	FacetFilter.prototype.onsaphome = function(oEvent) {
 		jQuery(this._aRows[0]).focus();
 		oEvent.preventDefault();
 		oEvent.setMarked();
@@ -621,7 +657,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Moves the focus to an appropriate area (upwards) when PAGEUP key is pressed.
 	 * @param {object} oEvent Fired when PAGEUP key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsappageup = function(oEvent) {
+	FacetFilter.prototype.onsappageup = function(oEvent) {
 		this._previousTarget = oEvent.target;
 	};
 
@@ -629,7 +665,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Moves the focus to an appropriate area (downwards) when PAGEDOWN key is pressed.
 	 * @param {object} oEvent Fired when PAGEDOWN key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsappagedown = function(oEvent) {
+	FacetFilter.prototype.onsappagedown = function(oEvent) {
 		this._previousTarget = oEvent.target;
 	};
 
@@ -637,7 +673,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Imitates Page Down event.
 	 * @param {object} oEvent Fired when CTRL + RIGHT keys are pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapincreasemodifiers = function(oEvent) {
+	FacetFilter.prototype.onsapincreasemodifiers = function(oEvent) {
 	// [CTRL]+[RIGHT] - keycode 39 - page down
 		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 			this._previousTarget = oEvent.target;
@@ -654,7 +690,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Imitates Page Up event.
 	 * @param {object} oEvent Fired when CTRL + LEFT keys are pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapdecreasemodifiers = function(oEvent) {
+	FacetFilter.prototype.onsapdecreasemodifiers = function(oEvent) {
 	// [CTRL]+[LEFT] - keycode 37 - page up
 		var currentFocusIndex = 0;
 		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_LEFT) {
@@ -671,7 +707,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Imitates Page Down event.
 	 * @param {object} oEvent Fired when CTRL + DOWN keys are pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapdownmodifiers = function(oEvent) {
+	FacetFilter.prototype.onsapdownmodifiers = function(oEvent) {
 	// [CTRL]+[DOWN] - page down
 		this._previousTarget = oEvent.target;
 		var currentFocusIndex = 0;
@@ -686,7 +722,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Imitates Page Up event.
 	 * @param {object} oEvent Fired when CTRL + UP keys are pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapupmodifiers = function(oEvent) {
+	FacetFilter.prototype.onsapupmodifiers = function(oEvent) {
 	// [CTRL]+[UP] - page up
 		this._previousTarget = oEvent.target;
 		var currentFocusIndex = 0;
@@ -705,7 +741,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed.
 	 * @param {object} oEvent Fired when RIGHT or DOWN key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapexpand = function(oEvent) {
+	FacetFilter.prototype.onsapexpand = function(oEvent) {
 //		[+] = right/down - keycode 107
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
@@ -719,7 +755,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed. The Add Filter button is considered a category.
 	 * @param {object} oEvent The event fired when LEFT or UP ARROW key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapcollapse = function(oEvent) {
+	FacetFilter.prototype.onsapcollapse = function(oEvent) {
 //		[-] = left/up - keycode 109
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
@@ -733,7 +769,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed.
 	 * @param {object} oEvent Fired when DOWN ARROW key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapdown = function(oEvent) {
+	FacetFilter.prototype.onsapdown = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -748,7 +784,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed. The Add Filter button is considered a category.
 	 * @param {object} oEvent Fired when UP ARROW key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapup = function(oEvent) {
+	FacetFilter.prototype.onsapup = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -762,7 +798,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed. The Add Filter button is considered a category.
 	 * @param {object} oEvent Fired when LEFT ARROW key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapleft = function(oEvent) {
+	FacetFilter.prototype.onsapleft = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -776,7 +812,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Scroll accordingly if needed.
 	 * @param {object} oEvent Fired when RIGHT ARROW key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapright = function(oEvent) {
+	FacetFilter.prototype.onsapright = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -790,7 +826,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * The Add Filter button is considered a category.
 	 * @param {object} oEvent Fired when ESCAPE key is pressed
 	 */
-	sap.m.FacetFilter.prototype.onsapescape = function(oEvent) {
+	FacetFilter.prototype.onsapescape = function(oEvent) {
 
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			return;
