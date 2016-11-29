@@ -31,6 +31,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
 
+		if (!oControl.getEditable()) {
+			oRm.addClass("sapMTokenizerReadonly");
+		}
+
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
 			oRm.addClass("sapMTokenizerEmpty");

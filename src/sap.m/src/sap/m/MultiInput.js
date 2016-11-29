@@ -1286,19 +1286,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Functions selects the complete input text
-	 *
-	 * @private
-	 * @return {sap.m.MultiInput} this - for chaining
-	 */
-	MultiInput.prototype._selectAllInputText = function () {
-		var input = this._$input[0];
-		input.selectionStart = 0;
-		input.selectionEnd = this.getValue().length;
-		return this;
-	};
-
-	/**
 	 * Functions returns true if the suggestion popup is currently open
 	 *
 	 * @private
@@ -1412,7 +1399,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	MultiInput.prototype.addToken = function (oToken) {
-		oToken.setEditable(this.getEditable() && oToken.getEditable());
 		this._tokenizer.addToken(oToken);
 		return this;
 	};
@@ -1512,7 +1498,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		if (Array.isArray(aTokens)) {
 			for (i = 0; i < aTokens.length; i++) {
 				oValidatedToken = this.validateAggregation("tokens", aTokens[i], true);
-				oValidatedToken.setEditable(this.getEditable() && oValidatedToken.getEditable());
 				aValidatedTokens.push(oValidatedToken);
 			}
 

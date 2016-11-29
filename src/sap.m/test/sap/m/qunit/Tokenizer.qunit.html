@@ -376,6 +376,30 @@
 		equals(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 
+	test("test setEditable=false Tokenizer with editable tokens", function() {
+		var aFirstToken,
+			aSecondToken;
+		//arrange
+		tokenizer1.addToken(new sap.m.Token({text: "Token 1", key: "0001"}));
+		tokenizer1.addToken(new sap.m.Token({text: "Token 2", key: "0002", editable: false}));
+
+		aFirstToken = tokenizer1.getTokens()[0];
+		aSecondToken = tokenizer1.getTokens()[1];
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		equals(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
+		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+
+		//act
+		tokenizer1.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		equals(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
+		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+	});
+
 	test("copy to clipboard", function() {
 		if (window.clipboardData) {
 			jQuery.sap.require("jquery.sap.script");

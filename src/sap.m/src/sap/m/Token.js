@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Tokenizer'],
+	function(jQuery, library, Control, Tokenizer) {
 	"use strict";
 
 
@@ -119,7 +119,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
+		var that = this;
 		this._deleteIcon = new sap.ui.core.Icon({
+			id : that.getId() + "-icon",
 			src : "sap-icon://sys-cancel"
 		});
 
@@ -188,6 +190,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		if (bSelected) {
 			this.fireSelect();
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets the editable status of the token.
+	 *
+	 * @param {boolean} bEditable Indicates if the token is editable.
+	 * @return {sap.m.Token} this for chaining
+	 * @public
+	 */
+	Token.prototype.setEditable = function(bEditable) {
+		var oParent = this.getParent();
+
+		this.setProperty("editable", bEditable, true);
+
+		this.$().toggleClass("sapMTokenReadOnly", !bEditable);
+
+		if (oParent instanceof Tokenizer) {
+			oParent.invalidate();
 		}
 
 		return this;
@@ -286,14 +309,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		if (this.getSelected() && this.getEditable()) {
-			this.fireDelete({
-				token : this
-			});
-
-		}
+		this._deleteToken(oEvent);
 	};
 
 	/**
@@ -304,11 +320,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
+		this._deleteToken(oEvent);
+	};
+
+	Token.prototype._deleteToken = function(oEvent) {
+		if (this.getParent() instanceof Tokenizer) {
+			return;
+		}
+
 		if (this.getEditable()) {
 			this.fireDelete({
 				token : this
 			});
 		}
+
 		oEvent.preventDefault();
 	};
 

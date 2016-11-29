@@ -1078,7 +1078,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._onDeleteToken = function(oEvent) {
 		var token = oEvent.getParameter("token");
-		if (token) {
+		if (token && this.getEditable()) {
 			token.destroy();
 			this.fireTokenChange({
 				addedTokens : [],
@@ -1105,15 +1105,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._onTokenPress = function(oEvent) {};
 
 	Tokenizer.prototype.setEditable = function(bEditable) {
-		this.setProperty("editable", bEditable);
+		this.$().toggleClass("sapMTokenizerReadonly", !bEditable);
 
-		var tokens = this.getTokens();
-		var length = tokens.length;
-		for (var i = 0; i < length; i++) {
-			tokens[i].setEditable(bEditable);
-		}
-
-		return this;
+		return this.setProperty("editable", bEditable, true);
 	};
 
 	/**
