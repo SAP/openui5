@@ -202,7 +202,7 @@ QUnit.module("Horizontal scrolling", {
 });
 
 QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
-	var iAssertionDelay = 10;
+	var iAssertionDelay = 50;
 
 	// Scroll right to 200
 	for (var i = 1; i <= 20; i++) {
@@ -243,7 +243,7 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
 	var that = this;
 	var iNumberOfCols = oTable.getColumns().length;
-	var iAssertionDelay = 0;
+	var iAssertionDelay = 50;
 
 	// Start at the first cell in the header.
 	var iRowIndex = 0;
