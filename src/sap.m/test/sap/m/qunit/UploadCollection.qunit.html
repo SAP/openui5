@@ -1090,6 +1090,26 @@
 		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
 	});
 
+	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		this.oUploadCollection.$("drag-drop-area").height(150);
+		//Act
+		$RootNode.trigger("dragenter");
+		//Assert
+		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
+	});
+
+	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		this.oUploadCollection.$("drag-drop-area").height(150);
+		//Act
+		$RootNode.trigger("dragenter");
+		//Assert
+		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
+	});
+
 	QUnit.module("Event tests", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
