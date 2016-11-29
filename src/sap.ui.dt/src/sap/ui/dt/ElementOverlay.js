@@ -283,12 +283,26 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
-	 * Returns a DOM reference for the associated Element or null, if it can't be found
-	 * @return {Element} DOM element or null
+	 * Returns a jQuery Object reference for the associated Element or undefined, if it can't be found
+	 * @return {jQuery} jQuery object or undefined
 	 * @public
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
-		return ElementUtil.getDomRef(this.getElementInstance());
+		var oDomRef = ElementUtil.getDomRef(this.getElementInstance());
+		if (!oDomRef) {
+			var oDesignTimeMetadata = this.getDesignTimeMetadata();
+			if (!oDesignTimeMetadata) {
+				return;
+			}
+			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
+			if (fnGetDomRef) {
+				oDomRef = fnGetDomRef(this.getElementInstance());
+			}
+		}
+
+		if (oDomRef) {
+			return jQuery(oDomRef);
+		}
 	};
 
 	/**
