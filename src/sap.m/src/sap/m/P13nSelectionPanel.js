@@ -896,6 +896,9 @@ sap.ui.define([
 							enabled: {
 								path: 'href',
 								formatter: function(oValue) {
+									if (!oValue) {
+										this.addStyleClass("sapUiCompSmartLink");
+									}
 									return !!oValue;
 								}
 							},
