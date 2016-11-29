@@ -1446,7 +1446,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update the bindings:
 		//  - prevent the rerendering
 		//  - use the databinding fwk to update the content of the rows
-		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
+		if (bFirstVisibleRowChanged && this.getBinding("rows")) {
 			this.updateRows();
 			if (!bOnScroll) {
 				this._updateVSbScrollTop();
