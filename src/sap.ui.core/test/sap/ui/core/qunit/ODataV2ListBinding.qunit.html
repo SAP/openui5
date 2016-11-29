@@ -235,6 +235,40 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		});
 	});
 
+	asyncTest("ListBinding relative with context and refresh is needed", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("Products");
+		var iCount = 0;
+
+		function changeHandler() {
+			if (iCount === 0) {
+				var aContexts = oBinding.getContexts();
+				equal(aContexts.length, 5, "List contains entries");
+				equal(aContexts[0].getProperty("ProductName"), undefined, "Product name is missing");
+			} else if (iCount === 1) {
+				var aContexts = oBinding.getContexts();
+				equal(aContexts.length, 5, "List contains entries");
+				equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
+				start();
+			} else {
+				ok(false, "Must not change a third time.")
+			}
+			iCount++;
+		}
+
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.attachChange(changeHandler);
+		oModel.metadataLoaded().then(function() {
+			oBinding.initialize();
+			oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products", select: "Products/ProductID"}, function(oContext) {
+				oBinding.setContext(oContext);
+			});
+		});
+	});
+
+
 	asyncTest("ListBinding sort", function(){
 		var oBinding = oModel.bindList("/Categories");
 		var handler3 = function(oEvent){
