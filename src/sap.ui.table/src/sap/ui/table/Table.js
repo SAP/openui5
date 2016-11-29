@@ -1251,6 +1251,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var that = this;
 		var $this = this.$();
 
+		if (TableUtils.hasRowActions(this)) {
+			var bHasFlexibleRowActions = $this.hasClass("sapUiTableRActFlexible");
+			var oDummyCol = this.getDomRef("dummycolhdr");
+			var iDummyColWidth = oDummyCol ? oDummyCol.clientWidth : 0;
+			if (!bHasFlexibleRowActions && iDummyColWidth > 0) {
+				var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
+				var oRowActionStyles = {width: "auto"};
+				oRowActionStyles[this._bRtlMode ? "right" : "left"] = iRowActionPos;
+				this.$("sapUiTableRowActionScr").css(oRowActionStyles);
+				this.$("rowacthdr").css(oRowActionStyles);
+				$this.toggleClass("sapUiTableRActFlexible", true);
+			} else if (bHasFlexibleRowActions && iDummyColWidth <= 0) {
+				this.$("sapUiTableRowActionScr").removeAttr("style");
+				this.$("rowacthdr").removeAttr("style");
+				$this.toggleClass("sapUiTableRActFlexible", false);
+			}
+		}
+
 		$this.find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
 
 		function registerResizeHandler() {
