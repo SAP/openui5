@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', 'sap/m/OverflowToolbar', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
-	function(jQuery, MessageBox, Dialog, Library, Control, FileUploaderParamter, FileUploader, FileSizeFormat, Link, OverflowToolbar, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, ResizeHandler, Device) {
+sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/m/List', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', 'sap/m/OverflowToolbar', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
+	function(jQuery, MessageBox, Dialog, Library, Control, Icon, List, FileUploaderParamter, FileUploader, FileSizeFormat, Link, OverflowToolbar, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, ResizeHandler, Device) {
 	"use strict";
 
 	/**
@@ -98,9 +98,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Allows you to set your own text for the 'No data' label.
+			 * Allows you to set your own text for the 'No data' text label.
 			 */
-			noDataText : {type : "string", group : "Behavior", defaultValue : null},
+			noDataText : {type : "string", group : "Appearance", defaultValue : null},
+
+			/**
+			 * Allows you to set your own text for the 'No data' description label.
+			 * @since 1.46
+			 */
+			noDataDescription : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * Allows the user to use the same name for a file when editing the file name. 'Same name' refers to an already existing file name in the list.
@@ -197,6 +203,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 */
 			_list : {
 				type : "sap.m.List",
+				multiple : false,
+				visibility : "hidden"
+			},
+
+			/**
+			 * The icon is displayed in no data page
+			 * @since 1.46
+			 */
+			_noDataIcon : {
+				type : "sap.ui.core.Icon",
 				multiple : false,
 				visibility : "hidden"
 			}
@@ -486,9 +502,17 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		};
 		this._requestIdValue = 0;
 		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
-		this._oList = new sap.m.List(this.getId() + "-list");
+
+		this._oList = new List(this.getId() + "-list");
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
+
+		this.setAggregation("_noDataIcon", new Icon(this.getId() + "-no-data-icon", {
+			src : "sap-icon://document",
+			size : "6rem",
+			noTabStop : true
+		}), true);
+
 		this._iUploadStartCallCounter = 0;
 		this.aItems = [];
 		this._aDeletedItemForPendingUpload = [];
@@ -570,14 +594,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 	};
 
-	UploadCollection.prototype.setNoDataText = function(sNoDataText) {
-		this.setProperty("noDataText", sNoDataText);
-		if (this._oList.getNoDataText() !== sNoDataText) {
-			this._oList.setNoDataText(sNoDataText);
-		}
-		return this;
-	};
-
 	UploadCollection.prototype.setShowSeparators = function(bShowSeparators) {
 		this.setProperty("showSeparators", bShowSeparators);
 		if (this._oList.getShowSeparators() !== bShowSeparators) {
@@ -638,6 +654,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	UploadCollection.prototype.getInfoToolbar = function() {
 		return this._oList.getAggregation("infoToolbar");
+	};
+
+	UploadCollection.prototype.getNoDataText = function() {
+		var sNoDataText = this.getProperty("noDataText");
+		sNoDataText = sNoDataText || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT");
+		return sNoDataText;
+	};
+
+	UploadCollection.prototype.getNoDataDescription = function() {
+		var sNoDataDescription = this.getProperty("noDataDescription");
+		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
+		return sNoDataDescription;
 	};
 
 	UploadCollection.prototype.setInfoToolbar = function(infoToolbar) {
