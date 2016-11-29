@@ -25,46 +25,50 @@
         // 1st column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Text({text: "MultiLabel 1 long long long"}),
-                new sap.m.Text({text: "MultiLabel 2 long long long long"}),
-                new sap.m.Text({text: "MultiLabel 3"})
+                new sap.m.Text({text: "Row:1, Column:1 with a long description"}),
+                new sap.m.Text({text: "Row:2, Column:1"}),
+                new sap.m.Text({text: "Row:3, Column:1"})
             ],
-            headerSpan: [2, 2, 1],
+            headerSpan: [3, 1, 1],
             template: new sap.m.Text({text: "{lastName}"}),
             sortProperty: "lastName",
             filterProperty: "lastName",
             width: "100px",
             flexible: false,
+			autoResizable: true,
             resizable: true
         }));
 
         // 2nd column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Text({text: "MultiLabel 1 long long long"}),
-                new sap.m.Text({text: "MultiLabel 2 long long long long"}),
-                new sap.m.Text({text: "MutliLabel 3"})
+                new sap.m.Text({text: "Row:1, Column:2 with a long description"}),
+                new sap.m.Text({text: "Row:2, Column:2"}),
+                new sap.m.Text({text: "Row:3, Column:2"})
             ],
-            template: new sap.m.Label({text: "{name}"}),
+			headerSpan: [1, 2, 1],
+			template: new sap.m.Label({text: "{name}"}),
             sortProperty: "name",
             filterProperty: "name",
             width: "100px",
             flexible: false,
+			autoResizable: true,
             resizable: true
         }));
 
         // 3rd column with multilabels
         oTable.addColumn(new sap.ui.table.Column({
             multiLabels: [
-                new sap.m.Label({text: "MultiLabel A"}),
-                //new sap.m.Text({text: "MultiLabel B long long long"}),
-                new sap.m.Text({text: "MultiLabel C long long long long"})
+                new sap.m.Label({text: "Row:1, Column:3 - long text"}),
+                new sap.m.Text({text: "Row:2, Column:3"}),
+                new sap.m.Text({text: "Row:3, Column:3"})
             ],
             template: new sap.m.ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"}),
             sortProperty: "objStatusState",
             filterProperty: "objStatusState",
             width: "100px",
             flexible: true,
+			autoResizable: true,
             resizable: true
         }));
 
@@ -76,6 +80,7 @@
             hAlign: sap.ui.core.HorizontalAlign.Center,
             width: "100px",
             flexible: true,
+			autoResizable: true,
             resizable: true
         }));
 
@@ -84,6 +89,7 @@
             template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
             width: "100px",
             flexible: false,
+			autoResizable: true,
             resizable: true
         }));
 
@@ -92,6 +98,7 @@
             template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
             width: "100px",
             flexible: false,
+			autoResizable: true,
             resizable: true
         }));
 
@@ -100,6 +107,7 @@
             template: new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"}),
             width: "100px",
             flexible: false,
+			autoResizable: true,
             resizable: true
         }));
     }
