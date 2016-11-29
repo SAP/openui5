@@ -1052,7 +1052,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.onAfterRendering = function(oEvent) {
 		var bEventIsMarked = oEvent && oEvent.isMarked("insertTableRows");
 		if (bEventIsMarked) {
-			this._getScrollExtension().updateVSbMaxHeight();
+			this._getScrollExtension().updateVerticalScrollbarHeight();
 			this._updateVSbRange();
 		}
 
@@ -2665,37 +2665,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// focus is handled by item navigation. It's  not the root element of the table which may get the focus but
 		// the last focused column header or cell.
 		return TableUtils.getFocusedItemInfo(this).domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
-	};
-
-	/**
-	 * Handles the focus in to reposition the focus or prevent default handling for
-	 * column resizing.
-	 * @private
-	 */
-	Table.prototype.onfocusin = function(oEvent) {
-		var $ctrlScr;
-		var $FocusedDomRef = jQuery(oEvent.target);
-		if ($FocusedDomRef.parent('.sapUiTableTr').length > 0) {
-			$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-		} else if ($FocusedDomRef.parent('.sapUiTableColHdr').length > 0) {
-			$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
-		}
-
-		if ((Device.browser.firefox || Device.browser.chrome) && $ctrlScr && $ctrlScr.length > 0) {
-			var iCtrlScrScrollLeft = $ctrlScr.scrollLeft();
-			var iCtrlScrWidth = $ctrlScr.width();
-			var iCellLeft = $FocusedDomRef.position().left;
-			var iCellRight = iCellLeft + $FocusedDomRef.width();
-			var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
-			var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
-
-			var oHsb = this._getScrollExtension().getHorizontalScrollbar();
-			if (iOffsetRight > 0) {
-				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 2;
-			} else if (iOffsetLeft < 0) {
-				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetLeft - 1;
-			}
-		}
 	};
 
 	// =============================================================================
