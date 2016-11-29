@@ -168,7 +168,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 		oRm.write(">");
 
 		oRm.renderControl(oControl._oMoreIcon);
-		oRm.renderControl(oControl._oRemoveIcon);
+		oRm.renderControl(oControl._oRemoveButton);
 
 		oRm.write("</span>");
 	};

@@ -1816,6 +1816,20 @@
 		}
 	});
 
+	QUnit.test("Actions scope - title attribute of Remove button in LineMode", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		jQuery.sap.byId("remove").trigger("mouseenter");
+		var sTitleOfRemove = this.oGenericTile.$("action-remove").attr("title");
+
+		//Assert
+		assert.ok(sTitleOfRemove, "Remove button contains expected attribute title");
+	});
+
 	QUnit.test("TileContent content doesn't contain attributes ARIA-label and title", function(assert) {
 		//Arrange
 		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
