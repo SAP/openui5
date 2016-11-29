@@ -56,8 +56,9 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 	border-radius:    0;
 }
 
+/* dotted line appears blurry in IE and EDGE browsers. In these cases use dashed */
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           2px dotted @sapHCStandardFG;
+	border:           2px dashed @sapHCStandardFG;
 }
 
 /* ---------------------------------------------------------------------*/
