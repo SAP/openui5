@@ -3271,6 +3271,17 @@
 		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 
+		//one of list is inactive
+		var oFF = createFF(oFF, [
+			new sap.m.FacetFilterList("list101"),
+			new sap.m.FacetFilterList("list102", {active: false}),
+			new sap.m.FacetFilterList("list103")]);
+
+		oEvent.target = oFF.$().find(":sapTabbable")[1];//this should be the 3th list, as the second is not active
+		oFF.onsapdelete(oEvent);
+		equal(oFF.getLists()[2].getActive(), false, "keyboard onsapdelete when one of list is inactive tested - list103 deleted(should be inactive)");
+		equal(oFF.getAggregation("buttons").length, 2, "keyboard onsapdelete when one of list is inactive tested - There should be two buttons in the 'buttons' aggregation");
+		equal(oFF.getAggregation("removeFacetIcons").length, 2, "keyboard onsapdelete when one of list is inactive tested - There should be two remove icons in the aggregation");
 
 		var oFF = createFF(oFF);
 		oFF.getLists()[1].setActive(false);
@@ -3284,7 +3295,7 @@
 
 
 
-	function createFF(oFF) { //TODO: see if this helps with ie9 qunit failures
+	function createFF(oFF, aLists) { //TODO: see if this helps with ie9 qunit failures
 
 		if (oFF) {
 			oFF.destroy();
@@ -3292,8 +3303,15 @@
 
 		var oFF = new sap.m.FacetFilter("someid");
 		oFF.setShowPersonalization(true);
-		oFF.addList(new sap.m.FacetFilterList("list1"));
-		oFF.addList(new sap.m.FacetFilterList("list2"));
+		if (!aLists) {
+			oFF.addList(new sap.m.FacetFilterList("list1"));
+			oFF.addList(new sap.m.FacetFilterList("list2"));
+		} else {
+			aLists.forEach(function(oList) {
+				oFF.addList(oList);
+			});
+		}
+
 //		oFF._createResetButton();
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
