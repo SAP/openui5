@@ -291,6 +291,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						id : /--SalesOrders_ID-/,
+						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (aControls) {
 							aControls[0].$().tap();
 						},
