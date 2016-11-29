@@ -13,17 +13,16 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
 ], function (jQuery, ManagedObject, Binding, ChangeReason, Filter, FilterOperator, FilterType,
-		ListBinding, Model, Sorter, OperationMode, _ODataHelper, _Cache, _Helper, _SyncPromise,
-		Context, ODataListBinding, ODataModel, asODataParentBinding) {
+		ListBinding, Model, Sorter, OperationMode, Context, _Cache, _Helper, _SyncPromise,
+		ODataListBinding, ODataModel, asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -923,7 +922,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
-		this.mock(_ODataHelper).expects("createCache").never();
+		this.mock(oBinding).expects("createCache").never();
 
 		oBinding.setContext(oContext);
 	});
@@ -2925,9 +2924,8 @@ sap.ui.require([
 					.exactly(oFixture.bRelative ? 1 : 0)
 					.withExactArgs().returns(oPathPromise);
 			}
-			this.mock(_ODataHelper).expects("getQueryOptions")
-				.withExactArgs(sinon.match.same(oBinding), "",
-					sinon.match.same(oFixture.bRelative ? oContext : undefined))
+			this.mock(oBinding).expects("getQueryOptions")
+				.withExactArgs("", sinon.match.same(oFixture.bRelative ? oContext : undefined))
 				.returns(mQueryOptions);
 			this.mock(oBinding).expects("fetchFilter")
 				.withExactArgs(sinon.match.same(oFixture.bRelative ? oContext : undefined),
@@ -2968,7 +2966,7 @@ sap.ui.require([
 		var oContext = {fetchCanonicalPath : function () {}},
 			oBinding = this.oModel.bindList("EMPLOYEES", oContext, undefined, undefined, undefined);
 
-		this.mock(_ODataHelper).expects("createCache").never();
+		this.mock(oBinding).expects("createCache").never();
 
 		// code under test
 		assert.strictEqual(oBinding.makeCache(undefined), undefined,

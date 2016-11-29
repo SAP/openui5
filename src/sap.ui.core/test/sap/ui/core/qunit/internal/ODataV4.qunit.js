@@ -7,7 +7,6 @@ jQuery.sap.registerResourcePath("sap/ui/core/qunit",
 
 sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/_AnnotationHelperExpression.qunit",
-	"sap/ui/core/qunit/odata/v4/_ODataHelper.qunit",
 	"sap/ui/core/qunit/odata/v4/AnnotationHelper.qunit",
 	"sap/ui/core/qunit/odata/v4/Context.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Batch.qunit",
