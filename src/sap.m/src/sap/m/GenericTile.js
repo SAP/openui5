@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, Text, HTML, Icon, IconPool, GenericTileRenderer, LineModeRenderer, Device, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/Button', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, library, Control, Text, HTML, Icon, IconPool, Button, GenericTileRenderer, LineModeRenderer, Device, ResizeHandler) {
 	"use strict";
 
 	/**
@@ -177,11 +177,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 					src: "sap-icon://overflow"
 				}).addStyleClass("sapMGTMoreIcon");
 
-				this._oRemoveIcon = this._oRemoveIcon || IconPool.createControlByURI({
+				this._oRemoveIcon = this._oRemoveIcon || new Button({
 					id: this.getId() + "-action-remove",
-					src: "sap-icon://decline",
-					size: "0.75rem"
-				}).addStyleClass("sapMGTRemoveIcon");
+					icon: "sap-icon://decline"
+				}).addStyleClass("sapUiSizeCompact sapMGTRemoveIcon");
 				break;
 		}
 	};

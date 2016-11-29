@@ -34,6 +34,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.addClass("sapMGT");
+		oRm.addClass("sapMGTScope" + oControl.getScope());
 		oRm.addClass("sapMGTLineMode");
 		this._writeDirection(oRm);
 		if (sTooltipText) {
