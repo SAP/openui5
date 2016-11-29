@@ -142,7 +142,16 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 		// Set layout properties
 		var oLayoutData = oItem.getLayoutData();
-		if (oLayoutData instanceof sap.m.FlexItemData) {
+
+		// If no layout data is set, create it so that an ID can be set on the wrapper
+		if (sWrapperTag && !oLayoutData) {
+			oItem.setAggregation("layoutData", new sap.m.FlexItemData(), true);
+			oLayoutData = oItem.getLayoutData();
+		}
+
+		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
+			jQuery.sap.log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
+		} else {
 			// FlexItemData is an element not a control, so we need to write id and style class ourselves if a wrapper tag is used
 			if (sWrapperTag && oLayoutData.getId()) {
 				oRm.writeAttributeEscaped("id", oLayoutData.getId());
