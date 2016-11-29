@@ -668,6 +668,8 @@ sap.ui.define([
 		};
 
 		this._bNestedInAPopover = fnScanForPopup(this);
+
+		return this._bNestedInAPopover;
 	};
 
 	/**
