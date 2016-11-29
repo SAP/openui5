@@ -87,9 +87,25 @@ sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Component'],
 					},
 
 					"samples.components.ext.sap.Frag1": {
-						"extensionPointInFragment": {
+						"epFrag1": {
 							className: "sap.ui.core.Fragment",
 							fragmentName: "samples.components.ext.customer.CustomFrag1",
+							type: "XML"
+						}
+					},
+
+					"samples.components.ext.sap.Frag2": {
+						"epFrag2": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "samples.components.ext.customer.CustomFrag2",
+							type: "XML"
+						}
+					},
+
+					"samples.components.ext.customer.CustomFrag1": {
+						"epCustomFrag1": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "samples.components.ext.customer.CustomFrag2",
 							type: "XML"
 						}
 					}
