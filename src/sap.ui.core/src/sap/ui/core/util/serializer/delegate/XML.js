@@ -16,13 +16,13 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @param {function} [fnGetEventHandlerName] delegate function which returns the event handler name
 	 * @param {function} [fnMemorizePackage] a delegate function to memorize the control packages
 	 *
-	 * @public
 	 * @class XML serializer delegate class.
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.delegate.XML
-	 * @experimental Since 1.15.1. The XML serializer delegate is still under construction, so some implementation details can be changed in future.
+	 * @private
+	 * @sap-restricted sap.watt com.sap.webide
 	 */
 	var XML = Delegate.extend("sap.ui.core.util.serializer.delegate.XML", /** @lends sap.ui.core.util.serializer.delegate.XML.prototype */
 	{
