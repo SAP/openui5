@@ -16,10 +16,10 @@ sap.ui.define(['jquery.sap.global', './FlexBox', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The VBox control builds the container for a vertical flexible box layout. VBox is a convenience control as it is just a specialized FlexBox control.
+	 * The VBox control builds the container for a vertical flexible box layout. VBox is a convenience control, as it is just a specialized FlexBox control.<br>
+	 * <br>
+	 * <b>Note:</b> Be sure to check the <code>renderType</code> setting to avoid issues due to browser inconsistencies.
 	 *
-	 * Browser support:
-	 * This control is not supported in Internet Explorer 9!
 	 * @extends sap.m.FlexBox
 	 *
 	 * @author SAP SE
