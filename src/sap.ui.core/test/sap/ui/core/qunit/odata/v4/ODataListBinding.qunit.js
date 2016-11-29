@@ -227,6 +227,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("c'tor calls setParameters", function (assert) {
+		var mParameters = {},
+			mParametersClone = {};
+
+		this.mock(ODataListBinding.prototype).expects("setParameters")
+			.withExactArgs(sinon.match.same(mParametersClone));
+		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(mParameters))
+			.returns(mParametersClone);
+
+		new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined, undefined,
+			mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setParameters", function (assert) {
+		var mBindingParameters = {
+				$$groupId : "foo",
+				$$operationMode : OperationMode.Server,
+				$$updateGroupId : "update foo"
+			},
+			sGroupId = "foo",
+			oModelMock = this.mock(this.oModel),
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			sOperationMode = "Server",
+			mParameters = {
+				$$groupId : "foo",
+				$$operationMode : OperationMode.Server,
+				$$updateGroupId : "update foo",
+				$filter : "bar"
+			},
+			mQueryOptions = {
+				$filter : "bar"
+			},
+			sUpdateGroupId = "update foo";
+
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters),
+					["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.returns(mBindingParameters);
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
+			.returns(mQueryOptions);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Filter);
+
+		//code under test
+		oBinding.setParameters(mParameters, ChangeReason.Filter);
+
+		assert.strictEqual(oBinding.sOperationMode, sOperationMode, "sOperationMode");
+		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+		assert.strictEqual(oBinding.mParameters, mParameters);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oV4Context = {
@@ -389,8 +444,7 @@ sap.ui.require([
 
 		// absolute binding and binding with base context result in the same cache
 		oModelMock.expects("buildQueryOptions").thrice()
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters), true)
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
 			.returns(mQueryOptions);
 		this.mock(ODataListBinding.prototype).expects("buildOrderbyOption").twice()
 			.withExactArgs([], mQueryOptions.$orderby)
@@ -409,9 +463,9 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oV4Context);
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
-		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
-		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly(undefined));
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
@@ -426,7 +480,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oBaseContext);
 		assert.strictEqual(oBinding.getPath(), "EMPLOYEES");
-		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
@@ -443,7 +497,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.oCache, undefined, "oCache property is undefined");
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
-		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
@@ -501,8 +555,7 @@ sap.ui.require([
 			this.spy(_Helper, "toArray");
 			this.spy(ODataListBinding.prototype, "mergeQueryOptions");
 			this.mock(ODataModel.prototype).expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(oModel.mUriParameters),
-					sinon.match.same(oFixture.mParameters), true)
+				.withExactArgs(sinon.match.same(oModel.mUriParameters), oFixture.mParameters, true)
 				.returns(oFixture.buildQueryOptionResult);
 			this.mock(ODataListBinding.prototype).expects("buildOrderbyOption")
 				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : [],
@@ -539,43 +592,30 @@ sap.ui.require([
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
 		}, new Error("Unsupported operation mode: undefined"));
-		assert.throws(function () {
-			this.oModel.bindList("/EMPLOYEES", undefined, []);
-		}, new Error("Unsupported operation mode: undefined"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("bindList with filters", function (assert) {
 		var oBinding,
-			oCacheProxy = {},
-			oExpectation,
-			mExpectedbuildQueryOptions = {},
 			oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
 			aFilters = [oFilter],
 			oHelperMock = this.mock(_Helper),
 			mQueryParameters = {
-				$$operationMode : OperationMode.Server
+				$$operationMode : OperationMode.Server,
+				$filter : "bar"
 			};
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(undefined).returns([]);
-		this.mock(this.oModel).expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mQueryParameters), true)
-			.returns(mExpectedbuildQueryOptions);
-		this.mock(ODataListBinding.prototype).expects("buildOrderbyOption").never();
-		this.mock(_Cache).expects("create").never();
-		oExpectation = this.mock(ODataListBinding.prototype).expects("makeCache");
-		oExpectation.withExactArgs().returns(oCacheProxy);
+		this.mock(ODataListBinding.prototype).expects("fetchFilter")
+			.withExactArgs(undefined, sinon.match.same(aFilters), [], mQueryParameters.$filter)
+			.returns(_SyncPromise.resolve());
 
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, oFilter,
 			mQueryParameters);
 
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
-		assert.strictEqual(oBinding.mQueryOptions, mExpectedbuildQueryOptions);
-		sinon.assert.calledOn(oExpectation, oBinding);
-		assert.strictEqual(oBinding.oCache, oCacheProxy);
 	});
 
 	//*********************************************************************************************
@@ -591,9 +631,6 @@ sap.ui.require([
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42));
 		}, new Error("Unsupported operation mode: undefined"));
-		assert.throws(function () {
-			this.oModel.bindList("/EMPLOYEES", undefined, undefined, []);
-		}, new Error("Unsupported operation mode: undefined"));
 	});
 
 	//*********************************************************************************************
@@ -603,7 +640,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		this.mock(this.oModel).expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), undefined, true)
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), {}, true)
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
@@ -613,7 +650,7 @@ sap.ui.require([
 		oBinding = this.oModel.bindList("/EMPLOYEES", oContext);
 
 		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
-		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.deepEqual(oBinding.mParameters, {});
 	});
 
 	//*********************************************************************************************
@@ -1613,9 +1650,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
 		var aAllowed = ["$$groupId", "$$operationMode", "$$updateGroupId"],
-			oBinding,
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oModelMock = this.mock(this.oModel),
-			mParameters = {};
+			mParameters = {},
+			oPrototypeMock;
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
@@ -1624,7 +1662,7 @@ sap.ui.require([
 				aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
-		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		oBinding.setParameters(mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
@@ -1633,7 +1671,7 @@ sap.ui.require([
 				aAllowed)
 			.returns({$$groupId : "foo"});
 		// code under test
-		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		oBinding.setParameters(mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, undefined);
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
@@ -1642,7 +1680,7 @@ sap.ui.require([
 				aAllowed)
 			.returns({});
 		// code under test
-		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		oBinding.setParameters(mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
@@ -1650,9 +1688,12 @@ sap.ui.require([
 		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
 				aAllowed)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
+		oPrototypeMock = this.mock(ODataListBinding.prototype);
+		oPrototypeMock.expects("setParameters").withExactArgs({}); // called by c'tor
+		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
+		oPrototypeMock.restore();
 		// code under test
-		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", undefined, undefined, undefined,
-			mParameters);
+		oBinding.setParameters(mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
@@ -1948,8 +1989,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext while getContexts() is pending, relative", function (assert) {
-		var oBinding = this.oModel.bindList("Equipments", undefined, undefined, undefined, {}),
-			oBindingMock = this.mock(oBinding),
+		var oBinding = this.oModel.bindList("Equipments", undefined, undefined, undefined,
+				{"force own cache" : true}),
+				oBindingMock = this.mock(oBinding),
 			oContext1 = Context.create(this.oModel, {}, "/Employees('1')"),
 			oContext2 = Context.create(this.oModel, {}, "/Employees('2')"),
 			oReadPromise = Promise.resolve();
@@ -2964,7 +3006,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("makeCache, nothing to do", function (assert) {
 		var oContext = {fetchCanonicalPath : function () {}},
-			oBinding = this.oModel.bindList("EMPLOYEES", oContext, undefined, undefined, undefined);
+			oBinding = this.oModel.bindList("EMPLOYEES", oContext);
 
 		this.mock(oBinding).expects("createCache").never();
 
@@ -3584,7 +3626,69 @@ sap.ui.require([
 			}
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters", function (assert) {
+		var mParameters = {
+				"$apply": "filter(Amount gt 5)",
+				"$expand" : "foo",
+				"$select" : "ProductID"
+			},
+			oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined,
+				undefined, mParameters),
+			mNewParameters = {
+				"$apply" : "filter(Amount gt 3)",
+				"$filter" : "foo eq 'bar'",
+				"$expand" : undefined,
+				"foo" : undefined
+			};
+
+		this.mock(oBinding).expects("setParameters")
+			.withExactArgs({
+					"$apply" : "filter(Amount gt 3)",
+					"$filter" : "foo eq 'bar'",
+					"$select" : "ProductID"
+				}, ChangeReason.Change);
+
+		// code under test
+		oBinding.changeParameters(mNewParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters with binding parameters", function (assert) {
+		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
+
+		//code under test
+		assert.throws(function () {
+			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
+				"$$groupId" : "newGroupId"});
+		}, new Error("Unsupported parameter: $$groupId"));
+
+		//Checks that after aborting of changeParameter no Parameters at Binding are changed
+		assert.deepEqual(oBinding.mParameters, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters with empty map", function (assert) {
+		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
+
+		this.mock(ODataListBinding.prototype).expects("setParameters").never();
+
+		// code under test
+		oBinding.changeParameters({});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters with undefined map", function (assert) {
+		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(undefined);
+		}, new Error("Missing map of binding parameters"));
+	});
 });
+
 //TODO integration: 2 entity sets with same $expand, but different $select
 //TODO support suspend/resume
 //TODO Provide "array" methods that can deal with -1 index (splice, forEach, length) and use it
