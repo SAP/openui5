@@ -542,6 +542,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				sOutputValue;
 
 			sValue = this.validateProperty('value', sValue);
+
+			this._initMask();
+
 			MaskInput.prototype.setValue.call(this, sValue);
 			this._sLastChangeValue = sValue;
 			this._bValid = true;
@@ -666,14 +669,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._getFormat = function () {
-			var sFormat,
-				oBinding = this.getBinding("value");
-
-			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
-				sFormat = oBinding.oType.getOutputPattern();
-			} else {
-				sFormat = this.getDisplayFormat();
-			}
+			var sFormat = this._getDisplayFormatPattern();
 
 			if (!sFormat) {
 				sFormat = TimeFormatStyles.Medium;
@@ -826,7 +822,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				oSliders;
 
 			if (!oPicker) {
-				oPicker = this._createPicker(this.getDisplayFormat());
+				oPicker = this._createPicker(this._getDisplayFormatPattern());
 			}
 
 			oPicker.open();
@@ -1196,7 +1192,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		};
 
 		var TimeSemanticMaskHelper = function(oTimePicker) {
-			var sDisplayFormat = oTimePicker.getDisplayFormat(),
+			var sDisplayFormat = oTimePicker._getDisplayFormatPattern(),
 				sMask = sDisplayFormat,
 				sAllowedHourChars,
 				//Respect browser locale if no locale is explicitly set (BCP: 1670060658)
@@ -1514,6 +1510,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
 		}
+
+		TimePicker.prototype._getDisplayFormatPattern = function() {
+			var oBinding = this.getBinding("value");
+
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
+				return oBinding.oType.getOutputPattern();
+			}
+
+			return this.getDisplayFormat();
+		};
 
 		/**
 		 * Fires when the input operation has finished and the value has changed.
