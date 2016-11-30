@@ -140,7 +140,7 @@
 		strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
 		strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
 		strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
-		strictEqual(oRating0._iPxIconSize, 22, "By default the rating size is 22 px on " + oRating0);
+		strictEqual(oRating0._iPxIconSize, 16, "By default the rating size is 22 px on " + oRating0);
 		strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
 		strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
 		strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
@@ -205,12 +205,12 @@
 
 		// check selected width
 		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
-		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "256px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
+		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "16px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
+		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "196px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
 
 		// check unselected width
-		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "126px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
-		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "104px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
+		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "96px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
+		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "80px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
 		strictEqual(oRating2.$().children(".sapMRIUnselWrapper").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "0%" on ' + oRating2);
 
 		// check visibility false = no rendering
@@ -246,6 +246,14 @@
 		// check that acutal value is not rounded even though display is showing the rounded value
 		strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
 		strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
+
+		// check the the calculation of _toPx function are correct
+		strictEqual(oRating9._toPx(), false, "The result of undefined must be false");
+		strictEqual(oRating9._toPx("0"), 0, "The result of 0 must be 0");
+		strictEqual(oRating9._toPx("10px"), 10, "The result of 10px must be 10");
+		strictEqual(oRating9._toPx("2rem"), 32, "The result of 2rem must be 32");
+		strictEqual(oRating9._toPx("0.2rem"), 3, "The result of 0.2rem must be 3");
+		strictEqual(oRating9._toPx("1em"), 16, "The result of 1em must be 16");
 
 		// check exceeding value change
 		oRating0.setValue(-99); // too small
@@ -295,7 +303,7 @@
 	module("Events");
 
 	test("Firing events", function() {
-		expect(12);
+		expect(11);
 		var touches = {
 				0: {
 						pageX: 150,
@@ -368,8 +376,6 @@
 			return ( result > oRating4.getMaxValue() ? oRating4.getMaxValue() : result );
 		};
 
-		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
-
 		setEventValue(180);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
@@ -383,7 +389,7 @@
 		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
 
 		// special case (first 1/4 of first icon returns 0 to allow selection of 0 stars)
-		setEventValue(5);
+		setEventValue(4);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
