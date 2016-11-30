@@ -759,16 +759,19 @@ sap.ui.define([
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
 					}
 				} else {
-					if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
-						// split trailing @sapui.name first
-						iIndexOfAt = sSegment.length - 11;
-					} else {
-						iIndexOfAt = sSegment.indexOf("@");
+					// split trailing computed annotation, @sapui.name, or annotation
+					iIndexOfAt = sSegment.indexOf("@@");
+					if (iIndexOfAt < 0) {
+						if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
+							iIndexOfAt = sSegment.length - 11;
+						} else {
+							iIndexOfAt = sSegment.indexOf("@");
+						}
 					}
 					if (iIndexOfAt > 0) {
 						// <17.2 SimpleIdentifier|17.3 QualifiedName>@<annotation[@annotation]>
 						// Note: only the 1st annotation may use external targeting, the rest is
-						// pure "JSON" drill-down (except for "@sapui.name")!
+						// pure "JSON" drill-down (except for computed annotations/"@sapui.name")!
 						if (!step(sSegment.slice(0, iIndexOfAt), i, aSegments)) {
 							return false;
 						}
