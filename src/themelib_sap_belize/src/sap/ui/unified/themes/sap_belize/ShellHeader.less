@@ -3,27 +3,10 @@
 /* Belize theme                                */
 /* =========================================== */
 
-.sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:after {
-    border-left: 1px solid @sapUiShellBorderColor;
-}
-
-.sapUiUfdShellHeadUsrItm:before,
-.sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:before {
-    border-right: 1px solid @sapUiShellBorderColor;
-}
-
 .sapUiUfdShellHeadItm > span,
 .sapUiUfdShellHeadUsrItm {
 	-webkit-font-smoothing: antialiased;
-	text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor,50);
-}
-
-.sapUiUfdShellHeadItmMarker > div:after {
-	border-bottom-color: mix(@sapUiHighlight, #fff, 10); /*#E6F2F9*/
-}
-
-.sapUiUfdShellHeadItmMarker > div:before {
-	border-bottom-color: @sapUiShellBorderColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapUiUfdShellHeadItm:active > span,

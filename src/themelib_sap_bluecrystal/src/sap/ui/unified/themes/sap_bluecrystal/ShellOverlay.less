@@ -1,6 +1,7 @@
-/* ======================================================== */
-/* CSS for sap.ui.unfied.ShellOverlay.control (blue crystal)*/
-/* ======================================================== */
+/* ============================================ */
+/* CSS for control sap.ui.unified/ShellOverlay  */
+/* BlueCrystal theme                            */
+/* ============================================ */
 
 .sapUiUfdShellOvrlyHeadCntnt {
 	background-color: @sapUiShellBackground;
@@ -17,37 +18,10 @@
 .sapUiUfdShellOvrlyHeadClose:focus,
 .sapUiUfdShellOvrlyHeadClose:visited {
 	color: @sapUiButtonIconColor;
-	text-shadow: 0 1px 0 fade(@sapUiLightShadowTint,50);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapUiUfdShellOvrlyHeadClose:active {
 	background-color: @sapUiButtonActiveBackground;
 	color: @sapUiButtonActiveTextColor;
-}
-
-.sapUiUfdShellOvrlyHeadClose {
-	right: 0;
-	height: @sapUiUfdShellHeaderBarHeight - 8px;
-	margin: 4px;
-	padding-top: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-.sapUiUfdShellOvrlyHeadClose:before {
-	background-color: @sapUiToolbarSeparatorColor;
-    content: " ";
-    height: 76%;
-    top: 12%;
-    position: absolute;
-    left: -4px;
-    width: 1px;
-}
-
-html.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:hover {
-	background-color: @sapUiButtonHoverBackground;
-}
-
-html.sapUiMedia-Std-Desktop .sapUiUfdShellOvrlyHeadClose:active:hover {
-	background-color: @sapUiButtonActiveBackground;
 }
