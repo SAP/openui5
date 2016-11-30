@@ -4220,6 +4220,33 @@ QUnit.test("F2 - On a Data Cell", function(assert) {
 	this.testOnDataCellWithoutInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
 });
 
+QUnit.test("F2 - On a Row Action Cell", function(assert) {
+	initRowActions(oTable, 2, 2);
+
+	// Focus cell with a focusable & tabbable element inside.
+	var oElem = checkFocus(getRowAction(0, true), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
+
+	// Enter action mode.
+	qutils.triggerKeydown(oElem, Key.F2);
+	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $Element[0];
+	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the row action cell is focused");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+	// Leave action mode.
+	qutils.triggerKeydown(oElem, Key.F2, "F2", false, false, false);
+	checkFocus(getRowAction(0), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+	// No content in row action cell
+	initRowActions(oTable, 2, 0);
+	oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.F2);
+	checkFocus(getRowAction(0), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+});
+
 QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
 	this.testOnHeaderCells(assert, Key.Arrow.UP, "Arrow Up", false, true, false, false, qutils.triggerKeydown);
 	this.testOnHeaderCells(assert, Key.Arrow.DOWN, "Arrow Down", false, true, false, false, qutils.triggerKeydown);
@@ -4330,6 +4357,57 @@ QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no c
 	checkFocus(oElem, assert);
 
 	iNumberOfCols--;
+});
+
+QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible and no click handler", function(assert) {
+	oTable.clearSelection();
+	initRowActions(oTable, 2, 2);
+
+	// ENTER:
+
+	// Focus cell with a focusable & tabbable element inside.
+	var oElem = checkFocus(getRowAction(0, true), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
+	// Enter action mode.
+	qutils.triggerKeydown(oElem, Key.ENTER);
+	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $Element[0];
+	assert.strictEqual(document.activeElement, oElem, "ENTER: First interactive element in the row action cell is focused");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+
+	// Leave action mode.
+	oTable._getKeyboardExtension().setActionMode(false);
+
+
+	// SPACE:
+
+	// Focus cell with a focusable & tabbable element inside.
+	oElem = checkFocus(getRowAction(0, true), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
+	// Enter action mode.
+	qutils.triggerKeyup(oElem, Key.SPACE);
+	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $Element[0];
+	assert.strictEqual(document.activeElement, oElem, "SPACE: First interactive element in the row action cell is focused");
+	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+
+	// Leave action mode.
+	oTable._getKeyboardExtension().setActionMode(false);
+
+
+	// No content in row action cell
+	initRowActions(oTable, 2, 0);
+	oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.ENTER);
+	checkFocus(getRowAction(0), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	qutils.triggerKeyup(oElem, Key.SPACE);
+	checkFocus(getRowAction(0), assert);
+	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
 });
 
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
