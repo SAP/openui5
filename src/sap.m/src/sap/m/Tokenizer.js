@@ -341,26 +341,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
 	};
 
-	Tokenizer.prototype.clone = function() {
-		var aTokens = this.getTokens(),
-			oClone,
-			i;
-
-		for (i = 0; i < aTokens.length; i++) {
-			aTokens[i].detachDelete(this._onDeleteToken, this);
-			aTokens[i].detachPress(this._onTokenPress, this);
-		}
-
-		oClone = Control.prototype.clone.apply(this, arguments);
-
-		for (i = 0; i < aTokens.length; i++) {
-			aTokens[i].attachDelete(this._onDeleteToken, this);
-			aTokens[i].attachPress(this._onTokenPress, this);
-		}
-
-		return oClone;
-	};
-
 	Tokenizer.prototype.onBeforeRendering = function() {
 		this._deregisterResizeHandler();
 	};
@@ -434,9 +414,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
-		//when focus goes to token, keep the select status, otherwise deselect all tokens
-		if (!this._checkFocus()) {
-			this.selectAllTokens(false);
+		// when focus goes to token, keep the select status, otherwise deselect all tokens
+		if (document.activeElement == this.getDomRef() || !this._checkFocus()) {
+			this._changeAllTokensSelection(false);
+			this._oSelectionOrigin = null;
 		}
 	};
 
@@ -448,7 +429,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype.saptabnext = function(oEvent) {
-		this.selectAllTokens(false);
+		this._changeAllTokensSelection(false);
 	};
 
 	/**
@@ -475,7 +456,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype.onkeydown = function(oEvent) {
 
 		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
-			this.selectAllTokens(false);
+			this._changeAllTokensSelection(false);
 		}
 
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command
@@ -485,7 +466,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (this.getTokens().length > 0) {
 				this.focus();
-				this.selectAllTokens(true);
+				this._changeAllTokensSelection(true);
 				oEvent.preventDefault();
 			}
 
@@ -527,52 +508,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Called when the user presses the right arrow key, selects next token
-	 * @param {jQuery.Event} oEvent The event triggered by the user
-	 * @private
-	 */
-	Tokenizer.prototype.onsapnext = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN) {
-			return;
-		}
-
-		var iLength = this.getTokens().length;
-
-		if (iLength === 0) {
-			return;
-		}
-
-		this.selectAllTokens(false);
-
-		var oFocusedElement = jQuery(document.activeElement).control()[0];
-		if (oFocusedElement === this) {
-			// focus is on tokenizer itself - we do not handle this event and let it bubble
-			return;
-		}
-
-		// oFocusedElement could be undefined since the focus element might not correspond to a SAPUI5 Control
-		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
-
-		if (index < iLength - 1) {
-			var oNextToken = this.getTokens()[index + 1];
-			oNextToken.setSelected(true);
-			this._ensureTokenVisible(oNextToken);
-
-			oEvent.preventDefault();
-		} else if (index === iLength - 1) {
-			// focus is on last token - we do not handle this event and let it bubble
-			this.scrollToEnd();
-			return;
-		}
-
-		this._deactivateScrollToEnd();
-
-		// mark the event that it is handled by the control
-		oEvent.setMarked();
-
-	};
-
-	/**
 	 * Adjusts the scrollLeft so that the given token is visible from its left side
 	 * @param {sap.m.Token} oToken The token that will be fully visible
 	 * @private
@@ -596,26 +531,81 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		if (this.getSelectedTokens().length === this.getTokens().length) {
-			// select all situation
+		var iLength = this.getTokens().length;
+
+		if (iLength === 0) {
 			return;
 		}
 
-		if (this.getTokens().length === 0) {
+		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		if (oFocusedElement === this) {
+			// focus is on tokenizer itself - we do not handle this event and let it bubble
 			return;
 		}
-
-		var oFocusedElement = sap.ui.getCore().byId(jQuery(document.activeElement).attr("id"));
 
 		// oFocusedElement could be undefined since the focus element might not correspond to a SAPUI5 Control
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 
+		if (index == 0) {
+			// focus is on first token - we do not handle this event and let it bubble
+			return;
+		}
+
 		if (index > 0) {
 			var oPrevToken = this.getTokens()[index - 1];
-			oPrevToken.setSelected(true);
-			this._ensureTokenVisible(oPrevToken);
-		} else if (index === -1) {
-			this.getTokens()[this.getTokens().length - 1].setSelected(true);
+
+			this._changeAllTokensSelection(false, oPrevToken);
+
+			oPrevToken._changeSelection(true);
+			oPrevToken.focus();
+		} else  {
+			var token = this.getTokens()[this.getTokens().length - 1];
+			token._changeSelection(true);
+			token.focus();
+		}
+
+		this._deactivateScrollToEnd();
+
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+	};
+
+	/**
+	 * Called when the user presses the right arrow key, selects next token
+	 * @param {jQuery.Event} oEvent The event triggered by the user
+	 * @private
+	 */
+	Tokenizer.prototype.onsapnext = function(oEvent) {
+		if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN) {
+			return;
+		}
+
+		var iLength = this.getTokens().length;
+
+		if (iLength === 0) {
+			return;
+		}
+
+		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		if (oFocusedElement === this) {
+			// focus is on tokenizer itself - we do not handle this event and let it bubble
+			return;
+		}
+
+		// oFocusedElement could be undefined since the focus element might not correspond to a SAPUI5 Control
+		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
+
+		if (index < iLength - 1) {
+			var oNextToken = this.getTokens()[index + 1];
+
+			this._changeAllTokensSelection(false, oNextToken);
+
+			oNextToken._changeSelection(true);
+
+			oNextToken.focus();
+		} else {
+			// focus is on last token - we do not handle this event and let it bubble
+			return;
 		}
 
 		this._deactivateScrollToEnd();
@@ -905,8 +895,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
-		oToken.attachDelete(this._onDeleteToken, this);
-		oToken.attachPress(this._onTokenPress, this);
 
 		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 
@@ -920,10 +908,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
-		if (oToken) {
-			oToken.detachDelete(this._onDeleteToken, this);
-			oToken.detachPress(this._onTokenPress, this);
-		}
 
 		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 
@@ -955,14 +939,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Tokenizer.prototype.removeAllTokens = function(bFireEvent) {
-		var i, length, token, tokens;
-		tokens = this.getTokens();
-		length = tokens.length;
-		for (i = 0; i < length; i++) {
-			token = tokens[i];
-			token.detachDelete(this._onDeleteToken, this);
-			token.detachPress(this._onTokenPress, this);
-		}
+		var tokens = this.getTokens();
 
 		this.removeAllAggregation("tokens");
 
@@ -1035,12 +1012,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bSelect = true;
 		}
 
-		var tokens = this.getTokens();
-		var token, i, length;
-		length = tokens.length;
+		var tokens = this.getTokens(),
+			length = tokens.length,
+			i;
+
+		for (i = 0; i < length; i++) {
+			tokens[i].setSelected(bSelect);
+		}
+
+		this._doSelect();
+
+		return this;
+	};
+
+	/**
+	 * Function selects/deselects all tokens and fires the correct "select" or "deselect" events.
+	 * @param {sap.m.Token}
+	 * 			[optional] skipToken - this token will be skipped when changing the selection
+	 * @private
+	 */
+	Tokenizer.prototype._changeAllTokensSelection = function(bSelect, skipToken) {
+		var tokens = this.getTokens(),
+			length = tokens.length,
+			token,
+			i;
+
 		for (i = 0; i < length; i++) {
 			token = tokens[i];
-			token.setSelected(bSelect, true);
+			if (token !== skipToken) {
+				token._changeSelection(bSelect);
+			}
 		}
 
 		this._doSelect();
@@ -1076,8 +1077,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 * @param oEvent
 	 */
-	Tokenizer.prototype._onDeleteToken = function(oEvent) {
-		var token = oEvent.getParameter("token");
+	Tokenizer.prototype._onTokenDelete = function(token) {
 		if (token && this.getEditable()) {
 			token.destroy();
 			this.fireTokenChange({
@@ -1094,15 +1094,72 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/**
-	 * Function is called when token is pressed, toggles the token's selection state depending on ctrl key state, deselectes
-	 * other tokens. Currently handled by sap.m.Token#ontap
-	 *
-	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
-	 */
-	Tokenizer.prototype._onTokenPress = function(oEvent) {};
+	Tokenizer.prototype._onTokenSelect = function(oTokenSource, ctrlKey, shiftKey) {
+		var aTokens = this.getTokens(),
+			oToken,
+			i;
+
+		if (shiftKey) {
+			var oFocusedToken = this._getFocusedToken();
+			if (!oFocusedToken) {
+				this._oSelectionOrigin = null;
+				return;
+			}
+
+			if (this._oSelectionOrigin) {
+				oFocusedToken = this._oSelectionOrigin;
+			} else {
+				this._oSelectionOrigin = oFocusedToken;
+			}
+
+			var iFocusIndex = this.indexOfToken(oFocusedToken),
+				iIndex = this.indexOfToken(oTokenSource),
+				iMinIndex = Math.min(iFocusIndex, iIndex),
+				iMaxIndex = Math.max(iFocusIndex, iIndex);
+
+			for (i = 0; i < aTokens.length; i++) {
+				oToken = aTokens[i];
+				if (i >= iMinIndex && i <= iMaxIndex) {
+					oToken._changeSelection(true);
+				} else if (!ctrlKey) {
+					oToken._changeSelection(false);
+				}
+			}
+
+			return;
+		}
+
+		this._oSelectionOrigin = null;
+
+		// ctrl key was pressed, do nothing, the token handled it
+		if (ctrlKey) {
+			return;
+		}
+
+		// simple select, neither ctrl nor shift key was pressed, deselects other tokens
+		this._oSelectionOrigin = false;
+
+		for (i = 0; i < aTokens.length; i++) {
+			oToken = aTokens[i];
+
+			if (oToken !== oTokenSource) {
+				oToken._changeSelection(false);
+			}
+		}
+	};
+
+	Tokenizer.prototype._getFocusedToken = function() {
+		var oFocusedToken = sap.ui.getCore().byId(document.activeElement.id);
+
+		// if the focus is not on a Token in this Tokenizer do nothing
+		if (!oFocusedToken ||
+			!(oFocusedToken instanceof sap.m.Token) ||
+			this.indexOfToken(oFocusedToken) == -1) {
+			return null;
+		}
+
+		return oFocusedToken;
+	};
 
 	Tokenizer.prototype.setEditable = function(bEditable) {
 		this.$().toggleClass("sapMTokenizerReadonly", !bEditable);
