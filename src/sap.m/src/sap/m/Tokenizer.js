@@ -9,37 +9,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-		/**
-		 * Constructor for a new Tokenizer.
-		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-		 * @param {object} [mSettings] Initial settings for the new control
-		 *
-		 * @class
-		 * <strong><em>Overview</em></strong>
-		 * <br><br>
-		 * A tokenizer is a container for {@link sap.m.Token Tokens}. It also handles all actions associated with the tokens like adding, deleting, selecting and editing.
-		 * <br><br>
-		 * <strong><em>Structure</em></strong>
-		 * <br><br>
-		 * The tokens are stored in the <code>tokens</code> aggregation.
-		 * The tokenizer can determine, by setting the <code>editable</code> property, whether the tokens in it are editable.
-		 * Still the Token itself can determine if it is <code>editable</code>. This allows you to have non-editable Tokens in an editable Tokenizer.
-		 *
-		 * <br><br>
-		 * <strong><em>Usage</em></strong>
-		 * <br><br>
-		 * <strong>When to use:</strong>
-		 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
-		 *
-		 * @author SAP SE
-		 * @version ${version}
-		 *
-		 * @constructor
-		 * @public
-		 * @alias sap.m.Tokenizer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-		 */
+	/**
+	 * Constructor for a new Tokenizer.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
+	 * @class
+	 * <h3>Overview</h3>
+	 * A tokenizer is a container for {@link sap.m.Token Tokens}. It also handles all actions associated with the tokens like adding, deleting, selecting and editing.
+	 * <h3>Structure</h3>
+	 * The tokens are stored in the <code>tokens</code> aggregation.
+	 * The tokenizer can determine, by setting the <code>editable</code> property, whether the tokens in it are editable.
+	 * Still the Token itself can determine if it is <code>editable</code>. This allows you to have non-editable Tokens in an editable Tokenizer.
+	 *
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @public
+	 * @alias sap.m.Tokenizer
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
 
 		library : "sap.m",
@@ -114,6 +109,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 */
 					removedTokens :  { type: "sap.m.Token[]"}
 				}
+			},
+
+			/**
+			 * Fired when the tokens aggregation changed (add / remove token)
+			 */
+			tokenUpdate: {
+				/**
+				 * Type of tokenChange event.
+				 * There are two TokenUpdate types: "added", "removed"
+				 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+				 */
+				type: {type: "string"},
+
+				/**
+				 * The array of tokens that are added.
+				 * This parameter is used when tokenUpdate type is "added".
+				 */
+				addedTokens: {type: "sap.m.Token[]"},
+
+				/**
+				 * The array of tokens that are removed.
+				 * This parameter is used when tokenUpdate type is "removed".
+				 */
+				removedTokens: {type: "sap.m.Token[]"}
 			}
 		}
 	}});
@@ -156,8 +175,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function scrolls the tokens to the end
 	 *
 	 * @public
-	 * @param {boolean}
-	 *          bInitialize indicates if we should reset the 'scroll-to-end-pending' flag; if true we would reset this flag
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
 
@@ -213,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._truncateLastToken = function(nWidth){
 		var lastToken = this._removeLastTokensTruncation();
 		if (lastToken === null) {
-			 return;
+			return;
 		}
 
 		var that = this;
@@ -236,7 +253,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			lastToken.addStyleClass("sapMTokenTruncate");
 			lastToken.attachSelect(fSelectHandler);
 		} else {
-		  // last token is completely visible
+			// last token is completely visible
 			lastToken.detachSelect(fSelectHandler);
 		}
 
@@ -363,7 +380,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this._bScrollToEndIsActive) {
 			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-					that._doScrollToEnd();
+				that._doScrollToEnd();
 			});
 		}
 
@@ -488,7 +505,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getSelectedTokens().length === 0) {
 			this.onsapprevious(oEvent);
 		} else if (this.getEditable()) {
-			this.removeSelectedTokens();
+			this._removeSelectedTokens();
 		}
 
 		oEvent.preventDefault();
@@ -505,7 +522,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Tokenizer.prototype.onsapdelete = function(oEvent) {
 		if (this.getEditable()) {
-			this.removeSelectedTokens();
+			this._removeSelectedTokens();
 		}
 	};
 
@@ -517,7 +534,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype.onsapnext = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN) {
 			return;
-	  }
+		}
 
 		var iLength = this.getTokens().length;
 
@@ -559,7 +576,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Adjusts the scrollLeft so that the given token is visible from its left side
 	 * @param {sap.m.Token} oToken The token that will be fully visible
 	 * @private
-	*/
+	 */
 	Tokenizer.prototype._ensureTokenVisible = function(oToken) {
 		var iTokenizerLeftOffset = this.$().offset().left,
 			iTokenLeftOffset = oToken.$().offset().left;
@@ -720,8 +737,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
-			oSuggestionObject, fValidateCallback) {
-		var that = this;
+															   oSuggestionObject, fValidateCallback) {
+		var that = this,
+			bAddTokenSuccess;
 		return function(oToken) {
 			if (oToken) { // continue validating
 				aValidators = aValidators.slice(iValidatorIndex + 1);
@@ -731,7 +749,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					suggestionObject : oSuggestionObject,
 					validationCallback : fValidateCallback
 				}, aValidators);
-				that._addUniqueToken(oToken, fValidateCallback);
+				bAddTokenSuccess = that._addUniqueToken(oToken, fValidateCallback);
+
+				if (bAddTokenSuccess) {
+					that.fireTokenUpdate({
+						addedTokens : [oToken],
+						removedTokens : [],
+						type : Tokenizer.TokenUpdateType.Added
+					});
+				}
 			} else {
 				if (fValidateCallback) {
 					fValidateCallback(false);
@@ -754,6 +780,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oToken = this._validateToken(oParameters);
 		this._addUniqueToken(oToken, oParameters.validationCallback);
 	};
+
+	/**
+	 * Private function used by MultiInput which validates the given text and adds a new token if validation was successful
+	 *
+	 * @private
+	 * @param {object}
+	 *          oParameters - parameter bag containing following fields: {sap.m.String} text - the source text {sap.m.Token}
+	 *          [optional] token - a suggested token {object} [optional] suggestionObject - any object used to find the
+	 *          suggested token {function} [optional] validationCallback - callback which gets called after validation has
+	 *          finished
+	 */
+	Tokenizer.prototype._addValidateToken = function(oParameters) {
+		var oToken = this._validateToken(oParameters),
+			bAddTokenSuccessful = this._addUniqueToken(oToken, oParameters.validationCallback);
+
+		if (bAddTokenSuccessful) {
+			this.fireTokenUpdate({
+				addedTokens : [oToken],
+				removedTokens : [],
+				type : Tokenizer.TokenUpdateType.Added
+			});
+		}
+	};
+
 	/**
 	 * Function adds token if it does not already exist
 	 *
@@ -765,12 +815,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback) {
 		if (!oToken) {
-			return;
+			return false;
 		}
 
 		var tokenExists = this._tokenExists(oToken);
 		if (tokenExists) {
-			return;
+			return false;
 		}
 
 		this.addToken(oToken);
@@ -784,6 +834,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			removedTokens : [],
 			type : Tokenizer.TokenChangeType.TokensChanged
 		});
+
+		return true;
 	};
 
 	/**
@@ -936,7 +988,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @returns {sap.m.Tokenizer} - this for chaining
 	 */
-	Tokenizer.prototype.removeSelectedTokens = function() {
+	Tokenizer.prototype._removeSelectedTokens = function() {
 		var tokensToBeDeleted = this.getSelectedTokens();
 		var token, i, length;
 		length = tokensToBeDeleted.length;
@@ -957,6 +1009,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			addedTokens : [],
 			removedTokens : tokensToBeDeleted,
 			type : Tokenizer.TokenChangeType.TokensChanged
+		});
+
+		this.fireTokenUpdate({
+			addedTokens : [],
+			removedTokens : tokensToBeDeleted,
+			type: Tokenizer.TokenUpdateType.Removed
 		});
 
 		this._doSelect();
@@ -997,10 +1055,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.Token[]} - array of selected tokens or empty array
 	 */
 	Tokenizer.prototype.getSelectedTokens = function() {
-		var aSelectedTokens = [];
-		var i, length, token, tokens;
-		tokens = this.getTokens();
-		length = tokens.length;
+		var aSelectedTokens = [],
+			tokens = this.getTokens(),
+			i,
+			token,
+			length = tokens.length;
+
 		for (i = 0; i < length; i++) {
 			token = tokens[i];
 			if (token.getSelected()) {
@@ -1018,12 +1078,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._onDeleteToken = function(oEvent) {
 		var token = oEvent.getParameter("token");
-		if (token) {
+		if (token && this.getEditable()) {
 			token.destroy();
 			this.fireTokenChange({
 				addedTokens : [],
 				removedTokens : [token],
 				type : Tokenizer.TokenChangeType.TokensChanged
+			});
+
+			this.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : [token],
+				type : Tokenizer.TokenUpdateType.Removed
 			});
 		}
 	};
@@ -1039,15 +1105,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._onTokenPress = function(oEvent) {};
 
 	Tokenizer.prototype.setEditable = function(bEditable) {
-		this.setProperty("editable", bEditable);
+		this.$().toggleClass("sapMTokenizerReadonly", !bEditable);
 
-		var tokens = this.getTokens();
-		var length = tokens.length;
-		for (var i = 0; i < length; i++) {
-			tokens[i].setEditable(bEditable);
-		}
-
-		return this;
+		return this.setProperty("editable", bEditable, true);
 	};
 
 	/**
@@ -1137,6 +1197,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Removed : "removed",
 		RemovedAll : "removedAll",
 		TokensChanged : "tokensChanged"
+	};
+
+	Tokenizer.TokenUpdateType = {
+		Added : "added",
+		Removed : "removed"
 	};
 
 	Tokenizer.WaitForAsyncValidation = "sap.m.Tokenizer.WaitForAsyncValidation";
