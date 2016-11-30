@@ -46,11 +46,11 @@
 	text-shadow: @sapUiShadowText;
 }
 
-.sapMGTLineMode.sapMGTDisabled {
+.sapMGTLineMode.sapMGTDisabled > .sapMGTTouchArea > *:not(.sapMGTActionsContainer) {
 	opacity: 0.5;
 }
 
-.sapMGTLineMode.sapMGTFailed .sapMGTLineModeFailedIcon ~ *:not(.sapMGTStyleHelper) {
+.sapMGTLineMode.sapMGTFailed .sapMGTLineModeFailedIcon ~ *:not(.sapMGTStyleHelper):not(.sapMGTActionsContainer):not(.sapMGTEndMarker) {
 	opacity: 0.5;
 }
 
@@ -103,6 +103,12 @@
 
 		& * {
 			font-size: @sapMFontMediumSize;
+		}
+
+		&.sapMGTDisabled {
+			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+				opacity: 0.5;
+			}
 		}
 
 		.sapMGTLineStyleHelper {
