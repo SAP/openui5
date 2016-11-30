@@ -1,28 +1,12 @@
-/* ======================================================== */
-/* CSS for sap.ui.unfied.ShellHeader.control (bluecrystal)  */
-/* ======================================================== */
-
-.sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:after {
-    border-left: 1px solid @sapUiShellBorderColor;
-}
-
-.sapUiUfdShellHeadUsrItm:before,
-.sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:before {
-    border-right: 1px solid @sapUiShellBorderColor;
-}
+/* =========================================== */
+/* CSS for control sap.ui.unified/ShellHeader  */
+/* BlueCrystal theme                           */
+/* =========================================== */
 
 .sapUiUfdShellHeadItm > span,
 .sapUiUfdShellHeadUsrItm {
 	-webkit-font-smoothing: antialiased;
-	text-shadow: 0 1px 0 fade(@sapUiLightShadowTint,50);
-}
-
-.sapUiUfdShellHeadItmMarker > div:after {
-	border-bottom-color: mix(@sapUiHighlight, @sapUiWhite, 10); /*#E6F2F9*/
-}
-
-.sapUiUfdShellHeadItmMarker > div:before {
-	border-bottom-color: @sapUiShellBorderColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapUiUfdShellHeadItm:active > span,
@@ -37,5 +21,5 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadUsrItm:hover:active > *,
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmName,
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg,
 .sapUiUfdShellHeadItm:focus > span {
-	border-color: @sapUiFocus;
+	border-color: @sapUiContentFocusColor;
 }

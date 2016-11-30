@@ -1,25 +1,26 @@
-/* ================================================== */
-/* CSS for sap.ui.unfied.ShellHeader.control (hcb)    */
-/* ================================================== */
+/* =========================================== */
+/* CSS for control sap.ui.unified/ShellHeader  */
+/* High Contrast Black theme                   */
+/* =========================================== */
 
 @sapUiUfdShellHeadButtonBorderRadius: 6px;
 @sapUiUfdShellHeadButtonHeight: 40px;
 @sapUiUfdShellHeadButtonBorderWidth: 1px;
 
 .sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:after {
-	border-left: @sapUiUfdShellHeadButtonBorderWidth solid @sapHCStandardFG;
+	border-left: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
 	right: -@sapUiUfdShellHeadButtonOuterSpace;
 	top: @sapUiUfdShellHeadButtonOuterSpace/2;
 }
 
 .sapUiUfdShellHeadUsrItm:before,
 .sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:before {
-	border-right: @sapUiUfdShellHeadButtonBorderWidth solid @sapHCStandardFG;
+	border-right: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
 	top: @sapUiUfdShellHeadButtonOuterSpace/2;
 }
 
 html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
-	background-color: @sapHCHighlightBG;
+	background-color: @sapUiHighlight;
 }
 
 .sapUiUfdShellHeadItm {
@@ -27,9 +28,9 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
 }
 
 .sapUiUfdShellHeadItm > span {
-	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapHCStandardFG;
+	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
 	border-radius: @sapUiUfdShellHeadButtonBorderRadius;
-	color: @sapHCStandardFG;
+	color: @sapUiBaseText;
 	height: @sapUiUfdShellHeadButtonHeight;
 	line-height: @sapUiUfdShellHeadButtonHeight - 2*@sapUiUfdShellHeadButtonOutlineWidth;
 	margin-right: 2*@sapUiUfdShellHeadButtonOuterSpace;
@@ -42,7 +43,7 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
 .sapUiUfdShellHeadUsrItmImg,
 .sapUiUfdShellHeadUsrItmName,
 .sapUiUfdShellHeadUsrItmExp {
-	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapHCStandardFG;
+	border: @sapUiUfdShellHeadButtonBorderWidth solid @sapUiShellBorderColor;
 	height: @sapUiUfdShellHeadButtonHeight;
 	line-height: @sapUiUfdShellHeadButtonHeight - 2*@sapUiUfdShellHeadButtonOutlineWidth;;
 	margin-top: 0;
@@ -105,17 +106,12 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmImg {
 }
 
 html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
-	border-right: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapHCStandardFG;
+	border-right: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapUiContentFocusColor;
 	padding-right: @sapUiUfdShellHeadButtonInnerSpace - @sapUiUfdShellHeadButtonBorderWidth;
 }
 
-.sapUiUfdShellHeadItmMarker > div:after,
-.sapUiUfdShellHeadItmMarker > div:before {
-	border-bottom-color: @sapHCStandardFG;
-}
-
 .sapUiUfdShellHeadItm:focus > span {
-	border: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapHCStandardFG;
+	border: 2*@sapUiUfdShellHeadButtonBorderWidth dotted @sapUiContentFocusColor;
 	border-radius: 0;
 	padding: 0;
 }
