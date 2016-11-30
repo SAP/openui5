@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/m/LoadState" ],
-	function(LoadState) {
+sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
+	function(LoadState, GenericTileScope) {
 	"use strict";
 
 	/**
@@ -55,6 +55,10 @@ sap.ui.define([ "sap/m/LoadState" ],
 		oRm.writeClasses();
 		oRm.write(">");
 
+		if (oControl.getScope() === GenericTileScope.Actions) {
+			this._renderActionsScope(oRm, oControl);
+		}
+
 		if (oControl.getState() !== LoadState.Loaded) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		} else {
@@ -73,6 +77,7 @@ sap.ui.define([ "sap/m/LoadState" ],
 		if (sHeaderImage) {
 			oRm.renderControl(oControl._oImage);
 		}
+
 		this._renderHeader(oRm, oControl);
 		if (oControl.getSubheader()) {
 			this._renderSubheader(oRm, oControl);
@@ -145,6 +150,11 @@ sap.ui.define([ "sap/m/LoadState" ],
 			default :
 		}
 		oRm.write("</div>");
+	};
+
+	GenericTileRenderer._renderActionsScope = function(oRm, oControl) {
+		oRm.renderControl(oControl._oRemoveButton);
+		oRm.renderControl(oControl._oMoreIcon);
 	};
 
 	GenericTileRenderer._renderHoverOverlay = function(oRm, oControl) {
