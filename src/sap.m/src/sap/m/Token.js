@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Tokenizer'],
+	function(jQuery, library, Control, Tokenizer) {
 	"use strict";
 
 
@@ -12,12 +12,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new Token.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-	 * @param {object} [mSettings] Initial settings for the new control.
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.Token</code> is a container of a single text item with a delete icon if the token is in edit mode.
-	 * @extends sap.ui.core.Control
+	 * <h3>Overview</h3>
+	 * Tokens are small items of information (similar to tags) that mainly serve to visualize previously selected items.
+	 * Tokens are manipulated by a {@link sap.m.Tokenizer Tokenizer}.
+	 * <h3>Structure</h3>
+	 * The tokens store single text items or sometimes key-value pairs, such as "John Miller (ID1234567)".
+	 * Each token also contains a delete icon, which is invisible if the token is in edit mode.
+	 *
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * Tokens can only be used with the Tokenizer as a container.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -25,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Token
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model.
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {
 
@@ -111,7 +119,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
+		var that = this;
 		this._deleteIcon = new sap.ui.core.Icon({
+			id : that.getId() + "-icon",
 			src : "sap-icon://sys-cancel"
 		});
 
@@ -130,8 +140,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.$().toggleClass("sapMTokenActive", true);
 		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button) {
 			/* there are two cases that should fire touch start event:
-				left button click in desktop, where value of button event is 0;
-				touch event in combi device, where value of button event is undefined.*/
+			 left button click in desktop, where value of button event is 0;
+			 touch event in combi device, where value of button event is undefined.*/
 			return;
 		}
 
@@ -180,6 +190,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		if (bSelected) {
 			this.fireSelect();
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets the editable status of the token.
+	 *
+	 * @param {boolean} bEditable Indicates if the token is editable.
+	 * @return {sap.m.Token} this for chaining
+	 * @public
+	 */
+	Token.prototype.setEditable = function(bEditable) {
+		var oParent = this.getParent();
+
+		this.setProperty("editable", bEditable, true);
+
+		this.$().toggleClass("sapMTokenReadOnly", !bEditable);
+
+		if (oParent instanceof Tokenizer) {
+			oParent.invalidate();
 		}
 
 		return this;
@@ -278,14 +309,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		if (this.getSelected() && this.getEditable()) {
-			this.fireDelete({
-				token : this
-			});
-
-		}
+		this._deleteToken(oEvent);
 	};
 
 	/**
@@ -296,11 +320,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *          oEvent
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
+		this._deleteToken(oEvent);
+	};
+
+	Token.prototype._deleteToken = function(oEvent) {
+		if (this.getParent() instanceof Tokenizer) {
+			return;
+		}
+
 		if (this.getEditable()) {
 			this.fireDelete({
 				token : this
 			});
 		}
+
 		oEvent.preventDefault();
 	};
 
