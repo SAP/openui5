@@ -5,14 +5,13 @@
 
 		<title>MultiInput - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.MultiInput");
@@ -128,20 +127,20 @@
 		var oMultiInput4 = new sap.m.MultiInput("multiInputNotEditable", {
 			value : "Some text",
 			tokens: [
-					new sap.m.Token({text: "Token 1", key: "0001"}),
-					new sap.m.Token({text: "Token 2", key: "0002"}),
-					new sap.m.Token({text: "Token 3", key: "0003"}),
-					new sap.m.Token({text: "Token 4", key: "0004"})
-			],
+				new sap.m.Token({text: "Token 1", key: "0001"}),
+				new sap.m.Token({text: "Token 2", key: "0002"}),
+				new sap.m.Token({text: "Token 3", key: "0003"}),
+				new sap.m.Token({text: "Token 4", key: "0004"})
+		 	],
 			editable: false
 		});
 
 		oMultiInput4.setTokens([
-			         new sap.m.Token({text: "Token 1", key: "0001"}),
-			         new sap.m.Token({text: "Token 2", key: "0002", editable: false}),
-			         new sap.m.Token({text: "Token 3", key: "0003"}),
-			         new sap.m.Token({text: "Token 4", key: "0004", editable: false})
-			         ]);
+			 new sap.m.Token({text: "Token 1", key: "0001"}),
+			 new sap.m.Token({text: "Token 2", key: "0002", editable: false}),
+			 new sap.m.Token({text: "Token 3", key: "0003"}),
+			 new sap.m.Token({text: "Token 4", key: "0004", editable: false})
+		]);
 
 		oMultiInput5 = new sap.m.MultiInput("mI5", {
 			enableMultiLineMode: true,
@@ -1020,6 +1019,26 @@
 			var text = args.text;
 			return new sap.m.Token({key: text, text: text});
 		});
+
+
+		//editable/read-only
+
+		var oMultiInput9 = new sap.m.MultiInput("multiInputReadOnlyTokens", {
+			width : "60%",
+			tokens : [
+				new sap.m.Token({text: "Token 1", key: "0001"}),
+				new sap.m.Token({text: "Token 2", key: "0002", editable : false}),
+				new sap.m.Token({text: "Token 3", key: "0003"}),
+				new sap.m.Token({text: "Token 4", key: "0004", editable : false})
+			]
+		});
+
+		var readOnlyButton = new sap.m.Button({
+			text : "Toggle Read-Only",
+			press : function() {
+				oMultiInput9.setEditable(!oMultiInput9.getEditable());
+			}
+		})
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
@@ -1050,7 +1069,9 @@
 					new sap.m.Label({text : "token databinding in MultiInput"}),
 					oTable,
 					new sap.m.Label({text:"MultiInput with maximum three tokens"}),
-					oMultiInput8
+					oMultiInput8,
+					oMultiInput9,
+					readOnlyButton
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }
