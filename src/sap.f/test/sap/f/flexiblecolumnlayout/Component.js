@@ -12,29 +12,7 @@ sap.ui.define([
 		init: function () {
 			UIComponent.prototype.init.apply(this, arguments);
 
-			var oData = {
-				fullScreenColumn: "None",
-				detail: {
-					fullScreenButton: {
-						icon: "sap-icon://full-screen",
-						visible: false
-					},
-					closeButton: {
-						visible: false
-					}
-				},
-				detailDetail: {
-					fullScreenButton: {
-						icon: "sap-icon://full-screen",
-						visible: false
-					},
-					closeButton: {
-						visible: false
-					}
-				}
-			};
-
-			var oModel = new JSONModel(oData);
+			var oModel = new JSONModel();
 			this.setModel(oModel);
 
 			this.getRouter().initialize();
@@ -48,8 +26,8 @@ sap.ui.define([
 			});
 		},
 
-		isFullScreen: function () {
-			return this.getModel().getProperty("/fullScreenColumn") !== "None";
+		getFlexibleColumnLayout: function () {
+			return this.getRootControl().byId("fcl");
 		}
 	});
 	return Component;

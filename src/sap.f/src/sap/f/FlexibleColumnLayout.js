@@ -36,6 +36,12 @@ sap.ui.define([
 	var FlexibleColumnLayout = Control.extend("sap.f.FlexibleColumnLayout", {
 		metadata: {
 			properties: {
+
+				/**
+				 * Determines the layout of the control - number of columns and their relative sizes
+				 */
+				layout: {type: "sap.f.LayoutType", defaultValue: sap.f.LayoutType.OneColumn},
+
 				/**
 				 * Forces the control to only show two columns at a time on Desktop (as it would normally on Tablet).
 				 */
@@ -50,24 +56,6 @@ sap.ui.define([
 				 * Determines whether the user can switch between the MidColumnEmphasized (25/50/25) and EndColumnEmphasized (25/25/50) three-column layouts with the use of an additional navigation button.
 				 */
 				threeColumnLayoutTypeFixed: {type: "boolean", group: "Behavior", defaultValue: true},
-
-				/**
-				 * Shows/hides the <code>Mid</code> column.
-				 */
-				showMidColumn: {type: "boolean", defaultValue: false},
-
-				/**
-				 * Shows/hides the <code>End</code> column.
-				 *
-				 * Only has effect if <code>showMidColumn</code> is set to <code>true</code>.
-				 */
-				showEndColumn: {type: "boolean", defaultValue: false},
-
-				/**
-				 * Use to force a column to take up the whole available space, without the need to modify <code>showMidColumn</code> and <code>showEndColumn</code>.
-				 * When a column is in fullscreen mode, the <code>showMidColumn</code> and <code>showEndColumn</code> properties have no effect.
-				 */
-				fullScreenColumn: {type: "sap.f.FlexibleColumn", defaultValue: sap.f.FlexibleColumn.None},
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>Begin</code> column when <code>to()</code> is called without defining the
@@ -568,10 +556,10 @@ sap.ui.define([
 		this._iControlWidth = null;
 
 		// Holds the current layout of the control
-		this._sLayout = null;
+		this._sColumnWidthDistribution = null;
 
-		// Timer used to prevent excessive calls of "_adjustLayout" in a very short time
-		this._iAdjustLayoutTimer = null;
+		this._sLastLayout = null;
+		this._aLayoutHistory = [];
 
 		// The first NavContainer should always be created in advance - it cannot be hidden
 		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"));
@@ -682,61 +670,26 @@ sap.ui.define([
 		oRm.destroy();
 	};
 
-	/**
-	 * Setter for property showMidColumn
-	 * @param bShow
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setShowMidColumn = function (bShow) {
-		if (this.getShowMidColumn() === bShow) {
+
+
+	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout, bIsNavigationArrow){
+		var sCurrentLayout = this.getLayout();
+
+		if (sCurrentLayout === sNewLayout) {
 			return this;
 		}
 
-		var vResult = this.setProperty("showMidColumn", bShow, true);
+		this._sLastLayout = sCurrentLayout;
+		if (typeof sNewLayout !== "undefined") {
+			this._aLayoutHistory.push(sNewLayout);
+		}
+
+		var vResult = this.setProperty("layout", sNewLayout, true);
 		if (typeof this._$columns === "undefined") {
 			return vResult;
 		}
 
-		this._adjustLayoutDeferred();
-		return vResult;
-	};
-
-	/**
-	 * Setter for property showEndColumn
-	 * @param bShow
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setShowEndColumn = function (bShow) {
-		if (this.getShowEndColumn() === bShow) {
-			return this;
-		}
-
-		var vResult = this.setProperty("showEndColumn", bShow, true);
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
-		this._adjustLayoutDeferred();
-		return vResult;
-	};
-
-
-	/**
-	 * Setter for property fullScreenColumn
-	 * @param sColumn
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setFullScreenColumn = function (sColumn) {
-		if (this.getFullScreenColumn() === sColumn) {
-			return this;
-		}
-
-		var vResult = this.setProperty("fullScreenColumn", sColumn, true);
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
-		this._adjustLayoutDeferred();
+		this._applyLayoutChanges(bIsNavigationArrow);
 		return vResult;
 	};
 
@@ -752,7 +705,7 @@ sap.ui.define([
 			return vResult;
 		}
 
-		this._adjustLayoutDeferred();
+		this._applyLayoutChanges();
 		return vResult;
 	};
 
@@ -767,7 +720,7 @@ sap.ui.define([
 		this._cacheDOMElements();
 		this._iControlWidth = this.$().width();
 
-		this._adjustLayoutResize();
+		this._applyLayoutChanges();
 		this._hideShowArrows(); // Arrows need to be explicitly fixed after rerendering as the layout didn't actually change
 	};
 
@@ -794,25 +747,25 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._initButtons = function () {
 		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
 			icon: "sap-icon://slim-arrow-left",
-			press: this._adjustLayoutShift.bind(this, "left")
+			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
 
 		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
 			icon: "sap-icon://slim-arrow-right",
-			press: this._adjustLayoutShift.bind(this, "right")
+			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
 
 		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
 			icon: "sap-icon://slim-arrow-left",
-			press: this._adjustLayoutShift.bind(this, "left")
+			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
 
 		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
 			icon: "sap-icon://slim-arrow-right",
-			press: this._adjustLayoutShift.bind(this, "right")
+			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
 	};
@@ -936,7 +889,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getColumnSize = function (sColumn) {
-		var aSizes = this._sLayout.split("/"),
+		var aSizes = this._sColumnWidthDistribution.split("/"),
 			aMap = {
 				begin: 0,
 				mid: 1,
@@ -944,7 +897,20 @@ sap.ui.define([
 			},
 			sSize = aSizes[aMap[sColumn]];
 
-		return sSize;
+		return parseInt(sSize, 10);
+	};
+
+	FlexibleColumnLayout.prototype._getColumnSizeForLayout = function (sColumn, sLayout) {
+		var sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout),
+			aSizes = sColumnWidthDistribution.split("/"),
+			aMap = {
+				begin: 0,
+				mid: 1,
+				end: 2
+			},
+			sSize = aSizes[aMap[sColumn]];
+
+		return parseInt(sSize, 10);
 	};
 
 	FlexibleColumnLayout.prototype._onResize = function (oEvent) {
@@ -957,30 +923,6 @@ sap.ui.define([
 
 		this._iControlWidth = oEvent.size.width;
 
-		this._adjustLayoutResize();
-	};
-
-	/**
-	 * Deferred execution wrapper of _adjustLayout
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayoutDeferred = function () {
-
-		if (this._iAdjustLayoutTimer) {
-			jQuery.sap.clearDelayedCall(this._iAdjustLayoutTimer);
-			this._iAdjustLayoutTimer = null;
-		}
-
-		this._iAdjustLayoutTimer = jQuery.sap.delayedCall(FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT, this, this._adjustLayout, arguments);
-	};
-
-	/**
-	 * Called when the public API changed (properties)
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayout = function () {
-
-		// Don't try to apply any specific layout, just let it pick the default
 		this._applyLayoutChanges();
 	};
 
@@ -989,53 +931,78 @@ sap.ui.define([
 	 * @param sShiftDirection - left/right (direction of the arrow)
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._adjustLayoutShift = function (sShiftDirection) {
+	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
 
-		// Try to apply the next/previous layout in the list, relatively to the current
-		this._applyLayoutChanges(this._sLayout, sShiftDirection);
+		var sLayout = this.getLayout(),
+			oMap;
+
+		oMap = {
+			TwoColumnsBeginEmphasized: {
+				"left": "TwoColumnsMidEmphasized"
+			},
+			TwoColumnsMidEmphasized: {
+				"right": "TwoColumnsBeginEmphasized"
+			},
+			ThreeColumnsMidEmphasized: {
+				"left": "ThreeColumnsEndEmphasized",
+				"right": "ThreeColumnsMidEmphasizedEndHidden"
+			},
+			ThreeColumnsEndEmphasized: {
+				"right": "ThreeColumnsMidEmphasized"
+			},
+			ThreeColumnsMidEmphasizedEndHidden: {
+				"left": "ThreeColumnsMidEmphasized",
+				"right": "ThreeColumnsBeginEmphasizedEndHidden"
+			},
+			ThreeColumnsBeginEmphasizedEndHidden: {
+				"left": "ThreeColumnsMidEmphasizedEndHidden"
+			}
+		};
+
+		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
+		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
+			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
+
+		sLayout = oMap[sLayout][sShiftDirection];
+
+		this.setLayout(sLayout, true);
 	};
 
-	/**
-	 * Called when the user resized the browser and on the first load
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayoutResize = function () {
+	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout) {
+		var iMaxColumns = this._getMaxColumnsCount(),
+			oMap;
 
-		// After resize, try to apply the current layout - if it is no longer valid, the default will be taken
-		this._applyLayoutChanges(this._sLayout);
-	};
+		oMap = {
+			OneColumn: "100/0/0",
+			MidFullScreen: "0/100/0",
+			EndFullScreen: "0/0/100"
+		};
 
-	/**
-	 * Allows the setting of а predefined layout.
-	 * It may not be honored if it's not valid in that particular case.
-	 *
-	 *  <ul>The possible combinations of <code>beginColumnWidth</code>, <code>midColumnWidth</code>, and <code>endColumnWidth</code> are:
-	 *  <li>one active column: 100/0/0, 0/100/0, 0/0/100</li>
-	 *  <li>two active columns: 0/67/33, 33/67/0, 67/33/0</li>
-	 *  <li>three active columns: 25/25/50, 25/50/25</li></ul>
-	 *
-	 * @param {Object} oConfig An object with the values for the width of the 3 columns
-	 * @param {number} oConfig.beginColumnWidth The desired width of the <code>Begin</code> column
-	 * @param {number} oConfig.midColumnWidth The desired width of the <code>Mid</code> column
-	 * @param {number} oConfig.endColumnWidth The desired width of the <code>End</code> column
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	FlexibleColumnLayout.prototype.setLayout = function (oConfig){
-		var aLayoutConfig,
-			sNewLayout;
+		if (iMaxColumns === 1) {
 
-		if (!oConfig){
-			return;
+			oMap.TwoColumnsBeginEmphasized = "0/100/0";
+			oMap.TwoColumnsMidEmphasized =  "0/100/0";
+			oMap.ThreeColumnsMidEmphasized =  "0/0/100";
+			oMap.ThreeColumnsEndEmphasized =  "0/0/100";
+			oMap.ThreeColumnsMidEmphasizedEndHidden =  "0/0/100";
+			oMap.ThreeColumnsBeginEmphasizedEndHidden =  "0/0/100";
+
+		} else {
+
+			oMap.TwoColumnsBeginEmphasized = "67/33/0";
+			oMap.TwoColumnsMidEmphasized =  "33/67/0";
+			oMap.ThreeColumnsMidEmphasized =  iMaxColumns === 2 ? "0/67/33" : "25/50/25";
+			oMap.ThreeColumnsEndEmphasized =  iMaxColumns === 2 ? "0/67/33" : "25/25/50";
+			oMap.ThreeColumnsMidEmphasizedEndHidden =  "33/67/0";
+			oMap.ThreeColumnsBeginEmphasizedEndHidden =  "67/33/0";
 		}
 
-		aLayoutConfig = [oConfig.beginColumnWidth || 0, oConfig.midColumnWidth || 0, oConfig.endColumnWidth || 0];
-		sNewLayout = aLayoutConfig.join("/");
+		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
+		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
+			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
 
-		// Try to apply the layout, desired by the app developer
-		this._applyLayoutChanges(sNewLayout);
+		return oMap[sLayout];
 	};
-
 
 	/**
 	 * Checks if the given layout (sNewLayout) is valid in the current state and applies it (if yes)
@@ -1044,110 +1011,26 @@ sap.ui.define([
 	 * @returns {*}
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._applyLayoutChanges = function (sNewLayout, sShiftDirection) {
-		var sCurrentLayout = this._sLayout,
-			bMid = this.getShowMidColumn(),
-			bEnd = bMid && this.getShowEndColumn(),
-			sFullScreenColumn = this.getFullScreenColumn(),
-			iMaxColumns = this._getMaxColumnsCount(),
-			bThreeColumnLayoutTypeFixed = this.getThreeColumnLayoutTypeFixed(),
-			sThreeColumnLayoutType = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ? "25/25/50" : "25/50/25",
-			aPossibleLayouts,
-			sDefaultLayout,
-			iCurrentPos;
+	FlexibleColumnLayout.prototype._applyLayoutChanges = function (bIsNavigationArrow) {
+		var sLayout = this.getLayout(),
+			sCurrentColumnWidthDistribution = this._sColumnWidthDistribution;
 
-		// Fullscreen
-		if (sFullScreenColumn !== sap.f.FlexibleColumn.None) {
-
-			if (sFullScreenColumn === sap.f.FlexibleColumn.Begin) {
-				aPossibleLayouts = ["100/0/0"];
-				sDefaultLayout = "100/0/0";
-			} else if (sFullScreenColumn === sap.f.FlexibleColumn.Mid) {
-				aPossibleLayouts = ["0/100/0"];
-				sDefaultLayout = "0/100/0";
-			} else {
-				aPossibleLayouts = ["0/0/100"];
-				sDefaultLayout = "0/0/100";
-			}
-
-		} else {
-
-			// Desktop
-			if (iMaxColumns === 3) {
-
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["33/67/0", "67/33/0"];
-					sDefaultLayout = "67/33/0";
-				} else {
-					if (bThreeColumnLayoutTypeFixed) {
-						aPossibleLayouts = [sThreeColumnLayoutType, "33/67/0", "67/33/0"];
-					} else {
-						aPossibleLayouts = ["25/25/50", "25/50/25", "33/67/0", "67/33/0"];
-					}
-					sDefaultLayout = sThreeColumnLayoutType;
-				}
-
-				// Tablet
-			} else if (iMaxColumns === 2) {
-
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["33/67/0", "67/33/0"];
-					sDefaultLayout = "67/33/0";
-				} else {
-					aPossibleLayouts = ["0/67/33", "33/67/0", "67/33/0"];
-					sDefaultLayout = "0/67/33";
-				}
-
-				// Phone
-			} else {
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["0/100/0", "100/0/0"];
-					sDefaultLayout = "0/100/0";
-				} else {
-					aPossibleLayouts = ["0/0/100", "0/100/0", "100/0/0"];
-					sDefaultLayout = "0/0/100";
-				}
-			}
-		}
-
-		// When an arrow is clicked (sShift = left/right), select the previous/next layout in the list of possible ones
-		if (sShiftDirection) {
-			iCurrentPos = aPossibleLayouts.indexOf(sNewLayout);
-			if (sShiftDirection === "left" && iCurrentPos > 0) {
-				sNewLayout = aPossibleLayouts[iCurrentPos - 1];
-			} else if (sShiftDirection === "right" && iCurrentPos < aPossibleLayouts.length - 1) {
-				sNewLayout = aPossibleLayouts[iCurrentPos + 1];
-			}
-		}
-
-		// Always verify that the calculated layout is valid before enforcing it
-		if (aPossibleLayouts.indexOf(sNewLayout) === -1) {
-			sNewLayout = sDefaultLayout;
-		}
-
-		this._sLayout = sNewLayout;
+		this._sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout);
 
 		// Always resize columns (even if the layout did not change as columns have exact pixel widths)
 		this._resizeColumns();
 
 		// Only manage arrows and fire event if the layout actually changed as result of the operation
-		if (this._sLayout !== sCurrentLayout) {
+		if (this._sColumnWidthDistribution !== sCurrentColumnWidthDistribution) {
 			this._hideShowArrows();
 
 			this.fireLayoutChange({
 				beginColumnWidth: this._getColumnSize("begin"),
 				midColumnWidth: this._getColumnSize("mid"),
 				endColumnWidth: this._getColumnSize("end"),
-				maxColumnsCount: this._getMaxColumnsCount()
+				maxColumnsCount: this._getMaxColumnsCount(),
+				isNavigationArrow: bIsNavigationArrow,
+				layout: this.getLayout()
 			});
 		}
 	};
@@ -1157,10 +1040,10 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._hideShowArrows = function () {
-		var bMid = this.getShowMidColumn(),
-			bEnd = bMid && this.getShowEndColumn(),
+		var sLayout = this.getLayout(),
 			iMaxColumns = this._getMaxColumnsCount(),
-			sFullScreenColumn = this.getFullScreenColumn(),
+			bThreeColumnLayoutTypeFixed = this.getThreeColumnLayoutTypeFixed(),
+			oMap = {},
 			aNeededArrows = [];
 
 		// Stop here if the control isn't rendered yet
@@ -1168,55 +1051,30 @@ sap.ui.define([
 			return;
 		}
 
-		if (sFullScreenColumn === sap.f.FlexibleColumn.None) {
-			// Desktop
-			if (iMaxColumns === 3) {
+		if (iMaxColumns === 3) {
+			oMap.TwoColumnsBeginEmphasized = ["beginBack"];
+			oMap.TwoColumnsMidEmphasized =  ["midForward"];
+			oMap.ThreeColumnsMidEmphasized =  bThreeColumnLayoutTypeFixed ? ["midForward"] : ["midForward", "midBack"];
+			oMap.ThreeColumnsEndEmphasized =  ["endForward"];
+			oMap.ThreeColumnsMidEmphasizedEndHidden =  ["midForward", "midBack"];
+			oMap.ThreeColumnsBeginEmphasizedEndHidden =  ["beginBack"];
+		}
 
-				if (!bMid) {
-					aNeededArrows = [];
-				} else if (!bEnd) {
-					if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				} else {
-					if (this._sLayout === "25/50/25") {
-						if (this.getThreeColumnLayoutTypeFixed()) {
-							aNeededArrows = ["midForward"];
-						} else {
-							aNeededArrows = ["midForward", "midBack"];
-						}
-					} else if (this._sLayout === "25/25/50") {
-						aNeededArrows = ["endForward"];
-					} else if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward", "midBack"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				}
+		if (iMaxColumns === 2) {
+			oMap.TwoColumnsBeginEmphasized =  ["beginBack"];
+			oMap.TwoColumnsMidEmphasized =  ["midForward"];
+			oMap.ThreeColumnsMidEmphasized = ["midForward"];
+			oMap.ThreeColumnsEndEmphasized =  ["beginBack"];
+			oMap.ThreeColumnsMidEmphasizedEndHidden =  ["midForward", "midBack"];
+			oMap.ThreeColumnsBeginEmphasizedEndHidden =  ["beginBack"];
+		}
 
-				// Tablet
-			} else if (iMaxColumns === 2) {
+		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
+		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
+			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
 
-				if (!bMid) {
-					aNeededArrows = [];
-				} else if (!bEnd) {
-					if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward"];
-					} else {
-						aNeededArrows = ["midBack"];
-					}
-				} else {
-					if (this._sLayout === "0/67/33") {
-						aNeededArrows = ["midForward"];
-					} else if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward", "midBack"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				}
-			}
+		if (typeof oMap[sLayout] === "object") {
+			aNeededArrows = oMap[sLayout];
 		}
 
 		this._toggleButton("beginBack", aNeededArrows.indexOf("beginBack") !== -1);
