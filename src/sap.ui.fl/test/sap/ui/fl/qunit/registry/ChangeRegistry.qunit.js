@@ -301,6 +301,56 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	});
 
+	QUnit.test("registerChangeHandlersForControl understands a module path as a parameter", function (assert) {
+		var sControlType = "my.control.Implementation";
+		var oChangeHandlers = "sap/ui/fl/test/registry/TestChangeHandlers";
+		var bProcessingContinues = false;
+
+		var registerControlStub = this.stub(this.instance, "registerControlForSimpleChange");
+
+		this.instance._registerChangeHandlersForControl(sControlType, oChangeHandlers);
+
+		assert.equal(registerControlStub.callCount, 2, "two change handlers were registered for the control");
+		assert.equal(registerControlStub.firstCall.args[0], sControlType, "the first registration was for the passed control");
+		assert.equal(registerControlStub.firstCall.args[1].changeType, "doSomething", "the some change type was registered");
+		assert.equal(registerControlStub.secondCall.args[0], sControlType, "the second registration was for the passed control");
+		assert.equal(registerControlStub.secondCall.args[1].changeType, "doSomethingElse", "the hideControl change type was registered");
+	});
+
+	QUnit.test("registerChangeHandlersForControl does not crash if the loading of a module path leads to an error (file not found)", function (assert) {
+		var sControlType = "my.control.Implementation";
+		var oChangeHandlers = "sap/ui/fl/test/registry/DefinitelyNotAChangeHandlers";
+		var bProcessingContinues = false;
+
+		var registerControlStub = this.stub(this.instance, "registerControlForSimpleChange");
+		var errorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+
+		this.instance._registerChangeHandlersForControl(sControlType, oChangeHandlers);
+
+		bProcessingContinues = true;
+
+		assert.ok(bProcessingContinues, "the js processing continues");
+		assert.equal(registerControlStub.callCount, 0, "no registration was done");
+		assert.equal(errorLoggingStub.callCount, 1, "the error was logged");
+	});
+
+	QUnit.test("registerChangeHandlersForControl does not crash if the loading of a module path leads to an error (broken file)", function (assert) {
+		var sControlType = "my.control.Implementation";
+		var oChangeHandlers = "sap/ui/fl/test/registry/TestChangeHandlersBROKEN";
+		var bProcessingContinues = false;
+
+		var registerControlStub = this.stub(this.instance, "registerControlForSimpleChange");
+		var errorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+
+		this.instance._registerChangeHandlersForControl(sControlType, oChangeHandlers);
+
+		bProcessingContinues = true;
+
+		assert.ok(bProcessingContinues, "the js processing continues");
+		assert.equal(registerControlStub.callCount, 0, "no registration was done");
+		assert.equal(errorLoggingStub.callCount, 1, "the error was logged");
+	});
+
 	QUnit.test("registerControlsForChanges shall add a map of controls and changes to the registry", function (assert) {
 		this.instance.registerControlsForChanges({
 			'controlA': [SimpleChanges.unhideControl, SimpleChanges.hideControl],
