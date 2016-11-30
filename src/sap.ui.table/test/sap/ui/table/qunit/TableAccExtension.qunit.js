@@ -886,12 +886,16 @@ QUnit.test("ARIA Attributes of TH Elements", function(assert) {
 	var $Elem = oTable.$().find(".sapUiTableCCnt th[id]"); // all with ID
 	$Elem.each(function(){
 		var $TH = jQuery(this);
-		assert.strictEqual($TH.attr("role"), "columnheader" , "role");
-		assert.strictEqual($TH.attr("scope"), "col" , "scope");
-		var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
-		if (oColumn) {
-			assert.strictEqual($TH.attr("aria-owns"), oColumn.getId() , "aria-owns");
-			assert.strictEqual($TH.attr("aria-labelledby"), oColumn.getId() , "aria-labelledby");
+		if ($TH.attr("id") === oTable.getId() + "-dummycolhdr") {
+			assert.strictEqual($TH.attr("role"), "presentation" , "role");
+		} else {
+			assert.strictEqual($TH.attr("role"), "columnheader" , "role");
+			assert.strictEqual($TH.attr("scope"), "col" , "scope");
+			var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
+			if (oColumn) {
+				assert.strictEqual($TH.attr("aria-owns"), oColumn.getId() , "aria-owns");
+				assert.strictEqual($TH.attr("aria-labelledby"), oColumn.getId() , "aria-labelledby");
+			}
 		}
 	});
 	$Elem = oTable.$().find(".sapUiTableCCnt th:not([id])"); // dummy column
