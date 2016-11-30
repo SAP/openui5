@@ -16,7 +16,7 @@ module.exports = function(grunt, config) {
 	return {
 		coreNoJQueryJS: {
 			options: {
-				footer: 'if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
+				footer: 'if (!window["sap-ui-debug"]) { sap.ui.requireSync("sap/ui/core/library-preload"); } sap.ui.requireSync("sap/ui/core/Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
 			},
 			src: [
 				sSourcesFolder + 'sap/ui/Device.js',
