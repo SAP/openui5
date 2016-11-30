@@ -10,13 +10,22 @@ sap.ui.define([],
 	return {
 		aggregations: {
 			contentLeft: {
-				domRef: ":sap-domref > .sapMBarLeft"
+				domRef: ":sap-domref > .sapMBarLeft",
+				actions: {
+					move: "moveElements"
+				}
 			},
 			contentMiddle: {
-				domRef: ":sap-domref > .sapMBarMiddle > .sapMBarPH"
+				domRef: ":sap-domref > .sapMBarMiddle > .sapMBarPH",
+				actions: {
+					move: "moveElements"
+				}
 			},
 			contentRight: {
-				domRef: ":sap-domref > .sapMBarRight"
+				domRef: ":sap-domref > .sapMBarRight",
+				actions: {
+					move: "moveElements"
+				}
 			}
 		}
 	};
