@@ -1288,7 +1288,7 @@ sap.ui.define([
 		oChartTypeComboBox.setModel(oModel);
 
 		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
-			design: sap.m.ToolbarDesign.Solid, // Transparent,
+			design: sap.m.ToolbarDesign.Transparent,
 			content: [
 				oInvisibleChartTypeText, oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
 			]
