@@ -11,6 +11,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	var SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode;
 
+	/*
+	 * @see TableUtils#getParentRowActionCell
+	 * @see TableUtils#getParentDataCell
+	 */
+	function _getParentCell(oTable, oElement, sSelector) {
+		if (oTable == null || oElement == null || sSelector == null) {
+			return null;
+		}
+
+		var $Element = jQuery(oElement);
+		var $ParentCell = $Element.parent().closest(sSelector, oTable.getDomRef());
+
+		if ($ParentCell.length > 0) {
+			return $ParentCell;
+		}
+
+		return null;
+	}
+
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
@@ -567,18 +586,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		getParentDataCell: function(oTable, oElement) {
-			if (oTable == null || oElement == null) {
-				return null;
-			}
+			return _getParentCell(oTable, oElement, ".sapUiTableTd");
+		},
 
-			var $Element = jQuery(oElement);
-			var $ParentCell = $Element.parent().closest(".sapUiTableTd", oTable.getDomRef());
-
-			if ($ParentCell.length > 0) {
-				return $ParentCell;
-			}
-
-			return null;
+		/**
+		 * Returns the row action cell which is the parent of the specified element.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
+		 * @param {jQuery|HTMLElement} oElement An element inside a table row action cell.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the passed element is not inside a row action cell.
+		 * @private
+		 */
+		getParentRowActionCell: function(oTable, oElement) {
+			return _getParentCell(oTable, oElement, ".sapUiTableRowAction");
 		},
 
 		/**

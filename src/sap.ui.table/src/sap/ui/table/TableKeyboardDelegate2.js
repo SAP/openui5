@@ -96,7 +96,8 @@ sap.ui.define([
 		} else if (oCellInfo.type === CellType.ROWHEADER) {
 			TableUtils.toggleRowSelection(oTable, oEvent.target);
 
-		} else if (oCellInfo.type === CellType.DATACELL) {
+		} else if (oCellInfo.type === CellType.DATACELL
+			|| oCellInfo.type === CellType.ROWACTION) {
 
 			// Select/Deselect row.
 			if (TableUtils.isRowSelectionAllowed(oTable)) {
@@ -355,6 +356,7 @@ sap.ui.define([
 		var oActiveElement = document.activeElement;
 		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
 
 		if ($InteractiveElements !== null) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
@@ -363,29 +365,9 @@ sap.ui.define([
 			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
 			return true;
 
-		} else if ($ParentDataCell !== null) {
+		} else if ($ParentCell !== null) {
 			// Target is an interactive element inside a data cell.
 			this._getKeyboardExtension()._suspendItemNavigation();
-
-			// Remove tabIndex from previously focused cell.
-			var oLastInfo = this._getKeyboardExtension()._getLastFocusedCellInfo();
-
-			if (oLastInfo != null) {
-				var oRow = this.getRows()[oLastInfo.row - (TableUtils.hasRowHeader(this) ? 1 : 0)];
-
-				if (oRow != null) {
-					var oCell = oRow.getCells()[oLastInfo.cellInRow - TableUtils.getHeaderRowCount(this)];
-
-					if (oCell != null) {
-						var $DataCell = TableUtils.getParentDataCell(this, oCell.getDomRef());
-
-						if ($DataCell !== null) {
-							$DataCell[0].tabIndex = -1;
-						}
-					}
-				}
-			}
-
 			return true;
 		}
 
@@ -403,8 +385,9 @@ sap.ui.define([
 		oKeyboardExtension._resumeItemNavigation();
 
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
-		if ($ParentDataCell !== null) {
-			oKeyboardExtension._setSilentFocus($ParentDataCell);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
+		if ($ParentCell !== null) {
+			oKeyboardExtension._setSilentFocus($ParentCell);
 		} else {
 			oActiveElement.blur();
 			oKeyboardExtension._setSilentFocus(oActiveElement);
@@ -441,7 +424,8 @@ sap.ui.define([
 		}
 
 		var $ParentDataCell = TableUtils.getParentDataCell(this, $Target);
-		var bIsInteractiveElement = $ParentDataCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, $Target);
+		var bIsInteractiveElement = $ParentCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			// Leave the action mode when focusing an element in the table which is not supported by the action mode.
