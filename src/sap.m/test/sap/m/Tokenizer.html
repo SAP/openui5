@@ -5,14 +5,13 @@
 
 		<title>Tokenizer - sap.m</title>
 
+		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 		</script>
 
-		<script type="text/javascript">
+		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.Tokenizer");
@@ -28,7 +27,7 @@
 		};
 
 		//*******************************
-		var oTokenizer1 = new sap.m.Tokenizer({
+		var oTokenizer1 = new sap.m.Tokenizer("editableTokenizer", {
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -46,7 +45,7 @@
 			         tokenChange: fEventWriter
 		});
 		//*******************************
-		var oTokenizer2 = new sap.m.Tokenizer({
+		var oTokenizer2 = new sap.m.Tokenizer("notEditableTokenizer",{
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -65,12 +64,35 @@
 			         tokenChange: fEventWriter
 		});
 		//*******************************
-		oTokenizer3 = new sap.m.Tokenizer({
+		var oTokenizer3 = new sap.m.Tokenizer("editableAndNotEditable",{
 			tokens:[
 			        new sap.m.Token({text:"Dente", editable: false}),
 			        new sap.m.Token({text:"Friese", editable: false}),
 			        new sap.m.Token({text:"Mann", editable: true})
 			        ]
+		});
+
+		var oTokenizer4 = new sap.m.Tokenizer("setWidth",{
+			tokens:[
+				new sap.m.Token({text:"Dente", editable: false}),
+				new sap.m.Token({text:"Friese", editable: false}),
+				new sap.m.Token({text:"Mann", editable: true})
+			],
+			width: "100px"
+		});
+
+		var oTokenizer5 = new sap.m.Tokenizer({
+			tokens: [
+				new sap.m.Token({text:"Dente"}),
+				new sap.m.Token({text:"Friese", editable: false})
+			],
+		});
+
+		var toggleReadOnlyBtn = new sap.m.Button({
+			text : "Toggle Read-only",
+			press : function() {
+				oTokenizer5.setEditable(!oTokenizer5.getEditable());
+			}
 		});
 
 		var app = new sap.m.App("myApp");
@@ -85,7 +107,12 @@
 					new sap.m.Label({ text : "set the first two tokens editable property to false", width:"100%"}),
 					oTokenizer3,
 					new sap.m.Label({ text : "Token events:", width: "100%"}),
-					oEventList
+					oEventList,
+					new sap.m.Label({ text : "Tokenizer with set width", width: "100%"}),
+					oTokenizer4,
+					new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
+					oTokenizer5,
+					toggleReadOnlyBtn
 			]
 		});
 
