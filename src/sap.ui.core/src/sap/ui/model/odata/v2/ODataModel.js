@@ -5091,6 +5091,10 @@ sap.ui.define([
 			delete this.oMetadata;
 		}
 
+		if (this.oMetaModel) {
+			this.oMetaModel.destroy();
+			delete this.oMetaModel;
+		}
 
 		if (this.oAnnotations) {
 			this.oAnnotations.detachSomeLoaded(this.onAnnotationsLoaded);

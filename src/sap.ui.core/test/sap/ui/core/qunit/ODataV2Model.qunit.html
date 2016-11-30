@@ -3628,6 +3628,23 @@
 		OData.request.restore();
 
 	});
+	
+	test("test ODataModel destroy", function(){
+		cleanServiceDataCache();
+		jQuery.sap.require("sap.ui.thirdparty.datajs");
+		// spy on odata request function
+		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
+		
+		var oMetaModel = oModel.getMetaModel();
+		ok(oModel.oMetaModel, "Metamodel instance created");
+		ok(oModel.oAnnotations, "ODataAnnotations instance created");
+		ok(oModel.oMetadata, "ODataMetadata instance created");
+		oModel.destroy();
+		ok(oModel.bDestroyed, "Model should be destroyed");
+		ok(!oModel.oMetaModel, "Metamodel instance destroyed");
+		ok(!oModel.oAnnotations, "ODataAnnotations instance destroyed");
+		ok(!oModel.oMetadata, "ODataMetadata instance destroyed");
+	});
 
 	asyncTest("test metadata url parameters: no parameters", function() {
 		cleanServiceDataCache();
