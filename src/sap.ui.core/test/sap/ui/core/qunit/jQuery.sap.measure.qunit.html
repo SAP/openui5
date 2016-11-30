@@ -443,7 +443,7 @@
 				equal(oMeasurement.requests.length, 1, "One requests");
 				equal(oMeasurement.measurements.length, 0, "No measurements");
 				ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
-				ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].requestStart, "Roundtrip correct");
+				ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
 				ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
 				ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
