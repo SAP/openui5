@@ -349,6 +349,19 @@
 		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
 	});
 
+	QUnit.test("Action scope remove button does not steal focus", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$("action-remove").attr("tabindex"), "-1", "Correct tabindex is set on remove icon.");
+		assert.equal(this.oGenericTile._oRemoveButton._bExcludeFromTabChain, true, "Remove button is excluded from tab chain on rendering.");
+	});
+
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);

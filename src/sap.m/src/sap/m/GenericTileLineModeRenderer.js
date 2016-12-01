@@ -89,7 +89,9 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 
 		} else {
 			// cozy
-			this._renderFocusDiv(oRm, oControl);
+			if (oControl.getState() !== LoadState.Disabled) {
+				this._renderFocusDiv(oRm, oControl);
+			}
 
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-touchArea");

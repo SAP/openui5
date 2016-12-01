@@ -91,7 +91,10 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		} else {
 			this._renderHoverOverlay(oRm, oControl);
 		}
-		this._renderFocusDiv(oRm, oControl);
+
+		if (oControl.getState() !== LoadState.Disabled) {
+			this._renderFocusDiv(oRm, oControl);
+		}
 
 		if (oControl.getScope() === GenericTileScope.Actions) {
 			this._renderActionsScope(oRm, oControl);

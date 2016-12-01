@@ -43,10 +43,6 @@
 	cursor: inherit;
 }
 
-.sapMGTFailed {
-	width: 90%;
-}
-
 .sapMGTInnrCnt {
 	display: inline-block;
 }
@@ -110,6 +106,9 @@
 		right: 0.75rem;
 		bottom: 0.563rem;
 		z-index: 1;
+		&:focus {
+			outline: none;
+		}
 	}
 
 	.sapMGTRemoveButton {
@@ -123,7 +122,7 @@
 		z-index: 1;
 
 		.sapMBtnFocusDiv {
-			border-radius: 50%;
+			display: none;
 		}
 
 		.sapMBtnInner {
@@ -146,6 +145,10 @@
 			}
 		}
 
+		&:focus > .sapMFocusable {
+			outline: none;
+		}
+
 		/* The touch area has a different size and is slightly moved to the left and bottom */
 		&:before {
 			content: "";
@@ -161,11 +164,9 @@
 /************************ LINE MODE COZY ********************/
 
 .sapMGTLineMode.sapMGT {
-	float: left;
-	clear: left;
+	display: block;
 	min-height: 2.5rem;
 	min-width: 2rem;
-	width: 100%;
 	border-radius: 0.2rem;
 	box-shadow: none;
 	transition: background-color 0.2s;
@@ -265,13 +266,14 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		position: static;
 		right: 0rem;
 		bottom: 0rem;
+		width: 2rem;
 		height: 1.375rem;
 	}
 
 	.sapMGTRemoveButton {
 		display: block;
 		margin: 0 0.3125rem;
-		left: 50%;
+		left: 2rem;
 		position: static;
 		top: 0rem;
 		right: 0rem;

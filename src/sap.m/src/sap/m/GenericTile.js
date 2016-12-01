@@ -182,6 +182,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 					icon: "sap-icon://decline",
 					tooltip: this._rb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
 				}).addStyleClass("sapUiSizeCompact sapMGTRemoveButton");
+
+				this._oRemoveButton._bExcludeFromTabChain = true;
 				break;
 		}
 	};
@@ -657,9 +659,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.ontap = function(event) {
 		var oParams;
 		if (this.getState() !== library.LoadState.Disabled) {
-			if (Device.browser.internet_explorer) {
-				this.$().focus();
-			}
+			this.$().focus();
 			oParams = this._getEventParams(event);
 			this.firePress(oParams);
 			event.preventDefault();
@@ -1171,8 +1171,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			sAction = GenericTile._Action.Remove;
 		}
 		oParams = {
-				scope : sScope,
-				action : sAction
+			scope : sScope,
+			action : sAction
 		};
 		return oParams;
 	};
