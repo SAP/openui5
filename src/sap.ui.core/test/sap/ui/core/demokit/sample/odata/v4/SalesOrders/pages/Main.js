@@ -158,6 +158,31 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				filterSOItemsByProductIdWithChangeParameters : function (iRow) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSOItemsTable) {
+							var oRow = oSOItemsTable.getItems()[iRow],
+								sProductID = oRow.getCells()[2].getText();
+
+							// store sales order id and item postion for later comparison
+							sap.ui.test.Opa.getContext().sExpectedSalesOrderID =
+								oRow.getCells()[ID_COLUMN_INDEX].getText();
+							sap.ui.test.Opa.getContext().sExpectedItem =
+								oRow.getCells()[ITEM_COLUMN_INDEX].getText();
+
+							// filter for SOItem with Product ID from 2nd row
+							oSOItemsTable.getBinding("items")
+								.changeParameters({
+									$filter : "Product/ProductID eq '" + sProductID + "'"
+								});
+							Opa5.assert.ok(true, "Filter by ProductID with changeParameters:"
+								+ sProductID);
+						},
+						viewName : sViewName
+					});
+				},
 				filterSalesOrderItemsByProductID : function (sValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -527,6 +552,13 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "SalesOrderLineItems",
 						success : function (oSalesOrderItemsTable) {
 							var oRow = oSalesOrderItemsTable.getItems()[iRow];
+
+							// if called without 2nd and 3rd parameter use previously stored values
+							// for comparison
+							sExpectedSalesOrderID = sExpectedSalesOrderID
+								|| sap.ui.test.Opa.getContext().sExpectedSalesOrderID;
+							sExpectedItem = sExpectedItem
+								|| sap.ui.test.Opa.getContext().sExpectedItem;
 
 							Opa5.assert.strictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
 								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
