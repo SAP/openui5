@@ -425,7 +425,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * @see ExtensionHelper.performCellModifications
 		 */
 		modifyAccOfCOLUMNROWHEADER : function($Cell, bOnCellFocus) {
-			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER, {enabled: $Cell.hasClass("sapUiTableSelAllEnabled")});
+			var oTable = this.getTable(),
+				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER, {enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")});
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
 				mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null);
 		},
@@ -518,9 +520,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
-					mAttributes["role"] = ["columnheader"];
+					mAttributes["role"] = ["button"];
 					if (mParams && mParams.enabled) {
+						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
+					} else {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
+						mAttributes["aria-disabled"] = "true";
+						mAttributes["aria-pressed"] = "false";
 					}
 					break;
 
@@ -1089,28 +1095,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
 			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-		} else if (sSelectionMode === SelectionMode.Multi) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
-
-			if (bConsiderSelectionState === true) {
-				if (iSelectedIndicesCount === 1) {
-					// in multi selection case, if there is only one row selected it's not required
-					// to press CTRL in order to only deselect this single row hence use the description text
-					// of the single de-selection.
-					// for selection it's different since the description for SHIFT/CTRL handling is required
-					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-				} else if (iSelectedIndicesCount === 0) {
-					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
-					// in order to enhance the selection.
-					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-					mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-				}
-			}
-
 		} else if (sSelectionMode === SelectionMode.MultiToggle) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
 			// text for de-select is the same like for single selection
@@ -1127,6 +1111,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 
 		return mTooltipTexts;
+	};
+
+	/*
+	 * Applies corresponding ARIA properties of the given state to the select all button.
+	 * @param {boolean} bSelectAll the select all state which should be applied to the select all button
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableAccExtension.prototype.setSelectAllState = function (bSelectAll) {
+		var oTable = this.getTable();
+		if (oTable) {
+			oTable.$("selall").attr("aria-pressed", bSelectAll ? "true" : "false");
+		}
 	};
 
 	return TableAccExtension;
