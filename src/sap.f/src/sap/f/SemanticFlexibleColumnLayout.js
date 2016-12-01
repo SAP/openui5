@@ -48,31 +48,68 @@ sap.ui.define([
 
 	/**
 	 * Returns information about the layout that the control will have after navigating to the next logical level (i.e. from 1 column to 2 columns)
+	 * @param sColumn - the column, from which the navigation will be triggered - begin/mid/end
 	 * @returns {{layout: *, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
-	SemanticFlexibleColumnLayout.prototype.getNextUIState = function () {
+	SemanticFlexibleColumnLayout.prototype.getNextUIState = function (sColumn) {
 
 		var sCurrentLayout = this.getLayout(),
 			sNextLayout;
 
-		// 1 column => 2 columns
+		// 1 column
 		if (sCurrentLayout === "OneColumn") {
+
+			// Clicking an item in the begin column opens the mid column
 			sNextLayout = "TwoColumnsDefault";
+
 		}
 
-		// 2 columns => 3 columns
+		// 2 columns
 		if (["TwoColumnsDefault", "TwoColumnsBeginEmphasized", "TwoColumnsMidEmphasized"].indexOf(sCurrentLayout) !== -1) {
-			sNextLayout = "ThreeColumnsDefault";
+			if (sColumn === "begin") {
+
+				// Clicking the begin column when in 2-column layout should preserve the current layout (and not reset the default 2-column layout)
+				sNextLayout = sCurrentLayout;
+
+			} else {
+
+				// Clicking the mid colum when in 2-column layout should switch to 3 column layout
+				sNextLayout = "ThreeColumnsDefault";
+
+			}
 		}
 
 		// mid fullscreen => end fullscreen
 		if (sCurrentLayout === "MidFullScreen") {
+
+			// Clicking an item in the mid column from fullscreen always opens the end column in fullscreen
 			sNextLayout = "EndFullScreen";
+
 		}
 
-		// 3 columns => 4th level page (which is always shown in fullscreen)
+		// 3 columns
 		if (["ThreeColumnsDefault", "ThreeColumnsMidEmphasized", "ThreeColumnsEndEmphasized", "ThreeColumnsMidEmphasizedEndHidden", "ThreeColumnsBeginEmphasizedEndHidden"].indexOf(sCurrentLayout) !== -1) {
-			sNextLayout = "EndFullScreen";
+			if (sColumn === "begin") {
+
+				// Clicking the begin column in 3-column layout should switch to 2-column layout
+				sNextLayout = "TwoColumnsDefault";
+
+			} else if (sColumn === "mid") {
+
+				if (["ThreeColumnsMidEmphasizedEndHidden", "ThreeColumnsBeginEmphasizedEndHidden"].indexOf(sCurrentLayout) !== -1) {
+					// Clicking the mid column when in 3-column layout where end column is hidden, should reveal the end column again
+					sNextLayout = "ThreeColumnsDefault";
+				} else {
+					// Clicking the mid column when in 3-column layout where end column is visible, should preserve the current layout
+					sNextLayout = sCurrentLayout;
+				}
+
+			} else {
+
+				// Clicking the end column when in 3-column layout should always open fullscreen
+				sNextLayout = "EndFullScreen";
+
+			}
 		}
 
 		// end fullscreen => another end fullscreen

@@ -992,7 +992,7 @@ sap.ui.define([
 			oMap.TwoColumnsBeginEmphasized = "67/33/0";
 			oMap.TwoColumnsMidEmphasized =  "33/67/0";
 			oMap.ThreeColumnsMidEmphasized =  iMaxColumns === 2 ? "0/67/33" : "25/50/25";
-			oMap.ThreeColumnsEndEmphasized =  iMaxColumns === 2 ? "0/67/33" : "25/25/50";
+			oMap.ThreeColumnsEndEmphasized =  iMaxColumns === 2 ? "0/33/67" : "25/25/50";
 			oMap.ThreeColumnsMidEmphasizedEndHidden =  "33/67/0";
 			oMap.ThreeColumnsBeginEmphasizedEndHidden =  "67/33/0";
 		}
@@ -1063,13 +1063,13 @@ sap.ui.define([
 		if (iMaxColumns === 2) {
 			oMap.TwoColumnsBeginEmphasized =  ["beginBack"];
 			oMap.TwoColumnsMidEmphasized =  ["midForward"];
-			oMap.ThreeColumnsMidEmphasized = ["midForward"];
-			oMap.ThreeColumnsEndEmphasized =  ["beginBack"];
+			oMap.ThreeColumnsMidEmphasized = ["midForward", "midBack"];
+			oMap.ThreeColumnsEndEmphasized =  ["endForward"];
 			oMap.ThreeColumnsMidEmphasizedEndHidden =  ["midForward", "midBack"];
 			oMap.ThreeColumnsBeginEmphasizedEndHidden =  ["beginBack"];
 		}
 
-		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
+		oMap.TwoColumnsDefault = oMap.TwoColumnsBeginEmphasized;
 		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
 			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
 

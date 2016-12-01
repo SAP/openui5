@@ -9,7 +9,7 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 		handleMasterPress: function () {
-			var oNextUIState = this.getOwnerComponent().getFlexibleColumnLayout().getNextUIState();
+			var oNextUIState = this.getOwnerComponent().getFlexibleColumnLayout().getNextUIState("begin");
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout});
 		}
 	});
