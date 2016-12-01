@@ -95,6 +95,24 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 					 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
 					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
+				},
+				events: {
+					/**
+					 * Is fired when one of the following happens: <br>
+					 * <ol>
+					 *  <li>the text in the input has changed and the focus leaves the input field or the enter key
+					 *  is pressed.</li>
+					 *  <li>One of the decrement or increment buttons is pressed</li>
+					 * </ol>
+					 */
+					change: {
+						parameters: {
+							/**
+							 * The new <code>value</code> of the <code>control</code>.
+							 */
+							value: {type: "string"}
+						}
+					}
 				}
 			}
 		});
@@ -105,6 +123,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		StepInput.prototype.init = function () {
 			this._attachPressEvents();
 			this._attachLiveChange();
+			this._attachChange();
 		};
 
 		/**
@@ -263,6 +282,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			this._disableButtons(this._getIntOrFloat(vInputValue));
 			this.setValue(vInputValue);
 
+			if (this._iChangeEventTimer) {
+				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
+			}
+			if (this._sOldValue !== this.getValue()) {
+				this.fireChange({value: this.getValue()});
+			}
+
 			// Return the focus on the main element
 			this.$().focus();
 
@@ -343,9 +369,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		};
 
 		StepInput.prototype.setValue = function (oValue) {
-			this._getInput().setValue(oValue);
-			return this.setProperty("value", oValue, true);
+			var oResult;
 
+			this._sOldValue = this.getValue();
+			this._getInput().setValue(oValue);
+			oResult = this.setProperty("value", oValue, true);
+
+			return oResult;
 		};
 
 		/**
@@ -461,13 +491,40 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			this._getInput().attachLiveChange(this._liveChange, this);
 		};
 
+		StepInput.prototype._attachChange = function () {
+			this._getInput().attachChange(this._change, this);
+		};
+
 		/**
 		 * Attaches the <code>liveChange</code> handler for the input.
 		 * @private
 		 */
 		StepInput.prototype._liveChange = function () {
 			this._handleIncorrectValues();
+		};
+
+		/**
+		 * Handles the <code>change</code> event for the input.
+		 * @private
+		 */
+		StepInput.prototype._change = function (oEvent) {
+			this._sOldValue = this.getValue();
 			this.setProperty("value", this._getInput().getValue(), true);
+
+			if (this._iChangeEventTimer) {
+				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
+			}
+
+			/* In case the reason for change event is pressing +/- button(input loses focus),
+			 * this will lead to firing the StepInput#change event twice.
+			 * This is why we "schedule" a task for event firing, which will be executed unless the +/- button press handler
+			 * invalidates it.
+			 **/
+			this._iChangeEventTimer = jQuery.sap.delayedCall(100, this, function() {
+				if (this._sOldValue !== this.getValue()) {
+					this.fireChange({value: this.getValue()});
+				}
+			});
 		};
 
 		/**
@@ -482,7 +539,6 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				return;
 			}
 
-			this.setProperty("value", fNewValue, true);
 			this.getAggregation("_input")._$input.val(fNewValue);
 		};
 
