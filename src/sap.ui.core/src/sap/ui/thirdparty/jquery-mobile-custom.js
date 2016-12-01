@@ -2038,7 +2038,20 @@ if ( eventCaptureSupported ) {
 
 					$this.unbind( "vclick", clickHandler )
 						.unbind( "vmouseup", clearTapTimer );
-					$document.unbind( "vmousecancel", clearTapHandlers );
+					$document.unbind( "vmousecancel", clearTapHandlers )
+					// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseup' event
+					// on document
+						.unbind( "vmouseup", checkAndClearTapHandlers );
+				}
+
+				// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
+				// out of the 'mousedown' target
+				function checkAndClearTapHandlers( event ) {
+					// if the mouseup event occurs out of the DOM element where the mousedown is
+					// registered, unbind all of the listeners
+					if ( event.target !== thisObject && !$.contains(thisObject, event.target) ) {
+						clearTapHandlers();
+					}
 				}
 
 				function clickHandler( event ) {
@@ -2053,7 +2066,10 @@ if ( eventCaptureSupported ) {
 
 				$this.bind( "vmouseup", clearTapTimer )
 					.bind( "vclick", clickHandler );
-				$document.bind( "vmousecancel", clearTapHandlers );
+				$document.bind( "vmousecancel", clearTapHandlers )
+				// SAP MODIFICATION: register the function of clearing handlers to 'mouseup' event
+				// on document
+					.bind( "vmouseup", checkAndClearTapHandlers );
 
 				timer = setTimeout( function() {
 					triggerCustomEvent( thisObject, "taphold", $.Event( "taphold", { target: origTarget } ) );
