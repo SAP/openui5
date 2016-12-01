@@ -149,6 +149,11 @@
 			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")");
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")");
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomIntervalPattern("y", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"y\", \"y\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"y\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "d", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomIntervalPattern("yw", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomIntervalPattern("Q", "Q", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
 				if (sLocale === "xx_XX" && (sStyle !== "wide" && sStyle !== undefined)) {
 					return;
@@ -235,6 +240,14 @@
 		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
 		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
+		equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y–y", "interval format \"y\", \"y\"");
+		equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd.MM.y – dd.MM.y", "interval format \"yMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d.–d. MMM", "interval format \"MMMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd.–dd. MMM", "interval format \"MMMdd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm–HH:mm 'Uhr'", "interval format \"Hm\", \"H\"");
+		equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm–HH:mm 'Uhr'", "interval format \"jm\", \"j\"");
+		equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "y ('Woche': w) – y ('Woche': w)", "interval format \"yw\", \"y\"");
+		equal(oLocaleData.getCustomIntervalPattern("Q", "Q"), "Q – Q", "interval format \"Q\", \"Q\"");
 		// skeleton "yMMdd" has pattern "dd.MM.y" and
 		// skeleton "yMMMd" has pattern "d. MMM y"
 		// "yMMMMdd"'s best match is "yMMMd" since both "month" and "day" have the same representation category
@@ -292,6 +305,12 @@
 		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
 		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
+		equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y – y", "interval format \"y\", \"y\"");
+		equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd/MM/y – dd/MM/y", "interval format \"yMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d – d MMM", "interval format \"MMMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd – dd MMM", "interval format \"MMMdd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm – HH:mm", "interval format \"Hm\", \"H\"");
+		equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm – HH:mm", "interval format \"jm\", \"j\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
@@ -313,6 +332,7 @@
 		equal(oLocaleData.getCustomDateTimePattern("Jms"), "h:mm:ss", "datetime format \"Jms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdjms"), "EEEE, MMMM d, y 'at' h:mm:ss a", "datetime format \"yMMMMdEEEEjms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, MMMM d, y 'at' h:mm:ss", "datetime format \"yMMMMdEEEEJms\"");
+		equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "h:mm – h:mm a", "interval format \"jm\", \"j\"");
 	}
 
 	function customTests_he_IL(oLocaleData) {
@@ -365,6 +385,9 @@
 		// skeleton "yMMMd" has pattern "y年M月d日"
 		// "yMMMdd"'s best match should be "yMMMd" and the "day" should be expanded which results in "y年M月dd日"
 		equal(oLocaleData.getCustomDateTimePattern("yMMMdd"), "y年M月dd日", "datetime format \"yMMMdd\"");
+		equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y年～y年", "interval format \"y\", \"y\"");
+		equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "y/MM/dd～y/MM/dd", "interval format \"yMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "M月d日～d日", "interval format \"MMMd\", \"d\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		ok(oLocaleData.getCalendarWeek("wide", 0).toLowerCase().indexOf("week") === -1, "calendar week should be translated");
@@ -397,6 +420,12 @@
 		equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd.MM.y, H:mm:ss", "datetime format \"yMdHms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d MMMM y 'г'., H:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
 		equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('день': d), H ('секунда': s)", "datetime format \"ydHs\"");
+		equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y–y", "interval format \"y\", \"y\"");
+		equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd.MM.y – dd.MM.y", "interval format \"yMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d–d MMM", "interval format \"MMMd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd–dd MMM", "interval format \"MMMdd\", \"d\"");
+		equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "H:mm–H:mm", "interval format \"Hm\", \"H\"");
+		equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "H:mm–H:mm", "interval format \"jm\", \"j\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
