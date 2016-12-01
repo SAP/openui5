@@ -12,7 +12,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/northwind/V2/Northwind/Northwind.svc/",
+				"uri": "/here/goes/your/serviceUrl/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -103,7 +103,7 @@
 					]
 				},
 				{
-					"pattern": "Orders/{objectId}",
+					"pattern": "Orders/{objectId}/:?query:",
 					"name": "object",
 					"target": [
 						"master",
@@ -134,6 +134,18 @@
 				"notFound": {
 					"viewName": "NotFound",
 					"viewId": "notFound"
+				},
+				"shipping": {
+					"viewName": "Shipping",
+					"parent": "object",
+					"controlId": "iconTabFilterShipping",
+					"controlAggregation": "content"
+				},
+				"processor": {
+					"viewName": "Processor",
+					"parent": "object",
+					"controlId": "iconTabFilterProcessor",
+					"controlAggregation": "content"
 				}
 			}
 		}

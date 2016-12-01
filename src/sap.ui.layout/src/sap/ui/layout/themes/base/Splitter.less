@@ -1,7 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.ui.unified/Splitter.control */
-/* ============================================= */
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Base theme                              */
+/* ======================================= */
 
 /**
  * The main Splitter element can have the following classes in addition to its main class
@@ -34,9 +34,8 @@
 	cursor: move;
 	font-size: 16px;
 	background-color: transparent;
-	color: darken(@sapUiLightText, 20);
-	text-shadow: 1px 1px @sapUiWhiteBG;
-
+	color: @sapUiContentIconColor;
+	
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -46,20 +45,14 @@
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 1px dotted darken(@sapUiHighlight, 12);
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
 }
 
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: @sapUiDarkBG;
-	color: @sapUiTextInverted;
-	text-shadow: none;
-}
-
+.sapUiLoSplitter > .sapUiLoSplitterBar:hover,
 .sapUiLoSplitter > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	background-color: @sapUiHighlight;
-	color: @sapUiTextInverted;
+	color: @sapUiContentContrastIconColor;
 	text-shadow: none;
 }
 
@@ -216,7 +209,7 @@ html.sap-phone .sapUiLoSplitterV .sapUiLoSplitterBarIcon {
 /*********************************** IE Focus outline workaround **********************************/
 
 html[data-sap-ui-browser^=ie] .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 0px solid black;
+	outline: 0px solid @sapUiContentFocusColor;
 	outline-offset: 0;
 }
 
@@ -233,35 +226,34 @@ html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::aft
 html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
 	height: 100%;
 	width: 6px;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
 	height: 100%;
 	width: 16px;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
 	height: 100%;
 	width: 1px;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
 
 html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -6px;
 	height: 6px;
 	width: 100%;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -16px;
 	height: 16px;
 	width: 100%;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -1px;
 	height: 1px;
 	width: 100%;
-	border: 1px dotted darken(@sapUiHighlight, 12);
+	border: 1px dotted @sapUiContentFocusColor;
 }
-

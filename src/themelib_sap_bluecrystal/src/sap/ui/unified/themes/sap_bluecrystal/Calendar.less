@@ -3,13 +3,10 @@
 /* BlueCrystal theme                        */
 /* ======================================== */
 
-
 /* calendar should have only a border if on popup */
 .sapUiCal[data-sap-ui-popup]{
 	border-color: @sapUiContentForegroundBorderColor;
 }
-
-
 
 html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
 	outline: 0.0625rem dotted @sapUiContentFocusColor;
@@ -129,14 +126,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapUiCalItem:focus > .sapUiCalItemText,
 	.sapUiCalMonthPicker .sapUiCalItem:focus,
-	.sapUiCalYearPicker .sapUiCalItem:focus{
+	.sapUiCalYearPicker .sapUiCalItem:focus {
 		position: relative;
 		outline: none;
 	}
 
 	.sapUiCalItem:focus > .sapUiCalItemText:after,
 	.sapUiCalMonthPicker .sapUiCalItem:focus:after,
-	.sapUiCalYearPicker .sapUiCalItem:focus:after{
+	.sapUiCalYearPicker .sapUiCalItem:focus:after {
 		position: absolute;
 		top: 2px;
 		left: 2px;
@@ -148,11 +145,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText:after,
 	.sapUiCalMonthPicker .sapUiCalItemSel:focus:after,
-	.sapUiCalYearPicker .sapUiCalItemSel:focus:after{
+	.sapUiCalYearPicker .sapUiCalItemSel:focus:after {
 		border-color: @sapUiContentContrastFocusColor;
 	}
 
-	.sapUiCalItem.sapUiCalItemNow:focus > .sapUiCalItemText:after{
+	.sapUiCalItem.sapUiCalItemNow:focus > .sapUiCalItemText:after {
 		top: 0;
 		left: 0;
 		right: 0;
@@ -161,55 +158,56 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 html.sap-desktop .sapUiCalItemWeekEnd:hover,
-html.sap-desktop .sapUiCalItemWeekEnd:focus{
+html.sap-desktop .sapUiCalItemWeekEnd:focus {
 	background-color: darken(@sapUiContentForegroundColor,10);
 }
 
-.sapUiCalItemNow > .sapUiCalItemText{
+.sapUiCalItemNow > .sapUiCalItemText {
 	line-height: 2.6875rem;
 }
 
-.sapUiCalItemOtherMonth{
+.sapUiCalItemOtherMonth {
 	background-color: transparent;
 	color: lighten(@sapUiBaseText, 50);
 }
 
 html.sap-desktop .sapUiCalItemOtherMonth:hover,
-html.sap-desktop .sapUiCalItemOtherMonth:focus{
+html.sap-desktop .sapUiCalItemOtherMonth:focus {
 	background-color: darken(@sapUiListBackground , 10);
 }
 
-.sapUiCalItemSel{
+.sapUiCalItemSel {
 	color: @sapUiContentContrastTextColor;
+	background-color: @sapUiSelected;
 }
 
-.sapUiCalItemSel.sapUiCalItemOtherMonth{
+.sapUiCalItemSel.sapUiCalItemOtherMonth {
 	background-color: @sapUiSelected;
 }
 
 .sapUiCalItemSelBetween,
-.sapUiCalItemSelBetween.sapUiCalItemOtherMonth{
+.sapUiCalItemSelBetween.sapUiCalItemOtherMonth {
 	background-color: lighten(@sapUiSelected, 50);
 	color: @sapUiBaseText;
 }
 
 html.sap-desktop .sapUiCalItemSel:hover,
-html.sap-desktop .sapUiCalItemSel:focus{
+html.sap-desktop .sapUiCalItemSel:focus {
 	background-color: darken(@sapUiSelected, 10);
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus {
 	/* as IE don't support outline-offset */
 	border-color: @sapUiContentContrastFocusColor;
 }
 
 html.sap-desktop .sapUiCalItemSelBetween:hover,
-html.sap-desktop .sapUiCalItemSelBetween:focus{
+html.sap-desktop .sapUiCalItemSelBetween:focus {
 	background-color: lighten(@sapUiSelected, 40);
 }
 
-.sapUiCalItemNow.sapUiCalItemSel{
+.sapUiCalItemNow.sapUiCalItemSel {
 	color: @sapUiContentContrastTextColor;
 }
 

@@ -1,6 +1,7 @@
-/* ============================================= */
-/* CSS for control sap.m/Dialog.control          */
-/* ============================================= */
+/* ============================= */
+/* CSS for control sap.m/Dialog  */
+/* Base theme                    */
+/* ============================= */
 
 @sapMDialogMarginHeight: 7%;
 @sapMDialogBarHeight: 3rem;
@@ -25,6 +26,9 @@
 	-ms-transform: translate(-50%, -50%) scale(0.9);
 	-webkit-transform: translate(-50%, -50%) scale(0.9);
 	transform: translate(-50%, -50%) scale(0.9);
+	border: solid 1px transparent;
+	border-radius: 0.25rem;
+	box-shadow: @sapUiShadowLevel3;
 
 	&:not(.sapMDialogHighPixelDensity) {
 		//prevent blurring when the device pixel ration is 1 (not high density screens)
@@ -517,4 +521,8 @@ html[data-sap-ui-animation='off'] {
 	.sapMDialogBlockLayerAnimation {
 		transition: none;
 	}
+}
+
+.sapMDialog > .sapMDialogSection {
+  	background: @sapUiGroupContentBackground;
 }

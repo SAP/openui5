@@ -42,6 +42,11 @@
 									<Input value="{/collection}" id="collection"/>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement label="Entity-Type">
+								<f:fields>
+									<Input value="{/entityType}" id="entityType"/>
+								</f:fields>
+							</f:FormElement>
 							<f:FormElement label="$select properties">
 								<f:fields>
 									<Input value="{/selectProperties}" id="selectProperties"/>
@@ -168,6 +173,11 @@
 									<Input value="{/hierarchyDescendantCountFor}" id="hierarchyDescendantCountFor"/>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement label="External-Key">
+								<f:fields>
+									<Input value="{/hierarchyExternalKeyFor}" id="hierarchyExternalKeyFor"/>
+								</f:fields>
+							</f:FormElement>
 							<f:FormElement label="Use Local Metadata">
 								<f:fields>
 									<CheckBox selected="{/useLocalMetadata}" id="useLocalMetadata"/>
@@ -205,10 +215,11 @@
 						<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
 						<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
 						<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
+						<Button text="Save" icon="sap-icon://save" press=".onSave"></Button>
 						<ToolbarSpacer />
-						<Label text="Tree State Tools" />
+						<!--<Label text="Tree State Tools" />
 						<Button text="Save" icon="sap-icon://loan" press=".onSaveTreeState"></Button>
-						<Button text="Restore" icon="sap-icon://soccor" press=".onRestoreTreeState"></Button>
+						<Button text="Restore" icon="sap-icon://soccor" press=".onRestoreTreeState"></Button>-->
 						<ToolbarSpacer />
 						<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
 					</Toolbar>

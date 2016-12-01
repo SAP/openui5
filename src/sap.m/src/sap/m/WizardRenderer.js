@@ -16,12 +16,17 @@ sap.ui.define([], function () {
 	};
 
 	WizardRenderer.startWizard = function (oRm, oWizard) {
+		var sWizardLabelText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("WIZARD_LABEL");
+
 		oRm.write("<article");
 		oRm.writeControlData(oWizard);
 		oRm.addClass("sapMWizard");
 		oRm.writeClasses();
 		oRm.addStyle("width", oWizard.getWidth());
 		oRm.addStyle("height", oWizard.getHeight());
+		oRm.writeAccessibilityState({
+			"label": sWizardLabelText
+		});
 		oRm.writeStyles();
 		oRm.write(">");
 	};

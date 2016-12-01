@@ -17,11 +17,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 	 * The <code>SimpleForm</code> provides an easy-to-use API to create simple forms.
 	 * Inside a <code>SimpleForm</code>, a <code>Form</code> control is created along with its <code>FormContainers</code> and <code>FormElements</code>, but the complexity in the API is removed.
 	 * <ul>
-	 * <li>A new title starts a new group (<code>FormContainer</code>) in the form.</li>
-	 * <li>A new label starts a new row (<code>FormElement</code>) in the form.</li>
-	 * <li>All other controls will be assigned to the row (<code>FormElement</code>) started with the last label.</li>
+	 * <li>A new <code>Title</code> or <code>TabStrip</code> starts a new group (<code>FormContainer</code>) in the form.</li>
+	 * <li>A new <code>Label</code> starts a new row (<code>FormElement</code>) in the form.</li>
+	 * <li>All other controls will be assigned to the row (<code>FormElement</code>) that started with the last label.</li>
 	 * </ul>
 	 * Use <code>LayoutData</code> to influence the layout for special cases in the Input/Display controls.
+	 *
 	 * <b>Note:</b> If a more complex form is needed, use <code>Form</code> instead.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -39,13 +40,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * The maximum amount of groups (<code>FormContainers</code>) per row that is used before a new row is started.
-			 * <b>Note:</b> If a <code>ResponsiveGridLayout</code> is used as a layout, this property is not used. Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
+			 *
+			 * <b>Note:</b> If a <code>ResponsiveGridLayout</code> is used as a <code>layout</code>, this property is not used. Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
 			 */
 			maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
 
 			/**
-			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>. If the available width is below the given minWidth the SimpleForm will create a new row for the next group (<code>FormContainer</code>).
-			 * The default value is -1, meaning that inner groups (<code>FormContainers</code>) will be stacked until maxCols is reached, irrespective of whether a maxWidth is reached or the available parents width is reached.
+			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>. If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>FormContainer</code>).
+			 * The default value is -1, meaning that inner groups (<code>FormContainers</code>) will be stacked until <code>maxContainerCols</code> is reached, irrespective of whether a <code>width</code> is reached or the available parents width is reached.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
 			 */
 			minWidth : {type : "int", group : "Appearance", defaultValue : -1},
@@ -59,20 +62,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			/**
 			 * Applies a device-specific and theme-specific line-height to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
-			 * The accessibility aria-readonly attribute is set according to this property.
+			 *
+			 * The accessibility <code>aria-readonly</code> attribute is set according to this property.
+			 *
 			 * <b>Note:</b> The setting of the property has no influence on the editable functionality of the form's content.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Specifies the min-width in pixels of the label in all form containers.
+			 * Specifies the min-width in pixels of the label in all form rows.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
 			 */
 			labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
 
 			/**
 			 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
-			 * We suggest using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>, as its responsiveness uses the space available in the best way possible.
+			 *
+			 * We recommend using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>, as its responsiveness uses the space available in the best way possible.
 			 */
 			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout},
 
@@ -106,6 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Default span for labels in small size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -243,13 +251,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * If your input controls should influence their width, you can add <code>sap.ui.layout.ResponsiveFlowLayoutData</code> to them via <code>setLayoutData</code> method.
 			 * Ensure that the sum of the weights in the <code>ResponsiveFlowLayoutData</code> is not more than 5, as this is the total width of the input control part of each form row.</li>
 			 * </ul>
-			 * Example for a row where the <code>TextField</code> takes 4 and the <code>TextView</code> takes 1 weight (using <code>ResponsiveLayout</code>):
+			 * Example for a row where the <code>Input</code> weight 4 and the second <code>Input</code> weight 1 (using <code>ResponsiveLayout</code>):
 			 * <pre>
-			 * new sap.ui.commons.Label({text:"Label"});
-			 * new sap.ui.commons.TextField({value:"Weight 4",
-			 * layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({weight:4})}),
-			 * new sap.ui.commons.TextView({text:"Weight 1",
-			 * layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
+			 * new sap.m.Label({text:"Label"});
+			 * new sap.m.Input({value:"Weight 4", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:4})}),
+			 * new sap.m.Input({value:"Weight 1", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
+			 * </pre>
+			 *
+			 * For example, if a <code>ResponsiveGridLayout</code> is used as a layout, there are 12 cells in one row. Depending on the screen size the labels use the defined <code>labelSpan</code>.
+			 * The remaining cells are used for the fields (and <code>emptySpan</code> if defined). The available cells are distributed to all fields in the row. If one field should use a fixed number of cells
+			 * you can add <code>sap.ui.layout.GridData</code> to them via <code>setLayoutData</code> method.
+			 * If there are additional fields in the row they will get the remaining cells.
+			 * </ul>
+			 * Example for a row with two <code>Input</code> controls where one uses four cells on small screens, one cell on medium screens and 2 cells on larger screens (using <code>ResponsiveGridLayout</code>):
+			 * <pre>
+			 * new sap.m.Label({text:"Label"});
+			 * new sap.m.Input({value:"auto size"}),
+			 * new sap.m.Input({value:"fix size", layoutData: new sap.ui.layout.GridData({span: "XL1 L1 M2 S4"})}),
 			 * </pre>
 			 *
 			 * <b>Note:</b> Do not put any layout controls in here. This could destroy the visual layout,
@@ -263,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"},
 
 			/**
-			 * Title element of the <code>SimpleForm</code>. Can either be a <code>Title</code> control, or a string.
+			 * Title element of the <code>SimpleForm</code>. Can either be a <code>Title</code> element, or a string.
 			 * @since 1.16.3
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
@@ -281,7 +299,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 		associations: {
 
 			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
 			 * @since 1.32.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }

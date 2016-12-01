@@ -26,7 +26,9 @@ sap.ui.define([
 
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
-				oLayout = new HBox(),
+				oLayout = new HBox({
+					renderType : "Bare"
+				}),
 				oMetaModel,
 				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy

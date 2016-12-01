@@ -1,12 +1,14 @@
-/* ============================================= */
-/* CSS for controlsap.m/DisplayListItem.control  */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/DisplayListItem  */
+/* Base theme                             */
+/* ====================================== */
+
 .sapMDLI {
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
 	display: flex;
-	height: 2.75em;
+	height: 3rem;
 }
 
 .sapMDLILabel {
@@ -20,6 +22,12 @@
 	text-overflow: ellipsis;
 	min-width: 3rem;
 	display: block;
+	font-size: 1.125rem;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	color: @sapUiListTextColor;
 }
 
 .sapMLIBActionable .sapMDLILabel {
@@ -36,9 +44,13 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
+	font-size: 0.875rem;
+	margin-left: 1rem;
+	text-align: right;
+	color: @sapUiContentLabelColor;
 }
 
-.sapMDLI > .sapMLIBContent{
+.sapMDLI > .sapMLIBContent {
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -46,4 +58,30 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	line-height: 3rem;
+}
+
+html[dir=rtl] .sapMDLIValue {
+	text-align: left;
+}
+
+.sapMLIBActive .sapMDLILabel {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMDLIValue {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMDLI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMDLI > .sapMLIBContent {
+	line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMDLILabel {
+	font-size: @sapMFontMediumSize;
 }

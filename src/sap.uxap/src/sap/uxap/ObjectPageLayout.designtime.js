@@ -19,7 +19,7 @@ sap.ui.define([],
 		aggregations : {
 			sections : {
 				domRef : ":sap-domref > .sapUxAPObjectPageWrapper",
-				childrenName : {
+				childNames : {
 					singular : function(){
 						return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
 					},

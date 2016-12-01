@@ -1502,8 +1502,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var $document = jQuery(document);
 
-		$document.unbind("mousemove", this._onTabMove);
-		$document.unbind("mouseup", this._onTabMoved);
+		$document.off("mousemove", this._onTabMove);
+		$document.off("mouseup", this._onTabMoved);
 
 		this._oScroller.setHorizontal(true);
 		this._enableTextSelection();

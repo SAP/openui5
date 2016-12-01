@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * it, only in scenarios where a control and its descendants know each other very well
 	 * (e.g. complex controls where parent and children have the same code owner).
 	 *
-	 * @param {sap.ui.core.ManagedObject} [oOrigin] Child control for which the method was called
+	 * @param {sap.ui.base.ManagedObject} [oOrigin] Child control for which the method was called
 	 * @protected
 	 */
 	Control.prototype.invalidate = function(oOrigin) {
@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * In the event handler, <code>this</code> refers to the Control - not to the root DOM element like in jQuery. While the DOM element can
 	 * be used and modified, the general caveats for working with SAPUI5 control DOM elements apply. In particular the DOM element
 	 * may be destroyed and replaced by a new one at any time, so modifications that are required to have permanent effect may not
-	 * be done. E.g. use {@link Control.prototype.addStyleClass} instead if the modification is of visual nature.
+	 * be done. E.g. use {@link sap.ui.core.Control.prototype.addStyleClass} instead if the modification is of visual nature.
 	 *
 	 * Use {@link #detachBrowserEvent} to remove the event handler(s) again.
 	 *

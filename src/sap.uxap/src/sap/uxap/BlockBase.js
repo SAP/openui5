@@ -167,7 +167,7 @@ sap.ui.define([
 
 		BlockBase.prototype.onAfterRendering = function () {
 			if (this._getObjectPageLayout()) {
-				this._getObjectPageLayout()._adjustLayout();
+				this._getObjectPageLayout()._requestAdjustLayout();
 			}
 		};
 
@@ -599,8 +599,6 @@ sap.ui.define([
 			}
 		};
 
-		BlockBase.FORM_ADUSTMENT_RENDERING_DELAY = 1000;
-
 		BlockBase.prototype._applyFormAdjustmentFields = function (oFormAdjustmentFields, oFormLayout) {
 
 			oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
@@ -620,13 +618,6 @@ sap.ui.define([
 			oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoints.XL);
 			oFormLayout.setBreakpointL(oFormAdjustmentFields.breakpoints.L);
 			oFormLayout.setBreakpointM(oFormAdjustmentFields.breakpoints.M);
-
-			jQuery.sap.delayedCall(BlockBase.FORM_ADUSTMENT_RENDERING_DELAY, this, function() {
-				var oOPL = this._getObjectPageLayout();
-				if (oOPL) {
-					oOPL._adjustLayout();
-				}
-			});
 		};
 
 		/*************************************************************************************

@@ -3,6 +3,7 @@ jQuery.sap.require("sap.ui.test.Opa5");
 jQuery.sap.require("sap.ui.test.matchers.PropertyStrictEquals");
 jQuery.sap.require("sap.ui.test.actions.Press");
 jQuery.sap.require("sap.ui.test.actions.EnterText");
+jQuery.sap.require("sap.ui.test.matchers.LabelFor");
 
 sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("sap.ui.demo.cart.test.action.BuyProductJourneyAction", {
 			iPressOnTheSecondCategory : function () {
@@ -76,23 +77,27 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 
 			iFillTheForm : function () {
 				this.waitFor({
-					viewName : "Order",
-					id: "inputName",
+					viewName: "Order",
+					controlType: "sap.m.Input",
+					matchers: new sap.ui.test.matchers.LabelFor({ key: "CART_ORDER_NAME_LABEL" }),
 					actions: new sap.ui.test.actions.EnterText({ text: "MyName" })
 				});
 				this.waitFor({
 					viewName : "Order",
-					id: "inputAddress",
+					controlType: "sap.m.Input",
+					matchers: new sap.ui.test.matchers.LabelFor({ key: "CART_ORDER_ADDRESS_LABEL" }),
 					actions: new sap.ui.test.actions.EnterText({ text: "MyAddress" })
 				});
 				this.waitFor({
 					viewName : "Order",
-					id: "inputMail",
+					controlType: "sap.m.Input",
+					matchers: new sap.ui.test.matchers.LabelFor({ key: "CART_ORDER_MAIL_LABEL" }),
 					actions: new sap.ui.test.actions.EnterText({ text: "me@example.com" })
 				});
 				return this.waitFor({
 					viewName : "Order",
-					id: "inputNumber",
+					controlType: "sap.m.Input",
+					matchers: new sap.ui.test.matchers.LabelFor({ key: "CART_ORDER_CARD_NUMBER_LABEL" }),
 					actions: new sap.ui.test.actions.EnterText({ text: "1234567891234" })
 				});
 			},

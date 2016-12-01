@@ -208,7 +208,9 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 						eventData: mArguments.arguments,
 						targetControl: mArguments.targetControl,
 						view: mArguments.view,
-						preservePageInSplitContainer: oTargetConfig.preservePageInSplitContainer
+						showMidColumn: oRoute._oConfig.showMidColumn,
+						showEndColumn: oRoute._oConfig.showEndColumn,
+						fullScreenColumn: oRoute._oConfig.fullScreenColumn
 					});
 				}
 

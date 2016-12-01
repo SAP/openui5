@@ -396,7 +396,6 @@
 			"sap.m.sample.IconTabSeparator",
 			"sap.m.sample.IconTabBarOverflowSelectList",
 			"sap.m.sample.IconTabBarBackgroundDesign",
-			"sap.m.sample.IconTabFilterCustomization",
 			"sap.m.sample.IconTabBarDragDrop"
 		  ]
 		},
@@ -1560,11 +1559,6 @@
 		  "id": "sap.m.sample.IconTabBarBackgroundDesign",
 		  "name": "Icon Tab Bar - Background Design",
 		  "description": "In this example the backgroundDesign and headerBackgroundDesign properties are demonstrated."
-		},
-		{
-		  "id": "sap.m.sample.IconTabFilterCustomization",
-		  "name": "Icon Tab Bar - Tab Filter Customization",
-		  "description": "This example shows how the tab filters can be customized."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarDragDrop",

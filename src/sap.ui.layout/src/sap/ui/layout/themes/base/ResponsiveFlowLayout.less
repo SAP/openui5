@@ -1,7 +1,9 @@
-/* ========================================================== */
-/* CSS for control sap.ui.layout/ResponsiveFlowLayout.control */
-/* ========================================================== */
-@sapUiRFLPadding: ~"3px";
+/* =================================================== */
+/* CSS for control sap.ui.layout/ResponsiveFlowLayout  */
+/* Base theme                                          */
+/* =================================================== */
+
+@sapUiRFLPadding: ~"8px";
 
 .sapUiRFL {
 	position: relative;
@@ -24,10 +26,6 @@
 	overflow: hidden;
 }
 
-.sapUiRFLPaddingClass {
-	padding: 3px 3px 0 0;
-}
-
 .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child {
 	padding-left: 0;
 }
@@ -40,10 +38,6 @@
 	white-space: nowrap;
 }
 
-.sapUiRFLMultiContent.sapUiRFLPaddingClass {
-	padding: 0 3px 0 0;
-}
-
 .sapUiRFLMultiContent {
 	display: inline-block;
 	box-sizing: border-box;
@@ -51,4 +45,20 @@
 
 .sapUiRFLMultiContainerContent > .sapUiRFLMultiContent.sapUiRFLPaddingClass:last-child {
 	padding-right: 0;
+}
+
+.sapUiRFLPaddingClass {
+	padding: 0 0 8px 8px;
+}
+
+.sapUiRFLFullLength > .sapUiRFLPaddingClass {
+	padding-left: 0;
+}
+
+.sapUiRFLMultiContent.sapUiRFLPaddingClass {
+	padding: 0 0 8px 8px;
+}
+
+.sapUiRFLMultiContainerContent > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child {
+	padding-left: 0;
 }

@@ -27,12 +27,12 @@
 					testresults.bSapUiCoreExists = window.sap && sap.ui && typeof sap.ui.getCore === "function";
 					if ( testresults.bSapUiCoreExists ) {
 						testresults.bApplyThemeExists = typeof sap.ui.getCore().applyTheme === "function";
-						testresults.bThemeBeforeAsExpected = sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal";
+						testresults.bThemeBeforeAsExpected = sap.ui.getCore().getConfiguration().getTheme() === "sap_belize";
 						testresults.$LinksBefore = jQuery('head > link[id^="sap-ui-theme-"]');
 						try {
-							sap.ui.getCore().applyTheme("sap_goldreflection");
+							sap.ui.getCore().applyTheme("sap_bluecrystal");
 							testresults.$LinksAfter = jQuery('head > link[id^="sap-ui-theme-"]');
-							testresults.bThemeAfterAsExpected = sap.ui.getCore().getConfiguration().getTheme() === "sap_goldreflection";
+							testresults.bThemeAfterAsExpected = sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal";
 							testresults.bApplyThemeFails = false;
 						} catch (e) {
 							testresults.bApplyThemeFails = true;
@@ -42,8 +42,8 @@
 				}
 			};
 		</script>
+		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../../resources/sap-ui-core.js">

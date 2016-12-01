@@ -164,116 +164,34 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		},
 
 		/*
-		 * Calculates the widest content width of the column
-		 * also takes the column header and potential icons into account
-		 * @param {int} iColIndex index of the column which should be resized
-		 * @return {int} minWidth minimum width the column needs to have
-		 *
-		 * Note: Experimental, only works with a limited control set
-		 *
-		 * TBD: Cleanup this function and find a proper mechanismn
+		 * Calculates the widest content width of the currently visible column cells including headers.
+		 * Headers with column span are not taken into account.
+		 * @param {sap.ui.table.Column} oCol the column
+		 * @param {int} iColIndex index of the column
+		 * @return {int} iWidth calculated column width
+		 * @private
 		 */
 		_calculateAutomaticColumnWidth : function(oCol, iColIndex) {
-			function checkIsTextControl(oControl) {
-				var aTextBasedControls = [
-					"sap/m/Text",
-					"sap/m/Label",
-					"sap/m/Link",
-					"sap/m/Input",
-					"sap/ui/commons/TextView",
-					"sap/ui/commons/Label",
-					"sap/ui/commons/Link",
-					"sap/ui/commons/TextField"
-				];
-				var bIsTextBased = false;
-				for (var i = 0; i < aTextBasedControls.length; i++) {
-					bIsTextBased = bIsTextBased || TableUtils.isInstanceOf(oControl, aTextBasedControls[i]);
-				}
-				if (!bIsTextBased && typeof TablePointerExtension._fnCheckTextBasedControl === "function" && TablePointerExtension._fnCheckTextBasedControl(oControl)) {
-					bIsTextBased = true;
-				}
-				return bIsTextBased;
-			}
-
+			oCol = oCol || this.getColumns()[iColIndex];
 			var $this = this.$();
-			var iHeaderWidth = 0;
-			var $cols = $this.find('td[headers=\"' + this.getId() + '_col' + iColIndex + '\"]').children("div");
-			var aHeaderSpan = oCol.getHeaderSpan();
-			var oColLabel = oCol.getLabel();
-			var oColTemplate = oCol.getTemplate();
-			var bIsTextBased = checkIsTextControl(oColTemplate);
+			var $hiddenArea = jQuery("<div>").addClass("sapUiTableHiddenSizeDetector");
+			$this.append($hiddenArea);
 
-			var hiddenSizeDetector = document.createElement("div");
-			document.body.appendChild(hiddenSizeDetector);
-			jQuery(hiddenSizeDetector).addClass("sapUiTableHiddenSizeDetector");
+			// Create a copy of  all visible cells in the column, including the header cells without colspan
+			var $cells = $this.find('td[data-sap-ui-colid = "' + oCol.getId() + '"]:not([colspan])')
+				.filter(function(index, element) {
+					return element.style.display != "none";
+				}).children().clone();
+			$cells.find("[id]").removeAttr("id"); // remove all id attributes
 
-			var oColLabels = oCol.getMultiLabels();
-			if (oColLabels.length == 0 && !!oColLabel){
-				oColLabels = [oColLabel];
-			}
+			// Determine the column width
+			var iWidth = $hiddenArea.append($cells).width() + 4; // widest cell + 4px for borders, padding and rounding
+			iWidth = Math.min(iWidth, $this.find(".sapUiTableCnt").width()); // no wider as the table
+			iWidth = Math.max(iWidth + 4, TableUtils.Column.getMinColumnWidth()); // not to small
 
-			if (oColLabels.length > 0) {
-				jQuery.each(oColLabels, function(iIdx, oLabel){
-					var iHeaderSpan;
-					if (!!oLabel.getText()){
-						jQuery(hiddenSizeDetector).text(oLabel.getText());
-						iHeaderWidth = hiddenSizeDetector.scrollWidth;
-					} else {
-						iHeaderWidth = oLabel.$().scrollWidth;
-					}
-					iHeaderWidth = iHeaderWidth + $this.find("#" + oCol.getId() + "-icons").first().width();
+			$hiddenArea.remove();
 
-					$this.find(".sapUiTableColIcons#" + oCol.getId() + "_" + iIdx + "-icons").first().width();
-					if (aHeaderSpan instanceof Array && aHeaderSpan[iIdx] > 1){
-						iHeaderSpan = aHeaderSpan[iIdx];
-					} else if (aHeaderSpan > 1){
-						iHeaderSpan = aHeaderSpan;
-					}
-					if (!!iHeaderSpan){
-						// we have a header span, so we need to distribute the width of this header label over more than one column
-						//get the width of the other columns and subtract from the minwidth required from label side
-						var i = iHeaderSpan - 1;
-						while (i > iColIndex) {
-							iHeaderWidth = iHeaderWidth - (this._getVisibleColumns()[iColIndex + i].$().width() || 0);
-							i -= 1;
-						}
-					}
-				});
-			}
-
-			var minAddWidth = Math.max.apply(null, $cols.map(
-				function(){
-					var _$this = jQuery(this);
-					return parseInt(_$this.css('padding-left'), 10) + parseInt(_$this.css('padding-right'), 10)
-							+ parseInt(_$this.css('margin-left'), 10) + parseInt(_$this.css('margin-right'), 10);
-				}).get());
-
-			//get the max width of the currently displayed cells in this column
-			var minWidth = Math.max.apply(null, $cols.children().map(
-				function() {
-					var width = 0,
-					sWidth = 0;
-					var _$this = jQuery(this);
-					var sColText = _$this.text() || _$this.val();
-
-					if (bIsTextBased){
-						jQuery(hiddenSizeDetector).text(sColText);
-						sWidth = hiddenSizeDetector.scrollWidth;
-					} else {
-						sWidth = this.scrollWidth;
-					}
-					if (iHeaderWidth > sWidth){
-						sWidth = iHeaderWidth;
-					}
-					width = sWidth + parseInt(_$this.css('margin-left'), 10)
-											+ parseInt(_$this.css('margin-right'), 10)
-											+ minAddWidth
-											+ 1; // ellipsis is still displayed if there is an equality of the div's width and the table column
-					return width;
-				}).get());
-
-			jQuery(hiddenSizeDetector).remove();
-			return Math.max(minWidth, TableUtils.Column.getMinColumnWidth());
+			return iWidth;
 		},
 
 		/*
@@ -652,7 +570,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	 */
 	var RowHoverHandler = {
 
-		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
+		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableRowAction", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
 
 		initRowHovering : function(oTable) {
 			var $Table = oTable.$();

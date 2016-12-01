@@ -194,7 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 * <pre>
 	 * {
 	 *   "scopeObject": oComponent, // the Component instance
-	 *   "scopeType": "component"   // the stereotype of the scopeObject
+	 *   "scopeType": "component",   // the stereotype of the scopeObject
+	 *   "settings": {} // the provided service settings
 	 * }
 	 * </pre>
 	 *

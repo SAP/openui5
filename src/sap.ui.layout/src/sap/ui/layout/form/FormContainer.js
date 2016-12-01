@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	/**
 	 * Constructor for a new sap.ui.layout.form.FormContainer.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -36,12 +36,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 			/**
 			 * Container is expanded.
+			 *
 			 * <b>Note:</b> This property only works if <code>expandable</code> is set to <code>true</code>.
 			 */
 			expanded : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
 			 * Defines if the <code>FormContainer</code> is expandable.
+			 *
 			 * <b>Note:</b> The expander icon will only be shown if a <code>title</code> is set for the <code>FormContainer</code>.
 			 */
 			expandable : {type : "boolean", group : "Misc", defaultValue : false},
@@ -60,8 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			formElements : {type : "sap.ui.layout.form.FormElement", multiple : true, singularName : "formElement"},
 
 			/**
-			 * Title of the <code>FormContainer</code>. Can either be a <code>Title</code> object, or a string.
-			 * If a <code>Title</code> object is used, the style of the title can be set.
+			 * Title of the <code>FormContainer</code>. Can either be a <code>Title</code> element or a string.
+			 * If a <code>Title</code> element is used, the style of the title can be set.
 			 *
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 */
@@ -80,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		associations: {
 
 			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
 			 *
 			 * <b>Note:</b> This attribute is only rendered if the <code>FormContainer</code> has it's own
 			 * DOM representation in the used <code>FormLayout</code>.

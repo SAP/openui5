@@ -446,13 +446,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				AppCacheBuster.boot(oSyncPoint2);
 			}
 
-			//initialize support info stack
-			if (this.oConfiguration["xx-support"] !== null) {
+			// Initialize support info stack
+			if (this.oConfiguration.getSupportMode() !== null) {
 				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
 
-				var fnCallbackSupportInfo = function(Support) {
-					Support.initializeSupportMode(that.oConfiguration["xx-support"]);
+				var fnCallbackBootstrap = function(Bootstrap) {
+					Bootstrap.initSupportRules(that.oConfiguration.getSupportMode());
+
 					oSyncPoint2.finishTask(iSupportInfoTask);
+				};
+
+				var fnCallbackSupportInfo = function(Support) {
+					Support.initializeSupportMode(that.oConfiguration.getSupportMode());
+
+					if (bAsync) {
+						sap.ui.require(["sap/ui/support/Bootstrap"], fnCallbackBootstrap);
+					} else {
+						fnCallbackBootstrap(sap.ui.requireSync("sap/ui/support/Bootstrap"));
+					}
 				};
 
 				if (bAsync) {
@@ -460,14 +471,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				} else {
 					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
 				}
-
-				var iRulesBootTask = oSyncPoint2.startTask("support rules init");
-				this.loadLibrary("sap.ui.support", true).then(function () {
-					sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
-						Bootstrap.initSupportRules(that.oConfiguration.getSupportMode());
-						oSyncPoint2.finishTask(iRulesBootTask);
-					});
-				});
 			}
 
 			oSyncPoint2.finishTask(iCreateTasksTask);
@@ -1080,7 +1083,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		} else {
 			oRenderLog.debug("delay initial rendering until theme has been loaded");
 			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-				this.renderPendingUIUpdates("after theme has been loaded");
+				setTimeout(
+					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
+					Device.browser.safari ? 50 : 0
+				);
 			}, this);
 		}
 

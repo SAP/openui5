@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 						},
 						"sfapi": {
 							"type": "sap.ui.model.odata.ODataModel",
-							"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+							"uri": "./some/odata/service"
 						}
 					},
 

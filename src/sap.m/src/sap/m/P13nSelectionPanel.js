@@ -11,7 +11,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nSelectionPanel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nSelectionPanel control is used to define selection settings like the visibility or the order of items.
 	 * @extends sap.m.P13nPanel
@@ -30,8 +30,6 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * List of columns that has been changed
-				 *
-				 * @since 1.44.0
 				 */
 				columnsItems: {
 					type: "sap.m.P13nColumnsItem",
@@ -42,8 +40,6 @@ sap.ui.define([
 
 				/**
 				 * Internal aggregation for the toolbar
-				 *
-				 * @since 1.44.0
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -894,9 +890,18 @@ sap.ui.define([
 				template: new sap.m.ColumnListItem({
 					cells: [
 						new sap.m.Link({
-							text: "{text}",
 							href: "{href}",
-							// target: "{target}",
+							text: "{text}",
+							target: "{target}",
+							enabled: {
+								path: 'href',
+								formatter: function(oValue) {
+									if (!oValue) {
+										this.addStyleClass("sapUiCompSmartLink");
+									}
+									return !!oValue;
+								}
+							},
 							press: function(oEvent) {
 								var fOnLinkPress = this._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
 								if (fOnLinkPress) {

@@ -96,7 +96,8 @@ sap.ui.define([
 		} else if (oCellInfo.type === CellType.ROWHEADER) {
 			TableUtils.toggleRowSelection(oTable, oEvent.target);
 
-		} else if (oCellInfo.type === CellType.DATACELL) {
+		} else if (oCellInfo.type === CellType.DATACELL
+			|| oCellInfo.type === CellType.ROWACTION) {
 
 			// Select/Deselect row.
 			if (TableUtils.isRowSelectionAllowed(oTable)) {
@@ -157,8 +158,8 @@ sap.ui.define([
 	 */
 	TableKeyboardDelegate._isElementGroupToggler = function(oElement) {
 		return TableUtils.Grouping.isInGroupingRow(oElement) ||
-			(TableUtils.Grouping.isTreeMode(this) && oElement.classList.contains("sapUiTableTdFirst")) ||
-			oElement.classList.contains("sapUiTableTreeIcon");
+			   (TableUtils.Grouping.isTreeMode(this) && oElement.classList.contains("sapUiTableTdFirst")) ||
+			   oElement.classList.contains("sapUiTableTreeIcon");
 	};
 
 	/**
@@ -190,7 +191,7 @@ sap.ui.define([
 		var $Cell = jQuery(oCell);
 		var oCellInfo = TableUtils.getCellInfo($Cell);
 
-		if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+		if (oCellInfo !== null && (oCellInfo.type === TableUtils.CELLTYPES.DATACELL || oCellInfo.type === TableUtils.CELLTYPES.ROWACTION)) {
 			var $InteractiveElements = $Cell.find(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
 			if ($InteractiveElements.length > 0) {
 				return $InteractiveElements;
@@ -355,6 +356,7 @@ sap.ui.define([
 		var oActiveElement = document.activeElement;
 		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
 
 		if ($InteractiveElements !== null) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
@@ -363,29 +365,9 @@ sap.ui.define([
 			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
 			return true;
 
-		} else if ($ParentDataCell !== null) {
+		} else if ($ParentCell !== null) {
 			// Target is an interactive element inside a data cell.
 			this._getKeyboardExtension()._suspendItemNavigation();
-
-			// Remove tabIndex from previously focused cell.
-			var oLastInfo = this._getKeyboardExtension()._getLastFocusedCellInfo();
-
-			if (oLastInfo != null) {
-				var oRow = this.getRows()[oLastInfo.row - (sap.ui.table.TableUtils.hasRowHeader(this) ? 1 : 0)];
-
-				if (oRow != null) {
-					var oCell = oRow.getCells()[oLastInfo.cellInRow - sap.ui.table.TableUtils.getHeaderRowCount(this)];
-
-					if (oCell != null) {
-						var $DataCell = TableUtils.getParentDataCell(this, oCell.getDomRef());
-
-						if ($DataCell !== null) {
-							$DataCell[0].tabIndex = -1;
-						}
-					}
-				}
-			}
-
 			return true;
 		}
 
@@ -403,8 +385,9 @@ sap.ui.define([
 		oKeyboardExtension._resumeItemNavigation();
 
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
-		if ($ParentDataCell !== null) {
-			oKeyboardExtension._setSilentFocus($ParentDataCell);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
+		if ($ParentCell !== null) {
+			oKeyboardExtension._setSilentFocus($ParentCell);
 		} else {
 			oActiveElement.blur();
 			oKeyboardExtension._setSilentFocus(oActiveElement);
@@ -441,7 +424,8 @@ sap.ui.define([
 		}
 
 		var $ParentDataCell = TableUtils.getParentDataCell(this, $Target);
-		var bIsInteractiveElement = $ParentDataCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
+		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, $Target);
+		var bIsInteractiveElement = $ParentCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			// Leave the action mode when focusing an element in the table which is not supported by the action mode.
@@ -494,7 +478,7 @@ sap.ui.define([
 		if (oEvent.keyCode === jQuery.sap.KeyCodes.SHIFT &&
 			this.getSelectionMode() === SelectionMode.MultiToggle &&
 			(oCellInfo.type === CellType.ROWHEADER && TableUtils.isRowSelectorSelectionAllowed(this) ||
-			oCellInfo.type === CellType.DATACELL && TableUtils.isRowSelectionAllowed(this))) {
+			 oCellInfo.type === CellType.DATACELL && TableUtils.isRowSelectionAllowed(this))) {
 
 			var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(this);
 			var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
@@ -509,7 +493,7 @@ sap.ui.define([
 			 */
 			this._oRangeSelection = {
 				startIndex: iDataRowIndex,
-				selected: this.isIndexSelected(iDataRowIndex)
+				selected:   this.isIndexSelected(iDataRowIndex)
 			};
 
 		// Ctrl+A: Select/Deselect all.
@@ -517,8 +501,8 @@ sap.ui.define([
 			oEvent.preventDefault(); // To prevent full page text selection.
 
 			if ((oCellInfo.type === CellType.DATACELL ||
-				oCellInfo.type === CellType.ROWHEADER ||
-				oCellInfo.type === CellType.COLUMNROWHEADER)
+				 oCellInfo.type === CellType.ROWHEADER ||
+				 oCellInfo.type === CellType.COLUMNROWHEADER)
 				&& this.getSelectionMode() === SelectionMode.MultiToggle) {
 
 				this._toggleSelectAll();
@@ -705,7 +689,7 @@ sap.ui.define([
 			}
 
 		} else if (oCellInfo.type === CellType.COLUMNHEADER ||
-			oCellInfo.type === CellType.COLUMNROWHEADER) {
+				   oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 			if (TableUtils.isNoDataVisible(this)) {
 				this.$("noDataCnt").focus();
@@ -813,8 +797,8 @@ sap.ui.define([
 			}
 
 		} else if (oCellInfo.type === CellType.DATACELL ||
-			oCellInfo.type === CellType.ROWHEADER ||
-			oEvent.target === this.getDomRef("noDataCnt")) {
+				   oCellInfo.type === CellType.ROWHEADER ||
+				   oEvent.target === this.getDomRef("noDataCnt")) {
 
 			if (this.getColumnHeaderVisible()) {
 				TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
@@ -844,7 +828,8 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oCellInfo.type === CellType.DATACELL ||
-			oCellInfo.type === CellType.ROWHEADER) {
+			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.ROWACTION) {
 
 			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
 				var bScrolled = this._getScrollExtension().scroll(true, false, true);
@@ -951,11 +936,23 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oCellInfo.type === CellType.DATACELL ||
-			oCellInfo.type === CellType.ROWHEADER) {
+			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.ROWACTION) {
 
 			if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
 				var bScrolled = this._getScrollExtension().scroll(false, false, true);
+
 				if (bScrolled) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+			}
+
+			if (oCellInfo.type === CellType.ROWACTION) {
+				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+				var iFocusedRow = oFocusedItemInfo.row;
+
+				if (iFocusedRow === TableUtils.getHeaderRowCount(this)) {
+					// Do not navigate to the row actions column header cell.
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
@@ -1028,6 +1025,26 @@ sap.ui.define([
 				oKeyboardExtension.setActionMode(true);
 			}
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
+		}
+	};
+
+	TableKeyboardDelegate.prototype.onsapleft = function(oEvent) {
+		if (this._getKeyboardExtension().isInActionMode()) {
+			return;
+		}
+
+		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		if (oCellInfo.type === CellType.COLUMNHEADER && bIsRTL) {
+			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+			var iFocusedColumn = oFocusedItemInfo.cellInRow - (TableUtils.hasRowHeader(this) ? 1 : 0);
+			var iColumnCount = TableUtils.getVisibleColumnCount(this);
+
+			if (TableUtils.hasRowActions(this) && iFocusedColumn === iColumnCount - 1) {
+				// Do not navigate to the row actions column header cell.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+			}
 		}
 	};
 

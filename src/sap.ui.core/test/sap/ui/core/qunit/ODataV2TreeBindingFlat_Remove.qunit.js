@@ -1,6 +1,6 @@
 module("Remove and reinsert", {
 	setup: function() {
-		oMockServer.start();
+		fnSetupNewMockServer();
 		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
 	},
 	teardown: function() {
@@ -848,7 +848,7 @@ asyncTest("Create new node and added to a leaf node", function() {
 			equal(oN1017.addedSubtrees.length, 1, "Node 1001 has an added node");
 			strictEqual(oN1017.addedSubtrees[0]._getSubtree()[0].context, oContext, "The node is correctly added");
 			equal(oBinding.getLength(), 626, "The length is not yet increased by 1 after added a new node");
-			equal(oModel.getProperty("DRILLDOWN_STATE", oN1017.context), "collapsed", "Node 1017 is not a leaf node anymore but collapsed");
+			equal(oBinding.hasChildren(oN1017.context), true, "Node 1017 is not a leaf node anymore but collapsed");
 			ok(!oN1017.nodeState.isLeaf, "Node 1017 isn't a leaf anymore");
 			ok(oN1017.nodeState.collapsed, "Node 1017 is collapsed");
 

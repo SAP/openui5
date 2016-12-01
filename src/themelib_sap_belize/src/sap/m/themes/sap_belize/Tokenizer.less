@@ -16,3 +16,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		}
 	}
 }
+
+//editable tokens in read-only tokenizer
+.sapMTokenizer.sapMTokenizerReadonly {
+	.sapMToken {
+		color: @sapUiContentForegroundTextColor;
+
+		&.sapMTokenSelected {
+			color: @sapUiToggleButtonPressedTextColor;
+		}
+	}
+}

@@ -7,20 +7,46 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>sap.m.ComboBox</code>.
+		 * Constructor for a new ComboBox.
 		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-		 * @param {object} [mSettings] Initial settings for the new control.
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>sap.m.ComboBox</code> control combines a dropdown list with items and a text field with a button,
-		 * allowing the user to either type a value directly or choose from the list of existing items.
-		 * @extends sap.m.ComboBoxBase
+		 * A drop-down list for selecting and filtering values.
+		 * <h3>Overview</h3>
+		 * The control represents a drop-down menu with a list of the available options and a text input field to narrow down the options.
+		 * <h3>Structure</h3>
+		 * The combo-box consists of the following elements:
+		 * <ul>
+		 * <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.</li>
+		 * <li> Drop-down arrow - expands\collapses the option list.</li>
+		 * <li> Option list - the list of available options.</li>
+		 * </ul>
+		 * By setting the <code>showSecondaryValues</code> property, the combo box can display an additional value for each option (if there is one). Filtering is done only on the first option.
+		 * <h3>Usage</h3>
+		 * <h4>When to use:</h4>
+		 * <ul>
+		 * <li>You need to select only one item in a long list of options (between 13 and 200) or your custom user input.</li>
+		 * </ul>
+		 * <h4>When not to use:</h4>
+		 * <ul>
+		 * <li>You need to select between only two options. Use a {@link sap.m.Switch switch} control instead.</li>
+		 * <li>You need to select between 12 options. Use a {@link sap.m.Select select} control instead.</li>
+		 * <li>You need to select between more than 200 options. Use a {@link sap.m.Input input} control with value help instead.</li>
+		 * </ul>
+		 * <h3>Responsive Behavior</h3>
+		 * <ul>
+		 * <li>The width of the option list adapts to its content. The minimum width is the input field plus the drop-down arrow.</li>
+		 * <li>There is no horizontal scrolling in the option list. Entries in the list that are too long will be truncated.</li>
+		 * <li>On phone devices the combo box option list opens a dialog.</li>
+		 * </ul>
 		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
+		 * @extends sap.m.ComboBoxBase
 		 * @public
 		 * @since 1.22
 		 * @alias sap.m.ComboBox

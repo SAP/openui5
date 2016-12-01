@@ -270,19 +270,14 @@
 		checkSelection("MultiToggle - After 5th selection", [2]);
 		triggerSelectionOnRow(0, true, true, false);
 		checkSelection("MultiToggle - After 6th selection", [0, 2]);
-		if (oTable._getKeyboardExtension()._legacy) {
-			triggerSelectionOnRow(4, true, false, true);
-		} else {
-			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
-			oCell.focus();
-			qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
-		}
-		//debugger;
+		var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
+		oCell.focus();
+		qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
+		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
 		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(2, false, false, true);
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
@@ -383,6 +378,33 @@
 		oTable.getDomRef().style.width = "0px";
 		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
 	});
+	
+	QUnit.test("Row Actions", function(assert) {
+		assert.equal(sap.ui.table.TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
+		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
+		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "Action Area");
+		oTable.setRowActionCount(2);
+		sap.ui.getCore().applyChanges();
+		assert.equal(sap.ui.table.TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
+		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
+		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "Action Area");
+		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		sap.ui.getCore().applyChanges();
+		assert.equal(sap.ui.table.TableUtils.getRowActionCount(oTable), 2, "Table has 2 row actions");
+		assert.ok(oTable.$().hasClass("sapUiTableRAct"), "CSS class sapUiTableRAct");
+		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
+		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
+		oTable.setRowActionCount(1);
+		sap.ui.getCore().applyChanges();
+		assert.equal(sap.ui.table.TableUtils.getRowActionCount(oTable), 1, "Table has 1 row action");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
+		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "CSS class sapUiTableRActS");
+		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
+	});
+	
+	
 
 	QUnit.module("Column operations", {
 		beforeEach: function() {
@@ -1764,10 +1786,14 @@
 	});
 
 	QUnit.test("test onfocusin function", function(assert) {
+		var oScrollExtension = oTable._getScrollExtension();
+		oScrollExtension._debug();
+
 		var oEvent = jQuery.Event("focus", {
 			target: oTable.getColumns()[5].getDomRef()
 		});
-		oTable.onfocusin(oEvent);
+
+		oScrollExtension._ExtensionDelegate.onfocusin(oEvent);
 		assert.ok(jQuery(oEvent.target).parent('.sapUiTableColHdrTr').length > 0, "Column header is in focus");
 	});
 
@@ -1852,7 +1878,7 @@
 	});
 
 	QUnit.test("test _getBaseFontSize function", function(assert) {
-		assert.equal(oTable._getBaseFontSize(), 16, "Base font size retunred");
+		assert.equal(oTable._getBaseFontSize(), 16, "Base font size returned");
 	});
 
 	QUnit.test("test _CSSSizeToPixel function", function(assert) {

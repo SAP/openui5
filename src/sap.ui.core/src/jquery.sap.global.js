@@ -32,11 +32,11 @@
 		return;
 	}
 
-	// The native Promise in MS Edge is not fully compliant with the ES6 spec for promises.
-	// It executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
-	// We therefore enforce the use of the es6-promise polyfill also in MS Edge, it works properly.
+	// The native Promise in MS Edge and Apple Safari is not fully compliant with the ES6 spec for promises.
+	// MS Edge executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
+	// We therefore enforce the use of the es6-promise polyfill also in MS Edge and Safari, which works properly.
 	// @see jQuery.sap.promise
-	if (Device.browser.edge) {
+	if (Device.browser.edge || Device.browser.safari) {
 		window.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
 	}
 
@@ -310,7 +310,97 @@
 		// of the XHR object, which delays execution of the asynchronous event handlers, until
 		// the synchronous request is completed.
 		(function() {
-			var bSyncRequestOngoing = false;
+			var bSyncRequestOngoing = false,
+				bPromisesQueued = false;
+
+			// Overwrite setTimeout and Promise handlers to delay execution after
+			// synchronous request is completed
+			var _then = Promise.prototype.then,
+				_catch = Promise.prototype.catch,
+				_timeout = window.setTimeout,
+				_interval = window.setInterval,
+				oQueue;
+			function addPromiseHandler(fnHandler) {
+				// Collect all promise handlers and execute within the same timeout,
+				// to avoid them to be split among several tasks
+				if (!bPromisesQueued) {
+					bPromisesQueued = true;
+					oQueue = new Promise(function(resolve, reject) {
+						_timeout(function() {
+							resolve();
+							bPromisesQueued = false;
+						}, 0);
+					});
+				}
+				_then.call(oQueue, fnHandler);
+			}
+			function wrapPromiseHandler(fnHandler, oScope, bCatch) {
+				if (typeof fnHandler !== "function") {
+					return fnHandler;
+				}
+				return function() {
+					var aArgs = Array.prototype.slice.call(arguments);
+					// If a sync request is ongoing or other promises are still queued,
+					// the execution needs to be delayed
+					if (bSyncRequestOngoing || bPromisesQueued) {
+						return new Promise(function(resolve, reject) {
+							// The try catch is needed to differentiate whether resolve or
+							// reject needs to be called.
+							addPromiseHandler(function() {
+								var oResult;
+								try {
+									oResult = fnHandler.apply(window, aArgs);
+									resolve(oResult);
+								} catch (oException) {
+									reject(oException);
+								}
+							});
+						});
+					}
+					return fnHandler.apply(window, aArgs);
+				};
+			}
+			/*eslint-disable no-extend-native*/
+			Promise.prototype.then = function(fnThen, fnCatch) {
+				var fnWrappedThen = wrapPromiseHandler(fnThen),
+					fnWrappedCatch = wrapPromiseHandler(fnCatch);
+				return _then.call(this, fnWrappedThen, fnWrappedCatch);
+			};
+			Promise.prototype.catch = function(fnCatch) {
+				var fnWrappedCatch = wrapPromiseHandler(fnCatch);
+				return _catch.call(this, fnWrappedCatch);
+			};
+			/*eslint-enable no-extend-native*/
+
+			// If there are promise handlers waiting for execution at the time the
+			// timeout fires, start another timeout to postpone timer execution after
+			// promise execution.
+			function wrapTimerHandler(fnHandler) {
+				var fnWrappedHandler = function() {
+					var aArgs;
+					if (bPromisesQueued) {
+						aArgs = [fnWrappedHandler, 0].concat(arguments);
+						_timeout.apply(window, aArgs);
+					} else {
+						fnHandler.apply(window, arguments);
+					}
+				};
+				return fnWrappedHandler;
+			}
+			// setTimeout and setInterval can have arbitrary number of additional
+			// parameters, which are passed to the handler function when invoked.
+			window.setTimeout = function(fnHandler) {
+				var aArgs = Array.prototype.slice.call(arguments),
+					fnWrappedHandler = wrapTimerHandler(fnHandler);
+				aArgs[0] = fnWrappedHandler;
+				return _timeout.apply(window, aArgs);
+			};
+			window.setInterval = function(fnHandler) {
+				var aArgs = Array.prototype.slice.call(arguments),
+					fnWrappedHandler = wrapTimerHandler(fnHandler, true);
+				aArgs[0] = fnWrappedHandler;
+				return _interval.apply(window, aArgs);
+			};
 
 			// Replace the XMLHttpRequest object with a proxy, that overrides the constructor to
 			// return a proxy of the XHR instance
@@ -343,7 +433,7 @@
 								bDelay = true;
 							}
 							if (bDelay) {
-								setTimeout(callHandler, 0);
+								_timeout(callHandler, 0);
 								return true;
 							}
 							return callHandler();
@@ -2092,54 +2182,121 @@
 			aInteractions = [];
 		};
 
+		function isCompleteMeasurement(oMeasurement) {
+			if (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) {
+				return oMeasurement;
+			}
+		}
+
+		function isCompleteTiming(oRequestTiming) {
+			return oRequestTiming.startTime > 0 &&
+				oRequestTiming.startTime <= oRequestTiming.requestStart &&
+				oRequestTiming.requestStart <= oRequestTiming.responseEnd;
+		}
+
+		function aggregateRequestTiming(oRequest) {
+			// aggregate navigation and roundtrip with respect to requests overlapping and times w/o requests (gaps)
+			this.end = oRequest.responseEnd > this.end ? oRequest.responseEnd : this.end;
+			// sum up request time as a grand total over all requests
+			oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.startTime);
+
+			// if there is a gap between requests we add the times to the aggrgate and shift the lower limits
+			if (this.roundtripHigherLimit <= oRequest.startTime) {
+				oPendingInteraction.navigation += (this.navigationHigherLimit - this.navigationLowerLimit);
+				oPendingInteraction.roundtrip += (this.roundtripHigherLimit - this.roundtripLowerLimit);
+				this.navigationLowerLimit = oRequest.startTime;
+				this.roundtripLowerLimit = oRequest.startTime;
+			}
+
+			// shift the limits if this request was completed later than the earlier requests
+			if (oRequest.responseEnd > this.roundtripHigherLimit) {
+				this.roundtripHigherLimit = oRequest.responseEnd;
+			}
+			if (oRequest.requestStart > this.navigationHigherLimit) {
+				this.navigationHigherLimit = oRequest.requestStart;
+			}
+		}
+
+		function aggregateRequestTimings(aRequests) {
+			var oTimings = {
+				start: aRequests[0].startTime,
+				end: aRequests[0].responseEnd,
+				navigationLowerLimit: aRequests[0].startTime,
+				navigationHigherLimit: aRequests[0].requestStart,
+				roundtripLowerLimit: aRequests[0].startTime,
+				roundtripHigherLimit: aRequests[0].responseEnd
+			};
+
+			// aggregate all timings by operating on the oTimings object
+			aRequests.forEach(aggregateRequestTiming, oTimings);
+			oPendingInteraction.navigation += (oTimings.navigationHigherLimit - oTimings.navigationLowerLimit);
+			oPendingInteraction.roundtrip += (oTimings.roundtripHigherLimit - oTimings.roundtripLowerLimit);
+
+			// calculate average network time per request
+			if (oPendingInteraction.networkTime) {
+				var iTotalNetworkTime = oPendingInteraction.requestTime - oPendingInteraction.networkTime;
+				oPendingInteraction.networkTime = iTotalNetworkTime / aRequests.length;
+			} else {
+				oPendingInteraction.networkTime = 0;
+			}
+
+			// in case processing is not determined, which means no re-rendering occured, take start to end
+			if (oPendingInteraction.processing === 0) {
+				var iRelativeStart = oPendingInteraction.start - window.performance.timing.fetchStart;
+				oPendingInteraction.duration = oTimings.end - iRelativeStart;
+				// calculate processing time of before requests start
+				oPendingInteraction.processing = oTimings.start - iRelativeStart;
+			}
+
+		}
+
 		function finalizeInteraction(iTime) {
 			if (oPendingInteraction) {
 				oPendingInteraction.end = iTime;
 				oPendingInteraction.duration = oPendingInteraction.processing;
 				oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
-				oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
-					return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
-				}, true);
-				if (oPendingInteraction.requests.length > 0) {
-					// determine Performance API timestamp for latestly completed request
-					var iEnd = oPendingInteraction.requests[0].startTime,
-						iNavLo = oPendingInteraction.requests[0].startTime,
-						iNavHi = oPendingInteraction.requests[0].requestStart,
-						iRtLo = oPendingInteraction.requests[0].requestStart,
-						iRtHi = oPendingInteraction.requests[0].responseEnd;
-					oPendingInteraction.requests.forEach(function(oRequest) {
-						iEnd = oRequest.responseEnd > iEnd ? oRequest.responseEnd : iEnd;
-						oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.startTime);
-						// summarize navigation and roundtrip with respect to requests overlapping and times w/o requests
-						if (iRtHi < oRequest.startTime) {
-							oPendingInteraction.navigation += (iNavHi - iNavLo);
-							oPendingInteraction.roundtrip += (iRtHi - iRtLo);
-							iNavLo =  oRequest.startTime;
-							iRtLo =  oRequest.requestStart;
-						}
-						if (oRequest.responseEnd > iRtHi) {
-							iNavHi = oRequest.requestStart;
-							iRtHi = oRequest.responseEnd;
-						}
-					});
-					oPendingInteraction.navigation += iNavHi - iNavLo;
-					oPendingInteraction.roundtrip += iRtHi - iRtLo;
-					// calculate average network time per request
-					oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
-					// in case processing is not determined, which means no re-rendering occured, take start to iEnd
-					if (oPendingInteraction.duration === 0) {
-						oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
-					}
+				oPendingInteraction.incompleteRequests = 0;
+				oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(isCompleteMeasurement, true);
+
+				var aCompleteRequestTimings = oPendingInteraction.requests.filter(isCompleteTiming);
+				if (aCompleteRequestTimings.length > 0) {
+					aggregateRequestTimings(aCompleteRequestTimings);
+					oPendingInteraction.incompleteRequests = oPendingInteraction.requests.length - aCompleteRequestTimings.length;
 				}
-				// calculate real processing time if any processing took place, cannot be negative as then requests took longer than processing
-				if (oPendingInteraction.processing !== 0) {
-					var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
-					oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
-				}
+
+				// calculate real processing time if any processing took place
+				// cannot be negative as then requests took longer than processing
+				var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
+				oPendingInteraction.processing = iProcessing > -1 ? iProcessing : 0;
+
 				aInteractions.push(oPendingInteraction);
 				jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "jQuery.sap.measure");
 				oPendingInteraction = null;
 			}
+		}
+
+		// component determination - heuristic
+		function createOwnerComponentInfo(oSrcElement) {
+			var sId, sVersion;
+			if (oSrcElement) {
+				var Component, oComponent;
+				Component = sap.ui.require("sap/ui/core/Component");
+				while (Component && oSrcElement && oSrcElement.getParent) {
+					oComponent = Component.getOwnerComponentFor(oSrcElement);
+					if (oComponent || oSrcElement instanceof Component) {
+						oComponent = oComponent || oSrcElement;
+						var oApp = oComponent.getManifestEntry("sap.app");
+						// get app id or module name for FESR
+						sId = oApp && oApp.id || oComponent.getMetadata().getName();
+						sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
+					}
+					oSrcElement = oSrcElement.getParent();
+				}
+			}
+			return {
+				id: sId ? sId : "undetermined",
+				version: sVersion ? sVersion : ""
+			};
 		}
 
 		/**
@@ -2154,30 +2311,6 @@
 		 * @since 1.34.0
 		 */
 		this.startInteraction = function(sType, oSrcElement) {
-			// component determination - heuristic
-			function createOwnerComponentInfo(oSrcElement) {
-				var sId, sVersion;
-				if (oSrcElement) {
-					var Component, oComponent;
-					Component = sap.ui.require("sap/ui/core/Component");
-					while (Component && oSrcElement && oSrcElement.getParent) {
-						oComponent = Component.getOwnerComponentFor(oSrcElement);
-						if (oComponent || oSrcElement instanceof Component) {
-							oComponent = oComponent || oSrcElement;
-							var oApp = oComponent.getManifestEntry("sap.app");
-							// get app id or module name for FESR
-							sId = oApp && oApp.id || oComponent.getMetadata().getName();
-							sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
-						}
-						oSrcElement = oSrcElement.getParent();
-					}
-				}
-				return {
-					id: sId ? sId : "undetermined",
-					version: sVersion ? sVersion : ""
-				};
-			}
-
 			var iTime = jQuery.sap.now();
 
 			if (oPendingInteraction) {
@@ -2198,7 +2331,7 @@
 				start : iTime, // interaction start
 				end: 0, // interaction end
 				navigation: 0, // sum over all navigation times
-				roundtrip: 0, // time from first request sent to last received response end
+				roundtrip: 0, // time from first request sent to last received response end - without gaps and ignored overlap
 				processing: 0, // client processing time
 				duration: 0, // interaction duration
 				requests: [], // Performance API requests during interaction

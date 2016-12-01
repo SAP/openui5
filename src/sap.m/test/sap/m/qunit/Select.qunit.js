@@ -2,6 +2,364 @@ sinon.config.useFakeTimers = true;
 QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
 
+var mTestModelData = {
+    "items": [
+        {
+            "key": "DZ",
+            "text": "Algeria"
+        },
+
+        {
+            "key": "AR",
+            "text": "Argentina"
+        },
+
+        {
+            "key": "AU",
+            "text": "Australia"
+        },
+
+        {
+            "key": "AT",
+            "text": "Austria"
+        },
+
+        {
+            "key": "BH",
+            "text": "Bahrain"
+        },
+
+        {
+            "key": "BE",
+            "text": "Belgium"
+        },
+
+        {
+            "key": "BA",
+            "text": "Bosnia and Herzegovina"
+        },
+
+        {
+            "key": "BR",
+            "text": "Brazil"
+        },
+
+        {
+            "key": "BG",
+            "text": "Bulgaria"
+        },
+
+        {
+            "key": "CA",
+            "text": "Canada"
+        },
+
+        {
+            "key": "CL",
+            "text": "Chile"
+        },
+
+        {
+            "key": "CO",
+            "text": "Colombia"
+        },
+
+        {
+            "key": "HR",
+            "text": "Croatia"
+        },
+
+        {
+            "key": "CU",
+            "text": "Cuba"
+        },
+
+        {
+            "key": "CZ",
+            "text": "Czech Republic"
+        },
+
+        {
+            "key": "DK",
+            "text": "Denmark"
+        },
+
+        {
+            "key": "EG",
+            "text": "Egypt"
+        },
+
+        {
+            "key": "EE",
+            "text": "Estonia"
+        },
+
+        {
+            "key": "FI",
+            "text": "Finland"
+        },
+
+        {
+            "key": "FR",
+            "text": "France"
+        },
+
+        {
+            "key": "GH",
+            "text": "Ghana"
+        },
+
+        {
+            "key": "GR",
+            "text": "Greece"
+        },
+
+        {
+            "key": "HK",
+            "text": "Hong Kong"
+        },
+
+        {
+            "key": "HU",
+            "text": "Hungary"
+        },
+
+        {
+            "key": "IN",
+            "text": "India"
+        },
+
+        {
+            "key": "ID",
+            "text": "Indonesia"
+        },
+
+        {
+            "key": "IE",
+            "text": "Ireland"
+        },
+
+        {
+            "key": "IL",
+            "text": "Israel"
+        },
+
+        {
+            "key": "IT",
+            "text": "Italy"
+        },
+
+        {
+            "key": "JP",
+            "text": "Japan"
+        },
+
+        {
+            "key": "JO",
+            "text": "Jordan"
+        },
+
+        {
+            "key": "KE",
+            "text": "Kenya"
+        },
+
+        {
+            "key": "KW",
+            "text": "Kuwait"
+        },
+
+        {
+            "key": "LV",
+            "text": "Latvia"
+        },
+
+        {
+            "key": "LT",
+            "text": "Lithuania"
+        },
+
+        {
+            "key": "MK",
+            "text": "Macedonia"
+        },
+
+        {
+            "key": "MY",
+            "text": "Malaysia"
+        },
+
+        {
+            "key": "MX",
+            "text": "Mexico"
+        },
+
+        {
+            "key": "ME",
+            "text": "Montenegro"
+        },
+
+        {
+            "key": "MA",
+            "text": "Morocco"
+        },
+
+        {
+            "key": "NL",
+            "text": "Netherlands"
+        },
+
+        {
+            "key": "NZ",
+            "text": "New Zealand"
+        },
+
+        {
+            "key": "NG",
+            "text": "Nigeria"
+        },
+
+        {
+            "key": "NO",
+            "text": "Norway"
+        },
+
+        {
+            "key": "OM",
+            "text": "Oman"
+        },
+
+        {
+            "key": "PE",
+            "text": "Peru"
+        },
+
+        {
+            "key": "PH",
+            "text": "Philippines"
+        },
+
+        {
+            "key": "PL",
+            "text": "Poland"
+        },
+
+        {
+            "key": "PT",
+            "text": "Portugal"
+        },
+
+        {
+            "key": "QA",
+            "text": "Qatar"
+        },
+
+        {
+            "key": "RO",
+            "text": "Romania"
+        },
+
+        {
+            "key": "RU",
+            "text": "Russia"
+        },
+
+        {
+            "key": "SA",
+            "text": "Saudi Arabia"
+        },
+
+        {
+            "key": "SN",
+            "text": "Senegal"
+        },
+
+        {
+            "key": "RS",
+            "text": "Serbia"
+        },
+
+        {
+            "key": "SG",
+            "text": "Singapore"
+        },
+
+        {
+            "key": "SK",
+            "text": "Slovakia"
+        },
+
+        {
+            "key": "SI",
+            "text": "Slovenia"
+        },
+
+        {
+            "key": "ZA",
+            "text": "South Africa"
+        },
+
+        {
+            "key": "KR",
+            "text": "South Korea"
+        },
+
+        {
+            "key": "ES",
+            "text": "Spain"
+        },
+
+        {
+            "key": "SE",
+            "text": "Sweden"
+        },
+
+        {
+            "key": "CH",
+            "text": "Switzerland"
+        },
+
+        {
+            "key": "TW",
+            "text": "Taiwan"
+        },
+
+        {
+            "key": "TN",
+            "text": "Tunisia"
+        },
+
+        {
+            "key": "TR",
+            "text": "Turkey"
+        },
+
+        {
+            "key": "UG",
+            "text": "Uganda"
+        },
+
+        {
+            "key": "UA",
+            "text": "Ukraine"
+        },
+
+        {
+            "key": "AE",
+            "text": "United Arab Emirates"
+        },
+
+        {
+            "key": "GB",
+            "text": "United Kingdom"
+        },
+
+        {
+            "key": "YE",
+            "text": "Yemen"
+        }
+    ]};
+
 // helper functions
 var fnTestControlProperty = function(mOptions) {
 	var sProperty = jQuery.sap.charToUpperCase(mOptions.property);
@@ -1724,370 +2082,53 @@ QUnit.test("it should synchronize property changes of items to the select contro
 	oSelect.destroy();
 });
 
+
+// BCP 1670351685
+QUnit.test("it should select the selected item after the dropdown is open", function(assert) {
+
+    // system under test
+    var oModel = new sap.ui.model.json.JSONModel();
+
+    oModel.setData(mTestModelData);
+    sap.ui.getCore().setModel(oModel);
+
+    var oItemTemplate = new sap.ui.core.Item({
+        key: "{key}",
+        text: "{text}"
+    });
+
+    var oSelect = new sap.m.Select({
+        items: {
+            path: "/items",
+            template: oItemTemplate
+        }
+    });
+
+    // arrange
+    oSelect.placeAt("content");
+    var oScrollToItemSpy = this.spy(oSelect, "scrollToItem");
+    oSelect.setSelectedKey("YE");
+    sap.ui.getCore().applyChanges();
+    oSelect.focus();
+    oSelect.open();
+    this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+    // assert
+    assert.ok(oScrollToItemSpy.withArgs(oSelect.getSelectedItem()).calledOnce,
+        "after the dropdown is opened the scrollToItem is called");
+
+    // cleanup
+    oSelect.destroy();
+    oModel.destroy();
+});
+
 // BCP 1570472488
 QUnit.test("it should not fire the change event after the selection has changed (via keyboard) and the scrollbar is pressed", function(assert) {
 
 	// system under test
 	var oModel = new sap.ui.model.json.JSONModel();
-	var mData = {
-		"items": [
-			{
-				"key": "DZ",
-				"text": "Algeria"
-			},
 
-			{
-				"key": "AR",
-				"text": "Argentina"
-			},
-
-			{
-				"key": "AU",
-				"text": "Australia"
-			},
-
-			{
-				"key": "AT",
-				"text": "Austria"
-			},
-
-			{
-				"key": "BH",
-				"text": "Bahrain"
-			},
-
-			{
-				"key": "BE",
-				"text": "Belgium"
-			},
-
-			{
-				"key": "BA",
-				"text": "Bosnia and Herzegovina"
-			},
-
-			{
-				"key": "BR",
-				"text": "Brazil"
-			},
-
-			{
-				"key": "BG",
-				"text": "Bulgaria"
-			},
-
-			{
-				"key": "CA",
-				"text": "Canada"
-			},
-
-			{
-				"key": "CL",
-				"text": "Chile"
-			},
-
-			{
-				"key": "CO",
-				"text": "Colombia"
-			},
-
-			{
-				"key": "HR",
-				"text": "Croatia"
-			},
-
-			{
-				"key": "CU",
-				"text": "Cuba"
-			},
-
-			{
-				"key": "CZ",
-				"text": "Czech Republic"
-			},
-
-			{
-				"key": "DK",
-				"text": "Denmark"
-			},
-
-			{
-				"key": "EG",
-				"text": "Egypt"
-			},
-
-			{
-				"key": "EE",
-				"text": "Estonia"
-			},
-
-			{
-				"key": "FI",
-				"text": "Finland"
-			},
-
-			{
-				"key": "FR",
-				"text": "France"
-			},
-
-			{
-				"key": "GH",
-				"text": "Ghana"
-			},
-
-			{
-				"key": "GR",
-				"text": "Greece"
-			},
-
-			{
-				"key": "HK",
-				"text": "Hong Kong"
-			},
-
-			{
-				"key": "HU",
-				"text": "Hungary"
-			},
-
-			{
-				"key": "IN",
-				"text": "India"
-			},
-
-			{
-				"key": "ID",
-				"text": "Indonesia"
-			},
-
-			{
-				"key": "IE",
-				"text": "Ireland"
-			},
-
-			{
-				"key": "IL",
-				"text": "Israel"
-			},
-
-			{
-				"key": "IT",
-				"text": "Italy"
-			},
-
-			{
-				"key": "JP",
-				"text": "Japan"
-			},
-
-			{
-				"key": "JO",
-				"text": "Jordan"
-			},
-
-			{
-				"key": "KE",
-				"text": "Kenya"
-			},
-
-			{
-				"key": "KW",
-				"text": "Kuwait"
-			},
-
-			{
-				"key": "LV",
-				"text": "Latvia"
-			},
-
-			{
-				"key": "LT",
-				"text": "Lithuania"
-			},
-
-			{
-				"key": "MK",
-				"text": "Macedonia"
-			},
-
-			{
-				"key": "MY",
-				"text": "Malaysia"
-			},
-
-			{
-				"key": "MX",
-				"text": "Mexico"
-			},
-
-			{
-				"key": "ME",
-				"text": "Montenegro"
-			},
-
-			{
-				"key": "MA",
-				"text": "Morocco"
-			},
-
-			{
-				"key": "NL",
-				"text": "Netherlands"
-			},
-
-			{
-				"key": "NZ",
-				"text": "New Zealand"
-			},
-
-			{
-				"key": "NG",
-				"text": "Nigeria"
-			},
-
-			{
-				"key": "NO",
-				"text": "Norway"
-			},
-
-			{
-				"key": "OM",
-				"text": "Oman"
-			},
-
-			{
-				"key": "PE",
-				"text": "Peru"
-			},
-
-			{
-				"key": "PH",
-				"text": "Philippines"
-			},
-
-			{
-				"key": "PL",
-				"text": "Poland"
-			},
-
-			{
-				"key": "PT",
-				"text": "Portugal"
-			},
-
-			{
-				"key": "QA",
-				"text": "Qatar"
-			},
-
-			{
-				"key": "RO",
-				"text": "Romania"
-			},
-
-			{
-				"key": "RU",
-				"text": "Russia"
-			},
-
-			{
-				"key": "SA",
-				"text": "Saudi Arabia"
-			},
-
-			{
-				"key": "SN",
-				"text": "Senegal"
-			},
-
-			{
-				"key": "RS",
-				"text": "Serbia"
-			},
-
-			{
-				"key": "SG",
-				"text": "Singapore"
-			},
-
-			{
-				"key": "SK",
-				"text": "Slovakia"
-			},
-
-			{
-				"key": "SI",
-				"text": "Slovenia"
-			},
-
-			{
-				"key": "ZA",
-				"text": "South Africa"
-			},
-
-			{
-				"key": "KR",
-				"text": "South Korea"
-			},
-
-			{
-				"key": "ES",
-				"text": "Spain"
-			},
-
-			{
-				"key": "SE",
-				"text": "Sweden"
-			},
-
-			{
-				"key": "CH",
-				"text": "Switzerland"
-			},
-
-			{
-				"key": "TW",
-				"text": "Taiwan"
-			},
-
-			{
-				"key": "TN",
-				"text": "Tunisia"
-			},
-
-			{
-				"key": "TR",
-				"text": "Turkey"
-			},
-
-			{
-				"key": "UG",
-				"text": "Uganda"
-			},
-
-			{
-				"key": "UA",
-				"text": "Ukraine"
-			},
-
-			{
-				"key": "AE",
-				"text": "United Arab Emirates"
-			},
-
-			{
-				"key": "GB",
-				"text": "United Kingdom"
-			},
-
-			{
-				"key": "YE",
-				"text": "Yemen"
-			}
-		]};
-
-	oModel.setData(mData);
+	oModel.setData(mTestModelData);
 	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new sap.ui.core.Item({

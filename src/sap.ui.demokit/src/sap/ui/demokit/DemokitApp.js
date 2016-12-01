@@ -938,7 +938,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			this.navigateTo(sInitialPage);
 
-			jQuery(function () {
+			sap.ui.getCore().addPrerenderingTask(function () {
 				jQuery("body").append("<div id=\"logo\"><img id=\"logoico\"><img id=\"logotxt\"></div>");
 			  //check if it is internal or external version of Demokit and set the dialog content according to it
 				var oVersionInfo = sap.ui.getVersionInfo();
@@ -1260,7 +1260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				//Find supported themes
 				var isMobilePage = sIFrameContent.match(/\/sap\/me?\//);
-				var aMySupportedThemes = isMobilePage ? ["sap_bluecrystal", "sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcb"] : this._aThemes;
+				var aMySupportedThemes = isMobilePage ? ["sap_bluecrystal", "sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw"] : this._aThemes;
 				var aSupportedThemes = oContentWindow.sap.ui.demokit && oContentWindow.sap.ui.demokit._supportedThemes ? oContentWindow.sap.ui.demokit._supportedThemes : aMySupportedThemes;
 
 				//Update theme switch

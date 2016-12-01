@@ -497,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 *
 			 * @param {string} sName Name of the route
 			 * @param {object} [oParameters] Parameters for the route
-			 * @param {boolean} [bReplace=false] Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
+			 * @param {boolean} [bReplace=false] If set to <code>true</code>, the hash is replaced, and there will be no entry in the browser history, if set to <code>false</code>, the hash is set and the entry is stored in the browser history.
 			 * @public
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */

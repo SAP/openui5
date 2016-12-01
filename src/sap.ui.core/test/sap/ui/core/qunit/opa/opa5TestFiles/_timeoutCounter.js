@@ -24,7 +24,11 @@ sap.ui.define([
 			return;
 		}
 
-		QUnit.module("timeoutCounter - no " + sFunctionUnderTest);
+		QUnit.module("timeoutCounter - no " + sFunctionUnderTest, {
+			afterEach: function () {
+				oDebugSpy.reset();
+			}
+		});
 
 		QUnit.test("Should make sure there is no pending timeout before starting these tests", function (assert) {
 			var fnDone = assert.async();

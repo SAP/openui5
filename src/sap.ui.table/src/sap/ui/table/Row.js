@@ -34,7 +34,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			/**
 			 * The controls for the cells.
 			 */
-			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell"}
+			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell"},
+
+			/*
+			 * Hidden aggregation for row actions
+			 */
+			_rowAction : {type : "sap.ui.table.RowAction", multiple: false, visibility: "hidden"}
 		}
 	}});
 
@@ -136,6 +141,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 				var iRowIndex = oTable.indexOfRow(this);
 				// row selector domRef
 				this._mDomRefs[sKey].rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
+				// row action domRef
+				this._mDomRefs[sKey].rowAction = fnAccess(oTable.getId() + "-rowact" + iRowIndex);
 			}
 
 			// row domRef
@@ -160,6 +167,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 				} else {
 					// since this won't be undefined in jQuery case
 					this._mDomRefs[sKey].rowSelector = undefined;
+				}
+
+				if (this._mDomRefs[sKey].rowAction && this._mDomRefs[sKey].rowAction.length > 0) {
+					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowAction);
+				} else {
+					// since this won't be undefined in jQuery case
+					this._mDomRefs[sKey].rowAction = undefined;
 				}
 			}
 		}

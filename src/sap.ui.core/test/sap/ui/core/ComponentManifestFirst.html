@@ -4,20 +4,19 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Component Manifest First - sap.ui.core</title>
-	<script id="sap-ui-bootstrap"
-	type="text/javascript" src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-bindingSyntax="complex"
 	data-sap-ui-libs="sap.ui.commons,sap.m"
 	data-sap-ui-xx-componentPreload="async"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 	<style type="text/css">
 	.CodingArea textarea {
 		font-family: Consolas, monaco, monospace;
 	}
 	</style>
-	<script id="viewSoruce" type="xml/text">
+	<script id="viewSource" type="xml/text">
 		<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:lf="sap.ui.layout.form" xmlns="sap.m" xmlns:c="sap.ui.commons">
 			<l:Splitter height="100%">
 				<Panel width="auto" height="100%" headerText="Configuration Area">
@@ -49,7 +48,7 @@
 			</l:Splitter>
 		</mvc:View>
 	</script>
-	<script type="text/javascript">
+	<script>
 	sap.ui.localResources("samples");
 
 
@@ -139,7 +138,7 @@
 	// View Creation
 	var oManifestModel = new sap.ui.model.json.JSONModel(mModel);
 	var oMainView = new sap.ui.xmlview({
-		viewContent: jQuery("#viewSoruce").html()
+		viewContent: jQuery("#viewSource").html()
 	});
 	oMainView.setModel(oManifestModel);
 	oMainView.placeAt("Area");

@@ -283,12 +283,26 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
-	 * Returns a DOM reference for the associated Element or null, if it can't be found
-	 * @return {Element} DOM element or null
+	 * Returns a jQuery Object reference for the associated Element or undefined, if it can't be found
+	 * @return {jQuery} jQuery object or undefined
 	 * @public
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
-		return ElementUtil.getDomRef(this.getElementInstance());
+		var oDomRef = ElementUtil.getDomRef(this.getElementInstance());
+		if (!oDomRef) {
+			var oDesignTimeMetadata = this.getDesignTimeMetadata();
+			if (!oDesignTimeMetadata) {
+				return;
+			}
+			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
+			if (fnGetDomRef) {
+				oDomRef = fnGetDomRef(this.getElementInstance());
+			}
+		}
+
+		if (oDomRef) {
+			return jQuery(oDomRef);
+		}
 	};
 
 	/**
@@ -298,6 +312,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelectable = function(bSelectable) {
+		bSelectable = !!bSelectable;
 		if (bSelectable !== this.isSelectable()) {
 
 			if (!bSelectable) {
@@ -320,6 +335,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
+		bSelected = !!bSelected;
 		if (this.isSelectable() && bSelected !== this.isSelected()) {
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
@@ -341,6 +357,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setMovable = function(bMovable) {
+		bMovable = !!bMovable;
 		if (this.getMovable() !== bMovable) {
 			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
 
@@ -358,6 +375,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.setEditable = function(bEditable) {
+		bEditable = !!bEditable;
 		if (this.getEditable() !== bEditable) {
 			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
 

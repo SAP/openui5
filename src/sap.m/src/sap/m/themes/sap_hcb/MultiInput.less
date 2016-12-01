@@ -2,19 +2,19 @@
 /* CSS for control sap.m/MultiInput.control HCB theme*/
 /* ================================================= */
 
-.sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:hover,
-.sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:focus {
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
 	background-color: @sapHCHighlightBG;
 	border-left: 1px solid @sapHCStandardFG;
 }
 
-.sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:active {
+.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
 	background-color: @sapHCHighlightAltBG;
 	border-left: 1px solid @sapHCStandardFG;
 	color: @sapHCStandardFG;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputBorder {
+.sapMInputBaseReadonly .sapMMultiInputBorder {
 	background: @sapHCReducedBG;
 	border-color: @sapHCReducedAltFG;
 }
@@ -68,16 +68,16 @@ html.sap-tablet .sapUiSizeCompact .sapMMultiInputMultiModeBorder {
 	overflow-y: auto;
 }
 
-.sapMMultiInputNotEditable .sapMMultiInputBorder:hover {
+.sapMInputBaseReadonly .sapMMultiInputBorder:hover {
 	border-color: @sapHCReducedAltFG;
 }
 
-.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder,
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder,
 .sapMMultiInputBorder:hover {
 	border-color: @sapHCStandardFG;
 }
 
-.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder::before {
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
 	border: 2px dotted @sapHCStandardFG;
 	content: "";
 	position: absolute;

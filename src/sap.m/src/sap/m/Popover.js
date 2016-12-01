@@ -16,8 +16,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		*
 		* @class
 		* Displays additional information for an object in a compact way.
-		* @extends sap.ui.core.Control
-		* @implements sap.ui.core.PopupInterface
+		*
 		* <h3>Overview</h3>
 		* The popover displays additional information for an object in a compact way and without leaving the page. The popover can contain various UI elements such as fields, tables, images, and charts. It can also include actions in the footer.
 		* <h3>Structure</h3>
@@ -40,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		* </ul>
 		* <h4>When not to use:</h4>
 		* <ul>
-		* <li>The {@link sap.m.QucikView QuickView} is more appropriate for your use case.</li>
+		* <li>The {@link sap.m.QuickView QuickView} is more appropriate for your use case.</li>
 		* </ul>
 		* <h3>Responsive Behavior</h3>
 		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover. You can prevent this with the <code>modal</code> property.
@@ -51,10 +50,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		* <li>{@link sap.m.ResponsivePopover} is adaptive and responsive. It renders as a dialog with a close button in the header on phones, and as a popover on tablets.</li>
 		* </ul>
 		*
+		* @extends sap.ui.core.Control
+		* @implements sap.ui.core.PopupInterface
 		* @author SAP SE
 		* @version ${version}
 		*
-		* @constructor
 		* @public
 		* @alias sap.m.Popover
 		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -475,17 +475,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				// Because it's already fired in the sap.m.Popover.prototype.close function.
 				// The event also should not be fired if the focus is still inside the Popup. This could occur when the
 				// autoclose mechanism is fired by the child Popup and is called throught the EventBus
-				if (bBeforeCloseFired !== true && (this.touchEnabled || !this._isFocusInsidePopup())) {
+				// Also when the Popup is being destroyed, its close method is called. We should not fire beforeClose event in that case.
+				if (bBeforeCloseFired !== true && (this.touchEnabled || !this._isFocusInsidePopup()) && this.isOpen()) {
 					that.fireBeforeClose({openBy: that._oOpenBy});
 				}
 
 				that._deregisterContentResizeHandler();
 				Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 				that.removeDelegate(that._oRestoreFocusDelegate);
-
-				if (document.activeElement && !this.restoreFocus && !this._bModal && !Device.system.tablet) {
-					 document.activeElement.blur();
-				}
 			};
 		};
 
@@ -756,7 +753,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					(this._oPreviousFocus.sFocusId === document.activeElement.id);
 
 				// restore previous focus, if the current control isn't the same control as
-				if (!bSameFocusElement && this.oPopup.restoreFocus) {
+				if (!bSameFocusElement) {
 					Popup.applyFocusInfo(this._oPreviousFocus);
 					this._oPreviousFocus = null;
 				}
@@ -901,6 +898,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			Device.resize.detachHandler(this._fnOrientationChange);
 
 			InstanceManager.removePopoverInstance(this);
+
+			// If the popover is closed, the focused element has to be blurred on mobile device to close the on
+			// screen keyboard when the element isn't visible
+			if (!this.oPopup._bModal && !Device.system.desktop && document.activeElement && !jQuery(document.activeElement).is(":visible")) {
+				 document.activeElement.blur();
+			}
+
 			this.fireAfterClose({openBy: this._oOpenBy});
 		};
 
