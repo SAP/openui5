@@ -693,9 +693,7 @@ sap.ui.define([
 			}
 		}
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			if (oDependentBinding.refreshInternal) {
-				oDependentBinding.refreshInternal(sGroupId);
-			}
+			oDependentBinding.refreshInternal(sGroupId);
 		});
 	};
 
@@ -717,8 +715,6 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				// no deregisterChange because all property bindings deregistered due to
-				// oElementContext.destroy()
 				this.oCache = undefined;
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,

@@ -1280,6 +1280,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal", function (assert) {
+		var oBinding = this.oModel.bindProperty("NAME"),
+			oBindingMock = this.mock(oBinding),
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
+
+		oBindingMock.expects("makeCache").withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
+		oBinding.setContext(oContext);
+
+		oBindingMock.expects("makeCache").withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup");
+
+		// code under test
+		oBinding.refreshInternal("myGroup");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy: absolute binding", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("/absolute");
 

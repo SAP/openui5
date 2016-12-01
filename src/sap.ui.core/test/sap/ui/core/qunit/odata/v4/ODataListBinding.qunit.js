@@ -1382,21 +1382,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts - error handling for dataRequested/dataReceived", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oError = new Error("Expected Error"),
-			oReadPromise = _SyncPromise.resolve(Promise.reject(oError));
+	[false, true].forEach(function (bCanceled) {
+		QUnit.test("getContexts - error handling for dataRequested/dataReceived, canceled="
+				+ bCanceled, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oError = new Error("Expected Error"),
+				oReadPromise = _SyncPromise.resolve(Promise.reject(oError));
 
-		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
-			sClassName, sinon.match.same(oError));
-		this.mock(oBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
-		this.mock(oBinding).expects("fireDataReceived")
-			.withExactArgs({error : oError});
+			if (bCanceled) {
+				oError.canceled = true;
+			}
+			this.mock(this.oModel).expects("reportError").withExactArgs(
+				"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
+				sClassName, sinon.match.same(oError));
+			this.mock(oBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+			this.mock(oBinding).expects("fireDataReceived")
+				.withExactArgs(bCanceled ? undefined : {error : oError});
 
-		oBinding.getContexts(0, 3);
-		return oReadPromise.catch(function () {
-			assert.deepEqual(oBinding.getCurrentContexts(), [undefined, undefined, undefined]);
+			oBinding.getContexts(0, 3);
+			return oReadPromise.catch(function () {
+				assert.deepEqual(oBinding.getCurrentContexts(), [undefined, undefined, undefined]);
+			});
 		});
 	});
 
