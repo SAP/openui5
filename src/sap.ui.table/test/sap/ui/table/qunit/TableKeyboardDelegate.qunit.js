@@ -686,29 +686,15 @@ QUnit.test("No Column Header", function(assert) {
 });
 
 QUnit.test("Row Actions", function(assert) {
-	oTable.setRowActionCount(1);
-	var oRowAction = new sap.ui.table.RowAction();
-	var oItem = new sap.ui.table.RowActionItem({
-		type: "Navigation"
-	});
-	oRowAction.addItem(oItem);
-	oTable.setRowActionTemplate(oRowAction);
-	sap.ui.getCore().applyChanges();
-
+	initRowActions(oTable, 1, 1);
 	_testArrowKeys(assert);
 });
 
 QUnit.test("Column Header, Row Header, Row Actions, Fixed Rows", function(assert) {
+	initRowActions(oTable, 1, 1);
 	oTable.setVisibleRowCount(6);
 	oTable.setFixedRowCount(2);
 	oTable.setFixedBottomRowCount(2);
-	oTable.setRowActionCount(1);
-	var oRowAction = new sap.ui.table.RowAction();
-	var oItem = new sap.ui.table.RowActionItem({
-		type: "Navigation"
-	});
-	oRowAction.addItem(oItem);
-	oTable.setRowActionTemplate(oRowAction);
 	sap.ui.getCore().applyChanges();
 
 	_testArrowKeys(assert);
@@ -757,6 +743,7 @@ QUnit.test("Multi Header", function(assert) {
 });
 
 QUnit.test("Multi Header, Row Actions", function(assert) {
+	initRowActions(oTable, 1, 1);
 	oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
@@ -765,13 +752,6 @@ QUnit.test("Multi Header, Row Actions", function(assert) {
 	oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
 	oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
 	oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
-	oTable.setRowActionCount(1);
-	var oRowAction = new sap.ui.table.RowAction();
-	var oItem = new sap.ui.table.RowActionItem({
-		type: "Navigation"
-	});
-	oRowAction.addItem(oItem);
-	oTable.setRowActionTemplate(oRowAction);
 	sap.ui.getCore().applyChanges();
 
 	var oElem = checkFocus(getColumnHeader(iNumberOfCols - 1, true), assert);
@@ -901,8 +881,9 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 	oTable.setVisibleRowCount(6);
 	oTable.setFixedRowCount(2);
 	oTable.setFixedBottomRowCount(2);
-	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
 	sap.ui.getCore().applyChanges();
+
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
 
 	var i, iColumnIndex, oRow;
 	var iRowIndex = 0;
@@ -939,14 +920,14 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 		}
 		oRow = oTable.getRows()[iRowIndex];
 		oElem = checkFocus(getCell(iRowIndex, iColumnIndex), assert);
-		assert.equal(oRow.getIndex(), i, "Row index correct");
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
 	}
 
 	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 	oElem = checkFocus(getCell(iRowIndex, iColumnIndex), assert);
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
 	oElem = checkFocus(getCell(iRowIndex, iColumnIndex), assert);
-	assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index correct");
+	assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index is: " + oRow.getIndex() + ", should be: " + (iNumberOfRows - 1));
 
 	// Last Row, Last Column -> Last Row, First Column
 	for (i = iNumberOfCols - 2; i >= 0; i--) {
@@ -971,13 +952,12 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 		}
 		oRow = oTable.getRows()[iRowIndex];
 		oElem = checkFocus(getCell(iRowIndex, iColumnIndex), assert);
-		assert.equal(oRow.getIndex(), i, "Row index correct");
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
 	}
 
 	qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
-	sap.ui.getCore().applyChanges();
 
 	oElem = checkFocus(getCell(1, 1, true), assert);
 	qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -992,7 +972,6 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 
 	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
-	sap.ui.getCore().applyChanges();
 
 	oElem = checkFocus(getCell(1, 1, true), assert);
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1005,7 +984,6 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 	checkFocus(oElem, assert);
 
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-	sap.ui.getCore().applyChanges();
 
 	oElem = checkFocus(getCell(1, 1, true), assert);
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1018,9 +996,105 @@ QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
 	checkFocus(oElem, assert);
 });
 
+QUnit.test("Inside Row Actions, Fixed Rows (Range Selection)", function(assert) {
+	initRowActions(oTable, 1, 1);
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+
+	var i, iRowIndex, oRow;
+	var iVisibleRowCount = oTable.getVisibleRowCount();
+	var iFixedTopRowCount = oTable.getFixedRowCount();
+	var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
+
+	var oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
+
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	checkFocus(oElem, assert);
+
+	// First Row -> Last Row
+	for (i = 1; i < iNumberOfRows; i++) {
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+		iRowIndex = i;
+		if (i >= iVisibleRowCount - iFixedBottomRowCount && i < iNumberOfRows - iFixedBottomRowCount) {
+			iRowIndex = iVisibleRowCount - iFixedBottomRowCount - 1;
+		} else if (i >= iNumberOfRows - iFixedBottomRowCount) {
+			iRowIndex = i - (iNumberOfRows - iVisibleRowCount);
+		}
+		oRow = oTable.getRows()[iRowIndex];
+		oElem = checkFocus(getRowAction(iRowIndex), assert);
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
+	}
+
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	oElem = checkFocus(getRowAction(iRowIndex), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+	oElem = checkFocus(getRowAction(iRowIndex), assert);
+	assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index is: " + oRow.getIndex() + ", should be: " + (iNumberOfRows - 1));
+
+	// Last Row -> First Row
+	for (i = iNumberOfRows - 2; i > 0; i--) {
+		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+		iRowIndex = i;
+		if (i >= iFixedTopRowCount && i < iNumberOfRows - iVisibleRowCount + iFixedTopRowCount + 1) {
+			iRowIndex = iFixedTopRowCount;
+		} else if (i >= iNumberOfRows - iVisibleRowCount + iFixedTopRowCount + 1) {
+			iRowIndex = i - (iNumberOfRows - iVisibleRowCount);
+		}
+		oRow = oTable.getRows()[iRowIndex];
+		oElem = checkFocus(getRowAction(iRowIndex), assert);
+		assert.equal(oRow.getIndex(), i, "Row index is: " + oRow.getIndex() + ", should be: " + i);
+	}
+
+	qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
+
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+
+	oElem = checkFocus(getRowAction(1, true), assert);
+	qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	checkFocus(oElem, assert);
+
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+
+	oElem = checkFocus(getRowAction(1, true), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	checkFocus(oElem, assert);
+
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+
+	oElem = checkFocus(getRowAction(1, true), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+	checkFocus(oElem, assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	checkFocus(oElem, assert);
+});
+
 QUnit.test("Move between Row Header and Row (Range Selection)", function(assert) {
 	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
-	sap.ui.getCore().applyChanges();
 
 	var oElem = checkFocus(getRowHeader(0, true), assert);
 	qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -1028,6 +1102,18 @@ QUnit.test("Move between Row Header and Row (Range Selection)", function(assert)
 	oElem = checkFocus(getCell(0, 0), assert);
 	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
 	checkFocus(getRowHeader(0), assert);
+});
+
+QUnit.test("Move between Row Actions and Row (Range Selection)", function(assert) {
+	initRowActions(oTable, 1, 1);
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+
+	var oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
+	qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+	qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
+	checkFocus(getRowAction(0), assert);
 });
 
 QUnit.module("TableKeyboardDelegate2 - Navigation > Home & End", {

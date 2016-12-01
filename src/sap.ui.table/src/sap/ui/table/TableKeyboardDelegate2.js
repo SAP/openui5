@@ -478,7 +478,7 @@ sap.ui.define([
 		if (oEvent.keyCode === jQuery.sap.KeyCodes.SHIFT &&
 			this.getSelectionMode() === SelectionMode.MultiToggle &&
 			(oCellInfo.type === CellType.ROWHEADER && TableUtils.isRowSelectorSelectionAllowed(this) ||
-			 oCellInfo.type === CellType.DATACELL && TableUtils.isRowSelectionAllowed(this))) {
+			 (oCellInfo.type === CellType.DATACELL || oCellInfo.type === CellType.ROWACTION) && TableUtils.isRowSelectionAllowed(this))) {
 
 			var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(this);
 			var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
@@ -879,8 +879,11 @@ sap.ui.define([
 		if (oEvent.shiftKey) {
 			oEvent.preventDefault(); // To avoid text selection flickering.
 
+			/* Range Selection */
+
 			if (oCellInfo.type === CellType.ROWHEADER ||
-				oCellInfo.type === CellType.DATACELL) {
+				oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWACTION) {
 
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
@@ -978,8 +981,11 @@ sap.ui.define([
 		if (oEvent.shiftKey) {
 			oEvent.preventDefault(); // To avoid text selection flickering.
 
+			/* Range Selection */
+
 			if (oCellInfo.type === CellType.ROWHEADER ||
-				oCellInfo.type === CellType.DATACELL) {
+				oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWACTION) {
 
 				// Navigation should not be possible if we are not in range selection mode.
 				if (!this._oRangeSelection) {
@@ -1076,6 +1082,12 @@ sap.ui.define([
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 
+			} else if (oCellInfo.type === CellType.ROWACTION) {
+				// Navigation should not be possible if we are not in range selection mode.
+				if (!this._oRangeSelection) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+
 			/* Range Selection: Required for RTL mode. */
 
 			} else if (oCellInfo.type === CellType.ROWHEADER && bIsRTL) {
@@ -1144,6 +1156,14 @@ sap.ui.define([
 			} else if (oCellInfo.type === CellType.ROWHEADER) {
 				// If selection on data cells is not possible, then do not allow to move focus to them when performing a range selection.
 				if (!TableUtils.isRowSelectionAllowed(this)) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+
+			/* Range Selection: Required for RTL mode. */
+
+			} else if (oCellInfo.type === CellType.ROWACTION && bIsRTL) {
+				// Navigation should not be possible if we are not in range selection mode.
+				if (!this._oRangeSelection) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 
