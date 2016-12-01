@@ -41,7 +41,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		rm.write('<div');
 		rm.addClass('sapMFeedListItem');
-
 		rm.writeClasses();
 		rm.write('>');
 
@@ -99,9 +98,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.write('sapMFeedListItemHasFigure');
 			}
 			rm.write('" >');
-			rm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText sapUiSelectable"');
-			rm.writeAttribute("aria-hidden", true);
-			rm.write('>');
+			rm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText sapUiSelectable">');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
 				rm.renderControl(oFeedListItem._getLinkSender(true));
@@ -152,7 +149,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	FeedListItemRenderer._writeImageControl = function(rm, oFeedListItem, sMyId) {
 		rm.write('<figure id="' + sMyId + '-figure"');
-		rm.writeAttribute("aria-hidden", true);
 		rm.addClass('sapMFeedListItemFigure');
 		if (!oFeedListItem.getIcon()) {
 			rm.addClass('sapMFeedListItemIsDefaultIcon');
@@ -194,7 +190,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		rm.writeEscaped(oFeedListItem.getInfo());
 		rm.write('</span>');
 	};
-
 
 	return FeedListItemRenderer;
 
