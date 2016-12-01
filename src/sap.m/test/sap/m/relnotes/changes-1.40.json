@@ -5096,5 +5096,148 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "1f7311c37c52401623da4be16690d617c7988fef",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Screen Reader behavior improved",
+        "references": []
+      },
+      {
+        "id": "125f395bdb408261254e31c5ab67d8a8ecba2376",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Initial focus issue fixed",
+        "references": []
+      },
+      {
+        "id": "bd058b8a3ab39a3ce56baf0b2cd37d12b0811d7f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Memory leaks have been fixed",
+        "references": []
+      },
+      {
+        "id": "e583b01947885e40d315af9697faa73a2ed4b22a",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Correct height if flex item is a scroll container",
+        "references": []
+      },
+      {
+        "id": "83122f21e26f7966c8955625002ac4ae960f5ab3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "87748cb88616eb44a24535001d694ecdb1f3a715",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Mouse pointer handling enhanced",
+        "references": []
+      },
+      {
+        "id": "d2a8ff2763c1e4712d749b56b77ba1a7e23bea54",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: User text selection for failed state corrected",
+        "references": []
+      },
+      {
+        "id": "5b738bf8e6334a4411b41f452f7c07daa2977125",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Expanding is correct if no tab is selected",
+        "references": []
+      },
+      {
+        "id": "f9420fdebbf72e597c1e5309ce534d795c2ebcf7",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Race condition with \"SelectionFinish\" event is now fixed",
+        "references": []
+      },
+      {
+        "id": "03bcb9083bfa39648ce1c7e8160e81ba1936b6ac",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Returning the focus to the input after rendering the list removed",
+        "references": []
+      },
+      {
+        "id": "0390a8440d6a709c0ea6080ad710070e2d7084cb",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: onsapenter now selects a value from the picker",
+        "references": []
+      },
+      {
+        "id": "cf708e72f7111ea9499d80cc13ea0ccd0bb61209",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed methods getAggregation and clone",
+        "references": []
+      },
+      {
+        "id": "969f7de2c531bd691a0a6984aafbb4de61f38d22",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input value is visible when readonly",
+        "references": []
+      },
+      {
+        "id": "95e4b1388ec131f285e87ca6ea0ef904c548f1de",
+        "type": "FIX",
+        "text": " sap.m.Panel: Do not throw exception if .sapMPanelContent is not found",
+        "references": []
+      },
+      {
+        "id": "0fb7b45058117490215559ce06e53b2e623fbc22",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not fire beforeClose event when the Popup is destroyed",
+        "references": []
+      },
+      {
+        "id": "66b6541e19addf1842d6cb5c85f787ec03153446",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Content size is now adapted correctly",
+        "references": []
+      },
+      {
+        "id": "bb8b225fa122cb1afd59596e37af25727945d5c6",
+        "type": "FIX",
+        "text": " sap.m.Select: enable scrolling to the selected item when the selectList opens",
+        "references": []
+      },
+      {
+        "id": "db3f6de24a05e796743e27ea82ac19ce4ef2b4b4",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Master view properly closing issue",
+        "references": []
+      },
+      {
+        "id": "b4ec5a74faaad207b71b70b8760fa3a9f8e6edb1",
+        "type": "FIX",
+        "text": " sap.m.TabContainer - when items are rebound, default selected item is properly updated.",
+        "references": []
+      },
+      {
+        "id": "31580b2ebc5606c521fb8644688cf6e821a6aa10",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: File deletion during upload corrected",
+        "references": []
+      },
+      {
+        "id": "b80a4f6c447bcbee0a2c6c475877e021a5706198",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in Upload Pending scenario improved",
+        "references": []
+      },
+      {
+        "id": "2277e62f1241372b99901de27a161b884eef139a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Accessibility enhancements",
+        "references": []
+      },
+      {
+        "id": "f7ca74c55c8f1af57329dc3967002da5c12d653d",
+        "type": "FIX",
+        "text": " sap.m.delegate.ValueStateMessage: MaxWidth issue",
+        "references": []
+      }
+    ]
   }
 }

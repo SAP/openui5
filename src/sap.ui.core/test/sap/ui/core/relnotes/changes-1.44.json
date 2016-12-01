@@ -541,5 +541,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.3": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "9e3661d6707503eb2b4fc6065892070d97fd540e",
+        "type": "FIX",
+        "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
   }
 }

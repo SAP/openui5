@@ -1187,5 +1187,28 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "83122f21e26f7966c8955625002ac4ae960f5ab3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "0c7c92822ea5ea495bb496bcbc6a4b78fb389478",
+        "type": "FIX",
+        "text": " sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "78c419ca54f1eba92cc3e9ab0cae14cfe97a6e1e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
   }
 }

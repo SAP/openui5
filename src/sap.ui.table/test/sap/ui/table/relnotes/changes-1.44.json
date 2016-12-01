@@ -343,5 +343,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.3": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "2b4491985fc6228f6a0dcbecca7daa1e437318f8",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: resize bar not visible in RTL mode",
+        "references": []
+      }
+    ]
   }
 }

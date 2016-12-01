@@ -919,5 +919,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.3": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "1e14bd9f4e5d733003cd2fb1ae88656455fe56c1",
+        "type": "FIX",
+        "text": " sap.m.CustomListItem: FlexBox shrink workaround for IE.",
+        "references": []
+      },
+      {
+        "id": "a987315acdcd5799bf4c2a503f27a85d0301fb23",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Binding is now synchronized with SelectedItems association and SelectedKeys property",
+        "references": []
+      },
+      {
+        "id": "ae9dc141aadecbf543dfdc9e006210f7232b1d94",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Accessibility enhancements",
+        "references": []
+      }
+    ]
   }
 }
