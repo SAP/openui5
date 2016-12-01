@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Component, ComponentContainer, HTML, UIComponent, Controller, History,
 		JSONModel,
 		mobileLibrary, Text,
-		ToggleFullScreenHandler, data) {
+		ToggleFullScreenHandler, data, RTA) {
 
 	"use strict";
 
@@ -26,9 +26,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					showNavButton : true,
 					showNewTab: false
 				});
+				this.checkRTA();
 				this.getView().setModel(this._viewModel);
 			},
-
 			onRouteMatched : function (oEvt) {
 
 				if (oEvt.getParameter("name") !== "sample") {
@@ -182,6 +182,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView());
+			},
+			_oRTA : null,
+			checkRTA : function() {
+				if (!this._oRTA || !jQuery.sap.getObject("sap.ui.fl.FakeLrepConnector")) {
+					var that = this;
+					setTimeout(function() {
+						if (!that._oRTA) {
+							sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function(RuntimeAuthoring) {
+								that._oRTA = new RuntimeAuthoring();
+								that.checkRTA();
+							});
+						}
+					}, 1000);
+					return;
+				}
+				if (this._oRTA) {
+					this.getView().byId("toggleRTA").setVisible(true);
+				} else {
+					this.getView().byId("toggleRTA").setVisible(false);
+				}
+			},
+			onAdaptUI : function(oEvent) {
+				var oRTA = this._oRTA;
+				if (oRTA) {
+					oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					oRTA.start();
+					//TODO: hide some buttons of rta, because we currently cannot save
+					setTimeout(function() {
+						oRTA._oToolsMenu._oButtonTransport.setVisible(false);
+					},100);
+				}
 			}
 		});
 
@@ -221,5 +252,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		return sIFrameWithoutUI5Ending + sSearch;
 	};
+
 	return SampleController;
 });
