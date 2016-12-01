@@ -19,16 +19,19 @@
 			data-sap-ui-language="en-US">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<!-- Sinon JS -->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<!--[if IE]>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
 
 		<!-- Test functions -->
 		<script language="javascript">
-
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarUtils");
@@ -607,6 +610,76 @@
 				equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
 			});
 
+			module("Events", {
+				beforeEach: function () {
+					var that = this,
+						oCalMonth,
+						$CalendarRows,
+						$FirstRowDays;
+
+					this.oSelectSpy = sinon.spy();
+					this.oCal = new sap.ui.unified.Calendar("Cal4", {
+						primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+						select: that.oSelectSpy
+					}).placeAt("uiArea4");
+					sap.ui.getCore().applyChanges();
+
+					oCalMonth = this.oCal.getAggregation('month')[0];
+					$CalendarRows = oCalMonth.$('days').children();
+					$FirstRowDays = $CalendarRows.eq(0).children();
+
+					this.$FirstDayOfFirstRow = $FirstRowDays.eq(0);
+				},
+				afterEach: function () {
+					this.oCal.destroy();
+					this.oCal = undefined;
+				}
+			});
+
+			test("'mousedown' should not fire select event", function () {
+				//act
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
+				//assert
+				strictEqual(this.oCal.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
+				strictEqual(this.oSelectSpy.callCount, 0, "'Month fireSelect()' should NOT be called");
+			});
+
+			test("'mousedown' + 'mouseup' with drag threshold equal or more than 5px (on x axis) should NOT fire 'select' event", function () {
+				//act
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left + 5, this.$FirstDayOfFirstRow.offset().top, 0);
+				//assert
+				strictEqual(this.oCal.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
+				strictEqual(this.oSelectSpy.callCount, 0, "'Month fireSelect()' should NOT be called");
+			});
+
+			test("'mousedown' + 'mouseup' with drag threshold equal or more than 5px (on y axis) should NOT fire 'select' event", function () {
+				//act
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top + 5, 0);
+				//assert
+				strictEqual(this.oCal.getSelectedDates().length, 0, "Calendar 'getSelectedDates()' association should be empty");
+				strictEqual(this.oSelectSpy.callCount, 0, "'Month fireSelect()' should NOT be called");
+			});
+
+			test("'mousedown' + 'mouseup' with drag threshold less than 5px (on x axis) should fire 'select' event", function () {
+				//act
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left + 4, this.$FirstDayOfFirstRow.offset().top, 0);
+				//assert
+				strictEqual(this.oCal.getSelectedDates().length, 1, "Calendar 'getSelectedDates()' association should be empty");
+				strictEqual(this.oSelectSpy.callCount, 1, "'Month fireSelect()' should be called once");
+			});
+
+			test("'mousedown' + 'mouseup' with drag threshold less than 5px (on y axis) should fire 'select' event", function () {
+				//act
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mousedown', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top, 0);
+				qutils.triggerMouseEvent(this.$FirstDayOfFirstRow, 'mouseup', 5, 0, this.$FirstDayOfFirstRow.offset().left, this.$FirstDayOfFirstRow.offset().top + 4, 0);
+				//assert
+				strictEqual(this.oCal.getSelectedDates().length, 1, "Calendar 'getSelectedDates()' association should be empty");
+				strictEqual(this.oSelectSpy.callCount, 1, "'Month fireSelect()' should be called once");
+			});
+
 		</script>
 
 	</head>
@@ -622,5 +695,7 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
 	</body>
 </html>
