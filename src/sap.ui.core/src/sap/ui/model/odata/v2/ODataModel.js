@@ -1676,6 +1676,12 @@ sap.ui.define([
 			oEntity = this._getObject(sPath),
 			aExpand = [], aSelect = [];
 
+		// Created entities should never be reloaded, as they do not exist on
+		// the server yet
+		if (this._isCreatedEntity(oEntity)) {
+			return false;
+		}
+
 		function checkReloadNeeded(oEntityType, oEntity, aSelect, aExpand) {
 			var aOwnSelect, aOwnExpand,
 				vNavData, oNavEntityType, oNavEntity, aNavSelect, aNavExpand,
@@ -4785,6 +4791,16 @@ sap.ui.define([
 		} else {
 			jQuery.sap.log.error("Tried to use createEntry without created-callback, before metadata is available!");
 		}
+	};
+
+	/**
+	 * Returns whether the given entity has been created using createEntry.
+	 * @param {object} oEntity The entity to check
+	 * @returns {boolean} Returns whether the entity is created
+	 * @private
+	 */
+	ODataModel.prototype._isCreatedEntity = function(oEntity) {
+		return !!(oEntity && oEntity.__metadata && oEntity.__metadata.created);
 	};
 
 	/**
