@@ -819,16 +819,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		});
 
 		// collect header spans and find the last visible column header
-		function collectHeaderSpans(oColumn, index) {
-			var headerSpan = oColumn.getHeaderSpan(),
-				colSpan;
-
-			colSpan = jQuery.isArray(headerSpan) ? headerSpan[iRow] : parseInt(headerSpan, 10);
-			if (isNaN(colSpan)) {
-				colSpan = 1;
-			}
+		function collectHeaderSpans(oColumn, index, aCols) {
+			var colSpan = TableUtils.Column.getHeaderSpan(oColumn, iRow),
+				iColIndex;
 
 			if (nSpan < 1) {
+				if (colSpan > 1) {
+					// In case when a user makes some of the underlying columns invisible, adjust colspan
+					iColIndex = oColumn.getIndex();
+					colSpan = aCols.slice(index + 1, index + colSpan).reduce(function(span, column){
+						return column.getIndex() - iColIndex < colSpan ? span + 1 : span;
+					}, 1);
+				}
+
 				oColumn._nSpan = nSpan = colSpan;
 				iLastVisibleCol = index;
 			} else {
