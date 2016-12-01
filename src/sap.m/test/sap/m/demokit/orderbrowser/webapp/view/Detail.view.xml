@@ -27,7 +27,8 @@
 					path: 'detailView>/totalOrderAmount',
 					formatter: '.formatter.currencyValue'
 				}"
-				numberUnit="{detailView>/currency}">
+				numberUnit="{detailView>/currency}"
+				backgroundDesign="Translucent">
 				<attributes>
 					<ObjectAttribute title="{i18n>commonCustomerName}" text="{Customer/CompanyName}" />
 					<ObjectAttribute title="{i18n>detailOrderDate}" text="{
