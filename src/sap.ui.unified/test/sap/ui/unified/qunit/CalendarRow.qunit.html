@@ -813,7 +813,7 @@
 				equal(oRow1.getFocusedAppointment().getId(), "App1", "Appointment1 returned by getFocusedAppointment");
 
 				bStartDateChange = false;
-				qutils.triggerKeyboardEvent("App1", "ARROW_RIGHT");
+				qutils.triggerKeydown("App1", "ARROW_RIGHT");
 				sap.ui.getCore().applyChanges();
 				equal(document.activeElement.id, "App3", "Appointment3 focused");
 				equal(jQuery("#App3").attr("tabindex"), "0", "Appointment3: tabindex 0 rendered");
@@ -827,7 +827,7 @@
 				equal(jQuery("#App2").attr("tabindex"), "0", "Appointment2: tabindex -1 rendered");
 				equal(oRow1.getFocusedAppointment().getId(), "App2", "Appointment2 returned by getFocusedAppointment");
 
-				qutils.triggerKeyboardEvent("App2", "ARROW_LEFT");
+				qutils.triggerKeydown("App2", "ARROW_LEFT");
 				sap.ui.getCore().applyChanges();
 				equal(document.activeElement.id, "App0", "Appointment0 focused");
 				equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
@@ -841,7 +841,7 @@
 				initializeRow1();
 				jQuery("#App1").focus();
 				bStartDateChange = false;
-				qutils.triggerKeyboardEvent("App1", "HOME");
+				qutils.triggerKeydown("App1", "HOME");
 				sap.ui.getCore().applyChanges();
 				equal(document.activeElement.id, "App0", "Appointment0 focused");
 				equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
@@ -851,7 +851,7 @@
 				equal(oFormatYyyyMMddHHmm.format(oStartDate), "201502010800", "new Start date");
 
 				bStartDateChange = false;
-				qutils.triggerKeyboardEvent("App0", "END");
+				qutils.triggerKeydown("App0", "END");
 				sap.ui.getCore().applyChanges();
 				equal(document.activeElement.id, "App4", "Appointment4 focused");
 				equal(jQuery("#App0").attr("tabindex"), "-1", "Appointment0: tabindex -1 rendered");
@@ -862,7 +862,7 @@
 
 			test("keyboard selection", function() {
 				jQuery("#App0").focus();
-				qutils.triggerKeyboardEvent("App0", "ENTER");
+				qutils.triggerKeydown("App0", "ENTER");
 				equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
 				ok(!bMultiSelect, "Appointment 0: no multiple selection");
 				ok(sap.ui.getCore().byId("App0").getSelected(), "Appointment0: selected property set");
@@ -873,32 +873,32 @@
 				bLeaveRow = false;
 				sType = undefined;
 				jQuery("#App0").focus();
-				qutils.triggerKeyboardEvent("App0", "ARROW_UP");
+				qutils.triggerKeydown("App0", "ARROW_UP");
 				ok(bLeaveRow, "LeaveRow event fired");
 				equal(sType, "sapup", "LeaveRow event 'type' parameter set");
 
 				bLeaveRow = false;
 				sType = undefined;
-				qutils.triggerKeyboardEvent("App0", "ARROW_DOWN");
+				qutils.triggerKeydown("App0", "ARROW_DOWN");
 				ok(bLeaveRow, "LeaveRow event fired");
 				equal(sType, "sapdown", "LeaveRow event 'type' parameter set");
 
 				bLeaveRow = false;
-				qutils.triggerKeyboardEvent("App0", "HOME");
+				qutils.triggerKeydown("App0", "HOME");
 				ok(bLeaveRow, "LeaveRow event fired");
 				equal(sType, "saphome", "LeaveRow event 'type' parameter set");
 
 				bLeaveRow = false;
 				jQuery("#App1").focus();
-				qutils.triggerKeyboardEvent("App1", "HOME");
+				qutils.triggerKeydown("App1", "HOME");
 				ok(!bLeaveRow, "No LeaveRow event fired");
 
 				bLeaveRow = false;
-				qutils.triggerKeyboardEvent("App0", "END");
+				qutils.triggerKeydown("App0", "END");
 				ok(!bLeaveRow, "NoLeaveRow event fired");
 
 				bLeaveRow = false;
-				qutils.triggerKeyboardEvent("App4", "END");
+				qutils.triggerKeydown("App4", "END");
 				ok(bLeaveRow, "LeaveRow event fired");
 				equal(sType, "sapend", "LeaveRow event 'type' parameter set");
 			});
@@ -929,6 +929,82 @@
 				ok(oApp.$().is(":visible"), "The first appointment is visible");
 				equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
+
+		module("RTL", {
+				beforeEach: function () {
+					//Arrange
+					this.bOriginalRTLMode = sap.ui.getCore().getConfiguration().getRTL();
+					sap.ui.getCore().getConfiguration().setRTL(true);
+
+					this.oRowRTL = new sap.ui.unified.CalendarRow("RowRTL",  {
+						startDate: new Date("2015", "01", "01", "10", "15"),
+						intervalType: sap.ui.unified.CalendarIntervalType.Day,
+						appointments: [
+							new sap.ui.unified.CalendarAppointment("App0RTL", {
+								startDate: new Date("2015", "01", "01", "08", "15"),
+								endDate: new Date("2015", "01", "01", "08", "20")
+							}),
+							new sap.ui.unified.CalendarAppointment("App1RTL", {
+								startDate: new Date("2015", "01", "01", "11", "15"),
+								endDate: new Date("2015", "01", "01", "13", "15")
+							}),
+							new sap.ui.unified.CalendarAppointment("App2RTL", {
+									startDate: new Date("2015", "01", "01", "09", "45"),
+									endDate: new Date("2015", "01", "01", "11", "45")
+								}),
+							new sap.ui.unified.CalendarAppointment("App3RTL", {
+									startDate: new Date("2015", "01", "01", "15", "00"),
+									endDate: new Date("2015", "01", "01", "15", "30")
+								})
+						]
+					});
+					this.oRowRTL.placeAt("uiAreaRTL");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					//Cleanup
+					sap.ui.getCore().getConfiguration().setRTL(this.bOriginalRTLMode);
+					this.oRowRTL.destroy();
+				}
+			});
+
+		test("keyboard arrow navigation", function() {
+			jQuery("#App1RTL").focus();
+			equal(document.activeElement.id, "App1RTL", "Appointment1 focused");
+			equal(jQuery("#App1RTL").attr("tabindex"), "0", "Appointment1: tabindex 0 rendered");
+			equal(jQuery("#App2RTL").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
+			equal(this.oRowRTL.getFocusedAppointment().getId(), "App1RTL", "Appointment1 returned by getFocusedAppointment");
+
+			qutils.triggerKeydown("App1RTL", "ARROW_LEFT");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id, "App3RTL", "Appointment3 focused");
+			equal(jQuery("#App3RTL").attr("tabindex"), "0", "Appointment3: tabindex 0 rendered");
+			equal(jQuery("#App1RTL").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
+			equal(this.oRowRTL.getFocusedAppointment().getId(), "App3RTL", "Appointment3 returned by getFocusedAppointment");
+
+			jQuery("#App2RTL").focus();
+			equal(document.activeElement.id, "App2RTL", "Appointment2 focused");
+			equal(jQuery("#App1RTL").attr("tabindex"), "-1", "Appointment1: tabindex 0 rendered");
+			equal(jQuery("#App2RTL").attr("tabindex"), "0", "Appointment2: tabindex -1 rendered");
+			equal(this.oRowRTL.getFocusedAppointment().getId(), "App2RTL", "Appointment2 returned by getFocusedAppointment");
+
+			qutils.triggerKeydown("App2RTL", "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			equal(document.activeElement.id, "App0RTL", "Appointment0 focused");
+			equal(jQuery("#App0RTL").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
+			equal(jQuery("#App2RTL").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
+			equal(this.oRowRTL.getFocusedAppointment().getId(), "App0RTL", "Appointment0 returned by getFocusedAppointment");
+		});
+
+		test("Now indicator is displayed on the right", function() {
+			var oDate = new Date();
+			oDate.setHours(oDate.getHours() - 3);
+			this.oRowRTL.setStartDate(oDate);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#RowRTL-Now").is(":visible"), "Now indicatior is visible");
+			ok(jQuery("#RowRTL-Now").css("right"), "Now indicatior is displayed on the right");
+		});
+
 	</script>
 
 	</head>
@@ -938,6 +1014,8 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiAreaRTL"></div>
 		<br>
 		<div id="uiArea1"></div>
 		<br>
