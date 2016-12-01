@@ -7,7 +7,7 @@
 
 <title>ResponsiveDemo</title>
 
-<script src="../../../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap"></script>
+<script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"></script>
 
 <style>
 .CustomItemLayout {
@@ -15,7 +15,6 @@
 	padding: 3px;
 	min-width: 200px;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
 }
 
 .CustomItemLayoutInner {
@@ -221,7 +220,7 @@ function initialize(from){
 
 		currentMobile = mobile;
 		jQuery("#root").html("");
-		sap.ui.getCore().applyTheme(mobile ? "sap_bluecrystal" : "sap_goldreflection");
+		sap.ui.getCore().applyTheme(mobile ? "sap_belize" : "sap_bluecrystal");
 	}else{
 		init();
 	}

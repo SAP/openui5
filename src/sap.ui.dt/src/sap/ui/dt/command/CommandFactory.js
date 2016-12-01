@@ -7,20 +7,32 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	var mCommands = {
 		"Move" : {
 			findClass : function(oElement, sCommand, mSettings) {
+
+				var fnIsInSimpleFormContainer = function(oElement){
+					if (oElement.getMetadata().getName() === "sap.ui.layout.form.SimpleForm"){
+						return true;
+					} else if (oElement.getParent()) {
+						return fnIsInSimpleFormContainer(oElement.getParent());
+					} else {
+						return false;
+					}
+				};
+
 				var oMovedElement = (mSettings && mSettings.movedElements && mSettings.movedElements.length > 0)
 						? mSettings.movedElements[0]
 						: undefined;
 				var oElementToBeAnalyzed = oMovedElement ? oMovedElement.element : oElement;
 				var sType = oElementToBeAnalyzed.getMetadata().getName();
-				// TODO: this is too unspecific - could also be a 'normal' Form. The context (SImpleFOrm) shall be taken into
-				// account
-				if (sType === "sap.ui.layout.form.FormContainer" || sType === "sap.ui.layout.form.FormElement") {
+
+				if ((sType === "sap.ui.layout.form.FormContainer" || sType === "sap.ui.layout.form.FormElement") &&
+				    (fnIsInSimpleFormContainer(oElementToBeAnalyzed))) {
 					jQuery.sap.require("sap.ui.dt.command.SimpleFormMove");
 					return sap.ui.dt.command.SimpleFormMove;
 				} else {
 					jQuery.sap.require("sap.ui.dt.command.Move");
 					return sap.ui.dt.command.Move;
 				}
+
 			}
 		}
 	};

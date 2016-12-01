@@ -11,13 +11,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nSortItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>sortItems</code> aggregation in P13nSortPanel control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nSortItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -30,7 +31,6 @@ sap.ui.define([
 
 				/**
 				 * sap.m.P13nConditionOperation
-				 * @since 1.26.0
 				 */
 				operation: {
 					type: "string",
@@ -40,7 +40,6 @@ sap.ui.define([
 
 				/**
 				 * key of the column
-				 * @since 1.26.0
 				 */
 				columnKey: {
 					type: "string",

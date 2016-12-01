@@ -3,7 +3,7 @@
 /* Base theme                               */
 /* ======================================== */
 
-.sapUiCal{
+.sapUiCal {
 	background: none repeat scroll 0 0 @sapUiListBackground;
 	overflow: hidden;
 	position: relative;
@@ -15,18 +15,18 @@
 	padding: 1rem 0.5rem 0 0.5rem;
 }
 
-.sapUiCalInt{
+.sapUiCalInt {
 	box-sizing: border-box;
 }
 
 /* calendar should have only a border if on popup */
-.sapUiCal.sapUiShd{
+.sapUiCal.sapUiShd {
 	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
 	width: 20.125rem;
 }
 
 /*** HEADER ***/
-.sapUiCalHead{
+.sapUiCalHead {
 	width: 100%;
 	position: relative;
 	text-align:center;
@@ -37,12 +37,12 @@
 	background-color: @sapUiListBackground;
 }
 
-.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead{
+.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead {
 	max-width: 40rem;
 }
 
 .sapUiCalHead > button,
-.sapUiCalCancel{
+.sapUiCalCancel {
 	background-color: @sapUiButtonLiteBackground;
 	border: none;
 	color: @sapUiButtonTextColor;
@@ -54,12 +54,12 @@
 	font-size: @sapMFontMediumSize;
 }
 
-.sapUiCalHeadB{
+.sapUiCalHeadB {
 	vertical-align: top;
 	width: 5.75rem;
 }
 
-.sapUiCalHeadBAddText{
+.sapUiCalHeadBAddText {
 	width: 100%;
 	float: left;
 	color: @sapUiContentLabelColor;
@@ -67,34 +67,34 @@
 }
 
 .sapUiCalHeadPrev,
-.sapUiCalHeadNext{
+.sapUiCalHeadNext {
 	position: absolute;
 	width: 2.5rem;
 }
 
-.sapUiCalHeadPrev{
+.sapUiCalHeadPrev {
 	left: 0.5rem;
 }
 
-.sapUiCalHeadNext{
+.sapUiCalHeadNext {
 	right: 0.5rem;
 }
 
 /* no default (browser) outline, if device needs focus visualization its defined later */
 .sapUiCalHead > button:focus,
-.sapUiCalCancel:focus{
+.sapUiCalCancel:focus {
 	outline: none;
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
 html.sap-desktop .sapUiCalHead > button:focus,
-html.sap-desktop .sapUiCalCancel:focus{
+html.sap-desktop .sapUiCalCancel:focus {
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
 
 html.sap-desktop .sapUiCalHead > button:hover,
-html.sap-desktop .sapUiCalCancel:hover{
+html.sap-desktop .sapUiCalCancel:hover {
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
@@ -104,12 +104,12 @@ html.sap-desktop .sapUiCalCancel:hover{
 .sapUiCalCancel:active,
 html.sap-desktop .sapUiCalHead > button:active,
 html.sap-desktop .sapUiCalHead > button:active > .sapUiCalHeadBAddText,
-html.sap-desktop .sapUiCalCancel:active{
+html.sap-desktop .sapUiCalCancel:active {
 	background-color: @sapUiButtonActiveBackground;
 	color: @sapUiButtonActiveTextColor;
 }
 
-.sapUiCalHead > button.sapUiCalDsbl{
+.sapUiCalHead > button.sapUiCalDsbl {
 	cursor: default;
 	opacity: .3;
 	filter: alpha(opacity=30);
@@ -117,19 +117,19 @@ html.sap-desktop .sapUiCalCancel:active{
 
 html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalHead > button.sapUiCalDsbl:hover,
-.sapUiCalHead > button.sapUiCalDsbl:active{
+.sapUiCalHead > button.sapUiCalDsbl:active {
 	background-color: @sapUiButtonLiteBackground;
 	color: @sapUiButtonTextColor;
 }
 
 /*** days, months, years ***/
-.sapUiCalMonthView{
+.sapUiCalMonthView {
 	vertical-align: top;
 }
 
 .sapUiCalMonthView,
 .sapUiCalMonthPicker,
-.sapUiCalYearPicker{
+.sapUiCalYearPicker {
 	width: 14em;
 	display: inline-block;
 	width: 18rem; /* +1rem padding left and right = 320 px*/
@@ -138,12 +138,12 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalMonthView,
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker,
-.sapUiCalRow{
+.sapUiCalRow {
 	background-color: @sapUiListBackground;
 }
 
 .sapUiCal .sapUiCalMonthView,
-.sapUiCal .sapUiCalRow{
+.sapUiCal .sapUiCalRow {
 	box-sizing: border-box;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
@@ -151,23 +151,23 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker {
 	width: auto;
 }
 
-.sapUiCalHeadText{
+.sapUiCalHeadText {
 	text-align: center;
 	height: 2rem;
 	line-height: 2rem;
 	color: @sapUiCalendarColorToday;
 }
 
-.sapUiCalContentSingle .sapUiCalHeadText{
+.sapUiCalContentSingle .sapUiCalHeadText {
 	text-align: left;
 	margin-left: 12.5%;
 }
 
-.sapUiCalRow .sapUiCalHeadText{
+.sapUiCalRow .sapUiCalHeadText {
 	float: left;
 	text-align: left;
 	overflow: hidden;
@@ -175,7 +175,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	whitespace: nowrap;
 }
 
-.sapUiCalRow div > .sapUiCalHeadText:last-child{
+.sapUiCalRow div > .sapUiCalHeadText:last-child {
 	float: none; /* if not set, in IE the item line is displayed in the same line */
 }
 
@@ -188,7 +188,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalWH,
 .sapUiCalItem{
 	display: block;
-	overflow: hidden;
 	float: left;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -197,7 +196,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	cursor: default;
 	text-align: center;
 	overflow: hidden;
-	text-overflow: ellipsis;
 	white-space: nowrap;
 	box-sizing: border-box;
 }

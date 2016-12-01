@@ -565,6 +565,10 @@ sap.ui.require([
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+			this.oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			// TODO activate when all warnings unrelated to this module have been removed
+			//this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
@@ -737,9 +741,6 @@ sap.ui.require([
 		assert.throws(function () {
 			oMetaModel._getObject("/");
 		}, "_getObject");
-		assert.throws(function () {
-			oMetaModel.destroy();
-		}, "destroy");
 		assert.throws(function () {
 			oMetaModel.getODataAssociationEnd({
 				"navigationProperty" : [{
@@ -942,7 +943,7 @@ sap.ui.require([
 	[false, true].forEach(function (bIsLoggable) {
 		QUnit.test(
 				"_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
-			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			var oLogMock = this.oLogMock;
 
 			jQuery.sap.log.setLevel(bIsLoggable
 				? jQuery.sap.log.Level.WARNING
@@ -1126,7 +1127,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("_getObject: warning w/o context, log = " + bWarn, function (assert) {
-			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
@@ -1143,7 +1144,7 @@ sap.ui.require([
 
 		QUnit.test("_getObject: warning with sap.ui.model.Context, log = " + bWarn,
 			function (assert) {
-				var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+				var oLogMock = this.oLogMock;
 
 				oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
@@ -1162,7 +1163,7 @@ sap.ui.require([
 			});
 
 		QUnit.test("_getObject: warning with object context, log = " + bWarn, function (assert) {
-			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
@@ -1182,7 +1183,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_getObject: Invalid relative path w/o context", function (assert) {
-		oGlobalSandbox.mock(jQuery.sap.log).expects("error").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Invalid relative path w/o context", "some/relative/path", sComponent);
 
 		return withMetaModel(assert, function (oMetaModel) {
@@ -1823,6 +1824,11 @@ sap.ui.require([
 					loadMetadataAsync : bAsync
 				});
 
+			if (bAsync) {
+				this.oLogMock.expects("error").withExactArgs(
+					"error in ODataMetaModel.loaded(): " + oError.message, undefined,
+					"sap.ui.model.odata.v2.ODataModel");
+			}
 			// Note: this is just a placeholder for "anything which could go wrong inside load()"
 			oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
 
@@ -2666,6 +2672,28 @@ sap.ui.require([
 			assert.strictEqual(oAverageSpy.callCount, 1, "load start measurement after");
 			assert.strictEqual(oEndSpy.callCount, 1, "load end measurement after");
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy immediately", function (assert) {
+		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel = oModel.getMetaModel();
+
+		this.oLogMock.expects("error")
+			.withExactArgs("error in ODataMetaModel.loaded(): Meta model already destroyed",
+				undefined, "sap.ui.model.odata.v2.ODataModel");
+
+		oMetaModel.destroy();
+		return oMetaModel.loaded().then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.notOk(oMetaModel.oModel, "No model at the metamodel");
+			assert.strictEqual(oError.message, "Meta model already destroyed");
+		});
 	});
 
 

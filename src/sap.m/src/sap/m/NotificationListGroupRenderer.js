@@ -28,6 +28,7 @@ sap.ui.define([], function () {
 	var classNameCollapsed = 'sapMNLG-Collapsed';
 	var classNameSingleItemGroup = 'sapMNLGNoHdrFooter';
 	var classMaxNotificationsReached = 'sapMNLG-MaxNotifications';
+	var classNoNotifications = 'sapMNLG-NoNotifications';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -37,17 +38,23 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.render = function (oRm, oControl) {
 		if (oControl.getVisible()) {
-			var _bShowGroupHdrFooter = oControl.getShowEmptyGroup() || (oControl._getVisibleItemsCount() > 0);
+			var visibleItemsCount = oControl._getVisibleItemsCount();
+			var _bShowGroupHdrFooter = oControl.getShowEmptyGroup() || (visibleItemsCount > 0);
 			oRm.write('<li');
 			oRm.addClass(classNameItem);
 			oRm.addClass(classNameBase);
 			oRm.addClass(classNameListBaseItem);
+
 			if (!_bShowGroupHdrFooter) {
 				oRm.addClass(classNameSingleItemGroup);
 			}
 
 			if (oControl.getCollapsed()) {
 				oRm.addClass(classNameCollapsed);
+			}
+
+			if (visibleItemsCount == 0) {
+			    oRm.addClass(classNoNotifications);
 			}
 
 			oRm.writeClasses();

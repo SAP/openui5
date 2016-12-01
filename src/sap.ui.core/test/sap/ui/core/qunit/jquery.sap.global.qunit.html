@@ -4,14 +4,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Test Page for SAPUI5 jQuery.sap.global functionality</title>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
-		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" data-marker="42">
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_belize/library.css" data-marker="42">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -150,7 +150,7 @@
 			});
 
 			QUnit.test("don't load twice", function(assert){
-				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css";
+				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_belize/library.css";
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 				assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
@@ -320,6 +320,107 @@
 					done()
 				}, 0);
 			});
+
+			QUnit.test("sync/Promise/setTimeout", 12, function(assert) {
+				var bSyncOngoing = false,
+					bTimeoutTriggered = false,
+					bIntervalTriggered = false,
+					bPromiseTriggered = false,
+					vInterval,
+					done = assert.async(),
+					oResolved = Promise.resolve(),
+					oRejected = Promise.reject();
+
+				setTimeout(function(bTest) {
+					bTimeoutTriggered = true;
+					assert.ok(bTest, "Timeout parameter is passed correctly");
+				}, 0, true);
+
+				vInterval = setInterval(function(bTest) {
+					bIntervalTriggered = true;
+					assert.ok(bTest, "Interval parameter is passed correctly");
+					clearInterval(vInterval);
+				}, 0, true);
+
+				oResolved.then(function() {
+					bSyncOngoing = true;
+					jQuery.ajax({
+						url: "",
+						async: false,
+						cache: false
+					});
+					bSyncOngoing = false;
+					oResolved.then(function() {
+						bPromiseTriggered = true;
+						assert.ok(!bTimeoutTriggered, "Resolved after request: Timeout must not have been triggered");
+						assert.ok(!bIntervalTriggered, "Resolved after request: Interval must not have been triggered");
+					})
+				});
+
+				oResolved.then(function() {
+					assert.ok(!bSyncOngoing, "Resolved: Sync request is no longer running");
+					assert.ok(!bTimeoutTriggered, "Resolved: Timeout must not have been triggered");
+					assert.ok(!bIntervalTriggered, "Resolved: Interval must not have been triggered");
+					assert.ok(!bPromiseTriggered, "Resolved: Promise must not have been triggered");
+				});
+				oRejected.catch(function() {
+					assert.ok(!bSyncOngoing, "Rejected: Sync request is no longer running");
+					assert.ok(!bTimeoutTriggered, "Rejected: Timeout must not have been triggered");
+					assert.ok(!bIntervalTriggered, "Rejected: Interval must not have been triggered");
+					assert.ok(!bPromiseTriggered, "Rejected: Promise must not have been triggered");
+				});
+
+				setTimeout(function() {
+					done();
+				}, 0);
+			});
+
+			QUnit.test("sync/Promise reject/resolve", 4, function(assert) {
+				var bSyncOngoing = false,
+					done = assert.async(),
+					oError = new Error(),
+					oResolved = Promise.resolve();
+
+				oResolved.then(function() {
+					bSyncOngoing = true;
+					jQuery.ajax({
+						url: "",
+						async: false,
+						cache: false
+					});
+					bSyncOngoing = false;
+				});
+
+				oResolved.then(function() {
+					return 123;
+				}).then(function(oResult) {
+					assert.equal(oResult, 123, "Promise resolves with returned value");
+				});
+
+				oResolved.then(function() {
+					return Promise.resolve(123);
+				}).then(function(oResult) {
+					assert.equal(oResult, 123, "Promise resolves with resolved promise value");
+				});
+
+				oResolved.then(function() {
+					return Promise.reject(oError);
+				}).catch(function(oException) {
+					assert.equal(oException, oError, "Promise rejects with rejected promise Error");
+				});
+
+				oResolved.then(function() {
+					throw oError;
+				}).catch(function(oException) {
+					assert.equal(oException, oError, "Promise rejects with thrown Error");
+				});
+
+				setTimeout(function() {
+					done();
+				}, 0);
+
+			});
+
 
 </script>
 

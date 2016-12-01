@@ -91,8 +91,8 @@
 					data : {
 						actions : {
 							rename : {
-								domRef : function (){
-									return "domRef returned from a function"
+								domRef : function (oElement){
+									return oElement.getDomRef();
 								}
 							}
 						}
@@ -101,7 +101,7 @@
 
 				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 				assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "domRef returned from a function", "then the value of domRef is correct");
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0), this.oButton.getDomRef(), "then the value of domRef is correct");
 			});
 
 			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a string", function(assert) {
@@ -117,7 +117,7 @@
 
 				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 				assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).textContent, "myButton", "then the text of the button is correct");
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0).textContent, "myButton", "then the text of the button is correct");
 			});
 
 			QUnit.test("when getAssociatedDomRef is called on an action with domRef as undefined", function(assert) {
@@ -161,7 +161,7 @@
 				});
 
 				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), undefined, "then the domRef of the control is undefined ");
+				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).length, 0, "then the domRef of the control is undefined ");
 			});
 
 			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
@@ -196,18 +196,18 @@
 						actions : {
 							rename : function() {
 								return {
-									domRef : function (){
-										return "domRef returned from a function"
-									}
+                                    domRef : function (oElement){
+                                        return oElement.getDomRef();
+                                    }
 								};
 							}
 						}
 					}
 				});
 
-				var vDomRef = oAggregationDesignTimeMetadata.getAction("rename", this.oButton).domRef;
+				var vDomRef = oAggregationDesignTimeMetadata.getAction("rename", this.oSimpleForm).domRef;
 				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef), "domRef returned from a function", "then the domRef is correct");
+				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef).get(0), this.oSimpleForm.getDomRef(), "then the domRef is correct");
 			});
 
 			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function", function(assert) {
@@ -225,7 +225,7 @@
 
 				var vDomRef = oAggregationDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef), "then the domRef of the content is returned");
-				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef).textContent, "Simple FormTitle 0Label 0", "then the title of the content is correct");
+				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef).get(0).textContent, "Simple FormTitle 0Label 0", "then the title of the content is correct");
 			});
 
 		</script>

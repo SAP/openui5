@@ -24,7 +24,7 @@ sap.ui
 						metadata : {
 							properties : {
 								movedElements : {
-									type : "array"
+									type : "any[]"
 								},
 								target : {
 									type : "object"

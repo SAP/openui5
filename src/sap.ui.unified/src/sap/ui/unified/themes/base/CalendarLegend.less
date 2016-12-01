@@ -1,6 +1,8 @@
-/* ============================================= */
-/* CSS for control sap.ui.unified/Legend.control */
-/* ============================================= */
+/* ============================================== */
+/* CSS for control sap.ui.unified/CalendarLegend  */
+/* Base theme                                     */
+/* ============================================== */
+
 .sapUiUnifiedLegend {
 	color: @sapUiContentLabelColor;
 	font-familiy: @sapUiFontFamily;
@@ -10,6 +12,8 @@
 	column-gap: 8px;
 	-moz-column-gap: 8px; /* Firefox */
 	-webkit-column-gap: 8px; /* Safari and Chrome */
+	background-color: @sapUiListBackground;
+	font-size: @sapMFontSmallSize;
 }
 
 .sapUiUnifiedLegendItem {
@@ -19,10 +23,12 @@
 }
 
 .sapUiUnifiedLegendDescription {
+	float: left;
 	vertical-align: middle;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
+	word-wrap: break-word;
+	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
+	(the square in front of the legend description) */
+	width: calc(100% - 24px);
 	cursor: default;
 }
 
@@ -44,7 +50,44 @@
 .sapUiUnifiedLegendSquareSelected {
 	height: 10px;
 	width: 10px;
-	background: white;
-	border: 2px solid @sapUiPurple;
+	background: @sapUiListBackground;
+	border: 2px solid @sapUiCalendarColorToday;
 
+}
+
+/*** compact mode (desktop size) ***/
+
+.sapUiSizeCompact .sapUiUnifiedLegend,
+.sapUiSizeCompact.sapUiUnifiedLegend {
+	padding: 8px;
+	column-gap: 6px;
+	-moz-column-gap: 6px; /* Firefox */
+	-webkit-column-gap: 6px; /* Safari and Chrome */
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendItem {
+	display: inline-block;
+	width: 100%;
+	margin: 2px;
+}
+
+/*** items and colors ***/
+
+.sapUiUnifiedLegendToday > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	height: 10px;
+	width: 10px;
+	background-color: @sapUiListBackground;
+	border: 2px solid @sapUiCalendarColorToday;
+}
+
+.sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: @sapUiSelected;
+}
+
+.sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: lighten(@sapUiContentForegroundColor, 5);
+}
+
+.sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: @sapUiContentForegroundColor;
 }

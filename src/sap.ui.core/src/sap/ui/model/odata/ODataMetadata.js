@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this._loadMetadata()
 				.catch(function() {
 					// Ignored for initial metadata loading. Error handling is done inside _loadMetadata
-					jQuery.sap.assert(false, "[ODataMetadata] initial loading of metadata failed");
+					jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
 				});
 		},
 

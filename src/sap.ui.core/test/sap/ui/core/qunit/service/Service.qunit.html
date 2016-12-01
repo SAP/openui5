@@ -8,10 +8,9 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>QUnit test: Service Injection</title>
+	<script src="../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"
 		data-sap-ui-language="en"
 		data-sap-ui-noConflict="true">
@@ -492,6 +491,13 @@
 							"factoryName": "lazy.ServiceFactoryAlias",
 							"optional": true,
 							"lazy": false
+						},
+						"SettingsServiceAlias": {
+							"factoryName": "settings.ServiceFactoryAlias",
+							"settings": {
+								"setHierarchy": "auto",
+								"setTitle": "auto"
+							}
 						}
 					}
 				}
@@ -524,6 +530,7 @@
 			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
 			sap.ui.core.service.ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new sap.ui.core.service.ServiceFactory());
 			sap.ui.core.service.ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new my.ServiceFactory());
+			sap.ui.core.service.ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
 
 			// create the component
 			this.oComponent = sap.ui.component({
@@ -536,6 +543,7 @@
 			// unregister the Service Factory for: my.ServiceFactoryAlias
 			sap.ui.core.service.ServiceFactoryRegistry.unregister("my.ServiceFactoryAlias");
 			sap.ui.core.service.ServiceFactoryRegistry.unregister("lazy.ServiceFactoryAlias");
+			sap.ui.core.service.ServiceFactoryRegistry.unregister("settings.ServiceFactoryAlias");
 
 			this.oComponent.destroy();
 			delete this.oComponent;
@@ -701,6 +709,44 @@
 
 			// cleanup
 			oComponent.destroy();
+		});
+
+	});
+
+	QUnit.test("Pass settings to service for instantiating", function(assert) {
+
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/Service",
+			"my/Service"
+		], function(Service, MyService) {
+
+			oComponent.getService("SettingsServiceAlias").then(function(oService) {
+
+				var oServiceInstance = oComponent._mServices["SettingsServiceAlias"].instance;
+				var oRefServiceContext = {
+					"scopeObject": oComponent,
+					"scopeType": "component",
+					"settings": {
+						"setHierarchy": "auto",
+						"setTitle": "auto"
+					}
+				}
+				assert.ok(oServiceInstance._bInitialized, "Service is initialized properly!");
+				assert.deepEqual(oServiceInstance.getContext(), oRefServiceContext, "Service context should be the same.");
+
+				done();
+			}).catch(function(oError) {
+
+				assert.ok(false, "getService must not be failing!");
+				done();
+
+			});
+
 		});
 
 	});

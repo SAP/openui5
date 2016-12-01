@@ -1,24 +1,19 @@
-
-/* ============================================= */
-/* CSS for control sap.ui.unified/Splitter.control */
-/* ============================================= */
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* BlueCrystal theme                       */
+/* ======================================= */
 
 .sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	color: darken(@sapUiElement, 20);
-	text-shadow: 1px 1px @sapUiLightShadowTint;
+	color: darken(@sapUiContentIconColor, 20);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: @sapUiDarkBG;
-	color: @sapUiInvertedElement;
+	background-color: darken(@sapUiScrollBarHoverFaceColor, 30);
 }
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	background-color: @sapUiHighlight;
-	color: @sapUiInvertedElement;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 1px dotted @sapUiFocus;
+	color: @sapUiContentContrastIconColor;
 }

@@ -169,6 +169,95 @@ html[data-sap-ui-browser="ie9"] .sapMUCItemImage {
 	width:				2rem;
 }
 
+/* No data indicator */
+.sapMUCNoDataPage {
+	padding: 1rem;
+	text-align: center;
+	background: @sapUiGroupContentBackground;
+
+	.sapUiIcon {
+		color: fade(@sapUiContentNonInteractiveIconColor,50);
+	}
+
+	.sapMUCNoDataText {
+		padding: 1rem 0rem;
+		line-height: 2rem;
+		font-size: @sapMFontHeader2Size;
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMUCNoDataDescription {
+		padding: 0rem 0rem 2rem 0rem;
+		font-size: @sapMFontHeader5Size;
+		color: @sapUiContentLabelColor;
+	}
+}
+
+/* Drag && Drop */
+.sapMUC {
+	position: relative;
+
+	.sapMUCDragDropOverlay {
+		position: absolute;
+		top: 3rem;
+		right: 0rem;
+		left: 0rem;
+		bottom: 0rem;
+		background-color: fade(@sapUiDragAndDropBackground, 80);
+
+		&.sapMUCDragDropOverlayHide {
+			display: none;
+		}
+
+		&:after {
+			display: block;
+			content: "";
+			position: absolute;
+			top: 0rem;
+			left: 0rem;
+			bottom: 0rem;
+			right: 0rem;
+			margin: 0.5rem;
+			border: 0.125rem dashed @sapUiDragAndDropBorderColor;
+		}
+
+		.sapMUCDragDropIndicator {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			.sapUiIcon {
+				position: relative;
+				display: block;
+				color: @sapUiDragAndDropColor;
+				padding-bottom: 1rem;
+			}
+
+			.sapMText {
+				position: relative;
+				font-size: @sapMFontHeader4Size;
+				color: @sapUiDragAndDropColor;
+			}
+		}
+
+		&.sapMUCDropIndicator:after {
+			background-color: @sapUiDragAndDropActiveBackground;
+			border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
+		}
+
+		&.sapMUCDropIndicator {
+			.sapMUCDragDropIndicator {
+				.sapMText {
+					color: @sapUiDragAndDropActiveColor;
+				}
+				.sapUiIcon {
+					color: @sapUiDragAndDropActiveColor;
+				}
+			}
+		}
+	}
+}
 
 /* ************************************************************************************* */
 /* local fixes: should be done by used simple controls                                   */

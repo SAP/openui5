@@ -936,11 +936,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iFixedColumnCount > 0) {
-			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
+			var iUsedHorizontalTableSpace = TableUtils.Column.getMinColumnWidth() + oSizes.tableRowHdrScrWidth;
 
 			var oVsb = this.getDomRef("vsb");
 			if (oVsb) {
 				iUsedHorizontalTableSpace += oVsb.offsetWidth;
+			}
+
+			if (TableUtils.hasRowActions(this)) {
+				var oRowActions = this.getDomRef("sapUiTableRowActionScr");
+				if (oRowActions) {
+					iUsedHorizontalTableSpace += oRowActions.offsetWidth;
+				}
 			}
 
 			// If the columns fit into the table, we do not need to ignore the fixed column count.
@@ -987,12 +994,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// select rows
 		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
 		var aRowHeaderItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowHdr");
+		var aRowActionItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowAction");
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
 
 		var a = [];
 
 		a.forEach.call(aRowHeaderItems, updateRow);
+		a.forEach.call(aRowActionItems, updateRow);
 		a.forEach.call(aFixedRowItems, updateRow);
 		a.forEach.call(aScrollRowItems, updateRow);
 
@@ -1029,7 +1038,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 						that._mTimeouts.onBeforeRenderingAdjustRows = undefined;
 					}, 0);
 			}
-		} else if (!this._oRowTemplate && aRows.length > 0) {
+		} else if (this._bRowAggregationInvalid && aRows.length > 0) {
 			// Rows got invalidated, recreate rows with new template
 			this._adjustRows(aRows.length);
 		}
@@ -1041,10 +1050,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
-		if (oEvent && oEvent.isMarked("insertTableRows")) {
-			this._getScrollExtension().updateVSbMaxHeight();
+		var bEventIsMarked = oEvent && oEvent.isMarked("insertTableRows");
+		if (bEventIsMarked) {
+			this._getScrollExtension().updateVerticalScrollbarHeight();
 			this._updateVSbRange();
-			return;
 		}
 
 		this._bInvalid = false;
@@ -1066,7 +1075,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// enable/disable text selection for column headers
-		if (!this._bAllowColumnHeaderTextSelection) {
+		if (!this._bAllowColumnHeaderTextSelection && !bEventIsMarked) {
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
 		}
 
@@ -1082,17 +1091,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, true));
-		} else if (!this._mTimeouts.onAfterRenderingUpdateTableSizes) {
+		} else {
 			this._updateTableSizes();
 		}
 
-		this._updateVSbTop();
+		if (!bEventIsMarked) {
+			this._updateVSbTop();
 
-		// needed for the column resize ruler
-		this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
+			// needed for the column resize ruler
+			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
 
-		if (this.getBinding("rows")) {
-			this.fireEvent("_rowsUpdated");
+			if (this.getBinding("rows")) {
+				this.fireEvent("_rowsUpdated");
+			}
 		}
 	};
 
@@ -1118,7 +1129,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._updateTableSizes = function(bForceUpdateTableSizes, bSkipHandleRowCountMode) {
-		this._mTimeouts.onAfterRenderingUpdateTableSizes = undefined;
 		var oDomRef = this.getDomRef();
 
 		if (this._bInvalid || !oDomRef) {
@@ -1240,6 +1250,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var that = this;
 		var $this = this.$();
+
+		if (TableUtils.hasRowActions(this)) {
+			var bHasFlexibleRowActions = $this.hasClass("sapUiTableRActFlexible");
+			var oDummyCol = this.getDomRef("dummycolhdr");
+			var iDummyColWidth = oDummyCol ? oDummyCol.clientWidth : 0;
+			if (!bHasFlexibleRowActions && iDummyColWidth > 0) {
+				var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
+				var oRowActionStyles = {width: "auto"};
+				oRowActionStyles[this._bRtlMode ? "right" : "left"] = iRowActionPos;
+				this.$("sapUiTableRowActionScr").css(oRowActionStyles);
+				this.$("rowacthdr").css(oRowActionStyles);
+				$this.toggleClass("sapUiTableRActFlexible", true);
+			} else if (bHasFlexibleRowActions && iDummyColWidth <= 0) {
+				this.$("sapUiTableRowActionScr").removeAttr("style");
+				this.$("rowacthdr").removeAttr("style");
+				$this.toggleClass("sapUiTableRActFlexible", false);
+			}
+		}
 
 		$this.find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
 
@@ -1436,7 +1464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update the bindings:
 		//  - prevent the rerendering
 		//  - use the databinding fwk to update the content of the rows
-		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
+		if (bFirstVisibleRowChanged && this.getBinding("rows")) {
 			this.updateRows();
 			if (!bOnScroll) {
 				this._updateVSbScrollTop();
@@ -1877,7 +1905,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// this can only happen after the table control was rendered one. At this point in time we know how much space is
 		// consumed by the table header, toolbar, footer... and we can calculate how much space is left for the table rows.
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-		if ((this.getRows().length <= 0 || !this._oRowTemplate) && ((sVisibleRowCountMode == VisibleRowCountMode.Auto && this.bOutput) || sVisibleRowCountMode != VisibleRowCountMode.Auto)) {
+		if ((this.getRows().length <= 0 || this._bRowAggregationInvalid) && ((sVisibleRowCountMode == VisibleRowCountMode.Auto && this.bOutput) || sVisibleRowCountMode != VisibleRowCountMode.Auto)) {
 			if (this._iTableRowContentHeight) {
 				this._adjustRows(this._calculateRowsToDisplay());
 			}
@@ -1974,7 +2002,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
 
-		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
+		$this.find(".sapUiTableCtrlScrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
 			oInnerScrollContainer.on("scroll.sapUiTableSyncScrollPosition", function(oEvent) {
@@ -2655,37 +2683,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// focus is handled by item navigation. It's  not the root element of the table which may get the focus but
 		// the last focused column header or cell.
 		return TableUtils.getFocusedItemInfo(this).domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
-	};
-
-	/**
-	 * Handles the focus in to reposition the focus or prevent default handling for
-	 * column resizing.
-	 * @private
-	 */
-	Table.prototype.onfocusin = function(oEvent) {
-		var $ctrlScr;
-		var $FocusedDomRef = jQuery(oEvent.target);
-		if ($FocusedDomRef.parent('.sapUiTableTr').length > 0) {
-			$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-		} else if ($FocusedDomRef.parent('.sapUiTableColHdr').length > 0) {
-			$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
-		}
-
-		if ((Device.browser.firefox || Device.browser.chrome) && $ctrlScr && $ctrlScr.length > 0) {
-			var iCtrlScrScrollLeft = $ctrlScr.scrollLeft();
-			var iCtrlScrWidth = $ctrlScr.width();
-			var iCellLeft = $FocusedDomRef.position().left;
-			var iCellRight = iCellLeft + $FocusedDomRef.width();
-			var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
-			var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
-
-			var oHsb = this._getScrollExtension().getHorizontalScrollbar();
-			if (iOffsetRight > 0) {
-				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 2;
-			} else if (iOffsetLeft < 0) {
-				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetLeft - 1;
-			}
-		}
 	};
 
 	// =============================================================================
@@ -3396,6 +3393,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 			}
 		}
+		var oRowActionTemplate = this.getRowActionTemplate();
+		if (oRowActionTemplate) {
+			var oRowAction = oRowActionTemplate.clone();
+			oRowAction._setFixedLayout(true);
+			oRowAction._setCount(this.getRowActionCount());
+			oRowAction._setIconLabel(this.getId() + "-rowacthdr");
+			oRowAction._show = true; //TBD: Remove the _show flag, only needed to protect misuse in dev phase
+			oClone.setAggregation("_rowAction", oRowAction, true);
+		}
 		return oClone;
 	};
 
@@ -3533,26 +3539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oEvent.setMarked("insertTableRows");
 			oEvent.srcControl = this;
 			this._handleEvent(oEvent);
-
-			// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
-			// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
-			this._initRowDomRefs();
-			this._getKeyboardExtension().invalidateItemNavigation();
-
-			// restore the column icons
-			var aCols = this.getColumns();
-			for (var i = 0, l = aCols.length; i < l; i++) {
-				if (aCols[i].getVisible()) {
-					aCols[i]._restoreIcons();
-				}
-			}
-
-			this._updateTableContent();
-			this._updateTableSizes();
-
 			bReturn = true;
-
-			this._attachEvents();
 		}
 
 		if (!bNoUpdate && !this._bInvalid && this.getBinding("rows")) {
@@ -3943,6 +3930,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype._updateTableContent = function() {
 		TableUtils.Grouping.updateGroups(this);
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setRowActionTemplate = function(oTemplate) {
+		//TBD: Once aggregation is available: this.setAggregation("rowActionTemplate", oTemplate);
+		this._rowActionTemplate = oTemplate;
+
+		if (oTemplate) {
+			oTemplate._setCount(this.getRowActionCount());
+		}
+
+		this.invalidate();
+		this.invalidateRowsAggregation();
+		return this;
+	};
+
+	//TBD: Remove getter once the aggregation is available;
+	Table.prototype.getRowActionTemplate = function() {
+		return this._rowActionTemplate;
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setRowActionCount = function(iCount) {
+		//TBD: Once property is available: this.setProperty("rowActionTemplate", iCount);
+		this._iRowActionCount = iCount;
+		this.invalidate();
+
+		iCount = this.getRowActionCount();
+		var oRowAction = this.getRowActionTemplate();
+		if (oRowAction) {
+			oRowAction._setCount(iCount);
+		}
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			oRowAction = aRows[i].getAggregation("_rowAction");
+			if (oRowAction) {
+				oRowAction._setCount(iCount);
+			}
+		}
+		return this;
+	};
+
+	//TBD: Remove getter once the property is available;
+	Table.prototype.getRowActionCount = function() {
+		return this._iRowActionCount || 0;
 	};
 
 	return Table;

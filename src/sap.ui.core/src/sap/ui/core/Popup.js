@@ -302,16 +302,15 @@ sap.ui.define([
 	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
-	 * This property changes how focus handling works. When it's set to true,
-	 * focus will be restored after Popup is closed to the previous focused
-	 * element before Popup is open. Otherwise, this function is disabled.
-	 *
-	 * By default, the focus is restored only in non-touch environments.
+	 * On mobile device, the browser may set the focus to somewhere else after
+	 * the restoring of focus from Popup. This behavior should be prevented in
+	 * order to make sure that the focus is restored to the right DOM element in
+	 * mobile environment.
 	 *
 	 * @type {boolean}
 	 * @private
 	 */
-	Popup.prototype.restoreFocus = (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) || Device.system.combi;
+	Popup.prototype.preventBrowserFocus = (Device.support.touch || jQuery.sap.simulateMobileOnDesktop) && !Device.system.combi;
 
 	//****************************************************
 	//Layer et al
@@ -622,11 +621,8 @@ sap.ui.define([
 		jQuery.sap.assert(!offset || typeof offset === "string", "offset must be empty or a string");
 		jQuery.sap.assert(!collision || typeof collision === "string", "collision must be empty or a string");
 
-		// disable for mobile or desktop browser in touch mode
-		if (this.restoreFocus) {
-			// save current focused element to restore the focus after closing
-			this._oPreviousFocus = Popup.getCurrentFocusInfo();
-		}
+		// save current focused element to restore the focus after closing
+		this._oPreviousFocus = Popup.getCurrentFocusInfo();
 
 		// It is mandatroy to check if the new Popup runs within another Popup because
 		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
@@ -1092,6 +1088,19 @@ sap.ui.define([
 			this.removeChildFromPopup(sParentId, this._popupUID);
 		}
 
+		if (this._bModal && this.preventBrowserFocus) {
+			$Ref.one("mousedown", function(oEvent) {
+				// browser sets the focus after mousedown event
+				// On mobile devices, the restoring of focus may happen before
+				// the delayed mousedown event.
+				// The browser will set the focus to the clicked element again
+				// after restoring of the focus.
+				// Calling 'preventDefault' prevents the browser from setting
+				// the focus after the delayed mousedown event.
+				oEvent.preventDefault();
+			});
+		}
+
 		this._duringClose();
 		if (iRealDuration == 0) { // iRealDuration == 0 means: no animation!
 			this._closed();
@@ -1134,6 +1143,7 @@ sap.ui.define([
 			// update the DomRef because it could have been rerendered during closing
 			$Ref = this._$(/* forceRerender */ false, /* only get DOM */ true);
 			oDomRef = $Ref.length ? $Ref[0] : null;
+
 			if (oDomRef) {
 				// also hide the new DOM ref
 				oDomRef.style.display = "none";
@@ -1144,16 +1154,12 @@ sap.ui.define([
 			}
 		}
 
-		//disabled for mobile or desktop browser in touch mode
-		if (this.restoreFocus) {
-			if (this._bModal) {
-
-				// try to set the focus back to whatever was focused before. Do this here because animation needs to be finished.
-				//- TODO: currently focus is restored only for modal popups. Non modal popups have to do it themselves because the outside focus can change!
-				Popup.applyFocusInfo(this._oPreviousFocus);
-				this._oPreviousFocus = null;
-				this.oLastBlurredElement = null;
-			}
+		if (this._bModal) {
+			// try to set the focus back to whatever was focused before. Do this here because animation needs to be finished.
+			//- TODO: currently focus is restored only for modal popups. Non modal popups have to do it themselves because the outside focus can change!
+			Popup.applyFocusInfo(this._oPreviousFocus);
+			this._oPreviousFocus = null;
+			this.oLastBlurredElement = null;
 		}
 
 		this.bOpen = false;

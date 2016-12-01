@@ -100,6 +100,7 @@ sap.ui.define([
 				return mTimeouts[iID] < MAX_TIMEOUT_DEPTH;
 			}).length;
 			var bHasPendingTimeouts = iNumberOfBlockingTimeouts > 0;
+			// promise synchronization uses setTimeout so first check the Promise then the timeout
 			if (iPendingPromises > 0) {
 				oLogger.debug("There are " + iPendingPromises + " pending microtasks");
 				return true;

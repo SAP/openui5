@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nGroupPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -30,8 +31,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the maximum number of groups.
-				 *
-				 * @since 1.26
 				 */
 				maxGroups: {
 					type: "string",
@@ -42,8 +41,6 @@ sap.ui.define([
 				/**
 				 * Defines if <code>mediaQuery</code> or <code>ContainerResize</code> is used for a layout update. If <code>ConditionPanel</code>
 				 * is used in a dialog, the property must be set to true.
-				 *
-				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -53,9 +50,7 @@ sap.ui.define([
 
 				/**
 				 * Can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
-				 * or"Phone" you can set a fixed layout.
-				 *
-				 * @since 1.26
+				 * or "Phone" you can set a fixed layout.
 				 */
 				layoutMode: {
 					type: "string",
@@ -77,8 +72,6 @@ sap.ui.define([
 
 				/**
 				 * Defined group items.
-				 *
-				 * @since 1.26
 				 */
 				groupItems: {
 					type: "sap.m.P13nGroupItem",
@@ -91,24 +84,18 @@ sap.ui.define([
 
 				/**
 				 * Event raised if a <code>GroupItem</code> has been added.
-				 *
-				 * @since 1.26
 				 */
 				addGroupItem: {
 					parameters: {}
 				},
 
 				/**
-				 * Removes a group item.
-				 *
-				 * @since 1.26
+				 * Event raised if a <code>GroupItem</code> has been removed.
 				 */
 				removeGroupItem: {},
 
 				/**
-				 * Updates a group item.
-				 *
-				 * @since 1.26
+				 * Event raised if a <code>GroupItem</code> has been updated.
 				 */
 				updateGroupItem: {}
 			}
@@ -174,7 +161,7 @@ sap.ui.define([
 	 * user know that some values are not correct or missing.
 	 *
 	 * @public
-	 * @since 1.26
+	 * @returns {boolean} <code>True</code> if all conditions are valid, <code>false</code> otherwise.
 	 */
 	P13nGroupPanel.prototype.validateConditions = function() {
 		return this._oGroupPanel.validateConditions();
@@ -212,8 +199,7 @@ sap.ui.define([
 	 * Setter for the supported operations array.
 	 *
 	 * @public
-	 * @since 1.26
-	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @param {array} aOperations array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
 	 */
 	P13nGroupPanel.prototype.setOperations = function(aOperation) {
 		this._aOperations = aOperation;
@@ -223,11 +209,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Initialize the control
-	 *
-	 * @private
-	 */
 	P13nGroupPanel.prototype.init = function() {
 		this.setType(sap.m.P13nPanelType.group);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
@@ -334,14 +315,18 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return this;
 	};
 
 	P13nGroupPanel.prototype.removeItem = function(oItem) {
-		P13nPanel.prototype.removeItem.apply(this, arguments);
+		var oRemoved = P13nPanel.prototype.removeItem.apply(this, arguments);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return oRemoved;
 	};
 
 	P13nGroupPanel.prototype.destroyItems = function() {
@@ -360,6 +345,8 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return this;
 	};
 
 	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem, iIndex) {

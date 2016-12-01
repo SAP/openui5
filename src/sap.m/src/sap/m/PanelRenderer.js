@@ -31,16 +31,16 @@ sap.ui.define(['jquery.sap.global'],
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
 		oRm.write("<section");
-
+		oRm.writeControlData(oControl);
 		oRm.addClass("sapMPanel");
+		oRm.writeClasses();
 		oRm.addStyle("width", oControl.getWidth());
 		oRm.addStyle("height", oControl.getHeight());
-
-		oRm.writeAccessibilityState(oControl, { role: "form", labelledby: oControl._getLabellingElementId()});
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
 		oRm.writeStyles();
-
+		oRm.writeAccessibilityState(oControl, {
+			role: oControl.getAccessibleRole().toLowerCase(),
+			labelledby: oControl._getLabellingElementId()
+		});
 		oRm.write(">");
 	};
 

@@ -31,12 +31,19 @@ QUnit.test("init()", function(assert) {
 });
 
 QUnit.test("_debug()", function(assert) {
-	var oExtension = oTable._getKeyboardExtension();
-	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
-	oExtension._debug();
-	// TBD: assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
-});
+	var oScrollExtension = oTable._getScrollExtension();
 
+	assert.ok(!oScrollExtension._ExtensionHelper, "No debug mode: ExtensionHelper is not accessible");
+	assert.ok(!oScrollExtension._ExtensionDelegate, "No debug mode: ExtensionDelegate is not accessible");
+	assert.ok(!oScrollExtension._HorizontalScrollingHelper, "No debug mode: HorizontalScrollingHelper is not accessible");
+	assert.ok(!oScrollExtension._VerticalScrollingHelper, "No debug mode: VerticalScrollingHelper is not accessible");
+
+	oScrollExtension._debug();
+	assert.ok(oScrollExtension._ExtensionHelper, "Debug mode: ExtensionHelper is accessible");
+	assert.ok(oScrollExtension._ExtensionDelegate, "Debug mode: ExtensionDelegate is accessible");
+	assert.ok(oScrollExtension._HorizontalScrollingHelper, "Debug mode: HorizontalScrollingHelper is accessible");
+	assert.ok(oScrollExtension._VerticalScrollingHelper, "Debug mode: VerticalScrollingHelper is accessible");
+});
 
 QUnit.module("Destruction", {
 	beforeEach: function() {
@@ -66,8 +73,10 @@ QUnit.module("Scrollbars", {
 
 		createTables();
 
-		this.oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-		this.oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+		this.oScrollExtension = oTable._getScrollExtension();
+		this.oHSb = this.oScrollExtension.getHorizontalScrollbar();
+		this.oVSb = this.oScrollExtension.getVerticalScrollbar();
+		this.oScrollExtension._debug();
 	},
 	afterEach: function() {
 		document.getElementById("content").style.width = this.sOriginalWidth;
@@ -97,28 +106,38 @@ QUnit.test("Vertical scrollbar visibility", function(assert) {
 QUnit.test("Restoration of scrolling positions", function(assert) {
 	var iAssertionDelay = 100;
 	var done = assert.async();
+	var that = this;
 
 	function assertScrollPositions(sAction, iHorizontalScrollPosition, iVerticalScrollPosition) {
-		var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+		var oHSb = that.oScrollExtension.getHorizontalScrollbar();
+		var oVSb = that.oScrollExtension.getVerticalScrollbar();
+		var oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
+		var oContentScroll = oTable.getDomRef("sapUiTableCtrlScr");
 
 		assert.strictEqual(oHSb.scrollLeft, iHorizontalScrollPosition, sAction + ":  The horizontal scroll position is " + iHorizontalScrollPosition);
-		assert.ok(oHSb.scrollLeft === oTable.getDomRef("sapUiTableColHdrScr").scrollLeft && oHSb.scrollLeft === oTable.getDomRef("sapUiTableCtrlScr").scrollLeft,
-				  sAction + ":  The horizontal scroll positions are synchronized");
+		assert.ok(oHSb.scrollLeft === oHeaderScroll.scrollLeft && oHSb.scrollLeft === oContentScroll.scrollLeft,
+				  sAction + ":  The horizontal scroll positions are synchronized" +
+				  " [HSb: " + oHSb.scrollLeft + ", Header: " + oHeaderScroll.scrollLeft + ", Content: " + oContentScroll.scrollLeft + "]");
 		assert.strictEqual(oVSb.scrollTop, iVerticalScrollPosition, sAction + ":  The vertical scroll position is " + iVerticalScrollPosition);
+	}
+
+	function assertOnAfterRenderingEventHandlerCall(sAction) {
+		assert.ok(that.oOnAfterRenderingEventHandler.calledOnce, sAction + ": The onAfterRendering event handler of the scrolling extension has been called once");
+		that.oOnAfterRenderingEventHandler.reset();
 	}
 
 	new Promise(function(resolve) {
 		window.setTimeout(function() {
 			assertScrollPositions("Initial", 0, 0);
-			oTable._getScrollExtension().getHorizontalScrollbar().scrollLeft = 50;
-			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 55;
+			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = 50;
+			that.oScrollExtension.getVerticalScrollbar().scrollTop = 55;
 			resolve();
 		}, iAssertionDelay);
 	}).then(function() {
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
 				assertScrollPositions("Scrolled", 50, 55);
+				that.oOnAfterRenderingEventHandler = sinon.spy(that.oScrollExtension._ExtensionDelegate, "onAfterRendering");
 				oTable.rerender();
 				resolve();
 			}, iAssertionDelay);
@@ -126,22 +145,26 @@ QUnit.test("Restoration of scrolling positions", function(assert) {
 	}).then(function() {
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
+				assertOnAfterRenderingEventHandlerCall("Rerendered");
 				assertScrollPositions("Rerendered", 50, 55);
-				oTable._updateTableSizes();
+				oTable.invalidate();
 				resolve();
 			}, iAssertionDelay);
 		});
 	}).then(function() {
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
-				assertScrollPositions("Content updated", 50, 55);
-				oTable.invalidate();
+				assertOnAfterRenderingEventHandlerCall("Invalidated");
+				assertScrollPositions("Invalidated", 50, 55);
+				oTable.setProperty("visibleRowCountMode", sap.ui.table.VisibleRowCountMode.Auto, true);
+				oTable._updateTableSizes();
 				resolve();
 			}, iAssertionDelay);
 		});
 	}).then(function() {
 		window.setTimeout(function() {
-			assertScrollPositions("Invalidated", 50, 55);
+			assertOnAfterRenderingEventHandlerCall("Content updated");
+			assertScrollPositions("Content updated", 50, 55);
 			done();
 		}, iAssertionDelay);
 	});
@@ -179,27 +202,27 @@ QUnit.module("Horizontal scrolling", {
 });
 
 QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
+	var iAssertionDelay = 50;
+
 	// Scroll right to 200
-	this.oHSb.scrollLeft = 10;
-
-	for (var i = 1; i < 20; i++) {
+	for (var i = 1; i <= 20; i++) {
 		window.setTimeout(function(_i) {
-			this.oHSb.scrollLeft = 10 + _i * 10;
+			this.oHSb.scrollLeft = _i * 10;
 
-			if (_i === 19) { // Delay the asserts so that all the scroll event handlers can be called before.
+			if (_i === 20) { // Delay the asserts so that all the scroll event handlers can be called before.
 				window.setTimeout(function() {
 					assert.strictEqual(this.oHSb.scrollLeft, 200, "Horizontal scrollbar scroll position is 200");
 					assert.strictEqual(this.oHeaderScroll.scrollLeft, 200, "Header scroll position is 200");
 					assert.strictEqual(this.oContentScroll.scrollLeft, 200, "Content scroll position is 200");
 					scrollLeftTo20.bind(this)();
-				}.bind(this), 50);
+				}.bind(this), iAssertionDelay);
 			}
 
 		}.bind(this, i), i);
 	}
 
 	function scrollLeftTo20() {
-		for (var i = 1; i < 19; i++) {
+		for (var i = 1; i <= 18; i++) {
 			window.setTimeout(function (_i) {
 				this.oHSb.scrollLeft = 200 - _i * 10;
 
@@ -209,10 +232,10 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 						assert.strictEqual(this.oHeaderScroll.scrollLeft, 20, "Header scroll position is 20");
 						assert.strictEqual(this.oContentScroll.scrollLeft, 20, "Content scroll position is 20");
 						QUnit.start();
-					}.bind(this), 50);
+					}.bind(this), iAssertionDelay);
 				}
 
-			}.bind(this, i), i + 100);
+			}.bind(this, i), i);
 		}
 	}
 });
@@ -220,7 +243,7 @@ QUnit.asyncTest("Imitating scrollbar scrolling", function(assert) {
 QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", function(assert) {
 	var that = this;
 	var iNumberOfCols = oTable.getColumns().length;
-	var iAssertionDelay = 75;
+	var iAssertionDelay = 50;
 
 	// Start at the first cell in the header.
 	var iRowIndex = 0;
@@ -376,7 +399,7 @@ QUnit.asyncTest("Imitating Arrow Left/Right and Home/End key navigation", functi
 
 QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	var that = this;
-	var iAssertionDelay = 75;
+	var iAssertionDelay = 100;
 	var oTarget;
 	var iCurrentScrollPosition = this.oHSb.scrollLeft;
 
@@ -475,14 +498,14 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 
 QUnit.asyncTest("Imitating touch", function(assert) {
 	var that = this;
-	var itouchPosition;
+	var iTouchPosition;
 	var iCurrentScrollPosition = this.oHSb.scrollLeft;
 	var oScrollDelegate = oTable._getScrollExtension()._ExtensionDelegate;
 	var oTarget;
-	var iAssertionDelay = 50;
+	var iAssertionDelay = 100;
 
 	function touchStart(oTarget, iPageX) {
-		itouchPosition = iPageX;
+		iTouchPosition = iPageX;
 
 		var oTouchStartEventData = jQuery.Event("touchstart", {
 			target: oTarget,
@@ -498,12 +521,12 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 	function touchMove(oTarget, iScrollDelta, iExpectedScrollPosition) {
 		return new Promise(
 			function(resolve) {
-				itouchPosition -= iScrollDelta;
+				iTouchPosition -= iScrollDelta;
 
 				var oTouchMoveEventData = jQuery.Event("touchmove", {
 					target: oTarget,
 					targetTouches: [{
-						pageX: itouchPosition,
+						pageX: iTouchPosition,
 						pageY: 0
 					}],
 					originalEvent: {touches: true}

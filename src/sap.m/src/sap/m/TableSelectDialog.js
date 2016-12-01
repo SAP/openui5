@@ -16,10 +16,37 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * TableSelectDialog provides you with an easier way to create a dialog that contains a list with grouping and search functionalities.
-	 * The Table used in a SelectDialog is a Table with Columns. After selecting an item, the dialog is closed and a callback function returns the item being selected.
-	 * @extends sap.ui.core.Control
+	 * A dialog to select items in a table containing multiple values and attributes.
+	 * <h3>Overview</h3>
+	 * The table select dialog helps users select items in a table-like structure with several attributes and values per item. A search fields helps narrow down the results.
+	 * <h3>Structure</h3>
+	 * The table select dialog consists of the following elements:
+	 * <ul>
+	 * <li> Search field - used to search enter search terms for a specific item.</li>
+	 * <li> Infobar (optional) - shows additional information for the current selection (i.e. total number of selected items).</li>
+	 * <li> Content - the table with the items.</li>
+	 * <li> Footer (optional) - a toolbar for actions.</li>
+	 * </ul>
+	 * Table select dialog supports multi-selection when the <code>multiSelect</code> property is set.
 	 *
+	 * The selected items can be stored for later editing when the <code>rememberSelections</code> property is set.
+	 * <b>Note:<b> This property has to be set before the dialog is opened.
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>You need to select one or more items from a comprehensive list that contains multiple attributes or values.</li>
+	 * </ul>
+	 * <h4>When not to use:</h4>
+	 * <ul>
+	 * <li>You need to select one item from a predefined set of options that contains only one value. Use a {@link sap.m.Select switch} control instead.</li>
+	 * <li>You need to select items within a query-based range. Use a {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help} control instead.</li>
+	 * <li>You need to only filter a set of items. Use a {@link sap.ui.comp.filterbar.FilterBar filter bar} control instead.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>On smaller screens, the columns of the table wrap and build a list that shows all the information.</li>
+	 * </ul>
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 *

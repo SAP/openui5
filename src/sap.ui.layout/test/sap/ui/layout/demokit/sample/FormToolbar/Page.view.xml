@@ -18,7 +18,20 @@
 				</Toolbar>
 			</f:toolbar>
 			<f:layout>
-				<f:ResponsiveGridLayout />
+				<f:ResponsiveGridLayout
+					labelSpanXL="4"
+					labelSpanL="3"
+					labelSpanM="4"
+					labelSpanS="12"
+					adjustLabelSpan="false"
+					emptySpanXL="0"
+					emptySpanL="4"
+					emptySpanM="0"
+					emptySpanS="0"
+					columnsXL="2"
+					columnsL="1"
+					columnsM="1"
+					singleContainerFullSize="false" />
 			</f:layout>
 			<f:formContainers>
 				<f:FormContainer ariaLabelledBy="Title2">
@@ -40,7 +53,7 @@
 								<Input value="{Street}" />
 								<Input value="{HouseNumber}">
 									<layoutData>
-										<l:GridData span="L2 M2 S4" />
+										<l:GridData span="XL2 L1 M3 S4" />
 									</layoutData>
 								</Input>
 							</f:fields>
@@ -49,7 +62,7 @@
 							<f:fields>
 								<Input value="{ZIPCode}">
 									<layoutData>
-										<l:GridData span="L2 M2 S4" />
+										<l:GridData span="XL2 L1 M3 S4" />
 									</layoutData>
 								</Input>
 								<Input value="{City}" />

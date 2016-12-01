@@ -1,3 +1,8 @@
+/* ====================================== */
+/* CSS for control sap.ui.table/DragDrop  */
+/* Base theme                             */
+/* ====================================== */
+
 @_sapUiTableColumnDnDHighlightColor: @sapUiListHighlightColor;
 @_sapUiTableReorderIndicatorWidth: 2px;
 
@@ -141,8 +146,14 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	left: -5px;
 }
 
+.sapUiTableColRsz.sapUiTableColRszActive {
+	z-index: 5; /* Ensure be above Row Action Area */
+}
+
 html[dir=rtl] .sapUiTableColRsz {
 	margin-right: -3px;
+	right: -5px; /* it becomes "left" in RTL mode */
+	left: auto;
 }
 
 html.sap-desktop .sapUiTableColRsz:hover {
@@ -188,6 +199,6 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 .sapUiTableInteractiveResizerGhost {
 	position: absolute;
 	background-color: @_sapUiTableColumnDnDHighlightColor;
-	color: @sapUiTextInverted;
+	color: @sapUiContentContrastTextColor;
 	z-index:10000;
 }

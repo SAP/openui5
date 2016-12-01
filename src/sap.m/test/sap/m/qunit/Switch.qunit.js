@@ -309,7 +309,7 @@ test("getAccessibilityInfo", function(assert) {
 		customTextOff: "CustomOff"
 	});
 	assert.ok(!!oSwitch.getAccessibilityInfo, "Switch has a getAccessibilityInfo function");
-	var oInfo = oSwitch.getAccessibilityInfo();
+	var oInfo = oSwitch.getAccessibilityInfo(true);
 	assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 	assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
 	assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
@@ -319,15 +319,15 @@ test("getAccessibilityInfo", function(assert) {
 	assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 
 	oSwitch.setState(true);
-	oInfo = oSwitch.getAccessibilityInfo();
+	oInfo = oSwitch.getAccessibilityInfo(true);
 	assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " CustomON", "Description");
 
 	oSwitch.setCustomTextOn("");
-	oInfo = oSwitch.getAccessibilityInfo();
+	oInfo = oSwitch.getAccessibilityInfo(true);
 	assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ON"), "Description");
 
 	oSwitch.setType("AcceptReject");
-	oInfo = oSwitch.getAccessibilityInfo();
+	oInfo = oSwitch.getAccessibilityInfo(true);
 	assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
 
 	oSwitch.setEnabled(false);
@@ -405,6 +405,7 @@ test("class and attributes", function(assert) {
  */
 function testSwitchON(assert, oSwitch) {
 	var mDomRefs = fnGetDomRefs(oSwitch.getId());
+	var switchOnText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON");
 
 	// assert
 	assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -413,11 +414,12 @@ function testSwitchON(assert, oSwitch) {
 	assert.ok(!mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch first-child html element "must not have" the css class "sapMSwtOff"');
 
 	if (oSwitch.getName()) {
-		assert.strictEqual(mDomRefs.$Checkbox.attr("value"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The input checkbox is "On"');
+		assert.strictEqual(mDomRefs.$Checkbox.attr("value"), switchOnText, 'The input checkbox is "On"');
 		assert.strictEqual(mDomRefs.$Checkbox.attr("checked"), "checked", 'The input checkbox is "checked"');
 	}
 
-	assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "On"');
+	assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), switchOnText, 'The switch handle "data-sap-ui-swt" attribute must have the value of "On"');
+	assert.strictEqual(oSwitch.$("invisible").text(), switchOnText, 'The invisible switch label should be "On"');
 
 	if (oSwitch.getEnabled()) {
 		assert.equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
@@ -435,6 +437,7 @@ function testSwitchOFF(assert, oSwitch) {
 
 	// arrange
 	var mDomRefs = fnGetDomRefs(oSwitch.getId());
+	var switchOffText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF");
 
 	// assert
 	assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -443,11 +446,12 @@ function testSwitchOFF(assert, oSwitch) {
 	assert.ok(!mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must not have" the css class "sapMSwtOn"');
 
 	if (oSwitch.getName()) {
-		assert.strictEqual(mDomRefs.$Checkbox.attr("value"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The input checkbox is "Off"');
+		assert.strictEqual(mDomRefs.$Checkbox.attr("value"), switchOffText, 'The input checkbox is "Off"');
 		assert.strictEqual(mDomRefs.$Checkbox.attr("checked"), undefined, 'The input checkbox is not "checked"');
 	}
 
-	assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "Off"');
+	assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), switchOffText, 'The switch handle "data-sap-ui-swt" attribute must have the value of "Off"');
+	assert.strictEqual(oSwitch.$("invisible").text(), switchOffText, 'The invisible switch label should be "Off"');
 
 	if (mDomRefs.oSwitch.getEnabled()) {
 		assert.equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');

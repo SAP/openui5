@@ -1,8 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
-	"sap/ui/model/json/JSONModel"
-], function (Controller, MessageToast, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Dialog",
+	"sap/m/Text",
+	"sap/m/TextArea",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout"
+], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, VerticalLayout) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
 
@@ -10,6 +15,7 @@ sap.ui.define([
 			var oFormData = {
 				serviceURL: "odataFake",
 				collection: "/orgHierarchy",
+				entityType: "orgHierarchyType",
 				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE,MAGNITUDE",
 				initialLevel: 2,
 				countMode: "Inline",
@@ -26,6 +32,7 @@ sap.ui.define([
 				hierarchyNodeFor: "HIERARCHY_NODE",
 				hierarchyDrillStateFor: "DRILLDOWN_STATE",
 				hierarchyDescendantCountFor: "",
+				hierarchyExternalKeyFor: "",
 				visibleRowCount: 20,
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
 				overall: 0,
@@ -45,8 +52,6 @@ sap.ui.define([
 			this.aRenderResults = [];
 			this.aFunctionResults = [];
 			this.aVisibleRow = [];
-
-			this.nIdForNewNode = 3000;
 		},
 
 		/**
@@ -72,7 +77,7 @@ sap.ui.define([
 					this.oMockServer.start();
 				}
 			}
-			
+
 			// sequential expand mock service
 			if (sServiceUrl.indexOf("classicFake") >= 0) {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
@@ -83,7 +88,7 @@ sap.ui.define([
 						rootUri: sServiceUrl
 					});
 					this.oMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
-					
+
 					/**
 					 * Clean-Up Hierarchy Annotation Mockdata/Metadata
 					 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
@@ -93,12 +98,13 @@ sap.ui.define([
 						//convert string based level properties (NUMC fields) to real numbers
 						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
 					}
-					
+
 					this.oMockServer.start();
 				}
 			}
 
 			var sCollection = oViewModel.getProperty("/collection");
+			var sEntityType = oViewModel.getProperty("/entityType");
 			var sSelectProperties = oViewModel.getProperty("/selectProperties");
 			var sCountMode = oViewModel.getProperty("/countMode");
 			var sOperationMode = oViewModel.getProperty("/operationMode");
@@ -129,6 +135,7 @@ sap.ui.define([
 			var sHierarchyNodeFor = oView.byId("hierarchyNodeFor").getValue();
 			var sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
 			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
+			var sHierarchyExternalKeyFor = oView.byId("hierarchyExternalKeyFor").getValue();
 
 			// table propertis
 			var iVisibleRowCount = oViewModel.getProperty("/visibleRowCount");
@@ -179,15 +186,48 @@ sap.ui.define([
 			if (this.oODataModel) {
 				this.oODataModel.destroy();
 			}
-			this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
-			this.oODataModel.setUseBatch(false);
+			this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
+				json: true,
+				defaultUpdateMethod: "PUT",
+				disableHeadRequestForToken: true,
+				tokenHandling: true
+			});
 			this.oODataModel.setDefaultCountMode("Inline");
+
+			this.ensureCorrectChangeGroup(sEntityType);
+
+			if (!this.oODataModel.hasListeners("requestFailed")) {
+				this.oODataModel.attachRequestFailed({}, function (oEvent) {
+					var oDialog = new Dialog({
+						title: 'Request Failed with Error:',
+						contentWidth: "600px",
+						contentHeight: "300px",
+						content: [
+							new sap.ui.core.HTML({
+								content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(oEvent.getParameter("response").responseText) + "</span>"
+							})
+						],
+						beginButton: new Button({
+							text: 'OK',
+							press: function () {
+								oDialog.close();
+							}
+						}),
+						afterClose: function() {
+							oDialog.destroy();
+						}
+					});
+
+					oDialog.open();
+				});
+			}
 
 			oTable.setModel(this.oODataModel, "odata");
 			oTable.bindRows({
 				path: "odata>" + sCollection,
 				filters: oApplicationFilter,
 				parameters: {
+					select: sSelectProperties || "",
 					threshold: iBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
@@ -204,12 +244,33 @@ sap.ui.define([
 				}
 			});
 
+			oTable.setSelectionMode("MultiToggle");
 			oTable._setLargeDataScrolling(true);
 
 			this.setupCutAndPaste();
 
 			//for easier table dbg
 			window.oTable = oTable;
+		},
+		
+		ensureCorrectChangeGroup: function (sEntityType) {
+			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + jQuery.sap.uid());
+			
+			// make sure we have a change group
+			var mChangeGroups = this.oODataModel.getChangeGroups();
+			var oEntityType = {name: sEntityType || "orgHierarchyType"};
+
+			// if there is no change group for the entity type yet, create one
+			if (!mChangeGroups[oEntityType.name]) {
+				mChangeGroups[oEntityType.name] = {
+					groupId: this._sTreeChangeGroup,
+					single: false
+				};
+				this.oODataModel.setChangeGroups(mChangeGroups);
+
+				// important: the group has to be deferred so
+				this.oODataModel.setDeferredGroups([this._sTreeChangeGroup]);
+			}
 		},
 
 		/**
@@ -332,22 +393,70 @@ sap.ui.define([
 		onCreate: function() {
 			var oTable = this.getView().byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
-			var oModel = this.getView().getModel();
+			var oViewModel = this.getView().getModel();
 
-			if (iSelectedIndex !== -1) {
-				var oBinding = oTable.getBinding();
-				var oTableModel = oTable.getModel("odata");
-				var oContext = oTableModel.createEntry(oModel.getProperty("/collection"));
-				oTableModel.setProperty("DESCRIPTION", "New Node - " + this.nIdForNewNode, oContext);
-				oTableModel.setProperty("DRILLDOWN_STATE", "leaf", oContext);
-				oTableModel.setProperty("HIERARCHY_NODE", "" + this.nIdForNewNode, oContext);
-				oTableModel.setProperty("MAGNITUDE", 0, oContext);
-				this.nIdForNewNode++;
-
-				oBinding.addContexts(oTable.getContextByIndex(iSelectedIndex), [oContext]);
-			} else {
+			if (iSelectedIndex == -1) {
 				MessageToast.show("Select a parent node first.");
+				return;
 			}
+
+			var oDialog = new Dialog({
+				title: 'Confirm',
+				type: 'Message',
+				content: [
+					new Text({ text: 'Please enter the key of a business entity (the value for the hierarchy-node-external-key-for annotated property value):' }),
+					new TextArea('businessEntityValueTextArea', {
+						liveChange: function(oEvent) {
+							var sText = oEvent.getParameter('value');
+							var oParent = oEvent.getSource().getParent();
+							oParent.getBeginButton().setEnabled(sText.length > 0);
+						},
+						width: '100%',
+						placeholder: 'mandatory value'
+					})
+				],
+
+				beginButton: new Button({
+					text: 'OK',
+					enabled: false,
+					press: function () {
+						var sBusinessEntityKey = sap.ui.getCore().byId('businessEntityValueTextArea').getValue();
+
+						// create entry
+						var oBinding = oTable.getBinding();
+						var oTableModel = oTable.getModel("odata");
+						var oContext = oBinding.createEntry();
+						var sHierarchyExternalKeyFor = oViewModel.getProperty("/hierarchyExternalKeyFor");
+
+						if (sHierarchyExternalKeyFor) {
+							// IMPORTANT: This is hard-coded for demo-purposes.
+							// In a real scenario, the application has to provide the Business Entity Key (e.g. via Value Help) and set it to the correct property.
+							// There is no metadata check implemented in the TreeBinding for this purpose.
+							oTableModel.setProperty(sHierarchyExternalKeyFor, sBusinessEntityKey, oContext);
+						}
+
+						// add new entry to the binding
+						oBinding.addContexts(oTable.getContextByIndex(iSelectedIndex), [oContext]);
+
+						MessageToast.show("Node created. Beware: The node is currently only in a transient in the UI.");
+
+						oDialog.close();
+					}
+				}),
+
+				endButton: new Button({
+					text: 'Cancel',
+					press: function () {
+						oDialog.close();
+					}
+				}),
+
+				afterClose: function() {
+					oDialog.destroy();
+				}
+			});
+
+			oDialog.open();
 		},
 
 		/**
@@ -377,32 +486,54 @@ sap.ui.define([
 		 * Paste logic
 		 */
 		onPaste: function () {
-			var oTable = this.getView().byId("tableOData")
+			var oTable = this.getView().byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			if (this._oClipboardModel && iSelectedIndex != -1) {
 				this.openClipboard();
 			} else {
-				MessageToast.show("Select a new parent node first.\nOh and maybe cut out some nodes first ;)");
+				MessageToast.show("Select a new parent node first.");
 			}
+		},
+
+		/**
+		 * Submit the changes on the model
+		 */
+		onSave: function () {
+			MessageToast.show("Submitting changes...");
+			var oBinding = oTable.getBinding();
+			oTable.setBusyIndicatorDelay(1);
+			oTable.setEnableBusyIndicator(true);
+			oTable.setBusy(true);
+			oBinding.submitChanges({
+				success: function () {
+					oTable.setBusy(false);
+					this.setupCutAndPaste(); // clear clipboard
+				}.bind(this),
+				error: function () {
+					oTable.setBusy(false);
+				}
+			});
+			// scroll to top after submitting
+			oTable.setFirstVisibleRow(0);
 		},
 
 		/**
 		 * Opens the Clipboard for cut out contexts
 		 */
 		openClipboard: function () {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.ui.table.testApps.TreeTableODataClipboard", this);
+			if (!this._oPasteDialog) {
+				this._oPasteDialog = sap.ui.xmlfragment("sap.ui.table.testApps.TreeTableODataClipboard", this);
 			}
 
-			this._oDialog.setModel(this._oClipboardModel);
+			this._oPasteDialog.setModel(this._oClipboardModel);
 
-			this._oDialog.setMultiSelect(false);
+			this._oPasteDialog.setMultiSelect(false);
 
-			this._oDialog.setRememberSelections(false);
+			this._oPasteDialog.setRememberSelections(false);
 
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oPasteDialog);
 
-			this._oDialog.open();
+			this._oPasteDialog.open();
 		},
 
 		/**
@@ -437,11 +568,17 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Handler for saving the tree state.
+		 */
 		onSaveTreeState: function () {
 			var b = oTable.getBinding();
 			this._oTreeState = b.getCurrentTreeState();
 		},
 
+		/**
+		 * Rebinds the table with the previously saved state.
+		 */
 		onRestoreTreeState: function () {
 			this.onCreateTableClick(undefined, this._oTreeState);
 		},

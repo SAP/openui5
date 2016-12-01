@@ -11,13 +11,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nSortPanel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nSortPanel control is used to define settings for sorting in table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nSortPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -31,8 +32,6 @@ sap.ui.define([
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the ConditionPanel is used on a dialog the
 				 * property should be set to true!
-				 *
-				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -42,9 +41,7 @@ sap.ui.define([
 
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
-				 * or"Phone" you can set a fixed layout.
-				 *
-				 * @since 1.26
+				 * or "Phone" you can set a fixed layout.
 				 */
 				layoutMode: {
 					type: "string",
@@ -66,8 +63,6 @@ sap.ui.define([
 
 				/**
 				 * defined Sort Items
-				 *
-				 * @since 1.26
 				 */
 				sortItems: {
 					type: "sap.m.P13nSortItem",
@@ -80,22 +75,16 @@ sap.ui.define([
 
 				/**
 				 * event raised when a SortItem was added
-				 *
-				 * @since 1.26
 				 */
 				addSortItem: {},
 
 				/**
-				 * remove a sort item
-				 *
-				 * @since 1.26
+				 * event raised when a SortItem was removed
 				 */
 				removeSortItem: {},
 
 				/**
-				 * update a sort item
-				 *
-				 * @since 1.26
+				 * event raised when a SortItem was updated
 				 */
 				updateSortItem: {}
 			}
@@ -160,7 +149,7 @@ sap.ui.define([
 	 * user the feedback that some values are wrong or missing.
 	 *
 	 * @public
-	 * @since 1.26
+	 * @returns {boolean} <code>True</code> if all conditions are valid, <code>false</code> otherwise.
 	 */
 	P13nSortPanel.prototype.validateConditions = function() {
 		return this._oSortPanel.validateConditions();
@@ -198,8 +187,7 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 *
 	 * @public
-	 * @since 1.26
-	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @param {array} array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
 	 * @returns {sap.m.P13nSortPanel} this for chaining
 	 */
 	P13nSortPanel.prototype.setOperations = function(aOperation) {
@@ -319,14 +307,18 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return this;
 	};
 
 	P13nSortPanel.prototype.removeItem = function(oItem) {
-		P13nPanel.prototype.removeItem.apply(this, arguments);
+		var oRemove = P13nPanel.prototype.removeItem.apply(this, arguments);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return oRemove;
 	};
 
 	P13nSortPanel.prototype.destroyItems = function() {
@@ -345,6 +337,8 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 		}
+
+		return this;
 	};
 
 	P13nSortPanel.prototype.insertSortItem = function(oSortItem, iIndex) {

@@ -3350,10 +3350,12 @@ sap.ui.define([
 
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
 		oData = this._getObject('/' + sKey);
-		mParams = oData.__metadata.created;
-		//for created entries the group information is retrieved from the params
-		if (mParams) {
-			return {groupId: mParams.groupId, changeSetId: mParams.changeSetId};
+		if (oData) {
+			mParams = oData.__metadata.created;
+			//for created entries the group information is retrieved from the params
+			if (mParams) {
+				return {groupId: mParams.groupId, changeSetId: mParams.changeSetId};
+			}
 		}
 		//resolve groupId/changeSetId
 		if (this.mChangeGroups[oEntityType.name]) {
@@ -4470,8 +4472,22 @@ sap.ui.define([
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry,
-		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-		mChangedEntities = {}, oEntityInfo = {}, mParams, bFunction = false, that = this;
+			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
+			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
+			bFunction = false, that = this;
+
+		function updateChangedEntities(oOriginalObject, oChangedObject) {
+			jQuery.each(oChangedObject,function(sKey) {
+				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
+					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+						delete oChangedObject[sKey];
+					}
+				} else if (jQuery.sap.equal(oChangedObject[sKey], oOriginalObject[sKey])) {
+					delete oChangedObject[sKey];
+				}
+			});
+		}
 
 		sResolvedPath = this.resolve(sPath, oContext, true);
 
@@ -4482,7 +4498,7 @@ sap.ui.define([
 
 		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1);
 		sKey = oEntityInfo.key;
-		oOriginalEntry = this._getObject('/' + sKey);
+		oOriginalEntry = this._getObject('/' + sKey, null, true);
 		oOriginalValue = this._getObject(sPath, oContext, true);
 
 		//clone property
@@ -4493,7 +4509,7 @@ sap.ui.define([
 			this.mChangedEntities[sKey] = oEntry;
 		}
 
-		var oChangeObject = this.mChangedEntities[sKey];
+		oChangeObject = this.mChangedEntities[sKey];
 
 		// if property is not available check if it is a complex type and update it
 		aParts = oEntityInfo.propertyPath.split("/");
@@ -4506,12 +4522,15 @@ sap.ui.define([
 
 		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
 
+		oChangeObject[sPropertyPath] = oValue;
+
 		//reset clone if oValue equals the original value
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
-			delete oChangeObject[sPropertyPath];
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
 			delete this.mChangedEntities[sKey].__metadata;
+			// check for 'empty' complex types objects and delete it
+			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
@@ -4524,8 +4543,6 @@ sap.ui.define([
 				return true;
 			}
 			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
-		} else {
-			oChangeObject[sPropertyPath] = oValue;
 		}
 
 		oGroupInfo = this._resolveGroup(sKey);
@@ -5074,6 +5091,10 @@ sap.ui.define([
 			delete this.oMetadata;
 		}
 
+		if (this.oMetaModel) {
+			this.oMetaModel.destroy();
+			delete this.oMetaModel;
+		}
 
 		if (this.oAnnotations) {
 			this.oAnnotations.detachSomeLoaded(this.onAnnotationsLoaded);

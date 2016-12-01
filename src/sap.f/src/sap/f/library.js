@@ -96,6 +96,11 @@ sap.ui.define(["jquery.sap.global",
 		End: "End"
 	};
 
+	sap.ui.lazyRequire("sap.f.routing.Router");
+	sap.ui.lazyRequire("sap.f.routing.Target");
+	sap.ui.lazyRequire("sap.f.routing.TargetHandler");
+	sap.ui.lazyRequire("sap.f.routing.Targets");
+
 	return sap.f;
 
 });

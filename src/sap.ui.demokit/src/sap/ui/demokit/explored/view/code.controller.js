@@ -130,22 +130,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			for (var i = 0 ; i < oData.files.length ; i++) {
 				var oFile = oData.files[i],
 					sRawFileContent = oFile.raw,
-					iFileNestedLevel = oFile.name.split("../").length - 1;
+					iFileNestedLevel = oFile.name.split("../").length - 1,
+					sFileNameCloned = oFile.name.slice();
 
 				if (iFileNestedLevel > iRequiredParentLevels) {
 					iRequiredParentLevels = iFileNestedLevel;
 				}
 
 				if (iFileNestedLevel > 0 ) {
-					oFile.name = oFile.name.slice(oFile.name.lastIndexOf("../") + 3);
+					sFileNameCloned = oFile.name.slice(oFile.name.lastIndexOf("../") + 3);
 				}
 
 				// change the bootstrap URL to the current server for all HTML files of the sample
-				if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
+				if (sFileNameCloned && (sFileNameCloned === oData.iframe || sFileNameCloned.split(".").pop() === "html")) {
 					sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
 				}
 
-				oZipFile.file(oFile.name, sRawFileContent);
+				oZipFile.file(sFileNameCloned, sRawFileContent);
 
 				// mock files
 				for (var j = 0; j < this._aMockFiles.length; j++) {

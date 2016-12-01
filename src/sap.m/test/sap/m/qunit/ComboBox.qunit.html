@@ -10139,7 +10139,6 @@
 				tablet: true,
 				combi: false
 			});
-			this.stub(sap.ui.core.Popup.prototype, "restoreFocus", false);
 
 			var oCB = new sap.m.ComboBox();
 			var aValues = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00"];
@@ -10153,17 +10152,16 @@
 			oCB.placeAt('content');
 			sap.ui.getCore().applyChanges();
 
+			oCB.focus();
+
 			oCB.open();
 			this.clock.tick(500);
-
-			var spy = this.spy(document.activeElement, "blur");
 
 			oCB.close();
 			this.clock.tick(500);
 
-			assert.ok(!spy.callCount, "Blur shouldn't be called");
+			assert.ok(jQuery.sap.containsOrEquals(oCB.getDomRef(), document.activeElement), "Focus is still inside the ComboBox after open and close");
 
-			spy.restore();
 			oCB.destroy();
 		});
 		</script>

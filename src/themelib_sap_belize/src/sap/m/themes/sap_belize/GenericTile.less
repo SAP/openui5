@@ -38,6 +38,28 @@
 	opacity: 0.5;
 }
 
+.sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveIcon {
+	border: 1px solid @sapUiButtonBorderColor;
+	background-color: @sapUiButtonBackground;
+	color: @sapUiButtonTextColor;
+
+	&:before {
+		color: @sapUiButtonIconColor;
+	}
+}
+
+.sapMGTLineMode .sapMGTLineModeHelpContainer:not(:last-child) {
+	-webkit-mask-image: linear-gradient(to right, #FFF ~"calc(100% - 1.5rem)", transparent);
+
+	html[dir~=rtl] & {
+		-webkit-mask-image: linear-gradient(to left, #FFF ~"calc(100% - 1.5rem)", transparent);
+	}
+
+	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+		text-overflow: clip;
+	}
+}
+
 /************************ LINE MODE COMPACT *****************/
 
 .sap-desktop .sapUiSizeCompact .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
@@ -211,5 +233,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 @media screen and (max-width: 374px) {
 	.sapMGTHdrTxt > .sapMText {
 		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMGTSubHdrTxt {
+		font-size: @sapMFontSmallSize;
 	}
 }

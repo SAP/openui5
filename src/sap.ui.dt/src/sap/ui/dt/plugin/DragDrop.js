@@ -298,14 +298,16 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @protected
 	 */
 	DragDrop.prototype.createGhost = function(oOverlay) {
-		var oGhostDom = oOverlay.getAssociatedDomRef();
+		var $GhostDom = oOverlay.getAssociatedDomRef();
 		var $ghost;
-		if (!oGhostDom) {
-			oGhostDom = this._getAssociatedDomCopy(oOverlay);
-			$ghost = jQuery(oGhostDom);
+		if (!$GhostDom) {
+			$GhostDom = this._getAssociatedDomCopy(oOverlay);
+			$ghost = $GhostDom;
 		} else {
 			$ghost = jQuery("<div></div>");
-			DOMUtil.cloneDOMAndStyles(oGhostDom, $ghost);
+			jQuery.makeArray($GhostDom).forEach(function(oNode) {
+				DOMUtil.cloneDOMAndStyles(oNode, $ghost);
+			});
 		}
 
 		var $ghostWrapper = jQuery("<div></div>").addClass("sapUiDtDragGhostWrapper");
@@ -331,7 +333,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			});
 		});
 
-		return $DomCopy.get(0);
+		return $DomCopy;
 	};
 
 	/**

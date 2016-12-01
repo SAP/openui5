@@ -10,8 +10,23 @@ sap.ui.define([],
 	return {
 		aggregations: {
 			content: {
-				domRef: ":sap-domref"
+				domRef: ":sap-domref",
+				actions: {
+					move: "moveElements"
+				}
 			}
+		},
+		actions: {
+			remove: {
+				changeType: "hideControl"
+			},
+			reveal: {
+				changeType: "unhideControl"
+			}
+		},
+		name: {
+			singular: "HORIZONTAL_LAYOUT_CONTROL_NAME",
+			plural: "HORIZONTAL_LAYOUT_CONTROL_NAME_PLURAL"
 		}
 	};
 

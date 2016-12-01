@@ -1,30 +1,18 @@
-/* ============================================= */
-/* CSS for control sap.ui.unified/Splitter.control */
-/* ============================================= */
-
-.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	color: @sapHCStandardFG;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: @sapHCHighlightBG;
-	color: @sapHCStandardFG;
-}
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* High Contrast Black theme               */
+/* ======================================= */
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	background-color: @sapHCStandardBG;
+	background-color: @sapUiGlobalBackgroundColor;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 1px dotted @sapHCStandardFG;
+	outline: 2px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 /* HCB Additional Styles */
-
-.sapUiLoSplitter > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	color: @sapHCStandardFG;
-}
 
 .sapUiLoSplitterH > .sapUiLoSplitterBar > .sapUiLoSplitterBarIcon,
 .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon {

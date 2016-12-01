@@ -31,6 +31,7 @@ sap.ui.define([ "sap/m/LoadState" ],
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
+		oRm.addClass("sapMGTScope" + oControl.getScope());
 		oRm.addClass(oControl.getFrameType());
 		if (bHasPress) {
 			oRm.writeAttribute("role", "button");

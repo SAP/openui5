@@ -44,9 +44,9 @@ sap.ui.define([
 			if (iMaxColumnsCount === 1) {
 
 				oModel.setProperty("/detail/fullScreenButton/visible", false);
-				oModel.setProperty("/detail/closeButton/visible", false);
+				oModel.setProperty("/detail/closeButton/visible", true);
 				oModel.setProperty("/detailDetail/fullScreenButton/visible", false);
-				oModel.setProperty("/detailDetail/closeButton/visible", false);
+				oModel.setProperty("/detailDetail/closeButton/visible", true);
 
 			} else {
 				if (sLayout === "67/33/0" || sLayout === "33/67/0") {
@@ -66,13 +66,13 @@ sap.ui.define([
 				if (sLayout === "0/100/0") {
 					oModel.setProperty("/detail/fullScreenButton/icon", "sap-icon://exit-full-screen");
 					oModel.setProperty("/detail/fullScreenButton/visible", true);
-					oModel.setProperty("/detail/closeButton/visible", false);
+					oModel.setProperty("/detail/closeButton/visible", true);
 				}
 
 				if (sLayout === "0/0/100") {
 					oModel.setProperty("/detailDetail/fullScreenButton/icon", "sap-icon://exit-full-screen");
 					oModel.setProperty("/detailDetail/fullScreenButton/visible", true);
-					oModel.setProperty("/detailDetail/closeButton/visible", false);
+					oModel.setProperty("/detailDetail/closeButton/visible", true);
 				}
 			}
 		}

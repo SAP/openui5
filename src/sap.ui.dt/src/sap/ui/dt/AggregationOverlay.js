@@ -85,16 +85,19 @@ function(jQuery, Overlay) {
 	/**
 	 * Returns a DOM representation for an aggregation, associated with this AggregationOverlay, if it can be found or undefined
 	 * Representation is searched in DOM based on DesignTimeMetadata defined for the parent Overlay
-	 * @return {Element} Associated with this AggregationOverlay DOM Element or null, if it can't be found
+	 * @return {jQuery} Associated with this AggregationOverlay DOM Element or null, if it can't be found
 	 * @public
 	 */
 	AggregationOverlay.prototype.getAssociatedDomRef = function() {
 		var oElement = this.getElementInstance();
 		var sAggregationName = this.getAggregationName();
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var vDomRef = oDesignTimeMetadata.getDomRef();
-		var vAggregationDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, vDomRef, sAggregationName);
-		return vAggregationDomRef;
+
+		return oDesignTimeMetadata.getAssociatedDomRef(
+			oElement,
+			oDesignTimeMetadata.getDomRef(),
+			sAggregationName
+		);
 	};
 
 	/**

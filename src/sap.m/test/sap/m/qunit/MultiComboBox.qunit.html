@@ -4064,7 +4064,7 @@
 		});
 
 		// assertions
-		ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
+		ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4092,7 +4092,7 @@
 		});
 
 		// assertions
-		ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
+		ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4322,12 +4322,15 @@
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oMultiComboBox.open();
+		this.clock.tick(1000);
+
 
 		oMultiComboBox.setSelectedItems([oItem]);
 		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
+		this.clock.tick(300);
 
 		strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
 
@@ -4427,6 +4430,38 @@
 
 		assert.ok(!oStub.called, "onfocusin of the MCB should not be triggered after dialog is opened");
 
+		oStub.restore();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test('Endless focus loop should not be triggered when token is deleted on phone', function(assert) {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oItem = new sap.ui.core.Item({ text: "test" }),
+			oFakeEvent = new sap.ui.base.Event,
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [oItem]
+			}).placeAt("MultiComboBox-content"),
+			oSpy = sinon.spy(sap.m.MultiComboBox.prototype, "focus"),
+			oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+
+		oMultiComboBox.setSelectedItems([oItem]);
+		sap.ui.getCore().applyChanges();
+
+		oHandleTokensStub.withArgs("type").returns(sap.m.Tokenizer.TokenChangeType.Removed);
+		oHandleTokensStub.withArgs("token").returns(oMultiComboBox._oTokenizer.getTokens()[0]);
+		oMultiComboBox._handleTokenChange(oFakeEvent);
+		this.clock.tick(300);
+
+		assert.ok(!oSpy.called, "onfocusin of the MCB should not be triggered after a token is deleted");
+
+		oSpy.restore();
+		oFakeEvent.destroy();
+		oHandleTokensStub.restore();
 		oMultiComboBox.destroy();
 	});
 
@@ -4586,6 +4621,85 @@
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
 
 		oMultiComboBox.destroy();
+	});
+
+
+	QUnit.module("Integrations");
+
+	QUnit.test("Data binding: update model data", function (assert) {
+		var oData = {
+				"ProductCollection": [
+					{
+						"ProductId": "1234567",
+						"Name": "Power Projector 5"
+					},
+					{
+						"ProductId": "123",
+						"Name": "Power Projector 1"
+					}
+					, {
+						"ProductId": "1234",
+						"Name": "Power Projector 2"
+					}
+					, {
+						"ProductId": "12345",
+						"Name": "Power Projector 3"
+					}
+					, {
+						"ProductId": "123456",
+						"Name": "Power Projector 4"
+					}
+				],
+				"selectedCustomKeys": [
+					"1234567"
+				]
+			},
+			oData2 = [
+				{
+					"ProductId": "Zzz1",
+					"Name": "Something absolutely different 1"
+				},
+				{
+					"ProductId": "Zzz2",
+					"Name": "Something absolutely different 2"
+				},
+				{
+					"ProductId": "Zzz3",
+					"Name": "Something absolutely different 3"
+				},
+				{
+					"ProductId": "1234567",
+					"Name": "Power Projector 5"
+				}
+			];
+
+		var oMultiCombo = new sap.m.MultiComboBox({
+			items: {
+				path: '/ProductCollection',
+				template: new sap.ui.core.Item({key: "{ProductId}", text: "{Name}"})
+			},
+			selectedKeys: "{/selectedCustomKeys}"
+		});
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		oMultiCombo.setModel(oModel);
+		oMultiCombo.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys are set to 1 item.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are properly propagated.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are properly propagated.");
+
+		oModel.setProperty("/ProductCollection", oData2);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys remain to 1.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected keys remain to 1.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are not changed as the same item is in the new data.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are not changed as the same item is in the new data.");
+
+		oMultiCombo.destroy();
+		oModel.destroy();
 	});
 </script>
 </head>

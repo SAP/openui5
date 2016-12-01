@@ -1,0 +1,92 @@
+{
+	"sap.ui5": {
+
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {
+				},
+				"sap.m": {
+				},
+				"sap.f" : {
+				}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"viewType": "XML",
+				"viewPath": "flexiblecolumnlayout",
+				"controlId": "fcl",
+				"transition": "slide",
+				"bypassed": {
+				}
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "master",
+					"target": "master",
+					"showMidColumn": false,
+					"showEndColumn": false,
+					"fullScreenColumn": "None"
+				},
+				{
+					"pattern": "detail/:fs:",
+					"name": "detail",
+					"target": [
+						"master",
+						"detail"
+					],
+					"showMidColumn": true,
+					"showEndColumn": false
+				},
+				{
+					"pattern": "detailDetail/:fs:",
+					"name": "detailDetail",
+					"target": [
+						"master",
+						"detail",
+						"detailDetail"
+					],
+					"showMidColumn": true,
+					"showEndColumn": true
+				},
+				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"fullScreenColumn": "End"
+				},
+				{
+					"pattern": "page3",
+					"name": "page3",
+					"target": "page3",
+					"fullScreenColumn": "End"
+				}
+			],
+			"targets": {
+				"master": {
+					"viewName": "Master",
+					"controlAggregation": "beginColumnPages"
+				},
+				"detail": {
+					"viewName": "Detail",
+					"controlAggregation": "midColumnPages"
+				},
+				"detailDetail": {
+					"viewName": "DetailDetail",
+					"controlAggregation": "endColumnPages"
+				},
+				"page2": {
+					"viewName": "Page2",
+					"controlAggregation": "endColumnPages"
+				},
+				"page3": {
+					"viewName": "Page3",
+					"controlAggregation": "endColumnPages"
+				}
+			}
+		}
+	}
+}

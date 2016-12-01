@@ -573,9 +573,8 @@ sap.ui.define([
 		// Timer used to prevent excessive calls of "_adjustLayout" in a very short time
 		this._iAdjustLayoutTimer = null;
 
+		// The first NavContainer should always be created in advance - it cannot be hidden
 		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"));
-		this.setAggregation("_midColumnNav", this._createNavContainer("mid"));
-		this.setAggregation("_endColumnNav", this._createNavContainer("end"));
 	};
 
 	/**
@@ -585,13 +584,16 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._createNavContainer = function (sColumn) {
+		var sColumnCap = sColumn.charAt(0).toUpperCase() + sColumn.slice(1);
+
 		return new NavContainer(this.getId() + "-" + sColumn + "ColumnNav", {
 			navigate: function(oEvent){
 				this._handleNavigationEvent(oEvent, false, sColumn);
 			}.bind(this),
 			afterNavigate: function(oEvent){
 				this._handleNavigationEvent(oEvent, true, sColumn);
-			}.bind(this)
+			}.bind(this),
+			defaultTransitionName: this["getDefaultTransitionName" + sColumnCap + "Column"]()
 		});
 	};
 
@@ -618,16 +620,66 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Getter for the Begin column nav container - this one is always eagerly created, thus returned directly
+	 * @returns {*}
+	 * @private
+	 */
 	FlexibleColumnLayout.prototype._getBeginColumn = function () {
 		return this.getAggregation("_beginColumnNav");
 	};
 
+	/**
+	 * Getter for the Mid column nav container - lazily created
+	 * @returns {*}
+	 * @private
+	 */
 	FlexibleColumnLayout.prototype._getMidColumn = function () {
-		return this.getAggregation("_midColumnNav");
+		var oMidColumn = this.getAggregation("_midColumnNav");
+
+		if (!oMidColumn) {
+			oMidColumn = this._createNavContainer("mid");
+			this.setAggregation("_midColumnNav", oMidColumn, true);
+			this._flushColumnContent("mid", oMidColumn);
+		}
+
+		return oMidColumn;
 	};
 
+	/**
+	 * Getter for the End column nav container - lazily created
+	 * @returns {*}
+	 * @private
+	 */
 	FlexibleColumnLayout.prototype._getEndColumn = function () {
-		return this.getAggregation("_endColumnNav");
+		var oEndColumn = this.getAggregation("_endColumnNav");
+
+		if (!oEndColumn) {
+			oEndColumn = this._createNavContainer("end");
+			this.setAggregation("_endColumnNav", oEndColumn, true);
+			this._flushColumnContent("end", oEndColumn);
+		}
+
+		return oEndColumn;
+	};
+
+	/**
+	 * Updates the content of a column by flushing its container div only
+	 * @param sColumn
+	 * @param oControl
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn, oControl) {
+		var oRm;
+
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		oRm = sap.ui.getCore().createRenderManager();
+		oRm.renderControl(oControl);
+		oRm.flush(this._$columns[sColumn][0], undefined, true);
+		oRm.destroy();
 	};
 
 	/**
@@ -700,7 +752,7 @@ sap.ui.define([
 			return vResult;
 		}
 
-		this._adjustLayout();
+		this._adjustLayoutDeferred();
 		return vResult;
 	};
 
@@ -770,12 +822,22 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._cacheDOMElements = function () {
+		this._cacheColumns();
+
+		if (!sap.ui.Device.system.phone) {
+			this._cacheArrows();
+		}
+	};
+
+	FlexibleColumnLayout.prototype._cacheColumns = function () {
 		this._$columns = {
 			begin: this.$("beginColumn"),
 			mid: this.$("midColumn"),
 			end: this.$("endColumn")
 		};
+	};
 
+	FlexibleColumnLayout.prototype._cacheArrows = function () {
 		this._$columnButtons = {
 			beginBack: this.$("beginBack"),
 			midForward: this.$("midForward"),
@@ -1102,7 +1164,7 @@ sap.ui.define([
 			aNeededArrows = [];
 
 		// Stop here if the control isn't rendered yet
-		if (typeof this._$columns === "undefined") {
+		if (typeof this._$columns === "undefined" || sap.ui.Device.system.phone) {
 			return;
 		}
 
@@ -1221,7 +1283,7 @@ sap.ui.define([
 	// Mid column proxies
 
 	FlexibleColumnLayout.prototype.getMidColumnPages = function () {
-		return this._getMidColumn().getPages();
+		return this.getAggregation("_midColumnNav") ? this._getMidColumn().getPages() : [];
 	};
 
 	FlexibleColumnLayout.prototype.addMidColumnPage = function (oPage) {
@@ -1246,7 +1308,7 @@ sap.ui.define([
 	// End column proxies
 
 	FlexibleColumnLayout.prototype.getEndColumnPages = function () {
-		return this._getEndColumn().getPages();
+		return this.getAggregation("_endColumnNav") ? this._getEndColumn().getPages() : [];
 	};
 
 	FlexibleColumnLayout.prototype.addEndColumnPage = function (oPage) {
@@ -1614,13 +1676,23 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.setDefaultTransitionNameMidColumn = function(sTransition) {
 		this.setProperty("defaultTransitionNameMidColumn", sTransition, true);
-		this._getMidColumn().setDefaultTransitionName(sTransition);
+
+		// Only update the nav container, if already created - else, the property will be applied on creation
+		if (this.getAggregation("_midColumnNav")) {
+			this._getMidColumn().setDefaultTransitionName(sTransition);
+		}
+
 		return this;
 	};
 
 	FlexibleColumnLayout.prototype.setDefaultTransitionNameEndColumn = function(sTransition) {
 		this.setProperty("defaultTransitionNameEndColumn", sTransition, true);
-		this._getEndColumn().setDefaultTransitionName(sTransition);
+
+		// Only update the nav container, if already created - else, the property will be applied on creation
+		if (this.getAggregation("_endColumnNav")) {
+			this._getEndColumn().setDefaultTransitionName(sTransition);
+		}
+
 		return this;
 	};
 

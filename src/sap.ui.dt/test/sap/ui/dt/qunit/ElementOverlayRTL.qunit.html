@@ -34,18 +34,28 @@
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 
 			QUnit.module("Given that an Overlay Container is created on RTL mode", {
-				beforeEach : function(assert) {
-					sap.ui.dt.Overlay.getOverlayContainer();
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : {}
+					});
+					this.oOverlay.placeInOverlayContainer();
+
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
-					sap.ui.dt.Overlay.removeOverlayContainer();
+					this.oButton.destroy();
+					this.oOverlay.destroy();
 				}
 			});
 
 			QUnit.test("then", function(assert) {
-				var $container = jQuery("#overlay-container");
-				assert.strictEqual($container.offset().top, 0, "overlay container position is still top = 0px");
-				assert.strictEqual($container.offset().left, 0, "overlay container position is still left = 0px");
+				assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
 			});
 
 		</script>

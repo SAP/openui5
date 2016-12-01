@@ -47,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
 			"sap.m.GenericTileMode",
+			"sap.m.GenericTileScope",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -67,6 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
+			"sap.m.PanelAccessibleRole",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
 			"sap.m.QuickViewGroupElementType",
@@ -1026,6 +1028,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines the scopes of GenericTile enabling the developer to implement different "flavors" of tiles.
+	 *
+	 * @enum {string}
+	 * @experimental since 1.46.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @public
+	 */
+	sap.m.GenericTileScope = {
+		/**
+		 * Default scope where no new functionalities are added to the tile.
+		 * @public
+		 */
+		Display: "Display",
+
+		/**
+		 * Action scope where a "remove" and "more" icon are added to the tile as an overlay.
+		 * @public
+		 */
+		Actions: "Actions"
+	};
+
+	/**
 	 * Different levels for headers
 	 *
 	 * @enum {string}
@@ -1882,6 +1906,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Available Panel Accessible Landmark Roles.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.PanelAccessibleRole = {
+
+		/**
+		 * Represents the ARIA role <code>complementary</code>.
+		 * A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy.
+		 * @public
+		 */
+		Complementary : "Complementary",
+
+		/**
+		 * Represents the ARIA role <code>Form</code>.
+		 * A landmark region that contains a collection of items and objects that, as a whole, create a form.
+		 * @public
+		 */
+		Form: "Form",
+
+		/**
+		 * Represents the ARIA role <code>Region</code>.
+		 * A section of a page, that is important enough to be included in a page summary or table of contents.
+		 * @public
+		 */
+		Region: "Region"
+	};
+
+		/**
 	 * Types for the placement of popover control.
 	 *
 	 * @enum {string}

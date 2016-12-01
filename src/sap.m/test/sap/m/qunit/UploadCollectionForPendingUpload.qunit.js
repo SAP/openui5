@@ -115,7 +115,7 @@ QUnit.test("Test for method _onChange for instantUpload = false", function(asser
 	var oFileUploader = oUploadCollection._getFileUploader();
 	oFileUploader.fireChange({
 		files: aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
 	assert.deepEqual(oFileUploader, sap.ui.getCore().byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
@@ -253,7 +253,7 @@ QUnit.test("Rendering of an item after change event", function(assert) {
 	var oFileUploader = this.oUploadCollection._getFileUploader();
 	oFileUploader.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() +  "-ta_filenameHL"), "FileName is rendered");
@@ -269,15 +269,15 @@ QUnit.test("Setting of 'hidden' property on FileUploader instances", function(as
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
-	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be set to hidden after the second instance has been created");
 	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	assert.ok(!jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The current FileUploader instance should not be hidden");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(':hidden'), "The first FileUploader instance should be still hidden");
@@ -293,13 +293,13 @@ QUnit.test("Positions of the FileUploader instances in the toolbar", function(as
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
-	sap.ui.getCore().applyChanges(); // it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
+	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
@@ -319,6 +319,25 @@ QUnit.test("Set tooltip of FileUploader", function(assert) {
 
 QUnit.test("File upload button is visible", function(assert) {
 	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
+});
+
+QUnit.test("Focus handling after change event", function(assert) {
+	//Arrange
+	var oFileUploader = this.oUploadCollection._getFileUploader();
+	oFileUploader.fireChange({
+		files: this.aFiles,
+		newValue : "file1"// needed to enable IE9 support and non failing tests
+	});
+	var oButtonFU = this.oUploadCollection._oHeaderToolbar.getContent()[2].$().find("button");
+	var oStubFUFocus = sinon.stub(jQuery.sap, "focus");
+	sap.ui.getCore().applyChanges();
+
+	//Act
+	//Assert
+	assert.ok(oStubFUFocus.withArgs(oButtonFU), "Set focus on FileUploader called");
+
+	//Restore
+	oStubFUFocus.restore();
 });
 
 QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
@@ -345,7 +364,7 @@ QUnit.test("File upload button is visible after setting the uploadButtonInvisibl
 	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 });
 
-QUnit.module("PendingUpload",  {
+QUnit.module("PendingUpload", {
 
 	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection({instantUpload : false});
@@ -366,13 +385,13 @@ QUnit.test("Test Upload", function(assert) {
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
@@ -384,13 +403,13 @@ QUnit.test("Test Upload with checks for file uploader visibility", function(asse
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	this.oUploadCollection.upload();
 
@@ -407,13 +426,13 @@ QUnit.test("Test Upload with checks for file uploader visibility when files have
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 
 	this.oUploadCollection.setUploadButtonInvisible(true);
@@ -431,13 +450,13 @@ QUnit.test("Test Upload with checks for file uploader visibility after changing 
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	var oFileUploader2 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	this.oUploadCollection.upload();
 	this.oUploadCollection.setUploadButtonInvisible(true);
@@ -454,7 +473,7 @@ QUnit.test("Creation of a new FileUploader Instance during rerendering" , functi
 	var oFileUploader1 = this.oUploadCollection._oFileUploader;
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
@@ -469,19 +488,19 @@ QUnit.test("Creation of a new FileUploader Instance during rerendering" , functi
 	oFileUploader1 = this.oUploadCollection._oFileUploader;
 	oFileUploader1.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	var oFileUploader2 = this.oUploadCollection._oFileUploader;
 	oFileUploader2.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
 	oFileUploader3.fireChange({
 		files: this.aFiles,
-		newValue : "file1"	// needed to enable IE9 support and non failing tests
+		newValue : "file1"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	assert.notEqual(oFileUploader1.getId(), this.oUploadCollection._oFileUploader.getId(), "After the Change Event has been fired a new FileUploader instance should be created");
@@ -592,25 +611,25 @@ QUnit.test("Check file list", function(assert) {
 	var oFileUploader = this.oUploadCollection._oFileUploader;
 	oFileUploader.fireChange({
 		files: aFiles,
-		newValue : "Screenshot.ico"	// needed to enable IE9 support and non failing tests
+		newValue : "Screenshot.ico"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile1];
 	oFileUploader.fireChange({
 		files: aFiles,
-		newValue : "Notes.txt"	// needed to enable IE9 support and non failing tests
+		newValue : "Notes.txt"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile2];
 	oFileUploader.fireChange({
 		files: aFiles,
-		newValue : "Document.txt"	// needed to enable IE9 support and non failing tests
+		newValue : "Document.txt"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 	aFiles = [oFile3];
 	oFileUploader.fireChange({
 		files: aFiles,
-		newValue : "Picture of a woman.png"	// needed to enable IE9 support and non failing tests
+		newValue : "Picture of a woman.png"// needed to enable IE9 support and non failing tests
 	});
 	sap.ui.getCore().applyChanges();
 
@@ -631,8 +650,10 @@ QUnit.test("Check file list", function(assert) {
 	var sNameBeforeDeletion = this.oUploadCollection.getItems()[0].getFileName();
 	assert.equal(iLengthBeforeDeletion, 4, "4 list items available");
 
-	this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];
-	this.oUploadCollection._oItemForDelete._iLineNumber = 0;
+	this.oUploadCollection._oItemForDelete = {
+			documentId : this.oUploadCollection.getItems()[0].getDocumentId(),
+			_iLineNumber : 0
+	}
 	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	sap.ui.getCore().applyChanges();
 

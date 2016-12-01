@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
-	function(TileRenderer, LoadState) {
+sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTileScope" ],
+	function(TileRenderer, LoadState, GenericTileScope) {
 	"use strict";
 
 	/**
@@ -34,6 +34,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.addClass("sapMGT");
+		oRm.addClass("sapMGTScope" + oControl.getScope());
 		oRm.addClass("sapMGTLineMode");
 		this._writeDirection(oRm);
 		if (sTooltipText) {
@@ -71,7 +72,13 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.writeAttribute("id", oControl.getId() + "-endMarker");
 			oRm.addClass("sapMGTEndMarker");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write(">");
+
+			if (oControl.getScope() === GenericTileScope.Actions) {
+				this._renderActionsScope(oRm, oControl);
+			}
+
+			oRm.write("</div>");
 
 			//hover and press style helper
 			oRm.write("<div");
@@ -103,12 +110,14 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			if (oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
-
 			oRm.write("</span>"); //.sapMGTLineModeHelpContainer
+
+			if (oControl.getScope() === GenericTileScope.Actions) {
+				this._renderActionsScope(oRm, oControl);
+			}
 
 			oRm.write("</div>"); //.sapMGTTouchArea
 		}
-
 		oRm.write("</span>"); //.sapMGT
 	};
 
@@ -148,6 +157,19 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getSubheader());
+		oRm.write("</span>");
+	};
+
+	GenericTileLineModeRenderer._renderActionsScope = function(oRm, oControl) {
+		oRm.write("<span");
+		oRm.writeAttribute("id", oControl.getId() + "-actions");
+		oRm.addClass("sapMGTActionsContainer");
+		oRm.writeClasses();
+		oRm.write(">");
+
+		oRm.renderControl(oControl._oMoreIcon);
+		oRm.renderControl(oControl._oRemoveIcon);
+
 		oRm.write("</span>");
 	};
 

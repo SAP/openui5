@@ -23,6 +23,14 @@ sap.ui.define([
 							actions: new Press(),
 							errorMessage : "Did not find the nav button on detail page"
 						});
+					},
+					iPressProcessorTab: function () {
+						return this.waitFor({
+							id: "iconTabFilterProcessor",
+							viewName: sViewName,
+							actions: new Press(),
+							errorMessage: "Did nor find the processor tab on detail page"
+						})
 					}
 
 				},
@@ -164,6 +172,28 @@ sap.ui.define([
 									errorMessage : "The line item list does not display " + iNumberOfItems + " items."
 								});
 							}
+						});
+					},
+
+					iShouldSeeTheShippingInfo : function () {
+						return this.waitFor({
+							id: "SimpleFormShipAddress",
+							viewName: "Shipping",
+							success: function () {
+								Opa5.assert.ok("The shipping tab is rendered");
+							},
+							errorMessage: "Did not find shipping info"
+						});
+					},
+
+					iShouldSeeTheProcessorInfo : function () {
+						return this.waitFor({
+							id: "SimpleFormProcessorInfo",
+							viewName: "Processor",
+							success: function () {
+								Opa5.assert.ok("The processor tab is rendered");
+							},
+							errorMessage: "Did not find proceesor info"
 						});
 					}
 				}

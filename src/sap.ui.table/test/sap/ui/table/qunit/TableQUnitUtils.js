@@ -195,6 +195,21 @@ function getRowHeader(iRow, bFocus, assert) {
 	return jQuery(oCell);
 }
 
+function getRowAction(iRow, bFocus, assert) {
+	var oCell = jQuery.sap.domById(oTable.getId() + "-rowact" + iRow);
+	if (bFocus) {
+		oCell.focus();
+	}
+	if (assert) {
+		if (bFocus) {
+			assert.ok(oCell === document.activeElement, "Row Action " + iRow + " focused");
+		} else {
+			assert.ok(oCell != document.activeElement, "Row Action " + iRow + " not focused");
+		}
+	}
+	return jQuery(oCell);
+}
+
 function getSelectAll(bFocus, assert) {
 	var oCell = jQuery.sap.domById(oTable.getId() + "-selall");
 	if (bFocus) {
@@ -220,7 +235,7 @@ function setFocusOutsideOfTable(sId) {
 
 function checkFocus(oCell, assert) {
 	assert.ok(oCell === document.activeElement || oCell.get && oCell.get(0) === document.activeElement,
-		"Focus is on the expected position: " + jQuery(oCell).attr("id") + " == " + jQuery(document.activeElement).attr("id"));
+		"Focus is on: " + jQuery(document.activeElement).attr("id") + ", should be on: " + jQuery(oCell).attr("id"));
 	return jQuery(document.activeElement);
 }
 
@@ -229,15 +244,18 @@ function fakeGroupRow(iRow) {
 	var $Row = oTable.$("rows-row" + iRow);
 	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
 	var $RowHdr = oTable.$("rowsel" + iRow);
+	var $RowAct = oTable.$("rowact" + iRow);
 
 	$Row.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, true, true, 1, null);
+	$RowAct.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, true, true, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,
-		hdr: $RowHdr
+		hdr: $RowHdr,
+		act: $RowAct
 	};
 }
 
@@ -246,14 +264,33 @@ function fakeSumRow(iRow) {
 	var $Row = oTable.$("rows-row" + iRow);
 	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
 	var $RowHdr = oTable.$("rowsel" + iRow);
+	var $RowAct = oTable.$("rowact" + iRow);
 
 	$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, false, false, 1, null);
+	$RowAct.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, false, false, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,
-		hdr: $RowHdr
+		hdr: $RowHdr,
+		act: $RowAct
 	};
 }
+
+function initRowActions(oTable, iCount, iNumberOfActions) {
+	oTable.setRowActionCount(iCount);
+	var oRowAction = new sap.ui.table.RowAction();
+	var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
+	for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
+		var oItem = new sap.ui.table.RowActionItem({
+			icon: aActions[i].icon,
+			text: aActions[i].text,
+			type: aActions[i].type || "Custom"
+		});
+		oRowAction.addItem(oItem);
+	}
+	oTable.setRowActionTemplate(oRowAction);
+	sap.ui.getCore().applyChanges();
+};

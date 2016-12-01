@@ -27,7 +27,7 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 								return {changeType: oElement.name};
 							}
 						},
-						childrenName : {
+						childNames : {
 							singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 							plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 						}
@@ -39,7 +39,7 @@ QUnit.module("Given that an ElementDesignTimeMetadata is created for a control",
 						}
 					},
 					testAggregation3 : {
-						childrenName : function(oElement){
+						childNames : function(oElement){
 							//fake 2 cases:
 							//1. childNames is a function, that returns the object
 							//2. singular and plural can be functions to handle cases with self made resource bundling

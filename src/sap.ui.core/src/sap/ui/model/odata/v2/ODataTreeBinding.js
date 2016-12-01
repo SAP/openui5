@@ -1161,6 +1161,9 @@ sap.ui.define(['jquery.sap.global',
 			this.oRootContext = null;
 			this._bRootMissing = false;
 
+			// TODO: Remove this once the sync refresh after change is done in the model
+			delete this._bSupressRefreshAfterChange;
+
 			// abort running request and clear the map afterwards
 			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
 				if (oRequestHandle) {
@@ -1241,10 +1244,15 @@ sap.ui.define(['jquery.sap.global',
 			}
 		}
 		if (bForceUpdate || bChangeDetected) {
-			this.resetData();
-			this.bNeedsUpdate = false;
-			this.bRefresh = true;
-			this._fireRefresh({reason: ChangeReason.Refresh});
+			// if the refresh is suppressed, the data will not be reset and the following get*Context call will
+			// return the same data as before
+			if (!this._bSupressRefreshAfterChange) {
+				this.resetData();
+				// TODO: Abort pending requests --> like ODataListBinding
+				this.bNeedsUpdate = false;
+				this.bRefresh = true;
+				this._fireRefresh({reason: ChangeReason.Refresh});
+			}
 		}
 	};
 

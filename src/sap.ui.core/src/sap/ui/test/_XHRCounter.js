@@ -38,6 +38,19 @@ sap.ui.define([
 	// Check if sinon is already faking the Xhr
 	hookIntoSinonRestore();
 
+	// Hook into Xhr send for sinon Xhrs
+	var fnOriginalFakeSend = sinon.FakeXMLHttpRequest.prototype.send;
+	sinon.FakeXMLHttpRequest.prototype.send = function () {
+		this.addEventListener("readystatechange", function() {
+			if (this.readyState === 4) {
+				aFakeXHRs.splice(aXHRs.indexOf(this), 1);
+			}
+		});
+		aFakeXHRs.push(this);
+
+		return fnOriginalFakeSend.apply(this, arguments);
+	};
+
 	// Hook into Xhr send for regular Xhrs
 	var fnOriginalSend = XMLHttpRequest.prototype.send;
 	XMLHttpRequest.prototype.send = function () {
@@ -57,19 +70,6 @@ sap.ui.define([
 		this.method = sMethod;
 		this.url = sUrl;
 		return fnOriginalOpen.apply(this, arguments);
-	};
-
-	// Hook into Xhr send for sinon Xhrs
-	var fnOriginalFakeSend = sinon.FakeXMLHttpRequest.prototype.send;
-	sinon.FakeXMLHttpRequest.prototype.send = function () {
-		this.addEventListener("readystatechange", function() {
-			if (this.readyState === 4) {
-				aFakeXHRs.splice(aXHRs.indexOf(this), 1);
-			}
-		});
-		aFakeXHRs.push(this);
-
-		return fnOriginalFakeSend.apply(this, arguments);
 	};
 
 	function logPendingRequests () {

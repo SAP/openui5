@@ -252,16 +252,18 @@
 			});
 
 			QUnit.test("when an overlay is created via API function 'createOverlay'...", function(assert) {
+				var done = assert.async();
 				var oButton = new sap.m.Button();
 				var oOverlay = this.oDesignTime.createOverlay(oButton);
 
 				oOverlay.setLazyRendering(false);
 
-				sap.ui.getCore().applyChanges();
-
-				assert.ok(oOverlay.getDomRef(), "then a created overlay is also visible");
-
-				oOverlay.destroy();
+				this.oDesignTime.attachEventOnce("elementOverlayCreated", function() {
+					sap.ui.getCore().applyChanges();
+					assert.ok(oOverlay.getDomRef(), "then a created overlay is also visible");
+					oOverlay.destroy();
+					done();
+				});
 			});
 
 			QUnit.module("Given that an DesignTime is created for two root controls", {

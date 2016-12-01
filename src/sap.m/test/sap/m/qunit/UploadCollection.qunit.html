@@ -341,6 +341,51 @@
 		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar-Label"), "Info toolbar label is rendered");
 	});
 
+	QUnit.test("No data rendering", function(assert) {
+		//Arrange
+		this.oUploadCollection.unbindAggregation("items");
+		var oSpy = sinon.spy(sap.m.UploadCollectionRenderer, "renderNoData");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(oSpy.calledOnce, "no data rendering in upload collection is called");
+		oSpy.restore();
+	});
+
+	QUnit.test("No data rendering - with default text", function(assert) {
+		//Arrange
+		this.oUploadCollection.unbindAggregation("items");
+		var sNoDataText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT");
+		var sNoDataDescription = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oUploadCollection.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
+		assert.equal(this.oUploadCollection.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), sNoDataText, "default no data text is rendered in upload collection");
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload collection");
+	});
+
+	QUnit.test("No data rendering - with user specified no data text", function(assert) {
+		//Arrange
+		this.oUploadCollection.setNoDataText("myNoDataText");
+		this.oUploadCollection.unbindAggregation("items");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+	});
+
+	QUnit.test("No data rendering - with user specified no data description", function(assert) {
+		//Arrange
+		this.oUploadCollection.setNoDataDescription("myNoDataDescription");
+		this.oUploadCollection.unbindAggregation("items");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
+	});
+
 	QUnit.module("Rendering of UploadCollection with hideUploadButton = true", {
 
 		beforeEach : function() {
@@ -523,7 +568,7 @@
 			done();
 		});
 		oDialog.getButtons()[0].firePress();
-		sap.ui.getCore().applyChanges();
+		this.oUploadCollection.removeItem(oItem);
 		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
 	});
 
@@ -980,6 +1025,71 @@
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
+	QUnit.module("Drag and drop", {
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Drag file enter UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		//Act
+		$RootNode.trigger("dragenter");
+		//Assert
+		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file over UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		//Act
+		$RootNode.trigger("dragover");
+		//Assert
+		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file leave UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		this.oUploadCollection._oLastEnterUIArea = $RootNode[0];
+		//Act
+		this.oUploadCollection._$RootNode.trigger("dragleave");
+		//Assert
+		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
+	});
+
+	QUnit.test("Drag file enter UploadCollection", function(assert) {
+		//Arrange
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		//Act
+		$DragDropArea.trigger("dragenter");
+		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file leave UploadCollection", function(assert) {
+		//Arrange
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
+		$DragDropArea.trigger("dragleave");
+		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
 	QUnit.module("Event tests", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -1141,15 +1251,19 @@
 	});
 
 	QUnit.test("Event fileDeleted", function (assert) {
+		var oFileDelete = this.oUploadCollection.getItems()[1];
 		function onDelete (oEvent) {
 			// deprecated
 			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
 			// new
-			assert.equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
+			assert.equal(oEvent.getParameter("item"), oFileDelete, "Correct item in event delete");
 		}
 		assert.expect(2);
 		this.oUploadCollection.attachFileDeleted(onDelete);
-		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; // contributor : John Smith, documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde"
+		this.oUploadCollection._oItemForDelete = {
+				documentId : oFileDelete.getDocumentId(),
+				_iLineNumber : 1
+		}
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	});
 
@@ -1508,7 +1622,7 @@
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
-			equal( this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
+			assert.equal( this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
 		}
 
 		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
@@ -1562,7 +1676,6 @@
 		if (bPropagate) {
 			switch (sProperty) {
 				case "noDataText":
-					assert.deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
 					break;
 				default:
 					assert.deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
@@ -1588,7 +1701,7 @@
 		assert.strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
-		assert.equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT"), "Property 'noDataText' properly rendered in DOM");
 		assert.strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
@@ -1648,7 +1761,8 @@
 	QUnit.test("noDataText", function(assert) {
 		var sNoDataText = "myNoDataText";
 		testSetter(this.oUploadCollection, "noDataText", sNoDataText, true, assert);
-		assert.equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
 	});
 
 	QUnit.test("sameFilenameAllowed", function(assert) {
