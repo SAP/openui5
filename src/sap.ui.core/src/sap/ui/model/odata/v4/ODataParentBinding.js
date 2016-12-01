@@ -84,7 +84,7 @@ sap.ui.define([
 
 		if (!oPromise.isFulfilled()) {
 			this.oCache = oCacheProxy = {
-				hasPendingChanges : function () {
+				hasPendingChangesForPath : function () {
 					return false;
 				},
 				post : function () {
@@ -97,7 +97,7 @@ sap.ui.define([
 						return that.oCache.read.apply(that.oCache, aReadArguments);
 					});
 				},
-				resetChanges : function () {},
+				resetChangesForPath : function () {},
 				setActive : function () {},
 				update : function () {
 					throw new Error("PATCH request not allowed");
@@ -151,20 +151,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
-	 * meaning updates that have not yet been successfully sent to the server.
-	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @public
-	 * @since 1.39.0
-	 */
-	ODataParentBinding.prototype.hasPendingChanges = function () {
-		return this._hasPendingChanges(true);
-	};
-
-	/**
 	 * Initializes the OData list binding. Fires a 'change' event in case the binding has a
 	 * resolved path.
 	 *
@@ -177,20 +163,6 @@ sap.ui.define([
 		if (!this.bRelative || this.oContext) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
-	};
-
-	/**
-	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
-	 *
-	 * @throws {Error}
-	 *   If there is a change of this binding which has been sent to the server and for which there
-	 *   is no response yet.
-	 *
-	 * @public
-	 * @since 1.40.1
-	 */
-	ODataParentBinding.prototype.resetChanges = function () {
-		this._resetChanges(true);
 	};
 
 	/**

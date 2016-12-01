@@ -67,9 +67,10 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
-	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
 	 */
@@ -311,26 +312,6 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.getValue = function () {
 		return this.vValue;
-	};
-
-	/**
-	 * Returns <code>true</code> if the binding has pending changes, meaning updates that have not
-	 * yet been sent to the server.
-	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @public
-	 * @since 1.39.0
-	 */
-	ODataPropertyBinding.prototype.hasPendingChanges = function () {
-		if (this.oCache) {
-			return this.oCache.hasPendingChanges("");
-		}
-		if (this.oContext) {
-			return this.oContext.hasPendingChanges(this.sPath);
-		}
-		return false;
 	};
 
 	/**

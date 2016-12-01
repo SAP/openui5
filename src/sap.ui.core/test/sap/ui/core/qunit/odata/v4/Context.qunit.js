@@ -169,19 +169,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges", function (assert) {
+	QUnit.test("hasPendingChangesForPath", function (assert) {
 		var oBinding = {
-				_hasPendingChanges : function () {}
+				hasPendingChangesForPath : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			oResult = {},
 			sPath = "bar";
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(oBinding).expects("_hasPendingChanges")
-			.withExactArgs(undefined, "~bar~").returns(oResult);
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("~bar~").returns(oResult);
 
-		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
+		assert.strictEqual(oContext.hasPendingChangesForPath(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -209,17 +209,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges", function (assert) {
+	QUnit.test("resetChangesForPath", function (assert) {
 		var oBinding = {
-				_resetChanges : function () {}
+				resetChangesForPath : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			sPath = "bar";
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(oBinding).expects("_resetChanges").withExactArgs(undefined, "~bar~");
+		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("~bar~");
 
-		oContext.resetChanges(sPath);
+		oContext.resetChangesForPath(sPath);
 	});
 
 	//*********************************************************************************************

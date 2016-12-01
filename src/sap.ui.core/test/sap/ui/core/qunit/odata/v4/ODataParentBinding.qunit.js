@@ -38,17 +38,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges", function (assert) {
-		var oBinding = new ODataParentBinding(),
-			bResult = {};
-
-		this.mock(oBinding).expects("_hasPendingChanges").withExactArgs(true).returns(bResult);
-
-		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges(), bResult);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("initialize: absolute", function (assert) {
 		var oBinding = new ODataParentBinding({
 				bRelative : false,
@@ -87,16 +76,6 @@ sap.ui.require([
 
 		// code under test
 		oBinding.initialize();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChanges", function (assert) {
-		var oBinding = new ODataParentBinding();
-
-		this.mock(oBinding).expects("_resetChanges").withExactArgs(true);
-
-		// code under test
-		oBinding.resetChanges();
 	});
 
 	//*********************************************************************************************
@@ -310,8 +289,8 @@ sap.ui.require([
 				// code under test
 				oCacheProxy = oBinding.createCache(createCache, oPathPromise, oFilterPromise);
 
-				assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
-				assert.strictEqual(typeof oCacheProxy.resetChanges, "function");
+				assert.strictEqual(oCacheProxy.hasPendingChangesForPath(), false);
+				assert.strictEqual(typeof oCacheProxy.resetChangesForPath, "function");
 				assert.strictEqual(typeof oCacheProxy.setActive, "function");
 				assert.throws(function () {
 					oCacheProxy.post();

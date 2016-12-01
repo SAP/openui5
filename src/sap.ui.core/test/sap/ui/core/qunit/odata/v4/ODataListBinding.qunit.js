@@ -174,7 +174,7 @@ sap.ui.require([
 		 */
 		getCacheMock : function () {
 			var oCache = {
-					hasPendingChanges : function () { return false; },
+					hasPendingChangesForPath : function () { return false; },
 					read : function () {},
 					toString : function () { return "/service/EMPLOYEES"; }
 				};
@@ -1877,7 +1877,7 @@ sap.ui.require([
 				var oBinding,
 					oBindingMock = this.mock(ODataListBinding.prototype),
 					oCacheProxy = {
-						hasPendingChanges : function () {
+						hasPendingChangesForPath : function () {
 							return false;
 						}
 					},
@@ -2621,7 +2621,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.aContexts[-1], oContext, "Transient context");
 			assert.ok(bChangeFired, "Change event fired");
 
-			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
+			oCacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 			// code under test
 			oBinding.hasPendingChanges();

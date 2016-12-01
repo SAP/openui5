@@ -1237,7 +1237,7 @@ sap.ui.require([
 		var oPropertyBinding = this.oModel.bindProperty("/absolute"),
 			oResult = {};
 
-		this.oSandbox.mock(oPropertyBinding.oCache).expects("hasPendingChanges")
+		this.oSandbox.mock(oPropertyBinding.oCache).expects("hasPendingChangesForPath")
 			.withExactArgs("").returns(oResult);
 
 		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
@@ -1246,13 +1246,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
 		var oContext = {
-				hasPendingChanges : function () {},
+				hasPendingChangesForPath : function () {},
 				getPath : function () {return "Name";}
 			},
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
 			oResult = {};
 
-		this.oSandbox.mock(oContext).expects("hasPendingChanges").withExactArgs("Name")
+		this.oSandbox.mock(oContext).expects("hasPendingChangesForPath").withExactArgs("Name")
 			.returns(oResult);
 
 		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
