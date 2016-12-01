@@ -4,10 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/model/Context",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (BaseContext, _ODataHelper, _Helper, _SyncPromise) {
+], function (BaseContext, _Helper, _SyncPromise) {
 	"use strict";
 
 	/*
@@ -390,7 +389,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.getQueryOptions = function (sPath) {
-		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
+		return this.oBinding.getQueryOptions(sPath);
 	};
 
 	/**
@@ -415,10 +414,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.hasPendingChanges = function (sPath) {
-		// since we send a path, bAskParent is not needed and set to undefined
-		return _ODataHelper.hasPendingChanges(this.oBinding, undefined,
-			_Helper.buildPath(this.iIndex, sPath));
+	Context.prototype.hasPendingChangesForPath = function (sPath) {
+		return this.oBinding.hasPendingChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**
@@ -515,9 +512,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.resetChanges = function (sPath) {
-		// since we send a path, bAskParent is not needed and set to undefined
-		_ODataHelper.resetChanges(this.oBinding, undefined, _Helper.buildPath(this.iIndex, sPath));
+	Context.prototype.resetChangesForPath = function (sPath) {
+		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**

@@ -537,7 +537,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 
 		/**
 		 * Consumes the next token in the input string and pushes it to the array of tokens.
+		 *
 		 * @returns {boolean} whether a token is recognized
+		 * @throws {Error|Object|SyntaxError}
+		 *   <code>fnResolveBinding</code> may throw <code>SyntaxError</code>;
+		 *   <code>oTokenizer.setIndex()<code> may throw <code>Error</code>;
+		 *   <code>oTokenizer<code> may also throw <code>{name: 'SyntaxError', ...}</code>
 		 */
 		function consumeToken() {
 			var ch, oBinding, iIndex, aMatches, oToken;
@@ -598,6 +603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			while (consumeToken()) { /* deliberately empty */ }
 			/* eslint-enable no-empty */
 		} catch (e) {
+			// Note: new SyntaxError().name === "SyntaxError"
 			if (e.name === "SyntaxError") { //handle tokenizer errors
 				error(e.message, e.text, e.at);
 			} else {
@@ -786,9 +792,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
 			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
 			jQuery.sap.measure.end(sPerformanceParse);
-//			if (iStart === undefined && oTokens.at < sInput.length) {
-//				error("Invalid token in expression", sInput, oTokens.at);
-//			}
 			if (!oTokens.parts.length) {
 				return {
 					constant: oResult.formatter(),

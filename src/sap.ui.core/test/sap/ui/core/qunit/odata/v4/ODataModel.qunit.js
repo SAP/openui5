@@ -11,9 +11,9 @@ sap.ui.require([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -23,7 +23,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString, ODataUtils,
-		OperationMode, _ODataHelper, Context, _MetadataRequestor, _Requestor, _SyncPromise,
+		OperationMode, Context, _MetadataRequestor, _Parser, _Requestor, _SyncPromise,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
 		TestUtils) {
 	/*global QUnit, sinon */
@@ -48,6 +48,16 @@ sap.ui.require([
 				}
 			}
 		});
+
+	/**
+	 * Clones the given object
+	 *
+	 * @param {any} v the object
+	 * @returns {any} the clone
+	 */
+	function clone(v) {
+		return v && JSON.parse(JSON.stringify(v));
+	}
 
 	/**
 	 * Creates a V4 OData service for <code>TEA_BUSI</code>.
@@ -126,7 +136,7 @@ sap.ui.require([
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
 		oMetaModel = oModel.getMetaModel();
 
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs(null, {}, false, true)
 			.returns(mModelOptions);
 		this.mock(_MetadataRequestor).expects("create")
@@ -156,7 +166,7 @@ sap.ui.require([
 		var oModel,
 			mModelOptions = {};
 
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs(null, {"sap-client" : "111"}, false, true)
 			.returns(mModelOptions);
 
@@ -312,8 +322,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
 		var oError = new Error(),
-			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
+			oModelMock = this.mock(oModel),
 			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
 			oContext = Context.create(oModel, undefined, "/TEAMS('42')"),
 			oListBinding = oModel.bindList("/TEAMS"),
@@ -344,12 +354,12 @@ sap.ui.require([
 		// check: no refresh on binding with relative path
 		this.mock(oRelativeContextBinding).expects("refresh").never();
 		this.mock(oPropertyBinding).expects("refresh").never();
-		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
+		oModelMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
 		oModel.refresh("myGroup");
 
-		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+		oModelMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
@@ -417,11 +427,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch", function (assert) {
 		var oModel = createModel(),
+			oModelMock = this.mock(oModel),
 			oReturn,
 			oSubmitPromise = {};
 
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
-		this.mock(oModel).expects("_submitBatch").withExactArgs("groupId")
+		oModelMock.expects("checkGroupId").withExactArgs("groupId", true);
+		oModelMock.expects("_submitBatch").withExactArgs("groupId")
 			.returns(oSubmitPromise);
 
 		// code under test
@@ -433,11 +444,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch, invalid group ID", function (assert) {
 		var oError = new Error(),
-			oModel = createModel();
+			oModel = createModel(),
+			oModelMock = this.mock(oModel);
 
-		this.mock(oModel).expects("_submitBatch").never();
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
-			.throws(oError);
+		oModelMock.expects("_submitBatch").never();
+		oModelMock.expects("checkGroupId").withExactArgs("$auto", true).throws(oError);
 
 		assert.throws(function () {
 			oModel.submitBatch("$auto");
@@ -448,7 +459,7 @@ sap.ui.require([
 	QUnit.test("resetChanges with group ID", function (assert) {
 		var oModel = createModel();
 
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("groupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("groupId");
 
 		// code under test
@@ -460,7 +471,7 @@ sap.ui.require([
 	QUnit.test("resetChanges w/o group ID", function (assert) {
 		var oModel = createModel("", {updateGroupId : "updateGroupId"});
 
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("updateGroupId", true);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
 
 		// code under test
@@ -472,8 +483,7 @@ sap.ui.require([
 		var oError = new Error(),
 			oModel = createModel();
 
-		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
-			.throws(oError);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("$auto", true).throws(oError);
 		this.mock(oModel.oRequestor).expects("cancelChanges").never();
 
 		assert.throws(function () {
@@ -724,6 +734,206 @@ sap.ui.require([
 				+ "sap.ui.model.odata.v4.Context"), "sap.ui.model.odata.v4.Context not allowed");
 	});
 	// TODO allow v4.Context and return v4.Context
+
+	//*********************************************************************************************
+	QUnit.test("checkGroupId", function (assert) {
+		var oModel = createModel();
+
+		// valid group IDs
+		oModel.checkGroupId("myGroup");
+		oModel.checkGroupId("$auto");
+		oModel.checkGroupId("$direct");
+		oModel.checkGroupId(undefined);
+		oModel.checkGroupId("myGroup", true);
+
+		// invalid group IDs
+		["", "$invalid", 42].forEach(function (vGroupId) {
+			assert.throws(function () {
+				oModel.checkGroupId(vGroupId);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
+
+		// invalid application group IDs
+		["", "$invalid", 42, "$auto", "$direct", undefined].forEach(function (vGroupId) {
+			assert.throws(function () {
+				oModel.checkGroupId(vGroupId, true);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
+
+		// invalid group with custom message
+		assert.throws(function () {
+			oModel.checkGroupId("$invalid", false, "Custom error message: ");
+		}, new Error("Custom error message: $invalid"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
+		var aAllowedParams = ["$$groupId"],
+			oModel = createModel();
+
+		assert.deepEqual(oModel.buildBindingParameters(undefined), {});
+		assert.deepEqual(oModel.buildBindingParameters({}), {});
+		assert.deepEqual(oModel.buildBindingParameters({$$groupId : "$auto"}, aAllowedParams),
+			{$$groupId : "$auto"});
+		assert.deepEqual(oModel.buildBindingParameters(
+			{$$groupId : "$direct", custom : "foo"}, aAllowedParams), {$$groupId : "$direct"});
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$unsupported : "foo"});
+		}, new Error("Unsupported binding parameter: $$unsupported"));
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$groupId : ""}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$groupId': "));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$groupId : "~invalid"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$groupId': ~invalid"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$groupId : "$auto"});
+		}, new Error("Unsupported binding parameter: $$groupId"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$operationMode", function (assert) {
+		var aAllowedParams = ["$$operationMode"],
+			oModel = createModel();
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$operationMode : "Client"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Client"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$operationMode : "Auto"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Auto"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$operationMode : "any"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: any"));
+
+		assert.deepEqual(oModel.buildBindingParameters({$$operationMode : "Server"},
+				aAllowedParams),
+			{$$operationMode : "Server"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$updateGroupId", function (assert) {
+		var aAllowedParams = ["$$updateGroupId"],
+			oModel = createModel();
+
+		assert.deepEqual(oModel.buildBindingParameters({$$updateGroupId : "myGroup"},
+				aAllowedParams),
+			{$$updateGroupId : "myGroup"});
+		assert.deepEqual(oModel.buildBindingParameters(
+			{$$updateGroupId : "$direct", custom : "foo"}, aAllowedParams),
+			{$$updateGroupId : "$direct"});
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$unsupported : "foo"}, aAllowedParams);
+		}, new Error("Unsupported binding parameter: $$unsupported"));
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$updateGroupId : "~invalid"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$updateGroupId': ~invalid"));
+	});
+
+	//*********************************************************************************************
+	[{
+		mModelOptions : {"sap-client" : "111"},
+		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
+		bSystemQueryOptionsAllowed : true
+	}, {
+		mOptions : {
+			"$apply" : "apply",
+			"$filter" : "foo eq 42",
+			"$orderby" : "bar",
+			"$search" : '"foo bar" AND NOT foobar'
+		},
+		bSystemQueryOptionsAllowed : true
+	}, {
+		mModelOptions : {"custom" : "bar"},
+		mOptions : {"custom" : "foo"}
+	}, {
+		mModelOptions : undefined,
+		mOptions : undefined
+	}, {
+		mModelOptions : null,
+		mOptions : {"sap-client" : "111"},
+		bSapAllowed : true
+	}].forEach(function (o) {
+		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
+			var mOptions,
+				mOriginalModelOptions = clone(o.mModelOptions),
+				mOriginalOptions = clone(o.mOptions);
+
+			mOptions = ODataModel.prototype.buildQueryOptions(o.mModelOptions, o.mOptions,
+				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
+
+			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
+			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
+			assert.deepEqual(o.mOptions, mOriginalOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryOptions with $$ options", function (assert) {
+		assert.deepEqual(ODataModel.prototype.buildQueryOptions({}, {$$groupId : "$direct"}), {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
+		var oExpand = {"foo" : true},
+			oParserMock = this.mock(_Parser),
+			aSelect = ["bar"];
+
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$expand=foo").returns({"$expand" : oExpand});
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$select=bar").returns({"$select" : aSelect});
+
+		assert.deepEqual(ODataModel.prototype.buildQueryOptions({}, {
+			$expand : "foo",
+			$select : "bar"
+		}, true), {
+			$expand : oExpand,
+			$select : aSelect
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		mModelOptions : {},
+		mOptions : {"$foo" : "foo"},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $foo is not supported"
+	}, {
+		mModelOptions : {},
+		mOptions : {"@alias" : "alias"},
+		bSystemQueryOptionsAllowed : true,
+		error : "Parameter @alias is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : {"foo" : true}},
+		error : "System query option $expand is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : {"foo" : {"$unknown" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $unknown is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option select is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"sap-foo" : "300"},
+		error : "Custom query option sap-foo is not supported"
+	}].forEach(function (o) {
+		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
+			assert.throws(function () {
+				ODataModel.prototype.buildQueryOptions(o.mModelOptions, o.mOptions,
+					o.bSystemQueryOptionsAllowed);
+			}, new Error(o.error));
+		});
+	});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

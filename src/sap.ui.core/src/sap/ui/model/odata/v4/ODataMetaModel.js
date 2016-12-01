@@ -12,10 +12,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
-	"./_ODataHelper",
+	"./lib/_Helper",
 	"./lib/_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, BaseContext, FilterProcessor, JSONListBinding,
-		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
+		MetaModel, PropertyBinding, _Helper, _SyncPromise) {
 	"use strict";
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
@@ -414,7 +414,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
-
 		return this.fetchEntityContainer().then(function (mScope) {
 			var sCandidate, // the encoded candidate for the canonical path in case it's composed
 				oEntityContainer = mScope[mScope.$EntityContainer],
@@ -476,7 +475,7 @@ sap.ui.define([
 			 */
 			function keyPredicate(oEntityInstance, sPath) {
 				try {
-					return _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+					return _Helper.getKeyPredicate(oEntityType, oEntityInstance);
 				} catch (e) {
 					error(e.message, sPath);
 				}
@@ -760,16 +759,19 @@ sap.ui.define([
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
 					}
 				} else {
-					if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
-						// split trailing @sapui.name first
-						iIndexOfAt = sSegment.length - 11;
-					} else {
-						iIndexOfAt = sSegment.indexOf("@");
+					// split trailing computed annotation, @sapui.name, or annotation
+					iIndexOfAt = sSegment.indexOf("@@");
+					if (iIndexOfAt < 0) {
+						if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
+							iIndexOfAt = sSegment.length - 11;
+						} else {
+							iIndexOfAt = sSegment.indexOf("@");
+						}
 					}
 					if (iIndexOfAt > 0) {
 						// <17.2 SimpleIdentifier|17.3 QualifiedName>@<annotation[@annotation]>
 						// Note: only the 1st annotation may use external targeting, the rest is
-						// pure "JSON" drill-down (except for "@sapui.name")!
+						// pure "JSON" drill-down (except for computed annotations/"@sapui.name")!
 						if (!step(sSegment.slice(0, iIndexOfAt), i, aSegments)) {
 							return false;
 						}

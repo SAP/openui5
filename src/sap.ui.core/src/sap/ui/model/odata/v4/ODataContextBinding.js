@@ -8,13 +8,13 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./_ODataHelper",
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
-	"./lib/_SyncPromise"
-], function (jQuery, Binding, ChangeReason, ContextBinding, _ODataHelper, Context, _Cache,
-		_Helper, _SyncPromise) {
+	"./lib/_SyncPromise",
+	"./ODataParentBinding"
+], function (jQuery, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper, _SyncPromise,
+		asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -103,9 +103,18 @@ sap.ui.define([
 	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
+	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -125,14 +134,14 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
 					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
 				if (!this.bRelative || bDeferred || mParameters
-					|| oContext && !oContext.getBinding) {
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+						|| oContext && !oContext.getBinding) {
+					oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
@@ -148,8 +157,7 @@ sap.ui.define([
 								"The path must not continue after a deferred operation: " + sPath);
 						}
 					} else if (!this.bRelative) {
-						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-							this.mQueryOptions);
+						this.oCache = this.makeCache();
 					}
 				}
 
@@ -163,6 +171,8 @@ sap.ui.define([
 				publicMethods : []
 			}
 		});
+
+	asODataParentBinding(ODataContextBinding.prototype);
 
 	/**
 	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
@@ -507,7 +517,7 @@ sap.ui.define([
 			return oPromise;
 		}
 
-		_ODataHelper.checkGroupId(sGroupId);
+		this.oModel.checkGroupId(sGroupId);
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -628,79 +638,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the group ID of the binding that is used for read requests.
-	 *
-	 * @returns {string}
-	 *   The group ID
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.getGroupId = function () {
-		return this.sGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getGroupId
-					&& this.oContext.getGroupId())
-			|| this.oModel.getGroupId();
-	};
-
-	/**
-	 * Returns the group ID of the binding that is used for update requests.
-	 *
-	 * @returns {string}
-	 *   The update group ID
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.getUpdateGroupId = function () {
-		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
-					&& this.oContext.getUpdateGroupId())
-			|| this.oModel.getUpdateGroupId();
-	};
-
-	/**
-	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
-	 * meaning updates that have not yet been successfully sent to the server.
-	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @public
-	 * @since 1.39.0
-	 */
-	ODataContextBinding.prototype.hasPendingChanges = function () {
-		return _ODataHelper.hasPendingChanges(this, true);
-	};
-
-	/**
-	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
-	 * bound context.
-	 *
-	 * @protected
-	 * @see sap.ui.model.Binding#initialize
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.initialize = function () {
-		if (this.oElementContext) {
-			this._fireChange({reason : ChangeReason.Change});
-		}
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#isInitial
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.isInitial = function () {
-		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
-	};
-
-	/**
 	 * Creates a cache for the binding using the given context.
 	 *
 	 * The context is given as a parameter and this.oContext is unused because setContext calls
@@ -729,65 +666,15 @@ sap.ui.define([
 		} else if (!oContext || oContext.fetchCanonicalPath && !this.mParameters) {
 			return undefined; // no need for an own cache
 		}
-		mQueryOptions = _ODataHelper.getQueryOptions(this, "", oContext);
+		mQueryOptions = this.getQueryOptions("", oContext);
 		vCanonicalPath = oContext && (oContext.fetchCanonicalPath
 			? oContext.fetchCanonicalPath() : oContext.getPath());
-		return _ODataHelper.createCache(this, createCache, vCanonicalPath);
+		return this.createCache(createCache, vCanonicalPath);
 	};
 
 	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported for bindings which are not relative to a
-	 * {@link sap.ui.model.odata.v4.Context}.
-	 *
-	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
-	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
-	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
-	 *
-	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
-	 * there are pending changes. If there are changes, call
-	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
-	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
-	 * {@link #refresh}.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
-	 *   binding is not supported.
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#refresh
-	 * @see #hasPendingChanges
-	 * @see #resetChanges
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.refresh = function (sGroupId) {
-		if (!_ODataHelper.isRefreshable(this)) {
-			throw new Error("Refresh on this binding is not supported");
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot refresh due to pending changes");
-		}
-		_ODataHelper.checkGroupId(sGroupId);
-
-		this.refreshInternal(sGroupId);
-	};
-
-	/**
-	 * Refreshes the binding. The refresh method itself only performs some validation checks and
-	 * forwards to this method doing the actual work. Interaction between contexts also runs via
-	 * these internal methods.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh
-	 *
-	 * @private
+	 * @override sap.ui.model.odata.v4.ODataBinding#refreshInternal
+	 * @inheritdoc
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
 		if (!this.oElementContext) { // refresh after delete
@@ -810,34 +697,6 @@ sap.ui.define([
 				oDependentBinding.refreshInternal(sGroupId);
 			}
 		});
-	};
-
-	/**
-	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
-	 *
-	 * @throws {Error}
-	 *   If there is a change of this binding which has been sent to the server and for which there
-	 *   is no response yet.
-	 *
-	 * @public
-	 * @since 1.40.1
-	 */
-	ODataContextBinding.prototype.resetChanges = function () {
-		_ODataHelper.resetChanges(this, true);
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#resume
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.resume = function () {
-		throw new Error("Unsupported operation: v4.ODataContextBinding#resume");
 	};
 
 	/**
@@ -903,19 +762,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#suspend
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.suspend = function () {
-		throw new Error("Unsupported operation: v4.ODataContextBinding#suspend");
-	};
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is
@@ -927,40 +773,6 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.toString = function () {
 		return sClassName + ": " + (this.bRelative  ? this.oContext + "|" : "") + this.sPath;
-	};
-
-	/**
-	 * Updates the value for the given property name inside the entity with the given relative path;
-	 * the value is updated in this binding's cache or in its parent context in case it has no
-	 * cache.
-	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {string} sEditUrl
-	 *   The edit URL for the entity which is updated
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @returns {Promise}
-	 *   A promise on the outcome of the cache's <code>update</code> call
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl,
-		sPath) {
-		var oPromise;
-
-		if (this.oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
-			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
-			return oPromise;
-		}
-
-		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
-			_Helper.buildPath(this.sPath, sPath));
 	};
 
 	return ODataContextBinding;

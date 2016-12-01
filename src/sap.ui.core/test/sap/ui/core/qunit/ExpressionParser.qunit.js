@@ -698,4 +698,41 @@ sap.ui.require([
 		assert.strictEqual(oBindingInfo.parts.length, 2);
 		check(assert, sBinding, true);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("JSTokenizer throws SyntaxError object", function (assert) {
+		var iAt = 42,
+			sInput = "{= 'foo' }",
+			sMessage = "message",
+			oError = {
+				name: 'SyntaxError',
+				message: sMessage,
+				at: iAt,
+				text: sInput
+			},
+			oTokenizer = jQuery.sap._createJSTokenizer();
+
+		this.mock(jQuery.sap).expects("_createJSTokenizer").withExactArgs()
+			.returns(oTokenizer);
+		this.mock(oTokenizer).expects("white").withExactArgs()
+			.throws(oError);
+
+		this.checkError(assert, sInput, sMessage, iAt);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("JSTokenizer throws Error", function (assert) {
+		var sExpression = "{= 'foo' }",
+			oError = new Error("Must not set index 0 before previous index 1"),
+			oTokenizer = jQuery.sap._createJSTokenizer();
+
+		this.mock(jQuery.sap).expects("_createJSTokenizer").withExactArgs()
+			.returns(oTokenizer);
+		this.mock(oTokenizer).expects("setIndex")
+			.throws(oError);
+
+		assert.throws(function () {
+			BindingParser.complexParser(sExpression);
+		}, oError);
+	});
 });

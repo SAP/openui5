@@ -450,6 +450,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("toArray", function (assert) {
+		var oObject = {},
+			aObjects = [oObject];
+
+		assert.deepEqual(_Helper.toArray(), []);
+		assert.deepEqual(_Helper.toArray(null), []);
+		assert.deepEqual(_Helper.toArray(""), [""]);
+		assert.deepEqual(_Helper.toArray("foo"), ["foo"]);
+		assert.deepEqual(_Helper.toArray(oObject), aObjects);
+		assert.strictEqual(_Helper.toArray(aObjects), aObjects);
+	});
+
+	//*********************************************************************************************
 	// Integration Tests with real backend
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {
@@ -466,4 +479,112 @@ sap.ui.require([
 			});
 		});
 	}
+
+	//*********************************************************************************************
+	[{
+		sKeyPredicate : "('42')",
+		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Sector='DevOps',ID='42')",
+		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
+		oEntityInstance : {
+			"Bar" : 42,
+			"Fo=o" : "Walter\"s Win's"
+		},
+		oEntityType : {
+			"$Key" : ["Bar", "Fo=o"],
+			"Bar" : {
+				"$Type" : "Edm.Int16"
+			},
+			"Fo=o" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
+			var sProperty;
+
+			this.spy(_Helper, "formatLiteral");
+
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				oFixture.sKeyPredicate);
+
+			// check that _Helper.formatLiteral() is called for each property
+			for (sProperty in oFixture.oEntityType) {
+				if (sProperty[0] !== "$") {
+					assert.ok(
+						_Helper.formatLiteral.calledWithExactly(
+							oFixture.oEntityInstance[sProperty],
+							oFixture.oEntityType[sProperty].$Type),
+						_Helper.formatLiteral.printf(
+							"_Helper.formatLiteral('" + sProperty + "',...) %C"));
+				}
+			}
+		});
+	});
+	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			assert.throws(function () {
+				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
+			}, new Error("Missing value for key property 'ID'"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: no instance", function (assert) {
+		assert.throws(function () {
+			_Helper.getKeyPredicate({$Key : ["ID"]}, undefined);
+		}, new Error("No instance to calculate key predicate"));
+	});
 });

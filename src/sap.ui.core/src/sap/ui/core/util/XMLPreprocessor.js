@@ -4,9 +4,9 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/Device', 'sap/ui/model/BindingMode',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/BindingMode',
 	'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
-	function (jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, Device, BindingMode,
+	function (jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
 		CompositeBinding, Context) {
 		'use strict';
 

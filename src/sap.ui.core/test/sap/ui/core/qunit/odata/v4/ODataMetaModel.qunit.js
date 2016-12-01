@@ -9,19 +9,19 @@ sap.ui.require([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, BindingMode, BaseContext, ContextBinding, FilterProcessor, JSONListBinding,
-		MetaModel, _ODataHelper, AnnotationHelper, Context, _SyncPromise, ODataMetaModel,
-		ODataModel, PropertyBinding, TestUtils) {
+		MetaModel, AnnotationHelper, Context, _Helper, _SyncPromise, ODataMetaModel, ODataModel,
+		PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var mScope = {
@@ -982,6 +982,8 @@ sap.ui.require([
 				: "Unsupported path after @@this.is.ignored",
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/@@this.is.ignored@foo"
 				: "Unsupported path after @@this.is.ignored",
+			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored@sapui.name"
+				: "Unsupported path after @@this.is.ignored",
 			// ...is not a function but... --------------------------------------------------------
 			"/@@sap.ui.model.odata.v4.AnnotationHelper.invalid"
 				: "sap.ui.model.odata.v4.AnnotationHelper.invalid is not a function but: undefined",
@@ -1049,20 +1051,19 @@ sap.ui.require([
 	].forEach(function (sPath) {
 		QUnit.test("fetchObject: " + sPath + "@@...isMultiple", function (assert) {
 			var oContext,
+				oInput,
 				fnIsMultiple = this.mock(AnnotationHelper).expects("isMultiple"),
 				oResult = {},
 				oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1) // see oInput
 				.returns(_SyncPromise.resolve(mScope));
+			oInput = this.oMetaModel.getObject(sPath);
 			fnIsMultiple
-				.withExactArgs(
-					this.oMetaModel.getObject(sPath),
-					sinon.match({
-						context : sinon.match.object,
-						schemaChildName : "tea_busi.Worker"
-					}))
-				.returns(oResult);
+				.withExactArgs(oInput, sinon.match({
+					context : sinon.match.object,
+					schemaChildName : "tea_busi.Worker"
+				})).returns(oResult);
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath
@@ -1074,44 +1075,58 @@ sap.ui.require([
 			assert.ok(oContext instanceof BaseContext);
 			assert.strictEqual(oContext.getModel(), this.oMetaModel);
 			assert.strictEqual(oContext.getPath(), sPath);
-			assert.strictEqual(oContext.getObject(), this.oMetaModel.getObject(sPath));
+			assert.strictEqual(oContext.getObject(), oInput);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: ...@@.isMultiple", function (assert) {
-		var oContext,
-			fnIsMultiple,
-			sPath = "/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath",
-			oResult = {},
-			oScope = {
-				isMultiple : function () {}
+	(function () {
+		var sPath,
+			sPathPrefix,
+			mPathPrefix2SchemaChildName = {
+				"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath" : "tea_busi.Worker",
+				"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Label" : "tea_busi.TEAM",
+				"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label" : "name.space.Id"
 			},
-			oSyncPromise;
+			sSchemaChildName;
 
-		this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
-			.returns(_SyncPromise.resolve(mScope));
-		fnIsMultiple = this.mock(oScope).expects("isMultiple");
-		fnIsMultiple
-			.withExactArgs(
-				this.oMetaModel.getObject(sPath),
-				sinon.match({
-					context : sinon.match.object,
-					schemaChildName : "tea_busi.Worker"
-				}))
-			.returns(oResult);
+		for (sPathPrefix in mPathPrefix2SchemaChildName) {
+			sPath = sPathPrefix + "@@.computedAnnotation";
+			sSchemaChildName = mPathPrefix2SchemaChildName[sPathPrefix];
 
-		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@.isMultiple", null, {scope : oScope});
+			QUnit.test("fetchObject: " + sPath, function (assert) {
+				var fnComputedAnnotation,
+					oContext,
+					oInput,
+					oResult = {},
+					oScope = {
+						computedAnnotation : function () {}
+					},
+					oSyncPromise;
 
-		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.strictEqual(oSyncPromise.getResult(), oResult);
-		oContext = fnIsMultiple.args[0][1].context;
-		assert.ok(oContext instanceof BaseContext);
-		assert.strictEqual(oContext.getModel(), this.oMetaModel);
-		assert.strictEqual(oContext.getPath(), sPath);
-		assert.strictEqual(oContext.getObject(), this.oMetaModel.getObject(sPath));
-	});
+				this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1) // see oInput
+					.returns(_SyncPromise.resolve(mScope));
+				oInput = this.oMetaModel.getObject(sPathPrefix);
+				fnComputedAnnotation = this.mock(oScope).expects("computedAnnotation");
+				fnComputedAnnotation
+					.withExactArgs(oInput, sinon.match({
+						context : sinon.match.object,
+						schemaChildName : sSchemaChildName
+					})).returns(oResult);
+
+				// code under test
+				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : oScope});
+
+				assert.strictEqual(oSyncPromise.isFulfilled(), true);
+				assert.strictEqual(oSyncPromise.getResult(), oResult);
+				oContext = fnComputedAnnotation.args[0][1].context;
+				assert.ok(oContext instanceof BaseContext);
+				assert.strictEqual(oContext.getModel(), this.oMetaModel);
+				assert.strictEqual(oContext.getPath(), sPathPrefix);
+				assert.strictEqual(oContext.getObject(), oInput);
+			});
+		}
+	}());
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
@@ -1120,7 +1135,7 @@ sap.ui.require([
 				sPath = "/@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
 				oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			this.mock(AnnotationHelper).expects("isMultiple")
 				.throws(oError);
@@ -1412,7 +1427,7 @@ sap.ui.require([
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oContextMock = this.mock(oContext),
 				oEntityInstance = {},
-				oODataHelperMock = this.mock(_ODataHelper),
+				oHelperMock = this.mock(_Helper),
 				oPromise;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
@@ -1425,7 +1440,7 @@ sap.ui.require([
 					oContextMock.expects("fetchValue").withExactArgs("")
 						.returns(_SyncPromise.resolve(oEntityInstance));
 				}
-				oODataHelperMock.expects("getKeyPredicate")
+				oHelperMock.expects("getKeyPredicate")
 					.withExactArgs(sinon.match.same(mScope[oRequest.entityType]),
 						sinon.match.same(oEntityInstance))
 					.returns(oRequest.predicate);
@@ -1490,7 +1505,7 @@ sap.ui.require([
 					.returns(_SyncPromise.resolve(oFixture.instance));
 			} else {
 				this.mock(oContext).expects("fetchValue").never();
-				this.mock(_ODataHelper).expects("getKeyPredicate").never();
+				this.mock(_Helper).expects("getKeyPredicate").never();
 			}
 
 			oPromise = this.oMetaModel.fetchCanonicalPath(oContext);
@@ -1511,7 +1526,6 @@ sap.ui.require([
 			oContext = {},
 			mParameters = {},
 			sPath = "foo",
-			mParameters = {},
 			oValue = {};
 
 		//TODO call fetchObject instead once lazy loading is implemented
