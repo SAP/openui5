@@ -119,7 +119,7 @@ sap.ui.define([
 					});
 					this._bindView("/" + sObjectPath);
 				}.bind(this));
-				var oQuery  = oArguments["?query"];
+				var oQuery = oArguments["?query"];
 				if(oQuery && this._aValidKeys.indexOf(oQuery.tab) >=0){
 					this.getView().getModel("detailView").setProperty("/selectedTab", oQuery.tab);
 					this.getRouter().getTargets().display(oQuery.tab);

@@ -29,7 +29,7 @@ sap.ui.define([
 							id: "iconTabFilterProcessor",
 							viewName: sViewName,
 							actions: new Press(),
-							errorMessage: "Did nor find the processor tab on detail page"
+							errorMessage: "Did not find the processor tab on detail page"
 						})
 					}
 
@@ -193,7 +193,7 @@ sap.ui.define([
 							success: function () {
 								Opa5.assert.ok("The processor tab is rendered");
 							},
-							errorMessage: "Did not find proceesor info"
+							errorMessage: "Did not find processor info"
 						});
 					}
 				}

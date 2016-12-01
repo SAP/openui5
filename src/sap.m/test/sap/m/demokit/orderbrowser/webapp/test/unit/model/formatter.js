@@ -34,5 +34,16 @@ sap.ui.define([
 			currencyValueTestCase.call(this, assert, "0", "0.00");
 		});
 
+/*		QUnit.module("formatter - Binary Content");
+
+		QUnit.test("should return source for the image in the handleBinaryContent", function (assert) {
+			var sResult = formatter.handleBinaryContent("binaryData");
+			assert.strictEqual(sResult, "data:image/jpeg;base64,", "The type metadata is prepended  to the image string when binary date is passed to the formatter");
+		});
+
+		QUnit.test("should return source for the image in the handleBinaryContent", function (assert) {
+			var sResult = formatter.handleBinaryContent("");
+			assert.strictEqual(sResult, "../localService/mockdata/images/employee.jpg", "calling the formatter with no picture content returns the default picture URL");
+		});*/
 	}
 );
