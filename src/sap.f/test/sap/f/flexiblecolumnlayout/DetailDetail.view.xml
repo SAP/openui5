@@ -22,9 +22,9 @@
 							  isActionAreaAlwaysVisible="true"
 							  showPlaceholder="true">
 				<actions>
-					<ObjectPageHeaderActionButton icon="{/detailDetail/fullScreenButton/icon}" press="handleFullScreen" visible="{/detailDetail/fullScreenButton/visible}"></ObjectPageHeaderActionButton>
-					<ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" visible="{/detailDetail/closeButton/visible}"></ObjectPageHeaderActionButton>
-
+					<ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton icon="sap-icon://exit-full-screen" press="handleExitFullScreen" visible="{= ${/actionButtonsInfo/endColumn/exitFullScreen} !== null }"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"></ObjectPageHeaderActionButton>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

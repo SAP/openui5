@@ -26,43 +26,36 @@
 				{
 					"pattern": "",
 					"name": "master",
-					"target": "master",
-					"showMidColumn": false,
-					"showEndColumn": false,
-					"fullScreenColumn": "None"
+					"target": "master"
 				},
 				{
-					"pattern": "detail/:fs:",
+					"pattern": "detail/{layout}",
 					"name": "detail",
 					"target": [
 						"master",
 						"detail"
-					],
-					"showMidColumn": true,
-					"showEndColumn": false
+					]
 				},
 				{
-					"pattern": "detailDetail/:fs:",
+					"pattern": "detailDetail/{layout}",
 					"name": "detailDetail",
 					"target": [
 						"master",
 						"detail",
 						"detailDetail"
-					],
-					"showMidColumn": true,
-					"showEndColumn": true
+					]
 				},
 				{
 					"pattern": "page2",
 					"name": "page2",
 					"target": "page2",
-					"fullScreenColumn": "End"
+					"layout": "EndFullScreen"
 				},
 				{
 					"pattern": "page3",
 					"name": "page3",
 					"target": "page3",
-					"fullScreenColumn": "End"
+					"layout": "EndFullScreen"
 				}
 			],
 			"targets": {

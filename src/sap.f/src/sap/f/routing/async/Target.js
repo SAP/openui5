@@ -30,9 +30,7 @@ sap.ui.define([], function() {
 						eventData: vData,
 						targetControl: oViewInfo.control,
 						view: oViewInfo.view,
-						showMidColumn: oRouteConfig.showMidColumn,
-						showEndColumn: oRouteConfig.showEndColumn,
-						fullScreenColumn: oRouteConfig.fullScreenColumn
+						layout: oRouteConfig.layout
 					});
 					return oViewInfo;
 				});

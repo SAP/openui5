@@ -2,6 +2,8 @@
 	<Page title="This is the page after the Flexible Column Layout page" backgroundDesign="Transparent">
 		<Toolbar>
 			<Button text="To Page3" icon="sap-icon://feeder-arrow" iconFirst="false" press="handleNextPress"></Button>
+			<ToolbarSpacer />
+			<Button icon="sap-icon://decline" press="handleClose" visible="{= ${/actionButtonsInfo/midColumn/endColumn} !== null }"></Button>
 		</Toolbar>
 	</Page>
 </View>
