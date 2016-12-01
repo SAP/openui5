@@ -226,6 +226,12 @@
 			assert.ok(!this.spy.calledWith(this.pageId));
 		});
 
+		test("Auto focus should't be used when inside a popup", function (assert) {
+			var oNavContainer = new sap.m.NavContainer();
+			new sap.m.Popover({content: new sap.m.Page({content: [oNavContainer]})});
+			assert.ok(oNavContainer._isInsideAPopup(), "NavContainer detects that it's nested inside a popup");
+		});
+
 		module("Page change");
 
 		asyncTest("to page 2", function() {
