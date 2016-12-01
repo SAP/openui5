@@ -321,6 +321,107 @@
 				}, 0);
 			});
 
+			QUnit.test("sync/Promise/setTimeout", 12, function(assert) {
+				var bSyncOngoing = false,
+					bTimeoutTriggered = false,
+					bIntervalTriggered = false,
+					bPromiseTriggered = false,
+					vInterval,
+					done = assert.async(),
+					oResolved = Promise.resolve(),
+					oRejected = Promise.reject();
+
+				setTimeout(function(bTest) {
+					bTimeoutTriggered = true;
+					assert.ok(bTest, "Timeout parameter is passed correctly");
+				}, 0, true);
+
+				vInterval = setInterval(function(bTest) {
+					bIntervalTriggered = true;
+					assert.ok(bTest, "Interval parameter is passed correctly");
+					clearInterval(vInterval);
+				}, 0, true);
+
+				oResolved.then(function() {
+					bSyncOngoing = true;
+					jQuery.ajax({
+						url: "",
+						async: false,
+						cache: false
+					});
+					bSyncOngoing = false;
+					oResolved.then(function() {
+						bPromiseTriggered = true;
+						assert.ok(!bTimeoutTriggered, "Resolved after request: Timeout must not have been triggered");
+						assert.ok(!bIntervalTriggered, "Resolved after request: Interval must not have been triggered");
+					})
+				});
+
+				oResolved.then(function() {
+					assert.ok(!bSyncOngoing, "Resolved: Sync request is no longer running");
+					assert.ok(!bTimeoutTriggered, "Resolved: Timeout must not have been triggered");
+					assert.ok(!bIntervalTriggered, "Resolved: Interval must not have been triggered");
+					assert.ok(!bPromiseTriggered, "Resolved: Promise must not have been triggered");
+				});
+				oRejected.catch(function() {
+					assert.ok(!bSyncOngoing, "Rejected: Sync request is no longer running");
+					assert.ok(!bTimeoutTriggered, "Rejected: Timeout must not have been triggered");
+					assert.ok(!bIntervalTriggered, "Rejected: Interval must not have been triggered");
+					assert.ok(!bPromiseTriggered, "Rejected: Promise must not have been triggered");
+				});
+
+				setTimeout(function() {
+					done();
+				}, 0);
+			});
+
+			QUnit.test("sync/Promise reject/resolve", 4, function(assert) {
+				var bSyncOngoing = false,
+					done = assert.async(),
+					oError = new Error(),
+					oResolved = Promise.resolve();
+
+				oResolved.then(function() {
+					bSyncOngoing = true;
+					jQuery.ajax({
+						url: "",
+						async: false,
+						cache: false
+					});
+					bSyncOngoing = false;
+				});
+
+				oResolved.then(function() {
+					return 123;
+				}).then(function(oResult) {
+					assert.equal(oResult, 123, "Promise resolves with returned value");
+				});
+
+				oResolved.then(function() {
+					return Promise.resolve(123);
+				}).then(function(oResult) {
+					assert.equal(oResult, 123, "Promise resolves with resolved promise value");
+				});
+
+				oResolved.then(function() {
+					return Promise.reject(oError);
+				}).catch(function(oException) {
+					assert.equal(oException, oError, "Promise rejects with rejected promise Error");
+				});
+
+				oResolved.then(function() {
+					throw oError;
+				}).catch(function(oException) {
+					assert.equal(oException, oError, "Promise rejects with thrown Error");
+				});
+
+				setTimeout(function() {
+					done();
+				}, 0);
+
+			});
+
+
 </script>
 
 	</head>
