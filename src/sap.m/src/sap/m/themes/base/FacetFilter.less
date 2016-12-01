@@ -125,3 +125,11 @@ html.sap-desktop .sapMFFRefresh .sapMBtnTransparent > .sapMBtnIcon, html.sap-pho
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiContentContrastIconColor;
 }
+
+/* specific selector for the light facet filter text to use padding instead of margin,
+  otherwise the text gets cut off in Arabic because of the italic font
+*/
+.sapMFF > .sapMIBar.sapMTB.sapMTB-Info-CTX > .sapMText {
+	margin: 0;
+	padding: 0.5rem;
+}
