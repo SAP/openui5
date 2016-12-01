@@ -4262,6 +4262,55 @@
 		this.clock.reset();
 	});	
 
+	QUnit.test("setSelection + Popover close race condition", function (assert) {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: true,
+			phone: false,
+			tablet: true
+		});
+
+		var oItem = new sap.ui.core.Item({text: "Example"});
+		var oMCB = new sap.m.MultiComboBox({
+			items: [oItem]
+		}).placeAt("MultiComboBox-content");
+
+		var oSpyFireSelectionFinish = this.spy(oMCB, "fireSelectionFinish");
+		var oSpySetSelection = this.spy(oMCB, "setSelection");
+
+		sap.ui.getCore().applyChanges();
+
+		oMCB.open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		//Act
+		oMCB.close();
+		oMCB.setSelection({
+			fireChangeEvent: true,
+			id: oItem.getId(),
+			item: oItem,
+			key: "",
+			listItemUpdated: true,
+			suppressInvalidate: true
+		});
+
+		//Assert
+		assert.strictEqual(oSpySetSelection.callCount, 1, "setSelection executed");
+		assert.strictEqual(oSpyFireSelectionFinish.callCount, 0, "fireSelectionFinish not called yet");
+
+		//Act. Close the popover
+		this.clock.tick(500);
+
+		//Assert
+		assert.ok(oSpySetSelection.calledBefore(oSpyFireSelectionFinish), "setSelection should be called before fireSelectionFinish.");
+		assert.strictEqual(oSpySetSelection.callCount, 1, "setSelection executed last run.");
+		assert.strictEqual(oSpyFireSelectionFinish.callCount, 1, "fireSelectionFinish is called async after setSelection");
+		assert.ok(oSpyFireSelectionFinish.calledWithMatch({selectedItems: [oItem]}), "fireSelectionFinish should return an array within object containing the selected items.");
+
+		oMCB.destroy();
+	});
+
 	module("Focus handling");
 
 	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", function(assert) {
