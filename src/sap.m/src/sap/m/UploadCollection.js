@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/m/List', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', 'sap/m/OverflowToolbar', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
-	function(jQuery, MessageBox, Dialog, Library, Control, Icon, List, FileUploaderParamter, FileUploader, FileSizeFormat, Link, OverflowToolbar, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, ResizeHandler, Device) {
+sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/m/Text', 'sap/m/List', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', 'sap/m/OverflowToolbar', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
+	function(jQuery, MessageBox, Dialog, Library, Control, Icon, Text, List, FileUploaderParamter, FileUploader, FileSizeFormat, Link, OverflowToolbar, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, ResizeHandler, Device) {
 	"use strict";
 
 	/**
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * Allows you to set your own text for the 'No data' description label.
-			 * @since 1.46
+			 * @since 1.46.0
 			 */
 			noDataDescription : {type : "string", group : "Appearance", defaultValue : null},
 
@@ -209,11 +209,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The icon is displayed in no data page
-			 * @since 1.46
+			 * @since 1.46.0
 			 */
 			_noDataIcon : {
 				type : "sap.ui.core.Icon",
 				multiple : false,
+				visibility : "hidden"
+			},
+
+			/**
+			 * Internal aggregation to hold the drag and drop icon of indicator.
+			 * @since 1.46.0
+			 */
+			_dragDropIcon : {
+				type : "sap.ui.core.Icon",
+				multiple : false,
+				visibility : "hidden"
+			},
+
+			/**
+			 * Internal aggregation to hold the drag and drop text of indicator.
+			 * @since 1.46.0
+			 */
+			_dragDropText : {
+				type : "sap.m.Text",
+				multiple: false,
 				visibility : "hidden"
 			}
 		},
@@ -506,11 +526,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._oList = new List(this.getId() + "-list");
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
-
 		this.setAggregation("_noDataIcon", new Icon(this.getId() + "-no-data-icon", {
 			src : "sap-icon://document",
 			size : "6rem",
 			noTabStop : true
+		}), true);
+		this.setAggregation("_dragDropIcon", new Icon(this.getId() + "-drag-drop-icon", {
+			src : "sap-icon://upload-to-cloud",
+			size : "4rem",
+			noTabStop : true
+		}), true);
+		this.setAggregation("_dragDropText", new Text(this.getId() + "-drag-drop-text", {
+			text : this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR")
 		}), true);
 
 		this._iUploadStartCallCounter = 0;
@@ -856,6 +883,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._oListEventDelegate = null;
 		}
 		this._deregisterSizeHandler();
+		this._unbindDragEnterLeave();
 		checkInstantUpload.bind(this)();
 		if (!this.getInstantUpload()) {
 			this.aItems = this.getItems();
@@ -926,6 +954,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype.onAfterRendering = function() {
+		this._bindDragEnterLeave();
 		var that = this;
 		if (this.getInstantUpload()) {
 			if (this.aItems || (this.aItems === this.getItems())) {
@@ -970,6 +999,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype.exit = function() {
 		var i, iPendingUploadsNumber;
+		if (this._$RootNode) {
+			this._$RootNode = null;
+		}
 		if (this._oFileUploader) {
 			this._oFileUploader.destroy();
 			this._oFileUploader = null;
@@ -994,11 +1026,98 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._aFileUploadersForPendingUpload = null;
 		}
 		this._deregisterSizeHandler();
+		this._unbindDragEnterLeave();
 	};
 
 	/* =========================================================== */
 	/* Private methods */
 	/* =========================================================== */
+
+	/**
+	 * Binds the handlers for drag and drop events.
+	 *
+	 * @private
+	 */
+	UploadCollection.prototype._bindDragEnterLeave = function() {
+		if (this.getUIArea()) {
+			this._$RootNode = jQuery(this.getUIArea().getRootNode());
+			this._$RootNode.bind("dragenter", this._onDragEnterUIArea.bind(this));
+			this._$RootNode.bind("dragleave", this._onDragLeaveUIArea.bind(this));
+			this._$RootNode.bind("dragover", this._onDragOverUIArea.bind(this));
+		}
+		this._$DragDropArea = this.$("drag-drop-area");
+		this.$().bind("dragenter", this._onDragEnterUploadCollection.bind(this));
+		this.$().bind("dragleave", this._onDragLeaveUploadCollection.bind(this));
+	};
+
+	/**
+	 * Unbinds the handlers for drag and drop events.
+	 *
+	 * @private
+	 */
+	UploadCollection.prototype._unbindDragEnterLeave = function() {
+		if (this._$RootNode) {
+			this._$RootNode.unbind("dragenter", this._onDragEnterTheUIArea);
+			this._$RootNode.unbind("dragleave", this._onDragLeaveUIArea);
+			this._$RootNode.unbind("dragover", this._onDragOverUIArea);
+		}
+		this.$().unbind("dragenter", this._onDragEnterUploadCollection);
+		this.$().unbind("dragleave", this._onDragLeaveUploadCollection);
+	};
+
+	/**
+	 * Handler when file is dragged in UIArea.
+	 * @param {event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragEnterUIArea = function(event) {
+		this._oLastEnterUIArea = event.target;
+		this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+	};
+
+	/**
+	 * Handler when file is dragged over UIArea.
+	 * @param {event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragOverUIArea = function(event) {
+		this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+	};
+
+	/**
+	 * Handler when file is dragged away from UIArea.
+	 * @param {event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragLeaveUIArea = function(event) {
+		if (this._oLastEnterUIArea === event.target) {
+			this._$DragDropArea.addClass("sapMUCDragDropOverlayHide");
+		}
+	};
+
+	/**
+	 * Handler when file is dragged in UploadCollection drag drop area.
+	 * @param {event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragEnterUploadCollection = function(event) {
+		if (event.target === this._$DragDropArea[0]) {
+			this._$DragDropArea.addClass("sapMUCDropIndicator");
+			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DROP_FILE_INDICATOR"));
+		}
+	};
+
+	/**
+	 * Handler when file is dragged away from UploadCollection drag drop area.
+	 * @param {event} event which was fired
+	 * @private
+	 */
+	UploadCollection.prototype._onDragLeaveUploadCollection = function(event) {
+		if (event.target === this._$DragDropArea[0]) {
+			this.$("drag-drop-area").removeClass("sapMUCDropIndicator");
+			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"));
+		}
+	};
 
 	/**
 	 * unregister the onResize and orientation handlers.

@@ -19,7 +19,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	UploadCollectionRenderer.render = function(oRm, oControl) {
-
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -27,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 		oRm.writeClasses();
 		oRm.write(">");
 		ListRenderer.render.call(this, oRm, oControl._oList);
+		this.renderDragDropOverlay(oRm, oControl);
 		oRm.write("</div>");
 	};
 
@@ -55,6 +55,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.writeEscaped(oUploadCollection.getNoDataDescription());
+		oRm.write("</div>");
+		oRm.write("</div>");
+	};
+
+	UploadCollectionRenderer.renderDragDropOverlay = function(oRm, oControl) {
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-drag-drop-area");
+		oRm.addClass("sapMUCDragDropOverlay");
+		oRm.addClass("sapMUCDragDropOverlayHide");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("<div");
+		oRm.addClass("sapMUCDragDropIndicator");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.renderControl(oControl.getAggregation("_dragDropIcon"));
+		oRm.renderControl(oControl.getAggregation("_dragDropText"));
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};

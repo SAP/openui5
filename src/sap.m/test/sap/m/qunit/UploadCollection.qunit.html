@@ -1025,6 +1025,71 @@
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
+	QUnit.module("Drag and drop", {
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Drag file enter UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		//Act
+		$RootNode.trigger("dragenter");
+		//Assert
+		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file over UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		//Act
+		$RootNode.trigger("dragover");
+		//Assert
+		assert.notOk(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file leave UIArea", function(assert) {
+		//Arrange
+		var $RootNode = jQuery(this.oUploadCollection.getUIArea().getRootNode());
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		this.oUploadCollection._oLastEnterUIArea = $RootNode[0];
+		//Act
+		this.oUploadCollection._$RootNode.trigger("dragleave");
+		//Assert
+		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible");
+	});
+
+	QUnit.test("Drag file enter UploadCollection", function(assert) {
+		//Arrange
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		//Act
+		$DragDropArea.trigger("dragenter");
+		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
+	QUnit.test("Drag file leave UploadCollection", function(assert) {
+		//Arrange
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		this.oUploadCollection.$("drag-drop-area").removeClass("sapMUCDragDropOverlayHide");
+		//Act
+		$DragDropArea.trigger("dragleave");
+		//Assert
+		assert.notOk($DragDropArea.hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible");
+	});
+
 	QUnit.module("Event tests", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
