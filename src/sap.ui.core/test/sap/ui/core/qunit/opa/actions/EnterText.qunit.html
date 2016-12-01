@@ -203,7 +203,13 @@
 				});
 
 				// Act
-				oEnterText.executeOn(this.oControl);
+				var fnAction = function () {
+					oEnterText.executeOn(this.oControl);
+				}.bind(this);
+
+				assert.throws(fnAction, function(oErr) {
+					return !!oErr.message.match(/has no dom representation/);
+				}, "Exception has been thrown");
 
 				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
 			});
