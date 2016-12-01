@@ -179,25 +179,27 @@
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), "1.1",
-					"The value is successfuly incremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.1",
+					"The input's value is successfully incremented");
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), "0.0",
-					"The value is successfuly decremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.0",
+					"The value is successfully decremented");
 			oIncrementButton.firePress();
 			oIncrementButton.firePress();
 			strictEqual(this.stepInput.getValue(), 2,
-					"The value is successfuly decremented");
+					"The value is successfully decremented");
 
 		});
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
+				this.oChangeSpy = sinon.spy();
 				this.stepInput = new sap.m.StepInput({
 					value: 4,
 					max: 10,
-					min: -4
+					min: -4,
+					change: this.oChangeSpy
 				});
 
 				this.stepInput.placeAt('qunit-fixture');
@@ -205,87 +207,154 @@
 			},
 			afterEach: function () {
 				this.stepInput.destroy();
+				this.oChangeSpy.reset();
 			}
+		});
+
+		test("Value is changed upon Enter press", function() {
+			//prepare
+			var oInput = this.stepInput._getInput();
+
+			//act
+			jQuery(this.stepInput).focus();
+			oInput.$("inner").val(7);
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet");
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			qutils.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+			//assert
+			equal(this.stepInput.getValue(), 7, "Value should be changed due to ENTER pressed");
+			this.clock.tick(1000); //needed because the change event is fired inside a timeout callback
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+
+		test("Change event is fired only once when element is focused, changed and then + button is clicked", function() {
+			//prepare
+			var oInput = this.stepInput._getInput(),
+					oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
+			//act
+			jQuery(this.stepInput).focus();
+			oInput.$("inner").val(7);
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			oIncrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 8, "Value should be changed from 7 to 8 due to increment button pressed");
+			this.clock.tick(1000); //needed because the change event is fired inside a timeout callback
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		test("Change Event is fired when  +/- buttons are clicked", function() {
+			//prepare
+			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
+					oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+
+			//act
+			jQuery(this.stepInput).focus();
+			oIncrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 5, "Value should be changed 5 due to increment button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+			this.oChangeSpy.reset();
+
+			//act
+			oDecrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 4, "Value should be changed 4 due to decrement button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
 		test("up/down increases/decreases the value", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 5,
-					"The value is increasing with 1 after arrow up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 5,
+					"The input's value is increasing with 1 after arrow up");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 4,
-					"The value is decreasing with 1 after arrow down");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+					"The input's value is decreasing with 1 after arrow down");
 
 			this.stepInput.setStep(5);
+			this.clock.tick(1000);
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 9,
-					"The value is decreasing with 5 after arrow up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 9,
+					"The input's value is decreasing with 5 after arrow up");
 		});
 
 		test("pageup and pagedown increases/decreases the value with a larger step", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 6, "The value is increasing with step=step*2 after pageup");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 4,
-					"The value is decreasing with step=step*2 after pagedown");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+					"The input's value is decreasing with step=step*2 after pagedown");
 
 			this.stepInput.setStep(5);
 			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 14,
-					"The value is decreasing with step=step*2 after pageup");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 14,
+					"The input's value is decreasing with step=step*2 after pageup");
 		});
 
 		test("shift+up/down increases/decreases the value with a larger step if specified", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 6,
-					"The value is increasing with step=2*step after arrow up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6,
+					"The input's value is increasing with step=2*step after arrow up");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 4,
-					"The value is decreasing with step=1 after arrow down");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+					"The input's value is decreasing with step=1 after arrow down");
 
 			this.stepInput.setStep(5);
 			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 14,
-					"The value is decreasing with step=2*step after arrow up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 14,
+					"The input's value is decreasing with step=2*step after arrow up");
 		});
 
 		test("shift+pageup/pagedown sets value to max/min", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 10,
-					"The value is set to max after page up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+					"The input's value is set to max after page up");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), -4,
-					"The value is set to min after page down");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
+					"The input's value is set to min after page down");
 		});
 
 		test("ctrl+shift+up/down sets value to max/min", function () {
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, true);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(), 10,
-					"The value is set to max after page up");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+					"The input's value is set to max after page up");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, true);
 			this.clock.tick(1000);
-			strictEqual(this.stepInput.getValue(),-4,
-					"The value is set to min after page down");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(),-4,
+					"The input's  value is set to min after page down");
 		});
 
 		module("Accessibility", {
