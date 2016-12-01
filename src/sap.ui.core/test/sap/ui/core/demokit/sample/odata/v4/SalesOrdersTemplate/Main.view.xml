@@ -70,7 +70,6 @@
 											text="{field>Label@@.value}"/>
 									</template:then>
 									<template:else>
-										<!-- TODO ...@...@@... does not work! -->
 										<!-- .../@@.value triggers indirection in case of string constant -->
 										<Text text="{field>Value/$Path@com.sap.vocabularies.Common.v1.Label@@.value}"/>
 									</template:else>

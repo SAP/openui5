@@ -157,7 +157,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 */
-	function hasPendingChanges(mPatchRequests, sPath) {
+	function hasPendingChangesForPath(mPatchRequests, sPath) {
 		var sRequestPath;
 
 		for (sRequestPath in mPatchRequests) {
@@ -257,7 +257,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If one of the requests is currently running
 	 */
-	function resetChanges(oCache, sPath) {
+	function resetChangesForPath(oCache, sPath) {
 		var i,
 			sRequestPath,
 			aPromises;
@@ -309,7 +309,7 @@ sap.ui.define([
 
 		/*
 		 * Synchronous callback to cancel the PATCH request so that it is really gone when
-		 * resetChanges has been called on the binding or model.
+		 * resetChangesForPath has been called on the binding or model.
 		 */
 		function onCancel() {
 			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
@@ -564,9 +564,9 @@ sap.ui.define([
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 */
-	CollectionCache.prototype.hasPendingChanges = function (sPath) {
+	CollectionCache.prototype.hasPendingChangesForPath = function (sPath) {
 		return !!(sPath === "" && this.aElements[-1] && this.aElements[-1]["@$ui5.transient"])
-			|| hasPendingChanges(this.mPatchRequests, sPath);
+			|| hasPendingChangesForPath(this.mPatchRequests, sPath);
 	};
 
 	/**
@@ -679,7 +679,7 @@ sap.ui.define([
 	 *   If there is a change which has been sent to the server and for which there is no response
 	 *   yet.
 	 */
-	CollectionCache.prototype.resetChanges = function (sPath) {
+	CollectionCache.prototype.resetChangesForPath = function (sPath) {
 		var sTransientGroup;
 
 		if (sPath === "" && this.aElements[-1]) {
@@ -688,7 +688,7 @@ sap.ui.define([
 				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
 			}
 		}
-		resetChanges(this, sPath);
+		resetChangesForPath(this, sPath);
 	};
 
 	/**
@@ -851,8 +851,8 @@ sap.ui.define([
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 */
-	SingleCache.prototype.hasPendingChanges = function (sPath) {
-		return hasPendingChanges(this.mPatchRequests, sPath);
+	SingleCache.prototype.hasPendingChangesForPath = function (sPath) {
+		return hasPendingChangesForPath(this.mPatchRequests, sPath);
 	};
 
 	/**
@@ -968,8 +968,8 @@ sap.ui.define([
 	 *   If there is a change which has been sent to the server and for which there is no response
 	 *   yet.
 	 */
-	SingleCache.prototype.resetChanges = function (sPath) {
-		resetChanges(this, sPath);
+	SingleCache.prototype.resetChangesForPath = function (sPath) {
+		resetChangesForPath(this, sPath);
 	};
 
 	/**

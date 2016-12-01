@@ -4,11 +4,10 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
-	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise"
-], function (jQuery, BaseContext, _ODataHelper, Context, _Helper, _SyncPromise) {
+], function (jQuery, BaseContext, Context, _Helper, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -170,17 +169,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges", function (assert) {
-		var oBinding = {},
+	QUnit.test("hasPendingChangesForPath", function (assert) {
+		var oBinding = {
+				hasPendingChangesForPath : function () {}
+			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			oResult = {},
 			sPath = "bar";
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(_ODataHelper).expects("hasPendingChanges")
-			.withExactArgs(sinon.match.same(oBinding), undefined, "~bar~").returns(oResult);
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("~bar~").returns(oResult);
 
-		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
+		assert.strictEqual(oContext.hasPendingChangesForPath(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -208,16 +209,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges", function (assert) {
-		var oBinding = {},
+	QUnit.test("resetChangesForPath", function (assert) {
+		var oBinding = {
+				resetChangesForPath : function () {}
+			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			sPath = "bar";
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(_ODataHelper).expects("resetChanges")
-			.withExactArgs(sinon.match.same(oBinding), undefined, "~bar~");
+		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("~bar~");
 
-		oContext.resetChanges(sPath);
+		oContext.resetChangesForPath(sPath);
 	});
 
 	//*********************************************************************************************
@@ -585,14 +587,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptions", function (assert) {
-		var oBinding = {},
+		var oBinding = {
+				getQueryOptions : function () {}
+			},
 			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
 			sPath = "foo/bar",
 			mResult = {};
 
-		this.mock(_ODataHelper).expects("getQueryOptions")
-			.withExactArgs(sinon.match.same(oBinding), sPath)
-			.returns(mResult);
+		this.mock(oBinding).expects("getQueryOptions").withExactArgs(sPath).returns(mResult);
 
 		// code under test
 		assert.strictEqual(oContext.getQueryOptions(sPath), mResult);

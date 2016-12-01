@@ -20,20 +20,22 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
-	"./_ODataHelper",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
+	"./lib/_Parser",
 	"./ODataContextBinding",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _ODataHelper,
-		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
-		ODataPropertyBinding) {
+], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI,
+		_MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
+		ODataMetaModel, ODataPropertyBinding) {
 
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
+		rApplicationGroupID = /^\w+$/,
+		rGroupID = /^(\$auto|\$direct|\w+)$/,
 		mSupportedEvents = {
 			messageChange : true
 		},
@@ -44,7 +46,8 @@ sap.ui.define([
 			serviceUrl : true,
 			synchronizationMode : true,
 			updateGroupId : true
-		};
+		},
+		aSystemQueryOptions = ["$apply", "$expand", "$filter", "$orderby", "$search", "$select"];
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -147,7 +150,7 @@ sap.ui.define([
 					this.sOperationMode = mParameters.operationMode;
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
 					this.mUriParameters
-						= _ODataHelper.buildQueryOptions(null, oUri.query(true), false, true);
+						= this.buildQueryOptions(null, oUri.query(true), false, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
@@ -156,7 +159,7 @@ sap.ui.define([
 					if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
 						throw new Error("Group ID must be '$auto' or '$direct'");
 					}
-					_ODataHelper.checkGroupId(mParameters.updateGroupId, false,
+					this.checkGroupId(mParameters.updateGroupId, false,
 						"Invalid update group ID: ");
 					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
 
@@ -417,6 +420,176 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
+	 * parameters are those with a key starting with '$$', i.e. OData query options provided as
+	 * binding parameters are not contained in the map. The following parameters and parameter
+	 * values are supported, if the parameter is contained in the given 'aAllowed' parameter:
+	 * <ul>
+	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
+	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
+	 * </ul>
+	 *
+	 * @param {object} mParameters
+	 *   The map of binding parameters
+	 * @param {string[]} aAllowed
+	 *   The array of allowed binding parameters
+	 * @returns {object}
+	 *   The map of binding-specific parameters
+	 * @throws {Error}
+	 *   For unsupported parameters or parameter values
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.buildBindingParameters = function (mParameters, aAllowed) {
+		var mResult = {},
+			that = this;
+
+		if (mParameters) {
+			Object.keys(mParameters).forEach(function (sKey) {
+				var sValue = mParameters[sKey];
+
+				if (sKey.indexOf("$$") !== 0) {
+					return;
+				}
+				if (!aAllowed || aAllowed.indexOf(sKey) < 0) {
+					throw new Error("Unsupported binding parameter: " + sKey);
+				}
+
+				if (sKey === "$$groupId" || sKey === "$$updateGroupId") {
+					that.checkGroupId(sValue, false,
+						"Unsupported value for binding parameter '" + sKey + "': ");
+				} else if (sKey === "$$operationMode") {
+					if (sValue !== OperationMode.Server) {
+						throw new Error("Unsupported operation mode: " + sValue);
+					}
+				}
+
+				mResult[sKey] = sValue;
+			});
+		}
+		return mResult;
+	};
+
+	/**
+	 * Constructs a map of query options from the given options <code>mOptions</code> and
+	 * model options <code>mModelOptions</code>; an option overwrites a model option with the
+	 * same key. Options in <code>mOptions</code> starting with '$$' indicate binding-specific
+	 * parameters, which must not be part of a back end query; they are ignored and
+	 * not added to the map.
+	 * The following query options are disallowed:
+	 * <ul>
+	 * <li> System query options (key starts with "$") except those specified in
+	 *   <code>aAllowed</code>
+	 * <li> Parameter aliases (key starts with "@")
+	 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
+	 * </ul>
+	 * @param {object} [mModelOptions={}]
+	 *   Map of query options specified for the model
+	 * @param {object} [mOptions={}]
+	 *   Map of query options
+	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
+	 *   Whether system query options are allowed
+	 * @param {boolean} [bSapAllowed=false]
+	 *   Whether Custom query options starting with "sap-" are allowed
+	 * @throws {Error}
+	 *   If disallowed OData query options are provided
+	 * @returns {object}
+	 *   The map of query options
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.buildQueryOptions = function (mModelOptions, mOptions,
+			bSystemQueryOptionsAllowed, bSapAllowed) {
+		var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
+
+		/**
+		 * Validates an expand item.
+		 *
+		 * @param {boolean|object} vExpandOptions
+		 *   The expand options (the value for the "$expand" in the hierarchical options);
+		 *   either a map or simply true if there are no options
+		 */
+		function validateExpandItem(vExpandOptions) {
+			var sOption;
+
+			if (typeof vExpandOptions === "object") {
+				for (sOption in vExpandOptions) {
+					validateSystemQueryOption(sOption, vExpandOptions[sOption]);
+				}
+			}
+		}
+
+		/**
+		 * Validates a system query option.
+		 * @param {string} sOption The name of the option
+		 * @param {any} vValue The value of the option
+		 */
+		function validateSystemQueryOption(sOption, vValue) {
+			var sPath;
+
+			if (!bSystemQueryOptionsAllowed || aSystemQueryOptions.indexOf(sOption) < 0) {
+				throw new Error("System query option " + sOption + " is not supported");
+			}
+			if (sOption === "$expand") {
+				for (sPath in vValue) {
+					validateExpandItem(vValue[sPath]);
+				}
+			}
+		}
+
+		if (mOptions) {
+			Object.keys(mOptions).forEach(function (sKey) {
+				var vValue = mOptions[sKey];
+
+				if (sKey.indexOf("$$") === 0) {
+					return;
+				}
+
+				if (sKey[0] === "@") {
+					throw new Error("Parameter " + sKey + " is not supported");
+				}
+				if (sKey[0] === "$") {
+					if ((sKey === "$expand" || sKey === "$select")
+							&& typeof vValue === "string") {
+						vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+					}
+					validateSystemQueryOption(sKey, vValue);
+				} else if (!bSapAllowed && sKey.indexOf("sap-") === 0) {
+					throw new Error("Custom query option " + sKey + " is not supported");
+				}
+				mResult[sKey] = vValue;
+			});
+		}
+		return mResult;
+	};
+
+	/**
+	 * Checks whether the given group ID is valid, which means it is either undefined, '$auto',
+	 * '$direct' or an application group ID, which is a non-empty string consisting of
+	 * alphanumeric characters from the basic Latin alphabet, including the underscore.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} [bApplicationGroup]
+	 *   Whether only an application group ID is considered valid
+	 * @param {string} [sErrorMessage]
+	 *   The error message to be used if group ID is not valid; the group ID will be appended
+	 * @throws {Error}
+	 *   For invalid group IDs
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.checkGroupId = function (sGroupId, bApplicationGroup, sErrorMessage) {
+		if (!bApplicationGroup && sGroupId === undefined
+				|| typeof sGroupId === "string"
+					&& (bApplicationGroup ? rApplicationGroupID : rGroupID).test(sGroupId)) {
+			return;
+		}
+		throw new Error((sErrorMessage || "Invalid group ID: ") + sGroupId);
+	};
+
+	/**
 	 * Creates a binding context for the given path. A relative path can only be resolved if a
 	 * context is provided.
 	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
@@ -655,10 +828,10 @@ sap.ui.define([
 	 */
 	// @override
 	ODataModel.prototype.refresh = function (sGroupId) {
-		_ODataHelper.checkGroupId(sGroupId);
+		this.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (_ODataHelper.isRefreshable(oBinding)) {
+			if (oBinding.isRefreshable()) {
 				oBinding.refresh(sGroupId);
 			}
 		});
@@ -751,7 +924,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
 		sGroupId = sGroupId || this.sUpdateGroupId;
-		_ODataHelper.checkGroupId(sGroupId, true);
+		this.checkGroupId(sGroupId, true);
 
 		this.oRequestor.cancelChanges(sGroupId);
 	};
@@ -786,7 +959,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.submitBatch = function (sGroupId) {
-		_ODataHelper.checkGroupId(sGroupId, true);
+		this.checkGroupId(sGroupId, true);
 
 		return this._submitBatch(sGroupId);
 	};

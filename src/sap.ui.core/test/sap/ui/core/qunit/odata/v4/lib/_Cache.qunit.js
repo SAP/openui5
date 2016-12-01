@@ -60,7 +60,7 @@ sap.ui.require([
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise4));
 
 			// code under test
-			oCache.resetChanges("bar");
+			oCache.resetChangesForPath("bar");
 
 			assert.deepEqual(oCache.mPatchRequests, {
 				"foo/bar" : [oPromise1],
@@ -71,7 +71,7 @@ sap.ui.require([
 			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise5));
 
 			// code under test
-			oCache.resetChanges("");
+			oCache.resetChangesForPath("");
 
 			assert.deepEqual(oCache.mPatchRequests, {});
 		}
@@ -732,8 +732,9 @@ sap.ui.require([
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
 
-		assert.strictEqual(oCache.hasPendingChanges(""), true, "pending changes for root");
-		assert.strictEqual(oCache.hasPendingChanges("foo"), false, "pending changes for non-root");
+		assert.strictEqual(oCache.hasPendingChangesForPath(""), true, "pending changes for root");
+		assert.strictEqual(oCache.hasPendingChangesForPath("foo"), false,
+			"pending changes for non-root");
 
 		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[-1], {
@@ -756,7 +757,8 @@ sap.ui.require([
 			}),
 			oPostPromise.then(function () {
 				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
-				assert.strictEqual(oCache.hasPendingChanges(""), false, "no more pending changes");
+				assert.strictEqual(oCache.hasPendingChangesForPath(""), false,
+					"no more pending changes");
 			})
 		]);
 	});
@@ -1386,7 +1388,8 @@ sap.ui.require([
 						oError.canceled = true;
 						// call the cancel func delivered by the cache via the request call
 						oExpectation.args[0][6]();
-						assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/0/Note"), false);
+						assert.strictEqual(oCache.hasPendingChangesForPath("0/SO_2_SOITEM/0/Note"),
+							false);
 					}
 					fnReject(oError);
 					return oUpdatePromise;
@@ -1455,7 +1458,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update, hasPendingChanges and resetChanges", function (assert) {
+	QUnit.test("update, hasPendingChangesForPath and resetChangesForPath", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -1492,7 +1495,7 @@ sap.ui.require([
 		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/10/Note").then(function () {
 			var aUpdatePromises;
 
-			assert.strictEqual(oCache.hasPendingChanges(""), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
 					{Note : "foo"}, undefined, sinon.match.func)
@@ -1512,15 +1515,15 @@ sap.ui.require([
 					.then(unexpected, rejected)
 			];
 
-			assert.strictEqual(oCache.hasPendingChanges(""), true);
-			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/10"), true);
-			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/10/Note"), true);
-			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/11"), false);
-			assert.strictEqual(oCache.hasPendingChanges("SO_2_SOITEM"), false);
-			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/1"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("0/SO_2_SOITEM/10"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("0/SO_2_SOITEM/10/Note"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("0/SO_2_SOITEM/11"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("SO_2_SOITEM"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath("0/SO_2_SOITEM/1"), false);
 
 			// code under test
-			oCache.resetChanges("");
+			oCache.resetChangesForPath("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -1557,7 +1560,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache: resetChanges", function (assert) {
+	QUnit.test("Cache: resetChangesForPath", function (assert) {
 		var oCache = _Cache.create(_Requestor.create("/"), "/SalesOrderList");
 
 		// code under test
@@ -1565,7 +1568,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache: resetChanges - POST requests", function (assert) {
+	QUnit.test("Cache: resetChangesForPath - POST requests", function (assert) {
 		var oEntity = {"@$ui5.transient" : "groupId"},
 			oRequestor = _Requestor.create("/"),
 			oCache = _Cache.create(oRequestor, "/SalesOrderList"),
@@ -1574,20 +1577,21 @@ sap.ui.require([
 		oCache.aElements[-1] = oEntity;
 		oRequestorMock.expects("removePost").never();
 
-		// code under test - don't call removePost on root if resetChanges is called with a path
-		oCache.resetChanges("any/Path");
+		// code under test - don't call removePost on root if resetChangesForPath is called with a
+		// path
+		oCache.resetChangesForPath("any/Path");
 
 		oRequestorMock.expects("removePost").withExactArgs("groupId", oEntity);
 
 		// code under test
-		oCache.resetChanges("");
+		oCache.resetChangesForPath("");
 
 		// element at index -1 is not transient (does not have @$ui5.transient property)
 		oCache.aElements[-1] = {};
 		oRequestorMock.expects("removePost").never();
 
 		// code under test
-		oCache.resetChanges("");
+		oCache.resetChangesForPath("");
 	});
 
 	//*********************************************************************************************
@@ -2187,7 +2191,7 @@ sap.ui.require([
 		return oCache.read("groupId", "Note").then(function () {
 			var aUpdatePromises;
 
-			assert.strictEqual(oCache.hasPendingChanges(""), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
 					{Note : "foo"}, undefined, sinon.match.func)
@@ -2207,12 +2211,12 @@ sap.ui.require([
 					.then(unexpected, rejected)
 			];
 
-			assert.strictEqual(oCache.hasPendingChanges(""), true);
-			assert.strictEqual(oCache.hasPendingChanges("Note"), true);
-			assert.strictEqual(oCache.hasPendingChanges("bar"), false);
+			assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("Note"), true);
+			assert.strictEqual(oCache.hasPendingChangesForPath("bar"), false);
 
 			// code under test
-			oCache.resetChanges("");
+			oCache.resetChangesForPath("");
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
@@ -2246,7 +2250,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: resetChanges", function (assert) {
+	QUnit.test("SingleCache: resetChangesForPath", function (assert) {
 		var oRequestor = _Requestor.create("/"),
 			sResourcePath = "/SalesOrderList('0')",
 			oCache = _Cache.createSingle(oRequestor, sResourcePath);
