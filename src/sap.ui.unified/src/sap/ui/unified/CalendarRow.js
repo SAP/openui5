@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	CalendarRow.prototype.init = function(){
 
-		this._bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL  = sap.ui.getCore().getConfiguration().getRTL();
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
 		this._iDaysMinDelta = 30; // minutes
