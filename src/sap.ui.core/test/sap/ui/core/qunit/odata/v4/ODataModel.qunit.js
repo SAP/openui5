@@ -716,6 +716,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		dataPath : "/BusinessPartnerList('42')",
+		metaPath : ""
+	}, {
+		dataPath : "/BusinessPartnerList('42')",
+		metaPath : "@com.sap.vocabularies.UI.v1.LineItem"
+	}, {
+		dataPath : "/",
+		metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
+	}, {
+		dataPath : "/BusinessPartnerList",
+		metaPath : "/",
+		relativeMetaPath : "./" // meta path is always treated as a relative path
+	}, {
+		dataPath : "/BusinessPartnerList",
+		metaPath : "/Name",
+		relativeMetaPath : "./Name" // meta path is always treated as a relative path
+	}].forEach(function (oFixture){
+		var sPath = (oFixture.dataPath + "#" + oFixture.metaPath);
+
+		QUnit.test("createBindingContext - go to metadata " + sPath, function (assert) {
+			var oContext = {},
+				oModel = createModel(),
+				oMetaContext = {},
+				oMetaModel = oModel.getMetaModel(),
+				oMetaModelMock = this.mock(oMetaModel),
+				sMetaPath = oFixture.relativeMetaPath || oFixture.metaPath;
+
+			oMetaModelMock.expects("getMetaContext").withExactArgs(oFixture.dataPath)
+				.returns(oMetaContext);
+			oMetaModelMock.expects("createBindingContext")
+				.withExactArgs(sMetaPath, sinon.match.same(oMetaContext))
+				.returns(oContext);
+
+			// code under test
+			assert.strictEqual(oModel.createBindingContext(sPath), oContext);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createBindingContext - error cases", function (assert) {
 		var oModel = createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
@@ -933,6 +973,86 @@ sap.ui.require([
 					o.bSystemQueryOptionsAllowed);
 			}, new Error(o.error));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve", function (assert) {
+		var oModel = createModel();
+
+		// relative path w/o context
+		assert.strictEqual(
+			oModel.resolve("Name"),
+			undefined);
+
+		// just "/"
+		assert.strictEqual(
+			oModel.resolve("/"),
+			"/");
+		assert.strictEqual(
+			oModel.resolve("", new BaseContext(oModel, "/")),
+			"/");
+		assert.strictEqual(
+			oModel.resolve("/", new BaseContext(oModel, "/BusinessPartnerList#")),
+			"/",
+			"resolve does not handle # specially");
+
+		// some entity set
+		assert.strictEqual(
+			oModel.resolve("/BusinessPartnerList"),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("/BusinessPartnerList/"),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("/BusinessPartnerList", {/*must be ignored*/}),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("BusinessPartnerList", new BaseContext(oModel, "/")),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("BusinessPartnerList/", new BaseContext(oModel, "/")),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("", new BaseContext(oModel, "/BusinessPartnerList")),
+			"/BusinessPartnerList");
+		assert.strictEqual(
+			oModel.resolve("", new BaseContext(oModel, "/BusinessPartnerList/")),
+			"/BusinessPartnerList");
+
+		// an entity set's property
+		assert.strictEqual(
+			oModel.resolve("Name/", new BaseContext(oModel, "/BusinessPartnerList")),
+			"/BusinessPartnerList/Name");
+
+		// an entity set's type (metadata!)
+		assert.strictEqual(
+			oModel.resolve("/BusinessPartnerList#/"),
+			"/BusinessPartnerList#/");
+		assert.strictEqual(
+			oModel.resolve("BusinessPartnerList#/", new BaseContext(oModel, "/")),
+			"/BusinessPartnerList#/");
+		assert.strictEqual(
+			oModel.resolve("#/", new BaseContext(oModel, "/BusinessPartnerList")),
+			"/BusinessPartnerList/#/",
+			"there is a / added before the relative path");
+		assert.strictEqual(
+			oModel.resolve("#/", new BaseContext(oModel, "/BusinessPartnerList/")),
+			"/BusinessPartnerList/#/");
+		assert.strictEqual(
+			oModel.resolve("", new BaseContext(oModel, "/BusinessPartnerList#/")),
+			"/BusinessPartnerList#/");
+
+		// legacy compatibility (see sap.ui.model.Model#resolve)
+		assert.strictEqual(
+			oModel.resolve(42, new BaseContext(oModel, "/")),
+			"/42");
+		assert.throws(function () {
+			Model.prototype.resolve(42, new BaseContext(oModel, "/"));
+		});
+		assert.strictEqual(
+			oModel.resolve(0, new BaseContext(oModel, "/")),
+			Model.prototype.resolve(0, new BaseContext(oModel, "/")),
+			"/");
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

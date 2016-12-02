@@ -59,7 +59,11 @@ sap.ui.define([
 			oMetaModel.requestObject("/$EntityContainer/SalesOrderList/$Type").then(function () {
 				oLayout.addItem(sap.ui.view({
 					async : true,
+					bindingContexts : {
+						undefined : oModel.createBindingContext("/BusinessPartnerList")
+					},
 					models : {
+						// Note: XML Templating creates bindings to default model only!
 						undefined : oModel,
 						ui : new JSONModel({
 							bRealOData : bRealOData,
@@ -69,7 +73,11 @@ sap.ui.define([
 					},
 					preprocessors : {
 						xml : {
+							bindingContexts : {
+								data : oModel.createBindingContext("/BusinessPartnerList")
+							},
 							models : {
+								data : oModel,
 								meta : oMetaModel
 							}
 						}

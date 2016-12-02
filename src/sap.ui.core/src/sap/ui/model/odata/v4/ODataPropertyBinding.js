@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData V4 model
 	 * @param {string} sPath
-	 *   The binding path in the model; must not be empty or end with a slash
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -80,7 +80,7 @@ sap.ui.define([
 
 				PropertyBinding.call(this, oModel, sPath);
 
-				if (!sPath || sPath.slice(-1) === "/") {
+				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
 				oBindingParameters = this.oModel.buildBindingParameters(mParameters,

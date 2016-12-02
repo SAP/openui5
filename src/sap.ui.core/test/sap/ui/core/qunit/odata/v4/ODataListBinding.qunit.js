@@ -759,12 +759,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["", "/", "foo/"].forEach(function (sPath) {
+	["/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindList: invalid path: " + sPath, function (assert) {
 			assert.throws(function () {
 				this.oModel.bindList(sPath);
 			}, new Error("Invalid path: " + sPath));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindList: empty path is valid for base context", function (assert) {
+		var oBaseContext = this.oModel.createBindingContext("/BusinessPartnerList");
+
+		// code under test
+		this.oModel.bindList("", oBaseContext);
 	});
 
 	//*********************************************************************************************
