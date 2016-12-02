@@ -465,13 +465,14 @@ sap.ui.define([
 		onCut: function () {
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oBinding = oTable.getBinding();
+			var oModel = oBinding.getModel();
 
 			// keep track of the removed handle
 			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
 			this._oLastTreeHandle = oTreeHandle;
 
 			// only for demo: get the odata-key
-			var sKey = oTreeHandle._oSubtreeRoot.key;
+			var sKey = oModel.getKey(oTreeHandle);
 			this._mTreeHandles = this._mTreeHandles || {};
 			this._mTreeHandles[sKey] = oTreeHandle;
 
@@ -544,8 +545,7 @@ sap.ui.define([
 
 			if (aContexts.length >= 0) {
 				var oCtx = aContexts[0];
-				var oData = oCtx.getProperty();
-				var sKey = oData.key;
+				var sKey = oCtx.getProperty("key");
 				var oTreeHandle = this._mTreeHandles[sKey];
 
 				// insert in currently selected index
