@@ -4677,6 +4677,33 @@
 		}.bind(this))
 	});
 
+	asyncTest("createEntry and bindElement", function() {
+		assert.expect(1);
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+					ok(false, "success handler must not be called");
+				},
+				fnRequestSent = function() {
+					ok(false, "no request must be triggered");
+				};
+	
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				success: fnSuccess
+			});
+			var oContextBinding = this.oModel.bindContext(oCreatedContext.getPath());
+			oContextBinding.attachChange(function(){
+				ok(true, "ContextBinding change must be fired");
+			});
+			this.oModel.attachRequestSent(fnRequestSent);
+			oContextBinding.initialize();
+			setTimeout(function() {
+				that.oModel.detachRequestSent(fnRequestSent);
+				start();
+			}, 0);
+		}.bind(this))
+	});
+
 	module("Model: SAML");
 
 	asyncTest("SAML redirect - without batch", function(){
