@@ -927,7 +927,7 @@
 		},
         {
           "id": "sap.m.StepInput",
-          "name": "StepInput",
+          "name": "Step Input",
           "category": "User Input",
           "since": "1.40",
           "samples": ["sap.m.sample.StepInput"]
