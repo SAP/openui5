@@ -1306,6 +1306,7 @@ sap.ui.define([
 
 			if (oCellInfo.type === CellType.DATACELL ||
 				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.ROWACTION ||
 				oCellInfo.type === CellType.COLUMNHEADER) {
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
@@ -1322,16 +1323,21 @@ sap.ui.define([
 					/* Column header area */
 					/* Top fixed area */
 					if (iFocusedRow < iHeaderRowCount + this.getFixedRowCount()) {
-						// Set the focus to the first row of the top fixed area.
-						TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
+						if (oCellInfo.type === CellType.ROWACTION) {
+							// Set the focus to the first row (row actions do not have a header).
+							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
+						} else {
+							// Set the focus to the first row the column headers, if exists, otherwise to the first row of the top fixed area.
+							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
+						}
 
 					/* Scrollable area */
 					} else if (iFocusedRow >= iHeaderRowCount + this.getFixedRowCount() &&
 							   iFocusedRow < iHeaderRowCount + TableUtils.getNonEmptyVisibleRowCount(this) - this.getFixedBottomRowCount()) {
 						this._getScrollExtension().scrollMax(false, true);
-						// If a fixed top area exists, then set the focus to the first row of the top fixed area,
-						// otherwise set the focus to the first row of the column header area.
-						if (this.getFixedRowCount() > 0) {
+						// If a fixed top area exists or we are in the row action column (has no header),
+						// then set the focus to the first row (of the top fixed area), otherwise set the focus to the first row of the column header area.
+						if (this.getFixedRowCount() > 0 || oCellInfo.type === CellType.ROWACTION) {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
 						} else {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
@@ -1359,6 +1365,7 @@ sap.ui.define([
 
 			if (oCellInfo.type === CellType.DATACELL ||
 				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.ROWACTION ||
 				oCellInfo.type === CellType.COLUMNHEADER ||
 				oCellInfo.type === CellType.COLUMNROWHEADER) {
 
@@ -1430,6 +1437,7 @@ sap.ui.define([
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.ROWACTION ||
 			oCellInfo.type === CellType.COLUMNHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
@@ -1457,9 +1465,9 @@ sap.ui.define([
 
 					// Only change the focus if scrolling was not performed over a full page, or not at all.
 					if (iRowsToBeScrolled < iPageSize) {
-						// If a fixed top area exists, then set the focus to the first row of the top fixed area,
-						// otherwise set the focus to the first row of the column header area.
-						if (this.getFixedRowCount() > 0) {
+						// If a fixed top area exists or we are in the row action column (has no header),
+						// then set the focus to the first row (of the top fixed area), otherwise set the focus to the first row of the column header area.
+						if (this.getFixedRowCount() > 0 || oCellInfo.type === CellType.ROWACTION) {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
 						} else {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iHeaderRowCount, oEvent);
@@ -1479,6 +1487,11 @@ sap.ui.define([
 					TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount - TableUtils.getNonEmptyVisibleRowCount(this) + 1), oEvent);
 				}
 			}
+
+			// If the focus is in the first row of the row action area, do nothing (row actions do not have a column header).
+			if (oCellInfo.type === CellType.ROWACTION && iFocusedRow === iHeaderRowCount && this.getFixedRowCount() > 0) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+			}
 		}
 	};
 
@@ -1492,6 +1505,7 @@ sap.ui.define([
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
 			oCellInfo.type === CellType.COLUMNHEADER ||
+			oCellInfo.type === CellType.ROWACTION ||
 			oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
