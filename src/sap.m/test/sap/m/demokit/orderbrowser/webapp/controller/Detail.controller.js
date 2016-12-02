@@ -190,7 +190,7 @@ sap.ui.define([
 				oViewModel.setProperty("/shareSendEmailSubject",
 					oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
 				oViewModel.setProperty("/shareSendEmailMessage",
-					oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
+					oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href,oObject.ShipName, oObject.EmployeeID, oObject.CustomerID]));
 			},
 
 			_onMetadataLoaded : function () {

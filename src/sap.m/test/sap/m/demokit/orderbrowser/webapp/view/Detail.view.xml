@@ -24,8 +24,14 @@
 					formatter: 'jQuery.sap.formatMessage'
 				}"
 				number="{
-					path: 'detailView>/totalOrderAmount',
-					formatter: '.formatter.currencyValue'
+					parts: [
+						{path: 'detailView>/totalOrderAmount'},
+						{path: 'detailView>/currency'}
+					],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {
+						showMeasure: false
+					}
 				}"
 				numberUnit="{detailView>/currency}"
 				backgroundDesign="Translucent">
@@ -119,9 +125,8 @@
 								text="{Quantity}"/>
 							<ObjectNumber
 								number="{
-									parts:[{path: 'Quantity'}, {path: 'UnitPrice'}],
-									formatter: '.formatter.calculateItemTotal',
-									type: 'sap.ui.model.type.Currency'
+									parts:[{path: 'Quantity'}, {path: 'UnitPrice'}, {path:'detailView>/currency'}],
+									formatter: '.formatter.calculateItemTotal'
 								}"
 								unit="{detailView>/currency}"/>
 						</cells>

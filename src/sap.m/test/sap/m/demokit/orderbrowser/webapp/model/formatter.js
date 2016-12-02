@@ -1,5 +1,6 @@
 sap.ui.define([
-	], function () {
+		"sap/ui/model/type/Currency"
+	], function (Currency) {
 		"use strict";
 
 		return {
@@ -14,22 +15,21 @@ sap.ui.define([
 				if (!sValue) {
 					return "";
 				}
-
 				return parseFloat(sValue).toFixed(2);
 			},
-
-			calculateItemTotal : function (iQuantity, fPrice) {
+			calculateItemTotal : function (iQuantity, fPrice, sCurrencyCode) {
+				var oCurrency = new Currency({showMeasure: false});
 				var fTotal = iQuantity * fPrice;
-				return fTotal.toFixed(2);
+				return oCurrency.formatValue([fTotal.toFixed(2), sCurrencyCode], "string");
 			},
 
-			handleBinaryContent: function(bData){
-				if(bData) {
-					var sSource1 = 'data:image/jpeg;base64,';
-					var sSource2 = bData.substr(104);// stripping the first 104 bytes  from the binary data when using base64 encoding.
-					return sSource1 + sSource2;
+			handleBinaryContent: function(vData){
+				if(vData) {
+					var sMetaData1 = 'data:image/jpeg;base64,';
+					var sMetaData2 = vData.substr(104);// stripping the first 104 bytes  from the binary data when using base64 encoding.
+					return sMetaData1 + sMetaData2;
 				} else {
-					return "../localService/images/employee.jpg"
+					return "../images/employee.jpg";
 				}
 			}
 		};
