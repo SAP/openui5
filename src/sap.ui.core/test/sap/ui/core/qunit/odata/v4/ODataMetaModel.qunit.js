@@ -24,7 +24,17 @@ sap.ui.require([
 	/*eslint no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var mScope = {
+	var mMostlyEmptyScope = {
+			"$EntityContainer" : "tea_busi.DefaultContainer",
+			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
+			"tea_busi." : {
+				"$kind" : "Schema"
+			},
+			"tea_busi.DefaultContainer" : {
+				"$kind" : "EntityContainer"
+			}
+		},
+		mScope = {
 			"$Annotations" : {
 				"name.space.Id" : {
 					// Common := com.sap.vocabularies.Common.v1
@@ -933,7 +943,21 @@ sap.ui.require([
 			assert.deepEqual(oSyncPromise.getResult(), {}); // strictEqual would not work!
 		});
 	});
-	//TODO if there are no annotations for an external target, avoid {} unless "@" is used?
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject without $Annotations", function (assert) {
+		var oSyncPromise;
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			.returns(_SyncPromise.resolve(mMostlyEmptyScope));
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject("/@DefaultContainer");
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.deepEqual(oSyncPromise.getResult(), undefined); // strictEqual would not work!
+	});
+	//TODO if no annotations exist for an external target, avoid {} internally unless "@" is used?
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {

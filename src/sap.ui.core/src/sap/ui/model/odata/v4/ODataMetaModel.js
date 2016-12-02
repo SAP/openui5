@@ -746,7 +746,6 @@ sap.ui.define([
 			 */
 			function step(sSegment, i, aSegments) {
 				var iIndexOfAt,
-					sSchemaName,
 					bSplitSegment;
 
 				if (sSegment === "$Annotations") {
@@ -876,11 +875,7 @@ sap.ui.define([
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
 						//       e.g. ".../$ReturnType/@..."
-						sSchemaName
-							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
-						vResult = sSchemaName === sSchemaChildName
-							? oSchemaChild // annotations at schema are inline
-							: (mScope.$Annotations || {})[sTarget] || {};
+						vResult = (mScope.$Annotations || {})[sTarget] || {};
 						bODataMode = false; // switch to pure "JSON" drill-down
 					}
 				}
