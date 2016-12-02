@@ -46,7 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.addClass("sapMList");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("tabindex", "-1");
-		rm.writeAttribute("role", "presentation");
 
 		if (oControl.getInset()) {
 			rm.addClass("sapMListInsetBG");
