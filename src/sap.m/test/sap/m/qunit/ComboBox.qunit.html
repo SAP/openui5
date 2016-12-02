@@ -123,7 +123,7 @@
 
 		// CSN 0120031469 0000547938 2014
 		// do not override the binding for the value property
-		QUnit.test("setValue()", function(assert) {
+		QUnit.test("it should not override the value", function(assert) {
 
 			// system under test
 			var oComboBox = new sap.m.ComboBox({
@@ -141,8 +141,7 @@
 				},
 
 				value: {
-					path: "/value",
-					template: "{value}"
+					path: "/value"
 				}
 			});
 
@@ -172,6 +171,71 @@
 
 			// assert
 			assert.strictEqual(oComboBox.getValue(), "other value");
+
+			// cleanup
+			oComboBox.destroy();
+			oModel.destroy();
+		});
+
+		// BCP 0020751295 0000447582 2016
+		QUnit.test("it should update the value after a new binding context is set", function(assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				selectedKey: "b",
+				items: {
+					path: "items",
+					template: new sap.ui.core.Item({
+						key: "{key}",
+						text: "{text}"
+					})
+				}
+			});
+
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var mData = {
+				"rebum": {
+					"items": [
+						{
+							"key": "a",
+							"text": "lorem"
+						},
+						{
+							"key": "b",
+							"text": "ipsum"
+						}
+					]
+				},
+				"sanctus": {
+					"items": [
+						{
+							"key": "b",
+							"text": "dolor"
+						},
+						{
+							"key": "a",
+							"text": "sadipscing"
+						}
+					]
+				}
+			};
+
+			oModel.setData(mData);
+			sap.ui.getCore().setModel(oModel);
+			oComboBox.setBindingContext(oModel.getContext("/rebum"));
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oComboBox.getValue(), "ipsum");
+
+			// act
+			oComboBox.setBindingContext(oModel.getContext("/sanctus"));
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oComboBox.getValue(), "dolor");
 
 			// cleanup
 			oComboBox.destroy();
