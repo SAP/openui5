@@ -122,7 +122,7 @@ sap.ui.define([
 		this._updateShowHideAllButton(false);
 
 		if (oObjectPage && this.getDomRef()) {
-			oObjectPage._adjustLayout();
+			oObjectPage._requestAdjustLayout();
 		}
 	};
 

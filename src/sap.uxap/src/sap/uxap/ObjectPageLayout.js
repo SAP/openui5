@@ -15,9 +15,10 @@ sap.ui.define([
 	"./ObjectPageSubSectionLayout",
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
+	"./ThrottledTaskHelper",
 	"sap/ui/core/ScrollBar",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ScrollBar, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ThrottledTask, ScrollBar, library) {
 	"use strict";
 
 	/**
@@ -372,6 +373,8 @@ sap.ui.define([
 			this._$opWrapper.on("scroll", this.onWrapperScroll.bind(this));
 		}
 
+		this._registerOnContentResize();
+
 		this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
 		this.getFooter() && this._shiftFooter();
 
@@ -418,6 +421,10 @@ sap.ui.define([
 
 		if (this._iResizeId) {
 			ResizeHandler.deregister(this._iResizeId);
+		}
+
+		if (this._iContentResizeId) {
+			ResizeHandler.deregister(this._iContentResizeId);
 		}
 	};
 
@@ -542,6 +549,7 @@ sap.ui.define([
 		this._$headerContent = jQuery.sap.byId(this.getId() + "-headerContent");
 		this._$stickyHeaderContent = jQuery.sap.byId(this.getId() + "-stickyHeaderContent");
 		this._$contentContainer = jQuery.sap.byId(this.getId() + "-scroll");
+		this._$sectionsContainer = jQuery.sap.byId(this.getId() + "-sectionsContainer");
 		this._bDomElementsCached = true;
 	};
 
@@ -787,37 +795,47 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._adjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
-		//adjust the layout only if the object page is full ready
-		if (!this._bDomReady) {
-			return;
+	/*************************************************************************************
+	 * layout management
+	 ************************************************************************************/
+
+	/**
+	 * Schedules for execution a layout adjustment task.
+	 * This task is throttled by default (unless the bImmediate parameter is specified).
+	 * @param {Object} oEvent
+	 * @param {Boolean} bImmediate - whether the task should be executed immediately, rather than throttled
+	 * @param {Boolean} bNeedLazyLoading - parameter for the layout adjustment task
+	 * @returns {Promise} - promise that will be resolved upon the task execution
+	 * @since 1.44
+	 * @private
+	 */
+	ObjectPageLayout.prototype._requestAdjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
+
+		if (!this._oLayoutTask) {
+			this._oLayoutTask = new ThrottledTask(
+				this._executeAdjustLayout, //function to execute
+				ObjectPageLayout.DOM_CALC_DELAY, // throttle delay
+				this); // context
+		}
+		if (!bImmediate) {
+			jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "delayed by " + ObjectPageLayout.DOM_CALC_DELAY + " ms because of dom modifications");
 		}
 
-		//postpone until we get requests
-		if (this._iLayoutTimer) {
-			jQuery.sap.log.debug("ObjectPageLayout :: _adjustLayout", "delayed by " + ObjectPageLayout.DOM_CALC_DELAY + " ms because of dom modifications");
-			jQuery.sap.clearDelayedCall(this._iLayoutTimer);
-		}
+		var aTaskArgs = arguments;
+		Array.prototype.splice.call(aTaskArgs, 0, 2); // the first two are not specific to the task execution, so remove them
+		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs); // returns promise
+	};
 
-		if (bImmediate) {
-			this._updateScreenHeightSectionBasesAndSpacer();
-			this._iLayoutTimer = undefined;
-		} else {
-			//need to "remember" if one of the adjustLayout is requesting the lazyLoading
-			this._bNeedLazyLoading = this._bNeedLazyLoading !== undefined || bNeedLazyLoading;
+	/**
+	 * Adjust the layout includes recalculation of the dom positions and heights of the page components
+	 * Should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
+	 * @private
+	 */
+	ObjectPageLayout.prototype._executeAdjustLayout = function (bNeedLazyLoading) { // this is an expensive function and is called often, so should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
 
-			this._iLayoutTimer = jQuery.sap.delayedCall(ObjectPageLayout.DOM_CALC_DELAY, this, function () {
-				jQuery.sap.log.debug("ObjectPageLayout :: _adjustLayout", "re-evaluating dom positions");
-				this._updateScreenHeightSectionBasesAndSpacer();
-
-				//in case the layout has changed we need to re-evaluate the lazy loading
-				if (this._bNeedLazyLoading) {
-					this._oLazyLoading.doLazyLoading();
-				}
-
-				this._bNeedLazyLoading = undefined;
-				this._iLayoutTimer = undefined;
-			});
+		this._updateScreenHeightSectionBasesAndSpacer();
+		if (bNeedLazyLoading) {
+			this._oLazyLoading.doLazyLoading();
 		}
 	};
 
@@ -830,14 +848,13 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
 		//in case we have added a section or subSection which change the ux rules
-		jQuery.sap.log.debug("ObjectPageLayout :: _adjustLayout", "refreshing ux rules");
+		jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
 
 		/* obtain the currently selected section in the navBar before navBar is destroyed,
 		 in order to reselect that section after that navBar is reconstructed */
 		var sSelectedSectionId = this._getSelectedSectionId(),
 			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId),
-			bSelectionChanged = false,
-			bKeepExpandedMode = false;
+			bSelectionChanged = false;
 
 		this._applyUxRules(true);
 
@@ -854,20 +871,12 @@ sap.ui.define([
 			if (this.getUseIconTabBar()) {
 				this._setCurrentTabSection(oSelectedSection);
 			}
-			this._adjustLayout(null, false, true /* requires a check on lazy loading */);
-
-			bKeepExpandedMode = !this._bStickyAnchorBar
-				&& this._oFirstVisibleSection
-				&& (this._oFirstVisibleSection.getId() === oSelectedSection.getId());
-
-			if (bSelectionChanged && !bKeepExpandedMode) { /* bKeepExpandedMode check needed since scroll to section always brings sticky mode,
-			 so if the page is expanded and the selected section is
-			 the top section, then should not scroll */
-
-				jQuery.sap.delayedCall(0, this, function () { /* delayed call fixes BCP:1680125278, new sections positionTop was not ready when calling scroll */
-					this.scrollToSection(sSelectedSectionId);
-				});
-			}
+			this._requestAdjustLayout(null, false, true /* requires a check on lazy loading */)
+				.then(function () { // scrolling must be done after the layout adjustment is done (so the section positions are determined)
+					if (bSelectionChanged) {
+						this.scrollToSection(sSelectedSectionId);
+					}
+				}.bind(this));
 		}
 	};
 
@@ -954,6 +963,11 @@ sap.ui.define([
 			return;
 		}
 
+		if (this.bIsDestroyed) {
+			jQuery.sap.log.debug("ObjectPageLayout :: scrollToSection", "scrolling canceled as page is being destroyed");
+			return;
+		}
+
 		if (this.getUseIconTabBar()) {
 			var oToSelect = ObjectPageSection._getClosestSection(oSection);
 
@@ -978,8 +992,8 @@ sap.ui.define([
 		iOffset = iOffset || 0;
 
 		oSection._expandSection();
-		//call _adjustLayout synchronously to make extra sure we have the right positionTops for all sectionBase before scrolling
-		this._adjustLayout(null, true);
+		//call _requestAdjustLayout synchronously to make extra sure we have the right positionTops for all sectionBase before scrolling
+		this._requestAdjustLayout(null, true);
 
 		iDuration = this._computeScrollDuration(iDuration, oSection);
 
@@ -1017,7 +1031,7 @@ sap.ui.define([
 		iDuration = iDuration >= 0 ? iDuration : this._iScrollToSectionDuration;
 
 		if (this.getUseIconTabBar()
-			&& ((oTargetSection instanceof ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
+			&& ((oTargetSection instanceof ObjectPageSection) || this._isFirstVisibleSectionBase(oTargetSection))
 			&& this._bStickyAnchorBar) { // in this case we are only scrolling
 			// a section from expanded to sticky position,
 			// so the scrolling animation in not needed, instead it looks unnatural, so set a 0 duration
@@ -1029,14 +1043,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._computeScrollPosition = function (oTargetSection) {
 
 		var bFirstLevel = oTargetSection && (oTargetSection instanceof ObjectPageSection),
-			sId = oTargetSection.getId();
+			sId = oTargetSection.getId(),
+			iScrollTo = this._bMobileScenario || bFirstLevel ? this._oSectionInfo[sId].positionTopMobile : this._oSectionInfo[sId].positionTop,
+			bExpandedMode = !this._bStickyAnchorBar;
 
-		var iScrollTo = this._bMobileScenario || bFirstLevel ? this._oSectionInfo[sId].positionTopMobile : this._oSectionInfo[sId].positionTop;
-
-		if (this.getUseIconTabBar()
-			&& ((oTargetSection instanceof ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
-			&& !this._bStickyAnchorBar) { // preserve expanded header if no need to stick
-
+		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
 			iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
 		}
 		return iScrollTo;
@@ -1136,6 +1147,12 @@ sap.ui.define([
 			sPreviousSubSectionId,
 			sPreviousSectionId,
 			bAllowSnap;
+
+		if (!this._bDomReady) { //calculate the layout only if the object page is full ready
+			return false; // return success flag
+		}
+
+		jQuery.sap.log.debug("ObjectPageLayout :: _updateScreenHeightSectionBasesAndSpacer", "re-evaluating dom positions");
 
 		this.iScreenHeight = this.$().height();
 		var iSubSectionsCount = 0;
@@ -1256,6 +1273,7 @@ sap.ui.define([
 		}
 
 		this._updateCustomScrollerHeight(bAllowSnap);
+		return true; // return success flag
 	};
 
 	ObjectPageLayout.prototype._updateCustomScrollerHeight = function(bRequiresSnap) {
@@ -1280,11 +1298,10 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._computeScrollableContentSize = function(bShouldStick) {
-		var $scroll = jQuery.sap.byId(this.getId() + "-scroll"),
-			iScrollableContentHeight = 0;
+		var iScrollableContentHeight = 0;
 
-		if ($scroll && $scroll.length){
-			iScrollableContentHeight = $scroll[0].scrollHeight;
+		if (this._$contentContainer && this._$contentContainer.length){
+			iScrollableContentHeight = this._$contentContainer[0].scrollHeight;
 		}
 
 		if (!this._bStickyAnchorBar && bShouldStick) { //anchorBar is removed from scrollable content upon snap
@@ -1376,11 +1393,9 @@ sap.ui.define([
 		return iSpacerHeight;
 	};
 
-	ObjectPageLayout.prototype._isFirstVisibleSubSection = function (oSubSection) {
-		if (!oSubSection) {
-			return;
-		}
-		var oSectionInfo = this._oSectionInfo[oSubSection.getId()];
+	ObjectPageLayout.prototype._isFirstVisibleSectionBase = function (oSection) {
+
+		var oSectionInfo = this._oSectionInfo[oSection.getId()];
 		if (oSectionInfo) {
 			return oSectionInfo.positionTop === this.iHeaderContentHeight;
 		}
@@ -1408,7 +1423,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._initAnchorBarScroll = function () {
 
-		this._adjustLayout(null, true);
+		this._requestAdjustLayout(null, true);
 
 		//reset the scroll to top for anchorbar & scrolling management
 		this._sScrolledSectionId = "";
@@ -1453,6 +1468,48 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageLayout.prototype._registerOnContentResize = function () {
+
+		var $container = this._$sectionsContainer.length && this._$sectionsContainer[0];
+		if (!$container) {
+			return;
+		}
+
+		if (this._iContentResizeId) {
+			ResizeHandler.deregister(this._iContentResizeId);
+		}
+		this._iContentResizeId = ResizeHandler.register($container, this._onUpdateContentSize.bind(this));
+	};
+
+	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
+		var iScrollTop,
+			iPageHeight,
+			sClosestSectionId,
+			sSelectedSectionId;
+
+		// a special case: if the content that changed its height was *above* the current scroll position =>
+		// then the current scroll position updated respectively and => triggered a scroll event =>
+		// a new section may become selected during that scroll
+
+		// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
+
+		// solution [implemented bellow] is to compare (1) the currently visible section with (2) the currently selected section in the anchorBar
+		// and reselect if the two do not match
+		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
+			.then(function () {
+				iScrollTop = this._$opWrapper.scrollTop();
+				iPageHeight = this.iScreenHeight;
+				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
+				sSelectedSectionId = this._getSelectedSectionId();
+
+
+				if (sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
+					// then change the selection to match the correct section
+					this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[sClosestSectionId].buttonId);
+				}
+			}.bind(this));
+	};
+
 	/**
 	 * called when the screen is resize by users. Updates the screen height
 	 * @param oEvent
@@ -1477,7 +1534,7 @@ sap.ui.define([
 
 			this._adjustHeaderHeights();
 
-			this._adjustLayout(null, true);
+			this._requestAdjustLayout(null, true);
 
 			if (this.getFooter() && this.getShowFooter()) {
 				this._shiftFooter();
@@ -1600,7 +1657,7 @@ sap.ui.define([
 			// on desktop/tablet, skip subsections
 			if (oInfo.isSection || this._bMobileScenario) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
-				if (!sClosestId) {
+				if (!sClosestId && (oInfo.sectionReference._getInternalVisible() === true)) {
 					sClosestId = sId;
 				}
 
