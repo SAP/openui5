@@ -24,11 +24,11 @@ sap.ui.define([
 			this.currentRouteName = sRouteName;
 		},
 
-		onLayoutChanged: function (oEvent) {
+		onStateChanged: function (oEvent) {
 			var oModel = this.getOwnerComponent().getModel();
 
 			var bIsNavigationArrow = oEvent.getParameter("isNavigationArrow"),
-				oUIState = this.byId("fcl").getCurrentUIState();
+				oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
 
 			// Update the action buttons visibility
 			oModel.setData(oUIState);

@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/f/FlexibleColumnLayoutSemanticHelper"
+], function (UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
 
 	var Component = UIComponent.extend("flexiblecolumnlayout.Component", {
@@ -19,15 +20,19 @@ sap.ui.define([
 		},
 
 		createContent: function () {
-			// create root view
 			return sap.ui.view({
 				viewName: "flexiblecolumnlayout.FlexibleColumnLayout",
 				type: "XML"
 			});
 		},
 
-		getFlexibleColumnLayout: function () {
-			return this.getRootControl().byId("fcl");
+		/**
+		 * Returns an instance of the semantic helper
+		 * @returns {*}
+		 */
+		getHelper: function () {
+			var oFCL = this.getRootControl().byId("fcl");
+			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
 		}
 	});
 	return Component;

@@ -2,58 +2,70 @@
  * ${copyright}
  */
 
-// Provides control sap.f.SemanticFlexibleColumnLayout.
+/**
+ * FlexibleColumnLayout semantic helper
+ */
+
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
-	"./FlexibleColumnLayout",
-	"./FlexibleColumnLayoutRenderer"
-], function (jQuery, library, FlexibleColumnLayout, FlexibleColumnLayoutRenderer) {
+	"sap/ui/base/Metadata",
+	"sap/f/FlexibleColumnLayout"
+], function (jQuery, library, Metadata, FlexibleColumnLayout) {
 	"use strict";
 
+	var FlexibleColumnLayoutSemanticHelper = Metadata.createClass("sap.f.FlexibleColumnLayoutSemanticHelper", {
 
-	/**
-	 * Constructor for a new Semantic Flexible Column Layout.
-	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 *
-	 * @class
-	 * The FlexibleColumnLayout control implements the master-detail-detail paradigm by allowing the user to display up to three pages at a time.
-	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @private
-	 * @since 1.46
-	 * @alias sap.f.SemanticFlexibleColumnLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	var SemanticFlexibleColumnLayout = FlexibleColumnLayout.extend("sap.f.SemanticFlexibleColumnLayout", {
-		metadata: {
-		},
-		renderer: FlexibleColumnLayoutRenderer
+		/**
+		 * @private
+		 */
+		constructor: function (oFlexibleColumnLayout) {
+			this.oFCL = oFlexibleColumnLayout;
+		}
 	});
 
 	/**
-	 * Returns information about the current layout of the control
+	 * Instances of the class per flexible column layout object
+	 * @type {{}}
+	 * @private
+	 */
+	FlexibleColumnLayoutSemanticHelper._oInstances = {};
+
+	/**
+	 * Returns (and stores for future calls) an instance of the sap.f.FlexibleColumnLayoutSemanticHelper for a given instance of sap.f.FlexibleColumnLayout.
+	 * @param oFlexibleColumnLayout
+	 * @returns {*}
+	 */
+	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout) {
+
+		jQuery.sap.assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
+
+		var sId = oFlexibleColumnLayout.getId();
+
+		if (typeof FlexibleColumnLayoutSemanticHelper._oInstances[sId] === "undefined") {
+			FlexibleColumnLayoutSemanticHelper._oInstances[sId] = new FlexibleColumnLayoutSemanticHelper(oFlexibleColumnLayout);
+		}
+
+		return FlexibleColumnLayoutSemanticHelper._oInstances[sId];
+	};
+
+	/**
+	 * Returns information about the current state of the control
 	 * @returns {{layout: *, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
-	SemanticFlexibleColumnLayout.prototype.getCurrentUIState = function () {
-		var sCurrentLayout = this.getLayout();
+	FlexibleColumnLayoutSemanticHelper.prototype.getCurrentUIState = function () {
+		var sCurrentLayout = this.oFCL.getLayout();
 		return this._getUIStateForLayout(sCurrentLayout);
 	};
 
 	/**
-	 * Returns information about the layout that the control will have after navigating to the next logical level (i.e. from 1 column to 2 columns)
+	 * Returns information about the state that the control will have after navigating to the next logical level (i.e. from 1 column to 2 columns)
 	 * @param sColumn - the column, from which the navigation will be triggered - begin/mid/end
 	 * @returns {{layout: *, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
-	SemanticFlexibleColumnLayout.prototype.getNextUIState = function (sColumn) {
+	FlexibleColumnLayoutSemanticHelper.prototype.getNextUIState = function (sColumn) {
 
-		var sCurrentLayout = this.getLayout(),
+		var sCurrentLayout = this.oFCL.getLayout(),
 			sNextLayout;
 
 		// 1 column
@@ -125,50 +137,53 @@ sap.ui.define([
 	 * Returns information about the current layout
 	 * @returns {{layout: *, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 */
-	SemanticFlexibleColumnLayout.prototype._getUIStateForLayout = function (sLayout) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getUIStateForLayout = function (sLayout) {
+
+		var aSizes = this.oFCL._getColumnWidthDistributionForLayout(sLayout, true);
 
 		return {
 			layout: sLayout,
-			columnsSizes: this._getColumnsSizes(sLayout),
-			columnsVisibility: this._getColumnsVisibility(sLayout),
-			isFullScreen: this._getIsFullScreen(sLayout),
+			columnsSizes: this._getColumnsSizes(aSizes),
+			columnsVisibility: this._getColumnsVisibility(aSizes),
+			isFullScreen: this._getIsFullScreen(aSizes),
 			isLogicallyFullScreen: this._getIsLogicallyFullScreen(sLayout),
-			actionButtonsInfo: this._getActionButtonsInfo(sLayout)
+			actionButtonsInfo: this._getActionButtonsInfo(aSizes)
 		};
 
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getColumnsSizes = function (sLayout) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getColumnsSizes = function (aSizes) {
+
 		return {
-			beginColumn: this._getColumnSizeForLayout("begin", sLayout),
-			midColumn: this._getColumnSizeForLayout("mid", sLayout),
-			endColumn: this._getColumnSizeForLayout("end", sLayout)
+			beginColumn: aSizes[0],
+			midColumn: aSizes[1],
+			endColumn: aSizes[2]
 		};
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getColumnsVisibility = function (sLayout) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getColumnsVisibility = function (aSizes) {
+
 		return {
-			beginColumn: this._getColumnSizeForLayout("begin", sLayout) !== 0,
-			midColumn: this._getColumnSizeForLayout("mid", sLayout) !== 0,
-			endColumn: this._getColumnSizeForLayout("end", sLayout) !== 0
+			beginColumn: aSizes[0] !== 0,
+			midColumn: aSizes[1] !== 0,
+			endColumn: aSizes[2] !== 0
 		};
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getIsFullScreen = function (sLayout) {
-		return this._getColumnSizeForLayout("begin", sLayout) === 100 ||
-			this._getColumnSizeForLayout("mid", sLayout) === 100 ||
-			this._getColumnSizeForLayout("end", sLayout) === 100;
+	FlexibleColumnLayoutSemanticHelper.prototype._getIsFullScreen = function (aSizes) {
+
+		return aSizes.indexOf(100) !== -1;
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getIsLogicallyFullScreen = function (sLayout) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getIsLogicallyFullScreen = function (sLayout) {
 
 		return ["OneColumn", "MidFullScreen", "EndFullScreen"].indexOf(sLayout) !== -1;
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getActionButtonsInfo = function (sLayout) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getActionButtonsInfo = function (aSizes) {
 
-		var iMaxColumnsCount = this._getMaxColumnsCount(),
-			sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout),
+		var iMaxColumnsCount = this.oFCL._getMaxColumnsCount(),
+			sColumnWidthDistribution = aSizes.join("/"),
 			oMidColumn = {
 				fullScreen: null,
 				exitFullScreen: null,
@@ -178,7 +193,9 @@ sap.ui.define([
 				fullScreen: null,
 				exitFullScreen: null,
 				closeColumn: null
-			};
+			},
+			aEligibleLayouts,
+			sExitFullScreen;
 
 		if (iMaxColumnsCount === 1) {
 
@@ -203,8 +220,8 @@ sap.ui.define([
 
 			if (sColumnWidthDistribution === "0/100/0") {
 
-				var aEligibleLayouts = ["TwoColumnsDefault", "TwoColumnsBeginEmphasized", "TwoColumnsMidEmphasized", "ThreeColumnsBeginEmphasizedEndHidden", "ThreeColumnsMidEmphasizedEndHidden"];
-				var sExitFullScreen = this._getClosestHistoryEntryThatMatches(aEligibleLayouts) || "TwoColumnsDefault";
+				aEligibleLayouts = ["TwoColumnsDefault", "TwoColumnsBeginEmphasized", "TwoColumnsMidEmphasized", "ThreeColumnsBeginEmphasizedEndHidden", "ThreeColumnsMidEmphasizedEndHidden"];
+				sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || "TwoColumnsDefault";
 
 				oMidColumn.exitFullScreen = sExitFullScreen;
 				oMidColumn.closeColumn = "";
@@ -213,8 +230,8 @@ sap.ui.define([
 
 			if (sColumnWidthDistribution === "0/0/100") {
 
-				var aEligibleLayouts = ["ThreeColumnsDefault", "ThreeColumnsMidEmphasized", "ThreeColumnsEndEmphasized"];
-				var sExitFullScreen = this._getClosestHistoryEntryThatMatches(aEligibleLayouts) || "ThreeColumnsDefault";
+				aEligibleLayouts = ["ThreeColumnsDefault", "ThreeColumnsMidEmphasized", "ThreeColumnsEndEmphasized"];
+				sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || "ThreeColumnsDefault";
 
 				oEndColumn.exitFullScreen = sExitFullScreen;
 				oEndColumn.closeColumn = "TwoColumnsDefault";
@@ -228,18 +245,7 @@ sap.ui.define([
 		};
 	};
 
-	SemanticFlexibleColumnLayout.prototype._getClosestHistoryEntryThatMatches = function (aLayouts) {
-		var i;
 
-		for (i = this._aLayoutHistory.length - 1; i >= 0; i--) {
-			if (aLayouts.indexOf(this._aLayoutHistory[i]) !== -1) {
-				return this._aLayoutHistory[i];
-			}
-		}
-
-	};
-
-
-	return SemanticFlexibleColumnLayout;
+	return FlexibleColumnLayoutSemanticHelper;
 
 }, /* bExport= */ false);

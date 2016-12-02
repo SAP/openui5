@@ -1,9 +1,9 @@
 <View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.FlexibleColumnLayout" height="100%">
-	<SemanticFlexibleColumnLayout
+	<FlexibleColumnLayout
 		id="fcl"
 		threeColumnLayoutType="MidColumnEmphasized"
 		threeColumnLayoutTypeFixed="false"
-		layoutChange="onLayoutChanged"
+		stateChange="onStateChanged"
 		layout="{/layout}" >
-	</SemanticFlexibleColumnLayout>
+	</FlexibleColumnLayout>
 </View>
