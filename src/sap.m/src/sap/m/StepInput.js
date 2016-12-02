@@ -117,6 +117,11 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			}
 		});
 
+		// get resource translation bundle;
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
+		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
+
 		/**
 		 * Initializes the control.
 		 */
@@ -206,6 +211,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				var oButton = new Button({
 					icon: IconPool.getIconURI("add"),
 					id: this.getId() + "-incrementButton",
+					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP,
 					type: sap.m.ButtonType.Transparent
 				});
 				oButton._bExcludeFromTabChain = true;
@@ -224,6 +230,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 				var oButton = new Button({
 					icon: IconPool.getIconURI("less"),
 					id: this.getId() + "-decrementButton",
+					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP,
 					type: sap.m.ButtonType.Transparent
 				});
 				oButton._bExcludeFromTabChain = true;
