@@ -645,48 +645,62 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	/**
 	 * Handler for tap event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} event Event which was fired
 	 */
-	GenericTile.prototype.ontap = function(oEvent) {
+	GenericTile.prototype.ontap = function(event) {
 		var oParams;
 		if (this.getState() !== library.LoadState.Disabled) {
 			if (Device.browser.internet_explorer) {
 				this.$().focus();
 			}
-			oParams = this._getEventParams(oEvent);
+			oParams = this._getEventParams(event);
 			this.firePress(oParams);
-			oEvent.preventDefault();
+			event.preventDefault();
 		}
 	};
 
 	/**
 	 * Handler for keydown event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} event Event which was fired
 	 */
-	GenericTile.prototype.onkeydown = function(oEvent) {
-		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent) && this.getState() !== library.LoadState.Disabled) {
+	GenericTile.prototype.onkeydown = function(event) {
+		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").addClass("sapMGTPressActive");
 			}
-			oEvent.preventDefault();
+			event.preventDefault();
 		}
 	};
 
 	/**
 	 * Handler for keyup event
 	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @param {sap.ui.base.Event} event Event which was fired
 	 */
-	GenericTile.prototype.onkeyup = function(oEvent) {
-		var oParams;
-		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent) && this.getState() !== library.LoadState.Disabled) {
+	GenericTile.prototype.onkeyup = function(event) {
+		var oParams,
+			bFirePress = false,
+			sScope = this.getScope(),
+			bActionsScope = sScope === library.GenericTileScope.Actions;
+
+		if (bActionsScope && (jQuery.sap.PseudoEvents.sapdelete.fnCheck(event) || jQuery.sap.PseudoEvents.sapbackspace.fnCheck(event))) {
+			oParams = {
+				scope: sScope,
+				action: GenericTile._Action.Remove
+			};
+			bFirePress = true;
+		}
+		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}
-			oParams = this._getEventParams(oEvent);
+			oParams = this._getEventParams(event);
+			bFirePress = true;
+		}
+		if (bFirePress) {
 			this.firePress(oParams);
-			oEvent.preventDefault();
+			event.preventDefault();
 		}
 	};
 
