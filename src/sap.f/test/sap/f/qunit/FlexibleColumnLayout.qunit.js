@@ -322,6 +322,7 @@
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
 
 		this.oFCL.setTwoColumnLayoutOnDesktop(true);
+		sap.ui.getCore().applyChanges();
 
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
 		assert.equal(this.oFCL._getMaxColumnsCount(), 2, "Despite the desktop size the maximum number of columns is 2");
@@ -353,10 +354,10 @@
 		this.clock.restore();
 	});
 
-	QUnit.test("layoutChange event is fired on the first load", function (assert) {
+	QUnit.test("stateChange event is fired on the first load", function (assert) {
 
 		this.oFCL = new FlexibleColumnLayout();
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
 		oCore.applyChanges();
@@ -364,22 +365,33 @@
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
-	QUnit.test("layoutChange event is fired on API calls that change the layout", function (assert) {
+	QUnit.test("stateChange event is fired when setLayout changes the layout", function (assert) {
 		this.oFCL = oFactory.createFCL();
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		// Should be fired when the API causes a layout change
 		this.oFCL.setLayout("TwoColumnsDefault");
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
-	QUnit.test("layoutChange event is fired on resize", function (assert) {
+	QUnit.test("stateChange event is not fired when setLayout does not change the layout", function (assert) {
+		this.oFCL = oFactory.createFCL({
+			layout: "TwoColumnsDefault"
+		});
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
+
+		// Should be fired when the API causes a layout change
+		this.oFCL.setLayout("TwoColumnsDefault");
+		assert.ok(!oEventSpy.called, "Layout change event not fired");
+	});
+
+	QUnit.test("stateChange event is fired on resize events that trigger a breakpoint change", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
 		this.oFCL = oFactory.createFCL({
 			layout: "ThreeColumnsDefault"
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		// Should be fired when a resize causes a layout change
 		$("#" + sQUnitFixture).width(TABLET_SIZE);
@@ -389,23 +401,29 @@
 		this.clock.restore();
 	});
 
-	QUnit.test("layoutChange event is fired on navigation arrow click", function (assert) {
+	QUnit.test("stateChange event is not fired on resize events that do not trigger a breakpoint change", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		this.oFCL = oFactory.createFCL({
 			layout: "ThreeColumnsDefault"
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
-		this.getMidColumnForwardArrow().firePress();
-		assert.ok(oEventSpy.called, "Layout change event fired");
+		// Should be fired when a resize causes a layout change
+		$("#" + sQUnitFixture).width(TABLET_SIZE + 1); // Still on desktop
+		this.clock.tick(ANIMATION_WAIT_TIME);
+		assert.ok(!oEventSpy.called, "Layout change event not fired");
+
+		this.clock.restore();
 	});
 
-	QUnit.test("layoutChange event is fired on setLayout calls", function (assert) {
+	QUnit.test("stateChange event is fired on navigation arrow click", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: "ThreeColumnsDefault"
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
-		this.oFCL.setLayout("TwoColumnsDefault");
+		this.getMidColumnForwardArrow().firePress();
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
