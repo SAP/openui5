@@ -25,7 +25,7 @@ function checkForSnapshot() {
     for (var libObj in mLibraries) {
         groupId = mLibraries[libObj]['groupId'];
         artifactId = mLibraries[libObj]['artifactId'];
-        _url = 'http://nexus.wdf.sap.corp:8082/nexus/service/local/lucene/search?g=' + groupId + '&a=' + artifactId + '&v=' + snapshotVersion + '*';
+        _url = 'http://nexus.wdf.sap.corp:8081/nexus/service/local/lucene/search?g=' + groupId + '&a=' + artifactId + '&v=' + snapshotVersion + '*';
 
         request({
                 method: 'GET',
