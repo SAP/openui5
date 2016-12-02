@@ -512,7 +512,7 @@ sap.ui.define([
 				that.oOperation.sResourcePath = that.sPath.replace("...", aParameters.join(','));
 				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
 					(sPathPrefix + that.oOperation.sResourcePath).slice(1), that.mQueryOptions);
-				oPromise = that.oCache.read(sGroupId);
+				oPromise = that.oCache.fetchValue(sGroupId);
 			}
 			return oPromise;
 		}
@@ -602,7 +602,7 @@ sap.ui.define([
 		if (this.oCache) {
 			sGroupId = this.sRefreshGroupId || this.getGroupId();
 			this.sRefreshGroupId = undefined;
-			return this.oCache.read(sGroupId, sPath, function () {
+			return this.oCache.fetchValue(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.fireDataRequested();
 			}, oListener).then(function (vValue) {

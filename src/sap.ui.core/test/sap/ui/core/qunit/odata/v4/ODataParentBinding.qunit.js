@@ -274,6 +274,7 @@ sap.ui.require([
 					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
 					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]),
 					oCache = {
+						fetchValue : function () {},
 						read : function () {}
 					},
 					oCacheProxy,
@@ -285,7 +286,9 @@ sap.ui.require([
 					return oCache;
 				}
 
-				this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
+				this.mock(oCache).expects("read").withExactArgs(0, 10, "$auto")
+					.returns(Promise.resolve(oReadResult));
+				this.mock(oCache).expects("fetchValue").withExactArgs("$auto", "foo")
 					.returns(Promise.resolve(oReadResult));
 
 				// code under test
@@ -309,11 +312,18 @@ sap.ui.require([
 				}, new Error("PATCH request not allowed"));
 				assert.strictEqual(oCacheProxy.toString(), "Cache proxy for " + oBinding);
 
-				return oCacheProxy.read("$auto", "foo").then(function (oResult) {
-					assert.strictEqual(oBinding.oCache, oCache);
-					assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
-					assert.strictEqual(oResult, oReadResult);
-				});
+				return Promise.all([
+					oCacheProxy.read(0, 10, "$auto").then(function (oResult) {
+						assert.strictEqual(oBinding.oCache, oCache);
+						assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
+						assert.strictEqual(oResult, oReadResult);
+					}),
+					oCacheProxy.fetchValue("$auto", "foo").then(function (oResult) {
+						assert.strictEqual(oBinding.oCache, oCache);
+						assert.strictEqual(oCache.$canonicalPath, oFixture[0]);
+						assert.strictEqual(oResult, oReadResult);
+					})
+				]);
 			});
 	});
 

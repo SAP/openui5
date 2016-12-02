@@ -395,7 +395,7 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-		this.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("fetchValue")
 			.withExactArgs("$direct", "bar", sinon.match.func, sinon.match.same(oListener))
 			.callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
@@ -444,7 +444,7 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-		this.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("fetchValue")
 			.withExactArgs("myGroup", "bar", sinon.match.func, undefined)
 			.callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
@@ -465,7 +465,7 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
-		this.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("fetchValue")
 			.withExactArgs("$direct", "bar", sinon.match.func, undefined)
 			// no read required! .callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
@@ -482,9 +482,9 @@ sap.ui.require([
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = _SyncPromise.resolve(Promise.reject(oExpectedError));
 
-		oCacheMock.expects("read").withExactArgs("$direct", "foo", sinon.match.func, undefined)
+		oCacheMock.expects("fetchValue").withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.callsArg(2).returns(oCachePromise);
-		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func, undefined)
+		oCacheMock.expects("fetchValue").withExactArgs("$direct", "bar", sinon.match.func, undefined)
 			.returns(oCachePromise);
 		this.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
@@ -603,7 +603,7 @@ sap.ui.require([
 						{$$groupId : "myGroup"}), // to prevent that the context is asked for the ID
 					oCache = {
 						promise : Promise.resolve(),
-						read : function () {}
+						fetchValue : function () {}
 					},
 					oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
 					oResult = {};
@@ -613,7 +613,7 @@ sap.ui.require([
 				this.mock(oBinding).expects("createCache").returns(oCache);
 				oBinding.setContext(oContext);
 
-				this.mock(oCache).expects("read").withArgs("myGroup", oFixture.rel)
+				this.mock(oCache).expects("fetchValue").withArgs("myGroup", oFixture.rel)
 					.returns(_SyncPromise.resolve(oResult));
 
 				// code under test
@@ -723,7 +723,7 @@ sap.ui.require([
 	QUnit.test("read uses group ID", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"});
 
-		this.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("fetchValue")
 			.withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.returns(_SyncPromise.resolve());
 
@@ -856,7 +856,7 @@ sap.ui.require([
 				sPath = (bBaseContext ? "" : "/") + "FunctionImport(...)",
 				oSingleCache = {
 					hasPendingChangesForPath : function () {},
-					read : function () {},
+					fetchValue : function () {},
 					setActive : function () {}
 				},
 				oSingleCacheMock = this.mock(oSingleCache),
@@ -890,7 +890,8 @@ sap.ui.require([
 					"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)", {"sap-client" : "111"})
 				.returns(oSingleCache);
 			oBindingMock.expects("getGroupId").returns("foo");
-			oSingleCacheMock.expects("read").withExactArgs("foo").returns(_SyncPromise.resolve({}));
+			oSingleCacheMock.expects("fetchValue")
+				.withExactArgs("foo").returns(_SyncPromise.resolve({}));
 			oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 			// code under test
@@ -907,7 +908,7 @@ sap.ui.require([
 						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 							"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)", {"sap-client" : "111"})
 						.returns(oSingleCache);
-					oSingleCacheMock.expects("read").withExactArgs("myGroupId")
+					oSingleCacheMock.expects("fetchValue").withExactArgs("myGroupId")
 						.returns(_SyncPromise.resolve({}));
 					oBindingMock.expects("_fireChange")
 						.withExactArgs({reason : ChangeReason.Change});

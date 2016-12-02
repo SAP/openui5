@@ -494,20 +494,14 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
 		var aSegments = sPath.split("/"),
-			iIndex = Number(aSegments.shift()),
 			vDeleteProperty = aSegments.pop(),
 			that = this;
 
-		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oCacheData) {
+		return this.fetchValue(sGroupId, aSegments.join("/")).then(function (oCacheData) {
 			var oEntity,
 				mHeaders,
 				sTransientGroup;
 
-			if (!vDeleteProperty) {
-				// deleting at root level
-				oCacheData = that.aElements;
-				vDeleteProperty = iIndex;
-			}
 			oEntity = oCacheData[vDeleteProperty];
 			sTransientGroup = oEntity["@$ui5.transient"];
 			if (sTransientGroup === true) {
@@ -535,7 +529,7 @@ sap.ui.define([
 						// oEntity might have moved due to parallel insert/delete
 						vDeleteProperty = oCacheData.indexOf(oEntity);
 					}
-					if (vDeleteProperty === -1) {
+					if (vDeleteProperty === "-1") {
 						delete oCacheData[-1];
 					} else {
 						oCacheData.splice(vDeleteProperty, 1);
@@ -619,6 +613,47 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise to be resolved with an OData object for the requested data.
+	 *
+	 * @param {string} [sGroupId]
+	 *   ID of the group to associate the request with;
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back end request is sent.
+	 *   If no back end request is needed, the function is not called.
+	 * @param {object} [oListener]
+	 *   An optional change listener that is added for the given path. Its method
+	 *   <code>onChange</code> is called with the new value if the property at that path is modified
+	 *   via {@link #update} later.
+	 * @returns {SyncPromise}
+	 *   A promise to be resolved with the requested data.
+	 *
+	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   arrives.
+	 */
+	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
+		var iIndex,
+			oPromise,
+			aSegments,
+			that = this;
+
+		this.registerChange(sPath, oListener);
+		if (sPath) {
+			aSegments = sPath.split("/");
+			iIndex = parseInt(aSegments.shift(), 10);
+			oPromise = this.read(iIndex, 1, sGroupId, fnDataRequested);
+		} else {
+			oPromise = _SyncPromise.resolve();
+		}
+		return oPromise.then(function () {
+			that.checkActive();
+			return that.drillDown(that.aElements, sPath);
+		});
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -640,30 +675,21 @@ sap.ui.define([
 	 *   The length of the range
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the requests with
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into; <code>undefined</code> does not change the returned
-	 *   OData response object, but <code>""</code> already drills down into the element at
-	 *   <code>iIndex</code> (and requires <code>iLength === 1</code>)
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back end request is sent.
 	 *   If no back end request is needed, the function is not called.
-	 * @param {object} [oListener]
-	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code> will be called with the new value if the property at that path is
-	 *   modified via {@link #update} later.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
-	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
-	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
-	 *   returned and the requested range is reset to undefined.
+	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
+	 *   request fails, the error from the _Requestor is returned and the requested range is reset
+	 *   to undefined.
 	 *
 	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
 	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, sPath, fnDataRequested,
-			oListener) {
+	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, fnDataRequested) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
@@ -676,8 +702,6 @@ sap.ui.define([
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
-		} else if (iLength !== 1 && sPath !== undefined) {
-			throw new Error("Cannot drill-down for length " + iLength);
 		}
 
 		if (iEnd > this.iMaxElements) {
@@ -705,11 +729,6 @@ sap.ui.define([
 			var oResult;
 
 			that.checkActive();
-
-			if (sPath !== undefined) {
-				that.registerChange(iIndex + "/" + sPath, oListener);
-				return that.drillDown(that.aElements[iIndex], sPath);
-			}
 			oResult = {
 				"@odata.context" : that.sContext,
 				value : that.aElements.slice(iStart, iEnd)
@@ -763,10 +782,7 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var aSegments = sPath.split("/"),
-			iIndex = parseInt(aSegments.shift(), 10);
-
-		return this.read(iIndex, 1, sGroupId, aSegments.join("/"))
+		return this.fetchValue(sGroupId, sPath)
 			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
@@ -799,6 +815,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} [sPath]
+	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back end request is sent.
 	 *   If no back end request is needed, the function is not called.
@@ -812,7 +830,7 @@ sap.ui.define([
 	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
 	 *   arrives.
 	 */
-	PropertyCache.prototype.read = function (sGroupId, fnDataRequested, oListener) {
+	PropertyCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this;
 
 		that.registerChange("", oListener);
@@ -876,7 +894,7 @@ sap.ui.define([
 			sParentPath = aSegments.join("/"),
 			that = this;
 
-		return this.read(sGroupId, sParentPath).then(function (vCacheData) {
+		return this.fetchValue(sGroupId, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
@@ -979,13 +997,14 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet
 	 */
-	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested, oListener) {
+	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this,
 			sResourcePath = this.sResourcePath;
 
+		this.registerChange(sPath, oListener);
 		if (!this.oPromise) {
 			if (this.bPost) {
-				throw new Error("Read before a POST request");
+				throw new Error("Cannot fetch a value before the POST request");
 			}
 			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath,
 				sGroupId, undefined, undefined, fnDataRequested));
@@ -995,7 +1014,6 @@ sap.ui.define([
 			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
-			that.registerChange(sPath, oListener);
 			return that.drillDown(oResult, sPath);
 		});
 	};
@@ -1019,7 +1037,7 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		return this.read(sGroupId, sPath)
+		return this.fetchValue(sGroupId, sPath)
 			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
