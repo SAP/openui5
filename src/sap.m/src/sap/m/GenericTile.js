@@ -177,10 +177,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 					src: "sap-icon://overflow"
 				}).addStyleClass("sapMGTMoreIcon");
 
-				this._oRemoveIcon = this._oRemoveIcon || new Button({
+				this._oRemoveButton = this._oRemoveButton || new Button({
 					id: this.getId() + "-action-remove",
-					icon: "sap-icon://decline"
-				}).addStyleClass("sapUiSizeCompact sapMGTRemoveIcon");
+					icon: "sap-icon://decline",
+					tooltip: this._rb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+				}).addStyleClass("sapUiSizeCompact sapMGTRemoveButton");
 				break;
 		}
 	};
@@ -210,8 +211,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (this._oMoreIcon) {
 			this._oMoreIcon.destroy();
 		}
-		if (this._oRemoveIcon) {
-			this._oRemoveIcon.destroy();
+		if (this._oRemoveButton) {
+			this._oRemoveButton.destroy();
 		}
 	};
 
@@ -1004,7 +1005,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 	/**
 	 * Updates the attributes ARIA-label and title of the GenericTile. The updated attribute title is used for tooltip as well.
-	 * The attributes ARIA-label and title of the descendants will be removed.
+	 * The attributes ARIA-label and title of the descendants will be removed (exception: ARIA-label and title attribute
+	 * of "Remove" button are not removed in "Actions" scope).
 	 *
 	 * @private
 	 */
@@ -1016,8 +1018,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if ($Tile.attr("title") !== sAriaAndTitleText) {
 			$Tile.attr("aria-label", sAriaText);
 		}
-		$Tile.find('*').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
-
+		if (this.getScope() === library.GenericTileScope.Actions) {
+			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
+		} else {
+			$Tile.find('*').removeAttr("aria-label").removeAttr("title").unbind("mouseenter");
+		}
 		this._setTooltipFromControl();
 	};
 
