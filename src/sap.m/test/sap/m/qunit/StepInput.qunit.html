@@ -47,11 +47,12 @@
 		test("incrementButton", function () {
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
-
 			//assert
 			equal(oIncrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oIncrementButton.getMetadata().getName(), "sap.m.Button",
 					"the picker aggregation holds an instance of a button");
+
+			assert.equal(oIncrementButton.getTooltip(), sap.m.StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP, "The tooltip is correct");
 
 			oIncrementButton.firePress();
 			this.clock.tick(1000);
@@ -68,6 +69,8 @@
 			equal(oDecrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
 			strictEqual(oDecrementButton.getMetadata().getName(), "sap.m.Button",
 					"the step input _decrementButton aggregation holds an instance of a button");
+
+			assert.equal(oDecrementButton.getTooltip(), sap.m.StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP, "The tooltip is correct");
 
 			oDecrementButton.firePress();
 			this.clock.tick(1000);
