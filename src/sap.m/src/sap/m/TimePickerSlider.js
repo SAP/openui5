@@ -7,13 +7,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		"use strict";
 
 		/**
-		 * Constructor for a new TimePickerSlider.
+		 * Constructor for a new <code>TimePickerSlider</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * TimePickerSlider is a picker list control used inside a {@link sap.m.TimePicker} to choose a value.
+		 * A picker list control used inside a {@link sap.m.TimePicker} to choose a value.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
