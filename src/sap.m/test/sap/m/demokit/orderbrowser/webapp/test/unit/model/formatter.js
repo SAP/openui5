@@ -43,7 +43,7 @@ sap.ui.define([
 
 		QUnit.test("calling the formatter with no picture content returns the default picture URL", function (assert) {
 			var sResult = formatter.handleBinaryContent("");
-			assert.strictEqual(sResult, "../images/employee.jpg", "Test Success");
+			assert.strictEqual(sResult, "../images/Employee.png", "Test Success");
 		});
 	}
 );

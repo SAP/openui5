@@ -125,7 +125,11 @@
 								text="{Quantity}"/>
 							<ObjectNumber
 								number="{
-									parts:[{path: 'Quantity'}, {path: 'UnitPrice'}, {path:'detailView>/currency'}],
+									parts:[
+										{path: 'Quantity'},
+										{path: 'UnitPrice'},
+										{path:'detailView>/currency'}
+									],
 									formatter: '.formatter.calculateItemTotal'
 								}"
 								unit="{detailView>/currency}"/>
