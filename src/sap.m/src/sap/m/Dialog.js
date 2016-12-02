@@ -3,13 +3,13 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager'],
-	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters, RenderManager) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/ResizeHandler','sap/ui/Device'],
+	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters, RenderManager, ResizeHandler, Device) {
 		"use strict";
 
 
 		var ValueState = sap.ui.core.ValueState;
-		var isTheCurrentBrowserIENine = sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version < 10);
+		var isTheCurrentBrowserIENine = Device.browser.internet_explorer && (Device.browser.version < 10);
 
 		/**
 		 * Constructor for a new Dialog.
@@ -602,7 +602,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._setDimensions = function () {
 			var $this = this.$(),
 				bStretch = this.getStretch(),
-				bStretchOnPhone = this.getStretchOnPhone() && sap.ui.Device.system.phone,
+				bStretchOnPhone = this.getStretchOnPhone() && Device.system.phone,
 				bMessageType = this._bMessageType,
 				oStyles = {};
 
@@ -714,7 +714,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				iDialogWidth = $dialog.innerWidth(),
 				iDialogHeight = $dialog.innerHeight();
 
-			if (sap.ui.Device.system.desktop && (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0)) {
+			if (Device.system.desktop && (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0)) {
 				if (!this._bRTL) {
 					sTranslateX = '-' + Math.floor(iDialogWidth / 2) + "px";
 				} else {
@@ -906,7 +906,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// Setting focus to DOM Element which can open the on screen keyboard on mobile device doesn't work
 			// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
 			// and the keyboard should be opened by the User explicitly
-			if (sap.ui.Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
+			if (Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
 				jQuery.sap.focus(oFocusDomRef);
 			} else {
 				// Set the focus to the popup itself in order to keep the tab chain
@@ -978,7 +978,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var sAggregationName = sPos.toLowerCase() + "Button",
 				sButtonName = "_o" + this._firstLetterUpperCase(sPos) + "Button";
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return this.getAggregation(sAggregationName, null, /*avoid infinite loop*/true);
 			} else {
 				return this[sButtonName];
@@ -1041,11 +1041,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._deregisterResizeHandler = function () {
 			if (this._resizeListenerId) {
-				sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
 
-			sap.ui.Device.resize.detachHandler(this._onResize.bind(this));
+			Device.resize.detachHandler(this._onResize, this);
 		};
 
 		/**
@@ -1057,8 +1057,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
 			//This can be removed and the layout change to flex when the support for IE9 is dropped
-			this._resizeListenerId = sap.ui.core.ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
-			sap.ui.Device.resize.attachHandler(this._onResize.bind(this));
+			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
+			Device.resize.attachHandler(this._onResize, this);
 
 			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
 			this._onResize();
@@ -1070,7 +1070,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._deregisterContentResizeHandler = function () {
 			if (this._sContentResizeListenerId) {
-				sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+				ResizeHandler.deregister(this._sContentResizeListenerId);
 				this._sContentResizeListenerId = null;
 			}
 		};
@@ -1082,7 +1082,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._registerContentResizeHandler = function() {
 			if (!this._sContentResizeListenerId) {
-				this._sContentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef("scrollCont"), jQuery.proxy(this._onResize, this));
+				this._sContentResizeListenerId = ResizeHandler.register(this.getDomRef("scrollCont"), jQuery.proxy(this._onResize, this));
 			}
 
 			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
@@ -1350,7 +1350,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				return this;
 			}
 			this.setProperty("stretchOnPhone", bStretchOnPhone);
-			return this.setProperty("stretch", bStretchOnPhone && sap.ui.Device.system.phone);
+			return this.setProperty("stretch", bStretchOnPhone && Device.system.phone);
 		};
 
 		Dialog.prototype.setVerticalScrolling = function (bValue) {
@@ -1441,7 +1441,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			return $target.hasClass('sapMDialogTitle');
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			/**
 			 *
 			 * @param {Object} e
