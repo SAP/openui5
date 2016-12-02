@@ -22,10 +22,13 @@
 
 		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
 
-		sap.ui.require(["sap/ui/core/library", "sap/ui/core/ComponentContainer", "sap/ui/core/Component"], 
+		sap.ui.require(["sap/ui/core/library", "sap/ui/core/ComponentContainer", "sap/ui/core/Component"],
 				function (sapUiCore, ComponentContainer, Component) {
 
 			var ComponentLifecycle = sapUiCore.ComponentLifecycle;
+
+
+			QUnit.module("General");
 
 			QUnit.test("Should be able to chain setComponent", function (assert) {
 				var oComponentContainer = new ComponentContainer();
@@ -138,7 +141,10 @@
 
 			});
 
-			QUnit.test("Component Lifecycle: Legacy should destroy Component onExit but not when replaced", function (assert) {
+
+			QUnit.module("Component Lifecycle");
+
+			QUnit.test("Legacy should destroy Component onExit but not when replaced", function (assert) {
 				var oComponentContainer = new ComponentContainer({
 					name: "samples.components.button"
 				});
@@ -161,7 +167,7 @@
 				assert.ok(oNewComponent.bIsDestroyed, "New Component is not destroyed");
 			});
 
-			QUnit.test("Component Lifecycle: Application managed should not destroy Component", function (assert) {
+			QUnit.test("Application managed should not destroy Component", function (assert) {
 				var oComponentContainer = new ComponentContainer({
 					name: "samples.components.button",
 					lifecycle: ComponentLifecycle.Application
@@ -183,7 +189,7 @@
 				assert.ok(!oNewComponent.bIsDestroyed, "New Component is not destroyed because it was not created by the ComponentContainer");
 			});
 
-			QUnit.test("Component Lifecycle: Container managed should destroy Component", function (assert) {
+			QUnit.test("Container managed should destroy Component", function (assert) {
 				var oComponentContainer = new ComponentContainer({
 					name: "samples.components.button",
 					lifecycle: ComponentLifecycle.Container
@@ -204,6 +210,119 @@
 
 				assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
 				assert.ok(oNewComponent.bIsDestroyed, "New Component is destroyed because the lifecycle is managed by the Component");
+			});
+
+
+			QUnit.module("Component Usage");
+
+			sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("my.usage.Component", {
+					metadata: {
+						manifest: {
+							"sap.app" : {
+								"id" : "my.usage"
+							},
+							"sap.ui5" : {
+								"dependencies": {
+									"components": {
+										"samples.components.button": {}
+									}
+								},
+								"componentUsages": {
+									"myUsage": {
+										"name": "samples.components.button"
+									}
+								}
+							}
+						}
+					}
+				});
+			});
+
+
+			QUnit.test("Container should create the component usage (sync)", function (assert) {
+
+				var oOwnerComponent = sap.ui.component({
+					name: "my.usage"
+				});
+
+				// create the container within the context of the owner component
+				var oComponentContainer = oOwnerComponent.runAsOwner(function() {
+					return new ComponentContainer({
+						usage: "myUsage",
+						lifecycle: ComponentLifecycle.Container
+					});
+				});
+
+				// simulate onBeforeRendering to force to create the component
+				oComponentContainer.onBeforeRendering();
+
+				var done = (function() {
+					var asyncDone = assert.async();
+					return function cleanup() {
+						oComponentContainer.destroy();
+						oOwnerComponent.destroy();
+						asyncDone();
+					};
+				})();
+
+				sap.ui.require([
+					"sap/ui/core/Component",
+					"samples/components/button/Component"
+				], function(Component, UsedComponent) {
+
+					var oComponentUsage = oComponentContainer.getComponentInstance();
+
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
+					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+					done();
+
+				});
+
+			});
+
+			QUnit.test("Container should create the component usage (async)", function (assert) {
+
+				var oOwnerComponent = sap.ui.component({
+					name: "my.usage"
+				});
+
+				// create the container with in the context of the owner component
+				var oComponentContainer = oOwnerComponent.runAsOwner(function() {
+					return new ComponentContainer({
+						usage: "myUsage",
+						async: true,
+						lifecycle: ComponentLifecycle.Container
+					});
+				});
+
+				// simulate onBeforeRendering to force to create the component
+				oComponentContainer.onBeforeRendering();
+
+				var done = (function() {
+					var asyncDone = assert.async();
+					return function cleanup() {
+						oComponentContainer.destroy();
+						oOwnerComponent.destroy();
+						asyncDone();
+					};
+				})();
+
+				sap.ui.require([
+					"sap/ui/core/Component",
+					"samples/components/button/Component"
+				], function(Component, UsedComponent) {
+
+					var oComponentUsage = oComponentContainer.getComponentInstance();
+
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
+					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+					done();
+
+				});
+
 			});
 
 		});

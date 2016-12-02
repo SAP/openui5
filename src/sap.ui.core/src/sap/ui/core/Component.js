@@ -877,6 +877,115 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	}
 
 
+	/**
+	 * Creates a nested component that is declared in the <code>sap.ui5/componentUsages</code> section of
+	 * the descriptor (manifest.json) as follows:
+	 * <pre>
+	 * {
+	 *   [...]
+	 *   "sap.ui5": {
+	 *     "componentUsages": {
+	 *       "myUsage": {
+	 *         "name": "my.useful.Component"
+	 *       }
+	 *     }
+	 *   }
+	 *   [...]
+	 * }
+	 * </pre>
+	 * The syntax of the configuration object of the component usage matches the
+	 * configuration object of the {#link sap.ui.component} factory function.
+	 *
+	 * This is an example of how the <code>createComponent</code> function can
+	 * be used for asynchronous scenarios:
+	 * <pre>
+	 * oComponent.createComponent("myUsage").then(function(oComponent) {
+	 *   oComponent.doSomething();
+	 * }).catch(function(oError) {
+	 *   jQuery.sap.log.error(oError);
+	 * });
+	 * </pre>
+	 *
+	 * The following example shows how <code>createComponent</code> can be used to create a nested
+	 * component by providing specific properties like <code>id</code>, <code>async</code>,
+	 * <code>settings</code>, or <code>componentData</code>:
+	 * <pre>
+	 * var oComponent = oComponent.createComponent({
+	 *   usage: "myUsage",
+	 *   id: "myId",
+	 *   settings: { ... },
+	 *   componentData: { ... }
+	 * });
+	 * </pre>
+	 * The allowed list of properties are defined in the parameter documentation
+	 * of this function.
+	 *
+	 * The properties can also be defined in the descriptor. These properties can
+	 * be overwritten by the local properties of that function.
+	 *
+	 * @param {string|object} vUsage ID of the component usage or the configuration object that creates the component
+	 * @param {string} vUsage.usage ID of component usage
+	 * @param {string} [vUsage.id] ID of the nested component that is prefixed with <code>autoPrefixId</code>
+	 * @param {boolean} [vUsage.async=true] Indicates whether the component creation is done asynchronously (You should use synchronous creation only if really necessary, because this has a negative impact on performance.)
+	 * @param {object} [vUsage.settings] Settings for the nested component like for {#link sap.ui.component} or the component constructor
+	 * @param {object} [vUsage.componentData] Initial data of the component (@see sap.ui.core.Component#getComponentData)
+	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance (defaults to Promise / asynchronous behavior)
+	 * @public
+	 * @since 1.47.0
+	 */
+	Component.prototype.createComponent = function(vUsage) {
+		jQuery.sap.assert(
+			(typeof vUsage === 'string' && vUsage)
+			|| (typeof vUsage === 'object' && typeof vUsage.usage === 'string' && vUsage.usage),
+			"vUsage either must be a non-empty string or an object with a non-empty usage id"
+		);
+
+		// extract the config from the configuration object
+		var mConfig = {
+			async: true // async is by default true
+		};
+		if (vUsage && typeof vUsage === "object") {
+			mConfig.usage = vUsage.usage;
+			["id", "async", "settings", "componentData"].forEach(function(sName) {
+				if (vUsage[sName] !== undefined) {
+					mConfig[sName] = vUsage[sName];
+				}
+			});
+		} else if (typeof vUsage === "string") {
+			mConfig.usage = vUsage;
+		}
+		// create the component in the owner context of the current component
+		return this._createComponent(mConfig);
+	};
+
+
+	/**
+	 * Internal API to create a nested component with the owner context of the
+	 * current component.
+	 *
+	 * @param {object} mConfig Configuration object that creates the component
+	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
+	 *
+	 * @private
+	 * @since 1.47.0
+	 */
+	Component.prototype._createComponent = function(mConfig) {
+		// check the existence of the usage (mixin here for re-use in ComponentContainer)
+		if (mConfig && mConfig.usage) {
+			var sUsageId = mConfig.usage;
+			var mUsageConfig = this.getManifestEntry("/sap.ui5/componentUsages/" + sUsageId);
+			if (!mUsageConfig) {
+				throw new Error("Component usage \"" + sUsageId + "\" not declared in Component \"" + this.getManifestObject().getComponentName() + "\"!");
+			}
+			// mix in the component configuration on top of the usage configuration
+			mConfig = jQuery.extend(true, mUsageConfig, mConfig);
+		}
+		// create the nested component in the context of this component
+		return this.runAsOwner(function() {
+			return sap.ui.component(mConfig);
+		});
+	};
+
 
 	/**
 	 * Initializes the Component instance after creation.
