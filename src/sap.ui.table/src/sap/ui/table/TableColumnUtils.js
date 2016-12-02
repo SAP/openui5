@@ -698,6 +698,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 				} else {
 					return oTable._CSSSizeToPixel(sColumnWidth);
 				}
+			},
+
+			/**
+			 * Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
+			 *
+			 * @param {sap.ui.table.Table} oTable Instance of the table.
+			 * @param {boolean} bConsiderVisibility If <code>false</code> the result of the <code>getFixedColumnCount</code> function of the table is returned.
+			 * 										If <code>true</code> the visibility is included into the determination of the count.
+			 * @returns {int} Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
+			 * @private
+			 */
+			getFixedColumnCount: function(oTable, bConsiderVisibility) {
+				var iFixed = oTable.getFixedColumnCount();
+
+				if (!bConsiderVisibility) {
+					return iFixed;
+				}
+
+				if (iFixed <= 0 || oTable._bIgnoreFixedColumnCount) {
+					return 0;
+				}
+
+				var aColumns = oTable.getColumns();
+				var iVisibleFixedColumnCount = 0;
+				iFixed = Math.min(iFixed, aColumns.length);
+
+				for (var i = 0; i < iFixed; i++) {
+					if (aColumns[i].shouldRender()) {
+						iVisibleFixedColumnCount++;
+					}
+				}
+
+				return iVisibleFixedColumnCount;
 			}
 		};
 
