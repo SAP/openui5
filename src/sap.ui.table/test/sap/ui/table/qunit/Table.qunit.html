@@ -378,7 +378,7 @@
 		oTable.getDomRef().style.width = "0px";
 		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
 	});
-	
+
 	QUnit.test("Row Actions", function(assert) {
 		assert.equal(sap.ui.table.TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
 		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
@@ -403,8 +403,8 @@
 		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "CSS class sapUiTableRActS");
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
 	});
-	
-	
+
+
 
 	QUnit.module("Column operations", {
 		beforeEach: function() {
@@ -1315,6 +1315,16 @@
 		oTable.bindRows("otherModel>/root", vTemplate);
 		// destroy rows must not be called
 		assert.ok(spy.notCalled, "destroyRows was not called");
+	});
+
+	QUnit.test("BindRows", function(assert) {
+		var spy = this.spy(sap.ui.table.Table.prototype, "bindRows");
+		new sap.ui.table.Table({
+			rows: {path: "/modelData"},
+			columns: [new sap.ui.table.Column()]
+		});
+
+		assert.ok(spy.calledOnce, "bindRows was called");
 	});
 
 	QUnit.module("Callbacks", {
