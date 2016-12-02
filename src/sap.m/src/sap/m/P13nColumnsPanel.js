@@ -1435,11 +1435,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveToTop();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
 			})
 		});
 
@@ -1447,11 +1450,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveUp();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 
@@ -1459,11 +1465,14 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveDown();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 
@@ -1471,21 +1480,27 @@ sap.ui.define([
 			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
 			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
 			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._ItemMoveToBottom();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
 			})
 		});
 
 		this._oShowSelectedButton = new sap.m.Button({
 			text: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
+			tooltip: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
+			type: sap.m.ButtonType.Transparent,
 			press: function() {
 				that._swopShowSelectedButton();
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High
 			})
 		});
 		this._bShowSelected = false;
@@ -1522,7 +1537,7 @@ sap.ui.define([
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
 		this._oToolbar = new sap.m.OverflowToolbar({
-			design: sap.m.ToolbarDesign.Transparent,
+			design: sap.m.ToolbarDesign.Auto,
 			content: [
 				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
 			]
