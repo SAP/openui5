@@ -29,7 +29,7 @@ sap.ui.define([
 					var sMetaData2 = vData.substr(104);// stripping the first 104 bytes  from the binary data when using base64 encoding.
 					return sMetaData1 + sMetaData2;
 				} else {
-					return "../images/employee.jpg";
+					return "../images/Employee.png";
 				}
 			}
 		};
