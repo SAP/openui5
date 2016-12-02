@@ -19,6 +19,9 @@
     "type": "git",
     "url": "https://github.com/SAP/openui5.git"
   },
+  "engines": {
+    "node": ">= 6"
+  },
   "dependencies": {},
   "devDependencies": {
     "async": "^0.9.0",
