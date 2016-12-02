@@ -46,6 +46,14 @@
 		var oLabelReadOnly = new sap.m.Label({
 			text: "Read Only"
 		});
+		var oLabelBoundProperty = new sap.m.Label({
+			text: {
+				path: "/value",
+				formatter: function(sValue) {
+					return "oModel.getProperty()= " + sValue;
+				}
+			}
+		});
 		var oLabelStep3Value2Min0Max10 = new sap.m.Label({
 			text: "Visual test slider: step = 3, value = 2, min = 0, max = 10, width=50%"
 		});
@@ -54,7 +62,7 @@
 			content: [new sap.m.VBox({
 				items: [
 					oLabelStep1Val6Min6Max15,
-					new sap.m.StepInput({
+					new sap.m.StepInput("boundSI", {
 						min: 5,
 						max: 15,
 						value: 6,
@@ -132,9 +140,23 @@
 					new sap.m.StepInput({
 						editable: false,
 						ariaLabelledBy: oLabelReadOnly
+					}),
+					oLabelBoundProperty,
+					new sap.m.StepInput({
+						value: "{/value}"
 					})
 				]
 			})]
+		}).setModel(new sap.ui.model.json.JSONModel({value: 7}));
+
+
+		page1.getContent()[0].getItems().forEach(function(oContent) {
+			if (oContent.getMetadata().getName() === "sap.m.StepInput") {
+				oContent.attachChange(function(oEvent) {
+					var sMessage = "Change event! Value: " + oEvent.getParameter("value") + " for StepInput with ID: " + this.getId();
+					sap.m.MessageToast.show(sMessage);
+				});
+			}
 		});
 
 		function fnGetChangePropertyValueFunction(oControl, propertyName, aValues) {
