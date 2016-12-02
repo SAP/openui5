@@ -3,7 +3,6 @@
 /* Belize theme                      */
 /* ================================= */
 
-@_sap_m_IconTabBar_BorderColor: darken(@sapUiObjectHeaderBackground, 8);
 @_sap_m_IconTabBar_TextHoverColor: darken(@sapUiGroupTitleTextColor, 10);
 @_sap_m_IconTabBar_SelectedTextColor: darken(@sapUiSelected, 5);
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
@@ -11,9 +10,9 @@
 /* Head Container */
 
 .sapMITH {
-	box-shadow: inset 0 -0.25rem 0 -0.125rem @_sap_m_IconTabBar_BorderColor;
+	box-shadow: inset 0 -0.25rem 0 -0.125rem @sapUiObjectHeaderBorderColor;
   	background-color: @sapUiObjectHeaderBackground;
-	border-bottom: 0.125rem solid @sapUiContentContrastShadowColor;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
 }
 
 /* Arrow */
@@ -41,7 +40,7 @@
 /* Content Container */
 
 .sapMITBContent {
-	border-bottom: 0.125rem solid @_sap_m_IconTabBar_BorderColor;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
 }
 
 /* Tab Filter Item */
