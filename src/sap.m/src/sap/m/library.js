@@ -272,7 +272,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ViewSettingsItem",
 			"sap.m.semantic.SemanticButton",
 			"sap.m.semantic.SemanticSelect"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.m.Bar": {
+					"moveElements": "default"
+				},
+				"sap.m.Toolbar": {
+					"moveElements": "default"
+				}
+			}
+		}
 	});
 
 
