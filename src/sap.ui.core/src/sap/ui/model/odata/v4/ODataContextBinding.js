@@ -118,10 +118,6 @@ sap.ui.define([
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var oBindingParameters,
-					iPos = sPath.indexOf("(...)"),
-					bDeferred = iPos >= 0;
-
 
 				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
 					mParameters);
@@ -134,33 +130,10 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = this.oModel.buildQueryOptions(oModel.mUriParameters,
-					mParameters, true);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (!this.bRelative || bDeferred || mParameters
-						|| oContext && !oContext.getBinding) {
-					oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-						["$$groupId", "$$updateGroupId"]);
-					this.sGroupId = oBindingParameters.$$groupId;
-					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-					if (bDeferred) {
-						this.oOperation = {
-							bAction : undefined,
-							oMetadataPromise : undefined,
-							mParameters : {},
-							sResourcePath : undefined
-						};
-						if (iPos !== sPath.length - 5) {
-							throw new Error(
-								"The path must not continue after a deferred operation: " + sPath);
-						}
-					} else if (!this.bRelative) {
-						this.oCache = this.makeCache();
-					}
-				}
-
+				this.applyParameters(jQuery.extend(true, {}, mParameters));
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
@@ -249,6 +222,44 @@ sap.ui.define([
 				});
 		}
 		return this.oOperation.oMetadataPromise;
+	};
+
+	/**
+	 * Applies the given map of parameters to this binding's parameters.
+	 *
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.applyParameters = function (mParameters) {
+		var oBindingParameters,
+			iPos = this.sPath.indexOf("(...)"),
+			bDeferred = iPos >= 0;
+
+		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
+				mParameters, true);
+
+		if (!this.bRelative || bDeferred || mParameters) {
+			oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+				["$$groupId", "$$updateGroupId"]);
+			this.sGroupId = oBindingParameters.$$groupId;
+			this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+			if (bDeferred) {
+				this.oOperation = {
+					bAction : undefined,
+					oMetadataPromise : undefined,
+					mParameters : {},
+					sResourcePath : undefined
+				};
+				if (iPos !== this.sPath.length - 5) {
+					throw new Error(
+						"The path must not continue after a deferred operation: " + this.sPath);
+				}
+			} else if (!this.bRelative) {
+				this.oCache = this.makeCache();
+			}
+		}
 	};
 
 	// See class documentation
@@ -761,7 +772,6 @@ sap.ui.define([
 		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;
 	};
-
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is

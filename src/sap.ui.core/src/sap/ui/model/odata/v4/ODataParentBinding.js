@@ -67,6 +67,7 @@ sap.ui.define([
 			// do not create if a cache proxy was created, but the cache now has another one
 			if (!oCacheProxy || that.oCache === oCacheProxy) {
 				if (sCanonicalPath) {
+					//mCacheByContext has to be reset if parameters are changing
 					that.mCacheByContext = that.mCacheByContext || {};
 					that.oCache = that.mCacheByContext[sCanonicalPath];
 					if (that.oCache) {
