@@ -506,6 +506,32 @@ QUnit.test("Cell + Cell Click Event", function(assert) {
 	qutils.triggerMouseEvent($ColHdr, "click");
 	assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
 	assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
+
+	// Prevent Click on interactive controls
+
+	var oExtension = oTable._getPointerExtension();
+	oExtension._debug();
+	var aKnownClickableControls = oExtension._KNOWNCLICKABLECONTROLS;
+
+	$Cell = oRowColCell.cell.$();
+	for (var i = 0; i < aKnownClickableControls.length; i++) {
+		$Cell.toggleClass(aKnownClickableControls[i], true);
+		qutils.triggerMouseEvent($Cell, "click");
+		assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
+		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
+		$Cell.toggleClass(aKnownClickableControls[i], false);
+	}
+
+	oRowColCell.cell.getEnabled = function() {return false};
+	$Cell = oRowColCell.cell.$();
+	var iStartCount = iSelectCount;
+	for (var i = 0; i < aKnownClickableControls.length; i++) {
+		$Cell.toggleClass(aKnownClickableControls[i], true);
+		qutils.triggerMouseEvent($Cell, "click");
+		assert.equal(iSelectCount, iStartCount + i + 1, iSelectCount + " Selections should happen");
+		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
+		$Cell.toggleClass(aKnownClickableControls[i], false);
+	}
 });
 
 
@@ -809,9 +835,22 @@ QUnit.module("Helpers", {
 
 QUnit.test("_debug()", function(assert) {
 	var oExtension = oTable._getPointerExtension();
-	assert.ok(!oExtension._ExtensionHelper, "No debug mode");
+	assert.ok(!oExtension._ExtensionHelper, "_ExtensionHelper: No debug mode");
+	assert.ok(!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: No debug mode");
+	assert.ok(!oExtension._InteractiveResizeHelper, "_InteractiveResizeHelper: No debug mode");
+	assert.ok(!oExtension._ReorderHelper, "_ReorderHelper: No debug mode");
+	assert.ok(!oExtension._ExtensionDelegate, "_ExtensionDelegate: No debug mode");
+	assert.ok(!oExtension._RowHoverHandler, "_RowHoverHandler: No debug mode");
+	assert.ok(!oExtension._KNOWNCLICKABLECONTROLS, "_KNOWNCLICKABLECONTROLS: No debug mode");
+
 	oExtension._debug();
-	assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
+	assert.ok(!!oExtension._ExtensionHelper, "_ExtensionHelper: Debug mode");
+	assert.ok(!!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: Debug mode");
+	assert.ok(!!oExtension._InteractiveResizeHelper, "_InteractiveResizeHelper: Debug mode");
+	assert.ok(!!oExtension._ReorderHelper, "_ReorderHelper: Debug mode");
+	assert.ok(!!oExtension._ExtensionDelegate, "_ExtensionDelegate: Debug mode");
+	assert.ok(!!oExtension._RowHoverHandler, "_RowHoverHandler: Debug mode");
+	assert.ok(!!oExtension._KNOWNCLICKABLECONTROLS, "_KNOWNCLICKABLECONTROLS: Debug mode");
 });
 
 QUnit.test("_getEventPosition()", function(assert) {
