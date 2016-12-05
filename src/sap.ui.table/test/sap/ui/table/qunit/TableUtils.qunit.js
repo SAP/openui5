@@ -378,30 +378,38 @@ QUnit.test("getRowColCell", function(assert) {
 
 QUnit.test("getDataCellInfo", function(assert) {
 	oTable.getColumns()[2].setVisible(false);
-	sap.ui.getCore().applyChanges();
+	initRowActions(oTable, 1, 1);
 
-	var oCell;
-	var oInfo = TableUtils.getDataCellInfo(oTable, oCell);
-	assert.ok(!oInfo, "No Cell given");
+	assert.strictEqual(TableUtils.getDataCellInfo(), null, "Returned null: Passed nothing");
+	assert.strictEqual(TableUtils.getDataCellInfo(oTable), null, "Returned null: No cell passed");
+	assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
+	assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowAction(0)), null, "Returned null: Row Action cell passed");
+	assert.strictEqual(TableUtils.getDataCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
 
-	oCell = getRowHeader(0);
-	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
-	assert.ok(!oInfo, "No Data Cell given");
+	var oInfo = TableUtils.getDataCellInfo(oTable, getCell(0, 0));
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
 
-	oCell = getCell(0, 0);
-	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
-	assert.strictEqual(oInfo.rowIndex, 0, "Row Index of cell: 0");
-	assert.strictEqual(oInfo.columnIndex, 0, "Column Index of cell: 0");
+	oInfo = TableUtils.getDataCellInfo(oTable, getCell(1, 1));
+	assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
+	assert.strictEqual(oInfo.columnIndex, 1, "Column Index: 1");
 
-	oCell = getCell(1, 1);
-	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
-	assert.strictEqual(oInfo.rowIndex, 1, "Row Index of cell: 1");
-	assert.strictEqual(oInfo.columnIndex, 1, "Column Index of cell: 1");
+	oInfo = TableUtils.getDataCellInfo(oTable, getCell(2, 2));
+	assert.strictEqual(oInfo.rowIndex, 2, "Row Index: 2");
+	assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
+});
 
-	oCell = getCell(2, 2);
-	oInfo = TableUtils.getDataCellInfo(oTable, oCell);
-	assert.strictEqual(oInfo.rowIndex, 2, "Row Index of cell: 2");
-	assert.strictEqual(oInfo.columnIndex, 3, "Column Index of cell: 3");
+QUnit.test("getRowActionCellInfo", function(assert) {
+	initRowActions(oTable, 1, 1);
+
+	assert.strictEqual(TableUtils.getRowActionCellInfo(), null, "Returned null: Passed nothing");
+	assert.strictEqual(TableUtils.getRowActionCellInfo(oTable), null, "Returned null: No cell passed");
+	assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
+	assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getCell(0, 0)), null, "Returned null: Data cell passed");
+	assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
+
+	var oInfo = TableUtils.getRowActionCellInfo(oTable, getRowAction(0));
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
 });
 
 QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
