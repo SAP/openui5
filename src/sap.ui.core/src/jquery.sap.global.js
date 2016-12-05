@@ -890,7 +890,12 @@
 		/**
 		 * Registered listener to be informed about new log entries.
 		 */
-			oListener = null;
+			oListener = null,
+
+		/**
+		 * Additional support information delivered by callback should be logged
+		 */
+			bLogSupportInfo = false;
 
 		function pad0(i,w) {
 			return ("000" + String(i)).slice(-w);
@@ -946,11 +951,25 @@
 		 * @param {string} sMessage The message to be logged
 		 * @param {string} [sDetails] The optional details for the message
 		 * @param {string} [sComponent] The log component under which the message should be logged
+		 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+		 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+		 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+		 *   immutable JSON object with mostly static and stable content.
 		 * @returns {object} The log entry as an object or <code>undefined</code> if no entry was created
 		 * @private
 		 */
-		function log(iLevel, sMessage, sDetails, sComponent) {
+		function log(iLevel, sMessage, sDetails, sComponent, fnSupportInfo) {
 			if (iLevel <= level(sComponent) ) {
+				if (bLogSupportInfo) {
+					if (!fnSupportInfo && !sComponent && typeof sDetails === "function") {
+						fnSupportInfo = sDetails;
+						sDetails = "";
+					}
+					if (!fnSupportInfo && typeof sComponent === "function") {
+						fnSupportInfo = sComponent;
+						sComponent = "";
+					}
+				}
 				var fNow =  jQuery.sap.now(),
 					oNow = new Date(fNow),
 					iMicroSeconds = Math.floor((fNow - Math.floor(fNow)) * 1000),
@@ -963,6 +982,9 @@
 						details  : String(sDetails || ""),
 						component: String(sComponent || "")
 					};
+				if (bLogSupportInfo && typeof fnSupportInfo === "function") {
+					oLogEntry.supportInfo = fnSupportInfo();
+				}
 				aLog.push( oLogEntry );
 				if (oListener) {
 					oListener.onLogEntry(oLogEntry);
@@ -995,6 +1017,9 @@
 					case TRACE: console.trace ? console.trace(logText) : console.log(logText); break; // trace not available in IE, fallback to log (no trace)
 					// no default
 					}
+					if (console.info && oLogEntry.supportInfo) {
+						console.info(oLogEntry.supportInfo);
+					}
 				}
 				/*eslint-enable no-console */
 				return oLogEntry;
@@ -1020,12 +1045,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log instance for method chaining
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.fatal = function (sMessage, sDetails, sComponent) {
-				log(FATAL, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.fatal = function (sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(FATAL, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 
@@ -1035,12 +1064,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log instance
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.error = function error(sMessage, sDetails, sComponent) {
-				log(ERROR, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.error = function error(sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(ERROR, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 
@@ -1050,12 +1083,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log instance
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.warning = function warning(sMessage, sDetails, sComponent) {
-				log(WARNING, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.warning = function warning(sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(WARNING, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 
@@ -1065,12 +1102,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log instance
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.info = function info(sMessage, sDetails, sComponent) {
-				log(INFO, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.info = function info(sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(INFO, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 			/**
@@ -1079,12 +1120,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log instance
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.debug = function debug(sMessage, sDetails, sComponent) {
-				log(DEBUG, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.debug = function debug(sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(DEBUG, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 
@@ -1094,12 +1139,16 @@
 			 * @param {string} sMessage Message text to display
 			 * @param {string} [sDetails=''] Details about the message, might be omitted
 			 * @param {string} [sComponent=''] Name of the component that produced the log entry
+			 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
+			 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
+			 *   To avoid negative effects regarding execution times and memory consumption, the returned object should be a simple
+			 *   immutable JSON object with mostly static and stable content.
 			 * @return {jQuery.sap.log.Logger} The log-instance
 			 * @public
 			 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 			 */
-			this.trace = function trace(sMessage, sDetails, sComponent) {
-				log(TRACE, sMessage, sDetails, sComponent || sDefaultComponent);
+			this.trace = function trace(sMessage, sDetails, sComponent, fnSupportInfo) {
+				log(TRACE, sMessage, sDetails, sComponent || sDefaultComponent, fnSupportInfo);
 				return this;
 			};
 
@@ -1157,6 +1206,19 @@
 			 */
 			this.isLoggable = function (iLevel, sComponent) {
 				return (iLevel == null ? DEBUG : iLevel) <= level(sComponent || sDefaultComponent);
+			};
+
+			/**
+			 * Enables or disables whether additional support information is logged in a trace.
+			 * If enabled, logging methods like error, warning, info and debug are calling the additional
+			 * optional callback parameter fnSupportInfo and store the returned object in the log entry property supportInfo.
+			 *
+			 * @param {boolean} bEnabled true if the support information should be logged
+			 * @private
+			 * @since 1.46.0
+			 */
+			this.logSupportInfo = function logSupportInfo(bEnabled) {
+				bLogSupportInfo = bEnabled;
 			};
 		}
 
