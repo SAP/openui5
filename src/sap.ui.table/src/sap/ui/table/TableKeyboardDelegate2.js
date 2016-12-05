@@ -98,16 +98,21 @@ sap.ui.define([
 
 		} else if (oCellInfo.type === CellType.DATACELL) {
 
-			// Select/Deselect row.
-			if (TableUtils.isRowSelectionAllowed(oTable)) {
-				TableUtils.toggleRowSelection(oTable, oEvent.target);
+			// Action mode should only be entered when cellClick is not handled and no selection is performed.
+			var bEnterActionMode = !oTable.hasListeners("cellClick");
 
 			// Fire cell click event.
-			} else if (oTable.hasListeners("cellClick")) {
-				oTable._findAndfireCellEvent(oTable.fireCellClick, oEvent);
+			if (!oTable._findAndfireCellEvent(oTable.fireCellClick, oEvent)) {
 
-			// Enter action mode.
-			} else {
+				// Select/Deselect row.
+				if (TableUtils.isRowSelectionAllowed(oTable)) {
+					TableUtils.toggleRowSelection(oTable, oEvent.target);
+					bEnterActionMode = false;
+				}
+
+			}
+
+			if (bEnterActionMode) {
 				var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oEvent.target);
 				if ($InteractiveElements !== null) {
 					$InteractiveElements[0].focus();
