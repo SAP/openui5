@@ -700,3 +700,51 @@ QUnit.test("getColumnWidth", function(assert) {
 	assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 		"The width in pixels was correctly retrieved from the DOM in case of a column width specified in percentage");
 });
+
+
+QUnit.module("Fixed Columns", {
+	setup: function() {
+		createTables();
+		oTable.setFixedColumnCount(0);
+		this.aColumns = oTable.getColumns();
+		for (var i = 0; i < this.aColumns.length; i++) {
+			this.aColumns[i].setVisible(true);
+			this.aColumns[i].setWidth("100px");
+		}
+		oTable.setWidth(((this.aColumns.length * 100) + 200) +  "px");
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function () {
+		this.aColumns = null;
+		destroyTables();
+	}
+});
+
+QUnit.test("getFixedColumnCount", function(assert) {
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: No fixed Columns");
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 0, "Computed: No fixed Columns");
+
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 2, "Property: 2 fixed Columns");
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 2, "Computed: 2 fixed Columns");
+
+	this.aColumns[0].setVisible(false);
+	sap.ui.getCore().applyChanges();
+
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 2, "Property: 2 fixed Columns");
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 1, "Computed: 1 fixed Columns");
+
+	oTable.setFixedColumnCount(this.aColumns.length);
+	sap.ui.getCore().applyChanges();
+
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), this.aColumns.length, "Property: " + this.aColumns.length + " fixed Columns");
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), this.aColumns.length - 1, "Computed: " + (this.aColumns.length - 1) + " fixed Columns");
+
+	oTable.setWidth((this.aColumns.length * 100 - 200) + "px");
+	sap.ui.getCore().applyChanges();
+
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: 0 fixed Columns");
+	assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), 0, "Computed: 0 fixed Columns");
+});
