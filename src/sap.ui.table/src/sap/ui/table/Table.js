@@ -2755,7 +2755,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._isRowSelectable = function(iRowIndex) {
-		return true;
+		return iRowIndex >= 0 && iRowIndex < this._getRowCount();
 	};
 
 	/**
