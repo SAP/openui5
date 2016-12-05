@@ -940,7 +940,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
 
-		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
+		var bValidateFreeText = true;
+
+		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
+			if (this._hasTabularSuggestions()) {
+				bValidateFreeText = !this._oSuggestionTable.getSelectedItem();
+			} else {
+				bValidateFreeText = !this._oList.getSelectedItem();
+			}
+		}
+
+		if (bValidateFreeText) {
 			this._validateCurrentText();
 		}
 
