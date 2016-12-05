@@ -1099,6 +1099,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// sets the value if it has not changed
 				if (this._sValue === this.getValue()) {
 					this.setValue(vItem.getText());
+					this._sValue = this.getValue();
 				}
 			}
 		};
