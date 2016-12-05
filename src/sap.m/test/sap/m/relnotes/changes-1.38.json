@@ -2685,5 +2685,136 @@
         "references": []
       }
     ]
+  },
+  "1.38.12": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "38ad4a30419a973b1bc56b73c39036e3599f4465",
+        "type": "FIX",
+        "text": " sap.m.Button: Sufficient contrast ratio in HCB for IE",
+        "references": []
+      },
+      {
+        "id": "2932a747417421eea55d100c7d094eeef3fbdd39",
+        "type": "FIX",
+        "text": " sap.m.Button: prevent the Safari from setting the focus to wrong place",
+        "references": []
+      },
+      {
+        "id": "b60f74c3d000b6390260eb0b38b6bbf458789dd8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Memory leaks have been fixed",
+        "references": []
+      },
+      {
+        "id": "e1e4d1a8b8a4dff4489496e17c88b8a499448650",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter - all active lists can be deleted when there is also inactive.",
+        "references": []
+      },
+      {
+        "id": "523205cf54c426cd0a6041e91e8442384419c499",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Text shown correctly in Arabic",
+        "references": []
+      },
+      {
+        "id": "1c22e08255ff28b59a7e737cf78c302c7aead6dc",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Correct height if flex item is a scroll container",
+        "references": []
+      },
+      {
+        "id": "cb76e786044468f7b8d3850cf27df3c728d25079",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "fe94ce3f60984a83330d3012f1cfabf50ff547a7",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Binding is now synchronized with SelectedItems association and SelectedKeys property",
+        "references": []
+      },
+      {
+        "id": "e9bda9d832f3ce0128b6b82bbd04945c982a118b",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Race condition with \"SelectionFinish\" event is now fixed",
+        "references": []
+      },
+      {
+        "id": "929febf3cde5cf30eed34278a506e74a37ce407b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed methods getAggregation and clone",
+        "references": []
+      },
+      {
+        "id": "98275d16c04aa2b14b44b97d42cf150b2aed0b17",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input value is visible when readonly",
+        "references": []
+      },
+      {
+        "id": "b14249d112d8d2f4ed5ba260e152098a032fcedb",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: popup would close, since navContainer only checked if the immediate parent was a popup",
+        "references": []
+      },
+      {
+        "id": "86f742e79e374938f56f1f0445d04ac8abaa7184",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: API documentation updated",
+        "references": []
+      },
+      {
+        "id": "a442e309bfa0a6fece48663318da50d434ff74bc",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Correctly aligned inside form",
+        "references": []
+      },
+      {
+        "id": "55039841284d84c462ea01c862edf0ad161be833",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not fire beforeClose event when the Popup is destroyed",
+        "references": []
+      },
+      {
+        "id": "08644fc95e801bcf8b55bf2c2e0c2246636ed0d9",
+        "type": "FIX",
+        "text": " sap.m.Select: enable scrolling to the selected item when the selectList opens",
+        "references": []
+      },
+      {
+        "id": "55cf56242ba45d006a811e60949fb275dde01438",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Master view properly closing issue",
+        "references": []
+      },
+      {
+        "id": "e5a0ce6642c94194857ef25b57b3ef155d20fcb0",
+        "type": "FIX",
+        "text": " sap.m.TabContainer - when items are rebound, default selected item is properly updated.",
+        "references": []
+      },
+      {
+        "id": "1e55c654f543a7bfe41005bfdd4da6de23665d89",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: displayFormat now correctly ignored when value is bound",
+        "references": []
+      },
+      {
+        "id": "b53fe784a320f04627c7af6db1d541a6939ecd02",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: File deletion during upload corrected",
+        "references": []
+      },
+      {
+        "id": "5995ef27d1a65687770747da6e48fa6a3c0d374d",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in Upload Pending scenario improved",
+        "references": []
+      }
+    ]
   }
 }
