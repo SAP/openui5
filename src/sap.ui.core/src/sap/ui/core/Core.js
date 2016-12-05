@@ -896,13 +896,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// remove additional css files (ie9 rule limit fix)
 			if ($this.attr("data-sap-ui-css-count")) {
 				$this.remove();
+				return;
 			}
 
-			// set new URL
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
-				this.href = sHref;
-				$this.removeAttr("data-sap-ui-ready");
+				// Replace the current <link> tag with a new one.
+				// Changing "this.href" would also trigger loading the new stylesheet but
+				// the load/error handlers would not get called which causes issues with the ThemeCheck
+				// as the "data-sap-ui-ready" attribute won't be set.
+				jQuery.sap.includeStyleSheet(sHref, this.id);
 			}
 		});
 	};

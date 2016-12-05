@@ -5,6 +5,9 @@
 		<title>qUnit Page for sap.ui.core.ThemeCheck</title>
 		<script>
 			window["sap-ui-config"] = {
+				resourceRoots : {
+					"sap.ui.testlib" : "./testdata/uilib/"
+				},
 				themeRoots: {
 					"legacy": {
 						"sap.ui.core": "./testdata/customcss/"
@@ -18,6 +21,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_hcb"
+			data-sap-ui-libs="sap.ui.core,sap.ui.testlib"
 			data-sap-ui-noConflict="true">
 		</script>
 
@@ -62,10 +66,15 @@
 
 			themeApplied().then(function() {
 
-				// Check if the declared stylesheet has been fully loaded
-				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sSheetHref = getSheetHref(oLibraryCss);
-				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+				// Check if the declared sap.ui.core stylesheet has been fully loaded
+				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
+				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+
+				// Check if the declared sap.ui.testlib stylesheet has been fully loaded
+				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
+				var sTestSheetHref = getSheetHref(oTestLibraryCss);
+				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
 
 				done();
 			});
@@ -76,11 +85,15 @@
 
 			 themeChanged().then(function() {
 
-				// Check if the declared stylesheet has been fully loaded
-				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sSheetHref = getSheetHref(oLibraryCss);
+				// Check if the declared sap.ui.core stylesheet has been fully loaded
+				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
+				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
 
-				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+				// Check that the declared sap.ui.testlib stylesheet has been included but not loaded as it does not exist for "legacy" theme
+				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
+				var sTestSheetHref = getSheetHref(oTestLibraryCss);
+				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
@@ -102,11 +115,15 @@
 
 			 themeChanged().then(function() {
 
-				// Check if the declared stylesheet has been fully loaded
-				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sSheetHref = getSheetHref(oLibraryCss);
+				// Check if the declared sap.ui.core stylesheet has been fully loaded
+				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
+				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
 
-				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+				// Check that the declared sap.ui.testlib stylesheet has been included but not loaded as it does not exist for "customcss" theme
+				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
+				var sTestSheetHref = getSheetHref(oTestLibraryCss);
+				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
@@ -128,10 +145,15 @@
 
 			 themeChanged().then(function() {
 
-				// Check if the declared stylesheet has been fully loaded
-				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sSheetHref = getSheetHref(oLibraryCss);
-				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+				 // Check if the declared sap.ui.core stylesheet has been fully loaded
+				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
+				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+
+				// Check if the declared sap.ui.testlib stylesheet has been fully loaded
+				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
+				var sTestSheetHref = getSheetHref(oTestLibraryCss);
+				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
