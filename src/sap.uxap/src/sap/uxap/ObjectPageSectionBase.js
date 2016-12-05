@@ -88,7 +88,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
 		if (this._getObjectPageLayout()) {
-			this._getObjectPageLayout()._adjustLayout();
+			this._getObjectPageLayout()._requestAdjustLayout();
 			this._getObjectPageLayout()._setSectionsFocusValues();
 		}
 	};
@@ -240,7 +240,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 		this._isHidden = bHide;
 		this.$().children(this._sContainerSelector).toggle(!bHide);
 		if (oObjectPage) {
-			oObjectPage._adjustLayout();
+			oObjectPage._requestAdjustLayout();
 		}
 		return this;
 	};
