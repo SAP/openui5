@@ -22,27 +22,13 @@ sap.ui.define([
 		link: oLink
 	});
 
-	var oMessagePopover1 = new MessagePopover({
+	var oMessagePopover = new MessagePopover({
 		items: {
 			path: '/',
 			template: oMessageTemplate
 		}
 	});
 
-	var oMessagePopover2 = new MessagePopover({
-		items: {
-			path: '/',
-			template: oMessageTemplate
-		}
-	});
-
-	var oMessagePopover3 = new MessagePopover({
-		items: {
-			path: '/',
-			template: oMessageTemplate
-		},
-		initiallyExpanded: false
-	});
 
 	var CController = Controller.extend("sap.m.sample.MessagePopover.C", {
 		onInit: function () {
@@ -96,21 +82,11 @@ sap.ui.define([
 
 			this.getView().setModel(viewModel);
 
-			oMessagePopover1.setModel(oModel);
-			oMessagePopover2.setModel(oModel);
-			oMessagePopover3.setModel(oModel);
+			oMessagePopover.setModel(oModel);
 		},
 
-		handleMessagePopoverPress1: function (oEvent) {
-			oMessagePopover1.openBy(oEvent.getSource());
-		},
-
-		handleMessagePopoverPress2: function (oEvent) {
-			oMessagePopover2.openBy(oEvent.getSource());
-		},
-
-		handleMessagePopoverPress3: function (oEvent) {
-			oMessagePopover3.openBy(oEvent.getSource());
+		handleMessagePopoverPress: function (oEvent) {
+			oMessagePopover.openBy(oEvent.getSource());
 		}
 	});
 
