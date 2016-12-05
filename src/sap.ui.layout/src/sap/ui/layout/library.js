@@ -69,16 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.ui.layout.form.SimpleForm": {
-					"renameLabel": "sap/ui/layout/changeHandler/RenameSimpleForm",
-					"renameTitle": "sap/ui/layout/changeHandler/RenameSimpleForm",
-					"moveSimpleFormField": "sap/ui/layout/changeHandler/MoveSimpleForm",
-					"moveSimpleFormGroup": "sap/ui/layout/changeHandler/MoveSimpleForm",
-					"hideSimpleFormField": "sap/ui/layout/changeHandler/HideSimpleForm",
-					"unhideSimpleFormField": "sap/ui/layout/changeHandler/UnhideSimpleForm",
-					"removeSimpleFormGroup": "sap/ui/layout/changeHandler/HideSimpleForm",
-					"addSimpleFormGroup": "sap/ui/layout/changeHandler/AddSimpleFormGroup"
-				},
+				"sap.ui.layout.form.SimpleForm": "sap/ui/layout/flexibility/SimpleForm",
 				"sap.ui.layout.HorizontalLayout": {
 					"moveElements": "default",
 					"hideControl": "default",

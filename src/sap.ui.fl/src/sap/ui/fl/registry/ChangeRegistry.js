@@ -93,6 +93,15 @@ sap.ui.define([
 	ChangeRegistry.prototype._registerChangeHandlersForControl = function (sControlType, oChangeHandlers) {
 		var that = this;
 
+		if (typeof oChangeHandlers === "string") {
+			try {
+				oChangeHandlers = sap.ui.requireSync(oChangeHandlers + ".flexibility");
+			} catch (error) {
+				Utils.log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + error.message);
+				return; // continue without a registration
+			}
+		}
+
 		jQuery.each(oChangeHandlers, function (sChangeType, sChangeHandler) {
 			var oChangeHandler = that._getChangeHandler(sChangeType, sChangeHandler);
 			var oSimpleChange = {
