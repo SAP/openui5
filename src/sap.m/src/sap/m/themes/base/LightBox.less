@@ -1,3 +1,8 @@
+/* =============================== */
+/* CSS for control sap.m/LightBox  */
+/* Base theme                      */
+/* =============================== */
+
 @lightBoxMinHeight: 18rem;
 @footerOneLineHeightDesktop: 2.5rem;
 @footerTwoLinesHeightDesktop: 4rem;
@@ -16,6 +21,8 @@
 	max-height: 100%;
 	border-radius: 0.3125rem;
 	overflow: hidden;
+	background-color: @sapUiGlobalBackgroundColor;
+	box-shadow: @sapUiShadowLevel3;
 }
 
 .sap-desktop .sapMLightBox {
@@ -26,6 +33,10 @@
 .sap-tablet .sapMLightBox {
 	max-width: calc(~"100% - 2rem");
 	max-height: calc(~"100% - 2rem");
+}
+
+.sapMLightBoxFooter {
+  background-color: @sapUiPageFooterBackground;
 }
 
 /* ==========================================================================
@@ -87,6 +98,18 @@
 
 .sapMLightBoxFooter .sapMBtn {
 	padding-right: 0.25rem;
+}
+
+.sapMText.sapMLightBoxTitle {
+  color: @sapUiBaseText;
+  font-family: @sapUiFontFamily;
+  font-size: @sapMFontMediumSize;
+}
+
+.sapMText.sapMLightBoxSubtitle {
+  color: @sapUiContentLabelColor;
+  font-family: @sapUiFontFamily;
+  font-size: @sapMFontMediumSize;
 }
 
 /* Footer title
@@ -174,16 +197,25 @@
 	margin-top: 1rem;
 	font-size: 1.5rem;
 	line-height: 2rem;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader2Size;
 }
 
 .sapMLightBox .sapMLightBoxErrorSubtitle {
 	line-height: normal;
 	margin: 1rem auto;
 	font-size: 1rem;
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontHeader5Size;
 }
 
 .sapMLightBox.sapMLightBoxError .sapMLightBoxFooter {
 	position: initial;
+}
+
+.sapMLightBox .sapMLightBoxErrorContainer .sapUiIcon::before,
+.sapMLightBox .sapMLightBoxErrorContainerTwoHeaders .sapUiIcon::before {
+  color: @sapUiContentNonInteractiveIconColor;
 }
 
 /* ==========================================================================
