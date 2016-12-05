@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 	function(jQuery, TableExtension, TableUtils, Device, Popup, jQueryDom) {
 	"use strict";
 
+	var KNOWNCLICKABLECONTROLS = ["sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt", "sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer"];
+
 	/*
 	 * Provides utility functions used this extension
 	 */
@@ -23,6 +25,32 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 				oPos = oEvent;
 			}
 			return {x: oPos.pageX, y: oPos.pageY};
+		},
+
+		_skipClick : function(oEvent, $Target, oCellInfo) {
+			if (oCellInfo.type != TableUtils.CELLTYPES.DATACELL) {
+				return false;
+			}
+
+			// Common preferred way to avoid handling the click event
+			if (oEvent.isMarked()) {
+				return true;
+			}
+
+			// Special handling for known clickable controls
+			var oClickedControl = $Target.control(0);
+			if (oClickedControl) {
+				var $ClickedControl = oClickedControl.$();
+				if ($ClickedControl.length) {
+					for (var i = 0; i < KNOWNCLICKABLECONTROLS.length; i++) {
+						if ($ClickedControl.hasClass(KNOWNCLICKABLECONTROLS[i])) {
+							return typeof oClickedControl.getEnabled === "function" ? oClickedControl.getEnabled() : true;
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 
 	};
@@ -734,6 +762,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					delete oPointerExtension._bShowMenu;
 				}
 			} else {
+				if (ExtensionHelper._skipClick(oEvent, $Target, oCellInfo)) {
+					return;
+				}
+
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
 					this._onSelect(oEvent);
@@ -835,6 +867,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			this._ReorderHelper = ReorderHelper;
 			this._ExtensionDelegate = ExtensionDelegate;
 			this._RowHoverHandler = RowHoverHandler;
+			this._KNOWNCLICKABLECONTROLS = KNOWNCLICKABLECONTROLS;
 		},
 
 		/*
