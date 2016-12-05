@@ -19,8 +19,9 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		constructor: function (oFlexibleColumnLayout) {
+		constructor: function (oFlexibleColumnLayout, sMode) {
 			this.oFCL = oFlexibleColumnLayout;
+			this.sMode = sMode || "Default";
 		}
 	});
 
@@ -36,14 +37,14 @@ sap.ui.define([
 	 * @param oFlexibleColumnLayout
 	 * @returns {*}
 	 */
-	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout) {
+	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout, sMode) {
 
 		jQuery.sap.assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
 
 		var sId = oFlexibleColumnLayout.getId();
 
 		if (typeof FlexibleColumnLayoutSemanticHelper._oInstances[sId] === "undefined") {
-			FlexibleColumnLayoutSemanticHelper._oInstances[sId] = new FlexibleColumnLayoutSemanticHelper(oFlexibleColumnLayout);
+			FlexibleColumnLayoutSemanticHelper._oInstances[sId] = new FlexibleColumnLayoutSemanticHelper(oFlexibleColumnLayout, sMode);
 		}
 
 		return FlexibleColumnLayoutSemanticHelper._oInstances[sId];
@@ -69,15 +70,15 @@ sap.ui.define([
 			sNextLayout;
 
 		// 1 column
-		if (sCurrentLayout === "OneColumn") {
+		if (sCurrentLayout === sap.f.LayoutType.OneColumn) {
 
 			// Clicking an item in the begin column opens the mid column
-			sNextLayout = "TwoColumnsDefault";
+			sNextLayout = sap.f.LayoutType.TwoColumnsBeginExpanded;
 
 		}
 
 		// 2 columns
-		if (["TwoColumnsDefault", "TwoColumnsBeginEmphasized", "TwoColumnsMidEmphasized"].indexOf(sCurrentLayout) !== -1) {
+		if ([sap.f.LayoutType.TwoColumnsBeginExpanded, sap.f.LayoutType.TwoColumnsMidExpanded].indexOf(sCurrentLayout) !== -1) {
 			if (sColumn === "begin") {
 
 				// Clicking the begin column when in 2-column layout should preserve the current layout (and not reset the default 2-column layout)
@@ -85,32 +86,37 @@ sap.ui.define([
 
 			} else {
 
-				// Clicking the mid colum when in 2-column layout should switch to 3 column layout
-				sNextLayout = "ThreeColumnsDefault";
+				if (this.sMode === "MasterDetail") {
+					// Clicking the mid column when in 2-column layout should open the third column in fullscreen mode
+					sNextLayout = sap.f.LayoutType.EndColumnFullScreen;
+				} else {
+					// Clicking the mid column when in 2-column layout should switch to 3 column layout
+					sNextLayout = sap.f.LayoutType.ThreeColumnsMidExpanded;
+				}
 
 			}
 		}
 
 		// mid fullscreen => end fullscreen
-		if (sCurrentLayout === "MidFullScreen") {
+		if (sCurrentLayout === sap.f.LayoutType.MidColumnFullScreen) {
 
 			// Clicking an item in the mid column from fullscreen always opens the end column in fullscreen
-			sNextLayout = "EndFullScreen";
+			sNextLayout = sap.f.LayoutType.EndColumnFullScreen;
 
 		}
 
 		// 3 columns
-		if (["ThreeColumnsDefault", "ThreeColumnsMidEmphasized", "ThreeColumnsEndEmphasized", "ThreeColumnsMidEmphasizedEndHidden", "ThreeColumnsBeginEmphasizedEndHidden"].indexOf(sCurrentLayout) !== -1) {
+		if ([sap.f.LayoutType.ThreeColumnsMidExpanded, sap.f.LayoutType.ThreeColumnsEndExpanded, sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden, sap.f.LayoutType.ThreeColumnsBeginExpandedEndHidden].indexOf(sCurrentLayout) !== -1) {
 			if (sColumn === "begin") {
 
 				// Clicking the begin column in 3-column layout should switch to 2-column layout
-				sNextLayout = "TwoColumnsDefault";
+				sNextLayout = sap.f.LayoutType.TwoColumnsBeginExpanded;
 
 			} else if (sColumn === "mid") {
 
-				if (["ThreeColumnsMidEmphasizedEndHidden", "ThreeColumnsBeginEmphasizedEndHidden"].indexOf(sCurrentLayout) !== -1) {
+				if ([sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden, sap.f.LayoutType.ThreeColumnsBeginExpandedEndHidden].indexOf(sCurrentLayout) !== -1) {
 					// Clicking the mid column when in 3-column layout where end column is hidden, should reveal the end column again
-					sNextLayout = "ThreeColumnsDefault";
+					sNextLayout = sap.f.LayoutType.ThreeColumnsMidExpanded;
 				} else {
 					// Clicking the mid column when in 3-column layout where end column is visible, should preserve the current layout
 					sNextLayout = sCurrentLayout;
@@ -119,14 +125,14 @@ sap.ui.define([
 			} else {
 
 				// Clicking the end column when in 3-column layout should always open fullscreen
-				sNextLayout = "EndFullScreen";
+				sNextLayout = sap.f.LayoutType.EndColumnFullScreen;
 
 			}
 		}
 
 		// end fullscreen => another end fullscreen
-		if (sCurrentLayout === "EndFullScreen") {
-			sNextLayout = "EndFullScreen";
+		if (sCurrentLayout === sap.f.LayoutType.EndColumnFullScreen) {
+			sNextLayout = sap.f.LayoutType.EndColumnFullScreen;
 		}
 
 		return this._getUIStateForLayout(sNextLayout);
@@ -177,7 +183,7 @@ sap.ui.define([
 
 	FlexibleColumnLayoutSemanticHelper.prototype._getIsLogicallyFullScreen = function (sLayout) {
 
-		return ["OneColumn", "MidFullScreen", "EndFullScreen"].indexOf(sLayout) !== -1;
+		return [sap.f.LayoutType.OneColumn, sap.f.LayoutType.MidColumnFullScreen, sap.f.LayoutType.EndColumnFullScreen].indexOf(sLayout) !== -1;
 	};
 
 	FlexibleColumnLayoutSemanticHelper.prototype._getActionButtonsInfo = function (aSizes) {
@@ -200,28 +206,28 @@ sap.ui.define([
 		if (iMaxColumnsCount === 1) {
 
 			oMidColumn.closeColumn = "";
-			oEndColumn.closeColumn = "TwoColumnsDefault";
+			oEndColumn.closeColumn = sap.f.LayoutType.TwoColumnsBeginExpanded;
 
 		} else {
 
 			if (sColumnWidthDistribution === "67/33/0" || sColumnWidthDistribution === "33/67/0") {
 
-				oMidColumn.fullScreen = "MidFullScreen";
+				oMidColumn.fullScreen = sap.f.LayoutType.MidColumnFullScreen;
 				oMidColumn.closeColumn = "";
 
 			}
 
 			if (sColumnWidthDistribution === "25/50/25" || sColumnWidthDistribution === "25/25/50" || sColumnWidthDistribution === "0/67/33") {
 
-				oEndColumn.fullScreen = "EndFullScreen";
-				oEndColumn.closeColumn = "TwoColumnsDefault";
+				oEndColumn.fullScreen = sap.f.LayoutType.EndColumnFullScreen;
+				oEndColumn.closeColumn = sap.f.LayoutType.TwoColumnsBeginExpanded;
 
 			}
 
 			if (sColumnWidthDistribution === "0/100/0") {
 
-				aEligibleLayouts = ["TwoColumnsDefault", "TwoColumnsBeginEmphasized", "TwoColumnsMidEmphasized", "ThreeColumnsBeginEmphasizedEndHidden", "ThreeColumnsMidEmphasizedEndHidden"];
-				sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || "TwoColumnsDefault";
+				aEligibleLayouts = [sap.f.LayoutType.TwoColumnsBeginExpanded, sap.f.LayoutType.TwoColumnsMidExpanded, sap.f.LayoutType.ThreeColumnsBeginExpandedEndHidden, sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden];
+				sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || sap.f.LayoutType.TwoColumnsBeginExpanded;
 
 				oMidColumn.exitFullScreen = sExitFullScreen;
 				oMidColumn.closeColumn = "";
@@ -230,11 +236,16 @@ sap.ui.define([
 
 			if (sColumnWidthDistribution === "0/0/100") {
 
-				aEligibleLayouts = ["ThreeColumnsDefault", "ThreeColumnsMidEmphasized", "ThreeColumnsEndEmphasized"];
-				sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || "ThreeColumnsDefault";
+				if (this.sMode === "MasterDetail") {
+					// Closing the third column goes back to the 1-column layout
+					oEndColumn.closeColumn = sap.f.LayoutType.OneColumn;
+				} else {
+					aEligibleLayouts = [sap.f.LayoutType.ThreeColumnsMidExpanded, sap.f.LayoutType.ThreeColumnsEndExpanded];
+					sExitFullScreen = this.oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || sap.f.LayoutType.ThreeColumnsMidExpanded;
 
-				oEndColumn.exitFullScreen = sExitFullScreen;
-				oEndColumn.closeColumn = "TwoColumnsDefault";
+					oEndColumn.exitFullScreen = sExitFullScreen;
+					oEndColumn.closeColumn = sap.f.LayoutType.TwoColumnsBeginExpanded;
+				}
 
 			}
 		}

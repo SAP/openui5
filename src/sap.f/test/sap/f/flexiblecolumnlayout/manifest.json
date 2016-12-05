@@ -49,13 +49,13 @@
 					"pattern": "page2",
 					"name": "page2",
 					"target": "page2",
-					"layout": "EndFullScreen"
+					"layout": "EndColumnFullScreen"
 				},
 				{
 					"pattern": "page3",
 					"name": "page3",
 					"target": "page3",
-					"layout": "EndFullScreen"
+					"layout": "EndColumnFullScreen"
 				}
 			],
 			"targets": {

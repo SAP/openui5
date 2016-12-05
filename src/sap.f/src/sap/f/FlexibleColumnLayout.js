@@ -43,21 +43,6 @@ sap.ui.define([
 				layout: {type: "sap.f.LayoutType", defaultValue: sap.f.LayoutType.OneColumn},
 
 				/**
-				 * Forces the control to only show two columns at a time on Desktop (as it would normally on Tablet).
-				 */
-				twoColumnLayoutOnDesktop: {type: "boolean", group: "Behavior", defaultValue: false},
-
-				/**
-				 * Determines the default three-column layout: MidColumnEmphasized (25/50/25) or EndColumnEmphasized (25/25/50).
-				 */
-				threeColumnLayoutType: {type: "sap.f.ThreeColumnLayoutType", group: "Behavior", defaultValue: sap.f.ThreeColumnLayoutType.MidColumnEmphasized},
-
-				/**
-				 * Determines whether the user can switch between the MidColumnEmphasized (25/50/25) and EndColumnEmphasized (25/25/50) three-column layouts with the use of an additional navigation button.
-				 */
-				threeColumnLayoutTypeFixed: {type: "boolean", group: "Behavior", defaultValue: true},
-
-				/**
 				 * Determines the type of the transition/animation to apply for the <code>Begin</code> column when <code>to()</code> is called without defining the
 				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>show</code>, and the names of any registered custom transitions.
 				 */
@@ -912,33 +897,30 @@ sap.ui.define([
 			oMap;
 
 		oMap = {
-			TwoColumnsBeginEmphasized: {
-				"left": "TwoColumnsMidEmphasized"
+			TwoColumnsBeginExpanded: {
+				"left": sap.f.LayoutType.TwoColumnsMidExpanded
 			},
-			TwoColumnsMidEmphasized: {
-				"right": "TwoColumnsBeginEmphasized"
+			TwoColumnsMidExpanded: {
+				"right": sap.f.LayoutType.TwoColumnsBeginExpanded
 			},
-			ThreeColumnsMidEmphasized: {
-				"left": "ThreeColumnsEndEmphasized",
-				"right": "ThreeColumnsMidEmphasizedEndHidden"
+			ThreeColumnsMidExpanded: {
+				"left": sap.f.LayoutType.ThreeColumnsEndExpanded,
+				"right": sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden
 			},
-			ThreeColumnsEndEmphasized: {
-				"right": "ThreeColumnsMidEmphasized"
+			ThreeColumnsEndExpanded: {
+				"right": sap.f.LayoutType.ThreeColumnsMidExpanded
 			},
-			ThreeColumnsMidEmphasizedEndHidden: {
-				"left": "ThreeColumnsMidEmphasized",
-				"right": "ThreeColumnsBeginEmphasizedEndHidden"
+			ThreeColumnsMidExpandedEndHidden: {
+				"left": sap.f.LayoutType.ThreeColumnsMidExpanded,
+				"right": sap.f.LayoutType.ThreeColumnsBeginExpandedEndHidden
 			},
-			ThreeColumnsBeginEmphasizedEndHidden: {
-				"left": "ThreeColumnsMidEmphasizedEndHidden"
+			ThreeColumnsBeginExpandedEndHidden: {
+				"left": sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden
 			}
 		};
 
-		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
-		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
-			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
-
-		sLayout = oMap[sLayout][sShiftDirection];
+		jQuery.sap.assert(typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined", "An invalid layout was used for determining arrow behavior");
+		sLayout = typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined" ? oMap[sLayout][sShiftDirection] : sap.f.LayoutType.OneColumn;
 
 		this.setLayout(sLayout, true);
 	};
@@ -949,37 +931,20 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._hideShowArrows = function () {
 		var sLayout = this.getLayout(),
-			iMaxColumns = this._getMaxColumnsCount(),
-			bThreeColumnLayoutTypeFixed = this.getThreeColumnLayoutTypeFixed(),
 			oMap = {},
 			aNeededArrows = [];
 
-		// Stop here if the control isn't rendered yet
+		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
 		if (typeof this._$columns === "undefined" || sap.ui.Device.system.phone) {
 			return;
 		}
 
-		if (iMaxColumns === 3) {
-			oMap.TwoColumnsBeginEmphasized = ["beginBack"];
-			oMap.TwoColumnsMidEmphasized =  ["midForward"];
-			oMap.ThreeColumnsMidEmphasized =  bThreeColumnLayoutTypeFixed ? ["midForward"] : ["midForward", "midBack"];
-			oMap.ThreeColumnsEndEmphasized =  ["endForward"];
-			oMap.ThreeColumnsMidEmphasizedEndHidden =  ["midForward", "midBack"];
-			oMap.ThreeColumnsBeginEmphasizedEndHidden =  ["beginBack"];
-		}
-
-		if (iMaxColumns === 2) {
-			oMap.TwoColumnsBeginEmphasized =  ["beginBack"];
-			oMap.TwoColumnsMidEmphasized =  ["midForward"];
-			oMap.ThreeColumnsMidEmphasized = ["midForward", "midBack"];
-			oMap.ThreeColumnsEndEmphasized =  ["endForward"];
-			oMap.ThreeColumnsMidEmphasizedEndHidden =  ["midForward", "midBack"];
-			oMap.ThreeColumnsBeginEmphasizedEndHidden =  ["beginBack"];
-		}
-
-		oMap.TwoColumnsDefault = oMap.TwoColumnsBeginEmphasized;
-		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
-			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
+		oMap.TwoColumnsBeginExpanded =  ["beginBack"];
+		oMap.TwoColumnsMidExpanded =  ["midForward"];
+		oMap.ThreeColumnsMidExpanded = ["midForward", "midBack"];
+		oMap.ThreeColumnsEndExpanded =  ["endForward"];
+		oMap.ThreeColumnsMidExpandedEndHidden =  ["midForward", "midBack"];
+		oMap.ThreeColumnsBeginExpandedEndHidden =  ["beginBack"];
 
 		if (typeof oMap[sLayout] === "object") {
 			aNeededArrows = oMap[sLayout];
@@ -1473,9 +1438,6 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._getMaxColumnsCount = function () {
 		if (this._iControlWidth >= FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
-			if (this.getTwoColumnLayoutOnDesktop()) {
-				return 2;
-			}
 			return 3;
 		}
 
@@ -1487,11 +1449,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end"
+	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
 	 * @param sLayout - the layout
-	 * @param iMaxColumnsCount - the number of columns to interpret the layout against
 	 * @param bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
-	 * @returns {string}
+	 * @returns {string|array}
 	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 * @private
 	 */
@@ -1502,32 +1463,28 @@ sap.ui.define([
 
 		oMap = {
 			OneColumn: "100/0/0",
-			MidFullScreen: "0/100/0",
-			EndFullScreen: "0/0/100"
+			MidColumnFullScreen: "0/100/0",
+			EndColumnFullScreen: "0/0/100"
 		};
 
 		if (iMaxColumnsCount === 1) {
 
-			oMap.TwoColumnsBeginEmphasized = "0/100/0";
-			oMap.TwoColumnsMidEmphasized =  "0/100/0";
-			oMap.ThreeColumnsMidEmphasized =  "0/0/100";
-			oMap.ThreeColumnsEndEmphasized =  "0/0/100";
-			oMap.ThreeColumnsMidEmphasizedEndHidden =  "0/0/100";
-			oMap.ThreeColumnsBeginEmphasizedEndHidden =  "0/0/100";
+			oMap.TwoColumnsBeginExpanded = "0/100/0";
+			oMap.TwoColumnsMidExpanded =  "0/100/0";
+			oMap.ThreeColumnsMidExpanded =  "0/0/100";
+			oMap.ThreeColumnsEndExpanded =  "0/0/100";
+			oMap.ThreeColumnsMidExpandedEndHidden =  "0/0/100";
+			oMap.ThreeColumnsBeginExpandedEndHidden =  "0/0/100";
 
 		} else {
 
-			oMap.TwoColumnsBeginEmphasized = "67/33/0";
-			oMap.TwoColumnsMidEmphasized =  "33/67/0";
-			oMap.ThreeColumnsMidEmphasized =  iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
-			oMap.ThreeColumnsEndEmphasized =  iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
-			oMap.ThreeColumnsMidEmphasizedEndHidden =  "33/67/0";
-			oMap.ThreeColumnsBeginEmphasizedEndHidden =  "67/33/0";
+			oMap.TwoColumnsBeginExpanded = "67/33/0";
+			oMap.TwoColumnsMidExpanded =  "33/67/0";
+			oMap.ThreeColumnsMidExpanded =  iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
+			oMap.ThreeColumnsEndExpanded =  iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
+			oMap.ThreeColumnsMidExpandedEndHidden =  "33/67/0";
+			oMap.ThreeColumnsBeginExpandedEndHidden =  "67/33/0";
 		}
-
-		oMap.TwoColumnsDefault =  oMap.TwoColumnsBeginEmphasized;
-		oMap.ThreeColumnsDefault = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ?
-			oMap.ThreeColumnsEndEmphasized : oMap.ThreeColumnsMidEmphasized;
 
 		vResult = oMap[sLayout];
 
@@ -1551,10 +1508,6 @@ sap.ui.define([
 
 	// The width above which (inclusive) we are in tablet mode
 	FlexibleColumnLayout.TABLET_BREAKPOINT = 960;
-
-	// Timeout of the adjust layout debounce function
-	FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT = 10;
-
 
 	/**
 	 * Layout history helper class

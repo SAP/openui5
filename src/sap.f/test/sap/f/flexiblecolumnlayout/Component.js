@@ -32,7 +32,7 @@ sap.ui.define([
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl");
-			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
+			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, getUrlParam(window.location.href, "sim"));
 		}
 	});
 	return Component;
