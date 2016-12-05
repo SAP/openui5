@@ -1182,6 +1182,29 @@ QUnit.test("Default Test Table", function(assert) {
 	// *HOME* -> First cell
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 	checkFocus(getCell(0, 0), assert);
+
+	/* Test on row actions */
+
+	initRowActions(oTable, 2, 2);
+
+	// Row Action
+	var oElem = checkFocus(getRowAction(0, true), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	// *HOME* -> First cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	oElem = checkFocus(getCell(0, 0), assert);
+
+	// *END* -> Last cell
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
 });
 
 QUnit.test("No Row Header", function(assert) {
@@ -1303,6 +1326,37 @@ QUnit.test("Fixed Columns", function(assert) {
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 	checkFocus(getCell(0, 0), assert);
 
+
+	/* Test on row actions */
+
+	initRowActions(oTable, 2, 2);
+
+	// Row Action
+	var oElem = checkFocus(getRowAction(0, true), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	// *HOME* -> Non-Fixed area - First cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	oElem = checkFocus(getCell(0, 1), assert);
+
+	// *HOME* -> Fixed area - Single cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	oElem = checkFocus(getCell(0, 0), assert);
+
+	// *END* -> Non-Fixed area - Last cell
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	//Cleanup
+	initRowActions(oTable, 0, 0);
+
 	/**
 	 * 2 (of 5) Fixed Columns
 	 */
@@ -1384,6 +1438,40 @@ QUnit.test("Fixed Columns", function(assert) {
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 	checkFocus(getCell(0, 0), assert);
 
+	/* Test on row actions */
+
+	initRowActions(oTable, 2, 2);
+
+	// Row Action
+	var oElem = checkFocus(getRowAction(0, true), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	// *HOME* -> Non-Fixed area - First cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	oElem = checkFocus(getCell(0, 2), assert);
+
+	// *HOME* -> Fixed area - First cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	oElem = checkFocus(getCell(0, 0), assert);
+
+	// *END* -> Fixed area - Last cell
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getCell(0, 1), assert);
+
+	// *END* -> Non-Fixed area - Last cell
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	//Cleanup
+	initRowActions(oTable, 0, 0);
+
 	/**
 	 * 4 (of 5) Fixed Columns
 	 */
@@ -1457,6 +1545,32 @@ QUnit.test("Fixed Columns", function(assert) {
 	// *END* -> Fixed area - Last cell
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
 	checkFocus(getCell(0, oTable.getFixedColumnCount() - 1), assert);
+
+	/* Test on row actions */
+
+	initRowActions(oTable, 2, 2);
+
+	// Row Action
+	var oElem = checkFocus(getRowAction(0, true), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	// *HOME* -> First cell
+	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+	checkFocus(getCell(0, 0), assert);
+
+	// *END* -> Last cell
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+	// *END* -> Row Action
+	qutils.triggerKeydown(oElem, Key.END, false, false, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	//Cleanup
+	initRowActions(oTable, 0, 0);
 });
 
 QUnit.test("Fixed Columns with Column Span", function(assert) {
@@ -3969,6 +4083,13 @@ QUnit.test("(De)SelectAll possible", function(assert) {
 	assert.ok(TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows selected");
 	qutils.triggerKeydown(oElem, Key.A, false, false, true);
 	assert.ok(!TableUtils.areAllRowsSelected(oTable), "On Data Cell: All rows deselected");
+
+	initRowActions(oTable, 2, 2);
+	oElem = checkFocus(getRowAction(0, true), assert);
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(TableUtils.areAllRowsSelected(oTable), "On Row Action: All rows selected");
+	qutils.triggerKeydown(oElem, Key.A, false, false, true);
+	assert.ok(!TableUtils.areAllRowsSelected(oTable), "On Row Action: All rows deselected");
 });
 
 QUnit.test("(De)SelectAll not possible", function(assert) {
@@ -4201,6 +4322,9 @@ QUnit.test("Table with grouping", function(assert) {
 	testCollapseExpandAndFocus(getRowHeader(0));
 	testFocus(getColumnHeader(0));
 	testFocus(getSelectAll());
+
+	initRowActions(oTable, 2, 2);
+	testCollapseExpandAndFocus(getRowAction(0));
 });
 
 QUnit.module("TableKeyboardDelegate2 - Interaction > F4 (Expand/Collapse Group)", {
@@ -4241,6 +4365,9 @@ QUnit.test("Table with grouping", function(assert) {
 	testCollapseExpandAndFocus(getRowHeader(0));
 	testFocus(getColumnHeader(0));
 	testFocus(getSelectAll());
+
+	initRowActions(oTable, 2, 2);
+	testCollapseExpandAndFocus(getRowAction(0));
 });
 
 QUnit.module("TableKeyboardDelegate2 - Interaction > Plus & Minus (Expand/Collapse Group)", {
@@ -4291,6 +4418,9 @@ QUnit.test("Table with grouping", function(assert) {
 	testCollapseExpandAndFocus(getRowHeader(0));
 	testFocus(getColumnHeader(0));
 	testFocus(getSelectAll());
+
+	initRowActions(oTable, 2, 2);
+	testCollapseExpandAndFocus(getRowAction(0));
 });
 
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {

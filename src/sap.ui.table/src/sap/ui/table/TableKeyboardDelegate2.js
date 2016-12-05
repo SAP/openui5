@@ -502,6 +502,7 @@ sap.ui.define([
 
 			if ((oCellInfo.type === CellType.DATACELL ||
 				 oCellInfo.type === CellType.ROWHEADER ||
+				 oCellInfo.type === CellType.ROWACTION ||
 				 oCellInfo.type === CellType.COLUMNROWHEADER)
 				&& this.getSelectionMode() === SelectionMode.MultiToggle) {
 
@@ -1219,6 +1220,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oCellInfo.type === CellType.DATACELL ||
+			oCellInfo.type === CellType.ROWACTION ||
 			oCellInfo.type === CellType.COLUMNHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
@@ -1258,11 +1260,13 @@ sap.ui.define([
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.ROWACTION ||
 			oCellInfo.type === CellType.COLUMNHEADER ||
 			oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
+			var iColumnCount = oFocusedItemInfo.columnCount;
 			var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
 
 			var bHasRowHeader = TableUtils.hasRowHeader(this);
@@ -1291,7 +1295,15 @@ sap.ui.define([
 				// then set the focus to the last cell of the fixed column area.
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 				TableUtils.focusItem(this, iFocusedIndex + this.getFixedColumnCount() - iFocusedCellInRow, null);
+
+			} else if (TableUtils.hasRowActions(this) && oCellInfo.type === CellType.DATACELL && iFocusedCellInRow < iColumnCount - 2) {
+				// If the focus is on a data cell in the scrollable column area (except last cell),
+				// then set the focus to the row actions cell.
+				// Note: The END navigation from the last cell to the row action cell is handled by the item navigation.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + iColumnCount - 2, null);
 			}
+
 		}
 	};
 
@@ -1327,7 +1339,8 @@ sap.ui.define([
 							// Set the focus to the first row (row actions do not have a header).
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
 						} else {
-							// Set the focus to the first row the column headers, if exists, otherwise to the first row of the top fixed area.
+							// In case a column header exists, set the focus to the first row of the column header,
+							// otherwise set the focus to the first row of the top fixed area.
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
 						}
 
