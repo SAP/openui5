@@ -27,8 +27,7 @@ sap.ui.define(["jquery.sap.global",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
-			"sap.f.ThreeColumnLayoutType",
-			"sap.f.FlexibleColumn"
+			"sap.f.LayoutType"
 		],
 		controls: [
 			"sap.f.DynamicPage",
@@ -59,84 +58,49 @@ sap.ui.define(["jquery.sap.global",
 		 * Description
 		 * @public
 		 */
-		TwoColumnsDefault: "TwoColumnsDefault",
+		TwoColumnsBeginExpanded: "TwoColumnsBeginExpanded",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		TwoColumnsBeginEmphasized: "TwoColumnsBeginEmphasized",
+		TwoColumnsMidExpanded: "TwoColumnsMidExpanded",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		TwoColumnsMidEmphasized: "TwoColumnsMidEmphasized",
+		MidColumnFullScreen: "MidColumnFullScreen",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		MidFullScreen: "MidFullScreen",
+		ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		ThreeColumnsDefault: "ThreeColumnsDefault",
+		ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		ThreeColumnsMidEmphasized: "ThreeColumnsMidEmphasized",
+		ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		ThreeColumnsEndEmphasized: "ThreeColumnsEndEmphasized",
+		ThreeColumnsBeginExpandedEndHidden: "ThreeColumnsBeginExpandedEndHidden",
 
 		/**
 		 * Description
 		 * @public
 		 */
-		ThreeColumnsMidEmphasizedEndHidden: "ThreeColumnsMidEmphasizedEndHidden",
-
-		/**
-		 * Description
-		 * @public
-		 */
-		ThreeColumnsBeginEmphasizedEndHidden: "ThreeColumnsBeginEmphasizedEndHidden",
-
-		/**
-		 * Description
-		 * @public
-		 */
-		EndFullScreen: "EndFullScreen"
-	};
-
-	/**
-	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.f.ThreeColumnLayoutType = {
-
-		/**
-		 * Emphasized <code>End</code> column (25/25/50).
-		 * @public
-		 */
-		EndColumnEmphasized : "EndColumnEmphasized",
-
-		/**
-		 * Emphasized <code>Mid</code> column (25/50/25).
-		 * @public
-		 */
-		MidColumnEmphasized : "MidColumnEmphasized"
+		EndColumnFullScreen: "EndColumnFullScreen"
 	};
 
 	sap.ui.lazyRequire("sap.f.routing.Router");
