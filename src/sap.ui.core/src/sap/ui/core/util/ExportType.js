@@ -43,7 +43,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				/**
 				 * Charset.
 				 */
-				charset: 'string'
+				charset: 'string',
+
+				/**
+				 * Whether to prepend an unicode byte order mark when saving as a file (only applies for utf-8 charset).
+				 */
+				byteOrderMark: { type: 'boolean', defaultValue: undefined }
 			}
 		}
 
