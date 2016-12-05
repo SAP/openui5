@@ -378,7 +378,7 @@ sap.ui.define([
 		}
 
 		var $DataCell = TableUtils.getParentDataCell(oTable, oElement);
-		var $RowActionCell;
+		var $RowActionCell = null;
 		var $InteractiveElements;
 
 		if ($DataCell !== null) {
@@ -406,20 +406,13 @@ sap.ui.define([
 			// Search in the row action cell.
 			if (TableUtils.hasRowActions(oTable)) {
 				$RowActionCell = TableUtils.getParentRowActionCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
-
-				if ($RowActionCell !== null) {
-					// The interactive element is inside a row action cell.
-					// Search for the next interactive element in the row action cell.
-					$InteractiveElements = this._getInteractiveElements($RowActionCell);
-					if ($InteractiveElements.get(-1) !== $Element[0]) {
-						return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
-					}
-				}
 			}
 		}
 
 		if (TableUtils.hasRowActions(oTable)) {
-			$RowActionCell = TableUtils.getParentRowActionCell(oTable, oElement);
+			if ($RowActionCell === null) {
+				$RowActionCell = TableUtils.getParentRowActionCell(oTable, oElement);
+			}
 
 			if ($RowActionCell !== null) {
 				// The interactive element is inside a row action cell.
