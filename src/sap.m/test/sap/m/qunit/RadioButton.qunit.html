@@ -466,6 +466,17 @@
 			oRadioButton1.destroy();
 		});
 
+		QUnit.test("Destroying a RadioButton should not leak", function () {
+			var oRadioButton1 = new sap.m.RadioButton({
+				groupName: "group1"
+			});
+
+			oRadioButton1.destroy();
+			this.clock.tick(1);
+
+			assert.strictEqual(oRadioButton1._groupNames["group1"].length, 0, "RB instance should be removed from the group");
+		});
+
 		module("Focus Handling");
 
 		test("Should get the correct focus domref", function() {
