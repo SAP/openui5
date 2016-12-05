@@ -696,10 +696,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 */
 	MultiComboBox.prototype.onBeforeClose = function () {
 		ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
-
-		this.fireSelectionFinish({
-			selectedItems: this.getSelectedItems()
-		});
 	};
 
 	/**
@@ -722,6 +718,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			this.getPickerTextField().setValue("");
 			this._getFilterSelectedButton().setPressed(false);
 		}
+
+		this.fireSelectionFinish({
+			selectedItems: this.getSelectedItems()
+		});
 	};
 
 	/**
