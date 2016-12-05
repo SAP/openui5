@@ -8,6 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
+	"sap/m/VBox",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
@@ -17,8 +18,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
-], function (View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils, sinon,
-		URI) {
+], function (VBox, View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils,
+		sinon, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -38,7 +39,8 @@ sap.ui.define([
 				sQuery,
 				bRealOData = TestUtils.isRealOData(),
 				sServiceUrl = fnProxy(oModel.sServiceUrl),
-				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId");
+				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId"),
+				oViewContainer = new VBox();
 
 			if (oModel.sServiceUrl !== sServiceUrl || sGroupId || sUpdateGroupId) {
 				//replace model from manifest in case of proxy
@@ -165,22 +167,28 @@ sap.ui.define([
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}
 
-			return sap.ui.view({
-				id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-				models : { undefined : oModel,
-					ui : new JSONModel({
-							bLineItemSelected : false,
-							bRealOData : bRealOData,
-							bSalesOrderSelected : false,
-							bScheduleSelected : false,
-							bSelectedSalesOrderTransient : false,
-							bSortGrossAmountDescending : undefined,
-							sSortGrossAmountIcon : ""
-						}
-				)},
-				type : ViewType.XML,
-				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
+			// Simulate a templating-based app: The metadata is already
+			// available when the view is created.
+			oModel.getMetaModel().requestObject("/").then(function () {
+				oViewContainer.addItem(sap.ui.view({
+					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
+					models : { undefined : oModel,
+						ui : new JSONModel({
+								bLineItemSelected : false,
+								bRealOData : bRealOData,
+								bSalesOrderSelected : false,
+								bScheduleSelected : false,
+								bSelectedSalesOrderTransient : false,
+								bSortGrossAmountDescending : undefined,
+								sSortGrossAmountIcon : ""
+							}
+					)},
+					type : ViewType.XML,
+					viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
+				}));
 			});
+
+			return oViewContainer;
 			// TODO: enhance sample application after features are supported
 			// - Error Handling; not yet implemented in model
 		}

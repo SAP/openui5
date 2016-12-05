@@ -39,6 +39,9 @@ sap.ui.require([
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
+		if (bRealOData) {
+			Then.onTheCreateNewSalesOrderDialog.checkCurrencyCodeIsF4Help();
+		}
 		Then.onTheMainPage.checkNote(0);
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);

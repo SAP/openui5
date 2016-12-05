@@ -67,6 +67,18 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 
 			},
 			assertions : {
+				checkCurrencyCodeIsF4Help : function () {
+					return this.waitFor({
+						controlType : "sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp",
+						matchers : new Interactable(),
+						id : "NewCurrencyCode",
+						success : function (oValueHelp) {
+							Opa5.assert.ok(oValueHelp.getShowValueHelp(),
+								"CurrencyCode has value help");
+						},
+						viewName : sViewName
+					});
+				},
 				checkNewBuyerId : function (sExpectedBuyerID) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
