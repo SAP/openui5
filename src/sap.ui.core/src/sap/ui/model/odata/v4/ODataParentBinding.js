@@ -84,7 +84,17 @@ sap.ui.define([
 
 		if (!oPromise.isFulfilled()) {
 			this.oCache = oCacheProxy = {
+				_delete : function () {
+					throw new Error("DELETE request not allowed");
+				},
+				create : function () {
+					throw new Error("POST request not allowed");
+				},
+				deregisterChange : function () {
+					// Be prepared for late deregistrations by dependents of parked contexts
+				},
 				hasPendingChangesForPath : function () {
+					// No pending changes because create and update are not allowed
 					return false;
 				},
 				post : function () {
@@ -97,8 +107,16 @@ sap.ui.define([
 						return that.oCache.read.apply(that.oCache, aReadArguments);
 					});
 				},
-				resetChangesForPath : function () {},
-				setActive : function () {},
+				resetChangesForPath : function () {
+					// No pending changes because create and update are not allowed
+				},
+				setActive : function () {
+					// Do not deactivate, the cache that finally replaces the proxy must be
+					// active.
+				},
+				toString : function () {
+					return "Cache proxy for " + that;
+				},
 				update : function () {
 					throw new Error("PATCH request not allowed");
 				}
