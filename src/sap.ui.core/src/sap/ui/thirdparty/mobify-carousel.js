@@ -320,7 +320,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     	// Remove swipe animation on desktop devices,
     	// if the event is from a child control
     	// BCP: 1570454937
-    	if (sap.ui.Device.system.desktop && bTargetCarouselPage === false) {
+    	if ((!sap.ui.Device.system.tablet && !sap.ui.Device.system.phone) && bTargetCarouselPage === false) {
     	    return;
     	}
     	// SAP MODIFICATION END
