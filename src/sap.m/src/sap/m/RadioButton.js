@@ -479,10 +479,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oLabel.destroy();
 		}
 
-		if (iGroupNameIndex && iGroupNameIndex !== -1) {
+		if (iGroupNameIndex >= -1) {
 			aControlsInGroup.splice(iGroupNameIndex, 1);
 		}
-
 	};
 
 	/**
