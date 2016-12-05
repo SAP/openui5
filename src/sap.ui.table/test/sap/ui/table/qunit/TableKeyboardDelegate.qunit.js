@@ -3947,35 +3947,59 @@ QUnit.test("On a Row Header", function(assert) {
 });
 
 QUnit.test("On a Data Cell - Row selection possible", function(assert) {
-	var cellClickEventHandler = this.spy();
+	var iCallCount = 0;
+	var bPreventDefault = false;
 
 	oTable.clearSelection();
 	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
-	oTable.attachCellClick(cellClickEventHandler);
+	oTable.attachCellClick(function(oEvent) {
+		iCallCount++;
+		if (bPreventDefault) {
+			oEvent.preventDefault();
+		}
+	});
 	sap.ui.getCore().applyChanges();
 
 	var oElem = checkFocus(getCell(0, 0, true), assert);
 
 	// Space
 	this.assertSelection(assert, 0, false);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 0, "Click handler not called");
+	iCallCount = 0;
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 	this.assertSelection(assert, 0, true);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 1, "Click handler called");
+	iCallCount = 0;
 	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 	this.assertSelection(assert, 0, false);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 1, "Click handler called");
+	iCallCount = 0;
 	qutils.triggerKeyup(oElem, Key.SPACE, true, false, false);
 	this.assertSelection(assert, 0, false);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 0, "Click handler not called");
+	iCallCount = 0;
+	bPreventDefault = true;
+	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+	this.assertSelection(assert, 0, false);
+	assert.strictEqual(iCallCount, 1, "Click handler called but selection not changed");
+	iCallCount = 0;
+	bPreventDefault = false;
 
 	// Enter
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 	this.assertSelection(assert, 0, true);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 1, "Click handler called");
+	iCallCount = 0;
 	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 	this.assertSelection(assert, 0, false);
-	assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
+	assert.strictEqual(iCallCount, 1, "Click handler called");
+	iCallCount = 0;
+	bPreventDefault = true;
+	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
+	this.assertSelection(assert, 0, false);
+	assert.strictEqual(iCallCount, 1, "Click handler called but selection not changed");
+	iCallCount = 0;
+	bPreventDefault = false;
 });
 
 QUnit.test("On a Data Cell - Row selection not possible", function(assert) {
