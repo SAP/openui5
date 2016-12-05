@@ -879,8 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sLibFileName = this.href.slice(this.href.lastIndexOf("/") + 1),
 				sStandardLibFilePrefix = "library",
 				sHref,
-				pos,
-				$this = jQuery(this);
+				pos;
 
 			// handle 'variants'
 			if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
@@ -893,11 +892,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 			}
 
-			// set new URL
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
-				this.href = sHref;
-				$this.removeAttr("data-sap-ui-ready");
+				// Replace the current <link> tag with a new one.
+				// Changing "this.href" would also trigger loading the new stylesheet but
+				// the load/error handlers would not get called which causes issues with the ThemeCheck
+				// as the "data-sap-ui-ready" attribute won't be set.
+				jQuery.sap.includeStyleSheet(sHref, this.id);
 			}
 		});
 	};
