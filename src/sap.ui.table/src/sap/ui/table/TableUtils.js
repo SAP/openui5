@@ -495,12 +495,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		/**
 		 * Returns the row index and column index of a data cell.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {jQuery|HtmlElement} oCell The data cell.
 		 * @returns {{rowIndex: int, columnIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table data cell.
 		 */
 		getDataCellInfo: function(oTable, oCell) {
-			if (oCell == null) {
+			if (oTable == null || oCell == null) {
 				return null;
 			}
 
@@ -508,24 +508,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oCellInfo = this.getCellInfo($Cell);
 
 			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-				var iRowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
-				var sColId = $Cell.data("sap-ui-colid");
+				var sColumnId = $Cell.data("sap-ui-colid");
+				var oColumn = sap.ui.getCore().byId(sColumnId);
 
-				if (iRowIndex >= 0 && sColId) {
-					var oColumn = sap.ui.getCore().byId(sColId);
-					if (oColumn) {
-						var iColIndex = oTable.indexOfColumn(oColumn);
-						if (iColIndex >= 0) {
-							return {
-								rowIndex: iRowIndex,
-								columnIndex: iColIndex
-							};
-						}
-					}
+				if (oColumn != null) {
+					var iColumnIndex = oColumn.getIndex();
+					var iRowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
+
+					return {
+						rowIndex: iRowIndex,
+						columnIndex: iColumnIndex
+					};
 				}
 			}
 
 			return null;
+		},
+
+		/**
+		 * Returns the row index of a row action cell.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery|HtmlElement} oCell The row action cell.
+		 * @returns {{rowIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table row action cell.
+		 */
+		getRowActionCellInfo: function(oTable, oCell) {
+			if (oTable == null || oCell == null) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell);
+
+			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.ROWACTION) {
+				return {
+					rowIndex: parseInt($Cell.data("sap-ui-rowindex"), 10)
+				};
+			} else {
+				return null;
+			}
 		},
 
 		/**

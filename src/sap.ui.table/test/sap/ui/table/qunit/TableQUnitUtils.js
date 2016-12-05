@@ -293,4 +293,4 @@ function initRowActions(oTable, iCount, iNumberOfActions) {
 	}
 	oTable.setRowActionTemplate(oRowAction);
 	sap.ui.getCore().applyChanges();
-};
+}

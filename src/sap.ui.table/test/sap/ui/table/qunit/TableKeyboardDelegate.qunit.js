@@ -138,11 +138,9 @@ QUnit.module("KeyboardDelegate", {
 	}
 });
 
-
 QUnit.test("Delegate Type", function(assert) {
 	assert.ok(checkDelegateType("sap.ui.table.TableKeyboardDelegate2"), "Correct delegate");
 });
-
 
 //************************************************************************
 //Tests for sap.ui.table.TableKeyboardDelegate2 (Interactive Element Helpers)
@@ -186,7 +184,7 @@ QUnit.module("Interactive elements", {
 		addColumn("Focusable & Tabbable", "FocusTab", true, true);
 		addColumn("Focusable & Not Tabbable", "NoTab", true, false);
 
-		sap.ui.getCore().applyChanges();
+		initRowActions(oTable, 2, 2);
 	},
 	afterEach: function() {
 		destroyTables();
@@ -201,146 +199,233 @@ QUnit.test("isInteractiveElement", function(assert) {
 	var $NoTab = getCell(0, iNumberOfCols - 1).find("input");
 	var $FullyInteractive = getCell(0, iNumberOfCols - 2).find("input");
 	var $TreeIcon = jQuery('<div class="sapUiTableTreeIcon"></div>');
+	var $RowActionIcon = getRowAction(0).find(".sapUiTableActionIcon");
 
-	assert.ok(!sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($TreeIcon), "(jQuery) TreeIcon is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon), "(jQuery) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon), "(jQuery) ActionItem is interactive");
 
-	assert.ok(!sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
-	assert.ok(sap.ui.table.TableKeyboardDelegate2._isElementInteractive($TreeIcon[0]), "(HTMLElement) TreeIcon is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon[0]), "(HTMLElement) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon[0]), "(HTMLElement) ActionItem is interactive");
 
-	assert.ok(!sap.ui.table.TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
 });
 
 QUnit.test("getInteractiveElements", function(assert) {
-	var $InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1));
-	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "Data cell (jQuery) with focusable element: The correct element was returned");
+	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1));
+	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(HTMLElement) Data cell with focusable element: The correct element was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
-	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "Data cell (DOM) with focusable element: The correct element was returned");
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Data cell with focusable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(DOM) Data cell with focusable element: The correct element was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2));
-	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable & tabbable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "Data cell (jQuery) with focusable & tabbable element: The correct element was returned");
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2));
+	assert.strictEqual($InteractiveElements.length, 1, "(jQuery Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(jQuery Data cell with focusable & tabbable element: The correct element was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
-	assert.strictEqual($InteractiveElements.length, 1, "Data cell with focusable & tabbable element: One element was returned");
-	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "Data cell (DOM) with focusable & tabbable element: The correct element was returned");
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Data cell with focusable & tabbable element: One element was returned");
+	assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(DOM) Data cell with focusable & tabbable element: The correct element was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 3));
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 3));
 	assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getColumnHeader(0));
+	var $RowActionCell = getRowAction(0);
+	var $RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell);
+	assert.strictEqual($InteractiveElements.length, 2, "(jQuery) Row Action cell with 2 action items: Two elements have been returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(jQuery) The first returned element is the correct row action icon");
+	assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(jQuery) The second returned element is the correct row action icon");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell[0]);
+	assert.strictEqual($InteractiveElements.length, 2, "(DOM) Row Action cell with 2 action items: Two elements have been returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(DOM) The first returned element is the correct row action icon");
+	assert.strictEqual($InteractiveElements[1], $RowActionIcons[1], "(DOM) The second returned element is the correct row action icon");
+
+	initRowActions(oTable, 1, 1);
+	$RowActionCell = getRowAction(0);
+	$RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell);
+	assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Row Action cell with 1 action item: One element was returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(jQuery) The returned element is the correct row action icon");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($RowActionCell[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(DOM) Row Action cell with 1 action item: One elements was returned");
+	assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(DOM) The first returned element is the correct row action icon");
+
+	initRowActions(oTable, 1, 0);
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getRowAction(0));
+	assert.strictEqual($InteractiveElements, null, "Row action cell without interactive element: Null was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getColumnHeader(0));
 	assert.strictEqual($InteractiveElements, null, "Column header: Null was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getRowHeader(0));
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getRowHeader(0));
 	assert.strictEqual($InteractiveElements, null, "Row header: Null was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements(getSelectAll(0));
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getRowAction(0));
+	assert.strictEqual($InteractiveElements, null, "Row action: Null was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getSelectAll(0));
 	assert.strictEqual($InteractiveElements, null, "SelectAll: Null was returned");
 
-	$InteractiveElements = sap.ui.table.TableKeyboardDelegate2._getInteractiveElements();
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements();
 	assert.strictEqual($InteractiveElements, null, "No parameter passed: Null was returned");
 });
 
 QUnit.test("getFirstInteractiveElement", function(assert) {
-	var $FirstInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
 	assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
 	assert.strictEqual($FirstInteractiveElement[0].value, "FocusTab1", "First row: The correct element was returned");
 
-	$FirstInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getFirstInteractiveElement();
+	oTable.getColumns().forEach(function(oColumn) {
+		oColumn.setVisible(false);
+	});
+	sap.ui.getCore().applyChanges();
+
+	$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
+	assert.strictEqual($FirstInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0], "First row: The correct element was returned");
+
+	initRowActions(oTable, 1, 0);
+	$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($FirstInteractiveElement, null, "Row has no interactive elements: Null was returned");
+
+	$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement();
 	assert.strictEqual($FirstInteractiveElement, null, "No parameter passed: Null was returned");
 });
 
 QUnit.test("getLastInteractiveElement", function(assert) {
-	var $LastInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
-	assert.strictEqual($LastInteractiveElement.length, 1, "First row: One element was returned");
-	assert.strictEqual($LastInteractiveElement[0].value, "NoTab1", "First row: The correct element was returned");
+	$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($LastInteractiveElement.length, 1, "First row with row actions: One element was returned");
+	assert.strictEqual($LastInteractiveElement.get(-1), getRowAction(0).find(".sapUiTableActionIcon:visible").get(-1), "First row with row actions: The correct element was returned");
 
-	$LastInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getLastInteractiveElement();
+	initRowActions(oTable, 2, 0);
+	var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+	assert.strictEqual($LastInteractiveElement.length, 1, "First row without row actions: One element was returned");
+	assert.strictEqual($LastInteractiveElement[0].value, "NoTab1", "First row without row actions: The correct element was returned");
+
+	$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement();
 	assert.strictEqual($LastInteractiveElement, null, "No parameter passed: Null was returned");
 });
 
 QUnit.test("getPreviousInteractiveElement", function(assert) {
-	var $LastInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+	var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
 
-	var $PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement);
-	assert.strictEqual($PreviousInteractiveElement.length, 1, "Passed an interactive element (jQuery): One interactive element was returned");
+	var $PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0], "The correct previous element was returned");
+
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0].value, "NoTab1", "The correct previous element was returned");
+
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 	assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "The correct previous element was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
+	var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement);
 	assert.strictEqual($PreviousInteractiveElement, null,
-		"Getting the previous element of the previous element: Null was returned, it is the first interactive element in the row");
+		"(jQuery) Getting the previous interactive element of the first interactive element: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement[0])
-	assert.strictEqual($PreviousInteractiveElement.length, 1, "Passed an interactive element (HTMLElement): One interactive element was returned");
-	assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "First row: The correct previous element was returned");
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $LastInteractiveElement[0]);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0], "The correct previous element was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0].value, "NoTab1", "The correct previous element was returned");
+
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
+	assert.strictEqual($PreviousInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "The correct previous element was returned");
+
+	$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement[0]);
 	assert.strictEqual($PreviousInteractiveElement, null,
-		"Getting the previous element of the previous element: Null was returned, it is the first interactive element in the row");
+		"(HTMLElement) Getting the previous interactive element of the first interactive element: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getCell(0, 0));
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getCell(0, 0));
 	assert.strictEqual($PreviousInteractiveElement, null, "Data cell was passed: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getColumnHeader(0));
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getColumnHeader(0));
 	assert.strictEqual($PreviousInteractiveElement, null, "Column header cell was passed: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getRowHeader(0));
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getRowHeader(0));
 	assert.strictEqual($PreviousInteractiveElement, null, "Row header cell was passed: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getSelectAll(0));
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, getSelectAll(0));
 	assert.strictEqual($PreviousInteractiveElement, null, "SelectAll cell was passed: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement(oTable);
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable);
 	assert.strictEqual($PreviousInteractiveElement, null, "No interactive element was passed: Null was returned");
 
-	$PreviousInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getPreviousInteractiveElement();
+	$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement();
 	assert.strictEqual($PreviousInteractiveElement, null, "No parameter was passed: Null was returned");
 });
 
 QUnit.test("getNextInteractiveElement", function(assert) {
-	var $FirstInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
+	var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
 
-	var $NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement);
-	assert.strictEqual($NextInteractiveElement.length, 1, "Passed an interactive element (jQuery): One interactive element was returned");
+	var $NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
 	assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "The correct next element was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0], "The correct next element was returned");
+
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[1], "The correct next element was returned");
+
+	var $LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $LastInteractiveElement);
 	assert.strictEqual($NextInteractiveElement, null,
-		"Getting the next element of the next element: Null was returned, it is the last interactive element in the row");
+		"(jQuery) Getting the next interactive element of the last interactive element: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
-	assert.strictEqual($NextInteractiveElement.length, 1, "Passed an interactive element (HTMLElement): One interactive element was returned");
-	assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "First row: The correct next element was returned");
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "The correct next element was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0], "The correct next element was returned");
+
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
+	assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
+	assert.strictEqual($NextInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[1], "The correct next element was returned");
+
+	$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $LastInteractiveElement[0]);
 	assert.strictEqual($NextInteractiveElement, null,
-		"Getting the previous element of the previous element: Null was returned, it is the last interactive element in the row");
+		"(HTMLElement) Getting the next interactive element of the last interactive element: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, getCell(0, 0));
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getCell(0, 0));
 	assert.strictEqual($NextInteractiveElement, null, "Data cell was passed: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, getColumnHeader(0));
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getColumnHeader(0));
 	assert.strictEqual($NextInteractiveElement, null, "Column header cell was passed: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, getRowHeader(0));
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getRowHeader(0));
 	assert.strictEqual($NextInteractiveElement, null, "Row header cell was passed: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable, getSelectAll(0));
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, getSelectAll(0));
 	assert.strictEqual($NextInteractiveElement, null, "SelectAll cell was passed: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement(oTable);
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable);
 	assert.strictEqual($NextInteractiveElement, null, "No interactive element was passed: Null was returned");
 
-	$NextInteractiveElement = sap.ui.table.TableKeyboardDelegate2._getNextInteractiveElement();
+	$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement();
 	assert.strictEqual($NextInteractiveElement, null, "No parameter was passed: Null was returned");
 });
 
@@ -387,7 +472,7 @@ QUnit.module("TableKeyboardDelegate2 - Basics", {
 });
 
 QUnit.test("getInterface", function(assert) {
-	var oDelegate = new sap.ui.table.TableKeyboardDelegate2();
+	var oDelegate = new TableKeyboardDelegate2();
 	assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the object itself");
 });
 
@@ -1188,7 +1273,7 @@ QUnit.test("Default Test Table", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
@@ -1204,7 +1289,7 @@ QUnit.test("Default Test Table", function(assert) {
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
-	oElem = checkFocus(getRowAction(0), assert);
+	checkFocus(getRowAction(0), assert);
 });
 
 QUnit.test("No Row Header", function(assert) {
@@ -1326,13 +1411,12 @@ QUnit.test("Fixed Columns", function(assert) {
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 	checkFocus(getCell(0, 0), assert);
 
-
 	/* Test on row actions */
 
 	initRowActions(oTable, 2, 2);
 
 	// Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
@@ -1352,7 +1436,7 @@ QUnit.test("Fixed Columns", function(assert) {
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
-	oElem = checkFocus(getRowAction(0), assert);
+	checkFocus(getRowAction(0), assert);
 
 	//Cleanup
 	initRowActions(oTable, 0, 0);
@@ -1443,7 +1527,7 @@ QUnit.test("Fixed Columns", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
@@ -1467,7 +1551,7 @@ QUnit.test("Fixed Columns", function(assert) {
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
-	oElem = checkFocus(getRowAction(0), assert);
+	checkFocus(getRowAction(0), assert);
 
 	//Cleanup
 	initRowActions(oTable, 0, 0);
@@ -1551,7 +1635,7 @@ QUnit.test("Fixed Columns", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
@@ -1567,7 +1651,7 @@ QUnit.test("Fixed Columns", function(assert) {
 
 	// *END* -> Row Action
 	qutils.triggerKeydown(oElem, Key.END, false, false, false);
-	oElem = checkFocus(getRowAction(0), assert);
+	checkFocus(getRowAction(0), assert);
 
 	//Cleanup
 	initRowActions(oTable, 0, 0);
@@ -1746,7 +1830,7 @@ QUnit.test("Default Test Table", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *HOME* -> First Row Action
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -1845,7 +1929,7 @@ QUnit.test("Less data rows than visible rows", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Last row
 	qutils.triggerKeydown(oElem, Key.END, false, false, true);
@@ -1975,7 +2059,7 @@ QUnit.test("Less data rows than visible rows and Fixed Top/Bottom Rows", functio
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *END* -> Scrollable area - Last row
 	qutils.triggerKeydown(oElem, Key.END, false, false, true);
@@ -2071,7 +2155,7 @@ QUnit.test("No Column Header", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *HOME* -> First row
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2233,7 +2317,7 @@ QUnit.test("Multi Header and Fixed Top/Bottom Rows", function(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *HOME* -> First Row Action
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2272,7 +2356,7 @@ QUnit.test("Multi Header and Fixed Top/Bottom Rows", function(assert) {
 
 	// *HOME* -> First Row Action
 	qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
-	oElem = checkFocus(getRowAction(0), assert);
+	checkFocus(getRowAction(0), assert);
 });
 
 QUnit.module("TableKeyboardDelegate2 - Navigation > Page Up & Page Down", {
@@ -2292,6 +2376,7 @@ function _testPageKeys(assert) {
 	var iPageSize = iNonEmptyVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
 	var iLastScrollableRowIndex = iNonEmptyVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
 	var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
+	var i;
 
 	/* Test on row header */
 
@@ -2311,7 +2396,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getRowHeader(iLastScrollableRowIndex), assert);
 
 	// *PAGE_DOWN* -> Scrollable area - Last row - Scroll down all full pages
-	for (var i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
+	for (i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, false, false);
 		checkFocus(getRowHeader(iLastScrollableRowIndex), assert);
 		assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), i, "Scrolled down: Row index correct");
@@ -2341,7 +2426,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getRowHeader(oTable.getFixedRowCount()), assert);
 
 	// *PAGE_UP* -> Scrollable area - First row - Scroll up all full pages
-	for (var i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
+	for (i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
 		checkFocus(getRowHeader(oTable.getFixedRowCount()), assert);
 		assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), i - iPageSize, "Scrolled up: Row index correct");
@@ -2404,7 +2489,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getCell(iLastScrollableRowIndex, 0), assert);
 
 	// *PAGE_DOWN* -> Scrollable area - Last row - Scroll down all full pages
-	for (var i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
+	for (i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, false, false);
 		checkFocus(getCell(iLastScrollableRowIndex, 0), assert);
 		assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), i, "Scrolled down: Row index correct");
@@ -2434,7 +2519,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getCell(oTable.getFixedRowCount(), 0), assert);
 
 	// *PAGE_UP* -> Scrollable area - First row - Scroll up all full pages
-	for (var i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
+	for (i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
 		checkFocus(getCell(oTable.getFixedRowCount(), 0), assert);
 		assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), i - iPageSize, "Scrolled up: Row index correct");
@@ -2478,8 +2563,7 @@ function _testPageKeys(assert) {
 	initRowActions(oTable, 2, 2);
 
 	// First Row Action
-	var oElem = checkFocus(getRowAction(0, true), assert);
-
+	oElem = checkFocus(getRowAction(0, true), assert);
 
 	// *PAGE_UP* -> First Row Action
 	qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
@@ -2490,7 +2574,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getRowAction(iLastScrollableRowIndex), assert);
 
 	// *PAGE_DOWN* -> Scrollable area - Last row - Scroll down all full pages
-	for (var i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
+	for (i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, false, false);
 		checkFocus(getRowAction(iLastScrollableRowIndex), assert);
 		assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), i, "Scrolled down: Row index correct");
@@ -2520,7 +2604,7 @@ function _testPageKeys(assert) {
 	oElem = checkFocus(getRowAction(oTable.getFixedRowCount()), assert);
 
 	// *PAGE_UP* -> Scrollable area - First row - Scroll up all full pages
-	for (var i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
+	for (i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
 		checkFocus(getRowAction(oTable.getFixedRowCount()), assert);
 		assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), i - iPageSize, "Scrolled up: Row index correct");
@@ -2540,7 +2624,7 @@ function _testPageKeys(assert) {
 
 		// *PAGE_UP* -> Top fixed area - First row
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
-		oElem = checkFocus(getRowAction(0), assert);
+		checkFocus(getRowAction(0), assert);
 	}
 }
 
@@ -2629,6 +2713,8 @@ QUnit.module("TableKeyboardDelegate2 - Navigation > Alt+Page Up & Alt+Page Down"
 });
 
 QUnit.test("Default Test Table - Additional columns", function(assert) {
+	var i;
+
 	/* Test column header */
 
 	// SelectAll
@@ -2643,7 +2729,7 @@ QUnit.test("Default Test Table - Additional columns", function(assert) {
 	oElem = checkFocus(getColumnHeader(0), assert);
 
 	// *PAGE_DOWN* -> Scroll right to the last cell
-	for (var i = 0; i < iNumberOfCols - 1; i += 5) {
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 		oElem = checkFocus(getColumnHeader(Math.min(i + 5, iNumberOfCols - 1)), assert);
 	}
@@ -2653,7 +2739,7 @@ QUnit.test("Default Test Table - Additional columns", function(assert) {
 	checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
 
 	// *PAGE_UP* -> Scroll left to the first cell
-	for (var i = iNumberOfCols - 1; i >= 0; i -= 5) {
+	for (i = iNumberOfCols - 1; i >= 0; i -= 5) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 		oElem = checkFocus(getColumnHeader(Math.max(i - 5, 0)), assert);
 	}
@@ -2676,7 +2762,7 @@ QUnit.test("Default Test Table - Additional columns", function(assert) {
 	oElem = checkFocus(getCell(0, 0), assert);
 
 	// *PAGE_DOWN* -> Scroll right to the last cell
-	for (var i = 0; i < iNumberOfCols - 1; i += 5) {
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 		oElem = checkFocus(getCell(0, Math.min(i + 5, iNumberOfCols - 1)), assert);
 	}
@@ -2686,7 +2772,7 @@ QUnit.test("Default Test Table - Additional columns", function(assert) {
 	checkFocus(getCell(0, iNumberOfCols - 1), assert);
 
 	// *PAGE_UP* -> Scroll left to the first cell
-	for (var i = iNumberOfCols - 1; i >= 0; i -= 5) {
+	for (i = iNumberOfCols - 1; i >= 0; i -= 5) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 		oElem = checkFocus(getCell(0, Math.max(i - 5, 0)), assert);
 	}
@@ -2700,6 +2786,8 @@ QUnit.test("No Row Header", function(assert) {
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
 	sap.ui.getCore().applyChanges();
 
+	var i;
+
 	/* Test column header */
 
 	// First cell
@@ -2710,7 +2798,7 @@ QUnit.test("No Row Header", function(assert) {
 	checkFocus(getColumnHeader(0), assert);
 
 	// *PAGE_DOWN* -> Scroll right to the last cell
-	for (var i = 0; i < iNumberOfCols - 1; i += 5) {
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 		oElem = checkFocus(getColumnHeader(Math.min(i + 5, iNumberOfCols - 1)), assert);
 	}
@@ -2720,7 +2808,7 @@ QUnit.test("No Row Header", function(assert) {
 	checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
 
 	// *PAGE_UP* -> Scroll left to the first cell
-	for (var i = iNumberOfCols - 1; i >= 0; i -= 5) {
+	for (i = iNumberOfCols - 1; i >= 0; i -= 5) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 		oElem = checkFocus(getColumnHeader(Math.max(i - 5, 0)), assert);
 	}
@@ -2735,7 +2823,7 @@ QUnit.test("No Row Header", function(assert) {
 	checkFocus(getCell(0, 0), assert);
 
 	// *PAGE_DOWN* -> Scroll right to the last cell
-	for (var i = 0; i < iNumberOfCols - 1; i += 5) {
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 		oElem = checkFocus(getCell(0, Math.min(i + 5, iNumberOfCols - 1)), assert);
 	}
@@ -2745,7 +2833,7 @@ QUnit.test("No Row Header", function(assert) {
 	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
 
 	// *PAGE_UP* -> Scroll left to the first cell
-	for (var i = iNumberOfCols - 1; i >= 0; i -= 5) {
+	for (i = iNumberOfCols - 1; i >= 0; i -= 5) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 		oElem = checkFocus(getCell(0, Math.max(i - 5, 0)), assert);
 	}
@@ -2757,6 +2845,8 @@ QUnit.test("Column Spans", function(assert) {
 	oTable.getColumns()[11].setHeaderSpan([2]);
 	oTable.getColumns()[25].setHeaderSpan([2]);
 	sap.ui.getCore().applyChanges();
+
+	var i;
 
 	// First cell (3-span column)
 	var oElem = checkFocus(getColumnHeader(0, true), assert);
@@ -2770,13 +2860,13 @@ QUnit.test("Column Spans", function(assert) {
 	oElem = checkFocus(getColumnHeader(9), assert);
 
 	// *PAGE_DOWN* -> Scroll right to the last cell
-	for (var i = 9; i < iNumberOfCols - 2; i += 5) {
+	for (i = 9; i < iNumberOfCols - 2; i += 5) {
 		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
 		oElem = checkFocus(getColumnHeader(Math.min(i + 5, iNumberOfCols - 2), 0), assert);
 	}
 
 	// *PAGE_UP* -> Scroll left to the 3rd cell
-	for (var i = iNumberOfCols - 2; i > 10; i -= 5) {
+	for (i = iNumberOfCols - 2; i > 10; i -= 5) {
 		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
 		oElem = checkFocus(getColumnHeader(i - 5), assert);
 	}
@@ -3234,6 +3324,7 @@ function _testRangeSelection(assert) {
 	var iVisibleRowCount = oTable.getVisibleRowCount();
 	var iStartIndex = Math.floor(iNumberOfRows / 2);
 	var iIndex;
+	var i;
 
 	function test(bSelect, bRowHeader) {
 		// Prepare selection states. Set the selection states of the first and last row equal to the selection state of the starting row
@@ -3260,7 +3351,7 @@ function _testRangeSelection(assert) {
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false);
 
 		// Move up to the first row. All rows above the starting row should get (de)selected.
-		for (var i = iStartIndex - 1; i >= 0; i--) {
+		for (i = iStartIndex - 1; i >= 0; i--) {
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
 			iIndex = i;
 			if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
@@ -3276,7 +3367,7 @@ function _testRangeSelection(assert) {
 		this.assertSelection(assert, 0, bSelect);
 
 		// Move down to the starting row. When moving back down the rows always get deselected.
-		for (var i = 1; i <= iStartIndex; i++) {
+		for (i = 1; i <= iStartIndex; i++) {
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
 			iIndex = i;
 			if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
@@ -3292,7 +3383,7 @@ function _testRangeSelection(assert) {
 		this.assertSelection(assert, iStartIndex, bSelect); // Selection state of the starting row never gets changed.
 
 		// Move down to the last row. All rows beneath the starting row should get (de)selected.
-		for (var i = iStartIndex + 1; i < iNumberOfRows; i++) {
+		for (i = iStartIndex + 1; i < iNumberOfRows; i++) {
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
 			iIndex = i;
 			if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
@@ -3306,7 +3397,7 @@ function _testRangeSelection(assert) {
 		}
 
 		// Move up to the starting row. When moving back up the rows always get deselected
-		for (var i = iNumberOfRows - 2; i >= iStartIndex; i--) {
+		for (i = iNumberOfRows - 2; i >= iStartIndex; i--) {
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
 			iIndex = i;
 			if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
@@ -3337,7 +3428,7 @@ function _testRangeSelection(assert) {
 		oElem = this.getCellOrRowHeader(bRowHeader, iVisibleRowCount - 1, 0, true);
 
 		// Move down to the last row. All rows beneath the starting row should get (de)selected.
-		for (var i = iStartIndex + 1; i < iNumberOfRows; i++) {
+		for (i = iStartIndex + 1; i < iNumberOfRows; i++) {
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
 			iIndex = i;
 			if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
@@ -3354,7 +3445,7 @@ function _testRangeSelection(assert) {
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false);
 
 		// Move up to the starting row. Selection states should not change because selection mode was canceled.
-		for (var i = iNumberOfRows - 2; i >= iStartIndex; i--) {
+		for (i = iNumberOfRows - 2; i >= iStartIndex; i--) {
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
 			iIndex = i;
 			if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
@@ -3373,7 +3464,7 @@ function _testRangeSelection(assert) {
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false);
 
 		// Move up to the first row. All rows above the starting row should get (de)selected.
-		for (var i = iStartIndex - 1; i >= 0; i--) {
+		for (i = iStartIndex - 1; i >= 0; i--) {
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
 			iIndex = i;
 			if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
@@ -3389,7 +3480,7 @@ function _testRangeSelection(assert) {
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false);
 
 		// Move down to the starting row. Selection states should not change because selection mode was canceled.
-		for (var i = 1; i <= iStartIndex; i++) {
+		for (i = 1; i <= iStartIndex; i++) {
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
 			iIndex = i;
 			if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
@@ -3463,9 +3554,10 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Left & Shift+Right (C
 QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 	var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+	var i;
 
 	var oElem = getColumnHeader(0, true);
-	for (var i = TableUtils.Column.getColumnWidth(oTable, 0); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+	for (i = TableUtils.Column.getColumnWidth(oTable, 0); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
 		assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 0), i - iColumnResizeStep,
 			"Column width decreased by " + iColumnResizeStep + "px to " + TableUtils.Column.getColumnWidth(oTable, 0) + "px");
@@ -3479,7 +3571,7 @@ QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 	assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 0), iMinColumnWidth,
 		"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
 
-	for (var i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		iColumnWidthBefore = TableUtils.Column.getColumnWidth(oTable, 0);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 0), iColumnWidthBefore + iColumnResizeStep,
@@ -3490,9 +3582,10 @@ QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 QUnit.test("Default Test Table - Resize column", function(assert) {
 	var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 	var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+	var i;
 
 	var oElem = getColumnHeader(1, true);
-	for (var i = TableUtils.Column.getColumnWidth(oTable, 1); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
+	for (i = TableUtils.Column.getColumnWidth(oTable, 1); i - iColumnResizeStep > iMinColumnWidth; i -= iColumnResizeStep) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
 		assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 1), i - iColumnResizeStep,
 			"Column width decreased by " + iColumnResizeStep + "px to " + TableUtils.Column.getColumnWidth(oTable, 1) + "px");
@@ -3506,7 +3599,7 @@ QUnit.test("Default Test Table - Resize column", function(assert) {
 	assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 1), iMinColumnWidth,
 		"Column width could not be decreased below the minimum of " + iMinColumnWidth + "px");
 
-	for (var i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		iColumnWidthBefore = TableUtils.Column.getColumnWidth(oTable, 1);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, 1), iColumnWidthBefore + iColumnResizeStep,
@@ -3537,29 +3630,30 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 		var iSharedColumnResizeStep = Math.round(iColumnResizeStep / aResizingColumns.length);
 		var iMaxColumnSize = 0;
 		var iNewColumnWidth;
+		var i, j;
 
 		var aOriginalNotResizingColumnWidths = [];
-		for (var i = 0; i < aNotResizingColumns.length; i++) {
+		for (i = 0; i < aNotResizingColumns.length; i++) {
 			aOriginalNotResizingColumnWidths.push(TableUtils.Column.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()));
 		}
 
-		for (var i = 0; i < aResizingColumns.length; i++) {
+		for (i = 0; i < aResizingColumns.length; i++) {
 			iMaxColumnSize = Math.max(iMaxColumnSize, TableUtils.Column.getColumnWidth(oTable, aResizingColumns[i].getIndex()));
 		}
 
 		// Decrease the size to the minimum.
-		for (var i = iMaxColumnSize; i - iSharedColumnResizeStep > iMinColumnWidth; i -= iSharedColumnResizeStep) {
+		for (i = iMaxColumnSize; i - iSharedColumnResizeStep > iMinColumnWidth; i -= iSharedColumnResizeStep) {
 			qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
 
 			// Check resizable columns.
-			for (var j = 0; j < aResizingColumns.length; j++) {
+			for (j = 0; j < aResizingColumns.length; j++) {
 				iNewColumnWidth = TableUtils.Column.getColumnWidth(oTable, aResizingColumns[j].getIndex());
 				assert.strictEqual(iNewColumnWidth, Math.max(iMinColumnWidth, i - iSharedColumnResizeStep),
 					"Column " + (aResizingColumns[j].getIndex() + 1) + " width decreased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
 			}
 
 			// Check not resizable columns.
-			for (var j = 0; j < aNotResizingColumns.length; j++) {
+			for (j = 0; j < aNotResizingColumns.length; j++) {
 				assert.strictEqual(aOriginalNotResizingColumnWidths[j], TableUtils.Column.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
 					"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
 			}
@@ -3569,35 +3663,35 @@ QUnit.test("Multi Header - Resize spans", function(assert) {
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
 
 		// Check resizable columns for minimum width.
-		for (var i = 0; i < aResizingColumns.length; i++) {
+		for (i = 0; i < aResizingColumns.length; i++) {
 			assert.strictEqual(TableUtils.Column.getColumnWidth(oTable, aResizingColumns[i].getIndex()), iMinColumnWidth,
 				"Column " + (aResizingColumns[i].getIndex() + 1) + " width decreased to the minimum width of " + iMinColumnWidth + "px");
 		}
 
 		// Check not resizable columns for unchanged width.
-		for (var i = 0; i < aNotResizingColumns.length; i++) {
+		for (i = 0; i < aNotResizingColumns.length; i++) {
 			assert.strictEqual(aOriginalNotResizingColumnWidths[i], TableUtils.Column.getColumnWidth(oTable, aNotResizingColumns[i].getIndex()),
 				"Column " + (aNotResizingColumns[i].getIndex() + 1) + " width did not change");
 		}
 
 		// Increase the size.
-		for (var i = 0; i < 10; i++) {
+		for (i = 0; i < 10; i++) {
 			var aOriginalColumnWidths = [];
-			for (var j = 0; j < aResizingColumns.length; j++) {
+			for (j = 0; j < aResizingColumns.length; j++) {
 				aOriginalColumnWidths.push(TableUtils.Column.getColumnWidth(oTable, aResizingColumns[j].getIndex()));
 			}
 
 			qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 
 			// Check resizable columns.
-			for (var j = 0; j < aResizingColumns.length; j++) {
+			for (j = 0; j < aResizingColumns.length; j++) {
 				iNewColumnWidth = TableUtils.Column.getColumnWidth(oTable, aResizingColumns[j].getIndex());
 				assert.strictEqual(iNewColumnWidth, aOriginalColumnWidths[j] + iSharedColumnResizeStep,
 					"Column " + (aResizingColumns[j].getIndex() + 1) + " width increased by " + iSharedColumnResizeStep + "px to " + iNewColumnWidth + "px");
 			}
 
 			// Check not resizable columns.
-			for (var j = 0; j < aNotResizingColumns.length; j++) {
+			for (j = 0; j < aNotResizingColumns.length; j++) {
 				assert.strictEqual(aOriginalNotResizingColumnWidths[j], TableUtils.Column.getColumnWidth(oTable, aNotResizingColumns[j].getIndex()),
 					"Column " + (aNotResizingColumns[j].getIndex() + 1) + " width did not change");
 			}
@@ -3867,9 +3961,10 @@ QUnit.test("Fixed Columns - Move movable columns", function(assert) {
  * @param sKey The key to press.
  * @param bKeydown Indicates whether to trigger keydown or keyup.
  * @param bShift
+ * @param assert
  * @private
  */
-function _testColumnHeaderContextMenus(sKey, bKeydown, bShift) {
+function _testColumnHeaderContextMenus(sKey, bKeydown, bShift, assert) {
 	var oColumn = oTable.getColumns()[0];
 	oColumn.setSortProperty("dummy");
 	var oElem = checkFocus(getColumnHeader(0, true), assert);
@@ -3900,8 +3995,8 @@ QUnit.module("TableKeyboardDelegate2 - Interaction > Space & Enter", {
 });
 
 QUnit.test("On a Column Header", function(assert) {
-	_testColumnHeaderContextMenus(Key.SPACE, false, false);
-	_testColumnHeaderContextMenus(Key.ENTER, false, false);
+	_testColumnHeaderContextMenus(Key.SPACE, false, false, assert);
+	_testColumnHeaderContextMenus(Key.ENTER, false, false, assert);
 });
 
 QUnit.test("On SelectAll", function(assert) {
@@ -4191,7 +4286,7 @@ QUnit.test("On a Column Header", function(assert) {
 	var oContextMenuEvent = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
 
 	// Shift+F10
-	_testColumnHeaderContextMenus(Key.F10, true, true);
+	_testColumnHeaderContextMenus(Key.F10, true, true, assert);
 	var oKeyDownEventArgument = oKeydownEvent.args[0][0];
 	assert.ok(oKeyDownEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
@@ -4703,7 +4798,7 @@ QUnit.test("F2 - On a Data Cell", function(assert) {
 	var oElem = this.testOnDataCellWithInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
 
 	// Leave action mode.
-	qutils.triggerKeydown(oElem, Key.F2, "F2", false, false, false);
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getCell(0, iNumberOfCols - 1), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
@@ -4718,21 +4813,21 @@ QUnit.test("F2 - On a Row Action Cell", function(assert) {
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
 
 	// Enter action mode.
-	qutils.triggerKeydown(oElem, Key.F2);
-	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
-	oElem = $Element[0];
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $InteractiveElements[0];
 	assert.strictEqual(document.activeElement, oElem, "F2: First interactive element in the row action cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
 	// Leave action mode.
-	qutils.triggerKeydown(oElem, Key.F2, "F2", false, false, false);
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getRowAction(0), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 	// No content in row action cell
 	initRowActions(oTable, 2, 0);
 	oElem = checkFocus(getRowAction(0, true), assert);
-	qutils.triggerKeydown(oElem, Key.F2);
+	qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 	checkFocus(getRowAction(0), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 });
@@ -4853,15 +4948,15 @@ QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible an
 	oTable.clearSelection();
 	initRowActions(oTable, 2, 2);
 
-	// ENTER:
+	/* Enter key */
 
 	// Focus cell with a focusable & tabbable element inside.
 	var oElem = checkFocus(getRowAction(0, true), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
 	// Enter action mode.
-	qutils.triggerKeydown(oElem, Key.ENTER);
-	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
-	oElem = $Element[0];
+	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
+	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $InteractiveElements[0];
 	assert.strictEqual(document.activeElement, oElem, "ENTER: First interactive element in the row action cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
@@ -4869,16 +4964,15 @@ QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible an
 	// Leave action mode.
 	oTable._getKeyboardExtension().setActionMode(false);
 
-
-	// SPACE:
+	/* Space key */
 
 	// Focus cell with a focusable & tabbable element inside.
 	oElem = checkFocus(getRowAction(0, true), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus row action cell with content: Table is in Navigation Mode");
 	// Enter action mode.
-	qutils.triggerKeyup(oElem, Key.SPACE);
-	$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
-	oElem = $Element[0];
+	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(oElem);
+	oElem = $InteractiveElements[0];
 	assert.strictEqual(document.activeElement, oElem, "SPACE: First interactive element in the row action cell is focused");
 	assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
@@ -4886,15 +4980,14 @@ QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible an
 	// Leave action mode.
 	oTable._getKeyboardExtension().setActionMode(false);
 
-
 	// No content in row action cell
 	initRowActions(oTable, 2, 0);
 	oElem = checkFocus(getRowAction(0, true), assert);
-	qutils.triggerKeydown(oElem, Key.ENTER);
+	qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 	checkFocus(getRowAction(0), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
-	qutils.triggerKeyup(oElem, Key.SPACE);
+	qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 	checkFocus(getRowAction(0), assert);
 	assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
@@ -4971,7 +5064,10 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(oTable);
 	var bTableIsInGroupMode = TableUtils.Grouping.isGroupMode(oTable);
 	var bTableHasRowHeader = bTableHasRowSelectors || bTableIsInGroupMode;
+	var bTableHasRowActions = TableUtils.hasRowActions(oTable);
 	var oKeyboardExtension = oTable._getKeyboardExtension();
+	var iActionItemCount = bTableHasRowActions ? oTable.getRowActionTemplate()._iLen : 0;
+	var iLastColumnIndex = iNumberOfCols + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 	var iRowCount = oTable._getRowCount();
 	var iDelayAfterInRowTabbing = 0;
 	var iDelayAfterScrollTabbing = 100;
@@ -5014,7 +5110,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	// Tab to the last interactive control of the table. Then tab again to leave the action mode.
 	var sequence = Promise.resolve();
 	for (i = 0; i < iRowCount; i++) {
-		for (j = -1; j < iNumberOfCols; j++) {
+		for (j = -1; j <= iLastColumnIndex; j++) {
 			(function() {
 				var iAbsoluteRowIndex = i;
 				var iColumnIndex = j;
@@ -5028,7 +5124,11 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 				sequence = sequence.then(function() {
 					return new Promise(function(resolve) {
-						if (iColumnIndex === -1) { // Row Header
+						var $Cell;
+						var $InteractiveElements;
+						var bIsLastElementInRow = iColumnIndex === iLastColumnIndex;
+
+						if (iColumnIndex === -1) { // Row Header Cell
 							if (bTableHasRowHeader) {
 								oElem = getRowHeader(iRowIndex);
 
@@ -5036,7 +5136,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 									assert.strictEqual(document.activeElement, oElem[0],
 										"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Group Header Icon focused");
 									resolve();
-									return; // The TAB event will be simulated after the last cell in this row has been reached.
+									return; // The TAB event will be simulated after the iteration over the columns has reached the end.
 
 								} else if (bTableHasRowSelectors) {
 									assert.strictEqual(document.activeElement, oElem[0],
@@ -5059,27 +5159,73 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								return;
 							}
 
-						} else {
-							var $Cell = getCell(iRowIndex, iColumnIndex);
-							var $InteractiveElement = TableKeyboardDelegate2._getInteractiveElements($Cell);
+						} else if (iColumnIndex < iNumberOfCols) { // Data Cell
+							$Cell = getCell(iRowIndex, iColumnIndex);
+							$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($Cell);
 
-							if ($InteractiveElement === null) {
-								var bIsLastCellInGroupHeaderRow = iColumnIndex === iNumberOfCols - 1 && TableUtils.Grouping.isInGroupingRow(oElem);
-
+							if ($InteractiveElements === null) {
 								if (bShowInfo) {
 									assert.ok(true,
 										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Skipped, no interactive elements");
 								}
+								resolve();
+								return;
+							} else {
+								oElem = $InteractiveElements[0];
+								assert.strictEqual(document.activeElement, oElem,
+									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
 
-								if (!bIsLastCellInGroupHeaderRow) {
+								if (iColumnIndex === iNumberOfCols - 1 && iActionItemCount === 0) {
+									resolve();
+									return; // If there are no row action items, the TAB event will be simulated after the iteration over the columns has reached the end.
+								}
+							}
+
+						} else { // Row Action Cell
+							if (!bTableHasRowActions) {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Skipped, table has no row actions");
+								}
+
+								if (!bIsLastElementInRow) {
 									resolve();
 									return;
 								}
-
 							} else {
-								oElem = $InteractiveElement[0];
-								assert.strictEqual(document.activeElement, oElem,
-									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+								$Cell = getRowAction(iRowIndex);
+								$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($Cell);
+
+								if ($InteractiveElements === null) {
+									if (bShowInfo) {
+										assert.ok(true,
+											"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Skipped, no interactive elements");
+									}
+
+									if (!bIsLastElementInRow) {
+										resolve();
+										return;
+									}
+								} else {
+									var iActionItemIndex = iColumnIndex - iNumberOfCols;
+									var oActionItem = $InteractiveElements[iActionItemIndex];
+
+									if (oActionItem != null) {
+										oElem = oActionItem;
+										assert.strictEqual(document.activeElement, oElem,
+											"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Action Item " + (iActionItemIndex + 1) + " focused");
+									} else {
+										if (bShowInfo) {
+											assert.ok(true,
+												"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Action Item " + (iActionItemIndex + 1) + ": Skipped, it does not exist");
+										}
+
+										if (!bIsLastElementInRow) {
+											resolve();
+											return;
+										}
+									}
+								}
 							}
 						}
 
@@ -5089,15 +5235,22 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 						simulateTabEvent(document.activeElement);
 
-						var bScrolled = iColumnIndex === iNumberOfCols - 1 && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
+						var bScrolled = bIsLastElementInRow && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
 
 						if (bShowInfo) {
 							assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
 						}
 
 						setTimeout(function() {
-							if (iAbsoluteRowIndex === iRowCount - 1 && iColumnIndex === iNumberOfCols - 1) {
-								checkFocus(getCell(iVisibleRowCount - 1, iNumberOfCols - 1), assert);
+							if (iAbsoluteRowIndex === iRowCount - 1 && bIsLastElementInRow) {
+								var oRowActionElementCell = getRowAction(iVisibleRowCount - 1);
+
+								if (bTableHasRowActions && TableKeyboardDelegate2._getInteractiveElements(oRowActionElementCell) !== null) {
+									checkFocus(oRowActionElementCell, assert);
+								} else {
+									checkFocus(getCell(iVisibleRowCount - 1, iNumberOfCols - 1), assert);
+								}
+
 								assert.ok(!oKeyboardExtension.isInActionMode(), "Table is in Navigation Mode");
 							} else {
 								assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
@@ -5112,10 +5265,20 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 	sequence = sequence.then(function() {
 		return new Promise(function(resolve) {
-			// Focus the interactive element in the last cell in the last row.
 			oElem = TableKeyboardDelegate2._getInteractiveElements(document.activeElement)[0];
 			oKeyboardExtension.setActionMode(true);
-			assert.strictEqual(document.activeElement, oElem, "Last interactive element in the table focused");
+			assert.strictEqual(document.activeElement, oElem,
+				"The action mode was entered on the last cell of the last row - The cells first interactive element is focused");
+			assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
+
+			// Focus the last interactive element in the last cell in the last row.
+			var aRows = oTable.getRows();
+			var oLastRow = aRows[aRows.length - 1];
+
+			oElem = TableKeyboardDelegate2._getLastInteractiveElement(oLastRow)[0];
+			oElem.focus();
+
+			assert.strictEqual(document.activeElement, oElem, "The very last interactive element in the table is focused");
 			assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
 			resolve();
 		});
@@ -5123,7 +5286,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 	// Tab back to the first interactive control of the table. Then tab back again to leave the action mode.
 	for (i = iRowCount - 1; i >= 0; i--) {
-		for (j = iNumberOfCols - 1; j >= -1; j--) {
+		for (j = iLastColumnIndex; j >= -1; j--) {
 			(function() {
 				var iAbsoluteRowIndex = i;
 				var iColumnIndex = j;
@@ -5137,7 +5300,73 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 
 				sequence = sequence.then(function() {
 					return new Promise(function(resolve) {
-						if (iColumnIndex === -1) { // Row Header
+						var $Cell;
+						var $InteractiveElements;
+
+						if (iColumnIndex >= iNumberOfCols) { // Row Action Cell
+							if (!bTableHasRowActions) {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Skipped, table has no row actions");
+								}
+								resolve();
+								return;
+							} else {
+								$Cell = getRowAction(iRowIndex);
+								$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($Cell);
+
+								if ($InteractiveElements === null) {
+									if (bShowInfo) {
+										assert.ok(true,
+											"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Skipped, no interactive elements");
+									}
+									resolve();
+									return;
+								} else {
+									var iActionItemIndex = iColumnIndex - iNumberOfCols;
+									var oActionItem = $InteractiveElements[iActionItemIndex];
+
+									if (oActionItem != null) {
+										oElem = oActionItem;
+										assert.strictEqual(document.activeElement, oElem,
+											"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Action Item " + (iActionItemIndex + 1) + " focused");
+									} else {
+										if (bShowInfo) {
+											assert.ok(true,
+												"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Row Action Cell: Action Item " + (iActionItemIndex + 1) + ": Skipped, it does not exist");
+										}
+										resolve();
+										return;
+									}
+								}
+							}
+
+						} else if (iColumnIndex >= 0) { // Data Cell
+							$Cell = getCell(iRowIndex, iColumnIndex);
+							$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($Cell);
+
+							if ($InteractiveElements === null) {
+								if (bShowInfo) {
+									assert.ok(true,
+										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Skipped, no interactive elements");
+								}
+								resolve();
+								return;
+							}
+
+							oElem = $InteractiveElements[0];
+							assert.strictEqual(document.activeElement, oElem,
+								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+
+							var bIsFirstInteractiveElementInRow = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
+							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
+
+							if (bIsFirstInteractiveElementInRow && iColumnIndex > 0 && !bRowHasInteractiveRowHeader) {
+								resolve();
+								return;
+							}
+
+						} else { // Row Header Cell
 							if (bTableHasRowHeader) {
 								oElem = getRowHeader(iRowIndex);
 
@@ -5160,31 +5389,6 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 									assert.ok(true,
 										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Header Cell: Skipped, table has no row header");
 								}
-								resolve();
-								return;
-							}
-
-						} else {
-							var $Cell = getCell(iRowIndex, iColumnIndex);
-							var $InteractiveElement = TableKeyboardDelegate2._getInteractiveElements($Cell);
-
-							if ($InteractiveElement === null) {
-								if (bShowInfo) {
-									assert.ok(true,
-										"[INFO] Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Skipped, no interactive elements");
-								}
-								resolve();
-								return;
-							}
-
-							oElem = $InteractiveElement[0];
-							assert.strictEqual(document.activeElement, oElem,
-								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
-
-							var bIsFirstInteractiveElementInRow = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
-							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
-
-							if (bIsFirstInteractiveElementInRow && iColumnIndex > 0 && !bRowHasInteractiveRowHeader) {
 								resolve();
 								return;
 							}
@@ -5227,74 +5431,76 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 	});
 }
 
-QUnit.test("TAB & Shift+TAB - Default Test Table", function(assert) {
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows", function(assert) {
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	sap.ui.getCore().applyChanges();
-
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows, Fixed Columns", function(assert) {
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	oTable.setFixedColumnCount(2);
-	sap.ui.getCore().applyChanges();
-
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Fixed Top and Bottom Rows, Fixed Columns, No Row Headers", function(assert) {
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	oTable.setFixedColumnCount(2);
+QUnit.test("TAB & Shift+TAB", function(assert) {
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
 	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers", function(assert) {
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns", function(assert) {
+	oTable.setFixedColumnCount(2);
+	sap.ui.getCore().applyChanges();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions", function(assert) {
+	oTable.setFixedColumnCount(2);
+	initRowActions(oTable, 2, 2);
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows", function(assert) {
+	oTable.setFixedColumnCount(2);
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	initRowActions(oTable, 2, 2);
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows", function(assert) {
+	oTable.setFixedColumnCount(2);
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	initRowActions(oTable, 1, 0);
 
 	_testActionModeTabNavigation(assert);
 });
 
 QUnit.test("TAB & Shift+TAB - Grouping", function(assert) {
-	this.setupGrouping();
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows", function(assert) {
-	this.setupGrouping();
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	sap.ui.getCore().applyChanges();
-
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows, Fixed Columns", function(assert) {
-	this.setupGrouping();
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	oTable.setFixedColumnCount(2);
-	sap.ui.getCore().applyChanges();
-
-	_testActionModeTabNavigation(assert);
-});
-
-QUnit.test("TAB & Shift+TAB - Grouping, Fixed Top and Bottom Rows, Fixed Columns, No Row Headers", function(assert) {
-	this.setupGrouping();
-	oTable.setVisibleRowCount(6);
-	oTable.setFixedRowCount(2);
-	oTable.setFixedBottomRowCount(2);
-	oTable.setFixedColumnCount(2);
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-	sap.ui.getCore().applyChanges();
+	this.setupGrouping();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", function(assert) {
+	oTable.setFixedColumnCount(2);
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	initRowActions(oTable, 2, 2);
+	this.setupGrouping();
+
+	_testActionModeTabNavigation(assert);
+});
+
+QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", function(assert) {
+	oTable.setFixedColumnCount(2);
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	initRowActions(oTable, 1, 0);
+	this.setupGrouping();
 
 	_testActionModeTabNavigation(assert);
 });
