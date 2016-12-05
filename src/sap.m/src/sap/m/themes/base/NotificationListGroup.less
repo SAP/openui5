@@ -20,7 +20,6 @@
 
 .sapMNLG-Header > .sapMNLB-Priority {
   padding-top: @containerPadding;
-  border-radius: @notificationGroupBorderRadius 0 0 0;
 }
 
 // Header styles =======================================================================================================
@@ -86,14 +85,6 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 	border-radius: 0;
 }
 
-.sapMNLG-Collapsed .sapMNLG-SubHeader > .sapMNLB-Priority {
-  border-radius: 0 0 0 @notificationGroupBorderRadius;
-}
-
-.sapMNLG-NoNotifications .sapMNLG-SubHeader > .sapMNLB-Priority {
-  border-radius: 0 0 0 @notificationGroupBorderRadius;
-}
-
 // Body styles =========================================================================================================
 
 .sapMNLG-Body {
@@ -127,14 +118,6 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 
 .sapMLIB.sapMNLG-Collapsed .sapMNLG-Body{
   display: none;
-}
-
-.sapMNLG-Body > .sapMNLI .sapMNLB-Priority {
-  border-radius: 0;
-}
-
-.sapMNLG-Body > .sapMNLI:last-child .sapMNLB-Priority {
-  border-radius: 0 0 0 0.25rem;
 }
 
 // Compact mode ========================================================================================================
