@@ -1713,6 +1713,11 @@ sap.ui.define([
 					// Scroll one page.
 					TableUtils.focusItem(this, iFocusedIndex - iPageSize, null);
 				}
+
+			} else if (oCellInfo.type === CellType.ROWACTION) {
+				// If the focus is on a row action cell, then set the focus to the last data cell in the same row.
+				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+				TableUtils.focusItem(this, oFocusedItemInfo.cell - 1, null);
 			}
 		}
 	};
@@ -1763,7 +1768,12 @@ sap.ui.define([
 					} else if (!TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 						// Scroll one page.
 						TableUtils.focusItem(this, iFocusedIndex + iPageSize, null);
+
 					}
+
+				} else if (oCellInfo.type === CellType.DATACELL && TableUtils.hasRowActions(this) && iFocusedCellInRow == oFocusedItemInfo.columnCount - 2) {
+					// If focus is on the last cell, set the focus to the row action cell.
+					TableUtils.focusItem(this, oFocusedItemInfo.cell + 1, null);
 				}
 			}
 		}
