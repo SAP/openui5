@@ -104,6 +104,10 @@ public class Version {
 	  return new Version(major, minor, 0, SNAPSHOT_SUFFIX);
   }
   
+  public Version increasedPatchVersion(){
+	  return new Version(major,minor, patch + 1, null);
+  }
+  
   public Version nextVersion(ReleaseOperation op) {
 
     int newMajor = major;

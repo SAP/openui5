@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -35,14 +36,20 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.text.html.HTMLEditorKit.Parser;
 
 import static java.nio.file.StandardCopyOption.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.Version;
 import com.sap.ui5.tools.maven.LastRunInfo;
@@ -67,7 +74,7 @@ public class Git2P4Main {
   static String resumeAfter = null;
   static boolean applyContributorsVersions = false; 
   private static boolean skipContributorsVersions = false;
-  static String sp = File.separator;
+  static String sp = File.separator;  
   static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -77,6 +84,7 @@ public class Git2P4Main {
       return a.getId().compareTo(b.getId());
     }
   });
+  
 
   /**
    * This new context object is intended to contain all parameters in future
@@ -97,9 +105,11 @@ public class Git2P4Main {
     public List<Mapping> mappings = null;
     public Version version;
     public int lowestMinor = 28; //28 is the lowest minor at the time this is done
+    public static File objJson = null;
     public String findVersion(String branch) throws IOException {
       return Git2P4Main.findVersion(branch);
-    }
+    }       
+      
     public Set<String> getCommits(String...paths) throws IOException {
       Set<String> filter = new HashSet<String>();
       for(Mapping repo : mappings) {
@@ -112,7 +122,7 @@ public class Git2P4Main {
   }
   
   static Context context = new Context();
-  private static ProcessingFilter filter = new ProcessingFilter();
+  private static ProcessingFilter filter = new ProcessingFilter();    
   
   static void updateRepository(Mapping repo) throws IOException {
     git.setRepository(repo.gitRepository);
@@ -162,6 +172,21 @@ public class Git2P4Main {
 
   static final Pattern POM_VERSION = Pattern.compile("\\s*<version>([0-9]+(?:\\.[0-9]+(?:\\.[0-9]+)?)?(?:-SNAPSHOT)?)</version>\\s*");
 
+  //Takes the "version" from receivedFile and compares it with the current trigered branch version...
+  static void checkObjectIdsJsonVersion(String branchVer, File objIdsVersion) throws JsonIOException, JsonSyntaxException, FileNotFoundException{
+	  
+	  JsonObject jsonObject = new JsonObject();     
+      JsonParser parser = new JsonParser();
+      JsonElement jsonElement = parser.parse(new FileReader(objIdsVersion));
+      jsonObject = jsonElement.getAsJsonObject();        
+      String patchVersion = new Version(branchVer).increasedPatchVersion().toString();
+      String objectIdsVersion = jsonObject.get("version").toString().replaceAll("[\"]", "");
+      
+      if (!patchVersion.equals(objectIdsVersion)){
+    	  throw new IllegalArgumentException("The ObjectIds.json file version: " + objectIdsVersion + " is different from the current patch version: " + patchVersion);
+      }
+  }
+  
   static String findVersion(String branch) throws IOException {
 
     String version = null;
@@ -189,7 +214,6 @@ public class Git2P4Main {
   }
 
   static void modifyVersions(ReleaseOperation op, String branch, String fromVersion, String toVersion) throws IOException {
-
    boolean guess = false;
     
     // first ensure branch and op
@@ -236,14 +260,18 @@ public class Git2P4Main {
       Log.println("    operation: " + op);
       Log.println("  fromVersion: " + fromVersion);
       Log.println("    toVersion: " + toVersion);
+    }	
+    
+    if(op.equals(ReleaseOperation.ChangeObjectId)){
+    	checkObjectIdsJsonVersion(fromVersion, context.objJson);
     }
-
+    
     if(op.equals(ReleaseOperation.MilestoneDevelopment)){
        Runtime p = Runtime.getRuntime();       
 	   String jsLocation = extractSnapshotVersionJs().getParent();	   
 	   MyReleaseButton.getFileOSLocation(jsLocation);	  
 	   
-	     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions  )
+	     //Execution of the getSnapshotVersion.js (which searches and takes data from NEXUS for contributors Snapshot versions)
 	   p.exec("cmd.exe /c cd "+jsLocation+" & start cmd.exe /c" + "node getSnapshotVersion.js " + toVersion);	   
     }
     
@@ -284,8 +312,8 @@ public class Git2P4Main {
         label = "patch";
       }
      
-      if(op == ReleaseOperation.ChangeObjectId){
-    	  git.commit("[INTERNAL] Update ObjectIdsjson file with " + fromVersion);
+      if(op == ReleaseOperation.ChangeObjectId){    	  
+    	  git.commit("[INTERNAL] Update ObjectIdsjson file with " + new Version(fromVersion).increasedPatchVersion());
       } else {
     	  git.commit("VERSION CHANGE ONLY\n\nUpdate versions to next " + label + " version " + toVersion);  
       }
@@ -616,8 +644,8 @@ private static File extractSnapshotVersionJs() throws IOException {
 	        null,
 	        null
 	        ));
-	  }   
- 
+	  }
+
   private static String getPerforceCodelineForBranch(String branch) {
     
     Matcher m = Pattern.compile("(?:rel-)?([0-9]+\\.[0-9]+)|master").matcher(branch);
@@ -906,11 +934,11 @@ private static File extractSnapshotVersionJs() throws IOException {
     }
    
     if(objectIdChange.equals(command)){
-
     	String path = receivedFile.getAbsolutePath()  + sp +"tools" + sp +"_git2p4" + sp +"resources" + sp + "ObjectIds.json";
       	receivedFile = new File(path);
-      	receivedFile.createNewFile();
+      	receivedFile.createNewFile();      	
       	readAndCopyFromURL(receivedFile, fileAddress);
+      	context.objJson = receivedFile;
       	
   	  MyReleaseButton.setFile(receivedFile);
     }
@@ -1029,7 +1057,7 @@ private static File extractSnapshotVersionJs() throws IOException {
     	    if ( "list".equals(command) ) {
     	      return;
     	    }
-
+    	    
     	    if ( RELEASE_NOTES.equals(command) ) {
     	      context.branch = branch;
     	      new ReleaseNotes().execute(context);
