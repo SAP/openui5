@@ -5,18 +5,30 @@
 (function(aScriptIncludes) {
 
 	"use strict";
-
 	//extract base URL from script tag
-	var aScripts = document.getElementsByTagName("script"),
-		i,sSrc,mMatch,sBaseUrl,bCoreRequired = false;
+	var aScripts, i, sSrc, mMatch, sBaseUrl, oScriptTag,
+		bCoreRequired = false;
 
-	for (i = 0; i < aScripts.length; i++) {
-		sSrc = aScripts[i].getAttribute("src");
-		if (sSrc) {
-			mMatch = sSrc.match(/(.*\/)sap-ui-core\.js$/i);
-			if (mMatch) {
-				sBaseUrl = mMatch[1];
-				break;
+	oScriptTag = document.getElementById("sap-ui-bootstrap");
+	if (oScriptTag) {
+		sSrc = oScriptTag.getAttribute("src");
+		mMatch = sSrc.match(/^(?:.*\/)?resources\//i);
+		if (mMatch) {
+			sBaseUrl = mMatch[0];
+		}
+	}
+
+	if (sBaseUrl == null) {
+		aScripts = document.getElementsByTagName("script");
+
+		for (i = 0; i < aScripts.length; i++) {
+			sSrc = aScripts[i].getAttribute("src");
+			if (sSrc) {
+				mMatch = sSrc.match(/(.*\/)sap-ui-core\.js$/i);
+				if (mMatch) {
+					sBaseUrl = mMatch[1];
+					break;
+				}
 			}
 		}
 	}

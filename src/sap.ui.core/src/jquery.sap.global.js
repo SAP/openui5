@@ -559,40 +559,40 @@
 	 * contains the identified script-tag and resource root
 	 */
 	var _oBootstrap = (function() {
-		var oTag, sUrl, sResourceRoot,
-			reConfigurator = /^(.*\/)?download\/configurator[\/\?]/,
-			reBootScripts = /^(.*\/)?(sap-ui-(core|custom|boot|merged)(-.*)?)\.js([?#]|$)/,
-			reResources = /^(.*\/)?resources\//;
 
-		// check all script tags that have a src attribute
-		jQuery("script[src]").each(function() {
-			var src = this.getAttribute("src"),
-				m;
-			if ( (m = src.match(reConfigurator)) !== null ) {
-				// guess 1: script tag src contains "/download/configurator[/?]" (for dynamically created bootstrap files)
-				oTag = this;
-				sUrl = src;
-				sResourceRoot = (m[1] || "") + "resources/";
-				return false;
-			} else if ( (m = src.match(reBootScripts)) !== null ) {
-				// guess 2: src contains one of the well known boot script names
-				oTag = this;
-				sUrl = src;
-				sResourceRoot = m[1] || "";
-				return false;
-			} else if ( this.id == 'sap-ui-bootstrap' && (m = src.match(reResources)) ) {
-				// guess 2: script tag has well known id and src contains "resources/"
-				oTag = this;
-				sUrl = src;
-				sResourceRoot = m[0];
-				return false;
+		function check(oScript, rUrlPattern) {
+			var sUrl = oScript && oScript.getAttribute("src");
+			var oMatch = rUrlPattern.exec(sUrl);
+			if ( oMatch ) {
+				return {
+					tag: oScript,
+					url: sUrl,
+					resourceRoot: oMatch[1] || ""
+				};
 			}
-		});
-		return {
-			tag: oTag,
-			url: sUrl,
-			resourceRoot: sResourceRoot
-		};
+		}
+
+		var reResources = /^((?:.*\/)?resources\/)/,
+			reBootScripts, aScripts, i, oResult;
+
+		// Prefer script tags which have the sap-ui-bootstrap ID
+		// This prevents issues when multiple script tags point to files named
+		// "sap-ui-core.js", for example when using the cache buster for UI5 resources
+		oResult = check(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), reResources);
+
+		if ( !oResult ) {
+			aScripts = document.querySelectorAll('SCRIPT[src]');
+			reBootScripts = /^(.*\/)?(?:sap-ui-(core|custom|boot|merged)(?:-.*)?)\.js(?:[?#]|$)/;
+			for ( i = 0; i < aScripts.length; i++ ) {
+				oResult = check(aScripts[i], reBootScripts);
+				if ( oResult ) {
+					break;
+				}
+			}
+		}
+
+		return oResult || {};
+
 	})();
 
 	/**
@@ -625,9 +625,17 @@
 			if (bUserConfirmed) {
 				// replace the bootstrap tag with a newly created script tag to enable restarting the core from a different server
 				var oScript = _oBootstrap.tag,
-					sScript = "<script src=\"" + sRebootUrl + "\"";
+					sScript = "<script id=\"sap-ui-bootstrap\" src=\"" + sRebootUrl + "\"";
 				jQuery.each(oScript.attributes, function(i, oAttr) {
-					if (oAttr.nodeName.indexOf("data-sap-ui-") == 0) {
+					if (oAttr.nodeName === "data-sap-ui-resourceroots") {
+						var oResourceRootsCfg = JSON.parse(oAttr.nodeValue + "");
+						// Reset resource root configuration to prevent it from overruling the bootstrap tag
+						if (oResourceRootsCfg) {
+							oResourceRootsCfg[""] = undefined;
+
+							sScript += " data-sap-ui-resourceroots=\"" + JSON.stringify(oResourceRootsCfg).replace(/"/g, "&quot;") + "\"";
+						}
+					} else if (oAttr.nodeName.indexOf("data-sap-ui-") === 0) {
 						sScript += " " + oAttr.nodeName + "=\"" + oAttr.nodeValue.replace(/"/g, "&quot;") + "\"";
 					}
 				});
@@ -636,7 +644,12 @@
 
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
-				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
+
+				var oCfg = window["sap-ui-config"];
+				if (oCfg && oCfg.resourceRoots) {
+					// Reset resource root configuration to prevent it from overruling the bootstrap tag
+					oCfg.resourceRoots[""] = undefined;
+				}
 
 				document.write(sScript);
 
