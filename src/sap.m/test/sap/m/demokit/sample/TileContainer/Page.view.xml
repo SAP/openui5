@@ -11,7 +11,7 @@
 			tileDelete="handleTileDelete"
 			tiles="{/TileCollection}">
 			<StandardTile
-				icon="sap-icon://{icon}"
+				icon="{icon}"
 				type="{type}"
 				number="{number}"
 				numberUnit="{numberUnit}"
