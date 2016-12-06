@@ -664,7 +664,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 .sapUiSupportCntnt,
 .sapUiSupportPerf-PanelContent,
 #sapUiSupportPerf-Panel,
-#sapUiSupportPerf-PanelContent {
+#sapUiSupportPerf-PanelContent not(.sapUiSupportHidden) {
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;

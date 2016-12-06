@@ -29,7 +29,7 @@ sap.ui.define([
 
 				this._oStub = oSupportStub;
 
-				if (this.isToolPlugin()) {
+				if (this.runsAsToolPlugin()) {
 
 					// TOOLS SIDE!
 
@@ -88,7 +88,7 @@ sap.ui.define([
 		ControlTree.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
 
-			if (this.isToolPlugin()) {
+			if (this.runsAsToolPlugin()) {
 				initInTools.call(this, oSupportStub);
 			} else {
 				initInApps.call(this, oSupportStub);
@@ -122,7 +122,7 @@ sap.ui.define([
 
 		ControlTree.prototype.exit = function(oSupportStub) {
 			Plugin.prototype.exit.apply(this, arguments);
-			if (this.isToolPlugin()) {
+			if (this.runsAsToolPlugin()) {
 				$(document)
 				.off('click', 'li img.sapUiControlTreeIcon')
 				.off('click', 'li div')
