@@ -120,6 +120,7 @@
     oTable1.setFixedRowCount(1);
     oTable1.setFixedBottomRowCount(1);
     oTable1.setEnableColumnFreeze(true);
+    oTable1.setShowColumnVisibilityMenu(true);
     oTable1.setColumnHeaderVisible(true);
     createColumns(oTable1);
     oTable1.setModel(oModel);
@@ -130,6 +131,8 @@
     oTable2.setFooter("Footer");
     oTable2.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
     oTable2.setFixedColumnCount(0);
+	oTable2.setEnableColumnFreeze(true);
+	oTable2.setShowColumnVisibilityMenu(true);
     createColumns(oTable2);
     oTable2.setModel(oModel);
     oTable2.bindRows("/modelData");
