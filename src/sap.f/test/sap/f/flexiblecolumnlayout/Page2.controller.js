@@ -11,10 +11,6 @@ sap.ui.define([
 		},
 		handleNextPress: function () {
 			this.oRouter.navTo("page3");
-		},
-		handleClose: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
-			this.oRouter.navTo("detail", {layout: sNextLayout});
 		}
 	});
 }, true);

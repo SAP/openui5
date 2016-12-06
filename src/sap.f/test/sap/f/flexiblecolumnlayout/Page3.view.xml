@@ -3,7 +3,6 @@
 		<Toolbar>
 			<Label text="This is the last page. Use the back button to go back."/>
 			<ToolbarSpacer />
-			<Button icon="sap-icon://decline" press="handleClose" visible="{= ${/actionButtonsInfo/midColumn/endColumn} !== null }"></Button>
 		</Toolbar>
 	</Page>
 </View>

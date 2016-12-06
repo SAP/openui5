@@ -31,8 +31,13 @@ sap.ui.define([
 		 * @returns {*}
 		 */
 		getHelper: function () {
-			var oFCL = this.getRootControl().byId("fcl");
-			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, getUrlParam(window.location.href, "sim"));
+			var oFCL = this.getRootControl().byId("fcl"),
+				oSettings = {
+					mode: getUrlParam(window.location.href, "sim"),
+					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded
+				};
+
+			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
 		}
 	});
 	return Component;

@@ -10,7 +10,7 @@ sap.ui.define([
 			this.oModel = this.getOwnerComponent().getModel();
 		},
 		handleDetailDetailPress: function () {
-			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState("end");
+			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(3);
 			this.oRouter.navTo("page2", {layout: oNextUIState.layout});
 		},
 		handleFullScreen: function () {
