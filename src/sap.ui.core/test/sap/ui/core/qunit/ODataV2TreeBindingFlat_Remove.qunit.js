@@ -98,8 +98,11 @@ asyncTest("Move manually expanded nodes", function(){
 			oN2000 = oN1004.children[3];
 			var oHandle = oBinding.removeContext(oN2000.context);
 			oBinding.addContexts(oN1639.context, oHandle);
-			equal(oBinding.getLength(), 700, "The length of binding is correct after move a deep node");
+			equal(oBinding.getLength(), 699, "The length of binding is correct after move a deep node (to collapsed subtree)");
 
+			oBinding.expand(oN1639, true);
+			equal(oBinding.getLength(), 700, "The length of binding is correct after expanding subtree");
+			
 			oBinding.collapse(oN1004);
 			equal(oBinding.getLength(), 638, "The length of binding is correct after the old parent is collapsed");
 

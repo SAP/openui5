@@ -337,6 +337,127 @@ asyncTest("Request Creation - DELETE - 2", function(){
 	});
 });
 
+asyncTest("Request Creation - DELETE - 3 - deep to initially collapsed", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var oN1005, oN1630, oN1633;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			oN1633 = oBinding.findNode(8);
+
+			// move from 1005 to 1630 (from server-indexed parent node to deep parent node)
+			oBinding.removeContext(oN1633.context);
+			oBinding.addContexts(oN1630.context, oN1633.context);
+
+			// delete new parent node for deep one 1633  -->  oN1630
+			oBinding.removeContext(oN1630.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				equals(aRequests.length, 2, "Number of Change Requests is correct.");
+				equals(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				equals(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
+				equals(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+
+				start();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
+	});
+});
+
+
+asyncTest("Request Creation - DELETE - 3 - in to deep", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var oN1005, oN1630, oN1632, oN1642;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1632 = oBinding.findNode(7);
+
+			oBinding.expand(oN1632);
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler3);
+		}
+		
+		function handler3 () {
+			oBinding.detachChange(handler3);
+
+			oN1630 = oBinding.findNode(5);
+			oN1642 = oBinding.findNode(9);
+
+			// move from 1642 to 1630  -  from deep parent node (1632) to deep parent node (1630)
+			oBinding.removeContext(oN1642.context);
+			oBinding.addContexts(oN1630.context, oN1642.context);
+
+			// delete new parent node for deep one 1642  -->  oN1630
+			oBinding.removeContext(oN1630.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				equals(aRequests.length, 2, "Number of Change Requests is correct.");
+				equals(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				equals(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				equals(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
+
+				start();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
+	});
+});
+
 asyncTest("Request Creation - Refresh after Success - Event-Timing", function(){
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {
