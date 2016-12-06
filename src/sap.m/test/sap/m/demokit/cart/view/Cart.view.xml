@@ -45,7 +45,10 @@
 		<content>
 			<List
 				id="entryList"
-				footerText="{i18n>CART_SAVED_FOR_LATER_FOOTER_TEXT}"
+				footerText="{
+					path : 'cartProducts>/savedForLaterEntries',
+					formatter : '.formatter.footerTextForCart'
+				}"
 				mode="{cfg>/listMode}"
 				delete="handleEntryListDelete"
 				select="handleEntryListSelect"
@@ -124,7 +127,7 @@
 						<attributes>
 							<ObjectAttribute
 								active="true"
-								press="onAddBackToCart"
+								press="onAddBackToBasket"
 								text="{i18n>CART_ADD_TO_CART_LINK_TEXT}" />
 						</attributes>
 						<firstStatus>
