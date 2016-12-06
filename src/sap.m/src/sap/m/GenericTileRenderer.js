@@ -55,17 +55,6 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (oControl.getScope() === GenericTileScope.Actions) {
-			this._renderActionsScope(oRm, oControl);
-		}
-
-		if (oControl.getState() !== LoadState.Loaded) {
-			this._renderStateOverlay(oRm, oControl, sTooltipText);
-		} else {
-			this._renderHoverOverlay(oRm, oControl);
-		}
-		this._renderFocusDiv(oRm, oControl);
-
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrContent");
 		oRm.addClass(oControl.getFrameType());
@@ -96,6 +85,17 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.write("</div>");
+
+		if (oControl.getState() !== LoadState.Loaded) {
+			this._renderStateOverlay(oRm, oControl, sTooltipText);
+		} else {
+			this._renderHoverOverlay(oRm, oControl);
+		}
+		this._renderFocusDiv(oRm, oControl);
+
+		if (oControl.getScope() === GenericTileScope.Actions) {
+			this._renderActionsScope(oRm, oControl);
+		}
 		oRm.write("</div>");
 	};
 
