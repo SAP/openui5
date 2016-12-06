@@ -1,23 +1,10 @@
-.sapMNLI {
-  background-color: @sapUiLightestBG;
-  box-shadow: 0 0.125rem 0.5rem fade(@sapUiDarkShadowTint, 50%);
-  border-bottom: 0;
-}
+/* =========================================== */
+/* CSS for control sap.m/NotificationListItem  */
+/* BlueCrystal theme                           */
+/* =========================================== */
 
 .sapMNLI-UnreadStatus {
   background: @sapUiAccent5;
-}
-
-.sapMNLI-Header > .sapMTitle {
-  font-size: @sapMFontLargeSize;
-}
-
-.sapMNLI-Body .sapMNLI-Details {
-  font-size: @sapMFontMediumSize;
-}
-
-.sapMNLI-Description .sapMNLI-Text, .sapMNLI-Details .sapMNLI-Datetime {
-  color: @sapUiLightText;
 }
 
 .sapMNLI-CloseButton {
@@ -30,12 +17,10 @@
 
 // Focus Styles ========================================================================================================
 
-html.sap-desktop .sapMLIB.sapMNLI:focus {
-  outline: none;
-}
+
 
 .sapMNLI:focus::before {
-  border: 1px dotted @sapUiFocus;
+  border: 1px dotted @sapUiContentFocusColor;
   position: absolute;
   content: " ";
   top: 1px;
