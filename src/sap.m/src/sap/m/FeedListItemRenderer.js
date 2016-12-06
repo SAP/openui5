@@ -103,9 +103,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.write('sapMFeedListItemHasFigure');
 			}
 			rm.write('" >');
-			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText"');
-			rm.writeAttribute("aria-hidden", true);
-			rm.write('>');
+			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText">');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
 				rm.renderControl(oFeedListItem._getLinkSender(true));
@@ -156,7 +154,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	FeedListItemRenderer._writeImageControl = function(rm, oFeedListItem, sMyId) {
 		rm.write('<figure id="' + sMyId + '-figure"');
-		rm.writeAttribute("aria-hidden", true);
 		rm.addClass('sapMFeedListItemFigure');
 		if (!oFeedListItem.getIcon()) {
 			rm.addClass('sapMFeedListItemIsDefaultIcon');
