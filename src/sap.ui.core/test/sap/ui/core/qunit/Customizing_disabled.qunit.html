@@ -127,6 +127,13 @@
 	});
 
 
+	test("Controller Extension (sap.ui.controller)", function() {
+		oComp.runAsOwner(function() {
+			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
+			ok(oController.isExtended === undefined, "Controller has not been extended with sap.ui.controller factory function!");
+		});
+	});
+
 	test("Controller Extension (Code Extensibility)", function() {
 
 		// check lifecycle methods
