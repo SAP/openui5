@@ -232,6 +232,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				parameters : {
 
 					/**
+					 * The event parameter is set to true, when the value is changed by navigating through suggestions.
+					 */
+					suggestionNavigation : {type : "boolean"},
+
+					/**
 					 * The new value of the input.
 					 */
 					value : {type : "string"}
@@ -592,7 +597,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
+		if (bInteractionChange) {
 			this.fireLiveChange({
 				value: sNewValue,
 				// backwards compatibility
@@ -774,7 +779,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
+		if (bInteractionChange) {
 			this.fireLiveChange({
 				value: sNewValue,
 				// backwards compatibility
@@ -1151,6 +1156,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._$input.val(sNewValue);
 
 		this.fireLiveChange({
+			suggestionNavigation: true,
 			value: sNewValue,
 			// backwards compatibility
 			newValue: sNewValue
