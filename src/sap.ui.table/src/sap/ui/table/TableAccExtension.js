@@ -1125,6 +1125,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 	};
 
+	/*
+	 * Adds the column header / label of the given column to the ariaLabelledBy association (if exists)
+	 * of the given control.
+	 */
+	TableAccExtension.prototype.addColumnHeaderLabel = function(oColumn, oControl) {
+		var oTable = this.getTable();
+		if (!this._accMode || !oControl.getAriaLabelledBy || !oTable) {
+			return;
+		}
+
+		var sLabel = oTable.getColumnHeaderVisible() ? oColumn.getId() : null;
+		if (!sLabel) {
+			var oLabel = oColumn.getAggregation("label");
+			if (oLabel) {
+				sLabel = oLabel.getId();
+			}
+		}
+		var aLabels = oControl.getAriaLabelledBy();
+		if (sLabel && jQuery.inArray(sLabel, aLabels) < 0) {
+			oControl.addAriaLabelledBy(sLabel);
+		}
+	};
+
 	return TableAccExtension;
 
 });
