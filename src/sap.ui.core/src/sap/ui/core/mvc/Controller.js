@@ -219,6 +219,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				throw new Error("Controller name ('sName' parameter) is required");
 			}
 
+			// special meaning for oControllerImpl to define that the Controller
+			// should not be extended by the factory function and this can be
+			// handled later (required for the View to extend asynchronously!)
+			var bExtend = true;
+			if (typeof oControllerImpl === "boolean") {
+				bExtend = !oControllerImpl /* oControllerImpl = true: do not extend */;
+				oControllerImpl = undefined;
+			}
+
 			if (!oControllerImpl) {
 				// controller *instantiation*
 
@@ -230,12 +239,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 				if ( mRegistry[sName] ) {
 					// anonymous controller
-					return new Controller(sName);
+					var oController = new Controller(sName);
+					if (bExtend) {
+						Controller.extendIfRequired(oController, sName);
+					}
+					return oController;
 				} else {
 					var CTypedController = jQuery.sap.getObject(sName);
 					if ( typeof CTypedController === "function" && CTypedController.prototype instanceof Controller ) {
 						// typed controller
-						return new CTypedController();
+						var oController = new CTypedController();
+						if (bExtend) {
+							Controller.extendIfRequired(oController, sName);
+						}
+						return oController;
 					}
 				}
 				throw new Error("Controller " + sName + " couldn't be instantiated");
