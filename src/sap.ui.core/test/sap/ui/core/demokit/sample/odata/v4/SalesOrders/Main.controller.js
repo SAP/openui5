@@ -185,8 +185,7 @@ sap.ui.define([
 			var sMessage,
 				sOrderID,
 				oTable = this.getView().byId("SalesOrders"),
-				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
-				that = this;
+				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
@@ -195,7 +194,6 @@ sap.ui.define([
 				// Use "$auto" or "$direct" just like selected when creating the model
 				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
-						that._setSalesOrderBindingContext();
 						MessageBox.alert("Deleted Sales Order " + sOrderID,
 							{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 					}, function (oError) {
