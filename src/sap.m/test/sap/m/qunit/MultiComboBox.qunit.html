@@ -4419,6 +4419,111 @@
 		oMCB.destroy();
 	});
 
+	QUnit.test("Selecting an item should close the picker and clean the input", function(assert) {
+		var oFakeEvent = new sap.ui.base.Event,
+			oItem = new sap.ui.core.Item({
+				text: "test1"
+			}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					oItem,
+					new sap.ui.core.Item({
+						text: "a"
+					})
+				]
+			}),
+			oFakeInput = {
+				target: {
+					value: "t"
+				},
+				srcControl: oMultiComboBox
+			};
+
+		var oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
+			oFocusinStub = sinon.stub(sap.m.MultiComboBox.prototype, "onfocusin");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oMultiComboBox._sOldValue = "t";
+		oMultiComboBox._bCheckBoxClicked = false;
+		oMultiComboBox.setValue("t");
+		oMultiComboBox.fireChange({ value: "t" });
+		oMultiComboBox.oninput(oFakeInput);
+		sap.ui.getCore().applyChanges();
+
+		oHandleTokensStub.withArgs("listItem").returns(oMultiComboBox.getListItem(oItem));
+		oHandleTokensStub.withArgs("selected").returns(true);
+
+		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox.isOpen(), false, "Picker should close after selection");
+		assert.strictEqual(oFocusinStub.called, true, "Focusin of the MCB should be called");
+		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be empty");
+
+		oFakeInput = null;
+		oMultiComboBox.destroy();
+		oHandleTokensStub.restore();
+		oFocusinStub.restore();
+	});
+
+	QUnit.test("Selecting an item checkbox should not close the picker", function(assert) {
+		var oFakeEvent = new sap.ui.base.Event,
+			oItem = new sap.ui.core.Item({
+				text: "test1"
+			}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					oItem,
+					new sap.ui.core.Item({
+						text: "a"
+					})
+				]
+			}),
+			oFakeInput = {
+				target: {
+					value: "t"
+				},
+				srcControl: oMultiComboBox
+			};
+
+		var oHandleTokensStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
+			oFocusinStub = sinon.stub(sap.m.MultiComboBox.prototype, "onfocusin");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oMultiComboBox._sOldValue = "t";
+		oMultiComboBox._bCheckBoxClicked = true;
+		oMultiComboBox.setValue("t");
+		oMultiComboBox.fireChange({ value: "t" });
+		oMultiComboBox.oninput(oFakeInput);
+		sap.ui.getCore().applyChanges();
+
+		oHandleTokensStub.withArgs("listItem").returns(oMultiComboBox.getListItem(oItem));
+		oHandleTokensStub.withArgs("selected").returns(true);
+
+		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox.isOpen(), true, "Picker should not close after selection");
+		assert.strictEqual(oMultiComboBox.getValue(), "t", "Value should be t");
+
+		oFakeInput = null;
+		oMultiComboBox.destroy();
+		oHandleTokensStub.restore();
+		oFocusinStub.restore();
+	});
+
 	module("Focus handling");
 
 	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", function(assert) {
