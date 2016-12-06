@@ -28,7 +28,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 		customerAction: function() {
 			customSub2ControllerCalled();
-		}
+		},
+
+		isExtended: true
 
 	});
 
