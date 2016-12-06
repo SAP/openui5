@@ -76,11 +76,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			oTargetInfo.focusable = oTargetInfo.focusable || oSourceInfo.focusable;
 			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo, oBundle));
 
-			for (var i = 0; i < oSourceInfo.children.length; i++) {
-				if (oSourceInfo.children[i]) {
-					ACCInfoHelper._flatten(oSourceInfo.children[i], oTargetInfo, oBundle, iLevel + 1);
+			oSourceInfo.children.forEach(function(oChild) {
+				if (!oChild.getAccessibilityInfo || (oChild.getVisible && !oChild.getVisible())) {
+					return;
 				}
-			}
+
+				ACCInfoHelper._flatten(oChild.getAccessibilityInfo(), oTargetInfo, oBundle, iLevel + 1);
+			});
 
 			if (iLevel == 0) {
 				oTargetInfo.description = oTargetInfo._descriptions.join(" ").trim();

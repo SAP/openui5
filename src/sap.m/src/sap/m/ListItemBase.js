@@ -102,23 +102,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-	ListItemBase.getAccessibilityText = function(oControl, oAccInfo) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
+		if (!oControl || !oControl.bOutput) {
+			return "";
+		}
 
-		if (oControl) {
-			if (!oControl.getVisible()) {
-				return oBundle.getText("CONTROL_INVISIBLE");
-			}
-
-			if (!oControl.getAccessibilityInfo) {
-				oAccInfo = this.getDefaultAccessibilityInfo(oControl.getDomRef());
-			} else {
-				oAccInfo = oControl.getAccessibilityInfo();
-			}
-
-			if (!oAccInfo) {
-				return "";
-			}
+		var oAccInfo;
+		if (!oControl.getAccessibilityInfo) {
+			oAccInfo = this.getDefaultAccessibilityInfo(oControl.getDomRef());
+		} else if (oControl.getVisible && oControl.getVisible()) {
+			oAccInfo = oControl.getAccessibilityInfo();
 		}
 
 		oAccInfo = jQuery.extend({
@@ -127,7 +120,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			children: []
 		}, oAccInfo);
 
-		var sText = oAccInfo.type + " " + oAccInfo.description + " ";
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sText = oAccInfo.type + " " + oAccInfo.description + " ";
+
 		if (oAccInfo.enabled === false) {
 			sText += oBundle.getText("CONTROL_DISABLED") + " ";
 		}
@@ -135,11 +130,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sText += oBundle.getText("CONTROL_READONLY") + " ";
 		}
 
-		oAccInfo.children.forEach(function(oChildAccInfo) {
-			sText += ListItemBase.getAccessibilityText(null, oChildAccInfo) + " ";
+		oAccInfo.children.forEach(function(oChild) {
+			sText += ListItemBase.getAccessibilityText(oChild) + " ";
 		});
 
-		return sText.trim();
+		sText = sText.trim();
+		if (bDetectEmpty && !sText) {
+			sText = oBundle.getText("CONTROL_EMPTY");
+		}
+
+		return sText;
 	};
 
 	ListItemBase.getDefaultAccessibilityInfo = function(oDomRef) {
