@@ -2073,17 +2073,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 				if (bSomethingFailed) {
 					// TODO: How to handle error on change set?
+					// E-Tag? Pre-condition failed?
 				} else {
 					// Trigger a refresh to reload the newly updated hierarchy
+					// This is the happy path, and only here a refresh has to be triggered.
 					this._bSupressRefreshAfterChange = false;
 					this._refresh(true);
 				}
+			} else {
+				// batch response does not contain change responses: error case
+				jQuery.sap.log.warning("ODataTreeBindingFlat.submitChanges - success: Batch-request response does not contain change response.");
 			}
 
 		}.bind(this);
 
 		mParameters.error = function (oEvent) {
 			// TODO: How to handle errors?
+			// What kind of errors? Timeout? Authentication failed? General 50x error?
 
 			// call original error handler
 			fnOrgError(oEvent);
