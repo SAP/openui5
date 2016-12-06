@@ -34,7 +34,6 @@ sap.ui.define([
 				return ValueState.Success;
 			}
         }
-
 	};
 
 });
