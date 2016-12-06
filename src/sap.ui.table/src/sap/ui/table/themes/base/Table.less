@@ -715,6 +715,15 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableCtrlCnt {
 	box-sizing: border-box;
+	min-height: @_sapUiTableRowHeight;
+}
+
+.sapUiSizeCozy .sapUiTableCtrlCnt {
+	min-height: @_sapUiTableRowHeightCozy;
+}
+
+.sapUiSizeCondensed .sapUiTableCtrlCnt {
+	min-height: @_sapUiTableRowHeightCondensed;
 }
 
 .sapUiTableCtrl {
