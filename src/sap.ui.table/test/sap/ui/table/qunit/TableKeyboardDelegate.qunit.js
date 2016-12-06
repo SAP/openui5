@@ -2782,6 +2782,72 @@ QUnit.test("Default Test Table - Additional columns", function(assert) {
 	checkFocus(getRowHeader(0), assert);
 });
 
+QUnit.test("Row Actions", function(assert) {
+	initRowActions(oTable, 2, 2);
+
+	var i;
+
+	/* Test column header */
+
+	// SelectAll
+	var oElem = checkFocus(getSelectAll(true), assert);
+
+	// *PAGE_UP* -> SelectAll
+	qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
+	checkFocus(getSelectAll(), assert);
+
+	// *PAGE_DOWN* -> First cell
+	qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+	oElem = checkFocus(getColumnHeader(0), assert);
+
+	// *PAGE_DOWN* -> Scroll right to the last cell
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
+		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+		oElem = checkFocus(getColumnHeader(Math.min(i + 5, iNumberOfCols - 1)), assert);
+	}
+
+	// *PAGE_DOWN* -> Last cell
+	qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+	checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+	/* Test on first content row */
+
+	// Selection cell
+	oElem = checkFocus(getRowHeader(0, true), assert);
+
+	// *PAGE_DOWN* -> First cell
+	qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+	oElem = checkFocus(getCell(0, 0), assert);
+
+	// *PAGE_DOWN* -> Scroll right to the last cell
+	for (i = 0; i < iNumberOfCols - 1; i += 5) {
+		qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+		oElem = checkFocus(getCell(0, Math.min(i + 5, iNumberOfCols - 1)), assert);
+	}
+
+	// *PAGE_DOWN* -> Row Action Cell
+	qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+	oElem = checkFocus(getRowAction(0), assert);
+
+	// *PAGE_DOWN* -> Row Action Cell
+	qutils.triggerKeydown(oElem, Key.Page.DOWN, false, true, false);
+	checkFocus(getRowAction(0), assert);
+
+	// *PAGE_UP* -> last cell
+	qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
+	oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+	// *PAGE_UP* -> Scroll left to the first cell
+	for (i = iNumberOfCols - 1; i >= 0; i -= 5) {
+		qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
+		oElem = checkFocus(getCell(0, Math.max(i - 5, 0)), assert);
+	}
+
+	// *PAGE_UP* -> Selection cell
+	qutils.triggerKeydown(oElem, Key.Page.UP, false, true, false);
+	checkFocus(getRowHeader(0), assert);
+});
+
 QUnit.test("No Row Header", function(assert) {
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
 	sap.ui.getCore().applyChanges();
