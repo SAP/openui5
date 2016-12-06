@@ -67,16 +67,16 @@ sap.ui.define([
 					 * Completes the change by adding change handler specific content
 					 *
 					 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object to be completed
-					 * @param {object} oSpecificChangeInfo with attribute groupLabel, the new group label to be included in the change
+					 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 					 * @public
 					 */
-					completeChangeContent : function(oChangeWrapper, oSpecificChangeInfo) {
-						var oChange = oChangeWrapper.getDefinition();
+					completeChangeContent : function(oChangeWrapper, mSpecificChangeInfo) {
+						var oChangeDefinition = oChangeWrapper.getDefinition();
 						var sChangePropertyName = mRenameSettings.changePropertyName;
 						var sTranslationTextType = mRenameSettings.translationTextType;
 
-						if (this._fnIsProvided(oSpecificChangeInfo.value)) {
-							Base.setTextInChange(oChange, sChangePropertyName, oSpecificChangeInfo.value, sTranslationTextType);
+						if (this._fnIsProvided(mSpecificChangeInfo.value)) {
+							Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
 						} else {
 							throw new Error("oSpecificChangeInfo.value attribute required");
 						}
