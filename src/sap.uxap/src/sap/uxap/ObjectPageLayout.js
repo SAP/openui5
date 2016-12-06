@@ -840,10 +840,11 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._executeAdjustLayout = function (bNeedLazyLoading) { // this is an expensive function and is called often, so should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
 
-		this._updateScreenHeightSectionBasesAndSpacer();
-		if (bNeedLazyLoading) {
+		var bSuccess = this._updateScreenHeightSectionBasesAndSpacer();
+		if (bSuccess && bNeedLazyLoading) {
 			this._oLazyLoading.doLazyLoading();
 		}
+		return bSuccess;
 	};
 
 
