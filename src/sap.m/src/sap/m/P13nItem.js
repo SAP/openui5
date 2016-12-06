@@ -151,6 +151,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines target of a link.
+				 */
+				target: {
+					type: "string",
+					defaultValue: null
+				},
+
+				/**
 				 * Defines press handler of a link.
 				 *
 				 * @since 1.46.0
