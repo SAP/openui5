@@ -87,7 +87,11 @@ sap.ui.define([
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {
-			this.getView().byId("CreateSalesOrderDialog").close();
+			var oView = this.getView();
+
+			oView.byId("CreateSalesOrderDialog").close();
+			// move the focus to the row of the newly created sales order
+			oView.byId("SalesOrders").getItems()[0].focus();
 		},
 
 		onCreateSalesOrder : function (oEvent) {
