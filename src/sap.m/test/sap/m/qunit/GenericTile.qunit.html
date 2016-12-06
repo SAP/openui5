@@ -321,24 +321,32 @@
 		}
 	});
 
-	QUnit.test("Action scope in LineMode/compact", function(assert) {
+	QUnit.test("Action scope in normal mode", function(assert) {
 		//Arrange
-		this.oGenericTile.addStyleClass("sapUiSizeCompact");
-		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
-		sinon.spy(sap.m.GenericTileLineModeRenderer, "_renderActionsScope");
+
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sap.m.GenericTileLineModeRenderer._renderActionsScope.callCount, 1, "Function _renderActionsScope has been called once");
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+	});
+
+	QUnit.test("Action scope in LineMode/compact", function(assert) {
+		//Arrange
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
 		assert.ok(this.oGenericTile.$("actions").length > 0, "Action container has been rendered");
 		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
 		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
-
-		//Cleanup
-		sap.m.GenericTileLineModeRenderer._renderActionsScope.restore();
 	});
 
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {

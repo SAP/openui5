@@ -50,6 +50,7 @@
 		value : "17Ñç",
 		frameType : "OneByOne",
 		state : sap.m.LoadState.Loaded,
+		scope : sap.m.GenericTileScope.Display,
 		valueColor : sap.m.ValueColor.Error,
 		indicator : sap.m.DeviationIndicator.None,
 		title : "US Profit Margin",
@@ -124,7 +125,7 @@
 	};
 
 	var fnPress = function(oEvent) {
-		sap.m.MessageToast.show("The Generic Tile is pressed.");
+		sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
 	};
 
 	var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);
@@ -151,6 +152,7 @@
 		header : "{/header}",
 		tooltip : "{/tooltip}",
 		state : "{/state}",
+		scope : "{/scope}",
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
 		press : fnPress,
@@ -182,6 +184,7 @@
 		frameType : "TwoByOne",
 		header : "{/header}",
 		state : "{/state}",
+		scope : "{/scope}",
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
 		press : fnPress,
@@ -375,6 +378,22 @@
 		})]
 	});
 
+	var oScopeLabel = new sap.m.Label({
+		text : "Scope",
+		labelFor : "scope"
+	});
+
+	var oScopeSelect = new sap.m.Select("scope", {
+		items : [new sap.ui.core.Item({
+			key : "Display",
+			text : sap.m.GenericTileScope.Display
+		}), new sap.ui.core.Item({
+			key : "Actions",
+			text : sap.m.GenericTileScope.Actions
+		})],
+		selectedKey: "{/scope}"
+	});
+
 	var oPressLbl = new sap.m.Label({
 		text : "Press Action",
 		labelFor : "press-action"
@@ -455,7 +474,7 @@
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
 		}), oModeLabel, oModeSelect, oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
-				oUnitInput, oFailedLabel, oFailedInput, oFtLbl, oFtSlct, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oPressLbl, 
+				oUnitInput, oFailedLabel, oFailedInput, oFtLbl, oFtSlct, oPictureLbl, oPictureSlct,oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oScopeLabel, oScopeSelect, oPressLbl,
 				oPressSwtch, oIndicatorLabel, oIndicatorSelect, oSizeLbl, oSizeBtn]
 	});
 

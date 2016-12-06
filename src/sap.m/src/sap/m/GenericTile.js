@@ -904,7 +904,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.m.GenericTile} control current GenericTile instance
 	 */
 	GenericTile.prototype._checkFooter = function(tileContent, control) {
-		if (control.getProperty("state") === library.LoadState.Failed) {
+		if (control.getProperty("state") === library.LoadState.Failed || this.getScope() === library.GenericTileScope.Actions) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
