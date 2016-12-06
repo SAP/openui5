@@ -362,6 +362,57 @@
 		assert.equal(this.oGenericTile._oRemoveButton._bExcludeFromTabChain, true, "Remove button is excluded from tab chain on rendering.");
 	});
 
+	QUnit.test("Action scope in disabled LineMode GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Disabled");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("actions").length === 0, "Action container has not been rendered");
+		assert.ok(this.oGenericTile.$("action-more").length === 0, "More icon has not been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length === 0, "Remove icon has not been rendered");
+	});
+
+	QUnit.test("Action scope in failed LineMode GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Failed");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("actions").length > 0, "Action container has been rendered");
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+		assert.ok(this.oGenericTile.$("warn-icon").length > 0, "Failed icon has been rendered");
+	});
+
+	QUnit.test("Action scope in disabled regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Disabled");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("action-more").length === 0, "More icon has not been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length === 0, "Remove button has not been rendered");
+	});
+
+	QUnit.test("Action scope in failed regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Failed");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove button has been rendered");
+		assert.ok(this.oGenericTile.$("failed-icon").length > 0, "Failed icon has been rendered");
+		assert.ok(this.oGenericTile.$("failed-text").length === 0, "Failed text has not been rendered");
+	});
+
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);

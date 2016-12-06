@@ -172,6 +172,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._initScopeContent = function() {
 		switch (this.getScope()) {
 			case library.GenericTileScope.Actions:
+				if (this.getState() === library.LoadState.Disabled) {
+					break;
+				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
 					id: this.getId() + "-action-more",
 					src: "sap-icon://overflow"
@@ -231,7 +234,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		this._initScopeContent();
-
 		this._generateFailedText();
 
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);
@@ -911,7 +913,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.m.GenericTile} control current GenericTile instance
 	 */
 	GenericTile.prototype._checkFooter = function(tileContent, control) {
-		if (control.getProperty("state") === library.LoadState.Failed || this.getScope() === library.GenericTileScope.Actions) {
+		var sState = control.getState();
+		if (sState === library.LoadState.Failed || this.getScope() === library.GenericTileScope.Actions && sState !== library.LoadState.Disabled) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);

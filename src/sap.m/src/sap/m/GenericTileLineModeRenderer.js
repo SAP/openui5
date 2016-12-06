@@ -163,16 +163,18 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 	};
 
 	GenericTileLineModeRenderer._renderActionsScope = function(oRm, oControl) {
-		oRm.write("<span");
-		oRm.writeAttribute("id", oControl.getId() + "-actions");
-		oRm.addClass("sapMGTActionsContainer");
-		oRm.writeClasses();
-		oRm.write(">");
+		if (oControl.getState() !== LoadState.Disabled) {
+			oRm.write("<span");
+			oRm.writeAttribute("id", oControl.getId() + "-actions");
+			oRm.addClass("sapMGTActionsContainer");
+			oRm.writeClasses();
+			oRm.write(">");
 
-		oRm.renderControl(oControl._oMoreIcon);
-		oRm.renderControl(oControl._oRemoveButton);
+			oRm.renderControl(oControl._oMoreIcon);
+			oRm.renderControl(oControl._oRemoveButton);
 
-		oRm.write("</span>");
+			oRm.write("</span>");
+		}
 	};
 
 	/**
