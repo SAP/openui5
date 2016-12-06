@@ -4,8 +4,6 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	var mode = "";
-
 	return Controller.extend("flexiblecolumnlayout.FlexibleColumnLayout", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
@@ -17,27 +15,32 @@ sap.ui.define([
 			var sRouteName = oEvent.getParameter("name");
 			var sLayout = oEvent.getParameters().arguments.layout;
 
-			// Update the layout
+			// Update the layout of the FlexibleColumnLayout
 			oModel.setProperty("/layout", sLayout);
+
+			this._updateUIElements();
 
 			// Save the current route name
 			this.currentRouteName = sRouteName;
 		},
 
 		onStateChanged: function (oEvent) {
-			var oModel = this.getOwnerComponent().getModel();
-
 			var bIsNavigationArrow = oEvent.getParameter("isNavigationArrow"),
-				oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
+				sLayout = oEvent.getParameter("layout");
 
-			// Update the action buttons visibility
-			oModel.setData(oUIState);
+			this._updateUIElements();
 
-			// Replace the URL if a navigation arrow was used
+			// Replace the URL with the new layout if a navigation arrow was used
 			if (bIsNavigationArrow) {
-				this.oRouter.navTo(this.currentRouteName, {layout: oUIState.layout}, true);
+				this.oRouter.navTo(this.currentRouteName, {layout: sLayout}, true);
 			}
+		},
 
+		// Update the close/fullscreen buttons visibility
+		_updateUIElements: function () {
+			var oModel = this.getOwnerComponent().getModel();
+			var oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
+			oModel.setData(oUIState);
 		}
 	});
 }, true);

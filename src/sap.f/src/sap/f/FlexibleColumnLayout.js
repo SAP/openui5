@@ -6,11 +6,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
+	"./LayoutType",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, ResizeHandler, Control, Button, NavContainer) {
+], function (jQuery, library, LT, ResizeHandler, Control, Button, NavContainer) {
 	"use strict";
 
 
@@ -111,10 +112,12 @@ sap.ui.define([
 			events: {
 				/**
 				 * Fired when there is a change in the <code>layout</code> property or in the maximum number of columns that can be displayed at once.
-				 *
+				 * <br/></br>
 				 * <ul>The interactions that may lead to a state change are:
-				 *  <li>the property <code>layout</code> was changed - directly via the control's <code>setLayout</code> method or indirectly by the user clicking a navigation arrow</li>
+				 *  <li>the property <code>layout</code> was changed indirectly by the user clicking a navigation arrow</li>
 				 *  <li>the user resized the browser beyond a breakpoint, thus changing the maximum number of columns that can be displayed at once.</li></ul>
+				 * <br/><br/>
+				 * <b>Note: </b>The event is suppressed while the control has zero width and will be fired the first time it gets a non-zero width
 				 *
 				 */
 				stateChange: {
@@ -643,7 +646,7 @@ sap.ui.define([
 
 
 
-	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout, bIsNavigationArrow){
+	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout){
 		sNewLayout = this.validateProperty("layout", sNewLayout);
 
 		var sCurrentLayout = this.getLayout();
@@ -661,7 +664,6 @@ sap.ui.define([
 
 		this._resizeColumns();
 		this._hideShowArrows();
-		this._fireStateChange(!!bIsNavigationArrow, false);
 
 		return vResult;
 	};
@@ -860,6 +862,29 @@ sap.ui.define([
 		return parseInt(sSize, 10);
 	};
 
+
+
+	/**
+	 * Returns the maximum number of columns that can be displayed at once based on the control size
+	 * @returns {number}
+	 * @public
+	 */
+	FlexibleColumnLayout.prototype.getMaxColumnsCount = function () {
+		if (this._iControlWidth >= FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
+			return 3;
+		}
+
+		if (this._iControlWidth >= FlexibleColumnLayout.TABLET_BREAKPOINT && this._iControlWidth < FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
+			return 2;
+		}
+
+		if (this._iControlWidth > 0) {
+			return 1;
+		}
+
+		return 0;
+	};
+
 	FlexibleColumnLayout.prototype._onResize = function (oEvent) {
 		var iNewWidth = oEvent.size.width,
 			iOldMaxColumnsCount,
@@ -870,11 +895,11 @@ sap.ui.define([
 			return;
 		}
 
-		iOldMaxColumnsCount = this._getMaxColumnsCount();
+		iOldMaxColumnsCount = this.getMaxColumnsCount();
 
 		this._iControlWidth = oEvent.size.width;
 
-		iMaxColumnsCount = this._getMaxColumnsCount();
+		iMaxColumnsCount = this.getMaxColumnsCount();
 
 		// Always resize the columns when the browser is resized
 		this._resizeColumns();
@@ -894,35 +919,35 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
 
 		var sLayout = this.getLayout(),
-			oMap;
-
-		oMap = {
-			TwoColumnsBeginExpanded: {
-				"left": sap.f.LayoutType.TwoColumnsMidExpanded
-			},
-			TwoColumnsMidExpanded: {
-				"right": sap.f.LayoutType.TwoColumnsBeginExpanded
-			},
-			ThreeColumnsMidExpanded: {
-				"left": sap.f.LayoutType.ThreeColumnsEndExpanded,
-				"right": sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden
-			},
-			ThreeColumnsEndExpanded: {
-				"right": sap.f.LayoutType.ThreeColumnsMidExpanded
-			},
-			ThreeColumnsMidExpandedEndHidden: {
-				"left": sap.f.LayoutType.ThreeColumnsMidExpanded,
-				"right": sap.f.LayoutType.ThreeColumnsBeginExpandedEndHidden
-			},
-			ThreeColumnsBeginExpandedEndHidden: {
-				"left": sap.f.LayoutType.ThreeColumnsMidExpandedEndHidden
-			}
-		};
+			oMap = {
+				TwoColumnsBeginExpanded: {
+					"left": LT.TwoColumnsMidExpanded
+				},
+				TwoColumnsMidExpanded: {
+					"right": LT.TwoColumnsBeginExpanded
+				},
+				ThreeColumnsMidExpanded: {
+					"left": LT.ThreeColumnsEndExpanded,
+					"right": LT.ThreeColumnsMidExpandedEndHidden
+				},
+				ThreeColumnsEndExpanded: {
+					"right": LT.ThreeColumnsMidExpanded
+				},
+				ThreeColumnsMidExpandedEndHidden: {
+					"left": LT.ThreeColumnsMidExpanded,
+					"right": LT.ThreeColumnsBeginExpandedEndHidden
+				},
+				ThreeColumnsBeginExpandedEndHidden: {
+					"left": LT.ThreeColumnsMidExpandedEndHidden
+				}
+			};
 
 		jQuery.sap.assert(typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined", "An invalid layout was used for determining arrow behavior");
-		sLayout = typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined" ? oMap[sLayout][sShiftDirection] : sap.f.LayoutType.OneColumn;
+		sLayout = typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined" ? oMap[sLayout][sShiftDirection] : LT.OneColumn;
 
-		this.setLayout(sLayout, true);
+		this.setLayout(sLayout);
+
+		this._fireStateChange(true, false);
 	};
 
 	/**
@@ -939,12 +964,12 @@ sap.ui.define([
 			return;
 		}
 
-		oMap.TwoColumnsBeginExpanded =  ["beginBack"];
-		oMap.TwoColumnsMidExpanded =  ["midForward"];
-		oMap.ThreeColumnsMidExpanded = ["midForward", "midBack"];
-		oMap.ThreeColumnsEndExpanded =  ["endForward"];
-		oMap.ThreeColumnsMidExpandedEndHidden =  ["midForward", "midBack"];
-		oMap.ThreeColumnsBeginExpandedEndHidden =  ["beginBack"];
+		oMap[LT.TwoColumnsBeginExpanded] =  ["beginBack"];
+		oMap[LT.TwoColumnsMidExpanded] =  ["midForward"];
+		oMap[LT.ThreeColumnsMidExpanded] = ["midForward", "midBack"];
+		oMap[LT.ThreeColumnsEndExpanded] =  ["endForward"];
+		oMap[LT.ThreeColumnsMidExpandedEndHidden] =  ["midForward", "midBack"];
+		oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  ["beginBack"];
 
 		if (typeof oMap[sLayout] === "object") {
 			aNeededArrows = oMap[sLayout];
@@ -968,11 +993,17 @@ sap.ui.define([
 
 
 	FlexibleColumnLayout.prototype._fireStateChange = function (bIsNavigationArrow, bIsResize) {
+
+		// The event should not be fired if the control has zero width as all relevant layout calculations are size-based
+		if (this._iControlWidth === 0) {
+			return;
+		}
+
 		this.fireStateChange({
 			isNavigationArrow: bIsNavigationArrow,
 			isResize: bIsResize,
 			layout: this.getLayout(),
-			maxColumnsCount: this._getMaxColumnsCount()
+			maxColumnsCount: this.getMaxColumnsCount()
 		});
 	};
 
@@ -1429,25 +1460,6 @@ sap.ui.define([
 		return this._oLayoutHistory;
 	};
 
-
-	/**
-	 * Returns the maximum number of columns that can be displayed at once based on the control size and settings
-	 * @returns {number}
-	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._getMaxColumnsCount = function () {
-		if (this._iControlWidth >= FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
-			return 3;
-		}
-
-		if (this._iControlWidth >= FlexibleColumnLayout.TABLET_BREAKPOINT && this._iControlWidth < FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
-			return 2;
-		}
-
-		return 1;
-	};
-
 	/**
 	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
 	 * @param sLayout - the layout
@@ -1457,33 +1469,35 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray) {
-		var iMaxColumnsCount = this._getMaxColumnsCount(),
-			oMap,
+		var iMaxColumnsCount = this.getMaxColumnsCount(),
+			oMap = {},
 			vResult;
 
-		oMap = {
-			OneColumn: "100/0/0",
-			MidColumnFullScreen: "0/100/0",
-			EndColumnFullScreen: "0/0/100"
-		};
+		// Layouts with the same distribution for all cases
+		oMap[LT.OneColumn] = "100/0/0";
+		oMap[LT.MidColumnFullScreen] = "0/100/0";
+		oMap[LT.EndColumnFullScreen] = "0/0/100";
+
 
 		if (iMaxColumnsCount === 1) {
 
-			oMap.TwoColumnsBeginExpanded = "0/100/0";
-			oMap.TwoColumnsMidExpanded =  "0/100/0";
-			oMap.ThreeColumnsMidExpanded =  "0/0/100";
-			oMap.ThreeColumnsEndExpanded =  "0/0/100";
-			oMap.ThreeColumnsMidExpandedEndHidden =  "0/0/100";
-			oMap.ThreeColumnsBeginExpandedEndHidden =  "0/0/100";
+			// On 1 column, all have fullscreen mapping
+			oMap[LT.TwoColumnsBeginExpanded] = "0/100/0";
+			oMap[LT.TwoColumnsMidExpanded] =  "0/100/0";
+			oMap[LT.ThreeColumnsMidExpanded] =  "0/0/100";
+			oMap[LT.ThreeColumnsEndExpanded] =  "0/0/100";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] =  "0/0/100";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  "0/0/100";
 
 		} else {
 
-			oMap.TwoColumnsBeginExpanded = "67/33/0";
-			oMap.TwoColumnsMidExpanded =  "33/67/0";
-			oMap.ThreeColumnsMidExpanded =  iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
-			oMap.ThreeColumnsEndExpanded =  iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
-			oMap.ThreeColumnsMidExpandedEndHidden =  "33/67/0";
-			oMap.ThreeColumnsBeginExpandedEndHidden =  "67/33/0";
+			// On 2 and 3 columns, the only difference is in the modes where all 3 columns are visible
+			oMap[LT.TwoColumnsBeginExpanded] = "67/33/0";
+			oMap[LT.TwoColumnsMidExpanded] =  "33/67/0";
+			oMap[LT.ThreeColumnsMidExpanded] =  iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
+			oMap[LT.ThreeColumnsEndExpanded] =  iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] =  "33/67/0";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  "67/33/0";
 		}
 
 		vResult = oMap[sLayout];
