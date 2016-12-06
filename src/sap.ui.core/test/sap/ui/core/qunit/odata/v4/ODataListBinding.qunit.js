@@ -1584,6 +1584,9 @@ sap.ui.require([
 
 		oBinding.deregisterChange("foo", oListener, 1);
 	});
+	// TODO deregisterChange from a property binding may arrive after the binding changed its cache
+	//      (or activated a cache proxy) when a relative binding with cache changed its parent
+	//      context. Find a better way to deal with these registrations.
 
 	//*********************************************************************************************
 	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
