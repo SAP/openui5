@@ -2077,7 +2077,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				} else {
 					// Trigger a refresh to reload the newly updated hierarchy
 					// This is the happy path, and only here a refresh has to be triggered.
-					this._bSupressRefreshAfterChange = false;
 					this._refresh(true);
 				}
 			} else {
@@ -2096,11 +2095,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		// built the actual requests for the change-set
+		this.oModel.setRefreshAfterChange(false);
 		this._generateSubmitData();
-
-		// suppress refresh after change
-		// TODO: Remove this work around once the ODataModel supports a sync. setting of the refreshAfterChange property
-		this._bSupressRefreshAfterChange = true;
+		this.oModel.setRefreshAfterChange(true);
 
 		// relay submit call to the model
 		this.oModel.submitChanges(mParameters);
