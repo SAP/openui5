@@ -101,7 +101,11 @@
 			<headerToolbar>
 				<Toolbar>
 					<content>
-						<Title text="Sales Orders" titleStyle="H2"/>
+						<Title text="Sales Orders" titleStyle="H2">
+							<layoutData>
+								<ToolbarLayoutData shrinkable="false" />
+							</layoutData>
+						</Title>
 						<Button enabled="{= !${ui>/bCreateSalesOrderPending} }"
 							icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"/>
 						<Button
@@ -125,7 +129,11 @@
 							placeholder="Filter by gross amount greater than"
 							value="{path : 'ui>/filterValue',
 								type:'sap.ui.model.odata.type.Decimal'}"
-							width="50%" search="onFilter"/>
+							visible="{ui>/bRealOData}" width="50%" search="onFilter">
+							<layoutData>
+								<ToolbarLayoutData shrinkable="false" />
+							</layoutData>
+						</SearchField>
 					</content>
 				</Toolbar>
 			</headerToolbar>
