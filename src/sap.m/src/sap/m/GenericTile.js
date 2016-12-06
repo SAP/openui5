@@ -556,19 +556,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @protected
 	 */
 	GenericTile.prototype.getBoundingRects = function() {
-		var oPosition = this.$().position();
+		var oPosition = this.$().offset(); //get the tile's position relative to the document (for drag and drop)
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isCompact()) {
 			this._getStyleData();
-			var aRects = [];
+			var aRects = [],
+				$StyleHelper,
+				oOffset;
 
-			for (var i = 0; i < this._oStyleData.lines.length; i++) {
-				aRects[i] = this._oStyleData.lines[i];
+			this.$().find(".sapMGTLineStyleHelper").each(function() {
+				$StyleHelper = jQuery(this);
+				oOffset = $StyleHelper.offset();
 
-				if (this._oStyleData.rtl) {
-					aRects[i].offset.x = this._oStyleData.availableWidth - aRects[i].width; //turn x-coordinate back around
-				}
-				aRects[i].offset.y += oPosition.top; //add style helper top to make coordinate relative to tile, instead of style helper
-			}
+				aRects.push({
+					offset: {
+						x: oOffset.left,
+						y: oOffset.top
+					},
+					width: $StyleHelper.width(),
+					height: $StyleHelper.height()
+				});
+			});
 			return aRects;
 		} else {
 			return [ {

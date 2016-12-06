@@ -905,8 +905,8 @@
 
 		//Assert
 		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
-		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
-		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.x, "number", "The field 'offset.x' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.y, "number", "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 	});
@@ -922,41 +922,21 @@
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
+
+		this.oGenericTile._getStyleData();
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.call(this.oGenericTile);
+
 		var aBoundingRects = this.oGenericTile.getBoundingRects();
 
 		//Assert
 		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
-		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
-		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.x, "number", "The field 'offset.x' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.y, "number", "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 
 		//Cleanup
 		oStubGetPixelValue.restore();
-	});
-
-	QUnit.test("Correct offset in RTL", function() {
-		//Arrange
-		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
-		this.oGenericTile._oStyleData = {
-			availableWidth: 1000,
-			rtl: true,
-			lines: [ {
-				offset: {
-					x: 100,
-					y: 100
-				},
-				width: 50
-			} ]
-		};
-		sinon.stub(this.oGenericTile, "_getStyleData");
-
-		//Act
-		var aBoundingRects = this.oGenericTile.getBoundingRects();
-
-		//Assert
-		assert.equal(aBoundingRects.length, 1, "One line has been returned.");
-		assert.equal(aBoundingRects[0].offset.x, 950, "Horizontal position has been converted from right to left.");
 	});
 
 	QUnit.module("Rendering tests for failing state", {
