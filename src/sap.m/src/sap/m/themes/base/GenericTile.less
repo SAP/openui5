@@ -87,12 +87,29 @@
 }
 
 .sapMGT.sapMGTScopeActions {
+
+	.sapMTileCntContent {
+		position: relative;
+
+		&:after {
+			position: absolute;
+			display: block;
+			content: "";
+			top: 0rem;
+			bottom: 0rem;
+			left: 0rem;
+			right: 0rem;
+			background-color: fade(@sapUiTileBackground, 70);
+		}
+	}
+
 	.sapMGTMoreIcon {
 		width: 1rem;
 		height: 1rem;
 		position: absolute;
 		right: 0.75rem;
 		bottom: 0.563rem;
+		z-index: 1;
 	}
 
 	.sapMGTRemoveButton {
