@@ -18,6 +18,8 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
 
 			function loadBundle(assert, mParams, fnDoWhenLoaded) {
@@ -96,17 +98,35 @@
 
 			QUnit.module(".hdbtextbundle files");
 
-			/*test("access and parsing", function() {
+			QUnit.test("access and parsing", function(assert) {
+				// redirect access to URL + Accept header to files with language specific texts
+				this.stub(jQuery.sap, "loadResource", function(sResourceName, mOptions) {
+					if ( typeof sResourceName === 'object' ) {
+						mOptions = sResourceName;
+						sResourceName = undefined;
+					}
+					if ( mOptions && mOptions.url === 'testdata/resources/bundle.hdbtextbundle' ) {
+						var sLocale = mOptions.headers &&  mOptions.headers['Accept-Language'];
+						var sResource = 'testdata/resources/bundle' + (sLocale ? "_" + sLocale.replace('-','_') : '') + '.hdbtextbundle';
+						var sResult;
+						jQuery.ajax({
+							url: sResource,
+							dataType: 'text',
+							async: false,
+							success: function(data) {
+								sResult = data;
+							}
+						});
+						return sResult;
+					}
+					throw new Error();
+				});
 				var oProps = jQuery.sap.resources({url : "testdata/resources/bundle.hdbtextbundle", locale : "zh_HK"});
-				var sValue = oProps.getText("transkey5");
-				equal(sValue, "Test Text 1 zh_HK", "transkey5 accessed");
-				sValue = oProps.getText("transkey4");
-				equal(sValue, "Test Text 1 zh_TW", "transkey4 accessed");
-				sValue = oProps.getText("transkey2");
-				equal(sValue, "Test Text 2 en", "transkey2 accessed");
-				sValue = oProps.getText("transkey1");
-				equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
-			});*/
+				assert.equal(oProps.getText("transkey5"), "Test Text 1 zh_HK", "transkey5 accessed");
+				assert.equal(oProps.getText("transkey4"), "Test Text 1 zh_TW", "transkey4 accessed");
+				assert.equal(oProps.getText("transkey2"), "Test Text 2 en", "transkey2 accessed");
+				assert.equal(oProps.getText("transkey1"), "Test Text 1 Fallback", "transkey1 accessed");
+			}); 
 
 			QUnit.test("fallback for invalid locales (sync)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : "0815"}, testFallbackForInvalidLocales);
