@@ -3,9 +3,12 @@
  */
 
 // Provides helper sap.ui.table.TablePointerExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', 'sap/ui/core/Popup', 'jquery.sap.dom'],
-	function(jQuery, TableExtension, TableUtils, Device, Popup, jQueryDom) {
+sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', 'sap/ui/core/Popup', 'jquery.sap.dom'],
+	function(library, jQuery, TableExtension, TableUtils, Device, Popup, jQueryDom) {
 	"use strict";
+
+	// shortcuts
+	var SelectionMode = library.SelectionMode;
 
 	var KNOWNCLICKABLECONTROLS = ["sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt", "sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer"];
 
@@ -27,8 +30,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			return {x: oPos.pageX, y: oPos.pageY};
 		},
 
+		/*
+		 * Returns true, when the given click event should be skipped because it happened on a
+		 * interactive control inside a table cell.
+		 */
 		_skipClick : function(oEvent, $Target, oCellInfo) {
-			if (oCellInfo.type != TableUtils.CELLTYPES.DATACELL) {
+			if (oCellInfo.type != TableUtils.CELLTYPES.DATACELL && oCellInfo.type != TableUtils.CELLTYPES.ROWACTION) {
 				return false;
 			}
 
@@ -51,6 +58,71 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			}
 
 			return false;
+		},
+
+		/*
+		 * Changes the selection based on the given click event on the given row selector, data cell or row action cell.
+		 */
+		_handleClickSelection : function(oEvent, $Cell, oTable) {
+
+			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
+
+				// in case of IE and SHIFT we clear the text selection
+				if (!!Device.browser.internet_explorer && oEvent.shiftKey) {
+					oTable._clearTextSelection();
+				}
+
+				var oSelMode = oTable.getSelectionMode();
+
+				if (oSelMode === SelectionMode.Single) {
+					if (!oTable.isIndexSelected(iRowIndex)) {
+						oTable.setSelectedIndex(iRowIndex);
+					} else {
+						oTable.clearSelection();
+					}
+				} else {
+					var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
+
+					// in case of multi toggle behavior a click on the row selection
+					// header adds or removes the selected row and the previous selection
+					// will not be removed
+					if (oSelMode === SelectionMode.MultiToggle) {
+						bCtrl = true;
+					}
+
+					if (oEvent.shiftKey) {
+						// If no row is selected getSelectedIndex returns -1 - then we simply
+						// select the clicked row:
+						var iSelectedIndex = oTable.getSelectedIndex();
+						if (iSelectedIndex >= 0) {
+							oTable.addSelectionInterval(iSelectedIndex, iRowIndex);
+						} else {
+							oTable.setSelectedIndex(iRowIndex);
+						}
+					} else {
+						if (!oTable.isIndexSelected(iRowIndex)) {
+							if (bCtrl) {
+								oTable.addSelectionInterval(iRowIndex, iRowIndex);
+							} else {
+								oTable.setSelectedIndex(iRowIndex);
+							}
+						} else {
+							if (bCtrl) {
+								oTable.removeSelectionInterval(iRowIndex, iRowIndex);
+							} else {
+								if (oTable._getSelectedIndicesCount() === 1) {
+									oTable.clearSelection();
+								} else {
+									oTable.setSelectedIndex(iRowIndex);
+								}
+							}
+						}
+					}
+				}
+
+				return true;
+			});
+
 		}
 
 	};
@@ -768,7 +840,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-					this._onSelect(oEvent);
+					if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+						this._toggleSelectAll();
+					} else {
+						ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
+					}
 				} else {
 					oEvent.preventDefault();
 				}

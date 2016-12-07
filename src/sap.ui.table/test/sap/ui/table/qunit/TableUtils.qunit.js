@@ -266,6 +266,11 @@ QUnit.test("getNonEmptyVisibleRowCount", function(assert) {
 
 
 QUnit.test("toggleRowSelection", function(assert) {
+	var iCallbackIndex = -1;
+	var fnSelectionCallback = function(iIndex) {
+		iCallbackIndex = iIndex;
+	};
+
 	function test(oRowIndicator) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
@@ -289,6 +294,11 @@ QUnit.test("toggleRowSelection", function(assert) {
 		assert.ok(oTable.isIndexSelected(iRowIndex), "Row selected");
 		TableUtils.toggleRowSelection(oTable, oRowIndicator, false); // Deselect
 		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
+
+		iCallbackIndex = -1;
+		TableUtils.toggleRowSelection(oTable, oRowIndicator, null, fnSelectionCallback); // Callback
+		assert.strictEqual(iCallbackIndex, iRowIndex, "Callback called");
+		assert.ok(!oTable.isIndexSelected(iRowIndex), "Row not selected");
 	}
 
 	// Test by passing a cell as the row indicator.
@@ -305,6 +315,11 @@ QUnit.test("toggleRowSelection", function(assert) {
 	TableUtils.toggleRowSelection(oTable, oElem, true); // Select
 	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
 	TableUtils.toggleRowSelection(oTable, oElem, false); // Deselect
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+
+	iCallbackIndex = -1;
+	TableUtils.toggleRowSelection(oTable, oElem, null, fnSelectionCallback); // Callback
+	assert.strictEqual(iCallbackIndex, -1, "Callback not called");
 	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
 
 	oTable.addSelectionInterval(0, 0);

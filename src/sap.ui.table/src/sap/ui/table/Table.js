@@ -2648,6 +2648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var sId = $cell.attr("id");
 		var aMatches = /.*-row(\d*)-col(\d*)/i.exec(sId);
 		var bCancel = false;
+		// TBD: cellClick event is currently not fired on row action cells.
+		// If this should be enabled in future we need to consider a different set of event parameters.
 		if (aMatches) {
 			var iRow = aMatches[1];
 			var iCol = aMatches[2];
@@ -2685,61 +2687,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return TableUtils.getFocusedItemInfo(this).domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
 	};
 
-	// =============================================================================
-	// SELECTION HANDLING
-	// =============================================================================
-
-	/**
-	 * Handles the row selection and the column header menu.
-	 * @private
-	 */
-	Table.prototype._onSelect = function(oEvent) {
-
-		// trigger column menu
-		var $target = jQuery(oEvent.target);
-
-		// determine modifier keys
-		var bShift = oEvent.shiftKey;
-		var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
-
-		// row header?
-		var $row = $target.closest(".sapUiTableRowHdr");
-		if ($row.length === 1) {
-			var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-			this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
-			return;
-		}
-
-		// table control? (only if the selection behavior is set to row)
-		var oClosestTd, $ClosestTd;
-		if (oEvent.target) {
-			$ClosestTd = jQuery(oEvent.target).closest(".sapUiTableCtrl > tbody > tr > td");
-			if ($ClosestTd.length > 0) {
-				oClosestTd = $ClosestTd[0];
-			}
-		}
-
-		if (oClosestTd && ($ClosestTd.hasClass("sapUiTableTd") || $ClosestTd.hasClass("sapUiTableTDDummy"))
-			&& TableUtils.isRowSelectionAllowed(this)) {
-			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
-			if ($row.length === 1) {
-				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-				this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
-				return;
-			}
-		}
-
-		// select all?
-		if (jQuery.sap.containsOrEquals(this.getDomRef("selall"), oEvent.target)) {
-			this._toggleSelectAll();
-			return;
-		}
-
-	};
-
 
 	// =============================================================================
-	// ROW EVENT HANDLING
+	// ROW SELECTION
 	// =============================================================================
 
 	/**
@@ -2751,86 +2701,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._isRowSelectable = function(iRowIndex) {
 		return iRowIndex >= 0 && iRowIndex < this._getRowCount();
 	};
-
-	/**
-	 * Handles the row selection (depending on the mode).
-	 * @private
-	 */
-	Table.prototype._onRowSelect = function(iRowIndex, bShift, bCtrl) {
-
-		// in case of IE and SHIFT we clear the text selection
-		if (!!Device.browser.internet_explorer && bShift) {
-			this._clearTextSelection();
-		}
-
-		// is the table bound?
-		var oBinding = this.getBinding("rows");
-		if (!oBinding) {
-			return;
-		}
-
-		//var iRowIndex = Math.min(Math.max(0, iRowIndex), this.getBinding("rows").getLength() - 1);
-		if (iRowIndex < 0 || iRowIndex >= (oBinding.getLength() || 0)) {
-			return;
-		}
-
-		// Make sure that group headers, which represents a tree node in AnalyticalTable, are not selectable.
-		if (!this._isRowSelectable(iRowIndex)) {
-			return;
-		}
-
-		this._iSourceRowIndex = iRowIndex;
-
-		var oSelMode = this.getSelectionMode();
-		if (oSelMode !== SelectionMode.None) {
-			if (oSelMode === SelectionMode.Single) {
-				if (!this.isIndexSelected(iRowIndex)) {
-					this.setSelectedIndex(iRowIndex);
-				} else {
-					this.clearSelection();
-				}
-			} else {
-				// in case of multi toggle behavior a click on the row selection
-				// header adds or removes the selected row and the previous seleciton
-				// will not be removed
-				if (oSelMode === SelectionMode.MultiToggle) {
-					bCtrl = true;
-				}
-				if (bShift) {
-					// If no row is selected getSelectedIndex returns -1 - then we simply
-					// select the clicked row:
-					var iSelectedIndex = this.getSelectedIndex();
-					if (iSelectedIndex >= 0) {
-						this.addSelectionInterval(iSelectedIndex, iRowIndex);
-					} else {
-						this.setSelectedIndex(iRowIndex);
-					}
-				} else {
-					if (!this.isIndexSelected(iRowIndex)) {
-						if (bCtrl) {
-							this.addSelectionInterval(iRowIndex, iRowIndex);
-						} else {
-							this.setSelectedIndex(iRowIndex);
-						}
-					} else {
-						if (bCtrl) {
-							this.removeSelectionInterval(iRowIndex, iRowIndex);
-						} else {
-							if (this._getSelectedIndicesCount() === 1) {
-								this.clearSelection();
-							} else {
-								this.setSelectedIndex(iRowIndex);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		this._iSourceRowIndex = undefined;
-
-	};
-
 
 	// =============================================================================
 	// SORTING & FILTERING

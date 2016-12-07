@@ -180,10 +180,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {jQuery|HTMLElement|int} oRowIndicator The data cell in the row, or the data row index of the row,
 		 * 												 where the selection state should be toggled.
 		 * @param {boolean} [bSelect] If defined, then instead of toggling the desired state is set.
+		 * @param {function} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
 		 * @returns {boolean} Returns <code>true</code> if the selection state of the row has been changed.
 		 * @private
 		 */
-		toggleRowSelection: function(oTable, oRowIndicator, bSelect) {
+		toggleRowSelection: function(oTable, oRowIndicator, bSelect, fnDoSelect) {
 			if (oTable == null ||
 				oTable.getBinding("rows") == null ||
 				oTable.getSelectionMode() === SelectionMode.None ||
@@ -199,20 +200,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 				oTable._iSourceRowIndex = iAbsoluteRowIndex; // To indicate that the selection was changed by user interaction.
 
-				if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
-					if (bSelect != null && bSelect) {
-						return false;
-					}
-					oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+				var bSelectionChanged = true;
+
+				if (fnDoSelect) {
+					bSelectionChanged = fnDoSelect(iAbsoluteRowIndex, bSelect);
 				} else {
-					if (bSelect != null && !bSelect) {
-						return false;
+
+					if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
+						if (bSelect != null && bSelect) {
+							return false;
+						}
+						oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+					} else {
+						if (bSelect != null && !bSelect) {
+							return false;
+						}
+						oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 					}
-					oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 				}
 
 				delete oTable._iSourceRowIndex;
-				return true;
+				return bSelectionChanged;
 			}
 
 			// Variable oRowIndicator is a row index value.
@@ -226,16 +234,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			} else {
 				var $Cell = jQuery(oRowIndicator);
 				var oCellInfo = this.getCellInfo($Cell[0]);
+				var bIsRowSelectionAllowed = this.isRowSelectionAllowed(oTable);
 
 				if (oCellInfo !== null
 					&& !TableUtils.Grouping.isInGroupingRow($Cell[0])
-					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && this.isRowSelectionAllowed(oTable))
+					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && bIsRowSelectionAllowed)
+					|| (oCellInfo.type === this.CELLTYPES.ROWACTION && bIsRowSelectionAllowed)
 					|| (oCellInfo.type === this.CELLTYPES.ROWHEADER && this.isRowSelectorSelectionAllowed(oTable)))) {
 
 					var iAbsoluteRowIndex;
 					if (oCellInfo.type === this.CELLTYPES.DATACELL) {
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"), 10)].getIndex();
-					} else { // CELLTYPES.ROWHEADER
+					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"), 10)].getIndex();
 					}
 

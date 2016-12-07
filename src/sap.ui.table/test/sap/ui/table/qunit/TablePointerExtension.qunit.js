@@ -364,10 +364,14 @@ QUnit.module("Click", {
 
 
 QUnit.asyncTest("Tree Icon", function(assert) {
+	var oExtension = oTreeTable._getPointerExtension();
+	oExtension._debug();
+
 	var iRowCount = oTreeTable._getRowCount();
 	assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
 	ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
-	oTreeTable._onSelect = function() {
+	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
+	oExtension._ExtensionHelper._handleClickSelection = function() {
 		assert.ok(false, "_doSelect should not be called");
 	};
 
@@ -375,6 +379,8 @@ QUnit.asyncTest("Tree Icon", function(assert) {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+		oExtension._ExtensionHelper.__handleClickSelection = null;
 		QUnit.start();
 	};
 
@@ -385,9 +391,13 @@ QUnit.asyncTest("Tree Icon", function(assert) {
 
 
 QUnit.asyncTest("Group Header", function(assert) {
+	var oExtension = oTreeTable._getPointerExtension();
+	oExtension._debug();
+
 	oTreeTable.setUseGroupMode(true);
 	sap.ui.getCore().applyChanges();
-	oTreeTable._onSelect = function() {
+	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
+	oExtension._ExtensionHelper._handleClickSelection = function() {
 		assert.ok(false, "_doSelect should not be called");
 	};
 
@@ -399,6 +409,8 @@ QUnit.asyncTest("Group Header", function(assert) {
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 		ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+		oExtension._ExtensionHelper.__handleClickSelection = null;
 		QUnit.start();
 	};
 
@@ -409,8 +421,12 @@ QUnit.asyncTest("Group Header", function(assert) {
 
 
 QUnit.test("Analytical Table Sum", function(assert) {
+	var oExtension = oTreeTable._getPointerExtension();
+	oExtension._debug();
+
 	var bSelected = false;
-	oTreeTable._onSelect = function() {
+	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
+	oExtension._ExtensionHelper._handleClickSelection = function() {
 		bSelected = true;
 	};
 
@@ -418,13 +434,20 @@ QUnit.test("Analytical Table Sum", function(assert) {
 	$RowHdr.addClass("sapUiAnalyticalTableSum");
 	qutils.triggerMouseEvent($RowHdr, "click");
 	assert.ok(!bSelected, "No Selection should happen");
+
+	oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+	oExtension._ExtensionHelper.__handleClickSelection = null;
 });
 
 
 QUnit.test("Mobile Group Menu Button", function(assert) {
+	var oExtension = oTreeTable._getPointerExtension();
+	oExtension._debug();
+
 	var bSelected = false;
 	var bContextMenu = false;
-	oTreeTable._onSelect = function() {
+	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
+	oExtension._ExtensionHelper._handleClickSelection = function() {
 		bSelected = true;
 	};
 	oTreeTable._onContextMenu = function() {
@@ -436,12 +459,19 @@ QUnit.test("Mobile Group Menu Button", function(assert) {
 	qutils.triggerMouseEvent($FakeButton, "click");
 	assert.ok(!bSelected, "No Selection should happen");
 	assert.ok(bContextMenu, "Context Menu should be opened");
+
+	oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+	oExtension._ExtensionHelper.__handleClickSelection = null;
 });
 
 
 QUnit.test("Cell + Cell Click Event", function(assert) {
+	var oExtension = oTreeTable._getPointerExtension();
+	oExtension._debug();
+
 	var iSelectCount = 0;
-	oTreeTable._onSelect = function() {
+	oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
+	oExtension._ExtensionHelper._handleClickSelection = function() {
 		iSelectCount++;
 	};
 
@@ -532,6 +562,28 @@ QUnit.test("Cell + Cell Click Event", function(assert) {
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 		$Cell.toggleClass(aKnownClickableControls[i], false);
 	}
+
+	oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
+	oExtension._ExtensionHelper.__handleClickSelection = null;
+});
+
+
+QUnit.test("Selection", function(assert) {
+	oTable.clearSelection();
+	oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+	initRowActions(oTable, 2, 2);
+	sap.ui.getCore().applyChanges();
+
+	var oElem = getCell(0,0);
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
+	oElem = getRowHeader(0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(!oTable.isIndexSelected(0), "Row not selected");
+	oElem = getRowAction(0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(oTable.isIndexSelected(0), "Row selected");
 });
 
 
