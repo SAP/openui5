@@ -3,46 +3,6 @@
 /* Belize theme                        */
 /* =================================== */
 
-.sapMMsgStripInformation {
-	background-color: @sapUiNeutralBG;
-	border-color: @sapUiNeutralBorder;
-	color: @sapUiBaseText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiNeutralElement;
-	}
-}
-
-.sapMMsgStripSuccess {
-	background-color: @sapUiSuccessBG;
-	border-color: @sapUiSuccessBorder;
-	color: @sapUiBaseText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiPositiveElement;
-	}
-}
-
-.sapMMsgStripWarning {
-	background-color: @sapUiWarningBG;
-	border-color: @sapUiWarningBorder;
-	color: @sapUiBaseText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiCriticalElement;
-	}
-}
-
-.sapMMsgStripError {
-	background-color: @sapUiErrorBG;
-	border-color: @sapUiErrorBorder;
-	color: @sapUiBaseText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiNegativeElement;
-	}
-}
-
 .sapMMsgStripCloseButton {
 	// centering the content of the ::after element
 	// does not work in IE if directly set on ::after
@@ -76,6 +36,6 @@
 	&:focus:active::after {
 		// we need white color in both light and
 		// dark versions when close button is active
-		border-color: @sapUiButtonEmphasizedTextColor;
+		border-color: @sapUiContentContrastFocusColor;
 	}
 }

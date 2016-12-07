@@ -3,32 +3,8 @@
 /* Belize theme                                */
 /* =========================================== */
 
-.sapMNLI {
-  background-color: @sapUiListBackground;
-  box-shadow: @sapUiShadowLevel0;
-  border-bottom: 0;
-  &:hover {
-    background-color: @sapUiListHoverBackground;
-  }
-}
-
 .sapMNLI-UnreadStatus {
   background: @sapUiAccent5;
-}
-
-.sapMNLI-Header > .sapMTitle {
-  font-size: @sapMFontLargeSize;
-}
-
-.sapMNLI-Header > .sapMText {
-  color: @sapUiListTextColor;
-}
-
-.sapMNLI-Body .sapMNLI-Details,
-.sapMNLI-Description .sapMNLI-Text,
-.sapMNLI-Details .sapMNLI-Datetime {
-  font-size: @sapMFontMediumSize;
-  color: @sapUiContentLabelColor;
 }
 
 .sapMNLI-CloseButton {
@@ -41,9 +17,7 @@
 
 // Focus Styles ========================================================================================================
 
-html.sap-desktop .sapMLIB.sapMNLI:focus {
-  outline: none;
-}
+
 
 .sapMNLI:focus::before {
   border: 1px dotted @sapUiContentFocusColor;
