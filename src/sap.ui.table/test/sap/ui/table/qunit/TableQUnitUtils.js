@@ -13,6 +13,9 @@ sap.ui.core.Control.extend("TestControl", {
 			"tabbable" : "boolean",
 			"index" : "int", //Results in different behavior of the control in different columns
 			"width" : "sap.ui.core.CSSSize" // Table sets "width" for the title text
+		},
+		associations : {
+			"ariaLabelledBy" : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		}
 	},
 

@@ -896,6 +896,14 @@ QUnit.module("Misc", {
 	}
 });
 
+QUnit.test("ARIA Labels of Column Template", function(assert) {
+	var aColumns = oTable._getVisibleColumns();
+	var aCells = oTable.getRows()[0].getCells();
+	for (var i = 0; i < aCells.length; i++) {
+		assert.strictEqual(aCells[i].getAriaLabelledBy()[0], aColumns[i].getId(), "ArialabelledBy to column header for cell in column " + i);
+	}
+});
+
 QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
 	var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
 	assert.strictEqual($Elem.attr("role"), "button" , "role");
