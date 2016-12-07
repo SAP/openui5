@@ -15,33 +15,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new Dynamic Page.
+	 * Constructor for a new <code>DynamicPage</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * <strong><i>Overview</i></strong>
-	 * <br><br>
-	 * A {@link sap.f.DynamicPage} is a control that is used as a layout for an
-	 * application. It consists of a title, a header, content and a footer.
-	 * Additionally it offers dynamic behavior when scrolling, where part of the
-	 * header snaps to the title.
-	 * <br><br>
-	 * <strong>Notes:</strong>
-	 * <ul><li>If you're displaying a {@link sap.m.FlexBox FlexBox} control with
-	 * non-adaptive content (doesn't stretch to fill the available space), it is
-	 * recommended to set the <code>fitContainer</code> property of the
-	 * {@link sap.m.FlexBox FlexBox} to <code>false</code>.</li>
-	 * <li>If you are displaying a {@link sap.ui.table.Table}, keep in mind that it is
-	 * non-adaptive and may cause unpredicted behavior for the
-	 * {@link sap.f.DynamicPage DynamicPage} on smaller screen sizes, such as mobile.</li>
-	 * </ul>
-	 * <strong><i>Structure</i></strong>
-	 * <br><br>
-	 * The control consist of several components -
-	 * {@link sap.f.DynamicPageTitle DynamicPageTitle},
-	 * {@link sap.f.DynamicPageHeader DynamicPageHeader}, a content area, and a footer:
+	 * A layout control, representing a web page, consisting of a title, header with dynamic behavior, a content area, and an optional floating footer.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The control consist of several components:
+	 *
 	 * <ul><li>{@link sap.f.DynamicPageTitle DynamicPageTitle} - consists of a heading
 	 * on the left side, content in the middle, and actions on the right. The displayed
 	 * content changes based on the current mode of the {@link sap.f.DynamicPageHeader
@@ -54,19 +39,28 @@ sap.ui.define([
 	 * and does not care about the content alignment and responsiveness.</li>
 	 * <li>Footer - positioned at the bottom with a small offset and used for additional
 	 * actions, the footer floats above the content. It can be any {@link sap.m.IBar}
-	 * control.</li>
-	 * </ul>
-	 * <strong><i>Usage</i></strong>
-	 * <br><br>
-	 * Use the {@link sap.f.DynamicPage DynamicPage} if you need to have a title, that is
-	 * always visible and a header, that has configurable Expanding/Snapping functionality.
+	 * control.</li></ul>
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * Use the <code>DynamicPage</code> if you need to have a title, that is always visible
+	 * and a header, that has configurable Expanding/Snapping functionality.
 	 * If you don't need the Expanding/Snapping functionality it is better to use the
 	 * {@link sap.m.Page} as a lighter control.
-	 * <br><br>
-	 * <strong><i>Responsive Behavior</i></strong>
-	 * <br><br>
-	 * The responsive behavior of the {@link sap.f.DynamicPage DynamicPage} depends on the
-	 * behavior of the content that is displayed.
+	 *
+	 * <ul><b>Notes:</b>
+	 * <li>If you're displaying a {@link sap.m.FlexBox} with non-adaptive content
+	 * (doesn't stretch to fill the available space), it is recommended to set the
+	 * <code>fitContainer</code> property of the {@link sap.m.FlexBox FlexBox} to
+	 * <code>false</code>.</li>
+	 * <li>If you are displaying a {@link sap.ui.table.Table}, keep in mind that it is
+	 * non-adaptive and may cause unpredicted behavior for the <code>DynamicPage</code>
+	 * on smaller screen sizes, such as mobile.</li></ul>
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 *
+	 * The responsive behavior of the <code>DynamicPage</code> depends on the behavior of
+	 * the content that is displayed.
 	 *
 	 * @extends sap.ui.core.Control
 	 *

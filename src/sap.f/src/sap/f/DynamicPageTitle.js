@@ -14,35 +14,31 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * <strong><i>Overview</i></strong>
-	 * <br><br>
-	 * The {@link sap.f.DynamicPageTitle DynamicPageTitle} control is part of
-	 * the {@link sap.f.DynamicPage} family and is used to serve as title of
-	 * the {@link sap.f.DynamicPage DynamicPage}.
-	 * <br><br>
-	 * <strong><i>Usage</i></strong>
-	 * <br><br>
-	 * The {@link sap.f.DynamicPageTitle DynamicPageTitle} can hold any
-	 * control and displays the most important information regarding the
-	 * object that will always remain visible while scrolling.
-	 * <br><br>
-	 * <b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control, but it`s recommended to use controls,
-	 * suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
-	 * <br><br>
-	 * If the <code>toggleHeaderOnTitleClick</code> property of the
-	 * {@link sap.f.DynamicPage DynamicPage} is set to <code>true</code>, the user can
-	 * switch between the expanded/collapsed states of the
-	 * {@link sap.f.DynamicPageHeader DynamicPageHeader} by clicking on the
-	 * <code>DynamicPageTitle</code>. If set to <code>false</code>, the
-	 * <code>DynamicPageTitle</code> is not clickable and the application must provide
-	 * other means for expanding/collapsing the <code>DynamicPageHeader</code>,
-	 * if necessary.
-	 * <br><br>
-	 * <strong><i>Responsive Behavior</i></strong>
-	 * <br><br>
-	 * The responsive behavior of the
-	 * {@link sap.f.DynamicPageTitle DynamicPageTitle} depends on the
-	 * behavior of the content that is displayed.
+	 * Title of the {@link sap.f.DynamicPage}.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>DynamicPageTitle</code> control is part of the {@link sap.f.DynamicPage}
+	 * family and is used to serve as title of the {@link sap.f.DynamicPage DynamicPage}.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * The <code>DynamicPageTitle</code> can hold any control and displays the most important
+	 * information regarding the object that will always remain visible while scrolling.
+	 *
+	 * <b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control, but it`s
+	 * recommended to use controls, suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
+	 *
+	 * If the <code>toggleHeaderOnTitleClick</code> property of the {@link sap.f.DynamicPage DynamicPage}
+	 * is set to <code>true</code>, the user can switch between the expanded/collapsed states of the
+	 * {@link sap.f.DynamicPageHeader DynamicPageHeader} by clicking on the <code>DynamicPageTitle</code>.
+	 * If set to <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the app must
+	 * provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 *
+	 * The responsive behavior of the <code>DynamicPageTitle</code> depends on the behavior of the
+	 * content that is displayed.
 	 *
 	 * @extends sap.ui.core.Control
 	 *

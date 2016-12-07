@@ -14,29 +14,26 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * <strong><i>Overview</i></strong>
-		 * <br><br>
-		 * The {@link sap.f.DynamicPageHeader DynamicPageHeader} control is part
-		 * of the {@link sap.f.DynamicPage} family and is used to serve as header
-		 * of the {@link sap.f.DynamicPage DynamicPage}.
-		 * <br><br>
-		 * <strong><i>Usage</i></strong>
-		 * <br><br>
-		 * The {@link sap.f.DynamicPageHeader DynamicPageHeader} can hold any
-		 * layout control and has two states - expanded and collapsed (snapped).
-		 * The switching between these states happens when:
-		 * <ul>
-		 * <li>the user scrolls below its bottom margin</li>
-		 * <li>the user clicks on the
-		 * {@link sap.f.DynamicPageTitle DynamicPageTitle}</li>
-		 * <li>through the {@link sap.f.DynamicPage DynamicPage}
-		 * property <code>headerExpanded</code></li>
-		 * </ul>
-		 * <strong><i>Responsive Behavior</i></strong>
-		 * <br><br>
-		 * The responsive behavior of the
-		 * {@link sap.f.DynamicPageHeader DynamicPageHeader} depends on the
-		 * behavior of the content that is displayed.
+		 * Header of the {@link sap.f.DynamicPage}.
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 * The <code>DynamicPageHeader</code> control is part of the {@link sap.f.DynamicPage} family
+		 * and is used to serve as header of the {@link sap.f.DynamicPage DynamicPage}.
+		 *
+		 * <h3>Usage</h3>
+		 *
+		 * The <code>DynamicPageHeader</code> can hold any layout control and has  two states - expanded
+		 * and collapsed (snapped). The switching between these states happens when:
+		 *
+		 * <ul><li>the user scrolls below its bottom margin</li>
+		 * <li>the user clicks on the {@link sap.f.DynamicPageTitle DynamicPageTitle}</li>
+		 * <li>through the {@link sap.f.DynamicPage DynamicPage} property <code>headerExpanded</code></li></ul>
+		 *
+		 * <h3>Responsive Behavior</h3>
+		 *
+		 * The responsive behavior of the <code>DynamicPageHeader</code> depends on the behavior of the
+		 * content that is displayed.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
