@@ -365,7 +365,7 @@
 		oButton.destroy();
 	});
 
-	test("For safari the button should gain explicitly focus after a tap", function() {
+	test("For safari the button should gain explicitly focus on touch start", function() {
 		// Arrange
 		// stub the browser to be only safari
 		this.stub(sap.ui.Device, "browser", {
@@ -377,11 +377,11 @@
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oButton.ontap({ setMarked:  jQuery.noop });
+		oButton.ontouchstart({ setMarked: jQuery.noop, preventDefault: jQuery.noop, targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }});
 		this.clock.tick(1000);
 
 		// Assert
-		strictEqual(oRenderSpy.callCount, 1, "The button is focused after a tap");
+		strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
 
 		// Cleanup
 		oButton.destroy();
