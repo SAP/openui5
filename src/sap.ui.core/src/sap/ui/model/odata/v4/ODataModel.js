@@ -96,8 +96,8 @@ sap.ui.define([
 	 *   Every resource path (relative to the service root URL, no query options) according to
 	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
 	 *   a valid data binding path within this model if a leading slash is added; for example
-	 *   "/" + "EMPLOYEES('A%2FB%26C')" to access an entity instance with key "A/B&C". Note that
-	 *   appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
+	 *   "/" + "SalesOrderList('A%2FB%26C')" to access an entity instance with key "A/B&C". Note
+	 *   that appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
 	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
 	 *
 	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
@@ -888,9 +888,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
 	 *   A context in this model which must point to a non-contained OData entity
 	 * @returns {Promise}
-	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
-	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
-	 *   the given context does not point to an entity
+	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
+	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
+	 *   e.g. when the given context does not point to an entity
 	 *
 	 * @deprecated since 1.39.0
 	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
