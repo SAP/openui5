@@ -2134,7 +2134,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			mParameters = mParameters || {};
 			mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
 
+			var bOriginalAfterChange = this.oModel.bRefreshAfterChange; //TODO: Change this to a Getter in ODataModel?
+			this.oModel.setRefreshAfterChange(false);
 			oNewEntry = this.oModel.createEntry(sAbsolutePath, mParameters);
+			this.oModel.setRefreshAfterChange(bOriginalAfterChange);
 		} else {
 			jQuery.sap.log.warning("ODataTreeBindingFlat: createEntry failed, as the binding path could not be resolved.");
 		}
@@ -2206,9 +2209,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		// built the actual requests for the change-set
+		var bOriginalAfterChange = this.oModel.bRefreshAfterChange; //TODO: Change this to a Getter in ODataModel?
 		this.oModel.setRefreshAfterChange(false);
 		this._generateSubmitData();
-		this.oModel.setRefreshAfterChange(true);
+		this.oModel.setRefreshAfterChange(bOriginalAfterChange);
 
 		// relay submit call to the model
 		this.oModel.submitChanges(mParameters);
