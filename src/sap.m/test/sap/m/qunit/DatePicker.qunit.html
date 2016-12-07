@@ -504,6 +504,19 @@
 				qutils.triggerEvent("click", "DP3-icon");
 			});
 
+
+			test("validation check", function() {
+
+				simulateUserInputViaTheInputField();
+				simulateSelectionOnTheCalendar();
+				simulateUserInputViaTheInputField();
+				simulateSelectionOnTheCalendar();
+				simulateUserInputViaTheInputField();
+
+				assert.equal(bChange, true,
+						"fireChange is fired everytime when needed and _lastValue is in sync with the selected date");
+			});
+
 			asyncTest("specialDates", function() {
 				var oDate = new Date(2016, 5, 29);
 				oDP3.setDateValue(oDate);
@@ -514,17 +527,17 @@
 				}
 				var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 					items: [
-					        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
-					        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
-					        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
-					        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
-					        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
-					        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
-					        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
-					        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
-					        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
-					        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
-					        ]
+						new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+						new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+						new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+						new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+						new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+						new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+						]
 				});
 				oDP3.setLegend(oLegend);
 				var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: "Type01"});
@@ -714,6 +727,31 @@
 				strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 			});
 
+			//set the input value to an invalid one
+			function simulateUserInputViaTheInputField(){
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				jQuery("#DP2").children("input").val("11/190/2016");
+				qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DP2", "Change event fired");
+				equal(sValue, "11/190/2016", "The new value is set to an invalid one");
+				ok(!bValid, "Value is not valid");
+				equal(oDP2.getValue(), "11/190/2016", "Value in internal format set");
+			}
+
+			//press the icon and select a valid value
+			function simulateSelectionOnTheCalendar(){
+				oDP2.focus();
+				qutils.triggerEvent("click", "DP2-icon");
+				var $Date = jQuery("#DP2-cal--Month0-20140401");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(oDP2.getValue() !== "11/190/2016",
+                        "The value has successfully changed after a selection from the calendar");
+			}
 
 		</script>
 
