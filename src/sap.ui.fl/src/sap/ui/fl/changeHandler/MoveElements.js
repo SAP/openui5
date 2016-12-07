@@ -24,10 +24,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 		 * @param {sap.ui.core.Control} oSourceParent control that matches the change selector for applying the change, which is the source of the move
-		 * @param {object} mPropertyBag
+		 * @param {object} mPropertyBag - map of properties
 		 * @param {object} mPropertyBag.view - xml node representing an ui5 view
-		 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent
+		 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
+		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComopnent
+		 * @return {boolean} true - if change could be applied
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.changeHandler.MoveElements#applyChange
@@ -96,8 +97,6 @@ sap.ui.define([
 		};
 
 		MoveElements.buildStableChangeInfo = function(mMoveActionParameter){
-			delete mMoveActionParameter.source.publicAggregation;
-			delete mMoveActionParameter.target.publicAggregation;
 			return mMoveActionParameter;
 		};
 
@@ -106,13 +105,17 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Change} oChange change object to be completed
 		 * @param {object} mSpecificChangeInfo as an empty object since no additional attributes are required for this operation
-		 * @param {object} mPropertyBag
+		 * @param {object} mPropertyBag - map of properties
 		 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.changeHandler.MoveElements#completeChangeContent
 		 */
 		MoveElements.completeChangeContent = function(oChange, mSpecificChangeInfo, mPropertyBag) {
+			// build stable changeInfo
+			delete mSpecificChangeInfo.source.publicAggregation;
+			delete mSpecificChangeInfo.target.publicAggregation;
+
 			function checkCompleteChangeContentConditions() {
 				if (!mSpecificChangeInfo.movedElements) {
 					throw new Error("mSpecificChangeInfo.movedElements attribute required");
