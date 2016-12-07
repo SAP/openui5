@@ -1,4 +1,4 @@
-/*globals QUnit */
+/*globals QUnit, sinon*/
 
 jQuery.sap.require("sap.ui.fl.changeHandler.BaseRename");
 jQuery.sap.require("sap.ui.fl.changeHandler.Base");
@@ -9,6 +9,7 @@ jQuery.sap.require("sap.m.Button");
 jQuery.sap.require("sap.ui.core.LayoutData");
 
 (function (Base, BaseRename, Change, JsControlTreeModifier, XmlTreeModifier) {
+	'use strict';
 
 	jQuery.sap.registerModulePath("testComponent", "../testComponent");
 	var sandbox = sinon.sandbox.create();
@@ -18,7 +19,7 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 					});
 
 	QUnit.module("Given that a rename change handler for a button is created", {
-		setup: function () {
+		beforeEach: function() {
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
@@ -42,39 +43,49 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 				value : "Button New Text"
 			};
 
+			this.oButton = new sap.m.Button(oComponent.createId("myButton"));
 		},
-		teardown: function () {
+		afterEach: function(){
 			this.oButton.destroy();
 			sandbox.restore();
 		}
 	});
 
-
-	QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called', function () {
-		this.oButton = new sap.m.Button(oComponent.createId("myButton"));
-
+	QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called', function (assert) {
 		this.oButtonRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo);
 		this.oButtonRenameChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
 
 		assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
 	});
 
-	QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called', function () {
+	QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called', function (assert) {
+		this.mSpecificChangeInfo.value = "{i18n>textKey}";
+
+		this.oButtonRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo);
+		this.oButtonRenameChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
+
+		var oBindingInfo = this.oButton.getBindingInfo("text");
+		assert.equal(oBindingInfo.parts[0].path, "textKey", "property value binding path has changed as expected");
+		assert.equal(oBindingInfo.parts[0].model, "i18n", "property value binding model has changed as expected");
+	});
+
+	QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called', function (assert) {
 
 		this.myLayoutId = "myLayout";
-		this.oButton = new sap.m.Button(oComponent.createId("myButton"));
 		this.oLayout = new sap.ui.layout.VerticalLayout(oComponent.createId(this.myLayoutId) ,{
 			content : [this.oButton]
 		});
 
 		var oDOMParser = new DOMParser();
 		var oXmlString =
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m"><layout:VerticalLayout id="' + this.oLayout.getId() + '">' +
-					'<layout:content>' +
-						'<Button id="' + this.oButton.getId() + '">' +
-						'</Button>' +
-					'</layout:content>' +
-				'</layout:VerticalLayout></mvc:View>';
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">' +
+					'<layout:VerticalLayout id="' + this.oLayout.getId() + '">' +
+						'<layout:content>' +
+							'<Button id="' + this.oButton.getId() + '"' + ' text="Initial Text"' + '>' +
+							'</Button>' +
+						'</layout:content>' +
+					'</layout:VerticalLayout>' +
+				'</mvc:View>';
 
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 		this.oXmlView = oXmlDocument;
@@ -86,6 +97,16 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 
 		assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
 	});
+
+	QUnit.test('when completeChangeContent is called without a value', function (assert) {
+		this.mSpecificChangeInfo.value = null;
+
+		assert.throws(
+			this.oButtonRenameChangeHandler.completeChangeContent.bind(this, this.oChange, this.mSpecificChangeInfo),
+			"then an error is thrown");
+	});//
+
+	//TODO: Negative test to check if the error is properly raised when change is incomplete
 
 }(sap.ui.fl.changeHandler.Base,
 	sap.ui.fl.changeHandler.BaseRename,

@@ -28,14 +28,6 @@ sap.ui.define([
 			 */
 			createRenameChangeHandler: function(mRenameSettings) {
 				return {
-					/**
-					 * Checks if a string is provided as also empty strings are allowed
-					 * @param  {string}  sString provided string
-					 * @return {Boolean} true if provided
-					 */
-					_fnIsProvided : function(sString){
-						return typeof (sString) === "string";
-					},
 
 					/**
 					 * Renames a control.
@@ -54,9 +46,16 @@ sap.ui.define([
 						var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
 						var sValue = sText.value;
 
-						if (oChangeDefinition.texts && sText && this._fnIsProvided(sValue)) {
-							oModifier.setProperty(oControl, sPropertyName, sValue);
+						if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
+
+							// The value can be a binding - e.g. for translatable values in WebIde
+							if (Utils.isBinding(sValue)) {
+								oModifier.setPropertyBinding(oControl, sPropertyName, sValue);
+							} else {
+								oModifier.setProperty(oControl, sPropertyName, sValue);
+							}
 							return true;
+
 						} else {
 							Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 							//however subsequent changes should be applied
@@ -75,7 +74,7 @@ sap.ui.define([
 						var sChangePropertyName = mRenameSettings.changePropertyName;
 						var sTranslationTextType = mRenameSettings.translationTextType;
 
-						if (this._fnIsProvided(mSpecificChangeInfo.value)) {
+						if (typeof (mSpecificChangeInfo.value) === "string") {
 							Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
 						} else {
 							throw new Error("oSpecificChangeInfo.value attribute required");
