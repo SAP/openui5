@@ -538,10 +538,9 @@ sap.ui.define([
 		P13nSelectionPanel.prototype._createToolbar.apply(this, arguments);
 
 		var oModel = this._getInternalModel();
-		var that = this;
 
 		var oInvisibleChartTypeText = new sap.ui.core.InvisibleText({
-			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
+			text: this._oRb.getText('COLUMNSPANEL_CHARTTYPE')
 		});
 		var oChartTypeComboBox = new sap.m.ComboBox({
 			selectedKey: {
@@ -563,7 +562,7 @@ sap.ui.define([
 		});
 		oChartTypeComboBox.setModel(oModel);
 
-		this._getToolbar().addContent(oInvisibleChartTypeText);
+		this._getToolbar().insertContent(oInvisibleChartTypeText, 0).insertContent(oChartTypeComboBox, 1);
 	};
 
 	P13nChartSelectionPanel.prototype._isSelectionItemEqualToModelItem = function(oSelectionItem, oModelItem) {
