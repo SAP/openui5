@@ -14,7 +14,7 @@ sap.ui.define([
 					iPressOnTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectListItem",
-							matchers : new BindingPath({path : "/Products('id_11')"}),
+							matchers : new BindingPath({path : "/Products('HT-1254')"}),
 							actions : new Press(),
 							errorMessage : "The product list does not contain required selection"
 						});

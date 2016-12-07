@@ -51,7 +51,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
-							matchers : new BindingPath({path : "/cartEntries/id_11", modelName: "cartProducts"}),
+							matchers : new BindingPath({path : "/cartEntries/HT-1254", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
@@ -65,7 +65,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
-							matchers : new BindingPath({path : "/savedForLaterEntries/id_11", modelName: "cartProducts"}),
+							matchers : new BindingPath({path : "/savedForLaterEntries/HT-1254", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
