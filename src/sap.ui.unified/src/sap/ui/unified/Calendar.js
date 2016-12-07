@@ -1325,6 +1325,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 	};
 
+	/**
+	* Returns an array of currently visible days
+	* @returns {Array} visible days
+	* @private
+	*/
+	Calendar.prototype._getVisibleDays = function () {
+	   var oMonth = this.getAggregation("month")[0];
+	   return oMonth._getVisibleDays(oMonth._getDate(), false);
+	};
+
 	/*
 	 * sets the date in the used Month controls
 	 * @param {sap.ui.unified.Calendar} this Calendar instance

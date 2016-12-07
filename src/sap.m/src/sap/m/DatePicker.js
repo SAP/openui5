@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DatePicker.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
-	function(jQuery, Device, InputBase, Date1, UniversalDate, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library', 'sap/ui/unified/calendar/CalendarUtils'],
+	function(jQuery, Device, InputBase, Date1, UniversalDate, library, CalendarUtils) {
 	"use strict";
 
 
@@ -180,6 +180,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			 */
 			legend: { type: "sap.ui.core.Control", multiple: false}
 		},
+		events : {
+
+			/**
+			 * Fired when navigating in <code>Calendar</code> popup.
+			 * @since 1.46.0
+			 */
+			navigate : {
+				parameters : {
+
+					/**
+					 * Date range containing the start and end date displayed in the <code>Calendar</code> popup.
+					 */
+					dateRange : {type : "sap.ui.unified.DateRange"}
+
+				}
+			}
+		},
 		designTime : true
 	}});
 
@@ -214,6 +231,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			delete this._oCalendar;
 		}
 
+		if (this._iInvalidateCalendar) {
+			jQuery.sap.clearDelayedCall(this._iInvalidateCalendar);
+		}
+
 		this._sUsedDisplayPattern = undefined;
 		this._sUsedDisplayCalendarType = undefined;
 		this._oDisplayFormat = undefined;
@@ -228,6 +249,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 		if (!oOrigin || oOrigin != this._oCalendar) {
 			// Calendar is only invalidated by DatePicker itself -> so don't invalidate DatePicker
 			sap.ui.core.Control.prototype.invalidate.apply(this, arguments);
+			// Invalidate calendar with a delayed call so it could have updated specialDates aggregation from DatePicker
+			this._iInvalidateCalendar = jQuery.sap.delayedCall(0, this, _invalidateCalendar);
 		}
 
 	};
@@ -978,6 +1001,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 
 		this._openPopup();
 
+		// Fire navigate event when the calendar popup opens
+		this.fireNavigate({
+			dateRange: this._getVisibleDatesRange(this._oCalendar)
+		});
+
 	}
 
 	// to be overwritten by DateTimePicker
@@ -1015,6 +1043,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 
 	};
 
+	/**
+	 * Creates a DateRange with the first and the last visible days in the calendar popup
+	 * @param {sap.ui.unified.Calendar} oCalendar
+	 * @returns {sap.ui.unified.DateRange}
+	 * @private
+	 */
+	DatePicker.prototype._getVisibleDatesRange = function (oCalendar) {
+		var aVisibleDays = oCalendar._getVisibleDays();
+
+		// Convert from UTC to local Date
+		return new sap.ui.unified.DateRange({
+			startDate: CalendarUtils._createLocalDate(aVisibleDays[0].oDate), // First visible date
+			endDate: CalendarUtils._createLocalDate(aVisibleDays[aVisibleDays.length - 1].oDate) // Last visible date
+		});
+	};
+
 	// to be overwritten by DateTimePicker
 	DatePicker.prototype._createPopupContent = function(){
 
@@ -1025,7 +1069,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
 				maxDate: this.getMaxDate(),
-				legend: this.getLegend()
+				legend: this.getLegend(),
+				startDateChange: function () {
+						this.fireNavigate({
+							dateRange: this._getVisibleDatesRange(this._oCalendar)
+						});
+					}.bind(this)
 				});
 			this._oDateRange = new sap.ui.unified.DateRange();
 			this._oCalendar.addSelectedDate(this._oDateRange);
