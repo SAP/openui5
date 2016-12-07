@@ -230,12 +230,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 */
 			liveChange : {
 				parameters : {
-
-					/**
-					 * The event parameter is set to true, when the value is changed by navigating through suggestions.
-					 */
-					suggestionNavigation : {type : "boolean"},
-
 					/**
 					 * The new value of the input.
 					 */
@@ -597,14 +591,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange) {
-			this.fireLiveChange({
-				value: sNewValue,
-				// backwards compatibility
-				newValue: sNewValue
-			});
-		}
-
 		// update the input field
 		if (this._bUseDialog) {
 			this._oPopupInput.setValue(sNewValue);
@@ -778,14 +764,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		this._sSelectedValue = sNewValue;
-
-		if (bInteractionChange) {
-			this.fireLiveChange({
-				value: sNewValue,
-				// backwards compatibility
-				newValue: sNewValue
-			});
-		}
 
 		// update the input field
 		if (this._bUseDialog) {
@@ -1154,13 +1132,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// setValue isn't used because here is too early to modify the lastValue of input
 		this._$input.val(sNewValue);
-
-		this.fireLiveChange({
-			suggestionNavigation: true,
-			value: sNewValue,
-			// backwards compatibility
-			newValue: sNewValue
-		});
 
 		// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 		this._sSelectedSuggViaKeyboard = sNewValue;
