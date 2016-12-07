@@ -58,6 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		// selection state
 		this._aExpandedAfterSelectAll = this._aExpandedAfterSelectAll || [];
 		this._mSelected = this._mSelected || {};
+		this._mDeselected = this._mDeselected || {};
 		this._bSelectAll = false;
 
 		// the delta variable for calculating the correct binding-length (used e.g. for sizing the scrollbar)
@@ -1332,9 +1333,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// toggles the selection state based on bIsSelected
 		if (bIsSelected) {
+			delete this._mDeselected[oNode.key];
 			this._mSelected[oNode.key] = oNode;
 		} else {
 			delete this._mSelected[oNode.key];
+			this._mDeselected[oNode.key] = oNode;
+
 			if (oNode.key === this._sLeadSelectionKey) {
 				// if the lead selection node is deselected, clear the _sLeadSelectionKey
 				this._sLeadSelectionKey = null;
@@ -1559,8 +1563,114 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * @returns {int} number of selected nodes.
 	 */
 	ODataTreeBindingFlat.prototype.getSelectedNodesCount = function () {
-		var aInvisibleNodes = this._getInvisibleSelectedNodes();
-		return Math.max(Object.keys(this._mSelected).length - aInvisibleNodes.length, 0);
+		var iSelectedNodes;
+
+		if (this._bSelectAll) {
+			if (this._bReadOnly) {
+				// Read only
+				var aRelevantExpandedAfterSelectAllNodes = [],
+					iNumberOfVisibleDeselectedNodes = 0,
+					sKey;
+
+				this._aExpandedAfterSelectAll.sort(function (a, b) {
+					var iA = this._getRelatedServerIndex(a);
+					var iB = this._getRelatedServerIndex(b);
+					jQuery.sap.assert(iA != undefined, "getSelectedNodesCount: (containing) Server-Index not found for node 'a'");
+					jQuery.sap.assert(iB != undefined, "getSelectedNodesCount: (containing) Server-Index not found node 'b'");
+
+					// deep nodes are inside the same containing server-index --> sort them by their level
+					// this way we can make sure, that deeper nodes are sorted after higher-leveled ones
+					if (iA == iB && a.isDeepOne && b.isDeepOne) {
+						return a.originalLevel - b.originalLevel;
+					}
+
+					return iA - iB; // ascending
+				}.bind(this));
+
+				var iLastExpandedIndex = -1, oNode, iNodeIdx, i;
+				for (i = 0; i < this._aExpandedAfterSelectAll.length; i++) {
+					oNode = this._aExpandedAfterSelectAll[i];
+					iNodeIdx = this._getRelatedServerIndex(oNode);
+					if (iNodeIdx <= iLastExpandedIndex && !oNode.initiallyCollapsed) {
+						// Node got already covered by a previous loop through its parent
+						//	AND node is not initially collapsed.
+						// Deep nodes are initially collapsed and have to be processed, even though
+						//	their related server-index is in another node's magnitude range.
+						continue;
+					}
+					if (oNode.initiallyCollapsed) {
+						iLastExpandedIndex = iNodeIdx;
+					} else {
+						iLastExpandedIndex = iNodeIdx + oNode.magnitude;
+					}
+
+					aRelevantExpandedAfterSelectAllNodes.push(oNode);
+					iNumberOfVisibleDeselectedNodes += oNode.magnitude;
+				}
+
+				var checkContainedInExpandedNode = function(oNode, oBreaker) {
+					if (aRelevantExpandedAfterSelectAllNodes.indexOf(oNode) !== -1) {
+						iNumberOfVisibleDeselectedNodes--;
+						oBreaker.broken = true;
+					}
+				};
+
+				for (sKey in this._mSelected) {
+					this._up(this._mSelected[sKey], checkContainedInExpandedNode, true /*old/original*/);
+				}
+
+				var bIsVisible;
+				var checkVisibleDeselectedAndNotAlreadyCountedNode = function(oNode, oBreaker) {
+					if (oNode.nodeState.collapsed || (oNode.nodeState.removed && !oNode.nodeState.reinserted) ||
+							aRelevantExpandedAfterSelectAllNodes.indexOf(oNode) !== -1) {
+						bIsVisible = false;
+						oBreaker.broken = true;
+					}
+				};
+
+				for (sKey in this._mDeselected) {
+					bIsVisible = true;
+					this._up(this._mDeselected[sKey], checkVisibleDeselectedAndNotAlreadyCountedNode, true /*old/original*/);
+					if (bIsVisible) {
+						iNumberOfVisibleDeselectedNodes++;
+					}
+				}
+
+				iSelectedNodes = this.getLength() - iNumberOfVisibleDeselectedNodes;
+			} else {
+				// Write => go through all visible nodes in the tree
+				iSelectedNodes = 0;
+				this._map(function (oNode, oRecursionBreaker, sIndexType, iIndex, oParent) {
+					var oParentNode;
+					if (oNode) {
+						if (oNode.nodeState.selected) {
+							iSelectedNodes++;
+						}
+					} else if (oNode === undefined && sIndexType === "serverIndex") {
+						// Not yet loaded node => parent is unknown
+						var bIsSelected = true;
+						for (var i = iIndex - 1; i >= 0; i--) {
+							if (this._aNodeChanges[i]) {
+								oParentNode = this._aNodes[i];
+								if (oParentNode.serverIndex + oParentNode.magnitude >= iIndex &&
+										this._aExpandedAfterSelectAll.indexOf(oParentNode) !== -1) {
+									bIsSelected = false;
+									break;
+								}
+							}
+						}
+
+						if (bIsSelected) {
+							iSelectedNodes++;
+						}
+					}
+				}.bind(this));
+			}
+		} else {
+			var aInvisibleNodes = this._getInvisibleSelectedNodes();
+			iSelectedNodes = Math.max(Object.keys(this._mSelected).length - aInvisibleNodes.length, 0);
+		}
+		return iSelectedNodes;
 	};
 
 	/**
@@ -1951,6 +2061,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		this._aExpanded = [];
 		this._aExpandedAfterSelectAll = [];
 		this._mSelected = {};
+		this._mDeselected = {};
 		this._aRemoved = [];
 
 		this._aNodeChanges = [];
