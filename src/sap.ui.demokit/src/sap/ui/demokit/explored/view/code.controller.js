@@ -195,9 +195,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			sIndexFile = sIndexFile.replace(/{{SAMPLE_ID}}/g, oData.id);
 
-			var sParentResourcesRoots = "";
+			var sParentResourcesRoots = "",
+				sODataIdCloned = oData.id.slice();
 			for (var i = 0; i < iRequiredParentLevels; i++) {
-				sParentResourcesRoots += "\"" + oData.id.substring(0, oData.id.lastIndexOf("."))  + "\" : \"./\", ";
+				sODataIdCloned = sODataIdCloned.substring(0, sODataIdCloned.lastIndexOf("."));
+				sParentResourcesRoots += "\"" + sODataIdCloned  + "\" : \"./\", ";
 			}
 			sIndexFile = sIndexFile.replace(/{{PARENT_RESOURCES}}/g, sParentResourcesRoots);
 
