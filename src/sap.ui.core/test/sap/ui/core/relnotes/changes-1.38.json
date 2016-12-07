@@ -1790,5 +1790,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "08df0bd223bc0617a591fe0cb80c2dc8fd24ce96",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      }
+    ]
   }
 }
