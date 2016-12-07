@@ -576,6 +576,7 @@ sap.ui.define([
 			visible: true,
 			text: oItem.getText(),
 			href: oItem.getHref(),
+			target: oItem.getTarget(),
 			tooltip: oItem.getTooltip(),
 
 			originalIndex: iIndex, // TODO: do we need it at all?
