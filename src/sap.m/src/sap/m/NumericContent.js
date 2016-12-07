@@ -243,7 +243,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.ontap = function(oEvent) {
+		this.$().focus();
 		this.firePress();
+		oEvent.preventDefault();
 	};
 
 	/**
