@@ -15,12 +15,15 @@
 			<ObjectHeader
 					id="objectHeader"
 					title="{Title}"
-					number="{Price}"
+					number="{
+						path: 'Price',
+						formatter: '.formatter.numberUnit'
+					}"
 					numberUnit="{Currency}">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
 						expanded="{device>/isNoPhone}"
-						class="sapUiResponsiveContentPadding">
+						class="sapUiNoContentPadding">
 				<items>
 					<IconTabFilter icon="sap-icon://hint" key="info">
 						<form:SimpleForm>
