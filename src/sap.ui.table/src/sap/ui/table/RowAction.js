@@ -321,7 +321,7 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem)
 			aIcons[1].$()[iIdx == 1 ? "attr" : "removeAttr"]("aria-haspopup", iIdx == 1 ? "true" : undefined);
 		}
 
-		if (this._bFixedLayout && this._iLen == 1) {
+		if (this._bFixedLayout && this._iLen == 1 && this._iCount == 2) {
 			var aAllItems = this.getItems();
 			if (aAllItems.length > 1 && aItems[0] === aAllItems[1]) {
 				aItems[0]._syncIcon(aIcons[1]);
