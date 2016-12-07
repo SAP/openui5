@@ -81,7 +81,20 @@
 			width: "100px"
 		});
 
-		var oTokenizer5 = new sap.m.Tokenizer({
+		var oTokenizer5 = new sap.m.Tokenizer("editableAndReadonly",{
+			width: "200px",
+			tokens:[
+				new sap.m.Token({text:"One", editable: true}),
+				new sap.m.Token({text:"Two", editable: false}),
+				new sap.m.Token({text:"Three", editable: false}),
+				new sap.m.Token({text:"Four", editable: true}),
+				new sap.m.Token({text:"Five", editable: true}),
+				new sap.m.Token({text:"Six", editable: false}),
+				new sap.m.Token({text:"Seven", editable: true})
+			]
+		});
+
+		var oTokenizer6 = new sap.m.Tokenizer({
 			tokens: [
 				new sap.m.Token({text:"Dente"}),
 				new sap.m.Token({text:"Friese", editable: false})
@@ -112,6 +125,8 @@
 					oTokenizer4,
 					new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
 					oTokenizer5,
+				    new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
+					oTokenizer6,
 					toggleReadOnlyBtn
 			]
 		});
