@@ -24,7 +24,8 @@
 					"sap.ui.table.sample.Resizing",
 					"sap.ui.table.sample.MultiHeader",
 					"sap.ui.table.sample.OData",
-					"sap.ui.table.sample.OData2"
+					"sap.ui.table.sample.OData2",
+					"sap.ui.table.sample.RowAction"
 
 				]
 			},
@@ -85,6 +86,10 @@
 				"id": "sap.ui.table.sample.OData2",
 				"name": "OData Metadata",
 				"description": "Shows an example how an oData metadata driven table creation can look like"
+			},{
+				"id": "sap.ui.table.sample.RowAction",
+				"name": "Row Actions",
+				"description": "Shows how row actions can be used."
 			},{
 			  "id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
 			  "name": "JSONTreeBinding",

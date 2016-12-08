@@ -229,9 +229,9 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			multiLabels : {type : "sap.ui.core.Control", multiple : true, singularName : "multiLabel"},
 
 			/**
-			 * Template (cell renderer) of this column. A template is decoupled from the column, which means after
-			 * changing the templates' properties or aggregations an explicit invalidation of the column or table is
-			 * required. The default depends on the loaded libraries.
+			 * Template (cell renderer) of this column. A template is decoupled from the column. Each time
+			 * the template's properties or aggregations have been changed, the template has to be applied again via
+			 * <code>setTemplate</code> for the changes to take effect. The default template depends on the libraries loaded.
 			 */
 			template : {type : "sap.ui.core.Control", multiple : false},
 
