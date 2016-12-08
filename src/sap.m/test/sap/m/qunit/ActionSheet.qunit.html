@@ -546,7 +546,6 @@
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
 						aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-					strictEqual(oButton1.getAriaLabelledBy().length, 2, "Button should be labelled by itself and a hidden text");
 					strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
 					strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
 					strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
@@ -604,7 +603,7 @@
 						aButtonLabels = button1.getAriaLabelledBy();
 
 						strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
-						strictEqual(aButtonLabels.length, 2, "Button should be labelled by 2 ids");
+						strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
 						ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
 						start();
 						oActionSheet.close();
@@ -640,7 +639,7 @@
 
 				setTimeout(function(){
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
-						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[1],
+						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[0],
 						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
 
 					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
