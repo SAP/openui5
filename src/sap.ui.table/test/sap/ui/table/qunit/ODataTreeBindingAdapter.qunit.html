@@ -1205,6 +1205,80 @@
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
+	asyncTest("getSelectedNodesCount with recursive collapse", function(){
+		prebuildTree(function () {
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 56, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			equal(oBinding.getSelectedNodesCount(), 49, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			equal(oBinding.getSelectedNodesCount(), 49, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 56, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 48, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	asyncTest("getSelectedNodesCount without recursive collapse", function(){
+		prebuildTree(function () {
+			oBinding.setCollapseRecursive(false);
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 56, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			equal(oBinding.getSelectedNodesCount(), 49, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			equal(oBinding.getSelectedNodesCount(), 56, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 56, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 55, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		});
+	});
+
+	asyncTest("getSelectedNodesCount with paging", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				rootLevel: 4
+			});
+
+			var handler1 = function () {
+				oBinding.detachChange(handler1);
+				oBinding.getContexts(0, 2);
+
+				oBinding.selectAll();
+				equal(oBinding.getSelectedNodesCount(), 61, "Correct selected nodes count after selectAll call");
+				equal(oBinding.getLength(), 61, "Correct binding length");
+
+				start();
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getContexts(0, 2);
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
 	asyncTest("Select single nodes", function(){
 		prebuildTree(function () {
 			var oContext;
