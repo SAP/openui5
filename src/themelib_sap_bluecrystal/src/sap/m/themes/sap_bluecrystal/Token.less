@@ -16,13 +16,23 @@ html.sap-desktop .sapMToken:hover {
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: 0.0625rem dotted @sapUiInvertedFocus;
+	outline: 0.0625rem dotted @sapUiFocus;
 	outline-offset: -3px;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:focus {
+	outline: 0.0625rem dotted @sapUiInvertedFocus;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMToken:focus {
+		.sapMTokenText:before {
+			border: 1px dashed @sapUiFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+		}
+	}
+
+	.sapMToken.sapMTokenSelected:focus {
 		.sapMTokenText:before {
 			border: 1px dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
@@ -53,8 +63,4 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover,
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: 0.75rem;
-}
-
-.sapMToken.sapMTokenActive {
-	background: darken(@sapUiButtonBackground, 5);
 }
