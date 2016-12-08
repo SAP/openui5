@@ -946,14 +946,12 @@ sap.ui.define([
 			}
 			oPromise.then(function (vResult) {
 				var bContextsCreated,
-					aResult,
-					iResultLength;
+					aResult;
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
-					iResultLength = aResult ? aResult.length : 0;
-					bContextsCreated = that.createContexts(oRange, iResultLength);
+					bContextsCreated = that.createContexts(oRange, aResult.length);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
 							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
