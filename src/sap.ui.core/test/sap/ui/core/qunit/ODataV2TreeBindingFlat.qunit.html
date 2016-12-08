@@ -59,6 +59,7 @@
 	// create binding
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
+		oModel.addBinding(oBinding);
 	};
 </script>
 
