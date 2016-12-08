@@ -317,9 +317,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 			this.$().find(".sapMTokenizer").after(sSpanText);
 			this._setValueInvisible();
-		}
 
-		this._bShowIndicator = true;
+			this._bShowIndicator = true;
+		}
 	};
 
 	/**
@@ -1117,6 +1117,16 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			return;
 		}
 
+		if (!this._bUseDialog										// Validation occurs if we are not on phone
+			&& !bNewFocusIsInSuggestionPopup						// AND the focus is not in the suggestion popup
+			&& oEvent.relatedControlId !== this.getId()				// AND the focus is not in the input field
+			&& oEvent.relatedControlId !== this._tokenizer.getId()	// AND the focus is not on the tokenizer
+			&& !bNewFocusIsInTokenizer								// AND the focus is not in the tokenizer
+			&& !(this._isMultiLineMode && this._bShowIndicator)) {	// AND we are not in MultiLine mode with 'N more' text displayed
+
+			this._validateCurrentText(true);
+		}
+
 		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator && this.getEditable()) {
 
 			if (bNewFocusIsInMultiInput || bNewFocusIsInSuggestionPopup) {
@@ -1140,6 +1150,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	MultiInput.prototype._onDialogClose = function () {
+		this._validateCurrentText();
+
 		this._tokenizer._oScroller.setHorizontal(true);
 		this._tokenizer.removeStyleClass("sapMTokenizerMultiLine");
 
@@ -1311,7 +1323,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			return this;
 		}
 
-		if (bEditable && (this.getEnableMultiLineMode() || this._bUseDialog)) {
+		if (bEditable && (this.getEnableMultiLineMode() || this._bUseDialog) && this.getTokens().length > 1) {
 			this._bShowIndicator = true;
 		} else {
 			this._bShowIndicator = false;
