@@ -2357,10 +2357,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				groupId: this._getCorrectChangeGroup(sAbsolutePath)
 			});
 			return oDeleteRequestHandle;
-			/*
-			// Work around for a missing DELETE request in the back-end system
-			this.oModel.setProperty(this.oTreeProperties["hierarchy-parent-node-for"], "", oContext);
-			*/
 		}
 	};
 
@@ -2383,7 +2379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			oNewHandle,
 			oContext;
 
-		jQuery.sap.assert(oParentContext && vContextHandles, "ODataTreeBinding.addContexts was called with incomplete arguments!");
+		jQuery.sap.assert(oParentContext && vContextHandles, "ODataTreeBinding.addContexts() was called with incomplete arguments!");
 
 		// we can only add nodes if we have a valid parent node
 		if (oNewParentNode) {
@@ -2395,70 +2391,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				oNewParentNode.nodeState.collapsed = true;
 			}
 
-			// received an array of new and (to the binding) unknown nodes
-			if (jQuery.isArray(vContextHandles)) {
-
-				if (vContextHandles.length > 0) {
-
-					// TODO: Check if all given contexts were created via this binding instance
-
-					// transform the new contexts into nodes
-					for (var i = 0; i < vContextHandles.length; i++) {
-						oContext = vContextHandles[i];
-
-						// set unique node ID if the context was created and we did not assign an ID yet
-						this._ensureHierarchyNodeIDForContext(oContext);
-
-						vContextHandles[i] = {
-							context: oContext,
-							key: oModel.getKey(oContext),
-							parent: oNewParentNode,
-							nodeState: {
-								isLeaf: true, // by default is the context is a leaf
-								collapsed: false,
-								expanded: false,
-								selected: false,
-								added: true // mark the node as newly added
-							},
-							addedSubtrees: [],
-							children: [],
-							magnitude: 0
-							// the level information will be maintained during the tree traversing
-						};
-
-						// track root node as changed
-						this._trackChangedNode(vContextHandles[i]);
-
-						// separately track the node as added
-						this._aAdded.push(vContextHandles[i]);
-					}
-
-					// push the newly added subtree to the parent node
-					oNewHandle = {
-						_getSubtree: function () {
-							return vContextHandles;
-						},
-						_oSubtreeRoot: null, // no subtree root if the contexts are newly inserted
-						_oNewParentNode: oNewParentNode
-					};
+			// check if we have a single context or an array of contexts
+			if (!jQuery.isArray(vContextHandles)) {
+				if (vContextHandles instanceof sap.ui.model.Context) {
+					vContextHandles = [vContextHandles];
 				} else {
-					jQuery.sap.log.warning("ODataTreeBinding.addContexts() was called with an empty array.");
+					jQuery.sap.log.warning("ODataTreeBinding.addContexts(): The child node argument is not of type sap.ui.model.Context.");
+				}
+			}
+
+			// returns a getSubtree function for the new subtree handles
+			// used as a closure around a given node, cannot be inside the for-loop below
+			var fnBuildGetSubtree = function (oFreshNode) {
+				return function () {
+					return [oFreshNode];
+				};
+			};
+
+			// IMPORTANT:
+			// We need to reverse the order of the input child vContextHandles array.
+			// The reason is, that we later always "unshift" the subtree-handles to the addedSubtree list of the parent node.
+			// This is done so the newly added nodes are added to the top of the subtree.
+			// At this positon they are the most likely to be visible in the TreeTable.
+			vContextHandles = vContextHandles.slice();
+			vContextHandles.reverse();
+
+			// seperate existing nodes/subtress from the newly created ones
+			for (var j = 0; j < vContextHandles.length; j++) {
+				var oContext = vContextHandles[j];
+
+				if (!oContext || !(oContext instanceof sap.ui.model.Context)) {
+					jQuery.sap.log.warning("ODataTreeBindingFlat.addContexts(): no valid child context given!");
 					return;
 				}
-			} else if (vContextHandles instanceof sap.ui.model.Context) {
-				// vContextHandles is a data binding context --> look up the subtree handle
-				// TODO: Use HierarchyNode ID instead of path? oContext.getProperty(this.oTreeProperties["hierarchy-node-for"])
-				oNewHandle = this._mSubtreeHandles[vContextHandles.getPath()];
 
-				// handle is a subtree and not a flat array of new child contexts
+				// look up the context for a cut out subtree handle
+				var oNewHandle = this._mSubtreeHandles[oContext.getPath()];
+
+				// set unique node ID if the context was created and we did not assign an ID yet
+				this._ensureHierarchyNodeIDForContext(oContext);
+
+				// We have a subtree handle for the given context.
+				// This means we have a cut out subtree and can re-insert it directly
 				if (oNewHandle && oNewHandle._isRemovedSubtree) {
+					jQuery.sap.log.info("ODataTreeBindingFlat.addContexts(): Existing context added '" + oContext.getPath() + "'");
+
 					// set the parent node for the newly inserted sub-tree to match the new parent
 					oNewHandle._oNewParentNode = oNewParentNode;
 
 					// mark the node as reinserted if it was previously removed
 					oNewHandle._oSubtreeRoot.nodeState.reinserted = true;
 
-					// keep track of the new and the original parent of a reinserted node
+					// keep track of the new and the original parent of a reinserted node (used for index-, selection- and submit-request-calculations)
 					oNewHandle._oSubtreeRoot.originalParent = oNewHandle._oSubtreeRoot.originalParent || oNewHandle._oSubtreeRoot.parent;
 					oNewHandle._oSubtreeRoot.parent = oNewParentNode;
 
@@ -2469,25 +2453,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 					// update parent property
 					oContext = oNewHandle.getContext();
 
-					// set unique node ID if the context was created and we did not assign an ID yet
-					this._ensureHierarchyNodeIDForContext(oContext);
-
 					// track root node as changed
 					this._trackChangedNode(oNewHandle._oSubtreeRoot);
+
+					// clean cut out subtree handles, if the context is later removed from the binding again,
+					// we simply re-add it with updated subtree data
+					this._mSubtreeHandles[oContext.getPath()];
+				} else {
+					// Context is unknown to the binding  -->  new context
+					// TODO: What to do with contexts, which are not created by this binding?
+					jQuery.sap.log.info("ODataTreeBindingFlat.addContexts(): Newly created context added.");
+
+					this._ensureHierarchyNodeIDForContext(oContext);
+					var oFreshNode = {
+						context: oContext,
+						key: oModel.getKey(oContext),
+						parent: oNewParentNode,
+						nodeState: {
+							isLeaf: true, // by default a newly created context is a leaf
+							collapsed: false,
+							expanded: false,
+							selected: false,
+							added: true // mark the node as newly added
+						},
+						addedSubtrees: [],
+						children: [],
+						magnitude: 0
+						// no level?  -->  the level information will be maintained during the tree traversal (via _map)
+					};
+
+					// track root node as changed
+					this._trackChangedNode(oFreshNode);
+
+					// separately track the node as added
+					this._aAdded.push(oFreshNode);
+
+					// push the newly added subtree to the parent node
+					oNewHandle = {
+						_getSubtree: fnBuildGetSubtree(oFreshNode),
+						_oSubtreeRoot: null, // no subtree root if the contexts are newly inserted
+						_oNewParentNode: oNewParentNode
+					};
 				}
-			} else {
-				jQuery.sap.log.warning("ODataTreeBinding.addContexts: called with wrong arguments.");
-			}
 
-			// update containing-server index for the newly added subtree
-			// TODO: Check if this information can be used productively, right now it's only used for debugging
-			oNewHandle._iContainingServerIndex = oNewParentNode.serverIndex || oNewParentNode.containingServerIndex;
+				// update containing-server index for the newly added subtree
+				// TODO: Check if this information can be used productively, right now it's only used for debugging
+				oNewHandle._iContainingServerIndex = oNewParentNode.serverIndex || oNewParentNode.containingServerIndex;
 
-			oNewParentNode.addedSubtrees.unshift(oNewHandle);
+				// finally add the new subtree handle to the existing parent node's addedSubtree list
+				oNewParentNode.addedSubtrees.unshift(oNewHandle);
 
-			// keep track of server-indexed node changes
-			if (oNewParentNode.serverIndex !== undefined) {
-				this._aNodeChanges[oNewParentNode.serverIndex] = true;
+				// keep track of server-indexed node changes (used e.g. for index- and selection-calculation
+				if (oNewParentNode.serverIndex !== undefined) {
+					this._aNodeChanges[oNewParentNode.serverIndex] = true;
+				}
 			}
 
 			// clear cache to make sure findNode etc. don't deliver wrong nodes (index is shifted due to adding)
