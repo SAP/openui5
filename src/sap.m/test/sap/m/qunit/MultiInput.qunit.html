@@ -372,6 +372,25 @@
 		equals(multiInput1._$input.getSelectedText(), "", "texts get unselected");
 	});
 
+	test("test text validation on focus leave", function() {
+		//arrange
+		var testTokenText = "C-Item";
+
+		multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text});
+		});
+
+		multiInput1.setValue(testTokenText);
+
+		//act
+		multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = multiInput1.getTokens();
+		equals(aTokens.length, 1, "MultiInput contains 1 token");
+		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
+	});
+
 	test("test exit", function() {
 
 		multiInput1._sResizeHandlerId = "ID0123";
