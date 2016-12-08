@@ -318,7 +318,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 	 * _checkContextParameter
 	 */
 
-	QUnit.test("_checkContextParameter calls the corresponding matcher depending on the operator", function (assert) {
+	QUnit.test("_checkContextParameter calls the corresponding matcher depending on the operator (EQ)", function (assert) {
 
 		var aRuntimeContext = [];
 
@@ -334,7 +334,30 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		var checkEqualsStub = this.stub(ContextManager, "_checkEquals").returns(true);
 		ContextManager._checkContextParameter(oContext, aRuntimeContext);
 
-		assert.equal(checkEqualsStub.getCalls().length, 1, "the equals comparsion was called once");
+		assert.equal(checkEqualsStub.getCalls().length, 1, "the equals comparison was called once");
+		var aPassedParameters = checkEqualsStub.getCall(0).args;
+		assert.equal(aPassedParameters[0], sSelector, "the selector was passed");
+		assert.equal(aPassedParameters[1], sValue, "the value was passed");
+		assert.equal(aPassedParameters[2], aRuntimeContext, "the runtime context was passed");
+	});
+
+	QUnit.test("_checkContextParameter calls the corresponding matcher depending on the operator (NE)", function (assert) {
+
+		var aRuntimeContext = [];
+
+		var sSelector = "country";
+		var sValue = "china";
+
+		var oContext = {
+			"selector": sSelector,
+			"operator": "NE",
+			"value": sValue
+		};
+
+		var checkEqualsStub = this.stub(ContextManager, "_checkEquals").returns(false);
+		ContextManager._checkContextParameter(oContext, aRuntimeContext);
+
+		assert.equal(checkEqualsStub.getCalls().length, 1, "the equals comparison was called once");
 		var aPassedParameters = checkEqualsStub.getCall(0).args;
 		assert.equal(aPassedParameters[0], sSelector, "the selector was passed");
 		assert.equal(aPassedParameters[1], sValue, "the value was passed");
