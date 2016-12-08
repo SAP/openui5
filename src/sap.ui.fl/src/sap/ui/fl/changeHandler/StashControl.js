@@ -21,8 +21,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
+	 * @param {object} mPropertyBag	- map of properties
+	 * @returns {boolean} true - if change could be applied
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -40,18 +41,6 @@ sap.ui.define([
 	 */
 	StashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 
-	};
-
-	/**
-	 * Transform the remove action format to the StashControl change format
-	 *
-	 * @param {object} mRemoveActionParameter a json object with the remove parameter
-	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
-
-	 * @function
-	 */
-	StashControl.buildStableChangeInfo = function(mRemoveActionParameter){
-		return mRemoveActionParameter;
 	};
 
 	return StashControl;
