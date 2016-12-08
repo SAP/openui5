@@ -96,10 +96,6 @@ sap.ui.define([
 			return true;
 		};
 
-		MoveElements.buildStableChangeInfo = function(mMoveActionParameter){
-			return mMoveActionParameter;
-		};
-
 		/**
 		 * Completes the change by adding change handler specific content
 		 *

@@ -22,6 +22,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag - map of properties
+	 * @returns {boolean} true - if change could be applied
 	 * @public
 	 */
 	HideForm.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -90,6 +92,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {object} oElement - removedElement
+	 * @returns {object} stable element
 	 * @private
 	 */
 	HideForm._getStableElement = function(oElement) {
@@ -105,9 +109,9 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.oChangeWrapper} oChange change object to be completed
+	 * @param {sap.ui.fl.oChangeWrapper} oChangeWrapper change object to be completed
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - map of properties
 	 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
 	 * @public
 	 */
@@ -119,18 +123,6 @@ sap.ui.define([
 		} else {
 			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
 		}
-	};
-
-
-	/**
-	 * Transform the remove action format to the hideControl change format
-	 *
-	 * @param {object} mRemoveActionParameter a json object with the remove parameter
-	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
-	 * @public
-	 */
-	HideForm.buildStableChangeInfo = function(mRemoveActionParameter) {
-		return mRemoveActionParameter;
 	};
 
 	return HideForm;
