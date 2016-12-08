@@ -1,12 +1,14 @@
-/* ============================================= */
-/* Theme CSS for control sap.m/Panel.control     */
-/* ============================================= */
+/* ============================ */
+/* CSS for control sap.m/Panel  */
+/* BlueCrystal theme            */
+/* ============================ */
+
 .sapMPanelBGSolid {
 	background-color: @sapUiGroupContentBackground;
 }
 
 .sapMPanelBGTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 80%);
+	background-color: fade(@sapUiGroupContentBackground, 80);
 }
 
 .sapMPanelBGTransparent {
@@ -23,12 +25,7 @@
 }
 
 .sapMPanelHdr {
-	font-weight: @sapUiFontHeaderWeight;
-	font-size: @sapMFontHeader4Size;
-	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 0.0625rem 0 @sapUiLightShadowTint;
-	color: @sapUiGroupTitleTextColor;
-	background-color: @sapUiGroupTitleBackground;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
@@ -36,8 +33,7 @@
 }
 
 .sapMPanelExpandableIcon {
-	color: @sapUiElement;
 	&:focus::after {
-		border: 1px dotted @sapUiFocus;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 }
