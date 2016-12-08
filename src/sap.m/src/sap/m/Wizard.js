@@ -310,7 +310,7 @@ sap.ui.define([
 
 			if (index > progressAchieved || index <= 0) {
 				jQuery.sap.log.warning("The given step is either not yet reached, or is not present in the wizard control.");
-				return;
+				return this;
 			}
 
 			this._getProgressNavigator().discardProgress(index);
