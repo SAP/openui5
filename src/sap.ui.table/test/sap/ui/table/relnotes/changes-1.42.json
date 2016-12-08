@@ -315,5 +315,40 @@
         "references": []
       }
     ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "7667c6d6563aff6e80b56d164ab9c131d341ff5d",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix content height when custom row height is defined",
+        "references": []
+      },
+      {
+        "id": "9895cd4e5700826159a7ae6db713403e76605722",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Fix large data scrolling.",
+        "references": []
+      },
+      {
+        "id": "abf52b87b619e4e31b54127bb6cc98414817841c",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: fixed columns do not show a resize ruler",
+        "references": []
+      },
+      {
+        "id": "4c16e3027b21e364b3eda5d711f7d9ef3065d264",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect resize of columns with header span",
+        "references": []
+      },
+      {
+        "id": "00e129a8b78ae4265bbd6f6ad6b7d28271d9a8be",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: resize bar not visible in RTL mode",
+        "references": []
+      }
+    ]
   }
 }

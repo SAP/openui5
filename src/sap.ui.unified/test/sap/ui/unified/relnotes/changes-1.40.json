@@ -529,5 +529,33 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "78c419ca54f1eba92cc3e9ab0cae14cfe97a6e1e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "64979f10bce32a567b05983646401bc99d805ac5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Displayed correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "ebda0572c2c05766af4f080d61885e6eb12bb3a9",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
+        "references": []
+      }
+    ]
   }
 }

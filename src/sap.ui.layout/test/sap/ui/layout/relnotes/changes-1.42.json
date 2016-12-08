@@ -173,5 +173,16 @@
         "references": []
       }
     ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "3ed84839c8cdcc7255f12ed0c6d9e67b0d8ce419",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm adding content twice",
+        "references": []
+      }
+    ]
   }
 }

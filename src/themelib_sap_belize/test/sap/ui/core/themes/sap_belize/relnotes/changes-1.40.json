@@ -641,5 +641,81 @@
         "references": []
       }
     ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "66fabb32aabdf9b86be0ee1f2e13963367aaefcb",
+        "type": "FIX",
+        "text": " sap.m.Bar: sap.m.Text and sap.m.Lable has correct color and shadow in Belize",
+        "references": []
+      },
+      {
+        "id": "83122f21e26f7966c8955625002ac4ae960f5ab3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "0c7c92822ea5ea495bb496bcbc6a4b78fb389478",
+        "type": "FIX",
+        "text": " sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "4571ff621d4790526ecd8b1f3ba921b45f914697",
+        "type": "FIX",
+        "text": " sap.m.Panel: corrected focus for IE",
+        "references": []
+      },
+      {
+        "id": "78c419ca54f1eba92cc3e9ab0cae14cfe97a6e1e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "fce10e4eeec5ef3863f0a9298b6015703e434fda",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.ToggleButton: Css selectors fixed in Belize",
+        "references": []
+      },
+      {
+        "id": "a4056b312333584a5adea0d5a090351f093e4ed2",
+        "type": "FIX",
+        "text": " sap.m.MessageToast - width property is no longer restricted to a maximum of 15rems",
+        "references": []
+      },
+      {
+        "id": "fcfce59a083217a3e007f116f465d87d120ad8b4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: SetEditable no longer modifies its tokens",
+        "references": []
+      },
+      {
+        "id": "23aba18d350513d3bda83f07b4ba78021259588c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token selection corrected",
+        "references": []
+      },
+      {
+        "id": "96c9b09291aa16cd2338688a9df854bed4aa1de8",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "fc1fc714fd7c1bed958158bba88c423dc801105e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly displayed in Belize",
+        "references": []
+      }
+    ]
   }
 }

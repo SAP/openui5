@@ -845,5 +845,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.12": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "ebd69f9231b539f14fbb110c6c40508d6dde379f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Handle Cell click also when MatrixLayout is used in cell",
+        "references": []
+      },
+      {
+        "id": "08626b932f27b8c7bc315df70831b8619f0167f7",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Restore focus on row (e.g. tree icon) after rendering",
+        "references": []
+      },
+      {
+        "id": "efc82948dc8dc426d5d0b453f6b6c7b9a63373fd",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Horizontal scroll position is restored after rerendering.",
+        "references": []
+      },
+      {
+        "id": "8445b0e98c836d3504ad7a6c7e48d004ba7d2435",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect resize of columns with header span",
+        "references": []
+      },
+      {
+        "id": "68675bdba028da041e32959f30ea0d78a23de38e",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: resize bar not visible in RTL mode",
+        "references": []
+      }
+    ]
   }
 }
