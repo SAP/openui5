@@ -12,16 +12,18 @@
 			showNavButton="true"
 			title="{i18n>objectTitle}">
 		<semantic:content>
-
 			<ObjectHeader
 					id="objectHeader"
 					title="{Title}"
-					number="{Price}"
+					number="{
+						path: 'Price',
+						formatter: '.formatter.numberUnit'
+					}"
 					numberUnit="{Currency}">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
 						expanded="{device>/isNoPhone}"
-						class="sapUiResponsiveContentPadding">
+						class="sapUiNoContentPadding">
 				<items>
 					<IconTabFilter icon="sap-icon://hint" key="info">
 						<form:SimpleForm>
@@ -38,7 +40,6 @@
 					</IconTabFilter>
 					<IconTabFilter icon="sap-icon://inspection" key="statistics">
 						<Text text="Viewed 55555 times" id="viewCounter"/>
-
 					</IconTabFilter>
 				</items>
 			</IconTabBar>

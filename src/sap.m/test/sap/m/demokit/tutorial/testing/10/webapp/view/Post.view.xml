@@ -14,7 +14,10 @@
 			<ObjectHeader
 					id="objectHeader"
 					title="{Title}"
-					number="{Price}"
+					number="{
+						path: 'Price',
+						formatter: '.formatter.numberUnit'
+					}"
 					numberUnit="{Currency}">
 			</ObjectHeader>
 		</semantic:content>
