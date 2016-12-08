@@ -116,7 +116,7 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.onDragStart = function(oOverlay, oEvent) {
+	ControlDragDrop.prototype.onDragStart = function(oOverlay) {
 		this._oDraggedOverlay = oOverlay;
 		this.getElementMover().setMovedOverlay(oOverlay);
 
@@ -139,7 +139,7 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
+	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay) {
 		var oDraggedOverlay = this.getDraggedOverlay();
 		if (oTargetOverlay.getElementInstance() !== oDraggedOverlay.getElementInstance()
 				&& oTargetOverlay !== this._oPreviousTarget) {

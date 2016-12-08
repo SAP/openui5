@@ -184,60 +184,60 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onMovableChange = function(oEvent) { };
+	DragDrop.prototype.onMovableChange = function(oOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onDragStart = function(oDraggedOverlay, oEvent) { };
+	DragDrop.prototype.onDragStart = function(oDraggedOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onDragEnd = function(oDraggedOverlay, oEvent) { };
+	DragDrop.prototype.onDragEnd = function(oDraggedOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onDrag = function(oDraggedOverlay, oEvent) { };
-
-	/**
-	 * @return {boolean} return true to omit event.preventDefault
-	 * @protected
-	 */
-	DragDrop.prototype.onDragEnter = function(oOverlay, oEvent) { };
+	DragDrop.prototype.onDrag = function(oDraggedOverlay) { };
 
 	/**
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
-	DragDrop.prototype.onDragLeave = function(oOverlay, oEvent) { };
+	DragDrop.prototype.onDragEnter = function(oOverlay) { };
 
 	/**
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
-	DragDrop.prototype.onDragOver = function(oOverlay, oEvent) { };
+	DragDrop.prototype.onDragLeave = function(oOverlay) { };
+
+	/**
+	 * @return {boolean} return true to omit event.preventDefault
+	 * @protected
+	 */
+	DragDrop.prototype.onDragOver = function(oOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay, oEvent) { };
+	DragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onAggregationDragOver = function(oAggregationOverlay, oEvent) { };
+	DragDrop.prototype.onAggregationDragOver = function(oAggregationOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onAggregationDragLeave = function(oAggregationOverlay, oEvent) { };
+	DragDrop.prototype.onAggregationDragLeave = function(oAggregationOverlay) { };
 
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onAggregationDrop = function(oAggregationOverlay, oEvent) { };
+	DragDrop.prototype.onAggregationDrop = function(oAggregationOverlay) { };
 
 	/**
 	 * @private
@@ -260,7 +260,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			this._detachDragEvents(oOverlay);
 		}
 
-		this.onMovableChange(oOverlay, oEvent);
+		this.onMovableChange(oOverlay);
 	};
 
 	/**
@@ -277,7 +277,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		}
 
 		this.showGhost(oOverlay, oEvent);
-		this.onDragStart(oOverlay, oEvent);
+		this.onDragStart(oOverlay);
 	};
 
 	DragDrop.prototype._attachTouchDragEvents = function(oOverlay) {
@@ -390,7 +390,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			if (ElementUtil.isInstanceOf(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 				this.onAggregationDragEnter(oTargetOverlay);
 			} else {
-				this.onDragEnter(oTargetOverlay, oEvent);
+				this.onDragEnter(oTargetOverlay);
 			}
 		}
 
@@ -530,7 +530,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		this._removeGhost();
 
 		this._clearAllScrollIntervals();
-		this.onDragEnd(oOverlay, oEvent);
+		this.onDragEnd(oOverlay);
 
 		oEvent.stopPropagation();
 	};
@@ -541,7 +541,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	DragDrop.prototype._onDrag = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
-		this.onDrag(oOverlay, oEvent);
+		this.onDrag(oOverlay);
 
 		oEvent.stopPropagation();
 	};
@@ -553,7 +553,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
-			if (!this.onDragEnter(oOverlay, oEvent)) {
+			if (!this.onDragEnter(oOverlay)) {
 				oEvent.stopPropagation();
 			}
 		}
@@ -568,7 +568,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
-			if (!this.onDragLeave(oOverlay, oEvent)) {
+			if (!this.onDragLeave(oOverlay)) {
 				oEvent.stopPropagation();
 			}
 		}
@@ -583,7 +583,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
-			if (!this.onDragOver(oOverlay, oEvent)) {
+			if (!this.onDragOver(oOverlay)) {
 				oEvent.stopPropagation();
 			}
 		}
@@ -633,7 +633,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._onAggregationDragEnter = function(oEvent) {
 		var oAggregationOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onAggregationDragEnter(oAggregationOverlay, oEvent);
+		this.onAggregationDragEnter(oAggregationOverlay);
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -644,7 +644,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._onAggregationDragOver = function(oEvent) {
 		var oAggregationOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onAggregationDragOver(oAggregationOverlay, oEvent);
+		this.onAggregationDragOver(oAggregationOverlay);
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -655,7 +655,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._onAggregationDragLeave = function(oEvent) {
 		var oAggregationOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onAggregationDragLeave(oAggregationOverlay, oEvent);
+		this.onAggregationDragLeave(oAggregationOverlay);
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -666,7 +666,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._onAggregationDrop = function(oEvent) {
 		var oAggregationOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this.onAggregationDrop(oAggregationOverlay, oEvent);
+		this.onAggregationDrop(oAggregationOverlay);
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
