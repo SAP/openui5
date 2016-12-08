@@ -7,12 +7,30 @@
 @_sap_m_WizardProgressNavigator_NavAnchorTitleSelectedTextColor: darken(@sapUiGroupTitleTextColor, 20);
 @_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor: darken(@sapUiGroupTitleTextColor, 10);
 
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-	background: @_sap_m_WizardProgressNavigator_NavAnchorCircleHoverColor;
+.sapMWizardProgressNav {
+	border-bottom: solid 0.125rem @sapUiGroupContentBorderColor;
+	box-shadow: @sapUiShadowHeader;
+	position: absolute;
+	z-index: 1;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"]:hover .sapMWizardProgressNavAnchorCircle {
-	background: @sapUiHighlight;
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background-color: inherit;
+	color: @sapUiHighlight;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorCircle {
+	background-color: @sapUiHighlight;
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavAnchorTitle,
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorTitle {
+	color: @_sap_m_WizardProgressNavigator_NavAnchorTitleHoverTextColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavAnchor::after {
+	height: 0.125rem;
 }
 
 .sapMWizardProgressNavAnchor:focus {
@@ -38,7 +56,7 @@
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
-	
+
 	.sapMWizardProgressNavAnchorTitle {
 		color: @_sap_m_WizardProgressNavigator_NavAnchorTitleSelectedTextColor;
 	}
