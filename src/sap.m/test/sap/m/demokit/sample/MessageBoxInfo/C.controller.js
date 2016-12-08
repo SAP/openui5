@@ -22,24 +22,20 @@ sap.ui.define([
 
 		showFormattedTextInfo: function(oEvent) {
 			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.show("Information", {
-				icon: MessageBox.Icon.INFORMATION,
-				title: "Information",
-				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+			MessageBox.show("Unable to load data.", {
+				icon: MessageBox.Icon.ERROR,
+				title: "Error",
+				actions: [sap.m.MessageBox.Action.OK],
 				id: "messageBoxId2",
-				defaultAction: MessageBox.Action.NO,
-				details: '<h1>Header 1</h1>' +
-						'<h3>Header 3</h3>\n' +
-						'<p><a href="//www.sap.com" target="_top" style="color:green; font-weight:600;">link to sap.com</a> - opens in a new window.' +
+				defaultAction: sap.m.MessageBox.Action.OK,
+				details: '<p><strong>This can happen if:</strong></p>\n' +
 						'<ul>' +
-						'<li>&lt;ul&gt; - &lt;li&gt;</li>' +
-						'<li>Span <span class="foo">span class="foo"</span> &bull; <strong>strong</strong> &bull; <em>em</em> &bull; <u>u</u></li>' +
-						'<li style="background-color: rgb(255, 255, 255);">white background</li>' +
+						'<li>You are not connected to the internet</li>' +
+						'<li>a backend component is not <em>available</em></li>' +
+						'<li>or an underlying system is down</li>' +
 						'</ul>' +
-						'<pre>pre: abc\n        def\n           ghi</pre>\n' +
-						'<dl><dt>dl - dt - de:</dt><dd>Definition list <code>&lt;dl&gt;</code> of terms <code>&lt;dt&gt;</code> and descriptions <code>&lt;dd&gt;</code></dd>' +
-						'<br><cite>Cite: a reference to a source</cite>',
-				styleClass: bCompact? "sapUiSizeCompact" : "",
+						'<p>Get more help <a href="//www.sap.com" target="_top">here</a>.',
+				styleClass: bCompact ? "sapUiSizeCompact" : "",
 				contentWidth: "100px"
 			});
 		},
