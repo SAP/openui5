@@ -1,0 +1,69 @@
+{
+	"navigation": [
+		{
+			"title": "Home",
+			"icon": "sap-icon://home",
+			"expanded": true,
+			"key": "home"
+		},
+		{
+			"title": "Settings",
+			"icon": "sap-icon://settings",
+			"key": "systemSettings"
+		},
+		{
+			"title": "Statistics",
+			"icon": "sap-icon://line-chart",
+			"key": "statistics",
+			"items": [
+				{
+					"title": "Usage Statistics",
+					"key": "Usage Statistics was pressed"
+				},
+				{
+					"title": "Order Statistics",
+					"key": "Order Statistics was pressed"
+				}
+			]
+		}
+	],
+	"fixedNavigation": [
+		{
+			"title": "Important Links",
+			"icon": "sap-icon://chain-link",
+			"key": "Important Links was pressed"
+		},
+		{
+			"title": "Legal",
+			"icon": "sap-icon://compare",
+			"key": "Legal was pressed"
+		}
+	],
+	"masterSettings": [
+		{
+			"title": "System Settings",
+			"key": "systemSettings",
+			"selected": true
+		},
+		{
+			"title": "Order Settings",
+			"key": "orderSettings",
+			"selected": false
+		},
+		{
+			"title": "Supplier Settings",
+			"key": "supplierSettings",
+			"selected": false
+		},
+		{
+			"title": "Campaign Settings",
+			"key": "campaignSettings",
+			"selected": false
+		},
+		{
+			"title": "Shipping Settings",
+			"key": "shipping Settings",
+			"selected": false
+		}
+	]
+}
