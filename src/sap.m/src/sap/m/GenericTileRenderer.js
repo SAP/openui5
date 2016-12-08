@@ -24,6 +24,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		var sAriaText = oControl._getAriaText();
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
+		var sState = oControl.getState();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -39,7 +40,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
-		if (oControl.getState() !== LoadState.Disabled) {
+		if (sState !== LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
@@ -86,7 +87,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		}
 		oRm.write("</div>");
 
-		if (oControl.getState() !== LoadState.Loaded) {
+		if (sState !== LoadState.Loaded) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		} else {
 			this._renderHoverOverlay(oRm, oControl);
@@ -140,13 +141,15 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 				oRm.renderControl(oControl._oWarningIcon);
 				oRm.write("</div>");
 
-				oRm.write("<div");
-				oRm.writeAttribute("id", oControl.getId() + "-failed-text");
-				oRm.addClass("sapMGenericTileFtrFldTxt");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oControl.getAggregation("_failedMessageText"));
-				oRm.write("</div>");
+				if (oControl.getScope() !== GenericTileScope.Actions) {
+					oRm.write("<div");
+					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
+					oRm.addClass("sapMGenericTileFtrFldTxt");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.renderControl(oControl.getAggregation("_failedMessageText"));
+					oRm.write("</div>");
+				}
 
 				oRm.write("</div>");
 				break;
@@ -156,8 +159,10 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 	};
 
 	GenericTileRenderer._renderActionsScope = function(oRm, oControl) {
-		oRm.renderControl(oControl._oRemoveButton);
-		oRm.renderControl(oControl._oMoreIcon);
+		if (oControl.getState() !== LoadState.Disabled) {
+			oRm.renderControl(oControl._oRemoveButton);
+			oRm.renderControl(oControl._oMoreIcon);
+		}
 	};
 
 	GenericTileRenderer._renderHoverOverlay = function(oRm, oControl) {
