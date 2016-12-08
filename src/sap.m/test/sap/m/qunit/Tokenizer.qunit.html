@@ -92,8 +92,6 @@
 
 		//assert
 		equals(tokenizer2.getTokens().length, 3, "Clone has 3 tokens");
-		equals(tokenizer2.getTokens()[0].mEventRegistry.press.length, 1, "Cloned token has 1 press handler");
-		equals(tokenizer2.getTokens()[0].mEventRegistry.delete.length, 1, "Cloned token has 1 delete handler");
 
 		//clean-up
 		tokenizer2.destroy();
@@ -119,11 +117,6 @@
 		tokenizer1.addToken(token2);
 		tokenizer1.addToken(token3);
 		equals(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
-
-		token2.fireDelete({
-			token : token2
-		});
-		equals(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
 
 		tokenizer1.removeAllTokens();
 	});
