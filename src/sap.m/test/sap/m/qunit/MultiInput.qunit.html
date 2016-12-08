@@ -231,6 +231,25 @@
 		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
+	test("test text validation on focus leave", function() {
+		//arrange
+		var testTokenText = "C-Item";
+
+		this.multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text});
+		});
+
+		this.multiInput1.setValue(testTokenText);
+
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		equals(aTokens.length, 1, "MultiInput contains 1 token");
+		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
+	});
+
 	test("test exit", function() {
 		this.multiInput1._sResizeHandlerId = "ID0123";
 		this.multiInput1.exit();
