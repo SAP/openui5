@@ -938,7 +938,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 				}
 			}
 		};
-		if (!(Device.support.pointer && Device.support.touch)) {
+
+		// Windows Phone (<10) doesn't need event emulation because IE supports
+		// touch events but fires mouse events based on pointer events without
+		// delay.
+		// In Edge on Windows Phone 10 the mouse events are delayed like in
+		// other browsers
+		var bEmulationNeeded = !(Device.os.windows_phone && Device.os.version < 10);
+
+		// Simulate touch events on NOT delayed mouse events (delayed mouse
+		// events are filtered out in fnMouseToTouchHandler)
+		if (bEmulationNeeded) {
 			createSimulatedEvent("touchstart", ["mousedown"], fnMouseToTouchHandler);
 			createSimulatedEvent("touchend", ["mouseup", "mouseout"], fnMouseToTouchHandler);
 			// Browser doesn't fire any mouse event after dragstart, so we need to listen to dragstart to cancel the current touch process in order
@@ -947,9 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		}
 
 		// Simulate mouse events on touch devices
-		// Except for Windows Phone (<10): IE supports touch events but fires mouse events based on pointer events without delay.
-		// In Edge on Windows Phone 10 the mouse events are delayed like in other browsers
-		if (Device.support.touch && !(Device.os.windows_phone && Device.os.version < 10)) {
+		if (Device.support.touch && bEmulationNeeded) {
 			var bFingerIsMoved = false,
 				iMoveThreshold = jQuery.vmouse.moveDistanceThreshold,
 				iStartX, iStartY,
