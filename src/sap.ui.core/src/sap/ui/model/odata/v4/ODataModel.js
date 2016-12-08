@@ -595,6 +595,24 @@ sap.ui.define([
 	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
 	 * <code>bReload</code> from {@link sap.ui.model.Model#createBindingContext} are not supported.
 	 *
+	 * It is possible to create binding contexts pointing to metadata.  A '#' in the resolved path
+	 * splits it into two parts: The part before '#' is transformed into a metadata context (see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following '#' is then
+	 * interpreted relative to this metadata context, even if it starts with a '/'; a trailing '/'
+	 * is allowed here, see {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the
+	 * effect it has.
+	 *
+	 * Examples:
+	 * <ul>
+	 * <li><code>/Products('42')/Name#@com.sap.vocabularies.Common.v1.Label</code>
+	 *   points to the "Label" annotation of the "Name" property of the entity set "Products".
+	 * <li><code>/#Products/Name@com.sap.vocabularies.Common.v1.Label</code> has no data path part
+	 *   and thus starts at the metadata root. It also points to the "Label" annotation of the
+	 *   "Name" property of the entity set "Products".
+	 * <li><code>/Products#/</code>
+	 *   points to the entity type (note the trailing '/') of the entity set "Products".
+	 * </ul>
+	 *
 	 * @param {string} sPath
 	 *   The binding path, may be relative to the provided context
 	 * @param {sap.ui.model.Context} [oContext]
@@ -610,7 +628,11 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.createBindingContext = function (sPath, oContext) {
-		var sResolvedPath;
+		var sDataPath,
+			oMetaContext,
+			sMetaPath,
+			sResolvedPath,
+			iSeparator;
 
 		if (arguments.length > 2) {
 			throw new Error("Only the parameters sPath and oContext are supported");
@@ -623,6 +645,17 @@ sap.ui.define([
 		if (sResolvedPath === undefined) {
 			throw new Error("Cannot create binding context from relative path '" + sPath
 				+ "' without context");
+		}
+
+		iSeparator = sResolvedPath.indexOf('#');
+		if (iSeparator >= 0) {
+			sDataPath = sResolvedPath.slice(0, iSeparator);
+			sMetaPath = sResolvedPath.slice(iSeparator + 1);
+			if (sMetaPath[0] === "/") {
+				sMetaPath = "." + sMetaPath;
+			}
+			oMetaContext = this.oMetaModel.getMetaContext(sDataPath);
+			return this.oMetaModel.createBindingContext(sMetaPath, oMetaContext);
 		}
 
 		return new BaseContext(this, sResolvedPath);
@@ -927,6 +960,55 @@ sap.ui.define([
 		this.checkGroupId(sGroupId, true);
 
 		this.oRequestor.cancelChanges(sGroupId);
+	};
+
+	/**
+	 * Resolves the given path relative to the given context. Without a context, a relative path
+	 * cannot be resolved and <code>undefined</code> is returned. An absolute path is returned
+	 * unchanged. A relative path is appended to the context's path separated by a forward slash
+	 * ("/"). The resulting path does not end with a forward slash unless it contains the hash ("#")
+	 * character used to branch (see {@link #createBindingContext}) into metadata; see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect of a trailing
+	 * slash.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the data model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {string}
+	 *   Resolved path or <code>undefined</code>
+	 *
+	 * @private
+	 * @see sap.ui.model.Model#resolve
+	 */
+	// @override
+	ODataModel.prototype.resolve = function (sPath, oContext) {
+		var sResolvedPath;
+
+		if (sPath[0] === "/") {
+			sResolvedPath = sPath;
+		} else {
+			if (oContext) {
+				if (sPath) {
+					if (oContext.getPath().slice(-1) === "/") {
+						sResolvedPath = oContext.getPath() + sPath;
+					} else {
+						sResolvedPath = oContext.getPath() + "/" + sPath;
+					}
+				} else {
+					sResolvedPath = oContext.getPath();
+				}
+			}
+		}
+
+		if (sResolvedPath
+				&& sResolvedPath !== "/"
+				&& sResolvedPath[sResolvedPath.length - 1] === "/"
+				&& sResolvedPath.indexOf("#") < 0) {
+			sResolvedPath = sResolvedPath.slice(0, sResolvedPath.length - 1);
+		}
+
+		return sResolvedPath;
 	};
 
 	/**

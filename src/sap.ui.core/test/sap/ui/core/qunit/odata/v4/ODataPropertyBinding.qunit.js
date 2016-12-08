@@ -277,12 +277,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["", "/", "foo/"].forEach(function (sPath) {
+	["/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindProperty: invalid path: " + sPath, function (assert) {
 			assert.throws(function () {
 				this.oModel.bindProperty(sPath);
 			}, new Error("Invalid path: " + sPath));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindProperty: empty path is valid for base context", function (assert) {
+		var oBaseContext = this.oModel.createBindingContext("/ProductList('HT-1000')/Name");
+
+		// code under test
+		this.oModel.bindProperty("", oBaseContext);
 	});
 
 	//*********************************************************************************************

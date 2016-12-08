@@ -54,11 +54,11 @@
 				</VBox>
 			</content>
 		</Panel>
-		<template:with path="meta>/BusinessPartnerList/" var="entityType">
+		<template:with path="data>#/" var="entityType">
 			<template:with path="entityType>@com.sap.vocabularies.UI.v1.LineItem" var="lineItem">
 				<!-- Note: this limits the data shown to 5 rows! -->
 				<Table headerText="Business Partners"
-					items="{path:'/BusinessPartnerList', length: 5}">
+					items="{path:'', length: 5}">
 					<columns>
 						<template:repeat list="{lineItem>}" var="field">
 							<Column>
