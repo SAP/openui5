@@ -1227,5 +1227,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "b6309695fb83cfe718a0c0849306e60822c45b32",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: fixed columns do not show a resize ruler",
+        "references": []
+      }
+    ]
   }
 }

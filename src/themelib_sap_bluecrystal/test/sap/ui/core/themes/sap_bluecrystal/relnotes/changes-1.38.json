@@ -677,5 +677,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.12": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "cb76e786044468f7b8d3850cf27df3c728d25079",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      }
+    ]
   }
 }

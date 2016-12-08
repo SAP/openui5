@@ -3531,5 +3531,46 @@
         "references": []
       }
     ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "86c9ed687db09400578901520d099ccef414b4c7",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      },
+      {
+        "id": "34e7aa7f6e8e491d85cc00d24c1497279c8feb23",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      },
+      {
+        "id": "b0b758c64624be7ecc330e9871b4d27d2f1d2f92",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      },
+      {
+        "id": "ec44015e8dafcb4ae5c04a0c81149691a60f01e4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: swipe now works correctly on combi devices",
+        "references": []
+      },
+      {
+        "id": "68e90f0bf63ed5eec5c88614367ef6ef601d38ce",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollBar: invalidation while setting contentSize causes the user to lose track of the scrollbar handle",
+        "references": []
+      },
+      {
+        "id": "8dce03c19fc30c73d82c193377747fb0834bef9d",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t try to reload created entities",
+        "references": []
+      }
+    ]
   }
 }

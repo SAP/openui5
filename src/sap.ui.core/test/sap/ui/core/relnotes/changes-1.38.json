@@ -1756,5 +1756,50 @@
         "references": []
       }
     ]
+  },
+  "1.38.12": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "5e68da248f59ccb84f85dd8a2214b2e1783c9791",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      },
+      {
+        "id": "9d47290236edacec7f2617a7a95009997e487318",
+        "type": "FIX",
+        "text": " jquery.sap.trace.qunit: test robustness",
+        "references": []
+      },
+      {
+        "id": "321afcccedcec50d251112d848a1b166bbd6aad6",
+        "type": "FIX",
+        "text": " v2.ODataModel: empty request - setProperty on complex type",
+        "references": []
+      }
+    ]
+  },
+  "1.38.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "48b331475733f248b9ca2cd3a16f062c6257e2e7",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      }
+    ]
+  },
+  "1.38.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "08df0bd223bc0617a591fe0cb80c2dc8fd24ce96",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      }
+    ]
   }
 }
