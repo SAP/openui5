@@ -2955,7 +2955,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
 			window.clearTimeout(this._mTimeouts.scrollUpdateTimerId);
 			this._mTimeouts.scrollUpdateTimerId = window.setTimeout(function() {
-				updateVisibleRow(this);
+				updateVisibleRow(that);
 				that._mTimeouts._sScrollUpdateTimerId = null;
 			}, 300);
 		} else {
