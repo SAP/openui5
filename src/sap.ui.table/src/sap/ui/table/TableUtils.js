@@ -765,27 +765,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		/**
 		 * Checks whether the cell of the given DOM reference is in the first row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {Object} oRef Cell DOM Reference
+		 * @param {Object|int} row Cell DOM reference or row index
 		 * @private
 		 */
-		isFirstScrollableRow : function(oTable, oRef) {
-			var $Ref = jQuery(oRef);
-			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+		isFirstScrollableRow : function(oTable, row) {
+			if (isNaN(row)) {
+				var $Ref = jQuery(row);
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+			}
 			var iFixed = oTable.getFixedRowCount() || 0;
-			return iRowIndex == iFixed;
+			return row == iFixed;
 		},
 
 		/**
 		 * Checks whether the cell of the given DOM reference is in the last row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {Object} oRef Cell DOM Reference
+		 * @param {Object|int} row Cell DOM reference or row index
 		 * @private
 		 */
-		isLastScrollableRow : function(oTable, oRef) {
-			var $Ref = jQuery(oRef);
-			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+		isLastScrollableRow : function(oTable, row) {
+			if (isNaN(row)) {
+				var $Ref = jQuery(row);
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"), 10);
+			}
 			var iFixed = oTable.getFixedBottomRowCount() || 0;
-			return iRowIndex == oTable.getVisibleRowCount() - iFixed - 1;
+			return row == oTable.getVisibleRowCount() - iFixed - 1;
 		},
 
 		/**
