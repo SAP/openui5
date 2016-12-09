@@ -8,13 +8,37 @@ sap.ui.define([
 		"use strict";
 
 		/*
-		 * Change handler for adding a smart form group.
-		 * @alias sap.ui.fl.changeHandler.AddGroup
+		 * Change handler for adding a simple form group.
+		 * @alias sap.ui.layout.changeHandler.AddSimpleFormGroup
 		 * @author SAP SE
 		 * @version ${version}
 		 * @experimental Since 1.27.0
 		 */
-		var AddGroup = {};
+		var AddSimpleFormGroup = {};
+
+		AddSimpleFormGroup.CONTENT_AGGREGATION = "content";
+
+		var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
+			var oResult;
+			var iCurrentGroupIndex = -1;
+
+			// Empty simpleform case, when the title is null
+			if (iGroupIndex === 0) {
+				return iGroupIndex;
+			}
+
+			for (var i = 0; i < aContent.length; i++) {
+				var sType = oModifier.getControlType(aContent[i]);
+				if (aStopToken.indexOf(sType) > -1) {
+					iCurrentGroupIndex++;
+					if (iCurrentGroupIndex === iGroupIndex) {
+						oResult = aContent[i];
+						return aContent.indexOf(oResult);
+					}
+				}
+			}
+			return aContent.length;
+		};
 
 		/**
 		 * Adds a smart form group.
@@ -25,7 +49,7 @@ sap.ui.define([
          * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
 		 * @public
 		 */
-		AddGroup.applyChange = function (oChangeWrapper, oForm, mPropertyBag) {
+		AddSimpleFormGroup.applyChange = function (oChangeWrapper, oForm, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
             var oAppComponent = mPropertyBag.appComponent;
@@ -46,11 +70,24 @@ sap.ui.define([
 					sGroupId = oChange.content.group.id;
 				}
 				var sLabelText = oChange.texts.groupLabel.value;
-				var insertIndex = oChange.content.group.index;
+
+				var aContent = oModifier.getAggregation(oForm, AddSimpleFormGroup.CONTENT_AGGREGATION);
+
+				var iInsertIndex;
+				var iRelativeIndex;
+
+				if (typeof oChange.content.group.index === "number") {
+					// The old code support
+					iInsertIndex = oChange.content.group.index;
+				} else {
+					iRelativeIndex = oChange.content.group.relativeIndex;
+					iInsertIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, ["sap.ui.core.Title"], aContent, iRelativeIndex);
+				}
+
 				var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
 
 				oModifier.setProperty(oTitle, "text", sLabelText);
-				oModifier.insertAggregation(oForm, "content", oTitle, insertIndex, oView);
+				oModifier.insertAggregation(oForm, "content", oTitle, iInsertIndex, oView);
 
 			} else {
 				Utils.log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
@@ -69,14 +106,14 @@ sap.ui.define([
          * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
 		 * @public
 		 */
-		AddGroup.completeChangeContent = function (oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
+		AddSimpleFormGroup.completeChangeContent = function (oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
 			var oChange = oChangeWrapper.getDefinition();
 			var oAppComponent = mPropertyBag.appComponent;
 
 			if (oSpecificChangeInfo.newLabel) {
 				Base.setTextInChange(oChange, "groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
 			} else {
-				throw new Error("oSpecificChangeInfo.groupLabel attribute required");
+				throw new Error("oSpecificChangeInfo.newLabel attribute required");
 			}
 			if (!oChange.content) {
 				oChange.content = {};
@@ -93,18 +130,18 @@ sap.ui.define([
 			if (oSpecificChangeInfo.index === undefined) {
 				throw new Error("oSpecificChangeInfo.index attribute required");
 			} else {
-				oChange.content.group.index = oSpecificChangeInfo.index;
+				oChange.content.group.relativeIndex = oSpecificChangeInfo.index;
 			}
 		};
 
 		/**
 		 * Gets the id from the group to be added.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - addGroup change, which contains the group id within the content
+		 * @param {sap.ui.fl.Change} oChange - addSimpleFormGroup change, which contains the group id within the content
 		 * @returns {string} groupId
 		 * @public
 		 */
-		AddGroup.getControlIdFromChangeContent = function (oChange) {
+		AddSimpleFormGroup.getControlIdFromChangeContent = function (oChange) {
 			var sControlId;
 
 			if (oChange && oChange._oDefinition) {
@@ -114,5 +151,5 @@ sap.ui.define([
 			return sControlId;
 		};
 
-		return AddGroup;
+		return AddSimpleFormGroup;
 	}, /* bExport= */true);
