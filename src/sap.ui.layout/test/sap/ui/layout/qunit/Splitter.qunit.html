@@ -388,6 +388,18 @@
 			assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
 		});
 
+		QUnit.test("Splitter should unsubscribe after destroy", function(assert) {
+			var oSplitter = new sap.ui.layout.Splitter(),
+				oUnsubscribeStub = sinon.spy(sap.ui.core.EventBus.prototype, "unsubscribe");
+
+			oSplitter.destroy();
+
+			assert.strictEqual(oUnsubscribeStub.args[0].length, 4, "Unsubscribe should be called with 4 arguments");
+			assert.ok(oUnsubscribeStub.calledWith("sap.ui","__preserveContent", oSplitter._preserveHandler, oSplitter), "Should be called with instance of a Splitter");
+
+			oUnsubscribeStub.restore();
+		});
+
 		QUnit.module("Content areas");
 
 		QUnit.test("addContentArea", function (assert) {

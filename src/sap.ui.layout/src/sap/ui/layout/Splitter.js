@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 	Splitter.prototype.exit = function() {
-		sap.ui.getCore().getEventBus().unsubscribe("sap.ui","__preserveContent", this._preserveHandler);
+		sap.ui.getCore().getEventBus().unsubscribe("sap.ui","__preserveContent", this._preserveHandler, this);
 		this.disableAutoResize();
 		delete this._resizeCallback;
 
