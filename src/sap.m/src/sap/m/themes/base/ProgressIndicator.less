@@ -29,6 +29,7 @@
 	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
+	min-width: 0;
 
 	-webkit-align-items: center;
 	align-items: center;
@@ -58,6 +59,9 @@
 .sapMPIText {
 	font-size: 0.75rem;
 	color: @sapUiContentLabelColor;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .sapMPITextLeft {
