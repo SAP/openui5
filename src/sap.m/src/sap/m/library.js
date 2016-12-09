@@ -1065,7 +1065,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 */
 		HeaderMode : "HeaderMode",
 		/**
-		 * Line mode (Only header and subtitle are rendered continuously spanning multiple lines).
+		 * Line mode (Implemented for both, cozy and compact densities. Generic Tile is displayed as in-line element, header and subheader are displayed in one line.
+		 * In case the texts need more than one line, the representation depends on the used density.
+		 * <b>Cozy:</b> The text will be truncated and the full text is shown in a tooltip as soon as the tile is hovered (desktop only).
+		 * <b>Compact:</b> Header and subheader are rendered continuously spanning multiple lines, no tooltip is provided).
 		 * @since 1.44.0
 		 * @public
 		 */
@@ -1082,13 +1085,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.GenericTileScope = {
 		/**
-		 * Default scope where no new functionalities are added to the tile.
+		 * Default scope (The default scope of the tile, no action icons are rendered).
 		 * @public
 		 */
 		Display: "Display",
 
 		/**
-		 * Action scope where a "remove" and "more" icon are added to the tile as an overlay.
+		 * Action scope (Possible footer and Error State information is overlaid, "Remove" and "More" icons are added to the tile).
 		 * @public
 		 */
 		Actions: "Actions"

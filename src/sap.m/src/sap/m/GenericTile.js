@@ -12,7 +12,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class Displays the title, description, and a customizable main area.
+	 * @class Displays header, subheader, and a customizable main area in a tile format. Since 1.44, also an in-line format which contains only header and subheader is supported.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -71,14 +72,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				"imageDescription" : {type : "string", group : "Misc", defaultValue : null},
 
 				/**
-				 * Changes the visualization in order to enable additional actions inside the Generic Tile.
+				 * Changes the visualization in order to enable additional actions with the Generic Tile.
 				 * @experimental since 1.46.0
 				 */
 				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
 			},
+			defaultAggregation : "tileContent",
 			aggregations : {
 				/**
-				 * The switchable view that depends on the tile type.
+				 * The content of the tile.
 				 */
 				"tileContent" : {type : "sap.m.TileContent", multiple : true},
 				/**
@@ -103,14 +105,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				"press" : {
 					parameters: {
 						/**
-						 * The scope the GenericTile was in when the event occurred.
+						 * The current scope the GenericTile was in when the event occurred.
 						 * @experimental since 1.46.0
 						 */
 						"scope": { type: "sap.m.GenericTileScope" },
 
 						/**
-						 * The action that was pressed on the tile.
-						 * Available actions are: Press and Remove
+						 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
+						 * In Display scope, the parameter value is only Press.
 						 * @experimental since 1.46.0
 						 */
 						"action": { type: "string" }
@@ -188,6 +190,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
 				break;
+			default:
+				// do nothing
 		}
 	};
 
@@ -488,6 +492,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * is to be executed in order to update the tile's hover style.
 	 *
 	 * @param {jQuery.Event} [oEvent] The animationend or transitionend event object
+	 * @returns {boolean} true or false
 	 * @private
 	 */
 	GenericTile.prototype._queueAnimationEnd = function(oEvent) {
@@ -1092,7 +1097,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		var fnGetContentDensity = function (sFnName, oObject) {
 			if (!oObject[sFnName]) {
-				return;
+				return undefined;
 			}
 
 			for (var i = 0; i < aContentDensityStyleClasses.length; i++) {
