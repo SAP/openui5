@@ -824,4 +824,86 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 	});
 
+
+
+	QUnit.module("isPersonalized", {
+		beforeEach: function () {
+			this.oUserChange = new Change({
+				"fileType": "change",
+				"layer": "USER",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			this.oVendorChange1 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			this.oVendorChange2 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			this.oFlexController = new FlexController("someReference");
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("detects personalization and ends the check on the first personalization", function (assert) {
+		var oVendorChange2Spy = this.spy(this.oVendorChange2, "getLayer");
+		var aChanges = [this.oVendorChange1, this.oUserChange, oVendorChange2Spy];
+		sandbox.stub(this.oFlexController, "getComponentChanges").returns(aChanges);
+
+		var bIsPersonalized = this.oFlexController.isPersonalized();
+
+		assert.ok(bIsPersonalized, "personalization was determined");
+		assert.notOk(oVendorChange2Spy.called, "after a personalization was detected no further checks were made");
+	});
+
+	QUnit.test("detects application free of personalization", function (assert) {
+		var aChanges = [this.oVendorChange1, this.oVendorChange2];
+		this.stub(this.oFlexController, "getComponentChanges").returns(aChanges);
+
+		var bIsPersonalized = this.oFlexController.isPersonalized();
+
+		assert.notOk(bIsPersonalized, "personalization was determined");
+	});
+
 }(sap.ui.fl.FlexController, sap.ui.fl.Change, sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.HideControl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier, sap.ui.fl.context.ContextManager));

@@ -383,7 +383,6 @@ sap.ui.define([
 			return this._getAppComponentForComponent(oComponent);
 		},
 
-
 		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
@@ -417,7 +416,7 @@ sap.ui.define([
 		_getAppComponentForComponent: function (oComponent) {
 			var oSapApp = null;
 
-			// special case for SmartTemplating to reach the real appComponent
+			// special case for Fiori Elements to reach the real appComponent
 			if (oComponent && oComponent.getAppComponent) {
 				return oComponent.getAppComponent();
 			}

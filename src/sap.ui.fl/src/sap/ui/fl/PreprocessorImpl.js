@@ -44,7 +44,7 @@ sap.ui.define([
 			var sFlexReference = Utils.getAppComponentClassNameForComponent(oComponent);
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
-			return oChangePersistence.getChangesForComponent(LrepConnector.createConnector(), sFlexReference, undefined).then(function(oChanges) {
+			return oChangePersistence.getChangesForComponent().then(function(oChanges) {
 
 				var aExtensionProviders = [];
 
