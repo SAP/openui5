@@ -184,16 +184,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						// write opening tag
 						aResult.push("<" + sLocalName + " ");
 						// write attributes
+						var bHasId = false;
 						for (var i = 0; i < xmlNode.attributes.length; i++) {
 							var attr = xmlNode.attributes[i];
 							var value = attr.value;
 							if (attr.name === "id") {
+								bHasId = true;
 								value = getId(oView, xmlNode);
 							}
 							aResult.push(attr.name + "=\"" + jQuery.sap.encodeHTML(value) + "\" ");
 						}
 						if ( bRoot === true ) {
 							aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
+							if (!bHasId) {
+								aResult.push("id" + "=\"" + oView.getId() + "\" ");
+							}
 						}
 						aResult.push(">");
 

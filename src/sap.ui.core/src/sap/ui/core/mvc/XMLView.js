@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.XMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'jquery.sap.xml'],
-	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'jquery.sap.xml'],
+	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control, RenderManager/* , jQuerySap */) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -295,6 +295,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			// when the render manager notifies us about an empty child rendering, we replace the old DOM with a dummy
 			jQuery(oElement).replaceWith('<div id="' + RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
+		};
+
+		XMLView.prototype.destroy = function(bSuppressInvalidate) {
+			var $preservedContent = RenderManager.findPreservedContent(this.getId());
+			if ($preservedContent) {
+				// Cleanup any preserved content
+				$preservedContent.remove();
+			}
+			if (bSuppressInvalidate == "KeepDom" && this.getDomRef()) {
+				// Make sure that the view's DOM won't get preserved if the view is destroyed
+				// Otherwise it could get adopted by another view instance which just has
+				//	the same ID as the old view
+				// Also, if a destroyed view's DOM gets preserved, it probably won't ever get removed
+				this.getDomRef().removeAttribute("data-sap-ui-preserve");
+			}
+			View.prototype.destroy.call(this, bSuppressInvalidate);
 		};
 
 		/**
