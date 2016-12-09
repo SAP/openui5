@@ -14,10 +14,7 @@
 			<ObjectHeader
 				id="objectHeader"
 				title="{ProductName}"
-				number="{
-					path: 'UnitsInStock',
-					formatter: '.formatter.numberUnit'
-				}"/>
+				number="{UnitsInStock}"/>
 		</semantic:content>
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction

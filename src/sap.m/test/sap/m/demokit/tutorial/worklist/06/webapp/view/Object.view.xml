@@ -15,15 +15,17 @@
 			<ObjectHeader
 				id="objectHeader"
 				responsive="true"
-				intro="{ProductID}"
 				title="{ProductName}"
 				numberUnit="PC"
-				numberState="Success"
-				number="{
+				numberState="{
 					path: 'UnitsInStock',
-					formatter: '.formatter.numberUnit'
-				}">
+					formatter: '.formatter.quantityState'
+				}"
+				number="{UnitsInStock}">
 				<attributes>
+					<ObjectAttribute
+					title="{i18n>ObjectProductIdText}"
+					text="{ProductID}"/>
 					<ObjectAttribute
 						title="{i18n>ObjectPriceTitle}"
 						text="{
@@ -36,10 +38,17 @@
 						text="{i18n>ObjectDiscontinuedStatusText}"
 						state="Error"
 						visible="{path:'Discontinued'}"/>
+					<ProgressIndicator
+							percentValue="{UnitsInStock}"
+							displayValue="{UnitsInStock}"
+							showValue="true"
+							state="{
+							path: 'UnitsInStock',
+							formatter: '.formatter.quantityState'}" />
 				</statuses>
 			</ObjectHeader>
 			<Panel
-				class="sapUiContentPadding"
+				class="sapUiNoContentPadding"
 				headerText="{i18n>ObjectSupplierTabTitle}">
     			<content>
     				<form:SimpleForm
