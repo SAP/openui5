@@ -45,6 +45,16 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 			// ---- control specific ----
 			library : "sap.ui.dt",
+			associations: {
+				/**
+				 * Array of plugins, that set editable to true
+				 */
+				editableByPlugins : {
+					type : "any[]",
+					multiple : true,
+					singularName: "editableByPlugin"
+				}
+			},
 			properties : {
 				/**
 				 * Whether the ElementOverlay is selected
