@@ -31,14 +31,14 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
 }
 
 .sapMSTBulleted > span.sapMSTActive {
-	background-color: lighten(@sapUiContentNonInteractiveIconColor, 45);
+	background-color: @sapUiContentContrastIconColor;
 	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
 }
 
 .sapMST .sapMSTIconDisplayArea {
-	background-color: darken(@sapUiHighlight, 18);
+	background-color: darken(@sapUiBrand, 18);
 }
 
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
-	background-color: @sapUiHighlight;
+	background-color: @sapUiBrand;
 }

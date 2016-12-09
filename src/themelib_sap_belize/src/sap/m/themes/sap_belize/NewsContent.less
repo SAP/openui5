@@ -3,25 +3,20 @@
 /* Belize theme                       */
 /* ================================== */
 
-@_sap_m_NewsContent_HeaderTextColor: @sapUiContentContrastTextColor;
-@_sap_m_NewsContent_SubHeaderTextColor: lighten(@sapUiTileTextColor, 45);
-
 .sapMNwC {
 	background-color: fade(@sapUiTileBackground, 60);
 }
 
 .sapMTileCnt.News {
-	.sapMNwCSbh, .sapMNwC {
-		text-shadow: @sapUiShadowText;
-		color: @_sap_m_NewsContent_HeaderTextColor;
+	.sapMNwC {
+		text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
+		.sapMNwCSbh {
+			color: lighten(@sapUiContentLabelColor, 45);
+		}
+		.sapMNwCCTxt .sapMText {
+			color: @sapUiContentContrastTextColor;
+		}
 	}
-	.sapMNwCSbh {
-		color: @_sap_m_NewsContent_SubHeaderTextColor;
-	}
-}
-
-.sapMNwCCTxt .sapMText {
-	color: @_sap_m_NewsContent_HeaderTextColor;
 }
 
 .sapMNwC:focus {
