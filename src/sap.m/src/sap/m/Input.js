@@ -1866,9 +1866,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						aTabularRows[i].setVisible(false);
 					}
-
-					oInput._highlightTableText();
 				}
+
+				oInput._highlightTableText();
 			} else {
 				// filter standard items
 				var bListItem = (aItems[0] instanceof ListItem ? true : false);
