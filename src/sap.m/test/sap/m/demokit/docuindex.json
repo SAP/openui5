@@ -1,32 +1,19 @@
 {
 	"demo": {
 		"text": "sap.m",
-		"customIcons" : {
-			"file" : "test-resources/sap/m/demokit/docuIcons",
-			"namespace" : "sapmdemo",
-			"icons" : [
-				{ "name": "icon-explorer", "id": "e006" },
-				{ "name": "cart", "id": "e002" },
-				{ "name": "helloworld", "id": "e003" },
-				{ "name": "crud", "id": "e009" },
-				{ "name": "splitapp", "id": "e00C" },
-				{ "name": "mvc", "id": "e00B" },
-				{ "name": "orderbrowser", "id": "e0d7"}
-			]
-		},
 		"links": [
 			{
 				"text": "Shopping Cart",
 				"ref": "test-resources/sap/m/demokit/cart/index.html",
 				"config": "test-resources/sap/m/demokit/cart/demoapp.json",
-				"icon": "sapmdemo/cart",
+				"icon": "cart",
 				"desc": "The classic business process of finding & ordering products"
 			},
 			{
 				"text": "Hello World",
 				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
 				"config": "test-resources/sap/m/demokit/helloworld/demoapp.json",
-				"icon": "sapmdemo/helloworld",
+				"icon": "hello-world",
 				"desc": "This is where it all starts when developing with UI5"
 			},
 			{
@@ -46,19 +33,19 @@
 			{
 				"text": "Manage Products",
 				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html",
-				"icon": "task",
+				"icon": "list",
 				"desc": "This app is the final result of the 'Worklist App Tutorial'"
 			},
 			{
 				"text": "Bulletin Board",
 				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
-				"icon": "task",
+				"icon": "legend",
 				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
 			},
 			{
 				"text": "Order Browser",
 				"ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html",
-				"icon": "orderbrowser",
+				"icon": "retail-store-manager",
 				"desc": "This master-detail app is an example for navigating through orders and their status"
 			}
 		]
