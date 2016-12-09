@@ -116,7 +116,7 @@ sap.ui.define([
 						});
 					},
 
-					iSearchForTheFirstObject : function (){
+					iSearchFor : function (sSearch){
 						var sFirstObjectCompanyName;
 
 						return this.waitFor({
@@ -124,10 +124,9 @@ sap.ui.define([
 							viewName : sViewName,
 							matchers: new AggregationFilled({name : "items"}),
 							success : function (oList) {
-								sFirstObjectCompanyName = oList.getItems()[0].getAttributes()[0].getText();
-								return this.iSearchForValue(new EnterText({text: sFirstObjectCompanyName}), new Press());
+								return this.iSearchForValue(new EnterText({text: sSearch}), new Press());
 							},
-							errorMessage : "Did not find list items while trying to search for the first item."
+							errorMessage : "Did not find list items while trying to search for " + sSearch
 						});
 					},
 
@@ -229,15 +228,14 @@ sap.ui.define([
 						});
 					},
 
-					theListShowsOnlyObjectsWithTheSearchStringInTheirTitle : function () {
+					theListShowsOnlyObjectsWithTheSearchString : function (sSearch) {
 						this.waitFor({
 							id : "list",
 							viewName : sViewName,
 							matchers : new AggregationFilled({name : "items"}),
 							check : function(oList) {
-								var sTitle = oList.getItems()[0].getTitle(),
-									bEveryItemContainsTheTitle = oList.getItems().every(function (oItem) {
-										return oItem.getTitle().indexOf(sTitle) !== -1;
+								var bEveryItemContainsTheTitle = oList.getItems().every(function (oItem) {
+										return oItem.getAttributes()[0].getText().indexOf(sSearch) !== -1;
 									});
 								return bEveryItemContainsTheTitle;
 							},
