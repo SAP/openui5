@@ -48,6 +48,17 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	user-select: none;
 
 	line-height: 1.625rem;
+	max-width: calc(~"100% - 1.875rem");
+	box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapMTokenText {
+	max-width: calc(~"100% - 1.25rem");
+}
+
+.sapMTokenReadOnly .sapMTokenText,
+.sapMTokenizerReadonly .sapMTokenText {
+	max-width: 100%;
 }
 
 .sapMTokenIcon {
@@ -56,6 +67,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	line-height: 1.5rem;
 	padding: 0 0.5rem;
 	font-size: @sapMFontLargeSize;
+	box-sizing: border-box;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop .sapMTokenIcon,
