@@ -71,6 +71,7 @@
   margin: 0;
   box-shadow: none;
   border-bottom: none;
+  border-radius: 0;
 }
 
 .sapMText.sapMNLG-Datetime {
@@ -81,18 +82,6 @@
 
 .sapMLIB.sapMNLG-Collapsed .sapMNLG-Body{
   display: none;
-}
-
-.sapMNLG-Body .sapMNLI {
-  border-radius: 0;
-}
-
-.sapMNLG-Body .sapMNLI .sapMNLI-Priority {
-  border-radius: 0;
-}
-
-.sapMNLG-Body > .sapMNLI .sapMNLB-Priority {
-  border-radius: 0;
 }
 
 // Footer styles =======================================================================================================
@@ -148,4 +137,10 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 .sapUiSizeCompact .sapMNLG-Footer .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
+}
+
+// Single item mode ====================================================================================================
+
+.sapMNLG.sapMLIB.sapMNLGNoHdrFooter {
+  padding-top: 0;
 }
