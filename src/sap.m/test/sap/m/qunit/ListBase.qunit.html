@@ -397,7 +397,7 @@
 
 			// TODO: decide if check on internal variables is needed (Cahit)
 			strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after initialization of " + oList);
-			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after initialization of " + oList);
+			strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after initialization of " + oList);
 
 			oList.destroy();
 		});
@@ -472,7 +472,7 @@
 
 			// TODO: decide if check on internal variables is needed (Cahit)
 			strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after destroying " + oList.getId());
-			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after destroying " + oList.getId());
+			strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after destroying " + oList.getId());
 		});
 
 		/********************************************************************************/

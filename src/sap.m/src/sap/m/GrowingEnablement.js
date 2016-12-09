@@ -71,6 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			oRm.write("<ul");
 			oRm.addClass("sapMListUl");
 			oRm.addClass("sapMGrowingList");
+			oRm.writeAttribute("role", "presentation");
 			oRm.writeAttribute("id", this._oControl.getId() + "-triggerList");
 			oRm.addStyle("display", "none");
 			oRm.writeClasses();

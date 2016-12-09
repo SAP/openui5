@@ -157,6 +157,21 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 	};
 
+	StandardListItem.prototype.getContentAnnouncement = function(oBundle) {
+		var sAnnouncement = "",
+			sInfoState = this.getInfoState(),
+			oIconInfo = IconPool.getIconInfo(this.getIcon()) || {};
+
+		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
+		sAnnouncement += this.getTitle() + " " + this.getDescription() + " " + this.getInfo() + " ";
+
+		if (sInfoState != "None") {
+			sAnnouncement += oBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
+		}
+
+		return sAnnouncement;
+	};
+
 	return StandardListItem;
 
 }, /* bExport= */ true);

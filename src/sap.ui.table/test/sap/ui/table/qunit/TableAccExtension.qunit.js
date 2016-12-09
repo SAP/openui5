@@ -3,6 +3,21 @@
 // Preparation Code
 //************************************************************************
 
+sap.ui.base.ManagedObject.extend("TextControl", {
+	metadata: {
+		properties: {
+			text: {
+				type: "String"
+			}
+		}
+	},
+	getAccessibilityInfo: function() {
+		return {
+			description: this.getText()
+		};
+	}
+});
+
 TestControl.prototype.getAccessibilityInfo = function() {
 	var iMode = this.getIndex();
 	switch (iMode) {
@@ -27,7 +42,7 @@ TestControl.prototype.getAccessibilityInfo = function() {
 				description: "DESCRIPTION_" + this.getText(),
 				focusable: true,
 				enabled: false,
-				children: [{description: "CHILD1"}, {description: "CHILD2"}]
+				children: [new TextControl({text: "CHILD1"}), new TextControl({text: "CHILD2"})]
 			};
 		case 3:
 			return {
