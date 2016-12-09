@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/PreprocessorImpl",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView"
-], function(FlexController, Component, ChangeHandlerRegistration, ChangePersistenceFactory, PreprocessorImpl, MvcController, XMLView) {
+], function(FlexController, Component, ChangeHandlerRegistration, ChangePersistenceFactory, MvcController, XMLView) {
 	"use strict";
 
 	/**
