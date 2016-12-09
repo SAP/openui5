@@ -19,7 +19,8 @@
 						path: 'Price',
 						formatter: '.formatter.numberUnit'
 					}"
-					numberUnit="{Currency}">
+					numberUnit="{Currency}"
+					backgroundDesign="Translucent">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
 						expanded="{device>/isNoPhone}"

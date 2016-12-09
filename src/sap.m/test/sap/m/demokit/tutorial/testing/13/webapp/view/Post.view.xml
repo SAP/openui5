@@ -18,7 +18,8 @@
 						path: 'Price',
 						formatter: '.formatter.numberUnit'
 					}"
-					numberUnit="{Currency}">
+					numberUnit="{Currency}"
+					backgroundDesign="Translucent">
 			</ObjectHeader>
 		</semantic:content>
 	</semantic:FullscreenPage>
