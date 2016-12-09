@@ -394,7 +394,7 @@
 						switchRowActions(oTable, 2, oTemplate);
 					}
 				},
-				MULTI : {
+				MULTI_ONE : {
 					text: "Multiple Actions (1 Column)",
 					action: function(oTable) {
 						var oTemplate = new sap.ui.table.RowAction({items: [
