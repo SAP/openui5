@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
 			}
 
-			sAnnouncement += ListItemBase.getAccessibilityText(oCell) + " ";
+			sAnnouncement += ListItemBase.getAccessibilityText(oCell, true) + " ";
 		});
 
 		return sAnnouncement;
