@@ -25,12 +25,8 @@
 					FakeLrepConnector.deleteChanges();
 				}
 
-				if (/[&?](sap-rta-mock-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
-
-					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
-
-					FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
-				}
+				jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
 			});
 		}());
 
