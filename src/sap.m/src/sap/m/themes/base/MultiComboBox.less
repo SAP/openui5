@@ -58,6 +58,8 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 	display: -ms-flexbox;
 
 	&.sapMMultiComboBoxBorder .sapMTokenizer {
+		flex: 0 1 auto;
+		-ms-flex: 0 1 auto;
 		&:not(.sapMTokenizerEmpty) .sapMTokenizerScrollContainer {
 			padding-left: 0.375rem;
 		}
@@ -69,19 +71,25 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 /* ------------------------------ */
 
 .sapMMultiComboBoxInputContainer {
-	flex-grow: 1;
+	flex: 1;
+	-ms-flex: 1;
+	margin-right: 2.5rem;
+	min-width: 4.5rem;
 
 	& .sapMMultiComboBoxInputInner {
-		padding-right: 0.375rem;
-		min-width: 5.125rem;
 		font-size: @sapMFontMediumSize;
 		font-family: @sapUiFontFamily;
+	}
+
+	& .sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
+		padding-right: 0.75rem;
 	}
 }
 
 .sapUiSizeCompact {
-	.sapMMultiComboBoxInputContainer .sapMMultiComboBoxInputInner {
-		min-width: 3.75rem;
+	.sapMMultiComboBoxInputContainer {
+		margin-right: 2rem;
+		min-width: 3.5rem;
 	}
 }
 
@@ -116,21 +124,6 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 /* If a non-native placeholder is used, make sure that arrow button is in front of placeholder. */
 .sapMMultiComboBox .sapMComboBoxBaseArrow {
 	z-index: 2;
-}
-
-/* ------------------------------ */
-/* InputInner                     */
-/* ------------------------------ */
-.sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
-	height: 2.375rem;
-	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
-	padding-right: 0;
-}
-
-.sapUiSizeCompact .sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
-	height: 1.625rem;
-	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
-	padding-right: 0;
 }
 
 .sapMMultiComboBoxItem .sapMCb {
