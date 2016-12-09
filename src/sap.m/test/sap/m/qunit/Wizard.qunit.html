@@ -72,6 +72,7 @@
 					]
 				});
 
+				this.oWizardSecondStep = this.oWizard.getSteps()[1];
 				this.oWizard.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -85,6 +86,7 @@
 				this.oWizard.destroy();
 				this.oSpies.error.restore();
 				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				this.oWizardSecondStep = null;
 				this.oWizard = null;
 			}
 		});
@@ -218,12 +220,25 @@
 			assert.strictEqual(this.oWizard.getProgress(), 3, "Progress should be 3");
 		});
 
+		QUnit.test("DiscardProgress() should return the wizard instance", function (assert) {
+			var oButton = this.oWizard._getNextButton(), vResult;
+			oButton.firePress();
+			oButton.firePress();
+			oButton.firePress();
+
+			vResult = this.oWizard.discardProgress(this.oWizardSecondStep);
+			assert.strictEqual(vResult, this.oWizard, "The Wizard instance returned correctly");
+
+			vResult = this.oWizard.discardProgress();
+			assert.strictEqual(vResult, this.oWizard, "The Wizard instance returned correctly when no step provided");
+		});
+
 		QUnit.test("DiscardProgress() should reset the steps after a given step", function (assert) {
 			var oButton = this.oWizard._getNextButton();
 			oButton.firePress();
 			oButton.firePress();
 			oButton.firePress();
-			this.oWizard.discardProgress(this.oWizard.getSteps()[1]);
+			this.oWizard.discardProgress(this.oWizardSecondStep);
 			assert.strictEqual(this.oWizard.getProgress(), 2, "Progress should be 1");
 		});
 
@@ -232,7 +247,7 @@
 			oButton.firePress();
 			oButton.firePress();
 			oButton.firePress();
-			this.oWizard.discardProgress(this.oWizard.getSteps()[1]);
+			this.oWizard.discardProgress(this.oWizardSecondStep);
 			assert.strictEqual(this.oWizard.getSteps()[2].$().css("display"), "none", "Step should be hidden");
 		});
 
