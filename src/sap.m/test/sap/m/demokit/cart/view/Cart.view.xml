@@ -12,7 +12,7 @@
 			<Button
 				id="editButton"
 				icon="sap-icon://edit"
-				enabled="{cartProducts>/showEditAndProceedButton}"
+				enabled="{cartProducts>/showEditButton}"
 				visible="{cfg>/notInDelete}"
 				press="handleEditOrDoneButtonPress" />
 		</headerContent>
@@ -22,14 +22,14 @@
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
-					} EUR" />
+					}" />
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
 					type="Accept"
 					text="{i18n>CART_PROCEED_BUTTON_TEXT}"
 					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
-					enabled="{cartProducts>/showEditAndProceedButton}"
+					enabled="{cartProducts>/showProceedButton}"
 					visible="{cfg>/notInDelete}"
 					press="handleProceedButtonPress" />
 				<Button
@@ -50,7 +50,7 @@
 					formatter : '.formatter.footerTextForCart'
 				}"
 				mode="{cfg>/listMode}"
-				delete="handleEntryListDelete"
+				delete="onCartEntriesDelete"
 				select="handleEntryListSelect"
 				noDataText="{i18n>CART_NO_DATA}"
 				items="{
@@ -100,7 +100,7 @@
 				id="saveForLaterList"
 				mode="{cfg>/listMode}"
 				showNoData="false"
-				delete="handleEntryListDelete"
+				delete="onSaveForLaterDelete"
 				select="handleEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',

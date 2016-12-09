@@ -2,11 +2,12 @@ sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
+		'sap/ui/test/matchers/Properties',
 		'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 		'sap/ui/test/matchers/BindingPath',
 		'sap/ui/test/matchers/Ancestor',
 		'sap/ui/test/actions/Press'
-	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual, BindingPath, Ancestor, Press) {
+	], function (Opa5, AggregationFilled, PropertyStrictEquals, Properties, AggregationContainsPropertyEqual, BindingPath, Ancestor, Press) {
 		var CART_VIEW_NAME = "Cart";
 
 		Opa5.createPageObjects({
@@ -112,7 +113,10 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.Button",
 							autoWait: bIsEnabled,
-							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://edit"}),
+							matchers : new Properties({
+								icon : "sap-icon://edit",
+								enabled: bIsEnabled
+							}),
 							success : function (aButtons) {
 								Opa5.assert.strictEqual(
 									aButtons[0].getEnabled(), bIsEnabled, sSuccessMessage

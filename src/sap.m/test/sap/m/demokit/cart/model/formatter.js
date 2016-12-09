@@ -26,7 +26,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 				var oProduct = oCartEntries[sProductId];
 				fTotalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
 			});
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CART_TOTAL_PRICE") + ": " + formatter.price(fTotalPrice);
+			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CART_TOTAL_PRICE")
+				+ ": " + formatter.price(fTotalPrice);
 		},
 
 		statusText: function (status) {
