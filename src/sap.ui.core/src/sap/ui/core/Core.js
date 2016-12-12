@@ -296,6 +296,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
 
+			var bAsync = sPreloadMode === "async";
+
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
 				var fields = String(v).trim().split(/\s*:\s*/),
@@ -355,15 +357,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
-				that._boot();
-				oSyncPoint1.finishTask(iCoreBootTask);
-				jQuery.sap.measure.end("coreBoot");
+				that._boot(bAsync, function() {
+					oSyncPoint1.finishTask(iCoreBootTask);
+					jQuery.sap.measure.end("coreBoot");
+				});
 			});
 
 			// a helper task to prevent the premature completion of oSyncPoint2
 			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
-
-			var bAsync = sPreloadMode === "async";
 
 			// load the version info file in case of a custom theme to determine
 			// the distribution version which should be provided in library.css requests.
@@ -379,7 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					oSyncPoint2.finishTask(iVersionInfoTask);
 				};
 
-				// only use async mode if library prelaod is async
+				// only use async mode if library preload is async
 				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
 				if (vReturn instanceof Promise) {
 					vReturn.then(fnCallback, function(oError) {
@@ -415,7 +416,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			};
 
 			if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
-				var bAsyncPreload = sPreloadMode !== "sync";
 				// determine set of libraries
 				var aLibs = aModules.reduce(function(aResult, sModule) {
 					var iPos = sModule.search(/\.library$/);
@@ -426,10 +426,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				}, []);
 
 				var preloaded = this.loadLibraries(aLibs, {
-					async: bAsyncPreload,
+					async: bAsync,
 					preloadOnly: true
 				});
-				if ( bAsyncPreload ) {
+				if ( bAsync ) {
 					var iPreloadLibrariesTask = oSyncPoint2.startTask("preload bootstrap libraries");
 					preloaded.then(function() {
 						oSyncPoint2.finishTask(iPreloadLibrariesTask);
@@ -754,7 +754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.measure.start("loadWebFonts", "Time to load SAP web fonts");
 		var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/",
-			sFormat = sap.ui.Device.browser.chrome ? "woff2" : "woff";
+			sFormat = Device.browser.chrome ? "woff2" : "woff";
 
 		var aFonts = [
 			{url: sFontPath + '72-Regular.' + sFormat, weight: "normal", style: "normal", stretch: "normal", format: sFormat},
@@ -812,7 +812,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @private
 	 */
-	Core.prototype._boot = function() {
+	Core.prototype._boot = function(bAsync, fnCallback) {
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
@@ -822,14 +822,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// load all modules now
 		var that = this;
-		jQuery.each(this.oConfiguration.modules, function(i,mod) {
+		this.oConfiguration.modules.forEach( function(mod) {
 			var m = mod.match(/^(.*)\.library$/);
 			if ( m ) {
 				that.loadLibrary(m[1]);
 			} else {
-				jQuery.sap.require(mod);
+				jQuery.sap.require( mod );
 			}
 		});
+
+		fnCallback();
 	};
 
 

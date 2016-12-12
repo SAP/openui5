@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest, Proxy */
+/*global ActiveXObject, alert, confirm, console, document, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest, Proxy */
 
 /**
  * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -2665,6 +2665,17 @@
 
 			mPreloadModules = {},
 
+		/**
+		 * Whether sap.ui.define calls could be executed asynchronously in the current context.
+		 *
+		 * The initial value is determined by the preload flag. This is necessary to make
+		 * hard coded script tags work when their scripts include a sap.ui.define call and if
+		 * some later incline script expects the results of sap.ui.define.
+		 * Most prominent example: unit tests that include QUnitUtils as a script tag and use qutils
+		 * in one of their inline scripts.
+		 */
+			bGlobalAsyncMode = !( /(?:^|\?|&)sap-ui-(?:xx-)?preload=async(?:&|$)/.test(location.search) || oCfgData.preload === 'async' || oCfgData['xx-preload'] === 'async'),
+
 		/* for future use
 		/**
 		 * Mapping from default AMD names to UI5 AMD names.
@@ -3214,7 +3225,7 @@
 			return oModule;
 		}
 
-		function requireModule(sModuleName, bSync) {
+		function requireModule(oRequestingModule, sModuleName, bAsync) {
 
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
@@ -3226,27 +3237,24 @@
 
 			// only for robustness, should not be possible by design (all callers append '.js')
 			if ( !m ) {
-				log.error("can only require Javascript module, not " + sModuleName);
-				return;
+				throw new Error("can only require Javascript module, not " + sModuleName);
 			}
 
-			if ( oShim && oShim.deps ) {
+			oModule = Module.get(sModuleName);
+
+			if ( oShim && oShim.deps && !oShim.deps.requested ) {
 				if ( bLoggable ) {
 					log.debug("require dependencies of raw module " + sModuleName);
 				}
-				for (i = 0; i < oShim.deps.length; i++) {
-					if ( bLoggable ) {
-						log.debug("  require " + oShim.deps[i]);
-					}
-					requireModule(oShim.deps[i] + '.js', bSync);
-				}
+				return requireAll(oModule, oShim.deps, function() {
+					oShim.deps.requested = true;
+					return requireModule(oRequestingModule, sModuleName, bAsync);
+				}, bAsync);
 			}
 
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
 			sType = m[0]; // must be a normalized resource name of type .js sType can be one of .js|.view.js|.controller.js|.fragment.js|.designtime.js
-
-			oModule = Module.get(sModuleName);
 
 			if ( bLoggable ) {
 				log.debug(sLogPrefix + "require '" + sModuleName + "' of type '" + sType + "'");
@@ -3257,7 +3265,7 @@
 				if ( oModule.state === PRELOADED ) {
 					oModule.state = LOADED;
 					jQuery.sap.measure.start(sModuleName, "Require module " + sModuleName + " (preloaded)", ["require"]);
-					execModule(sModuleName);
+					execModule(sModuleName, bAsync);
 					jQuery.sap.measure.end(sModuleName);
 				}
 
@@ -3289,7 +3297,7 @@
 					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "'");
 				}
 
-				if ( bSync && syncCallBehavior && sModuleName !== 'sap/ui/core/Core.js' ) {
+				if ( !bAsync && syncCallBehavior && sModuleName !== 'sap/ui/core/Core.js' ) {
 					sMsg = "[nosync] loading module '" + oModule.url + "'";
 					if ( syncCallBehavior === 1 ) {
 						log.error(sMsg);
@@ -3316,10 +3324,9 @@
 				});
 				/*eslint-enable no-loop-func */
 			}
-
 			// execute module __after__ loading it, this reduces the required stack space!
 			if ( oModule.state === LOADED ) {
-				execModule(sModuleName);
+				execModule(sModuleName, bAsync);
 			}
 
 			jQuery.sap.measure.end(sModuleName);
@@ -3371,17 +3378,18 @@
 		evalModuleStr.count = 0;
 
 		// sModuleName must be a normalized resource name of type .js
-		function execModule(sModuleName) {
+		function execModule(sModuleName, bAsync) {
 
 			var oModule = mModules[sModuleName],
 				oShim = mAMDShim[sModuleName],
 				bLoggable = log.isLoggable(),
-				sOldPrefix, sScript, vAMD, oMatch;
+				sOldPrefix, sScript, vAMD, oMatch, bOldGlobalAsyncMode;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
 				// check whether the module is known to use an existing AMD loader, remember the AMD flag
 				vAMD = (oShim === true || (oShim && oShim.amd)) && typeof window.define === "function" && window.define.amd;
+				bOldGlobalAsyncMode = bGlobalAsyncMode;
 
 				try {
 
@@ -3389,6 +3397,7 @@
 						// temp. remove the AMD Flag from the loader
 						delete window.define.amd;
 					}
+					bGlobalAsyncMode = bAsync;
 
 					if ( bLoggable ) {
 						log.debug(sLogPrefix + "executing '" + sModuleName + "'");
@@ -3473,28 +3482,36 @@
 					if ( vAMD ) {
 						window.define.amd = vAMD;
 					}
+					bGlobalAsyncMode = bOldGlobalAsyncMode;
 				}
 			}
 		}
 
-		function requireAll(sBaseName, aDependencies, fnCallback) {
+		function requireAll(oRequestingModule, aDependencies, fnCallback, bAsync) {
 
 			var aModules = [],
 				bLoggable = log.isLoggable(),
-				i, sDepModName;
+				sBaseName, i, sDepModName;
+
+			// calculate the base name for relative module names
+			sBaseName = oRequestingModule && oRequestingModule.name.slice(0, oRequestingModule.name.lastIndexOf('/') + 1);
+			aDependencies = aDependencies.slice();
+			for (i = 0; i < aDependencies.length; i++) {
+				aDependencies[i] = resolveModuleName(sBaseName, aDependencies[i]) + ".js";
+			}
 
 			for (i = 0; i < aDependencies.length; i++) {
-				sDepModName = resolveModuleName(sBaseName, aDependencies[i]);
+				sDepModName = aDependencies[i];
 				if ( bLoggable ) {
 					log.debug(sLogPrefix + "require '" + sDepModName + "'");
 				}
-				aModules[i] = requireModule(sDepModName + ".js");
+				aModules[i] = requireModule(oRequestingModule, sDepModName, bAsync);
 				if ( bLoggable ) {
 					log.debug(sLogPrefix + "require '" + sDepModName + "': done.");
 				}
 			}
 
-			fnCallback(aModules);
+			return fnCallback(aModules);
 		}
 
 		/**
@@ -3891,7 +3908,7 @@
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
 
-			requireModule(vModuleName, true);
+			requireModule(null, vModuleName, /* bAsync = */ false);
 
 		};
 
@@ -4124,7 +4141,7 @@
 		 */
 		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
 			var bLoggable = log.isLoggable(),
-				sResourceName, sBaseName;
+				sResourceName;
 
 			// optional id
 			if ( typeof sModuleName === 'string' ) {
@@ -4139,9 +4156,6 @@
 
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-
-			// calculate the base name for relative module names
-			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
 
 			// optional array of dependencies
 			if ( !Array.isArray(aDependencies) ) {
@@ -4160,7 +4174,7 @@
 			oModule.content = undefined;
 
 			// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
-			requireAll(sBaseName, aDependencies, function(aModules) {
+			requireAll(oModule, aDependencies, function(aModules) {
 
 				// factory
 				if ( bLoggable ) {
@@ -4193,7 +4207,7 @@
 					}
 				}
 
-			});
+			}, /* bAsync = */ bGlobalAsyncMode);
 
 		};
 
@@ -4287,7 +4301,7 @@
 					},0);
 				}
 
-			});
+			}, /* bAsync = */ true);
 
 			// return undefined;
 		};
@@ -4331,7 +4345,7 @@
 		 * @private
 		 */
 		sap.ui.requireSync = function(sModuleName) {
-			return requireModule(sModuleName + ".js", true);
+			return requireModule(null, sModuleName + ".js", /* bAsync = */ false);
 		};
 
 		/**
