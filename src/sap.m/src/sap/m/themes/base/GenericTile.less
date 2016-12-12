@@ -188,7 +188,7 @@
 	width: 100%;
 	margin-top: -0.125rem;
 	margin-bottom: -0.125rem;
-	pointer-events: all;
+	pointer-events: auto;
 }
 
 /* mixin for flex-box entries */
@@ -397,16 +397,13 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		display: inline-block;
 		position: relative;
 		top: 0.5rem;
+		z-index: 3;
 	}
 
 	.sapMGTStyleHelper {
 		position: absolute;
 		top: 0px;
 		width: 100%;
-	}
-
-	.sapMGTLineMode.sapMGTDisabled * {
-		pointer-events: none;
 	}
 
 	.sapMGTLineStyleHelper {
