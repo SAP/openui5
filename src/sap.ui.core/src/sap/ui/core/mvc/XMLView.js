@@ -475,6 +475,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			return true; // indicates that we have taken care
 		};
 
+		XMLView.prototype.destroy = function(bSuppressInvalidate) {
+			var $preservedContent = RenderManager.findPreservedContent(this.getId());
+			if ($preservedContent) {
+				// Cleanup any preserved content
+				$preservedContent.remove();
+			}
+			if (bSuppressInvalidate == "KeepDom" && this.getDomRef()) {
+				// Make sure that the view's DOM won't get preserved if the view is destroyed
+				// Otherwise it could get adopted by another view instance which just has
+				//	the same ID as the old view
+				// Also, if a destroyed view's DOM gets preserved, it probably won't ever get removed
+				this.getDomRef().removeAttribute("data-sap-ui-preserve");
+			}
+			View.prototype.destroy.call(this, bSuppressInvalidate);
+		};
+
 		/**
 		* Register a preprocessor for all views of a specific type.
 		*
