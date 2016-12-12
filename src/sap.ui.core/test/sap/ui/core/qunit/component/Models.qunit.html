@@ -193,11 +193,11 @@
 				annotationURI: [ '/path/to/odata/annotations/1' ]
 			});
 
-			// model: "v2-ODataModel" with multi origin annotations 
+			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", 
-												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",	
+				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
 												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
 												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
 												]
@@ -363,11 +363,11 @@
 				refreshAfterChange: true,
 			});
 
-			// model: "v2-ODataModel" with multi origin annotations 
+			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=BLA_123/?sap-client=foo&sap-server=bar',
-				annotationURI: ["/path/to/other/odata/service;o=BLA_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", 
-												"v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",	
+				annotationURI: ["/path/to/other/odata/service;o=BLA_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+												"v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
 												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
 												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
 												]
@@ -430,11 +430,11 @@
 				refreshAfterChange: true,
 			});
 
-			// model: "v2-ODataModel" with multi origin annotations 
+			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=STARTUP456/?sap-client=foo&sap-server=bar',
 				annotationURI: ["/path/to/other/odata/service;o=STARTUP456/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",				 
+												"v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
 												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
 												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
 												]
@@ -499,12 +499,12 @@
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/trailing/slash/',
 				metadataUrlParams: {
-					"sapbc": "1476971462",
+					"sap-context-token": "1476971462",
 					"sap-language": "EN"
 				},
 				annotationURI: [
-					'/path/to/odata/service/with/trailing/slash/annotations.xml?sapbc=1476971136&sap-language=EN',
-					'v2models/parent/path/to/local/odata/annotations/2?sapbc=1476971160&sap-language=EN'
+					'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-context-token=1476971136&sap-language=EN',
+					'v2models/parent/path/to/local/odata/annotations/2?sap-context-token=1476971160&sap-language=EN'
 				],
 				useBatch: true,
 				refreshAfterChange: true,
@@ -589,7 +589,7 @@
 				annotationURI: [ '/path/to/odata/annotations/1' ]
 			});
 
-			// model: "v2-ODataModel" with multi origin annotations 
+			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
 				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
@@ -953,11 +953,11 @@
 					annotationURI: [ '/path/to/odata/annotations/1' ]
 				});
 
-			// model: "v2-ODataModel" with multi origin annotations 
+			// model: "v2-ODataModel" with multi origin annotations
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
 				annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
-												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",				 
+												"v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value",
 												"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
 												"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value"
 												]
@@ -1166,7 +1166,7 @@
 								"settings": {
 									"metadataUrlParams": {
 										"custom-param": "foo-3",
-										"sapbc": "foo",
+										"sap-context-token": "foo",
 										"sap-language": "bar"
 									}
 								}
@@ -1444,11 +1444,11 @@
 				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 					serviceUrl: "/path/to/odata/service1;o=XXX?sap-client=foo&sap-server=bar",
 					metadataUrlParams: {
-						"sapbc": "1476348072",
+						"sap-context-token": "1476348072",
 						"sap-language": "EN"
 					},
 					annotationURI: [
-						"/path/to/odata/annotations/1?sapbc=1476348278&sap-language=EN"
+						"/path/to/odata/annotations/1?sap-context-token=1476348278&sap-language=EN"
 					]
 				});
 
@@ -1465,11 +1465,11 @@
 					serviceUrl: "/path/to/odata/service2;o=XXX?sap-client=foo&sap-server=bar",
 					metadataUrlParams: {
 						"custom-param": "foo-3",
-						"sapbc": "1476361076",
+						"sap-context-token": "1476361076",
 						"sap-language": "bar"
 					},
 					annotationURI: [
-						"/path/to/odata/annotations/2?sap-language=abc&sapbc=1476365059"
+						"/path/to/odata/annotations/2?sap-language=abc&sap-context-token=1476365059"
 					]
 				});
 

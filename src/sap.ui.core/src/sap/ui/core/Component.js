@@ -1086,8 +1086,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								oModelConfig.settings = oModelConfig.settings || {};
 								oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
 
-								// set sapbc cache token (override existing value)
-								oModelConfig.settings.metadataUrlParams["sapbc"] = sCacheToken;
+								// set sap-context-token (override existing value)
+								oModelConfig.settings.metadataUrlParams["sap-context-token"] = sCacheToken;
 
 								// set sap-language (do not override existing value)
 								if (typeof oModelConfig.settings.metadataUrlParams["sap-language"] === "undefined") {
@@ -1135,8 +1135,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								var sCacheToken = mCacheTokens.dataSources[oAnnotation.uri];
 								if (sCacheToken) {
 
-									// set sapbc cache token (override existing value)
-									oAnnotationUri.setQuery("sapbc", sCacheToken);
+									// set sap-context-token (override existing value)
+									oAnnotationUri.setQuery("sap-context-token", sCacheToken);
 
 									// set sap-language (do not override existing value)
 									if (!oAnnotationUri.hasQuery("sap-language")) {
