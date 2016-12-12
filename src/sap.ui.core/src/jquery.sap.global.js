@@ -3376,7 +3376,7 @@
 			var oModule = mModules[sModuleName],
 				oShim = mAMDShim[sModuleName],
 				bLoggable = log.isLoggable(),
-				sOldPrefix, sScript, vAMD;
+				sOldPrefix, sScript, vAMD, oMatch;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
@@ -3412,10 +3412,18 @@
 						// Note: make URL absolute so Chrome displays the file tree correctly
 						// Note: do not append if there is already a sourceURL / sourceMappingURL
 						// Note: Safari fails, if sourceURL is the same as an existing XHR URL
-						if (sScript && !sScript.match(/\/\/[#@] source(Mapping)?URL=.*$/)) {
-							sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
-							if (Device.browser.safari) {
-								sScript += "?";
+						// Note: Chrome ignores debug files when the same URL has already been load via sourcemap of the bootstrap file (sap-ui-core)
+						// Note: sourcemap annotations URLs in eval'ed sources are resolved relative to the page, not relative to the source
+						if (sScript ) {
+							oMatch = /\/\/[#@] source(Mapping)?URL=(.*)$/.exec(sScript);
+							if ( oMatch && oMatch[1] && /[^/]+\.js\.map$/.test(oMatch[2]) ) {
+								// found a sourcemap annotation with a typical UI5 generated relative URL
+								sScript = sScript.slice(0, oMatch.index) + oMatch[0].slice(0, -oMatch[2].length) + URI(oMatch[2]).absoluteTo(oModule.url);
+							} else if ( !oMatch ) {
+								sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
+								if (Device.browser.safari || Device.browser.chrome) {
+									sScript += "?eval";
+								}
 							}
 						}
 
