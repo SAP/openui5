@@ -64,12 +64,13 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected {
+
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow) {
 		outline: none;
 		position: relative;
 	}
 
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
 		content: " ";
 		position: absolute;
 		top: 1px;

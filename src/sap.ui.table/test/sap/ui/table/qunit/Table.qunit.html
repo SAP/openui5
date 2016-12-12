@@ -1797,29 +1797,6 @@
 		assert.ok(jQuery(oEvent.target).parent('.sapUiTableColHdrTr').length > 0, "Column header is in focus");
 	});
 
-	QUnit.test("test _onSelect function", function(assert) {
-		oTable._bShowMenu = true;
-		var oColumn = oTable.getColumns()[5];
-		var oRow = oTable.getRows()[5];
-		var oEvent = jQuery.Event("keyup", {
-			target: oColumn.getDomRef(),
-			metaKey: true,
-			ctrlKey: true,
-			shiftKey: true
-		});
-		oColumn.$().addClass("sapUiTableColDropDown");
-		oTable._onSelect(oEvent);
-		assert.ok(oTable.fireColumnSelect({ column: oColumn }), "Event fired on 5th column header");
-	});
-
-	QUnit.test("test _onRowSelect function", function(assert) {
-		oTable._onRowSelect(5, true, true);
-		assert.ok(oTable._iSourceRowIndex === undefined, "_onRowSelect() called with SelectionMode.MultiToggle");
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
-		oTable._onRowSelect(4, true, true);
-		assert.ok(oTable._iSourceRowIndex === undefined, "_onRowSelect() called with SelectionMode.Single");
-	});
-
 	QUnit.test("test setSelectionInterval function", function(assert) {
 		assert.equal(oTable._oSelection.aSelectedIndices.length, 0, "Selection interval is not set on the table");
 		oTable.setSelectionInterval(2, 6);

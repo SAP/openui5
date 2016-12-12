@@ -43,10 +43,6 @@
 	cursor: inherit;
 }
 
-.sapMGTFailed {
-	width: 90%;
-}
-
 .sapMGTInnrCnt {
 	display: inline-block;
 }
@@ -86,14 +82,91 @@
 	font-size: 2.5rem;
 }
 
+.sapMGT.sapMGTScopeActions {
+
+	.sapMTileCntContent {
+		position: relative;
+
+		&:after {
+			position: absolute;
+			display: block;
+			content: "";
+			top: 0rem;
+			bottom: 0rem;
+			left: 0rem;
+			right: 0rem;
+			background-color: fade(@sapUiTileBackground, 70);
+		}
+	}
+
+	.sapMGTMoreIcon {
+		width: 1rem;
+		height: 1rem;
+		position: absolute;
+		right: 0.75rem;
+		bottom: 0.563rem;
+		z-index: 1;
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.sapMGTRemoveButton {
+		width: 1.375rem;
+		height: 1.375rem;
+		border-radius: 50%;
+		padding: 0px;
+		position: absolute;
+		top: -0.5rem;
+		right: -0.5rem;
+		z-index: 1;
+
+		.sapMBtnFocusDiv {
+			display: none;
+		}
+
+		.sapMBtnInner {
+			width: 100%;
+			height: 100%;
+			min-width: 0px;
+			border-radius: 50%;
+			border: none;
+			outline-offset: -2px;
+		}
+
+		.sapMBtnIcon {
+			font-size: 0.75rem;
+			margin: 0px;
+			width: 100%;
+
+			&:before {
+				position: relative;
+				top: -0.125rem;
+			}
+		}
+
+		&:focus > .sapMFocusable {
+			outline: none;
+		}
+
+		/* The touch area has a different size and is slightly moved to the left and bottom */
+		&:before {
+			content: "";
+			position: absolute;
+			top: -1px;
+			bottom: -0.6875rem;
+			left: -0.6875rem;
+			right: -0.0625rem;
+		}
+	}
+}
+
 /************************ LINE MODE COZY ********************/
 
 .sapMGTLineMode.sapMGT {
-	float: left;
-	clear: left;
+	display: block;
 	min-height: 2.5rem;
 	min-width: 2rem;
-	width: 100%;
 	border-radius: 0.2rem;
 	box-shadow: none;
 	transition: background-color 0.2s;
@@ -190,40 +263,24 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 
 	.sapMGTMoreIcon {
 		display: block;
+		position: static;
+		right: 0rem;
+		bottom: 0rem;
 		width: 2rem;
 		height: 1.375rem;
 	}
 
-	.sapMGTRemoveIcon {
+	.sapMGTRemoveButton {
 		display: block;
-		width: 1.375rem;
-		height: 1.375rem;
 		margin: 0 0.3125rem;
-		border-radius: 50%;
-		padding: 0px;
+		left: 2rem;
+		position: static;
+		top: 0rem;
+		right: 0rem;
+		z-index: 0;
 
-		.sapMBtnFocusDiv {
-			border-radius: 50%;
-		}
-
-		.sapMBtnInner {
-			width: 100%;
-			height: 100%;
-			min-width: 0px;
-			border-radius: 50%;
-			border: none;
-			outline-offset: -2px;
-		}
-
-		.sapMBtnIcon {
-			font-size: 0.75rem;
-			margin: 0px;
-			width: 100%;
-
-			&:before {
-				position: relative;
-				top: -0.125rem;
-			}
+		&:before {
+			content: none;
 		}
 	}
 }
@@ -316,6 +373,10 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	.sapMGTLineMode .sapMGTHdrTxt:last-of-type {
 		padding-right: 0.5rem;
 		margin-right: 0.5rem;
+	}
+
+	.sapMGTLineMode.sapMGTScopeActions  .sapMGTHdrTxt:last-of-type {
+		padding-right: 4rem;
 	}
 
 	.sapMGTActionsContainer {
@@ -514,5 +575,12 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 		margin-top: 0.25rem;
 		margin-left: 0.5625rem;
 		margin-right: 0.5625rem;
+	}
+
+	.sapMGT.sapMGTScopeActions {
+		.sapMGTMoreIcon {
+			right: 0.5rem;
+			bottom: 0.313rem;
+		}
 	}
 }

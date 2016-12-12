@@ -61,6 +61,8 @@
 /* GridLayout */
 td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	float: right;
+	position: relative;
+	padding-right: 0.25rem;
 }
 
 /* ResponsiveGridLayout */
@@ -77,12 +79,13 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel{
 	text-align: end !important; /* to overwrite setting on label */
 	width: 100%; /* to react on touch/click on whole label cell */
-	padding-right: 4px;
+	padding-right: 0.25rem;
 	box-sizing: border-box;
 	position: relative;
 }
 
 /* in the cases text-align: end is set, we position the colon of the label to absolute so it does not get truncated in the ellipsis*/
+td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel:after,
 .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel:after,
 .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel:after,
 .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel:after,
@@ -125,6 +128,9 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 /* collapse lines in a form */
 .sapUiForm .sapUiFormElementLbl > .sapMLabel{
 	height: auto;
+}
+
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel{
 	/*
 		We guessed the width of a : here. 0.3em seems to be fine in chrome it works without the padding
 		but as long as we do not touch the box-sizing it seems to be fine to set it there too
@@ -138,14 +144,14 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	vertical-align: top; /* align vertically to multiline texts */
 }
 
-.sapUiForm .sapUiFormElementLbl > .sapMLabel:after{
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:after{
 	content:":";
 }
-.sapUiForm .sapUiFormElementLbl > .sapMLabel:lang(fr):after{
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:lang(fr):after{
 	content:" :";
 }
 
-.sapUiForm .sapUiFormElementLbl > .sapMLabel.sapMLabelNoText:after{
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel.sapMLabelNoText:after{
 	content: none;
 }
 

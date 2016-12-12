@@ -980,12 +980,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			// detach this function
 			that._oDialog.detachAfterClose(fnAfterClose);
 
-			// reset selection
-			that._resetSelection();
-
 			// fire cancel event
 			that.fireCancel();
 		};
+
+		// reset selection
+		// before was part of the fnAfterClose callback but apparently actions were executed on
+		// a table that does not exist so moving here as fix
+		that._resetSelection();
 
 		// attach the reset function to afterClose to hide the dialog changes from the end user
 		this._oDialog.attachAfterClose(fnAfterClose);
@@ -1043,6 +1045,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.bIsDestroyed) {
+			this._executeSearch("", "search");
 			this._oTable.removeSelections();
 			for (; i < this._aInitiallySelectedItems.length; i++) {
 				this._oTable.setSelectedItem(this._aInitiallySelectedItems[i]);

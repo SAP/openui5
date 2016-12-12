@@ -504,6 +504,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
 	UploadCollection._placeholderCamera = 'sap-icon://camera';
 	UploadCollection._markerMargin = 8; // the left margin for each marker in px
+
 	if (Device.system.phone) {
 		UploadCollection._resizeTimeoutInterval = 500; // the time interval after the resize is applied for phones (in msec)
 	} else {
@@ -1073,6 +1074,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype._onDragEnterUIArea = function(event) {
 		this._oLastEnterUIArea = event.target;
 		this._$DragDropArea.removeClass("sapMUCDragDropOverlayHide");
+		this._AdjustDragDropIcon();
 	};
 
 	/**
@@ -1103,6 +1105,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype._onDragEnterUploadCollection = function(event) {
 		if (event.target === this._$DragDropArea[0]) {
 			this._$DragDropArea.addClass("sapMUCDropIndicator");
+			this._AdjustDragDropIcon();
 			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DROP_FILE_INDICATOR"));
 		}
 	};
@@ -1116,6 +1119,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (event.target === this._$DragDropArea[0]) {
 			this.$("drag-drop-area").removeClass("sapMUCDropIndicator");
 			this.getAggregation("_dragDropText").setText(this._oRb.getText("UPLOADCOLLECTION_DRAG_FILE_INDICATOR"));
+		}
+	};
+
+	/**
+	 * Hides the icon when the height of the drag enabled area is smaller than 10rem
+	 *
+	 * @private
+	 */
+	UploadCollection.prototype._AdjustDragDropIcon = function() {
+		// Icon is displayed when the drag enabled area more than 10rem(160px)
+		if (this._$DragDropArea[0].offsetHeight < 160) {
+			this.getAggregation("_dragDropIcon").$().hide();
 		}
 	};
 

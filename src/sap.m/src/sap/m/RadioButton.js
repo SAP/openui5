@@ -126,7 +126,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		}
+		},
+		designTime : true
 	}});
 
 
@@ -479,10 +480,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oLabel.destroy();
 		}
 
-		if (iGroupNameIndex && iGroupNameIndex !== -1) {
+		if (iGroupNameIndex >= -1) {
 			aControlsInGroup.splice(iGroupNameIndex, 1);
 		}
-
 	};
 
 	/**

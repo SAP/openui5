@@ -26,14 +26,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			/**
 			 * Moves an element from one aggregation to another.
 			 *
-			 * @param {sap.ui.fl.Change}
-			 *          oChangeWrapper change object with instructions to be applied on the control map
-			 * @param {sap.ui.core.Control}
+			 * @param {sap.ui.fl.Change} oChangeWrapper
+			 *          change object with instructions to be applied on the control map
+			 * @param {sap.ui.core.Control} oSimpleForm
 			 *          oSourceParent control that matches the change selector for applying the change, which is the source of
 			 *          the move
-			 * @param {object}
-			 *          mPropertyBag map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
-	         *          sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
+			 * @param {object} mPropertyBag
+			 *          map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
+			 *          sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
+			 * @returns {boolean} true - if change could be applied
 			 * @public
 			 */
 			MoveSimpleForm.applyChange = function(oChangeWrapper, oSimpleForm, mPropertyBag) {
@@ -125,11 +126,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 				return true;
 
-			};
-
-			// To be removed
-			MoveSimpleForm.buildStableChangeInfo = function(mSpecificChangeInfo) {
-				return mSpecificChangeInfo;
 			};
 
 			/**

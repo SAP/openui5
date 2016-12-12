@@ -14,12 +14,17 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The WizardStep is a container control which should be used mainly to aggregate user input controls.
-	 * It gives the developer the ability to validate, invalidate the step and define subsequent steps.
-	 * Note: The WizardStep control control is supposed to be used only as an aggregation of the Wizard control,
+	 * A container control used to aggregate user input controls as part of a sap.m.Wizard.
+	 * <h3>Overview</h3>
+	 * WizardStep gives the developer the ability to validate, invalidate the step and define subsequent steps.
+	 * The WizardStep control control is supposed to be used only as an aggregation of the {@link sap.m.Wizard Wizard} control,
 	 * and should not be used as a standalone one.
+	 * <h3>Structure</h3>
+	 * <ul>
+	 * <li>Each wizard step has a title. Additionally it can have an icon.</li>
+	 * <li>Each wizard step can be validated by setting the <code>validated</code> property. This action will trigger the rendering of the Next step button.</li>
+	 * <li>If the execution needs to branch after a given step, you should set all possible next steps in the <code>subsequentSteps</code> aggregation.
 	 * @extends sap.ui.core.Control
-	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

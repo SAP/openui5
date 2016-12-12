@@ -9,12 +9,13 @@ sap.ui.define([
 			var oFormData = {
 				serviceURL: "",
 				collection: "",
-				selectProperties: "CostCenter,CostCenterText,ActualCosts,Currency,PlannedCosts",
-				tableThreshold: 10,
+				resultSet: "ActualPlannedCostsResults",
+				selectProperties: "CostCenter,CostCenterText,CostElement,CostElementText,Currency,ActualCosts,PlannedCosts",
+				tableThreshold: 20,
 				bindingThreshold: 10000,
 				dimensions: "CostCenter",
-				measures:"PlannedCosts",
-				visibleRowCount: 10,
+				measures:"ActualCosts,PlannedCosts",
+				visibleRowCount: 20,
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
 				overall: 0,
 				onBeforeRendering: 0,
@@ -42,6 +43,8 @@ sap.ui.define([
 
 			var sServiceUrl = oDataModel.getProperty("/serviceURL");
 			var sCollection = oDataModel.getProperty("/collection");
+			var sResultSet = oDataModel.getProperty("/resultSet");
+			var iRowCount = parseInt(oDataModel.getProperty("/visibleRowCount"), 10);
 
 			var oStoredData = TABLESETTINGS.getAnalyticalService();
 			sServiceUrl = sServiceUrl || oStoredData.url;
@@ -89,7 +92,9 @@ sap.ui.define([
 			}
 
 			jQuery.sap.measure.start("createTable");
-			oTable = new sap.ui.table.AnalyticalTable({});
+			oTable = new sap.ui.table.AnalyticalTable({
+				visibleRowCount: iRowCount
+			});
 			oTableContainer.addContent(oTable);
 
 			oTable.addDelegate({
@@ -150,10 +155,23 @@ sap.ui.define([
 			var aProperties = sSelectProperties.split(",");
 
 			jQuery.each(aProperties, function(iIndex, sProperty) {
+				
+				var oTemplate = sProperty;
+				// measure column
+				if (aMeasures.indexOf(sProperty) != -1) {
+					oTemplate = new sap.m.Label({
+						text: {
+							path: sProperty,
+							type: new sap.ui.model.type.Float()
+						},
+						textAlign: "End"
+					});
+				}
+				
 
 				var oColumn = new sap.ui.table.AnalyticalColumn({
 					label: sProperty,
-					template: sProperty,
+					template: oTemplate,
 					sortProperty: sProperty,
 					filterProperty: sProperty,
 					leadingProperty: sProperty
@@ -178,13 +196,21 @@ sap.ui.define([
 			oTable.bindRows({
 				path: "/" + sCollection,
 				parameters: {
-					threshold: sBindingThreshold
+					entitySet: sResultSet,
+					useBatchRequests: true,
+					useAcceleratedAutoExpand: true,
+					reloadSingleUnitMeasures: true,
+					provideGrandTotals: true,
+					provideTotalResultSize: true
 				}
 			});
 
 
 			window.oTable = oTable;
-
+			
+			/**
+			 * Create Perf Measurements
+			 */
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
 			});
@@ -222,7 +248,10 @@ sap.ui.define([
 
 			this.aFunctionResults.push(oFunctionResult);
 		},
-
+		
+		/**
+		 * Performance Measure Stuff
+		 */
 		onDownload: function() {
 
 			var overallAve = 0,

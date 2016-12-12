@@ -1,23 +1,10 @@
-.sapMLIB.sapMNLB {
-  border-radius: 0.375rem 0.25rem 0.25rem 0.375rem;
-}
+/* =========================================== */
+/* CSS for control sap.m/NotificationListBase  */
+/* Belize theme                                */
+/* =========================================== */
 
-/* ==========================================================================
-   Notification Priorities
-  ========================================================================== */
+@_sap_m_NotificationListBase_Background: @sapUiListBackground;
 
-.sapMNLB-None {
-  background-color: @sapUiNeutralBorder;
-}
-
-.sapMNLB-Low {
-  background-color: @sapUiSuccessBorder;
-}
-
-.sapMNLB-Medium {
-  background-color: @sapUiWarningBorder;
-}
-
-.sapMNLB-High {
-  background-color: @sapUiErrorBorder;
+.sapMNLB {
+  background-color: @_sap_m_NotificationListBase_Background;
 }

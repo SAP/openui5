@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ListBase.
-sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, GroupHeaderListItem, library, Control, ItemNavigation, Parameters) {
+sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
+	function(jQuery, GroupHeaderListItem, library, Control, ItemNavigation, InvisibleText) {
 	"use strict";
 
 
@@ -386,20 +386,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	}});
 
+	ListBase.getInvisibleText = function() {
+		return this.oInvisibleText || (this.oInvisibleText = new InvisibleText().toStatic());
+	};
 
 	// class name for the navigation items
 	ListBase.prototype.sNavItemClass = "sapMLIB";
 
 	ListBase.prototype.init = function() {
-		this._oGrowingDelegate = null;
-		this._bSelectionMode = false;
-		this._bReceivingData = false;
-		this._oSelectedItem = null;
-		this._aSelectedPaths = [];
 		this._aNavSections = [];
-		this._bUpdating = false;
-		this._bRendering = false;
-		this._bActiveItem = false;
+		this._aSelectedPaths = [];
 		this._iItemNeedsHighlight = 0;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
@@ -1449,35 +1445,102 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 
-	// returns accessibility role
-	ListBase.prototype.getRole = function() {
-		var sMode = this.getMode(),
-			mMode = sap.m.ListMode;
-
-		return (sMode == mMode.None || sMode == mMode.Delete) ? "list" : "listbox";
+	ListBase.prototype.getAccessibilityType = function() {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LIST");
 	};
 
-	// this gets called after navigation items are focused
-	ListBase.prototype.onNavigationItemFocus = function(oEvent) {
-		var iIndex = oEvent.getParameter("index"),
-			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oItemDomRef = aItemDomRefs[iIndex],
-			iSetSize = aItemDomRefs.length,
-			oBinding = this.getBinding("items");
+	ListBase.prototype.getAccessibilityDescription = function() {
+		var sDescription = "",
+			mMode = sap.m.ListMode,
+			sMode = this.getMode(),
+			oHeaderTBar = this.getHeaderToolbar(),
+			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		if (oHeaderTBar) {
+			var oTitle = oHeaderTBar.getTitleControl();
+			if (oTitle) {
+				sDescription = oTitle.getText() + " ";
+			}
+		} else {
+			sDescription = this.getHeaderText() + " ";
+		}
+
+		if (this.getItems().length) {
+			if (sMode == mMode.MultiSelect) {
+				sDescription += oBundle.getText("LIST_MULTISELECTABLE") + " ";
+			} else if (sMode == mMode.Delete) {
+				sDescription += oBundle.getText("LIST_DELETABLE") + " ";
+			} else if (sMode != mMode.None) {
+				sDescription += oBundle.getText("LIST_SELECTABLE") + " ";
+			}
+		} else if (this.getShowNoData()) {
+			sDescription += this.getNoDataText() + " ";
+		}
+
+		sDescription += this.getFooterText();
+		return sDescription.trim();
+	};
+
+	ListBase.prototype.getAccessibilityInfo = function() {
+		return {
+			type: this.getAccessibilityType(),
+			description: this.getAccessibilityDescription(),
+			focusable: true
+		};
+	};
+
+	// this gets called when items are focused
+	ListBase.prototype.onItemFocusIn = function(oItem) {
+		var iSetSize = 0,
+			aItems = this.getVisibleItems(),
+			iPosInset = aItems.indexOf(oItem) + 1,
+			oBinding = this.getBinding("items"),
+			oItemDomRef = oItem.getDomRef();
 
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
 			iSetSize = oBinding.getLength();
 			if (oBinding.isGrouped()) {
-				iSetSize += this.getItems(true).filter(function(oItem) {
+				iSetSize += aItems.filter(function(oItem) {
 					return oItem.isGroupHeader() && oItem.getVisible();
 				}).length;
 			}
+		} else {
+			iSetSize = aItems.length;
 		}
 
-		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
-		oItemDomRef.setAttribute("aria-posinset", iIndex + 1);
-		oItemDomRef.setAttribute("aria-setsize", iSetSize);
+		if (!oItem.getContentAnnouncement) {
+			// let the screen reader announce the whole content
+			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
+			oItemDomRef.setAttribute("aria-posinset", iPosInset);
+			oItemDomRef.setAttribute("aria-setsize", iSetSize);
+		} else {
+			// prepare the announcement for the screen reader
+			var oAccInfo = oItem.getAccessibilityInfo(),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sDescription = oAccInfo.type + " ";
+
+			sDescription += oBundle.getText("LIST_ITEM_POSITION", [iPosInset, iSetSize]) + " ";
+			sDescription += oAccInfo.description;
+			this.updateInvisibleText(sDescription, oItemDomRef);
+		}
+	};
+
+	ListBase.prototype.updateInvisibleText = function(sText, oItemDomRef, bPrepend) {
+		var oInvisibleText = ListBase.getInvisibleText(),
+			$FocusedItem = jQuery(oItemDomRef || document.activeElement);
+
+		if (this.bAnnounceDetails) {
+			this.bAnnounceDetails = false;
+			var oAccInfo = this.getAccessibilityInfo();
+			sText = oAccInfo.type + " " + oAccInfo.description + " " + sText;
+		}
+
+		oInvisibleText.setText(sText.trim());
+		$FocusedItem.addAriaLabelledBy(oInvisibleText.getId(), bPrepend);
+		window.setTimeout(function() {
+			$FocusedItem.removeAriaLabelledBy(oInvisibleText.getId());
+		}, 0);
 	};
 
 	/* Keyboard Handling */
@@ -1531,9 +1594,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				sapnext : ["alt"],
 				sapprevious : ["alt"]
 			});
-
-			// attach to the focus event of the navigation items
-			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this.onNavigationItemFocus, this);
 		}
 
 		// TODO: Maybe we need a real paging algorithm here
@@ -1787,6 +1847,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 		// get the last tabbable item or itself and focus
 		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
+		this.bAnnounceDetails = true;
 		$FocusElement.focus();
 	};
 

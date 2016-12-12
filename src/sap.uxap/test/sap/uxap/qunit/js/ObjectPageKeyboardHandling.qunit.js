@@ -4,8 +4,6 @@
 		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton",
 		sPopOverAnchorSelector = ".sapMPopoverScroll > .sapUxAPAnchorBarButton";
 
-	sinon.config.useFakeTimers = true;
-
 	jQuery.sap.registerModulePath("view", "view");
 
 	sap.ui.controller("viewController", {});
@@ -38,6 +36,7 @@
 
 	module("AnchorBar", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			sap.ui.Device.system.phone = false;
 			jQuery("html")
 				.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
@@ -50,6 +49,15 @@
 			this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
 				assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
 			}
+		},
+		afterEach: function() {
+			// trigger 'escape' keypress event to potentially close the popover
+			var oActiveElement = document.activeElement;
+			sap.ui.test.qunit.triggerKeydown(oActiveElement, jQuery.sap.KeyCodes.ESCAPE);
+			sap.ui.test.qunit.triggerKeyup(oActiveElement, jQuery.sap.KeyCodes.ESCAPE);
+			this.clock.tick(500);
+
+			this.clock.restore();
 		}
 	});
 
@@ -177,10 +185,6 @@
 		var aPopoverAnchors = $(sPopOverAnchorSelector),
 			iFirstSubAnchor = aPopoverAnchors[0].id;
 		assert.ok(jQuery.sap.byId(iFirstSubAnchor).is(":focus"), "Menu should be opened and first anchor focused");
-
-		// Close the popover
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(iFirstSubAnchor), jQuery.sap.KeyCodes.ESCAPE);
-		sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId(iFirstSubAnchor), jQuery.sap.KeyCodes.ESCAPE);
 	});
 
 	QUnit.test("PAGE UP: Anchor level", function (assert) {

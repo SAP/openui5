@@ -1,59 +1,10 @@
-.sapMNLI {
-  background-color: @sapUiLightestBG;
-  border: 1px solid @sapUiExtraLightBorder;
-  border-left: 0;
-  box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
-}
+/* =========================================== */
+/* CSS for control sap.m/NotificationListItem  */
+/* High Contrast Black theme                   */
+/* =========================================== */
 
 .sapMNLI-UnreadStatus {
-  background: @sapHCStandardFG;
-}
-
-.sapMNLI-Header > .sapMTitle {
-  font-size: @sapMFontLargeSize;
-}
-
-.sapMNLI-Body .sapMNLI-Details {
-  font-size: @sapMFontMediumSize;
-}
-
-.sapMNLB-Priority {
-  top: -1px;
-  &.sapMNLB-None {
-    border-top: 1px solid @sapHCNeutral;
-    border-bottom: 1px solid @sapHCNeutral;
-  }
-
-  &.sapMNLB-Low {
-    border-top: 1px solid @sapHCPositive;
-    border-bottom: 1px solid @sapHCPositive;
-  }
-
-  &.sapMNLB-Medium {
-    border-top: 1px solid @sapHCCritical;
-    border-bottom: 1px solid @sapHCCritical;
-  }
-
-  &.sapMNLB-High {
-    border-top: 1px solid @sapHCNegative;
-    border-bottom: 1px solid @sapHCNegative;
-  }
-}
-
-.sapMNLI-None {
-  background-color: @sapHCNeutral;
-}
-
-.sapMNLI-Low {
-  background-color: @sapHCPositive;
-}
-
-.sapMNLI-Medium {
-  background-color: @sapHCCritical;
-}
-
-.sapMNLI-High {
-  background-color: @sapHCNegative
+  background: @sapUiNeutralBorder;
 }
 
 .sapMNLI-CloseButton .sapMBtnIcon {
@@ -66,12 +17,10 @@
 
 // Focus Styles ========================================================================================================
 
-html.sap-desktop .sapMLIB.sapMNLI:focus {
-  outline: none;
-}
+
 
 html.sap-desktop .sapMLIB.sapMNLI:focus::before {
-  border: 0.125rem dotted @sapHCStandardFG;
+  border: 0.125rem dotted @sapUiContentFocusColor;
   border-left-style: solid;
   position: absolute;
   content: "";
@@ -84,7 +33,7 @@ html.sap-desktop .sapMLIB.sapMNLI:focus::before {
 }
 
 html.sap-desktop .sapMLIB.sapMNLI:focus::after {
-  border-left: 0.125rem dotted @sapHCStandardBG;
+  border-left: 0.125rem dotted @sapUiListBackground;
   position: absolute;
   content: "";
   top: 0;

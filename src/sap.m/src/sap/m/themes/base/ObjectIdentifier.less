@@ -1,13 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/ObjectIdentifier.control */
-/* ============================================= */
-
-.sapMObjectIdentifier {
-}
-
-.sapMObjectIdentifierTopRow {
-}
+/* ======================================= */
+/* CSS for control sap.m/ObjectIdentifier  */
+/* Base theme                              */
+/* ======================================= */
 
 .sapMObjectIdentifierIcons {
 	overflow: hidden;
@@ -15,7 +9,7 @@
     vertical-align: top-text;
     float: right;
     font-size: 1rem;
-    color: @sapUiElement;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMObjectIdentifierIconSpan {
@@ -36,9 +30,19 @@
 	color: @sapUiGroupTitleTextColor;
 }
 
-.sapMObjectIdentifierText {
+.sapMObjectIdentifierTitle .sapMLnk,
+.sapMOITitleActive .sapMLnk {
+	color: @sapUiLink;	
+}
+
+.sapMObjectIdentifierText .sapMText,
+.sapMObjectIdentifierText,
+.sapMObjectIdentifier {
 	color: @sapUiContentLabelColor;
-	font-size: 0.875rem;
+}
+
+.sapMObjectIdentifierText {
+	font-size: @sapMFontMediumSize;
 	padding-top: 0;
 }
 
@@ -46,10 +50,14 @@
 	margin-top: 0.5rem;
 }
 
+.sapMLIBActive .sapMObjectIdentifier {
+		color: @sapUiListActiveTextColor;
+}
+
 /* ObjectIdentifier inside a table */
 .sapMListTbl .sapMObjectIdentifierTitle .sapMLnk,
 .sapMListTbl .sapMObjectIdentifierTitle .sapMText {
-	font-size: 0.875rem;
+	font-size: @sapMFontMediumSize;
 	padding-top: 0;
 }
 

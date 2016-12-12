@@ -1,6 +1,8 @@
-/* ==================================== */
-/* CSS for sap.m/NumericContent.control */
-/* ==================================== */
+/* ============================= */
+/* CSS for sap.m/NumericContent  */
+/* Base theme                    */
+/* ============================= */
+
 .sapMNC {
 	position: relative;
 	box-sizing: border-box;
@@ -37,13 +39,16 @@
 	position: relative;
 	float: left;
 	padding-right: 0.625rem;
-
 	font-size: 1.75rem;
 	line-height: 1.65rem;
 	height: 1.75rem;
 	width: 1.75rem;
 	margin-top: 0.625rem;
 	vertical-align: top;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiTileIconColor;
+	float: none;
 
 	&.WithoutMargin {
 		display: inline-block;
@@ -65,6 +70,8 @@
 	text-overflow: ellipsis;
 	font-size: 2.5rem;
 	line-height: 3rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
 
 	&.WithoutMargin {
 		float: left;
@@ -121,6 +128,8 @@ html[dir=rtl] .sapMNCValueScr {
 	height: 18px;
 	margin-top: 0.938rem;
 	font-size: 1rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
 }
 
 
@@ -176,5 +185,60 @@ html[dir=rtl] .sapMNCValueScr {
 		height: 17px;
 		margin-top: 0.625rem;
 		font-size: 0.875rem;
+	}
+}
+
+.sapMNCValue.Neutral,
+.sapMNCIndicator.Neutral,
+.sapMNCScale.Neutral {
+	color: @sapUiNeutralText;
+}
+
+.sapMNCValue.Good,
+.sapMNCIndicator.Good,
+.sapMNCScale.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCValue.Error,
+.sapMNCIndicator.Error,
+.sapMNCScale.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical,
+.sapMNCScale.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCIndicator.Loading,
+.sapMNCValue.Loading,
+.sapMNCScale.Loading,
+.sapMNCIconImage.Loading,
+.sapMNCIndicator.Failed,
+.sapMNCValue.Failed,
+.sapMNCScale.Failed,
+.sapMNCIconImage.Failed {
+	color: @sapUiContentLabelColor;
+	opacity: 0.25;
+}
+
+.sapMNC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMNC:focus:not([tabindex]) {
+	outline: none;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMNCValue {
+		font-size: 2rem;
 	}
 }

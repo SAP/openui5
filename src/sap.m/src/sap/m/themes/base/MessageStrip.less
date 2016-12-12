@@ -1,3 +1,8 @@
+/* =================================== */
+/* CSS for control sap.m/MessageStrip  */
+/* Base theme                          */
+/* =================================== */
+
 .sapMMsgStrip {
 	border: 1px solid;
 	border-radius: 0.1875rem;
@@ -90,5 +95,45 @@ html[data-sap-ui-animation='on'] {
 	&::after {
 		content: '\e03e';
 		position: absolute;
+	}
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapUiNeutralBG;
+	border-color: @sapUiNeutralBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiNeutralElement;
+	}
+}
+
+.sapMMsgStripSuccess {
+	background-color: @sapUiSuccessBG;
+	border-color: @sapUiSuccessBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiPositiveElement;
+	}
+}
+
+.sapMMsgStripWarning {
+	background-color: @sapUiWarningBG;
+	border-color: @sapUiWarningBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiCriticalElement;
+	}
+}
+
+.sapMMsgStripError {
+	background-color: @sapUiErrorBG;
+	border-color: @sapUiErrorBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiNegativeElement;
 	}
 }

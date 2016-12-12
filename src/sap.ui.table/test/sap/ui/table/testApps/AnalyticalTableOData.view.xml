@@ -42,19 +42,14 @@
 									<Input value="{/collection}" id="collection"/>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement label="ResultSet">
+								<f:fields>
+									<Input value="resultSet" id="resultSet"/>
+								</f:fields>
+							</f:FormElement>
 							<f:FormElement label="$select properties">
 								<f:fields>
 									<Input value="{/selectProperties}" id="selectProperties"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Table Threshold">
-								<f:fields>
-									<Input value="{/tableThreshold}" id="tableThreshold"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="ListBinding Threshold">
-								<f:fields>
-									<Input value="{/bindingThreshold}" id="bindingThreshold"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="Dimensions">
@@ -69,7 +64,7 @@
 							</f:FormElement>
 							<f:FormElement label="VisibleRowCount">
 								<f:fields>
-									<Input value="{/visibleRowCount}" id="visibleRowCount"/>
+									<Input value="{path: '/visibleRowCount', type:'sap.ui.model.type.Integer'}" id="visibleRowCount"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="VisibleRowCountMode">
@@ -110,7 +105,7 @@
 	</Panel>
 	<Panel
 		expandable="true"
-		expanded="true"
+		expanded="false"
 		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>

@@ -178,7 +178,6 @@ sap.ui.define([], function() {
 									}
 									return true;
 								},
-								containerTitle : "GROUP_CONTROL_NAME",
 								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();
@@ -195,7 +194,6 @@ sap.ui.define([], function() {
 									}
 									return true;
 								},
-								containerTitle : "GROUP_CONTROL_NAME",
 								getCreatedContainerId : function(sNewControlID) {
 									var oTitle = sap.ui.getCore().byId(sNewControlID);
 									var sParentElementId = oTitle.getParent().getId();

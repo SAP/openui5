@@ -1,6 +1,8 @@
-/* ============================================= */
-/* CSS for control sap.m/HeaderContainer.control */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/HeaderContainer  */
+/* Base theme                             */
+/* ====================================== */
+
 .sapMHdrCntr {
 	position: relative;
 	display: inline-block;
@@ -236,4 +238,21 @@ html.sap-tablet:not(.sap-desktop) .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertic
 }
 .sapMHdrCntrItemCntr {
 	display: inline-block;
+}
+
+.sapMHdrCntrBGTransparent {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapMHdrCntrBGSolid {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapMHdrCntrBGTranslucent {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+html.sap-desktop .sapMHrdrCntrInner:focus {
+	outline: none;
+	border: 1px dotted @sapUiContentFocusColor;
 }

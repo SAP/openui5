@@ -54,7 +54,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		designTime: true
 	}});
 
+	InputListItem.prototype.getContentAnnouncement = function() {
+		var sAnnouncement = this.getLabel();
+		this.getContent().forEach(function(oContent) {
+			sAnnouncement += ListItemBase.getAccessibilityText(oContent) + " ";
+		});
 
+		return sAnnouncement;
+	};
 
 	return InputListItem;
 

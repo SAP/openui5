@@ -15,14 +15,18 @@
 			<ObjectHeader
 					id="objectHeader"
 					title="{Title}"
-					number="{Price}"
-					numberUnit="{Currency}">
+					number="{
+						path: 'Price',
+						formatter: '.formatter.numberUnit'
+					}"
+					numberUnit="{Currency}"
+					backgroundDesign="Translucent">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
 						expanded="{device>/isNoPhone}"
-						class="sapUiResponsiveContentPadding">
+						class="sapUiNoContentPadding">
 				<items>
-					<IconTabFilter icon="sap-icon://hint" key="info">
+					<IconTabFilter icon="sap-icon://hint" key="info" >
 						<form:SimpleForm>
 							<form:content>
 								<Label text="{i18n>postDateLabel}"/>

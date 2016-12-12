@@ -196,32 +196,6 @@ sap.ui.define([
 
 			this.ensureCorrectChangeGroup(sEntityType);
 
-			if (!this.oODataModel.hasListeners("requestFailed")) {
-				this.oODataModel.attachRequestFailed({}, function (oEvent) {
-					var oDialog = new Dialog({
-						title: 'Request Failed with Error:',
-						contentWidth: "600px",
-						contentHeight: "300px",
-						content: [
-							new sap.ui.core.HTML({
-								content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(oEvent.getParameter("response").responseText) + "</span>"
-							})
-						],
-						beginButton: new Button({
-							text: 'OK',
-							press: function () {
-								oDialog.close();
-							}
-						}),
-						afterClose: function() {
-							oDialog.destroy();
-						}
-					});
-
-					oDialog.open();
-				});
-			}
-
 			oTable.setModel(this.oODataModel, "odata");
 			oTable.bindRows({
 				path: "odata>" + sCollection,
@@ -465,13 +439,14 @@ sap.ui.define([
 		onCut: function () {
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oBinding = oTable.getBinding();
+			var oModel = oBinding.getModel();
 
 			// keep track of the removed handle
 			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
 			this._oLastTreeHandle = oTreeHandle;
 
 			// only for demo: get the odata-key
-			var sKey = oTreeHandle._oSubtreeRoot.key;
+			var sKey = oModel.getKey(oTreeHandle);
 			this._mTreeHandles = this._mTreeHandles || {};
 			this._mTreeHandles[sKey] = oTreeHandle;
 
@@ -496,20 +471,74 @@ sap.ui.define([
 		},
 
 		/**
+		 * Shows an error dialog with the given error message.
+		 */
+		showErrorDialogue: function (sErrorCode, sErrorText) {
+			var oDialog = new Dialog({
+				title: 'Request Failed with Error: ' + sErrorCode,
+				contentWidth: "600px",
+				contentHeight: "300px",
+				content: [
+					new sap.ui.core.HTML({
+						content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(sErrorText) + "</span><br/><span><i>Please see the debug-console ('Network' tab), for the actual back-end response.</i></span>"
+					})
+				],
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				afterClose: function() {
+					oDialog.destroy();
+				}
+			});
+
+			oDialog.open();
+		},
+
+		/**
 		 * Submit the changes on the model
 		 */
 		onSave: function () {
 			MessageToast.show("Submitting changes...");
 			var oBinding = oTable.getBinding();
+			
 			oTable.setBusyIndicatorDelay(1);
 			oTable.setEnableBusyIndicator(true);
 			oTable.setBusy(true);
+			
+			// send collected change data to the back-end
 			oBinding.submitChanges({
-				success: function () {
+				success: function (oData) {
+					// remove busy state of table
 					oTable.setBusy(false);
-					this.setupCutAndPaste(); // clear clipboard
+					// re-setup and clear the clipboard
+					this.setupCutAndPaste();
+					
+					// check if the change responses are missing --> at least one change failed
+					if (oData.__batchResponses && oData.__batchResponses[0] &&
+						!oData.__batchResponses[0].__changeResponses) {
+						// check for error message
+						var iStatusCode = parseInt(oData.__batchResponses[0].response.statusCode, 10);
+						if (iStatusCode < 200 || iStatusCode > 299) {
+							var sErrorCode = "";
+							var sErrorMessage = "";
+							try {
+								var oErrorObj = JSON.parse(oData.__batchResponses[0].response.body);
+								sErrorCode = oErrorObj.error.code;
+								sErrorMessage = oErrorObj.error.message.value;
+							} catch (e) {
+								sErrorCode = "Unknown Error";
+								sErrorMessage = "A service error occured. The error message could not be formatted correctly.";
+							}
+							this.showErrorDialogue(sErrorCode, sErrorMessage);
+						}
+					}
+					
 				}.bind(this),
-				error: function () {
+				error: function (oEvent) {
+					this.showErrorDialogue("error");
 					oTable.setBusy(false);
 				}
 			});
@@ -544,8 +573,7 @@ sap.ui.define([
 
 			if (aContexts.length >= 0) {
 				var oCtx = aContexts[0];
-				var oData = oCtx.getProperty();
-				var sKey = oData.key;
+				var sKey = oCtx.getProperty("key");
 				var oTreeHandle = this._mTreeHandles[sKey];
 
 				// insert in currently selected index
@@ -564,7 +592,7 @@ sap.ui.define([
 					this._oClipboardModel.setData(this._oClipboardModelData);
 				}
 
-				MessageToast.show("Node '" + oData.key + "' was re-inserted.");
+				MessageToast.show("Node '" + sKey + "' was re-inserted.");
 			}
 		},
 

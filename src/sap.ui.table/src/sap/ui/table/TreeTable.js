@@ -505,6 +505,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		var oBinding = this.getBinding("rows");
 		if (oBinding.selectAll) {
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			this._getAccExtension().setSelectAllState(true);
 			oBinding.selectAll();
 		} else {
 			//otherwise fallback on the tables own function
@@ -609,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		//when using the treebindingadapter, check if the node is selected
 		var oBinding = this.getBinding("rows");
 
-		if (oBinding && oBinding.findNode && oBinding.getSelectedNodesCount) {
+		if (oBinding && oBinding.getSelectedNodesCount) {
 			return oBinding.getSelectedNodesCount();
 		} else {
 			// selection model case

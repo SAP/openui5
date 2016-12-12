@@ -31,6 +31,12 @@
 				tooltip="{i18n>sampleFullScreenTooltip}"
 				press="onToggleFullScreen" />
 			<Button
+				id="toggleRTA"
+				text="Adapt"
+				class="sapUiHideOnPhone"
+				tooltip="{i18n>sampleAdaptTooltip}"
+				press="onAdaptUI" visible="false"/>
+			<Button
 				id="code"
 				icon="sap-icon://syntax"
 				tooltip="{i18n>sampleShowCodeTooltip}"

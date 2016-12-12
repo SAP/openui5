@@ -4,9 +4,11 @@
 
 // Provides control sap.m.Input.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
-		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
+		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
+		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
 	function(jQuery, Bar, Dialog, InputBase, List, Popover,
-			Item, ColumnListItem, StandardListItem, Table, Toolbar, ToolbarSpacer, library, IconPool/* , jQuerySap */) {
+			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
+			Table, Toolbar, ToolbarSpacer, library, IconPool/* , jQuerySap */) {
 	"use strict";
 
 
@@ -228,7 +230,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 */
 			liveChange : {
 				parameters : {
-
 					/**
 					 * The new value of the input.
 					 */
@@ -324,11 +325,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items
 	 */
 	Input._DEFAULTFILTER = function(sValue, oItem) {
+
+		if (oItem instanceof ListItem && jQuery.sap.startsWithIgnoreCase(oItem.getAdditionalText(), sValue)) {
+			return true;
+		}
+
 		return jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
 	};
 
 	/**
-	 * The default filter function for tabular suggestions. It checks whether the first item text begins with the typed value.
+	 * The default filter function for tabular suggestions. It checks whether some item text begins with the typed value.
 	 * @param {string} sValue the current filter string
 	 * @param {sap.m.ColumnListItem} oColumnListItem the filtered list item
 	 * @private
@@ -339,11 +345,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			i = 0;
 
 		for (; i < aCells.length; i++) {
-			// take first cell with a text method and compare value
+
 			if (aCells[i].getText) {
-				return jQuery.sap.startsWithIgnoreCase(aCells[i].getText(), sValue);
+				if (jQuery.sap.startsWithIgnoreCase(aCells[i].getText(), sValue)) {
+					return true;
+				}
 			}
 		}
+
 		return false;
 	};
 
@@ -582,14 +591,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
-			this.fireLiveChange({
-				value: sNewValue,
-				// backwards compatibility
-				newValue: sNewValue
-			});
-		}
-
 		// update the input field
 		if (this._bUseDialog) {
 			this._oPopupInput.setValue(sNewValue);
@@ -763,14 +764,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		this._sSelectedValue = sNewValue;
-
-		if (bInteractionChange && this._sSelectedSuggViaKeyboard !== sNewValue) {
-			this.fireLiveChange({
-				value: sNewValue,
-				// backwards compatibility
-				newValue: sNewValue
-			});
-		}
 
 		// update the input field
 		if (this._bUseDialog) {
@@ -1127,7 +1120,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			// for tabular suggestions we call a result filter function
 			sNewValue = this._getInputValue(this._fnRowResultFilter(aListItems[iSelectedIndex]));
 		} else {
-			var bListItem = (aItems[0] instanceof sap.ui.core.ListItem ? true : false);
+			var bListItem = (aItems[0] instanceof ListItem ? true : false);
 			if (bListItem) {
 				// for two value suggestions we use the item label
 				sNewValue = this._getInputValue(aListItems[iSelectedIndex].getLabel());
@@ -1139,12 +1132,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// setValue isn't used because here is too early to modify the lastValue of input
 		this._$input.val(sNewValue);
-
-		this.fireLiveChange({
-			value: sNewValue,
-			// backwards compatibility
-			newValue: sNewValue
-		});
 
 		// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 		this._sSelectedSuggViaKeyboard = sNewValue;
@@ -1732,6 +1719,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput.setSelectionItem(oListItem._oItem, true);
 					}
 				});
+
+				oInput._oList.addEventDelegate({
+					onAfterRendering: oInput._highlightListText.bind(oInput)
+				});
+
 			} else {
 				// tabular suggestions
 				// if no custom filter is set we replace the default filter function here
@@ -1875,14 +1867,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						aTabularRows[i].setVisible(false);
 					}
 				}
+
+				oInput._highlightTableText();
 			} else {
 				// filter standard items
-				var bListItem = (aItems[0] instanceof sap.ui.core.ListItem ? true : false);
+				var bListItem = (aItems[0] instanceof ListItem ? true : false);
 				for (i = 0; i < aItems.length; i++) {
 					oItem = aItems[i];
 					if (!bFilter || oInput._fnFilter(sTypedChars, oItem)) {
 						if (bListItem) {
-							oListItem = new sap.m.DisplayListItem(oItem.getId() + "-dli");
+							oListItem = new DisplayListItem(oItem.getId() + "-dli");
 							oListItem.setLabel(oItem.getText());
 							oListItem.setValue(oItem.getAdditionalText());
 						} else {
@@ -1955,6 +1949,58 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 	})();
 
+	Input.prototype._createHighlightedText = function(label) {
+		var text = label.innerText,
+			value = this.getValue().toLowerCase(),
+			count = value.length,
+			lowerText = text.toLowerCase(),
+			subString,
+			newText = '';
+
+		var index = lowerText.indexOf(value);
+
+		if (index == 0) {
+			subString = text.substring(index, count);
+			newText += '<span class="sapMInputHighlight">' + subString + '</span>';
+			newText += text.substring(count);
+		} else {
+			newText = text;
+		}
+
+		return newText;
+	};
+
+	/**
+	 * Highlights matched text in the suggestion list.
+	 * @private
+	 *
+	 */
+	Input.prototype._highlightListText = function() {
+		var i,
+			label,
+			labels = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+
+		for (i = 0; i < labels.length; i++) {
+			label = labels[i];
+			label.innerHTML = this._createHighlightedText(label);
+		}
+	};
+
+	/**
+	 * Highlights matched text in the suggestion table.
+	 * @private
+	 *
+	 */
+	Input.prototype._highlightTableText = function() {
+		var i,
+			label,
+			labels = this._oSuggestionTable.$().find('tbody .sapMLabel');
+
+		for (i = 0; i < labels.length; i++) {
+			label = labels[i];
+			label.innerHTML = this._createHighlightedText(label);
+		}
+	};
 
 	Input.prototype.onfocusin = function(oEvent) {
 		InputBase.prototype.onfocusin.apply(this, arguments);
@@ -2014,6 +2060,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					that.setSelectionRow(oSelectedListItem, true);
 				}
 			});
+
+			this._oSuggestionTable.addEventDelegate({
+				onAfterRendering: this._highlightTableText.bind(this)
+			});
+
 			// initially hide the table on phone
 			if (this._bUseDialog) {
 				this._oSuggestionTable.addStyleClass("sapMInputSuggestionTableHidden");

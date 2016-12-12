@@ -57,10 +57,7 @@
 						<cells>
 							<ObjectIdentifier
 								title="{ProductName}"/>
-							<ObjectNumber number="{
-								path: 'UnitsInStock',
-								formatter: '.formatter.numberUnit'
-							}"/>
+							<ObjectNumber number="{UnitsInStock}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

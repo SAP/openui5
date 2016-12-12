@@ -1,6 +1,8 @@
-/* ========================================== */
-/* CSS for control sap.m/ImageContent.control */
-/* ========================================== */
+/* =================================== */
+/* CSS for control sap.m/ImageContent  */
+/* Base theme                          */
+/* =================================== */
+
 .sapMImageContent {
 	position: relative;
 	height: 3.875rem;
@@ -26,4 +28,24 @@
 	.sapMImageContentImageIcon {
 		max-height: 3rem;
 	}
+	
+	.sapMImageContentImageIcon.sapUiIcon {
+		font-size: 1.5rem;
+	}
+}
+
+html.sap-desktop .sapMImageContent:focus {
+	outline-color: @sapUiContentFocusColor;
+	outline-style: dotted;
+	outline-width: 1px;
+}
+
+html.sap-desktop .sapMImageContent:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMImageContentImageIcon.sapUiIcon {
+	font-size: 1.75rem;
+	color: @sapUiTileIconColor;
+	padding-bottom: 0.35rem;
 }

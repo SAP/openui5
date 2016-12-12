@@ -105,7 +105,8 @@ sap.ui.define([
 			var oCartModel = new JSONModel({
 				cartEntries: {},
 				savedForLaterEntries: {},
-				showEditAndProceedButton: false
+				showEditButton: false,
+				showProceedButton: false
 			});
 			this.setModel(oCartModel, "cartProducts");
 

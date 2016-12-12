@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/f/FlexibleColumnLayoutSemanticHelper"
+], function (UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
 
 	var Component = UIComponent.extend("flexiblecolumnlayout.Component", {
@@ -12,44 +13,31 @@ sap.ui.define([
 		init: function () {
 			UIComponent.prototype.init.apply(this, arguments);
 
-			var oData = {
-				fullScreenColumn: "None",
-				detail: {
-					fullScreenButton: {
-						icon: "sap-icon://full-screen",
-						visible: false
-					},
-					closeButton: {
-						visible: false
-					}
-				},
-				detailDetail: {
-					fullScreenButton: {
-						icon: "sap-icon://full-screen",
-						visible: false
-					},
-					closeButton: {
-						visible: false
-					}
-				}
-			};
-
-			var oModel = new JSONModel(oData);
+			var oModel = new JSONModel();
 			this.setModel(oModel);
 
 			this.getRouter().initialize();
 		},
 
 		createContent: function () {
-			// create root view
 			return sap.ui.view({
 				viewName: "flexiblecolumnlayout.FlexibleColumnLayout",
 				type: "XML"
 			});
 		},
 
-		isFullScreen: function () {
-			return this.getModel().getProperty("/fullScreenColumn") !== "None";
+		/**
+		 * Returns an instance of the semantic helper
+		 * @returns {*}
+		 */
+		getHelper: function () {
+			var oFCL = this.getRootControl().byId("fcl"),
+				oSettings = {
+					mode: getUrlParam(window.location.href, "sim"),
+					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded
+				};
+
+			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
 		}
 	});
 	return Component;

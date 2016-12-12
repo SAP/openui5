@@ -2,11 +2,12 @@ sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
+		'sap/ui/test/matchers/Properties',
 		'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 		'sap/ui/test/matchers/BindingPath',
 		'sap/ui/test/matchers/Ancestor',
 		'sap/ui/test/actions/Press'
-	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual, BindingPath, Ancestor, Press) {
+	], function (Opa5, AggregationFilled, PropertyStrictEquals, Properties, AggregationContainsPropertyEqual, BindingPath, Ancestor, Press) {
 		var CART_VIEW_NAME = "Cart";
 
 		Opa5.createPageObjects({
@@ -51,7 +52,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
-							matchers : new BindingPath({path : "/cartEntries/id_11", modelName: "cartProducts"}),
+							matchers : new BindingPath({path : "/cartEntries/HT-1254", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
@@ -61,11 +62,11 @@ sap.ui.define([
 							}
 						});
 					},
-					iPressOnAddBackToCartForTheFirstProduct : function () {
+					iPressOnAddBackToBasketForTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectAttribute",
 							viewName : CART_VIEW_NAME,
-							matchers : new BindingPath({path : "/savedForLaterEntries/id_11", modelName: "cartProducts"}),
+							matchers : new BindingPath({path : "/savedForLaterEntries/HT-1254", modelName: "cartProducts"}),
 							success: function (aObjectAttributes) {
 								this.waitFor({
 									controlType : "sap.m.Text",
@@ -91,6 +92,17 @@ sap.ui.define([
 						});
 					},
 
+					iShouldNotSeeASaveForLaterFooter : function () {
+						return this.waitFor({
+							viewName : "Cart",
+							id : "entryList",
+							success : function (oList) {
+								Opa5.assert.strictEqual("", oList.getFooterText(), "The footer is not visible");
+							},
+							errorMessage : "The footer is still visible"
+						});
+					},
+
 					theEditButtonHelper  : function (bIsEnabled) {
 						var sErrorMessage = "The edit button is enabled";
 						var sSuccessMessage = "The edit button is disabled";
@@ -101,7 +113,10 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.Button",
 							autoWait: bIsEnabled,
-							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://edit"}),
+							matchers : new Properties({
+								icon : "sap-icon://edit",
+								enabled: bIsEnabled
+							}),
 							success : function (aButtons) {
 								Opa5.assert.strictEqual(
 									aButtons[0].getEnabled(), bIsEnabled, sSuccessMessage

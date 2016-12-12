@@ -6,11 +6,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
+	"./LayoutType",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, ResizeHandler, Control, Button, NavContainer) {
+], function (jQuery, library, LT, ResizeHandler, Control, Button, NavContainer) {
 	"use strict";
 
 
@@ -36,38 +37,11 @@ sap.ui.define([
 	var FlexibleColumnLayout = Control.extend("sap.f.FlexibleColumnLayout", {
 		metadata: {
 			properties: {
-				/**
-				 * Forces the control to only show two columns at a time on Desktop (as it would normally on Tablet).
-				 */
-				twoColumnLayoutOnDesktop: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
-				 * Determines the default three-column layout: MidColumnEmphasized (25/50/25) or EndColumnEmphasized (25/25/50).
+				 * Determines the layout of the control - number of columns and their relative sizes
 				 */
-				threeColumnLayoutType: {type: "sap.f.ThreeColumnLayoutType", group: "Behavior", defaultValue: sap.f.ThreeColumnLayoutType.MidColumnEmphasized},
-
-				/**
-				 * Determines whether the user can switch between the MidColumnEmphasized (25/50/25) and EndColumnEmphasized (25/25/50) three-column layouts with the use of an additional navigation button.
-				 */
-				threeColumnLayoutTypeFixed: {type: "boolean", group: "Behavior", defaultValue: true},
-
-				/**
-				 * Shows/hides the <code>Mid</code> column.
-				 */
-				showMidColumn: {type: "boolean", defaultValue: false},
-
-				/**
-				 * Shows/hides the <code>End</code> column.
-				 *
-				 * Only has effect if <code>showMidColumn</code> is set to <code>true</code>.
-				 */
-				showEndColumn: {type: "boolean", defaultValue: false},
-
-				/**
-				 * Use to force a column to take up the whole available space, without the need to modify <code>showMidColumn</code> and <code>showEndColumn</code>.
-				 * When a column is in fullscreen mode, the <code>showMidColumn</code> and <code>showEndColumn</code> properties have no effect.
-				 */
-				fullScreenColumn: {type: "sap.f.FlexibleColumn", defaultValue: sap.f.FlexibleColumn.None},
+				layout: {type: "sap.f.LayoutType", defaultValue: sap.f.LayoutType.OneColumn},
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>Begin</code> column when <code>to()</code> is called without defining the
@@ -137,56 +111,47 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired when there is any change in the layout of the columns.
+				 * Fired when there is a change in the <code>layout</code> property or in the maximum number of columns that can be displayed at once.
+				 * <br/></br>
+				 * <ul>The interactions that may lead to a state change are:
+				 *  <li>the property <code>layout</code> was changed indirectly by the user clicking a navigation arrow</li>
+				 *  <li>the user resized the browser beyond a breakpoint, thus changing the maximum number of columns that can be displayed at once.</li></ul>
+				 * <br/><br/>
+				 * <b>Note: </b>The event is suppressed while the control has zero width and will be fired the first time it gets a non-zero width
 				 *
-				 * <ul>The interactions that may lead to a layout change are:
-				 *  <li>the user collapsed/expanded a column by clicking a navigation arrow</li>
-				 *  <li>the user resized the browser</li>
-				 *  <li>columns were shown/hidden via the control's API</li>
-				 *  <li>the public method <code>setLayout</code> was called</li></ul>
-				 *
-				 *  <ul>The possible combinations of <code>beginColumnWidth</code>, <code>midColumnWidth</code>, and <code>endColumnWidth</code> are:
-				 *  <li>one active column: 100/0/0, 0/100/0, 0/0/100</li>
-				 *  <li>two active columns: 0/67/33, 33/67/0, 67/33/0</li>
-				 *  <li>three active columns: 25/25/50, 25/50/25</li></ul>
 				 */
-				layoutChange: {
+				stateChange: {
 					parameters: {
 						/**
-						 * The width (as percentage) of the <code>Begin</code> column.
-						 *
-						 * Possible values are: 0, 25, 33, 67, 100.
+						 * The value of the <code>layout</code> property
 						 */
-						beginColumnWidth: {
-							type: "int"
-						},
-						/**
-						 * The width (as percentage) of the <code>Mid</code> column.
-						 *
-						 * Possible values are: 0, 25, 33, 50, 67, 100.
-						 */
-						midColumnWidth: {
-							type: "int"
-						},
-						/**
-						 * The width (as percentage) of the <code>End</code> column.
-						 *
-						 * Possible values are: 0, 25, 33, 50, 67, 100.
-						 */
-						endColumnWidth: {
-							type: "int"
+						layout: {
+							type: "sap.f.LayoutType"
 						},
 						/**
 						 * The maximum number of columns that can be displayed at once based on the available screen size and control settings.
 						 *
 						 * <ul>Possible values are:
-						 * <li>3 for desktop (1280px or more)</li>
-						 * <li>2 for tablet (between 960px and 1280px) or for desktop with <code>twoColumnLayoutOnDesktop</code> set to <code>true</code></li>
-						 * <li>1 for phone (less than 960px)</li></ul>
+						 * <li>3 for browser size of 1280px or more</li>
+						 * <li>2 for browser size between 960px and 1280px</li>
+						 * <li>1 for browser size less than 960px</li></ul>
 						 */
 						maxColumnsCount: {
 							type: "int"
+						},
+						/**
+						 * Indicates whether the layout changed as a result of the user clicking a navigation arrow
+						 */
+						isNavigationArrow: {
+							type: "boolean"
+						},
+						/**
+						 * Indicates whether the maximum number of columns that can be displayed at once changed
+						 */
+						isResize: {
+							type: "boolean"
 						}
+
 					}
 				},
 
@@ -567,11 +532,8 @@ sap.ui.define([
 		// Holds the current width of the control - set on onAfterRendering, updated on resize
 		this._iControlWidth = null;
 
-		// Holds the current layout of the control
-		this._sLayout = null;
-
-		// Timer used to prevent excessive calls of "_adjustLayout" in a very short time
-		this._iAdjustLayoutTimer = null;
+		// Holds an object, responsible for saving and searching the layout history
+		this._oLayoutHistory = new LayoutHistory();
 
 		// The first NavContainer should always be created in advance - it cannot be hidden
 		this.setAggregation("_beginColumnNav", this._createNavContainer("begin"));
@@ -682,77 +644,27 @@ sap.ui.define([
 		oRm.destroy();
 	};
 
-	/**
-	 * Setter for property showMidColumn
-	 * @param bShow
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setShowMidColumn = function (bShow) {
-		if (this.getShowMidColumn() === bShow) {
+
+
+	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout){
+		sNewLayout = this.validateProperty("layout", sNewLayout);
+
+		var sCurrentLayout = this.getLayout();
+
+		if (sCurrentLayout === sNewLayout) {
 			return this;
 		}
 
-		var vResult = this.setProperty("showMidColumn", bShow, true);
+		var vResult = this.setProperty("layout", sNewLayout, true);
+		this._oLayoutHistory.addEntry(sNewLayout);
+
 		if (typeof this._$columns === "undefined") {
 			return vResult;
 		}
 
-		this._adjustLayoutDeferred();
-		return vResult;
-	};
+		this._resizeColumns();
+		this._hideShowArrows();
 
-	/**
-	 * Setter for property showEndColumn
-	 * @param bShow
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setShowEndColumn = function (bShow) {
-		if (this.getShowEndColumn() === bShow) {
-			return this;
-		}
-
-		var vResult = this.setProperty("showEndColumn", bShow, true);
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
-		this._adjustLayoutDeferred();
-		return vResult;
-	};
-
-
-	/**
-	 * Setter for property fullScreenColumn
-	 * @param sColumn
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setFullScreenColumn = function (sColumn) {
-		if (this.getFullScreenColumn() === sColumn) {
-			return this;
-		}
-
-		var vResult = this.setProperty("fullScreenColumn", sColumn, true);
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
-		this._adjustLayoutDeferred();
-		return vResult;
-	};
-
-	/**
-	 * Setter for property twoColumnLayoutOnDesktop
-	 * @param oControl
-	 * @returns {*}
-	 */
-	FlexibleColumnLayout.prototype.setTwoColumnLayoutOnDesktop = function (bValue) {
-
-		var vResult = this.setProperty("twoColumnLayoutOnDesktop", bValue, true);
-		if (typeof this._$columns === "undefined") {
-			return vResult;
-		}
-
-		this._adjustLayoutDeferred();
 		return vResult;
 	};
 
@@ -767,8 +679,9 @@ sap.ui.define([
 		this._cacheDOMElements();
 		this._iControlWidth = this.$().width();
 
-		this._adjustLayoutResize();
-		this._hideShowArrows(); // Arrows need to be explicitly fixed after rerendering as the layout didn't actually change
+		this._hideShowArrows();
+		this._resizeColumns();
+		this._fireStateChange(false, false);
 	};
 
 	FlexibleColumnLayout.prototype.exit = function () {
@@ -794,25 +707,25 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._initButtons = function () {
 		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
 			icon: "sap-icon://slim-arrow-left",
-			press: this._adjustLayoutShift.bind(this, "left")
+			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
 
 		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
 			icon: "sap-icon://slim-arrow-right",
-			press: this._adjustLayoutShift.bind(this, "right")
+			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
 
 		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
 			icon: "sap-icon://slim-arrow-left",
-			press: this._adjustLayoutShift.bind(this, "left")
+			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
 
 		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
 			icon: "sap-icon://slim-arrow-right",
-			press: this._adjustLayoutShift.bind(this, "right")
+			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
 	};
@@ -936,7 +849,9 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getColumnSize = function (sColumn) {
-		var aSizes = this._sLayout.split("/"),
+		var sLayout = this.getLayout(),
+			sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout),
+			aSizes = sColumnWidthDistribution.split("/"),
 			aMap = {
 				begin: 0,
 				mid: 1,
@@ -944,44 +859,56 @@ sap.ui.define([
 			},
 			sSize = aSizes[aMap[sColumn]];
 
-		return sSize;
+		return parseInt(sSize, 10);
+	};
+
+
+
+	/**
+	 * Returns the maximum number of columns that can be displayed at once based on the control size
+	 * @returns {number}
+	 * @public
+	 */
+	FlexibleColumnLayout.prototype.getMaxColumnsCount = function () {
+		if (this._iControlWidth >= FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
+			return 3;
+		}
+
+		if (this._iControlWidth >= FlexibleColumnLayout.TABLET_BREAKPOINT && this._iControlWidth < FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
+			return 2;
+		}
+
+		if (this._iControlWidth > 0) {
+			return 1;
+		}
+
+		return 0;
 	};
 
 	FlexibleColumnLayout.prototype._onResize = function (oEvent) {
-		var iNewWidth = oEvent.size.width;
+		var iNewWidth = oEvent.size.width,
+			iOldMaxColumnsCount,
+			iMaxColumnsCount;
 
 		// If the size didn't change or the control is resized to 0, don't do anything
 		if (iNewWidth === 0 || iNewWidth === this._iControlWidth) {
 			return;
 		}
 
+		iOldMaxColumnsCount = this.getMaxColumnsCount();
+
 		this._iControlWidth = oEvent.size.width;
 
-		this._adjustLayoutResize();
-	};
+		iMaxColumnsCount = this.getMaxColumnsCount();
 
-	/**
-	 * Deferred execution wrapper of _adjustLayout
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayoutDeferred = function () {
+		// Always resize the columns when the browser is resized
+		this._resizeColumns();
 
-		if (this._iAdjustLayoutTimer) {
-			jQuery.sap.clearDelayedCall(this._iAdjustLayoutTimer);
-			this._iAdjustLayoutTimer = null;
+		// Only update the arrows and fire the event if the maximum number of columns that can be shown has changed
+		if (iMaxColumnsCount !== iOldMaxColumnsCount) {
+			this._hideShowArrows();
+			this._fireStateChange(false, true);
 		}
-
-		this._iAdjustLayoutTimer = jQuery.sap.delayedCall(FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT, this, this._adjustLayout, arguments);
-	};
-
-	/**
-	 * Called when the public API changed (properties)
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayout = function () {
-
-		// Don't try to apply any specific layout, just let it pick the default
-		this._applyLayoutChanges();
 	};
 
 	/**
@@ -989,167 +916,38 @@ sap.ui.define([
 	 * @param sShiftDirection - left/right (direction of the arrow)
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._adjustLayoutShift = function (sShiftDirection) {
+	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
 
-		// Try to apply the next/previous layout in the list, relatively to the current
-		this._applyLayoutChanges(this._sLayout, sShiftDirection);
-	};
-
-	/**
-	 * Called when the user resized the browser and on the first load
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._adjustLayoutResize = function () {
-
-		// After resize, try to apply the current layout - if it is no longer valid, the default will be taken
-		this._applyLayoutChanges(this._sLayout);
-	};
-
-	/**
-	 * Allows the setting of а predefined layout.
-	 * It may not be honored if it's not valid in that particular case.
-	 *
-	 *  <ul>The possible combinations of <code>beginColumnWidth</code>, <code>midColumnWidth</code>, and <code>endColumnWidth</code> are:
-	 *  <li>one active column: 100/0/0, 0/100/0, 0/0/100</li>
-	 *  <li>two active columns: 0/67/33, 33/67/0, 67/33/0</li>
-	 *  <li>three active columns: 25/25/50, 25/50/25</li></ul>
-	 *
-	 * @param {Object} oConfig An object with the values for the width of the 3 columns
-	 * @param {number} oConfig.beginColumnWidth The desired width of the <code>Begin</code> column
-	 * @param {number} oConfig.midColumnWidth The desired width of the <code>Mid</code> column
-	 * @param {number} oConfig.endColumnWidth The desired width of the <code>End</code> column
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	FlexibleColumnLayout.prototype.setLayout = function (oConfig){
-		var aLayoutConfig,
-			sNewLayout;
-
-		if (!oConfig){
-			return;
-		}
-
-		aLayoutConfig = [oConfig.beginColumnWidth || 0, oConfig.midColumnWidth || 0, oConfig.endColumnWidth || 0];
-		sNewLayout = aLayoutConfig.join("/");
-
-		// Try to apply the layout, desired by the app developer
-		this._applyLayoutChanges(sNewLayout);
-	};
-
-
-	/**
-	 * Checks if the given layout (sNewLayout) is valid in the current state and applies it (if yes)
-	 * @param sNewLayout - the layout we're trying to set
-	 * @param sShiftDirection - returns the previous/next layout in the list, closest to sNewLayout
-	 * @returns {*}
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._applyLayoutChanges = function (sNewLayout, sShiftDirection) {
-		var sCurrentLayout = this._sLayout,
-			bMid = this.getShowMidColumn(),
-			bEnd = bMid && this.getShowEndColumn(),
-			sFullScreenColumn = this.getFullScreenColumn(),
-			iMaxColumns = this._getMaxColumnsCount(),
-			bThreeColumnLayoutTypeFixed = this.getThreeColumnLayoutTypeFixed(),
-			sThreeColumnLayoutType = this.getThreeColumnLayoutType() === library.ThreeColumnLayoutType.EndColumnEmphasized ? "25/25/50" : "25/50/25",
-			aPossibleLayouts,
-			sDefaultLayout,
-			iCurrentPos;
-
-		// Fullscreen
-		if (sFullScreenColumn !== sap.f.FlexibleColumn.None) {
-
-			if (sFullScreenColumn === sap.f.FlexibleColumn.Begin) {
-				aPossibleLayouts = ["100/0/0"];
-				sDefaultLayout = "100/0/0";
-			} else if (sFullScreenColumn === sap.f.FlexibleColumn.Mid) {
-				aPossibleLayouts = ["0/100/0"];
-				sDefaultLayout = "0/100/0";
-			} else {
-				aPossibleLayouts = ["0/0/100"];
-				sDefaultLayout = "0/0/100";
-			}
-
-		} else {
-
-			// Desktop
-			if (iMaxColumns === 3) {
-
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["33/67/0", "67/33/0"];
-					sDefaultLayout = "67/33/0";
-				} else {
-					if (bThreeColumnLayoutTypeFixed) {
-						aPossibleLayouts = [sThreeColumnLayoutType, "33/67/0", "67/33/0"];
-					} else {
-						aPossibleLayouts = ["25/25/50", "25/50/25", "33/67/0", "67/33/0"];
-					}
-					sDefaultLayout = sThreeColumnLayoutType;
+		var sLayout = this.getLayout(),
+			oMap = {
+				TwoColumnsBeginExpanded: {
+					"left": LT.TwoColumnsMidExpanded
+				},
+				TwoColumnsMidExpanded: {
+					"right": LT.TwoColumnsBeginExpanded
+				},
+				ThreeColumnsMidExpanded: {
+					"left": LT.ThreeColumnsEndExpanded,
+					"right": LT.ThreeColumnsMidExpandedEndHidden
+				},
+				ThreeColumnsEndExpanded: {
+					"right": LT.ThreeColumnsMidExpanded
+				},
+				ThreeColumnsMidExpandedEndHidden: {
+					"left": LT.ThreeColumnsMidExpanded,
+					"right": LT.ThreeColumnsBeginExpandedEndHidden
+				},
+				ThreeColumnsBeginExpandedEndHidden: {
+					"left": LT.ThreeColumnsMidExpandedEndHidden
 				}
+			};
 
-				// Tablet
-			} else if (iMaxColumns === 2) {
+		jQuery.sap.assert(typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined", "An invalid layout was used for determining arrow behavior");
+		sLayout = typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined" ? oMap[sLayout][sShiftDirection] : LT.OneColumn;
 
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["33/67/0", "67/33/0"];
-					sDefaultLayout = "67/33/0";
-				} else {
-					aPossibleLayouts = ["0/67/33", "33/67/0", "67/33/0"];
-					sDefaultLayout = "0/67/33";
-				}
+		this.setLayout(sLayout);
 
-				// Phone
-			} else {
-				if (!bMid) {
-					aPossibleLayouts = ["100/0/0"];
-					sDefaultLayout = "100/0/0";
-				} else if (!bEnd) {
-					aPossibleLayouts = ["0/100/0", "100/0/0"];
-					sDefaultLayout = "0/100/0";
-				} else {
-					aPossibleLayouts = ["0/0/100", "0/100/0", "100/0/0"];
-					sDefaultLayout = "0/0/100";
-				}
-			}
-		}
-
-		// When an arrow is clicked (sShift = left/right), select the previous/next layout in the list of possible ones
-		if (sShiftDirection) {
-			iCurrentPos = aPossibleLayouts.indexOf(sNewLayout);
-			if (sShiftDirection === "left" && iCurrentPos > 0) {
-				sNewLayout = aPossibleLayouts[iCurrentPos - 1];
-			} else if (sShiftDirection === "right" && iCurrentPos < aPossibleLayouts.length - 1) {
-				sNewLayout = aPossibleLayouts[iCurrentPos + 1];
-			}
-		}
-
-		// Always verify that the calculated layout is valid before enforcing it
-		if (aPossibleLayouts.indexOf(sNewLayout) === -1) {
-			sNewLayout = sDefaultLayout;
-		}
-
-		this._sLayout = sNewLayout;
-
-		// Always resize columns (even if the layout did not change as columns have exact pixel widths)
-		this._resizeColumns();
-
-		// Only manage arrows and fire event if the layout actually changed as result of the operation
-		if (this._sLayout !== sCurrentLayout) {
-			this._hideShowArrows();
-
-			this.fireLayoutChange({
-				beginColumnWidth: this._getColumnSize("begin"),
-				midColumnWidth: this._getColumnSize("mid"),
-				endColumnWidth: this._getColumnSize("end"),
-				maxColumnsCount: this._getMaxColumnsCount()
-			});
-		}
+		this._fireStateChange(true, false);
 	};
 
 	/**
@@ -1157,66 +955,24 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._hideShowArrows = function () {
-		var bMid = this.getShowMidColumn(),
-			bEnd = bMid && this.getShowEndColumn(),
-			iMaxColumns = this._getMaxColumnsCount(),
-			sFullScreenColumn = this.getFullScreenColumn(),
+		var sLayout = this.getLayout(),
+			oMap = {},
 			aNeededArrows = [];
 
-		// Stop here if the control isn't rendered yet
+		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
 		if (typeof this._$columns === "undefined" || sap.ui.Device.system.phone) {
 			return;
 		}
 
-		if (sFullScreenColumn === sap.f.FlexibleColumn.None) {
-			// Desktop
-			if (iMaxColumns === 3) {
+		oMap[LT.TwoColumnsBeginExpanded] =  ["beginBack"];
+		oMap[LT.TwoColumnsMidExpanded] =  ["midForward"];
+		oMap[LT.ThreeColumnsMidExpanded] = ["midForward", "midBack"];
+		oMap[LT.ThreeColumnsEndExpanded] =  ["endForward"];
+		oMap[LT.ThreeColumnsMidExpandedEndHidden] =  ["midForward", "midBack"];
+		oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  ["beginBack"];
 
-				if (!bMid) {
-					aNeededArrows = [];
-				} else if (!bEnd) {
-					if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				} else {
-					if (this._sLayout === "25/50/25") {
-						if (this.getThreeColumnLayoutTypeFixed()) {
-							aNeededArrows = ["midForward"];
-						} else {
-							aNeededArrows = ["midForward", "midBack"];
-						}
-					} else if (this._sLayout === "25/25/50") {
-						aNeededArrows = ["endForward"];
-					} else if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward", "midBack"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				}
-
-				// Tablet
-			} else if (iMaxColumns === 2) {
-
-				if (!bMid) {
-					aNeededArrows = [];
-				} else if (!bEnd) {
-					if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward"];
-					} else {
-						aNeededArrows = ["midBack"];
-					}
-				} else {
-					if (this._sLayout === "0/67/33") {
-						aNeededArrows = ["midForward"];
-					} else if (this._sLayout === "33/67/0") {
-						aNeededArrows = ["midForward", "midBack"];
-					} else {
-						aNeededArrows = ["beginBack"];
-					}
-				}
-			}
+		if (typeof oMap[sLayout] === "object") {
+			aNeededArrows = oMap[sLayout];
 		}
 
 		this._toggleButton("beginBack", aNeededArrows.indexOf("beginBack") !== -1);
@@ -1235,24 +991,20 @@ sap.ui.define([
 		this._$columnButtons[sButton].toggle(bShow);
 	};
 
-	/**
-	 * Returns the maximum number of columns that can be displayed at once based on the control size and settings
-	 * @returns {number}
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._getMaxColumnsCount = function () {
-		if (this._iControlWidth >= FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
-			if (this.getTwoColumnLayoutOnDesktop()) {
-				return 2;
-			}
-			return 3;
+
+	FlexibleColumnLayout.prototype._fireStateChange = function (bIsNavigationArrow, bIsResize) {
+
+		// The event should not be fired if the control has zero width as all relevant layout calculations are size-based
+		if (this._iControlWidth === 0) {
+			return;
 		}
 
-		if (this._iControlWidth >= FlexibleColumnLayout.TABLET_BREAKPOINT && this._iControlWidth < FlexibleColumnLayout.DESKTOP_BREAKPOINT) {
-			return 2;
-		}
-
-		return 1;
+		this.fireStateChange({
+			isNavigationArrow: bIsNavigationArrow,
+			isResize: bIsResize,
+			layout: this.getLayout(),
+			maxColumnsCount: this.getMaxColumnsCount()
+		});
 	};
 
 	// Begin column proxies
@@ -1696,7 +1448,71 @@ sap.ui.define([
 		return this;
 	};
 
-	// STATIC MEMBERS
+	//******************************************************** PROTECTED MEMBERS **************************************/
+
+	/**
+	 * Returns the layout history object
+	 * @returns {LayoutHistory}
+	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getLayoutHistory = function () {
+		return this._oLayoutHistory;
+	};
+
+	/**
+	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
+	 * @param sLayout - the layout
+	 * @param bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
+	 * @returns {string|array}
+	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray) {
+		var iMaxColumnsCount = this.getMaxColumnsCount(),
+			oMap = {},
+			vResult;
+
+		// Layouts with the same distribution for all cases
+		oMap[LT.OneColumn] = "100/0/0";
+		oMap[LT.MidColumnFullScreen] = "0/100/0";
+		oMap[LT.EndColumnFullScreen] = "0/0/100";
+
+
+		if (iMaxColumnsCount === 1) {
+
+			// On 1 column, all have fullscreen mapping
+			oMap[LT.TwoColumnsBeginExpanded] = "0/100/0";
+			oMap[LT.TwoColumnsMidExpanded] =  "0/100/0";
+			oMap[LT.ThreeColumnsMidExpanded] =  "0/0/100";
+			oMap[LT.ThreeColumnsEndExpanded] =  "0/0/100";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] =  "0/0/100";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  "0/0/100";
+
+		} else {
+
+			// On 2 and 3 columns, the only difference is in the modes where all 3 columns are visible
+			oMap[LT.TwoColumnsBeginExpanded] = "67/33/0";
+			oMap[LT.TwoColumnsMidExpanded] =  "33/67/0";
+			oMap[LT.ThreeColumnsMidExpanded] =  iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
+			oMap[LT.ThreeColumnsEndExpanded] =  iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] =  "33/67/0";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] =  "67/33/0";
+		}
+
+		vResult = oMap[sLayout];
+
+		if (bAsArray) {
+			vResult = vResult.split("/").map(function (sColumnWidth) {
+				return parseInt(sColumnWidth, 10);
+			});
+		}
+
+		return vResult;
+	};
+
+
+	//******************************************************** STATIC MEMBERS *****************************************/
 
 	// The margin between columns in pixels
 	FlexibleColumnLayout.COLUMN_MARGIN = 8;
@@ -1707,8 +1523,38 @@ sap.ui.define([
 	// The width above which (inclusive) we are in tablet mode
 	FlexibleColumnLayout.TABLET_BREAKPOINT = 960;
 
-	// Timeout of the adjust layout debounce function
-	FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT = 10;
+	/**
+	 * Layout history helper class
+	 * @constructor
+	 */
+	function LayoutHistory () {
+		this._aLayoutHistory = [];
+	}
+
+	/**
+	 * Adds a new entry to the history
+	 * @param sLayout
+	 */
+	LayoutHistory.prototype.addEntry = function (sLayout) {
+		if (typeof sLayout !== "undefined") {
+			this._aLayoutHistory.push(sLayout);
+		}
+	};
+
+	/**
+	 * Searches the history for the most recent layout that matches any of the aLayouts entries
+	 * @param aLayouts - a list of layouts
+	 * @returns {*}
+	 */
+	LayoutHistory.prototype.getClosestEntryThatMatches = function (aLayouts) {
+		var i;
+
+		for (i = this._aLayoutHistory.length - 1; i >= 0; i--) {
+			if (aLayouts.indexOf(this._aLayoutHistory[i]) !== -1) {
+				return this._aLayoutHistory[i];
+			}
+		}
+	};
 
 	return FlexibleColumnLayout;
 

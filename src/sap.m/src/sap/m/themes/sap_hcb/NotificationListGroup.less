@@ -1,102 +1,13 @@
-.sapMNLG-Collapsed .sapMNLG-SubHeader > .sapMNLB-Priority {
-  top: 0.03rem;
-}
-
-.sapMNLG-Body {
-  .sapMNLI:last-child {    
-    border-radius: 0.375rem 0.25rem 0.25rem 0.375rem;
-    .sapMNLB-Priority {
-      padding-top: 0.05rem;
-    }
-  }
-}
-
-
-.sapMNLG-Header .sapMNLB-Priority,
-.sapMNLG-SubHeader .sapMNLB-Priority {
-  &.sapMNLB-None {
-    border-top: none;
-    border-bottom: 1px solid @sapHCNeutral;
-  }
-
-  &.sapMNLB-Low {
-    border-top: none;
-    border-bottom: 1px solid @sapHCPositive;
-  }
-
-  &.sapMNLB-Medium {
-    border-top: none;
-    border-bottom: 1px solid @sapHCCritical;
-  }
-
-  &.sapMNLB-High {
-    border-top: none;
-    border-bottom: 1px solid @sapHCNegative;
-  }
-}
-
-.sapMNLG-Body .sapMNLB-Priority {
-  top: 0;
-  &.sapMNLB-None {
-    border: none;
-  }
-  &.sapMNLB-Low {
-    border: none;
-  }
-  &.sapMNLB-Medium {
-    border: none;
-  }
-  &.sapMNLB-High {
-    border: none;
-  }
-}
-
-.sapMNLB-None {
-  background-color: @sapHCNeutral;
-}
-
-.sapMNLB-Low {
-  background-color: @sapHCPositive;
-}
-
-.sapMNLB-Medium {
-  background-color: @sapHCCritical;
-}
-
-.sapMNLB-High {
-  background-color: @sapHCNegative;
-}
-
-.sapMNLG {
-  border-top: 1px solid @sapHCStandardFG;
-  border-right: 1px solid @sapHCStandardFG;
-  border-bottom: 1px solid @sapHCStandardFG;
-  box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
-}
-
-.sapMNLG .sapMNLI {
-  margin-top: 0;
-  border-left: 0;
-  border-right: 0;
-}
-
-.sapMNLG-CloseButton .sapMBtnIcon {
-  line-height: 2.375rem;
-}
-
-.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner .sapMBtnIcon {
-  line-height: 1.5rem;
-}
+/* ============================================ */
+/* CSS for control sap.m/NotificationListGroup  */
+/* High Contrast Black theme                    */
+/* ============================================ */
 
 // Focus Styles ========================================================================================================
 
-html.sap-desktop .sapMLIB.sapMNLG:focus {
-  outline: none;
-}
-
-html.sap-desktop .sapMLIB.sapMNLG:focus::before, {
+html.sap-desktop .sapMLIB.sapMNLG:focus::before {
   content: "";
-  border: 0.125rem dotted @sapHCStandardFG;
+  border: 0.125rem dotted @sapUiContentFocusColor;
   border-left-style: solid;
   position: absolute;
   top: 1px;
@@ -107,9 +18,9 @@ html.sap-desktop .sapMLIB.sapMNLG:focus::before, {
   z-index: 2;
 }
 
-html.sap-desktop .sapMLIB.sapMNLG:focus::after, {
+html.sap-desktop .sapMLIB.sapMNLG:focus::after {
   content: "";
-  border-left: 0.125rem dotted @sapHCStandardBG;
+  border-left: 0.125rem dotted @sapUiListBackground;
   position: absolute;
   top: 1px;
   bottom: 0.5625rem;
@@ -125,7 +36,7 @@ html[data-sap-ui-browser*='ie'].sap-desktop .sapMLIB.sapMNLG:focus .sapMNLI::bef
 
 html[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::before {
   content: "";
-  border: 0.125rem dotted @sapHCStandardFG;
+  border: 0.125rem dotted @sapUiContentFocusColor;
   border-left-style: solid;
   position: absolute;
   top: 0;
@@ -138,7 +49,7 @@ html[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::before {
 
 html[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::after {
   content: "";
-  border-left: 0.125rem dotted @sapHCStandardBG;
+  border-left: 0.125rem dotted @sapUiListBackground;
   position: absolute;
   top: 0;
   right: 0;

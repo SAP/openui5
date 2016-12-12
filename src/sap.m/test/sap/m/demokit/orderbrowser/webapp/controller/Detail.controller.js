@@ -73,7 +73,6 @@ sap.ui.define([
 					aItemsContext;
 
 				// only update the counter if the length is final
-//				if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
 				if (oItemsBinding.isLengthFinal()) {
 					if (iTotalItems) {
 						sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
@@ -87,22 +86,12 @@ sap.ui.define([
 					fOrderTotal = aItemsContext.reduce(_calculateOrderTotal, 0);
 					oViewModel.setProperty("/totalOrderAmount", fOrderTotal);
 				}
-//				function _calculateOrderTotal (fPreviousTotal, oCurrentContext, iCurrentIndex, aItemsContext) {
-//					//var fItemTotal = 0;
-//					var fItemTotal = oCurrentContext.getObject().Quantity * oCurrentContext.getObject().UnitPrice;
-//					return fPreviousTotal + fItemTotal;
-//				}
+
 			},
 
 			/* =========================================================== */
 			/* begin: internal methods                                     */
 			/* =========================================================== */
-
-//			_calculateOrderTotal : function (fPreviousTotal, oCurrentContext, iCurrentIndex, aItemsContext) {
-//				var fItemTotal = 0;
-//				fItemTotal = oCurrentContext.getObject().Quantiy * oCurrentContext.getObject().UnitPrice;
-//				return fPreviousTotal + fItemTotal;
-//			},
 
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
@@ -119,7 +108,7 @@ sap.ui.define([
 					});
 					this._bindView("/" + sObjectPath);
 				}.bind(this));
-				var oQuery  = oArguments["?query"];
+				var oQuery = oArguments["?query"];
 				if(oQuery && this._aValidKeys.indexOf(oQuery.tab) >=0){
 					this.getView().getModel("detailView").setProperty("/selectedTab", oQuery.tab);
 					this.getRouter().getTargets().display(oQuery.tab);
@@ -190,7 +179,7 @@ sap.ui.define([
 				oViewModel.setProperty("/shareSendEmailSubject",
 					oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
 				oViewModel.setProperty("/shareSendEmailMessage",
-					oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
+					oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href, oObject.ShipName, oObject.EmployeeID, oObject.CustomerID]));
 			},
 
 			_onMetadataLoaded : function () {

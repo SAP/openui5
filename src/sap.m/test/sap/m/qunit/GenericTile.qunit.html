@@ -321,24 +321,96 @@
 		}
 	});
 
-	QUnit.test("Action scope in LineMode/compact", function(assert) {
+	QUnit.test("Action scope in normal mode", function(assert) {
 		//Arrange
-		this.oGenericTile.addStyleClass("sapUiSizeCompact");
-		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
-		sinon.spy(sap.m.GenericTileLineModeRenderer, "_renderActionsScope");
+
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sap.m.GenericTileLineModeRenderer._renderActionsScope.callCount, 1, "Function _renderActionsScope has been called once");
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+	});
+
+	QUnit.test("Action scope in LineMode/compact", function(assert) {
+		//Arrange
+		this.oGenericTile.addStyleClass("sapUiSizeCompact");
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		//Act
+		this.oGenericTile.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		//Assert
 		assert.ok(this.oGenericTile.$("actions").length > 0, "Action container has been rendered");
 		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
 		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+	});
 
-		//Cleanup
-		sap.m.GenericTileLineModeRenderer._renderActionsScope.restore();
+	QUnit.test("Action scope remove button does not steal focus", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.$("action-remove").attr("tabindex"), "-1", "Correct tabindex is set on remove icon.");
+		assert.equal(this.oGenericTile._oRemoveButton._bExcludeFromTabChain, true, "Remove button is excluded from tab chain on rendering.");
+	});
+
+	QUnit.test("Action scope in disabled LineMode GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Disabled");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("actions").length === 0, "Action container has not been rendered");
+		assert.ok(this.oGenericTile.$("action-more").length === 0, "More icon has not been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length === 0, "Remove icon has not been rendered");
+	});
+
+	QUnit.test("Action scope in failed LineMode GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Failed");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("actions").length > 0, "Action container has been rendered");
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove icon has been rendered");
+		assert.ok(this.oGenericTile.$("warn-icon").length > 0, "Failed icon has been rendered");
+	});
+
+	QUnit.test("Action scope in disabled regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Disabled");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("action-more").length === 0, "More icon has not been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length === 0, "Remove button has not been rendered");
+	});
+
+	QUnit.test("Action scope in failed regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.setState("Failed");
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$("action-more").length > 0, "More icon has been rendered");
+		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove button has been rendered");
+		assert.ok(this.oGenericTile.$("failed-icon").length > 0, "Failed icon has been rendered");
+		assert.ok(this.oGenericTile.$("failed-text").length === 0, "Failed text has not been rendered");
 	});
 
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {
@@ -897,8 +969,8 @@
 
 		//Assert
 		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
-		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
-		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.x, "number", "The field 'offset.x' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.y, "number", "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 	});
@@ -914,41 +986,21 @@
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
+
+		this.oGenericTile._getStyleData();
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.call(this.oGenericTile);
+
 		var aBoundingRects = this.oGenericTile.getBoundingRects();
 
 		//Assert
 		assert.equal(aBoundingRects.length, 1, "An array has been returned.");
-		assert.ok(aBoundingRects[0].offset.x >= 0, "The field 'offset.x' is available.");
-		assert.ok(aBoundingRects[0].offset.y >= 0, "The field 'offset.y' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.x, "number", "The field 'offset.x' is available.");
+		assert.equal(typeof aBoundingRects[0].offset.y, "number", "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
 
 		//Cleanup
 		oStubGetPixelValue.restore();
-	});
-
-	QUnit.test("Correct offset in RTL", function() {
-		//Arrange
-		sinon.stub(this.oGenericTile, "_isCompact").returns(true);
-		this.oGenericTile._oStyleData = {
-			availableWidth: 1000,
-			rtl: true,
-			lines: [ {
-				offset: {
-					x: 100,
-					y: 100
-				},
-				width: 50
-			} ]
-		};
-		sinon.stub(this.oGenericTile, "_getStyleData");
-
-		//Act
-		var aBoundingRects = this.oGenericTile.getBoundingRects();
-
-		//Assert
-		assert.equal(aBoundingRects.length, 1, "One line has been returned.");
-		assert.equal(aBoundingRects[0].offset.x, 950, "Horizontal position has been converted from right to left.");
 	});
 
 	QUnit.module("Rendering tests for failing state", {
@@ -1816,6 +1868,20 @@
 		}
 	});
 
+	QUnit.test("Actions scope - title attribute of Remove button in LineMode", function(assert) {
+		//Arrange
+		this.oGenericTile.setMode(sap.m.GenericTileMode.LineMode);
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		jQuery.sap.byId("remove").trigger("mouseenter");
+		var sTitleOfRemove = this.oGenericTile.$("action-remove").attr("title");
+
+		//Assert
+		assert.ok(sTitleOfRemove, "Remove button contains expected attribute title");
+	});
+
 	QUnit.test("TileContent content doesn't contain attributes ARIA-label and title", function(assert) {
 		//Arrange
 		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
@@ -1936,7 +2002,7 @@
 		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
 	});
 
-	QUnit.test("Press event tap test", function(assert) {
+	QUnit.test("Press event on 'tap' with correct parameters in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", handlePress);
 
@@ -1951,33 +2017,7 @@
 		}
 	});
 
-	QUnit.test("Press event enter up test", function(assert) {
-		//Arrange
-		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
-		e.keyCode = jQuery.sap.KeyCodes.ENTER;
-
-		//Act
-		this.oGenericTile.$().trigger(e);
-
-		//Assert
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when enter up");
-	});
-
-	QUnit.test("Press event enter down test", function(assert) {
-		//Arrange
-		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keydown');
-		e.keyCode = jQuery.sap.KeyCodes.ENTER;
-
-		//Act
-		this.oGenericTile.$().trigger(e);
-
-		//Assert
-		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when enter down")
-	});
-
-	QUnit.test("Press event with correct parameters", function(assert) {
+	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -1989,6 +2029,106 @@
 		function handlePress(oEvent) {
 			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
 			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+		}
+	});
+
+	QUnit.test("ENTER key down event in Display scope", function(assert) {
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keydown');
+		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when ENTER down")
+	});
+
+	QUnit.test("ENTER key event in Display scope", function(assert) {
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+	});
+
+	QUnit.test("ENTER key event in Actions scope", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+	});
+
+	QUnit.test("DELETE key event in Display scope", function(assert) {
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.DELETE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when DELETE up");
+	});
+
+	QUnit.test("BACKSPACE key event in Display scope", function(assert) {
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when BACKSPACE up");
+	});
+
+	QUnit.test("DELETE key event in Actions scope with correct parameters", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.attachEvent("press", handlePress);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.DELETE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has correct parameter 'action'");
+		}
+	});
+
+	QUnit.test("BACKSPACE key event in Actions scope with correct parameters", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oGenericTile.attachEvent("press", handlePress);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has scope arameter 'Actions'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has action parameter 'Remove'");
 		}
 	});
 </script>

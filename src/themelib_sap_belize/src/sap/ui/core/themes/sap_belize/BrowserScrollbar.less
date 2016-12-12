@@ -14,9 +14,15 @@ html[data-sap-ui-browser*="ie"] .sapUiBody {
 
 /****** Safari + Chrome on Desktop ******/
 
+html.sap-desktop ::-webkit-scrollbar:horizontal {
+	height: 0.75rem;
+}
+
+html.sap-desktop ::-webkit-scrollbar:vertical {
+	width: 0.75rem;
+}
+
 html.sap-desktop ::-webkit-scrollbar {
-	width: 16px;
-	height: 16px;
 	background-color: @sapUiScrollBarTrackColor;
 }
 

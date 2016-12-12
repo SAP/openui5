@@ -6,6 +6,7 @@
 @_sap_ui_unified_Calendar_ItemColor: lighten(@sapUiContentForegroundColor,5);
 @_sap_ui_unified_Calendar_ItemHoverColor: darken(@sapUiContentForegroundColor,5);
 @_sap_ui_unified_Calendar_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
+@_sap_ui_unified_Calendar_ItemWeekEndColor: @sapUiContentForegroundColor;
 @_sap_ui_unified_Calendar_ItemWeekEndHoverColor: darken(@sapUiContentForegroundColor, 10);
 @_sap_ui_unified_Calendar_ItemOtherMonthColor: lighten(@sapUiBaseText, 30);
 @_sap_ui_unified_Calendar_ItemSelBetweenColor: lighten(@sapUiSelected, 43);
@@ -173,6 +174,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		right: 0;
 		bottom: 0;
 	}
+}
+
+.sapUiCalItemWeekEnd {
+	background-color: @_sap_ui_unified_Calendar_ItemWeekEndColor;
 }
 
 html.sap-desktop .sapUiCalItemWeekEnd:hover,

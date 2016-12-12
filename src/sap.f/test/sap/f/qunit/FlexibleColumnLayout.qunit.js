@@ -1,4 +1,4 @@
-(function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, bDebugMode) {
+(function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, LT, bDebugMode) {
 	"use strict";
 	var oCore = sap.ui.getCore(),
 		sQUnitFixture = bDebugMode ? "qunit-fixture-visible" : "qunit-fixture",
@@ -96,196 +96,84 @@
 		assert.ok(this.oFCL.$().length, "In the DOM");
 	});
 
-	QUnit.test("Constructor - 1 column", function (assert) {
+	QUnit.test("Layout: OneColumn", function (assert) {
 
-		this.oFCL = oFactory.createFCL();
+		this.oFCL = oFactory.createFCL({
+			Layout: LT.OneColumn
+		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
 	});
 
-	QUnit.test("Constructor - 2 columns", function (assert) {
+	QUnit.test("Layout: TwoColumnsBeginExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.TwoColumnsBeginExpanded
 		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+		assert.ok(this.oFCL.$("beginColumn").width() > this.oFCL.$("midColumn").width());
 	});
 
-	QUnit.test("Constructor - 2 columns and begin column is in fullscreen", function (assert) {
+	QUnit.test("Layout: TwoColumnsMidExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			fullScreenColumn: sap.f.FlexibleColumn.Begin
+			layout: LT.TwoColumnsMidExpanded
 		});
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-	});
-
-	QUnit.test("Constructor - 2 columns and mid column is in fullscreen", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			fullScreenColumn: sap.f.FlexibleColumn.Mid
-		});
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-	});
-
-	QUnit.test("Constructor - 3 columns", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
-		});
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-	});
-
-	QUnit.test("Constructor - 3 columns and begin column is in fullscreen", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			fullScreenColumn: sap.f.FlexibleColumn.Begin
-		});
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-	});
-
-	QUnit.test("Constructor - 3 columns and mid column is in fullscreen", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			fullScreenColumn: sap.f.FlexibleColumn.Mid
-		});
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-	});
-
-	QUnit.test("Constructor - 3 columns and end column is in fullscreen", function (assert) {
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			fullScreenColumn: sap.f.FlexibleColumn.End
-		});
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-	});
-
-	QUnit.test("API call - showMidColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL();
-
-		// Show the mid column
-		this.oFCL.setShowMidColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-
-		// Hide the mid column
-		this.oFCL.setShowMidColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		this.clock.restore();
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("midColumn").width());
 	});
 
-	QUnit.test("API call - showEndColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: MidColumnFullScreen", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.MidColumnFullScreen
 		});
+		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+	});
 
-		// Show the end column
-		this.oFCL.setShowEndColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+	QUnit.test("Layout: ThreeColumnsMidExpanded", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("midColumn").width());
+		assert.ok(this.oFCL.$("endColumn").width() < this.oFCL.$("midColumn").width());
+	});
 
-		// Hide the end column
-		this.oFCL.setShowEndColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+	QUnit.test("Layout: ThreeColumnsEndExpanded", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsEndExpanded
+		});
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("endColumn").width());
+		assert.ok(this.oFCL.$("midColumn").width() < this.oFCL.$("endColumn").width());
+	});
+
+	QUnit.test("Layout: ThreeColumnsMidExpandedEndHidden", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden
+		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-
-		this.clock.restore();
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("midColumn").width());
 	});
 
-	QUnit.test("API call - showEndColumn and showMidColumn interaction", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL();
-
-		// Show the end column (without showing the mid column first)
-		this.oFCL.setShowEndColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		// Now show the mid column
-		this.oFCL.setShowMidColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-
-		// Hide the mid column again
-		this.oFCL.setShowMidColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		this.clock.restore();
-	});
-
-	QUnit.test("API call - fullScreenColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: ThreeColumnsBeginExpandedEndHidden", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsBeginExpandedEndHidden
 		});
-
-		// Set the begin column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Begin);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		// Remove fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-
-		// Set the mid column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Mid);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-
-		// Set the end column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.End);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-
-		// Remove fullscreen again
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-
-		this.clock.restore();
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+		assert.ok(this.oFCL.$("midColumn").width() < this.oFCL.$("beginColumn").width());
 	});
 
+	QUnit.test("Layout: EndColumnFullScreen", function (assert) {
 
-	QUnit.test("API call - fullScreenColumn overrides showMidColumn and showEndColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL();
-
-		// Set the mid column to fullscreen although showMidColumn is false
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Mid);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-
-		// Set the end column to fullscreen although showMidColumn and showEndColumn are both false
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.End);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+		this.oFCL = oFactory.createFCL({
+			layout: LT.EndColumnFullScreen
+		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-
-		// Remove fullscreen again
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		this.clock.restore();
 	});
 
 	QUnit.test("Navigation arrows - 1 column", function (assert) {
@@ -295,14 +183,14 @@
 
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.TwoColumnsBeginExpanded
 		});
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.TwoColumnsBeginExpanded
 		});
 
 		this.getBeginColumnBackArrow().firePress();
@@ -312,81 +200,17 @@
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
-	QUnit.test("Navigation arrows - 3 columns (mid column emphasized, fixed 3-column layout)", function (assert) {
+	QUnit.test("Navigation arrows - 3 columns (mid column Expanded, not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.MidColumnEmphasized,
-			threeColumnLayoutTypeFixed: true
-		});
-
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
-	});
-
-	QUnit.test("Navigation arrows - 3 columns (mid column emphasized, not-fixed 3-column layout)", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.MidColumnEmphasized,
-			threeColumnLayoutTypeFixed: false
+			layout: LT.ThreeColumnsMidExpanded
 		});
 
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
-
-	QUnit.test("Navigation arrows - 3 columns (end column emphasized, fixed 3-column layout)", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.EndColumnEmphasized,
-			threeColumnLayoutTypeFixed: true
-		});
-
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 1);
-	});
-
-	QUnit.test("Navigation arrows - 3 columns (end column emphasized, not-fixed 3-column layout)", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.EndColumnEmphasized,
-			threeColumnLayoutTypeFixed: false
-		});
-
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 1);
-	});
-
-	QUnit.test("Navigation arrows - 3 columns operation (fixed 3-column layout)", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.MidColumnEmphasized,
-			threeColumnLayoutTypeFixed: true
-		});
-
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
-
-		// Click it again
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
-
-		this.getBeginColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
-
-		this.getMidColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1); // End column is back
-	});
-
 
 	QUnit.test("Navigation arrows - 3 columns operation (not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			threeColumnLayoutType: sap.f.ThreeColumnLayoutType.MidColumnEmphasized,
-			threeColumnLayoutTypeFixed: false
+			layout: LT.ThreeColumnsMidExpanded
 		});
 
 		this.getMidColumnForwardArrow().firePress();
@@ -411,42 +235,11 @@
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
 
-	QUnit.test("twoColumnLayoutOnDesktop forces 2 columns even on desktop", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true,
-			twoColumnLayoutOnDesktop: true
-		});
-
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
-		assert.ok(this.oFCL._getMaxColumnsCount() === 2, "Despite the desktop size the maximum number of columns is 2");
-	});
-
-	QUnit.test("Setting twoColumnLayoutOnDesktop triggers a layout change", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
-		});
-
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-
-		this.oFCL.setTwoColumnLayoutOnDesktop(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
-		assert.equal(this.oFCL._getMaxColumnsCount(), 2, "Despite the desktop size the maximum number of columns is 2");
-
-		this.clock.restore();
-	});
-
 	QUnit.test("Resizing the control triggers a layout change", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
 
 		$("#" + sQUnitFixture).width(TABLET_SIZE);
@@ -468,47 +261,10 @@
 		this.clock.restore();
 	});
 
-	QUnit.test("API call - setLayout", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
-		});
-
-		// using a valid config
-		this.oFCL.setLayout({beginColumnWidth: 67, midColumnWidth: 33, endColumnWidth: 0});
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-		assert.ok(this.oFCL._sLayout === "67/33/0", "The new layout is correctly set");
-
-		// using an invalid input
-		this.oFCL.setLayout("INVALID INPUT");
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-		assert.ok(this.oFCL._sLayout === "25/50/25", "On invalid input we fallback to the default value");
-
-		// using a valid config again
-		this.oFCL.setLayout({beginColumnWidth: 33, midColumnWidth: 67, endColumnWidth: 0});
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-		assert.ok(this.oFCL._sLayout === "33/67/0", "The new layout is correctly set");
-	});
-
-
-	QUnit.test("API call - setLayout works with asynchronous property setters", function (assert) {
-		this.oFCL = oFactory.createFCL({
-			threeColumnLayoutTypeFixed: false
-		});
-
-		// using a valid config
-		this.oFCL.setShowMidColumn(true);
-		this.oFCL.setShowEndColumn(true);
-		this.oFCL.setLayout({beginColumnWidth: 25, midColumnWidth: 25, endColumnWidth: 50});
-
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
-		assert.equal(this.oFCL._sLayout, "25/25/50", "The new layout is correctly set");
-	});
-
-	QUnit.test("layoutChange event is fired on the first load", function (assert) {
+	QUnit.test("stateChange event is fired on the first load", function (assert) {
 
 		this.oFCL = new FlexibleColumnLayout();
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
 		oCore.applyChanges();
@@ -516,28 +272,21 @@
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
-	QUnit.test("layoutChange event is fired on API calls that change the layout", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
+	QUnit.test("stateChange event is not fired when setLayout is called", function (assert) {
 		this.oFCL = oFactory.createFCL();
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
-		// Should be fired when the API causes a layout change
-		this.oFCL.setShowMidColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assert.ok(oEventSpy.called, "Layout change event fired");
-
-		this.clock.restore();
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		assert.ok(!oEventSpy.called, "Layout change event not fired");
 	});
 
-	QUnit.test("layoutChange event is fired on resize", function (assert) {
+	QUnit.test("stateChange event is fired on resize events that trigger a breakpoint change", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		// Should be fired when a resize causes a layout change
 		$("#" + sQUnitFixture).width(TABLET_SIZE);
@@ -547,34 +296,58 @@
 		this.clock.restore();
 	});
 
-	QUnit.test("layoutChange event is fired on navigation arrow click", function (assert) {
+	QUnit.test("stateChange event is not fired on resize events that do not trigger a breakpoint change", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
-		this.getMidColumnForwardArrow().firePress();
-		assert.ok(oEventSpy.called, "Layout change event fired");
+		// Should be fired when a resize causes a layout change
+		$("#" + sQUnitFixture).width(TABLET_SIZE + 1); // Still on desktop
+		this.clock.tick(ANIMATION_WAIT_TIME);
+		assert.ok(!oEventSpy.called, "Layout change event not fired");
 
 		this.clock.restore();
 	});
 
-	QUnit.test("layoutChange event is fired on setLayout calls", function (assert) {
+	QUnit.test("stateChange event is not fired while the control has 0 width", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
-		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
-		});
-		var oEventSpy = this.spy(this.oFCL, "fireLayoutChange");
+		var $fixture = $("#" + sQUnitFixture),
+			iOldWidth = $fixture.width();
 
-		this.oFCL.setLayout({beginColumnWidth: 67, midColumnWidth: 33, endColumnWidth: 0});
+		$fixture.width(0);
+
+		this.oFCL = new FlexibleColumnLayout();
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
+
+		this.oFCL.placeAt(sQUnitFixture);
+		oCore.applyChanges();
+
+		assert.ok(!oEventSpy.called, "Layout change event from onAfterRendering not fired");
+
+		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
+		assert.ok(!oEventSpy.called, "Layout change event from calling setLayout not fired");
+
+		// Should be fired when the control is resized to non-zero width
+		$fixture.width(PHONE_SIZE);
+		this.clock.tick(ANIMATION_WAIT_TIME);
 		assert.ok(oEventSpy.called, "Layout change event fired");
 
+		$fixture.width(iOldWidth);
 		this.clock.restore();
+	});
+
+	QUnit.test("stateChange event is fired on navigation arrow click", function (assert) {
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
+		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
+
+		this.getMidColumnForwardArrow().firePress();
+		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
 	QUnit.test("Mid column is loaded lazily", function (assert) {
@@ -639,123 +412,114 @@
 		}
 	});
 
-	QUnit.test("Constructor - 3 columns", function (assert) {
+	QUnit.test("Layout: OneColumn", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.OneColumn
 		});
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
-	});
-
-
-	QUnit.test("API call - showMidColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL();
-
-		// Show the mid column
-		this.oFCL.setShowMidColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-
-		// Hide the mid column
-		this.oFCL.setShowMidColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		this.clock.restore();
 	});
 
-	QUnit.test("API call - showEndColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: TwoColumnsBeginExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: "TwoColumnsBeginExpanded"
 		});
-
-		// Show the end column
-		this.oFCL.setShowEndColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
-
-		// Hide the end column
-		this.oFCL.setShowEndColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
-
-		this.clock.restore();
+		assert.ok(this.oFCL.$("beginColumn").width() > this.oFCL.$("midColumn").width());
 	});
 
-
-	QUnit.test("API call - fullScreenColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: TwoColumnsMidExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: "TwoColumnsMidExpanded"
 		});
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("midColumn").width());
+	});
 
-		// Show the begin column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Begin);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
+	QUnit.test("Layout: MidColumnFullScreen", function (assert) {
 
-		// Remove fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
-
-		// Show the mid column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Mid);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+		this.oFCL = oFactory.createFCL({
+			layout: LT.MidColumnFullScreen
+		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+	});
 
-		// Show the end column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.End);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+	QUnit.test("Layout: ThreeColumnsMidExpanded", function (assert) {
 
-		// Remove fullscreen again
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
+		assert.ok(this.oFCL.$("endColumn").width() < this.oFCL.$("midColumn").width());
+	});
 
-		this.clock.restore();
+	QUnit.test("Layout: ThreeColumnsEndExpanded", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsEndExpanded
+		});
+		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
+		assert.ok(this.oFCL.$("midColumn").width() < this.oFCL.$("endColumn").width());
+	});
+
+	QUnit.test("Layout: ThreeColumnsMidExpandedEndHidden", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden
+		});
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+		assert.ok(this.oFCL.$("beginColumn").width() < this.oFCL.$("midColumn").width());
+	});
+
+	QUnit.test("Layout: ThreeColumnsBeginExpandedEndHidden", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsBeginExpandedEndHidden
+		});
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+		assert.ok(this.oFCL.$("midColumn").width() < this.oFCL.$("beginColumn").width());
+	});
+
+	QUnit.test("Layout: EndColumnFullScreen", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.EndColumnFullScreen
+		});
+		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.TwoColumnsBeginExpanded
 		});
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 0, 0);
+		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.TwoColumnsBeginExpanded
 		});
 
-		this.getMidColumnBackArrow().firePress();
+		this.getBeginColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
 
 		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 0, 0);
+		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
 
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
+		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation", function (assert) {
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
 
 		this.getMidColumnForwardArrow().firePress();
@@ -770,7 +534,7 @@
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 
 		this.getMidColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
+		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back
 	});
 
@@ -787,105 +551,76 @@
 		}
 	});
 
-	QUnit.test("Constructor - 1 column", function (assert) {
+	QUnit.test("Layout: OneColumn", function (assert) {
 
-		this.oFCL = oFactory.createFCL();
+		this.oFCL = oFactory.createFCL({
+			layout: LT.OneColumn
+		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
 	});
 
-	QUnit.test("Constructor - 2 columns", function (assert) {
+	QUnit.test("Layout: TwoColumnsBeginExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: "TwoColumnsBeginExpanded"
 		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
 	});
 
-	QUnit.test("Constructor - 3 columns", function (assert) {
+	QUnit.test("Layout: TwoColumnsMidExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: "TwoColumnsMidExpanded"
 		});
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
-	});
-
-	QUnit.test("API call - showMidColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
-		this.oFCL = oFactory.createFCL();
-
-		// Show the mid column
-		this.oFCL.setShowMidColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-
-		// Hide the mid column
-		this.oFCL.setShowMidColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		this.clock.restore();
 	});
 
-	QUnit.test("API call - showEndColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: MidColumnFullScreen", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true
+			layout: LT.MidColumnFullScreen
 		});
-
-		// Show the end column
-		this.oFCL.setShowEndColumn(true);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-
-		// Hide the end column
-		this.oFCL.setShowEndColumn(false);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-
-		this.clock.restore();
 	});
 
-
-	QUnit.test("API call - fullScreenColumn", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Layout: ThreeColumnsMidExpanded", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			showMidColumn: true,
-			showEndColumn: true
+			layout: LT.ThreeColumnsMidExpanded
 		});
-
-		// Show the begin column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Begin);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
-
-		// Remove fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+	});
 
-		// Show the mid column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.Mid);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+	QUnit.test("Layout: ThreeColumnsEndExpanded", function (assert) {
 
-		// Show the end column to fullscreen
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.End);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsEndExpanded
+		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+	});
 
-		// Remove fullscreen again
-		this.oFCL.setFullScreenColumn(sap.f.FlexibleColumn.None);
-		this.clock.tick(sap.f.FlexibleColumnLayout.ADJUST_LAYOUT_TIMEOUT);
+	QUnit.test("Layout: ThreeColumnsMidExpandedEndHidden", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden
+		});
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+	});
 
-		this.clock.restore();
+	QUnit.test("Layout: ThreeColumnsBeginExpandedEndHidden", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsBeginExpandedEndHidden
+		});
+		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+	});
+
+	QUnit.test("Layout: EndColumnFullScreen", function (assert) {
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.EndColumnFullScreen
+		});
+		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
 	});
 
 	QUnit.module("Nav containers proxying", {
@@ -1030,4 +765,4 @@
 	});
 
 
-}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.m.Page, sap.m.Button, sap.m.NavContainer, false));
+}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));

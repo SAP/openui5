@@ -27,8 +27,7 @@ sap.ui.define(["jquery.sap.global",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
-			"sap.f.ThreeColumnLayoutType",
-			"sap.f.FlexibleColumn"
+			"sap.f.LayoutType"
 		],
 		controls: [
 			"sap.f.DynamicPage",
@@ -40,60 +39,68 @@ sap.ui.define(["jquery.sap.global",
 	});
 
 	/**
-	 * Types of three-column layout for the sap.f.FlexibleColumnLayout control.
+	 * Types of layout for the sap.f.FlexibleColumnLayout control.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.ThreeColumnLayoutType = {
+	sap.f.LayoutType = {
 
 		/**
-		 * Emphasized <code>End</code> column (25/25/50).
+		 * Description
 		 * @public
 		 */
-		EndColumnEmphasized : "EndColumnEmphasized",
+		OneColumn: "OneColumn",
 
 		/**
-		 * Emphasized <code>Mid</code> column (25/50/25).
+		 * Description
 		 * @public
 		 */
-		MidColumnEmphasized : "MidColumnEmphasized"
-	};
-
-	/**
-	 * Used to reference a column in the context of a FlexibleColumnLayout.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.f.FlexibleColumn = {
-		/**
-		 * No column
-		 * @public
-		 */
-		None: "None",
+		TwoColumnsBeginExpanded: "TwoColumnsBeginExpanded",
 
 		/**
-		 * The <code>Begin</code> column.
+		 * Description
 		 * @public
 		 */
-		Begin: "Begin",
+		TwoColumnsMidExpanded: "TwoColumnsMidExpanded",
 
 		/**
-		 * The <code>Mid</code> column.
+		 * Description
 		 * @public
 		 */
-		Mid: "Mid",
+		MidColumnFullScreen: "MidColumnFullScreen",
 
 		/**
-		 * The <code>End</code> column.
+		 * Description
 		 * @public
 		 */
-		End: "End"
+		ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
+
+		/**
+		 * Description
+		 * @public
+		 */
+		ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
+
+		/**
+		 * Description
+		 * @public
+		 */
+		ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
+
+		/**
+		 * Description
+		 * @public
+		 */
+		ThreeColumnsBeginExpandedEndHidden: "ThreeColumnsBeginExpandedEndHidden",
+
+		/**
+		 * Description
+		 * @public
+		 */
+		EndColumnFullScreen: "EndColumnFullScreen"
 	};
 
 	sap.ui.lazyRequire("sap.f.routing.Router");

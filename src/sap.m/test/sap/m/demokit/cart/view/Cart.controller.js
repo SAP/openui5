@@ -17,6 +17,8 @@ sap.ui.define([
 	Dialog,
 	Button) {
 	var sCartModelName = "cartProducts";
+	var sSavedForLaterEntries = "savedForLaterEntries";
+	var sCartEntries = "cartEntries";
 
 	return Controller.extend("sap.ui.demo.cart.view.Cart", {
 		formatter: formatter,
@@ -79,38 +81,43 @@ sap.ui.define([
 
 		onSaveForLater: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
-			var oModelData = oBindingContext.getModel().getData();
+			var oModel = oBindingContext.getModel();
+			this._changeList(sSavedForLaterEntries, sCartEntries, oBindingContext);
 
-			var oListToAddItem = oModelData.savedForLaterEntries;
-			var oListToDeleteItem = oModelData.cartEntries;
-			this._changeList(oListToAddItem, oListToDeleteItem, oEvent);
+			if (Object.keys(oModel.getData().cartEntries).length === 0) {
+				oModel.setProperty("/showProceedButton", false);
+			}
 		},
 
-		onAddBackToCart: function (oEvent) {
+		onAddBackToBasket: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
-			var oModelData = oBindingContext.getModel().getData();
 
-			var oListToAddItem = oModelData.cartEntries;
-			var oListToDeleteItem = oModelData.savedForLaterEntries;
-			this._changeList(oListToAddItem, oListToDeleteItem, oEvent);
+			this._changeList(sCartEntries, sSavedForLaterEntries, oBindingContext);
+
+			oBindingContext.getModel().setProperty("/showProceedButton", true);
 		},
 
-		_changeList: function (oListToAddItem, oListToDeleteItem, oEvent) {
-			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
-			var oCartModel = this.getView().getModel(sCartModelName);
+		_changeList: function (sListToAddItem, sListToDeleteItem, oBindingContext) {
+			var oCartModel = oBindingContext.getModel();
 			var oProduct = oBindingContext.getObject();
+			var oModelData = oCartModel.getData();
+			// why are the items cloned? - the JSON model checks if the values in the object are changed.
+			// if we do our modifications on the same reference, there will be no change detected.
+			// so we modify after the clone.
+			var oListToAddItem = $.extend({}, oModelData[sListToAddItem]);
+			var oListToDeleteItem = $.extend({}, oModelData[sListToDeleteItem]);
 			var sProductId = oProduct.ProductId;
 
 			// find existing entry for product
 			if (oListToAddItem[sProductId] === undefined) {
 				// copy new entry
-				oListToAddItem[sProductId] = oProduct;
+				oListToAddItem[sProductId] = $.extend({}, oProduct);
 			}
 
 			//Delete the saved Product from cart
 			delete oListToDeleteItem[sProductId];
-			// update model
-			oCartModel.refresh(true);
+			oCartModel.setProperty("/" + sListToAddItem, oListToAddItem);
+			oCartModel.setProperty("/" + sListToDeleteItem, oListToDeleteItem);
 		},
 
 		_showProduct: function (item) {
@@ -127,31 +134,41 @@ sap.ui.define([
 			}
 		},
 
-		handleEntryListDelete: function (oEvent) {
+		onCartEntriesDelete: function (oEvent) {
+			this._deleteProduct(sCartEntries, oEvent)
+		},
+
+		onSaveForLaterDelete: function (oEvent) {
+			this._deleteProduct(sSavedForLaterEntries, oEvent)
+		},
+
+		_deleteProduct : function (sCollection, oEvent) {
+			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
+			var sEntryId = oBindingContext.getObject().ProductId;
+			var oModel = oBindingContext.getModel();
 			// show confirmation dialog
-			var sEntryId = oEvent.getParameter("listItem").getBindingContext(sCartModelName).getObject().Id;
 			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			MessageBox.show(
 				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
 					title: oBundle.getText("CART_DELETE_DIALOG_TITLE"),
 					actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
-					onClose: jQuery.proxy(function (oAction) {
-						if (MessageBox.Action.DELETE === oAction) {
-							var oModel = this.getView().getModel(sCartModelName);
-							var oData = oModel.getData();
-							var aNewEntries = jQuery.grep(oData.cartEntries, function (oEntry) {
-								var keep = (oEntry.Id !== sEntryId);
-								if (!keep) {
-									oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
-								}
-								return keep;
-							});
-							oData.cartEntries = aNewEntries;
-							oData.showEditAndProceedButton = aNewEntries.length > 0;
-							oModel.setData(oData);
+					onClose: function (oAction) {
+						if (oAction !== MessageBox.Action.DELETE) {
+							return;
 						}
-					}, this)
-				});
+						var oCartModel = oBindingContext.getModel();
+						var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
+
+						delete oCollectionEntries[sEntryId];
+						// update model
+						oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
+						if (Object.keys(oModel.getData().cartEntries).length === 0) {
+							oModel.setProperty("/showProceedButton", false);
+							oModel.setProperty("/showEditButton", false);
+						}
+					}
+				}
+			);
 		},
 
 		handleProceedButtonPress: function (oEvent) {
@@ -218,7 +235,8 @@ sap.ui.define([
 			var oCartProductsModelData = oCartProductsModel.getData();
 			oCartProductsModelData.cartEntries = {};
 			oCartProductsModelData.totalPrice = "0";
-			oCartProductsModelData.showEditAndProceedButton = false;
+			oCartProductsModelData.showEditButton = false;
+			oCartProductsModelData.showProceedButton = false;
 			oCartProductsModel.setData(oCartProductsModelData);
 			this._router.navTo("home");
 			if (!Device.system.phone) {

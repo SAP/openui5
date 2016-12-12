@@ -1,0 +1,22 @@
+[
+  {
+    "CustomerID": "TORTU",
+    "CompanyName": "Tortuga Restaurante"
+  },
+  {
+    "CustomerID": "ALFKI",
+    "CompanyName": "Alfreds Futterkiste"
+  },
+  {
+    "CustomerID": "AROUT",
+    "CompanyName": "Around the Horn"
+  },
+  {
+    "CustomerID": "BERGS",
+    "CompanyName": "Berglunds snabbköp"
+  },
+  {
+    "CustomerID": "BOTTM",
+    "CompanyName": "Bottom-Dollar Markets"
+  }
+]

@@ -1,6 +1,7 @@
-/* ============================================ */
-/* CSS for control sap.m/IconTabBar.control			*/
-/* ============================================ */
+/* ================================= */
+/* CSS for control sap.m/IconTabBar  */
+/* Base theme                        */
+/* ================================= */
 
 .sapMITB {
 	display: block;
@@ -98,6 +99,14 @@
 	display: inline-block;
 	margin: 1rem 0.75rem 0 0.25rem;
 	vertical-align: top;
+	font-size: @sapMFontSmallSize;
+	padding: 1px 1px 0 1px;
+}
+
+.sapMITBScrollContainer {
+	/* the same padding as on the sapMITBHead is needed
+	to correct the scrolling calculations*/
+	padding: 1px 1px 0 1px;
 }
 
 html.sap-phone .sapMITB .sapMITBHead {
@@ -189,6 +198,7 @@ html[dir='rtl'] .sapMITBContentArrow {
 .sapMITBContent {
 	padding: 1rem;
 	position: relative;
+	background-color: @sapUiGroupContentBackground;
 }
 
 html.sap-phone .sapMITBContent {
@@ -236,6 +246,7 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	position: relative;
 	text-align: center;
 	vertical-align: top;
+	color: @sapUiGroupTitleTextColor;
 }
 
 html.sap-desktop .sapMITBFilter:not(.sapMITBDisabled) {
@@ -313,6 +324,8 @@ html.sap-phone .sapMITBFilter:first-child {
 	position: relative;
 	text-overflow: ellipsis;
 	width: 5rem;
+	color: @sapUiGroupTitleTextColor;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBHorizontal.sapMITBFilter .sapMITBText {
@@ -412,6 +425,34 @@ html[dir='rtl'] .sapMITBHorizontal.sapMITBFilter > .sapMITBHorizontalWrapper > .
 	width: 3rem;
 }
 
+.sapMITBTextOnly .sapMITBText {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMITBTextOnly .sapMITBFilterDefault > .sapMITBText {
+	color: @sapUiGroupTitleTextColor;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMITBFilter .sapMITBCount {
+	color: @sapUiGroupTitleTextColor;
+	text-shadow: @sapUiShadowText;
+	max-width: 2rem;
+	overflow: hidden;
+	position: absolute;
+	text-overflow: ellipsis;
+}
+
+.sapMITBTextOnly .sapMITBFilter .sapMITBCount {
+	font-size: @sapMFontMediumSize;
+	max-width: none;
+	position: relative;
+}
+
+.sapMITBCount {
+	color: @sapUiGroupTitleTextColor;
+}
+
 /* Tab Filter Show All Item */
 
 .sapMITBAll .sapMITBTab {
@@ -435,6 +476,8 @@ html.sap-phone .sapMITBAll {
 	padding: 0 0.5rem;
 	vertical-align: middle;
 	width: auto;
+	color: @sapUiGroupTitleTextColor;
+	text-shadow: @sapUiShadowText;
 }
 
 html.sap-phone .sapMITBAll > .sapMITBTab > .sapMITBCount {
@@ -455,6 +498,8 @@ html.sap-phone .sapMITBAll > .sapMITBTab > .sapMITBCount {
 	vertical-align: middle;
 	white-space: normal;
 	width: auto;
+	color: @sapUiGroupTitleTextColor;
+	text-shadow: @sapUiShadowText;
 }
 
 html.sap-phone .sapMITBAll .sapMITBText {
@@ -486,6 +531,7 @@ html.sap-phone .sapMITBAll .sapMITBText {
 	height: 3rem;
 	margin: 0 0.25rem;
 	width: 0;
+	border: 1px solid @sapUiListBorderColor;
 }
 
 html.sap-phone .sapMITBSepLine {
@@ -497,6 +543,11 @@ html.sap-phone .sapMITBSepLine {
 	height: 3rem;
 	line-height: 3rem;
 	padding: 0 0.25rem;
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMITBSepIcon::before {
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMITBHorizontal + .sapMITBSep {
@@ -511,11 +562,8 @@ html.sap-phone .sapMITBSepLine {
 	cursor: pointer;
 	font-size: 1rem;
 	position: absolute;
-	top: 1px;
-}
-
-.sapMITBArrowScroll {
 	top: 1rem;
+	color: @sapUiContentIconColor;
 }
 
 .sapMITBArrowScrollLeft {

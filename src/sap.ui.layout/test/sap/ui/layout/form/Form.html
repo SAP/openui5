@@ -173,7 +173,7 @@
 									        		}
 									        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
-															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
 												}),
 							         new sap.m.ToggleButton({text: 'move element',
 													press: function(oEvent) {
@@ -188,7 +188,20 @@
 								        		}
 								        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
-															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
+												}),
+							         new sap.m.ToggleButton({text: 'label conons',
+													press: function(oEvent) {
+								        		var bPressed = oEvent.getParameter("pressed");
+								        		var oForm = sap.ui.getCore().byId("F1");
+								        		if (bPressed) {
+								        			oForm.addStyleClass("sapUiFormLblColon");
+								        		} else {
+								        			oForm.removeStyleClass("sapUiFormLblColon");
+								        		}
+								        	 },
+														layoutData: new sap.ui.core.VariantLayoutData({
+															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "2"})]})
 							         })]
 						})
 					],

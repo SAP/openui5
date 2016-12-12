@@ -16,11 +16,32 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The Wizard control enables users to accomplish a single goal
-		 * which consists of multiple dependable sub-tasks.
-		 * Each sub-task is provided in the form of a WizardStep.
+		 * Enables users to accomplish a single goal which consists of multiple dependable sub-tasks.
+		 * <h3>Overview</h3>
+		 * The sap.m.Wizard helps users complete a complex and unfamiliar task by dividing it into sections and guiding the user through it.
+		 * The wizard has two main areas - a navigation area at the top showing the step sequence and a content area below it.
+		 * <h3>Structure</h3>
+		 * <h4>Navigation Area</h4>
+		 * The top most area of the wizard is occupied by the navigation area. It shows the sequence of {@link sap.m.WizardStep wizard steps}.
+		 * <ul>
+		 * <li>The minimum number of steps is 3 and the maximum is 8 and are stored in the <code>steps</code> aggregation.</li>
+		 * <li>Steps can be branching depending on choices the user made in their input - this is set by the <code>enableBranching</code> property. </li>
+		 * <li>Steps can have different visual representations - numbers or icons. You can add labels for better readability </li>
+		 * </ul>
+		 * <h4>Content</h4>
+		 * The content occupies the main part of the page. It can hold any type of input controls. The content is kept in {@link sap.m.WizardStep wizard steps}.
+		 * <h4>Next Step Button</h4>
+		 * The next step button is displayed below the content. It can be hidden by setting <code>showNextButton</code> to <code>false</code> and displayed, for example,
+		 * only after the user has filled all mandatory fields.
+		 * <h3>Usage</h3>
+		 * <h4>When to use:</h4>
+		 * When the user has to accomplish a long or unfamiliar task.
+		 * <h4>When not to use:</h4>
+		 * When the user has to accomplish a routine task that is clear and familiar.
+		 * When the task has only two steps or less.
+		 * <h3>Responsive Behavior</h3>
+		 * On mobile devices the steps in the StepNavigator are grouped together and overlap. Tapping on them will show a popover to select the step to navigate to.
 		 * @extends sap.ui.core.Control
-		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -289,7 +310,7 @@ sap.ui.define([
 
 			if (index > progressAchieved || index <= 0) {
 				jQuery.sap.log.warning("The given step is either not yet reached, or is not present in the wizard control.");
-				return;
+				return this;
 			}
 
 			this._getProgressNavigator().discardProgress(index);

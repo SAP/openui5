@@ -81,8 +81,28 @@
 							type: 'sap.ui.model.type.Date',
 							formatOptions: { style: 'short' }
 						}">
+						<firstStatus>
+							<ObjectStatus
+								state="{
+									parts: [
+										{path: 'RequiredDate'},
+										{path: 'ShippedDate'},
+										{path: 'OrderID'}
+									],
+									formatter:'.formatter.deliveryState'
+								}"
+								text="{
+									parts: [
+										{path: 'RequiredDate'},
+										{path: 'ShippedDate'},
+										{path: 'OrderID'}
+									],
+									formatter:'.formatter.deliveryText'
+								}"/>
+
+						</firstStatus>
 						<attributes>
-							<ObjectAttribute title="{i18n>commonCustomerName}" id="companyName" text="{Customer/CompanyName}" />
+							<ObjectAttribute  id="companyName" text="{Customer/CompanyName}" />
 							<ObjectAttribute title="{i18n>commonItemShipped}"
 								text="{= ${ShippedDate}
 									? ${ path: 'ShippedDate',
