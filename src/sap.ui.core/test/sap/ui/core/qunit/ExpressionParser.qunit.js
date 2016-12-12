@@ -307,7 +307,10 @@ sap.ui.require([
 		{ binding: "{=[1}", message: "Expected , but instead saw }", token: "}"},
 		{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
 		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
-		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
+		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"},
+		// Note: jQuery.sap._createJSTokenizer()#string fails with at: length + 2
+		{ binding: "{= '}", message: "Bad string", at: 6}, // nud
+		{ binding: "{= 0 '}", message: "Bad string", at: 8} // led
 	].forEach(function (oFixture) {
 		QUnit.test("Error handling " + oFixture.binding + " --> " + oFixture.message,
 			function (assert) {
@@ -734,5 +737,19 @@ sap.ui.require([
 		assert.throws(function () {
 			BindingParser.complexParser(sExpression);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Internal incident 1680322832", function (assert) {
+		var oIcon,
+			oModel = new JSONModel({ID : "T 1000"});
+
+		// code under test (used to fail with "Bad string")
+		oIcon = new Icon({
+			color : "'{= encodeURIComponent(${/ID}) }'",
+			models : oModel
+		});
+
+		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", "'T%201000'"));
 	});
 });

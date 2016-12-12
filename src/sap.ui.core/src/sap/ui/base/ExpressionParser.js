@@ -70,6 +70,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 					return BINDING.bind(null, oToken.value);
 				}
 			},
+			"ERROR": {
+				lbp: Infinity,
+				led: function (oToken, oParser, fnLeft) {
+					error(oToken.value.message, oToken.value.text, oToken.value.at);
+				},
+				nud: function (oToken, oParser) {
+					error(oToken.value.message, oToken.value.text, oToken.value.at);
+				}
+			},
 			"IDENTIFIER": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
@@ -604,8 +613,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			/* eslint-enable no-empty */
 		} catch (e) {
 			// Note: new SyntaxError().name === "SyntaxError"
-			if (e.name === "SyntaxError") { //handle tokenizer errors
-				error(e.message, e.text, e.at);
+			if (e.name === "SyntaxError") { // remember tokenizer error
+				aTokens.push({
+					id: "ERROR",
+					value: e
+				});
 			} else {
 				throw e;
 			}
