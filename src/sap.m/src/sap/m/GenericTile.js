@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The switchable view that depends on the tile type.
 				 */
-				"tileContent" : {type : "sap.m.TileContent", multiple : true},
+				"tileContent" : {type : "sap.m.TileContent", multiple : true, bindable : "bindable"},
 				/**
 				 * An icon or image to be displayed in the control.
 				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.TileContent control instead.
