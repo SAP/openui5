@@ -284,6 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default"
 				},
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
+				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.RadioButton": {
 					"hideControl": "default",
 					"renameRadioButton": "sap/m/changeHandler/RenameRadioButton",
