@@ -65,6 +65,8 @@
 									new sap.ui.layout.VerticalLayout({
 										id: "verticalLayout",
 										content: [
+											new sap.m.Label({id: "labelInvisible", visible: false, text: "Not Visible"}),
+											new sap.m.Label({id: "labelOutsideForm", text: "Label Outside Form"}),
 											new sap.m.RadioButton({id: "btn1", text: "Button1"}),
 											new sap.m.CheckBox({id:"checkbox1", text: "CheckBox1"}),
 											new sap.m.RatingIndicator("ratingIndicator", { iconSize: "1rem", value: 2.5 }),
@@ -83,6 +85,14 @@
 													new sap.m.Button({id: "btn6", text: "HButton6"}),
 												]
 											})
+										]
+									}),
+									new sap.ui.layout.form.SimpleForm({
+										id: "SimpleForm1",
+										content: [
+											new sap.m.Title({id: "simpleFormTitle1", text: "Form Title"}),
+											new sap.m.Label({id: "formLabel", text: "Label"}),
+											new sap.m.Text({id: "formText", text: "textToLabel1"})
 										]
 									}),
 									new sap.ui.layout.VerticalLayout({id: "justTest"}),
