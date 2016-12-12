@@ -1415,6 +1415,20 @@
 		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
 	});
 
+	QUnit.test("Internal method _getAriaText for actions scope", function() {
+		//Arrange
+		this.oGenericTile.setScope("Actions");
+		this.oGenericTile._getAriaAndTooltipText = function() {
+			return "ARIA and tooltip test";
+		}
+		sap.ui.getCore().applyChanges();
+		//Act
+		var sAriaText = this.oGenericTile._getAriaText();
+		var sActionsText = this.oGenericTile._rb.getText("GENERICTILE_ACTIONS_ARIA_TEXT");
+		//Assert
+		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test", "Expected text for ARIA-label generated for actions scope");
+	});
+
 	QUnit.test("Internal method _getTooltipText", function(assert) {
 		//Arrange
 		var sTooltipText;
