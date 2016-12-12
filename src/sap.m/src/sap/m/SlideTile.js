@@ -35,11 +35,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			 */
 			"transitionTime" : {type : "int", group : "Appearance", defaultValue : 500}
 		},
+		defaultAggregation : "tiles",
 		aggregations : {
 			/**
 			 * The set of Generic Tiles to be shown in the control.
 			 */
-			"tiles" : {type : "sap.m.GenericTile", multiple : true, singularName : "tile"},
+			"tiles" : {type : "sap.m.GenericTile", multiple : true, singularName : "tile", bindable : "bindable"},
 			/**
 			 * The pause/play icon that is being used to display the pause/play state of the control.
 			 */

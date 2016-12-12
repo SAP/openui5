@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 				 */
 				"description" : {type : "string", group : "Accessibility", defaultValue : null}
 			},
+			defaultAggregation : "_content",
 			aggregations : {
 				/**
 				 * The hidden aggregation for the image content.

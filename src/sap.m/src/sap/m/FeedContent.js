@@ -60,12 +60,13 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 				 */
 				"truncateValueTo" : {type : "int", group : "Misc", defaultValue : 4}
 			},
+			defaultAggregation : "_contentTextAgr",
 			aggregations : {
 
 				/**
 				 * The hidden aggregation for the content text.
 				 */
-				"contentTextAgr" : {type : "sap.m.Text", multiple : false, visibility : "hidden"}
+				"_contentTextAgr" : {type : "sap.m.Text", multiple : false, visibility : "hidden"}
 			},
 			events : {
 				/**
@@ -86,8 +87,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 			maxLines : 2
 		});
 		this._oContentText.cacheLineHeight = false;
-		this.setAggregation("contentTextAgr", this._oContentText);
-		this.setTooltip("{AltText}"); // TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
+		this.setAggregation("_contentTextAgr", this._oContentText, true);
+		this.setTooltip("{AltText}");
 	};
 
 	FeedContent.prototype.onBeforeRendering = function() {
@@ -98,6 +99,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	FeedContent.prototype.onAfterRendering = function() {
 		this.$().bind("mouseenter", this._addTooltip.bind(this));
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+	};
+
+	FeedContent.prototype.exit = function() {
+		this._oContentText = null;
 	};
 
 	/**
@@ -126,8 +131,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	FeedContent.prototype.getAltText = function() {
 		var sAltText = "";
 		var bIsFirst = true;
-		if (this.getAggregation("contentTextAgr").getText()) {
-			sAltText += this.getAggregation("contentTextAgr").getText();
+		if (this.getAggregation("_contentTextAgr").getText()) {
+			sAltText += this.getAggregation("_contentTextAgr").getText();
 			bIsFirst = false;
 		}
 		if (this.getSubheader()) {
