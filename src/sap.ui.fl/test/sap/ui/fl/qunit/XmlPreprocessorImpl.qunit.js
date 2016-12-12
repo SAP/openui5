@@ -2,10 +2,35 @@
 jQuery.sap.require("sap.ui.fl.XmlPreprocessorImpl");
 jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
 jQuery.sap.require("sap.ui.fl.ChangePersistence");
+jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
 jQuery.sap.require("sap.ui.fl.Utils");
 
-(function(XmlPreprocessorImpl, ChangePersistenceFactory, ChangePersistence, Utils) {
+(function(XmlPreprocessorImpl, ChangePersistenceFactory, ChangePersistence, FlexControllerFactory, Utils) {
 	"use strict";
+
+	QUnit.test("process is skipped if no cache key could be determined", function (assert) {
+		var oView = {};
+		var sFlexReference = "someName";
+		var mPorpertyBag = {
+			sync: false
+		};
+		var oMockedComponent = {
+			getComponentClassName: function () {
+				return sFlexReference;
+			}
+		};
+
+		var oChangePersistence = new ChangePersistence(sFlexReference, {});
+		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create");
+		this.stub(oChangePersistence, "getCacheKey").returns(ChangePersistence.NOTAG);
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent");
+
+		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+
+		return XmlPreprocessorImpl.process(oView, mPorpertyBag).then(function () {
+			assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
+		});
+	});
 
 	QUnit.test("getCacheKey does return a cache key", function (assert) {
 		var sCacheKey = "abc123";
@@ -24,4 +49,4 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
-}(sap.ui.fl.XmlPreprocessorImpl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.fl.Utils));
+}(sap.ui.fl.XmlPreprocessorImpl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.fl.FlexControllerFactory, sap.ui.fl.Utils));
