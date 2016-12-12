@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Co
 			}).setParent(this);
 			this.oToolsButton.attachEvent('itemSelected', this.handleToolsButtonSelected, this); // attach event this way to have the right this-reference in handler
 
-			var sIcon = Parameters._getThemeImage('ssapUiFeedToolsIconUrl');
+			var sIcon = Parameters._getThemeImage('sapUiFeedToolsIconUrl');
 			var sIconHover = Parameters._getThemeImage('sapUiFeedToolsIconHoverUrl');
 			if (sIcon) {
 				this.oToolsButton.setProperty('icon', sIcon, true);
