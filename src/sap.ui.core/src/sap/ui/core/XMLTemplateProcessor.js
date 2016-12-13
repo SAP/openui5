@@ -324,21 +324,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 			 */
 			function createControlOrExtension(node) { // this will also be extended for Fragments with multiple roots
 
-				if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core") {
-					// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
-					return ExtensionPoint(oView, node.getAttribute("name"), function(){
-						var children = node.childNodes;
-						var oDefaultContent = [];
-						for (var i = 0; i < children.length; i++) {
-							var oChildNode = children[i];
-							if (oChildNode.nodeType === 1 /* ELEMENT_NODE */) { // text nodes are ignored - plaintext inside extension points is not supported; no warning log because even whitespace is a text node
-								oDefaultContent = jQuery.merge(oDefaultContent, createControls(oChildNode));
+				if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core" ) {
+					if (bEnrichFullIds) {
+						// Processing the different types of ExtensionPoints (XML, JS...) is not possible, hence
+						// they are skipped as well as their potentially overwritten default content.
+						return [];
+					} else {
+						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
+						return ExtensionPoint(oView, node.getAttribute("name"), function(){
+							var children = node.childNodes;
+							var oDefaultContent = [];
+							for (var i = 0; i < children.length; i++) {
+								var oChildNode = children[i];
+								if (oChildNode.nodeType === 1 /* ELEMENT_NODE */) { // text nodes are ignored - plaintext inside extension points is not supported; no warning log because even whitespace is a text node
+									oDefaultContent = jQuery.merge(oDefaultContent, createControls(oChildNode));
+								}
 							}
-						}
-						return oDefaultContent;
-					});
+							return oDefaultContent;
+						});
+					}
 
-				} else {
+				}  else {
 					// a plain and simple regular UI5 control
 					return createRegularControls(node);
 				}
