@@ -517,6 +517,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if an active personalization - user specific changes or variants - for the flexibility reference
+	 * of the controller instance (<code>this._sComponentName</code>) is in place.
+	 *
+	 * @returns {boolean} <code>bIsPersonalized</code>; true if a personalization is active in the application that has been made via flexibility
+	 * @public
+	 */
+	FlexController.prototype.isPersonalized = function () {
+		var aChanges = this.getComponentChanges({});
+		var bIsPersonalized = aChanges.some(function (oChange) {
+			return oChange.getLayer() === "USER";
+		});
+
+		return !!bIsPersonalized;
+	};
+
+	/**
 	 * Creates a new instance of sap.ui.fl.Persistence based on the current component and caches the instance in a private member
 	 *
 	 * @returns {sap.ui.fl.Persistence} persistence instance
