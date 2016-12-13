@@ -12,7 +12,7 @@ describe('sap.m.NotificationListGroup', function () {
     });
 
     it('should collapse and expand the group', function () {
-        var expandCollapseLink = element(by.css('#notificationGroup .sapMNLG-Footer > .sapMBtn'));
+        var expandCollapseLink = element(by.css('#notificationGroup .sapMNLG-SubHeader > .sapMBtn'));
         expandCollapseLink.click();
         expect(takeScreenshot(group)).toLookAs('collapsed');
         expandCollapseLink.click();
