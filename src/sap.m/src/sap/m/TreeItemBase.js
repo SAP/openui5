@@ -289,6 +289,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 	};
 
+	TreeItemBase.prototype.getAccessibilityType = function(oBundle) {
+		return oBundle.getText("ACC_CTR_TYPE_TREEITEM");
+	};
+
 	TreeItemBase.prototype.exit = function() {
 		ListItemBase.prototype.exit.apply(this, arguments);
 		this.destroyControls(["Expander"]);
