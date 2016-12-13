@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						}
 
 						if (bExecuteDefault) {
-							MenuUtils.openColumnContextMenu(oTable, iColumnIndex, bHoverFirstMenuItem);
+							MenuUtils.openColumnContextMenu(oTable, iColumnIndex, bHoverFirstMenuItem, $TableCell);
 						}
 					} else {
 						MenuUtils.applyColumnHeaderCellMenu(oTable, iColumnIndex);
@@ -131,12 +131,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
 			 * @param {int} iColumnIndex The index of the column to open the context menu on.
 			 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
+			 * @param {jQuery} oCell The column header cell to which the menu should be attached.
 			 * @private
 			 *
 			 * @see openContextMenu
 			 * @see closeColumnContextMenu
 			 */
-			openColumnContextMenu: function(oTable, iColumnIndex, bHoverFirstMenuItem) {
+			openColumnContextMenu: function(oTable, iColumnIndex, bHoverFirstMenuItem, oCell) {
 				if (oTable == null ||
 					iColumnIndex == null || iColumnIndex < 0) {
 					return;
@@ -162,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					}
 				}
 
-				oColumn._openMenu(oColumn.getDomRef(), bHoverFirstMenuItem);
+				oColumn._openMenu(oCell && oCell[0] || oColumn.getDomRef(), bHoverFirstMenuItem);
 			},
 
 			/**
