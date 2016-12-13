@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MultiInput.
-sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library'],
-	function (jQuery, Input, Tokenizer, Token, library) {
+sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/Device'],
+	function (jQuery, Input, Tokenizer, Token, library, Device) {
 		"use strict";
 
 
@@ -400,6 +400,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	MultiInput.prototype._openMultiLineOnPhone = function() {
 		var that = this;
 
+		if (!this.getEditable()) {
+			return;
+		}
+
 		this._oSuggestionPopup.open();
 		this._oSuggestionPopup.insertContent(this._tokenizer, 0);
 		this._tokenizer.setReverseTokens(true);
@@ -478,14 +482,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			return;
 		}
 
-		// on phone open a full screen dialog
-		if (this._bUseDialog) {
-			this._openMultiLineOnPhone();
-			return;
-		}
-
 		// on desktop and tablet if multi line is enabled and control has tokens
-		if (this.getEnableMultiLineMode() && aTokens.length > 0) {
+		if (this.getEnableMultiLineMode() && aTokens.length > 0 && !Device.system.phone) {
 			this._openMultiLineOnDesktop();
 		}
 	};
@@ -1004,6 +1002,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		Input.prototype.ontap.apply(this, arguments);
 	};
 
+	MultiInput.prototype._onclick = function (oEvent) {
+		if (this._bUseDialog) {
+			this._openMultiLineOnPhone();
+		}
+	};
 
 	/**
 	 * Focus is on MultiInput
@@ -1012,7 +1015,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
 
-		if (this.getEditable() && (this.getEnableMultiLineMode() || this._bUseDialog)) {
+		if (this.getEditable() && this.getEnableMultiLineMode()) {
 			this.openMultiLine();
 		}
 
