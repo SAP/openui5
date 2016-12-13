@@ -29,7 +29,8 @@ sap.ui.define(['jquery.sap.global'],
 			aEmptyArray = [];
 
 		var sPopoverCategoryId = "_POPOVER_",
-			sDialogCategoryId = "_DIALOG_";
+			sDialogCategoryId = "_DIALOG_",
+			sLightBoxCategoryId = "_LIGHTBOX_";
 
 		/**
 		 * Adds an instance to the given category. If the instance is already added to the same category, it won't be added again.
@@ -168,6 +169,23 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		/**
+		 * Adds a control to predefined dialog category in instance manager.
+		 *
+		 * @param {sap.m.LigthBox} oLightBox Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
+		 * @returns {sap.m.InstanceManager} Enable method chaining.
+		 * @protected
+		 * @function
+		 */
+		InstanceManager.addLightBoxInstance = function(oLightBox){
+			if (typeof oLightBox.close === "function" ) {
+				InstanceManager.addInstance(sLightBoxCategoryId, oLightBox);
+			} else {
+				jQuery.sap.log.warning("In method addLightBoxInstance: the parameter doesn't have a close method and can't be managed.");
+			}
+			return this;
+		};
+
+		/**
 		 * Removes control from predefined popover category in instance manager.
 		 *
 		 * @param {sap.ui.core.Control} oPopover to be removed from instance manager.
@@ -192,6 +210,18 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		/**
+		 * Removes control from predefined dialog category in instance manager.
+		 *
+		 * @param {sap.m.LightBox} oLightBox to be removed from instance manager.
+		 * @returns {sap.m.LightBox|null} The removed popover or null. If the LightBox isn't managed, this method returns null instead of the removed LightBox.
+		 * @protected
+		 * @function
+		 */
+		InstanceManager.removeLightBoxInstance = function(oLightBox){
+			return InstanceManager.removeInstance(sLightBoxCategoryId, oLightBox);
+		};
+
+		/**
 		 * Returns true if there's popover(s) managed in predefined popover category, otherwise it returns false.
 		 *
 		 * @returns {boolean} Whether there's popover(s) open.
@@ -211,6 +241,17 @@ sap.ui.define(['jquery.sap.global'],
 		*/
 		InstanceManager.hasOpenDialog = function(){
 			return !InstanceManager.isCategoryEmpty(sDialogCategoryId);
+		};
+
+		/**
+		 * Returns true if there's LightBox(es) managed in predefined dialog category, otherwise it returns false.
+		 *
+		 * @returns {boolean} Whether there's LightBox(es) is/are open.
+		 * @public
+		 * @function
+		 */
+		InstanceManager.hasOpenLightBox = function(){
+			return !InstanceManager.isCategoryEmpty(sLightBoxCategoryId);
 		};
 
 		/**
@@ -248,6 +289,23 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		/**
+		 * Check if the given LightBox instance is managed under the LightBox category.
+		 * For LightBox instances, managed means the LightBox is open.
+		 *
+		 * This function is specially provided for customized controls which doesn't have the possibility to check whether it's open.
+		 * If the given popover is an instance of sap.m.Popover, sap.m.ActionSheet, the isOpen() method on the instance is
+		 * preferred to be called than this function.
+		 *
+		 * @param {sap.m.LightBox} oLightBox The LightBox that is checked.
+		 * @returns Whether the given popover is open.
+		 * @public
+		 * @function
+		 */
+		InstanceManager.isLightBoxOpen = function(oLightBox){
+			return InstanceManager.isInstanceManaged(sLightBoxCategoryId, oLightBox);
+		};
+
+		/**
 		 * Gets all of the open popovers. If there's no popover open, it returns an empty array.
 		 *
 		 * @return {sap.ui.core.Control[]} The open popovers.
@@ -267,6 +325,17 @@ sap.ui.define(['jquery.sap.global'],
 		*/
 		InstanceManager.getOpenDialogs = function(){
 			return InstanceManager.getInstancesByCategoryId(sDialogCategoryId);
+		};
+
+		/**
+		 * Gets all of the open dialogs. If there's no dialog open, it returns an empty array.
+		 *
+		 * @return {sap.m.LightBox} The opened LightBoxes.
+		 * @public
+		 * @function
+		 */
+		InstanceManager.getOpenLightBoxes = function(){
+			return InstanceManager.getInstancesByCategoryId(sLightBoxCategoryId);
 		};
 
 		/**
@@ -323,6 +392,21 @@ sap.ui.define(['jquery.sap.global'],
 				jQuery.when.apply(this, aDeferred).then(fnCallback);
 			}
 
+			return this;
+		};
+
+		/**
+		 * Closes all open popovers.
+		 *
+		 * @public
+		 * @returns {sap.m.InstanceManager} Enable method chaining.
+		 * @function
+		 */
+		InstanceManager.closeAllLightBoxes = function(){
+			var aIntances = InstanceManager.getOpenLightBoxes(), iLength = aIntances.length, index;
+			for (index = 0; index < iLength; index += 1) {
+				aIntances[index].close();
+			}
 			return this;
 		};
 	}());

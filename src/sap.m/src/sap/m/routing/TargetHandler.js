@@ -287,6 +287,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			if (InstanceManager.hasOpenDialog()) {
 				InstanceManager.closeAllDialogs();
 			}
+
+			// close open LightBoxes
+			if (InstanceManager.hasOpenLightBox()) {
+				InstanceManager.closeAllLightBoxes();
+			}
 		};
 
 
