@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.f.SemanticPage test page</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f">
+	</script>
+
+	<style>html, body, .container {height: 100%}</style>
+
+	<script id="view1" type="sapui5/xmlview">
+		<core:View
+			id="view1"
+			height="100%"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:f="sap.f"
+			controllerName="my.own.controller">
+
+			<f:SemanticPage id="mySemanticPage" headerPinnable="false">
+				<f:titleHeading>
+					<Title text="My Title" />
+				</f:titleHeading>
+
+				<f:headerContent>
+					<FlexBox
+						alignItems="Start"
+						justifyContent="SpaceBetween">
+						<items>
+							<Panel backgroundDesign="Transparent">
+								<content>
+									<ObjectAttribute title="Functional Area" text="Development"/>
+									<ObjectAttribute title="Cost Center" text="PI DFA GD Programs and Product"/>
+									<ObjectAttribute title="Email" text="email@address.com"/>
+								</content>
+							</Panel>
+							<ObjectStatus text="In Stock" state="Error" />
+						</items>
+						</FlexBox>
+				</f:headerContent>
+
+				<f:content>
+					<VBox fitContainer="true">
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+						<MessageStrip text="I am in SemanticPage content"/>
+					</VBox>
+				</f:content>
+
+				<f:footerContent>
+					<Button text="Footer btn" />
+					<Button text="Footer btn" />
+					<Button text="Footer btn" />
+					<Button text="Footer btn" />
+				</f:footerContent>
+			</f:SemanticPage>
+		</core:View>
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<script>
+		sap.ui.xmlview({viewContent: jQuery('#view1').html()}).placeAt("content");
+	</script>
+<div class="container" id="content"></div>
+</body>
+</html>

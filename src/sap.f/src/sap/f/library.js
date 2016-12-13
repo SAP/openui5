@@ -34,9 +34,32 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
-			"sap.f.FlexibleColumnLayout"
+			"sap.f.FlexibleColumnLayout",
+			"sap.f.semantic.SemanticPage"
 		],
-		elements: []
+		elements: [
+			"sap.f.semantic.AddAction",
+			"sap.f.semantic.CloseAction",
+			"sap.f.semantic.CopyAction",
+			"sap.f.semantic.DeleteAction",
+			"sap.f.semantic.DiscussInJamAction",
+			"sap.f.semantic.ExitFullScreenAction",
+			"sap.f.semantic.FavoriteAction",
+			"sap.f.semantic.FlagAction",
+			"sap.f.semantic.FooterMainAction",
+			"sap.f.semantic.FullScreenAction",
+			"sap.f.semantic.MessagesIndicator",
+			"sap.f.semantic.NegativeAction",
+			"sap.f.semantic.PositiveAction",
+			"sap.f.semantic.PrintAction",
+			"sap.f.semantic.SemanticButton",
+			"sap.f.semantic.SemanticControl",
+			"sap.f.semantic.SemanticToggleButton",
+			"sap.f.semantic.SendEmailAction",
+			"sap.f.semantic.SendMessageAction",
+			"sap.f.semantic.ShareInJamAction",
+			"sap.f.semantic.TitleMainAction"
+		]
 	});
 
 	/**

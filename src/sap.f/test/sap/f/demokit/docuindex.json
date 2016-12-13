@@ -53,6 +53,16 @@
         "id": "sap.f.sample.Avatar",
         "name": "Avatar",
         "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
+      },
+      {
+        "id": "sap.f.sample.SemanticPageFreeStyle",
+        "name": "SemanticPage Freestyle Sample",
+        "description": "SemanticPage 2.0 Freestyle Sample."
+      },
+      {
+        "id": "sap.f.sample.SemanticPage",
+        "name": "SemanticPage 2.0 WorkList Floorplan",
+        "description": "SemanticPage 2.0 WorkList Floorplan sample."
       }
     ]
   }
