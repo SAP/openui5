@@ -16,7 +16,9 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.FlexBox</code> control builds the container for a flexible box layout.
+	 * The <code>sap.m.FlexBox</code> control builds the container for a flexible box layout.<br>
+	 * <br>
+	 * <b>Note:</b> Be sure to check the <code>renderType</code> setting to avoid issues due to browser inconsistencies.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -65,7 +67,9 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			fitContainer : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul)
+			 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul).<br>
+			 * <br>
+			 * We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
 			 */
 			renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : sap.m.FlexRendertype.Div},
 
@@ -329,17 +333,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @protected
 	 */
 	FlexBox.prototype.getAccessibilityInfo = function() {
-		var aContent = this.getItems();
-		var aChildren = [];
-		for (var i = 0; i < aContent.length; i++) {
-			if (aContent[i].getAccessibilityInfo) {
-				var oInfo = aContent[i].getAccessibilityInfo();
-				if (oInfo) {
-					aChildren.push(oInfo);
-				}
-			}
-		}
-		return {children: aChildren};
+		return {children: this.getItems()};
 	};
 
 	return FlexBox;

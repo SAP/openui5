@@ -109,6 +109,15 @@
 						new sap.m.Button("myButton3",{text:"Destroy",press:function(oEvent) {
 							oSimpleForm1.destroy();
 						}}),
+						new sap.m.ToggleButton("myButton4",{text:"Label colons",press:function(oEvent) {
+							var bPressed = oEvent.getParameter("pressed");
+							var oForm = sap.ui.getCore().byId("SF1");
+							if (bPressed) {
+								oForm.addStyleClass("sapUiFormLblColon");
+							} else {
+								oForm.removeStyleClass("sapUiFormLblColon");
+							}
+						}}),
 						new sap.m.Label({text:"BackgroundDesign"}),
 						new sap.m.SegmentedButton("BackCol", {
 							width: "100%",

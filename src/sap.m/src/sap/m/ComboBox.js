@@ -1061,6 +1061,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			sKey = vItem ? vItem.getKey() : "";
 			this.setProperty("selectedKey", sKey, true);
 			this._handleAriaActiveDescendant(vItem);
+			this.toggleStyleClass(this.getRenderer().CSS_CLASS_COMBOBOX + "SelectionActive", !!sKey);
 		};
 
 		/**
@@ -1099,6 +1100,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// sets the value if it has not changed
 				if (this._sValue === this.getValue()) {
 					this.setValue(vItem.getText());
+					this._sValue = this.getValue();
 				}
 			}
 		};

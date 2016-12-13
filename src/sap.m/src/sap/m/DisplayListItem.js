@@ -49,6 +49,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 	}});
 
+	DisplayListItem.prototype.getContentAnnouncement = function() {
+		return this.getLabel() + " " + this.getValue();
+	};
+
 	return DisplayListItem;
 
 }, /* bExport= */ true);

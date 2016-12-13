@@ -1,6 +1,8 @@
-/* ============================================= */
-/* CSS for control sap.m/HeaderContainer.control */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/HeaderContainer  */
+/* BlueCrystal theme                      */
+/* ====================================== */
+
 .sapMHdrCntrBtn > .sapMBtnInner {
 	border: none;
 }
@@ -9,15 +11,6 @@
 	background-color: transparent;
 }
 
-.sapMHdrCntrBGSolid {
-	background-color: @sapUiGroupContentBackground;
-}
-
 .sapMHdrCntrBGTranslucent {
-	background-color: fade(@sapUiGroupContentBackground, 60%);
-}
-
-html.sap-desktop .sapMHrdrCntrInner:focus {
-	outline: none;
-	border: 1px dotted @sapUiContentFocusColor;
+	background-color: fade(@sapUiObjectHeaderBackground, 60);
 }

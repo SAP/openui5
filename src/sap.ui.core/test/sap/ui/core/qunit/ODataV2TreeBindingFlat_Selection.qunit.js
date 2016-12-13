@@ -185,3 +185,194 @@ asyncTest("Select All", function() {
 		oBinding.getContexts(0, 10);
 	});
 });
+
+/*
+	Select all: Read only
+*/
+asyncTest("getSelectedNodesCount with recursive collapse - read only", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 626, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
+asyncTest("getSelectedNodesCount without recursive collapse - read only", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oBinding.setCollapseRecursive(false);
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 626, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
+asyncTest("getSelectedNodesCount with paging - read only", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 626, "Correct selected nodes count after selectAll call");
+			equal(oBinding.getLength(), 626, "Correct binding length");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(128, 64);
+	});
+});
+
+/*
+	Select all: Write
+*/
+asyncTest("getSelectedNodesCount with recursive collapse - write", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+			oBinding.removeContext(oBinding.getContextByIndex(2)); // force write-mode
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 625, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 619, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
+asyncTest("getSelectedNodesCount without recursive collapse - write", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+			oBinding.removeContext(oBinding.getContextByIndex(2)); // force write-mode
+
+			oBinding.setCollapseRecursive(false);
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+
+			oBinding.collapse(1);
+			equal(oBinding.getSelectedNodesCount(), 620, "Correct selected nodes count after collapse of first first-level node");
+
+			oBinding.expand(1);
+			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after expanding of first first-level node again");
+			equal(oBinding.getLength(), 625, "Correct binding length");
+
+			oBinding.removeSelectionInterval(1, 1);
+			equal(oBinding.getSelectedNodesCount(), 624, "Correct selected nodes count after explicitly deselecting node under a selectAllMode parent");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
+	});
+});
+
+asyncTest("getSelectedNodesCount with paging - write", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+			oBinding.removeContext(oBinding.getContextByIndex(130)); // force write-mode
+
+			oBinding.selectAll();
+			equal(oBinding.getSelectedNodesCount(), 625, "Correct selected nodes count after selectAll call");
+			equal(oBinding.getLength(), 625, "Correct binding length");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(128, 64);
+	});
+});

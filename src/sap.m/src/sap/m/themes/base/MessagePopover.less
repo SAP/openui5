@@ -1,3 +1,8 @@
+/* ===================================== */
+/* CSS for control sap.m/MessagePopover  */
+/* Base theme                            */
+/* ===================================== */
+
 .sapMMsgPopover {
 	.sapMSegBBtnMixed {
 		padding-left: 0;
@@ -22,6 +27,7 @@
 
 	.sapMMsgPopoverDescriptionText {
 		padding-bottom: 1rem;
+		font-size: @sapMFontMediumSize;
 	}
 
 	.sapMMsgPopoverDescriptionLink {
@@ -34,6 +40,7 @@
 
 	.sapMMsgPopoverTitleText {
 		vertical-align: middle;
+		font-size: @sapMFontHeader5Size;
 	}
 
 	.sapMSLIDescription {
@@ -52,7 +59,7 @@
 
 	.sapMLIB.sapMLIBActive {
 		.sapMSLIImgIcon {
-			color: @sapUiInvertedElement;
+			color: @sapUiListActiveTextColor;
 		}
 	}
 
@@ -62,7 +69,7 @@
 
 	.sapMSLIInfo {
 		margin: 0;
-	}
+	}	
 }
 
 .sapMMsgPopover.sapMMsgPopover-init {
@@ -152,4 +159,42 @@
 		margin-top: 0.125rem;
 		margin-bottom: 0.125rem;
 	}
+}
+
+.sapMMsgPopoverItemSuccess .sapMSLIImgIcon,
+.sapMMsgPopoverBtnSuccess.sapMSegBBtn .sapUiIcon,
+.sapMMsgPopoverDescIconSuccess {
+	color: @sapUiPositiveElement;
+}
+
+.sapMMsgPopoverItemWarning .sapMSLIImgIcon,
+.sapMMsgPopoverBtnWarning.sapMSegBBtn .sapUiIcon,
+.sapMMsgPopoverDescIconWarning {
+	color: @sapUiCriticalElement;
+}
+
+.sapMMsgPopoverItemError .sapMSLIImgIcon,
+.sapMMsgPopoverBtnError.sapMSegBBtn .sapUiIcon,
+.sapMMsgPopoverDescIconError {
+	color: @sapUiNegativeElement;
+}
+
+.sapMMsgPopoverItemInformation .sapMSLIImgIcon,
+.sapMMsgPopoverBtnInformation.sapMSegBBtn .sapUiIcon,
+.sapMMsgPopoverDescIconInformation {
+	color: @sapUiNeutralElement;
+}
+
+.sapMMsgPopoverItem .sapMSLIIconActive {
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMPopover.sapMMsgPopover.sapMMsgPopover-init {
+	.sapMPopoverArr:after {
+		border-top-color: @sapUiPageHeaderBackground;
+	}
+}
+
+.sapMMsgPopoverCloseBtn .sapMBtnIcon {
+	color: @sapUiButtonIconColor;
 }

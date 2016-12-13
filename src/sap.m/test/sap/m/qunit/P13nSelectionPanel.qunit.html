@@ -4,8 +4,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <title>Test Page for sap.m.P13nSelectionPanel</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 	
 </script>
@@ -26,14 +26,8 @@
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
-	sinon.config.useFakeTimers = true;
-</script>
-
 <script>
-	QUnit.config.autostart = false;
-	sap.ui.test.qunit.delayTestStart();
+	jQuery.sap.require("sap.m.P13nSelectionPanel");
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -60,7 +54,7 @@
 		strictEqual(oSelectionPanel.getTitleLarge(), "");
 		strictEqual(oSelectionPanel.getType(), sap.m.P13nPanelType.selection);
 		deepEqual(oSelectionPanel.getItems(), []);
-		deepEqual(oSelectionPanel.getColumnsItems(), []);
+		deepEqual(oSelectionPanel.getSelectionItems(), []);
 		deepEqual(oSelectionPanel._getInternalModel().getData().items, []);
 
 		// cleanup
@@ -75,16 +69,13 @@
 			items: [
 				oItemC = new sap.m.P13nItem({
 					columnKey: "keyC",
-					text: "C",
-					visible: true
+					text: "C"
 				}), oItemB = new sap.m.P13nItem({
 					columnKey: "keyB",
-					text: "B",
-					visible: false
+					text: "B"
 				}), oItemA = new sap.m.P13nItem({
 					columnKey: "keyA",
-					text: "A",
-					visible: true
+					text: "A"
 				})
 			]
 		});
@@ -120,8 +111,7 @@
 			text: "A"
 		}), oItemB = new sap.m.P13nItem({
 			columnKey: "keyB",
-			text: "B",
-			visible: false
+			text: "B"
 		}), oItemC = new sap.m.P13nItem({
 			columnKey: "keyC",
 			text: "C"
@@ -357,11 +347,11 @@
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+	test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oSelectionItemC;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
 			items: [
 				oItemC = new sap.m.P13nItem({
@@ -375,11 +365,11 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
 					columnKey: "keyC",
 					index: 1,
-					visible: true
+					selected: true
 				})
 			]
 		});
@@ -397,24 +387,24 @@
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+		// Index of SelectionItem has not been changed
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - columnsItems: [aColumnsItems], items: [aItems]", function() {
+	test("constructor - selectionItems: [aSelectionItems], items: [aItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oSelectionItemC;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
 					columnKey: "keyC",
-					visible: true,
+					selected: true,
 					index: 1
 				})
 			],
@@ -445,19 +435,19 @@
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, true);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+		// Index of SelectionItem has not been changed
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oSelectionPanel.destroy();
 	});
 
-	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+	test("constructor - items: [aItems], selectionItems: [aSelectionItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oSelectionItemC;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
 			items: [
 				oItemC = new sap.m.P13nItem({
@@ -471,11 +461,11 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemC = new sap.m.P13nSelectionItem({
 					columnKey: "keyC",
 					index: 1,
-					visible: true
+					selected: true
 				})
 			]
 		});
@@ -485,7 +475,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oSelectionPanel.removeColumnsItem(oColumnsItemC);
+		oSelectionPanel.removeSelectionItem(oSelectionItemC);
 
 		// assertions
 		// The table items order has been changed to: A, B, C
@@ -496,8 +486,8 @@
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[0].persistentSelected, undefined);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[1].persistentSelected, undefined);
 		strictEqual(oSelectionPanel._getInternalModel().getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oSelectionPanel.getColumnsItems().length, 0);
+		// Index of SelectionItem has not been changed
+		strictEqual(oSelectionPanel.getSelectionItems().length, 0);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -506,7 +496,7 @@
 	test("getOkPayload: â0 -> a0", function() {
 
 		// system under test
-		var oColumnsItemA;
+		var oSelectionItemA;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
 			items: [
 				new sap.m.P13nItem({
@@ -514,11 +504,11 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemA = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
 					columnKey: "keyA",
 					index: 0,
-					visible: true
+					selected: true
 				})
 			]
 		});
@@ -534,10 +524,10 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), false);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), -1);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), -1);
 		// cleanup
 		oSelectionPanel.destroy();
 	});
@@ -552,7 +542,7 @@
 					text: "A"
 				})
 			],
-			columnsItems: []
+			selectionItems: []
 		});
 
 		// arrange
@@ -566,9 +556,9 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 0);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 0);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -584,7 +574,7 @@
 					text: "A"
 				})
 			],
-			columnsItems: []
+			selectionItems: []
 		});
 
 		// arrange
@@ -598,7 +588,7 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 0);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 0);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -614,7 +604,7 @@
 					text: "A"
 				})
 			],
-			columnsItems: []
+			selectionItems: []
 		});
 
 		// arrange
@@ -628,9 +618,9 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -639,7 +629,7 @@
 	test("getOkPayload: â0 -> â1", function() {
 
 		// system under test
-		var oColumnsItemsA;
+		var oSelectionItemsA;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
 			items: [
 				new sap.m.P13nItem({
@@ -647,11 +637,11 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemA = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
 					columnKey: "keyA",
 					index: 0,
-					visible: true
+					selected: true
 				})
 			]
 		});
@@ -667,10 +657,10 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), true);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), 1);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), true);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), 1);
 
 		// cleanup
 		oSelectionPanel.destroy();
@@ -679,7 +669,7 @@
 	test("getOkPayload: â0 -> a1", function() {
 
 		// system under test
-		var oColumnsItemsA;
+		var oSelectionItemsA;
 		var oSelectionPanel = new sap.m.P13nSelectionPanel({
 			items: [
 				new sap.m.P13nItem({
@@ -687,11 +677,11 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemA = new sap.m.P13nColumnsItem({
+			selectionItems: [
+				oSelectionItemA = new sap.m.P13nSelectionItem({
 					columnKey: "keyA",
 					index: 0,
-					visible: true
+					selected: true
 				})
 			]
 		});
@@ -707,10 +697,10 @@
 		var oPayload = oSelectionPanel.getOkPayload();
 
 		// assertions
-		strictEqual(oSelectionPanel.getColumnsItems().length, 1);
-		strictEqual(oSelectionPanel.getColumnsItems()[0], oColumnsItemA);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getVisible(), false);
-		strictEqual(oSelectionPanel.getColumnsItems()[0].getIndex(), -1);
+		strictEqual(oSelectionPanel.getSelectionItems().length, 1);
+		strictEqual(oSelectionPanel.getSelectionItems()[0], oSelectionItemA);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getSelected(), false);
+		strictEqual(oSelectionPanel.getSelectionItems()[0].getIndex(), -1);
 
 		// cleanup
 		oSelectionPanel.destroy();

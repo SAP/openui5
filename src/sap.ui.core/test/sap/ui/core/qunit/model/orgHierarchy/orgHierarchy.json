@@ -12555,7 +12555,7 @@
 	"MAGNITUDE": "null",
 	"SERVER_INDEX": "null",
 	"PARENT_NODE": "1630",
-	"DRILLDOWN_STATE": "expanded",
+	"DRILLDOWN_STATE": "leaf",
 	"toChildren": {
 		"__deferred": {
 			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1638')/toChildren"
@@ -12573,7 +12573,7 @@
 	"MAGNITUDE": "null",
 	"SERVER_INDEX": "null",
 	"PARENT_NODE": "1630",
-	"DRILLDOWN_STATE": "expanded",
+	"DRILLDOWN_STATE": "leaf",
 	"toChildren": {
 		"__deferred": {
 			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1639')/toChildren"
@@ -12591,10 +12591,82 @@
 	"MAGNITUDE": "null",
 	"SERVER_INDEX": "null",
 	"PARENT_NODE": "1630",
-	"DRILLDOWN_STATE": "expanded",
+	"DRILLDOWN_STATE": "leaf",
 	"toChildren": {
 		"__deferred": {
 			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1640')/toChildren"
+		}
+	}
+},
+{
+	"__metadata": {
+		"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1641')",
+		"type": "HierarchyTestservice.odata.tree.orgHierarchyType"
+	},
+	"HIERARCHY_NODE": "1641",
+	"DESCRIPTION": "p28oK4n1I9J33s6sgs4q",
+	"LEVEL": 4,
+	"MAGNITUDE": "null",
+	"SERVER_INDEX": "null",
+	"PARENT_NODE": "1632",
+	"DRILLDOWN_STATE": "leaf",
+	"toChildren": {
+		"__deferred": {
+			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1641')/toChildren"
+		}
+	}
+},
+{
+	"__metadata": {
+		"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1642')",
+		"type": "HierarchyTestservice.odata.tree.orgHierarchyType"
+	},
+	"HIERARCHY_NODE": "1642",
+	"DESCRIPTION": "JHzwzo6GKKrvMttzui4e",
+	"LEVEL": 4,
+	"MAGNITUDE": "null",
+	"SERVER_INDEX": "null",
+	"PARENT_NODE": "1632",
+	"DRILLDOWN_STATE": "leaf",
+	"toChildren": {
+		"__deferred": {
+			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1642')/toChildren"
+		}
+	}
+},
+{
+	"__metadata": {
+		"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1643')",
+		"type": "HierarchyTestservice.odata.tree.orgHierarchyType"
+	},
+	"HIERARCHY_NODE": "1643",
+	"DESCRIPTION": "EHxx12sy8LzJHzsxDwFo",
+	"LEVEL": 4,
+	"MAGNITUDE": "null",
+	"SERVER_INDEX": "null",
+	"PARENT_NODE": "1632",
+	"DRILLDOWN_STATE": "leaf",
+	"toChildren": {
+		"__deferred": {
+			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1643')/toChildren"
+		}
+	}
+},
+{
+	"__metadata": {
+		"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1644')",
+		"type": "HierarchyTestservice.odata.tree.orgHierarchyType"
+	},
+	"HIERARCHY_NODE": "1644",
+	"DESCRIPTION": "lpliywrz2gjhwef838h1",
+	"LEVEL": 4,
+	"MAGNITUDE": "null",
+	"SERVER_INDEX": "null",
+	"PARENT_NODE": "1632",
+	"DRILLDOWN_STATE": "leaf",
+	"toChildren": {
+		"__deferred": {
+			"uri": "http://HierarchyTestservice/odata/tree.xsodata/orgHierarchy('1644')/toChildren"
 		}
 	}
 }]

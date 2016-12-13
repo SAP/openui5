@@ -7,16 +7,23 @@ sap.ui.define([
 	return Controller.extend("flexiblecolumnlayout.DetailDetail", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
+			this.oModel = this.getOwnerComponent().getModel();
 		},
 		handleDetailDetailPress: function () {
-			this.oRouter.navTo("page2");
+			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(3);
+			this.oRouter.navTo("page2", {layout: oNextUIState.layout});
 		},
 		handleFullScreen: function () {
-			var sFullScreen = this.getOwnerComponent().isFullScreen() ? "" : "fs";
-			this.oRouter.navTo("detailDetail", {fs: sFullScreen});
+			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/fullScreen");
+			this.oRouter.navTo("detailDetail", {layout: sNextLayout});
+		},
+		handleExitFullScreen: function () {
+			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/exitFullScreen");
+			this.oRouter.navTo("detailDetail", {layout: sNextLayout});
 		},
 		handleClose: function () {
-			this.oRouter.navTo("detail");
+			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
+			this.oRouter.navTo("detail", {layout: sNextLayout});
 		}
 	});
 }, true);

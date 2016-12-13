@@ -14,8 +14,12 @@
 			<ObjectHeader
 					id="objectHeader"
 					title="{Title}"
-					number="{Price}"
-					numberUnit="{Currency}">
+					number="{
+						path: 'Price',
+						formatter: '.formatter.numberUnit'
+					}"
+					numberUnit="{Currency}"
+					backgroundDesign="Translucent">
 			</ObjectHeader>
 		</semantic:content>
 	</semantic:FullscreenPage>

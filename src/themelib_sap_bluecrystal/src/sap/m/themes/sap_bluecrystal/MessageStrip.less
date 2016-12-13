@@ -1,51 +1,16 @@
-.sapMMsgStripInformation {
-	background-color: @sapUiNeutralBG;
-	border-color: @sapUiNeutralBorder;
-	color: @sapUiStandardText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiNeutralElement;
-	}
-}
-
-.sapMMsgStripSuccess {
-	background-color: @sapUiSuccessBG;
-	border-color: @sapUiSuccessBorder;
-	color: @sapUiStandardText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiPositiveElement;
-	}
-}
-
-.sapMMsgStripWarning {
-	background-color: @sapUiWarningBG;
-	border-color: @sapUiWarningBorder;
-	color: @sapUiStandardText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiCriticalElement;
-	}
-}
-
-.sapMMsgStripError {
-	background-color: @sapUiErrorBG;
-	border-color: @sapUiErrorBorder;
-	color: @sapUiStandardText;
-
-	& .sapMMsgStripIcon {
-		color: @sapUiNegativeElement;
-	}
-}
+/* =================================== */
+/* CSS for control sap.m/MessageStrip  */
+/* BlueCrystal theme                   */
+/* =================================== */
 
 .sapMMsgStripCloseButton {
 	// centering the content of the ::after element
 	// does not work in IE if directly set on ::after
 	// 1.5rem - 4px (1px border and 1px offset per side)
 	line-height: 1.5rem;
-	color: fade(@sapUiStandardText, 60%);
+	color: fade(@sapUiBaseText, 60);
 	&:focus::after {
-		border-color: @sapUiFocus;
+		border-color: @sapUiContentFocusColor;
 	}
 
 	&::after {
@@ -57,6 +22,6 @@
 	}
 
 	&:hover {
-		color: @sapUiStandardText;
+		color: @sapUiBaseText;
 	}
 }

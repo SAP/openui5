@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			var iSelectableRowCount = oTable._getSelectableRowCount();
-			return iSelectableRowCount > 0 && iSelectableRowCount === oTable.getSelectedIndices().length;
+			return iSelectableRowCount > 0 && iSelectableRowCount === oTable._getSelectedIndicesCount();
 		},
 
 		/**
@@ -180,10 +180,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {jQuery|HTMLElement|int} oRowIndicator The data cell in the row, or the data row index of the row,
 		 * 												 where the selection state should be toggled.
 		 * @param {boolean} [bSelect] If defined, then instead of toggling the desired state is set.
+		 * @param {function} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
 		 * @returns {boolean} Returns <code>true</code> if the selection state of the row has been changed.
 		 * @private
 		 */
-		toggleRowSelection: function(oTable, oRowIndicator, bSelect) {
+		toggleRowSelection: function(oTable, oRowIndicator, bSelect, fnDoSelect) {
 			if (oTable == null ||
 				oTable.getBinding("rows") == null ||
 				oTable.getSelectionMode() === SelectionMode.None ||
@@ -193,22 +194,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			function setSelectionState(iAbsoluteRowIndex) {
+				if (!oTable._isRowSelectable(iAbsoluteRowIndex)) {
+					return false;
+				}
+
 				oTable._iSourceRowIndex = iAbsoluteRowIndex; // To indicate that the selection was changed by user interaction.
 
-				if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
-					if (bSelect != null && bSelect) {
-						return false;
-					}
-					oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+				var bSelectionChanged = true;
+
+				if (fnDoSelect) {
+					bSelectionChanged = fnDoSelect(iAbsoluteRowIndex, bSelect);
 				} else {
-					if (bSelect != null && !bSelect) {
-						return false;
+
+					if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
+						if (bSelect != null && bSelect) {
+							return false;
+						}
+						oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+					} else {
+						if (bSelect != null && !bSelect) {
+							return false;
+						}
+						oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 					}
-					oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 				}
 
 				delete oTable._iSourceRowIndex;
-				return true;
+				return bSelectionChanged;
 			}
 
 			// Variable oRowIndicator is a row index value.
@@ -222,16 +234,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			} else {
 				var $Cell = jQuery(oRowIndicator);
 				var oCellInfo = this.getCellInfo($Cell[0]);
+				var bIsRowSelectionAllowed = this.isRowSelectionAllowed(oTable);
 
 				if (oCellInfo !== null
 					&& !TableUtils.Grouping.isInGroupingRow($Cell[0])
-					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && this.isRowSelectionAllowed(oTable))
+					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && bIsRowSelectionAllowed)
+					|| (oCellInfo.type === this.CELLTYPES.ROWACTION && bIsRowSelectionAllowed)
 					|| (oCellInfo.type === this.CELLTYPES.ROWHEADER && this.isRowSelectorSelectionAllowed(oTable)))) {
 
 					var iAbsoluteRowIndex;
 					if (oCellInfo.type === this.CELLTYPES.DATACELL) {
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"), 10)].getIndex();
-					} else { // CELLTYPES.ROWHEADER
+					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"), 10)].getIndex();
 					}
 
@@ -495,12 +509,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		/**
 		 * Returns the row index and column index of a data cell.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {jQuery|HtmlElement} oCell The data cell.
 		 * @returns {{rowIndex: int, columnIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table data cell.
 		 */
 		getDataCellInfo: function(oTable, oCell) {
-			if (oCell == null) {
+			if (oTable == null || oCell == null) {
 				return null;
 			}
 
@@ -508,24 +522,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oCellInfo = this.getCellInfo($Cell);
 
 			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-				var iRowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
-				var sColId = $Cell.data("sap-ui-colid");
+				var sColumnId = $Cell.data("sap-ui-colid");
+				var oColumn = sap.ui.getCore().byId(sColumnId);
 
-				if (iRowIndex >= 0 && sColId) {
-					var oColumn = sap.ui.getCore().byId(sColId);
-					if (oColumn) {
-						var iColIndex = oTable.indexOfColumn(oColumn);
-						if (iColIndex >= 0) {
-							return {
-								rowIndex: iRowIndex,
-								columnIndex: iColIndex
-							};
-						}
-					}
+				if (oColumn != null) {
+					var iColumnIndex = oColumn.getIndex();
+					var iRowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
+
+					return {
+						rowIndex: iRowIndex,
+						columnIndex: iColumnIndex
+					};
 				}
 			}
 
 			return null;
+		},
+
+		/**
+		 * Returns the row index of a row action cell.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery|HtmlElement} oCell The row action cell.
+		 * @returns {{rowIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table row action cell.
+		 */
+		getRowActionCellInfo: function(oTable, oCell) {
+			if (oTable == null || oCell == null) {
+				return null;
+			}
+
+			var $Cell = jQuery(oCell);
+			var oCellInfo = this.getCellInfo($Cell);
+
+			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.ROWACTION) {
+				return {
+					rowIndex: parseInt($Cell.data("sap-ui-rowindex"), 10)
+				};
+			} else {
+				return null;
+			}
 		},
 
 		/**

@@ -248,21 +248,6 @@ function(jQuery) {
 
 		DOMUtil._copyStylesTo(mStyles, oDest);
 
-
-		mStyles = window.getComputedStyle(oSrc, ":after");
-		var sContent = mStyles.getPropertyValue("content");
-		if (sContent && sContent !== "none") {
-			if (sContent.indexOf("attr(") === 0) {
-				sContent = sContent.replace("attr(", "");
-				sContent = sContent.replace(")", "");
-				sContent = oSrc.getAttribute(sContent);
-			}
-			var oAfterElement = jQuery("<span></span>").appendTo(oDest);
-			oAfterElement.text(sContent.replace(/\"/g, ""));
-			DOMUtil._copyStylesTo(mStyles, oAfterElement.get(0));
-			oAfterElement.css("display", "inline");
-		}
-
 		this._copyPseudoElement(":after", oSrc, oDest);
 		this._copyPseudoElement(":before", oSrc, oDest);
 	};

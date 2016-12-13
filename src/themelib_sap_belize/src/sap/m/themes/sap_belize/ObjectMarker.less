@@ -1,14 +1,10 @@
-/* ============================================= */
-/* CSS for control sap.m/ObjectMarker.control    */
-/* ============================================= */
-.sapMObjectMarker {
-	.sapUiIcon {
-		color: @sapUiContentMarkerIconColor;
-	}
-	.sapMText {
-		color: @sapUiContentLabelColor;
-	}
-}
-.sapMListTbl .sapMObjectMarker .sapMText {
-	color: @sapUiContentLabelColor;
+/* =================================== */
+/* CSS for control sap.m/ObjectMarker  */
+/* Belize theme                        */
+/* =================================== */
+
+@_sap_m_ObjectMarker_LinkShadowColor: none;
+
+.sapMObjectMarker .sapMLnk {
+	text-shadow: @_sap_m_ObjectMarker_LinkShadowColor;
 }

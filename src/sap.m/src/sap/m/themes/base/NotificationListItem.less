@@ -1,3 +1,8 @@
+/* =========================================== */
+/* CSS for control sap.m/NotificationListItem  */
+/* Base theme                                  */
+/* =========================================== */
+
 @containerPadding: 1rem;
 
 /* ==========================================================================
@@ -8,7 +13,14 @@
   padding: @containerPadding;
   position: relative;
   cursor: pointer;
+  background-color: @sapUiListBackground;
+  box-shadow: @sapUiShadowLevel0;
+  border-bottom: 0;
+  &:hover {
+    background-color: @sapUiListHoverBackground;
+  }
 }
+
 
 .sapMNLI:first-of-type {
   margin-top: 0.125rem;
@@ -17,10 +29,6 @@
 /* ==========================================================================
    Priority styles
   ========================================================================== */
-
-.sapMNLI .sapMNLB-Priority {
-  border-radius: 0.25rem 0 0 0.25rem;
-}
 
 /* ==========================================================================
    Message Strip styles
@@ -49,6 +57,7 @@
   margin-right: 2rem;
   white-space: normal;
   overflow: auto;
+  color: @sapUiListTextColor;
 }
 
 .sapMNLI-Header > .sapMText.sapMNLI-Unread {
@@ -76,7 +85,7 @@
   padding-top: 0.375rem;
   font-family: @sapUiFontFamily;
   font-weight: normal;
-  color: @sapUiLightText;
+  color: @sapUiContentLabelColor;
 }
 
 .sapMNLI-Details .sapMText.sapMNLI-Text {
@@ -212,4 +221,21 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
   bottom: 0;
   right: 0;
   margin-bottom: 0;
+}
+
+.sapMNLI-Header > .sapMTitle {
+  font-size: @sapMFontLargeSize;
+}
+
+.sapMNLI-Body .sapMNLI-Details,
+.sapMNLI-Description .sapMNLI-Text,
+.sapMNLI-Details .sapMNLI-Datetime {
+  font-size: @sapMFontMediumSize;
+  color: @sapUiContentLabelColor;
+}
+
+// Focus Styles ========================================================================================================
+
+html.sap-desktop .sapMLIB.sapMNLI:focus {
+  outline: none;
 }

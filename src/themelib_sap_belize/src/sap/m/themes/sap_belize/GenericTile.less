@@ -3,6 +3,22 @@
 /* Belize theme                       */
 /* ================================== */
 
+.sapMGT.sapMGTScopeActions {
+	.sapMGTRemoveButton {
+		border: 1px solid @sapUiButtonBorderColor;
+		background-color: @sapUiButtonBackground;
+		color: @sapUiButtonTextColor;
+
+		&:before {
+			color: @sapUiButtonIconColor;
+		}
+	}
+
+	.sapMGTMoreIcon {
+		color: @sapUiButtonIconColor;
+	}
+}
+
 /************************ LINE MODE COZY ********************/
 
 .sapMGT.sapMGTLineMode {
@@ -38,7 +54,7 @@
 	opacity: 0.5;
 }
 
-.sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveIcon {
+.sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveButton {
 	border: 1px solid @sapUiButtonBorderColor;
 	background-color: @sapUiButtonBackground;
 	color: @sapUiButtonTextColor;
@@ -62,24 +78,26 @@
 
 /************************ LINE MODE COMPACT *****************/
 
-.sap-desktop .sapUiSizeCompact .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
-	&:focus .sapMGTLineStyleHelperInner:before{
-		content: "";
-		position: absolute;
-		top: 1px;
-		left: 1px;
-		bottom: 1px;
-		right: 1px;
-		box-sizing: border-box;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-
-	&:not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
-		background: fade(@sapUiShellHoverBackground, 10);
-	}
-}
-
 .sapUiSizeCompact {
+	.sap-desktop & .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+		&:focus, &.sapMGTLineModePress {
+			.sapMGTLineStyleHelperInner:before {
+				content: "";
+				position: absolute;
+				top: 1px;
+				left: 1px;
+				bottom: 1px;
+				right: 1px;
+				box-sizing: border-box;
+				border: 1px dotted @sapUiContentFocusColor;
+			}
+		}
+
+		&:not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
+			background: fade(@sapUiShellHoverBackground, 10);
+		}
+	}
+
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 
@@ -217,7 +235,9 @@ html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTWithImage
 	background: fade(@sapUiShellHoverBackground, 18);
 }
 
-html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
+html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
+html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
+html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 

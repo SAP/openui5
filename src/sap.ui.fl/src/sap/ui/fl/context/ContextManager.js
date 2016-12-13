@@ -187,6 +187,8 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 			switch (sOperator) {
 				case "EQ":
 					return this._checkEquals(sSelector, oValue, aRuntimeContext);
+				case "NE":
+					return !this._checkEquals(sSelector, oValue, aRuntimeContext);
 				default:
 					jQuery.sap.log.info("A context within a flexibility change with the operator '" + sOperator + "' could not be verified");
 					return false;

@@ -1,6 +1,10 @@
-/* ============================================================ */
-/* CSS for sap.m/HeaderContainer.control for 'sap_belize' theme */
-/* ============================================================ */
+/* ====================================== */
+/* CSS for control sap.m/HeaderContainer  */
+/* Belize theme                           */
+/* ====================================== */
+
+@_sap_m_HeaderContainer_Translucent_Background: fade(@sapUiObjectHeaderBackground, 100);
+
 .sapMHdrCntrBtn > .sapMBtnInner {
 	border: none;
 }
@@ -9,15 +13,6 @@
 	background-color: transparent;
 }
 
-.sapMHdrCntrBGSolid {
-	background-color: @sapUiBaseColor;
-}
-
 .sapMHdrCntrBGTranslucent {
-	background-color: fade(@sapUiBaseColor, 100%);
-}
-
-html.sap-desktop .sapMHrdrCntrInner:focus {
-	outline: none;
-	border: 1px dotted @sapUiContentFocusColor;
+	background-color: @_sap_m_HeaderContainer_Translucent_Background;
 }

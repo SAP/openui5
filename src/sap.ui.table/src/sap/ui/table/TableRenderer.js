@@ -341,10 +341,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.writeAttribute("id", oTable.getId() + "-selall");
 		var oSelMode = oTable.getSelectionMode();
 		var bEnabled = false;
+		var bSelAll = false;
 		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
 			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
 			if (!TableUtils.areAllRowsSelected(oTable)) {
 				rm.addClass("sapUiTableSelAll");
+			} else {
+				bSelAll = true;
 			}
 			rm.addClass("sapUiTableSelAllEnabled");
 			bEnabled = true;
@@ -357,7 +360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNROWHEADER", {enabled: bEnabled});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNROWHEADER", {enabled: bEnabled, checked: bSelAll});
 
 		rm.write(">");
 		if (oTable.getSelectionMode() !== SelectionMode.Single) {
@@ -816,16 +819,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		});
 
 		// collect header spans and find the last visible column header
-		function collectHeaderSpans(oColumn, index) {
-			var headerSpan = oColumn.getHeaderSpan(),
-				colSpan;
-
-			colSpan = jQuery.isArray(headerSpan) ? headerSpan[iRow] : parseInt(headerSpan, 10);
-			if (isNaN(colSpan)) {
-				colSpan = 1;
-			}
+		function collectHeaderSpans(oColumn, index, aCols) {
+			var colSpan = TableUtils.Column.getHeaderSpan(oColumn, iRow),
+				iColIndex;
 
 			if (nSpan < 1) {
+				if (colSpan > 1) {
+					// In case when a user makes some of the underlying columns invisible, adjust colspan
+					iColIndex = oColumn.getIndex();
+					colSpan = aCols.slice(index + 1, index + colSpan).reduce(function(span, column){
+						return column.getIndex() - iColIndex < colSpan ? span + 1 : span;
+					}, 1);
+				}
+
 				oColumn._nSpan = nSpan = colSpan;
 				iLastVisibleCol = index;
 			} else {

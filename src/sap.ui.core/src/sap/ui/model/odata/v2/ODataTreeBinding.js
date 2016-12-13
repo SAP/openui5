@@ -1161,9 +1161,6 @@ sap.ui.define(['jquery.sap.global',
 			this.oRootContext = null;
 			this._bRootMissing = false;
 
-			// TODO: Remove this once the sync refresh after change is done in the model
-			delete this._bSupressRefreshAfterChange;
-
 			// abort running request and clear the map afterwards
 			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
 				if (oRequestHandle) {
@@ -1244,15 +1241,11 @@ sap.ui.define(['jquery.sap.global',
 			}
 		}
 		if (bForceUpdate || bChangeDetected) {
-			// if the refresh is suppressed, the data will not be reset and the following get*Context call will
-			// return the same data as before
-			if (!this._bSupressRefreshAfterChange) {
-				this.resetData();
-				// TODO: Abort pending requests --> like ODataListBinding
-				this.bNeedsUpdate = false;
-				this.bRefresh = true;
-				this._fireRefresh({reason: ChangeReason.Refresh});
-			}
+			this.resetData();
+			// TODO: Abort pending requests --> like ODataListBinding
+			this.bNeedsUpdate = false;
+			this.bRefresh = true;
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 
@@ -2084,24 +2077,59 @@ sap.ui.define(['jquery.sap.global',
 
 	/**
 	 * Adds the given contexts to the tree by adding them to the given parent context as children.
-	 * If the parent is set to "null", the child contexts will be come top-level nodes.
+	 * The contexts will be added before the current first child of the parent context.
 	 *
-	 * @param oParentContext {sap.ui.model.Context} the parent context under which the new contexts will be inserted
-	 * @param vContextHandle {array|object} an array of contexts or a subtree handle, which will be added to the tree.
+	 * Only newly created contexts and contexts previously removed from the binding instance and can be added.
+	 * The binding does not accept contexts from other bindings.
+	 *
+	 * Please see the API documentation for the function createEntry: {@link sap.ui.model.odata.v2.ODataTreeBinding#createEntry createEntry}.
+	 *
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * Please see the Constructor documentation for more details.
+	 *
+	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.addContexts
+	 * @param oParentContext {sap.ui.model.Context} the parent context under which the new contexts will be inserted
+	 * @param vContextHandle {sap.ui.model.Context|sap.ui.model.Context[]} an array of contexts or a single context, which will be added to the tree.
 	 * @private
 	 */
 
 	/**
 	 * Removes the give context from the tree, including all its descendants.
-	 * This basically removes a complete subtree.
-	 * A leaf node is a trivial subtree, yet the return value of this function is still a subtree handle.
-	 * The subtre-handle only exposed one public functin "getContext".
-	 * When calling getContext() on the subtree handle, the parent-node of the removed subtree is returned.
+	 * Calling removeContext for a given context implicitly removes the complete subtree underneath it.
 	 *
-	 * @param {sap.ui.model.Context} the context which should be removed
-	 * @return an handle for the removed subtree.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * Please see the Constructor documentation for more details.
+	 *
+	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.removeContext
+	 * @param {sap.ui.model.Context} the context which should be removed
+	 * @return {sap.ui.model.Context} the removed context
+	 * @private
+	 */
+
+	/**
+	 * Creates a new binding context related to this binding instance.
+	 * The available API is the same as for the v2.ODataModel.
+	 * Please see the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#createEntry createEntry}.
+	 *
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * Please see the Constructor documentation for more details.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.createEntry
+	 * @private
+	 */
+
+	/**
+	 * Submits all queued hierarchy changes for this binding instance.
+	 * This includes property changes, as well as newly created nodes and deleted nodes.
+	 * The available API is the same as for the v2.ODataModel.
+	 * Please see the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#submitChanges submitChanges}.
+	 *
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * Please see the Constructor documentation for more details.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.submitChanges
 	 * @private
 	 */
 

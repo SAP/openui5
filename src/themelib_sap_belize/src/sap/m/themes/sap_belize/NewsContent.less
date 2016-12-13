@@ -2,40 +2,28 @@
 /* CSS for control sap.m/NewsContent  */
 /* Belize theme                       */
 /* ================================== */
-.sapMNwCCTxt .sapMText {
-	font-size: @sapMFontMediumSize;
-	color: @sapUiContentContrastTextColor;
-}
+
+@_sap_m_NewsContent_HeaderTextColor: @sapUiContentContrastTextColor;
+@_sap_m_NewsContent_SubHeaderTextColor: lighten(@sapUiTileTextColor, 45);
 
 .sapMNwC {
 	background-color: fade(@sapUiTileBackground, 60);
 }
 
-.sapMNwCSbh {
-	color: @sapUiContentLabelColor;
-	font-size: @sapMFontMediumSize;
-}
-
 .sapMTileCnt.News {
 	.sapMNwCSbh, .sapMNwC {
-		text-shadow: 0 1px 0 fade(@sapUiContentShadowColor, 50);
-		color: @sapUiContentContrastTextColor;
+		text-shadow: @sapUiShadowText;
+		color: @_sap_m_NewsContent_HeaderTextColor;
 	}
 	.sapMNwCSbh {
-		color: lighten(@sapUiContentLabelColor, 45);
+		color: @_sap_m_NewsContent_SubHeaderTextColor;
 	}
+}
+
+.sapMNwCCTxt .sapMText {
+	color: @_sap_m_NewsContent_HeaderTextColor;
 }
 
 .sapMNwC:focus {
-	outline: 1px dotted @sapUiContentFocusColor; /*Check with Carmen about 3 decimals*/
-}
-
-.sapMNwC:focus:not([tabindex]) {
-	outline: none;
-}
-
-@media screen and (max-width: 374px) {
-	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
-		font-size: @sapMFontSmallSize;
-	}
+	outline: 1px dotted @sapUiContentFocusColor;
 }

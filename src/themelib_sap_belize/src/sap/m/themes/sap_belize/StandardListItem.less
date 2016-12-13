@@ -3,6 +3,8 @@
 /* Belize theme                           */
 /* ====================================== */
 
+@_sap_m_StandardListItem_TextShadowColor: none;
+
 .sapMSLI {
 	height: 3rem;
 }
@@ -75,9 +77,10 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMSLIInfo{
+.sapMSLIInfo {
 	margin: 0 0 0 1rem;
 	font-size: 0.875rem;
+	text-shadow: @_sap_m_StandardListItem_TextShadowColor;
 }
 
 .sapMSLIInfoNone{
@@ -162,11 +165,6 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 	.sapMSLITitleOnly {
 		font-size: @sapMFontMediumSize;
 	}
-}
-
-.sapContrast .sapMSLIInfo,
-.sapContrast.sapMSLIInfo {
-	text-shadow: @sapUiShadowText;
 }
 
 .sapContrast .sapMLIBSelected.sapMLIBHoverable .sapMSLIDescription,

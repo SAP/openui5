@@ -101,7 +101,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
 		if (this._getObjectPageLayout()) {
-			this._getObjectPageLayout()._requestAdjustLayout();
+			this._getObjectPageLayout()._requestAdjustLayout().catch(function () {
+				jQuery.sap.log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
+			});
 			this._getObjectPageLayout()._setSectionsFocusValues();
 		}
 	};

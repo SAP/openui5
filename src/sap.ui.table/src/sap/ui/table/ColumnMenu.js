@@ -301,8 +301,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		var bColumnFreezeEnabled = oTable && oTable.getEnableColumnFreeze();
 
 		if (bColumnFreezeEnabled) {
-			var iColumnIndex = jQuery.inArray(oColumn, oTable.getColumns());
-			var bIsFixedColumn = iColumnIndex + 1 == oTable.getFixedColumnCount();
+			var iColumnIndex = oColumn.getIndex();
+			var bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getFixedColumnCount();
 
 			this.addItem(this._createMenuItem(
 				"freeze",

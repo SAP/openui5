@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
-			this.bPendingRefresh = true;
+			this.bPendingRefresh = false;
 			this.sGroupId = undefined;
 			this.sRefreshGroupId = undefined;
 			this.bLengthRequested = false;
@@ -1247,10 +1247,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		this.bIgnoreSuspend = false;
 		this.bSuspended = false;
 		if (this.bPendingRefresh) {
+			// _refresh detected a change (or was forced) but did
+			//	not refresh due to active suspension
 			this._refresh();
 		} else {
 			this.checkUpdate();
 		}
+	};
+
+	ODataListBinding.prototype.suspend = function() {
+		if (this.bInitial) {
+			this.bPendingRefresh = true;
+		}
+		ListBinding.prototype.suspend.apply(this, arguments);
 	};
 
 	return ODataListBinding;

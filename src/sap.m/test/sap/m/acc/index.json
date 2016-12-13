@@ -108,7 +108,7 @@
 		{
 			"control": "sap.m.FormattedText",
 			"url": "FormattedText.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.GenericTile",
@@ -319,7 +319,7 @@
 		{
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.QuickView",
@@ -369,7 +369,7 @@
 		{
 			"control": "sap.m.Select",
 			"url": "Select.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.SelectDialog",
@@ -379,7 +379,7 @@
 		{
 			"control": "sap.m.SelectList",
 			"url": "../SelectList.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.Shell",
@@ -415,7 +415,7 @@
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
 			"desc" : "Suggestions list of the Search Field",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.Switch",
@@ -486,6 +486,11 @@
 			"control": "sap.m.Toolbar",
 			"url": "../Toolbar.html",
 			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.m.Tree",
+			"url": "../Tree.html",
+			"appComponent": "CA-UI5-TBL"
 		},
 		{
 			"control": "sap.m.UploadCollection",

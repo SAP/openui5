@@ -1,11 +1,15 @@
-/* ========================================= */
-/* CSS for control sap.m/NewsContent.control */
-/* ========================================= */
+/* ================================== */
+/* CSS for control sap.m/NewsContent  */
+/* Base theme                         */
+/* ================================== */
+
 .sapMNwC {
 	display: inline-block;
 	outline: none;
 	width: 20.5rem;
 	height: 3.5625rem;
+	color: @sapUiTileTextColor;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMNwCCTxt {
@@ -36,6 +40,8 @@
 	max-width: 20.5rem;
 	display: inline-block;
 	line-height: 1.1875rem;
+	color: @sapUiTileTextColor;
+	font-size: @sapMFontMediumSize;
 }
 
 /* BREAKPOINT FOR SMALL PHONES */
@@ -56,5 +62,20 @@
 	.sapMNwCSbh {
 		max-width: 17.75rem;
 		line-height: 1.063rem;
+	}
+}
+
+.sapMNwCCTxt .sapMText {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMNwC:focus:not([tabindex]) {
+	outline: none;
+}
+
+@media screen and (max-width: 374px) {
+	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
+		font-size: @sapMFontSmallSize;
 	}
 }

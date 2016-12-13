@@ -197,6 +197,29 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}
 	});
 
+	test("Cloning: Event listeners are called on the correct controller instance", 12, function() {
+		var oTmpl, oClone;
+		oTmpl = fnViewFactory();
+		if (!oTmpl.sViewName) {
+			// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
+			//	We will address this in a separate change, until then we skip testing those cases
+			expect(6);
+			ok(true, "Skipping clone of views created from string of object");
+			return;
+		}
+		oClone = oTmpl.clone();
+
+		oTmpl.fireBeforeRendering();
+		ok(window.onBeforeRenderingCalled === oTmpl.getController(), "Event is called on correct controller instance");
+
+		oClone.fireBeforeRendering();
+		ok(window.onBeforeRenderingCalled === oClone.getController(), "Event is called on correct controller instance");
+
+		// Cleanup
+		oTmpl.destroy();
+		oClone.destroy();
+	});
+
 
 	// asyncTest("Async View Instantiation: loaded() method", function() {
 	// 	// define View and place it onto the page

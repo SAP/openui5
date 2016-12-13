@@ -57,6 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ValueCSSColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
+			"sap.m.LinkConversion",
 			"sap.m.ListGrowingDirection",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListKeyboardMode",
@@ -272,7 +273,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ViewSettingsItem",
 			"sap.m.semantic.SemanticButton",
 			"sap.m.semantic.SemanticSelect"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.m.Bar": {
+					"moveElements": "default"
+				},
+				"sap.m.RadioButton": {
+					"hideControl": "default",
+					"renameRadioButton": "sap/m/changeHandler/RenameRadioButton",
+					"unhideControl": "default"
+				},
+				"sap.m.Toolbar": {
+					"moveElements": "default"
+				}
+			}
+		}
 	});
 
 
@@ -964,6 +980,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Enumeration for possible link-to-anchor conversion strategy.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.LinkConversion = {
+
+		/**
+		 * Default mode (no conversion).
+		 * @public
+		 */
+		None: "None",
+
+		/**
+		 * Valid links with protocols, such as http, https, ftp.
+		 * @public
+		 */
+		ProtocolOnly: "ProtocolOnly",
+
+		/**
+		 * Valid links with protocols, such as http, https, ftp and those starting with the string "www".
+		 * @public
+		 */
+		All: "All"
+	};
+
+	/**
 	 * Defines how the input display text should be formatted.
 	 *
 	 * @enum {string}
@@ -1020,7 +1065,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 */
 		HeaderMode : "HeaderMode",
 		/**
-		 * Line mode (Only header and subtitle are rendered continuously spanning multiple lines).
+		 * Line mode (Implemented for both, cozy and compact densities. Generic Tile is displayed as in-line element, header and subheader are displayed in one line.
+		 * In case the texts need more than one line, the representation depends on the used density.
+		 * <b>Cozy:</b> The text will be truncated and the full text is shown in a tooltip as soon as the tile is hovered (desktop only).
+		 * <b>Compact:</b> Header and subheader are rendered continuously spanning multiple lines, no tooltip is provided).
 		 * @since 1.44.0
 		 * @public
 		 */
@@ -1037,13 +1085,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.GenericTileScope = {
 		/**
-		 * Default scope where no new functionalities are added to the tile.
+		 * Default scope (The default scope of the tile, no action icons are rendered).
 		 * @public
 		 */
 		Display: "Display",
 
 		/**
-		 * Action scope where a "remove" and "more" icon are added to the tile as an overlay.
+		 * Action scope (Possible footer and Error State information is overlaid, "Remove" and "More" icons are added to the tile).
 		 * @public
 		 */
 		Actions: "Actions"

@@ -102,6 +102,89 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
+	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
+		if (!oControl || !oControl.bOutput) {
+			return "";
+		}
+
+		var oAccInfo;
+		if (!oControl.getAccessibilityInfo) {
+			oAccInfo = this.getDefaultAccessibilityInfo(oControl.getDomRef());
+		} else if (oControl.getVisible && oControl.getVisible()) {
+			oAccInfo = oControl.getAccessibilityInfo();
+		}
+
+		oAccInfo = jQuery.extend({
+			type: "",
+			description: "",
+			children: []
+		}, oAccInfo);
+
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sText = oAccInfo.type + " " + oAccInfo.description + " ";
+
+		if (oAccInfo.enabled === false) {
+			sText += oBundle.getText("CONTROL_DISABLED") + " ";
+		}
+		if (oAccInfo.editable === false) {
+			sText += oBundle.getText("CONTROL_READONLY") + " ";
+		}
+
+		oAccInfo.children.forEach(function(oChild) {
+			sText += ListItemBase.getAccessibilityText(oChild) + " ";
+		});
+
+		sText = sText.trim();
+		if (bDetectEmpty && !sText) {
+			sText = oBundle.getText("CONTROL_EMPTY");
+		}
+
+		return sText;
+	};
+
+	ListItemBase.getDefaultAccessibilityInfo = function(oDomRef) {
+		if (!oDomRef) {
+			return null;
+		}
+
+		var Node = window.Node,
+			NodeFilter = window.NodeFilter,
+			oTreeWalker = document.createTreeWalker(oDomRef, NodeFilter.SHOW_TEXT + NodeFilter.SHOW_ELEMENT, function(oNode) {
+				if (oNode.type === Node.ELEMENT_NODE) {
+					if (oNode.classList.contains("sapUiInvisibleText")) {
+						return NodeFilter.FILTER_SKIP;
+					}
+
+					if (oNode.getAttribute("aria-hidden") == "true" ||
+						oNode.style.visibility == "hidden" ||
+						oNode.style.display == "none" ||
+						!oNode.offsetHeight ||
+						!oNode.offsetWidth) {
+						return NodeFilter.FILTER_REJECT;
+					}
+
+					return NodeFilter.FILTER_SKIP;
+				}
+
+				return NodeFilter.FILTER_ACCEPT;
+			}, false);
+
+		var aText = [];
+		while (oTreeWalker.nextNode()) {
+			var oNode = oTreeWalker.currentNode;
+			if (oNode.nodeType === Node.TEXT_NODE) {
+				var sText = (oNode.nodeValue || "").trim();
+				if (sText) {
+					aText.push(sText);
+				}
+			}
+		}
+
+		return {
+			description: aText.join(" ")
+		};
+	};
+
 	// icon URI configuration
 	ListItemBase.prototype.DetailIconURI = IconPool.getIconURI("edit");
 	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI("sys-cancel");
@@ -206,6 +289,69 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.bSelectedDelayed = bSelected;
 		}
 	};
+
+	ListItemBase.prototype.getAccessibilityType = function(oBundle) {
+		return oBundle.getText("ACC_CTR_TYPE_OPTION");
+	};
+
+	ListItemBase.prototype.getAccessibilityDescription = function(oBundle) {
+		var aOutput = [],
+			mType = sap.m.ListType,
+			sType = this.getType(),
+			sHighlight = this.getHighlight();
+
+		if (this.getSelected()) {
+			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
+		}
+
+		if (sHighlight != "None") {
+			aOutput.push(oBundle.getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase()));
+		}
+
+		if (this.getUnread() && this.getListProperty("showUnread")) {
+			aOutput.push(oBundle.getText("LIST_ITEM_UNREAD"));
+		}
+
+		if (this.getContentAnnouncement) {
+			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
+		}
+
+		if (this.getCounter()) {
+			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", this.getCounter()));
+		}
+
+		if (sType == mType.Navigation) {
+			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATION"));
+		} else {
+			if (sType == mType.Detail || sType == mType.DetailAndActive) {
+				aOutput.push(oBundle.getText("LIST_ITEM_DETAIL"));
+			}
+			if (sType == mType.Active || sType == mType.DetailAndActive) {
+				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
+			}
+		}
+
+		return aOutput.join(" ");
+	};
+
+	ListItemBase.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return {
+			type: this.getAccessibilityType(oBundle),
+			description: this.getAccessibilityDescription(oBundle),
+			focusable: true
+		};
+	};
+
+	/**
+	 * Returns the accessibility announcement for the content
+	 * Hook for the subclasses.
+	 *
+	 * @returns {string}
+	 * @protected
+	 * ListItemBase.prototype.getContentAnnouncement = function() {
+	 * };
+	 */
 
 	/*
 	 * Returns the mode of the current item according to list mode
@@ -904,10 +1050,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// handle propagated focus to make the item row focusable
 	ListItemBase.prototype.onfocusin = function(oEvent) {
 		var oList = this.getList();
-		if (!oList ||
-			oEvent.isMarked() ||
-			oList.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ||
-			oEvent.srcControl === this ||
+		if (!oList || oEvent.isMarked()) {
+			return;
+		}
+
+		if (oEvent.srcControl === this) {
+			oList.onItemFocusIn(this);
+			return;
+		}
+
+		if (oList.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ||
 			!jQuery(oEvent.target).is(":sapFocusable")) {
 			return;
 		}

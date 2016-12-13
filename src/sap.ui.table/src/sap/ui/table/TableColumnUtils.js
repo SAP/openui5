@@ -227,50 +227,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			},
 
 			/**
-			 * Returns the header span of a given column. If <code>iLevel</code> is passed, the header span of that
-			 * header row is returned if there is any defined, otherwise <code>iLevel</code> is defaulted by 0. If there is no header span for the passed level, the first
-			 * span is returned.
+			 * Returns the header span of a given column. If <code>iLevel</code> is provided, the header span of that
+			 * header row is returned if there is any defined, otherwise the maximum header span is returned.
+			 * If there is no header span for the level, 1 is returned as a default value.
 			 *
 			 * @param {sap.ui.table.Column} oColumn Column of which the header span shall be returned
 			 * @param {int} [iLevel=0] Zero-based index of the header span for multi-labels
-			 * @returns {int} Single header span or array of header spans if no level provided
+			 * @returns {int} Header span
 			 * @private
 			 */
 			getHeaderSpan : function(oColumn, iLevel) {
 				var vHeaderSpans = oColumn.getHeaderSpan();
 				var iHeaderSpan;
-				iLevel = iLevel || 0;
+
+				function getSpan(sSpan) {
+					var result = parseInt(sSpan, 10);
+					return isNaN(result) ? 1 : result;
+				}
 
 				if (jQuery.isArray(vHeaderSpans)) {
-					if (!vHeaderSpans[iLevel]) {
-						iLevel = 0;
+					if (isNaN(iLevel)) { // find max value of all spans in the header
+						iHeaderSpan = Math.max.apply(null, vHeaderSpans.map(getSpan));
+					} else {
+						iHeaderSpan = getSpan(vHeaderSpans[iLevel]);
 					}
-					iHeaderSpan = parseInt(vHeaderSpans[iLevel], 10);
 				} else {
-					iHeaderSpan = parseInt(vHeaderSpans, 10);
+					iHeaderSpan = getSpan(vHeaderSpans);
 				}
 
 				return Math.max(iHeaderSpan, 1);
 			},
 
 			/**
-			 * Returns the highest header span of a column across all header levels
+			 * Returns the total header span of a column across all header levels
 			 * @param {sap.ui.table.Column} oColumn column of which the max header span shall be determined
-			 * @returns {int} Highest header span
+			 * @returns {int} Total header span of the column
 			 * @private
 			 */
 			getMaxHeaderSpan : function(oColumn) {
-				var iMaxHeaderSpan = 1;
-				var vHeaderSpans = oColumn.getHeaderSpan();
-				if (!jQuery.isArray(vHeaderSpans)) {
-					vHeaderSpans = [vHeaderSpans];
-				}
-
-				for (var i = 0; i < vHeaderSpans.length; i++) {
-					iMaxHeaderSpan = Math.max(iMaxHeaderSpan, parseInt(vHeaderSpans[i], 10));
-				}
-
-				return iMaxHeaderSpan;
+				return TableColumnUtils.getHeaderSpan(oColumn);
 			},
 
 			/**
@@ -280,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * @private
 			 */
 			hasHeaderSpan : function(oColumn) {
-				return TableColumnUtils.getMaxHeaderSpan(oColumn) > 1;
+				return TableColumnUtils.getHeaderSpan(oColumn) > 1;
 			},
 
 			/**
@@ -698,6 +693,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 				} else {
 					return oTable._CSSSizeToPixel(sColumnWidth);
 				}
+			},
+
+			/**
+			 * Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
+			 *
+			 * @param {sap.ui.table.Table} oTable Instance of the table.
+			 * @param {boolean} bConsiderVisibility If <code>false</code> the result of the <code>getFixedColumnCount</code> function of the table is returned.
+			 * 										If <code>true</code> the visibility is included into the determination of the count.
+			 * @returns {int} Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
+			 * @private
+			 */
+			getFixedColumnCount: function(oTable, bConsiderVisibility) {
+				var iFixed = oTable.getFixedColumnCount();
+
+				if (!bConsiderVisibility) {
+					return iFixed;
+				}
+
+				if (iFixed <= 0 || oTable._bIgnoreFixedColumnCount) {
+					return 0;
+				}
+
+				var aColumns = oTable.getColumns();
+				var iVisibleFixedColumnCount = 0;
+				iFixed = Math.min(iFixed, aColumns.length);
+
+				for (var i = 0; i < iFixed; i++) {
+					if (aColumns[i].shouldRender()) {
+						iVisibleFixedColumnCount++;
+					}
+				}
+
+				return iVisibleFixedColumnCount;
 			}
 		};
 

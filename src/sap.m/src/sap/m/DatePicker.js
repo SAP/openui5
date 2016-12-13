@@ -1142,6 +1142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 				this._bValid = true;
 				if (this.getDomRef()) { // as control could be destroyed during update binding
 					this._$input.val(sValue);
+					this._lastValue = sValue;
 				}
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});

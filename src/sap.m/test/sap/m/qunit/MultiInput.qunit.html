@@ -56,9 +56,6 @@
 		this.multiInput1.addToken(token2);
 		this.multiInput1.addToken(token3);
 		equals(this.multiInput1.getTokens().length, 3, "MultiInput contains 3 tokens");
-
-		token2.fireDelete({token: token2});
-		equals(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens");
 	});
 
 	test("setTokens aggregation", function() {
@@ -99,8 +96,6 @@
 		//assert
 		equals(multiInputClone.getTokens().length, 1, "Cloned MultiInput contains 1 token");
 		equals(multiInputClone.getTokens()[0].getText(), TEXT, "Cloned token has correct text");
-		equals(multiInputClone.getTokens()[0].mEventRegistry.press.length, 1, "Cloned token has 1 press handler");
-		equals(multiInputClone.getTokens()[0].mEventRegistry.delete.length, 1, "Cloned token has 1 delete handler");
 
 		//clean-up
 		multiInputClone.destroy();
@@ -234,6 +229,25 @@
 		//assert
 		equals(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
 		ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+	});
+
+	test("test text validation on focus leave", function() {
+		//arrange
+		var testTokenText = "C-Item";
+
+		this.multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text});
+		});
+
+		this.multiInput1.setValue(testTokenText);
+
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		equals(aTokens.length, 1, "MultiInput contains 1 token");
+		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
 
 	test("test exit", function() {

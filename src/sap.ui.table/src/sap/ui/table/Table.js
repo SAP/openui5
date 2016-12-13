@@ -232,7 +232,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * be used when the navigation mode is set to scrolling.
 			 * @since 1.27.0
 			 */
-			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Number of row actions made visible which determines the width of the row action column.
+			 * The values <code>0</code>, <code>1</code> and <code>2</code> are possible.
+			 * @since 1.45.0
+			 */
+			rowActionCount : {type : "int", group : "Appearance", defaultValue : 0}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -273,7 +280,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * The control is shown, in case there is no data for the Table available. In case of a string
 			 * value this will simply replace the no data text.
 			 */
-			noData : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false}
+			noData : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+
+			/**
+			 * Template for row actions. A template is decoupled from the row or table. Each time
+			 * the template's properties or aggregations have been changed, the template has to be applied again via
+			 * <code>setRowActionTemplate</code> for the changes to take effect.
+			 */
+			rowActionTemplate : {type : "sap.ui.table.RowAction", multiple : false}
 		},
 		associations : {
 
@@ -2648,6 +2662,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var sId = $cell.attr("id");
 		var aMatches = /.*-row(\d*)-col(\d*)/i.exec(sId);
 		var bCancel = false;
+		// TBD: cellClick event is currently not fired on row action cells.
+		// If this should be enabled in future we need to consider a different set of event parameters.
 		if (aMatches) {
 			var iRow = aMatches[1];
 			var iCol = aMatches[2];
@@ -2685,61 +2701,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return TableUtils.getFocusedItemInfo(this).domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
 	};
 
-	// =============================================================================
-	// SELECTION HANDLING
-	// =============================================================================
-
-	/**
-	 * Handles the row selection and the column header menu.
-	 * @private
-	 */
-	Table.prototype._onSelect = function(oEvent) {
-
-		// trigger column menu
-		var $target = jQuery(oEvent.target);
-
-		// determine modifier keys
-		var bShift = oEvent.shiftKey;
-		var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
-
-		// row header?
-		var $row = $target.closest(".sapUiTableRowHdr");
-		if ($row.length === 1) {
-			var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-			this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
-			return;
-		}
-
-		// table control? (only if the selection behavior is set to row)
-		var oClosestTd, $ClosestTd;
-		if (oEvent.target) {
-			$ClosestTd = jQuery(oEvent.target).closest(".sapUiTableCtrl > tbody > tr > td");
-			if ($ClosestTd.length > 0) {
-				oClosestTd = $ClosestTd[0];
-			}
-		}
-
-		if (oClosestTd && ($ClosestTd.hasClass("sapUiTableTd") || $ClosestTd.hasClass("sapUiTableTDDummy"))
-			&& TableUtils.isRowSelectionAllowed(this)) {
-			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
-			if ($row.length === 1) {
-				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-				this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
-				return;
-			}
-		}
-
-		// select all?
-		if (jQuery.sap.containsOrEquals(this.getDomRef("selall"), oEvent.target)) {
-			this._toggleSelectAll();
-			return;
-		}
-
-	};
-
 
 	// =============================================================================
-	// ROW EVENT HANDLING
+	// ROW SELECTION
 	// =============================================================================
 
 	/**
@@ -2749,88 +2713,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._isRowSelectable = function(iRowIndex) {
-		return true;
+		return iRowIndex >= 0 && iRowIndex < this._getRowCount();
 	};
-
-	/**
-	 * Handles the row selection (depending on the mode).
-	 * @private
-	 */
-	Table.prototype._onRowSelect = function(iRowIndex, bShift, bCtrl) {
-
-		// in case of IE and SHIFT we clear the text selection
-		if (!!Device.browser.internet_explorer && bShift) {
-			this._clearTextSelection();
-		}
-
-		// is the table bound?
-		var oBinding = this.getBinding("rows");
-		if (!oBinding) {
-			return;
-		}
-
-		//var iRowIndex = Math.min(Math.max(0, iRowIndex), this.getBinding("rows").getLength() - 1);
-		if (iRowIndex < 0 || iRowIndex >= (oBinding.getLength() || 0)) {
-			return;
-		}
-
-		// Make sure that group headers, which represents a tree node in AnalyticalTable, are not selectable.
-		if (!this._isRowSelectable(iRowIndex)) {
-			return;
-		}
-
-		this._iSourceRowIndex = iRowIndex;
-
-		var oSelMode = this.getSelectionMode();
-		if (oSelMode !== SelectionMode.None) {
-			if (oSelMode === SelectionMode.Single) {
-				if (!this.isIndexSelected(iRowIndex)) {
-					this.setSelectedIndex(iRowIndex);
-				} else {
-					this.clearSelection();
-				}
-			} else {
-				// in case of multi toggle behavior a click on the row selection
-				// header adds or removes the selected row and the previous seleciton
-				// will not be removed
-				if (oSelMode === SelectionMode.MultiToggle) {
-					bCtrl = true;
-				}
-				if (bShift) {
-					// If no row is selected getSelectedIndex returns -1 - then we simply
-					// select the clicked row:
-					var iSelectedIndex = this.getSelectedIndex();
-					if (iSelectedIndex >= 0) {
-						this.addSelectionInterval(iSelectedIndex, iRowIndex);
-					} else {
-						this.setSelectedIndex(iRowIndex);
-					}
-				} else {
-					if (!this.isIndexSelected(iRowIndex)) {
-						if (bCtrl) {
-							this.addSelectionInterval(iRowIndex, iRowIndex);
-						} else {
-							this.setSelectedIndex(iRowIndex);
-						}
-					} else {
-						if (bCtrl) {
-							this.removeSelectionInterval(iRowIndex, iRowIndex);
-						} else {
-							if (this._getSelectedIndicesCount() === 1) {
-								this.clearSelection();
-							} else {
-								this.setSelectedIndex(iRowIndex);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		this._iSourceRowIndex = undefined;
-
-	};
-
 
 	// =============================================================================
 	// SORTING & FILTERING
@@ -2965,6 +2849,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
 			}
 			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
+			this._getAccExtension().setSelectAllState(!bClearSelectAll);
 		}
 	};
 
@@ -3074,6 +2959,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			this.$("selall").attr('title', this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}
 		return this;
@@ -3284,27 +3170,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setFixedColumnCount = function(iFixedColumnCount, bSuppressInvalidate) {
-		var aCols = this._getVisibleColumns();
-		var vHeaderSpan = aCols[iFixedColumnCount - 1] && aCols[iFixedColumnCount - 1].getHeaderSpan();
-		if (vHeaderSpan) {
-			var iHeaderSpan;
-			if (jQuery.isArray(vHeaderSpan)) {
-				iHeaderSpan = parseInt(vHeaderSpan[0], 10);
-			} else {
-				iHeaderSpan = parseInt(vHeaderSpan, 10);
+
+		var aCols = this.getColumns();
+
+		// There may be invisible columns and the last visible fixed column may have a colspan
+		// 1. Find the last visible fixed column
+		// 2. Check if it has a column span
+		// 3. Adjust iFixedColumnCount, if needed
+		var oColumn,
+			i;
+
+		for (i = iFixedColumnCount - 1; i >= 0; i--) {
+			oColumn = aCols[i];
+			if (oColumn && oColumn.getVisible()) {
+				iFixedColumnCount = Math.max(iFixedColumnCount, oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn));
+				break;
 			}
-			iFixedColumnCount += iHeaderSpan - 1;
 		}
+
 		//Set current width as fixed width for cols
 		var $ths = this.$().find(".sapUiTableCtrlFirstCol > th");
-		for (var i = 0; i < iFixedColumnCount; i++) {
-			var oColumn = aCols[i];
-			if (oColumn) {
-				var iColumnIndex = jQuery.inArray(oColumn, this.getColumns());
-				if (TableUtils.isVariableWidth(oColumn.getWidth())) {
-					// remember the current column width for the next rendering
-					oColumn._iFixWidth = $ths.filter("[data-sap-ui-headcolindex='" + iColumnIndex + "']").width();
-				}
+		for (i = iFixedColumnCount - 1; i >= 0; i--) {
+			oColumn = aCols[i];
+			if (oColumn && TableUtils.isVariableWidth(oColumn.getWidth())) {
+				// remember the current column width for the next rendering
+				oColumn._iFixWidth = $ths.filter("[data-sap-ui-headcolindex='" + oColumn.getIndex() + "']").width();
 			}
 		}
 		this.setProperty("fixedColumnCount", iFixedColumnCount, bSuppressInvalidate);
@@ -3936,30 +3826,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setRowActionTemplate = function(oTemplate) {
-		//TBD: Once aggregation is available: this.setAggregation("rowActionTemplate", oTemplate);
-		this._rowActionTemplate = oTemplate;
+		this.setAggregation("rowActionTemplate", oTemplate);
 
+		oTemplate = this.getRowActionTemplate();
 		if (oTemplate) {
 			oTemplate._setCount(this.getRowActionCount());
 		}
 
-		this.invalidate();
 		this.invalidateRowsAggregation();
 		return this;
-	};
-
-	//TBD: Remove getter once the aggregation is available;
-	Table.prototype.getRowActionTemplate = function() {
-		return this._rowActionTemplate;
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setRowActionCount = function(iCount) {
-		//TBD: Once property is available: this.setProperty("rowActionTemplate", iCount);
-		this._iRowActionCount = iCount;
-		this.invalidate();
+		this.setProperty("rowActionCount", iCount);
 
 		iCount = this.getRowActionCount();
 		var oRowAction = this.getRowActionTemplate();
@@ -3974,11 +3856,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 		return this;
-	};
-
-	//TBD: Remove getter once the property is available;
-	Table.prototype.getRowActionCount = function() {
-		return this._iRowActionCount || 0;
 	};
 
 	return Table;

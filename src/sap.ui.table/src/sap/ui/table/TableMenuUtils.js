@@ -7,6 +7,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 	function(jQuery, Device, Menu, MenuItem, Popup, library) {
 		"use strict";
 
+		// Table uses z-indices, ensure that popups starts their z-indices at least with 20.
+		Popup.setInitialZIndex(10);
+
 		/**
 		 * Static collection of utility functions related to menus of sap.ui.table.Table, ...
 		 *

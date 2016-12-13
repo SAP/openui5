@@ -10,7 +10,8 @@
 				{ "name": "helloworld", "id": "e003" },
 				{ "name": "crud", "id": "e009" },
 				{ "name": "splitapp", "id": "e00C" },
-				{ "name": "mvc", "id": "e00B" }
+				{ "name": "mvc", "id": "e00B" },
+				{ "name": "orderbrowser", "id": "e0d7"}
 			]
 		},
 		"links": [
@@ -53,6 +54,12 @@
 				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
 				"icon": "task",
 				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
+			},
+			{
+				"text": "Order Browser",
+				"ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html",
+				"icon": "orderbrowser",
+				"desc": "This master-detail app is an example for navigating through orders and their status"
 			}
 		]
 	},
@@ -949,7 +956,7 @@
 		},
         {
           "id": "sap.m.StepInput",
-          "name": "StepInput",
+          "name": "Step Input",
           "category": "User Input",
           "since": "1.40",
           "samples": ["sap.m.sample.StepInput"]
