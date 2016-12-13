@@ -1505,17 +1505,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		};
 	};
 
-	// this gets called when items are focused
-	ListBase.prototype.onItemFocusIn = function(oItem) {
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-			return;
-		}
-
+	ListBase.prototype.getAccessbilityPosition = function(oItem) {
 		var iSetSize = 0,
 			aItems = this.getVisibleItems(),
 			iPosInset = aItems.indexOf(oItem) + 1,
-			oBinding = this.getBinding("items"),
-			oItemDomRef = oItem.getDomRef();
+			oBinding = this.getBinding("items");
 
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
@@ -1529,18 +1523,33 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			iSetSize = aItems.length;
 		}
 
+		return {
+			setSize : iSetSize,
+			posInset: iPosInset
+		};
+	};
+
+	// this gets called when items are focused
+	ListBase.prototype.onItemFocusIn = function(oItem) {
+		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+			return;
+		}
+
+		var oItemDomRef = oItem.getDomRef(),
+			mPosition = this.getAccessbilityPosition(oItem);
+
 		if (!oItem.getContentAnnouncement) {
 			// let the screen reader announce the whole content
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
-			oItemDomRef.setAttribute("aria-posinset", iPosInset);
-			oItemDomRef.setAttribute("aria-setsize", iSetSize);
+			oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
+			oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
 		} else {
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				sDescription = oAccInfo.type + " ";
 
-			sDescription += oBundle.getText("LIST_ITEM_POSITION", [iPosInset, iSetSize]) + " ";
+			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
 			sDescription += oAccInfo.description;
 			this.updateInvisibleText(sDescription, oItemDomRef);
 		}

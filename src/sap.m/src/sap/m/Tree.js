@@ -177,6 +177,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		return this;
 	};
 
+	Tree.prototype.getAccessibilityType = function() {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TREE");
+	};
+
 	return Tree;
 
 }, /* bExport= */ true);
