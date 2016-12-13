@@ -192,8 +192,10 @@ html[dir=rtl] {
 }
 
 // Shift last cell content to left, on the right edge the touch button is placed.
-.sapUiTableGroupMode.sapUiTableTouch .sapUiTableCtrlScroll .sapUiTableGroupHeader td:last-child {
-	padding-right: 3rem;
+html.sap-tablet:not(.sap-desktop), html.sap-phone {
+	.sapUiTableGroupMode .sapUiTableCtrlScroll .sapUiTableGroupHeader td:last-child {
+		padding-right: 3rem;
+	}
 }
 
 .sapUiTableGroupMode .sapUiTableRowHdr::before {
