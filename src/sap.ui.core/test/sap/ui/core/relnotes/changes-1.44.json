@@ -552,5 +552,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.4": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "571645c40709c4b2db489e0cb7d1132c7e306ed3",
+        "type": "FIX",
+        "text": " Avoid unguarded access to window.localStorage during bootstrap",
+        "references": []
+      },
+      {
+        "id": "5de510d37e6b5ebe0eb667b041c3027ae80edd68",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      },
+      {
+        "id": "7674c4f71087a77c75f3c7ef2a5fcb17a8fff5f8",
+        "type": "FIX",
+        "text": " XMLView: Prevent preserve of destroyed views DOM",
+        "references": []
+      },
+      {
+        "id": "63cdc9f941607e52c038f8510ee370c6acab1ba2",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      },
+      {
+        "id": "b7df6b12bdd4dab49f040a7de00d7c0386e8cf4c",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t try to reload created entities",
+        "references": []
+      }
+    ]
   }
 }

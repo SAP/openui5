@@ -370,5 +370,58 @@
         "references": []
       }
     ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "e1aa21b97a2b5c7e95e56bd7140ab70361320520",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.ToggleButton: Css selectors fixed in Belize",
+        "references": []
+      },
+      {
+        "id": "de125d754e1582e1d5f41c9484bcecc9e6eb0cf7",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "b0894cbcfd2f2e8bbe6fd4ad5e6d90a6d1843868",
+        "type": "FIX",
+        "text": " sap.m.MessageToast - width property is no longer restricted to a maximum of 15rems",
+        "references": []
+      },
+      {
+        "id": "f5494d110618aed7c10e5d844c9090ab4b151130",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: SetEditable no longer modifies its tokens",
+        "references": []
+      },
+      {
+        "id": "9384b997158e188499ea44c5d08a751be1b034ad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token selection corrected",
+        "references": []
+      },
+      {
+        "id": "7de30f514a4b07c1609c63d18935fa92005749c0",
+        "type": "FIX",
+        "text": " sap.m.Panel: corrected focus for IE",
+        "references": []
+      },
+      {
+        "id": "520ec412486bb014eb354bee561ae36ead785b5e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "6f15b1384bda273af5b230dbb671b61841791212",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly displayed in Belize",
+        "references": []
+      }
+    ]
   }
 }

@@ -677,5 +677,33 @@
         "references": []
       }
     ]
+  },
+  "1.38.12": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "cb76e786044468f7b8d3850cf27df3c728d25079",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      }
+    ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "2df8118db13d20341eecbd66a97e5e3d0115763b",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "88f9fb18ad875e9214c9404cb702f81843533f18",
+        "type": "FIX",
+        "text": " uxap.ObjectPageSubSection title color fixed",
+        "references": []
+      }
+    ]
   }
 }

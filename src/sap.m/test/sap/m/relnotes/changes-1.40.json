@@ -5239,5 +5239,166 @@
         "references": []
       }
     ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "43f122bc0db323b2d17edfb4847551a9384424a7",
+        "type": "FIX",
+        "text": " sap.m.Button: Sufficient contrast ratio in HCB for IE",
+        "references": []
+      },
+      {
+        "id": "ab2f5d558d14ba7f52c17d11c340ee9a83439a11",
+        "type": "FIX",
+        "text": " sap.m.Button: prevent the Safari from setting the focus to wrong place",
+        "references": []
+      },
+      {
+        "id": "bd753c98af683b5a3c6cc4e99430e56965315abf",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter - all active lists can be deleted when there is also inactive.",
+        "references": []
+      },
+      {
+        "id": "2f0b4446e89042768545d1a703dea03f3898bbc1",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Text shown correctly in Arabic",
+        "references": []
+      },
+      {
+        "id": "6f0906b757c2daf31992b04da270851fd6114475",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Screenreader support improved",
+        "references": []
+      },
+      {
+        "id": "d78748e2cac11e10261d0122b6d2536aa68af14c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: \"select\" event is not fired any more when control is destroyed",
+        "references": []
+      },
+      {
+        "id": "ab6a2487525af34e72f77f142f5ddb87067dd160",
+        "type": "FIX",
+        "text": " sap.m.Input: Additional \"suggestionNavigation\" parameter to the \u0027liveChange\u0027 event is added",
+        "references": []
+      },
+      {
+        "id": "fab5d7e56b24e9ce52b653607dad076c80143465",
+        "type": "FIX",
+        "text": " sap.m.Input: Scroll from table with suggestions fixed",
+        "references": []
+      },
+      {
+        "id": "ed8144b643b676c9f5cd674236c96f41291e70ee",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Binding is now synchronized with SelectedItems association and SelectedKeys property",
+        "references": []
+      },
+      {
+        "id": "2b64c518eb487821fa167ab0a374c5ba81f50bc7",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Remove race condition between fireSelectionFinish event and setSelection method",
+        "references": []
+      },
+      {
+        "id": "fcfce59a083217a3e007f116f465d87d120ad8b4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: SetEditable no longer modifies its tokens",
+        "references": []
+      },
+      {
+        "id": "ef12519bdeddfaa46afb1e4445a915644ada2768",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Suggestions + free text validation is now working correctly",
+        "references": []
+      },
+      {
+        "id": "23aba18d350513d3bda83f07b4ba78021259588c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token selection corrected",
+        "references": []
+      },
+      {
+        "id": "315ad8f27f58caa68dadf78c0243c81a78ca3091",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: popup would close, since navContainer only checked if the immediate parent was a popup",
+        "references": []
+      },
+      {
+        "id": "33099ce1d845b4a5ba5f15f9255f24f845926a87",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: API documentation updated",
+        "references": []
+      },
+      {
+        "id": "35f2b3dc6ee6488a7ed50c52a307cf0a58da4c87",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Correctly aligned inside form",
+        "references": []
+      },
+      {
+        "id": "e9b87849fcd90ebb6e67398a4aa3f7a599e3c0bd",
+        "type": "FIX",
+        "text": " sap.m.Panel: content of Panel with animation is now drawn in IE",
+        "references": []
+      },
+      {
+        "id": "d021e398a4266cd2a1ff3a4ecd5e0c8f459a375d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Exit method should remove all instances from groups",
+        "references": []
+      },
+      {
+        "id": "fa5c5bbbbd5579c2eff9ad3036453f23ff7e908c",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator fix pixel calculation",
+        "references": []
+      },
+      {
+        "id": "990ea52bf358da503366503f20d294d28251ab6f",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover - Calling setBeginButton() and setEndButton() with null parameters no longer throws NPE",
+        "references": []
+      },
+      {
+        "id": "baa4146b969f90b964e192a2e9e329b5c915a8b6",
+        "type": "FIX",
+        "text": " sap.m.StepInput - \"change\" event is fired.",
+        "references": []
+      },
+      {
+        "id": "a03c9985104f9ca4728d532b98f8fbea884e1c47",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Increase and decrease buttons have tooltips",
+        "references": []
+      },
+      {
+        "id": "977ff30bcf026734fdac2be5dbc8e979dc730769",
+        "type": "FIX",
+        "text": " sap.m.TileContainer explored app. sample binds icon property correctly.",
+        "references": []
+      },
+      {
+        "id": "fc1fc714fd7c1bed958158bba88c423dc801105e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly displayed in Belize",
+        "references": []
+      },
+      {
+        "id": "fc52103afa169efd83864b46c4972c47103707c9",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: displayFormat now correctly ignored when value is bound",
+        "references": []
+      },
+      {
+        "id": "80e3ac169dea8f61e9f02cdfd8b65c5ad9990f35",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Next button on a tablet is not aligned",
+        "references": []
+      }
+    ]
   }
 }

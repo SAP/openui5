@@ -942,5 +942,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.4": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "710a5c2db453effd962931fa831d8e124cf3c37d",
+        "type": "FIX",
+        "text": " sap.m.Button: Sufficient contrast ratio in HCB for IE",
+        "references": []
+      }
+    ]
   }
 }
