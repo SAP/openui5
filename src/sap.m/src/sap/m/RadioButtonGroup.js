@@ -510,12 +510,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var i = 0;
 				for (i = 0; i < aButtons.length; i++) {
 					aButtons[i].detachEvent("_change", this._handleItemChanged, this);
+					aButtons[i].detachEvent("select", this._handleRBSelect, this);
 				}
 
 				var oClone = Control.prototype.clone.apply(this, arguments);
 
 				for (i = 0; i < aButtons.length; i++) {
 					aButtons[i].attachEvent("_change", this._handleItemChanged, this);
+					aButtons[i].attachEvent("select", this._handleRBSelect, this);
 				}
 
 				return oClone;
