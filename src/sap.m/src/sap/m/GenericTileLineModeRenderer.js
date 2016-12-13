@@ -22,6 +22,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 		var sTooltipText = oControl._getTooltipText(),
 			bIsCompact = oControl._isCompact(),
 			sAriaText = oControl._getAriaText(),
+			sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + oControl.getScope()),
 			bHasPress = oControl.hasListeners("press");
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
@@ -34,7 +35,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.addClass("sapMGT");
-		oRm.addClass("sapMGTScope" + oControl.getScope());
+		oRm.addClass(sScopeClass);
 		oRm.addClass("sapMGTLineMode");
 		this._writeDirection(oRm);
 		if (sTooltipText) {
