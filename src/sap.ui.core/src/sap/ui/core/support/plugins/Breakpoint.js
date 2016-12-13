@@ -16,11 +16,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportBreakpoint", "", oSupportStub]);
 
-				// app plugin only!
-				if (this.isToolPlugin()) {
-					throw new Error();
-				}
-
 				this._oStub = oSupportStub;
 
 				this._methodType = {
@@ -49,6 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 			}
 
 		});
+
+		Breakpoint.prototype.isToolPlugin = function(){
+			return false;
+		};
+
+		Breakpoint.prototype.isAppPlugin = function(){
+			return true;
+		};
 
 		Breakpoint.prototype.init = function(oSupportStub) {
 			Plugin.prototype.init.apply(this, arguments);

@@ -26,9 +26,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportTrace", "JavaScript Trace", oSupportStub]);
 
-				this._aEventIds = this.isToolPlugin() ? [this.getId() + "Entry"] : [];
+				this._aEventIds = this.runsAsToolPlugin() ? [this.getId() + "Entry"] : [];
 
-				if (this.isToolPlugin()) {
+				if (this.runsAsToolPlugin()) {
 					this._aLogEntries = [];
 					this._iLogLevel = jQuery.sap.log.Level.ALL;
 					this._oDateFormat = sap.ui.requireSync('sap/ui/core/format/DateFormat').getDateTimeInstance();
@@ -47,7 +47,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			}
 		});
 
-
 		/**
 		 * Handler for sapUiSupportTraceEntry event
 		 *
@@ -61,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 		Trace.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
-			if (!this.isToolPlugin()) {
+			if (!this.runsAsToolPlugin()) {
 				return;
 			}
 
@@ -118,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 
 		Trace.prototype.exit = function(oSupportStub){
-			if (this.isToolPlugin()) {
+			if (this.runsAsToolPlugin()) {
 				if (this._fClearHandler) {
 					this.$("clear").unbind("click", this._fClearHandler);
 					this._fClearHandler = null;

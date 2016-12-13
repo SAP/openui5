@@ -7,10 +7,6 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 	function(jQuery, Plugin, Support) {
 	"use strict";
 
-
-
-
-
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.MessageTest.
 		 * @class This class represents the plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
@@ -32,7 +28,6 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 				this._bFirstTime = true;
 			}
 		});
-
 
 		/**
 		 * Handler for sapUiSupportMessageTestMsg event

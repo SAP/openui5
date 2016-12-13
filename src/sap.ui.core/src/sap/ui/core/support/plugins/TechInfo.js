@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		var TechInfo = Plugin.extend("sap.ui.core.support.plugins.TechInfo", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportTechInfo", "Technical Information", oSupportStub]);
-				this._aEventIds = this.isToolPlugin() ? [
+				this._aEventIds = this.runsAsToolPlugin() ? [
 					this.getId() + "Data",
 					this.getId() + "FinishedE2ETrace"
 				] : [
@@ -33,14 +33,13 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 					this.getId() + "ToggleStatistics"
 				];
 
-				if (this.isToolPlugin()) {
+				if (this.runsAsToolPlugin()) {
 					this.e2eLogLevel = "medium";
 					this.e2eTraceStarted = false;
 				}
 
 			}
 		});
-
 
 		/**
 		 * Handler for sapUiSupportTechInfoData event
@@ -222,7 +221,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 
 		TechInfo.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
-			if (!this.isToolPlugin()) {
+			if (!this.runsAsToolPlugin()) {
 				sendData(this);
 				return;
 			}

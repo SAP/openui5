@@ -25,16 +25,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 		var Selector = Plugin.extend("sap.ui.core.support.plugins.Selector", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportSelector", "", oSupportStub]);
-
-				if (this.isToolPlugin()) {
-					throw Error();
-				}
-
 				this._aEventIds = [this.getId() + "Highlight"];
 				this._oPopup = new Popup();
 			}
 		});
 
+		Selector.prototype.isToolPlugin = function(){
+			return false;
+		};
 
 		/**
 		 * Handler for sapUiSupportSelectorHighlight event

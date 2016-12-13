@@ -96,7 +96,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
 			"sap.ui.core.tmpl.DOMAttribute"
-		]
+		],
+		extensions: {
+			"sap.ui.support" : {
+				diagnosticPlugins: [
+					"sap/ui/core/support/plugins/TechInfo",
+					"sap/ui/core/support/plugins/ControlTree",
+					"sap/ui/core/support/plugins/Debugging",
+					"sap/ui/core/support/plugins/Trace",
+					"sap/ui/core/support/plugins/Selector",
+					"sap/ui/core/support/plugins/Breakpoint",
+					"sap/ui/core/support/plugins/ViewInfo",
+					"sap/ui/core/support/plugins/LocalStorage",
+					"sap/ui/core/support/plugins/Interaction",
+					"sap/ui/core/support/plugins/Performance"
+				]
+			}
+		}
 	});
 
 	/* eslint-disable no-undef */

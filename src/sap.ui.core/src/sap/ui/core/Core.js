@@ -457,7 +457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				};
 
 				var fnCallbackSupportInfo = function(Support) {
-					Support.initializeSupportMode(that.oConfiguration.getSupportMode());
+					Support.initializeSupportMode(that.oConfiguration.getSupportMode(), bAsync);
 
 					if (bAsync) {
 						sap.ui.require(["sap/ui/support/Bootstrap"], fnCallbackBootstrap);
