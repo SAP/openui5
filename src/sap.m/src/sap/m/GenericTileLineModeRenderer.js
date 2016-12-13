@@ -82,7 +82,9 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 
 		} else {
 			// cozy
-			this._renderFocusDiv(oRm, oControl);
+			if (oControl.getState() !== LoadState.Disabled) {
+				this._renderFocusDiv(oRm, oControl);
+			}
 
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-touchArea");
@@ -103,7 +105,6 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			if (oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
-
 			oRm.write("</span>"); //.sapMGTLineModeHelpContainer
 
 			oRm.write("</div>"); //.sapMGTTouchArea
