@@ -389,5 +389,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "31dc0488af910bd3f3267c51dc7118c1b85d7d5b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
+      }
+    ]
   }
 }
