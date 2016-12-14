@@ -20,6 +20,10 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		if (oControl.getEnableMultiLineMode()) {
 			oRm.addClass("sapMMultiInputMultiLine");
 		}
+
+		if (oControl.getTokens().length > 1) {
+			oRm.addClass("sapMMultiInputNoPlaceholder");
+		}
 	};
 
 	MultiInputRenderer.getAriaDescribedBy = function(oControl) {
@@ -40,6 +44,10 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 		oRm.write('<div id="' + oControl.getId() + '-border"');
 		oRm.addClass('sapMMultiInputBorder');
+
+		if (oControl.getTokens().length > 0) {
+			oRm.addClass("sapMMultiInputNarrowBorder");
+		}
 
 		if (oControl.getEnableMultiLineMode() || oControl._bUseDialog ) {
 
@@ -64,23 +72,22 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	};
 
 	MultiInputRenderer._renderInput = function(oRm, oControl) {
+		oRm.write("<div class=\"sapMMultiInputInputContainer\">");
 
-		if ( oControl._isMultiLineMode && oControl._bShowIndicator === false ) {
-			oRm.write("<div class=\"sapMMultiInputInputContainer sapMMultiInputMultiModeInputContainer\">");
-		} else {
-			if ( oControl._isMultiLineMode && oControl._bShowIndicator === true) {
-				var iTokens = oControl.getTokens().length;
-				oRm.write("<span class=\"sapMMultiInputIndicator\">");
-				if (iTokens > 1) {
-					var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-					oRm.write( oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iTokens - 1) );
-				}
-				oRm.write("</span>");
+		if ( oControl._isMultiLineMode && oControl._bShowIndicator === true) {
+			var iTokens = oControl.getTokens().length;
+			oRm.write("<span class=\"sapMMultiInputIndicator\">");
+			if (iTokens > 1) {
+				var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oRm.write( oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iTokens - 1) );
 			}
-			oRm.write("<div class=\"sapMMultiInputInputContainer\">");
+			oRm.write("</span>");
 		}
 
 		InputRenderer.openInputTag.call(this, oRm, oControl);
+	};
+
+	MultiInputRenderer.writeInnerContent = function(oRm, oControl) {
 
 	};
 
@@ -89,6 +96,9 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		InputRenderer.closeInputTag.call(this, oRm, oControl);
 
 		oRm.write("</div>");
+
+		InputRenderer.writeValueHelpIcon(oRm, oControl);
+
 		oRm.write("</div>");
 		oRm.write("<div class=\"sapMMultiInputShadowDiv\"></div>");
 	};
