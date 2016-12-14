@@ -12,12 +12,6 @@
 }
 
 .sapMPopover {
-	background: @sapUiGroupContentBackground;
-	border: none;
-	box-shadow: @sapUiShadowLevel2;
-	border-radius: 0.25rem;
-	min-height: 2rem;
-
 	.sapContrastPlus.sapMBar, .sapContrastPlus .sapMBar,
 	.sapContrast.sapMBar, .sapContrast .sapMBar{
 		box-shadow: none;
@@ -39,72 +33,6 @@
 .sapMPopover .sapMIBar.sapMHeader-CTX {
 	border-top-right-radius: 0.25rem;
 	border-top-left-radius: 0.25rem;
-}
-
-.sapMPopover .sapMPopoverCont {
-	background-color: @sapUiGroupContentBackground;
-	margin: 0;
-}
-
-/* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
-	box-sizing: border-box;
-}
-
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
-	display: inline-block;
-}
-
-/*for only two buttons in footer's contentMiddle aggregation*/
-.sapMPopoverSpecialFooter > .sapMBarMiddle {
-	display: block;
-	height: 100%;
-	//padding: 0 0.25rem;
-	box-sizing: border-box;
-}
-
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
-	display: block;
-	padding: 0;
-}
-
-.sapMPopoverSpecialFooter > .sapMBarLeft,
-.sapMPopoverSpecialFooter > .sapMBarRight {
-	display: none;
-}
-
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
-	width: 50%;
-	padding-left: 0.25rem;
-}
-
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
-
-	.sapMBtn:last-child {
-		margin-left: 0;
-	}
-
-	.sapMBtn:first-child {
-		padding-right: 0.25rem;
-		padding-left: 0;
-	}
-}
-
-.sapMPopoverArr {
-	display: block;
-	width: 1rem;
-	height: 1rem;
-	position: absolute;
-	overflow: hidden;
-
-	&:after {
-		content: " ";
-		display: block;
-		width: 0.7rem;
-		height: 0.7rem;
-		background-color: @sapUiGroupContentBackground;
-		transform: rotate(-45deg);
-	}
 }
 
 /* pointing upward arrow */
