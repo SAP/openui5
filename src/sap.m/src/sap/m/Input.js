@@ -184,7 +184,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * Defines the validation callback function called when a suggestion row gets selected.
 			 * @since 1.44
 			 */
-			suggestionRowValidator: {type: "any", group: "Misc", defaultValue: ""}
+			suggestionRowValidator: {type: "any", group: "Misc", defaultValue: ""},
+
+			/**
+			 * Specifies whether the suggestions highlighting is enabled.
+			 * @since 1.46
+			 */
+			enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true}
 		},
 		defaultAggregation : "suggestionItems",
 		aggregations : {
@@ -318,6 +324,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	IconPool.insertFontFaceStyle();
 
 	/**
+	 * Returns true if some word from the text starts with specific value.
+	 */
+	Input._wordStartsWithValue = function(sText, sValue) {
+
+		var index;
+
+		while (sText) {
+			if (jQuery.sap.startsWithIgnoreCase(sText, sValue)) {
+				return true;
+			}
+
+			index = sText.indexOf(' ');
+			if (index == -1) {
+				break;
+			}
+
+			sText = sText.substring(index + 1);
+		}
+
+		return false;
+	};
+
+	/**
 	 * The default filter function for one and two-value. It checks whether the item text begins with the typed value.
 	 * @param {string} sValue the current filter string
 	 * @param {sap.ui.core.Item} oItem the filtered list item
@@ -326,11 +355,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input._DEFAULTFILTER = function(sValue, oItem) {
 
-		if (oItem instanceof ListItem && jQuery.sap.startsWithIgnoreCase(oItem.getAdditionalText(), sValue)) {
+		if (oItem instanceof ListItem && Input._wordStartsWithValue(oItem.getAdditionalText(), sValue)) {
 			return true;
 		}
 
-		return jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
+		return Input._wordStartsWithValue(oItem.getText(), sValue);
 	};
 
 	/**
@@ -347,7 +376,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		for (; i < aCells.length; i++) {
 
 			if (aCells[i].getText) {
-				if (jQuery.sap.startsWithIgnoreCase(aCells[i].getText(), sValue)) {
+				if (Input._wordStartsWithValue(aCells[i].getText(), sValue)) {
 					return true;
 				}
 			}
@@ -1867,7 +1896,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					}
 				}
 
-				oInput._highlightTableText();
+				this._oSuggestionTable.invalidate();
 			} else {
 				// filter standard items
 				var bListItem = (aItems[0] instanceof ListItem ? true : false);
@@ -1948,6 +1977,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 	})();
 
+	/**
+	 * Creates highlighted text.
+	 * @private
+	 */
 	Input.prototype._createHighlightedText = function(label) {
 		var text = label.innerText,
 			value = this.getValue().toLowerCase(),
@@ -1958,10 +1991,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		var index = lowerText.indexOf(value);
 
-		if (index == 0) {
-			subString = text.substring(index, count);
+		if (index > -1) {
+
+			newText += text.substring(0, index);
+			subString = text.substring(index, index + count);
 			newText += '<span class="sapMInputHighlight">' + subString + '</span>';
-			newText += text.substring(count);
+			newText += text.substring(index + count);
 		} else {
 			newText = text;
 		}
@@ -1975,6 +2010,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 *
 	 */
 	Input.prototype._highlightListText = function() {
+
+		if (!this.getEnableSuggestionsHighlighting()) {
+			return;
+		}
+
 		var i,
 			label,
 			labels = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
@@ -1991,6 +2031,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 *
 	 */
 	Input.prototype._highlightTableText = function() {
+
+		if (!this.getEnableSuggestionsHighlighting()) {
+			return;
+		}
+
 		var i,
 			label,
 			labels = this._oSuggestionTable.$().find('tbody .sapMLabel');
