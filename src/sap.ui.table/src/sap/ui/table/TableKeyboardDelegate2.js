@@ -1570,7 +1570,7 @@ sap.ui.define([
 				/* Scrollable area - First row */
 				} else if (iFocusedRow === iHeaderRowCount + this.getFixedRowCount()) {
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - this.getFixedRowCount() - this.getFixedBottomRowCount();
-					var iRowsToBeScrolled = this._getSanitizedFirstVisibleRow();
+					var iRowsToBeScrolled = this.getFirstVisibleRow();
 
 					this._getScrollExtension().scroll(false, true, true); // Scroll up one page
 
@@ -1659,7 +1659,7 @@ sap.ui.define([
 				/* Scrollable area - Last row */
 				} else if (iFocusedRow === iHeaderRowCount + iNonEmptyVisibleRowCount - this.getFixedBottomRowCount() - 1) {
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - this.getFixedRowCount() - this.getFixedBottomRowCount();
-					var iRowsToBeScrolled = this._getRowCount() - this.getFixedBottomRowCount() - this._getSanitizedFirstVisibleRow() - iPageSize * 2;
+					var iRowsToBeScrolled = this._getRowCount() - this.getFixedBottomRowCount() - this.getFirstVisibleRow() - iPageSize * 2;
 
 					this._getScrollExtension().scroll(true, true, true); // Scroll down one page
 

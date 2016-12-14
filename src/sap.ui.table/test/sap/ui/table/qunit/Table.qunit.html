@@ -326,10 +326,21 @@
 		assert.equal(oTable.getEnableColumnReordering(),true,"Reordering is allowed");
 	});
 
-	QUnit.test("FirstVisibleRow", 1, function(assert) {
+	QUnit.test("FirstVisibleRow", 4, function(assert) {
+		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow row is: 5");
+
 		oTable.setFirstVisibleRow(4, false);
 		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getFirstVisibleRow(), 4, "First Visible Row correct!");
+		assert.equal(oTable.getFirstVisibleRow(), 4, "FirstVisibleRow has been set to: 4");
+
+		oTable.setFirstVisibleRow(-1, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getFirstVisibleRow(), 0, "FirstVisibleRow has been set to: 0");
+
+		var iMaxRowIndex = aData.length - oTable.getVisibleRowCount();
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow has been set to: " + iMaxRowIndex);
 	});
 
 	QUnit.test("ColumnHeaderHeight", 2, function(assert) {
@@ -1600,7 +1611,7 @@
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
 		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateBindingLength()).length, 3, "fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
-		assert.equal(oTable._getSanitizedFirstVisibleRow(true), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
+		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		oTable.setVisibleRowCount(250);
 		sap.ui.getCore().applyChanges();
 		oTable._updateFixedBottomRows();
