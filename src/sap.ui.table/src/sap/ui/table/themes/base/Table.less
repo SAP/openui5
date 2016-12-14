@@ -3,6 +3,8 @@
  ******************************************************************************/
 
 @sapUiTableRowHeight: 23px;
+@sapUiTableCompactRowHeight: 32px;
+@sapUiTableCondensedRowHeight: 25px;
 @sapUiTableColHdrHeight: 23px;
 @sapUiTableRowHdrWidth: 22px;
 @sapUiTableToolbarDesign: ~"Transparent"; /* should be one of the sap.m.ToolbarDesign enumeration */
@@ -150,6 +152,22 @@
 	position: relative;
 	overflow: hidden;
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTableCtrlCnt {
+  min-height: @sapUiTableRowHeight;
+}
+
+.sapUiSizeCozy .sapUiTableCtrlCnt {
+  min-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiTableCtrlCnt {
+  min-height: @sapUiTableCompactRowHeight;
+}
+
+.sapUiSizeCondensed .sapUiTableCtrlCnt {
+  min-height: @sapUiTableCondensedRowHeight;
 }
 
 /* Since in visibleRowCountMode=Auto, the table has no height, the overlay must be applied to every child div
