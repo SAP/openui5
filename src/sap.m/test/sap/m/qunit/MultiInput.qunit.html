@@ -4,7 +4,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.m.MultiInput</title>
-<script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
@@ -113,7 +112,6 @@
 		isEditable = this.multiInput1.getEditable();
 		equals(isEditable, false, "MultiInput editable === false");
 		equals(jQuery(this.multiInput1.getDomRef())
-				.find(".sapMMultiInputInputContainer")
 				.css("visibility"), "visible", "Input should be visible even if MultiInput is disabled");
 
 		this.multiInput1.setEditable(false);
@@ -248,13 +246,6 @@
 		var aTokens = this.multiInput1.getTokens();
 		equals(aTokens.length, 1, "MultiInput contains 1 token");
 		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
-	});
-
-	test("test exit", function() {
-		this.multiInput1._sResizeHandlerId = "ID0123";
-		this.multiInput1.exit();
-
-		equals(this.multiInput1._sResizeHandlerId, undefined, "Resizehandler got deleted");
 	});
 
 	module("Validation", {
@@ -507,7 +498,7 @@
 
 		//assert
 		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parent().hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeInputContainer");
+		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput has no tokens and no class sapMMultiInputMultiModeInputContainer");
 
 		//arrange
 		this.multiInput1.setTokens([
@@ -520,14 +511,14 @@
 
 		//assert
 		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), true, "MultiInput is open and has class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parent().hasClass("sapMMultiInputMultiModeInputContainer"), true, "MultiInput is open and has class sapMMultiInputMultiModeInputContainer");
+		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), true, "MultiInput is open and has class sapMMultiInputMultiModeInputContainer");
 
 		//act
 		this.multiInput1.closeMultiLine();
 
 		//assert
 		equal(this.multiInput1.$("border").hasClass("sapMMultiInputMultiModeBorder"), false, "MultiInput closed and has no class sapMMultiInputMultiModeBorder");
-		equal(this.multiInput1._$input.parent().hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
+		equal(this.multiInput1._$input.parents('.sapMMultiInputBorder').hasClass("sapMMultiInputMultiModeInputContainer"), false, "MultiInput closed and has no class sapMMultiInputMultiModeInputContainer");
 	});
 
 	test("open multi line mode on phone", function() {
