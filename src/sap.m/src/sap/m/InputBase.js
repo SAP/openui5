@@ -547,9 +547,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this.getEditable() && oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}
-
-		// mark the event as InputBase event
-		oEvent.setMark("inputBase");
 	};
 
 	/**
