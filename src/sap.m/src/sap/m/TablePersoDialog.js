@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			}
 		};
 
-		this._fnUpdateArrowButtons = function() {
+		this._fnUpdateArrowButtons = function(bUpdateFocus) {
 			// Initialisation of the enabled property
 			var bButtonDownEnabled = true,
 				bButtonUpEnabled = true,
@@ -194,12 +194,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				if (that._oList.getItems()[0].getSelected()) {
 					// First item selected: disable button "arrow top" and focus button "arrow bottom"
 					bButtonUpEnabled = false;
-					jQuery.sap.focus(that._oButtonDown.getDomRef());
+					if (bUpdateFocus) {
+						jQuery.sap.focus(that._oButtonDown.getDomRef());
+					}
 				}
 				if (that._oList.getItems()[iItemCount - 1].getSelected()) {
 					// Last item selected: disable button "arrow bottom" and focus button "arrow top"
 					bButtonDownEnabled = false;
-					jQuery.sap.focus(that._oButtonUp.getDomRef());
+					if (bUpdateFocus) {
+						jQuery.sap.focus(that._oButtonUp.getDomRef());
+					}
 				}
 			}
 
@@ -267,7 +271,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
 			mode: sap.m.ListMode.SingleSelectMaster,
-			selectionChange: this._fnUpdateArrowButtons,
+			selectionChange: function(){ this._fnUpdateArrowButtons.call(this); }.bind(this),
 			updateFinished: this._fnListUpdateFinished
 		});
 
@@ -616,7 +620,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// Otherwise, element is within the scroll container's viewport, so no action is necessary
 		}
 
-		this._fnUpdateArrowButtons.call(this);
+		this._fnUpdateArrowButtons.call(this, true);
 
 	};
 

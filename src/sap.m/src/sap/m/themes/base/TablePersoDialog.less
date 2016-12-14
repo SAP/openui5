@@ -10,13 +10,24 @@ html[data-sap-ui-browser="ie9"] .sapMPersoDialog .sapMPersoDialogFixedBar .sapMP
 .sapMPersoDialogFixedBar {
 	position: relative;
 
-	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
-		font-size: 1.125rem;
-	}
-
 	.sapMPersoDialogResetBtn {
 		position: absolute;
 		top: 0;
 		right: 0;
 	}
+}
+
+.sapUiSizeCozy .sapMPersoDialogFixedBar {
+
+	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
+		font-size: 1.125rem;
+	}
+}
+
+.sapUiSizeCompact .sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child {
+    margin-left: 0.5rem;
+}
+
+.sapUiSizeCompact .sapMPersoDialogFixedBar .sapMCb {
+    padding-left: 2.5rem;
 }
