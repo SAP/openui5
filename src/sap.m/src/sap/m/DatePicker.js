@@ -179,7 +179,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			 * @since 1.38.5
 			 */
 			legend: { type: "sap.ui.core.Control", multiple: false}
-		}
+		},
+		designTime : true
 	}});
 
 	DatePicker.prototype.init = function() {
