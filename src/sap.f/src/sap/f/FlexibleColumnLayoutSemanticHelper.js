@@ -118,6 +118,9 @@ sap.ui.define([
 				} else if (sCurrentLayout === LT.MidColumnFullScreen) {
 					// From mid fullscreen, should go to end fullscreen
 					sNextLayout = LT.EndColumnFullScreen;
+				} else if (sCurrentLayout === LT.EndColumnFullScreen) {
+					// From end fullscreen, should remain in end fullscreen
+					sNextLayout = LT.EndColumnFullScreen;
 				} else {
 					// In all other cases, should go to default 3-column
 					sNextLayout = this._defaultThreeColumnLayoutType;
