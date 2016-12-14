@@ -138,6 +138,58 @@
 			oLink2.destroy();
 		});
 
+		// Keyboar handling
+		test("Disabled link should not be in the tab chain", function() {
+			var oLink1 = new sap.m.Link("l1", {
+				text : sText,
+				href: "x.html",
+				target: "_blank",
+				width : "200px",
+				enabled : false
+			}).placeAt("uiArea1");
+
+			sap.ui.getCore().applyChanges();
+
+			var $oLink = oLink1.$();
+
+			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+
+			oLink1.destroy();
+		});
+
+		test("Link with empty or no text should not be in the tab chain", function() {
+			var oLink1 = new sap.m.Link("l1", {
+				text : "",
+				href: "x.html",
+				target: "_blank",
+				width : "200px"
+			}).placeAt("uiArea1");
+
+			sap.ui.getCore().applyChanges();
+
+			var $oLink = oLink1.$();
+
+			strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+
+			oLink1.destroy();
+		});
+
+		test("Normal link should be in the tab chain", function() {
+			var oLink1 = new sap.m.Link("l1", {
+				text : sText,
+				href: "x.html",
+				target: "_blank",
+				width : "200px"
+			}).placeAt("uiArea1");
+
+			sap.ui.getCore().applyChanges();
+
+			var $oLink = oLink1.$();
+
+			strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
+
+			oLink1.destroy();
+		});
 
 		// ARIA specific tests
 		test("ARIA specific test", function() {
