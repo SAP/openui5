@@ -1,53 +1,9 @@
-/* ================================================= */
-/* CSS for control sap.m.QuickView */
-/* ================================================= */
-
-html.sap-desktop .sapMQuickViewPage.sapMPage > header,
-html.sap-tablet .sapMQuickViewPage.sapMPage > header {
-	font-size: @sapMFontHeader5Size;
-}
-
-html.sap-desktop .sapUiSizeCompact .sapMQuickViewTitle,
-html.sap-tablet .sapUiSizeCompact .sapMQuickViewTitle {
-	font-size: @sapMFontHeader6Size;
-}
-
-.sapMQuickViewPage h1,
-.sapMQuickViewPage .sapUiForm .sapUiFormTitle {
-	font-size: @sapMFontHeader3Size;
-	font-weight: @sapUiFontHeaderWeight;
-	line-height: normal;
-	color: @sapHCStandardFG;
-	padding-left: 0;
-}
-
-.sapMQuickViewPage .sapUiVltCell .sapMLnk {
-	font-size: @sapMFontHeader3Size;
-	font-weight: @sapUiFontHeaderWeight;
-	line-height: normal;
-	white-space: normal;
-}
-
-.sapMQuickViewPage .sapUiHLayout .sapUiIcon {
-	background-color: @sapHCStandardBG;
-	color: @sapHCReducedAltFG;
-	box-sizing: border-box;
-	border: 0.0625rem solid @sapHCReducedAltFG;
-	border-radius: 0;
-}
-
-.sapMQuickViewPage .sapUiVlt .sapMText {
-	font-size: @sapMFontMediumSize;
-	color: @sapHCStandardFG;
-}
-
-.sapMQuickViewPage .sapUiIcon:focus,
-html.sap-phone .sapMQuickViewPage .sapMLnk:focus,
-html.sap-tablet .sapMQuickViewPage .sapMLnk:focus{
-  outline: none;
-}
+/* ================================ */
+/* CSS for control sap.m/QuickView  */
+/* High Contrast Black theme        */
+/* ================================ */
 
 html.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 }

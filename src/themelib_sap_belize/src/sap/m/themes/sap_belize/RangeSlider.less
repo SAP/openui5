@@ -1,55 +1,14 @@
-/* ====================================================== */
-/* CSS for sap.m.RangeSlider control's Belize theme */
-/* ====================================================== */
-/* pressed */
-
-.sapMSliderHandleTooltip {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  height: 1.5rem;
-  line-height: 1.5rem;
-  font-size: 0.75rem;
-  text-align: center;
-  visibility: hidden;
-  box-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5);
-  position: relative;
-  flex-shrink: 0;
-  background-color: @sapUiGroupContentBackground;
-}
-
-.sapMSliderHandleTooltipShow {
-  visibility: visible;
-}
-
-.sapMSlider {
-  &:hover {
-    .sapMSliderHandleTooltip, .sapMSliderTooltipContainer {
-      visibility: visible;
-    }
-  }
-}
-
-.sapMSliderHandleTooltipsShow,
-.sapMSliderHandleTooltipsShow .sapMSliderHandleTooltip {
-  visibility: visible;
-}
-
-.sapMSliderLabels {
-  height: 1rem;
-}
-
-.sapMSliderLabel {
-  font-size: 0.75rem;
-}
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* Belize theme                       */
+/* ================================== */
 
 /* overlap */
 .sapMSliderHandle.sapMSliderHandleOverlap {
-  background-color: @sapUiFieldActiveBorderColor;
   border: 0.125rem solid darken(@sapUiFieldActiveBorderColor, 5);
 }
 
 /* pressed */
 .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
   background: fade(@sapUiFieldActiveBorderColor, 30);
-  border: 0.125rem solid @sapUiFieldActiveBorderColor;
 }

@@ -1,54 +1,14 @@
-/* ====================================================== */
-/* CSS for sap.m.RangeSlider control's BlueCrystal theme */
-/* ====================================================== */
-
-
-/* pressed */
-
-div.sapMSliderInner > span.sapMSliderHandle.sapMSliderHandlePressed {
-	background: fade(@sapUiFieldActiveBorderColor, 30);
-	border: 0.125rem solid @sapUiFieldActiveBorderColor;
-}
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* BlueCrystal theme                  */
+/* ================================== */
 
 /* overlap */
-span.sapMSliderHandleOverlap {
-	background-color: @sapUiFieldActiveBorderColor;
-	border: 0.125rem solid darken(@sapUiFieldActiveBorderColor,5);
+.sapMSliderHandle.sapMSliderHandleOverlap {
+  border: 0.125rem solid darken(@sapUiFieldActiveBorderColor, 5);
 }
 
-.sapMSliderHandleTooltip {
-	background: @sapUiGroupContentBackground;
-	color: contrast(@sapUiGroupContentBackground,
-					@sapUiStandardText,
-					@sapContent_ContrastTextColor,
-					@sapContent_ContrastTextThreshold);
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
-	height: 1.5rem;
-	line-height: 1.5rem;
-	font-size: 0.75rem;
-	text-align: center;
-	box-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5);
-	position: relative;
-	flex-shrink: 0;
-}
-
-.sapMSliderHandleTooltipsShow {
-	visibility: visible;
-}
-
-.sapMSlider {
-	&:hover {
-		.sapMSliderTooltipContainer {
-			visibility: visible;
-		}
-	}
-}
-
-.sapMSliderLabels {
-	height: 1rem;
-}
-
-.sapMSliderLabel {
-	font-size: 0.75rem;
+/* pressed */
+.sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
+  background: fade(@sapUiFieldActiveBorderColor, 30);
 }
