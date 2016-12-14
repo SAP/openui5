@@ -47,3 +47,10 @@
 	margin-top: 0rem;
 }
 
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiBlockLayoutCell", ~"> .sapUiBlockCellContent");
+
+/* override for standard padding: 2rem for BlockLayoutCell */
+.sapUiBlockLayoutCell.sapUiContentPadding > .sapUiBlockCellContent {
+	padding: 2rem;
+}
