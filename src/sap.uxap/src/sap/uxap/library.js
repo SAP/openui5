@@ -50,7 +50,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		extensions: {
 			flChangeHandlers: {
 				"sap.uxap.ObjectPageLayout": {
-					"moveElements": "default"
+					"moveControls": "default"
 				},
 				"sap.uxap.ObjectPageSection": {
 					"hideControl": "default",
