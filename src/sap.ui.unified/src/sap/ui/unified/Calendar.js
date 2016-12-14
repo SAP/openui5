@@ -1673,7 +1673,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oHeader.setAdditionalTextButton1(sText);
 
 		var aMonths = this._getDisplayedMonths(oDate);
-		if (aMonths.length > 1) {
+		if (aMonths.length > 1 && !this._bShowOneMonth) {
 			if (!sPattern) {
 				sPattern = oLocaleData.getIntervalPattern();
 			}

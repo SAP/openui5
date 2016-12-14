@@ -122,6 +122,16 @@
 						oAppointmentStartDate.setMonth(oAppointmentStartDate.getMonth() + iStartOffset);
 						oAppointmentEndDate.setMonth(oAppointmentStartDate.getMonth() + iEndOffset);
 						break;
+
+					case sap.ui.unified.CalendarIntervalType.Week:
+						oAppointmentStartDate.setDate(oAppointmentStartDate.getDate() + iStartOffset);
+						oAppointmentEndDate.setDate(oAppointmentStartDate.getDate() + iEndOffset);
+						break;
+
+					case sap.ui.unified.CalendarIntervalType.OneMonth:
+						oAppointmentStartDate.setDate(oAppointmentStartDate.getDate() + iStartOffset);
+						oAppointmentEndDate.setDate(oAppointmentStartDate.getDate() + iEndOffset);
+						break;
 					}
 					oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() - 1);
 				}
@@ -144,6 +154,7 @@
 		var handleStartDateChange = function(oEvent) {
 			var oDf = sap.ui.core.format.DateFormat.getTimeInstance("HH:mm:ss");
 			oEventLabel.setText("startDateChange event at " + oDf.format(new Date()) + " with params:"  + JSON.stringify(oEvent.mParameters));
+			oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + "," + Math.ceil(Math.random()*255).toString() + ");");
 		};
 		var handleLegend = function(oEvent){
 			oDialog.open();

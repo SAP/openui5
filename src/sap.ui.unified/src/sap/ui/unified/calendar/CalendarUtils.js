@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		 * @public
 		 */
 		CalendarUtils.getFirstDateOfWeek = function (oDate) {
-			var oUniversalDate = new UniversalDate(oDate),
+			var oUniversalDate = new UniversalDate(oDate.getTime()),
 				oFirstDateOfWeek,
 				oWeek;
 
@@ -211,6 +211,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 			return new UniversalDate(Date.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day,
 				oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds())).getJSDate();
+		};
+
+		/**
+		 * Gets the first day of a given month.
+		 * This function works with date values in UTC to produce timezone agnostic results.
+		 *
+		 * @param {Date} oDate JavaScript date
+		 * @returns {Date} JavaScript date corresponding to the first date of the month
+		 * @public
+		 */
+		CalendarUtils.getFirstDateOfMonth = function(oDate) {
+			var oNewDate = new UniversalDate(oDate.getTime());
+			oNewDate.setUTCDate(1);
+
+			return oNewDate;
 		};
 
 		/**
