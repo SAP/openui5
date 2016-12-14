@@ -1,16 +1,53 @@
+/* ================================= */
+/* CSS for control sap.m/MultiInput  */
+/* Base theme                        */
+/* ================================= */
 
-/* ============================================= */
-/* CSS for control sap.m/MultiInput.control */
-/* ============================================= */
+.sapMMultiInput {
+	min-width: 7rem; //9.5rem;
+}
+
+.sapMMultiInput.sapMInputVH {
+	min-width: 9.875rem;
+}
+
+.sapMMultiInput .sapMTokenizer {
+	min-width: 4rem;
+}
+
+.sapMMultiInput .sapMTokenizer.sapMTokenizerEmpty {
+	min-width: 0;
+}
+
+.sapMMultiInput .sapMMultiInputInputContainer {
+	min-width: 3rem;
+	flex-grow: 1;
+	flex-shrink: 10000;
+	position: relative;
+}
+
+.sapMMultiInput .sapMInputBaseInner {
+	// we reduce the standard padding from sapMInputBaseInner (which is too large for our purposes)
+	border: 0;
+	padding-left: 0;
+	padding-right: 0.125rem;
+	height: 2.375rem;
+	position: absolute;
+	left: 0;
+	background: transparent;
+}
 
 .sapMMultiInputBorder {
 	box-sizing: border-box;
 	position: relative;
 	white-space: nowrap;
-}
-
-.sapMMultiInputInputContainer {
-	box-sizing: border-box;
+	border-radius: 0;
+	background: @sapUiFieldBackground;
+	border: 1px solid @sapUiFieldBorderColor;
+	height: 2.5rem;
+	padding-left: 0.75rem;
+	display: flex;
+	flex-direction: row;
 }
 
 // on the desktop we hide the overflow
@@ -21,6 +58,8 @@ html.sap-desktop .sapMMultiInputBorder {
 .sapMMultiInput .sapMInputValHelp {
 	display: inline-block;
 	position: static;
+	min-width: 2.375rem;
+	min-height: 2.375rem;
 }
 
 // in general tokens in multi-line or on phone are not visible
@@ -46,39 +85,29 @@ html.sap-phone .sapMMultiInput .sapMToken:last-child {
 	display: inline-block;
 }
 
-// we need this selector to avoid being overwritten by the input.css
-.sapUiSizeCompact .sapMMultiInput .sapMInputValHelp {
-	display: inline-block;
-	position: static;
-}
-
-.sapMMultiInput .sapMMultiInputMultiModeInputContainer .sapMInputValHelp,
-.sapUiSizeCompact .sapMMultiInput .sapMMultiInputMultiModeInputContainer .sapMInputValHelp {
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-
-.sapMMultiInput .sapMMultiInputInputContainer {
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-
 .sapMMultiInputShadowDiv {
 	display: inline;
 	visibility: collapse;
 	position: absolute;
 	top: 0;
 	left: 0;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
 }
 
-.sapMMultiInput.sapMInputBaseReadonly .sapMMultiInputInputContainer {
-	position: absolute;
-}
+.sapMMultiInputNoPlaceholder {
+	.sapMInputBaseInner::-webkit-input-placeholder {
+		opacity: 0;
+	}
 
-.sapMMultiInputInputContainer.sapMMultiInputMultiModeInputContainer {
-	position: static;
+
+	.sapMInputBaseInner::-moz-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner:-ms-input-placeholder {
+		opacity: 0;
+	}
 }
 
 // focus styles
@@ -90,7 +119,182 @@ html.sap-desktop .sapMMultiInput.sapMFocus .sapMInputBaseInner:focus {
 	background: transparent;
 }
 
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:focus {
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMMultiInput:not(.sapMInputBaseReadonly)  .sapMInputValHelp > .sapMInputValHelpInner:active {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMInputBaseReadonly .sapMMultiInputBorder {
+	background: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMMultiInputNarrowBorder {
+	padding-left: 0.375rem;
+}
+
+html.sap-desktop .sapMMultiInputMultiModeBorder,
+html.sap-tablet .sapMMultiInputMultiModeBorder {
+	height: auto;
+	max-height: 10.375rem;
+	overflow-y: auto;
+	z-index: 11;
+	display: block;
+
+	.sapMInputBaseInner {
+		display: block;
+		width: 100%;
+		position: static;
+	}
+}
+
+.sapMMultiInputMultiModeBorder .sapMTokenizer {
+	white-space: normal;
+	max-width: calc(~"100% - 2.375rem"); // 100% - icon width 2.375rem
+	box-sizing: border-box;
+}
+
+.sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {
+	margin-bottom: 0;
+}
+
+.sapMMultiInputMultiModeBorder .sapMTokenizerEmpty {
+	height: 0;
+	display: block;
+}
+
+.sapMMultiInputIndicator {
+	display: inline-block;
+	font-size: @sapMFontMediumSize;
+	line-height: 2.375rem;
+}
+
+.sapMMultiInputMultiModeBorder .sapMInputBaseInner {
+	border: 1px;
+}
+
+.sapMInputBaseReadonly .sapMMultiInputBorder:hover {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+.sapMInput:not(.sapMInputBaseDisabled) .sapMMultiInputBorder:hover {
+	border-color: @sapUiFieldHoverBorderColor;
+}
+
+.sapMInputBase.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder {
+	border-color: @sapUiFieldWarningColor;
+}
+
+.sapMInputBase.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
+	border-color: @sapUiFieldInvalidColor;
+}
+
+.sapMInputBase.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
+	border-color: @sapUiFieldSuccessColor;
+}
+
+.sapMMultiInputShadowDiv {
+	border: 0 transparent;
+	min-width: 2.4rem;
+	background: transparent;
+}
+
+.sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 2.375rem);
+}
+
 html.sap-phone .sapMToken:focus,
 html.sap-tablet:not(.sap-desktop) .sapMToken:focus {
 	outline-color: transparent;
 }
+
+html.sap-phone .sapMTokenizerMultiLine {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	max-width: calc(~"100% - 2rem");
+}
+
+html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMToken {
+	float: left;
+	clear: both;
+}
+
+// compact size styles
+.sapUiSizeCompact .sapMMultiInput.sapMInputVH {
+	min-width: 7rem;
+}
+
+.sapUiSizeCompact .sapMMultiInput .sapMTokenizer {
+	min-width: 3.75rem;
+}
+
+.sapUiSizeCompact .sapMMultiInput .sapMTokenizer.sapMTokenizerEmpty {
+	min-width: 0;
+}
+
+// we need this selector to avoid being overwritten by the input.css
+.sapUiSizeCompact .sapMMultiInput .sapMInputValHelp {
+	display: inline-block;
+	min-width: 2rem;
+	min-height: 1.5rem;
+}
+
+.sapMMultiInput .sapMMultiInputMultiModeInputContainer .sapMInputValHelp,
+.sapUiSizeCompact .sapMMultiInput .sapMMultiInputMultiModeInputContainer .sapMInputValHelp {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.sapUiSizeCompact .sapMMultiInputBorder {
+	height: 1.625rem;
+	padding-left: 0.25rem;
+}
+
+.sapUiSizeCompact .sapMMultiInputMultiModeBorder {
+	height: auto;
+	max-height: 7rem;
+	overflow-y: auto;
+}
+
+.sapUiSizeCompact .sapMMultiInputShadowDiv {
+	min-width: 1.9rem;
+
+	// we need specific height here since we cannot take that from class sapMInputBaseInner as we do it in the non-compact mode
+	height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMMultiInput .sapMInputBaseInner {
+	padding-left: 0;
+	padding-right: 0.125rem;
+	height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 1.5rem);
+}
+
+.sapUiSizeCompact .sapMMultiInputIndicator {
+	line-height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer {
+	white-space: normal;
+	max-width: calc(~"100% - 2rem"); // 100% - icon width 2rem
+	box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {
+	margin-bottom: -0.125rem;
+}
+
+
