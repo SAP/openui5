@@ -2480,7 +2480,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
 		var iEstimatedViewportHeight = this._getDefaultRowHeight() * this.getVisibleRowCount();
 		// Case: Not enough data to fill all available rows, only sum used rows.
-		if (this.getVisibleRowCount() > this._getRowCount()) {
+		if (this.getVisibleRowCount() >= this._getRowCount()) {
 			aRowHeights = aRowHeights.slice(0, this._getRowCount());
 		}
 		var iRowHeightsDelta = aRowHeights.reduce(function(a, b) { return a + b; }, 0) - iEstimatedViewportHeight;
