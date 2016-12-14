@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle the key down event for Ctrl+ a
+	 * Handle the key down event for Ctrl+ a , Ctrl+ c
 	 *
 	 * @param {jQuery.Event}
 	 *            oEvent - the occuring event
@@ -472,6 +472,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		}
 
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
+			this._copy();
+		}
+	};
+
+	/**
+	 * Handles the copy event
+	 *
+	 * @param {ClipboardEvent}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype._copy = function() {
+		var self = this;
+		var copy = function(oEvent) {
+				var aSelectedTokens = self.getSelectedTokens(),
+					sSelectedText = "",
+					token;
+
+				for (var i = 0; i < aSelectedTokens.length; i++) {
+					token = aSelectedTokens[i];
+					sSelectedText = sSelectedText + (i > 0 ? "\r\n" : "") + token.getText();
+				}
+
+				if (!sSelectedText) {
+					return;
+				}
+
+				if (oEvent.clipboardData) {
+					oEvent.clipboardData.setData('text/plain', sSelectedText);
+				} else {
+					oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+				}
+
+				oEvent.preventDefault();
+		};
+
+		document.addEventListener('copy', copy);
+
+		document.execCommand('copy');
+
+		document.removeEventListener('copy', copy);
 	};
 
 	/**
