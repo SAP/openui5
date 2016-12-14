@@ -3256,29 +3256,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 	};
 
-	/**
-	 * The row index only considers the position of the row in the aggregation. It must be adapted
-	 * to consider the firstVisibleRow offset or if a fixed bottom row was pressed
-	 * @param {int} iRow row index of the control in the rows aggregation
-	 * @returns {int} the adapted (absolute) row index
-	 * @private
-	 */
-	Table.prototype._getAbsoluteRowIndex = function(iRow) {
-		var iIndex = 0;
-		var iFirstVisibleRow = this.getFirstVisibleRow();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var iFirstFixedBottomRowIndex = iVisibleRowCount - iFixedBottomRowCount;
-
-		if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
-			iIndex = this.getBinding().getLength() - iVisibleRowCount + iRow;
-		} else {
-			iIndex = iFirstVisibleRow + iRow;
-		}
-
-		return iIndex;
-	};
-
 	// =============================================================================
 	// SELECTION HANDLING
 	// =============================================================================
@@ -3321,7 +3298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var $row = $target.closest(".sapUiTableRowHdr");
 		if ($row.length === 1) {
 			var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-			this._onRowSelect(this._getAbsoluteRowIndex(iIndex), bShift, bCtrl);
+			this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
 			return;
 		}
 
@@ -3341,7 +3318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
 			if ($row.length === 1) {
 				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
-				this._onRowSelect(this._getAbsoluteRowIndex(iIndex), bShift, bCtrl);
+				this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
 				return;
 			}
 		}
