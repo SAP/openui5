@@ -3,8 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Component", "sap/ui/fl/FlexControllerFactory", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/ChangePersistenceFactory"
-], function(jQuery, Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory) {
+	"jquery.sap.global",
+	"sap/ui/core/Component",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/ChangePersistence"
+], function(jQuery, Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory, ChangePersistence) {
 	"use strict";
 
 	/**
@@ -23,7 +29,7 @@ sap.ui.define([
 	/**
 	 * Asynchronous view processing method.
 	 *
-	 * @param {Node} oView xml node of the view to process
+	 * @param {Node} oView XML node of the view to process
 	 * @param {object} mProperties
 	 * @param {string} mProperties.componentId - id of the component creating the view
 	 *
@@ -34,8 +40,8 @@ sap.ui.define([
 	XmlPreprocessorImpl.process = function(oView, mProperties){
 		try {
 			if (!mProperties || mProperties.sync) {
-				Utils.log.warning("Flexibility feature for applying changes on an xml view is only available for " +
-					"asynchronous views. The merging will be done later on the JS controls itself.");
+				Utils.log.warning("Flexibility feature for applying changes on an XML view is only available for " +
+					"asynchronous views; merge is be done later on the JS controls.");
 				return (oView);
 			}
 
@@ -50,6 +56,14 @@ sap.ui.define([
 			}
 
 			var sFlexReference = Utils.getComponentClassName(oComponent);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
+			var cacheKey = oChangePersistence.getCacheKey();
+
+			if (!cacheKey || cacheKey === ChangePersistence.NOTAG) {
+				Utils.log.warning("No cache key could be determined for the view; flexibility XML view preprocessing is skipped. " +
+					"The processing will be done later on the JS controls.");
+				return Promise.resolve(oView);
+			}
 
 			var oFlexController = FlexControllerFactory.create(sFlexReference);
 			return oFlexController.processXmlView(oView, mProperties).then(function() {
@@ -67,7 +81,7 @@ sap.ui.define([
 	/**
 	 * Asynchronous determination of a hash key for caching purposes
 	 *
-	 * @param {Node} oView xml node of the view for which the key should be determined
+	 * @param {Node} oView XML node of the view for which the key should be determined
 	 * @returns {jquery.sap.promise} promise returning the hash key
 	 *
 	 * @public
