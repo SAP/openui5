@@ -9061,6 +9061,43 @@
 			oComboBox.destroy();
 		});
 
+		// BCP 1680329042
+		QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", function(assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var oFocusDomRef = oComboBox.getFocusDomRef();
+
+			// act (type something in the text field input)
+			oFocusDomRef.value = "lo";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+
+			// wait for the word completion feature
+			this.clock.tick(0);
+
+			// remove the autocompleted text ("rem ipsum" by pressing the backspace keyboard key
+			sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			oFocusDomRef.value = "lo";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+
+			// assert
+			assert.ok(oComboBox.getSelectedItem() === null);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {

@@ -524,17 +524,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 							oControl.updateDomValue(this._oFirstItemTextMatched.getText() + " (" + this._oFirstItemTextMatched.getAdditionalText() + ")");
 							this.setSelection(this._oFirstItemTextMatched);
 						} else if (bSearchBoth) {
+
 							if (bTextMatched) {
 								oControl.updateDomValue(oFirstVisibleItem.getText() + " (" + oFirstVisibleItem.getAdditionalText() + ")");
 							} else {
 								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText() + " (" + oFirstVisibleItem.getText() + ")");
 							}
+
 							this.setSelection(oFirstVisibleItem);
 						} else {
 							oControl.updateDomValue(oFirstVisibleItem.getText());
 							this.setSelection(oFirstVisibleItem);
 						}
-
 					}
 
 					if (oSelectedItem !== this.getSelectedItem()) {
@@ -550,7 +551,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					}
 				}
 
-				if (bEmptyValue || !bItemsVisible) {
+				if (bEmptyValue || !bItemsVisible ||
+					(!oControl._bDoTypeAhead && (this._getSelectedItemText() !== sValue))) {
 					this.setSelection(null);
 
 					if (oSelectedItem !== this.getSelectedItem()) {
