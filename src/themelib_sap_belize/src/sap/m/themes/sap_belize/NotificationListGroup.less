@@ -8,3 +8,11 @@
 .sapMNLG .sapMNLI {
     background: @_sap_m_NotificationListGroup_CombinationBackground;
 }
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+    .sapMNLB li:focus::before,
+    .sapMLIB:focus::before {
+        border: 1px dashed @sapUiContentFocusColor;
+    }
+}
