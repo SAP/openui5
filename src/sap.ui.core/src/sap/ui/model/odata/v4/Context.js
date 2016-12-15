@@ -219,9 +219,9 @@ sap.ui.define([
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
-	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. if
-	 *   the given context does not point to an entity
+	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
+	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
+	 *   e.g. if the given context does not point to an entity
 	 *
 	 * @private
 	 */
@@ -270,7 +270,7 @@ sap.ui.define([
 	 * key properties are available within the initial data.
 	 *
 	 * @returns {string}
-	 *   The canonical path (e.g. "/EMPLOYEES(ID='1')")
+	 *   The canonical path (e.g. "/SalesOrderList('0500000000')")
 	 * @throws {Error}
 	 *   If the canonical path cannot be determined yet or in case of failure, e.g. if the given
 	 *   context does not point to an entity
@@ -445,9 +445,9 @@ sap.ui.define([
 	 * key properties are available within the initial data.
 	 *
 	 * @returns {Promise}
-	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
-	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. if
-	 *   the given context does not point to an entity
+	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
+	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
+	 *   e.g. if the given context does not point to an entity
 	 *
 	 * @function
 	 * @public

@@ -947,7 +947,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$kind : "Action"}));
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
-				{"sap-client" : "111"}, false, true)
+				{"sap-client" : "111"}, true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("post")
@@ -1004,7 +1004,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, false, true)
+				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("groupId");
 		oSingleCacheMock.expects("post")
@@ -1026,75 +1026,89 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["", "navigation2/navigation3"].forEach(function (sPathPrefix) {
-		var sAction = sPathPrefix ? sPathPrefix + "/schema.Action" : "schema.Action";
+	[false, true].forEach(function (bBaseContext) {
+		["", "navigation2/navigation3"].forEach(function (sPathPrefix) {
+			var sAction = sPathPrefix ? sPathPrefix + "/schema.Action" : "schema.Action",
+				sBaseContext = bBaseContext ? ", baseContext" : "";
 
-		QUnit.test("execute bound action, relative binding "  + sAction,
-			function (assert) {
-			var oBinding,
-				oBindingMock,
-				oCacheMock = this.mock(_Cache),
-				oParentBinding1 = this.oModel.bindContext("/EntitySet(ID='1')/navigation1"),
-				oParentBinding2 = this.oModel.bindContext("/EntitySet(ID='2')/navigation1"),
-				oPostResult = {},
-				oSingleCache = {
-					deregisterChange : function () {},
-					post : function () {},
-					read : function () {}
-				},
-				oSingleCacheMock = this.mock(oSingleCache),
-				that = this;
+			function createContext(oModel, sPath) {
+				return bBaseContext ? oModel.createBindingContext(sPath)
+					: Context.create(oModel, {}, sPath);
+			}
 
-			oParentBinding1.initialize();
-			oParentBinding2.initialize();
-			oBinding = this.oModel.bindContext(sAction + "(...)",
-				oParentBinding1.getBoundContext(), {$$groupId : "groupId"});
-			oBindingMock = this.mock(oBinding);
+			QUnit.test("execute bound action, relative binding " + sAction + sBaseContext,
+				function (assert) {
+					var oBinding,
+						oBindingMock,
+						oCacheMock = this.mock(_Cache),
+						oParentContext1 = createContext(this.oModel,
+								"/EntitySet(ID='1')/navigation1"),
+						oParentContext2 = createContext(this.oModel,
+								"/EntitySet(ID='2')/navigation1"),
+						oPostResult = {},
+						oSingleCache = {
+							deregisterChange : function () {},
+							post : function () {},
+							read : function () {}
+						},
+						oSingleCacheMock = this.mock(oSingleCache),
+						that = this;
 
-			oBindingMock.expects("_requestOperationMetadata").twice()
-				.returns(Promise.resolve({$kind : "Action"}));
-			this.mock(oParentBinding1.getBoundContext()).expects("requestCanonicalPath")
-				.withExactArgs().returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
-			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"EntitySet(ID='1')/navigation1/" + sAction,
-					{"sap-client" : "111"}, false, true)
-				.returns(oSingleCache);
-			this.mock(oBinding.getContext()).expects("getObject")
-				.withExactArgs(sPathPrefix)
-				.returns({"@odata.etag" : "etag"});
-			oSingleCacheMock.expects("post")
-				.withExactArgs("groupId", {}, "etag")
-				.returns(_SyncPromise.resolve(oPostResult));
-			oBindingMock.expects("_fireChange")
-				.withExactArgs({reason : ChangeReason.Change});
+					oBinding = this.oModel.bindContext(sAction + "(...)", oParentContext1,
+						{$$groupId : "groupId"});
+					oBindingMock = this.mock(oBinding);
 
-			// code under test
-			return oBinding.execute().then(function () {
-				oBindingMock.expects("_fireChange")
-					.withExactArgs({reason : ChangeReason.Context});
+					oBindingMock.expects("_requestOperationMetadata").twice()
+						.returns(Promise.resolve({$kind : "Action"}));
+					if (!bBaseContext) {
+						this.mock(oParentContext1).expects("requestCanonicalPath")
+							.withExactArgs()
+							.returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
+						this.mock(oBinding.getContext()).expects("getObject")
+							.withExactArgs(sPathPrefix)
+							.returns({"@odata.etag" : "etag"});
+					}
+					oCacheMock.expects("createSingle")
+						.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+							"EntitySet(ID='1')/navigation1/" + sAction,
+							{"sap-client" : "111"}, true)
+						.returns(oSingleCache);
+					oSingleCacheMock.expects("post")
+						.withExactArgs("groupId", {}, bBaseContext ? undefined : "etag")
+						.returns(_SyncPromise.resolve(oPostResult));
+					oBindingMock.expects("_fireChange")
+						.withExactArgs({reason : ChangeReason.Change});
 
-				// code under test: setContext clears the cache
-				oBinding.setContext(oParentBinding2.getBoundContext());
+					// code under test
+					return oBinding.execute().then(function () {
+						oBindingMock.expects("_fireChange")
+							.withExactArgs({reason : ChangeReason.Context});
 
-				that.mock(oParentBinding2.getBoundContext()).expects("requestCanonicalPath")
-					.withExactArgs().returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
-				oCacheMock.expects("createSingle")
-					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-						"EntitySet(ID='2')/navigation1/" + sAction,
-						{"sap-client" : "111"}, false, true)
-					.returns(oSingleCache);
-				that.mock(oBinding.getContext()).expects("getObject")
-					.withExactArgs(sPathPrefix)
-					.returns({}); // no ETag
-				oSingleCacheMock.expects("post")
-					.withExactArgs("groupId", {"foo" : "bar"}, undefined)
-					.returns(_SyncPromise.resolve(oPostResult));
-				oBindingMock.expects("_fireChange")
-					.withExactArgs({reason : ChangeReason.Change});
+						// code under test: setContext clears the cache
+						oBinding.setContext(oParentContext2);
 
-				// code under test: execute creates a new cache with the new path
-				return oBinding.setParameter("foo", "bar").execute();
+						if (!bBaseContext) {
+							that.mock(oParentContext2).expects("requestCanonicalPath")
+								.withExactArgs()
+								.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
+							that.mock(oBinding.getContext()).expects("getObject")
+								.withExactArgs(sPathPrefix)
+								.returns({}); // no ETag
+						}
+						oCacheMock.expects("createSingle")
+							.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+								"EntitySet(ID='2')/navigation1/" + sAction,
+								{"sap-client" : "111"}, true)
+							.returns(oSingleCache);
+						oSingleCacheMock.expects("post")
+							.withExactArgs("groupId", {"foo" : "bar"}, undefined)
+							.returns(_SyncPromise.resolve(oPostResult));
+						oBindingMock.expects("_fireChange")
+							.withExactArgs({reason : ChangeReason.Change});
+
+						// code under test: execute creates a new cache with the new path
+						return oBinding.setParameter("foo", "bar").execute();
+				});
 			});
 		});
 	});
@@ -1357,6 +1371,34 @@ sap.ui.require([
 		oBinding.refreshInternal();
 
 		sinon.assert.calledOnce(fnOnRefresh);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshInternal", function (assert) {
+		var oCache = {},
+			oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", undefined, {"foo" : "bar"}),
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
+			oBindingMock = this.mock(oBinding),
+			oChild0 = {
+				refreshInternal : function () {}
+			},
+			oChild1 = {
+				refreshInternal : function () {}
+			};
+
+		oBindingMock.expects("makeCache").twice().returns(oCache);
+		oBinding.mCacheByContext = {};
+		oBinding.setContext(oContext);
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Refresh});
+		this.mock(this.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup");
+		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
+
+		//code under test
+		oBinding.refreshInternal("myGroup");
+
+		assert.deepEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************

@@ -1382,22 +1382,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						if (!sResolvedPath) {
 							error("Cannot resolve path for ", oElement);
 						}
+						vHelperResult = oModel.createBindingContext(sResolvedPath);
 						if (sHelper) {
 							fnHelper = getObject(sHelper);
 							if (typeof fnHelper !== "function") {
 								error("Cannot resolve helper for ", oElement);
 							}
-							vHelperResult = fnHelper(oModel.createBindingContext(sResolvedPath));
-							if (vHelperResult instanceof Context) {
-								oModel = vHelperResult.getModel();
-								sResolvedPath = vHelperResult.getPath();
-							} else if (vHelperResult !== undefined) {
-								if (typeof vHelperResult !== "string" || vHelperResult === "") {
-									error("Illegal helper result '" + vHelperResult + "' in ",
-										oElement);
-								}
-								sResolvedPath = vHelperResult;
+							vHelperResult = fnHelper(vHelperResult);
+						}
+						if (vHelperResult instanceof Context) {
+							oModel = vHelperResult.getModel();
+							sResolvedPath = vHelperResult.getPath();
+						} else if (vHelperResult !== undefined) {
+							if (typeof vHelperResult !== "string" || vHelperResult === "") {
+								error("Illegal helper result '" + vHelperResult + "' in ",
+									oElement);
 							}
+							sResolvedPath = vHelperResult;
 						}
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({

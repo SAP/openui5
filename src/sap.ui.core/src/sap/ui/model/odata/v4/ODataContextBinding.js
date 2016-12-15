@@ -83,17 +83,17 @@ sap.ui.define([
 	 *   function with the parameter values of the last execute.
 	 *
 	 *   The binding parameter for bound actions may be given in the binding path, for example
-	 *   <code>/TEAMS(Team_Id='TEAM_01')/tea_busi.AcChangeManagerOfTeam(...)</code>. This can be
-	 *   used if the exact instance is known in advance. If you use a relative binding instead, the
-	 *   operation path is a concatenation of the parent context's canonical path and the deferred
-	 *   binding's path.
+	 *   "/SalesOrderList('42')/name.space.SalesOrder_Confirm". This can be
+	 *   used if the exact entity for the binding parameter is known in advance. If you use a
+	 *   relative binding instead, the operation path is a concatenation of the parent context's
+	 *   canonical path and the deferred binding's path.
 	 *
-	 *   <b>Example</b>: You have a table with a list binding to <code>/TEAMS</code>. In each row
-	 *   you have a button to change the team's manager, with the relative binding
-	 *   <code>tea_busi.AcChangeManagerOfTeam(...)</code>. Then the parent context for such a button
-	 *   refers to an instance of TEAMS, so its canonical path is
-	 *   <code>/TEAMS(ID='<i>TeamID</i>')</code> and the resulting path for the action is
-	 *   <code>/TEAMS(ID='<i>TeamID</i>')/tea_busi.AcChangeManagerOfTeam</code>.
+	 *   <b>Example</b>: You have a table with a list binding to "/SalesOrderList". In
+	 *   each row you have a button to confirm the sales order, with the relative binding
+	 *   "name.space.SalesOrder_Confirm(...)". Then the parent context for such a button
+	 *   refers to an entity in "SalesOrderList", so its canonical path is
+	 *   "/SalesOrderList('<i>SalesOrderID</i>')" and the resulting path for the action
+	 *   is "/SalesOrderList('<i>SalesOrderID</i>')/name.space.SalesOrder_Confirm".
 	 *
 	 *   This also works if the relative path of the deferred operation binding starts with a
 	 *   navigation property. Then this navigation property will be part of the operation's
@@ -480,7 +480,7 @@ sap.ui.define([
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, false, true);
+						(sPathPrefix + that.sPath).slice(1, -5), that.mQueryOptions, true);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
@@ -693,9 +693,7 @@ sap.ui.define([
 			}
 		}
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			if (oDependentBinding.refreshInternal) {
-				oDependentBinding.refreshInternal(sGroupId);
-			}
+			oDependentBinding.refreshInternal(sGroupId);
 		});
 	};
 
@@ -717,8 +715,6 @@ sap.ui.define([
 					this.oElementContext.destroy();
 					this.oElementContext = null;
 				}
-				// no deregisterChange because all property bindings deregistered due to
-				// oElementContext.destroy()
 				this.oCache = undefined;
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,

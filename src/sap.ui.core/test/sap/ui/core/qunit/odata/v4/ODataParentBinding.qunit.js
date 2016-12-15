@@ -268,7 +268,9 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("createCache: proxy interface, " + oFixture[0] + ", " + oFixture[1],
 			function (assert) {
-				var oBinding = new ODataParentBinding(),
+				var oBinding = new ODataParentBinding({
+						toString : function () { return "TheBinding"; }
+					}),
 					oFilterPromise = oFixture[1] && Promise.resolve(oFixture[1]),
 					oPathPromise = oFixture[0] && Promise.resolve(oFixture[0]),
 					oCache = {
@@ -289,15 +291,23 @@ sap.ui.require([
 				// code under test
 				oCacheProxy = oBinding.createCache(createCache, oPathPromise, oFilterPromise);
 
+				assert.throws(function () {
+					oCacheProxy._delete();
+				}, new Error("DELETE request not allowed"));
+				assert.throws(function () {
+					oCacheProxy.create();
+				}, new Error("POST request not allowed"));
+				oCacheProxy.deregisterChange("path/to/property", {});
 				assert.strictEqual(oCacheProxy.hasPendingChangesForPath(), false);
-				assert.strictEqual(typeof oCacheProxy.resetChangesForPath, "function");
-				assert.strictEqual(typeof oCacheProxy.setActive, "function");
+				oCacheProxy.resetChangesForPath();
+				oCacheProxy.setActive(false);
 				assert.throws(function () {
 					oCacheProxy.post();
-				}, "POST request not allowed");
+				}, new Error("POST request not allowed"));
 				assert.throws(function () {
 					oCacheProxy.update();
-				}, "PATCH request not allowed");
+				}, new Error("PATCH request not allowed"));
+				assert.strictEqual(oCacheProxy.toString(), "Cache proxy for " + oBinding);
 
 				return oCacheProxy.read("$auto", "foo").then(function (oResult) {
 					assert.strictEqual(oBinding.oCache, oCache);
