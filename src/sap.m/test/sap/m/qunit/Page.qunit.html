@@ -199,6 +199,27 @@
 				oRenderOncePage.destroy();
 			});
 
+			test("Page with footer and unescaped id", function () {
+				var oPage = new sap.m.Page("my.Page", {
+					footer: new sap.m.Bar({
+						contentMiddle: [
+							new sap.m.Button({text: "Footer Btn"})
+						]
+					}),
+					content: new sap.ui.core.HTML({
+						content: "<div id='p4content'>another test content</div>"
+					})
+				}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(jQuery.sap.domById("my.Page"), "Page should be rendered");
+				ok(jQuery.sap.domById("p4content"), "Page content should be rendered");
+				equal(oPage._contentHasScroll(), false, "Content should be correctly checked for scroll");
+
+				oPage.destroy();
+				oPage = null;
+			});
+
 			module("Properties Check");
 
 			test("showSubHeader", function() {
