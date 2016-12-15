@@ -376,3 +376,108 @@ asyncTest("getSelectedNodesCount with paging - write", function(){
 		oBinding.getContexts(128, 64);
 	});
 });
+
+asyncTest("getSelectedIndices with initially collapsed (expanded) node and deep node (selected)", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var oN1005;
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+
+			oBinding.attachChange(handler2);
+		};
+
+		var handler2 = function () {
+			oBinding.detachChange(handler2);
+
+			oBinding.setSelectedIndex(8);
+
+			deepEqual(oBinding.getSelectedIndices(), [8], "Selected indices are correct after expand of initially collapsed node.");
+
+			oBinding.expand(5);
+
+			oBinding.attachChange(handler3);
+		};
+
+		var handler3 = function () {
+			oBinding.detachChange(handler3);
+
+			deepEqual(oBinding.getSelectedIndices(), [11], "Selected indices are correct after expand of deep node.");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
+});
+
+asyncTest("getSelectedIndices with deep node (expanded) node and deep node (selected)", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var oN1005;
+
+		var handler1 = function () {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+
+			oBinding.attachChange(handler2);
+		};
+
+		var handler2 = function () {
+			oBinding.detachChange(handler2);
+
+			// 1632
+			oBinding.expand(7);
+
+			oBinding.attachChange(handler3);
+		};
+
+		var handler3 = function () {
+			oBinding.detachChange(handler3);
+
+			// 1642
+			oBinding.setSelectedIndex(9);
+
+			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct initially.");
+
+			// 1630
+			oBinding.expand(5);
+
+			oBinding.attachChange(handler4);
+		};
+
+		var handler4 = function () {
+			oBinding.detachChange(handler4);
+
+			deepEqual(oBinding.getSelectedIndices(), [12], "Selected indices of deep node is correct after expanding a previous deep node.");
+
+			// 1630
+			oBinding.collapse(5);
+			deepEqual(oBinding.getSelectedIndices(), [9], "Selected indices of deep node is correct after collapse a previous expanded deep node.");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
+});
