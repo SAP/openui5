@@ -338,7 +338,7 @@
 		},
 		{
 			"control": "sap.m.RadioButtonGroup",
-			"url": "../RadioButtonGroup.html",
+			"url": "RadioButtonGroup.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
