@@ -30,6 +30,7 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.LayoutType"
 		],
 		controls: [
+			"sap.f.Avatar",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
@@ -107,6 +108,120 @@ sap.ui.define(["jquery.sap.global",
 	sap.ui.lazyRequire("sap.f.routing.Target");
 	sap.ui.lazyRequire("sap.f.routing.TargetHandler");
 	sap.ui.lazyRequire("sap.f.routing.Targets");
+
+	/**
+	 * Used by the <code>Avatar</code> control to define which shape to use
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.f.AvatarShape = {
+		/**
+		 * Circle shape for the avatar
+		 * @public
+		 */
+		Circle: "Circle",
+
+		/**
+		 * Square shape for the avatar
+		 * @public
+		 */
+		Square: "Square"
+	};
+
+	/**
+	 * Used by the <code>Avatar</code> control to define which size to use
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.f.AvatarSize = {
+		/**
+		 * Extra small size
+		 * @public
+		 */
+		XS: "XS",
+
+		/**
+		 * Small size
+		 * @public
+		 */
+		S: "S",
+
+		/**
+		 * Medium size
+		 * @public
+		 */
+		M: "M",
+
+		/**
+		 * Large size
+		 * @public
+		 */
+		L: "L",
+
+		/**
+		 * Extra large size
+		 * @public
+		 */
+		XL: "XL",
+
+		/**
+		 * Custom size
+		 * @public
+		 */
+		Custom: "Custom"
+	};
+
+	/**
+	 * Used by the <code>Avatar</code> control to define it's type
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.f.AvatarType = {
+		/**
+		 * Type icon for the avatar
+		 * @public
+		 */
+		Icon: "Icon",
+		/**
+		 * Type image for the avatar
+		 * @public
+		 */
+		Image: "Image",
+		/**
+		 * Type initials for the avatar
+		 * @public
+		 */
+		Initials: "Initials"
+	};
+	/**
+	 * Used by the <code>Avatar</code> control to define it's image size
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.46
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.f.AvatarImageFitType = {
+		/**
+		 * The background image will be as large as possible, so that the background area is completely covered by the image
+		 * @public
+		 */
+		Cover: "Cover",
+		/**
+		 * The background image will be scaled to the largest size such that both its width and height can fit
+		 * @public
+		 */
+		Contain: "Contain"
+	};
 
 	return sap.f;
 

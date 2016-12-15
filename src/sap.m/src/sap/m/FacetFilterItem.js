@@ -10,13 +10,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 
 	/**
-	 * Constructor for a new FacetFilterItem.
+	 * Constructor for a new <code>FacetFilterItem</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Represents a value for the FacetFilterList control.
+	 * Represents a value for the {@link sap.m.FacetfilterList} control.
 	 * @extends sap.m.ListItemBase
 	 * @version ${version}
 	 *

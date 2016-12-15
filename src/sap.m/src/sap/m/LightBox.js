@@ -4,8 +4,8 @@
 
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/m/Text',
 		'sap/m/Button', 'sap/m/Image', 'sap/ui/core/ResizeHandler', 'sap/ui/Device', 'sap/m/MessagePage',
-		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout'],
-	function (jQuery, library, Control, Popup, Text, Button, Image, ResizeHandler, Device, MessagePage, Icon, VerticalLayout) {
+		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager'],
+	function (jQuery, library, Control, Popup, Text, Button, Image, ResizeHandler, Device, MessagePage, Icon, VerticalLayout, InstanceManager) {
 
 		'use strict';
 
@@ -189,6 +189,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
+
+			InstanceManager.removeLightBoxInstance(this);
 		};
 
 		//================================================================================
@@ -208,6 +210,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (oImageContent && oImageContent.getImageSrc()) {
 				this._oPopup.open(300, 'center center', 'center center', document.body, null);
+				InstanceManager.addLightBoxInstance(this);
 			}
 
 			return this;
@@ -239,6 +242,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			this._oPopup.close();
+			InstanceManager.removeLightBoxInstance(this);
 
 			return this;
 		};

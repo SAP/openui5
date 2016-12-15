@@ -259,16 +259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 	function initAsyncState(oView) {
 		oView.oAsyncState = {};
-		oView.oAsyncState.promise = new Promise(function(fnResolve, fnReject) {
-			oView.oAsyncState.complete = function(error) {
-				if (!error) {
-					fnResolve(oView);
-				} else {
-					oView.destroy();
-					fnReject(error);
-				}
-			};
-		});
+		oView.oAsyncState.promise = null;
 	}
 
 	/**
@@ -352,7 +343,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		if (this.initViewSettings) {
 			if (mSettings.async) {
-				this.initViewSettings(mSettings)
+				// async processing starts here
+				this.oAsyncState.promise = this.initViewSettings(mSettings)
 					.then(function() {
 						return fnPropagateOwner(fnInitController);
 					})
@@ -360,9 +352,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
-						fnPropagateOwner(that.fireAfterInit.bind(that));
-						// resolve/reject the #loaded Promise
-						that.oAsyncState.complete();
+						return fnPropagateOwner(that.fireAfterInit.bind(that));
+					})
+					.then(function() {
+						// async processing ends by resolving with the view
+						return that;
 					});
 			} else {
 				this.initViewSettings(mSettings);
@@ -370,8 +364,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				this.runPreprocessor("controls", this, true);
 				this.fireAfterInit();
 			}
-		} else if (mSettings.async) {
-			that.oAsyncState.complete();
 		}
 	};
 
@@ -883,7 +875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	* @return {Promise} resolves with the complete view instance, reject with any thrown error
 	*/
 	View.prototype.loaded = function() {
-		if (!this.oAsyncState) {
+		if (!this.oAsyncState || !this.oAsyncState.promise) {
 			// resolve immediately with this view instance
 			return Promise.resolve(this);
 		} else {

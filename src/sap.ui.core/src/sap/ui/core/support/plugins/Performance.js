@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 				this._oStub = oSupportStub;
 
-				if (this.isToolPlugin()) {
+				if (this.runsAsToolPlugin()) {
 					this._aEventIds = [
 						this.getId() + "SetMeasurements",
 						this.getId() + "SetActive"
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 		Performance.prototype.init = function (oSupportStub) {
 			Plugin.prototype.init.apply(this, arguments);
-			if (this.isToolPlugin()) {
+			if (this.runsAsToolPlugin()) {
 				initInTools.call(this, oSupportStub);
 			} else {
 				initInApps.call(this, oSupportStub);

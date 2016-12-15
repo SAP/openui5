@@ -1,41 +1,21 @@
-/* ===================================== */
-/* Less helper functions for gradients   */
-/* ===================================== */
-
-.sapMRIIcon {
-	/* required for size calculation */
-	height: 1.375rem; /* default size */
-	overflow: hidden;
-}
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* High Contrast Black theme              */
+/* ====================================== */
 
 .sapMRIIconSel,
 .sapMRIIconHov,
 .sapMPointer .sapMRIIconUnsel {
-	color: @sapHCStandardFG;
+	color: @sapUiContentIconColor;
 }
 
 .sapMRIIconUnsel {
-	color: @sapHCReducedAltFG;
-}
-
-.sapMRIDisabled {
-	outline: none;
-	cursor: default;
-}
-
-.sapMRI .sapUiIcon,
-.sapMRI .sapMImg {
-	padding-right: 0.25rem;
-}
-
-.sapMRI .sapUiIcon:last-child,
-.sapMRI .sapMImg:last-child {
-	padding-right: 0;
+	color: @sapUiHcReducedAltForeground;
 }
 
 /* Custom focus outline */
 html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 }
 
@@ -53,41 +33,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.125rem dotted @sapHCStandardFG;;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorXS {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingXS;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorS {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingS;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorM {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingM;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingL;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorXS, .sapMRI.sapUiRatingIndicatorS, .sapMRI.sapUiRatingIndicatorM,
-.sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon:last-child, .sapMImg:last-child {
-		padding-right: 0;
+		border: 0.125rem dotted @sapUiContentFocusColor;;
 	}
 }

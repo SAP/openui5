@@ -1660,11 +1660,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					if (oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode) {
 
 						oInput._showIndicator();
-
-						setTimeout(function() {
-							oInput._setContainerSizes();
-						}, 0);
-
 					}
 
 					// only destroy items in simple suggestion mode

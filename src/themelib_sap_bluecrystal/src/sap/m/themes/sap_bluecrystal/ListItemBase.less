@@ -3,14 +3,17 @@
 /* BlueCrystal theme                   */
 /* =================================== */
 
-.sapMListBGTransparent .sapMLIB {
+.sapMListBGTransparent .sapMLIB:not(.sapMLIBActive),
+.sapMListBGTransparent .sapMLIB:not(.sapMLIBSelected) {
 	background: fade(@sapUiListBackground, 0);
 }
 
-.sapMListBGTranslucent .sapMLIB {
+.sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive),
+.sapMListBGTranslucent .sapMLIB:not(.sapMLIBSelected) {
 	background: fade(@sapUiListBackground, @sapUiTranslucentBGOpacity);
 }
 
-.sapMListBGSolid .sapMLIB{
+.sapMListBGSolid .sapMLIB:not(.sapMLIBActive),
+.sapMListBGSolid .sapMLIB:not(.sapMLIBSelected) {
 	background: @sapUiListBackground;
 }

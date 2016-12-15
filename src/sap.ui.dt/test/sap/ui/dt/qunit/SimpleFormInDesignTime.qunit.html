@@ -121,7 +121,7 @@
 				var that = this;
 				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
 					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
-					assert.equal(fnGetIndex(that.oSimpleForm), 6, "then the new index should be 6");
+					assert.equal(fnGetIndex(that.oSimpleForm), 1, "then the new index should be 1");
 				});
 			});
 
@@ -129,7 +129,7 @@
 				var that = this;
 				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
 					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
-					assert.equal(fnGetIndex(that.oSimpleForm, that.oSimpleForm.getAggregation("form").getFormContainers()[0]), 6, "then the new index should be 6");
+					assert.equal(fnGetIndex(that.oSimpleForm, that.oSimpleForm.getAggregation("form").getFormContainers()[0]), 1, "then the new index should be 1");
 				});
 			});
 

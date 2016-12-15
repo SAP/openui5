@@ -1,3 +1,8 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* BlueCrystal theme                      */
+/* ====================================== */
+
 /* ===================================== */
 /* Less helper functions for gradients   */
 /* ===================================== */
@@ -27,13 +32,8 @@
 	.sapMRIGradient(@sapUiContentForegroundColor, 10);
 }
 
-.sapMRIDisabled{
-	outline: none;
-	cursor: default;
-}
-
 html[data-sap-ui-browser^='ie10'] .sapMRIDisabled .sapMRIIconSel {
-	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
+	text-shadow: 0px 0px 0px @sapUiContentShadowColor;
 }
 
 .sapMRIIconHov {
@@ -42,27 +42,16 @@ html[data-sap-ui-browser^='ie10'] .sapMRIDisabled .sapMRIIconSel {
 }
 
 html[data-sap-ui-browser^='ie10'] .sapMRIIconHov {
-	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
+	text-shadow: 0px 0px 0px @sapUiContentShadowColor;
 }
 
 html[data-sap-ui-browser^='ie10'] .sapMRIIconUnsel {
-	text-shadow: 0px 0px 0px @sapUiDarkShadowTint;
+	text-shadow: 0px 0px 0px @sapUiContentShadowColor;
 }
-
-.sapMRI .sapUiIcon,
-.sapMRI .sapMImg {
-	padding-right: 0.25rem;
-}
-
-.sapMRI .sapUiIcon:last-child,
-.sapMRI .sapMImg:last-child {
-	padding-right: 0rem;
-}
-
 
 /* Custom focus outline */
 html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
-	outline: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
 }
 
@@ -80,46 +69,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 1px dotted @sapUiFocus;
-	}
-}
-
-/* Compact mode */
-.sapUiSizeCompact .sapMRIIcon {
-	height: 1rem; /* default size for the compact mode */
-}
-
-.sapMRI.sapUiRatingIndicatorXS {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingXS;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorS {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingS;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorM {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingM;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon, .sapMImg {
-		padding-right: @sapUiRIIconPaddingL;
-		vertical-align: top;
-	}
-}
-
-.sapMRI.sapUiRatingIndicatorXS, .sapMRI.sapUiRatingIndicatorS, .sapMRI.sapUiRatingIndicatorM,
-.sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon:last-child, .sapMImg:last-child {
-		padding-right: 0;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 }

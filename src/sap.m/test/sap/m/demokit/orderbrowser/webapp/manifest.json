@@ -59,6 +59,9 @@
 				},
 				"sap.m": {
 					"minVersion": "1.38.0"
+				},
+				"sap.ui.layout": {
+					"minVersion": "1.38.0"
 				}
 			}
 		},

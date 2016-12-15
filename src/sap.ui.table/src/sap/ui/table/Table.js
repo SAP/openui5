@@ -1239,10 +1239,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var oTableSizes = this._collectTableSizes();
 
-		if (this._mTimeouts.afterUpdateTableSizes) {
-			window.clearTimeout(this._mTimeouts.afterUpdateTableSizes);
-		}
-
 		if (oTableSizes.tableCntHeight == 0 && oTableSizes.tableCntWidth == 0) {
 			// the table has no size at all. This may be due to one of the parents has display:none. In order to
 			// recognize when the parent size changes, the resize handler must be registered synchronously, otherwise
@@ -1293,10 +1289,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// a special workaround for the splitter control due to concurrence issues
 			registerResizeHandler();
 		} else {
-			// size changes of the parent happen due to adaptations of the table sizes. In order to first let the
-			// browser finish painting, the resize handler is registered in a timeout. If this would be done synchronously,
+			// Size changes of the parent happen due to adaptations of the table sizes. In order to first let the
+			// browser finish painting, the resize handler is registered in a promise. If this would be done synchronously,
 			// updateTableSizes would always run twice.
-			this._mTimeouts.afterUpdateTableSizes = window.setTimeout( registerResizeHandler, 0);
+			Promise.resolve().then(registerResizeHandler);
 		}
 	};
 
@@ -1478,7 +1474,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update the bindings:
 		//  - prevent the rerendering
 		//  - use the databinding fwk to update the content of the rows
-		if (bFirstVisibleRowChanged && this.getBinding("rows")) {
+		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
 			if (!bOnScroll) {
 				this._updateVSbScrollTop();
@@ -2394,7 +2390,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
 		var iEstimatedViewportHeight = this._getDefaultRowHeight() * this.getVisibleRowCount();
 		// Case: Not enough data to fill all available rows, only sum used rows.
-		if (this.getVisibleRowCount() > this._getRowCount()) {
+		if (this.getVisibleRowCount() >= this._getRowCount()) {
 			aRowHeights = aRowHeights.slice(0, this._getRowCount());
 		}
 		var iRowHeightsDelta = aRowHeights.reduce(function(a, b) { return a + b; }, 0) - iEstimatedViewportHeight;

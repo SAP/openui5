@@ -1014,8 +1014,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @returns {boolean} whether the design mode is active or not.
 		 * @since 1.13.2
-		 * @experimental Since 1.13.2
-		 * @public
+		 * private
+	 	 * @sap-restricted sap.watt com.sap.webide
 		 */
 		getDesignMode : function() {
 			return this["xx-designMode"];
@@ -1026,8 +1026,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.13.2
-		 * @experimental Since 1.13.2
-		 * @public
+		 * private
+	 	 * @sap-restricted sap.watt com.sap.webide
 		 */
 		getSuppressDeactivationOfControllerCode : function() {
 			return this["xx-suppressDeactivationOfControllerCode"];
@@ -1038,8 +1038,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
-		 * @experimental Since 1.26.4
-		 * @public
+		 * private
+	 	 * @sap-restricted sap.watt com.sap.webide
 		 */
 		getControllerCodeDeactivated : function() {
 			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();

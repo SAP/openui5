@@ -690,9 +690,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					return this;
 				}
 
-				// Set the Control which contains the oParentDomRef as autoclose area in Popup to let the Popup also be notified with rerendering.
+				// Set the Control whose root DOM is oParentDomRef as autoclose area in Popup to let the Popup also be notified with rerendering.
 				// If no Control can be found, the DOM ref is given instead.
-				oPopup.setAutoCloseAreas([jQuery(oParentDomRef).control(0) || oParentDomRef]);
+				oPopup.setAutoCloseAreas([sap.ui.getCore().byId(oParentDomRef.id) || oParentDomRef]);
 				oPopup.setContent(this);
 				//if position has to be calculated wait until it is calculated with setting the position
 				if (iPlacePos <= 3) {

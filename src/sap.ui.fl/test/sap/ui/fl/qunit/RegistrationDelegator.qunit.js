@@ -17,7 +17,7 @@ jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 		var registerLoadComponentEventHandlerStub = sinon.stub(RegistrationDelegator, "registerLoadComponentEventHandler");
 		var registerExtensionProviderStub = sinon.stub(RegistrationDelegator, "registerExtensionProvider");
 		var registerChangesInComponentStub = sinon.stub(RegistrationDelegator, "registerChangesInComponent");
-		var registerXMLPreprocessorStub = sinon.stub(RegistrationDelegator, "registerXMLPreprocessor");
+		//var registerXMLPreprocessorStub = sinon.stub(RegistrationDelegator, "registerXMLPreprocessor");
 
 		jQuery.sap.require("sap.ui.fl.library");
 
@@ -25,7 +25,7 @@ jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 		sinon.assert.calledOnce(registerLoadComponentEventHandlerStub, "Load Component Event Handler called.");
 		sinon.assert.calledOnce(registerExtensionProviderStub, "Extension provider called.");
 		sinon.assert.calledOnce(registerChangesInComponentStub, "Changes in Component called.");
-		sinon.assert.calledOnce(registerXMLPreprocessorStub, "XML preprocessor called.");
+		//sinon.assert.calledOnce(registerXMLPreprocessorStub, "XML preprocessor called.");
 	});
 
 }(sap.ui.fl.RegistrationDelegator));

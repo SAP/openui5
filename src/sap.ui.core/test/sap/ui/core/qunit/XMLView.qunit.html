@@ -291,7 +291,7 @@ sap.ui.core.mvc.Controller</title>
 		// hide the view
 		oView.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		
+
 		// this should move it to the preserve area with all child controls incl. the invisible placeholder
 		assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
 		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder still should exist for panel");
@@ -310,7 +310,7 @@ sap.ui.core.mvc.Controller</title>
 		assert.notOk(dummyPlaceholder(oPanel), "panel should have no more dummy placeholder");
 		assert.notOk(invisiblePlaceholder(oPanel), "panel should have no more invisible placeholder");
 
-		// now make view and child visible in two different renderings 
+		// now make view and child visible in two different renderings
 		oView.setVisible(false);
 		oPanel.setVisible(false);
 		sap.ui.getCore().applyChanges();
@@ -332,6 +332,40 @@ sap.ui.core.mvc.Controller</title>
 
 		oView.destroy();
 		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Destroy removes preserved content from DOM", function(assert) {
+		// Because nobody else would do it
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = oView.getDomRef();
+		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+
+		oView.destroy();
+
+		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
+	});
+
+	QUnit.test("Destroy with 'KeepDom'-mode removes preservable flag from DOM ref", function(assert) {
+		// Otherwise view content of already destroyed views might get preserve and never destroyed
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = oView.getDomRef();
+
+		oView.destroy("KeepDom");
+		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+
+		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
+
+		// Cleanup
+		var oDomRef = oView.getDomRef();
+		oDomRef.parentElement.removeChild(oDomRef);
 	});
 
 	QUnit.module("Additional tests:");
@@ -581,6 +615,35 @@ sap.ui.core.mvc.Controller</title>
 		return bSync ? fnAssert() : oView.loaded().then(fnAssert);
 	}
 
+	function testPreprocessorError(assert, bSync, sType) {
+		var oView, oPreprocessors = {}, error,
+			oError = new Error("preprocessor failed"),
+			preprocessorSpy = sinon.spy(function(vSource) {
+				throw oError;
+			}),
+			fnAssert = function(e) {
+				assert.strictEqual(e, oError, "error was processed");
+			}.bind(this);
+
+		assert.expect(1);
+
+		oPreprocessors[sType] = this.fnGetConfig(preprocessorSpy, true);
+
+		// synchronous case -> try/catch
+		try {
+			oView = sap.ui.xmlview({
+				viewContent: this.sViewContent,
+				preprocessors: oPreprocessors,
+				async: !bSync
+			});
+		} catch (_error) {
+			error = _error;
+		}
+
+		// async case -> Promise#catch
+		return bSync ? fnAssert(error) : oView.loaded().catch(fnAssert);
+	}
+
 	jQuery.each(sap.ui.core.mvc.XMLView.PreprocessorType, function(sProp, sType) {
 		QUnit.test("sync - single preprocessor " + sType + " (compatible)", function(assert) {
 			testPreprocessor.call(this, assert, true, sType);
@@ -593,6 +656,12 @@ sap.ui.core.mvc.Controller</title>
 		});
 		QUnit.test("async - multiple preprocessors " + sType, function(assert) {
 			return testPreprocessor.call(this, assert, false, sType, 2);
+		});
+		QUnit.test("sync - preprocessor error " + sType + " (compatible)", function(assert) {
+			testPreprocessorError.call(this, assert, true, sType);
+		});
+		QUnit.test("async - preprocessor error " + sType, function(assert) {
+			testPreprocessorError.call(this, assert, true, sType);
 		});
 	});
 

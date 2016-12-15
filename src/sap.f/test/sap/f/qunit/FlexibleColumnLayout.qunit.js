@@ -623,6 +623,26 @@
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
 	});
 
+	QUnit.test("Navigation arrows - 1 column", function (assert) {
+		this.oFCL = oFactory.createFCL();
+		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+	});
+
+	QUnit.test("Navigation arrows - 2 columns", function (assert) {
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded
+		});
+		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+	});
+
+	QUnit.test("Navigation arrows - 3 columns", function (assert) {
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
+
+		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+	});
+
 	QUnit.module("Nav containers proxying", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");

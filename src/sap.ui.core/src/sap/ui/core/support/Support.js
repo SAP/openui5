@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	function(jQuery, EventProvider, Plugin, Device/* , jQuerySap, jQuerySap2, jQuerySap1 */) {
 	"use strict";
 
+	/*global document, localStorage, window */
+
 	/**
 	 * Constructor for sap.ui.core.support.Support - must not be used: To get the singleton instance, use
 	 * sap.ui.core.support.Support.getStub.
@@ -51,6 +53,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 						that._oRemoteWindow = null;
 						Support.exitPlugins(that, false);
 					});
+					this.attachEvent(mEvents.LIBS, function(oEvent){
+						var aLibs = Support.getDiagnosticLibraries(),
+							aLibNames = [];
+						for (var i = 0; i < aLibs.length; i++) {
+							aLibNames.push(aLibs[i].name);
+						}
+						that.sendEvent(mEvents.LIBS, aLibNames);
+					});
 					this.attachEvent(mEvents.SETUP, function(oEvent){
 						that._isOpen = true;
 						Support.initPlugins(that, false);
@@ -71,11 +81,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
 					});
-					jQuery(function(){
-						Support.initPlugins(that, true).then(function() {
-							that.sendEvent(mEvents.SETUP);
+					this.attachEvent(mEvents.LIBS, function(oEvent){
+						sap.ui.getCore().loadLibraries(oEvent.mParameters,true).then(function() {
+							jQuery(function(){
+								Support.initPlugins(that, true).then(function() {
+									that.sendEvent(mEvents.SETUP);
+								});
+							});
 						});
 					});
+					this.sendEvent(mEvents.LIBS);
 					break;
 			}
 
@@ -91,6 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 
 	var mEvents = {
+		LIBS: "sapUiSupportLibs",
 		SETUP: "sapUiSupportSetup", //Event when support tool is opened
 		TEAR_DOWN: "sapUiSupportTeardown" //Event when support tool is closed
 	};
@@ -119,8 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * Support plugin registration
 	 * @private
 	 */
-	Support.TOOL_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.ViewInfo", "sap.ui.core.support.plugins.Debugging", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.MessageTest", "sap.ui.core.support.plugins.Interaction"];
-	Support.APP_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.Selector", "sap.ui.core.support.plugins.Breakpoint", "sap.ui.core.support.plugins.LocalStorage", "sap.ui.core.support.plugins.Interaction"];
+	var aPlugins = [];
 
 
 	/**
@@ -150,6 +165,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		return _oStubInstance;
 	};
 
+	/**
+	 * Returns all plugins for the diagnostics tool window
+	 * @returns {sap.ui.core.support.Plugin[]}
+	 * @private
+	 * @sap-restricted
+	 */
+	Support.getToolPlugins = function() {
+		var aResult = [];
+		for (var i = 0; i < aPlugins.length; i++) {
+			if (aPlugins[i] instanceof Plugin && aPlugins[i].isToolPlugin()) {
+				aResult.push(aPlugins[i]);
+			}
+		}
+		return aResult;
+	};
+
+	/**
+	 * Returns all plugins for the application window
+	 * @param bTool
+	 * @returns {sap.ui.core.support.Plugin[]}
+	 * @private
+	 * @sap-restricted
+	 */
+	Support.getAppPlugins = function() {
+		var aResult = [];
+		for (var i = 0; i < aPlugins.length; i++) {
+			if (aPlugins[i] instanceof Plugin && aPlugins[i].isAppPlugin()) {
+				aResult.push(aPlugins[i]);
+			}
+		}
+		return aResult;
+	};
+
 
 	/**
 	 * Returns the type of this support stub.
@@ -162,6 +210,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		return this._sType;
 	};
 
+	/**
+	 * Returns true if this stub is running on the diagnostics tool window
+	 *
+	 * @returns {boolean} true if this stub is running on the diagnostics tool window, otherwise, false
+	 * @private
+	 * @sap-restricted
+	 */
+	Support.prototype.isToolStub = function() {
+		return this._sType === Support.StubType.TOOL;
+	};
+
+	/**
+	 * Returns true if this stub is running on the application window
+	 *
+	 * @returns {boolean} true if this stub is running on the application window, otherwise, false
+	 * @private
+	 * @sap-restricted
+	 */
+	Support.prototype.isAppStub = function() {
+		return this._sType === Support.StubType.APPLICATION;
+	};
 
 	/**
 	 * Receive event handler for postMessage communication.
@@ -203,6 +272,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @param {string} sEventId the event id
 	 * @param {Object} [mParams] the parameter map (JSON)
+	 * @sap-restricted
 	 * @private
 	 */
 	Support.prototype.sendEvent = function(sEventId, mParams) {
@@ -312,6 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @param {Object} [mParameters] the parameter map (JSON)
 	 * @return {sap.ui.core.support.Support} Returns <code>this</code> to allow method chaining
 	 * @private
+	 * @sap-restricted
 	 */
 
 
@@ -321,6 +392,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @name sap.ui.core.support.Support.prototype.detachEvent
 	 * @function
 	 * @private
+	 * @sap-restricted
 	 */
 
 
@@ -330,6 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @name sap.ui.core.support.Support.prototype.attachEvent
 	 * @function
 	 * @private
+	 * @sap-restricted
 	 */
 
 
@@ -372,6 +445,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	}
 
 	/**
+	 * Returns an array of of all library infos that define sap.ui.support extensions for diagnosticPlugins.
+	 *
+	 * @returns {LibraryInfo[]} Returns an array of of all library infos that contain a diagnosticPlugins extension
+	 * @private
+	 */
+	Support.getDiagnosticLibraries = function() {
+		var mLibs = sap.ui.getCore().getLoadedLibraries(),
+			aLibs = [];
+		for (var n in mLibs) {
+			var oLib = mLibs[n];
+			if (oLib.extensions && oLib.extensions["sap.ui.support"] && oLib.extensions["sap.ui.support"].diagnosticPlugins) {
+				aLibs.push(oLib);
+			}
+		}
+		return aLibs;
+	};
+
+	/**
 	 * Loads and initializes all plugins on app or tool side depending on
 	 * the <code>bTool</code> parameter.
 	 *
@@ -384,8 +475,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		return new Promise(function(resolve, reject) {
 
-			var aPlugins = bTool ? Support.TOOL_SIDE_PLUGINS : Support.APP_SIDE_PLUGINS;
-
+			aPlugins = [];
+			var aLibs = Support.getDiagnosticLibraries();
+			for (var i = 0; i < aLibs.length; i++) {
+				var oLib = aLibs[i],
+					aLibPlugins = oLib.extensions["sap.ui.support"].diagnosticPlugins;
+				if (Array.isArray(aLibPlugins)) {
+					for (var j = 0; j < aLibPlugins.length; j++) {
+						if (aPlugins.indexOf(aLibPlugins[j]) === -1) {
+							aPlugins.push(aLibPlugins[j]);
+						}
+					}
+				}
+			}
 			// collect plugin modules
 			var aPluginModules = [],
 				aPluginModuleIndexes = [],
@@ -393,7 +495,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 			for ( i = 0; i < aPlugins.length; i++ ) {
 				if ( typeof aPlugins[i] === "string" ) {
-					aPluginModules.push( jQuery.sap.getResourceName(aPlugins[i], '') );
+					aPluginModules.push( aPlugins[i] );
 					aPluginModuleIndexes.push(i);
 				}
 			}
@@ -403,23 +505,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				var i,j,FNPluginConstructor;
 
 				// instantiate loaded plugins
-				for ( var j = 0; j < arguments.length; j++ ) {
+				for ( j = 0; j < arguments.length; j++ ) {
 					FNPluginConstructor = arguments[j];
 					i = aPluginModuleIndexes[j];
-					aPlugins[i] = new FNPluginConstructor(oStub);
-					if ( oStub.getType() === mTypes.TOOL ) {
+					if (oStub.isToolStub() && FNPluginConstructor.prototype.isToolPlugin()) {
+						aPlugins[i] = new FNPluginConstructor(oStub);
 						wrapPlugin(aPlugins[i]);
+					} else if (oStub.isAppStub() && FNPluginConstructor.prototype.isAppPlugin()) {
+						aPlugins[i] = new FNPluginConstructor(oStub);
 					}
 				}
 
 				for ( i = 0; i < aPlugins.length; i++ ) {
-					if ( aPlugins[i] instanceof Plugin ) {
-						aPlugins[i].init(oStub);
+					if (aPlugins[i] instanceof Plugin ) {
+						if (oStub.isToolStub() && aPlugins[i].isToolPlugin()) {
+							aPlugins[i].init(oStub);
+						} else if (oStub.isAppStub() && aPlugins[i].isAppPlugin()) {
+							aPlugins[i].init(oStub);
+						}
 					}
 				}
-
 				resolve();
-
 			});
 
 		});
@@ -435,10 +541,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @private
 	 */
 	Support.exitPlugins = function(oStub, bTool) {
-		var aPlugins = bTool ? Support.TOOL_SIDE_PLUGINS : Support.APP_SIDE_PLUGINS;
 		for (var i = 0; i < aPlugins.length; i++) {
 			if (aPlugins[i] instanceof Plugin) {
-				aPlugins[i].exit(oStub, bTool);
+				if (aPlugins[i].isToolPlugin() && oStub.isToolStub() && bTool) {
+					aPlugins[i].exit(oStub, true);
+				} else if (aPlugins[i].isAppPlugin() && oStub.isAppStub() && !bTool) {
+					aPlugins[i].exit(oStub, false);
+				}
 			}
 		}
 	};
@@ -465,16 +574,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	/**
 	 * Initialize support mode based on configuration
 	 */
-	Support.initializeSupportMode = function(aSettings) {
+	Support.initializeSupportMode = function(aSettings, bAsync) {
 		if (aSettings.indexOf("true") > -1 || aSettings.indexOf("viewinfo") > -1) {
-			Support.initializeSupportInfo();
+			Support._initializeSupportInfo(bAsync);
 		}
 	};
 
 	/**
 	 * Initialize Support Info Store This is only done if getSupportMode on configuration is true or viewinfo.
+	 * @private
 	 */
-	Support.initializeSupportInfo = function() {
+	Support._initializeSupportInfo = function(bAsync) {
 		var aSupportInfos = [],
 			aSupportInfosBreakpoints = [],
 			aSupportXMLModifications = [],
@@ -483,27 +593,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			sDOMNodeNamespaceURI = "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1",
 			mSupportInfos = {};
 
+		var bHasLocalStorage = (function() {
+			// Note: according to Web Storage spec, access to window.localStorage might already fail with a security exception
+			// Note: on iOS, access to window.localStorage might succeed, but access to methods might fail (privacy mode)
+			var key = "sap-ui-support.probe", value;
+			try {
+				localStorage.setItem(key, key);
+				value = localStorage.getItem(key);
+				localStorage.removeItem(key);
+				return value === key;
+			} catch (e) {
+				return false;
+			}
+		}());
+
 		// store breakpoints to local storage
 		function _storeBreakpoints() {
-			if (window.localStorage) {
-				window.localStorage.setItem("sap-ui-support.aSupportInfosBreakpoints/" + window.document.location.href, JSON.stringify(aSupportInfosBreakpoints));
+			if (bHasLocalStorage) {
+				localStorage.setItem("sap-ui-support.aSupportInfosBreakpoints/" + document.location.href, JSON.stringify(aSupportInfosBreakpoints));
 			}
 		}
 
 		//store xml modification to local storage
 		function _storeXMLModifications() {
-			if (window.localStorage) {
-				window.localStorage.setItem("sap-ui-support.aSupportXMLModifications/" + window.document.location.href, JSON.stringify(aSupportXMLModifications));
+			if (bHasLocalStorage) {
+				localStorage.setItem("sap-ui-support.aSupportXMLModifications/" + document.location.href, JSON.stringify(aSupportXMLModifications));
 			}
 		}
 
 		//read the stored data from the last run to enable modifications and breakpoints
-		if (window.localStorage) {
-			var sValue = window.localStorage.getItem("sap-ui-support.aSupportInfosBreakpoints/" + window.document.location.href);
+		if (bHasLocalStorage) {
+			var sValue = localStorage.getItem("sap-ui-support.aSupportInfosBreakpoints/" + document.location.href);
 			if (sValue) {
 				aSupportInfosBreakpoints = JSON.parse(sValue);
 			}
-			var sValue = window.localStorage.getItem("sap-ui-support.aSupportXMLModifications/" + window.document.location.href);
+			var sValue = localStorage.getItem("sap-ui-support.aSupportXMLModifications/" + document.location.href);
 			if (sValue) {
 				aSupportXMLModifications = JSON.parse(sValue);
 			}
@@ -835,23 +959,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			};
 		};
 
-		jQuery.sap.require("sap.ui.core.mvc.View");
-		sap.ui.core.mvc.View._supportInfo = sap.ui.core.support.Support.info;
+		var aModulesWhereToInjectSupportInfo = [
+			"sap/ui/base/ManagedObject",
+			"sap/ui/core/mvc/View",
+			"sap/ui/core/XMLTemplateProcessor",
+			"sap/ui/thirdparty/datajs"
+		];
 
-		jQuery.sap.require("sap.ui.base.ManagedObject");
-		sap.ui.base.ManagedObject._supportInfo = sap.ui.core.support.Support.info;
+		function injectSupportInfo(ManagedObject, View, XMLTemplateProcessor, _datajs) {
+			ManagedObject._supportInfo = Support.info;
+			View._supportInfo = Support.info;
+			XMLTemplateProcessor._supportInfo = Support.info;
+			// Note: module 'datajs' currently exports the global 'OData', not 'datajs', therefore patching global directly
+			if (window.datajs) {
+				window.datajs._sap = {
+					_supportInfo:  Support.info
+				};
+			}
 
-		jQuery.sap.require("sap.ui.core.XMLTemplateProcessor");
-		sap.ui.core.XMLTemplateProcessor._supportInfo = sap.ui.core.support.Support.info;
-
-		jQuery.sap.require("sap.ui.thirdparty.datajs");
-		if (window.datajs) {
-			window.datajs._sap = {
-				_supportInfo:  sap.ui.core.support.Support.info
-			};
+			jQuery.sap.log.info("sap.ui.core.support.Support.info initialized.");
 		}
 
-		jQuery.sap.log.info("sap.ui.core.support.Support.info initialized.");
+		if ( bAsync ) {
+			sap.ui.require(aModulesWhereToInjectSupportInfo, injectSupportInfo);
+		} else {
+			injectSupportInfo.apply(null, aModulesWhereToInjectSupportInfo.map(sap.ui.requireSync) );
+		}
 	};
 
 	return Support;

@@ -543,8 +543,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
 
-		// mark the event as InputBase event
-		oEvent.setMark("inputBase");
+		// Prevents browser back to previous page in IE
+		if (!this.getEditable() && oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+			oEvent.preventDefault();
+		}
 	};
 
 	/**
