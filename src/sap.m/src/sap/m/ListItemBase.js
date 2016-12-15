@@ -157,9 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 					if (oNode.getAttribute("aria-hidden") == "true" ||
 						oNode.style.visibility == "hidden" ||
-						oNode.style.display == "none" ||
-						!oNode.offsetHeight ||
-						!oNode.offsetWidth) {
+						oNode.style.display == "none") {
 						return NodeFilter.FILTER_REJECT;
 					}
 
@@ -312,10 +310,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aOutput.push(oBundle.getText("LIST_ITEM_UNREAD"));
 		}
 
-		if (this.getContentAnnouncement) {
-			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
-		}
-
 		if (this.getCounter()) {
 			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", this.getCounter()));
 		}
@@ -329,6 +323,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (sType == mType.Active || sType == mType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
 			}
+		}
+
+		if (this.getContentAnnouncement) {
+			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
 		}
 
 		return aOutput.join(" ");
