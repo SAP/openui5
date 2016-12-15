@@ -787,6 +787,46 @@
 		equal(this.oBox.getDomRef().children.length, 0, "All items should have been removed");
 	});
 
+	QUnit.module("Nested FlexBoxes", {
+		setup: function() {
+			this.oBoxConfig = {
+			},
+			this.vItemTemplates = [
+			                       sap.m.VBox,
+			                       sap.ui.core.HTML,
+			                       sap.ui.core.HTML
+			],
+			this.vItemConfigs = [
+			                     {
+			                    	layoutData: new sap.m.FlexItemData({
+			                    		baseSize: "0",
+			                    		growFactor: 3
+			                    	})
+			                     },
+			                     {
+			                    	content: "<div class='items'>2</div>",
+			                    	layoutData: new sap.m.FlexItemData({})
+			                     },
+			                     {
+			                    	content: "<div class='items'>3</div>",
+			                    	layoutData: new sap.m.FlexItemData({})
+			                     }
+			]
+			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
+			this.oItem1 = this.oBox.getItems()[0];
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function() {
+			this.oBox.destroy();
+			this.oBox = null;
+		}
+	});
+
+	QUnit.test("Nested FlexBox rendered without wrapper", function() {
+		ok(this.oItem1.getDomRef().classList.contains("sapMVBox"), "Inner VBox should be rendered without a wrapper");
+	});
+
 	QUnit.module("Accessibility", {
 		setup: function() {
 			this.oBoxConfig = {
