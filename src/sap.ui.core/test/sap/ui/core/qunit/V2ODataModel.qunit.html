@@ -62,7 +62,24 @@
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
+	
+	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
+	var fnChange = function(oEvent) {
+		bChanged = true;
+		ok(bDataRequested && !bDataReceived,"change fired");
+	};
+
+	var fnDataRequested = function(oEvent) {
+		bDataRequested = true;
+		ok(!bDataReceived && !bChanged,"dataRequested fired");
+	};
+
+	var fnDataReceived = function(oEvent) {
+		bDataReceived = true;
+		ok(bChanged && bDataRequested,"dataRecieved fired");
+	};
+	
 	/**
 	 * Removes all shared Metadata
 	 */
@@ -3088,7 +3105,84 @@
 			stopServer();
 		}
 	});
-
+	asyncTest("Event order (single request): bindElement fails --> refresh", function(){
+		expect(5);
+		oModel.setUseBatch(false);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			oLabel.getElementBinding().detachDataReceived(handler);
+			oLabel.getElementBinding().attachDataReceived(function() {
+				ok(true, "DataReceived fired");
+				oLabel.unbindElement();
+				bChanged = false;
+				bDataRequested = false;
+				bDataReceived = false;
+				start(); // resume normal testing			
+			});
+			oLabel.getElementBinding().refresh();
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (single request): bindElement fails", function(){
+		expect(3);
+		oModel.setUseBatch(false);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			oLabel.unbindElement();
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			start(); // resume normal testing
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (batch request): bindElement fails --> refresh", function(){
+		expect(5);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			oLabel.getElementBinding().detachDataReceived(handler);
+			oLabel.getElementBinding().attachDataReceived(function() {
+				ok(true, "DataReceived fired");
+				oLabel.unbindElement();
+				bChanged = false;
+				bDataRequested = false;
+				bDataReceived = false;
+				start(); // resume normal testing			
+			});
+			oLabel.getElementBinding().refresh();
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (batch request): bindElement fails", function(){
+		expect(3);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			oLabel.unbindElement();
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			start(); // resume normal testing
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
 	asyncTest("test eventing when using read with batch on", function() {
 		var bSuccess = false;
 		var iReqComp = 0;
