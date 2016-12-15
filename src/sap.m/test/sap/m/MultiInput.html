@@ -4,8 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>MultiInput - sap.m</title>
-
-		<script src="shared-config.js"></script>
+		
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout">
@@ -139,7 +138,7 @@
 			 new sap.m.Token({text: "Token 1", key: "0001"}),
 			 new sap.m.Token({text: "Token 2", key: "0002", editable: false}),
 			 new sap.m.Token({text: "Token 3", key: "0003"}),
-			 new sap.m.Token({text: "Token 4", key: "0004", editable: false})
+			 new sap.m.Token({text: "Token 4 with a long text", key: "0004", editable: false})
 		]);
 
 		oMultiInput5 = new sap.m.MultiInput("mI5", {
@@ -191,7 +190,7 @@
 		});
 
 		oMultiInputCustomValidator.setTokens([
-		   			         new sap.m.Token({text: "Token 1", key: "0001"}),
+		   			         new sap.m.Token({text: "Token 1 with a much much much longer text than the rest", key: "0001"}),
 		   			         new sap.m.Token({text: "Token 2", key: "0002"}),
 		   			         new sap.m.Token({text: "Token 3", key: "0003"}),
 		   			         new sap.m.Token({text: "Token 4", key: "0004"}),
