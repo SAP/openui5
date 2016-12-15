@@ -70,15 +70,32 @@ sap.ui.define([], function() {
 						};
 					}
 				},
+				beforeMove : function (oSimpleForm) {
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = true;
+					}
+				},
+				afterMove : function (oSimpleForm) {
+					if (oSimpleForm){
+						oSimpleForm._bChangedByMe = false;
+					}
+				},
 				actions : {
 					move : function(oMovedElement){
 						var sType = oMovedElement.getMetadata().getName();
 
+						var oMoveMetadata;
 						if (sType === "sap.ui.layout.form.FormContainer"){
-							return "moveSimpleFormGroup";
+							oMoveMetadata = {
+								changeType : "moveSimpleFormGroup"
+							};
 						} else if (sType === "sap.ui.layout.form.FormElement"){
-							return "moveSimpleFormField";
+							oMoveMetadata = {
+								changeType : "moveSimpleFormField"
+							};
 						}
+
+						return oMoveMetadata;
 					},
 					rename : function(oElement){
 						var sType = oElement.getMetadata().getName();
@@ -94,8 +111,6 @@ sap.ui.define([], function() {
 								domRef : function (oControl){
 									if (oControl.getTitle && oControl.getTitle()) {
 										return oControl.getTitle().getDomRef();
-									} else {
-										return;
 									}
 								}
 							};
@@ -151,7 +166,7 @@ sap.ui.define([], function() {
 						var sType = oElement.getMetadata().getName();
 						var oCreateContainerMetadata;
 						if (sType === "sap.ui.layout.form.FormElement"){
-							return;
+							return null;
 						} else if (sType === "sap.ui.layout.form.SimpleForm") {
 							oCreateContainerMetadata = {
 								changeType : "addSimpleFormGroup",

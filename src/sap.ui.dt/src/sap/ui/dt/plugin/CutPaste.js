@@ -41,10 +41,7 @@ sap.ui.define([
 					type: "sap.ui.dt.plugin.ElementMover"
 				}
 			},
-			associations: {},
-			events: {
-				elementMoved: {}
-			}
+			associations: {}
 		}
 	});
 
@@ -132,35 +129,53 @@ sap.ui.define([
 		}
 	};
 
-	CutPaste.prototype.paste = function(oTargetOverlay) {
+	/**
+	 * The actual execution of paste. This method is additionally defined because
+	 * there might be steps between the execution and finalization (stopCutAndPaste) of
+	 * paste (for example in the RTA plugin that extends this one).
+	 * @param  {sap.ui.dt.Overlay} oTargetOverlay The Overlay where the element will be pasted
+	 * @return {boolean} Return true if paste was successfully executed
+	 */
+	CutPaste.prototype._executePaste = function(oTargetOverlay) {
 		var oCutOverlay = this.getElementMover().getMovedOverlay();
 		if (!oCutOverlay) {
-			return;
+			return false;
 		}
 		if (!this._isForSameElement(oCutOverlay, oTargetOverlay)) {
 
 			var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
 			if (oTargetZoneAggregation) {
 				this.getElementMover().insertInto(oCutOverlay, oTargetZoneAggregation);
+				return true;
 			} else if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
-					this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
+				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
+				return true;
 			} else {
-				return;
+				return false;
 			}
-
-			this.fireElementModified({
-				"command" : this.getElementMover().buildMoveEvent()
-			});
 		}
 
 		// focus get invalidated, see BCP 1580061207
 		setTimeout(function(){
 			oCutOverlay.focus();
 		},0);
-
-		this.stopCutAndPaste();
 	};
 
+	/**
+	 * Paste the element into the target overlay
+	 * @param  {sap.ui.dt.Overlay} oTargetOverlay The Overlay where the element will be pasted
+	 */
+	CutPaste.prototype.paste = function(oTargetOverlay) {
+		var bPasteExecuted = this._executePaste(oTargetOverlay);
+
+		if (bPasteExecuted === true){
+			this.stopCutAndPaste();
+		}
+	};
+
+	/**
+	 * Finalize cut&paste operation + cleanup
+	 */
 	CutPaste.prototype.stopCutAndPaste = function() {
 		var oCutOverlay = this.getElementMover().getMovedOverlay();
 		if (oCutOverlay) {

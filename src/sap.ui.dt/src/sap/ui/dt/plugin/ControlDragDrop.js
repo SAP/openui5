@@ -41,10 +41,7 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 					type : "sap.ui.dt.plugin.ElementMover"
 				}
 			},
-			associations : {},
-			events : {
-				elementMoved : {}
-			}
+			associations : {}
 		}
 	});
 
@@ -127,9 +124,6 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
-		this.fireElementModified({
-			"command" : this.getElementMover().buildMoveEvent()
-		});
 		delete this._oPreviousTarget;
 		this.getElementMover().deactivateAllTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
 		delete this._oDraggedOverlay;
