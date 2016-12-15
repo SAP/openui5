@@ -10,30 +10,6 @@ sap.ui.define([
 ], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
-	var Cache;
-
-	/**
-	 * Adds an item to the given map by path.
-	 *
-	 * @param {object} mMap
-	 *   A map from path to a list of items
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} [oItem]
-	 *   The item; if it is <code>undefined</code>, nothing happens
-	 */
-	function addByPath(mMap, sPath, oItem) {
-		if (oItem) {
-			if (!mMap[sPath]) {
-				mMap[sPath] = [oItem];
-			} else if (mMap[sPath].indexOf(oItem) >= 0) {
-				return;
-			} else {
-				mMap[sPath].push(oItem);
-			}
-		}
-	}
-
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
@@ -95,39 +71,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Drills down into the given object according to <code>sPath</code>.
-	 *
-	 * @param {object} oResult
-	 *   Some object
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into
-	 * @param {function} fnLog
-	 *   A function logging a warning which takes the invalid segment as parameter
-	 * @returns {object}
-	 *   The child object according to <code>sPath</code>
-	 */
-	function drillDown(oResult, sPath, fnLog) {
-		if (sPath) {
-			sPath.split("/").every(function (sSegment) {
-				if (!oResult || typeof oResult !== "object") {
-					if (oResult !== null) {
-						fnLog(sSegment);
-					}
-					oResult = undefined;
-					return false;
-				}
-				oResult = oResult[sSegment];
-				if (oResult === undefined) {
-					fnLog(sSegment);
-					return false;
-				}
-				return true;
-			});
-		}
-		return oResult;
-	}
-
-	/**
 	 * Fills the given array range with the given value. If iEnd is greater than the array length,
 	 * elements are appended to the end, in contrast to Array.fill.
 	 *
@@ -149,26 +92,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
-	 *
-	 * @param {object} mPatchRequests Map of PATCH requests
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
-	 */
-	function hasPendingChangesForPath(mPatchRequests, sPath) {
-		var sRequestPath;
-
-		for (sRequestPath in mPatchRequests) {
-			if (isSubPath(sRequestPath, sPath)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns <code>true</code> if <code>sRequestPath</code> is a sub-path of <code>sPath</code>.
 	 *
 	 * @param {string} sRequestPath The request path
@@ -177,32 +100,6 @@ sap.ui.define([
 	 */
 	function isSubPath(sRequestPath, sPath) {
 		return sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPath + "/") === 0;
-	}
-
-	/**
-	 * Removes an item from the given map by path.
-	 *
-	 * @param {object} mMap
-	 *   A map from path to a list of items
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oItem
-	 *   The item
-	 */
-	function removeByPath(mMap, sPath, oItem) {
-		var aItems = mMap[sPath],
-			iIndex;
-
-		if (aItems) {
-			iIndex = aItems.indexOf(oItem);
-			if (iIndex >= 0) {
-				if (aItems.length === 1) {
-					delete mMap[sPath];
-				} else {
-					aItems.splice(iIndex, 1);
-				}
-			}
-		}
 	}
 
 	/**
@@ -250,30 +147,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Reset all pending POST requests and PATCH requests for the given <code>sPath</code>
-	 *
-	 * @param {_Cache} oCache The cache
-	 * @param {string} sPath The path
-	 * @throws {Error}
-	 *   If one of the requests is currently running
-	 */
-	function resetChangesForPath(oCache, sPath) {
-		var i,
-			sRequestPath,
-			aPromises;
-
-		for (sRequestPath in oCache.mPatchRequests) {
-			if (isSubPath(sRequestPath, sPath)) {
-				aPromises = oCache.mPatchRequests[sRequestPath];
-				for (i = 0; i < aPromises.length; i++ ) {
-					oCache.oRequestor.removePatch(aPromises[i]);
-				}
-				delete oCache.mPatchRequests[sRequestPath];
-			}
-		}
-	}
-
-	/**
 	 * Updates the property of the given name with the given new value (and later with the server's
 	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
 	 * request.
@@ -303,8 +176,7 @@ sap.ui.define([
 			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
 			sTransientGroup,
 			// the path that is updated; the promise is registered here
-			sUpdatePath =
-				_Helper.buildPath(sPath, oCache.bSingleProperty ? "value" : sPropertyPath),
+			sUpdatePath = _Helper.buildPath(sPath, sPropertyPath),
 			oUpdatePromise;
 
 		/*
@@ -312,7 +184,7 @@ sap.ui.define([
 		 * resetChangesForPath has been called on the binding or model.
 		 */
 		function onCancel() {
-			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 			// write the previous value into the cache
 			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
 				createUpdateData(aPropertyPath, vOldValue));
@@ -339,10 +211,6 @@ sap.ui.define([
 		mHeaders = {"If-Match" : oCacheData["@odata.etag"]};
 		// create the PATCH request body
 		oBody = createUpdateData(aPropertyPath, vValue);
-		if (oCache.bSingleProperty) {
-			// single property caches always have the attribute in "value"
-			aPropertyPath = ["value"];
-		}
 		// remember the old value
 		vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
 			return oValue && oValue[sSegment];
@@ -362,18 +230,227 @@ sap.ui.define([
 		// send and register the PATCH request
 		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody,
 			undefined, onCancel);
-		addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+		oCache.addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 		return oUpdatePromise.then(function (oPatchResult) {
-			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 			// update the cache with the PATCH response
-			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
-				oCache.bSingleProperty ? {value : oPatchResult[sPropertyPath]} : oPatchResult);
+			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData, oPatchResult);
 			return oPatchResult;
 		}, function (oError) {
-			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
 			throw oError;
 		});
 	}
+
+	//*********************************************************************************************
+	// Cache
+	//*********************************************************************************************
+
+	/**
+	 * Base class for the various caches.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL
+	 * @param {object} [mQueryOptions]
+	 *   A map of key-value pairs representing the query string
+	 */
+	function Cache(oRequestor, sResourcePath, mQueryOptions) {
+		this.bActive = true;
+		this.mChangeListeners = {};
+		this.mPatchRequests = {};
+		this.mQueryOptions = mQueryOptions;
+		this.oRequestor = oRequestor;
+		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
+	}
+
+	/**
+	 * Adds an item to the given map by path.
+	 *
+	 * @param {object} mMap
+	 *   A map from path to a list of items
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} [oItem]
+	 *   The item; if it is <code>undefined</code>, nothing happens
+	 */
+	Cache.prototype.addByPath = function (mMap, sPath, oItem) {
+		if (oItem) {
+			if (!mMap[sPath]) {
+				mMap[sPath] = [oItem];
+			} else if (mMap[sPath].indexOf(oItem) >= 0) {
+				return;
+			} else {
+				mMap[sPath].push(oItem);
+			}
+		}
+	};
+
+	/**
+	 * Throws an error if the cache is not active.
+	 */
+	Cache.prototype.checkActive = function () {
+		var oError;
+
+		if (!this.bActive) {
+			oError = new Error("Response discarded: cache is inactive");
+			oError.canceled = true;
+			throw oError;
+		}
+	};
+
+	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} oListener
+	 *   The change listener
+	 */
+	Cache.prototype.deregisterChange = function (sPath, oListener) {
+		this.removeByPath(this.mChangeListeners, sPath, oListener);
+	};
+
+	/**
+	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
+	 * leads into void.
+	 *
+	 * @param {object} oData
+	 *   The result from a read or cache lookup
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @returns {any}
+	 *   The result matching to <code>sPath</code>
+	 */
+	Cache.prototype.drillDown = function (oData, sPath) {
+		var that = this;
+
+		function invalidSegment(sSegment) {
+			jQuery.sap.log.error("Failed to drill-down into " + sPath + ", invalid segment: "
+				+ sSegment, that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+		}
+
+		if (sPath) {
+			sPath.split("/").every(function (sSegment) {
+				if (!oData || typeof oData !== "object") {
+					if (oData !== null) {
+						invalidSegment(sSegment);
+					}
+					oData = undefined;
+					return false;
+				}
+				oData = oData[sSegment];
+				if (oData === undefined) {
+					invalidSegment(sSegment);
+					return false;
+				}
+				return true;
+			});
+		}
+		return oData;
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	Cache.prototype.hasPendingChangesForPath = function (sPath) {
+		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
+			return isSubPath(sRequestPath, sPath);
+		});
+	};
+
+	/**
+	 * Registers the listener for the path.
+	 *
+	 * @param {string} sPath The path
+	 * @param {object} [oListener] The listener
+	 */
+	Cache.prototype.registerChange = function (sPath, oListener) {
+		this.addByPath(this.mChangeListeners, sPath, oListener);
+	};
+
+	/**
+	 * Removes an item from the given map by path.
+	 *
+	 * @param {object} mMap
+	 *   A map from path to a list of items
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} oItem
+	 *   The item
+	 */
+	Cache.prototype.removeByPath = function (mMap, sPath, oItem) {
+		var aItems = mMap[sPath],
+			iIndex;
+
+		if (aItems) {
+			iIndex = aItems.indexOf(oItem);
+			if (iIndex >= 0) {
+				if (aItems.length === 1) {
+					delete mMap[sPath];
+				} else {
+					aItems.splice(iIndex, 1);
+				}
+			}
+		}
+	};
+
+	/**
+	 * Resets all pending changes below the given path.
+	 *
+	 * @param {string} [sPath]
+	 *   The path
+	 * @throws {Error}
+	 *   If there is a change which has been sent to the server and for which there is no response
+	 *   yet.
+	 */
+	Cache.prototype.resetChangesForPath = function (sPath) {
+		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
+			var i, aPromises;
+
+			if (isSubPath(sRequestPath, sPath)) {
+				aPromises = this.mPatchRequests[sRequestPath];
+				for (i = aPromises.length - 1; i >= 0; i--) {
+					this.oRequestor.removePatch(aPromises[i]);
+				}
+				delete this.mPatchRequests[sRequestPath];
+			}
+		}, this);
+	};
+
+	/**
+	 * Sets the active state of the cache. If the cache becomes inactive, all change listeners are
+	 * deregistered. If it is inactive, all read requests will be rejected, even if they have been
+	 * started while the cache still was active.
+	 *
+	 * @param {boolean} bActive
+	 *   Whether the cache shell be active
+	 */
+	Cache.prototype.setActive = function (bActive) {
+		this.bActive = bActive;
+		if (!bActive) {
+			this.mChangeListeners = {};
+		}
+	};
+
+	/**
+	 * Returns the cache's URL.
+	 *
+	 * @returns {string} The URL
+	 */
+	Cache.prototype.toString = function () {
+		return this.oRequestor.getServiceUrl() + this.sResourcePath;
+	};
+
+	//*********************************************************************************************
+	// CollectionCache
+	//*********************************************************************************************
 
 	/**
 	 * Creates a cache for a collection of entities that performs requests using the given
@@ -387,18 +464,17 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 */
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
-		var sQuery = Cache.buildQueryString(mQueryOptions);
+		Cache.apply(this, arguments);
 
-		this.bActive = true;
 		this.sContext = undefined;    // the "@odata.context" from the responses
 		this.aElements = [];          // the available elements
 		this.iMaxElements = Infinity; // the max. number of elements if known, Infinity otherwise
-		this.mChangeListeners = {};
-		this.mPatchRequests = {};
-		this.mQueryOptions = mQueryOptions;
-		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + sQuery + (sQuery.length ? "&" : "?");
+
+		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
 	}
+
+	// make CollectionCache a Cache
+	CollectionCache.prototype = Object.create(Cache.prototype);
 
 	/**
 	 * Deletes an entity on the server and in the cached data.
@@ -543,20 +619,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {number} iIndex
-	 *   The collection index
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oListener
-	 *   The change listener
-	 */
-	CollectionCache.prototype.deregisterChange = function (iIndex, sPath, oListener) {
-		removeByPath(this.mChangeListeners, iIndex + "/" + sPath, oListener);
-	};
-
-	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -566,7 +628,7 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.hasPendingChangesForPath = function (sPath) {
 		return !!(sPath === "" && this.aElements[-1] && this.aElements[-1]["@$ui5.transient"])
-			|| hasPendingChangesForPath(this.mPatchRequests, sPath);
+			|| Cache.prototype.hasPendingChangesForPath.call(this, sPath);
 	};
 
 	/**
@@ -640,24 +702,13 @@ sap.ui.define([
 
 		// Note: this.aElements[-1] cannot be a promise...
 		return _SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
-			var oError,
-				oResult;
+			var oResult;
 
-			if (!that.bActive) {
-				oError = new Error("Response discarded: cache is inactive");
-				oError.canceled = true;
-				throw oError;
-			}
+			that.checkActive();
 
 			if (sPath !== undefined) {
-				addByPath(that.mChangeListeners, iIndex + "/" + sPath, oListener);
-				oResult = that.aElements[iIndex];
-				return drillDown(oResult, sPath, function (sSegment) {
-					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath
-						+ "$skip=" + iIndex + "&$top=1 via " + sPath
-						+ ", invalid segment: " + sSegment,
-						null, "sap.ui.model.odata.v4.lib._Cache");
-				});
+				that.registerChange(iIndex + "/" + sPath, oListener);
+				return that.drillDown(that.aElements[iIndex], sPath);
 			}
 			oResult = {
 				"@odata.context" : that.sContext,
@@ -688,30 +739,7 @@ sap.ui.define([
 				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
 			}
 		}
-		resetChangesForPath(this, sPath);
-	};
-
-	/**
-	 * Sets the active state of the cache. If the cache becomes inactive, all change listeners are
-	 * deregistered.
-	 *
-	 * @param {boolean} bActive
-	 *   Whether the cache shell be active
-	 */
-	CollectionCache.prototype.setActive = function (bActive) {
-		this.bActive = bActive;
-		if (!bActive) {
-			this.mChangeListeners = {};
-		}
-	};
-
-	/**
-	 * Returns the cache's URL.
-	 *
-	 * @returns {string} The URL
-	 */
-	CollectionCache.prototype.toString = function () {
-		return this.oRequestor.getServiceUrl() + this.sResourcePath;
+		Cache.prototype.resetChangesForPath.call(this, sPath);
 	};
 
 	/**
@@ -742,6 +770,66 @@ sap.ui.define([
 			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
+	//*********************************************************************************************
+	// PropertyCache
+	//*********************************************************************************************
+
+	/**
+	 * Creates a cache for a single property that performs requests using the given requestor.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL
+	 * @param {object} [mQueryOptions]
+	 *   A map of key-value pairs representing the query string
+	 */
+	function PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
+		Cache.apply(this, arguments);
+
+		this.oPromise = null;
+	}
+
+	// make PropertyCache a Cache
+	PropertyCache.prototype = Object.create(Cache.prototype);
+
+	/**
+	 * Returns a promise to be resolved with an OData object for the requested data.
+	 *
+	 * @param {string} [sGroupId]
+	 *   ID of the group to associate the request with;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back end request is sent.
+	 *   If no back end request is needed, the function is not called.
+	 * @param {object} [oListener]
+	 *   An optional change listener that is added for the given path. Its method
+	 *   <code>onChange</code> is called with the new value if the property at that path is modified
+	 *   via {@link #update} later.
+	 * @returns {SyncPromise}
+	 *   A promise to be resolved with the element.
+	 *
+	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   arrives.
+	 */
+	PropertyCache.prototype.read = function (sGroupId, fnDataRequested, oListener) {
+		var that = this;
+
+		that.registerChange("", oListener);
+		if (!this.oPromise) {
+			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", this.sResourcePath,
+				sGroupId, undefined, undefined, fnDataRequested));
+		}
+		return this.oPromise.then(function (oResult) {
+			that.checkActive();
+			return oResult.value;
+		});
+	};
+
+	//*********************************************************************************************
+	// SingleCache
+	//*********************************************************************************************
+
 	/**
 	 * Creates a cache for a single entity that performs requests using the given requestor.
 	 *
@@ -751,26 +839,21 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
-	 * @param {boolean} [bSingleProperty]
-	 *   Whether the cache is used to read a single property, not a single entity; automatic
-	 *   unwrapping of <code>{value : "..."}</code> happens then
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
-		this.bActive = true;
-		this.mChangeListeners = {};
-		this.mPatchRequests = {};
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost) {
+		Cache.apply(this, arguments);
+
 		this.bPost = bPost;
 		this.bPosting = false;
 		this.oPromise = null;
-		this.mQueryOptions = mQueryOptions;
-		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
-		this.bSingleProperty = bSingleProperty;
 	}
+
+	// make SingleCache a Cache
+	SingleCache.prototype = Object.create(Cache.prototype);
 
 	/**
 	 * Deletes an entity on the server and in the cached data.
@@ -829,30 +912,6 @@ sap.ui.define([
 					}
 				});
 		});
-	};
-
-	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oListener
-	 *   The change listener
-	 */
-	SingleCache.prototype.deregisterChange = function (sPath, oListener) {
-		removeByPath(this.mChangeListeners, this.bSingleProperty ? "value" : sPath, oListener);
-	};
-
-	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
-	 */
-	SingleCache.prototype.hasPendingChangesForPath = function (sPath) {
-		return hasPendingChangesForPath(this.mPatchRequests, sPath);
 	};
 
 	/**
@@ -922,76 +981,23 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this,
-			oPromise,
 			sResourcePath = this.sResourcePath;
 
 		if (!this.oPromise) {
 			if (this.bPost) {
 				throw new Error("Read before a POST request");
 			}
-			oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath, sGroupId,
-					undefined, undefined, fnDataRequested));
-			this.oPromise = oPromise;
+			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath,
+				sGroupId, undefined, undefined, fnDataRequested));
 		}
 		return this.oPromise.then(function (oResult) {
-			var oError;
-
-			if (!that.bActive) {
-				oError = new Error("Response discarded: cache is inactive");
-				oError.canceled = true;
-				throw oError;
-			}
-
-			if (that.bSingleProperty) {
-				// 204 No Content: map undefined to null
-				oResult = oResult ? oResult.value : null;
-			} else if (oResult["$ui5.deleted"]) {
+			that.checkActive();
+			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
-			addByPath(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
-			if (sPath) {
-				return drillDown(oResult, sPath, function (sSegment) {
-					jQuery.sap.log.error("Failed to drill-down into " + sResourcePath + "/"
-							+ sPath + ", invalid segment: " + sSegment, null,
-						"sap.ui.model.odata.v4.lib._Cache");
-				});
-			}
-			return oResult;
+			that.registerChange(sPath, oListener);
+			return that.drillDown(oResult, sPath);
 		});
-	};
-
-	/**
-	 * Resets all pending changes below the given path.
-	 * @param {string} [sPath]
-	 *   The path
-	 * @throws {Error}
-	 *   If there is a change which has been sent to the server and for which there is no response
-	 *   yet.
-	 */
-	SingleCache.prototype.resetChangesForPath = function (sPath) {
-		resetChangesForPath(this, sPath);
-	};
-
-	/**
-	 * Sets the active state of the cache.
-	 *
-	 * @param {boolean} bActive
-	 *   Whether the cache shell be active
-	 */
-	SingleCache.prototype.setActive = function (bActive) {
-		this.bActive = bActive;
-		if (!bActive) {
-			this.mChangeListeners = {};
-		}
-	};
-
-	/**
-	 * Returns the single cache's URL.
-	 *
-	 * @returns {string} The URL
-	 */
-	SingleCache.prototype.toString = function () {
-		return this.oRequestor.getServiceUrl() + this.sResourcePath;
 	};
 
 	/**
@@ -1013,168 +1019,187 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		return (this.bSingleProperty ? this.oPromise : this.read(sGroupId, sPath))
+		return this.read(sGroupId, sPath)
 			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
-	Cache = {
-		/**
-		 * Builds a query string from the parameter map. Converts the known OData system query
-		 * options, all other OData system query options are rejected; with
-		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-		 *
-		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string
-		 * @param {boolean} [bDropSystemQueryOptions=false]
-		 *   Whether all system query options are dropped (useful for non-GET requests)
-		 * @returns {string}
-		 *   The query string; it is empty if there are no options; it starts with "?" otherwise
-		 * @example
-		 * {
-		 *		$expand : {
-		 *			"SO_2_BP" : true,
-		 *			"SO_2_SOITEM" : {
-		 *				"$expand" : {
-		 *					"SOITEM_2_PRODUCT" : {
-		 *						"$apply" : "filter(Price gt 100)",
-		 *						"$expand" : {
-		 *							"PRODUCT_2_BP" : null,
-		 *						},
-		 *						"$select" : "CurrencyCode"
-		 *					},
-		 *					"SOITEM_2_SO" : null
-		 *				}
-		 *			}
-		 *		},
-		 *		"sap-client" : "003"
-		 *	}
-		 */
-		buildQueryString : function (mQueryOptions, bDropSystemQueryOptions) {
-			return _Helper.buildQuery(
-				Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
-		},
+	//*********************************************************************************************
+	// "static" functions
+	//*********************************************************************************************
 
-		/**
-		 *  Converts the value for a "$expand" in mQueryParams.
-		 *
-		 *  @param {object} mExpandItems The expand items, a map from path to options
-		 *  @returns {string} The resulting value for the query string
-		 *  @throws {Error} If the expand items are not an object
-		 */
-		convertExpand : function (mExpandItems) {
-			var aResult = [];
+	/**
+	 * Builds a query string from the parameter map. Converts the known OData system query
+	 * options, all other OData system query options are rejected; with
+	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
+	 *
+	 * @param {object} mQueryOptions
+	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @returns {string}
+	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+	 * @example
+	 * {
+	 *		$expand : {
+	 *			"SO_2_BP" : true,
+	 *			"SO_2_SOITEM" : {
+	 *				"$expand" : {
+	 *					"SOITEM_2_PRODUCT" : {
+	 *						"$apply" : "filter(Price gt 100)",
+	 *						"$expand" : {
+	 *							"PRODUCT_2_BP" : null,
+	 *						},
+	 *						"$select" : "CurrencyCode"
+	 *					},
+	 *					"SOITEM_2_SO" : null
+	 *				}
+	 *			}
+	 *		},
+	 *		"sap-client" : "003"
+	 *	}
+	 */
+	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions) {
+		return _Helper.buildQuery(
+			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
+	};
 
-			if (!mExpandItems || typeof mExpandItems !== "object") {
-				throw new Error("$expand must be a valid object");
-			}
+	/**
+	 *  Converts the value for a "$expand" in mQueryParams.
+	 *
+	 *  @param {object} mExpandItems The expand items, a map from path to options
+	 *  @returns {string} The resulting value for the query string
+	 *  @throws {Error} If the expand items are not an object
+	 */
+	Cache.convertExpand = function (mExpandItems) {
+		var aResult = [];
 
-			Object.keys(mExpandItems).forEach(function (sExpandPath) {
-				var vExpandOptions = mExpandItems[sExpandPath];
-
-				if (vExpandOptions && typeof vExpandOptions === "object") {
-					aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions));
-				} else {
-					aResult.push(sExpandPath);
-				}
-			});
-
-			return aResult.join(",");
-		},
-
-		/**
-		 * Converts the expand options.
-		 *
-		 * @param {string} sExpandPath The expand path
-		 * @param {boolean|object} vExpandOptions
-		 *   The options; either a map or simply <code>true</code>
-		 * @returns {string} The resulting string for the OData query in the form "path" (if no
-		 *   options) or "path($option1=foo;$option2=bar)"
-		 */
-		convertExpandOptions : function (sExpandPath, vExpandOptions) {
-			var aExpandOptions = [];
-
-			convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
-				aExpandOptions.push(sOptionName + '=' + vOptionValue);
-			});
-			return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
-				: sExpandPath;
-		},
-
-		/**
-		 * Converts the query options. All known OData system query options are converted to
-		 * strings, so that the result can be used for _Helper.buildQuery; with
-		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-		 *
-		 * @param {object} mQueryOptions The query options
-		 * @param {boolean} [bDropSystemQueryOptions=false]
-		 *   Whether all system query options are dropped (useful for non-GET requests)
-		 * @returns {object} The converted query options
-		 */
-		convertQueryOptions : function (mQueryOptions, bDropSystemQueryOptions) {
-			var mConvertedQueryOptions = {};
-
-			if (!mQueryOptions) {
-				return undefined;
-			}
-			convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
-				mConvertedQueryOptions[sKey] = vValue;
-			}, bDropSystemQueryOptions);
-			return mConvertedQueryOptions;
-		},
-
-		/**
-		 * Creates a cache for a collection of entities that performs requests using the given
-		 * requestor.
-		 *
-		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-		 *   The requestor
-		 * @param {string} sResourcePath
-		 *   A resource path relative to the service URL; it must not contain a query string<br>
-		 *   Example: Products
-		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string, the value in this pair has to
-		 *   be a string or an array of strings; if it is an array, the resulting query string
-		 *   repeats the key for each array value.
-		 *   Examples:
-		 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
-		 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
-		 * @returns {sap.ui.model.odata.v4.lib._Cache}
-		 *   The cache
-		 */
-		create : function _create(oRequestor, sResourcePath, mQueryOptions) {
-			return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
-		},
-
-		/**
-		 * Creates a cache for a single entity that performs requests using the given requestor.
-		 *
-		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-		 *   The requestor
-		 * @param {string} sResourcePath
-		 *   A resource path relative to the service URL; it must not contain a query string<br>
-		 *   Example: Products
-		 * @param {object} [mQueryOptions]
-		 *   A map of key-value pairs representing the query string, the value in this pair has to
-		 *   be a string or an array of strings; if it is an array, the resulting query string
-		 *   repeats the key for each array value.
-		 *   Examples:
-		 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
-		 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
-		 * @param {boolean} [bSingleProperty]
-		 *   Whether the cache is used to read a single property, not a single entity; automatic
-		 *   unwrapping of <code>{value : "..."}</code> happens then
-		 * @param {boolean} [bPost]
-		 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
-		 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
-		 *   throws an error.
-		 * @returns {sap.ui.model.odata.v4.lib._Cache}
-		 *   The cache
-		 */
-		createSingle : function _createSingle(oRequestor, sResourcePath, mQueryOptions,
-				bSingleProperty, bPost) {
-			return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty,
-				bPost);
+		if (!mExpandItems || typeof mExpandItems !== "object") {
+			throw new Error("$expand must be a valid object");
 		}
+
+		Object.keys(mExpandItems).forEach(function (sExpandPath) {
+			var vExpandOptions = mExpandItems[sExpandPath];
+
+			if (vExpandOptions && typeof vExpandOptions === "object") {
+				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions));
+			} else {
+				aResult.push(sExpandPath);
+			}
+		});
+
+		return aResult.join(",");
+	};
+
+	/**
+	 * Converts the expand options.
+	 *
+	 * @param {string} sExpandPath The expand path
+	 * @param {boolean|object} vExpandOptions
+	 *   The options; either a map or simply <code>true</code>
+	 * @returns {string} The resulting string for the OData query in the form "path" (if no
+	 *   options) or "path($option1=foo;$option2=bar)"
+	 */
+	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions) {
+		var aExpandOptions = [];
+
+		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
+			aExpandOptions.push(sOptionName + '=' + vOptionValue);
+		});
+		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
+			: sExpandPath;
+	};
+
+	/**
+	 * Converts the query options. All known OData system query options are converted to
+	 * strings, so that the result can be used for _Helper.buildQuery; with
+	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
+	 *
+	 * @param {object} mQueryOptions The query options
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @returns {object} The converted query options
+	 */
+	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions) {
+		var mConvertedQueryOptions = {};
+
+		if (!mQueryOptions) {
+			return undefined;
+		}
+		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
+			mConvertedQueryOptions[sKey] = vValue;
+		}, bDropSystemQueryOptions);
+		return mConvertedQueryOptions;
+	};
+
+	/**
+	 * Creates a cache for a collection of entities that performs requests using the given
+	 * requestor.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   Example: Products
+	 * @param {object} mQueryOptions
+	 *   A map of key-value pairs representing the query string, the value in this pair has to
+	 *   be a string or an array of strings; if it is an array, the resulting query string
+	 *   repeats the key for each array value.
+	 *   Examples:
+	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
+	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The cache
+	 */
+	Cache.create = function _create(oRequestor, sResourcePath, mQueryOptions) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
+	};
+
+	/**
+	 * Creates a cache for a single property that performs requests using the given requestor.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   Example: Products
+	 * @param {object} [mQueryOptions]
+	 *   A map of key-value pairs representing the query string, the value in this pair has to
+	 *   be a string or an array of strings; if it is an array, the resulting query string
+	 *   repeats the key for each array value.
+	 *   Examples:
+	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
+	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The cache
+	 */
+	Cache.createProperty = function _createProperty(oRequestor, sResourcePath, mQueryOptions) {
+		return new PropertyCache(oRequestor, sResourcePath, mQueryOptions);
+	};
+
+	/**
+	 * Creates a cache for a single entity that performs requests using the given requestor.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   Example: Products
+	 * @param {object} [mQueryOptions]
+	 *   A map of key-value pairs representing the query string, the value in this pair has to
+	 *   be a string or an array of strings; if it is an array, the resulting query string
+	 *   repeats the key for each array value.
+	 *   Examples:
+	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
+	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {boolean} [bPost]
+	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
+	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
+	 *   throws an error.
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The cache
+	 */
+	Cache.createSingle = function _createSingle(oRequestor, sResourcePath, mQueryOptions, bPost) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost);
 	};
 
 	return Cache;

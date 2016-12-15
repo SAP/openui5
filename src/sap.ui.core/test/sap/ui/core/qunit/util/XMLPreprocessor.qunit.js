@@ -1408,6 +1408,37 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("template:with calls createBindingContext()", function (assert) {
+		var oDataModel = new JSONModel(),
+			oMetaModel = new JSONModel({
+				some : {
+					random : {
+						path : {
+							flag : true
+						}
+					}
+				}
+			});
+
+		this.mock(oDataModel).expects("createBindingContext")
+			.withExactArgs("/some/#random/path")
+			.returns(oMetaModel.createBindingContext("/some/random/path"));
+
+		this.check(assert, [
+			mvcView(),
+			'<template:with path="/some/#random/path" var="path">',
+			'<template:if test="{path>flag}">',
+			'<In id="flag"/>',
+			'</template:if>',
+			'</template:with>',
+			'</mvc:View>'
+		], {
+			models : oDataModel
+		});
+	});
+	//TODO createBindingContext should also be used w/o var
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bHasHelper) {
 		QUnit.test("template:with and 'named context', has helper = " + bHasHelper,
 			function (assert) {

@@ -1,0 +1,66 @@
+{
+	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"value" : [
+		{
+			"SalesOrderID" : "0500000099",
+			"ItemPosition" : "0000000010",
+			"Note" : "EPM DG: SO ID 0500000099 Item 0000000010",
+			"NoteLanguage" : "E",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "1137.64",
+			"NetAmount" : "956.00",
+			"TaxAmount" : "181.64",
+			"DeliveryDate" : "2016-06-26T22:00:00Z",
+			"Quantity" : "1",
+			"QuantityUnit" : "EA",
+			"Product" : {
+				"ProductID" : "HT-1000",
+				"ProductName" : "Notebook Basic 15"
+			},
+			"SOITEM_2_PRODUCT" : {
+				"ProductID" : "HT-1000",
+				"TypeCode" : "PR",
+				"Category" : "Notebooks",
+				"Name" : "Notebook Basic 15",
+				"NameLanguage" : "EN",
+				"Description" : "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+				"DescriptionLanguage" : "EN",
+				"SupplierID" : "0100000000",
+				"SupplierName" : "SAP",
+				"TaxTarifCode" : 1,
+				"MeasureUnit" : "EA",
+				"WeightMeasure" : "4.200",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "EUR",
+				"Price" : "956.00",
+				"Width" : "30.000",
+				"Depth" : "18.000",
+				"Height" : "3.000",
+				"DimUnit" : "CM",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+				"PRODUCT_2_BP" : {
+					"@odata.etag" : "W/\"20160613143341.1548870\"",
+					"BusinessPartnerID" : "0100000000",
+					"CompanyName" : "SAP",
+					"LegalForm" : "SE",
+					"PhoneNumber" : "0622734567",
+					"BP_2_CONTACT" : [{
+						"DateOfBirth" : null,
+						"EmailAddress" : "do.not.reply@sap.com",
+						"FirstName" : "Karl",
+						"LastName" : "Müller",
+						"PhoneNumber" : "0622734567",
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab92db14"
+					}, {
+						"DateOfBirth" : null,
+						"EmailAddress" : "hjg@sap.com",
+						"FirstName" : "Harald",
+						"LastName" : "Gahn",
+						"PhoneNumber" : "0622746358",
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab92fb14"
+					}]
+				}
+			}
+		}]
+}
