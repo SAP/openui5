@@ -29,6 +29,7 @@
 	height: 11rem;
 }
 
+.sapMGTHdrTxt,
 .sapMGTHdrTxt > .sapMGTTitle,
 .sapMGTSubHdrTxt,
 .sapMGT .sapMGTContent {
@@ -375,8 +376,10 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		margin-right: 0.5rem;
 	}
 
-	.sapMGTLineMode.sapMGTScopeActions  .sapMGTHdrTxt:last-of-type {
-		padding-right: 4rem;
+	.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTDisabled) {
+		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+			padding-right: 4rem;
+		}
 	}
 
 	.sapMGTActionsContainer {
@@ -425,10 +428,6 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 
 	.sapMGTLineMode .sapMGTHdrTxt {
 		max-height: none !important;
-	}
-
-	.sapMGTLineMode.sapMGTScopeActions .sapMGTSubHdrTxt {
-		padding-right: 4rem;
 	}
 }
 
