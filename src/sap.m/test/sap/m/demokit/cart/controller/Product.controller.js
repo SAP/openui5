@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/m/MessageToast',
 	'sap/m/MessageBox'
 ], function ($, Controller, formatter, MessageToast, MessageBox) {
-	return Controller.extend("sap.ui.demo.cart.view.Product", {
+	return Controller.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
 
 		onInit : function () {

@@ -11,7 +11,7 @@ sap.ui.define([
 			 FilterOperator) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.cart.view.Category", {
+	return Controller.extend("sap.ui.demo.cart.controller.Category", {
 		formatter : formatter,
 
 		onInit : function () {
