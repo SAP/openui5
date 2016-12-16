@@ -110,6 +110,17 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 		return this;
 	};
 
+	/**
+	 * setVisible shouldn't be used on wizard steps.
+	 * If you need to show/hide steps based on some condition - use the branching property instead
+	 * @returns {WizardStep}
+	 */
+	WizardStep.prototype.setVisible = function (visible) {
+		this.setProperty("visible", visible, true);
+		jQuery.sap.log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
+		return this;
+	};
+
 	WizardStep.prototype._isLeaf = function () {
 		if ( this.getNextStep() === null && this.getSubsequentSteps().length === 0 ) {
 			return true;
