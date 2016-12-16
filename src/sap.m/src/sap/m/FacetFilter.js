@@ -374,7 +374,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = null;
 		this._addTarget = null;
 		this._aRows = null; //save item level div
-		this._originalaDomRefs = null;
 
 		this._bundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -521,33 +520,23 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @param {object} oEvent Fired when the Delete key is pressed
 	 */
 	FacetFilter.prototype.onsapdelete = function(oEvent) {
-	//save original DomRefs before deletion
-		if (this._originalaDomRefs == null) {
-			this._originalaDomRefs = this._aDomRefs;
-		}
+		var oButton, oList;
 
-	// no deletion on 'Add' button
-		if (oEvent.target.id.indexOf("add") >= 0) {
-			return;
-		}
-
-	//  no deletion - showpersonalization  set to false"
+		//  no deletion - showpersonalization  set to false"
 		if (!this.getShowPersonalization()) {
 			return;
 		}
 
-		var j = -1;
-		for (var i = 0; i < this._originalaDomRefs.length; i++) {
-			if (oEvent.target.id == this._originalaDomRefs[i].id) {
-				j = i;
-				break;
-			}
-		}
-		if (j < 0) {
+		oButton = sap.ui.getCore().byId(oEvent.target.id);
+		if (!oButton) { //not an UI5 object
 			return;
 		}
 
-		var oList = this.getLists()[j];
+		oList = sap.ui.getCore().byId(oButton.getAssociation("list"));
+		// no deletion on button 'Add', "Reset"
+		if (!oList) { //We allow only buttons with attached list.
+			return;
+		}
 
 		// no deletion - showRemoveFacetIcon set to false
 		if (!oList.getShowRemoveFacetIcon()) {
