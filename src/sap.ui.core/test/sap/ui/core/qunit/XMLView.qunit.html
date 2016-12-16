@@ -333,6 +333,40 @@ sap.ui.core.mvc.Controller</title>
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("Destroy removes preserved content from DOM", function(assert) {
+		// Because nobody else would do it
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = oView.getDomRef();
+		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+
+		oView.destroy();
+
+		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
+	});
+
+	QUnit.test("Destroy with 'KeepDom'-mode removes preservable flag from DOM ref", function(assert) {
+		// Otherwise view content of already destroyed views might get preserve and never destroyed
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = oView.getDomRef();
+
+		oView.destroy("KeepDom");
+		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+
+		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
+
+		// Cleanup
+		var oDomRef = oView.getDomRef();
+		oDomRef.parentElement.removeChild(oDomRef);
+	});
+
 	QUnit.module("Additional tests:");
 
 	// encoding
