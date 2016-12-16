@@ -79,6 +79,9 @@ sap.ui.define([
 		// When set to true, the overflow button will be rendered
 		this._bOverflowButtonNeeded = false;
 
+		// When set to true, means that the overflow toolbar is in a popup
+		this._bNestedInAPopover = null;
+
 		// When set to true, changes to the controls in the toolbar will trigger a recalculation
 		this._bListenForControlPropertyChanges = false;
 
@@ -380,7 +383,7 @@ sap.ui.define([
 		// If there are any action sheet only controls and they are visible, move them to the action sheet first
 		if (this._aActionSheetOnlyControls.length) {
 			for (i = this._aActionSheetOnlyControls.length - 1; i >= 0; i--) {
-				if (this._aActionSheetOnlyControls[i].getVisible()){
+				if (this._aActionSheetOnlyControls[i].getVisible()) {
 					aButtonsToMoveToActionSheet.unshift(this._aActionSheetOnlyControls[i]);
 				}
 			}
@@ -480,6 +483,7 @@ sap.ui.define([
 		this._resetToolbar();
 
 		this._bControlsInfoCached = false;
+		this._bNestedInAPopover = null;
 		this._iPreviousToolbarWidth = null;
 		if (bHardReset) {
 			this._bSkipOptimization = true;
@@ -624,19 +628,48 @@ sap.ui.define([
 		this._getOverflowButton().setPressed(false); // Turn off the toggle button
 		this._getOverflowButton().$().focus(); // Focus the toggle button so that keyboard handling will work
 
-		if (!bWindowsPhone) {
-			// On IE/sometimes other browsers, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
-			// To prevent this behaviour, disable the overflow button till the end of the current javascript engine's "tick"
-			this._getOverflowButton().setEnabled(false);
-			jQuery.sap.delayedCall(0, this, function () {
-				this._getOverflowButton().setEnabled(true);
-
-				// In order to restore focus, we must wait another tick here to let the renderer enable it first
-				jQuery.sap.delayedCall(0, this, function () {
-					this._getOverflowButton().$().focus();
-				});
-			});
+		if (this._isNestedInsideAPopup() || bWindowsPhone) {
+			return;
 		}
+
+		// On IE/sometimes other browsers, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
+		// To prevent this behaviour, disable the overflow button till the end of the current javascript engine's "tick"
+		this._getOverflowButton().setEnabled(false);
+		jQuery.sap.delayedCall(0, this, function () {
+			this._getOverflowButton().setEnabled(true);
+
+			// In order to restore focus, we must wait another tick here to let the renderer enable it first
+			jQuery.sap.delayedCall(0, this, function () {
+				this._getOverflowButton().$().focus();
+			});
+		});
+	};
+
+	/**
+	 * Checks if the overflowToolbar is nested in a popup
+	 * @returns {boolean}
+	 * @private
+	 */
+	OverflowToolbar.prototype._isNestedInsideAPopup = function () {
+		var fnScanForPopup;
+
+		if (this._bNestedInAPopover !== null) {
+			return this._bNestedInAPopover;
+		}
+
+		fnScanForPopup = function (oControl) {
+			if (!oControl) {
+				return false;
+			}
+
+			if (oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface")) {
+				return true;
+			}
+
+			return fnScanForPopup(oControl.getParent());
+		};
+
+		this._bNestedInAPopover = fnScanForPopup(this);
 	};
 
 	/**
@@ -858,7 +891,6 @@ sap.ui.define([
 
 	/************************************************** STATIC ***************************************************/
 
-
 	/**
 	 * Returns the optimal width of an element for the purpose of calculating the content width of the OverflowToolbar
 	 * so that spacers f.e. don't expand too aggressively and take up the whole space
@@ -946,7 +978,7 @@ sap.ui.define([
 		return this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3;
 	};
 
-	OverflowToolbar.prototype.onThemeChanged = function() {
+	OverflowToolbar.prototype.onThemeChanged = function () {
 		this._resetAndInvalidateToolbar();
 	};
 
