@@ -57,6 +57,18 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		Cache._isOn = bActive;
 	};
 
+
+	/**
+	 * Returns the entries stored in the cache.
+	 *
+	 * @return {object} _entries - a map of flexibility references and server responses for the given entry
+	 *
+	 * @protected
+	 */
+	Cache.getEntries = function () {
+		return Cache._entries;
+	};
+
 	/**
 	 * This method retrieves the changes for a given
 	 * component. It answers all subsequent calls with the same promise, which

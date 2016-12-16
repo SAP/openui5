@@ -34,6 +34,13 @@
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
       url="../../../../test-resources/sap/ui/fl/relnotes/changes-{major}.{minor}.json"
       resolve="lib" />
+
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <all-in-one>
+        <exclude name="sap/ui/fl/support/" />
+      </all-in-one>
+    </packaging>
+
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-FL</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
     </ownership>
