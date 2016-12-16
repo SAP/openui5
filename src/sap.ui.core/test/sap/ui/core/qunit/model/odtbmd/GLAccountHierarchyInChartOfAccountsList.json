@@ -8,7 +8,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "INT",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "A K T I V A",
@@ -20,7 +21,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausstehende Kapital-Einlagen",
@@ -32,7 +34,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1010000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Eingefordert",
@@ -44,7 +47,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Nicht eingefordert",
@@ -56,7 +60,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer die Ingangsetzung und",
@@ -68,7 +73,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1020000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert",
@@ -80,7 +86,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1021000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -92,7 +99,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1022000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anlagevermoegen",
@@ -104,7 +112,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1030000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Immaterielle Vermoegens-Gegenstaende",
@@ -116,7 +125,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Konzessionen, gewerbliche Schutzrechte",
@@ -128,7 +138,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert",
@@ -140,7 +151,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031011",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -152,7 +164,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031012",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Geschaefts- oder Firmen-Wert",
@@ -164,7 +177,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert",
@@ -176,7 +190,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -188,7 +203,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Geleiste Anzahlungen",
@@ -200,7 +216,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert",
@@ -212,7 +229,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031031",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -224,7 +242,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1031032",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sachanlagen",
@@ -236,7 +255,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Grundstuecke, grundstuecksgleiche Rechte und",
@@ -248,7 +268,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert 0500",
@@ -260,7 +281,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032011",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -272,7 +294,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032012",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Technische Anlagen und Maschinen",
@@ -284,7 +307,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert 1000",
@@ -296,7 +320,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -308,7 +333,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Andere Anlagen sowie",
@@ -320,7 +346,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert 2000",
@@ -332,7 +359,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032031",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -344,7 +372,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032032",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Geleistete Anzahlungen und",
@@ -356,7 +385,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anschaffungswert 3000",
@@ -368,7 +398,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032041",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertberichtigung",
@@ -380,7 +411,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1032042",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Finanzanlagen",
@@ -392,7 +424,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anteile an verbundenen Unternehmen",
@@ -404,7 +437,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausleihungen an verbundene Unternehmen",
@@ -416,7 +450,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -428,7 +463,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -440,7 +476,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Beteiligungen",
@@ -452,7 +489,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausleihungen an Unternehmen, mit denen ein",
@@ -464,7 +502,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -476,7 +515,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033041",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -488,7 +528,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033042",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertpapiere des Anlagevermoegens",
@@ -500,7 +541,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033050",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Ausleihungen",
@@ -512,7 +554,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033060",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -524,7 +567,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033061",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -536,7 +580,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033062",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Geleistete Anzahlungen auf Finanzanlagen",
@@ -548,7 +593,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1033070",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Umlaufvermoegen",
@@ -560,7 +606,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1040000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Vorraete",
@@ -572,7 +619,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1041000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Roh-, Hilfs- und Betriebsstoffe",
@@ -584,7 +632,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1041010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Unfertige Erzeugnisse, unfertige Leistungen",
@@ -596,7 +645,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1041020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Fertige Erzeugnisse und Waren",
@@ -608,7 +658,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1041030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Geleistete Anzahlungen fuer Vorraete",
@@ -620,7 +671,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1041040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Forderungen und",
@@ -632,7 +684,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Forderungen aus Lieferungen und",
@@ -644,7 +697,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -656,7 +710,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042011",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -668,7 +723,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042012",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Forderungen aus Lieferungen und",
@@ -680,7 +736,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu",
@@ -692,7 +749,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -704,7 +762,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Forderungen gegen Unternehmen, mit denen ein",
@@ -716,7 +775,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -728,7 +788,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042031",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -740,7 +801,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042032",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Vermoegens-Gegenstaende",
@@ -752,7 +814,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -764,7 +827,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042041",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "sonstige Forderungen",
@@ -776,7 +840,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042041/00",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ford. Umsatzsteuer",
@@ -788,7 +853,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042041/10",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit ueber einem Jahr",
@@ -800,7 +866,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1042042",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Wertpapiere",
@@ -812,7 +879,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1043000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anteile an verbundenen Unternehmen",
@@ -824,7 +892,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1043010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Eigene Anteile",
@@ -836,7 +905,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1043020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Wertpapiere",
@@ -848,7 +918,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1043030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Schecks, Kassenbestand, Bundesbank- und Post-",
@@ -860,7 +931,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1044000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige",
@@ -872,7 +944,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1044000/00",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Postgiro",
@@ -884,7 +957,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1044000/21",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bank 1",
@@ -896,7 +970,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1044000/22",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bank 2",
@@ -908,7 +983,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1044000/23",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abgrenzungs-Posten fuer kuenftige",
@@ -920,7 +996,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1050000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Rechnungs-Abgrenzungsposten",
@@ -932,7 +1009,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1060000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Disagio",
@@ -944,7 +1022,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1061000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Rechnungs-Abgrenzungsposten",
@@ -956,7 +1035,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1062000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Nicht durch Eigenkapital gedeckter Fehlbetrag",
@@ -968,7 +1048,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1070000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "P A S S I V A",
@@ -980,7 +1061,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Eigenkapital",
@@ -992,7 +1074,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2010000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gezeichnetes Kapital",
@@ -1004,7 +1087,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Kapital-Ruecklage",
@@ -1016,7 +1100,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gewinn-Ruecklagen",
@@ -1028,7 +1113,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2013000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gesetzliche Ruecklage",
@@ -1040,7 +1126,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2013010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ruecklage fuer eigene Anteile",
@@ -1052,7 +1139,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2013020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Satzungsmaessige Ruecklagen",
@@ -1064,7 +1152,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2013030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Andere Gewinn-Ruecklagen",
@@ -1076,7 +1165,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2013040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bilanzgewinn",
@@ -1088,7 +1178,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2014100",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bilanzverlust",
@@ -1100,7 +1191,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2014200",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Umgliederung des nicht durch Eigenkapital",
@@ -1112,7 +1204,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2015000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonderposten mit Ruecklage-Anteil",
@@ -1124,7 +1217,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2020000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Steuerliche Sonder-AfA (Unterschieds-Betrag)",
@@ -1136,7 +1230,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2021000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonderposten mit Ruecklage-Anteil",
@@ -1148,7 +1243,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2022000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Rueckstellungen",
@@ -1160,7 +1256,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2030000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Rueckstellungen fuer Pensionen und",
@@ -1172,7 +1269,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2031000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Rueckstellungen fuer latente Steuern",
@@ -1184,7 +1282,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2032000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Steuer-Rueckstellungen",
@@ -1196,7 +1295,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2033000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Rueckstellungen",
@@ -1208,7 +1308,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2034000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten",
@@ -1220,7 +1321,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2040000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Anleihen",
@@ -1232,7 +1334,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Konvertible Anleihen",
@@ -1244,7 +1347,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1256,7 +1360,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041011",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1268,7 +1373,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041012",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1280,7 +1386,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041013",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Nicht konvertible Anleihen",
@@ -1292,7 +1399,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1304,7 +1412,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1316,7 +1425,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1328,7 +1438,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2041023",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten gegenueber Kreditinstituten",
@@ -1340,7 +1451,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1352,7 +1464,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige",
@@ -1364,7 +1477,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042010/00",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Postgiro",
@@ -1376,7 +1490,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042010/21",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bank 1",
@@ -1388,7 +1503,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042010/22",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bank 2",
@@ -1400,7 +1516,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042010/23",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1412,7 +1529,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1424,7 +1542,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2042030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Erhaltene Anzahlungen auf Bestellungen",
@@ -1436,7 +1555,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2043000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1448,7 +1568,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2043010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1460,7 +1581,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2043020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1472,7 +1594,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2043030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten aus",
@@ -1484,7 +1607,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2044000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1496,7 +1620,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2044010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1508,7 +1633,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2044020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1520,7 +1646,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2044030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten aus der Annahme gezogener",
@@ -1532,7 +1659,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2045000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1544,7 +1672,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2045010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1556,7 +1685,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2045020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1568,7 +1698,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2045030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten gegenueber",
@@ -1580,7 +1711,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2046000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu",
@@ -1592,7 +1724,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2046010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1604,7 +1737,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2046020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1616,7 +1750,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2046030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verbindlichkeiten gegenueber Unternehmen,",
@@ -1628,7 +1763,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2047000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1640,7 +1776,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2047010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1652,7 +1789,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2047020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1664,7 +1802,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2047030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Verbindlichkeiten",
@@ -1676,7 +1815,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Verbindlichkeiten aus Steuern",
@@ -1688,7 +1828,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1700,7 +1841,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048011",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1712,7 +1854,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048012",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1724,7 +1867,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048013",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Verbindlichkeiten im Rahmen",
@@ -1736,7 +1880,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1748,7 +1893,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048021",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1760,7 +1906,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048022",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1772,7 +1919,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048023",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Andere sonstige Verbindlichkeiten",
@@ -1784,7 +1932,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit bis zu einem Jahr",
@@ -1796,7 +1945,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048031",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Verbindlichkeiten",
@@ -1808,7 +1958,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048031/00",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Umsatzsteuer",
@@ -1820,7 +1971,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048031/10",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von 1 bis 5 Jahren",
@@ -1832,7 +1984,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048032",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "mit einer Restlaufzeit von ueber 5 Jahren",
@@ -1844,7 +1997,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2048033",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Rechnungsabgrenzungsposten",
@@ -1856,7 +2010,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "2050000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gewinn- und Verlust-Rechnung",
@@ -1868,7 +2023,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Umsatzerloese",
@@ -1880,7 +2036,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3010000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Brutto-Erloese",
@@ -1892,7 +2049,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Inland",
@@ -1904,7 +2062,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3011010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausland",
@@ -1916,7 +2075,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3011020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Erloes-Schmaelerungen",
@@ -1928,7 +2088,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Bestands-Veraenderung",
@@ -1940,7 +2101,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3020000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Andere aktivierte Eigenleistungen",
@@ -1952,7 +2114,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3030000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige betriebliche Ertraege",
@@ -1964,7 +2127,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3040000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ertrag aus der Aufloesung des Sonderpostens",
@@ -1976,7 +2140,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3041000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Uebrige sonstige betriebliche Ertraege",
@@ -1988,7 +2153,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3042000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Materialaufwand",
@@ -2000,7 +2166,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3050000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Roh-, Hilfs- und",
@@ -2012,7 +2179,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3051000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Brennstoffe",
@@ -2024,7 +2192,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3051010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Strom",
@@ -2036,7 +2205,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3051030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Wasser",
@@ -2048,7 +2218,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3051040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Aufwendungen fuer RHB-Stoffe",
@@ -2060,7 +2231,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3051090",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer bezogene Leistungen",
@@ -2072,7 +2244,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3052000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Personalaufwand",
@@ -2084,7 +2257,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3060000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Loehne und Gehaelter",
@@ -2096,7 +2270,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Fertigungs-Loehne",
@@ -2108,7 +2283,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Hilfs- und Ausfall-Loehne",
@@ -2120,7 +2296,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Krankheits-Loehne und Lohnfortzahlung",
@@ -2132,7 +2309,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gehaelter",
@@ -2144,7 +2322,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061050",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Lohn- und Gehalts-Aufwendungen",
@@ -2156,7 +2335,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3061090",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Soziale Abgaben und Aufwendungen fuer",
@@ -2168,7 +2348,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3062000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Soziale Abgaben",
@@ -2180,7 +2361,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3062010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Altersversorgung",
@@ -2192,7 +2374,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3062020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen fuer Unterstuetzung",
@@ -2204,7 +2387,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3062030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abschreibungen",
@@ -2216,7 +2400,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3070000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "AfA auf immaterielle Vermoegens-Gegenstaende",
@@ -2228,7 +2413,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3071000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "planmaessig",
@@ -2240,7 +2426,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3071010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "ausserplanmaessig",
@@ -2252,7 +2439,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3071020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abschreibungen auf Vermoegens-Gegenstaende",
@@ -2264,7 +2452,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3072000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abschreibungen auf Vermoegens-Gegenstaende",
@@ -2276,7 +2465,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3073000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige betriebliche Aufwendungen",
@@ -2288,7 +2478,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3080000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwand aus der Einstellung in den",
@@ -2300,7 +2491,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3081000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Uebrige sonstige betriebliche Aufwendungen",
@@ -2312,7 +2504,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Instandhaltungskosten",
@@ -2324,7 +2517,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Versicherungen",
@@ -2336,7 +2530,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Raumkosten",
@@ -2348,7 +2543,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Maschinen-Mieten",
@@ -2360,7 +2556,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082040",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Reisekosten",
@@ -2372,7 +2569,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082050",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Kraftfahrzeugkosten",
@@ -2384,7 +2582,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082060",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Werbe- und Vertreterkosten",
@@ -2396,7 +2595,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082070",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige betriebliche Aufwendungen",
@@ -2408,7 +2608,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "3082090",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Finanz-Ergebnis",
@@ -2420,7 +2621,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ertraege aus Beteiligungen",
@@ -2432,7 +2634,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "bei nicht verbundenen Unternehmen",
@@ -2444,7 +2647,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4011010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "bei verbundenen Unternehmen",
@@ -2456,7 +2660,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4011020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufgrund eines Gewinnabfuehrungs-Vetrages",
@@ -2468,7 +2673,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ertraege aus anderen Wertpapieren und",
@@ -2480,7 +2686,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4013000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "aus nicht verbundenen Unternehmen",
@@ -2492,7 +2699,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4013010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "aus verbundenen Unternehmen",
@@ -2504,7 +2712,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4013020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Zinsen und aehnliche Ertraege",
@@ -2516,7 +2725,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4014000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "aus nicht verbundenen Unternehmen",
@@ -2528,7 +2738,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4014010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "aus verbundenen Unternehmen",
@@ -2540,7 +2751,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4014020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abschreibungen auf Finanzanlagen und auf",
@@ -2552,7 +2764,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4015000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausserplanmaessige AfA auf Finanz-Anlagen",
@@ -2564,7 +2777,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4015010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Abschreibung auf Wertpapiere des Umlauf-",
@@ -2576,7 +2790,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4015020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Andere Abschreibungen auf Finanzanlagen und",
@@ -2588,7 +2803,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4015030",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Aufwendungen aus Verlust-Uebernahme",
@@ -2600,7 +2816,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4016000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Zinsen und aehnliche Aufwendungen",
@@ -2612,7 +2829,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4017000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "an nicht verbundene Unternehmen",
@@ -2624,7 +2842,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4017010",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "an verbundene Unternehmen",
@@ -2636,7 +2855,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "4017020",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausserordentliches Ergebnis",
@@ -2648,7 +2868,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "5000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausserordentliche Ertraege",
@@ -2660,7 +2881,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "5011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausserordentliche Aufwendungen",
@@ -2672,7 +2894,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "5012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Steuern",
@@ -2684,7 +2907,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "6000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Steuern vom Einkommen und vom Ertrag",
@@ -2696,7 +2920,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "6011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Sonstige Steuern",
@@ -2708,7 +2933,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "6012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ergebnis-Verwendung",
@@ -2720,7 +2946,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Dummyknoten",
@@ -2732,7 +2959,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7010000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Auf Grund eines Gewinnabfuehrungs-Vetrages",
@@ -2744,7 +2972,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ertraege aus Verlust-Uebernahme",
@@ -2756,7 +2985,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verlust-Vortrag aus dem Vorjahr",
@@ -2768,7 +2998,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7040000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gewinn-Vortrag aus dem Vorjahr",
@@ -2780,7 +3011,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7050000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Entnahmen aus der Kapital-Ruecklage",
@@ -2792,7 +3024,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7060000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Entnahmen aus Gewinn-Ruecklagen",
@@ -2804,7 +3037,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7070000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Einstellungen in Gewinn-Ruecklagen",
@@ -2816,7 +3050,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7080000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Gewinn aus GuV",
@@ -2828,7 +3063,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "7090000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Nicht zugeordnete Konten",
@@ -2840,7 +3076,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "8000000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "",
@@ -2852,7 +3089,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "1",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Haftungs-Verhältnisse",
@@ -2864,7 +3102,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9010000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Haftungs-Verhältnisse",
@@ -2876,7 +3115,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9011000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Ausgleichs-Posten fuer Haftungs-Verhaeltnisse",
@@ -2888,7 +3128,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9012000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung kalkulatorische Kosten",
@@ -2900,7 +3141,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9020000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung Wechsel",
@@ -2912,7 +3154,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9030000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung Anlagen-Abgang (AM",
@@ -2924,7 +3167,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9050000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung WE/RE (MM)",
@@ -2936,7 +3180,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9060000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung Debitoren-Geldeingang",
@@ -2948,7 +3193,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9070000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Verrechnung Konzernabschluss-Konten",
@@ -2960,7 +3206,8 @@
 	"FunctionalArea": "",
 	"CreatedBy": "",
 	"FinancialStatementItem": "9080000",
-	"CreationDate": ""
+	"CreationDate": "",
+	"DrilldownState": "collapsed"
 },
 {
 	"FinancialStatementItemText": "Konten, die Saldo Null ausweisen muessen",

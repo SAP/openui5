@@ -597,6 +597,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				if (!oNode.children[iMaxGroupSize - 1]) {
 					oNode.children[iMaxGroupSize - 1] = undefined;
 				}
+
+				oNodeState.leafCount = iMaxGroupSize;
 			}
 
 			// if the binding is running in the OperationMode "Client", make sure the node sections are optimised to load everything
@@ -683,6 +685,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 							expanded: false // a new node state is never expanded (EXCEPT during auto expand!)
 						});
 					}
+
+					oChildNode.nodeState.parentGroupID = oNode.groupID;
 
 					// if the table is grouped: a leaf is a node 1 level deeper than the number of grouped columns
 					// otherwise if the table is (fully) ungrouped every node is a leaf
@@ -773,7 +777,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				//the total number of leafs in the sub-tree
 				numberOfLeafs: mParameters.numberOfLeafs || 0,
 				autoExpand: mParameters.autoExpand || 0,
-				absoluteNodeIndex: mParameters.absoluteNodeIndex || 0
+				absoluteNodeIndex: mParameters.absoluteNodeIndex || 0,
+				totalNumberOfLeafs: 0
 			};
 			//calculate the group id
 			if (oContext !== undefined) {
@@ -1043,7 +1048,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * Checks if the given node can be selected. Always true for TreeTable controls, except the node is not defined.
 		 */
 		TreeBindingAdapter.prototype._isNodeSelectable = function (oNode) {
-			return !!oNode;
+			return !!oNode && !oNode.isArtificial;
 		};
 
 		/**
@@ -1148,11 +1153,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Returns the number of selected nodes.
+		 * Returns the number of selected nodes (including not-yet loaded)
 		 * @private
 		 */
 		TreeBindingAdapter.prototype.getSelectedNodesCount = function () {
-			return Object.keys(this._mTreeState.selected).length;
+			var iSelectedNodes;
+
+			if (this._oRootNode && this._oRootNode.nodeState.selectAllMode) {
+				var sGroupId, iVisibleDeselectedNodeCount, oParent, oGroupNodeState;
+
+				iVisibleDeselectedNodeCount = 0;
+				// If we implicitly deselect all nodes under a group node,
+				//	we need to count them as "visible deselected nodes"
+				for (sGroupId in this._mTreeState.expanded) {
+					oGroupNodeState = this._mTreeState.expanded[sGroupId];
+					if (!oGroupNodeState.selectAllMode && oGroupNodeState.leafCount !== undefined) {
+						iVisibleDeselectedNodeCount += oGroupNodeState.leafCount;
+					}
+				}
+
+				// Except those who got explicitly selected after the parent got collapsed
+				//	and expanded again (and while the root is still in select-all mode)
+				for (sGroupId in this._mTreeState.selected) {
+					oGroupNodeState = this._mTreeState.selected[sGroupId];
+					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+					if (oParent && !oParent.selectAllMode) {
+						iVisibleDeselectedNodeCount--;
+					}
+				}
+
+				// Add those which are explicitly deselected and whose parents *are* in selectAllMode (not covered by the above)
+				for (sGroupId in this._mTreeState.deselected) {
+					oGroupNodeState = this._mTreeState.deselected[sGroupId];
+					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+					// If parent is expanded check if its in select all mode
+					if (oParent && oParent.selectAllMode) {
+						iVisibleDeselectedNodeCount++;
+					}
+				}
+
+				iSelectedNodes = this._getSelectableNodesCount(this._oRootNode) - iVisibleDeselectedNodeCount;
+			} else {
+				iSelectedNodes = Object.keys(this._mTreeState.selected).length;
+			}
+			return iSelectedNodes;
+		};
+
+		/**
+		 * Returns the number of currently selectable nodes (with respect to the current expand/collapse state).
+		 * @returns
+		 */
+		TreeBindingAdapter.prototype._getSelectableNodesCount = function (oNode) {
+			if (oNode) {
+				return oNode.magnitude;
+			} else {
+				return 0;
+			}
 		};
 
 		/**
@@ -1365,7 +1421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 					if (this._isNodeSelectable(oNode)) {
 						//if a node is NOT selected (and is not our artificial root node...)
-						if (!oNode.isArtificial && oNode.nodeState.selected !== true) {
+						if (oNode.nodeState.selected !== true) {
 							mParams.rowIndices.push(iNodeCounter);
 						}
 						this.setNodeSelection(oNode.nodeState, true);
