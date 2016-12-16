@@ -66,6 +66,16 @@ sap.ui.define(['jquery.sap.global', './TreeItemBase', './library', 'sap/ui/core/
 		return this._oIconControl;
 	};
 
+	StandardTreeItem.prototype.getContentAnnouncement = function() {
+		var sAnnouncement = "",
+		oIconInfo = IconPool.getIconInfo(this.getIcon()) || {};
+
+		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
+		sAnnouncement += this.getTitle() + " ";
+
+		return sAnnouncement;
+	};
+
 	StandardTreeItem.prototype.exit = function() {
 		TreeItemBase.prototype.exit.apply(this, arguments);
 		this.destroyControls(["Icon"]);
