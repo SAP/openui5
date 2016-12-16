@@ -1229,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				for (var i = 0; i < aNotFixedVariableColumns.length; i++) {
 					iDomWidth = aNotFixedVariableColumns[i].header && aNotFixedVariableColumns[i].header.offsetWidth;
 					aNotFixedVariableColumns[i].newWidth = calcNewWidth(iDomWidth, aNotFixedVariableColumns[i].minWidth);
-					if (aNotFixedVariableColumns[i].newWidth >= 0) {
+					if (parseInt(aNotFixedVariableColumns[i].newWidth, 10) >= 0) {
 						adaptColWidth(aNotFixedVariableColumns[i]);
 					}
 				}
