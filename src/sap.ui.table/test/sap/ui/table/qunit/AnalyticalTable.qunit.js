@@ -263,6 +263,15 @@ QUnit.asyncTest("collapseAll", 6, function (assert) {
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
+QUnit.test("BindRows", function(assert) {
+	var spy = this.spy(sap.ui.table.AnalyticalTable.prototype, "bindRows");
+	new sap.ui.table.AnalyticalTable({
+		rows: {path: "/modelData"},
+		columns: [new sap.ui.table.AnalyticalColumn()]
+	});
+
+	assert.ok(spy.calledOnce, "bindRows was called");
+});
 
 
 QUnit.module("GroupHeaderMenu", {

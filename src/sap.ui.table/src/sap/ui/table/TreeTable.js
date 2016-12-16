@@ -121,8 +121,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			oBindingInfo.parameters.rootNodeID = oBindingInfo.parameters.rootNodeID;
 		}
 
-		//return Table.prototype.bindRows.call(this, oBindingInfo, vTemplate, oSorter, aFilters);
-		return this.bindAggregation("rows", oBindingInfo);
+		return Table.prototype.bindRows.call(this, oBindingInfo);
 	};
 
 	/**

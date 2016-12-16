@@ -1261,6 +1261,16 @@
 		assert.ok(spy.notCalled, "destroyRows was not called");
 	});
 
+	QUnit.test("BindRows", function(assert) {
+		var spy = this.spy(sap.ui.table.Table.prototype, "bindRows");
+		new sap.ui.table.Table({
+			rows: {path: "/modelData"},
+			columns: [new sap.ui.table.Column()]
+		});
+
+		assert.ok(spy.calledOnce, "bindRows was called");
+	});
+
 	QUnit.module("Callbacks", {
 		afterEach: destroyTable
 	});
