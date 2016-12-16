@@ -131,7 +131,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			var aSemanticKey = [];
 			for (var annotationsProperty in this._oDraftMetadata.annotations) {
 				if (annotationsProperty.lastIndexOf(mEntitySets[sEntityset].type) > -1) {
-					aSemanticKey = this._oDraftMetadata.annotations[annotationsProperty][this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_SEMANTICKEY];
+					aSemanticKey = this._oDraftMetadata.annotations[annotationsProperty][this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_SEMANTICKEY] || [];
 					break;
 				}
 			}
