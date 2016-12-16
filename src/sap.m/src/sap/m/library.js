@@ -279,6 +279,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Bar": {
 					"moveElements": "default"
 				},
+				"sap.m.DatePicker": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.RadioButton": {
 					"hideControl": "default",
 					"renameRadioButton": "sap/m/changeHandler/RenameRadioButton",
