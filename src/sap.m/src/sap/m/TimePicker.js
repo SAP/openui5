@@ -1078,6 +1078,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._initMask = function() {
+			if (this._oTimeSemanticMaskHelper) {
+				this._oTimeSemanticMaskHelper.destroy();
+			}
 			this._oTimeSemanticMaskHelper = new TimeSemanticMaskHelper(this);
 		};
 

@@ -2253,6 +2253,29 @@
 			equal(tp._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces("AM 1:22:52"), "AM1:22:52", "AM 1:22:52");
 		});
 
+		test("TimeSemanticMaskHelper initialization destroyes any previous instances", function() {
+			//prepare
+			var tp = new sap.m.TimePicker(),
+					oSpyDestroy;
+
+			//act
+			tp._oTimeSemanticMaskHelper.destroy();
+
+			//assert
+			ok(!tp._oTimeSemanticMaskHelper._maskRuleHours, "Rule for Hours should be destroyed");
+			ok(!tp._oTimeSemanticMaskHelper._maskRuleMinSec, "Rule for MinutesSecs should be destroyed");
+			ok(!tp._oTimeSemanticMaskHelper._maskRuleChars, "Rule for Chars should be destroyed");
+
+			//prepare
+			oSpyDestroy = this.spy(tp._oTimeSemanticMaskHelper, "destroy");
+
+			//act
+			tp._initMask();
+
+			//assert
+			equals(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
+		});
+
 
 		module("events and event handlers", {
 			beforeEach: function () {
