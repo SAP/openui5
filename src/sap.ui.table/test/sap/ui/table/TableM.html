@@ -17,6 +17,14 @@
 
 <script>
 
+function pressHandler(oEvent) {
+	var bCellClick = oEvent.getId() === "cellClick";
+	jQuery.sap.log.warning((bCellClick ? "Cell" : oEvent.getSource().getMetadata().getName()) + " pressed");
+	if (!bCellClick) {
+		oEvent.preventDefault();
+	}
+}
+
 (new sap.m.Button({
 	text: "Just a Button before"
 })).placeAt("content");
@@ -24,7 +32,8 @@
 var oTable = new sap.ui.table.Table({
 	title: "Title of the Table",
 	footer: "Footer of the Table",
-	selectionMode: sap.ui.table.SelectionMode.MultiToggle
+	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+	cellClick: pressHandler
 });
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
@@ -67,7 +76,7 @@ oColumn = new sap.ui.table.Column({resizable: false, label: new sap.m.Label({tex
 oTable.addColumn(oColumn);
 
 // sap.m.Button
-oControl = new sap.m.Button({text: "{gender}"});
+oControl = new sap.m.Button({text: "{gender}", press: pressHandler});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Button"}), template: oControl, width: "100px"});
 oTable.addColumn(oColumn);
 
@@ -125,7 +134,7 @@ oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.RadioButton"
 oTable.addColumn(oColumn);
 
 // sap.m.Link
-oControl = new sap.m.Link({href: "{href}", text: "{linkText}"});
+oControl = new sap.m.Link({href: "{href}", text: "{linkText}", press: pressHandler});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Link"}), template: oControl, width: "150px"});
 oTable.addColumn(oColumn);
 
