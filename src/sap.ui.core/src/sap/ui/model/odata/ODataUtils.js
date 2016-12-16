@@ -426,10 +426,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sValue = "guid'" + vValue + "'";
 				break;
 			case "Edm.Decimal":
-				sValue = vValue + "M";
+				sValue = vValue + "m";
 				break;
 			case "Edm.Int64":
-				sValue = vValue + "L";
+				sValue = vValue + "l";
 				break;
 			case "Edm.Double":
 				sValue = vValue + "d";

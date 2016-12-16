@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 
 <!--
-  Tested sap.ui.model.odata.ODataModel
+  Tested sap.ui.model.odata.v2.ODataModel
 -->
 
 <html>
 <head>
+<meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -4196,6 +4197,39 @@
 				}, true);
 			});
 		});
+	});
+
+	asyncTest("Normalize key, model access", function() {
+		var oModel = initModel(sURI);
+		oModel.read("/Current_Product_Lists", {
+			success: function() {
+				var sURI;
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=1,ProductName='Chai')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')"), "Entity is returned");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')"), "Entity is returned");
+
+				ok(oModel.getObject("/" + oModel.createKey("Current_Product_Lists", {ProductID: 75, ProductName: "Rhönbräu Klosterbier"})), "Entity is returned, createKey");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURIComponent("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+				ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + jQuery.sap.encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=1,ProductName='Chai')/ProductName"), "Chai", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')/ProductName"), "Aniseed Syrup", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')/ProductName"), "Sirop d'érable", "Property is returned");
+				equal(oModel.getProperty("/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')/ProductName"), "Rhönbräu Klosterbier", "Property is returned");
+				start();
+			}
+		})
+	});
+
+	test("Normalize key", function() {
+		var oModel = initModel(sURI);
+		equal(oModel._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
+		equal(oModel._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
+		equal(oModel._normalizeKey("Entity(':/?')"), "Entity('%3A%2F%3F')", "String encoding normalized, single key")
+		equal(oModel._normalizeKey("Entity(a=':/?',b='test',c=':/?',d='test')"), "Entity(a='%3A%2F%3F',b='test',c='%3A%2F%3F',d='test')", "String encoding normalized, multiple keys")
+		equal(oModel._normalizeKey("Entity(a='test',b=123F,c=':::',e=123D)"), "Entity(a='test',b=123f,c='%3A%3A%3A',e=123d)", "Number types and strings normalized, mixed keys");
+		equal(oModel._normalizeKey("Entity('Entity(a=123M,b=123F,c=123L,d=123D)')"), "Entity('Entity(a%3D123M%2Cb%3D123F%2Cc%3D123L%2Cd%3D123D)')", "Number inside string not normalized");
 	});
 	</script>
 

@@ -242,17 +242,17 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sEmployees1Expand3LevelsXML],
 			//Filter ANDing Tests
 			//Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)
-			"Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			"Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m":
 				[200, oCountHeaders, "9"],
-			"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m":
 				[200, oXMLHeaders, sProductsForFilterANDing1],
-			"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "5"],
-			"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing2],
-			"Products/$count?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products/$count?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "6"],
-			"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing3],
 					"Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages":
 				[200, oJSONHeaders, sRegionsJSON],
@@ -264,6 +264,8 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sFaultTolerance1],
 			"Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
 				[200, oXMLHeaders, sFaultTolerance2],
+			"Current_Product_Lists":
+				[200, oJSONHeaders, sCurrentProductListsJSON],
 			"Employees(2)/Employee1":
 				[204, oNodataHeaders, ""],
 			"SpecialHeaders":
@@ -7833,3 +7835,287 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 				"		</m:properties>\n" +
 				"	</content>\n" +
 				"</entry>";
+
+var sCurrentProductListsJSON = "{" +
+	"\"d\" : {" +
+	"\"results\": [" +
+	"{" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=1,ProductName='Chai')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 1, \"ProductName\": \"Chai\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=2,ProductName='Chang')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 2, \"ProductName\": \"Chang\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 3, \"ProductName\": \"Aniseed Syrup\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=4,ProductName='Chef%20Anton''s%20Cajun%20Seasoning')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 4, \"ProductName\": \"Chef Anton's Cajun Seasoning\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=6,ProductName='Grandma''s%20Boysenberry%20Spread')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 6, \"ProductName\": \"Grandma's Boysenberry Spread\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=7,ProductName='Uncle%20Bob''s%20Organic%20Dried%20Pears')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 7, \"ProductName\": \"Uncle Bob's Organic Dried Pears\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=8,ProductName='Northwoods%20Cranberry%20Sauce')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 8, \"ProductName\": \"Northwoods Cranberry Sauce\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=10,ProductName='Ikura')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 10, \"ProductName\": \"Ikura\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=11,ProductName='Queso%20Cabrales')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 11, \"ProductName\": \"Queso Cabrales\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=12,ProductName='Queso%20Manchego%20La%20Pastora')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 12, \"ProductName\": \"Queso Manchego La Pastora\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=13,ProductName='Konbu')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 13, \"ProductName\": \"Konbu\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=14,ProductName='Tofu')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 14, \"ProductName\": \"Tofu\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=15,ProductName='Genen%20Shouyu')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 15, \"ProductName\": \"Genen Shouyu\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=16,ProductName='Pavlova')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 16, \"ProductName\": \"Pavlova\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=18,ProductName='Carnarvon%20Tigers')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 18, \"ProductName\": \"Carnarvon Tigers\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=19,ProductName='Teatime%20Chocolate%20Biscuits')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 19, \"ProductName\": \"Teatime Chocolate Biscuits\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=20,ProductName='Sir%20Rodney''s%20Marmalade')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 20, \"ProductName\": \"Sir Rodney's Marmalade\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=21,ProductName='Sir%20Rodney''s%20Scones')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 21, \"ProductName\": \"Sir Rodney's Scones\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=22,ProductName='Gustaf''s%20Kn%C3%A4ckebr%C3%B6d')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 22, \"ProductName\": \"Gustaf's Kn\u00e4ckebr\u00f6d\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=23,ProductName='Tunnbr%C3%B6d')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 23, \"ProductName\": \"Tunnbr\u00f6d\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=25,ProductName='NuNuCa%20Nu%C3%9F-Nougat-Creme')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 25, \"ProductName\": \"NuNuCa Nu\u00df-Nougat-Creme\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=26,ProductName='Gumb%C3%A4r%20Gummib%C3%A4rchen')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 26, \"ProductName\": \"Gumb\u00e4r Gummib\u00e4rchen\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=27,ProductName='Schoggi%20Schokolade')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 27, \"ProductName\": \"Schoggi Schokolade\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=30,ProductName='Nord-Ost%20Matjeshering')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 30, \"ProductName\": \"Nord-Ost Matjeshering\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=31,ProductName='Gorgonzola%20Telino')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 31, \"ProductName\": \"Gorgonzola Telino\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=32,ProductName='Mascarpone%20Fabioli')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 32, \"ProductName\": \"Mascarpone Fabioli\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=33,ProductName='Geitost')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 33, \"ProductName\": \"Geitost\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=34,ProductName='Sasquatch%20Ale')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 34, \"ProductName\": \"Sasquatch Ale\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=35,ProductName='Steeleye%20Stout')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 35, \"ProductName\": \"Steeleye Stout\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=36,ProductName='Inlagd%20Sill')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 36, \"ProductName\": \"Inlagd Sill\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=37,ProductName='Gravad%20lax')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 37, \"ProductName\": \"Gravad lax\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=38,ProductName='C%C3%B4te%20de%20Blaye')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 38, \"ProductName\": \"C\u00f4te de Blaye\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=39,ProductName='Chartreuse%20verte')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 39, \"ProductName\": \"Chartreuse verte\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=40,ProductName='Boston%20Crab%20Meat')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 40, \"ProductName\": \"Boston Crab Meat\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=41,ProductName='Jack''s%20New%20England%20Clam%20Chowder')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 41, \"ProductName\": \"Jack's New England Clam Chowder\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=43,ProductName='Ipoh%20Coffee')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 43, \"ProductName\": \"Ipoh Coffee\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=44,ProductName='Gula%20Malacca')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 44, \"ProductName\": \"Gula Malacca\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=45,ProductName='Rogede%20sild')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 45, \"ProductName\": \"Rogede sild\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=46,ProductName='Spegesild')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 46, \"ProductName\": \"Spegesild\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=47,ProductName='Zaanse%20koeken')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 47, \"ProductName\": \"Zaanse koeken\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=48,ProductName='Chocolade')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 48, \"ProductName\": \"Chocolade\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=49,ProductName='Maxilaku')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 49, \"ProductName\": \"Maxilaku\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=50,ProductName='Valkoinen%20suklaa')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 50, \"ProductName\": \"Valkoinen suklaa\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=51,ProductName='Manjimup%20Dried%20Apples')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 51, \"ProductName\": \"Manjimup Dried Apples\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=52,ProductName='Filo%20Mix')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 52, \"ProductName\": \"Filo Mix\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=54,ProductName='Tourti%C3%A8re')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 54, \"ProductName\": \"Tourti\u00e8re\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=55,ProductName='P%C3%A2t%C3%A9%20chinois')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 55, \"ProductName\": \"P\u00e2t\u00e9 chinois\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=56,ProductName='Gnocchi%20di%20nonna%20Alice')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 56, \"ProductName\": \"Gnocchi di nonna Alice\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=57,ProductName='Ravioli%20Angelo')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 57, \"ProductName\": \"Ravioli Angelo\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=58,ProductName='Escargots%20de%20Bourgogne')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 58, \"ProductName\": \"Escargots de Bourgogne\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=59,ProductName='Raclette%20Courdavault')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 59, \"ProductName\": \"Raclette Courdavault\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=60,ProductName='Camembert%20Pierrot')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 60, \"ProductName\": \"Camembert Pierrot\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=61,ProductName='Sirop%20d''%C3%A9rable')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 61, \"ProductName\": \"Sirop d'\u00e9rable\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=62,ProductName='Tarte%20au%20sucre')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 62, \"ProductName\": \"Tarte au sucre\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=63,ProductName='Vegie-spread')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 63, \"ProductName\": \"Vegie-spread\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=64,ProductName='Wimmers%20gute%20Semmelkn%C3%B6del')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 64, \"ProductName\": \"Wimmers gute Semmelkn\u00f6del\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=65,ProductName='Louisiana%20Fiery%20Hot%20Pepper%20Sauce')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 65, \"ProductName\": \"Louisiana Fiery Hot Pepper Sauce\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=66,ProductName='Louisiana%20Hot%20Spiced%20Okra')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 66, \"ProductName\": \"Louisiana Hot Spiced Okra\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=67,ProductName='Laughing%20Lumberjack%20Lager')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 67, \"ProductName\": \"Laughing Lumberjack Lager\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=68,ProductName='Scottish%20Longbreads')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 68, \"ProductName\": \"Scottish Longbreads\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=69,ProductName='Gudbrandsdalsost')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 69, \"ProductName\": \"Gudbrandsdalsost\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=70,ProductName='Outback%20Lager')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 70, \"ProductName\": \"Outback Lager\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=71,ProductName='Flotemysost')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 71, \"ProductName\": \"Flotemysost\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=72,ProductName='Mozzarella%20di%20Giovanni')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 72, \"ProductName\": \"Mozzarella di Giovanni\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=73,ProductName='R%C3%B6d%20Kaviar')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 73, \"ProductName\": \"R\u00f6d Kaviar\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=74,ProductName='Longlife%20Tofu')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 74, \"ProductName\": \"Longlife Tofu\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=75,ProductName='Rh%C3%B6nbr%C3%A4u%20Klosterbier')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 75, \"ProductName\": \"Rh\u00f6nbr\u00e4u Klosterbier\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=76,ProductName='Lakkalik%C3%B6%C3%B6ri')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 76, \"ProductName\": \"Lakkalik\u00f6\u00f6ri\"" +
+	"}, {" +
+	"\"__metadata\": {" +
+	"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Current_Product_Lists(ProductID=77,ProductName='Original%20Frankfurter%20gr%C3%BCne%20So%C3%9Fe')\", \"type\": \"NorthwindModel.Current_Product_List\"" +
+	"}, \"ProductID\": 77, \"ProductName\": \"Original Frankfurter gr\u00fcne So\u00dfe\"" +
+	"}" +
+	"]" +
+	"}" +
+	"}";

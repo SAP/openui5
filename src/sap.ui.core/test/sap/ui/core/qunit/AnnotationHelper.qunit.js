@@ -1164,10 +1164,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{type : "Date", result : "datetime'2033-03-25T00:00:00'"},
 		//TODO split seconds, e.g. ".123456789012"
 		{type : "DateTimeOffset", result : "datetimeoffset'2033-01-06T07:25:21Z'"},
-		{type : "Decimal", result : "-12345678901234567.12345678901234M"},
+		{type : "Decimal", result : "-12345678901234567.12345678901234m"},
 		{type : "Float", result : "1.69e+308d"},
 		{type : "Guid", result : "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
-		{type : "Int", result : "-9223372036854775800L"},
+		{type : "Int", result : "-9223372036854775800l"},
 		{type : "String", result : "'String Filtered Maxlength 40'"},
 		//TODO split seconds, e.g. ".123456789012"
 		{type : "TimeOfDay", result : "time'PT11H11M11S'"}
@@ -1207,13 +1207,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				//TODO split seconds, e.g. ".123456789012"
 				+ encode("datetimeoffset'2033-01-06T07:25:21Z'")
 				+ "+and+Decimal+eq+"
-				+ encode("-12345678901234567.12345678901234M")
+				+ encode("-12345678901234567.12345678901234m")
 				+ "+and+Double+eq+"
 				+ encode("1.69e+308d")
 				+ "+and+GlobalUID+eq+"
 				+ encode("guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'")
 				+ "+and+Int64+eq+"
-				+ encode("-9223372036854775800L")
+				+ encode("-9223372036854775800l")
 				+ "+and+String40+eq+"
 				+ encode("'String Filtered Maxlength 40'")
 				+ "+and+Time+eq+"

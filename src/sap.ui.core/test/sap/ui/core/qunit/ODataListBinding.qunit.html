@@ -411,7 +411,7 @@
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			equal(aFilteredContexts.length, 9, "Only AppFilter, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M", "Application Filter only, URL-Params-Construction");
+			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
 
 			oBinding.detachChange(handler);
 
@@ -431,7 +431,7 @@
 			equal(aFilteredContexts.length, 5, "ControlFilter AND AppFilter, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chef Anton's Cajun Seasoning", "ControlFilter AND AppFilter, filtered content");
 			//check if the braces are set correct
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)", "Control and Application Filter, Braces when ANDed");
+			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler1);
 
@@ -449,7 +449,7 @@
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			equal(aFilteredContexts.length, 6, "Changing the Control-Filters, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "ControlFilter AND AppFilter, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)", "Control and Application Filter, Braces when ANDed");
+			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler2);
 
@@ -466,7 +466,7 @@
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			equal(aFilteredContexts.length, 9, "Reset to AppFilter, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
-			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M", "Application Filter only, URL-Params-Construction");
+			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m", "Application Filter only, URL-Params-Construction");
 
 			oBinding.detachChange(handler3);
 			start();
