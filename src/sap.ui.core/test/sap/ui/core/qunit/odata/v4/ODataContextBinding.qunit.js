@@ -74,6 +74,95 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("c'tor calls applyParameters", function (assert) {
+		var mParameters = {},
+			mParametersClone = {};
+
+		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(mParameters))
+			.returns(mParametersClone);
+		this.mock(ODataContextBinding.prototype).expects("applyParameters")
+			.withExactArgs(sinon.match.same(mParametersClone));
+
+		new ODataContextBinding(this.oModel, "/EMPLOYEES", undefined, mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: absolutePath", function (assert) {
+		var mBindingParameters = {
+				$$groupId : "foo",
+				$$updateGroupId : "update foo"
+			},
+			sGroupId = "foo",
+			oModelMock = this.mock(this.oModel),
+			oBinding = this.oModel.bindContext("/EMPLOYEES"),
+			mParameters = {
+				$$groupId : "foo",
+				$$updateGroupId : "update foo",
+				$filter : "bar"
+			},
+			mQueryOptions = {
+				$filter : "bar"
+			},
+			sUpdateGroupId = "update foo";
+
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
+			.returns(mQueryOptions);
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.returns(mBindingParameters);
+		this.mock(oBinding).expects("makeCache");
+
+		// code under test
+		oBinding.applyParameters(mParameters);
+
+		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: deferred", function (assert) {
+		var mBindingParameters = {
+				$$groupId : "foo",
+				$$updateGroupId : "update foo"
+			},
+			sGroupId = "foo",
+			oModelMock = this.mock(this.oModel),
+			oBinding = this.oModel.bindContext("/DEFERRED(...)"),
+			mParameters = {
+				$$groupId : "foo",
+				$$updateGroupId : "update foo",
+				$filter : "bar"
+			},
+			mQueryOptions = {
+				$filter : "bar"
+			},
+			sUpdateGroupId = "update foo",
+			oOperation = {
+					bAction : undefined,
+					oMetadataPromise : undefined,
+					mParameters : {},
+					sResourcePath : undefined
+		};
+
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
+			.returns(mQueryOptions);
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.returns(mBindingParameters);
+
+		// code under test
+		oBinding.applyParameters(mParameters);
+
+		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+		assert.deepEqual(oBinding.oOperation, oOperation, "oOperation");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("mixin", function (assert) {
 		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
 			oMixin = {};
@@ -306,16 +395,19 @@ sap.ui.require([
 	["/EMPLOYEES(ID='1')", "EMPLOYEE_2_TEAM(Team_Id='4711')"].forEach(function (sPath) {
 		QUnit.test("bindContext with parameters, path " + sPath, function (assert) {
 			var oBinding,
-				mParameters = {},
+				mParameters = {
+					$select : "ProductID",
+					$apply: "filter(Amount gt 5)"
+				},
 				mQueryOptions = {};
 
 			this.spy(ODataContextBinding.prototype, "makeCache");
 			this.mock(this.oModel).expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-					sinon.match.same(mParameters), true)
+					mParameters, true)
 				.returns(mQueryOptions);
 			this.mock(ODataModel.prototype).expects("buildBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.withExactArgs(mParameters, aAllowedBindingParameters)
 				.returns({$$groupId : "group", $$updateGroupId : "updateGroup"});
 			this.mock(_Cache).expects("createSingle")
 				.exactly((sPath[0] === "/") ? 1 : 0)
@@ -681,12 +773,15 @@ sap.ui.require([
 	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
 			oModelMock = this.mock(this.oModel),
-			mParameters = {};
+			mParameters = {
+				$select : "ProductID",
+				$apply: "filter(Amount gt 5)"
+			};
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters,
 				aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 
@@ -695,7 +790,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters,
 				aAllowedBindingParameters)
 			.returns({$$groupId : "foo"});
 		// code under test
@@ -704,14 +799,14 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters).returns({});
+			.withExactArgs(mParameters, aAllowedBindingParameters).returns({});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", {}, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		// buildBindingParameters also called for relative binding
-		oModelMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters,
 				aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", undefined, mParameters);
