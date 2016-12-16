@@ -1919,9 +1919,10 @@ sap.ui.define([
 			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
+			vValue = vValue.split("?")[0];
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey;
+		return sKey && this._normalizeKey(sKey);
 	};
 
 	/**
@@ -1975,6 +1976,29 @@ sap.ui.define([
 		}
 		sKey += ")";
 		return sKey;
+	};
+
+	/**
+	 * Normalizes the given canonical key.
+	 *
+	 * Although keys contained in OData response must be canonical, there are
+	 * minor differences (like capitalization of suffixes for Decimal, Double,
+	 * Float) which can differ and cause equality checks to fail.
+	 *
+	 * @param {string} sKey The canonical key of an entity
+	 * @returns {string} Normalized key of the entry
+	 * @private
+	 */
+	ODataModel.prototype._normalizeKey = function(sKey) {
+		var rString = /([(=,])('.*?')([,)])/g,
+			rNumType = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g;
+		function normalizeEncoding(value, p1, p2, p3) {
+			return p1 + encodeURIComponent(decodeURI(p2)) + p3;
+		}
+		function normalizeCase(value) {
+			return value.toLowerCase();
+		}
+		return sKey.replace(rString, normalizeEncoding).replace(rNumType, normalizeCase);
 	};
 
 	/**
@@ -2872,7 +2896,7 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					if (aChangeSet[i].bRefreshAfterChange) {
 						var oRequest = aChangeSet[i].request,
-							sKey = oRequest.requestUri.split('?')[0];
+							sKey = that._getKey(oRequest.requestUri);
 						if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 							var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 							if (oEntityMetadata) {
