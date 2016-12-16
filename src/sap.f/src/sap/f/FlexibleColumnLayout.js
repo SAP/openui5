@@ -9,9 +9,10 @@ sap.ui.define([
 	"./LayoutType",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, LT, ResizeHandler, Control, Button, NavContainer) {
+], function (jQuery, library, LT, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
 	"use strict";
 
 
@@ -707,24 +708,28 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._initButtons = function () {
 		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
 			icon: "sap-icon://slim-arrow-left",
+			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_BEGIN_COLUMN_BACK_ARROW"),
 			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
 
 		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
 			icon: "sap-icon://slim-arrow-right",
+			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_FORWARD_ARROW"),
 			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
 
 		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
 			icon: "sap-icon://slim-arrow-left",
+			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_BACK_ARROW"),
 			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
 
 		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
 			icon: "sap-icon://slim-arrow-right",
+			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_END_COLUMN_FORWARD_ARROW"),
 			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
@@ -1546,6 +1551,47 @@ sap.ui.define([
 
 	// The width above which (inclusive) we are in tablet mode
 	FlexibleColumnLayout.TABLET_BREAKPOINT = 960;
+
+
+	/**
+	 * Retrieves the resource bundle for the <code>sap.f</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	FlexibleColumnLayout._getResourceBundle = function () {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	};
+
+	/**
+	 * Lazily gets the aria labels for the three columns, and reuses them for all instances of the Flexible Column Layout
+	 * @static
+	 * @private
+	 * @returns {Object} the labels for the columns
+	 */
+	FlexibleColumnLayout._getAriaLabels = function () {
+		if (!FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels) {
+			FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels = {
+				beginColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_BEGIN_COLUMN_REGION_TEXT"),
+				midColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_MID_COLUMN_REGION_TEXT"),
+				endColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_END_COLUMN_REGION_TEXT")
+			};
+		}
+
+		return FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels;
+	};
+
+	/**
+	 * Creates an invisible text in the static area and returns its id
+	 * @param sResourceBundleKey
+	 * @private
+	 * @returns {string}
+	 */
+	FlexibleColumnLayout._getARIAInvisibleTextId = function (sResourceBundleKey) {
+		return new InvisibleText({
+			text: FlexibleColumnLayout._getResourceBundle().getText(sResourceBundleKey)
+		}).toStatic().getId();
+	};
 
 	/**
 	 * Layout history helper class

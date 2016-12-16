@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(["sap/f/FlexibleColumnLayout"],
+	function (FCL) {
 		"use strict";
 
 		var FCLRenderer = {};
@@ -29,6 +29,10 @@ sap.ui.define([],
 			// Begin column
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-beginColumn");
+			oRm.writeAccessibilityState(oControl, {
+				role: "region",
+				labelledBy: FCL._getAriaLabels().beginColumnLabel
+			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnBegin").addClass("sapFFCLColumnActive");
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -49,6 +53,10 @@ sap.ui.define([],
 			// Mid column
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-midColumn");
+			oRm.writeAccessibilityState(oControl, {
+				role: "region",
+				labelledBy: FCL._getAriaLabels().midColumnLabel
+			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnMid");
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -73,6 +81,10 @@ sap.ui.define([],
 			// End column
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-endColumn");
+			oRm.writeAccessibilityState(oControl, {
+				role: "region",
+				labelledBy: FCL._getAriaLabels().endColumnLabel
+			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnEnd");
 			oRm.writeClasses();
 			oRm.writeStyles();
