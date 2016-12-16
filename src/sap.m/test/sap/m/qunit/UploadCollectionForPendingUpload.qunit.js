@@ -631,8 +631,10 @@ QUnit.test("Check file list", function(assert) {
 	var sNameBeforeDeletion = this.oUploadCollection.getItems()[0].getFileName();
 	assert.equal(iLengthBeforeDeletion, 4, "4 list items available");
 
-	this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];
-	this.oUploadCollection._oItemForDelete._iLineNumber = 0;
+	this.oUploadCollection._oItemForDelete = {
+			documentId : this.oUploadCollection.getItems()[0].getDocumentId(),
+			_iLineNumber : 0
+	}
 	this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	sap.ui.getCore().applyChanges();
 
