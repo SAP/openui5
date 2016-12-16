@@ -209,12 +209,12 @@ test("tree item with icon", function() {
 module("Binding");
 
 test("data binding update", function() {
-	strictEqual(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander").css("font-family"), "SAP-icons");
+	ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
 
 	oModel.setProperty("/",oData2);
 	sap.ui.getCore().applyChanges();
 
-	strictEqual(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander").css("font-family"), "Arial, Helvetica, sans-serif", "binding update successfully.");
+	ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding update successfully.");
 	oTree.destroy();
 });
 
