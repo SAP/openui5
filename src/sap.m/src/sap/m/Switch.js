@@ -158,6 +158,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oDomRef.setAttribute("aria-checked", "false");
 			}
 
+			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
+
 			if (sap.ui.getCore().getConfiguration().getAnimation()) {
 				$Switch.addClass(CSS_CLASS + "Trans");
 			}
@@ -166,17 +168,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oSwitchInnerDomRef.style.cssText = "";
 		};
 
+		Switch.prototype._getInvisibleElement = function(){
+			return this.$("invisible");
+		};
+
 		Switch.prototype.getInvisibleElementId = function() {
 			return this.getId() + "-invisible";
 		};
 
-		Switch.prototype.getInvisibleElementText = function() {
+		Switch.prototype.getInvisibleElementText = function(bState) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
 				case sap.m.SwitchType.Default:
-					sText = this.getCustomTextOn() || oBundle.getText("SWITCH_ON");
+					sText = this.getCustomTextOn() || (bState ? oBundle.getText("SWITCH_ON") : oBundle.getText("SWITCH_OFF"));
 					break;
 
 				case sap.m.SwitchType.AcceptReject:
@@ -428,13 +434,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		};
 
-		Switch.prototype.getAccessibilityInfo = function() {
+		Switch.prototype.getAccessibilityInfo = function(bState) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			var sDesc = "";
 
 			if (this.getState()) {
-				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText();
+				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText(bState);
 			}
 
 			return {
