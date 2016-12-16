@@ -381,6 +381,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		TabContainer.prototype.destroyItems = function() {
 			this._getTabStrip().destroyItems();
+			this.setAssociation("selectedItem", null);
 
 			return this.destroyAggregation("items");
 		};
