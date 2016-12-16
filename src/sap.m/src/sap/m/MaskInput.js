@@ -557,6 +557,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		var oSearchRuleResult = this._findRuleBySymbol(sSymbol, this.getRules());
 		if (oSearchRuleResult) {
 			this.removeAggregation('rules', oSearchRuleResult.oRule);
+			oSearchRuleResult.oRule.destroy();
 		}
 	};
 
