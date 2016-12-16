@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		// Sanitize the arguments for API Compatibility: sName, sPath, oTemplate, oSorter, aFilters
 		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
 
-		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
+		var vReturn = Table.prototype.bindRows.call(this, oBindingInfoSanitized);
 
 		this._updateTotalRow(true);
 
