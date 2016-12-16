@@ -660,6 +660,27 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	};
 
 	/**
+	 * Returns the first sap.m.Title control instance inside the toolbar for the accessibility
+	 *
+	 * @returns {sap.m.Title|undefined}
+	 * @since 1.44
+	 * @protected
+	 */
+	Toolbar.prototype.getTitleControl = function() {
+		if (!sap.m.Title) {
+			return;
+		}
+
+		var aContent = this.getContent();
+		for (var i = 0; i < aContent.length; i++) {
+			var oContent = aContent[i];
+			if (oContent instanceof sap.m.Title && oContent.getVisible()) {
+				return oContent;
+			}
+		}
+	};
+
+	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
 	 *
 	 * @returns {String}
@@ -667,19 +688,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @protected
 	 */
 	Toolbar.prototype.getTitleId = function() {
-		if (!sap.m.Title) {
-			return "";
-		}
-
-		var aContent = this.getContent();
-		for (var i = 0; i < aContent.length; i++) {
-			var oContent = aContent[i];
-			if (oContent instanceof sap.m.Title) {
-				return oContent.getId();
-			}
-		}
-
-		return "";
+		var oTitle = this.getTitleControl();
+		return oTitle ? oTitle.getId() : "";
 	};
 
 	///////////////////////////

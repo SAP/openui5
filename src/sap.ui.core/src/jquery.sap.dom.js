@@ -1014,13 +1014,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @this {jQuery} jQuery context
 	 * @param {string} sAttribute The name of the attribute.
 	 * @param {string} sValue The value of the attribute to be inserted.
+	 * @param {string} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @function
 	 * @private
 	 */
-	function addToAttributeList(sAttribute, sValue) {
+	function addToAttributeList(sAttribute, sValue, bPrepend) {
 		var sAttributes = this.attr(sAttribute);
 		if (!sAttributes) {
 			return this.attr(sAttribute, sValue);
@@ -1028,7 +1029,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		var aAttributes = sAttributes.split(" ");
 		if (aAttributes.indexOf(sValue) == -1) {
-			aAttributes.push(sValue);
+			bPrepend ? aAttributes.unshift(sValue) : aAttributes.push(sValue);
 			this.attr(sAttribute, aAttributes.join(" "));
 		}
 
@@ -1070,6 +1071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * Adds the given ID reference to the the aria-labelledby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
+	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaLabelledBy
 	 * @public
@@ -1077,8 +1079,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @since 1.30.0
 	 * @function
 	 */
-	jQuery.fn.addAriaLabelledBy = function (sId) {
-		return addToAttributeList.call(this, "aria-labelledby", sId);
+	jQuery.fn.addAriaLabelledBy = function (sId, bPrepend) {
+		return addToAttributeList.call(this, "aria-labelledby", sId, bPrepend);
 	};
 
 	/**
@@ -1100,6 +1102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * Adds the given ID reference to the aria-describedby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
+	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaDescribedBy
 	 * @public
@@ -1107,8 +1110,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @since 1.30.0
 	 * @function
 	 */
-	jQuery.fn.addAriaDescribedBy = function (sId) {
-		return addToAttributeList.call(this, "aria-describedby", sId);
+	jQuery.fn.addAriaDescribedBy = function (sId, bPrepend) {
+		return addToAttributeList.call(this, "aria-describedby", sId, bPrepend);
 	};
 
 	/**

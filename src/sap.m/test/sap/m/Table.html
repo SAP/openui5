@@ -260,7 +260,8 @@
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.ui.core.Icon({
-				src : "sap-icon://add-filter"
+				src : "sap-icon://add-filter",
+				press: function() {}
 			})
 		]
 	});
@@ -366,7 +367,8 @@
 				text: "{linkText}"
 			}),
 			new sap.ui.core.Icon({
-				src : "sap-icon://{src}"
+				src : "sap-icon://{src}",
+				press: function() {}
 			}),
 			new sap.m.RatingIndicator({
 				value: "{rating}"

@@ -257,20 +257,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
 	 */
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
-
-		var mMode = sap.m.ListMode,
-			sMode = oControl.getMode(),
-			bMultiSelectable;
-
-		if (sMode == mMode.MultiSelect) {
-			bMultiSelectable = true;
-		} else if (sMode != mMode.None && sMode != mMode.Delete) {
-			bMultiSelectable = false;
-		}
-
 		return {
 			role : this.getAriaRole(oControl),
-			multiselectable : bMultiSelectable,
 			labelledby : {
 				value : this.getAriaLabelledBy(oControl),
 				append : true

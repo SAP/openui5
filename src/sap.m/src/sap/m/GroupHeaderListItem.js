@@ -93,6 +93,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 	};
 
+	GroupHeaderListItem.prototype.getAccessibilityType = function(oBundle) {
+		var sType = this.getTable() ? "ROW" : "OPTION";
+		return oBundle.getText("LIST_ITEM_GROUP_HEADER") + " " + oBundle.getText("ACC_CTR_TYPE_" + sType);
+	};
+
+	GroupHeaderListItem.prototype.getContentAnnouncement = function() {
+		return this.getTitle();
+	};
+
 	return GroupHeaderListItem;
 
 }, /* bExport= */ true);

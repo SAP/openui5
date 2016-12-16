@@ -76,6 +76,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 */
 	ActionListItem.prototype.onsapspace = ActionListItem.prototype.onsapenter;
 
+	ActionListItem.prototype.getContentAnnouncement = function() {
+		return this.getText();
+	};
+
 	return ActionListItem;
 
 }, /* bExport= */ true);

@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			if (sLabelId &&
 				oContent.addAriaLabelledBy &&
 				oContent.getAriaLabelledBy().indexOf(sLabelId) == -1) {
-				oContent.addAriaLabelledBy(sLabelId);
+				oContent.addAssociation("ariaLabelledBy", sLabelId, true);
 			}
 
 			rm.renderControl(oContent);
