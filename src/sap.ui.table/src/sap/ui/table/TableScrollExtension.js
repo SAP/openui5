@@ -96,11 +96,23 @@ sap.ui.define([
 				var iScrollTop = oVSb.scrollTop;
 				oScrollExtension._iVerticalScrollPosition = iScrollTop;
 
-				if (TableUtils.isVariableRowHeightEnabled(oTable)) {
+				var iNewFirstVisibleRowIndex = oTable._getFirstVisibleRowByScrollTop(iScrollTop);
+				var iOldFirstVisibleRowIndex = oTable.getFirstVisibleRow();
+				var bFirstVisibleRowChanged = iNewFirstVisibleRowIndex !== iOldFirstVisibleRowIndex;
+
+				if (bFirstVisibleRowChanged) {
+					oTable.setFirstVisibleRow(iNewFirstVisibleRowIndex, true);
+
+					if (TableUtils.isVariableRowHeightEnabled(oTable)) {
+						oTable.attachEventOnce("_rowsUpdated", function() {
+							// Do not use iScrollTop from the closure. The scroll position might have been changed already.
+							this._adjustTablePosition(oVSb.scrollTop, this._aRowHeights);
+						});
+					}
+
+				} else if (TableUtils.isVariableRowHeightEnabled(oTable)) {
 					oTable._adjustTablePosition(iScrollTop, oTable._aRowHeights);
 				}
-
-				oTable.setFirstVisibleRow(oTable._getFirstVisibleRowByScrollTop(iScrollTop), true);
 			}
 
 			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledVerticallyByWheel) {
