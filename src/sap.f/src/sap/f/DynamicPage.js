@@ -89,10 +89,9 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the header is expanded.
-				 * <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example
-				 * when the expanded header is larger than the available screen area. For those cases a warning is logged.
-				 * The header can be also expanded/collapsed by user interaction, which requires the property to be
-				 * internally mutated by the control to reflect the changed state.
+				 *
+				 * <b>Note:</b> The header can be also expanded/collapsed by user interaction,
+				 * which requires the property to be internally mutated by the control to reflect the changed state.
 				 */
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
@@ -730,16 +729,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is larger than what's allowed for it to collapse (snap).
-	 * <b>Note: </b>If the header becomes larger than the screen height, it shouldn't collapse (snap) while scrolling.
-	 * @returns {boolean}
-	 * @private
-	 */
-	DynamicPage.prototype._headerBiggerThanAllowedToExpandWithACommand = function () {
-		return this._getEntireHeaderHeight() > this._getOwnHeight();
-	};
-
-	/**
 	 * Determines if the header is larger than what's allowed for it to be pinned.
 	 * If the header becomes more than 60% of the screen height it cannot be pinned.
 	 * @param {Number} iControlHeight
@@ -1130,11 +1119,6 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function () {
-		if (this._headerBiggerThanAllowedToExpandWithACommand()) {
-			jQuery.sap.log.warning("DynamicPage :: couldn't expand header. There isn't enough space for it to fit on the screen", this);
-			return;
-		}
-
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
 		if (this._preserveHeaderStateOnScroll() || !this._needsVerticalScrollBar()) {
 			if (!this.getHeaderExpanded()) {
