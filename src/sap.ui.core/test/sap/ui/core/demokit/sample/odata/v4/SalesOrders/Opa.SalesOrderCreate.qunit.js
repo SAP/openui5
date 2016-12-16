@@ -165,6 +165,10 @@ sap.ui.require([
 			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
 			When.onTheMainPage.sortByGrossAmount();
 			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
+			// Change filter via API (changeParameters)
+			When.onTheMainPage.sortByGrossAmount();
+			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
+			Then.onTheMainPage.checkSalesOrderItemInRow(0);
 		}
 
 		if (!bRealOData) {

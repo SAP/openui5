@@ -120,13 +120,7 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
-				this.setParameters(jQuery.extend(true, {}, mParameters));
-
-				if (!this.bRelative) {
-					// Note: this.mParameters is ignored for absolute bindings,
-					// but this.mQueryOptions is used --> setParameters() must happen before
-					this.oCache = this.makeCache();
-				}
+				this.applyParameters(jQuery.extend(true, {}, mParameters));
 
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
@@ -222,6 +216,43 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Applies the the given map of parameters to this binding's parameters and triggers the
+	 * creation of a new cache if called with a change reason.
+	 *
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason for {@link #reset}
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+				["$$groupId", "$$operationMode", "$$updateGroupId"]),
+			sOperationMode;
+
+		sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
+		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
+		// Just check for the case that no mode was specified, but sort/filter takes place
+		if (!sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
+			throw new Error("Unsupported operation mode: " + sOperationMode);
+		}
+		this.sOperationMode = sOperationMode;
+
+		this.sGroupId = oBindingParameters.$$groupId;
+		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
+			mParameters, true);
+		this.mParameters = mParameters; //store mParameters at binding after validation
+
+		this.mCacheByContext = undefined;
+		this.oCache = this.makeCache(this.oContext);
+		this.reset(sChangeReason);
+	};
+
+	/**
 	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified.
 	 * It is to be used by applications for example to switch off a busy indicator or to process an
@@ -260,49 +291,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes this binding's parameters according to the given map of parameters: Parameters with
-	 * an <code>undefined</code> value are removed, the other parameters are set, and missing
-	 * parameters remain unchanged.
-	 *
-	 * @param {object} mParameters
-	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList}
-	 * @throws {Error}
-	 *   If <code>mParameters</code> is missing or contains binding-specific parameters.
-	 *
-	 * @public
-	 * @since 1.45.0
-	 */
-	ODataListBinding.prototype.changeParameters = function (mParameters) {
-		var sKey;
-
-		if (!mParameters) {
-			throw new Error("Missing map of binding parameters");
-		}
-		if (!Object.keys(mParameters).length) {
-			return;
-		}
-
-		for (sKey in mParameters) {
-			if (sKey.indexOf("$$") === 0) {
-				throw new Error("Unsupported parameter: " + sKey);
-			}
-		}
-		for (sKey in mParameters) {
-			if (mParameters[sKey] === undefined) {
-				delete this.mParameters[sKey];
-			} else {
-				this.mParameters[sKey] = mParameters[sKey];
-			}
-		}
-		this.setParameters(this.mParameters, ChangeReason.Change);
-	};
-
-	/**
-	 * Build the value for the OData V4 '$orderby' system query option from the given sorters
+	 * Builds the value for the OData V4 '$orderby' system query option from the given sorters
 	 * and the optional static '$orderby' value which is appended to the sorters.
 	 *
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
-	 *   An array of <code>Sorter</code> objects to be converted into corresponding '$orderby'
+	 *   An array of <code>Sorter</code> objects to be converted into a corresponding '$orderby'
 	 *   string.
 	 * @param {string} [sOrderbyQueryOption]
 	 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
@@ -311,6 +304,8 @@ sap.ui.define([
 	 *   The concatenated '$orderby' system query option
 	 * @throws {Error}
 	 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
+	 *
+	 * @private
 	 */
 	ODataListBinding.prototype.buildOrderbyOption = function (aSorters, sOrderbyQueryOption) {
 		var aOrderbyOptions = [],
@@ -327,6 +322,58 @@ sap.ui.define([
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
 		return aOrderbyOptions.join(',');
+	};
+
+	/**
+	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
+	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
+	 * removed, the other parameters are set, and missing parameters remain unchanged.
+	 *
+	 * @param {object} mParameters
+	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList}
+	 * @throws {Error}
+	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported parameters
+	 *   or unsupported values.
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataListBinding.prototype.changeParameters = function (mParameters) {
+		var bChanged = false,
+			sKey,
+			mBindingParameters = jQuery.extend(true, {}, this.mParameters);
+
+		if (!mParameters) {
+			throw new Error("Missing map of binding parameters");
+		}
+		if (!Object.keys(mParameters).length) {
+			return;
+		}
+		for (sKey in mParameters) {
+			if (sKey.indexOf("$$") === 0) {
+				throw new Error("Unsupported parameter: " + sKey);
+			}
+		}
+
+		for (sKey in mParameters) {
+			if (mParameters[sKey] === undefined) {
+				if (mBindingParameters[sKey] !== undefined) {
+					delete mBindingParameters[sKey];
+					bChanged = true;
+				}
+			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
+				if (typeof mParameters[sKey] === 'object') {
+					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
+				} else {
+					mBindingParameters[sKey] = mParameters[sKey];
+				}
+				bChanged = true;
+			}
+		}
+
+		if (bChanged) {
+			this.applyParameters(mBindingParameters, ChangeReason.Change);
+		}
 	};
 
 	/*
@@ -1255,8 +1302,8 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		this.sRefreshGroupId = sGroupId;
 		if (this.oCache) {
-			this.oCache = this.makeCache(this.oContext);
 			this.mCacheByContext = undefined;
+			this.oCache = this.makeCache(this.oContext);
 		}
 		this.reset(ChangeReason.Refresh);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
@@ -1319,35 +1366,6 @@ sap.ui.define([
 				this.oContext = oContext;
 			}
 		}
-	};
-
-	/**
-	 * Sets this binding's parameters to the given map of parameters.
-	 *
-	 * @param {object} [mParameters]
-	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
-	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
-	 *   A change reason for {@link #reset}
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.setParameters = function (mParameters, sChangeReason) {
-		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$groupId", "$$operationMode", "$$updateGroupId"]);
-
-		this.sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
-		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
-		// Just check for the case that no mode was specified, but sort/filter takes place
-		if (!this.sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
-			throw new Error("Unsupported operation mode: " + this.sOperationMode);
-		}
-
-		this.sGroupId = oBindingParameters.$$groupId;
-		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.mParameters = mParameters;
-		this.mQueryOptions = this.oModel.buildQueryOptions(this.oModel.mUriParameters,
-			mParameters, true);
-		this.reset(sChangeReason);
 	};
 
 	/**
