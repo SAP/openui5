@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 		function getCacheKeyProviders(oView) {
 			var mPreprocessors = View._mPreprocessors["XML"],
-				oPreprocessorInfo = oView.getPreprocessorInfo(true),
+				oPreprocessorInfo = oView.getPreprocessorInfo(/*bSync =*/false),
 				aFutureCacheKeys = [];
 			function pushFutureKey(o) {
 				if (o.preprocessor.getCacheKey) {

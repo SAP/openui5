@@ -223,7 +223,15 @@ sap.ui.require(["jquery.sap.global",
 			});
 
 			QUnit.test("Preprocessor integration", function(assert) {
-				var sKey = "key", oSpy = this.oSpy;
+				var sKey = "key",
+					oSpy = this.oSpy,
+					oViewInfo = {
+						name: "example.mvc.cache",
+						componentId: undefined,
+						id: "cachedView",
+						caller: "Element sap.ui.core.mvc.XMLView#cachedView (example.mvc.cache)",
+						sync: false
+					};
 				assert.expect(4);
 				assert.ok(TestPreprocessor);
 				// inject the preprocessor, ugly, but has to be done to place the spy
@@ -233,7 +241,7 @@ sap.ui.require(["jquery.sap.global",
 				var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
 				return viewFactory({keys: [sKey]}).loaded().then(function(oView) {
 					sinon.assert.calledOnce(oGetCacheKeySpy);
-					sinon.assert.calledWithExactly(oGetCacheKeySpy, oView.getPreprocessorInfo());
+					sinon.assert.calledWith(oGetCacheKeySpy, oViewInfo);
 					// "foo" is the part coming from TestPreprocessor.js
 					sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts(["foo", sKey]));
 					oSpy.restore();
