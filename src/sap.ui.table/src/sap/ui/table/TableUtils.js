@@ -152,6 +152,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			function setSelectionState(iAbsoluteRowIndex) {
+				if (!oTable._isRowSelectable(iAbsoluteRowIndex)) {
+					return false;
+				}
+
 				oTable._iSourceRowIndex = iAbsoluteRowIndex; // To indicate that the selection was changed by user interaction.
 
 				if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
