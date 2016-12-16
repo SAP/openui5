@@ -44,13 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 * Defines the semantic level of the title.
 			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
 			 * Depending on this setting either a HTML h1-h6 element is used or when using level <code>Auto</code> no explicit level information is written (HTML5 header element).
+			 * This property does not influence the style of the control. Use the property <code>titleStyle</code> for this purpose instead.
 			 */
 			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
 
 			/**
 			 * Defines the style of the title.
-			 * When using the <code>Auto</code> styling, the appearance of the title depends on the current position of the title and the defined level.
-			 * This automatism can be overridden by setting a different style explicitly.
+			 * When using the <code>Auto</code> styling, the appearance of the title depends on the current position of the title (e.g. inside a <code>Toolbar</code>).
+			 * This default behavior can be overridden by setting a different style explicitly.
 			 * The actual appearance of the title and the different styles always depends on the theme being used.
 			 */
 			titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
