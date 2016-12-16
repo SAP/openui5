@@ -1717,16 +1717,28 @@
 	});
 
 	QUnit.test("test _onTableResize function", function(assert) {
-		oTable._onTableResize();
-		var iOldAfterUpdateTableSizes = oTable._mTimeouts.afterUpdateTableSizes;
-		oTable.setRowHeight(40);
-		oTable._bInvalid = false;
-		oTable._bVariableRowHeightEnabled = true;
-		oTable._iRowHeightsDelta = 15;
-		oTable._onTableResize();
-		var iNewAfterUpdateTableSizes = oTable._mTimeouts.afterUpdateTableSizes;
-		assert.ok(iOldAfterUpdateTableSizes !== iNewAfterUpdateTableSizes, "Table must have been resized");
-		assert.ok(oTable._isVSbRequired());
+		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+		var $TableParent = oTable.$().parent();
+
+		window.setTimeout(function() {
+			var iOldTableContentHeight = oTable._collectTableSizes().tableCntHeight;
+			$TableParent.height(500);
+
+			window.setTimeout(function() {
+				var iNewTableContentHeight = oTable._collectTableSizes().tableCntHeight;
+
+				assert.notStrictEqual(iOldTableContentHeight, iNewTableContentHeight,
+						"The table content height has changed. (Old " + iOldTableContentHeight + ", New: " + iNewTableContentHeight + ")");
+				assert.ok(iOldTableContentHeight > iNewTableContentHeight, "The table content height has decreased");
+
+				$TableParent.height("");
+
+				done();
+			}, 500);
+		}, 500);
 	});
 
 	QUnit.test("test onfocusin function", function(assert) {
