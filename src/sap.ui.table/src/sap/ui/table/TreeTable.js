@@ -505,6 +505,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		var oBinding = this.getBinding("rows");
 		if (oBinding.selectAll) {
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
+			this._getAccExtension().setSelectAllState(true);
 			oBinding.selectAll();
 		} else {
 			//otherwise fallback on the tables own function

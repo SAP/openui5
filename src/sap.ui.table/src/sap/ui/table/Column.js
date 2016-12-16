@@ -981,6 +981,12 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			oClone.data("sap-ui-colindex", iIndex);
 			oClone.data("sap-ui-colid", this.getId());
 			this._aTemplateClones.push(oClone);
+
+			var oTable = this.getParent();
+			if (oTable) {
+				oTable._getAccExtension().addColumnHeaderLabel(this, oClone);
+			}
+
 			return oClone;
 		}
 	};
