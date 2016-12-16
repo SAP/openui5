@@ -965,6 +965,23 @@
 			});
 		}
 
+		test("Adding rule with placeholderSymbol that matches existing rule", function() {
+			//prepare
+			var oRule1 = new sap.m.MaskInputRule({maskFormatSymbol: "_", regex: "aaa"}),
+					oRule2 = new sap.m.MaskInputRule({maskFormatSymbol: "_", regex: "999"}),
+					oSpyDestroyOldRule = this.spy(oRule1, "destroy");
+			this.oMaskInput.destroyRules();
+
+			//act
+			this.oMaskInput.addRule(oRule1);
+			this.oMaskInput.addRule(oRule2);
+
+			//assert
+			equals(this.oMaskInput.getRules().length, 1, "Adding second rule with the same maskFormatSymbol does not increase the rules aggregation");
+			equals(this.oMaskInput.getRules()[0].getId(), oRule2.getId() , "The rules aggregation should contain the last added rule");
+			equals(oSpyDestroyOldRule.callCount, 1, "The old rule is destroyed");
+		});
+
 		module("ARIA", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput({
