@@ -984,7 +984,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.46.0
+	 * @since 1.45.5
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.LinkConversion = {
