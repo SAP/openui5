@@ -123,7 +123,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			var oBinding = oTable.getBinding("rows");
 			if (oBinding) {
 				var bIsExpanded = oBinding.isExpanded(iRowIndex);
-				if (bExpand === true && !bIsExpanded) { // Force expand
+				if (oBinding.nodeHasChildren && !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iRowIndex))) {
+					return null; // a leaf can't be expanded or collapsed
+				} else if (bExpand === true && !bIsExpanded) { // Force expand
 					oBinding.expand(iRowIndex);
 				} else if (bExpand === false && bIsExpanded) { // Force collapse
 					oBinding.collapse(iRowIndex);
