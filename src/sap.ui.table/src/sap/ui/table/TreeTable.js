@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		//when using the treebindingadapter, check if the node is selected
 		var oBinding = this.getBinding("rows");
 
-		if (oBinding && oBinding.findNode && oBinding.getSelectedNodesCount) {
+		if (oBinding && oBinding.getSelectedNodesCount) {
 			return oBinding.getSelectedNodesCount();
 		} else {
 			// selection model case
