@@ -25,7 +25,7 @@
 							<Column width="6em">
 								<Text text="Created At" />
 							</Column>
-							<Column width="4em">
+							<Column width="4em" hAlign="Center">
 								<Text text="Active" />
 							</Column>
 						</columns>
@@ -35,8 +35,17 @@
 									<Text text="{flex>layer}" />
 									<Text text="{flex>changeType}" />
 									<Text text="{flex>selector/id}" />
-									<Text text="{flex>support.user}" />
-									<Text text="{flex>creation}" />
+									<Text text="{flex>support/user}" />
+									<Text text="{
+										path: 'flex>creation',
+										type: 'sap.ui.model.type.Date',
+										formatOptions: {
+											style: 'medium',
+											source: {
+												pattern: 'yyyy-MM-ddThh:mm:ss.SSSSSSSZ'
+											}
+										}
+									}" />
 									<core:Icon src="{= ${flex>isActive} ? 'sap-icon://sys-enter' : 'sap-icon://sys-cancel'}" />
 								</cells>
 							</ColumnListItem>
