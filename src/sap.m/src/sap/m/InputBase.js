@@ -565,9 +565,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 		}
 
-		// mark the event as InputBase event
-		oEvent.setMark("inputBase");
-
 		if ((mBrowser.msie && mBrowser.version < 10) &&
 			(oEvent.which === mKC.DELETE || oEvent.which === mKC.BACKSPACE)) {
 
