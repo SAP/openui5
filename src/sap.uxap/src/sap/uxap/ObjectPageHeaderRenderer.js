@@ -340,13 +340,9 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 	/**
 	 * Renders the Lock icon.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRm the RenderManager that can be used for writing to the render output buffer
-	 *
-	 * @param {sap.uxap.ObjectPageHeader}
-	 *            oControl the ObjectPageHeader
-	 * @param {boolean}
-	 *      bTitleInContent - if the lock will be rendered in content or in title
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.uxap.ObjectPageHeader} oControl the ObjectPageHeader
+	 * @param {boolean} bTitleInContent the lock will be rendered in content or in title
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderLock = function (oRm, oControl, bTitleInContent) {
