@@ -99,7 +99,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Fires when the user clicks on the detail button of the control.
 			 */
 			detailPress : {}
-		}
+		},
+		designTime : true
 	}});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
