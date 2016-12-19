@@ -13,8 +13,9 @@
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-noConflict="true">
+		     
+		      src="../../../../../resources/sap-ui-core.js"
+		      data-sap-ui-noConflict="true">
 	</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -222,13 +223,6 @@
 			equal(jQuery.sap.formatMessage("Say '{0}'", "Hello"), "Say {0}", "quoted placeholder should be ignored");
 		});
 
-		test("empty placeholder and doubled single quote", function() {
-			equal(jQuery.sap.formatMessage("I''m {0} {1}", []), "I'm {0} {1}", "should just replace doubled single quotes with one quote and do nothing with placeholders");
-			equal(jQuery.sap.formatMessage("I''m {0} {1}", ['UI5']), "I'm UI5 {1}", "should just replace doubled single quotes with one quote and only replace the first placeholder");
-			equal(jQuery.sap.formatMessage("I''m '{0}' {0}", ['UI5']), "I'm {0} UI5", "should just replace doubled single quotes with one quote and replace the first unescaped placeholder");
-			equal(jQuery.sap.formatMessage("I''m ''{0}''", []), "I'm '{0}'", "should just replace doubled single quotes with one quote and and do nothing with placeholder within escaped quotes");
-		});
-
 		test("pattern syntax errors", 5, function() {
 			try {
 				jQuery.sap.formatMessage("Say }", [12.4]);
@@ -256,8 +250,9 @@
 				ok(true, "nested placeholders raise an error");
 			}
 		});
-		</script>
-	</head>
+
+     </script>
+  </head>
 	<body>
 		<h1 id="qunit-header">QUnit page for jquery.sap.properties</h1>
 		<h2 id="qunit-banner"></h2>
