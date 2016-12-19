@@ -22,28 +22,47 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 *
 	 * @class
-	 * Tree binding implementation for odata models.
-	 * To use the v2.ODataTreeBinding with an odata service, which exposes hierarchy annotations, please
-	 * consult the "SAP Annotations for OData Version 2.0" Specification.
-	 * The necessary property annotations, as well as accepted/default values are documented in the specification.
+	 * Tree binding implementation for OData models.
 	 *
-	 * In addition to these hieararchy annotations, the ODataTreeBinding also supports (cyclic) references between entities based on navigation properties.
+	 * <h3>Hierarchy Annotations</h3>
+	 * To use the v2.ODataTreeBinding with an OData service, which exposes hierarchy annotations, please
+	 * see the <b>"SAP Annotations for OData Version 2.0"</b> Specification.
+	 * The required property annotations, as well as accepted/default values are documented in the specification.
+	 *
+	 * Services which include the <code>hierarchy-node-descendant-count-for</code> annotation and expose the data points in a depth-first pre-order sorted manner,
+	 * can use an optimized auto-expand feature by specifying the <code>numberOfExpandedLevels</code> in the binding parameters.
+	 * This will pre-expand the hierarchy to the given number of levels, with one single initial OData request.
+	 *
+	 * For services without the <code>hierarchy-node-descendant-count-for</code> annotation, the <code>numberOfExpandedLevels</code> property is deprecated.
+	 *
+	 * <h3>Navigation Properties</h3>
+	 * <i>Important: The use of navigation properties to build up the hierarchy structure is deprecated and it is recommended to use the hierarchy annotations mentioned above instead.</i>
+	 * In addition to these hierarchy annotations, the ODataTreeBinding also supports (cyclic) references between entities based on navigation properties.
 	 * To do this you have to specify the binding parameter "navigation".
 	 * The pattern for this is as follows: { entitySetName: "navigationPropertyName" }.
 	 * Example: {
 	 *	 "Employees": "toColleagues"
 	 * }
 	 *
-	 * In OperationMode.Server, the filtering on the ODataTreeBinding is only supported with initial filters.
-	 * However please be aware that this applies only to filters which do not obstruct the creation of a hierarchy.
-	 * So filtering on a property (e.g. a "Customer") is fine, as long as the application can ensure, that the responses from the backend are enough
-	 * to construct a tree hierarchy. Subsequent paging requests for sibiling and child nodes must also return responses since the filters will be sent with
-	 * every request.
-	 * Filtering with the filter() function is not supported for the OperationMode.Server.
+	 * <h3>OperationModes</h3>
+	 * For a full definition and explanation of all OData binding OperationModes please see {@link sap.ui.model.odata.OperationMode}.
 	 *
-	 * With OperationMode.Client and OperationMode.Auto, the ODataTreeBinding also supports control filters.
-	 * In these OperationModes, the filters and sorters will be applied clientside, same as for the v2.ODataListBinding.
-	 * The OperationModes "Client" and "Auto" are only supported for trees which will be constructed based upon hierarchy annotations.
+	 * <h4>In OperationMode.Server</h4>
+	 * Filtering on the ODataTreeBinding is only supported with application filters.
+	 * However please be aware that this applies only to filters which do not prevent the creation of a hierarchy.
+	 * So filtering on a property (e.g. a "Customer") is fine, as long as the application can ensure that the responses from the backend are sufficient
+	 * to create a valid hierarchy on the client. Subsequent paging requests for sibiling and child nodes must also return responses since the filters will be sent with
+	 * every request.
+	 * Using Control-Filters ({@link sap.ui.model.FilterType}) via the filter() function is not supported for the OperationMode.Server.
+	 *
+	 * </h4>OperationMode.Client and OperationMode.Auto</h4>
+	 * The ODataTreeBinding supports Control-Filters only in OperationModes <code>Client</code> and <code>Auto</code>.
+	 *
+	 * In these OperationModes, the filters and sorters will be applied on the client, same as for the v2.ODataListBinding.
+	 *
+	 * The OperationModes <code>Client</code> and <code>Auto</code> are only supported for services. which expose the hierarchy annotations mentioned above, but do <b>not</b>
+	 * expose the <code>hierarchy-node-descendant-count-for</code> annotation.
+	 * Services with hierarchy annotations including the <code>hierarchy-node-descendant-count-for</code> annotation, do NOT support the OperationModes Client and Auto.
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
@@ -62,7 +81,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor] Mapping to the property holding the descendant count for the node.
 	 * @param {object} [mParameters.navigation] An map describing the navigation properties between entity sets, which should be used for constructing and paging the tree.
 	 * @param {int} [mParameters.numberOfExpandedLevels=0] This property defines the number of levels, which will be expanded initially.
-	 *												   Please be aware, that this property leads to multiple backend requests. Default value is 0.
+	 *													Please be aware, that this property leads to multiple backend requests. Default value is 0.
+	 *													The auto-expand feature is deprecated for services without the "hierarchy-node-descendant-count-for" annotation.
 	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
 	 *										Conforming to the "SAP Annotations for OData Version 2.0" Specification, the root level must start at 0.
 	 *										Default value is thus 0.
@@ -73,6 +93,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
 	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
+	 * 										OperationMode.Auto is only supported for services which exposes the hierarchy-annotations, yet do NO expose the "hierarchy-node-descendant-count-for" annotation.
 	 * @param {boolean} [mParameters.useServersideApplicationFilters] set this flag if $filter statements should be used for the $count/$inlinecount and data-retrieval in the OperationMode.Auto.
 	 * 													 Only use this if your backend supports prefiltering the tree and is capable of responding a complete tree hierarchy,
 	 * 													 including all inner nodes. To construct the hierarchy on the client, it is mandatory that all filter-matches include their complete
@@ -1861,10 +1882,10 @@ sap.ui.define(['jquery.sap.global',
 			this.oTreeProperties[sMagnitudeAnnotation] = this.oTreeProperties[sMagnitudeAnnotation] ||
 				(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor);
 
-			// apply the auto-expand adapter if the necessary annotations were found
+			// apply the flat auto-expand mixin if the necessary annotations were found (in Server-Mode)
 			// exception: the binding runs in operation-mode "Client"
 			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
-			if (this.oTreeProperties[sMagnitudeAnnotation] && !this.bClientOperation) {
+			if (this.oTreeProperties[sMagnitudeAnnotation] && this.sOperationMode == OperationMode.Server) {
 				// make sure the magnitude is added to the $select if it was not added by the application anyway
 				if (this.mParameters && this.mParameters.select && this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) == -1) {
 					this.mParameters.select += ("," + this.oTreeProperties[sMagnitudeAnnotation]);
