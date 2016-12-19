@@ -191,6 +191,29 @@ QUnit.test("it should create the DOM for the value state message popup (test cas
 	oInputBase.destroy();
 });
 
+QUnit.test("it should create the DOM for the value state and it should be smaller than the width of the control", function(assert) {
+
+	// arrange
+	var oInputBase = new sap.m.InputBase({
+		width: "30%",
+		valueState: sap.ui.core.ValueState.Error,
+		valueStateText: "Invalid SAP Fiori URL. Please enter the SAP Fiori configuration again. A list of correct configuration can be found at http://sap.com/configurations/."
+	});
+
+	oInputBase.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oInputBase.openValueStateMessage();
+
+	// assert
+	var oValueStateMessage = document.getElementById(oInputBase.getValueStateMessageId());
+	assert.ok(oValueStateMessage.offsetWidth <= oInputBase.getDomRef().offsetWidth, "The ValueStateMessage has correct width.")
+
+	// cleanup
+	oInputBase.destroy();
+});
+
 QUnit.test("it should not throw an exeption", function(assert) {
 
 	// system under test + act
