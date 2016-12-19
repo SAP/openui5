@@ -776,7 +776,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oSelectedItem = aItems[iIndexOf];
 
 			if (oSelectedItem) {
-				this.setSelectedItem(oSelectedItem);
+				this.setSelectedItem(oSelectedItem, true);
 			} else {
 				var oIconTabBar = this.getParent();
 				if (oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getExpanded()) {
