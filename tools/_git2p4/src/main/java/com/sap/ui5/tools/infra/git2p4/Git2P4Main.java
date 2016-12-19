@@ -148,7 +148,7 @@ public class Git2P4Main {
     //special case for initial openui5 version 
     if ("openui5".equals(repo.getRepositoryName()) && context.range.contains("1.24.0")){
       repo.range = "";
-    } 
+    }
     repo.lastRunInfo = new LastRunInfo(repo.getRepository(), branch);
     if (useLastCommit) {
       String lastCommitId = repo.lastRunInfo.getLastCommitId();
@@ -175,16 +175,16 @@ public class Git2P4Main {
   //Takes the "version" from receivedFile and compares it with the current trigered branch version...
   static void checkObjectIdsJsonVersion(String branchVer, File objIdsVersion) throws JsonIOException, JsonSyntaxException, FileNotFoundException{
 	  
-	  JsonObject jsonObject = new JsonObject();     
-      JsonParser parser = new JsonParser();
-      JsonElement jsonElement = parser.parse(new FileReader(objIdsVersion));
-      jsonObject = jsonElement.getAsJsonObject();        
-      String patchVersion = new Version(branchVer).increasedPatchVersion().toString();
-      String objectIdsVersion = jsonObject.get("version").toString().replaceAll("[\"]", "");
-      
-      if (!patchVersion.equals(objectIdsVersion)){
-    	  throw new IllegalArgumentException("The ObjectIds.json file version: " + objectIdsVersion + " is different from the current patch version: " + patchVersion);
-      }
+  JsonObject jsonObject = new JsonObject();     
+  JsonParser parser = new JsonParser();
+  JsonElement jsonElement = parser.parse(new FileReader(objIdsVersion));
+  jsonObject = jsonElement.getAsJsonObject();        
+  String patchVersion = new Version(branchVer).increasedPatchVersion().toString();
+  String objectIdsVersion = jsonObject.get("version").toString().replaceAll("[\"]", "");
+  
+  if (!patchVersion.equals(objectIdsVersion)){
+	  throw new IllegalArgumentException("The ObjectIds.json file version: " + objectIdsVersion + " is different from the current patch version: " + patchVersion);
+  	}
   }
   
   static String findVersion(String branch) throws IOException {
@@ -645,6 +645,17 @@ private static File extractSnapshotVersionJs() throws IOException {
 	        null
 	        ));
 	  }
+  
+  private static void createUI5RulesUI(File repositoryRoot, String p4depotPrefix, String branch) {
+	    mappings.clear();
+	    mappings.add(new Mapping(
+	        "/RulesDevOps/sap.rules.ui.git",
+	        new File(repositoryRoot, "sap.rules.ui"),
+	        null,
+	        null,
+	        null
+	        ));
+	  }
 
   private static String getPerforceCodelineForBranch(String branch) {
     
@@ -920,6 +931,8 @@ private static File extractSnapshotVersionJs() throws IOException {
         filter = new ProcessingFilter(UPDATE_ONLY_CORE_FILTER_NAME, EnumSet.of(ProcessingTypes.Sapui5CoreVersion));
       } else if ( "--git-url".equals(args[i]) ) {
         git.setGitURL(args[++i]);
+      } else if ( "--ssh-suffix".equals(args[i]) ) {
+          git.setSShSuffix(args[++i]);
       } else if ( "--git-https-port".equals(args[i]) ) {
         git.setGitHttpsPort(args[++i]);
       } else if ( "--rebuild".equals(args[i]) ) {
@@ -986,11 +999,11 @@ private static File extractSnapshotVersionJs() throws IOException {
     } else if ( "uxap".equals(mappingSet) ) {
     	createUI5UXAPMappings(gitDir, p4depotPath, branch);
     } else if ( "dist-abap-smp".equals(mappingSet) ) {
-
-		createUI5DistRepackageMappings(gitDir, null, branch);
-    	
+		createUI5DistRepackageMappings(gitDir, null, branch);    	
     } else if ( "galilei".equals(mappingSet) ) {
     	createUI5GalileiMappings(gitDir, p4depotPath, branch);
+    } else if ( "sap.rules.ui".equals(mappingSet) ) {
+    	createUI5RulesUI(gitDir, null, branch);
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
@@ -1011,9 +1024,9 @@ private static File extractSnapshotVersionJs() throws IOException {
     	      createVersionTags(branch, fromVersion);
     	      return;
     	    }
-    	    
+    	    Version version = context.version = new Version(fromVersion == null ? findVersion(branch) : fromVersion);
     	    if ( RELEASE_NOTES.equals(command) && context.range == null ) {
-    	      Version version = context.version = new Version(fromVersion == null ? findVersion(branch) : fromVersion);
+    	      
     	      context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
     	    }
     	    

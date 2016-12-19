@@ -58,7 +58,7 @@ public class GitClient {
     }
     long t0 = System.currentTimeMillis();
     Process process = pb.start();
-    if ( input != null ) {
+    if ( input != null ) {						
       Writer w = new OutputStreamWriter(process.getOutputStream());
       w.write(input);
       w.close();
@@ -227,7 +227,7 @@ public class GitClient {
     }
     return log(oneline, args);
   }
-
+  
   public boolean log(boolean oneline, String ... args) throws IOException {
     String[] commonArgs = new String[] { 
         "log", "--no-color", oneline ? "--format=commit %H%n" : "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents"};
@@ -257,6 +257,7 @@ public class GitClient {
   }
 
   static Pattern STATUS_LINE = Pattern.compile("^.*:   (.*)$");
+  private String suffix;
   private List<String> evalStatus() {
     lastOutput.add("");
     List<String> result = new ArrayList<String>();
@@ -269,10 +270,11 @@ public class GitClient {
     }
     return result;
   }
-
+  
   public boolean clone(String gitUrl) throws IOException {
   	// we always fetch via SSH
-    return execute("clone", createGitBaseUrl(false) + gitUrl, getRepository().getAbsolutePath());
+	 
+    return execute("clone", createGitBaseUrl(false) + gitUrl, getRepository().getAbsolutePath());    
   }
 
   public boolean fetch() throws IOException {
@@ -349,7 +351,7 @@ public class GitClient {
   	} else {
   		baseUrl.append("ssh://");
     	if (sshUser != null) {
-    		baseUrl.append(sshUser);
+    		baseUrl.append(sshUser + this.suffix != null ? this.suffix : "");
     		//baseUrl.append("@");
     	}
   	}
@@ -357,7 +359,7 @@ public class GitClient {
   	  baseUrl.append(getGitURL()).append(":");
   		baseUrl.append(getGitHttpsPort());
   	} else {
-  		//baseUrl.append("29418");
+  	  		//baseUrl.append("29418");
   	}
   	return baseUrl.toString();
   }
@@ -389,5 +391,10 @@ public class GitClient {
   public void setGitHttpsPort(String gitHttpsPort) {
     this.gitHttpsPort = gitHttpsPort;
   }
+
+public void setSShSuffix(String suffix) {
+	this.suffix = suffix;
+	
+}
 
 }
