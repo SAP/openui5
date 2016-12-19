@@ -2816,5 +2816,58 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "03b0949bd5c63ad5e5d0065735ef008a6dfa5d43",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Screenreader support improved",
+        "references": []
+      },
+      {
+        "id": "c301b7664d93ff54ca0513c4090171d0c7ac3df9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: \"select\" event is not fired any more when control is destroyed",
+        "references": []
+      },
+      {
+        "id": "8b4f0b01d058e171afb3e32565e4abc2b81fc041",
+        "type": "FIX",
+        "text": " sap.m.Input: Scroll from table with suggestions fixed",
+        "references": []
+      },
+      {
+        "id": "9d85a065469bccceb526d75c677a4d40be4fdb03",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Remove race condition between fireSelectionFinish event and setSelection method",
+        "references": []
+      },
+      {
+        "id": "d314566cff0d585f3883860356250b4dd25a3e44",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Suggestions + free text validation is now working correctly",
+        "references": []
+      },
+      {
+        "id": "3f97f4cd0c727801965e2d733b55e6ad099dab86",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Console error _getAnyHeader now corrected",
+        "references": []
+      },
+      {
+        "id": "94a93143dbab8500e83b117c174b5792b283fbca",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Close button inside the select list is now positioned correctly in IE",
+        "references": []
+      },
+      {
+        "id": "0e8dbf2bbba1e3fe1c8518e481bdc29419c73051",
+        "type": "FIX",
+        "text": " sap.m.TileContainer explored app. sample binds icon property correctly.",
+        "references": []
+      }
+    ]
   }
 }

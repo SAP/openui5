@@ -163,5 +163,16 @@
         "references": []
       }
     ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "8390d60cb4a185e2c8261668e544f622d19fee8e",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Remove top and bottom padding of an inbox task icon in a table cell in the Gold Reflection theme to ensure the default row height.",
+        "references": []
+      }
+    ]
   }
 }

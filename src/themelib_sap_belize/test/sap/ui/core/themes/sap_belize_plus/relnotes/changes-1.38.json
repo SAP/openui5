@@ -430,5 +430,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "6b519b46c0d19181aed50dbf9d2a1786b19b7bae",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      }
+    ]
   }
 }

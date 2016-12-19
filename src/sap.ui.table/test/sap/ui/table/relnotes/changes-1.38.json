@@ -880,5 +880,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "8cbdf9e212de71df91f4e585ece301e957535a10",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Fix large data scrolling.",
+        "references": []
+      }
+    ]
   }
 }

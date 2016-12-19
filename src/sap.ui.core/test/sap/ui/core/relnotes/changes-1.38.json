@@ -1801,5 +1801,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "17d3f7079f47a43c97888d365d058b16d2bd5969",
+        "type": "FIX",
+        "text": " Avoid unguarded access to window.localStorage during bootstrap",
+        "references": []
+      },
+      {
+        "id": "41f3d659637b8aa232f5ceb3cd53ae0ca9a396cb",
+        "type": "FIX",
+        "text": " sap.m.Carousel: swipe now works correctly on combi devices",
+        "references": []
+      }
+    ]
   }
 }
