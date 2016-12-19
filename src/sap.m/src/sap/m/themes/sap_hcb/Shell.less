@@ -1,32 +1,18 @@
-@media (min-height: @sapMShellMinHeightForHeader) {
-	.sapMShellHeader {
-		border-top: 0.25rem solid @sapHCStandardFG;
-	}
-
-	html.sap-desktop .sapMShellHeaderLogout:active {
-		color: @sapHCStandardFG;
-	}
-}
-
-.sapUiUfdShell .sapMShellHeader {
-	border-top: none;
-}
+/* ============================ */
+/* CSS for control sap.m/Shell  */
+/* High Contrast Black theme    */
+/* ============================ */
 
 /* background color class for Shell header */
 .sapMShellBackgroundColorOnlyIfDefault {
-	background-color: @sapHCStandardBG;
+	background-color: @sapUiGlobalBackgroundColor;
 }
 
 html.sap-desktop {
-	.sapMShellHeaderText {
-		font-size: @sapMFontHeader2Size;
-		color: @sapHCStandardFG;
-	}
-
 	.sapMShellCentralBox {
-		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-		border-right: 1px solid @sapHCReducedAltFG;
-		border-left: 1px solid @sapHCReducedAltFG;
+		box-shadow: 0 0 2.5rem 0.125rem @sapUiContentShadowColor;
+		border-right: 1px solid @sapUiHcReducedAltForeground;
+		border-left: 1px solid @sapUiHcReducedAltForeground;
 	}
 }
 
@@ -38,7 +24,7 @@ html.sap-desktop {
 	html.sap-desktop {
 		.sapMShellAppWidthLimited {
 			.sapMShellCentralBox {
-				background-color: @sapHCStandardBG;
+				background-color: @sapUiBaseBG;
 			}
 		}
 	}
