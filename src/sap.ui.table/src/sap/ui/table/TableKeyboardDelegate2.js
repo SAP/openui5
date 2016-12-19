@@ -149,8 +149,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TableKeyboardDelegate._focusRowSelector = function(oTable, iRowIndex) {
-		var $RowHeaderCell = jQuery(oTable.getDomRef("rowsel" + iRowIndex));
-		$RowHeaderCell.focus();
+		oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
 	};
 
 	/**
