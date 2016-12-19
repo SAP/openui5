@@ -273,6 +273,18 @@ sap.ui.define([
 					oForm.addAriaLabelledBy(oPageTitleControl);
 				}
 
+				// destroy the old page content
+				var oPageContent = this._mPageContent;
+				if (oPageContent) {
+					if (oPageContent.form) {
+						oPageContent.form.destroy();
+					}
+
+					if (oPageContent.header) {
+						oPageContent.header.destroy();
+					}
+				}
+
 				this._mPageContent = {
 					form: oForm,
 					header: oHeader
