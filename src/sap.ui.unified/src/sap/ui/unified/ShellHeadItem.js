@@ -102,6 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	};
 
 	ShellHeadItem.prototype.onsapspace = ShellHeadItem.prototype.onclick;
+	ShellHeadItem.prototype.onsapenter = ShellHeadItem.prototype.onclick;
 
 
 	ShellHeadItem.prototype.setStartsSection = function(bStartsSection){
