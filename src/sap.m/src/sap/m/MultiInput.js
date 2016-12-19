@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MultiInput.
-sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/Device'],
-	function (jQuery, Input, Tokenizer, Token, library, Device) {
+sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
+	function (jQuery, Input, Tokenizer, Token, library, Device, InvisibleText) {
 		"use strict";
 
 
@@ -57,7 +57,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				/**
 				 * The tokenizer which displays the tokens
 				 */
-				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
+				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Hidden text used for accesibility
+				 */
+				_tokensInfo: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -131,17 +136,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	// create an ARIA announcement and remember its ID for later use in the renderer:
-	MultiInput.prototype._sAriaMultiInputContainTokenId = new sap.ui.core.InvisibleText({
-		text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
-	}).toStatic().getId();
-
 	// **
 	// * This file defines behavior for the control,
 	// */
 	MultiInput.prototype.init = function () {
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 		Input.prototype.init.call(this);
 
 		this._bIsValidating = false;
@@ -157,6 +155,15 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 
 		this.attachLiveChange(this._onLiveChange, this);
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			// create an ARIA announcement and remember its ID for later use in the renderer:
+			var sAriaMultiInputContainToken = new InvisibleText({
+				text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
+			});
+
+			this.setAggregation("_tokensInfo", sAriaMultiInputContainToken);
+		}
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -291,8 +298,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			if (this.$().find(".sapMMultiInputIndicator").length !== 0) {
 				this._removeIndicator();
 			}
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
+
+			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 
 			this.$().find(".sapMMultiInputInputContainer").prepend(sSpanText);
 			this._setValueInvisible();
@@ -536,10 +543,30 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-		var oTokenizer = this.getAggregation("tokenizer");
+		var oTokenizer = this.getAggregation("tokenizer"),
+			iTokenCount = this.getTokens().length,
+			oInvisibleText,
+			sMultiInputAria = "";
 
 		if (oTokenizer) {
 			oTokenizer.toggleStyleClass("sapMTokenizerEmpty", oTokenizer.getTokens().length === 0);
+		}
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			oInvisibleText = this.getAggregation("_tokensInfo");
+			switch (iTokenCount) {
+				case 0:
+					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN");
+					break;
+				case 1:
+					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN");
+					break;
+				default:
+					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", iTokenCount);
+					break;
+			}
+
+			oInvisibleText.setText(sMultiInputAria);
 		}
 
 		Input.prototype.onBeforeRendering.apply(this, arguments);
@@ -1392,7 +1419,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		}).join(" ");
 
 		var oInfo = Input.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTIINPUT");
+		oInfo.type = oRb.getText("ACC_CTR_TYPE_MULTIINPUT");
 		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
 		return oInfo;
 	};

@@ -28,17 +28,23 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 	MultiInputRenderer.getAriaDescribedBy = function(oControl) {
 
-		var sAriaDescribedBy = InputRenderer.getAriaDescribedBy.apply(this, arguments);
+		var sAriaDescribedBy = InputRenderer.getAriaDescribedBy.apply(this, arguments),
+			oInvisibleTextId = oControl.getAggregation("_tokensInfo").getId();
 
 		if (sAriaDescribedBy) {
-			sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaMultiInputContainTokenId;
+			sAriaDescribedBy = sAriaDescribedBy + " " + oInvisibleTextId;
 		} else {
-			sAriaDescribedBy = oControl._sAriaMultiInputContainTokenId;
+			sAriaDescribedBy = oInvisibleTextId ;
 		}
 
 		return sAriaDescribedBy;
 	};
 
+	MultiInputRenderer.renderAriaDescribedBy  = function(oRm, oControl) {
+		InputRenderer.renderAriaDescribedBy.call(this, oRm, oControl);
+
+		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
+	};
 
 	MultiInputRenderer.openInputTag = function(oRm, oControl) {
 
