@@ -563,6 +563,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var mKC = jQuery.sap.KeyCodes;
 		var mBrowser = sap.ui.Device.browser;
 
+		// Prevents browser back to previous page in IE
+		if (!this.getEditable() && oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+			oEvent.preventDefault();
+		}
+
 		// mark the event as InputBase event
 		oEvent.setMark("inputBase");
 
