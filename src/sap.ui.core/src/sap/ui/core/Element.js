@@ -230,33 +230,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {string} [oKeyInfo.type] Type info for the entity
 	 * @public
 	 * @static
+	 * @deprecated As of 1.44, use the more flexible {@link sap.ui.base.ManagedObject.create}.
+	 * @function
 	 */
-	Element.create = function(vData, oKeyInfo) {
-		if ( !vData || vData instanceof Element || typeof vData !== "object" || vData instanceof String) {
-			return vData;
-		}
-
-		function getClass(vType) {
-			if ( typeof vType === "function" ) {
-				return vType;
-			}
-			if (typeof vType === "string" ) {
-				return jQuery.sap.getObject(vType);
-			}
-		}
-
-		var fnClass = getClass(vData.Type) || getClass(oKeyInfo && oKeyInfo.type);
-		if ( typeof fnClass === "function" ) {
-			return new fnClass(vData);
-		}
-
-		// we don't know how to create the Element from vData, so fail
-		// extension points could be integrated here
-		var message = "Don't know how to create an Element from " + vData + " (" + (typeof vData) + ")";
-		jQuery.sap.log.fatal(message);
-		throw new Error(message);
-	};
-
+	Element.create = ManagedObject.create;
 
 	/**
 	 * Returns a simple string representation of this element.
@@ -266,11 +243,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @return {string} a string description of this element
 	 */
 	Element.prototype.toString = function() {
-		if ( this.getMetadata ) {
 		return "Element " + this.getMetadata().getName() + "#" + this.sId;
-		} else {
-			return "Element {unknown class}#" + this.sId;
-		}
 	};
 
 
@@ -909,11 +882,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *          bRecursive true, if all nested children should be returned.
 	 * @return {sap.ui.core.Element[]} array of child elements and controls
 	 * @public
+	 * @function
 	 */
-	Element.prototype.findElements = function(bRecursive) {
-		var aControls = ManagedObject.prototype.findAggregatedObjects.call(this, bRecursive);
-		return aControls;
-	};
+	Element.prototype.findElements = ManagedObject.prototype.findAggregatedObjects;
 
 	/**
 	 * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints
@@ -964,10 +935,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * @return {sap.ui.core.Element} reference to the instance itself
 	 * @public
+	 * @function
 	 */
-	Element.prototype.bindElement = function(sPath, mParameters) {
-		return this.bindObject(sPath, mParameters);
-	};
+	Element.prototype.bindElement = ManagedObject.prototype.bindObject;
 
 	/**
 	 * Removes the defined binding context of this object, all bindings will now resolve
@@ -976,10 +946,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {string} sModelName
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
+	 * @function
 	 */
-	Element.prototype.unbindElement = function(sModelName) {
-		return this.unbindObject(sModelName);
-	};
+	Element.prototype.unbindElement = ManagedObject.prototype.unbindObject;
 
 	/**
 	 * Get the element binding object for a specific model
@@ -987,10 +956,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {string} sModelName the name of the model
 	 * @return {sap.ui.model.Binding} the element binding for the given model name
 	 * @public
+	 * @function
 	 */
-	Element.prototype.getElementBinding = function(sModelName){
-		return this.getObjectBinding(sModelName);
-	};
+	Element.prototype.getElementBinding = ManagedObject.prototype.getObjectBinding;
 
 	/*
 	 * If Control has no FieldGroupIds use the one of the parents.
