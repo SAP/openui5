@@ -889,6 +889,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
+		if (this.getScope() === library.GenericTileScope.Actions) {
+			sAriaText = this._rb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
+		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
 
@@ -1016,13 +1019,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			bIsFirst = false;
 		}
 
-		// when MicroChart in GenericTile, set MicroChart tooltip as GenericTile tooltip
-		for (var i = 0; i < aTiles.length; i++) {
-			oContent = aTiles[i].getContent();
-			if (oContent && oContent.getMetadata().getLibraryName() === "sap.suite.ui.microchart") {
-				sTooltip += (bIsFirst ? "" : "\n") + oContent.getTooltip_AsString();
+		// when MicroChart is in GenericTile, set MicroChart tooltip as GenericTile tooltip (not valid in actions scope)
+		if (this.getScope() !== library.GenericTileScope.Actions) {
+			for (var i = 0; i < aTiles.length; i++) {
+				oContent = aTiles[i].getContent();
+				if (oContent && oContent.getMetadata().getLibraryName() === "sap.suite.ui.microchart") {
+					sTooltip += (bIsFirst ? "" : "\n") + oContent.getTooltip_AsString();
+				}
+				bIsFirst = false;
 			}
-			bIsFirst = false;
 		}
 
 		// when user does not set tooltip, apply the tooltip above
