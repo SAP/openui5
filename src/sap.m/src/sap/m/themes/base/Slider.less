@@ -1,6 +1,7 @@
-/* ======================================= */
-/* CSS for control sap.m/Slider.control    */
-/* ======================================= */
+/* ============================= */
+/* CSS for control sap.m/Slider  */
+/* Base theme                    */
+/* ============================= */
 
 /* ------------------------------ */
 /* Slider commons styles          */
@@ -11,6 +12,8 @@
 	vertical-align: top;
 	box-sizing: border-box;
 	position: relative;
+	height: 3rem;
+	padding: 1.406rem 1.0625rem;
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
@@ -26,6 +29,11 @@
 	width: 100%;
 	position: relative;
 	background-repeat: no-repeat;
+}
+
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.188rem;
 }
 
 .sapMSliderProgress,
@@ -61,4 +69,43 @@
 	border-left: 0.0625rem solid @sapUiFieldBorderColor;
 	height: 100%;
 	position: relative;
+}
+
+/* slider progress bar */
+.sapMSliderProgress {
+	background: @sapUiFieldActiveBorderColor;
+}
+
+/* slider handle */
+.sapMSliderHandle {
+	margin-left: -1rem;
+	top: -0.91rem;
+	height: 1.75rem;
+	width: 1.75rem;
+
+	/* some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
+	but does support the long-hand properties for each corner like "border-top-left-radius" */
+	border-top-left-radius: 1rem;
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+}
+
+/* ============ */
+/* compact size */
+/* ============ */
+
+/* slider */
+.sapUiSizeCompact .sapMSlider {
+	height: 2rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+/* slider handle */
+.sapUiSizeCompact .sapMSliderHandle {
+	height: 1.375rem;
+	width: 1.375rem;
+	margin-left: -0.8125rem;
+	top: -0.75rem;
 }

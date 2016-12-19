@@ -3,35 +3,17 @@
 /* Belize theme                 */
 /* ============================ */
 
-@media (min-height: @sapMShellMinHeightForHeader) {
-	.sapMShellHeader {
-		border-top: 4px solid @sapUiBrand;
-	}
-
-	.sap-desktop .sapMShellHeaderLogout:active {
-		color: @sapUiContentContrastTextColor;
-	}
-}
-.sapUiUfdShell .sapMShellHeader {
-	border-top: none;
-}
-
-
 /* background color class for Shell header */
 .sapMShellBackgroundColorOnlyIfDefaultMixin() when not (@sapUiGlobalBackgroundImage = '') {
 	background-color: transparent; /* custom BG image... just hide the background */
 }
+
 .sapMShellBackgroundColorOnlyIfDefaultMixin() when (@sapUiGlobalBackgroundImage = '') {
-	background-color: mix(@sapUiHighlight, @sapUiWhite, 5); /* default BG image - display the default background color */
+	background-color: mix(@sapUiHighlight, #fff, 5); /* default BG image - display the default background color */
 }
+
 .sapMShellBackgroundColorOnlyIfDefault {
 	.sapMShellBackgroundColorOnlyIfDefaultMixin;
-}
-
-
-html.sap-desktop .sapMShellHeaderText {
-	font-size: @sapMFontHeader2Size;
-	color: @sapUiShellTextColor;
 }
 
 html.sap-desktop .sapMShellCentralBox {

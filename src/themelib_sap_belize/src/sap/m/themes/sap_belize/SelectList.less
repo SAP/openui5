@@ -3,52 +3,11 @@
 /* Belize theme                      */
 /* ================================= */
 
-/* ------------------------------ */
-/* list                           */
-/* ------------------------------ */
-
-.sapMSelectList {
-	background: @sapUiListBackground;
-}
-
-/* ------------------------------ */
-/* item                           */
-/* ------------------------------ */
-
-.sapMSelectListItemBase {
-	color: @sapUiListTextColor;
-	font-size: @sapMFontMediumSize;
-	height: 2.5rem;
-	cursor: pointer;
-}
-
-.sapMSelectListItem {
-	padding: 0 1rem 0 1rem;
-	line-height: 2.5rem;
-}
-
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -2px;
-}
-
-/* hover */
-.sapMSelectListItemBaseHoverable:hover {
-	background: @sapUiListHoverBackground;
-}
-
-/* hover selected */
-.sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
-	background-color: @sapUiListSelectionHoverBackground;
-}
-
-/* pressed and pressed selected */
-.sapMSelectListItemBase.sapMSelectListItemBasePressed,
-.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
-	color: @sapUiListActiveTextColor;
-	background: @sapUiListActiveBackground;
 }
 
 /* disabled */
@@ -58,7 +17,8 @@
 
 /* focus */
 html.sap-desktop .sapMSelectListItemBase:focus {
-	outline-color: @sapUiContentFocusColor;
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
@@ -66,38 +26,4 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
 		border: 1px dotted @sapUiContentFocusColor;
 	}
-}
-
-/* ------------------------------ */
-/* cell                           */
-/* ------------------------------ */
-
-.sapMSelectListCell {
-	padding-left: 1rem;
-}
-
-.sapMSelectListLastCell {
-	padding-right: 1rem;
-}
-
-/* ------------------------------ */
-/* separator                      */
-/* ------------------------------ */
-
-.sapMSelectListSeparatorItem {
-	border: 1px solid @sapUiListBorderColor;
-}
-
-/* compact size  */
-
-/* ------------------------------ */
-/* commons styles                 */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSelectListItemBase {
-	height: 2rem;
-}
-
-.sapUiSizeCompact .sapMSelectListItem {
-	line-height: 2rem;
 }
