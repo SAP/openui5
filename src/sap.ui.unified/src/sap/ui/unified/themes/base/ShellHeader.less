@@ -228,6 +228,10 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 	border: @sapUiUfdShellHeadButtonOutlineWidth dotted @sapUiFocus;
 }
 
+html[data-sap-ui-browser^="ie"] .sapUiUfdShellHeadItm:focus > span {
+	border-style: dashed;
+}
+
 .sapUiUfdShellSearch {
 	display: inline-block;
 	position: relative;
