@@ -67,25 +67,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates an object that has the given value exactly at the given property path allowing to
-	 * use the result in _Helper.updateCache().
-	 * Examples:
-	 * ["Age"], 42 -> {Age: 42}
-	 * ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
-	 *
-	 * @param {string[]} aPropertyPath The property path split into an array of segments
-	 * @param {any} vValue The property value
-	 * @returns {object} The resulting object
-	 */
-	function createUpdateData(aPropertyPath, vValue) {
-		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
-			var oResult = {};
-			oResult[sSegment] = vValue0;
-			return oResult;
-		}, vValue);
-	}
-
-	/**
 	 * Fills the given array range with the given value. If iEnd is greater than the array length,
 	 * elements are appended to the end, in contrast to Array.fill.
 	 *
@@ -195,102 +176,6 @@ sap.ui.define([
 		}
 		// Note: this relies on $count being present as an own property of aCollection
 		_Helper.updateCache(mChangeListeners, sPath, aCollection, {$count : vCount});
-	}
-
-	/**
-	 * Updates the property of the given name with the given new value (and later with the server's
-	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
-	 * request.
-	 *
-	 * @param {object} oCache
-	 *   The cache
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sPropertyPath
-	 *   Name or path of the property to update relative to the edit URL
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {string} sEditUrl
-	 *   The edit URL for the entity which is updated via PATCH
-	 * @param {string} sPath
-	 *   Relative path to drill-down into
-	 * @param {object} oCacheData
-	 *   The cache data for sPath
-	 * @returns {Promise}
-	 *   A promise for the PATCH request
-	 */
-	function update(oCache, sGroupId, sPropertyPath, vValue, sEditUrl, sPath, oCacheData) {
-		var oBody, // the body for the PATCH request
-			mHeaders, // the headers for the PATCH request
-			vOldValue, // the old value of the property
-			sParkedGroupId,
-			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
-			sTransientGroup,
-			// the path that is updated; the promise is registered here
-			sUpdatePath = _Helper.buildPath(sPath, sPropertyPath),
-			oUpdatePromise;
-
-		/*
-		 * Synchronous callback to cancel the PATCH request so that it is really gone when
-		 * resetChangesForPath has been called on the binding or model.
-		 */
-		function onCancel() {
-			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
-			// write the previous value into the cache
-			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
-				createUpdateData(aPropertyPath, vOldValue));
-		}
-
-		if (!oCacheData) {
-			throw new Error("Cannot update '" + sPropertyPath + "': '" + sPath
-				+ "' does not exist");
-		}
-		sTransientGroup = oCacheData["@$ui5.transient"];
-		if (sTransientGroup === true) {
-			throw new Error("No 'update' allowed while waiting for server response");
-		}
-		if (sTransientGroup && sTransientGroup.indexOf("$parked.") === 0) {
-			sParkedGroupId = sTransientGroup;
-			sTransientGroup = sTransientGroup.slice(8);
-		}
-		if (sTransientGroup && sTransientGroup !== sGroupId) {
-			throw new Error("The entity will be created via group '" + sTransientGroup
-				+ "'. Cannot patch via group '" + sGroupId + "'");
-		}
-
-		sEditUrl += Cache.buildQueryString(oCache.mQueryOptions, true);
-		mHeaders = {"If-Match" : oCacheData["@odata.etag"]};
-		// create the PATCH request body
-		oBody = createUpdateData(aPropertyPath, vValue);
-		// remember the old value
-		vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
-			return oValue && oValue[sSegment];
-		}, oCacheData);
-		// write the changed value into the cache
-		_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
-			createUpdateData(aPropertyPath, vValue));
-		if (sTransientGroup) {
-			// When updating a transient entity, _Helper.updateCache has already updated the POST
-			// request, because the request body is a reference into the cache.
-			if (sParkedGroupId) {
-				oCacheData["@$ui5.transient"] = sTransientGroup;
-				oCache.oRequestor.relocate(sParkedGroupId, oCacheData, sTransientGroup);
-			}
-			return Promise.resolve({});
-		}
-		// send and register the PATCH request
-		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody,
-			undefined, onCancel);
-		oCache.addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
-		return oUpdatePromise.then(function (oPatchResult) {
-			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
-			// update the cache with the PATCH response
-			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData, oPatchResult);
-			return oPatchResult;
-		}, function (oError) {
-			oCache.removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
-			throw oError;
-		});
 	}
 
 	//*********************************************************************************************
@@ -582,6 +467,97 @@ sap.ui.define([
 		return this.oRequestor.getServiceUrl() + this.sResourcePath;
 	};
 
+	/**
+	 * Updates the property of the given name with the given new value (and later with the server's
+	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
+	 * request.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPropertyPath
+	 *   Path of the property to update, relative to the entity
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated via PATCH
+	 * @param {string} [sEntityPath]
+	 *   Path of the entity, relative to the cache
+	 * @returns {Promise}
+	 *   A promise for the PATCH request
+	 */
+	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, sEditUrl, sEntityPath) {
+		var aPropertyPath = sPropertyPath.split("/"),
+			that = this;
+
+		return this.fetchValue(sGroupId, sEntityPath).then(function (oEntity) {
+			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+				vOldValue,
+				oPatchPromise,
+				sParkedGroup,
+				sTransientGroup,
+				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
+
+			/*
+			 * Synchronous callback to cancel the PATCH request so that it is really gone when
+			 * resetChangesForPath has been called on the binding or model.
+			 */
+			function onCancel () {
+				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				// write the previous value into the cache
+				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
+					Cache.makeUpdateData(aPropertyPath, vOldValue));
+			}
+
+			if (!oEntity) {
+				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
+					+ "' does not exist");
+			}
+			sTransientGroup = oEntity["@$ui5.transient"];
+			if (sTransientGroup) {
+				if (sTransientGroup === true) {
+					throw new Error("No 'update' allowed while waiting for server response");
+				}
+				if (sTransientGroup.indexOf("$parked.") === 0) {
+					sParkedGroup = sTransientGroup;
+					sTransientGroup = sTransientGroup.slice(8);
+				}
+				if (sTransientGroup !== sGroupId) {
+					throw new Error("The entity will be created via group '" + sTransientGroup
+						+ "'. Cannot patch via group '" + sGroupId + "'");
+				}
+			}
+			// remember the old value
+			vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
+				return oValue && oValue[sSegment];
+			}, oEntity);
+			// write the changed value into the cache
+			_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			if (sTransientGroup) {
+				// When updating a transient entity, _Helper.updateCache has already updated the
+				// POST request, because the request body is a reference into the cache.
+				if (sParkedGroup) {
+					oEntity["@$ui5.transient"] = sTransientGroup;
+					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
+				}
+				return Promise.resolve({});
+			}
+			// send and register the PATCH request
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
+				{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
+			that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+			return oPatchPromise.then(function (oPatchResult) {
+				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				// update the cache with the PATCH response
+				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
+				return oPatchResult;
+			}, function (oError) {
+				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				throw oError;
+			});
+		});
+	};
+
 	//*********************************************************************************************
 	// CollectionCache
 	//*********************************************************************************************
@@ -834,31 +810,6 @@ sap.ui.define([
 		Cache.prototype.resetChangesForPath.call(this, sPath);
 	};
 
-	/**
-	 * Updates the property of the given name with the given new value (and later with the server's
-	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
-	 * request.
-	 * In case of a transient entity, all property updates for this entity will not lead to a PATCH
-	 * request, but update the POST.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {string} sEditUrl
-	 *   The edit URL for the entity which is updated via PATCH
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into
-	 * @returns {Promise}
-	 *   A promise for the PATCH request
-	 */
-	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		return this.fetchValue(sGroupId, sPath)
-			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
-	};
-
 	//*********************************************************************************************
 	// PropertyCache
 	//*********************************************************************************************
@@ -925,6 +876,16 @@ sap.ui.define([
 			that.checkActive();
 			return oResult.value;
 		});
+	};
+
+	/**
+	 * Not supported.
+	 *
+	 * @throws {Error}
+	 *   Updating a single property is not supported.
+	 */
+	PropertyCache.prototype.update = function () {
+		throw new Error("Unsupported");
 	};
 
 	//*********************************************************************************************
@@ -1044,29 +1005,6 @@ sap.ui.define([
 			}
 			return that.drillDown(oResult, sPath);
 		});
-	};
-
-	/**
-	 * Updates the property of the given name with the given new value (and later with the server's
-	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
-	 * request.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {string} sEditUrl
-	 *   The edit URL for the entity which is updated via PATCH
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into
-	 * @returns {Promise}
-	 *   A promise for the PATCH request
-	 */
-	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		return this.fetchValue(sGroupId, sPath)
-			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
 	//*********************************************************************************************
@@ -1275,6 +1213,31 @@ sap.ui.define([
 				Cache.computeCount(vValue);
 			}
 		});
+	};
+
+	/**
+	 * Makes an object that has the given value exactly at the given property path allowing to use
+	 * the result in _Helper.updateCache().
+	 *
+	 * Examples:
+	 * <ul>
+	 * <li>["Age"], 42 -> {Age: 42}
+	 * <li>["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
+	 * </ul>
+	 *
+	 * @param {string[]} aPropertyPath
+	 *   The property path split into an array of segments
+	 * @param {any} vValue
+	 *   The property value
+	 * @returns {object}
+	 *   The resulting object
+	 */
+	Cache.makeUpdateData = function (aPropertyPath, vValue) {
+		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
+			var oResult = {};
+			oResult[sSegment] = vValue0;
+			return oResult;
+		}, vValue);
 	};
 
 	return Cache;
