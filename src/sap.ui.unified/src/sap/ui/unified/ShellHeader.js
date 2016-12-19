@@ -68,7 +68,8 @@ sap.ui.define(['jquery.sap.global', './library'],
 				var aItems = begin ? oHeader.getHeadItems() : oHeader.getHeadEndItems();
 
 				for (var i = 0; i < aItems.length; i++) {
-					rm.write("<a tabindex='0' href='#'");
+
+					rm.write("<div tabindex='0'");
 					rm.writeElementData(aItems[i]);
 					rm.addClass("sapUiUfdShellHeadItm");
 					if (aItems[i].getStartsSection()) {
@@ -98,12 +99,12 @@ sap.ui.define(['jquery.sap.global', './library'],
 							pressed: aItems[i].getToggleEnabled() ? aItems[i].getSelected() : null
 						});
 					}
-					rm.write("><span></span><div class='sapUiUfdShellHeadItmMarker'><div></div></div></a>");
+					rm.write("><span></span><div class='sapUiUfdShellHeadItmMarker'><div></div></div></div>");
 				}
 
 				var oUser = oHeader.getUser();
 				if (!begin && oUser) {
-					rm.write("<a tabindex='0' href='#'");
+					rm.write("<div tabindex='0'");
 					rm.writeElementData(oUser);
 					rm.addClass("sapUiUfdShellHeadUsrItm");
 					if (!oUser.getShowPopupIndicator()) {
@@ -129,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 					rm.writeAttributeEscaped("title", sUserName);
 					rm.write(">");
 					rm.writeEscaped(sUserName);
-					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp' aria-hidden='true'></span></a>");
+					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp' aria-hidden='true'></span></div>");
 				}
 
 				rm.write("</div>");
