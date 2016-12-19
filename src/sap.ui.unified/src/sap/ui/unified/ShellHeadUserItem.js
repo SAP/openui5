@@ -77,6 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	};
 
 	ShellHeadUserItem.prototype.onsapspace = ShellHeadUserItem.prototype.onclick;
+	ShellHeadUserItem.prototype.onsapenter = ShellHeadUserItem.prototype.onclick;
 
 	ShellHeadUserItem.prototype.setImage = function(sImage){
 		this.setProperty("image", sImage, true);
