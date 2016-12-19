@@ -1818,5 +1818,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.16": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "4a402c6b3415d5cfa22a0b868bb9c6b284fee679",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "ad20d0bd535b1f7d9e31048e436e6fbc5f9aafeb",
+        "type": "FIX",
+        "text": " XMLView: Prevent preserve of destroyed views DOM",
+        "references": []
+      },
+      {
+        "id": "c6eced3ceb0e6a20b29ea6fc7115c101bfd0d848",
+        "type": "FIX",
+        "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
   }
 }
