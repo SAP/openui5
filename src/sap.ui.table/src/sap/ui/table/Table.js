@@ -1195,7 +1195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// do not change freezed columns
 				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
-					colHeader = aColHeaders[0];
+					colHeader = aColHeaders[1]; // column headers may have display:none, use data table
 					domWidth = colHeader && colHeader.offsetWidth;
 					if (domWidth) {
 						if (domWidth <= minWidth) {
