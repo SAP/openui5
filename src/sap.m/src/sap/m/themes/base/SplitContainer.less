@@ -1,6 +1,8 @@
-/* ============================================= */
-/* CSS for control sap.m/SplitContainer.control */
-/* ============================================= */
+/* ===================================== */
+/* CSS for control sap.m/SplitContainer  */
+/* Base theme                            */
+/* ===================================== */
+
 .sapMSplitContainer {
 	width: 100%;
 	height: 100%;
@@ -14,6 +16,19 @@
 	width: 320px;
 	float: left;
 	left: 0;
+	background-color: @sapUiGroupContentBackground;
+}
+
+/* separator line over the content of the master page */
+.sapMSplitContainerMaster:after {
+	content: "";
+	position: absolute;
+	width: 0;
+	right: 0;
+	height: 100%;
+	bottom: 0;
+	border-right: 1px solid @sapUiGroupContentBorderColor;
+	z-index: 5;
 }
 
 .sapMSplitContainerMaster > .sapMSplitContainerMasterBlindLayer {
@@ -46,7 +61,7 @@
 .sapMSplitContainerStretchCompress > .sapMSplitContainerMaster,
 .sapMSplitContainerShowHide:not(.sapMSplitContainerPortrait) > .sapMSplitContainerMaster,
 .sapMSplitContainerPopover:not(.sapMSplitContainerPortrait) > .sapMSplitContainerMaster {
-	border-radius: 0.3125em;
+	border-radius: 0;
 }
 
 .sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMaster,
@@ -62,7 +77,12 @@
 	z-index: 5;
 	top: 0;
 	height: 100%;
-	border-right: none;
+	box-shadow: @sapUiShadowLevel2;
+	border-right: @sapUiGroupContentBorderColor;
+	background-clip: padding-box;
+	-webkit-background-clip: padding-box;
+	-ms-background-clip: padding-box;
+	-moz-background-clip: padding-box;
 }
 
 html[data-sap-ui-browser^="ie9"] .sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMaster,
@@ -98,6 +118,7 @@ html[data-sap-ui-browser^="ie9"] .sapMSplitContainerHideMode > .sapMSplitContain
 	-webkit-transition: all 300ms;
 	-moz-transform: translate3d(-330px,0,0);
 	-moz-transition: all 300ms;
+	box-shadow: @sapUiShadowLevel2;
 }
 
 .sapMSplitContainerPortrait.sapMSplitContainerStretchCompress > .sapMSplitContainerMaster {
@@ -252,4 +273,14 @@ html[data-sap-ui-animation='off'] {
 		-webkit-animation: fadeOut 5ms;
 		-moz-animation: fadeOut 5ms;
 	}
+}
+
+/* footer separator has priority */
+.sapMSplitContainerMaster footer {
+	z-index: 6;
+}
+
+.sapMPopoverCont .sapMSplitContainerMaster:after {
+	/* popover has its own border, do not show separator */
+	display: none;
 }
