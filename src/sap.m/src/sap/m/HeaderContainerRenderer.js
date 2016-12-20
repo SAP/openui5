@@ -19,6 +19,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 	 */
 	HeaderContainerRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString();
+		var sOrientationClass = oControl.getOrientation();
+		if (sOrientationClass) {
+			sOrientationClass = jQuery.sap.encodeCSS(sOrientationClass);
+		}
+		var sBackgroundClass = jQuery.sap.encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -26,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		oRm.addClass("sapMHdrCntr");
-		oRm.addClass(oControl.getOrientation());
+		oRm.addClass(sOrientationClass);
 		if (oControl.getShowDividers()) {
 			oRm.addClass("sapMHrdrCntrDvdrs");
 		}
@@ -53,8 +58,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oControl.getId() + "-scroll-area");
 		oRm.addClass("sapMHdrCntrCntr");
-		oRm.addClass(oControl.getOrientation());
-		oRm.addClass("sapMHdrCntrBG" + oControl.getBackgroundDesign());
+		oRm.addClass(sOrientationClass);
+		oRm.addClass(sBackgroundClass);
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
@@ -65,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 			oRm.write("<div");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrLeft");
-			oRm.addClass(oControl.getOrientation());
+			oRm.addClass(sOrientationClass);
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oButton);
@@ -77,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Orientation'],
 			oRm.write("<div");
 			oRm.addClass("sapMHdrCntrBtnCntr");
 			oRm.addClass("sapMHdrCntrRight");
-			oRm.addClass(oControl.getOrientation());
+			oRm.addClass(sOrientationClass);
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oButton);
