@@ -2090,6 +2090,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether object <code>a</code> is an inclusive descendant of object <code>b</code>.
+	 *
+	 * @param {sap.ui.base.ManaagedObject} a Object that should be checked for being a descendant
+	 * @param {sap.ui.base.ManaagedObject} b Object that should be checked for having a descendant
+	 * @returns {boolean} Whether <code>a</code> is a descendant of (or the same as) <code>b</code>
+	 * @private
+	 */
+	function isInclusiveDescendantOf(a, b) {
+		while ( a && a !== b ) {
+			a = a.oParent;
+		}
+		return !!a;
+	}
+
+	/**
 	 * Defines this object's new parent. If no new parent is given, the parent is
 	 * just unset and we assume that the old parent has removed this child from its
 	 * aggregation. But if a new parent is given, this child is first removed from
@@ -2106,6 +2121,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
+		jQuery.sap.assert(oParent == null || oParent instanceof ManagedObject, "oParent either must be null, undefined or a ManagedObject");
+
 		if ( !oParent ) {
 
 			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
@@ -2117,11 +2134,11 @@ sap.ui.define([
 			this.sParentAggregationName = null;
 			var oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 
-			/* In case of a 'move' - remove/add controls snychronous in an aggregation -
-			 * we should not propagate synchronous when setting the parent to null.
+			/* In case of a 'move' - remove/add controls synchronously in an aggregation -
+			 * we should not propagate synchronously when setting the parent to null.
 			 * Synchronous propagation destroys the bindings when removing a control
 			 * from the aggregation and recreates them when adding the control again.
-			 * This could lead to a data refetch, and in some scenarios to endless
+			 * This could lead to a data refetch, and in some scenarios even to endless
 			 * request loops.
 			 */
 			if (oPropagatedProperties !== this.oPropagatedProperties) {
@@ -2143,6 +2160,10 @@ sap.ui.define([
 
 			// Note: no need (and no way how) to invalidate
 			return;
+		}
+
+		if ( isInclusiveDescendantOf(oParent, this) ) {
+			throw new Error("Cycle detected: new parent '" + oParent + "' is already a descendant of (or equal to) '" + this + "'");
 		}
 
 		// set suppress invalidate flag
