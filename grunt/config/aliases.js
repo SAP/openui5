@@ -71,7 +71,7 @@ module.exports = function(grunt, config) {
 		// Visualtest task
 		'visualtest' : function(mode) {
 
-			if(!mode || (mode !== 'src' && mode !== 'target')) {
+			if (!mode || (mode !== 'src' && mode !== 'target')) {
 				mode = 'src';
 			}
 
@@ -312,4 +312,4 @@ module.exports = function(grunt, config) {
 		]
 
 	};
-}
+};
