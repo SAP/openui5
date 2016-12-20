@@ -89,6 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.IScale",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -261,6 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.PlanningCalendarRow",
 			"sap.m.PlanningCalendarView",
 			"sap.m.P13nSortItem",
+			"sap.m.ResponsiveScale",
 			"sap.m.SegmentedButtonItem",
 			"sap.m.SuggestionItem",
 			"sap.m.TabContainerItem",
@@ -1158,6 +1160,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @since 1.22
 	 * @name sap.m.IBar
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 *
+	 *   Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
+	 *
+	 *
+	 * @since 1.46
+	 * @name sap.m.IScale
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel

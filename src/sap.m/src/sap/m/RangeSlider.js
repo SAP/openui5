@@ -172,6 +172,11 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             }
 
             this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(this.getStep());
+
+            // For backwards compatibility when tickmarks are enabled, should be visible
+            if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
+                this.setAggregation("scale", new sap.m.ResponsiveScale());
+            }
         };
 
         RangeSlider.prototype.onAfterRendering = function () {
