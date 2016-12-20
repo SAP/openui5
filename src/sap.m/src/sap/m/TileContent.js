@@ -53,11 +53,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 */
 				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : sap.m.FrameType.Auto}
 			},
+			defaultAggregation : "content",
 			aggregations : {
 				/**
 				 * The switchable view that depends on the tile type.
 				 */
-				"content" : {type : "sap.ui.core.Control", multiple : false}
+				"content" : {type : "sap.ui.core.Control", multiple : false, bindable : "bindable"}
 			}
 		}
 	});
