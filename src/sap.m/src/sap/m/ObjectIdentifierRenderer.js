@@ -91,10 +91,10 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oOI._getTitleControl());
-		//Render WAI ARIA hidden label for title if it's active
-		if (oOI.getProperty("titleActive")) {
-			oRm.renderControl(oOI._oAriaInfoTextControl);
-		}
+
+		//Render WAI ARIA hidden label for title
+		oRm.renderControl(oOI._oAriaCustomRole);
+
 		oRm.write("</div>"); // Title ends
 
 		oRm.write("</div>"); // Top row ends
