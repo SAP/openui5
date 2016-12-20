@@ -23,9 +23,9 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a new Overflow Toolbar
+	 * Constructor for a new <code>OverflowToolbar</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
@@ -36,9 +36,9 @@ sap.ui.define([
 	 *
 	 * The content of the <code>OverflowToolbar</code> moves into the overflow area from
 	 * right to left when the the available space is not enough in the visible area of
-	 * the container. It can be accessed by the user throught the overflow button that
+	 * the container. It can be accessed by the user through the overflow button that
 	 * opens it in a popover.
-	 * <br><br>
+	 *
 	 * <b>Note:</b> It is recommended that you use <code>OverflowToolbar</code> over
 	 * {@link sap.m.Toolbar}, unless you want to avoid overflow in favor of shrinking.
 	 *
@@ -48,10 +48,10 @@ sap.ui.define([
 	 * <code>OverflowToolbar</code>, such as certain actions to appear only in the
 	 * overflow area or to never move there. For more information, see
 	 * {@link sap.m.OverflowToolbarLayoutData} and {@link sap.m.OverflowToolbarPriority}.
-	 * <br><br>
+	 *
 	 * Only the following controls can be moved in the overflow area:
-	 * <ul>
-	 * <li>{@link sap.m.Button}</li>
+	 *
+	 * <ul><li>{@link sap.m.Button}</li>
 	 * <li>{@link sap.m.CheckBox}</li>
 	 * <li>{@link sap.m.ComboBox}</li>
 	 * <li>{@link sap.m.DatePicker}</li>
@@ -65,8 +65,7 @@ sap.ui.define([
 	 * <li>{@link sap.m.TimePicker}</li>
 	 * <li>{@link sap.m.ToggleButton}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
-	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li>
-	 * </ul>
+	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li></ul>
 	 *
 	 * <h3>Responsive behavior</h3>
 	 *
