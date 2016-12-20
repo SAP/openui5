@@ -1,59 +1,74 @@
 <core:View
 	controllerName="sap.m.sample.GenericTileLineMode.Page"
+	height="100%"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-	<VBox width="100%">
-		<l:HorizontalLayout
-			id="TileContainerExpanded"
-			allowWrapping="true"
-			content="{/tiles/expanded}">
-			<GenericTile
-				header="{title}"
-				subheader="{subtitle}"
-				state="{=${state} || 'Loaded'}"
-				press="press"
-				class="sapUiTinyMarginBegin sapUiTinyMarginTop">
-				<tileContent>
-					<TileContent footer="{footer}">
-						<content>
-							<NumericContent
-								value="{kpivalue}"
-								valueColor="{color}"
-								indicator="{trend}"
-								scale="{scale}" />
-						</content>
-					</TileContent>
-				</tileContent>
-			</GenericTile>
-		</l:HorizontalLayout>
-		<html:div class="sapUiTinyMarginBegin sapUiTinyMarginTop">
-			<l:HorizontalLayout
-				id="tileContainerCollapsed"
-				allowWrapping="true"
-				content="{/tiles/collapsed}"
-				class="sapMSampleTileContainer">
-				<GenericTile
-					header="{title}"
-					subheader="{subtitle}"
-					state="{=${state} || 'Loaded'}"
-					mode="LineMode"
-					press="press"
-					class="sapUiSmallMarginEnd">
-					<tileContent>
-						<TileContent footer="{footer}">
-							<content>
-								<NumericContent
-									value="{kpivalue}"
-									valueColor="{color}"
-									indicator="{trend}"
-									scale="{scale}" />
-							</content>
-						</TileContent>
-					</tileContent>
-				</GenericTile>
-			</l:HorizontalLayout>
-		</html:div>
-	</VBox>
+	<Page
+		showHeader="true">
+		<customHeader>
+			<OverflowToolbar>
+				<ToolbarSpacer />
+				<Label text="Tile Actions:" />
+				<Switch state="{/actionsScope}" />
+			</OverflowToolbar>
+		</customHeader>
+		<content>
+			<VBox fitContainer="true">
+				<l:HorizontalLayout
+					id="TileContainerExpanded"
+					allowWrapping="true"
+					content="{/tiles}">
+					<GenericTile
+						header="{title}"
+						subheader="{subtitle}"
+						state="{=${state} || 'Loaded'}"
+						scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+						press="press"
+						class="sapUiTinyMarginBegin sapUiTinyMarginTop">
+						<tileContent>
+							<TileContent footer="{footer}">
+								<content>
+									<NumericContent
+										value="{kpivalue}"
+										valueColor="{color}"
+										indicator="{trend}"
+										scale="{scale}" />
+								</content>
+							</TileContent>
+						</tileContent>
+					</GenericTile>
+				</l:HorizontalLayout>
+				<html:div class="sapUiTinyMarginBegin sapUiTinyMarginTop">
+					<l:HorizontalLayout
+						id="tileContainerCollapsed"
+						allowWrapping="true"
+						content="{/tiles}"
+						class="sapMSampleTileContainer">
+						<GenericTile
+							header="{title}"
+							subheader="{subtitle}"
+							state="{=${state} || 'Loaded'}"
+							scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+							mode="LineMode"
+							press="press"
+							class="sapUiTinyMarginEnd">
+							<tileContent>
+								<TileContent footer="{footer}">
+									<content>
+										<NumericContent
+											value="{kpivalue}"
+											valueColor="{color}"
+											indicator="{trend}"
+											scale="{scale}" />
+									</content>
+								</TileContent>
+							</tileContent>
+						</GenericTile>
+					</l:HorizontalLayout>
+				</html:div>
+			</VBox>
+		</content>
+	</Page>
 </core:View>

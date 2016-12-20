@@ -1,111 +1,62 @@
 {
-	"tiles": {
-		"expanded": [
-			{
-				"title": "Customer Confidence",
-				"subtitle": "CRM",
-				"footer": "",
-				"kpivalue": 97,
-				"scale": "%",
-				"color": "Good",
-				"trend": "Up"
-			},
-			{
-				"title": "Customer Complaints",
-				"subtitle": "CRM",
-				"footer": "In the last week",
-				"kpivalue": 3,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Down",
-				"state": "Loading"
-			},
-			{
-				"title": "Business Decisions",
-				"subtitle": "Commitments",
-				"footer": "Up for decision",
-				"kpivalue": 5,
-				"scale": "",
-				"color": "Neutral",
-				"trend": "None"
-			},
-			{
-				"title": "Manage Invoices",
-				"subtitle": "",
-				"footer": "Processed this week",
-				"kpivalue": 200,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Up"
-			},
-			{
-				"title": "Manage Expenses",
-				"subtitle": "Premises",
-				"footer": "",
-				"kpivalue": 500,
-				"scale": "G",
-				"color": "Error",
-				"trend": "Up",
-				"state": "Disabled"
-			}
-		],
-		"collapsed": [
-			{
-				"title": "Manage Products",
-				"subtitle": "Product Details",
-				"footer": "",
-				"kpivalue": 2,
-				"scale": "",
-				"color": "Good",
-				"trend": "None"
-			},
-			{
-				"title": "Business Decisions",
-				"subtitle": "Approval Needed",
-				"footer": "",
-				"kpivalue": 12,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Down"
-			},
-			{
-				"title": "Manage Master Data Type Activity With a Long Title and Without an Icon",
-				"subtitle": "Subtitle for Activity",
-				"footer": "",
-				"kpivalue": 12,
-				"scale": "",
-				"color": "Critical",
-				"trend": "Down"
-			},
-			{
-				"title": "Jessica Danielle Johnson ",
-				"subtitle": "Senior Consultant, Department Sales & Distribution",
-				"footer": "",
-				"kpivalue": 1,
-				"scale": "k",
-				"color": "Critical",
-				"trend": "Down"
-			},
-			{
-				"title": "Manage Assets",
-				"subtitle": "",
-				"footer": "",
-				"kpivalue": 500,
-				"scale": "",
-				"color": "Error",
-				"trend": "Up",
-				"state": "Failed"
-			},
-			{
-				"title": "Manage Invoices",
-				"subtitle": "Payment Open",
-				"footer": "",
-				"kpivalue": 1,
-				"scale": "k",
-				"color": "Critical",
-				"trend": "Down",
-				"state": "Disabled"
-			}
-		]
-	}
+	"actionsScope": false,
+	"tiles": [
+		{
+			"title": "Manage Products",
+			"subtitle": "Product Details",
+			"footer": "",
+			"kpivalue": 2,
+			"scale": "",
+			"color": "Good",
+			"trend": "None"
+		},
+		{
+			"title": "Business Decisions",
+			"subtitle": "Approval Needed",
+			"footer": "",
+			"kpivalue": 12,
+			"scale": "",
+			"state": "Loading",
+			"color": "Critical",
+			"trend": "Down"
+		},
+		{
+			"title": "Manage Master Data Type Activity With a Long Title and Without an Icon",
+			"subtitle": "Subtitle for Activity",
+			"footer": "",
+			"kpivalue": 12,
+			"scale": "",
+			"color": "Critical",
+			"trend": "Down"
+		},
+		{
+			"title": "Jessica Danielle Johnson ",
+			"subtitle": "Senior Consultant, Department Sales & Distribution",
+			"footer": "",
+			"kpivalue": 1,
+			"scale": "k",
+			"color": "Critical",
+			"trend": "Down"
+		},
+		{
+			"title": "Manage Assets",
+			"subtitle": "",
+			"footer": "",
+			"kpivalue": 500,
+			"scale": "",
+			"color": "Error",
+			"trend": "Up",
+			"state": "Failed"
+		},
+		{
+			"title": "Manage Invoices",
+			"subtitle": "Payment Open",
+			"footer": "",
+			"kpivalue": 1,
+			"scale": "k",
+			"color": "Critical",
+			"trend": "Down",
+			"state": "Disabled"
+		}
+	]
 }

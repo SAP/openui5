@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 			includes: [ "style.css" ],
 			config: {
 				sample: {
+					stretch: true,
 					files: [ "Page.view.xml", "Page.controller.js", "style.css" ]
 				}
 			}
