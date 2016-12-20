@@ -145,6 +145,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						$.each(arguments, function(iArgumentIndex, sArgument) {
 							oArguments[that._aRoutes[iIndex]._paramsIds[iArgumentIndex]] = sArgument;
 						});
+
+						that._beforeRouteMatched(oArguments);
+
 						that._routeMatched(oArguments, true);
 					});
 				});
@@ -328,7 +331,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					}
 					return null;
 				}
-			}
+			},
+
+			/**
+			 * @private
+			 */
+			_beforeRouteMatched: function(oArguments) {}
 		});
 
 
