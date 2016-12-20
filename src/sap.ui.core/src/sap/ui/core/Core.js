@@ -821,6 +821,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// load all modules now
+		if ( bAsync ) {
+			return this._requireModulesAsync().then(function() {
+				fnCallback();
+			});
+		}
+
 		var that = this;
 		this.oConfiguration.modules.forEach( function(mod) {
 			var m = mod.match(/^(.*)\.library$/);
@@ -834,6 +840,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		fnCallback();
 	};
 
+	Core.prototype._requireModulesAsync = function() {
+
+		var aLibs = [],
+			aModules = [];
+
+		this.oConfiguration.modules.forEach(function(sModule) {
+			var m = sModule.match(/^(.*)\.library$/);
+			if ( m ) {
+				aLibs.push( m[1] );
+			} else {
+				aModules.push( jQuery.sap.getResourceName( sModule ) );
+			}
+		});
+
+		// TODO: require libs and modules in parallel or define a sequence?
+		return Promise.all([
+			this.loadLibraries(aLibs),
+			new Promise(function(resolve) {
+				sap.ui.require(aModules, function() {
+					resolve(Array.prototype.slice.call(arguments));
+				});
+			})
+		]);
+
+	};
 
 	/**
 	 * Applies the theme with the given name (by loading the respective style sheets, which does not disrupt the application).
@@ -1754,31 +1785,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
-		function requireLibs() {
-			if ( bRequire ) {
-				aLibraries.forEach(function(vLibraryName) {
-					if ( typeof vLibraryName === 'object' ) {
-						vLibraryName = vLibraryName.name;
-					}
-					jQuery.sap.require(vLibraryName + ".library");
-				});
-				if ( that.oThemeCheck && that.isInitialized() ) {
-					that.oThemeCheck.fireThemeChangedEvent(true);
+		function getLibraryModuleNames() {
+			return aLibraries.map(function(vLibraryName) {
+				if ( typeof vLibraryName === 'object' ) {
+					vLibraryName = vLibraryName.name;
 				}
+				return vLibraryName.replace(/\./g, "/") + "/library";
+			});
+		}
+
+		function triggerThemeCheck() {
+			if ( that.oThemeCheck && that.isInitialized() ) {
+				that.oThemeCheck.fireThemeChangedEvent(true);
 			}
+		}
+
+		function requireLibsAsync() {
+			return new Promise(function(resolve, reject) {
+				sap.ui.require(getLibraryModuleNames(), function() {
+					triggerThemeCheck();
+					resolve();
+				});
+			});
+		}
+
+		function requireLibsSync() {
+			getLibraryModuleNames().forEach(sap.ui.requireSync);
+			triggerThemeCheck();
 		}
 
 		if ( bAsync ) {
 
 			var preloaded = bPreload ? Promise.all(aLibraries.map(preloadLibraryAsync)) : Promise.resolve(true);
-			return preloaded.then(requireLibs);
+			return bRequire ? preloaded.then(requireLibsAsync) : preloaded;
 
 		} else {
 
 			if ( bPreload ) {
 				aLibraries.forEach(preloadLibrarySync);
 			}
-			requireLibs();
+			if ( bRequire ) {
+				requireLibsSync();
+			}
 
 		}
 
