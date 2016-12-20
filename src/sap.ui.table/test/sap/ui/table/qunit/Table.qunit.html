@@ -238,8 +238,8 @@
 			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + i);
 			oCell.focus();
 			if (bKeyboard) {
-				qutils.triggerKeyEvent("keydown", oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-				qutils.triggerKeyEvent("keyup", oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
+				qutils.triggerKeydown(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
+				qutils.triggerKeyup(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
 			} else {
 				qutils.triggerEvent("click", oCell, {metaKey : !!bCtrlKey, ctrlKey : !!bCtrlKey, shiftKey: !!bShiftKey});
 			}
@@ -268,21 +268,20 @@
 		checkSelection("MultiToggle - After 4th selection", [2, 3]);
 		triggerSelectionOnRow(3, true, false, false);
 		checkSelection("MultiToggle - After 5th selection", [2]);
-		triggerSelectionOnRow(0, true, true, false);
+		triggerSelectionOnRow(0, true, false, false);
 		checkSelection("MultiToggle - After 6th selection", [0, 2]);
 		if (oTable._getKeyboardExtension()._legacy) {
 			triggerSelectionOnRow(4, true, false, true);
 		} else {
 			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
 			oCell.focus();
-			qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-			qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
+			qutils.triggerKeydown(document.activeElement, "SHIFT", false, false, false);
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
 		}
-		//debugger;
 		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(2, false, false, true);
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
