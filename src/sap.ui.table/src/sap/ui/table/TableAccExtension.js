@@ -485,10 +485,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
 					mAttributes["role"] = "columnheader";
 					mAttributes["aria-labelledby"] = mParams && mParams.headerId ?  [mParams.headerId] : [];
-					if (oColumn && oColumn._menuHasItems()) {
-						mAttributes["aria-haspopup"] = "true";
-						mAttributes["aria-describedby"] = [sTableId + "-ariacolmenu"];
-					}
 					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
@@ -498,6 +494,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					}
 					if (bIsMainHeader && oColumn.getFiltered()) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
+					}
+					if (oColumn && oColumn._menuHasItems()) {
+						mAttributes["aria-haspopup"] = "true";
+						mAttributes["aria-labelledby"].push(sTableId + "-ariacolmenu");
 					}
 					break;
 
