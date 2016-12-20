@@ -1,6 +1,7 @@
-/* ============================================= */
-/* CSS base theme for control sap.m/StandardTile.control */
-/* ============================================= */
+/* =================================== */
+/* CSS for control sap.m/StandardTile  */
+/* Base theme                          */
+/* =================================== */
 
 .sapMStdTileTopRow {
 	height: 4rem;
@@ -27,6 +28,9 @@
 	overflow: hidden;
 	text-align: right;
 	line-height: 1em;
+	font-family: @sapUiFontCondensedFamily;
+	font-stretch: condensed; /* for Firefox */
+	color: @sapUiContentLabelColor;
 }
 
 .sapMStdTileNum {
@@ -93,6 +97,7 @@ html[dir=rtl] .sapMStdTileInfo{
 .sapMStdTileMonitorType {
 	margin-top: -2rem;
 	padding-top: 2rem;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMStdTileBottomRow .sapMStdTileMonitorType {
@@ -146,4 +151,60 @@ html.sap-phone .sapMStdTileNumM {
 
 html.sap-phone .sapMStdTileNumS {
 	font-size:  1rem;
+}
+
+.sapMStdTileIconDiv,
+.sapMStdTileTitle {
+	color: @sapUiTileTitleTextColor;
+}
+
+.sapMStdIconMonitor {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMStdIconCreate {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMStdTileNumUnit {
+	color: @sapUiContentLabelColor;
+	text-transform: uppercase;
+}
+
+.sapMStdTileInfo {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMStdTileInfoError {
+	color: @sapUiNegativeText;
+}
+
+.sapMStdTileInfoWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMStdTileInfoSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMTileActive-CTX .sapMStdIconCreate {
+	opacity: 1;
+}
+
+.sapMTileActive-CTX .sapMStdTileInfoWarning,
+.sapMTileActive-CTX .sapMStdTileInfoSuccess,
+.sapMTileActive-CTX .sapMStdTileInfoError,
+.sapMTileActive-CTX .sapMStdTileTitle,
+.sapMTileActive-CTX .sapMStdTileNumUnit,
+.sapMTileActive-CTX .sapMStdTileNum,
+.sapMTileActive-CTX .sapMStdTileNumM,
+.sapMTileActive-CTX .sapMStdTileNumS,
+.sapMTileActive-CTX .sapMStdTileInfo {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMTileActive-CTX .sapMStdTileIconDiv,
+.sapMTileActive-CTX .sapMStdIconMonitor,
+.sapMTileActive-CTX .sapMStdIconCreate {
+	color: @sapUiContentContrastIconColor;
 }
