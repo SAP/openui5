@@ -233,8 +233,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * Placeholders have the form <code>{ integer }</code>, where any occurrence of
 	 * <code>{0}</code> is replaced by the value with index 0 in <code>aValues</code>,
 	 * <code>{1}</code> by the value with index 1 in <code>aValues</code> etc.
-	 * If a placeholder uses an index for which <code>aValues</code> contains no or only an
-	 * <code>undefined</code> value, then the placeholder won't be replaced.
 	 *
 	 * To avoid interpretation of curly braces as placeholders, any non-placeholder fragment
 	 * of the pattern can be enclosed in single quotes. The surrounding single quotes will be
@@ -245,7 +243,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * Example Pattern Strings:
 	 * <pre>
 	 *   jQuery.sap.formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
-	 *   jQuery.sap.formatMessage("Say {1}",     ["Hello"]) -> "Say {1}"      // no value for the placeholder
 	 *   jQuery.sap.formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
 	 *   jQuery.sap.formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
 	 *   jQuery.sap.formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
@@ -289,13 +286,7 @@ sap.ui.define(['jquery.sap.global'],
 			} else if ( $3 ) {
 				// a welformed curly brace
 				//   --> emit the argument but ignore other parameters
-				// Replace the string or do nothing if the string could not be found
-				var sValue = aValues[parseInt($3, 10)];
-				if (sValue !== undefined) {
-					return String(sValue);
-				} else {
-					return $0;
-				}
+				return String(aValues[parseInt($3, 10)]);
 			}
 			// e.g. malformed curly braces
 			//   --> throw Error
