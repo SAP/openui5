@@ -394,6 +394,32 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		});
 	});
 
+	QUnit.test("discardChanges with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function() {
+		var oChangePersistence = this.oFlexController._oChangePersistence = {
+			deleteChange: sinon.stub(),
+			saveDirtyChanges: sinon.stub().returns(Promise.resolve())
+		};
+		var aChanges = [];
+		for (var i = 0; i < 5 ; i++){
+			aChanges.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}))
+		};
+		aChanges[0]._oDefinition.layer = "USER";
+		aChanges[1]._oDefinition.layer = "USER";
+		aChanges[2]._oDefinition.layer = "PARTNER";
+		aChanges[3]._oDefinition.layer = "VENDOR";
+
+		return this.oFlexController.discardChanges(aChanges, true).then(function() {
+			sinon.assert.calledTwice(oChangePersistence.deleteChange);
+			sinon.assert.calledOnce(oChangePersistence.saveDirtyChanges);
+		});
+	});
+
 	QUnit.test("createAndApplyChange shall remove the change from the persistence, if applying the change raised an exception", function (assert){
 		var oControl = new Control();
 		var oChangeSpecificData = {
