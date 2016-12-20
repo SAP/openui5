@@ -5,10 +5,10 @@
 // Provides control sap.m.Input.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
 		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
-		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
+		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText'],
 	function(jQuery, Bar, Dialog, InputBase, List, Popover,
 			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
-			Table, Toolbar, ToolbarSpacer, library, IconPool/* , jQuerySap */) {
+			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText) {
 	"use strict";
 
 
@@ -391,6 +391,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
+
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		// Init static hidden text for ARIA
+		if (!Input._sAriaPopupLabelId) {
+			Input._sAriaPopupLabelId = new InvisibleText({
+				text: this._oRb.getText("INPUT_AVALIABLE_VALUES")
+			}).toStatic().getId();
+		}
 	};
 
 	/**
@@ -933,8 +942,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (bShowValueHelp && !Input.prototype._sAriaValueHelpLabelId) {
 			// create an F4 ARIA announcement and remember its ID for later use in the renderer:
-			Input.prototype._sAriaValueHelpLabelId = new sap.ui.core.InvisibleText({
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP")
+			Input.prototype._sAriaValueHelpLabelId = new InvisibleText({
+				text: this._oRb.getText("INPUT_VALUEHELP")
 			}).toStatic().getId();
 		}
 		return this;
@@ -947,8 +956,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (bValueHelpOnly && !Input.prototype._sAriaInputDisabledLabelId) {
 			// create an F4 ARIA announcement and remember its ID for later use in the renderer:
-			Input.prototype._sAriaInputDisabledLabelId = new sap.ui.core.InvisibleText({
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_DISABLED")
+			Input.prototype._sAriaInputDisabledLabelId = new InvisibleText({
+				text: this._oRb.getText("INPUT_DISABLED")
 			}).toStatic().getId();
 		}
 		return this;
@@ -1358,7 +1367,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		Input.prototype._getShowMoreButton = function() {
 			var that = this,
-				oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oMessageBundle = this._oRb;
 
 			return this._oShowMoreButton || (this._oShowMoreButton = new sap.m.Button({
 				text : oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
@@ -1570,7 +1579,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		function createSuggestionPopup(oInput) {
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oMessageBundle = oInput._oRb;
 
 			if (oInput._bUseDialog) {
 				oInput._oPopupInput = new Input(oInput.getId() + "-popup-input", {
@@ -1685,6 +1694,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				}));
 
 			oInput._oSuggestionPopup.addStyleClass("sapMInputSuggestionPopup");
+			oInput._oSuggestionPopup.addAriaLabelledBy(Input._sAriaPopupLabelId);
 
 			// add popup as dependent to also propagate the model and bindings to the content of the popover
 			oInput.addDependent(oInput._oSuggestionPopup);
@@ -1796,6 +1806,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		function refreshListItems(oInput) {
 			var bShowSuggestion = oInput.getShowSuggestion();
+			var oRb = oInput._oRb;
 			oInput._iPopupListSelectedIndex = -1;
 
 			if (!bShowSuggestion ||
@@ -1896,9 +1907,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (iItemsLength > 0) {
 				// add items to list
 				if (iItemsLength == 1) {
-					sAriaText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_SUGGESTIONS_ONE_HIT");
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
 				} else {
-					sAriaText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
 				}
 				oInput.$("inner").attr("aria-haspopup", "true");
 
@@ -1923,7 +1934,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					}
 				}
 			} else {
-				sAriaText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_SUGGESTIONS_NO_HIT");
+				sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
 				oInput.$("inner").removeAttr("aria-haspopup");
 				oInput.$("inner").removeAttr("aria-activedescendant");
 

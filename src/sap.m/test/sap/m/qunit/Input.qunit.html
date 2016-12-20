@@ -2690,6 +2690,24 @@
 		strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
 		oInput.destroy();
 	});
+
+	test("Popup", function() {
+		var oInput = createInputWithSuggestions();
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("It").trigger("input");
+
+		this.clock.tick(300);
+
+		var $popover = oInput._oSuggestionPopup.$();
+		ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
+
+		oInput.destroy();
+
+	});
 </script>
 
 </head>
