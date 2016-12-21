@@ -142,38 +142,61 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query options for the binding.
+	 * Returns the query options for the binding. Uses the options resulting from the binding
+	 * parameters or options inherited from the parent binding using {@link #inheritQueryOptions}.
+	 * Merges the model's query options.
 	 *
-	 * @param {string} sPath
-	 *   The path (relative to this binding) for which the OData query options are requested
-	 * @param {sap.ui.model.Context} oContext
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used to to compute the inherited query options
+	 * @returns {object}
+	 *   The computed query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getQueryOptions = function (oContext) {
+		var mOwnQueryOptions = this.mQueryOptions;
+
+		if (!Object.keys(mOwnQueryOptions).length) {
+			mOwnQueryOptions = this.inheritQueryOptions(oContext);
+		}
+
+		return jQuery.extend({}, this.oModel.mUriParameters, mOwnQueryOptions);
+	};
+
+	/**
+	 * Returns the query options that are inherited from the parent binding. This is the case if
+	 * the parent binding has a <code>$expand</code> with this binding's path.
+	 *
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used to to compute the inherited query options
 	 * @returns {object}
 	 *   The query options for the given path
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.getQueryOptions = function (sPath, oContext) {
-		var oResult = this.mQueryOptions;
+	ODataParentBinding.prototype.inheritQueryOptions = function (oContext) {
+		var oResult;
 
+		if (!this.isRelative() || !oContext || !oContext.getQueryOptions) {
+			return undefined;
+		}
+
+		oResult = oContext.getQueryOptions();
 		if (!oResult) {
-			return oContext && oContext.getQueryOptions
-				&& oContext.getQueryOptions(_Helper.buildPath(this.sPath, sPath));
-		}
-		if (!sPath) {
-			return oResult;
+			return undefined;
 		}
 
-		sPath = sPath.replace(rNotMetaContext, ""); // transform path to metadata path
-		sPath.split("/").some(function (sSegment) {
-			oResult = oResult.$expand && oResult.$expand[sSegment];
-			if (!oResult || oResult === true) {
-				oResult = undefined;
-				return true;
-			}
-		});
+		this.sPath
+			.replace(rNotMetaContext, "") // transform path to metadata path
+			.split("/").some(function (sSegment) {
+				oResult = oResult.$expand && oResult.$expand[sSegment];
+				if (!oResult || oResult === true) {
+					oResult = undefined;
+					return true;
+				}
+			});
 
-		return this.oModel.buildQueryOptions(this.oModel.mUriParameters, oResult, true);
+		return oResult;
 	};
 
 	/**

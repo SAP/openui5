@@ -18,7 +18,7 @@ sap.ui.require([
 ], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper,
 		_SyncPromise, ODataContextBinding, ODataModel, asODataParentBinding, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
@@ -106,8 +106,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
-			.returns(mQueryOptions);
+			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -147,8 +146,7 @@ sap.ui.require([
 		};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters), mParameters, true)
-			.returns(mQueryOptions);
+			.withExactArgs(undefined, mParameters, true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -348,7 +346,7 @@ sap.ui.require([
 		//code under test
 		oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext);
 
-		assert.deepEqual(oBinding.mQueryOptions, {"sap-client": "111"});
+		assert.deepEqual(oBinding.mQueryOptions, {});
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.strictEqual(oBinding.sUpdateGroupId, undefined);
 	});
@@ -381,7 +379,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
 			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("mQueryOptions"), true);
-			assert.deepEqual(oBinding.mQueryOptions, {"sap-client" : "111"});
+			assert.deepEqual(oBinding.mQueryOptions, {});
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
@@ -394,33 +392,38 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')", "EMPLOYEE_2_TEAM(Team_Id='4711')"].forEach(function (sPath) {
 		QUnit.test("bindContext with parameters, path " + sPath, function (assert) {
-			var oBinding,
+			var bAbsolute = sPath[0] === "/",
+				oBinding,
+				mBindingQueryOptions = {},
 				mParameters = {
 					$select : "ProductID",
 					$apply: "filter(Amount gt 5)"
 				},
-				mQueryOptions = {};
+				mResultingQueryOptions = {};
 
 			this.spy(ODataContextBinding.prototype, "makeCache");
 			this.mock(this.oModel).expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-					mParameters, true)
-				.returns(mQueryOptions);
+				.withExactArgs(undefined, mParameters, true)
+				.returns(mBindingQueryOptions);
+			this.mock(ODataContextBinding.prototype).expects("getQueryOptions")
+				.exactly(bAbsolute ? 1 : 0)
+				.withExactArgs(undefined)
+				.returns(mResultingQueryOptions);
 			this.mock(ODataModel.prototype).expects("buildBindingParameters")
 				.withExactArgs(mParameters, aAllowedBindingParameters)
 				.returns({$$groupId : "group", $$updateGroupId : "updateGroup"});
 			this.mock(_Cache).expects("createSingle")
 				.exactly((sPath[0] === "/") ? 1 : 0)
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
-					sinon.match.same(mQueryOptions));
+					sinon.match.same(mResultingQueryOptions));
 
 			// code under test
 			oBinding = this.oModel.bindContext(sPath, null, mParameters);
 
-			if (sPath[0] === "/") {
+			if (bAbsolute) {
 				sinon.assert.calledOnce(ODataContextBinding.prototype.makeCache);
 			}
-			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
+			assert.strictEqual(oBinding.mQueryOptions, mBindingQueryOptions);
 			assert.strictEqual(oBinding.sGroupId, "group");
 			assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
 		});
@@ -669,9 +672,7 @@ sap.ui.require([
 				oContextMock = this.mock(oContext),
 				oResult = {};
 
-			oContextMock.expects("fetchCanonicalPath")
-				.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-			this.mock(oBinding).expects("createCache").returns(oCache);
+			this.mock(oBinding).expects("makeCache").returns(oCache);
 			oBinding.setContext(oContext);
 
 			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
@@ -700,9 +701,7 @@ sap.ui.require([
 					oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
 					oResult = {};
 
-				this.mock(oContext).expects("fetchCanonicalPath")
-					.returns(_SyncPromise.resolve("SalesOrderList('42')"));
-				this.mock(oBinding).expects("createCache").returns(oCache);
+				this.mock(oBinding).expects("makeCache").returns(oCache);
 				oBinding.setContext(oContext);
 
 				this.mock(oCache).expects("fetchValue").withArgs("myGroup", oFixture.rel)
@@ -949,6 +948,7 @@ sap.ui.require([
 				oExecutePromise,
 				oHelperMock = this.mock(_Helper),
 				sPath = (bBaseContext ? "" : "/") + "FunctionImport(...)",
+				oQueryOptions = {},
 				oSingleCache = {
 					hasPendingChangesForPath : function () {},
 					fetchValue : function () {},
@@ -980,9 +980,13 @@ sap.ui.require([
 			oHelperMock.expects("formatLiteral").withExactArgs("bãr'1", "Edm.String")
 				.returns("'bãr''1'");
 			oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
+			oBindingMock.expects("getQueryOptions")
+				.withExactArgs(sinon.match.same(oBinding.oContext))
+				.returns(oQueryOptions);
 			oCacheMock.expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)", {"sap-client" : "111"})
+					"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)",
+					sinon.match.same(oQueryOptions))
 				.returns(oSingleCache);
 			oBindingMock.expects("getGroupId").returns("foo");
 			oSingleCacheMock.expects("fetchValue")
@@ -999,9 +1003,13 @@ sap.ui.require([
 						.withExactArgs("bãr'2", "Edm.String").returns("'bãr''2'");
 					oHelperMock.expects("formatLiteral")
 						.withExactArgs(42, "Edm.Int16").returns("42");
-					oCacheMock.expects("createSingle").twice() // the second one is from the refresh
+					oBindingMock.expects("getQueryOptions")
+						.withExactArgs(sinon.match.same(oBinding.oContext))
+						.returns(oQueryOptions);
+					oCacheMock.expects("createSingle")
 						.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-							"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)", {"sap-client" : "111"})
+							"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)",
+							sinon.match.same(oQueryOptions))
 						.returns(oSingleCache);
 					oSingleCacheMock.expects("fetchValue").withExactArgs("myGroupId")
 						.returns(_SyncPromise.resolve({}));
@@ -1011,6 +1019,15 @@ sap.ui.require([
 					// code under test
 					return oBinding.setParameter("føø", "bãr'2").execute("myGroupId")
 						.then(function () {
+						oBindingMock.expects("getQueryOptions")
+							.withExactArgs(
+								bBaseContext ? sinon.match.same(oBinding.oContext) : undefined)
+							.returns(oQueryOptions);
+						oCacheMock.expects("createSingle")
+							.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+								"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)",
+								sinon.match.same(oQueryOptions))
+						.returns(oSingleCache);
 							oBindingMock.expects("_fireChange")
 								.withExactArgs({reason : ChangeReason.Refresh});
 
@@ -1030,6 +1047,7 @@ sap.ui.require([
 			oBindingMock,
 			mParameters = {},
 			sPath = "/ActionImport(...)",
+			mQueryOptions = {},
 			oSingleCache = {
 				post : function () {}
 			},
@@ -1041,9 +1059,10 @@ sap.ui.require([
 
 		oBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
+		oBindingMock.expects("getQueryOptions").withExactArgs(undefined).returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
-				{"sap-client" : "111"}, true)
+				sinon.match.same(mQueryOptions), true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("post")
@@ -1089,6 +1108,7 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oCacheMock = this.mock(_Cache),
 			oPostResult = {},
+			mQueryOptions = {},
 			oSingleCache = {
 				hasPendingChangesForPath : function () {},
 				post : function () {},
@@ -1098,9 +1118,11 @@ sap.ui.require([
 
 		oBindingMock.expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
+		oBindingMock.expects("getQueryOptions")
+			.withExactArgs(oBinding.oContext).returns(mQueryOptions);
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, true)
+				"EntitySet(ID='1')/schema.Action", sinon.match.same(mQueryOptions), true)
 			.returns(oSingleCache);
 		oBindingMock.expects("getGroupId").returns("groupId");
 		oSingleCacheMock.expects("post")
@@ -1142,6 +1164,7 @@ sap.ui.require([
 						oParentContext2 = createContext(this.oModel,
 								"/EntitySet(ID='2')/navigation1"),
 						oPostResult = {},
+						mQueryOptions = {},
 						oSingleCache = {
 							deregisterChange : function () {},
 							post : function () {},
@@ -1164,10 +1187,12 @@ sap.ui.require([
 							.withExactArgs(sPathPrefix)
 							.returns({"@odata.etag" : "etag"});
 					}
+					oBindingMock.expects("getQueryOptions")
+						.withExactArgs(oParentContext1).returns(mQueryOptions);
 					oCacheMock.expects("createSingle")
 						.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 							"EntitySet(ID='1')/navigation1/" + sAction,
-							{"sap-client" : "111"}, true)
+							sinon.match.same(mQueryOptions), true)
 						.returns(oSingleCache);
 					oSingleCacheMock.expects("post")
 						.withExactArgs("groupId", {}, bBaseContext ? undefined : "etag")
@@ -1191,10 +1216,12 @@ sap.ui.require([
 								.withExactArgs(sPathPrefix)
 								.returns({}); // no ETag
 						}
+						oBindingMock.expects("getQueryOptions")
+							.withExactArgs(oParentContext2).returns(mQueryOptions);
 						oCacheMock.expects("createSingle")
 							.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 								"EntitySet(ID='2')/navigation1/" + sAction,
-								{"sap-client" : "111"}, true)
+								sinon.match.same(mQueryOptions), true)
 							.returns(oSingleCache);
 						oSingleCacheMock.expects("post")
 							.withExactArgs("groupId", {"foo" : "bar"}, undefined)
@@ -1731,7 +1758,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs("", undefined)
+			.withExactArgs(undefined)
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(undefined, oBinding.sPath)
 			.returns(oBinding.sPath);
@@ -1789,7 +1816,7 @@ sap.ui.require([
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oPathPromise);
 		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs("", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
 			.returns("/" + sCachePath);
@@ -1818,7 +1845,7 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		this.mock(oBinding).expects("getQueryOptions")
-			.withExactArgs("", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
 			.returns("/" + sCachePath);
