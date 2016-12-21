@@ -14,8 +14,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/Component",
 			// subscribe to app events
 			this._component = Component.getOwnerComponentFor(this.getView());
 			this._component.getEventBus().subscribe("app", "applyAppConfiguration", this._applyAppConfiguration, this);
-			//load fake lrep lazy
-			this.initFlex();
 		},
 
 		onAfterRendering : function () {
@@ -49,60 +47,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/Component",
 				this._themeActive = oData.themeActive;
 				this._compactOn = oData.compactOn;
 			}
-
-		},
-		_bFlexInitialized : false,
-		initFlex: function() {
-			if (!this._bFlexInitialized) {
-				var that = this;
-				setTimeout(function() {
-					sap.ui.require(["sap/ui/fl/FakeLrepConnector","sap/ui/fl/Utils", "sap/ui/fl/descriptorRelated/api/Settings"], function(FakeLrepConnector, Utils, Settings) {
-						if (!Utils || !FakeLrepConnector) {
-							return;
-						}
-
-						Settings.prototype.isProductiveSystem = function() {
-							return true; // not currently working to avoid transport button...
-						};
-
-						Utils.checkControlId = function() {
-							return true;
-						};
-
-						// override FakeLrepConnector functions
-						FakeLrepConnector.enableFakeConnector();
-						FakeLrepConnector.prototype.create = function(payload, changeList, isVariant) {
-							return Promise.resolve();
-						};
-						FakeLrepConnector.prototype.loadChanges = function(sComponentClassName) {
-							return new Promise(function(resolve, reject) {
-								var result = {
-									changes: {},
-									componentClassName: sComponentClassName
-								};
-								resolve(result);
-							});
-						};
-						FakeLrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions){
-							return new Promise(function(resolve, reject){
-
-							});
-						};
-						FakeLrepConnector.prototype.update = function(payload, changeName, changelist, isVariant) {
-							return Promise.resolve();
-						};
-						FakeLrepConnector.prototype.deleteChange = function(params, isVariant) {
-							return Promise.resolve({
-								response: undefined,
-								status: 'nocontent'
-							});
-						};
-						that._bFlexInitialized = true;
-					});
-				}, 3000);
-				return;
-			}
-
 		}
 	});
 
