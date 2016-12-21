@@ -1057,5 +1057,8 @@ sap.ui.define([
 		return sClassName + ": " + this.sServiceUrl;
 	};
 
+	// pass this constructor to ODataMetaModel to avoid the cyclic dependency
+	ODataMetaModel.setODataModel(ODataModel);
+
 	return ODataModel;
 }, /* bExport= */ true);

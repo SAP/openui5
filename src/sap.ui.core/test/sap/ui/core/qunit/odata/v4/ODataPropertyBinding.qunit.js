@@ -1348,6 +1348,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["getValueListType", "requestValueListInfo"].forEach(function (sFunctionName) {
+		QUnit.test(sFunctionName + ": forward", function(assert) {
+			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+				oPropertyBinding = this.oModel.bindProperty("Category", oContext),
+				vResult = {};
+
+			this.mock(this.oModel).expects("resolve")
+				.withExactArgs(oPropertyBinding.sPath, oContext)
+				.returns("~");
+			this.mock(this.oModel.getMetaModel()).expects(sFunctionName)
+				.withExactArgs("~").returns(vResult);
+
+			// code under test
+			assert.strictEqual(oPropertyBinding[sFunctionName](), vResult);
+		});
+
+		QUnit.test(sFunctionName + ": unresolved", function(assert) {
+			var oPropertyBinding = this.oModel.bindProperty("Category");
+
+			this.mock(this.oModel).expects("resolve")
+				.withExactArgs(oPropertyBinding.sPath, undefined)
+				.returns(undefined);
+			assert.throws(function () {
+				oPropertyBinding[sFunctionName]();
+			}, new Error(oPropertyBinding + " is not resolved yet"));
+		});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {

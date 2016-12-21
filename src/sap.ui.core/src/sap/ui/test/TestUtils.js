@@ -468,8 +468,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *   project's test folder, typically it should start with "sap".
 		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {string} [sFilterBase="/"]
-		 *   A base path for the filter URLs. It is prepended to all keys in <code>mFixture</code>.
-		 *   It must end with '/'.
+		 *   A base path for relative filter URLs in <code>mFixture</code>.
 		 *
 		 * @see #.isRealOData
 		 * @see #.proxy
@@ -480,9 +479,14 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 			if (bRealOData) {
 				return;
 			}
-			sFilterBase = sFilterBase || "/";
+			if (!sFilterBase) {
+				sFilterBase = "/";
+			} else if (sFilterBase.slice(-1) !== "/") {
+				sFilterBase += "/";
+			}
 			Object.keys(mFixture).forEach(function (sUrl) {
-				mResultingFixture[sFilterBase + sUrl] = mFixture[sUrl];
+				var sAbsoluteUrl = sUrl[0] === "/" ? sUrl : sFilterBase + sUrl;
+				mResultingFixture[sAbsoluteUrl] = mFixture[sUrl];
 			});
 			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
 				mResultingFixture);
