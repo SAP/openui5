@@ -1283,6 +1283,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		return this;
 	};
 
+	MultiInput.prototype.updateTokens = function () {
+		this.destroyTokens();
+		this.updateAggregation("tokens");
+	};
+
 	MultiInput.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
 		var aTokens;
 		if (sAggregationName === "tokens") {

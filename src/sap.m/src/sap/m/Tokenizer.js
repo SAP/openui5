@@ -1020,6 +1020,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	Tokenizer.prototype.updateTokens = function () {
+		this.destroyTokens();
+		this.updateAggregation("tokens");
+	};
+
 	/**
 	 * Function removes all selected tokens
 	 *
@@ -1037,7 +1042,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (i = 0; i < length; i++) {
 			token = tokensToBeDeleted[i];
 			if (token.getEditable()) {
-				this.removeToken(token);
+				token.destroy();
 			}
 		}
 
