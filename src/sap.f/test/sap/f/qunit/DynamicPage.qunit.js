@@ -353,7 +353,6 @@
 			sSnappedClass = "sapFDynamicPageTitleSnapped",
 			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
 
-		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(false);
 		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
 
 		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
@@ -379,28 +378,6 @@
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 	});
 
-	QUnit.test("DynamicPage Header - expanding/collapsing through the API when not allowed because of header size", function (assert) {
-		var oDynamicPage = this.oDynamicPage,
-			sSnappedClass = "sapFDynamicPageTitleSnapped",
-			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
-
-		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(true);
-		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
-
-		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
-
-		oDynamicPage.setHeaderExpanded(false);
-		assert.equal(oDynamicPage.getHeaderExpanded(), true, "collapsing it when no space for the entire header fails");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.ok(oSetPropertySpy.neverCalledWith("headerExpanded", false, true));
-
-		oDynamicPage.setHeaderExpanded(true);
-		assert.ok(oSetPropertySpy.neverCalledWith("headerExpanded", true, true));
-		assert.equal(oDynamicPage.getHeaderExpanded(), true, "setting it to true again does nothing");
-	});
-
-
 	QUnit.test("DynamicPage Header - expanding/collapsing by clicking the title", function (assert) {
 
 		var oDynamicPage = this.oDynamicPage,
@@ -409,7 +386,6 @@
 				srcControl: oDynamicPageTitle
 			};
 
-		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(false);
 		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Initially the header is expanded");
@@ -932,27 +908,6 @@
 		fnStubConfig(100, 999);
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), false,
-			"DynamicPage Header is not bigger than allowed");
-	});
-
-	QUnit.test("DynamicPage _headerBiggerThanAllowedToExpandWithACommand() returns the correct value", function (assert) {
-		var oDynamicPage = this.oDynamicPage,
-			oSandBox = sinon.sandbox.create(),
-			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
-				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight),
-					oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
-			};
-
-		fnStubConfig(1000, 999);
-
-		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandWithACommand(), true,
-			"DynamicPage Header is bigger than allowed");
-
-		oSandBox.restore();
-
-		fnStubConfig(100, 999);
-
-		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandWithACommand(), false,
 			"DynamicPage Header is not bigger than allowed");
 	});
 
