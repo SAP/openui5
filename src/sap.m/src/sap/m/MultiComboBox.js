@@ -743,7 +743,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	MultiComboBox.prototype.createPopover = function() {
 		var oPopup = new Popover({
 			showArrow: false,
-			showHeader: false,
 			placement: sap.m.PlacementType.Vertical,
 			offsetX: 0,
 			offsetY: 0,
