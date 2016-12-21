@@ -72,14 +72,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		/*************************************** Static members ******************************************/
 
-		DynamicPageHeader._LIBRARY = "sap.m";
-
 		/**
 		 * Retrieves the resource bundle for the <code>sap.f</code> library.
 		 * @returns {Object} the resource bundle object
 		 */
 		DynamicPageHeader._getResourceBundle = function () {
-			return sap.ui.getCore().getLibraryResourceBundle(DynamicPageHeader._LIBRARY);
+			return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 		};
 
 		DynamicPageHeader.ARIA = {

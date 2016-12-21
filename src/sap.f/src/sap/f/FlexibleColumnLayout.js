@@ -1560,7 +1560,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	FlexibleColumnLayout._getResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
 	/**
