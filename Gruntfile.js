@@ -6,6 +6,7 @@
 
 var path = require('path');
 var moment = require('moment');
+var semver = require('semver');
 
 module.exports = function(grunt) {
 
@@ -18,6 +19,15 @@ module.exports = function(grunt) {
 		deferLogs: true,
 		color: 'cyan'
 	});
+
+	// Check for valid required Node.js version from package.json
+	// npm does not validate this within the project itself; only if this project would be installed as a dependency (which is not the case as of now)
+	var pkg = grunt.file.readJSON(__dirname + "/package.json");
+	if (pkg.engines && pkg.engines.node && !semver.satisfies(process.version, pkg.engines.node)) {
+		grunt.log.error('!!! WARNING !!!');
+		grunt.log.error('Unsupported Node.js version: wanted "' + pkg.engines.node + '" (current: "' + process.version + '")');
+		grunt.log.error('Please update your Node.js installation!');
+	}
 
 	// Load all custom tasks from grunt/tasks dir
 	grunt.loadTasks(path.join(process.cwd(), 'grunt/tasks'));
