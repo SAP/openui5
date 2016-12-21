@@ -849,46 +849,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	Month.prototype.onmousedown = function (oEvent) {
-		var oEventData = oEvent.originalEvent;
-		this._oMouseDownCoordinates = {};
+	Month.prototype.onmouseup = function(oEvent){
 
-		if (oEvent.pageX == undefined) {
-			oEventData = oEvent.originalEvent.touches[0];
+		// fire select event on mouseup to prevent closing calendar during click
+
+		if (this._bMouseMove) {
+			this._unbindMousemove(true);
+
+			// focus now selected day
+			var oFocusedDate = this._getDate();
+			var aDomRefs = this._oItemNavigation.getItemDomRefs();
+
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				var $DomRef = jQuery(aDomRefs[i]);
+				if (!$DomRef.hasClass("sapUiCalItemOtherMonth")) {
+					if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate.getJSDate(), true)) {
+						$DomRef.focus();
+						break;
+					}
+				}
+			}
+
+			if (this._bMoveChange) {
+				// selection was changed -> make it final
+				var bSelected = _selectDay.call(this, oFocusedDate);
+				if (!bSelected && this._oMoveSelectedDate) {
+					_selectDay.call(this, this._oMoveSelectedDate);
+				}
+				this._bMoveChange = false;
+				this._bMousedownChange = false;
+				this._oMoveSelectedDate = undefined;
+				_fireSelect.call(this);
+			}
 		}
 
-		this._oMouseDownCoordinates.pageX = oEventData.pageX;
-		this._oMouseDownCoordinates.pageY = oEventData.pageY;
-
-		oEvent.preventDefault();
-		oEvent.setMark("cancelAutoClose");
-	};
-
-	Month.prototype.onmouseup = function(oEvent) {
-		var oEventData = oEvent.originalEvent,
-			iOffsetX,
-			iOffsetY;
-
-		if (!this._oMouseDownCoordinates) {
-			return;
+		if (this._bMousedownChange) {
+			this._bMousedownChange = false;
+			_fireSelect.call(this);
 		}
-
-		if (oEvent.pageX == undefined) {
-			oEventData = oEvent.originalEvent.changedTouches[0];
-		}
-
-		iOffsetX = Math.abs(oEventData.pageX - this._oMouseDownCoordinates.pageX);
-		iOffsetY = Math.abs(oEventData.pageY - this._oMouseDownCoordinates.pageY);
-
-		if (iOffsetX < 5 && iOffsetY < 5) {
-			//Mouseup with less than 5px difference in either x or y coordinates is considered as a click
-			this._bMousedownChange = this._bMouseMove = this._bMoveChange = true;
-			_handleMouseup.call(this, oEvent);
-		} else {
-			//Mouseup with offset equal or more than 5px in either x or y coordinates is considered as a drag
-			jQuery.sap.log.info("Mouse drag performed. Unfortunately the calendar doesn't support yet this event");
-		}
-		this._oMouseDownCoordinates = undefined;
 
 	};
 
@@ -1285,6 +1283,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: bOtherMonth});
 		}
 
+		if (oEvent.type == "mousedown") {
+			// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
+			_handleMousedown.call(this, oEvent, oFocusedDate, iIndex);
+		}
+
 	}
 
 	function _handleFocusAgain(oControlEvent){
@@ -1306,45 +1309,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_handleMousedown.call(this, oEvent, oFocusedDate, iIndex);
 		}
 
-	}
-
-	function _handleMouseup (oEvent) {
-		// fire select event on mouseup to prevent closing calendar during click
-
-		if (this._bMouseMove) {
-			this._unbindMousemove(true);
-
-			// focus now selected day
-			var oFocusedDate = this._getDate();
-			var aDomRefs = this._oItemNavigation.getItemDomRefs();
-
-			for ( var i = 0; i < aDomRefs.length; i++) {
-				var $DomRef = jQuery(aDomRefs[i]);
-				if (!$DomRef.hasClass("sapUiCalItemOtherMonth")) {
-					if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate.getJSDate(), true)) {
-						$DomRef.focus();
-						break;
-					}
-				}
-			}
-
-			if (this._bMoveChange) {
-				// selection was changed -> make it final
-				var bSelected = _selectDay.call(this, oFocusedDate);
-				if (!bSelected && this._oMoveSelectedDate) {
-					_selectDay.call(this, this._oMoveSelectedDate);
-				}
-				this._bMoveChange = false;
-				this._bMousedownChange = false;
-				this._oMoveSelectedDate = undefined;
-				_fireSelect.call(this);
-			}
-		}
-
-		if (this._bMousedownChange) {
-			this._bMousedownChange = false;
-			_fireSelect.call(this);
-		}
 	}
 
 	function _handleMousedown(oEvent, oFocusedDate, iIndex){
