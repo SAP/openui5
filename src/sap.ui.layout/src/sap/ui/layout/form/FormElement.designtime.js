@@ -19,6 +19,13 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 					if (oLayout instanceof ResponsiveGridLayout) {
 						var aFields = oFormElement.getFields();
 						var oLabel = oFormElement.getLabel();
+						if (typeof (oLabel) === "string"){
+							if (oFormElement.getLabelControl){
+								oLabel = oFormElement.getLabelControl();
+							} else { // can't retrieve label object
+								oLabel = null;
+							}
+						}
 						if (oLabel) {
 							aFields.unshift(oLabel);
 						}
