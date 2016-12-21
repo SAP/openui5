@@ -142,6 +142,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	});
 
+
+	// Creates Information for SupportTool (see e.g. library.support.js of sap.ui.table library)
+	function createSupportInfo(oAnalyticalBinding, sErrorId) {
+		return function() {
+			if (!oAnalyticalBinding.__supportUID) {
+				oAnalyticalBinding.__supportUID = jQuery.sap.uid();
+			}
+			return {
+				type: "sap.ui.model.analytics.AnalyticalBinding",
+				analyticalError: sErrorId,
+				analyticalBindingId: oAnalyticalBinding.__supportUID
+			};
+		};
+	}
+
+
 	/**
 	 * Setter for context
 	 * @param {Object} oContext the new context object
@@ -2488,7 +2504,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 					if (iDeviatingUnitPropertyNameIndex == -1) {
 // 						this._trace_debug_if(true, "assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
-						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
+						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h, null, null, createSupportInfo(this, "NO_DEVIATING_UNITS"));
 					}
 				}
 				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || h == iODataResultsLength - 1)
