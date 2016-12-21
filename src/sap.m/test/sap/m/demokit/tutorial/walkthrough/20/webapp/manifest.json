@@ -24,7 +24,8 @@
 	  "phone": true
 	},
 	"supportedThemes": [
-	  "sap_bluecrystal"
+		"sap_hcb",
+		"sap_belize"
 	]
   },
 
