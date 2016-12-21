@@ -73,6 +73,14 @@
 		assert.strictEqual(this.rangeSlider.$().find(".sapMSliderHandle").length, 2, "Both handles should be affected");
 	});
 
+	QUnit.test("Memory leak on rerender", function (assert) {
+		var oldLabel = this.rangeSlider._oRangeLabel;
+		this.rangeSlider.rerender();
+		sap.ui.getCore().applyChanges();
+		var newLabel = this.rangeSlider._oRangeLabel;
+		assert.equal(oldLabel, newLabel, "No new range label should be created on control rerendering");
+	});
+
 	QUnit.module("API", {
 		setup: function () {
 			this.rangeSlider = new sap.m.RangeSlider();
