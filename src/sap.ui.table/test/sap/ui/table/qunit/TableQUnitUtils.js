@@ -153,8 +153,12 @@ function destroyTables() {
 //************************************************************************
 
 
-function getCell(iRow, iCol, bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + iRow + "-col" + iCol);
+function getCell(iRow, iCol, bFocus, assert, oTableInstance) {
+	if (oTableInstance == null) {
+		oTableInstance = oTable;
+	}
+
+	var oCell = jQuery.sap.domById(oTableInstance.getId() + "-rows-row" + iRow + "-col" + iCol);
 	if (bFocus) {
 		oCell.focus();
 	}
@@ -168,8 +172,12 @@ function getCell(iRow, iCol, bFocus, assert) {
 	return jQuery(oCell);
 }
 
-function getColumnHeader(iCol, bFocus, assert) {
-	var oCell = jQuery.sap.domById((oTable._getVisibleColumns()[iCol]).getId());
+function getColumnHeader(iCol, bFocus, assert, oTableInstance) {
+	if (oTableInstance == null) {
+		oTableInstance = oTable;
+	}
+
+	var oCell = jQuery.sap.domById((oTableInstance._getVisibleColumns()[iCol]).getId());
 	if (bFocus) {
 		oCell.focus();
 	}
@@ -183,8 +191,12 @@ function getColumnHeader(iCol, bFocus, assert) {
 	return jQuery(oCell);
 }
 
-function getRowHeader(iRow, bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + iRow);
+function getRowHeader(iRow, bFocus, assert, oTableInstance) {
+	if (oTableInstance == null) {
+		oTableInstance = oTable;
+	}
+
+	var oCell = jQuery.sap.domById(oTableInstance.getId() + "-rowsel" + iRow);
 	if (bFocus) {
 		oCell.focus();
 	}
@@ -198,8 +210,12 @@ function getRowHeader(iRow, bFocus, assert) {
 	return jQuery(oCell);
 }
 
-function getSelectAll(bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-selall");
+function getSelectAll(bFocus, assert, oTableInstance) {
+	if (oTableInstance == null) {
+		oTableInstance = oTable;
+	}
+
+	var oCell = jQuery.sap.domById(oTableInstance.getId() + "-selall");
 	if (bFocus) {
 		oCell.focus();
 	}
