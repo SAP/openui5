@@ -3065,14 +3065,7 @@
 		// act
 		var oToken = jQuery.find(".sapMToken")[0];
 		var oTokenIcon = jQuery.find(".sapMTokenIcon")[0];
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oToken, {
-			target : oTokenIcon,
-			button : 0
-		});
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oToken, {
-			target : oTokenIcon,
-			button : 0
-		});
+		sap.ui.test.qunit.triggerEvent("click", oTokenIcon);
 
 		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);

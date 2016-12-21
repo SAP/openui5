@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Tokenizer'],
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Tokenizer'],
 	function(jQuery, library, Control, Tokenizer) {
 	"use strict";
 
@@ -100,7 +100,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			/**
 			 * This event is fired when the token gets selected.
 			 */
-			select : {}
+			select : {},
+
+			/**
+			 * This event is fired when the token gets deselected.
+			 */
+			deselect : {}
 		}
 	}});
 
@@ -122,7 +127,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		var that = this;
 		this._deleteIcon = new sap.ui.core.Icon({
 			id : that.getId() + "-icon",
-			src : "sap-icon://sys-cancel"
+			src : "sap-icon://sys-cancel",
+			noTabStop: true,
+			press : function(oEvent) {
+				var oParent = that.getParent();
+				if (oParent instanceof Tokenizer) {
+					oParent._onTokenDelete(that);
+				}
+				that.fireDelete();
+				oEvent.preventDefault();
+			}
 		});
 
 		this._deleteIcon.addStyleClass("sapMTokenIcon");
@@ -137,60 +151,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	Token.prototype.ontouchstart = function(oEvent) {
-		this.$().toggleClass("sapMTokenActive", true);
-		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button) {
-			/* there are two cases that should fire touch start event:
-			 left button click in desktop, where value of button event is 0;
-			 touch event in combi device, where value of button event is undefined.*/
-			return;
-		}
-
-		this._oSrcStartId = oEvent.target.id;
-
-		if (this._oSrcStartId === this._deleteIcon.getId()) {
-			oEvent.preventDefault();
-		}
+		// prevent default or else the icon may get focused
+		oEvent.preventDefault();
 	};
 
 	/**
 	 * Sets the selection status of the token.
 	 *
 	 * @param {boolean} bSelected Indicates if the token is selected.
-	 * @param {boolean} bMultiSelect Indicates if the token is one of the multi-selected tokens.
 	 * @return {sap.m.Token} this for chaining
+	 * @public
 	 */
-	Token.prototype.setSelected = function(bSelected, bMultiSelect) {
+	Token.prototype.setSelected = function(bSelected) {
 
-		if (bSelected && !bMultiSelect) {
-			this.focus();
+		if (this.getSelected() === bSelected) {
+			return this;
 		}
 
 		var $this = this.$();
 
 		if ($this) {
-			if (bSelected) {
-				$this.addClass("sapMTokenSelected");
-				$this.attr('aria-selected', "true");
-			} else {
-				$this.removeClass("sapMTokenSelected");
-				$this.attr('aria-selected', "false");
-			}
-		} else {
-			if (bSelected) {
-				this.addStyleClass("sapMTokenSelected");
-				this.attr('aria-selected', "true");
-			} else {
-				this.removeStyleClass("sapMTokenSelected");
-				this.attr('aria-selected', "false");
-			}
-
+			$this.toggleClass("sapMTokenSelected", bSelected);
+			$this.attr('aria-selected', bSelected);
 		}
 
 		this.setProperty("selected", bSelected, true);
-
-		if (bSelected) {
-			this.fireSelect();
-		}
 
 		return this;
 	};
@@ -221,14 +206,57 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @param {jQuery.Event} oEvent
 	 */
-	Token.prototype._onTokenPress = function() {
-		var bSelected = this.getSelected();
-		this.setSelected(!bSelected);
+	Token.prototype._onTokenPress = function(oEvent) {
+		var bSelected = this.getSelected(),
+			bCtrlKey = oEvent.ctrlKey || oEvent.metaKey,
+			bShiftKey = oEvent.shiftKey,
+			bNewSelectedValue = true,
+			oParent;
 
-		if (!bSelected) {
-			this.fireSelect({});
+		if (bCtrlKey) {
+			bNewSelectedValue = !bSelected;
 		}
 
+		this.setSelected(bNewSelectedValue);
+
+		this.firePress();
+
+		if (bSelected != bNewSelectedValue) {
+			if (bNewSelectedValue) {
+				this.fireSelect();
+			} else {
+				this.fireDeselect();
+			}
+		}
+
+		oParent = this.getParent();
+		if (oParent instanceof Tokenizer) {
+			oParent._onTokenSelect(this, bCtrlKey, bShiftKey);
+		}
+
+		if (this.getSelected()) {
+			this.focus();
+		}
+	};
+
+	/**
+	 * Sets the selection status of the token and fires the correct "select" or "deselect" event.
+	 *
+	 * @param {boolean} bSelected Indicates if the token is selected.
+	 * @private
+	 */
+	Token.prototype._changeSelection = function(bSelected) {
+		if (this.getSelected() == bSelected) {
+			return;
+		}
+
+		this.setSelected(bSelected);
+
+		if (bSelected) {
+			this.fireSelect();
+		} else {
+			this.fireDeselect();
+		}
 	};
 
 
@@ -240,54 +268,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
-		this._onTokenPress();
-	};
-
-	/**
-	 * Event handler called when control touch ends, triggers possible click events / selects token
-	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
-	 * @private
-	 */
-	Token.prototype.ontouchend = function(oEvent) {
-		this.$().toggleClass("sapMTokenActive", false);
-		var oSrc = oEvent.target;
-		if (this._oSrcStartId !== oSrc.id) {
-			delete this._oSrcStartId;
-			return;
-		}
-
-		// we only allow deletion on touch devices when the Token is selected - this is to avoid accidental deletion when
-		// swiping
-		var bTouch = sap.m.MultiInput.prototype._bDoTouchScroll;
-		var bTouchDeleteAllow = false;
-		if (bTouch && this.getSelected()) {
-			bTouchDeleteAllow = true;
-		}
-
-		if (oSrc.id === this._deleteIcon.getId()) {
-			if (bTouchDeleteAllow || !bTouch) {
-				this.fireDelete({
-					token : this
-				});
-			} else {
-				// in this case we at least make sure the element gets selected
-				this.firePress({
-					token : this
-				});
-			}
-			oEvent.preventDefault();
-
-		} else {
-			this.firePress({
-				token : this
-			});
-			oEvent.preventDefault();
-		}
-
-		delete this._oSrcStartId;
-
+		this._onTokenPress(oEvent);
 	};
 
 	/**
@@ -298,6 +279,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	Token.prototype.onsapfocusleave = function(oEvent) {
+		if (this.getParent() instanceof Tokenizer) {
+			return;
+		}
+
 		this.setSelected(false);
 	};
 
@@ -329,9 +314,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		if (this.getEditable()) {
-			this.fireDelete({
-				token : this
-			});
+			this.fireDelete();
 		}
 
 		oEvent.preventDefault();
@@ -345,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	Token.prototype.onsapspace = function(oEvent) {
 
-		this._onTokenPress();
+		this._onTokenPress(oEvent);
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();

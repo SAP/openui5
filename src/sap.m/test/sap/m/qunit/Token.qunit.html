@@ -5,16 +5,15 @@
 
 <title>Test Page for sap.m.Token</title>
 <script id="sap-ui-bootstrap"
-		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -87,10 +86,10 @@
 	test("select/deselect token", function() {
 		token1.setSelected(false);
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		ok(token1.$().hasClass("sapMTokenSelected"), "token is unselected");
+		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		ok(!token1.$().hasClass("sapMTokenSelected"), "token is unselected");
+		ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
 	});
 
 	test("setter / getter textDirection", function() {
