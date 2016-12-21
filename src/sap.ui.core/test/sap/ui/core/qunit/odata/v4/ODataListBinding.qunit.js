@@ -709,7 +709,7 @@ sap.ui.require([
 				that = this;
 
 			this.mock(oBinding.oCache).expects("read")
-				.withExactArgs(0, 3, "groupId", undefined, sinon.match.func)
+				.withExactArgs(0, 3, "groupId", sinon.match.func)
 				.returns(_SyncPromise.resolve(aData));
 			if (bExtendedChangeDetection) {
 				oBinding.enableExtendedChangeDetection(false);
@@ -752,8 +752,8 @@ sap.ui.require([
 					aDiff = [/*some diff*/];
 
 				oCacheMock.expects("read")
-					.withExactArgs(0, 3, "groupId", undefined, sinon.match.func)
-					.callsArg(4)
+					.withExactArgs(0, 3, "groupId", sinon.match.func)
+					.callsArg(3)
 					.returns(_SyncPromise.resolve(Promise.resolve(aData)));
 				if (bExtendedChangeDetection) {
 					oBinding.enableExtendedChangeDetection(false);
@@ -766,7 +766,7 @@ sap.ui.require([
 					if (!bExtendedChangeDetection) {
 						// expect a second read which is responded synchronously
 						oCacheMock.expects("read")
-							.withExactArgs(0, 3, "groupId", undefined, sinon.match.func)
+							.withExactArgs(0, 3, "groupId", sinon.match.func)
 							.returns(_SyncPromise.resolve(aData));
 					}
 					that.mock(oBinding).expects("_fireChange").never();
@@ -859,11 +859,11 @@ sap.ui.require([
 			}
 
 			oCacheMock.expects("read")
-				.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
-				.callsArg(4)
+				.withExactArgs(iStartIndex, iLength, "$direct", sinon.match.func)
+				.callsArg(3)
 				.returns(oPromise);
 			oCacheMock.expects("read")
-				.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
+				.withExactArgs(iStartIndex, iLength, "$direct", sinon.match.func)
 				.returns(createSyncResult(iEntityCount));
 
 			// spies to check and document calls to model and binding methods from ManagedObject
@@ -1054,12 +1054,12 @@ sap.ui.require([
 				// followed by a sync one
 				if (iRangeIndex < oFixture.length - 1) {
 					oCacheMock.expects("read")
-						.withExactArgs(iStart, iLength, "$auto", undefined, sinon.match.func)
-						.callsArg(4)
+						.withExactArgs(iStart, iLength, "$auto", sinon.match.func)
+						.callsArg(3)
 						.returns(createResult(iLength, iStart));
 				}
 				oCacheMock.expects("read")
-					.withExactArgs(iStart, iLength, "$auto", undefined, sinon.match.func)
+					.withExactArgs(iStart, iLength, "$auto", sinon.match.func)
 					.returns(createSyncResult(iLength, iStart));
 			}
 
@@ -1129,8 +1129,8 @@ sap.ui.require([
 				oContextMock.expects("fetchValue").returns(oPromise);
 			} else {
 				oCacheMock = this.getCacheMock();
-				oCacheMock.expects("read").callsArg(4).returns(createResult(2));
-				oCacheMock.expects("read").callsArg(4).returns(oPromise);
+				oCacheMock.expects("read").callsArg(3).returns(createResult(2));
+				oCacheMock.expects("read").callsArg(3).returns(oPromise);
 			}
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to get contexts for " + sResolvedPath
@@ -1172,8 +1172,8 @@ sap.ui.require([
 				oPromise = createResult(oFixture.result);
 
 			this.getCacheMock().expects("read")
-				.withExactArgs(oFixture.start, 30, "$direct", undefined, sinon.match.func)
-				.callsArg(4)
+				.withExactArgs(oFixture.start, 30, "$direct", sinon.match.func)
+				.callsArg(3)
 				.returns(oPromise);
 			oBinding = this.oModel.bindList("/EMPLOYEES", oContext, undefined, undefined,
 				{$$groupId : "$direct"});
@@ -1226,8 +1226,8 @@ sap.ui.require([
 
 		oPromise = createResult(iReadLength, iReadStart);
 		oCacheMock.expects("read")
-			.withExactArgs(iReadStart, 175, "$direct", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(iReadStart, 175, "$direct", sinon.match.func)
+			.callsArg(3)
 			.returns(oPromise);
 
 		// code under test
@@ -1252,7 +1252,7 @@ sap.ui.require([
 				.withExactArgs(110, 15, 0)
 				.returns({start : 110, length : 15});
 			oCacheMock.expects("read")
-				.withExactArgs(110, 15, "$direct", undefined, sinon.match.func)
+				.withExactArgs(110, 15, "$direct", sinon.match.func)
 				.returns(createSyncResult(15, 110));
 
 			// code under test
@@ -1264,7 +1264,7 @@ sap.ui.require([
 				.withExactArgs(120, 15, 0)
 				.returns({start : 120, length : 15});
 			oCacheMock.expects("read")
-				.withExactArgs(120, 15, "$direct", undefined, sinon.match.func)
+				.withExactArgs(120, 15, "$direct", sinon.match.func)
 				.returns(createSyncResult(15, 120));
 
 			// code under test
@@ -1286,8 +1286,8 @@ sap.ui.require([
 				oReadPromise = createResult(15);
 
 			oCacheMock.expects("read")
-				.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
-				.callsArg(4)
+				.withExactArgs(20, 30, "$auto", sinon.match.func)
+				.callsArg(3)
 				.returns(oReadPromise);
 
 			assert.deepEqual(oBinding.getCurrentContexts(), []);
@@ -1301,8 +1301,8 @@ sap.ui.require([
 
 				oReadPromise = createResult(oFixture.result);
 				oCacheMock.expects("read")
-					.withExactArgs(oFixture.start, 30, "$auto", undefined, sinon.match.func)
-					.callsArg(4)
+					.withExactArgs(oFixture.start, 30, "$auto", sinon.match.func)
+					.callsArg(3)
 					.returns(oReadPromise);
 
 				getContexts(assert, oBinding, oFixture.start, 30, oFixture.curr);
@@ -1333,18 +1333,18 @@ sap.ui.require([
 
 		// 1. read and get [20..50) -> estimated length 60
 		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(20, 30, "$auto", sinon.match.func)
+			.callsArg(3)
 			.returns(oReadPromise1);
 		// 2. read and get [0..30) -> length still 60
 		oCacheMock.expects("read")
-			.withExactArgs(0, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(0, 30, "$auto", sinon.match.func)
+			.callsArg(3)
 			.returns(oReadPromise2);
 		// 3. read [50..80) get no entries -> length is now final 50
 		oCacheMock.expects("read")
-			.withExactArgs(50, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(50, 30, "$auto", sinon.match.func)
+			.callsArg(3)
 			.returns(oReadPromise3);
 
 		oBinding.getContexts(20, 30);
@@ -1415,7 +1415,7 @@ sap.ui.require([
 		return new Promise(function (finishTest) {
 			var oBinding = that.oModel.bindList("/EMPLOYEES");
 
-			that.stub(oBinding.oCache, "read", function (iIndex, iLength, sGroupId, sPath,
+			that.stub(oBinding.oCache, "read", function (iIndex, iLength, sGroupId,
 					fnDataRequested) {
 				return _SyncPromise.resolve().then(function () {
 					that.mock(oBinding).expects("fireDataRequested").withExactArgs();
@@ -1448,7 +1448,7 @@ sap.ui.require([
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
 				sClassName, sinon.match.same(oError));
-			this.mock(oBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+			this.mock(oBinding.oCache).expects("read").callsArg(3).returns(oReadPromise);
 			this.mock(oBinding).expects("fireDataReceived")
 				.withExactArgs(bCanceled ? undefined : {error : oError});
 
@@ -1473,7 +1473,7 @@ sap.ui.require([
 				.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0"
 					+ " and length 10", sClassName, sinon.match.same(oError));
 
-			oCacheMock.expects("read").callsArg(4).returns(oReadResult);
+			oCacheMock.expects("read").callsArg(3).returns(oReadResult);
 			oCacheMock.expects("read").returns(oReadResult);
 
 			oBinding.attachDataReceived(function (oEvent) {
@@ -1498,8 +1498,9 @@ sap.ui.require([
 			oPromise,
 			oReadResult = {};
 
-		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs(42, 1, undefined, "bar", undefined, oListener)
+		this.mock(_Helper).expects("buildPath").withExactArgs(42, "bar").returns("~");
+		this.mock(oBinding.oCache).expects("fetchValue")
+			.withExactArgs(undefined, "~", undefined, oListener)
 			.returns(_SyncPromise.resolve(oReadResult));
 
 		oPromise = oBinding.fetchValue("bar", oListener, 42);
@@ -1509,7 +1510,7 @@ sap.ui.require([
 		});
 	});
 	//TODO support dataRequested/dataReceived event in fetchValue:
-	//     common implementation used by fetchValue and getContexts?
+	//     share implementation with ODataContextBinding?
 
 	//*********************************************************************************************
 	[{
@@ -1754,7 +1755,7 @@ sap.ui.require([
 				{$$groupId : "myGroup"});
 
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
+			.withExactArgs(0, 10, "myGroup", sinon.match.func)
 			.returns(createResult(0));
 
 		oBinding.getContexts(0, 10);
@@ -1766,7 +1767,7 @@ sap.ui.require([
 				{$$groupId : "$direct"});
 
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
+			.withExactArgs(0, 10, "myGroup", sinon.match.func)
 			.returns(createResult(0));
 		oBinding.sRefreshGroupId = "myGroup";
 
@@ -1782,8 +1783,8 @@ sap.ui.require([
 				oReadPromise = createResult(0);
 
 			that.mock(oBinding.oCache).expects("read")
-				.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
-				.callsArg(4).returns(oReadPromise);
+				.withExactArgs(0, 10, "$auto", sinon.match.func)
+				.callsArg(3).returns(oReadPromise);
 			// check that error in data received handler is logged
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0"
@@ -1807,8 +1808,8 @@ sap.ui.require([
 			oReadPromise1 = createResult(10);
 
 		oCacheMock.expects("read")
-			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
-			.callsArg(4).returns(oReadPromise1);
+			.withExactArgs(0, 10, "$auto", sinon.match.func)
+			.callsArg(3).returns(oReadPromise1);
 
 		oBinding.getContexts(0, 10);
 
@@ -1816,13 +1817,13 @@ sap.ui.require([
 			var oReadPromise2 = createResult(0);
 
 			oCacheMock.expects("read")
-				.withExactArgs(10, 5, "$auto", undefined, sinon.match.func)
-				.callsArg(4).returns(oReadPromise2);
+				.withExactArgs(10, 5, "$auto", sinon.match.func)
+				.callsArg(3).returns(oReadPromise2);
 
 			oBinding.getContexts(10, 5);
 
 			oCacheMock.expects("read")
-				.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
+				.withExactArgs(0, 5, "$auto", sinon.match.func)
 				.returns(createSyncResult(5));
 
 			oBinding.getContexts(0, 5);
@@ -2053,8 +2054,8 @@ sap.ui.require([
 		this.stub(oContext2, "fetchCanonicalPath").returns(_SyncPromise.resolve("Employees('2')"));
 		oBinding.setContext(oContext1);
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(0, 5, "$auto", sinon.match.func)
+			.callsArg(3)
 			.returns(oReadPromise);
 		oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context}); // from setContext
@@ -2118,8 +2119,8 @@ sap.ui.require([
 			oReadPromise = _SyncPromise.resolve(Promise.resolve(oResult));
 
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
+			.withExactArgs(0, 5, "$auto", sinon.match.func)
+			.callsArg(3)
 			.returns(oReadPromise);
 		//TODO: this.mock(oBinding).expects("createContexts").withExactArgs(sinon.match.same(oResult));
 		this.mock(oBinding).expects("_fireChange")
@@ -2153,8 +2154,8 @@ sap.ui.require([
 				.withExactArgs(0, 3, 0)
 				.returns(oRange);
 			oCacheMock.expects("read")
-				.withExactArgs(0, 3, "$auto", undefined, sinon.match.func)
-				.callsArg(4)
+				.withExactArgs(0, 3, "$auto", sinon.match.func)
+				.callsArg(3)
 				.returns(_SyncPromise.resolve(Promise.resolve(aData)));
 			that.mock(oBinding).expects("getDiff")
 				.withExactArgs(sinon.match.same(aData), 0)
@@ -2693,7 +2694,7 @@ sap.ui.require([
 		oContext = oBinding.create();
 
 		oCacheMock.expects("read")
-			.withExactArgs(-1, 1, "$auto", undefined, sinon.match.func)
+			.withExactArgs(-1, 1, "$auto", sinon.match.func)
 			.returns(_SyncPromise.resolve({value : [{}]}));
 
 		// code under test
@@ -2704,7 +2705,7 @@ sap.ui.require([
 		assert.deepEqual(aContexts, oBinding.getCurrentContexts());
 
 		oCacheMock.expects("read")
-			.withExactArgs(-1, 3, "$auto", undefined, sinon.match.func)
+			.withExactArgs(-1, 3, "$auto", sinon.match.func)
 			.returns(_SyncPromise.resolve({value : [{}, {}, {}]}));
 
 		// code under test
@@ -2716,7 +2717,7 @@ sap.ui.require([
 		assert.deepEqual(aContexts, oBinding.getCurrentContexts());
 
 		oCacheMock.expects("read")
-			.withExactArgs(0, 2, "$auto", undefined, sinon.match.func)
+			.withExactArgs(0, 2, "$auto", sinon.match.func)
 			.returns(_SyncPromise.resolve({value : [{}, {}]}));
 
 		// code under test
@@ -2747,7 +2748,7 @@ sap.ui.require([
 		oContext = oBinding.create();
 
 		oCacheMock.expects("read")
-			.withExactArgs(-1, 3, "$auto", undefined, sinon.match.func)
+			.withExactArgs(-1, 3, "$auto", sinon.match.func)
 			.returns(_SyncPromise.resolve(oResult));
 		this.mock(oBinding).expects("getDiff")
 			.withExactArgs(oResult.value, -1)

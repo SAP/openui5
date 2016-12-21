@@ -838,7 +838,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
 		if (this.oCache) {
-			return this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener);
+			return this.oCache.fetchValue(undefined, _Helper.buildPath(iIndex, sPath), undefined,
+				oListener);
 		}
 		if (this.oContext) {
 			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, iIndex, sPath),
@@ -976,10 +977,9 @@ sap.ui.define([
 			if (this.oCache) {
 				sGroupId = this.sRefreshGroupId || this.getGroupId();
 				this.sRefreshGroupId = undefined;
-				oPromise = this.oCache.read(oRange.start, oRange.length, sGroupId, undefined,
-					function () {
-						bDataRequested = true;
-						that.fireDataRequested();
+				oPromise = this.oCache.read(oRange.start, oRange.length, sGroupId, function () {
+					bDataRequested = true;
+					that.fireDataRequested();
 				});
 			} else {
 				oPromise = oContext.fetchValue(this.sPath).then(function (aResult) {

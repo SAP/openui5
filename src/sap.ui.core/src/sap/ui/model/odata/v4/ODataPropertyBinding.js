@@ -239,7 +239,7 @@ sap.ui.define([
 		}
 		if (this.oCache) {
 			sGroupId = sGroupId || this.getGroupId();
-			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
+			oReadPromise = this.oCache.fetchValue(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
 				that.fireDataRequested();
 			}, this);

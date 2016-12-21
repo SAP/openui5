@@ -94,6 +94,13 @@ sap.ui.define([
 				deregisterChange : function () {
 					// Be prepared for late deregistrations by dependents of parked contexts
 				},
+				fetchValue : function () {
+					var aArguments = arguments;
+
+					return oPromise.then(function () {
+						return that.oCache.fetchValue.apply(that.oCache, aArguments);
+					});
+				},
 				hasPendingChangesForPath : function () {
 					// No pending changes because create and update are not allowed
 					return false;
@@ -102,10 +109,10 @@ sap.ui.define([
 					throw new Error("POST request not allowed");
 				},
 				read : function () {
-					var aReadArguments = arguments;
+					var aArguments = arguments;
 
 					return oPromise.then(function () {
-						return that.oCache.read.apply(that.oCache, aReadArguments);
+						return that.oCache.read.apply(that.oCache, aArguments);
 					});
 				},
 				resetChangesForPath : function () {
