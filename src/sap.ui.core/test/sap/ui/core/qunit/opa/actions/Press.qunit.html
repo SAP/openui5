@@ -120,8 +120,6 @@
 				control: new Input({
 					showValueHelp: true
 				}),
-				// The Focusleave is fired on an icon not directly on the control
-				skipFocusLeaveCheck: true,
 				event: "ValueHelpRequest"
 			}].forEach(function (oTestCase) {
 						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
@@ -142,9 +140,8 @@
 								setTimeout(function () {
 									sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
 									sinon.assert.called(fnOnSapFocusInSpy);
-									if (!oTestCase.skipFocusLeaveCheck) {
-										sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
-									}
+									//Focusleave check has been removed due to fixed Press action behavior
+									//since in real scenario manual press action does not fire focusout event
 									fnDone();
 								}.bind(this), 20);
 							}, this);
