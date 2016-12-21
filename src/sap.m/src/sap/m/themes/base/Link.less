@@ -60,9 +60,12 @@ html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: underline;
 }
 
-/* Link focus offset in sap.ui.table.* tables */
+/* Link focus offset and visualization in sap.ui.table.* tables */
 html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline-offset: -2px;
+}
+.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMLnk {
+	font-weight: bold;
 }
 
 /* IE and Edge ignores outline-offset. Use an overlay: */
