@@ -140,30 +140,30 @@
 				</Toolbar>
 			</headerToolbar>
 			<columns>
-				<Column>
+				<Column width="8em">
 					<Text text="Sales Order ID"/>
 				</Column>
-				<Column>
+				<Column width="8em">
 					<Text text="Buyer Name"/>
 				</Column>
-				<Column>
+				<Column hAlign="Right" width="8em">
 					<Button enabled="{ui>/bRealOData}" id ="sortByGrossAmount"
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
 						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
-				<Column>
-					<Text text="Currency"/>
+				<Column width="3em">
+					<Text text="Curr." tooltip="Currency"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Large">
 					<Text text="Supplier Company Name"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Medium">
 					<Text text="Note"/>
 				</Column>
-				<Column>
+				<Column demandPopin="true" minScreenWidth="Large">
 					<Text text="Life Cycle Status"/>
 				</Column>
-				<Column>
+				<Column minScreenWidth="Large">
 					<Text text="Changed At"/>
 				</Column>
 			</columns>
@@ -372,7 +372,7 @@
 					<Column>
 						<Text text="Supplier"/>
 					</Column>
-					<Column>
+					<Column hAlign="Right">
 						<Text text="Gross Amount"/>
 					</Column>
 					<Column>
