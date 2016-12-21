@@ -3523,169 +3523,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		sTestName : "Add parameters",
-		mParameters : {
-			$search : "Foo NOT Bar"
-		},
-		mExpectedParameters : {
-			$apply : "filter(OLD gt 0)",
-			$expand : "foo",
-			$search : "Foo NOT Bar",
-			$select : "ProductID"
-		}
-	}, {
-		sTestName : "Delete parameters",
-		mParameters : {
-			$expand : undefined
-		},
-		mExpectedParameters : {
-			$apply : "filter(OLD gt 0)",
-			$select : "ProductID"
-		}
-	}, {
-		sTestName : "Change parameters",
-		mParameters : {
-			$apply : "filter(NEW gt 0)"
-		},
-		mExpectedParameters : {
-			$apply : "filter(NEW gt 0)",
-			$expand : "foo",
-			$select : "ProductID"
-		}
-	}, {
-		sTestName : "Add, delete, change parameters",
-		mParameters : {
-			$apply : "filter(NEW gt 0)",
-			$expand : {$search : "Foo NOT Bar"},
-			$search : "Foo NOT Bar",
-			$select : undefined
-		},
-		mExpectedParameters : {
-			$apply : "filter(NEW gt 0)",
-			$expand : {$search : "Foo NOT Bar"},
-			$search : "Foo NOT Bar"
-		}
-	}].forEach(function (oFixture) {
-		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
-			var mParameters = {
-					$apply: "filter(OLD gt 0)",
-					$expand : "foo",
-					$select : "ProductID"
-				},
-				oBinding = new ODataListBinding(this.oModel, "/ProductList", undefined, undefined,
-					undefined, mParameters);
-
-			this.mock(oBinding).expects("applyParameters")
-				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
-
-			// code under test
-			oBinding.changeParameters(oFixture.mParameters);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: with binding parameters", function (assert) {
-		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
-
-		//code under test
-		assert.throws(function () {
-			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
-				"$$groupId" : "newGroupId"});
-		}, new Error("Unsupported parameter: $$groupId"));
-
-		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: with empty map", function (assert) {
-		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
-
-		this.mock(ODataListBinding.prototype).expects("applyParameters").never();
-
-		// code under test
-		oBinding.changeParameters({});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: with undefined map", function (assert) {
-		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
-
-		// code under test
-		assert.throws(function () {
-			oBinding.changeParameters(undefined);
-		}, new Error("Missing map of binding parameters"));
-
-		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: try to delete non-existing parameters", function (assert) {
-		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES"),
-		mParameters = {
-				$apply: undefined
-			};
-
-		// code under test
-		oBinding.changeParameters(mParameters);
-
-		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
-		var mParameters = {
-				$apply: "filter(Amount gt 3)"
-			},
-			oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined,
-				undefined, mParameters);
-
-		this.mock(ODataListBinding.prototype).expects("applyParameters").never();
-
-		// code under test
-		oBinding.changeParameters(mParameters);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: adding not allowed parameter", function (assert) {
-		var mParameters = {
-				$apply: "filter(Amount gt 3)"
-			},
-			mNewParameters = {
-				$apply: "filter(Amount gt 5)",
-				$foo: "bar"
-			},
-			oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined,
-				undefined, mParameters);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.changeParameters(mNewParameters);
-		}, new Error("System query option $foo is not supported"));
-		assert.deepEqual(oBinding.mParameters, mParameters, "parameters unchanged on error");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("changeParameters: cloning mParameters", function (assert) {
-		var oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", undefined, undefined,
-				undefined, {}),
-			mParameters = {
-				$expand : {
-					SO_2_SOITEM : {
-						$orderby : "ItemPosition"
-					}
-				}
-			};
-
-		// code under test
-		oBinding.changeParameters(mParameters);
-
-		mParameters.$expand.SO_2_SOITEM.$orderby = "ItemID";
-
-		assert.strictEqual(oBinding.mParameters.$expand.SO_2_SOITEM.$orderby, "ItemPosition");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getDiff: extendedChangeDetection without bDetectUpdates", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oContext0 = { getPath : function () {}},
@@ -3738,6 +3575,22 @@ sap.ui.require([
 
 		assert.strictEqual(aDiffResult, aDiff);
 		assert.deepEqual(oBinding.aPreviousData, ["d0", "d1"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: relative w/o initial mParameters", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
+			oBinding = this.oModel.bindList("EMPLOYEES", oContext);
+
+		assert.strictEqual(oBinding.oCache, undefined, "noCache");
+
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(_SyncPromise.resolve("/TEAMS('42')/EMPLOYEES"));
+
+		// code under test;
+		oBinding.changeParameters({$filter : "bar"});
+
+		assert.ok(oBinding.oCache !== undefined, "Binding gets cache after changeParamters");
 	});
 });
 

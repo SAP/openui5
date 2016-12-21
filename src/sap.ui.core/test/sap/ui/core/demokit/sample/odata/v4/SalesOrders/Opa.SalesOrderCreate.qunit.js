@@ -23,6 +23,11 @@ sap.ui.require([
 				level : jQuery.sap.log.Level.ERROR,
 				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 			},
+			oExpectedLogChangeParameters = {
+				component : "sap.ui.model.odata.v4.lib._Cache",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "Failed to drill-down into Note, invalid segment: Note"
+			},
 			sModifiedNote = "Modified by OPA",
 			vRealOData = jQuery.sap.getUriParameters().get("realOData"),
 			bRealOData = /direct|proxy|true/.test(vRealOData);
@@ -172,6 +177,9 @@ sap.ui.require([
 			When.onTheMainPage.sortByGrossAmount();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
+			// Change SalesOrderDetails $select via API
+			When.onTheMainPage.unselectSODetailsNoteWithChangeParameters();
+			Then.onTheMainPage.checkSalesOrderDetailsNote();
 		}
 
 		if (!bRealOData) {
@@ -201,8 +209,9 @@ sap.ui.require([
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog( bRealOData ? [oExpectedLog, oExpectedLog, oExpectedLog]
-			: undefined);
+		Then.onTheMainPage.checkLog(bRealOData
+				? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
+				: undefined);
 		Then.iTeardownMyAppFrame();
 	});
 });

@@ -366,6 +366,18 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "sortByGrossAmount",
 						viewName : sViewName
 					});
+				},
+				unselectSODetailsNoteWithChangeParameters : function () {
+					return this.waitFor({
+						controlType : "sap.m.VBox",
+						id : "ObjectPage",
+						success : function (oSODetails) {
+							oSODetails.getBindingContext().getBinding().changeParameters({
+								$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,SalesOrderID'
+							});
+						},
+						viewName : sViewName
+					});
 				}
 			},
 			assertions: {
@@ -576,6 +588,16 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
 							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
 								sExpectedItem, "Item position in row " + iRow);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderDetailsNote: function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oSONote) {
+							Opa5.assert.strictEqual(oSONote.getValue(), "");
 						},
 						viewName : sViewName
 					});

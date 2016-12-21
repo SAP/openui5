@@ -99,6 +99,7 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
@@ -243,7 +244,7 @@ sap.ui.define([
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
-		this.mParameters = mParameters; //store mParameters at binding after validation
+		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		this.mCacheByContext = undefined;
 		this.oCache = this.makeCache(this.oContext);
@@ -320,58 +321,6 @@ sap.ui.define([
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
 		return aOrderbyOptions.join(',');
-	};
-
-	/**
-	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
-	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
-	 * removed, the other parameters are set, and missing parameters remain unchanged.
-	 *
-	 * @param {object} mParameters
-	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList}
-	 * @throws {Error}
-	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported parameters
-	 *   or unsupported values.
-	 *
-	 * @public
-	 * @since 1.45.0
-	 */
-	ODataListBinding.prototype.changeParameters = function (mParameters) {
-		var bChanged = false,
-			sKey,
-			mBindingParameters = jQuery.extend(true, {}, this.mParameters);
-
-		if (!mParameters) {
-			throw new Error("Missing map of binding parameters");
-		}
-		if (!Object.keys(mParameters).length) {
-			return;
-		}
-		for (sKey in mParameters) {
-			if (sKey.indexOf("$$") === 0) {
-				throw new Error("Unsupported parameter: " + sKey);
-			}
-		}
-
-		for (sKey in mParameters) {
-			if (mParameters[sKey] === undefined) {
-				if (mBindingParameters[sKey] !== undefined) {
-					delete mBindingParameters[sKey];
-					bChanged = true;
-				}
-			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
-				if (typeof mParameters[sKey] === 'object') {
-					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
-				} else {
-					mBindingParameters[sKey] = mParameters[sKey];
-				}
-				bChanged = true;
-			}
-		}
-
-		if (bChanged) {
-			this.applyParameters(mBindingParameters, ChangeReason.Change);
-		}
 	};
 
 	/*

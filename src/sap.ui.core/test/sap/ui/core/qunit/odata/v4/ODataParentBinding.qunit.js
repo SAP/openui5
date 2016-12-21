@@ -514,4 +514,200 @@ sap.ui.require([
 			assert.strictEqual(oError0, oError);
 		});
 	});
+	//*********************************************************************************************
+	[{
+		sTestName : "Add parameters",
+		mParameters : {
+			$search : "Foo NOT Bar"
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$expand : "foo",
+			$search : "Foo NOT Bar",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Delete parameters",
+		mParameters : {
+			$expand : undefined
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Change parameters",
+		mParameters : {
+			$apply : "filter(NEW gt 0)"
+		},
+		mExpectedParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : "foo",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Add, delete, change parameters",
+		mParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : {$search : "Foo NOT Bar"},
+			$search : "Foo NOT Bar",
+			$select : undefined
+		},
+		mExpectedParameters : {
+			$apply : "filter(NEW gt 0)",
+			$expand : {$search : "Foo NOT Bar"},
+			$search : "Foo NOT Bar"
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oModel : {},
+					mParameters : {
+						$apply: "filter(OLD gt 0)",
+						$expand : "foo",
+						$select : "ProductID"
+					},
+					sPath : "/ProductList",
+					applyParameters : function () {}
+				});
+
+			this.mock(oBinding).expects("applyParameters")
+				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
+
+			// code under test
+			oBinding.changeParameters(oFixture.mParameters);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with binding parameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		//code under test
+		assert.throws(function () {
+			oBinding.changeParameters({"$filter" : "filter(Amount gt 3)",
+				"$$groupId" : "newGroupId"});
+		}, new Error("Unsupported parameter: $$groupId"));
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with empty map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			});
+
+
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		oBinding.changeParameters({});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: with undefined map", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(undefined);
+		}, new Error("Missing map of binding parameters"));
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: try to delete non-existing parameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES"
+			});
+
+		// code under test
+		oBinding.changeParameters({$apply: undefined});
+
+		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
+		var mParameters = {
+				$apply: "filter(Amount gt 3)"
+			},
+			oBinding = new ODataParentBinding({
+					oModel : {},
+					mParameters : {
+						$apply : "filter(Amount gt 3)"
+					},
+					sPath : "/EMPLOYEES",
+					applyParameters : function () {}
+				});
+
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		oBinding.changeParameters(mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("changeParameters: adding not allowed parameter", function (assert) {
+		var mParameters = {
+				$apply: "filter(Amount gt 3)"
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : mParameters,
+				sPath : "/EMPLOYEES",
+				applyParameters : function () {}
+			}),
+			mNewParameters = {
+				$apply: "filter(Amount gt 5)",
+				$foo: "bar"
+			};
+
+		// code under test
+		assert.throws(function () {
+			oBinding.changeParameters(mNewParameters);
+		}, new Error("System query option $foo is not supported"));
+		assert.deepEqual(oBinding.mParameters, mParameters, "parameters unchanged on error");
+		// TODO do we need this test?
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: cloning mParameters", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {},
+				sPath : "/EMPLOYEES",
+				applyParameters : function (mParameters) {
+					this.mParameters = mParameters; // store mParameters at binding after validation
+				}
+			}),
+			mParameters = {
+				$expand : {
+					SO_2_SOITEM : {
+						$orderby : "ItemPosition"
+					}
+				}
+			};
+
+		// code under test
+		oBinding.changeParameters(mParameters);
+
+		mParameters.$expand.SO_2_SOITEM.$orderby = "ItemID";
+
+		assert.strictEqual(oBinding.mParameters.$expand.SO_2_SOITEM.$orderby, "ItemPosition");
+	});
 });

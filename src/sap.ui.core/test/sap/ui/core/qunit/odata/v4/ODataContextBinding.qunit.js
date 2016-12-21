@@ -121,7 +121,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: deferred", function (assert) {
+	QUnit.test("deferred operation binding", function (assert) {
 		var mBindingParameters = {
 				$$groupId : "foo",
 				$$updateGroupId : "update foo"
@@ -129,6 +129,7 @@ sap.ui.require([
 			sGroupId = "foo",
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.oModel.bindContext("/DEFERRED(...)"),
+			oBindingMock = this.mock(oBinding),
 			mParameters = {
 				$$groupId : "foo",
 				$$updateGroupId : "update foo",
@@ -150,6 +151,8 @@ sap.ui.require([
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
+		oBindingMock.expects("checkUpdate").never();
+		oBindingMock.expects("makeCache").never();
 
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -158,6 +161,32 @@ sap.ui.require([
 		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
 		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
 		assert.deepEqual(oBinding.oOperation, oOperation, "oOperation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: simulate call from changeParameters", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
+			oBinding = this.oModel.bindContext("", oContext),
+			oModelMock = this.mock(this.oModel),
+			mParameters = {
+				$filter : "bar"
+			};
+
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(mParameters, ["$$groupId", "$$updateGroupId"])
+			.returns({});
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(undefined, mParameters, true)
+			.returns({$filter : "bar"});
+		this.mock(oBinding).expects("makeCache").withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("checkUpdate");
+
+		//code under test
+		oBinding.applyParameters(mParameters, ChangeReason.Change);
+
+		assert.strictEqual(oBinding.mParameters, mParameters,
+			"applyParameters set oBinding.mParameters if called via changeParameters with " +
+			"a change reason");
 	});
 
 	//*********************************************************************************************
@@ -1059,8 +1088,9 @@ sap.ui.require([
 
 		oBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
-		oBindingMock.expects("getQueryOptions").withExactArgs(undefined).returns(mQueryOptions);
-		this.mock(_Cache).expects("createSingle")
+		oBindingMock.expects("getQueryOptions").twice()
+			.withExactArgs(undefined).returns(mQueryOptions);
+		this.mock(_Cache).expects("createSingle").twice()
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
 				sinon.match.same(mQueryOptions), true)
 			.returns(oSingleCache);
@@ -1858,6 +1888,22 @@ sap.ui.require([
 		assert.strictEqual(oBinding.makeCache(oContext), oBinding.oCache);
 
 		assert.strictEqual(oBinding.oCache, oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: relative w/o initial mParameters", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
+			oBinding = this.oModel.bindContext("TEAM_2_MANAGER", oContext);
+
+		assert.strictEqual(oBinding.oCache, undefined, "noCache");
+
+		this.mock(oContext).expects("fetchCanonicalPath").twice().withExactArgs()
+			.returns(_SyncPromise.resolve("/TEAMS('42')/TEAM_2_MANAGER"));
+
+		// code under test;
+		oBinding.changeParameters({$filter : "bar"});
+
+		assert.ok(oBinding.oCache !== undefined, "Binding gets cache after changeParamters");
 	});
 
 	//*********************************************************************************************

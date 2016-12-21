@@ -114,10 +114,12 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
+				var iPos = sPath.indexOf("(...)");
 
 				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
 					mParameters);
@@ -132,6 +134,19 @@ sap.ui.define([
 				this.oOperation = undefined;
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
+
+				if (iPos >= 0) { // deferred operation binding
+					this.oOperation = {
+						bAction : undefined,
+						oMetadataPromise : undefined,
+						mParameters : {},
+						sResourcePath : undefined
+					};
+					if (iPos !== this.sPath.length - 5) {
+						throw new Error(
+							"The path must not continue after a deferred operation: " + this.sPath);
+					}
+				}
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters));
 				this.oElementContext = this.bRelative
@@ -229,35 +244,26 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   Change reason if called from {@link #changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters) {
-		var oBindingParameters,
-			iPos = this.sPath.indexOf("(...)"),
-			bDeferred = iPos >= 0;
+	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(undefined, mParameters, true);
 
-		if (!this.bRelative || bDeferred || mParameters) {
-			oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$groupId", "$$updateGroupId"]);
-			this.sGroupId = oBindingParameters.$$groupId;
-			this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-			if (bDeferred) {
-				this.oOperation = {
-					bAction : undefined,
-					oMetadataPromise : undefined,
-					mParameters : {},
-					sResourcePath : undefined
-				};
-				if (iPos !== this.sPath.length - 5) {
-					throw new Error(
-						"The path must not continue after a deferred operation: " + this.sPath);
-				}
-			} else if (!this.bRelative) {
-				this.oCache = this.makeCache();
-			}
+		oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+			["$$groupId", "$$updateGroupId"]);
+		this.sGroupId = oBindingParameters.$$groupId;
+		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+		if (sChangeReason) { // set this.mParameters if called from changeParameters
+			this.mParameters = mParameters;
+		}
+		if (!this.oOperation) {
+			this.oCache = this.makeCache(this.oContext);
+			this.checkUpdate();
 		}
 	};
 
@@ -487,12 +493,10 @@ sap.ui.define([
 			sGroupId = sGroupId || that.getGroupId();
 			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
 			if (that.oOperation.bAction) {
-				// the action may reuse the cache because the resource path never changes
-				if (!that.oCache) {
-					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						(sPathPrefix + that.sPath).slice(1, -5),
-						that.getQueryOptions(that.oContext), true);
-				}
+				// Recreate the cache, because the query options might have changed
+				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+					(sPathPrefix + that.sPath).slice(1, -5),
+					that.getQueryOptions(that.oContext), true);
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available

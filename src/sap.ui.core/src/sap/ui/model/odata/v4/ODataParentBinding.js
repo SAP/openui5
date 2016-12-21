@@ -27,6 +27,52 @@ sap.ui.define([
 	var rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
 
 	/**
+	 * Changes this binding's parameters and refreshes the binding. The parameters are changed
+	 * according to the given map of parameters: Parameters with an <code>undefined</code> value are
+	 * removed, the other parameters are set, and missing parameters remain unchanged.
+	 *
+	 * @param {object} mParameters
+	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
+	 * @throws {Error}
+	 *   If <code>mParameters</code> is missing, contains binding-specific or unsupported
+	 *   parameters, or contains unsupported values.
+	 *
+	 * @public
+	 * @since 1.45.0
+	 */
+	ODataParentBinding.prototype.changeParameters = function (mParameters) {
+		var bChanged = false,
+			sKey,
+			mBindingParameters = jQuery.extend(true, {}, this.mParameters);
+
+		if (!mParameters) {
+			throw new Error("Missing map of binding parameters");
+		}
+
+		for (sKey in mParameters) {
+			if (sKey.indexOf("$$") === 0) {
+				throw new Error("Unsupported parameter: " + sKey);
+			}
+			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
+					delete mBindingParameters[sKey];
+					bChanged = true;
+			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
+				if (typeof mParameters[sKey] === 'object') {
+					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
+				} else {
+					mBindingParameters[sKey] = mParameters[sKey];
+				}
+				bChanged = true;
+			}
+		}
+
+		if (bChanged) {
+			this.applyParameters(mBindingParameters, ChangeReason.Change);
+		}
+	};
+
+	/**
 	 * Creates a cache using the given function and sets it at the binding. If the given
 	 * SyncPromises are not fulfilled yet, it temporarily sets a proxy acting as substitute.
 	 * If there is already a cache for the canonical path in the binding's
@@ -143,11 +189,11 @@ sap.ui.define([
 
 	/**
 	 * Returns the query options for the binding. Uses the options resulting from the binding
-	 * parameters or options inherited from the parent binding using {@link #inheritQueryOptions}.
-	 * Merges the model's query options.
+	 * parameters or the options inherited from the parent binding by
+	 * using {@link #inheritQueryOptions}. Merges the model's query options.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used to to compute the inherited query options
+	 *   The context that is used to compute the inherited query options
 	 * @returns {object}
 	 *   The computed query options
 	 *
@@ -165,10 +211,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the query options that are inherited from the parent binding. This is the case if
-	 * the parent binding has a <code>$expand</code> with this binding's path.
+	 * the parent binding has a <code>$expand</code> within the binding path.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used to to compute the inherited query options
+	 *   The context that is used to compute the inherited query options
 	 * @returns {object}
 	 *   The query options for the given path
 	 *
