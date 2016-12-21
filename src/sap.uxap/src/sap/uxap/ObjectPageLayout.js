@@ -681,18 +681,6 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype.forceInvalidation = ObjectPageLayout.prototype.invalidate;
-
-	ObjectPageLayout.prototype.invalidate = function (oSource) {
-		/* BCP: 1670453241. The objectPage would get invalidated during rendering by it's own children.
-		 This causes the invalidation to bubble up to the ObjectPage's parent and invalidate it as well.
-		 Here the objectPage would get invalidated only if it has dom representation */
-
-		if (this.getDomRef()) {
-			return this.forceInvalidation(oSource);
-		}
-	};
-
 	/*************************************************************************************
 	 * Ux rules
 	 ************************************************************************************/
