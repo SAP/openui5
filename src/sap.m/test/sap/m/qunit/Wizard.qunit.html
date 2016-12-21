@@ -254,6 +254,11 @@
 			 assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 1");
 		 });
 
+		QUnit.test("preivousStep().previousStep() chaining previousStep method should be possible", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			assert.ok(this.oWizard.previousStep().previousStep(), "previousStep chaining should not throw an Error");
+		});
+
 		QUnit.module("Wizard Branching", {
 			sWizardId: "wizard-branching-id",
 			setup: function () {
