@@ -14,6 +14,11 @@
 	overflow: hidden;
 }
 
+/* required to display icons background in RTL Mode*/
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):before {
+	display: inline;
+}
+
 .sapMRIIconSel {
 	color: lighten(@sapUiAccent1, 12);
 	-webkit-text-stroke: 1px darken(@sapUiAccent1, 3);
