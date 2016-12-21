@@ -5052,6 +5052,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {boolean} bRefreshAfterChange Whether to automatically refresh after changes
+	 * @public
+	 * @since 1.46.0
+	 */
+	ODataModel.prototype.getRefreshAfterChange = function() {
+		return this.bRefreshAfterChange;
+	};
+
+	/**
 	 * Enable/Disable automatic updates of all bindings after change operations.
 	 * @param {boolean} bRefreshAfterChange Whether to automatically refresh after changes
 	 * @public

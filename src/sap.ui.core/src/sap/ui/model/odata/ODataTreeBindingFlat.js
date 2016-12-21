@@ -2134,7 +2134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			mParameters = mParameters || {};
 			mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
 
-			var bOriginalAfterChange = this.oModel.bRefreshAfterChange; //TODO: Change this to a Getter in ODataModel?
+			var bOriginalAfterChange = this.oModel.getRefreshAfterChange();
 			this.oModel.setRefreshAfterChange(false);
 			oNewEntry = this.oModel.createEntry(sAbsolutePath, mParameters);
 			this.oModel.setRefreshAfterChange(bOriginalAfterChange);
@@ -2209,7 +2209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		// built the actual requests for the change-set
-		var bOriginalAfterChange = this.oModel.bRefreshAfterChange; //TODO: Change this to a Getter in ODataModel?
+		var bOriginalAfterChange = this.oModel.getRefreshAfterChange();
 		this.oModel.setRefreshAfterChange(false);
 		this._generateSubmitData();
 		this.oModel.setRefreshAfterChange(bOriginalAfterChange);
