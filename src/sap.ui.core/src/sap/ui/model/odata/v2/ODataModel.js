@@ -1342,12 +1342,8 @@ sap.ui.define([
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 			}
 		}.bind(this));
-		//handle calls after update
-		var aCallAfterUpdate = this.aCallAfterUpdate;
-		this.aCallAfterUpdate = [];
-		for (var i = 0; i < aCallAfterUpdate.length; i++) {
-			aCallAfterUpdate[i]();
-		}
+
+		this._processAfterUpdate();
 	};
 
 	/**
@@ -2235,6 +2231,7 @@ sap.ui.define([
 			} else {
 				that._processError(oRequest, oError, fnError);
 			}
+			that._processAfterUpdate();
 		};
 		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
@@ -2350,6 +2347,9 @@ sap.ui.define([
 					}
 				}
 			});
+
+			that._processAfterUpdate();
+
 			// Call callback and fire events for the batch request
 			if (fnError) {
 				fnError(oError);
@@ -2858,6 +2858,19 @@ sap.ui.define([
 			var oEventInfo = this._createEventInfo(oRequest, oError);
 			oEventInfo.success = false;
 			this.fireRequestCompleted(oEventInfo);
+		}
+	};
+
+	/**
+	 * Process handlers registered for execution after update.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._processAfterUpdate = function() {
+		var aCallAfterUpdate = this.aCallAfterUpdate;
+		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
 		}
 	};
 
