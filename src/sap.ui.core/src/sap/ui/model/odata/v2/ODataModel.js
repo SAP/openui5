@@ -1365,12 +1365,7 @@ sap.ui.define([
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 			}
 		}.bind(this));
-		//handle calls after update
-		var aCallAfterUpdate = this.aCallAfterUpdate;
-		this.aCallAfterUpdate = [];
-		for (var i = 0; i < aCallAfterUpdate.length; i++) {
-			aCallAfterUpdate[i]();
-		}
+		this._processAfterUpdate();
 	};
 
 	/**
@@ -2504,6 +2499,8 @@ sap.ui.define([
 					that._processError(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
 				}
 			}
+
+			that._processAfterUpdate();
 		}
 
 		oRequest.request.eventInfo = {
@@ -2605,6 +2602,8 @@ sap.ui.define([
 					processResponse(oRequest, oError, bAborted);
 				}
 			});
+
+			that._processAfterUpdate();
 
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, fnError, true);
@@ -3160,7 +3159,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * process a 'TwoWay' change
+	 * Process handlers registered for execution after update.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._processAfterUpdate = function() {
+		var aCallAfterUpdate = this.aCallAfterUpdate;
+		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
+		}
+	};
+
+	/**
+	 * Process a two-way binding change.
 	 *
 	 * @param {string} sKey Key of the entity to change
 	 * @param {object} oData The entry data
