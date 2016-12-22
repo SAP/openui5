@@ -263,6 +263,14 @@
 			 assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 1");
 		 });
 
+		QUnit.test("setVisible() of WizardStep should not change the visibility of the steps", function (assert) {
+			var step0 = this.oWizard.getSteps()[0];
+			var domRefInit = step0.$()[0];
+			step0.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(step0.$()[0], domRefInit, "setVisible(false) of the wizardStep should not hide the step");
+		});
+
 		QUnit.module("Wizard Branching", {
 			sWizardId: "wizard-branching-id",
 			setup: function () {
