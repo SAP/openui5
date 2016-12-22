@@ -4382,7 +4382,7 @@ sap.ui.define([
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry = { },
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
-			bFunction = false, that = this;
+			bFunction = false, that = this, bCreated;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			jQuery.each(oChangedObject,function(sKey) {
@@ -4435,9 +4435,12 @@ sap.ui.define([
 		//reset clone if oValue equals the original value
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			bCreated = oEntityMetadata && oEntityMetadata.created;
 			delete this.mChangedEntities[sKey].__metadata;
-			// check for 'empty' complex types objects and delete it
-			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			// check for 'empty' complex types objects and delete it - not for created entities
+			if (!bCreated) {
+				updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			}
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
