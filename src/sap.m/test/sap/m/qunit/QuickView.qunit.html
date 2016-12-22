@@ -527,6 +527,49 @@
 			assert.strictEqual(oText.text(), 'New Address', 'New text is correct');
 		});
 
+		QUnit.module("Navigate", {
+			setup: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open Quick View",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Test navOrigin parameter", function (assert) {
+			// arrange
+			var fnNavigate = this.spy();
+
+			this.oQuickView.attachNavigate(fnNavigate);
+
+			// act
+			this.oButton.firePress();
+
+			this.clock.tick(500);
+
+			var navigateLinkId = jQuery("a:contains('SAP AG')").click();
+
+			this.clock.tick(500);
+
+			// assert
+			ok(this.oQuickView._navOrigin, "navigate event is fired with navOrigin parameter");
+		});
 
 	</script>
 </head>

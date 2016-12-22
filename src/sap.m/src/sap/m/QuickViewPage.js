@@ -239,6 +239,7 @@ sap.ui.define([
 							tooltip : this._oResourceBundle.getText("PAGE_NAVBUTTON_TEXT"),
 							press : function() {
 								if (mNavContext.navContainer) {
+									mNavContext.quickView._setNavOrigin(null);
 									mNavContext.navContainer.back();
 								}
 							}
@@ -559,6 +560,7 @@ sap.ui.define([
 					e.preventDefault();
 					var sPageId = this.getCustomData()[0].getValue();
 					if (mNavContext.navContainer && sPageId) {
+						mNavContext.quickView._setNavOrigin(this);
 						mNavContext.navContainer.to(sPageId);
 					}
 				};
@@ -586,7 +588,9 @@ sap.ui.define([
 
 					mNavContext.popover.focus();
 
-					mNavContext.quickView._clearContainerHeight();
+					if (mNavContext.quickView.indexOfPage(this) == 0) {
+						mNavContext.quickView._clearContainerHeight();
+					}
 
 					this._createPage();
 
