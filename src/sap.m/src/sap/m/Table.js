@@ -524,24 +524,13 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	};
 
 	Table.prototype.onfocusin = function(oEvent) {
-		var oTarget = oEvent.target,
-			$Target = jQuery(oTarget);
-
+		var oTarget = oEvent.target;
 		if (oTarget.id === this.getId("tblHeader")) {
 			this._setHeaderAnnouncement();
 		} else if (oTarget.id === this.getId("tblFooter")) {
 			this._setFooterAnnouncement();
 		} else if (oTarget.id == this.getId("nodata")) {
 			this.updateInvisibleText(this.getNoDataText(), oTarget);
-		}
-
-		// Workaround for table row focus in IE.
-		// Removing and adding sapMLIBNativeOutline class which forces IE to rerender its Native focus.
-		if ($Target.hasClass("sapMLIBNativeOutline")) {
-			$Target.removeClass("sapMLIBNativeOutline");
-			window.setTimeout(function() {
-				$Target.addClass("sapMLIBNativeOutline");
-			}, 0);
 		}
 
 		ListBase.prototype.onfocusin.call(this, oEvent);

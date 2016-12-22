@@ -115,13 +115,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}, oAccInfo);
 
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			sText = oAccInfo.type + " " + oAccInfo.description + " ";
+			sText = oAccInfo.type + " " + oAccInfo.description + " ",
+			sTooltip = oControl.getTooltip_AsString();
 
 		if (oAccInfo.enabled === false) {
 			sText += oBundle.getText("CONTROL_DISABLED") + " ";
 		}
 		if (oAccInfo.editable === false) {
 			sText += oBundle.getText("CONTROL_READONLY") + " ";
+		}
+		if (!oAccInfo.type && sTooltip && sText.indexOf(sTooltip) == -1) {
+			sText = sTooltip + " " + sText;
 		}
 
 		oAccInfo.children.forEach(function(oChild) {
@@ -383,7 +387,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oDeleteControl = new Icon({
 			id: this.getId() + "-imgDel",
 			src: this.DeleteIconURI,
-			useIconTooltip: false,
+			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_DELETE"),
 			noTabStop: true
 		}).setParent(this, null, true).addStyleClass("sapMLIBIconDel").attachPress(function(oEvent) {
 			this.informList("Delete");
@@ -406,7 +410,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oDetailControl = new Icon({
 			id: this.getId() + "-imgDet",
 			src: this.DetailIconURI,
-			useIconTooltip: false,
+			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_EDIT"),
 			noTabStop: true
 		}).setParent(this, null, true).attachPress(function() {
 			this.fireDetailTap();
