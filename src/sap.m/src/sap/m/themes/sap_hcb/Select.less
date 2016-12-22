@@ -40,14 +40,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.125rem dotted @sapUiContentFocusColor;
+		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 
 /* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
 
 html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
-		line-height: 0rem;
+		line-height: 0;
 }
 
 /* icon only hover and focus */
@@ -79,7 +79,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		position:         absolute;
 		left:             0;
 		top:              0;
-		border:           0.125rem dotted @sapUiContentFocusColor;
+		border:           0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 
