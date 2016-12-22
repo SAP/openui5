@@ -195,13 +195,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 			/**
 			 * Specifies if a select all button should be displayed in the top left corner. This button is only displayed
-			 * if the row selector is visible and the selection mode is set to any kind of multi selection.
+			 * if the row selector is visible and the selection mode is set to any kind of multi-selection.
 			 * @since 1.23.0
 			 */
 			enableSelectAll : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Set this parameter to true to implement your own filter behaviour. Instead of the filter input box a button
+			 * Set this parameter to true to implement your own filter behavior. Instead of the filter input box a button
 			 * will be rendered for which' press event (customFilter) you can register an event handler.
 			 * @since 1.23.0
 			 */
