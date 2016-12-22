@@ -415,6 +415,63 @@
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
 	});
 
+	QUnit.test("Localization Change", function(assert) {
+		var bInvalidated = false;
+		var sChange = "";
+
+		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
+			sap.ui.table.Table.prototype._adaptLocalization.apply(this, arguments);
+			if (bRtlChanged) {
+				sChange += "RTL";
+			}
+			if (bLangChanged) {
+				sChange += "LANG";
+			}
+		};
+
+		oTable.invalidate = function() {
+			bInvalidated = true;
+			return sap.ui.table.Table.prototype.invalidate.apply(this, arguments);
+		};
+
+		var oRowAction = new sap.ui.table.RowAction();
+		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
+		oTable.setRowActionTemplate(oRowAction);
+		sap.ui.getCore().applyChanges();
+
+		//RTL + Language
+		oTable.onlocalizationChanged({changes : {rtl: "", language: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on RTL and Language change");
+		assert.equal(sChange, "RTLLANG", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//RTL
+		oTable.onlocalizationChanged({changes : {rtl: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on RTL change");
+		assert.equal(sChange, "RTL", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//Language
+		oTable.onlocalizationChanged({changes : {language: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on Language change");
+		assert.equal(sChange, "LANG", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//Other localization event
+		oTable.onlocalizationChanged({changes : {}});
+		assert.ok(!bInvalidated, "Table was not invalidated on other localization event");
+		assert.equal(sChange, "", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+	});
+
 
 
 	QUnit.module("Column operations", {

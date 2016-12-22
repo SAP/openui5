@@ -271,8 +271,6 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	 * called when the column is initialized
 	 */
 	Column.prototype.init = function() {
-
-		this.oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._oSorter = null;
 
 		// Skip proppagation of databinding properties to the template
@@ -381,13 +379,18 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	/**
 	 * This function invalidates the column's menu. All items will be re-created the next time the menu opens. This only
 	 * happens for generated menus.
+	 * @param {boolean} bUpdateLocalization Whether the texts of the menu should be updated too.
 	 * @private
 	 */
-	Column.prototype.invalidateMenu = function() {
+	Column.prototype.invalidateMenu = function(bUpdateLocalization) {
 		var oMenu = this.getAggregation("menu");
 
 		if (this._bMenuIsColumnMenu) {
-			oMenu._invalidate();
+			if (bUpdateLocalization) {
+				oMenu._updateResourceBundle(); // Also invalidates the menu
+			} else {
+				oMenu._invalidate();
+			}
 		}
 	};
 

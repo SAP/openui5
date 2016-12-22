@@ -191,7 +191,7 @@ QUnit.test("Unfreeze menu with multiheaders", function(assert) {
 		var menu = oTable.getColumns()[iCol].getMenu();
 		menu.destroyAggregation("items", true);
 		menu._addFreezeMenuItem();
-		return menu.getItems()[0].getText() == menu.oResBundle.getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
+		return menu.getItems()[0].getText() == menu._oResBundle.getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
 	}
 	assert.ok(hasFreezeMenuItem(0, true), "Column 0 has Unfreeze menu");
 	assert.ok(hasFreezeMenuItem(1, true), "Column 1 has Unfreeze menu");
