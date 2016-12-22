@@ -64,13 +64,16 @@ var getLabel = function (sText, sLabelFor) {
                 new sap.m.ToolbarSpacer(),
                 oToggleFooterButton,
                 new sap.m.Button({
-                    icon: "sap-icon://add"
+                    icon: "sap-icon://add",
+                    tooltip: "add"
                 }),
                 new sap.m.Button({
-                    icon: "sap-icon://edit"
+                    icon: "sap-icon://edit",
+                    tooltip: "edit"
                 }),
                 new sap.m.Button({
-                    icon: "sap-icon://delete"
+                    icon: "sap-icon://delete",
+                    tooltip: "delete"
                 })
             ]
         })
