@@ -13,8 +13,9 @@ var getLabel = function (sText, sLabelFor) {
         }
     },
     getLabelWithSelect = function (sValue) {
+        var oSelect = getSelect(10);
         return new sap.ui.layout.VerticalLayout({
-            content: [getLabel(sValue), getSelect(10)]
+            content: [getLabel(sValue, oSelect), oSelect]
         })
     },
     getLabelWithSelectCombo = function (iCount) {
