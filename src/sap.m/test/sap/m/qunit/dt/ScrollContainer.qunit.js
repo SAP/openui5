@@ -5,15 +5,16 @@
 		"sap/ui/dt/test/report/QUnit",
 		"sap/ui/dt/test/ElementEnablementTest",
 		"sap/m/ScrollContainer",
+		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, ScrollContainer, rtaControlEnablingCheck) {
+	], function (QUnitReport, ElementEnablementTest, ScrollContainer, Text, rtaControlEnablingCheck) {
 
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.m.ScrollContainer",
 			create: function () {
 				return new ScrollContainer({
 					content: [
-						new sap.m.Text({text: "Text"})
+						new Text({text: "Text"})
 					]
 				})
 			}

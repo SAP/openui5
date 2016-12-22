@@ -326,6 +326,7 @@
 
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTbExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivTbExpanded class");
+		assert.strictEqual(panel.$().find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar and infoToolbar", function(assert) {
@@ -339,6 +340,8 @@
 
 		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
 		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "should have infoToolbar and content area with sapMPanelExpandablePart class");
+		assert.strictEqual($panel.find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
+		assert.strictEqual($panel.find(".sapMPanelInfoTB").length, 1, "should have a toolbar with sapMPanelInfoToolbar class");
 	});
 
 	QUnit.test("Expandable Panel when expanded", function(assert) {
