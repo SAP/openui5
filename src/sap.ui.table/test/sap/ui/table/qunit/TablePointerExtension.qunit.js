@@ -299,7 +299,169 @@ QUnit.test("Skip trigger resize when resizing already started", function(assert)
 	ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
 });
 
+QUnit.module("Menus", {
+	beforeEach: function() {
+		createTables();
+		this.oPointerExtension = oTable._getPointerExtension();
+		this.oPointerExtension._debug();
+	},
+	afterEach: function () {
+		destroyTables();
+	},
 
+	/**
+	 * Triggers a mouse down event on the passed element simulating the specified button.
+	 *
+	 * @param {jQuery|HTMLElement} oElement The target of the event.
+	 * @param {int} iButton 0 = Left mouse button,
+	 * 						1 = Middle mouse button,
+	 * 						2 = Right mouse button
+	 */
+	triggerMouseDownEvent: function(oElement, iButton) {
+		qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
+	}
+});
+
+QUnit.test("Column Header", function(assert) {
+	var oElem = getColumnHeader(0, true);
+	var oColumn = oTable.getColumns()[0];
+	var oColumnMenu = oColumn.getMenu();
+	var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
+	var oContextMenuEventArgument;
+	var bFirstItemHovered;
+
+	// Try to open the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+
+	// Try to open the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
+
+	oColumn.setSortProperty("dummy");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+
+	// Open the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(oColumnMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+
+	// Close the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+
+	// Open the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(oColumnMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// Close the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// Open the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.ok(oColumnMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+
+	// Close the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oColumnMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+});
+
+QUnit.test("Data Cell", function(assert) {
+	var oElem = getCell(0, 0);
+	var oColumn = oTable.getColumns()[0];
+	var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
+	var oContextMenuEventArgument;
+	var bFirstItemHovered;
+
+	// Try to open the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+	checkFocus(oElem, assert);
+
+	// Try to open the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+	checkFocus(oElem, assert);
+
+	oTable.setEnableCellFilter(true);
+	this.stub(oColumn, "isFilterableByMenu").returns(true);
+
+	// Try to open the menu with the left mouse button.
+	this.triggerMouseDownEvent(oElem, 0);
+	qutils.triggerMouseEvent(oElem, "click");
+	assert.strictEqual(oTable._oCellContextMenu, undefined, "Menu is not yet created");
+	checkFocus(oElem, assert);
+
+	// Open the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
+	bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+	assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// Close the menu with the right mouse button.
+	this.triggerMouseDownEvent(oElem, 2);
+	jQuery(oElem).trigger("contextmenu");
+	assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+	checkFocus(oElem, assert);
+	oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+	oContextMenuEvent.reset();
+	assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+	// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context menu.
+	var aKnownClickableControls = this.oPointerExtension._KNOWNCLICKABLECONTROLS;
+	var $CellContent = oTable.getRows()[0].getCells()[0].$();
+
+	for (var i = 0; i < aKnownClickableControls.length; i++) {
+		$CellContent.toggleClass(aKnownClickableControls[i], true);
+		this.triggerMouseDownEvent($CellContent, 2);
+		jQuery($CellContent).trigger("contextmenu");
+		assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
+		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
+		oContextMenuEvent.reset();
+		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+		$CellContent.toggleClass(aKnownClickableControls[i], false);
+	}
+});
 
 QUnit.module("Mousedown", {
 	setup: function() {
@@ -352,7 +514,6 @@ QUnit.test("Scrollbar", function(assert){
 	assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on vertical scrollbar");
 });
 
-
 QUnit.module("Click", {
 	setup: function() {
 		createTables();
@@ -361,7 +522,6 @@ QUnit.module("Click", {
 		destroyTables();
 	}
 });
-
 
 QUnit.asyncTest("Tree Icon", function(assert) {
 	var iRowCount = oTreeTable._getRowCount();
@@ -457,7 +617,7 @@ QUnit.test("Cell + Cell Click Event", function(assert) {
 			oTreeTable.attachCellClick(fnHandler);
 			fnClickHandler = fnHandler;
 		}
-	};
+	}
 
 	var oRowColCell = sap.ui.table.TableUtils.getRowColCell(oTreeTable, 1, 2);
 	initCellClickHandler(function(oEvent){
