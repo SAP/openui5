@@ -109,6 +109,7 @@ public class LessFilter implements Filter {
         URL url = loader.getResource(LESS_PATH + script);
         Reader reader = new InputStreamReader(url.openStream(), "UTF-8");
         context.evaluateReader(this.scope, reader, script, 1, null);
+        reader.close();
       }
 
       // get environment object and set the resource loader used in less (see less-api.js)
