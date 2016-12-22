@@ -167,10 +167,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.oContext = oContext;
 			this.oDataState = null;
 
-			if (this.isRelative()) {
-				if (!this.bInitial) {
-					this.refresh();
-				}
+			// If binding is not a relative binding, nothing to do here
+			if (!this.isRelative()) {
+				return;
+			}
+
+			// resolving the path makes sure that we can safely analyze the metadata,
+			// as we have a resourcepath for the QueryResult
+			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			if (sResolvedPath) {
+				this.resetData();
+				this._initialize(); // triggers metadata/annotation check
+				this._fireChange({ reason: ChangeReason.Context });
 			}
 		}
 	};
@@ -187,7 +195,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @function
 	 */
 	AnalyticalBinding.prototype.initialize = function() {
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.isInitial()) {
+
+			// relative bindings will be properly initialized once the context is set
+			var bIsRelative = this.isRelative();
+			if (!bIsRelative || (bIsRelative && this.oContext)) {
+				this._initialize();
+			}
+
+			this._fireRefresh({reason: ChangeReason.Refresh});
+		}
+		return this;
+	};
+
+	/**
+	 * Performs the actual initialization.
+	 * Called either by sap.ui.model.analytics.v2.AnalyticalBinding#initialize or
+	 * sap.ui.model.analytics.v2.AnalyticalBinding#setContext.
+	 */
+	AnalyticalBinding.prototype._initialize = function() {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded()) {
 			this.bInitial = false;
 			//first fetch the analyticalQueryResult object from the adapted Model (see ODataModelAdapter.js)
 			this.oAnalyticalQueryResult = this.oModel.getAnalyticalExtensions().findQueryResultByName(this._getEntitySet());
@@ -205,7 +232,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
-		return this;
 	};
 
 	/* *******************************
@@ -240,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 */
 	AnalyticalBinding.prototype.getRootContexts = function(mParameters) {
 
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return [];
 		}
 
@@ -328,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 */
 	AnalyticalBinding.prototype.getNodeContexts = function(oContext, mParameters) {
 
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return [];
 		}
 
@@ -551,7 +577,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getProperty = function(sPropertyName) {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return {};
 		}
 		return this.oAnalyticalQueryResult.getEntityType().findPropertyByName(sPropertyName);
@@ -568,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getFilterablePropertyNames = function() {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return [];
 		}
 		return this.oAnalyticalQueryResult.getEntityType().getFilterablePropertyNames();
@@ -585,7 +611,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getSortablePropertyNames = function() {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return [];
 		}
 		return this.oAnalyticalQueryResult.getEntityType().getSortablePropertyNames();
@@ -604,7 +630,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyLabel = function(sPropertyName) {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return "";
 		}
 		return this.oAnalyticalQueryResult.getEntityType().getLabelOfProperty(sPropertyName);
@@ -623,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyHeading = function(sPropertyName) {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return "";
 		}
 		return this.oAnalyticalQueryResult.getEntityType().getHeadingOfProperty(sPropertyName);
@@ -642,7 +668,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyQuickInfo = function(sPropertyName) {
-		if (this.bInitial) {
+		if (this.isInitial()) {
 			return "";
 		}
 		return this.oAnalyticalQueryResult.getEntityType().getQuickInfoOfProperty(sPropertyName);
@@ -835,7 +861,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @protected
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
-		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.bInitial) {
+		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.isInitial()) {
 			this.aInitialAnalyticalInfo = aColumns;
 			return;
 		}
