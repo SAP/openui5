@@ -331,7 +331,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default"
 				},
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
+				"sap.m.Input": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.InputBase": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.Label": "sap/m/flexibility/Label",
+				"sap.m.MultiInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.MaskInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",

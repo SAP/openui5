@@ -123,7 +123,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					value: { type: "string" }
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	EnabledPropagator.call(InputBase.prototype);
