@@ -1,9 +1,4 @@
-html.sap-desktop .sapMListTblRow:focus{
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.1875rem;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMListTblRow:focus{
+html[data-sap-ui-browser="ie11"] .sapMListTblRow:focus{
 	outline-width: 3px;
 }
 
@@ -77,12 +72,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMListTblRow:focus{
  /* separators */
  .sapMLIBShowSeparator > td {
 	border-top: 1px solid @sapHCReducedAltFG;
-}
-
-/* set overlapped borders transparent to make focus outline more distinct */
-.sapMLIBShowSeparator:focus > td,
-.sapMLIBShowSeparator:focus + .sapMLIBShowSeparator > td {
-	border-top-color: transparent;
 }
 
 .sapMListShowSeparatorsNone .sapMLIBShowSeparator > td,

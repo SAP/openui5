@@ -147,7 +147,8 @@
 	}
 
 	var oSalaryFooter = new sap.m.Label({
-		text : "9.470.095 EUR"
+		text : "9.470.095 EUR",
+		tooltip: "Sum"
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel();
@@ -261,6 +262,7 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.ui.core.Icon({
 				src : "sap-icon://add-filter",
+				decorative: false,
 				press: function() {}
 			})
 		]
@@ -368,6 +370,7 @@
 			}),
 			new sap.ui.core.Icon({
 				src : "sap-icon://{src}",
+				decorative: false,
 				press: function() {}
 			}),
 			new sap.m.RatingIndicator({

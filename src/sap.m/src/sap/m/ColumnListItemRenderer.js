@@ -296,15 +296,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 	/**
 	 * Overwriting hook method of ListItemBase.
-	 * Does not render the classes for legacy outlines. Instead use the normal outlines in all cases.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm RenderManager
 	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
-		if (sap.ui.Device.browser.msie) {
-			rm.addClass("sapMLIBNativeOutline");
-		}
 	};
 
 	return ColumnListItemRenderer;
