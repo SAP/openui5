@@ -1,29 +1,35 @@
 [
 	{
-	"CategoryName" : "Accessories",
+		"CategoryName" : "Accessories",
 		"Category" : "AC",
 		"NumberOfProducts" : 34
-	}, {
+	},
+	{
 		"CategoryName" : "Desktop Computers",
 		"Category" : "DC",
-		"NumberOfProducts" : 7
-	}, {
+		"NumberOfProducts" : 4
+	},
+	{
 		"CategoryName" : "Flat Screens",
 		"Category" : "FS",
 		"NumberOfProducts" : 2
-	}, {
+	},
+	{
 		"CategoryName" : "Keyboards",
 		"Category" : "KB",
 		"NumberOfProducts" : 4
-	}, {
+	},
+	{
 		"CategoryName" : "Laptops",
 		"Category" : "LT",
 		"NumberOfProducts" : 11
-	}, {
+	},
+	{
 		"CategoryName" : "Printers",
 		"Category" : "PR",
 		"NumberOfProducts" : 9
-	}, {
+	},
+	{
 		"CategoryName" : "Smartphones and Tablets",
 		"Category" : "ST",
 		"NumberOfProducts" : 9
@@ -59,8 +65,8 @@
 		"NumberOfProducts" : 8
 	},
 	{
-		"CategoryName" : "Telekommunikation",
-		"Category" : "TK",
+		"CategoryName" : "Telecommunication",
+		"Category" : "TC",
 		"NumberOfProducts" : 3
 	},
 	{
