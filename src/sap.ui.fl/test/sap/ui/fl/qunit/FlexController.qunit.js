@@ -407,8 +407,8 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				fileType: "change",
 				changeType: "addField",
 				originalLanguage: "DE"
-			}))
-		};
+			}));
+		}
 		aChanges[0]._oDefinition.layer = "USER";
 		aChanges[1]._oDefinition.layer = "USER";
 		aChanges[2]._oDefinition.layer = "PARTNER";
@@ -417,6 +417,109 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		return this.oFlexController.discardChanges(aChanges, true).then(function() {
 			sinon.assert.calledTwice(oChangePersistence.deleteChange);
 			sinon.assert.calledOnce(oChangePersistence.saveDirtyChanges);
+		});
+	});
+
+	QUnit.test("discardChangesForId without personalized only option shall delete the changes from the persistence and save the deletion only for CUSTOMER layer", function(assert) {
+		var aChangesForSomeId = [];
+		for (var i = 0; i < 5 ; i++) {
+			aChangesForSomeId.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}));
+		}
+		aChangesForSomeId[0]._oDefinition.layer = "USER";
+		aChangesForSomeId[1]._oDefinition.layer = "PARTNER";
+		aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
+
+		var aChangesForSomeOtherId = [];
+		for (var i = 0; i < 5 ; i++) {
+			aChangesForSomeOtherId.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}));
+		}
+		aChangesForSomeOtherId[0]._oDefinition.layer = "USER";
+		aChangesForSomeOtherId[1]._oDefinition.layer = "USER";
+		aChangesForSomeOtherId[2]._oDefinition.layer = "PARTNER";
+		aChangesForSomeOtherId[3]._oDefinition.layer = "VENDOR";
+
+		var oDeleteStub = sinon.stub();
+
+		var oChangePersistence = this.oFlexController._oChangePersistence = {
+			deleteChange: oDeleteStub,
+			saveDirtyChanges: sinon.stub().returns(Promise.resolve()),
+			getChangesMapForComponent: function () {
+				return {
+					"someId": aChangesForSomeId,
+					"someOtherId": aChangesForSomeOtherId
+				};
+			}
+		};
+
+		return this.oFlexController.discardChangesForId("someId").then(function() {
+			assert.ok(oDeleteStub.calledTwice, "two changes were deleted");
+			assert.ok(oDeleteStub.calledWith(aChangesForSomeId[2]), "the first customer change for 'someId' was deleted");
+			assert.ok(oDeleteStub.calledWith(aChangesForSomeId[4]), "the second customer change for 'someId' was deleted");
+			assert.ok(oChangePersistence.saveDirtyChanges.calledOnce, "the deletion was persisted");
+		});
+	});
+
+	QUnit.test("discardChangesForId with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function(assert) {
+		var aChangesForSomeId = [];
+		for (var i = 0; i < 5 ; i++) {
+			aChangesForSomeId.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}));
+		}
+		aChangesForSomeId[0]._oDefinition.layer = "USER";
+		aChangesForSomeId[1]._oDefinition.layer = "PARTNER";
+		aChangesForSomeId[2]._oDefinition.layer = "USER";
+		aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
+
+		var aChangesForSomeOtherId = [];
+		for (var i = 0; i < 5 ; i++) {
+			aChangesForSomeOtherId.push(new Change({
+				fileName: "Gizorillus" + i,
+				layer: "CUSTOMER",
+				fileType: "change",
+				changeType: "addField",
+				originalLanguage: "DE"
+			}));
+		}
+		aChangesForSomeOtherId[0]._oDefinition.layer = "USER";
+		aChangesForSomeOtherId[1]._oDefinition.layer = "USER";
+		aChangesForSomeOtherId[2]._oDefinition.layer = "PARTNER";
+		aChangesForSomeOtherId[3]._oDefinition.layer = "VENDOR";
+
+		var oDeleteStub = sinon.stub();
+
+		var oChangePersistence = this.oFlexController._oChangePersistence = {
+			deleteChange: oDeleteStub,
+			saveDirtyChanges: sinon.stub().returns(Promise.resolve()),
+			getChangesMapForComponent: function () {
+				return {
+					"someId": aChangesForSomeId,
+					"someOtherId": aChangesForSomeOtherId
+				};
+			}
+		};
+
+		return this.oFlexController.discardChangesForId("someId", true).then(function() {
+			assert.ok(oDeleteStub.calledTwice, "two changes were deleted");
+			assert.ok(oDeleteStub.calledWith(aChangesForSomeId[0]), "the first user change for 'someId' was deleted");
+			assert.ok(oDeleteStub.calledWith(aChangesForSomeId[2]), "the second user change for 'someId' was deleted");
+			assert.ok(oChangePersistence.saveDirtyChanges.calledOnce, "the deletion was persisted");
 		});
 	});
 
