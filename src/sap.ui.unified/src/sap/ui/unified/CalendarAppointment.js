@@ -62,8 +62,14 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', './library'],
 			/**
 			 * Can be used as identifier of the appointment
 			 */
-			key : {type : "string", group : "Data", defaultValue : null}
+			key : {type : "string", group : "Data", defaultValue : null},
 
+            /**
+             * Overrides the color derived from the <code>type</code> property.
+             * This property will work only with full hex color with pound symbol, e.g.: #FF0000.
+             * @since 1.46.0
+             */
+            color: {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
 		}
 	}});
 
@@ -78,6 +84,34 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', './library'],
 
 		return this;
 
+	};
+
+	/**
+	 * Sets for the <code>color</code> property.
+	 * @param {string} sColor Hex type CSS color
+	 * @returns {control} <code>this</code> context for chaining.
+	 * @override
+	 * @since 1.46.0
+	 */
+	CalendarAppointment.prototype.setColor = function (sColor) {
+		if (sColor && sColor.match(/^#[0-9a-f]{6}$/i)) {
+			jQuery.sap.log.warning("setColor accepts only full hex color value with pound symbol.");
+		}
+		return this.setProperty("color", sColor);
+	};
+
+	/**
+	 * Generates CSS RGBA string from the Hex color.
+	 * @param {string} sHex color string
+	 * @returns {string} CSS rgba string
+	 * @private
+	 */
+	CalendarAppointment.prototype._getCSSColorForBackground = function(sHex) {
+		return "rgba(" + [
+				parseInt(sHex.substr(1, 2), 16), // Red
+				parseInt(sHex.substr(3, 2), 16), // Green
+				parseInt(sHex.substr(5, 2), 16) // Blue
+			].join(",") + ", 0.2)";
 	};
 
 	return CalendarAppointment;

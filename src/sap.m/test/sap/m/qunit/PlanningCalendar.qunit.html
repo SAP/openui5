@@ -101,6 +101,7 @@
 						startDate: new Date("2015", "0", "1", "09", "00"),
 						endDate: new Date("2015", "0", "1", "11", "00"),
 						type: sap.ui.unified.CalendarDayType.Type02,
+						color: "#FF0000",
 						title: "SAPUI5",
 						tooltip: "Test",
 						icon: "sap-icon://sap-ui5"
@@ -110,6 +111,7 @@
 						startDate: oPCStartDate,
 						endDate: new Date("2015", "0", "1", "09", "00"),
 						type: sap.ui.unified.CalendarDayType.Type01,
+						color: "#FF00FF",
 						title: "App 1",
 						icon: "../../ui/unified/images/m_01.png",
 						tooltip: "Tooltip",
@@ -524,10 +526,43 @@
 			ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 rendered");
 			ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 not rendered");
 			ok(!jQuery("#PC1-R1A3").get(0), "Row1: Appointment3 not rendered");
-			ok(!jQuery("#PC1-R1A2").get(0), "Row1: Appointment4 not rendered");
-
+			ok(!jQuery("#PC1-R1A4").get(0), "Row1: Appointment4 not rendered");
 			ok(!jQuery("#PC1-R2H1").get(0), "Row2: IntervalHeader1 rendered");
 			ok(jQuery("#PC1-R2A1").get(0), "Row2: Appointment1 rendered");
+		});
+
+		function _getCssColorProperty (oJQuerySet, sCssPropertyName) {
+			return /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/.exec(oJQuerySet.css(sCssPropertyName));
+		}
+
+		function _getBorderColorPropertyName () {
+			if (sap.ui.getCore().getConfiguration().getRTL()) {
+				return "border-right-color";
+			}
+			return "border-left-color";
+		}
+
+		function _checkColor (oExtractedRGB, oExpectedRGB, sLabel) {
+			equal(oExtractedRGB[1], oExpectedRGB.R, sLabel + " (RED)");
+			equal(oExtractedRGB[2], oExpectedRGB.G, sLabel + " (GREEN)");
+			equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
+		}
+
+		test("Check custom colors in Appointments", function () {
+		    var oAppointment$ = jQuery("#PC1-R1A1");
+            ok(!oAppointment$.hasClass("sapUiCalendarAppType01"), "Row1: Color setting prevents default formatting");
+			var oBorderColor = _getCssColorProperty(oAppointment$, _getBorderColorPropertyName());
+			ok(oBorderColor, "Row1: Appointment1 has a border color");
+			_checkColor(oBorderColor, {R: 255, G:0, B: 255}, "Row1: Appointment1 has the right custom border color");
+		});
+
+		test("Check custom colors in IntervalHeader", function () {
+			var oIntervalHeader$ = jQuery("#PC1-R1H1");
+			var oBorderColor;
+			ok(!oIntervalHeader$.hasClass("sapUiCalendarRowAppsIntHeadType02"), "Row2: Color setting prevents default formatting");
+			oBorderColor = _getCssColorProperty(oIntervalHeader$, _getBorderColorPropertyName());
+			ok(oBorderColor, "Row2: IntervalHeader1 has a border color");
+			_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 		});
 
 		module("Setters");
