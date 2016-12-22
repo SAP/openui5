@@ -699,17 +699,14 @@ sap.ui.define([
 	};
 
 	TableKeyboardDelegate.prototype.oncontextmenu = function(oEvent) {
-		var bRightMouseClick = oEvent.button === 2;
-		if (bRightMouseClick) {
+		if (oEvent.isMarked("handledByPointerExtension")) {
 			return;
 		}
 
-		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+		oEvent.preventDefault(); // To prevent opening the default browser context menu.
 
-		if (oCellInfo !== null) {
-			// To prevent opening the default browser context menu when pressing the context menu key on a table cell.
-			oEvent.preventDefault();
-		}
+		var $Cell = TableUtils.getCell(this, oEvent.target);
+		var oCellInfo = TableUtils.getCellInfo($Cell) || {};
 
 		if (oCellInfo.type === CellType.COLUMNHEADER ||
 			oCellInfo.type === CellType.DATACELL) {
