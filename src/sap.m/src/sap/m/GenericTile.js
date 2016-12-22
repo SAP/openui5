@@ -164,6 +164,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
+
+		this._bTilePress = true;
 	};
 
 	/**
@@ -665,7 +667,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype.ontap = function(event) {
 		var oParams;
-		if (this.getState() !== library.LoadState.Disabled) {
+		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
 			this.$().focus();
 			oParams = this._getEventParams(event);
 			this.firePress(oParams);
@@ -1188,6 +1190,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			action : sAction
 		};
 		return oParams;
+	};
+
+	/**
+	 * Provides an interface to switch on or off the tile's press event. Used in SlideTile for Actions scope.
+	 *
+	 * @param {boolean} value If set to true, the press event of the tile is active.
+	 * @protected
+	 * @since 1.46
+	 */
+	GenericTile.prototype.setPressEnabled = function(value) {
+		this._bTilePress = value;
 	};
 
 	return GenericTile;

@@ -2016,6 +2016,22 @@
 		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
 	});
 
+	QUnit.test("No press event when press event disabled", function(assert) {
+		//Arrange
+		var bEventNotTriggered = true;
+		this.oGenericTile.attachEvent("press", handlePress);
+		this.oGenericTile.setPressEnabled(false);
+
+		//Act
+		this.oGenericTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			bEventNotTriggered = false;
+		}
+		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
+	});
+
 	QUnit.test("Press event on 'tap' with correct parameters in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", handlePress);

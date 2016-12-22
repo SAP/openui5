@@ -140,15 +140,21 @@
 			return oGenericTile;
 		};
 		return fnGenericTileFactory;
-	}
+	};
+
+	var handleActionsPress = function(oEvent) {
+		sap.m.MessageToast.show("Press event from SlideTile in " + oEvent.getParameter("scope") + " scope with parameter " + oEvent.getParameter("action"));
+	};
 
 	var oFeedSlideTile = new sap.m.SlideTile("st-feed", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
+		scope: "{/scope}",
 		tiles : {
 			factory : fnGetGTFactory(oFeedTileContent),
 			path : "/feedTiles"
-		}
+		},
+		press: handleActionsPress
 	});
 
 	var oNewsTileContent = new sap.m.TileContent({
@@ -162,19 +168,23 @@
 	var oNewsSlideTile = new sap.m.SlideTile("st-news", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
+		scope: "{/scope}",
 		tiles : {
 			factory : fnGetGTFactory(oNewsTileContent),
 			path : "/newsTiles"
-		}
+		},
+		press: handleActionsPress
 	});
 
 	var oOneSlideTile = new sap.m.SlideTile("st-one", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
+		scope: "{/scope}",
 		tiles : {
 			factory : fnGetGTFactory(oNewsTileContent),
 			path : "/oneTile"
-		}
+		},
+		press: handleActionsPress
 	});
 
 	var oTileNoContent = new sap.m.SlideTile("st-noContent");
@@ -235,12 +245,28 @@
 		placeholder : 'Enter value ...'
 	});
 
+	var oScopeLabel = new sap.m.Label({
+		text : "Scope",
+		labelFor : "scope"
+	});
+
+	var oScopeSelect = new sap.m.Select("scope", {
+		items : [new sap.ui.core.Item({
+			key : "Display",
+			text : sap.m.GenericTileScope.Display
+		}), new sap.ui.core.Item({
+			key : "Actions",
+			text : sap.m.GenericTileScope.Actions
+		})],
+		selectedKey: "{/scope}"
+	});
+
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
 		maxContainerCols : 2,
 		editable : true,
 		content : [new sap.ui.core.Title({
 			text : "Modify Tiles Appearing"
-		}), oDTLbl, oDTInput, oTTLbl, oTTInput]
+		}), oDTLbl, oDTInput, oTTLbl, oTTInput, oScopeLabel, oScopeSelect]
 	});
 
 	oPage.addContent(editableSimpleForm);
