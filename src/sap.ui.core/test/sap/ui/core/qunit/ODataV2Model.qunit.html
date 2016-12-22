@@ -4272,6 +4272,18 @@
 			delete this.oModel;
 		}
 	});
+	asyncTest("set same value again", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
+			var oProduct = this.oModel.getProperty('', oContext);
+			this.oModel.setProperty("Name", "test", oContext);
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			ok(this.oModel.hasPendingChanges(), "Model should still have pending changes");
+			start();
+		}.bind(this))
+	});
 	asyncTest("submit again after error", function() {
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
