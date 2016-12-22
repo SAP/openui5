@@ -37,11 +37,17 @@
 				numberUnit="EUR">
 				<attributes>
 					<ObjectAttribute
+						title="{i18n>PRODUCT_SUPPLIER_ATTRIBUTE_TEXT}"
 						text="{SupplierName}" />
 					<ObjectAttribute
+						title="{i18n>PRODUCT_DESCRIPTION_ATTRIBUTE_TEXT}"
 						text="{ShortDescription}" />
 					<ObjectAttribute
-						text="{Weight}g" />
+						title="{i18n>PRODUCT_WEIGHT_ATTRIBUTE_TEXT}"
+						text="{Weight} {WeightUnit}"/>
+					<ObjectAttribute
+						title="{i18n>PRODUCT_MEASURES_ATTRIBUTE_TEXT}"
+						text="{Width} {Unit}, {Depth} {Unit}, {Height} {Unit}"/>
 				</attributes>
 				<firstStatus>
 					<ObjectStatus
@@ -57,13 +63,27 @@
 			</ObjectHeader>
 			<VBox alignItems="Center">
 				<Image
+					id = "productImage"
 					src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
 					decorative="true"
-					densityAware="false" />
+					class="sapUiSmallMargin"
+					press="onPicturePress"
+					width="100%"
+					/>
 			</VBox>
 		</content>
+
+		<dependents>
+			<LightBox id="lightBox">
+				<imageContent>
+					<LightBoxItem
+							imageSrc="{PictureUrl}"
+							title="{Name}"></LightBoxItem>
+				</imageContent>
+			</LightBox>
+		</dependents>
 	</Page>
 </mvc:View>
