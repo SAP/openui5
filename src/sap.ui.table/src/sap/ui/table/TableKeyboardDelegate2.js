@@ -135,7 +135,7 @@ sap.ui.define([
 			oTable._toggleSelectAll();
 
 		// Expand/Collapse group.
-		} else if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
+		} else if (TableKeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
 			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
 
 		// Select/Deselect row.
@@ -200,13 +200,14 @@ sap.ui.define([
 	/**
 	 * Checks whether an element is in the list of elements which can allow expanding and collapsing a group, if a specific key is pressed on them.
 	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
 	 * @param {HTMLElement} oElement The element to check.
 	 * @returns {boolean} Returns <code>true</code>, if pressing a specific key on this element can cause a group to expand or to collapse.
 	 * @private
 	 */
-	TableKeyboardDelegate._isElementGroupToggler = function(oElement) {
+	TableKeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
 		return TableUtils.Grouping.isInGroupingRow(oElement) ||
-			   (TableUtils.Grouping.isTreeMode(this) && oElement.classList.contains("sapUiTableTdFirst")) ||
+			   (TableUtils.Grouping.isTreeMode(oTable) && oElement.classList.contains("sapUiTableTdFirst")) ||
 			   oElement.classList.contains("sapUiTableTreeIcon");
 	};
 
@@ -526,10 +527,10 @@ sap.ui.define([
 			return;
 
 		// Expand/Collapse group.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F4)) {
-			if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
-				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target);
-			}
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F4) &&
+				   TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target);
+			return;
 		}
 
 		if (this._getKeyboardExtension().isInActionMode()) {
@@ -615,16 +616,15 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, "+")) {
-			if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
+			if (TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
 
 			} else if (oCellInfo.type === CellType.DATACELL) {
 				oKeyboardExtension.setActionMode(true);
 			}
-		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, "-")) {
-			if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, "-")) {
+			if (TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
 
 			} else if (oCellInfo.type === CellType.DATACELL) {
@@ -936,11 +936,12 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT)) {
-			if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
-				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
-			}
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
+			TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, true);
+			return;
 		}
 
 		if (oKeyboardExtension.isInActionMode()) {
@@ -1026,11 +1027,12 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT)) {
-			if (TableKeyboardDelegate._isElementGroupToggler(oEvent.target)) {
-				TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
-			}
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
+			TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target, false);
+			return;
 		}
 
 		if (oKeyboardExtension.isInActionMode()) {
