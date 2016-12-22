@@ -9,7 +9,7 @@ sap.ui.define([
 			 FilterOperator) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.cart.view.Home", {
+	return Controller.extend("sap.ui.demo.cart.controller.Home", {
 		formatter : formatter,
 
 		onInit: function () {

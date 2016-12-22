@@ -20,7 +20,7 @@ sap.ui.define([
 	var sSavedForLaterEntries = "savedForLaterEntries";
 	var sCartEntries = "cartEntries";
 
-	return Controller.extend("sap.ui.demo.cart.view.Cart", {
+	return Controller.extend("sap.ui.demo.cart.controller.Cart", {
 		formatter: formatter,
 
 		onInit: function () {

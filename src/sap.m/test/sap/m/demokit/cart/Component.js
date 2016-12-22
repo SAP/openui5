@@ -92,7 +92,7 @@ sap.ui.define([
 
 			// set i18n model
 			var oI18nModel = new ResourceModel({
-				bundleName: "sap.ui.demo.cart.i18n.appTexts"
+				bundleName: "sap.ui.demo.cart.i18n.i18n"
 			});
 			this.setModel(oI18nModel, "i18n");
 
