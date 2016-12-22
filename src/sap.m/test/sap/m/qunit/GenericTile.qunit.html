@@ -2072,7 +2072,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when ENTER down")
+		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered on ENTER down")
 	});
 
 	QUnit.test("ENTER key event in Display scope", function(assert) {
@@ -2085,7 +2085,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on ENTER up");
 	});
 
 	QUnit.test("ENTER key event in Actions scope", function(assert) {
@@ -2099,8 +2099,69 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on ENTER up");
 	});
+
+    QUnit.test("SPACE key event in Display scope", function(assert) {
+        //Arrange
+        this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+        var e = jQuery.Event('keyup');
+        e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+        //Act
+        this.oGenericTile.$().trigger(e);
+
+        //Assert
+        assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on SPACE up");
+    });
+
+    QUnit.test("SPACE key event in Display scope with correct parameters", function(assert) {
+        //Arrange
+        this.oGenericTile.setScope(sap.m.GenericTileScope.Display);
+        this.oGenericTile.attachEvent("press", handlePress);
+        var e = jQuery.Event('keyup');
+        e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+        //Act
+        this.oGenericTile.$().trigger(e);
+
+        //Assert
+        function handlePress(oEvent) {
+            assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
+            assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+        }
+    });
+
+    QUnit.test("SPACE key event in Actions scope", function(assert) {
+        //Arrange
+        this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+        this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+        var e = jQuery.Event('keyup');
+        e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+        //Act
+        this.oGenericTile.$().trigger(e);
+
+        //Assert
+        assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on SPACE up");
+    });
+
+    QUnit.test("SPACE key event in Actions scope with correct parameters", function(assert) {
+        //Arrange
+        this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+        this.oGenericTile.attachEvent("press", handlePress);
+        var e = jQuery.Event('keyup');
+        e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+        //Act
+        this.oGenericTile.$().trigger(e);
+
+        //Assert
+        function handlePress(oEvent) {
+            assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+            assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+        }
+    });
 
 	QUnit.test("DELETE key event in Display scope", function(assert) {
 		//Arrange
@@ -2112,7 +2173,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when DELETE up");
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered on DELETE up");
 	});
 
 	QUnit.test("BACKSPACE key event in Display scope", function(assert) {
@@ -2125,7 +2186,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when BACKSPACE up");
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered on BACKSPACE up");
 	});
 
 	QUnit.test("DELETE key event in Actions scope with correct parameters", function(assert) {
