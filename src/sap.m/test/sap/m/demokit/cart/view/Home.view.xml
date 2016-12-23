@@ -11,7 +11,7 @@
 			<Button
 				icon="sap-icon://cart"
 				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
-				press="handleCartButtonPress">
+				press="onCartButtonPress">
 			</Button>
 		</headerContent>
 		<subHeader>
@@ -20,7 +20,7 @@
 					id="searchField"
 					showRefreshButton="{device>/isNoTouch}"
 					placeholder="{i18n>HOME_SEARCH_PLACEHOLDER}"
-					search="handleSearch"
+					search="onSearch"
 					tooltip="{i18n>HOME_SEARCH_TOOLTIP}"
 					width="100%">
 				</SearchField>
@@ -34,12 +34,12 @@
 			<PullToRefresh
 				id="pullToRefresh"
 				visible="{device>/isTouch}"
-				refresh="handleRefresh" />
+				refresh="onRefresh" />
 			<!-- This list shows the search results -->
 			<List
 				id="productList"
 				mode="{device>/listMode}"
-				select="handleProductListSelect"
+				select="onProductListSelect"
 				noDataText="{i18n>HOME_NO_DATA}"
 				items="{
 					path : '/Products',
@@ -61,7 +61,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="handleProductListItemPress"
+						press="onProductListItemPress"
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute text="{SupplierName}"/>
@@ -97,7 +97,7 @@
 						title="{CategoryName}"
 						type="Active"
 						counter="{NumberOfProducts}"
-						press="handleCategoryListItemPress" >
+						press="onCategoryListItemPress" >
 						<customData>
 							<core:CustomData
 								key="id"

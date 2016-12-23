@@ -19,11 +19,11 @@ sap.ui.define([
 			this._search();
 		},
 
-		handleSearch: function () {
+		onSearch: function () {
 			this._search();
 		},
 
-		handleRefresh: function () {
+		onRefresh: function () {
 			var that = this;
 
 			// trigger search again and hide pullToRefresh when data ready
@@ -72,19 +72,19 @@ sap.ui.define([
 			});
 		},
 
-		handleCategoryListItemPress: function (oEvent) {
+		onCategoryListItemPress: function (oEvent) {
 			var oBindContext = oEvent.getSource().getBindingContext();
 			var oModel = oBindContext.getModel();
 			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
 			this._router.navTo("category", {id: sCategoryId});
 		},
 
-		handleProductListSelect: function (oEvent) {
+		onProductListSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("listItem");
 			this._showProduct(oItem);
 		},
 
-		handleProductListItemPress: function (oEvent) {
+		onProductListItemPress: function (oEvent) {
 			var oItem = oEvent.getSource();
 			this._showProduct(oItem);
 		},
@@ -96,7 +96,7 @@ sap.ui.define([
 			this._router.navTo("cartProduct", {productId: sId}, !sap.ui.Device.system.phone);
 		},
 
-		handleCartButtonPress: function () {
+		onCartButtonPress: function () {
 			this._router.navTo("cart");
 		}
 	});

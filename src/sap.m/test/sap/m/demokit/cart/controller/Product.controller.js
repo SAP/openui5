@@ -65,7 +65,7 @@ sap.ui.define([
 			}
 		},
 
-		handleAddButtonPress : function () {
+		onAddButtonPress : function () {
 			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			var oProduct = this.getView().getBindingContext().getObject();
 			var sProdStatus = oProduct.status;
@@ -135,11 +135,11 @@ sap.ui.define([
 			MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART"));
 		},
 
-		handleCartButtonPress :  function () {
+		onCartButtonPress :  function () {
 			this._router.navTo("cart");
 		},
 
-		handleNavButtonPress : function () {
+		onNavButtonPress : function () {
 			this.getOwnerComponent().myNavBack();
 		},
 

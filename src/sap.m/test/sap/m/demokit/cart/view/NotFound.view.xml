@@ -8,7 +8,7 @@
 	<Page
 		title="Not Found"
 		showNavButton="{device>/isPhone}"
-		navButtonPress="handleNavBack"
+		navButtonPress="onNavBack"
 		enableScrolling="false"
 		class="titlesSpace" >
 		<content>
