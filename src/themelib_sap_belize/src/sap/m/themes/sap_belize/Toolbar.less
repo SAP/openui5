@@ -3,38 +3,11 @@
 /* Belize theme                   */
 /* ============================== */
 
-.sapMTB {
-	height: 3rem;
-	background: @sapUiToolbarBackground;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: @sapUiGroupTitleBorderColor;
-}
-
-.sapMTBShrinkItem {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
-}
-
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiListHeaderBackground;
-}
-
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	height: 2rem;
 	padding: 0 0.5rem;
-	background: @sapUiInfobarBackground;
-	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
 	border-bottom: none;
-}
-
-.sapMTB-Info-CTX.sapMTBActive:hover {
-	background: @sapUiInfobarHoverBackground;
-}
-
-.sapMTB-Info-CTX.sapMTBActive:active {
-	background: @sapUiInfobarActiveBackground;
 }
 
 html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
@@ -59,17 +32,4 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		border: 0.0625rem dashed @sapUiContentContrastFocusColor;
 		pointer-events: none;
 	}
-}
-
-/********** COMPACT DESIGN ************/
-
-/* toolbar has 2rem height in compact mode */
-.sapUiSizeCompact .sapMTB {
-	height: 2rem;
-}
-
-/* default min-width value for the shrinkable items */
-.sapUiSizeCompact .sapMTBShrinkItem,
-.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
-	min-width: 2rem;
 }

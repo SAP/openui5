@@ -1,13 +1,23 @@
-/* ============================================= */
-/* CSS for value state message                   */
-/* ============================================= */
+/* ======================================== */
+/* CSS for control sap.m/ValueStateMessage  */
+/* Base theme                               */
+/* ======================================== */
 
 .sapMValueStateMessage {
 	box-sizing: border-box;
-}
-
-.sapMValueStateMessage {
-	padding: 0.3125rem;
 	background: @sapUiFieldBackground;
 	display: inline-block;
+	color: @sapUiBaseText;
+	font-size: @sapMFontSmallSize;
+	font-family: @sapUiFontFamily;
+	padding: 0.3rem 0.625rem;
+	min-width: 6rem;
+}
+
+.sapMValueStateMessageError {
+	background: @sapUiErrorBG;
+}
+
+.sapMValueStateMessageWarning {
+	background: @sapUiWarningBG;
 }
