@@ -515,6 +515,26 @@
 			});
 			oFormContainer.addFormElement(oFormElement);
 
+			oFormElement = new sap.ui.layout.form.FormElement("F4E4", {
+				label: new sap.ui.commons.Label({text: "Single/multiple selection"}),
+				fields: [
+					oRBG = new sap.ui.commons.RadioButtonGroup({
+						text: "Single selection",
+						items : [ new sap.ui.core.Item({
+							text : "Single Selection"
+						}), new sap.ui.core.Item({
+							text : "Multiple Selection"
+						})
+						],
+						select: function (oEvent) {
+							var bSingleSelection = this.getSelectedItem().getText() === "Single Selection" ? true : false;
+							sap.ui.getCore().byId("Cal4").setSingleSelection(bSingleSelection);
+						}
+					})
+				]
+			});
+			oFormContainer.addFormElement(oFormElement);
+
 			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 				items: [
 				        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
