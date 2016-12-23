@@ -1,8 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/cart/test/arrangement/Arrangement",
-	"sap/ui/demo/cart/test/action/BuyProductJourneyAction",
-	"sap/ui/demo/cart/test/assertion/BuyProductJourneyAssertion",
 	// QUnit additions
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
@@ -13,13 +11,16 @@ sap.ui.define([
 	"sap/ui/demo/cart/test/pageobjects/Product",
 	"sap/ui/demo/cart/test/pageobjects/Cart",
 	"sap/ui/demo/cart/test/pageobjects/Dialog"
-], function (Opa5, Arrangement, BuyProductJourneyAction, BuyProductJourneyAssertion) {
+], function (Opa5, Arrangement) {
 	"use strict";
 
 	Opa5.extendConfig({
 		arrangements : new Arrangement(),
-		actions: new BuyProductJourneyAction(),
-		assertions: new BuyProductJourneyAssertion(),
+		actions: new Opa5({
+			iLookAtTheScreen : function () {
+				return this;
+			}
+		}),
 		viewNamespace : "sap.ui.demo.cart.view.",
 		autoWait: true
 	});

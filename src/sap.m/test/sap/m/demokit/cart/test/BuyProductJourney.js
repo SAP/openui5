@@ -20,40 +20,39 @@ sap.ui.define([
 		When.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheCategoryList().
+		Then.onHome.iShouldSeeTheCategoryList().
 			and.theCategoryListShouldHaveSomeEntries();
 	});
 
 	//We are still on the second category
 	opaTest("Should see the product list", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheSecondCategory();
 
 		// Assertions
-		Then.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
 			and.iShouldSeeTheProductList().
 			and.theProductListShouldHaveSomeEntries();
 	});
 
 	opaTest("Should add a product to the cart", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheFirstProduct().and.
-			iAddTheDisplayedProductToTheCart().and.
-			iGoToTheCartPage();
+		When.onTheCategory.iPressOnTheFirstProduct();
+		When.onTheProduct.iAddTheDisplayedProductToTheCart();
+		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
-		Then.iShouldSeeTheProductInMyCart().
-			and.theProceedButtonShouldBeEnabled();
+		Then.onTheCart.iShouldSeeTheProductInMyCart();
 	});
 
 	opaTest("Should order the cart", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheProceedButton().and.
+		When.onTheCart.iPressOnTheProceedButton().and.
 			iFillTheForm().and.
-			iPressOrderNow().and.
-			iGoToTheCartPage();
+			iPressOrderNow();
+		When.onHome.iGoToTheCartPage();
 
 		// Assertions
-		Then.iShouldSeeAnEmptyCart().and.iTeardownMyApp();
+		Then.onTheCart.iShouldSeeAnEmptyCart().and.iTeardownMyApp();
 	});
 });
