@@ -1,36 +1,17 @@
-.sapMTB {
-	height: 3rem;
-	background: @sapUiToolbarBackground;
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
-}
-
-.sapMTBShrinkItem {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
-}
-
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiListHeaderBackground;
-}
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* BlueCrystal theme              */
+/* ============================== */
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	height: 2rem;
 	padding: 0 .25rem 0 0.5rem;
-	background: @sapUiInfobarBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
-.sapMTB-Info-CTX.sapMTBActive:hover {
-	background: @sapUiInfobarHoverBackground;
-}
-
-.sapMTB-Info-CTX.sapMTBActive:active {
-	background: @sapUiInfobarActiveBackground;
-}
-
 html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
-	outline: 1px dotted @sapUiInvertedFocus;
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 	outline-offset: -0.125rem;
 }
 
@@ -48,20 +29,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.0625rem dotted @sapUiInvertedFocus;
+		border: 0.0625rem dotted @sapUiContentContrastFocusColor;
 		pointer-events: none;
 	}
-}
-
-/********** COMPACT DESIGN ************/
-
-/* toolbar has 2rem height in compact mode */
-.sapUiSizeCompact .sapMTB {
-	height: 2rem;
-}
-
-/* default min-width value for the shrinkable items */
-.sapUiSizeCompact .sapMTBShrinkItem,
-.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
-	min-width: 2rem;
 }

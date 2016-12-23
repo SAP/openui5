@@ -1,66 +1,36 @@
-/* ============================================= */
-/* CSS for control sap.m/Token.control BlueCrystal theme*/
-/* ============================================= */
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* BlueCrystal theme            */
+/* ============================ */
 
 .sapMToken {
-	background: @sapUiButtonBackground;
 	border: 1px solid darken(@sapUiButtonBackground, 10);
-	border-radius: 0.125rem;
-	color: @sapUiDarkText;
 }
 
 html.sap-desktop .sapMToken:hover {
-	background: @sapUiButtonHoverBackground;
 	border: 1px solid darken(@sapUiButtonHoverBackground, 5);
-	border-radius: 0.125rem;
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: 0.0625rem dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:focus {
-	outline: 0.0625rem dotted @sapUiInvertedFocus;
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMToken:focus {
 		.sapMTokenText:before {
-			border: 1px dashed @sapUiFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+			border: 1px dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
 	}
 
 	.sapMToken.sapMTokenSelected:focus {
 		.sapMTokenText:before {
-			border: 1px dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+			border: 1px dashed @sapUiContentContrastFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
 	}
-}
-
-.sapMTokenSelected {
-	color: @sapUiButtonActiveTextColor;
-	background: @sapUiButtonActiveBackground;
-	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
-	border-radius: 0.125rem;
-}
-
-html.sap-desktop .sapMToken.sapMTokenSelected:hover,
-.sapMToken.sapMTokenSelected:hover {
-	background: darken(@sapUiButtonActiveBackground, 5);
-	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
-	border-radius: 0.125rem;
-}
-
-.sapMTokenSelected .sapMTokenIcon {
-	color: @sapUiInvertedElement;
-}
-
-.sapMTokenIcon {
-	color: @sapUiContentIconColor;
-}
-
-.sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
-	font-size: 0.75rem;
 }

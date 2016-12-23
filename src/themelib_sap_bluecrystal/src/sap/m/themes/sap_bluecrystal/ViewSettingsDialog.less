@@ -1,34 +1,27 @@
-/* ================================================================= */
-/* CSS for control sap.m/TableFilterDialog.control BlueCrystal theme */
-/* ================================================================= */
-
-/* workaround to remove the blurry effect on the icons */
-.sapMVSDSeg .sapMSegBBtn {
-	text-shadow: 0 0px;
-}
+/* ========================================= */
+/* CSS for control sap.m/ViewSettingsDialog  */
+/* BlueCrystal theme                         */
+/* ========================================= */
 
 .sapMTB.sapMVSDFilterHeaderToolbar {
-	background-color: @sapUiToolbarSolidBG;
-	border-bottom: 0.0625rem solid @sapUiToolbarBorder;
+	background-color: @sapUiListHeaderBackground;
+	border-bottom: 1px solid @sapUiGroupContentBorderColor;
 	.sapMBarChild.sapMCb {
 		.sapMCbLabel {
 			font-family: @sapUiFontFamily;
-			color: @sapUiDarkText;
+			color: @sapUiGroupTitleTextColor;
 			font-size: 1.125rem;
 		}
 	}
 }
 
-.sapMSF.sapMVSDFilterSearchField {
-	border-bottom: 0.0625rem solid @sapUiToolbarBorder;
-	.sapMSFF {
-		border: none;
-	}
+.sapMSF.sapMVSDFilterSearchField .sapMSFF {
+	border: none;
 }
 
 .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
 	.sapMCb:focus::before {
-		border: 0.0625rem dotted @sapUiFocus;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
 		pointer-events: none;
 	}
 }
@@ -52,11 +45,5 @@ html.sap-desktop .sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderTo
 		right: 0.25rem;
 		bottom: 0.25rem;
 		left: 0.25rem;
-	}
-}
-
-.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
-	.sapMLabel.sapMCbLabel {
-		font-size: @sapMFontMediumSize;
 	}
 }
