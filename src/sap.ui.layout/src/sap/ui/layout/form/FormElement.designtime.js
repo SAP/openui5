@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 						}
 
 						return aFields.filter(function(oElement) {
-							return oElement.getDomRef();
+							return oElement.getDomRef && oElement.getDomRef();
 						}).map(function(oElement) {
 							var oDomRef = oElement.getDomRef();
 							return oDomRef.parentNode;
