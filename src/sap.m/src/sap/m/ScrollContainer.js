@@ -74,7 +74,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					 * The content of the ScrollContainer.
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
-				}
+				},
+				designTime: true
 			}
 		});
 
