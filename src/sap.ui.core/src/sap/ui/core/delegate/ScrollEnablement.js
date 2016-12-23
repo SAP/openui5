@@ -494,7 +494,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 			_onTouchMove : function(oEvent){
 				var container = this._$Container[0];
-				var point = oEvent.touches[0];
+				var point = oEvent.touches ? oEvent.touches[0] : oEvent;
 				var dx = point.pageX - this._iX;
 				var dy = point.pageY - this._iY;
 
@@ -549,7 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 						container.scrollTop = scrollTop + this._iY - point.pageY;
 					}
 					if ((container.scrollLeft != scrollLeft) || (container.scrollTop != scrollTop)) { // if moved
-						oEvent.setMarked();
+						oEvent.setMarked && oEvent.setMarked();
 						oEvent.preventDefault();
 					}
 					this._iX = point.pageX;
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				}
 
 				if (!this._oIOSScroll || this._scrollable.vertical || this._scrollable.horizontal && this._iDirection == "h") {
-					oEvent.setMarked(); // see jQuery.sap.mobile.js
+					oEvent.setMarked &&  oEvent.setMarked(); // see jQuery.sap.mobile.js
 				}
 			},
 
@@ -579,7 +579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				}
 
 				if (this._bDragScroll && this._iDirection) {
-					oEvent.setMarked();
+					oEvent.setMarked && oEvent.setMarked();
 				}
 			},
 
@@ -587,7 +587,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			// Set options.nonTouchScrolling = true to enable
 			_onMouseDown : function(oEvent){
 				// start scrolling only when the left button is pressed
-				if (oEvent.button == 0) {
+				if (this._bDragScroll && oEvent.button == 0) {
 					this._bScrolling = true;
 					this._onStart(oEvent);
 				}
@@ -596,9 +596,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			_onMouseMove : function(oEvent){
 				// check if scrolling and the (left) button is pressed
 				if (this._bScrolling) {
-					var e = oEvent.originalEvent;
+					var e = oEvent.originalEvent || oEvent;
 					var button = e.buttons || e.which;
-					if (button == 1) {
+					if (button == 1 || oEvent.pressure) { // either the left mouse button or pen is pressed
 						var container = this._$Container[0];
 						if (this._bHorizontal) {
 							if ( this._bFlipX ) {
@@ -617,8 +617,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			_onMouseUp : function(){
-				this._bScrolling = false;
-				this._onEnd();
+				if (this._bScrolling) {
+					this._bScrolling = false;
+					this._onEnd();
+				}
 			},
 
 			onBeforeRendering: function() {
@@ -663,16 +665,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				// Set event listeners
 				$Container.scroll(jQuery.proxy(this._onScroll, this));
 
-				if (Device.support.touch) {
+				var oContainerRef = $Container[0];
+				function addEventListeners (sEvents, fListener) {
+					sEvents.split(" ").forEach(function(sEvent){
+						oContainerRef && oContainerRef.addEventListener(sEvent, fListener);
+					});
+				}
+				// React on mouse/pen and touch actions accordingly.
+				// Pen behavior is the same as of the mouse.
+				function onPointerDown(oEvent) {
+					return oEvent.pointerType == "touch" ? this._onStart(oEvent) : this._onMouseDown(oEvent);
+				}
+				function onPointerMove(oEvent) {
+					return oEvent.pointerType == "touch" ? this._onTouchMove(oEvent) : this._onMouseMove(oEvent);
+				}
+				function onPointerUp(oEvent) {
+					return oEvent.pointerType == "touch" ? this._onEnd(oEvent) : this._onMouseUp(oEvent);
+				}
+
+				if (Device.support.pointer && Device.system.desktop) {
+					// Chrome 55 cancels pointer events on Android too early, use them on desktop only
+					addEventListeners("pointerdown", onPointerDown.bind(this));
+					addEventListeners("pointermove", onPointerMove.bind(this));
+					addEventListeners("pointerup pointercancel pointerleave", onPointerUp.bind(this));
+				} else if (Device.support.touch) {
 					$Container
-						.on("touchcancel touchend", jQuery.proxy(this._onEnd, this))
-						.on("touchstart", jQuery.proxy(this._onStart, this))
-						.on("touchmove", jQuery.proxy(this._onTouchMove, this));
+						.on("touchcancel touchend", this._onEnd.bind(this))
+						.on("touchstart", this._onStart.bind(this))
+						.on("touchmove", this._onTouchMove.bind(this));
 				} else if (this._bDragScroll) {
 					$Container
-						.on("mouseup mouseleave", jQuery.proxy(this._onMouseUp, this))
-						.mousedown(jQuery.proxy(this._onMouseDown, this))
-						.mousemove(jQuery.proxy(this._onMouseMove, this));
+						.on("mouseup mouseleave", this._onMouseUp.bind(this))
+						.mousedown(this._onMouseDown.bind(this))
+						.mousemove(this._onMouseMove.bind(this));
 				}
 			},
 
