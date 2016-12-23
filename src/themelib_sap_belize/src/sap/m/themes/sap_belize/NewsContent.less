@@ -3,6 +3,9 @@
 /* Belize theme                       */
 /* ================================== */
 
+@_sap_m_NewsContent_HeaderTextColor: @sapUiContentContrastTextColor;
+@_sap_m_NewsContent_SubHeaderTextColor: lighten(@sapUiContentLabelColor, 45);
+
 .sapMNwC {
 	background-color: fade(@sapUiTileBackground, 60);
 }
@@ -11,10 +14,10 @@
 	.sapMNwC {
 		text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
 		.sapMNwCSbh {
-			color: lighten(@sapUiContentLabelColor, 45);
+			color: @_sap_m_NewsContent_SubHeaderTextColor;
 		}
 		.sapMNwCCTxt .sapMText {
-			color: @sapUiContentContrastTextColor;
+			color: @_sap_m_NewsContent_HeaderTextColor;
 		}
 	}
 }
