@@ -237,6 +237,10 @@ sap.ui.define(['jquery.sap.global'],
 			 */
 			ElementUtil.findAllSiblingsInContainer = function(oElement, oContainer) {
 				var oParent = oElement.getParent();
+				if (!oParent) {
+					return [];
+				}
+
 				if (oParent !== oContainer){
 					var aParents = ElementUtil.findAllSiblingsInContainer(oParent, oContainer);
 					return aParents.map(function(oParent){
