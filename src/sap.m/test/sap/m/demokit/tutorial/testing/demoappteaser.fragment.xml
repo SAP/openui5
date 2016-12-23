@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form">
+	<IconTabBar id="iconTabBar"
+				expanded="true"
+				expandable="false"
+				class="sapUiNoContentPadding">
+		<items>
+			<IconTabFilter icon="sap-icon://hint" text="Bike Rack" key="info"/>
+			<IconTabFilter icon="sap-icon://inspection" text="Statistics" key="statistics"/>
+		</items>
+		<content>
+			<form:SimpleForm>
+				<form:content>
+					<Label text="Posted at"/>
+					<Text text="12/2016"/>
+					<Label text="Description"/>
+					<Text text="Suitable for camper or RV"/>
+				</form:content>
+			</form:SimpleForm>
+		</content>
+	</IconTabBar>
+</core:FragmentDefinition>
