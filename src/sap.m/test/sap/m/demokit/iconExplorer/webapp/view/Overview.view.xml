@@ -1,0 +1,294 @@
+<mvc:View
+	controllerName="sap.ui.demo.iconexplorer.controller.Overview"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		showFooter="false"
+		title="{i18n>overviewViewTitle}">
+		<semantic:content>
+			<IconTabBar
+				id="iconTabBar"
+				select="onTabSelect"
+				stretchContentHeight="true"
+				expandable="false"
+				class="sapUiNoContentPadding">
+				<items>
+					<IconTabFilter
+						showAll="true"
+						count="{view>/iconFilterCount}"
+						text="{i18n>overviewTabAllText}"
+						tooltip="{i18n>overviewTabAllTooltip}"
+						key="all"/>
+					<IconTabSeparator/>
+					<IconTabFilter
+						icon="sap-icon://grid"
+						count="{/ProductCollectionStats/Counts/Weight/Heavy}"
+						text="{i18n>overviewTabGridText}"
+						tooltip="{i18n>overviewTabDetailsTooltip}"
+						key="grid"/>
+					<IconTabFilter
+							icon="sap-icon://list"
+							count="{/ProductCollectionStats/Counts/Weight/Ok}"
+							text="{i18n>overviewTabDetailsText}"
+							tooltip="{i18n>overviewTabDetailsTooltip}"
+							key="details"/>
+
+					<IconTabFilter
+						icon="sap-icon://palette"
+						count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+						text="{i18n>overviewTabVisualText}"
+						tooltip="{i18n>overviewTabVisualTooltip}"
+						key="visual"/>
+					<IconTabFilter
+						icon="sap-icon://favorite-list"
+						count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+						text="{i18n>overviewTabFavoritesText}"
+						tooltip="{i18n>overviewTabFavoritesTooltip}"
+						key="favorites"/>
+				</items>
+				<content>
+					<l:ResponsiveSplitter id="splitter" defaultPane="default">
+						<l:PaneContainer>
+							<l:SplitPane requiredParentWidth="400" id="default">
+								<ScrollContainer id="resultContainer" vertical="true" horizontal="false" height="100%">
+									<FlexBox
+										width="auto"
+										class="sapUiSmallMargin sapUiNoMarginBottom"
+										alignItems="Stretch">
+										<items>
+											<SearchField
+												id="searchField"
+												tooltip="{i18n>overviewSearchTooltip}"
+												liveChange="onSearch"
+												class="sapUiTinyMarginEnd"
+												width="auto">
+												<layoutData>
+													<FlexItemData growFactor="1"/>
+												</layoutData>
+											</SearchField>
+											<ComboBox
+												id="categorySelection"
+												items="{/groups}"
+												class=" sapUiTinyMarginEnd"
+												placeholder="{i18n>overviewSelectCategoryPlaceholder}"
+												tooltip="{i18n>overviewSelectCategoryTooltip}"
+												selectionChange="onSelectCategory"
+												width="100%">
+												<layoutData>
+													<FlexItemData growFactor="1"/>
+												</layoutData>
+												<core:Item key="{name}" text="{text}"/>
+											</ComboBox>
+										</items>
+									</FlexBox>
+
+									<OverflowToolbar
+										id="tagSelection"
+										visible="{= ${view>/iconFilterCount} !== 0 }"
+										width="auto"
+										design="Transparent"
+										content="{
+											path:'/groups/0/tags',
+											factory: '._tagSelectionFactory',
+											length: 50
+										}"
+										tooltip="{i18n>overviewSelectTagsTooltip}">
+									</OverflowToolbar>
+
+								</ScrollContainer>
+							</l:SplitPane>
+							<l:SplitPane requiredParentWidth="800">
+								<ScrollContainer id="preview" visible="false">
+									<layoutData><l:SplitterLayoutData size="350px"/></layoutData>
+									<l:VerticalLayout width="100%" class="sapUiContentPadding">
+										<Panel id="previewCopy" height="{path: 'view>/dummy', formatter: '.formatter.previewPanelHeight'}">
+											<headerToolbar>
+												<Toolbar>
+													<RadioButtonGroup columns="2" class="sapUiPanelHeaderRadioButtonGroup" select="onCopySelect">
+														<buttons>
+															<RadioButton text="{i18n>previewCopyCode}"/>
+															<RadioButton text="{i18n>previewCopyIcon}"/>
+														</buttons>
+													</RadioButtonGroup>
+													<ToolbarSpacer/>
+													<Button
+														id="closePreview"
+														icon="sap-icon://decline"
+														press="onClosePreview"/>
+												</Toolbar>
+											</headerToolbar>
+											<l:FixFlex fixFirst="false" vertical="false">
+												<l:flexContent>
+													<Input
+														id="previewCopyCode"
+														editable="false"
+														value="sap-icon://{name}"/>
+												</l:flexContent>
+												<l:fixContent>
+													<Button
+														icon="sap-icon://copy"
+														type="Emphasized"
+														tooltip="{i18n>previewCopyToClipboard}"
+														press="onCopyCodeToClipboard"
+														class="sapUiTinyMarginBegin"/>
+												</l:fixContent>
+											</l:FixFlex>
+											<l:FixFlex fixFirst="false" vertical="false" visible="false">
+												<l:flexContent>
+													<FormattedText
+														id="previewCopyIcon"
+														htmlText=""
+														class="sapUiCopyIcon sapMInputBaseReadonlyInner"/>
+												</l:flexContent>
+												<l:fixContent>
+													<Button
+														icon="sap-icon://copy"
+														type="Emphasized"
+														tooltip="{i18n>previewCopyToClipboard}"
+														press="onCopyIconToClipboard"
+														class="sapUiTinyMarginBegin"/>
+												</l:fixContent>
+											</l:FixFlex>
+										</Panel>
+										<Panel headerText="{i18n>previewIconTitle}">
+											<l:BlockLayout
+												id="sideLayout"
+												class="centeredBlockCells"
+												background="Accent">
+												<l:BlockLayoutRow>
+													<l:BlockLayoutCell id="previewCell">
+														<core:Icon id="previewIcon" src="sap-icon://{name}" size="100%"/>
+													</l:BlockLayoutCell>
+												</l:BlockLayoutRow>
+											</l:BlockLayout>
+										</Panel>
+										<Panel id="previewUseCases" headerText="{i18n>previewUseCasesTitle}">
+											<l:BlockLayout
+												id="useCaseLayout"
+												class="centeredBlockCells"
+												background="Accent">
+											<l:BlockLayoutRow>
+												<l:BlockLayoutCell>
+													<Button icon="sap-icon://{name}" text="Button" class="sapUiTinyMarginEnd"/>
+													<Button icon="sap-icon://{name}" text="Button" type="Accept" class="sapUiTinyMarginEnd"/>
+													<Button icon="sap-icon://{name}" text="Button" type="Reject" class="sapUiTinyMarginEnd"/>
+													<Button icon="sap-icon://{name}" text="Button" type="Emphasized" class="sapUiTinyMarginEnd"/>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell>
+													<OverflowToolbar
+														id="previewToolbar"
+														design="Solid"
+														class="sapContrast sapContrastPlus">
+														<Label text="Toolbar" class="sapUiTinyMarginBegin"/>
+														<ToolbarSpacer/>
+														<Button icon="sap-icon://{name}"/>
+														<Button icon="sap-icon://{name}" type="Accept"/>
+														<Button icon="sap-icon://{name}" type="Reject"/>
+														<Button icon="sap-icon://{name}" type="Emphasized"/>
+													</OverflowToolbar>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell>
+													<StandardListItem
+														id="previewListItem"
+														title="List Item"
+														description="sap-icon://{name}"
+														icon="sap-icon://{name}"
+														infoState="Warning"
+														highlight="Warning"/>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell>
+													<IconTabBar
+														id="previewIconTabBar"
+														expanded="true"
+														expandable="false"
+														headerBackgroundDesign="Solid"
+														selectedKey="1"
+														class="sapUiNoContentPadding semiTransparentITB">
+														<items>
+															<IconTabFilter icon="sap-icon://{name}" key="1" class=""/>
+															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Positive"/>
+															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Critical"/>
+															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Negative"/>
+														</items>
+														<content>
+															<Label text="IconTabBar" class="sapUiTinyMargin"/>
+														</content>
+													</IconTabBar>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell>
+													<GenericTile
+															id="previewGenericTile"
+															header="GenericTile"
+															class="previewGenericTile"
+															subheader="with Icon">
+														<tileContent>
+															<TileContent footer="Footer">
+																<content>
+																	<NumericContent
+																		value="42"
+																		scale="EUR"
+																		valueColor="Neutral"
+																		indicator="Up"
+																		state="Loaded"
+																		icon="sap-icon://{name}"/>
+																</content>
+															</TileContent>
+														</tileContent>
+													</GenericTile>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell>
+														<f:Avatar
+															src="sap-icon://{name}"
+															displaySize="L"
+															class="sapUiTinyMarginBottom"/>
+														<Text width="100%" textAlign="Center" text="Avatar"/>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+										</l:BlockLayout>
+									</Panel>
+									<Panel id="previewInfo" headerText="{i18n>previewInfoTitle}">
+										<ObjectAttribute id="unicodeInfo" title="{i18n>previewInfoUnicode}" text="?"/>
+										<ObjectAttribute title="{i18n>previewInfoCSSClass}" text="icon-{name}"/>
+										<ObjectAttribute id="categoryInfo" title="{i18n>previewInfoCategory}" text="?"/>
+										<ObjectAttribute title="{i18n>previewInfoTag}"/>
+										<Tokenizer
+											width="100%"
+											tokens="{
+												path: 'tags',
+												templateShareable: true
+											}"
+											editable="false">
+											<Token text="{name}" press="onTagSelect"/>
+										</Tokenizer>
+									</Panel>
+
+									</l:VerticalLayout>
+							</ScrollContainer>
+						</l:SplitPane>
+					</l:PaneContainer>
+				</l:ResponsiveSplitter>
+				</content>
+			</IconTabBar>
+		</semantic:content>
+
+		<semantic:customHeaderContent>
+			<Button
+				id="surprise"
+				visible="{= ${device>/system/phone} ? false : true}"
+				text="{i18n>overviewRandomIconButtonTitle}"
+				tooltip="{i18n>overviewRandomIconButtonTooltip}"
+				icon="sap-icon://activate"
+				press="onSurpriseMe"/>
+		</semantic:customHeaderContent>
+
+	</semantic:FullscreenPage>
+
+</mvc:View>
