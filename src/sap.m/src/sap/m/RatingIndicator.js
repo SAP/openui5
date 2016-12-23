@@ -111,7 +111,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					value : {type : "float"}
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	///**

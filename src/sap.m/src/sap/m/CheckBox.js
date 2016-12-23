@@ -120,7 +120,8 @@ sap.ui.define(['jquery.sap.global',
 					selected : {type : "boolean"}
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	EnabledPropagator.call(CheckBox.prototype);
