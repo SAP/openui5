@@ -306,6 +306,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			},
 
 			/**
+			 * Destroys the cell context menu.
+			 *
+			 * @param {sap.ui.table.Table} oTable Instance of the table.
+			 * @private
+			 */
+			cleanupDataCellContextMenu: function(oTable) {
+				if (!oTable || !oTable._oCellContextMenu) {
+					return;
+				}
+
+				oTable._oCellContextMenu.destroy();
+				oTable._oCellContextMenu = null;
+			},
+
+			/**
 			 * Applies a cell menu on a column header cell.
 			 * Hides the column header cell and inserts an element containing two buttons in its place. One button to open the column context menu and
 			 * one to resize the column. These are useful on touch devices.

@@ -296,6 +296,31 @@ QUnit.asyncTest("Menu", function (assert) {
 	performTestAfterTableIsUpdated.call(this, doTest);
 });
 
+QUnit.asyncTest("Localization", function (assert) {
+	function doTest(oTable) {
+		assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
+		assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
+		assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
+		assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+		oTable._getGroupHeaderMenu();
+		assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
+		assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
+		assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
+		assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
+		oTable._adaptLocalization(true, false);
+		assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
+		assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
+		assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
+		assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
+		oTable._adaptLocalization(false, true);
+		assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
+		assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
+		assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
+		assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+	}
+
+	performTestAfterTableIsUpdated.call(this, doTest);
+});
 
 
 QUnit.module("AnalyticalTable with ODataModel v2", {

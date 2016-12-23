@@ -214,6 +214,36 @@
 				}
 			}
 		},
+		RTL: {
+			text: "Right to Left",
+			sub: {
+				ON: {
+					text: "On",
+					action: function(oTable) {sap.ui.getCore().getConfiguration().setRTL(true);}
+				},
+				OFF: {
+					text: "Off",
+					action: function(oTable) {sap.ui.getCore().getConfiguration().setRTL(false);}
+				}
+			}
+		},
+		LANG: {
+			text: "Language (table related localized texts only)",
+			sub: {
+				EN: {
+					text: "en",
+					action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("en");}
+				},
+				DE: {
+					text: "de",
+					action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("de");}
+				},
+				FR: {
+					text: "fr",
+					action: function(oTable) {sap.ui.getCore().getConfiguration().setLanguage("fr");}
+				}
+			}
+		},
 		SELECTIONMODE: {
 			text: "Selection Mode",
 			sub: {
@@ -283,6 +313,10 @@
 		BUSY: {
 			text: "Busy",
 			action: function(oTable) {oTable.setBusy(!oTable.getBusy());}
+		},
+		CELLFILTER: {
+			text: "Enable / Disable Cell Filter",
+			action: function(oTable) {oTable.setEnableCellFilter(!oTable.getEnableCellFilter());}
 		},
 		FIXEDCOLUMNS: {
 			text: "Fixed Columns",
