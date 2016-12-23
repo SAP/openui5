@@ -3,15 +3,6 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 		iStartMyApp : function (sAdditionalUrlParameters) {
 			sAdditionalUrlParameters = sAdditionalUrlParameters || "";
 			return this.iStartMyAppInAFrame('../index.html?sap-ui-language=en' + sAdditionalUrlParameters);
-		},
-
-		iStartMyComponent : function () {
-			return this.iStartMyUIComponent({
-				componentConfig: {
-					name: "sap.ui.demo.cart"
-				},
-				hash: ""
-			});
 		}
 	});
 });

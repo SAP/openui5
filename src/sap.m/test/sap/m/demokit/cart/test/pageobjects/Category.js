@@ -10,7 +10,6 @@ sap.ui.define([
 			onTheCategory : {
 
 				actions : {
-
 					iPressOnTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectListItem",

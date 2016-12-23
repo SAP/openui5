@@ -6,18 +6,31 @@
 		<meta charset="utf-8">
 
 		<script id="sap-ui-bootstrap"
-		        src="../../../../../../resources/sap-ui-core.js"
-		        data-sap-ui-resourceroots='{"sap.ui.demo.cart.test": "./"}'
-		        data-sap-ui-frameOptions='deny'>
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-resourceroots='{
+					"sap.ui.demo.cart.test": "./",
+					"sap.ui.demo.cart.test.arrangement.Arrangement": "./arrangement/iframe/Arrangement"
+				}'
+				data-sap-ui-frameOptions='deny'>
 		</script>
 
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script>
-			jQuery.sap.require("sap.ui.demo.cart.test.requireQUnit");
-			jQuery.sap.require("sap.ui.demo.cart.test.AllJourneysWithIFrame");
+			// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
+			QUnit.config.autostart = false;
+
+			sap.ui.getCore().attachInit(function () {
+				"use strict";
+				sap.ui.require([
+					"sap/ui/demo/cart/test/configureOpa",
+					"sap/ui/demo/cart/test/AllJourneys"
+				], function () {
+					// configuration has been applied and the tests in the journeys have been loaded - start QUnit
+					QUnit.start();
+				});
+			});
 		</script>
-
 	</head>
-
 	<body>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>

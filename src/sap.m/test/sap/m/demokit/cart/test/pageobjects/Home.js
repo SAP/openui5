@@ -6,9 +6,7 @@ sap.ui.define([
 
 		Opa5.createPageObjects({
 			onHome : {
-
 				actions : {
-
 					iPressOnTheSecondCategory : function () {
 						return this.waitFor({
 							controlType : "sap.m.StandardListItem",
@@ -18,9 +16,8 @@ sap.ui.define([
 						});
 					}
 				}
-
 			}
 		});
-
 	}
+
 );
