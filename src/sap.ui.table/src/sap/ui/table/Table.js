@@ -1124,6 +1124,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
+		if (!oDomRef.offsetWidth) { // do not update sizes of an invisible table
+			TableUtils.deregisterResizeHandler(this, "");
+			registerResizeHandler();
+			return;
+		}
+
 		this._resetRowHeights();
 		this._resetColumnHeaderHeights();
 		this._aRowHeights = this._collectRowHeights(false);
@@ -1150,6 +1156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oTableRef = oTable.getDomRef();
 			var iAbsoluteMinWidth = TableUtils.Column.getMinColumnWidth();
 			var aNotFixedVariableColumns = [];
+			var bColumnHeaderVisible = oTable.getColumnHeaderVisible();
 
 			function calcNewWidth(iDomWidth, iMinWidth) {
 				if (iDomWidth <= iMinWidth) {
@@ -1170,7 +1177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// do not change freezed columns
 				if (TableUtils.isVariableWidth(colWidth) && !TableUtils.isFixedColumn(oTable, col.getIndex())) {
 					aColHeaders = oTableRef.querySelectorAll('th[data-sap-ui-colid="' + col.getId() + '"]');
-					colHeader = aColHeaders[1]; // column headers may have display:none, use data table
+					colHeader = aColHeaders[bColumnHeaderVisible ? 0 : 1]; // if column headers have display:none, use data table
 					domWidth = colHeader && colHeader.offsetWidth;
 					if (domWidth) {
 						if (domWidth <= minWidth) {
@@ -1180,8 +1187,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 							// reset the minimum style width that was set previously
 							return {headers : aColHeaders, newWidth: colWidth};
 						}
+						aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 					}
-					aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 				}
 				return null;
 			}
