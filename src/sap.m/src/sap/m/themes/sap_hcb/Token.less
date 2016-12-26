@@ -1,21 +1,10 @@
-/* =========================================== */
-/* CSS for control sap.m/Token.control ======= */
-/* High Contrast Black theme ================= */
-/* =========================================== */
-
-.sapMToken {
-	background: @sapHCStandardBG;
-	border: 1px solid @sapHCStandardFG;
-	border-radius: 0.125rem;
-	color: @sapHCStandardFG;
-}
-
-html.sap-desktop .sapMToken:hover {
-	background: @sapHCHighlightBG;
-}
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* High Contrast Black theme    */
+/* ============================ */
 
 html.sap-desktop .sapMToken:focus {
-	outline: 0.125rem dotted @sapUiInvertedFocus;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
@@ -23,24 +12,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMToken:focus {
 		.sapMTokenText:before {
-			border: 1px dashed @sapUiInvertedFocus; //dashed only in IE due to visual issues with dotted - ticket 1670468323
+			border: 0.125rem dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
 	}
 }
-
-.sapMTokenSelected {
-	background: @sapHCHighlightAltBG;
-}
-
-.sapMTokenSelected .sapMTokenIcon, .sapMToken:focus .sapMTokenIcon {
-	color: @sapHCStandardFG;
-}
-
-.sapMTokenIcon {
-	color: @sapHCStandardFG;
-}
-
-.sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
-	font-size: 0.75rem;
-}
-

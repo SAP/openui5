@@ -481,6 +481,27 @@ QUnit.test("closeDataCellContextMenu", function(assert) {
 	this.assertDataCellContextMenuOpen(0, 0, false);
 });
 
+QUnit.test("cleanupDataCellContextMenu", function(assert) {
+	var oColumn = oTable.getColumns()[0];
+	this.stub(oColumn, "isFilterableByMenu").returns(true);
+
+	oTable.setEnableCellFilter(true);
+
+	assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
+
+	TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+	this.assertDataCellContextMenuOpen(0, 0, true);
+
+	TableUtils.Menu.closeDataCellContextMenu(oTable);
+	this.assertDataCellContextMenuOpen(0, 0, false);
+
+	assert.ok(!!oTable._oCellContextMenu, "Context menu exists");
+	TableUtils.Menu.cleanupDataCellContextMenu();
+	assert.ok(!!oTable._oCellContextMenu, "Context menu exists");
+	TableUtils.Menu.cleanupDataCellContextMenu(oTable);
+	assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
+});
+
 QUnit.test("applyColumnHeaderCellMenu", function(assert) {
 	// Invalid parameters: No cell menu will be applied.
 	TableUtils.Menu.applyColumnHeaderCellMenu();

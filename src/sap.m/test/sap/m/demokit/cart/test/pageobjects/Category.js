@@ -8,9 +8,9 @@ sap.ui.define([
 
 		Opa5.createPageObjects({
 			onTheCategory : {
+				viewName : "Category",
 
 				actions : {
-
 					iPressOnTheFirstProduct : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectListItem",
@@ -22,7 +22,6 @@ sap.ui.define([
 
 					iGoToTheCartPage : function () {
 						return this.waitFor({
-							viewName : "Category",
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://cart"}),
 							actions : new Press(),
@@ -32,11 +31,9 @@ sap.ui.define([
 				},
 
 				assertions : {
-
 					iShouldSeeTheProductList : function () {
 						return this.waitFor({
 							id : "productList",
-							viewName : "Category",
 							success : function (oList) {
 								Opa5.assert.ok(
 									oList,
@@ -49,7 +46,6 @@ sap.ui.define([
 
 					iShouldBeTakenToTheSecondCategory : function () {
 						return this.waitFor({
-							viewName : "Category",
 							controlType : "sap.m.Page",
 							matchers : new PropertyStrictEquals({name : "title", value : "FS"}),
 							success : function (aPage) {
@@ -65,7 +61,6 @@ sap.ui.define([
 					theProductListShouldHaveSomeEntries : function () {
 						this.waitFor({
 							id : "productList",
-							viewName : "Category",
 							matchers : new AggregationFilled({name : "items"}),
 							success : function (oList) {
 								Opa5.assert.ok(

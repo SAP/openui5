@@ -1,11 +1,7 @@
-/* ================================================================= */
-/* CSS for control sap.m/ViewSettingsDialog.control HCB theme */
-/* ================================================================= */
-
-/* workaround to remove the blurry effect on the icons */
-.sapMVSDSeg .sapMSegBBtn {
-	text-shadow: 0 0px;
-}
+/* ========================================= */
+/* CSS for control sap.m/ViewSettingsDialog  */
+/* High Contrast Black theme                 */
+/* ========================================= */
 
 .sapMTB.sapMVSDFilterHeaderToolbar {
 	.sapMBarChild.sapMCb {
@@ -16,13 +12,9 @@
 	}
 }
 
-.sapMSF.sapMVSDFilterSearchField {
-	border-bottom: 0.0625rem solid @sapHCStandardFG;
-}
-
 .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
 	.sapMCb:focus::before {
-		border: 0.125rem dotted @sapHCStandardFG;
+		border: 0.125rem dotted @sapUiContentFocusColor;
 		pointer-events: none;
 	}
 }
@@ -46,11 +38,5 @@ html.sap-desktop .sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderTo
 		right: 0.125rem;
 		bottom: 0.375rem;
 		left: 0.375rem;
-	}
-}
-
-.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
-	.sapMLabel.sapMCbLabel {
-		font-size: @sapMFontMediumSize;
 	}
 }

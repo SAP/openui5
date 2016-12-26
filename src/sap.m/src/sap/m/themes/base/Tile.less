@@ -1,6 +1,7 @@
-/* ====================================== */
-/* CSS for control sap.m/Tile control     */
-/* ====================================== */
+/* =========================== */
+/* CSS for control sap.m/Tile  */
+/* Base theme                  */
+/* =========================== */
 
 .sapMTile {
 	border: 1px solid @sapUiTileBorderColor;
@@ -16,6 +17,9 @@
 	margin:0.5rem;
 	-webkit-touch-callout: none;
 	background-color: @sapUiTileBackground;
+	border-radius: 2px;
+	box-shadow: @sapUiShadowLevel0;
+	/*margin:0.6em;*/ /* in case of some behavior problems uncomment this line, it was comment because the margin causes the blurring of the focus rectangle in IE9*/
 }
 
 .sapMTile * {   /* FIXME!!! (star rule with any-parent selector...) */
@@ -61,6 +65,16 @@ html.sap-phone .sapMTileContent {
 	-moz-transition-property: none;
 	transition-property: none;
 }
-.sapMNavItemFlipping .sapMTile{
+
+.sapMNavItemFlipping .sapMTile {
 	opacity:0.01;
+}
+
+.sapMTile:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMTile .sapMTileDrag {
+	opacity : 0.6;
+	box-shadow: 0px 1px 3px fade(@sapUiContentShadowColor,60);
 }

@@ -136,7 +136,24 @@ sap.ui.define([
 				if (fGetService) {
 					this.oCrossAppNavigator = fGetService("CrossApplicationNavigation");
 				}
+			};
 
+			/**
+			 * Called before the control is rendered.
+			 * @private
+			 */
+			QuickViewPage.prototype.onBeforeRendering =  function() {
+				this._destroyPageContent();
+				this._createPageContent();
+			};
+
+			/**
+			 * Returns page content containing the header and the form.
+			 * @private
+			 * @returns {Object} Object containing the header and the form
+			 */
+			QuickViewPage.prototype.getPageContent =  function() {
+				return this._mPageContent;
 			};
 
 			/**
@@ -271,18 +288,6 @@ sap.ui.define([
 				var oPageTitleControl = this.getPageTitleControl();
 				if (oHeader && oPageTitleControl) {
 					oForm.addAriaLabelledBy(oPageTitleControl);
-				}
-
-				// destroy the old page content
-				var oPageContent = this._mPageContent;
-				if (oPageContent) {
-					if (oPageContent.form) {
-						oPageContent.form.destroy();
-					}
-
-					if (oPageContent.header) {
-						oPageContent.header.destroy();
-					}
 				}
 
 				this._mPageContent = {

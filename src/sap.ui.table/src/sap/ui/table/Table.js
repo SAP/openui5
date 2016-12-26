@@ -770,6 +770,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 	};
 
+
+	/**
+	 * Localization changed
+	 * @private
+	 */
+	Table.prototype.onlocalizationChanged = function(oEvent) {
+		var oChanges = oEvent.changes || {};
+		var bRtlChanged = oChanges.hasOwnProperty("rtl");
+		var bLangChanged = oChanges.hasOwnProperty("language");
+		if (bRtlChanged || bLangChanged) {
+			this._adaptLocalization(bRtlChanged, bLangChanged);
+			// Trigger rerendering of whole table
+			this.invalidate();
+		}
+	};
+
+	/**
+	 * Localization changed
+	 * @private
+	 */
+	Table.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
+		if (bRtlChanged) {
+			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+		}
+		if (bLangChanged) {
+			// Update bundle
+			this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
+
+			// Update bundle of row actions
+			var aRows = this.getRows();
+			var oRowAction;
+			for (var i = 0; i < aRows.length; i++) {
+				oRowAction = aRows[i].getAggregation("_rowAction");
+				if (oRowAction) {
+					oRowAction._oResBundle = this._oResBundle;
+				}
+			}
+
+			//Clear Cell Context Menu
+			TableUtils.Menu.cleanupDataCellContextMenu(this);
+
+			//Update Column Menus
+			this._invalidateColumnMenus(true);
+		}
+	};
+
+
 	/**
 	 * Determines the row heights of the fixed and scroll area.
 	 * @private
@@ -3262,13 +3309,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 *
+	 * Invalidates all column menus.
+	 * @param {boolean} bUpdateLocalization Whether the texts of the menu should be updated too.
 	 * @private
 	 */
-	Table.prototype._invalidateColumnMenus = function() {
+	Table.prototype._invalidateColumnMenus = function(bUpdateLocalization) {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			aCols[i].invalidateMenu();
+			aCols[i].invalidateMenu(bUpdateLocalization);
 		}
 	};
 

@@ -1,24 +1,19 @@
-.sapMTB {
-	height: 3rem;
-	background: @sapHCStandardBG;
-	border-bottom: 1px solid @sapHCStandardFG;
-}
-
-.sapMTBShrinkItem {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
-}
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* High Contrast Black theme      */
+/* ============================== */
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	height: 1.75rem;
 	padding: 0 .25rem 0 .5rem;
 	margin: 0.125rem 0.1875rem;
-	border: 0.125rem solid @sapHCStandardFG;
+	border: 0.125rem solid @sapUiGroupTitleBorderColor;
 	border-radius: 0.3125rem;
 }
 
 .sapMTB-Info-CTX.sapMTBActive:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
+	outline: 0.125rem dotted @sapUiContentContrastFocusColor;
 	outline-offset: -0.1875rem;
 }
 
@@ -36,29 +31,16 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.125rem dotted @sapHCStandardFG;
+		border: 0.125rem dotted @sapUiContentContrastFocusColor;
 		pointer-events: none;
 	}
 }
 
-/********** COMPACT DESIGN ************/
-
-/* toolbar has 2rem height in compact mode */
-.sapUiSizeCompact .sapMTB {
-	height: 2rem;
-}
-
-/* default min-width value for the shrinkable items */
-.sapUiSizeCompact .sapMTBShrinkItem,
-.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem {
-	min-width: 2rem;
-}
-
 /* HCB Additional Styles */
 .sapMTB-Solid-CTX.sapMTB {
-	border: 1px solid @sapHCStandardFG;
+	border: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMFooter-CTX.sapMTB {
-	border-top: 1px solid @sapHCStandardFG;
+	border-top: 1px solid @sapUiPageFooterBorderColor;
 }

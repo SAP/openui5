@@ -10,6 +10,10 @@
 	table-layout: fixed;
 }
 
+html[data-sap-ui-browser='ie11'] .sapMListTbl {
+	padding: 1px; /* outline must be visible */
+}
+
 .sapMListTbl .sapMLIB {
 	display: table-row;
 }
@@ -106,7 +110,7 @@ tr.sapMListTblHeaderNone > th {
 	overflow: hidden;
 }
 
-.sapMLIBNativeOutline > .sapMListTblHighlightCell > .sapMLIBHighlight {
+html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	height: 40rem; /* IE11 cannot stretch the height of the cell content */
 }
 

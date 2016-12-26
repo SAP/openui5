@@ -1,3 +1,8 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Base theme                     */
+/* ============================== */
+
 .sapMIBar.sapMTB  .sapMBarChild {
   margin-right: 0.25rem;
 }
@@ -13,6 +18,9 @@
 	-webkit-text-size-adjust: none;
 	-moz-text-size-adjust: none;
 	-ms-text-size-adjust: none;
+	height: 3rem;
+	background: @sapUiToolbarBackground;
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMTB:focus {
@@ -41,7 +49,7 @@
 }
 
 .sapMTBShrinkItem {
-	min-width: 1rem; /* default min-width value for the shrinkable items */
+	min-width: 2.5rem; /* default min-width value for the shrinkable items */
 }
 
 /* NewFlex */
@@ -121,4 +129,36 @@
 .sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:last-child,
 .sapUiRLContainer > .sapMTB > .sapMBarChild:last-child{
 	margin-right: 0;
+}
+
+/* Solid Toolbar Context */
+.sapMTB-Solid-CTX.sapMTB {
+	background: @sapUiListHeaderBackground;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: @sapUiInfobarBackground;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMTB-Info-CTX.sapMTBActive:hover {
+	background: @sapUiInfobarHoverBackground;
+}
+
+.sapMTB-Info-CTX.sapMTBActive:active {
+	background: @sapUiInfobarActiveBackground;
+}
+
+/********** COMPACT DESIGN ************/
+
+/* toolbar has 2rem height in compact mode */
+.sapUiSizeCompact .sapMTB {
+	height: 2rem;
+}
+
+/* default min-width value for the shrinkable items */
+.sapUiSizeCompact .sapMTBShrinkItem,
+.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
+	min-width: 2rem;
 }
