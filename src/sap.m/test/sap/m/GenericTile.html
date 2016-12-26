@@ -71,7 +71,28 @@
 	};
 
 	var fnPress = function(oEvent) {
-		sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
+		if (oEvent.getSource().getScope() === sap.m.GenericTileScope.Actions &&
+			oEvent.getParameter("action") === "Press") {
+			var oActionSheet = new sap.m.ActionSheet({
+				title : "Chosse Your Action",
+				showCancelButton : true,
+				placement : "Bottom",
+				buttons : [
+					new sap.m.Button({
+						text : "Move"
+					}),
+					new sap.m.Button({
+						text : "Whatever"
+					})
+				],
+				afterClose : function () {
+					oActionSheet.destroy();
+				}
+			});
+			oActionSheet.openBy(oEvent.getParameter("domRef"));
+		} else {
+			sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
+		}
 	};
 
 	var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);

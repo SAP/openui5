@@ -115,7 +115,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 						 * In Display scope, the parameter value is only Press.
 						 * @experimental since 1.46.0
 						 */
-						"action": { type: "string" }
+						"action": { type: "string" },
+
+						/**
+						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
+						 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
+						 * @experimental since 1.46.0
+						 */
+						"domRef" : { type: "any" }
 					}
 				}
 			}
@@ -137,15 +144,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	/* --- Lifecycle Handling --- */
 
 	GenericTile.prototype.init = function() {
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oTitle = new Text(this.getId() + "-title");
 		this._oTitle.addStyleClass("sapMGTTitle");
 		this._oTitle.cacheLineHeight = false;
 		this.setAggregation("_titleText", this._oTitle, true);
 
-		this._sFailedToLoad = this._rb.getText("INFOTILE_CANNOT_LOAD_TILE");
-		this._sLoading = this._rb.getText("INFOTILE_LOADING");
+		this._sFailedToLoad = this._oRb.getText("INFOTILE_CANNOT_LOAD_TILE");
+		this._sLoading = this._oRb.getText("INFOTILE_LOADING");
 
 		this._oFailedText = new Text(this.getId() + "-failed-txt", {
 			maxLines : 2
@@ -176,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._initScopeContent = function() {
 		switch (this.getScope()) {
 			case library.GenericTileScope.Actions:
-				if (this.getState() === library.LoadState.Disabled) {
+				if (this.getState && this.getState() === library.LoadState.Disabled) {
 					break;
 				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
@@ -187,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				this._oRemoveButton = this._oRemoveButton || new Button({
 					id: this.getId() + "-action-remove",
 					icon: "sap-icon://decline",
-					tooltip: this._rb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
 				}).addStyleClass("sapUiSizeCompact sapMGTRemoveButton");
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
@@ -892,7 +899,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
 		if (this.getScope() === library.GenericTileScope.Actions) {
-			sAriaText = this._rb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
+			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
 		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
@@ -1180,14 +1187,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._getEventParams = function(oEvent) {
 		var oParams,
 			sAction = GenericTile._Action.Press,
-			sScope = this.getScope();
+			sScope = this.getScope(),
+			oDomRef = this.getDomRef();
 
 		if (sScope === library.GenericTileScope.Actions && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
 			sAction = GenericTile._Action.Remove;
+			oDomRef = this._oRemoveButton.getPopupAnchorDomRef();
+		} else if (sScope === library.GenericTileScope.Actions) {
+			oDomRef = this._oMoreIcon.getDomRef();
 		}
 		oParams = {
 			scope : sScope,
-			action : sAction
+			action : sAction,
+			domRef : oDomRef
 		};
 		return oParams;
 	};

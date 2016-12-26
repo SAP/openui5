@@ -68,7 +68,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 					 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
 					 * @experimental since 1.46.0
 					 */
-					"action": { type: "string" }
+					"action": { type: "string" },
+
+					/**
+					 * The Element's DOM Element. Points to SlideTile instance DOM Element in Display scope.
+					 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
+					 * @experimental since 1.46.0
+					 */
+					"domRef" : { type: "any" }
 				}
 			}
 		}
@@ -93,6 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * Handler for beforerendering
 	 */
 	SlideTile.prototype.onBeforeRendering = function() {
+		GenericTile.prototype._initScopeContent.call(this);
 		this._stopAnimation();
 		this._sWidth = this._sHeight = undefined;
 		this._iCurrentTile = this._iPreviousTile = undefined;
@@ -117,6 +125,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype.exit = function() {
 		this._stopAnimation();
+		if (this._oMoreIcon) {
+			this._oMoreIcon.destroy();
+		}
+		if (this._oRemoveButton) {
+			this._oRemoveButton.destroy();
+		}
 	};
 
 	/* --- Event Handling --- */
