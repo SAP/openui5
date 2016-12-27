@@ -39,9 +39,38 @@
 .sapMCrslItemTableCell.sapMCrslImg img {
 	background: @sapUiGlobalBackgroundColor;
 }
+
 .sapMCrsl:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	&:before {
+		border: 1px solid @sapUiContentFocusColor;
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	&:after {
+		border: 1px dotted @sapUiContentContrastFocusColor;
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 2;
+		pointer-events: none;
+	}
 }
+
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrsl:focus::after,
+html[data-sap-ui-browser^='ed'].sap-desktop .sapMCrsl:focus::after {
+	border: 1px dashed @sapUiContentContrastFocusColor;
+}
+
 
 .sapMCrsl:hover .sapMCrslHud a {
 	opacity: 0.3;
