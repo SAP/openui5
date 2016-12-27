@@ -1,6 +1,7 @@
-/* ============================================= */
-/* CSS for controlsap.m/SegmentedButton.control */
-/* ============================================= */
+/* ====================================== */
+/* CSS for control sap.m/SegmentedButton  */
+/* Base theme                             */
+/* ====================================== */
 
 .sapMSegB {
 	margin: 0; /*To override the native browser margin*/
@@ -10,6 +11,9 @@
 	white-space: nowrap;
 	display: inline-block;
 	box-sizing: border-box;
+	height: 2.5rem;
+	vertical-align: top;
+	position: relative;
 }
 
 .sapMSegB .sapMSegBBtn {
@@ -22,6 +26,32 @@
 	vertical-align: text-bottom;
 	box-sizing: border-box;
 	display: inline-block;
+	font-size: 0.875rem;
+	height: 2.5rem;
+	line-height: 2.375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	text-align: center;
+	text-shadow: none;
+	color: @sapUiSegmentedButtonTextColor;
+	border-top: 1px solid @sapUiSegmentedButtonBorderColor;
+	border-left: 1px solid @sapUiSegmentedButtonBorderColor;
+	border-bottom: 1px solid @sapUiSegmentedButtonBorderColor;
+	border-right: 1px solid transparent;
+	background-color: @sapUiSegmentedButtonBackground;
+	&:not(.sapMSegBBtnMixed) .sapMImg {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+}
+
+// Adding margin to be displayed correct in sap.m.Bar
+.sapMBar .sapMSegB {
+	margin: 0.250rem 0;
+}
+
+html.sap-desktop .sapMSegBBtnFocusable:hover {
+	background: @sapUiSegmentedButtonHoverBackground;
 }
 
 .sapMSegBBtn:focus {
@@ -37,24 +67,24 @@
 }
 
 /* style for icon and text usage */
-.sapMSegBBtn.sapMSegBBtnMixed {
-	padding-right: 0.5rem;
-}
-
-.sapMSegB .sapMSegBBtn.sapMSegBBtnMixed {
-	padding-right: 0.5rem;
-	padding-left: 0.5rem;
-}
-
-//BCP: 1580200804
-.sapMSegB .sapMSegBBtn:not(.sapMSegBBtnMixed) .sapMBtnIcon {
-	margin-right: 0;
+.sapMSegB.sapMSegBIcons {
+	.sapMSegBBtn:not(.sapMSegBBtnMixed) {
+		padding: 0; /*BCP: 1580200804*/
+		margin-right: 0;
+	}
+	.sapMSegBBtn.sapMSegBBtnMixed .sapMImg,
+	.sapMSegBBtn.sapMSegBBtnMixed .sapUiIcon {
+		padding-left: 0;
+		padding-right: 0.5rem;
+	}
 }
 
 .sapMSegB img {
 	margin: 0;
-	vertical-align: top;
 	pointer-events: none; /*To disable the save image menu on ios*/
+	line-height: 2.375rem;
+	max-height:  2.375rem;
+	vertical-align: middle;
 }
 
 .sapMSegBBtn.sapMSegBBtnDis {
@@ -66,11 +96,47 @@
   cursor: pointer;
 }
 
-/* Removed, causing bug in ViewSettingsDialog in safari
-html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"] .sapMBar .sapMSegB {
-  line-height: 2.5rem;
+.sapMSegBBtn.sapMSegBBtnSel {
+	background: @sapUiSegmentedButtonSelectedBackground;
+	color: @sapUiSegmentedButtonSelectedTextColor;
+	border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
+	.sapUiIcon{
+		color: @sapUiSegmentedButtonSelectedIconColor;
+	}
 }
-*/
+
+.sapMSegBBtnSel:active,
+.sapMSegBBtnFocusable.sapMBtnActive {
+	background: @sapUiButtonActiveBackground;
+	color: @sapUiSegmentedButtonActiveTextColor;
+	.sapUiIcon{
+		color: @sapUiSegmentedButtonActiveIconColor;
+	}
+}
+
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
+.sapMSegBBtnFocusable.sapMBtnActive:hover,
+html.sap-desktop .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
+html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover {
+	background: @sapUiSegmentedButtonSelectedHoverBackground;
+}
+
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
+	// Hide next button left border
+	+ .sapMSegBBtn {
+		border-left: 1px solid transparent;
+	}
+}
+
+.sapMSegBBtn .sapUiIcon {
+	font-size: 1.375rem;
+	line-height: 2.375rem;
+	width: 2.375rem;
+	color: @sapUiSegmentedButtonIconColor;
+	vertical-align: middle;
+	text-align: center;
+}
 
 /* Fix for mobile segmented button in header, footer or bar element */
 html[data-sap-ui-os^="bb"],
@@ -95,6 +161,44 @@ html[data-sap-ui-os^="iOS"] {
 		.sapMSegB {
 			line-height: 1.5rem;
 			display: inline-block;
+		}
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMSegB {
+		height: 1.625rem;
+	}
+
+	.sapMSegB img {
+		line-height: 1.5rem;
+		height: 1.3rem;
+		width: 1.3rem;
+	}
+
+	.sapMSegBBtn .sapUiIcon {
+		font-size: 1rem;
+		line-height: 1.5rem;
+		width: 1rem;
+		vertical-align: top;
+	}
+
+	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
+		.sapMImg,
+		.sapUiIcon {
+			padding-left: 0.4375rem;
+			padding-right: 0.4375rem;
+		}
+	}
+	
+	.sapMSegBIcons {
+		.sapMSegBBtn.sapMSegBBtnMixed {
+			.sapMImg,
+			.sapUiIcon {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 	}
 }
