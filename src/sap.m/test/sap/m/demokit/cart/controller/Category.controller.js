@@ -50,11 +50,11 @@ sap.ui.define([
 			});
 		},
 
-		handleProductListSelect : function (oEvent) {
+		onProductListSelect : function (oEvent) {
 			this._showProduct(oEvent);
 		},
 
-		handleProductListItemPress : function (oEvent) {
+		onProductListItemPress : function (oEvent) {
 			this._showProduct(oEvent);
 		},
 
@@ -71,11 +71,11 @@ sap.ui.define([
 			this._router.navTo("product", {id: sCategoryId, productId: sProductId}, !Device.system.phone);
 		},
 
-		handleNavButtonPress : function () {
+		onNavButtonPress : function () {
 			this.getOwnerComponent().myNavBack();
 		},
 
-		handleCartButtonPress :  function () {
+		onCartButtonPress :  function () {
 			this._router.navTo("cart");
 		}
 	});

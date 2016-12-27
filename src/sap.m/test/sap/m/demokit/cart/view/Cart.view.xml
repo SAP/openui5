@@ -6,7 +6,7 @@
 		id="page"
 		title="{cfg>/pageTitle}"
 		showNavButton="{cfg>/notInDelete}"
-		navButtonPress="handleNavButtonPress"
+		navButtonPress="onNavButtonPress"
 		showFooter="true" >
 		<headerContent>
 			<Button
@@ -14,7 +14,7 @@
 				icon="sap-icon://edit"
 				enabled="{cartProducts>/showEditButton}"
 				visible="{cfg>/notInDelete}"
-				press="handleEditOrDoneButtonPress" />
+				press="onEditOrDoneButtonPress" />
 		</headerContent>
 		<footer>
 			<Toolbar>
@@ -31,7 +31,7 @@
 					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
 					enabled="{cartProducts>/showProceedButton}"
 					visible="{cfg>/notInDelete}"
-					press="handleProceedButtonPress" />
+					press="onProceedButtonPress" />
 				<Button
 					id="doneButton"
 					text="{i18n>CART_DONE_BUTTON_TEXT}"
@@ -39,7 +39,7 @@
 					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
-					press="handleEditOrDoneButtonPress" />
+					press="onEditOrDoneButtonPress" />
 			</Toolbar>
 		</footer>
 		<content>
@@ -51,7 +51,7 @@
 				}"
 				mode="{cfg>/listMode}"
 				delete="onCartEntriesDelete"
-				select="handleEntryListSelect"
+				select="onEntryListSelect"
 				noDataText="{i18n>CART_NO_DATA}"
 				items="{
 					path : 'cartProducts>/cartEntries',
@@ -74,7 +74,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="handleEntryListPress"
+						press="onEntryListPress"
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute
@@ -101,7 +101,7 @@
 				mode="{cfg>/listMode}"
 				showNoData="false"
 				delete="onSaveForLaterDelete"
-				select="handleEntryListSelect"
+				select="onEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',
 					sorter : {
@@ -122,7 +122,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="handleEntryListPress"
+						press="onEntryListPress"
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute

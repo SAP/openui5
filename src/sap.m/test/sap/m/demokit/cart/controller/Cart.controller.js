@@ -48,7 +48,7 @@ sap.ui.define([
 			oEntryList.removeSelections();
 		},
 
-		handleEditOrDoneButtonPress: function () {
+		onEditOrDoneButtonPress: function () {
 			this._toggleCfgModel();
 		},
 
@@ -67,15 +67,15 @@ sap.ui.define([
 			});
 		},
 
-		handleNavButtonPress: function () {
+		onNavButtonPress: function () {
 			this.getOwnerComponent().myNavBack();
 		},
 
-		handleEntryListPress: function (oEvent) {
+		onEntryListPress: function (oEvent) {
 			this._showProduct(oEvent.getSource());
 		},
 
-		handleEntryListSelect: function (oEvent) {
+		onEntryListSelect: function (oEvent) {
 			this._showProduct(oEvent.getParameter("listItem"));
 		},
 
@@ -171,7 +171,7 @@ sap.ui.define([
 			);
 		},
 
-		handleProceedButtonPress: function (oEvent) {
+		onProceedButtonPress: function (oEvent) {
 			var that = this;
 			if (!this._orderDialog) {
 

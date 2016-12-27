@@ -4,7 +4,7 @@ sap.ui.controller("sap.ui.demo.cart.controller.Order", {
 		var oModel = new sap.ui.model.json.JSONModel({});
 		this.getView().setModel(oModel);
 
-		// handle data binding validation results
+		// on data binding validation results
 		sap.ui.getCore().attachValidationError(
 			function (oEvent) {
 				var oElement = oEvent.getParameter("element");
