@@ -159,7 +159,23 @@
 				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP8"}),
 				new sap.m.DatePicker("DP8", { valueState: "Warning", valueStateText: "Warning Message" }),
 				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP9"}),
-				new sap.m.DatePicker("DP9", { valueState: "Error", valueStateText: "Error Message" })
+				new sap.m.DatePicker("DP9", { valueState: "Error", valueStateText: "Error Message" }),
+				new sap.m.Label({text: "Lazy loading of special dates DatePicker:", labelFor: "DP11"}),
+				new sap.m.DatePicker("DP11", {
+					navigate: function (oEvent) {
+						var oRange = oEvent.getParameter("dateRange");
+
+						// Clear existing aggregations
+						this.removeAllAggregation("specialDates");
+
+						// Add new days (in this case the first and the last visible day)
+						this.addSpecialDate(new sap.ui.unified.DateTypeRange({startDate: oRange.getStartDate(), type: "Type03"}));
+						this.addSpecialDate(new sap.ui.unified.DateTypeRange({startDate: oRange.getEndDate(), type: "Type04"}));
+
+						// Give feedback
+						sap.m.MessageToast.show("Navigate event fired and new special dates marked");
+					}
+				})
 			],
 			footer: createFooter()
 		});

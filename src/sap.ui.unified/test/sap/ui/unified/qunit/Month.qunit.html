@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Month - sap.ui.unified.calendar.Month</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+		<script>
+
+			(function () {
+				/**
+				 * Generate correct Date even for years before 1901
+				 * @param iYear {int} [0..9999] Full Year
+				 * @param iMonth {int} [0..11] Zero based month index
+				 * @param iDay {int} [1..31] Day of the month
+				 * @param [bUTC=false] {boolean} Should the returned date be a UTC date
+				 * @returns {Date} Date
+				 */
+				var createDate = function (iYear, iMonth, iDay, bUTC) {
+					var oDate;
+					// Note setFullYear/setUTCFullYear needed to explicitly switch to years before 1901 which is not supported with the constructor
+					// or with the deprecated setYear setter
+					if (bUTC) {
+						oDate = new Date(Date.UTC(iYear, iMonth, iDay));
+						oDate.setUTCFullYear(iYear);
+					} else {
+						oDate = new Date(iYear, iMonth, iDay);
+						oDate.setFullYear(iYear);
+					}
+					return oDate;
+				};
+
+				module("Rendering", {
+					beforeEach: function () {
+						this.oM = new sap.ui.unified.calendar.Month().placeAt("test");
+						sap.ui.getCore().applyChanges();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				test("Control is rendered", function () {
+					// Assert
+					ok(this.oM.getDomRef(), "Control is rendered");
+				});
+
+				test("Corner case for January 0001", function () {
+					// Act
+					this.oM.setDate(createDate(1, 0, 1));
+
+					var aItems = this.oM.$().find(".sapUiCalItem"),
+						$FirstDay = jQuery(aItems[0]);
+
+					// Assert
+					strictEqual($FirstDay.hasClass("sapUiCalItemDsbl"), true, "The day from year 0000 should be disabled");
+					strictEqual($FirstDay.find(".sapUiCalItemText").text(), "", "The day from year 0000 should not have a visible text");
+				});
+
+				test("Corner case for December 9999", function () {
+					// Act
+					this.oM.setDate(createDate(9999, 11, 1));
+
+					var aItems = this.oM.$().find(".sapUiCalItem"),
+						$LastDay = jQuery(aItems[aItems.length - 1]);
+
+					// Assert
+					strictEqual($LastDay.data("sap-day"), 99991231, "The last rendered day should be 9999-12-31");
+					strictEqual($LastDay.text(), "31", "The last rendered day should contain the string 31");
+				});
+
+				module("_getVisibleDays", {
+					beforeEach: function () {
+						this.oM = new sap.ui.unified.calendar.Month();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					},
+					/**
+					 * Assert the date range returned for rendering from the method.
+					 * @param oFocusDate {Date} The first day of the target month.
+					 * @param oFirstVisibleDate {Date} Expected first visible day.
+					 * @param oLastVisibleDate {Date} Expected last visible day.
+					 * @param iVisibleDays {int} Expected visible days.
+					 * @param sTargetMonthName {string} Name of the target month used for test description.
+					 * @param {boolean} [bForRendering=false] should days before 0001-01-01 be included in the returned array.
+					 */
+					assertByDate: function (oFocusDate, oFirstVisibleDate, oLastVisibleDate, iVisibleDays, sTargetMonthName, bForRendering) {
+						var aDays = this.oM._getVisibleDays(oFocusDate, bForRendering),
+							sExpectedFirstDay = oFirstVisibleDate.toUTCString(),
+							sExpectedLastDay = oLastVisibleDate.toUTCString();
+
+						// Assert
+						strictEqual(aDays[0].oDate.toUTCString(), sExpectedFirstDay,
+							"For " + sTargetMonthName + " the first day should be: " + sExpectedFirstDay);
+						strictEqual(aDays[aDays.length - 1].oDate.toUTCString(), sExpectedLastDay,
+							"For " + sTargetMonthName + " the last day should be: " + sExpectedLastDay);
+						strictEqual(aDays.length, iVisibleDays, "There should be " + iVisibleDays + " returned.");
+					}
+				});
+
+				test("Days in front and in back of the month should be added", function () {
+					this.assertByDate(
+						createDate(2016, 10, 1, true),
+						createDate(2016, 9, 30, true),
+						createDate(2016, 11, 3, true),
+						35,
+						"November 2016"
+					);
+				});
+
+				test("Days in front of the month should be added", function () {
+					this.assertByDate(
+						createDate(2016, 11, 1, true),
+						createDate(2016, 10, 27, true),
+						createDate(2016, 11, 31, true),
+						35,
+						"December 2016"
+					);
+				});
+
+				test("Days in back of the month should be added", function () {
+					this.assertByDate(
+						createDate(2017, 0, 1, true),
+						createDate(2017, 0, 1, true),
+						createDate(2017, 1, 4, true),
+						35,
+						"January 2017"
+					);
+				});
+
+				test("Only days corresponding to the current month", function () {
+					this.assertByDate(
+						createDate(2015, 1, 1, true),
+						createDate(2015, 1, 1, true),
+						createDate(2015, 1, 28, true),
+						28,
+						"February 2015"
+					);
+				});
+
+				test("Corner case for January year 0001", function () {
+					this.assertByDate(
+						createDate(1, 0, 1, true),
+						createDate(1, 0, 1, true),
+						createDate(1, 1, 3, true),
+						34,
+						"January 0001"
+					);
+				});
+
+				test("Corner case for January year 0001 called with parameter for rendering", function () {
+					this.assertByDate(
+						createDate(1, 0, 1, true),
+						createDate(0, 11, 31, true),
+						createDate(1, 1, 3, true),
+						35,
+						"January 0001",
+						true
+					);
+				});
+
+				test("Corner case December year 9999 there should be no day returned from year 10000", function () {
+					this.assertByDate(
+						createDate(9999, 11, 1, true),
+						createDate(9999, 10, 28, true),
+						createDate(9999, 11, 31, true),
+						34,
+						"December 2015"
+					);
+				});
+
+			})();
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.Month</h1>
+		<div id="qunit-fixture"></div>
+	<div id="test"></div>
+	</body>
+</html>
