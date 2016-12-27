@@ -102,6 +102,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	SlideTile.prototype.onBeforeRendering = function() {
 		// initialize SlideTile scope with SlideTile CSS class name
 		GenericTile.prototype._initScopeContent.call(this, "sapMST");
+		var bActionsView = this.getScope() === library.GenericTileScope.Actions;
+		// According to the scope of SlideTile, displays corresponding view of GenericTiles
+		for (var i = 0; i < this.getTiles().length; i++) {
+			this.getTiles()[i].showActionsView(bActionsView);
+		}
+		// save the current tile index to let the tile be displayed in Actions scope
+		if (this._iCurrentTile >= 0) {
+			this._iLastTile = this._iCurrentTile;
+		}
+		this._bNeedInvalidate = false;
 		this._stopAnimation();
 		this._sWidth = this._sHeight = undefined;
 		this._iCurrentTile = this._iPreviousTile = undefined;
@@ -111,13 +121,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * Handler for afterrendering
 	 */
 	SlideTile.prototype.onAfterRendering = function() {
-		var cTiles = this.getTiles().length;
+		var cTiles = this.getTiles().length,
+			sScope = this.getScope();
 		this._removeGTFocus();
 		this._iCurrAnimationTime = 0;
 		this._bAnimationPause = false;
-		this._scrollToNextTile();
-		if (cTiles > 1) {
+		// if the last displayed tile exists, then scrolls to this tile. Otherwise displays first tile.
+		if (this._iLastTile >= 0 && cTiles > 1) {
+			this._scrollToTile(this._iLastTile);
+		} else {
+			this._scrollToNextTile();
+		}
+		if (cTiles > 1 && sScope === library.GenericTileScope.Display) {
 			this._startAnimation();
+		}
+		// in actions scope, the more icon color is changed when the displayed tile has news content (dark background)
+		if (sScope === library.GenericTileScope.Actions && this._iCurrentTile >= 0 &&
+				this._hasNewsContent(this._iCurrentTile)) {
+			this.addStyleClass("sapMSTDarkBackground");
 		}
 	};
 
@@ -264,6 +285,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {jQuery.Event} oEvent Event object
 	 */
 	SlideTile.prototype.onfocusout = function (oEvent) {
+		if (this.getScope() === library.GenericTileScope.Actions) {
+			return;
+		}
 		if (this.getTiles().length > 1 && !this._isFocusInsideST()) {
 			this._startAnimation();
 			this._updatePausePlayIcon();
@@ -275,7 +299,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	// Overwrites setScope of SlideTile control to be able to call method _setTilePressState
 	SlideTile.prototype.setScope = function(value) {
 		if (this.getScope() !== value) {
-			this.setProperty("scope", value);
+			if (value === library.GenericTileScope.Actions) {
+				this.setProperty("scope", value, true);
+				// Invalidate after the sliding animation is done
+				this._bNeedInvalidate = true;
+				this._stopAnimation(this._bNeedInvalidate);
+			} else {
+				this.setProperty("scope", value);
+			}
 			this._setTilePressState();
 		}
 		return this;
@@ -321,9 +352,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	/**
 	 * Stops the animation
 	 *
+	 * @param {boolean} needInvalidate decides whether invalidates the control for setScope
 	 * @private
 	 */
-	SlideTile.prototype._stopAnimation = function() {
+	SlideTile.prototype._stopAnimation = function(needInvalidate) {
 		this._iCurrAnimationTime += Date.now() - this._iStartTime;
 		clearTimeout(this._sTimerId);
 		if (this._iCurrentTile != undefined) {
@@ -336,6 +368,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		}
 		if (this._iCurrAnimationTime > this.getDisplayTime()) {
 			this._scrollToNextTile(true); //Completes the animation and stops
+		} else if (needInvalidate) {
+			this.invalidate();
 		}
 		this._bAnimationPause = true;
 	};
@@ -354,6 +388,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		}.bind(this), iDisplayTime);
 		this._iStartTime = Date.now();
 		this._bAnimationPause = false;
+	};
+
+	/**
+	 * Scrolls to the tile with given index
+	 *
+	 * @private
+	 * @param {int} index of the tile in the tiles aggregation
+	 */
+	SlideTile.prototype._scrollToTile = function(tileIndex) {
+		if (tileIndex >= 0) {
+			var oWrapperTo = this.$("wrapper-" + tileIndex);
+			var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+
+			this._changeSizeTo(tileIndex);
+			oWrapperTo.css(sDir, "0rem");
+			this._iCurrentTile = tileIndex;
+
+			if (this.getTiles()[tileIndex]) {
+				this._setAriaDescriptor();
+			}
+			this._updateTilesIndicator();
+		}
 	};
 
 	/**
@@ -425,6 +481,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 				duration : iTransitionTime,
 				done : function() {
 					this._iCurrAnimationTime = 0;
+					if (this._bNeedInvalidate) {
+						this.invalidate();
+					}
 					if (!pause) {
 						this._startAnimation();
 					}
@@ -553,6 +612,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		for (var i = 0; i < oTiles.length; i++) {
 			oTiles[i].setPressEnabled(bTilePressEnabled);
 		}
+	};
+
+	/**
+	 * Checks if the given tile has NewsContent
+	 *
+	 * @param {int} index of the tile in the tiles aggregation
+	 * @returns {boolean} true when the tile has NewsContent, otherwise false
+	 * @private
+	 */
+	SlideTile.prototype._hasNewsContent = function(tileIndex) {
+		var aTileContent = this.getTiles()[tileIndex].getTileContent();
+		for (var i = 0; i < aTileContent.length; i++) {
+			if (aTileContent[i]._getContentType() === "News") {
+				return true;
+			}
+		}
+		return false;
 	};
 
 	/**

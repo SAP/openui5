@@ -934,7 +934,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype._checkFooter = function(tileContent, control) {
 		var sState = control.getState();
-		if (sState === library.LoadState.Failed || this.getScope() === library.GenericTileScope.Actions && sState !== library.LoadState.Disabled) {
+		var bActions = this.getScope() === library.GenericTileScope.Actions || this._bShowActionsView === true;
+		if (sState === library.LoadState.Failed || bActions && sState !== library.LoadState.Disabled) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
@@ -1216,6 +1217,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype.setPressEnabled = function(value) {
 		this._bTilePress = value;
+	};
+
+	/**
+	 * Shows the actions scope view of GenericTile without changing the scope. Used in SlideTile for Actions scope.
+	 *
+	 * @param {boolean} value If set to true, actions view is showed.
+	 * @protected
+	 * @since 1.46
+	 */
+	GenericTile.prototype.showActionsView = function(value) {
+		if (this._bShowActionsView !== value) {
+			this._bShowActionsView = value;
+			this.invalidate();
+		}
 	};
 
 	return GenericTile;

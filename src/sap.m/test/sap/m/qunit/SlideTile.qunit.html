@@ -198,6 +198,38 @@
 		assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
 	});
 
+	QUnit.test("SlideTile in Actions scope", function(assert) {
+		//Arrange
+		var spyScrollToTile = sinon.spy(this.oSlideTile, "_scrollToTile");
+		var spyStartAnimation = sinon.spy(this.oSlideTile, "_startAnimation");
+		var spyInvalidate = sinon.spy(this.oSlideTile, "invalidate");
+		//Act
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(spyScrollToTile.calledOnce, "Function _scrollToTile is called");
+		assert.ok(spyStartAnimation.notCalled, "Function _startAnimation is not called");
+		assert.ok(spyInvalidate.calledOnce, "Invalidate function is called");
+		assert.notOk(jQuery.sap.domById("st-pause-play-icon"), "The pause/play button is hidden");
+		assert.notOk(jQuery.sap.domById("st-tilesIndicator"), "The indicator is hidden");
+	});
+
+	QUnit.test("GenericTile view in SlideTile Actions scope", function(assert) {
+		//Arrange
+		var spy = [],
+			oTiles = this.oSlideTile.getTiles();
+		for (var i = 0; i < oTiles.length; i++) {
+			spy[i] = sinon.spy(oTiles[i], "showActionsView");
+		}
+		//Act
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		//Assert
+		for (var i = 0; i < oTiles.length; i++) {
+			assert.ok(spy[i].calledWith(true), "The " + i + " Tile shows Actions view");
+		}
+	});
+
 	QUnit.module("Events - sap.m.SlideTile", {
 		beforeEach : function() {
 			this.fnPressHandler = function() {
@@ -371,6 +403,16 @@
 		assert.equal(iNextTileIndex, 2, "Expected next tile index to the last one returned");
 	});
 
+	QUnit.test("Method _scrollToTile", function(assert) {
+		//Arrange
+		var iScrollToTile = 1;
+		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+		//Act
+		this.oSlideTile._scrollToTile(iScrollToTile);
+		//Assert
+		assert.equal(this.oSlideTile.$("wrapper-" + iScrollToTile).css(sDir), "0px", "The expected tile is displayed");
+	});
+
 	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
 		//Arrange
 		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
@@ -455,6 +497,39 @@
 		this.oSlideTile._scrollToNextTile(true, true);
 		//Assert
 		assert.ok($($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
+	});
+
+	QUnit.module("SlideTile has GenericTile with NewsContent", {
+		beforeEach: function() {
+			var oNewsTileContent = new sap.m.TileContent({
+				content: new sap.m.NewsContent()
+			});
+			var oGenericTile = new sap.m.GenericTile({
+				tileContent: [oNewsTileContent]
+			});
+			this.oSlideTile = new sap.m.SlideTile("st-news", {
+				tiles: [oGenericTile]
+			});
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("Method _hasNewsContent", function(assert) {
+		//Assert
+		assert.ok(this.oSlideTile._hasNewsContent(0), "The GenericTile in SlideTile has NewsContent");
+	});
+
+	QUnit.test("Icon color is adapted to NewsContent", function(assert) {
+		//Act
+		this.oSlideTile.setScope("Actions");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oSlideTile.hasStyleClass("sapMSTDarkBackground"), "The more icon color is adapted to NewsContent");
 	});
 
 	QUnit.module("Rendering - EmptyTile", {

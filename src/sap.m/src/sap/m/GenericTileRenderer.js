@@ -25,6 +25,8 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
+		var sScope = oControl.getScope();
+		var sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + sScope);
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -32,7 +34,11 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
-		oRm.addClass("sapMGTScope" + oControl.getScope());
+		oRm.addClass(sScopeClass);
+		// render actions view for SlideTile actions scope
+		if (sScope !== GenericTileScope.Actions && oControl._bShowActionsView) {
+			oRm.addClass("sapMGTScopeActions");
+		}
 		oRm.addClass(oControl.getFrameType());
 		if (bHasPress) {
 			oRm.writeAttribute("role", "button");
@@ -93,11 +99,11 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			this._renderHoverOverlay(oRm, oControl);
 		}
 
-		if (oControl.getState() !== LoadState.Disabled) {
+		if (sState !== LoadState.Disabled) {
 			this._renderFocusDiv(oRm, oControl);
 		}
 
-		if (oControl.getScope() === GenericTileScope.Actions) {
+		if (sScope === GenericTileScope.Actions) {
 			this._renderActionsScope(oRm, oControl);
 		}
 		oRm.write("</div>");
@@ -141,7 +147,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 				oRm.renderControl(oControl._oWarningIcon);
 				oRm.write("</div>");
 
-				if (oControl.getScope() !== GenericTileScope.Actions) {
+				if (oControl.getScope() !== GenericTileScope.Actions && !oControl._bShowActionsView) {
 					oRm.write("<div");
 					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
 					oRm.addClass("sapMGenericTileFtrFldTxt");
