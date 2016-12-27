@@ -557,6 +557,7 @@
 			oGenericTile = this.oSlideTile.getTiles()[0];
 		oGenericTile.attachEvent("press", handlePress);
 		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 
 		//Act
 		oGenericTile.$().trigger('tap');
@@ -571,6 +572,7 @@
 	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
 		//Arrange
 		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 		this.oSlideTile.attachEvent("press", handlePress);
 
 		//Act
