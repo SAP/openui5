@@ -1,10 +1,12 @@
 package com.sap.openui5;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -109,6 +111,7 @@ public class LessFilter implements Filter {
         URL url = loader.getResource(LESS_PATH + script);
         Reader reader = new InputStreamReader(url.openStream(), "UTF-8");
         context.evaluateReader(this.scope, reader, script, 1, null);
+        reader.close();
       }
 
       // get environment object and set the resource loader used in less (see less-api.js)
@@ -270,9 +273,21 @@ public class LessFilter implements Filter {
       for (String path : paths) {
         URL url = this.findResource(path);
         if (url != null) {
-          URLConnection c = url.openConnection();
-          c.connect();
-          lastModified = Math.max(lastModified, c.getLastModified());
+          InputStream is = null;
+          try {
+            URLConnection conn = url.openConnection();
+            // for JAR files we do not open the connection to avoid resource leaks!
+            if (conn instanceof JarURLConnection) {
+              File jarFile = new File(((JarURLConnection) conn).getJarFile().getName());
+              lastModified = Math.max(lastModified, jarFile.lastModified());
+            } else {
+              conn.connect();
+              is = conn.getInputStream();
+              lastModified = Math.max(lastModified, conn.getLastModified());
+            }
+          } finally {
+            IOUtils.closeQuietly(is);
+          }
         }
       }
     } catch (Exception ex) {
@@ -306,44 +321,50 @@ public class LessFilter implements Filter {
         if (url != null) {
 
           // read the library.source.less
-          URLConnection conn = url.openConnection();
-          conn.connect();
+          InputStream is = null;
+          try {
 
-          // up-to-date check
-          String resources = this.cache.get(path + "resources");
-          long lastModified = resources != null ? this.getMaxLastModified(resources.split(";")) : -1;
-          if (!this.lastModified.containsKey(sourcePath) || this.lastModified.get(sourcePath) < lastModified) {
+            URLConnection conn = url.openConnection();
+            conn.connect();
+            is = conn.getInputStream();
 
-            // some info
-            this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
+            // up-to-date check
+            String resources = this.cache.get(path + "resources");
+            long lastModified = resources != null ? this.getMaxLastModified(resources.split(";")) : -1;
+            if (!this.lastModified.containsKey(sourcePath) || this.lastModified.get(sourcePath) < lastModified) {
 
-            // read the content
-            InputStream is = conn.getInputStream();
-            String input = IOUtils.toString(is, "UTF-8");
+              // some info
+              this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
+
+              // read the content
+              String input = IOUtils.toString(is, "UTF-8");
+
+              // time measurement begin
+              long millis = System.currentTimeMillis();
+
+              // compile the CSS/JSON
+              Scriptable result = this.compileCSS(input, path, compressCSS, compressJSON, libraryName);
+
+              // cache the result
+              String css = Context.toString(ScriptableObject.getProperty((Scriptable) result, "css"));
+              this.cache.put(path + "library.css", css);
+              String rtlCss = Context.toString(ScriptableObject.getProperty((Scriptable) result, "cssRtl"));
+              this.cache.put(path + "library-RTL.css", rtlCss);
+              String json = Context.toString(ScriptableObject.getProperty((Scriptable) result, "json"));
+              this.cache.put(path + "library-parameters.json", json);
+              resources = Context.toString(ScriptableObject.getProperty((Scriptable) result, "resources"));
+              this.cache.put(path + "resources", resources);
+
+              // log the compile duration
+              this.log("  => took " + (System.currentTimeMillis() - millis) + "ms");
+
+              // store when the resource has been compiled
+              this.lastModified.put(sourcePath, this.getMaxLastModified(resources.split(";")));
+
+            }
+
+          } finally {
             IOUtils.closeQuietly(is);
-
-            // time measurement begin
-            long millis = System.currentTimeMillis();
-
-            // compile the CSS/JSON
-            Scriptable result = this.compileCSS(input, path, compressCSS, compressJSON, libraryName);
-
-            // cache the result
-            String css = Context.toString(ScriptableObject.getProperty((Scriptable) result, "css"));
-            this.cache.put(path + "library.css", css);
-            String rtlCss = Context.toString(ScriptableObject.getProperty((Scriptable) result, "cssRtl"));
-            this.cache.put(path + "library-RTL.css", rtlCss);
-            String json = Context.toString(ScriptableObject.getProperty((Scriptable) result, "json"));
-            this.cache.put(path + "library-parameters.json", json);
-            resources = Context.toString(ScriptableObject.getProperty((Scriptable) result, "resources"));
-            this.cache.put(path + "resources", resources);
-
-            // log the compile duration
-            this.log("  => took " + (System.currentTimeMillis() - millis) + "ms");
-
-            // store when the resource has been compiled
-            this.lastModified.put(sourcePath, this.getMaxLastModified(resources.split(";")));
-
           }
 
         } else {
