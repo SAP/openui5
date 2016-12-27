@@ -100,9 +100,10 @@ public class AnonymousLogLine {
 	private String csvUserAgent; // a specially formatted and enriched user-agent string with browser information; only set when isBotLine was called (performance)
 
 	public static void initializeClass(String applicationName) {
-		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+))\"	\"([^\"]+)\"	.*$");
-		VERSIONED_CORE_CHECK_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\....\\.hana\\.ondemand\\.com/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
-		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+)|[-])\"	\"([^\"]+)\"	.*$");
+		//                                         2016-12-23                         22:07:53                              
+		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	([\\d\\.]+)	(\\w+)	(/" + applicationName + "\\.(ui5origin).akadns.net(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+))\"	\"([^\"]+)\"	.*$");
+		VERSIONED_CORE_CHECK_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\.ui5origin.akadns.net/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
+		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(ui5origin).akadns.net((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+)|[-])\"	\"([^\"]+)\"	.*$");
 	}
 	
 	
@@ -168,9 +169,11 @@ public class AnonymousLogLine {
 		return referrer;
 	}
 
+	/*
 	public Region getRegion() {
 		return region;
 	}
+	*/
 	
 	public String getUserAgent() {
 		return userAgent;
@@ -259,6 +262,7 @@ public class AnonymousLogLine {
 
 		String ipCounter = m.group(9);
 		
+		/*
 		Region region = Region.EU;
 		String regionString = m.group(12);
 		if ("us".equals(regionString)) {
@@ -268,6 +272,7 @@ public class AnonymousLogLine {
 		} else if (!regionString.equals("eu")) {
 			throw new RuntimeException("Unknown Region string: " + regionString);
 		}
+		*/
 
 		AnonymousLogLine logLine = new AnonymousLogLine(
 				new Date(
@@ -286,7 +291,7 @@ public class AnonymousLogLine {
 						Integer.parseInt(m.group(16)), // first number
 						Integer.parseInt(m.group(17)),// second number
 						referrer, // referrer url
-						region, // region
+						Region.UNKNOWN, // region
 						m.group(21) // user-agent
 				);
 		return logLine;
