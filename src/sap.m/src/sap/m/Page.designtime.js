@@ -4,30 +4,52 @@
 
 // Provides the Design Time Metadata for the sap.m.Page control
 sap.ui.define([],
-	function() {
-	"use strict";
+	function () {
+		"use strict";
 
-	return {
-		aggregations : {
-			headerContent : {
-				domRef : ":sap-domref .sapMBarRight"
+		return {
+			actions: {
+				rename: function (oPage) {
+					// When a custom header is added the title is not visualized and we do not need a rename action.
+					if (oPage.getCustomHeader()) {
+						return;
+					}
+
+					return {
+						changeType: "renameTitle",
+						domRef: function (oControl) {
+							return oControl.$("title-inner")[0];
+						}
+					};
+				}
 			},
-			subHeader : {
-				domRef : ":sap-domref .sapMPageSubHeader"
+			aggregations: {
+				headerContent: {
+					domRef: ":sap-domref > .sapMPageHeader > .sapMBarRight"
+				},
+				subHeader: {
+					domRef: ":sap-domref > .sapMPageSubHeader"
+				},
+				customHeader: {
+					domRef: ":sap-domref > .sapMPageHeader"
+				},
+				content: {
+					domRef: ":sap-domref > section",
+					actions: {
+						move: "moveElements"
+					}
+				},
+				footer: {
+					domRef: ":sap-domref > .sapMPageFooter"
+				},
+				landmarkInfo: {
+					ignore: true
+				}
 			},
-			customHeader : {
-				domRef : ":sap-domref .sapMPageHeader"
-			},
-			content : {
-				domRef : ":sap-domref > section"
-			},
-			footer : {
-				domRef : ":sap-domref .sapMPageFooter"
-			},
-			landmarkInfo : {
-				ignore : true
+			name: {
+				singular: "PAGE_NAME",
+				plural: "PAGE_NAME_PLURAL"
 			}
-		}
-	};
+		};
 
-}, /* bExport= */ false);
+	}, /* bExport= */ false);
