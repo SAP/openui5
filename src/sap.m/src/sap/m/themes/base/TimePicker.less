@@ -1,13 +1,45 @@
-/* ============================================= */
-/* CSS for control sap.m/TimePicker.control      */
-/* ============================================= */
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* Base theme                        */
+/* ================================= */
 
 /* ======================================== */
 /* TimePicker Input Field                   */
 /* ======================================== */
+
 .sapMTimePicker {
 	.sapUiIcon {
 		cursor: pointer;
+		color: @sapUiContentIconColor;
+		&:hover {
+			background-color: @sapUiButtonLiteHoverBackground;
+		}
+		&:focus {
+			background-color: @sapUiButtonLiteHoverBackground;
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -1px;
+		}
+		&:active {
+			background-color: @sapUiButtonLiteActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+			outline: 1px dotted @sapUiContentContrastFocusColor;
+		}
+	}
+	&.sapMTPInputActive {
+		.sapMInputBaseInner {
+			border: 1px solid @sapUiFieldActiveBorderColor;
+		}
+		.sapUiIcon {
+			background-color: @sapUiToggleButtonPressedBackground;
+			color: @sapUiToggleButtonPressedTextColor;
+			&:hover {
+				background-color: @sapUiToggleButtonPressedHoverBackground;
+				color: @sapUiToggleButtonPressedTextColor;
+			}
+			&:focus {
+				background-color: @sapUiButtonLiteActiveBackground;
+			}
+		}
 	}
 }
 
@@ -137,6 +169,83 @@
 		}
 	}
 }
+
+.sapMTimePickerDropDown {
+	.sapMTimePickerContainer {
+		.sapMTimePickerContainerLabel {
+			font-size: @sapMFontHeader5Size;
+			color: @sapUiCalendarColorToday;
+		}
+		.sapMTPColumn {
+			.sapMTimePickerLabel {
+				font-size: @sapMFontSmallSize;
+				color: @sapUiContentLabelColor;
+				text-align: center;
+				vertical-align: middle;
+			}
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					background: @sapUiSelected;
+					border: 1px solid @sapUiListBorderColor;
+					font-size: @sapMFontMediumSize;
+					color: @sapUiContentContrastTextColor;
+					text-align: center;
+					&:hover {
+						background: @sapUiHighlight;
+						color: @sapUiContentContrastTextColor;
+					}
+					&:active {
+						background: @sapUiHighlight;
+						color: @sapUiContentContrastTextColor;
+					}
+					&:focus {
+						outline: 1px dotted @sapUiContentContrastFocusColor;
+						outline-offset: -3px;
+					}
+				}
+			}
+			&.sapMTPSliderExpanded {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						background: @sapUiListBackground;
+						color: @sapUiBaseText;
+						border: 1px solid @sapUiListBorderColor;
+						&:hover {
+							background: @sapUiHighlight;
+						}
+						&:active {
+							background: @sapUiHighlight;
+							color: @sapUiContentContrastTextColor;
+						}
+						&:focus {
+							outline: 1px dotted @sapUiContentFocusColor;
+							outline-offset: -3px;
+						}
+					}
+					.sapMTPPickerSelectionFrame {
+						outline: 0.125rem solid @sapUiContentForegroundBorderColor;
+						outline-offset: -0.313rem;
+						&:hover {
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapUiHighlight;
+							}
+						}
+						&:active {
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapUiSelected;
+								color: @sapUiContentContrastTextColor;
+							}
+						}
+					}
+				}
+			}
+			&:focus {
+				outline: none;
+			}
+		}
+	}
+}
+
 /* ======================================== */
 /* COMPACT MODE STYLES                      */
 /* ======================================== */
@@ -214,8 +323,37 @@
 		}
 	}
 }
+
 /* PHONE STYLES */
 html.sap-phone {
+	/* ======================================== */
+	/* TimePicker Input Field                   */
+	/* ======================================== */
+	.sapMTimePicker {
+		.sapUiIcon {
+			color: @sapUiContentIconColor;
+			&:focus {
+				background-color: @sapUiButtonLiteHoverBackground;
+				outline: 1px dotted @sapUiContentFocusColor;
+				outline-offset: -1px;
+			}
+			&:active {
+				background-color: @sapUiButtonLiteActiveBackground;
+				color: @sapUiButtonActiveTextColor;
+				outline: 1px dotted @sapUiContentContrastFocusColor;
+			}
+		}
+		&.sapMTPInputActive {
+			.sapMInputBaseInner {
+				border: 1px solid @sapUiFieldActiveBorderColor;
+			}
+			.sapUiIcon {
+				background-color: @sapUiToggleButtonPressedBackground;
+				color: @sapUiToggleButtonPressedTextColor;
+			}
+		}
+	}	
+	
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
@@ -248,6 +386,8 @@ html.sap-phone {
 				display: block;
 				height: 2rem;
 				line-height: 2rem;
+				font-size: @sapMFontHeader5Size;
+				color: @sapUiCalendarColorToday;
 			}
 			.sapMTPColumn {
 				display: inline-block;
@@ -260,9 +400,11 @@ html.sap-phone {
 				.sapMTimePickerLabel {
 					height: 2rem;
 					width: 4.5rem;
+					display: none;
+					font-size: @sapMFontSmallSize;
+					color: @sapUiContentLabelColor;
 					text-align: center;
 					vertical-align: middle;
-					display: none;
 				}
 				.sapMTimePickerItemArrows {
 					display: none;
@@ -277,6 +419,19 @@ html.sap-phone {
 						line-height: 3rem;
 						width: 4.5rem;
 						box-sizing: border-box;
+						background: @sapUiSelected;
+						border: 1px solid @sapUiListBorderColor;
+						font-size: @sapMFontMediumSize;
+						color: @sapUiContentContrastTextColor;
+						text-align: center;
+						&:active {
+							background: @sapUiHighlight;
+							color: @sapUiContentContrastTextColor;
+						}
+						&:focus {
+							outline: 1px dotted @sapUiContentContrastFocusColor;
+							outline-offset: -3px;
+						}
 					}
 					.sapMTPPickerSelectionFrame {
 						width: 4.5rem;
@@ -305,9 +460,22 @@ html.sap-phone {
 							line-height: 3rem;
 							width: 4.5rem;
 							box-sizing: border-box;
+							background: @sapUiListBackground;
+							color: @sapUiBaseText;
+							border: 1px solid @sapUiListBorderColor;
+							&:active {
+								background: @sapUiHighlight;
+								color: @sapUiContentContrastTextColor;
+							}
+							&:focus {
+								outline: 1px dotted @sapUiContentFocusColor;
+								outline-offset: -3px;
+							}
 						}
 						.sapMTPPickerSelectionFrame {
 							display: block;
+							outline: 0.125rem solid @sapUiContentForegroundBorderColor;
+							outline-offset: -0.313rem;
 						}
 					}
 					.sapMTimePickerSlider.SliderValues3 {
@@ -340,6 +508,9 @@ html.sap-phone {
 					.sapMTimePickerSlider.SliderValues12 {
 						height: 36rem;
 					}
+				}
+				&:focus {
+					outline: none;
 				}
 			}
 		}

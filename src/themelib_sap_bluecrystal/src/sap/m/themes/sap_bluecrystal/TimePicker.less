@@ -1,199 +1,71 @@
-/* ===================================================================== */
-/* CSS for control sap.m/TimePicker.control BlueCrystal theme            */
-/* ===================================================================== */
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* BlueCrystal theme                 */
+/* ================================= */
 
-/* ======================================== */
-/* TimePicker Input Field                   */
-/* ======================================== */
-.sapMTimePicker {
-	.sapUiIcon {
-		color: @sapUiElement;
-		&:hover {
-			background-color: @sapUiBtnBGTransparentHover;
-		}
-		&:focus {
-			background-color: @sapUiBtnBGTransparentHover;
-			outline: 1px dotted @sapUiFocus;
-			outline-offset: -1px;
-		}
-		&:active {
-			background-color: @sapUiBtnBGTransparentDown;
-			color: @sapUiBtnTextActive;
-			outline: 1px dotted @sapUiInvertedFocus;
-		}
-	}
-	&.sapMTPInputActive {
-		.sapMInputBaseInner {
-			border: 1px solid @sapUiInputBaseFocus;
-		}
-		.sapUiIcon {
-			background-color: @sapUiBtnBGTransparentDown;
-			color: @sapUiBtnTextActive;
-			&:hover {
-				background-color: @sapUiBtnBGTransparentHover;
-				color: @sapUiElement;
-			}
-			&:focus {
-				background-color: @sapUiBtnBGTransparentHover;
-			}
-		}
-	}
-}
 /* ======================================== */
 /* TimePicker Dropdown                      */
 /* ======================================== */
+
 .sapMTimePickerDropDown {
 	.sapMTimePickerContainer {
 		.sapMTPColumn {
-			.sapMTimePickerLabel {
-				font-size: @sapMFontSmallSize;
-				color: @sapUiLightText;
-				text-align: center;
-				vertical-align: middle;
-			}
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
-					background: @sapUiHighlight;
-					border: 1px solid @sapUiLightestBorder;
-					font-size: @sapMFontMediumSize;
-					color: @sapUiTextInverted;
-					text-align: center;
+					border: 1px solid lighten(@sapUiListBorderColor, 10);
 					&:hover {
-						background: darken(@sapUiHighlight, 10);
-						color: @sapUiTextInverted;
-					}
-					&:active {
-						background: @sapUiHighlight;
-						color: @sapUiTextInverted;
-					}
-					&:focus {
-						outline: 1px dotted @sapUiTextInverted;
-						outline-offset: -3px;
+						background: darken(@sapUiSelected, 10);
 					}
 				}
 			}
 			&.sapMTPSliderExpanded {
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
-						background: @sapUiExtraLightBG;
-						color: @sapUiStandardText;
+						background: lighten(@sapUiContentForegroundColor, 5);
+						border: 1px solid lighten(@sapUiListBorderColor, 10);
 						&:hover {
-							background: darken(@sapUiExtraLightBG, 10);
-						}
-						&:active {
-							background: @sapUiHighlight;
-							color: @sapUiTextInverted;
-						}
-						&:focus {
-							outline: 1px dotted @sapUiFocus;
-							outline-offset: -3px;
+							background: darken(@sapUiContentForegroundColor, 5);
 						}
 					}
 					.sapMTPPickerSelectionFrame {
-						border: 2px solid @sapUiHighlight;
+						outline: 0.125rem solid @sapUiSelected;
+						outline-offset: -0.313rem;
 						&:hover {
-							border: 2px solid darken(@sapUiHighlight,10);
-							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-								background: darken(@sapUiExtraLightBG, 10);
-							}
-						}
-						&:active {
-							border: 2px solid @sapUiHighlight;
-							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-								background: @sapUiHighlight;
-								color: @sapUiTextInverted;
+							+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: darken(@sapUiContentForegroundColor, 5);
 							}
 						}
 					}
 				}
-			}
-			&:focus {
-				outline: none;
 			}
 		}
 	}
 }
 
+/* PHONE STYLES */
 html.sap-phone {
-	/* ======================================== */
-	/* TimePicker Input Field                   */
-	/* ======================================== */
-	.sapMTimePicker {
-		.sapUiIcon {
-			color: @sapUiElement;
-			&:focus {
-				background-color: @sapUiBtnBGTransparentHover;
-				outline: 1px dotted @sapUiFocus;
-				outline-offset: -1px;
-			}
-			&:active {
-				background-color: @sapUiBtnBGTransparentDown;
-				color: @sapUiBtnTextActive;
-				outline: 1px dotted @sapUiInvertedFocus;
-			}
-		}
-		&.sapMTPInputActive {
-			.sapMInputBaseInner {
-				border: 1px solid @sapUiInputBaseFocus;
-			}
-			.sapUiIcon {
-				background-color: @sapUiBtnBGTransparentDown;
-				color: @sapUiBtnTextActive;
-			}
-		}
-	}
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
 	.sapMTimePickerDropDown {
 		.sapMTimePickerContainer {
-			.sapMTimePickerContainerLabel {
-				font-size: @sapMFontMediumSize;
-				color: @sapUiAccent4;
-			}
 			.sapMTPColumn {
-				.sapMTimePickerLabel {
-					font-size: @sapMFontSmallSize;
-					color: @sapUiLightText;
-					text-align: center;
-					vertical-align: middle;
-				}
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
-						background: @sapUiHighlight;
-						border: 1px solid @sapUiLightestBorder;
-						font-size: @sapMFontMediumSize;
-						color: @sapUiTextInverted;
-						text-align: center;
-						&:active {
-							background: @sapUiHighlight;
-							color: @sapUiTextInverted;
-						}
-						&:focus {
-							outline: 1px dotted @sapUiTextInverted;
-							outline-offset: -3px;
-						}
+						border: 1px solid lighten(@sapUiListBorderColor, 10);
 					}
 				}
 				&.sapMTPSliderExpanded {
 					.sapMTimePickerSlider {
 						.sapMTimePickerItem {
-							background: @sapUiExtraLightBG;
-							color: @sapUiStandardText;
-							&:active {
-							}
-							&:focus {
-								outline: 1px dotted @sapUiFocus;
-								outline-offset: -3px;
-							}
+							background: lighten(@sapUiContentForegroundColor, 5);
+							border: 1px solid lighten(@sapUiListBorderColor, 10);
 						}
 						.sapMTPPickerSelectionFrame {
-							border: 2px solid @sapUiHighlight;
+							outline: 0.125rem solid @sapUiSelected;
+							outline-offset: -0.313rem;
 						}
 					}
-				}
-				&:focus {
-					outline: none;
 				}
 			}
 		}
