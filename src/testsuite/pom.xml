@@ -61,16 +61,6 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sap.tnt</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sap.f</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>sap.ui.core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -87,6 +77,16 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>sap.m</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sap.tnt</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sap.f</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
