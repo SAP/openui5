@@ -688,43 +688,38 @@ public class AkamaiLogDownloader {
 		Map<String,Integer> ipAddressAnonymizer = new HashMap<String,Integer>(1024);
 		
 		// these strings mark relevant log entries
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/downloads/" + applicationName + "-";    // GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-runtime-1.26.7.zip
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/downloads/" + applicationName + "-";
-		final String ANY_DOWNLOAD_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/downloads/" + applicationName + "-";
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
-		final String ANY_GITHUB_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/	";
-		final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/	";
-		final String DEMOKIT_ROBOTS_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
-		final String DEMOKIT_ROBOTS_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/robots.txt	";
-		final String DEMOKIT_ROBOTS_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/robots.txt	";
-		final String CORE_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap-ui-core.js	";
-		final String CORE_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap-ui-core.js	";
-		final String CORE_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap-ui-core.js	";
-		final Pattern VERSIONED_CORE_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\....\\.hana\\.ondemand\\.com/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
+		final String ANY_DOWNLOAD_FRAGMENT_STRING = "GET	/" + applicationName + ".ui5origin.akadns.net/downloads/" + applicationName + "-";    // GET	/openui5.ui5origin.akadns.net/downloads/openui5-runtime-1.26.7.zip
+		//final String ANY_DOWNLOAD_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/downloads/" + applicationName + "-";    // GET	/openui5.eu1.hana.ondemand.com/downloads/openui5-runtime-1.26.7.zip
+		//final String ANY_DOWNLOAD_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/downloads/" + applicationName + "-";
+		//final String ANY_DOWNLOAD_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/downloads/" + applicationName + "-";
+		final String ANY_GITHUB_PAGE_FRAGMENT_STRING = "GET	/" + applicationName + ".ui5origin.akadns.net/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.ui5origin.akadns.net/resources/sap/ui/core/themes/base/img/1x1.gif
+		//final String ANY_GITHUB_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page="; // GET	/openui5.eu1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif
+		//final String ANY_GITHUB_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		//final String ANY_GITHUB_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=";
+		final String DEMOKIT_PAGE_FRAGMENT_STRING = "GET	/" + applicationName + ".ui5origin.akadns.net/	";                  // GET	/openui5.ui5origin.akadns.net/
+		//final String DEMOKIT_PAGE_FRAGMENT_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/	";                  // GET	/openui5.eu1.hana.ondemand.com/	
+		//final String DEMOKIT_PAGE_FRAGMENT_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/	";
+		//final String DEMOKIT_PAGE_FRAGMENT_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/	";
+		final String DEMOKIT_ROBOTS_STRING = "GET	/" + applicationName + ".ui5origin.akadns.net/robots.txt	";
+		//final String DEMOKIT_ROBOTS_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/robots.txt	"; // robots requests are interesting, so we can filter out bots later
+		//final String DEMOKIT_ROBOTS_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/robots.txt	";
+		//final String DEMOKIT_ROBOTS_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/robots.txt	";
+		final String CORE_STRING = "GET	/" + applicationName + ".ui5origin.akadns.net/resources/sap-ui-core.js	";
+		//final String CORE_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap-ui-core.js	";
+		//final String CORE_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap-ui-core.js	";
+		//final String CORE_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final Pattern VERSIONED_CORE_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\.ui5origin.akadns.net/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
 			String line;
 			while ((line = br.readLine()) != null) {
 
-				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_EU)		// TODO: performance: nine "contains" or three regex?
-						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_US)
-						|| line.contains(ANY_DOWNLOAD_FRAGMENT_STRING_AP)
-						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_EU)
-						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_US)
-						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING_AP)
-						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_EU)
-						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_US)
-						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING_AP)
-						|| line.contains(DEMOKIT_ROBOTS_STRING_EU)
-						|| line.contains(DEMOKIT_ROBOTS_STRING_US)
-						|| line.contains(DEMOKIT_ROBOTS_STRING_AP)
-						|| line.contains(CORE_STRING_EU)
-						|| line.contains(CORE_STRING_US)
-						|| line.contains(CORE_STRING_AP)
+				if (line.contains(ANY_DOWNLOAD_FRAGMENT_STRING)		// TO DO: performance: nine "contains" or three regex?
+						|| line.contains(ANY_GITHUB_PAGE_FRAGMENT_STRING)
+						|| line.contains(DEMOKIT_PAGE_FRAGMENT_STRING)
+						|| line.contains(DEMOKIT_ROBOTS_STRING)
+						|| line.contains(CORE_STRING)
 						|| VERSIONED_CORE_PATTERN.matcher(line).matches()) { // only handle interesting lines
 
 					String[] parts = line.split("\\t");
