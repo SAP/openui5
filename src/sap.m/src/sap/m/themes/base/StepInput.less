@@ -27,13 +27,16 @@
 
 .sapMStepInput-CTX {
 	.sapMInput {
-		.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
+		.sapMInputBaseInner {
 			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
 			padding: 0 2.75rem;
 		}
 	}
 
+	.sapMInputBaseInner:read-only {
+		padding: 0 0.75rem;
+	}
 	.sapMInputBaseWidthPadding {
 		padding: 0;
 	}

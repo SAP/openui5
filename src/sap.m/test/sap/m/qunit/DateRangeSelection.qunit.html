@@ -96,9 +96,9 @@
 			});
 
 			test("Date format", function() {
-				ok(!jQuery("#DRS1").children("input").val(), "DRS1 : empty date");
-				equal(jQuery("#DRS2").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
-				equal(jQuery("#DRS3").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
+				ok(!jQuery("#DRS1").children("div.sapMInputDivWrapper").children("input").val(), "DRS1 : empty date");
+				equal(jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
+				equal(jQuery("#DRS3").children("div.sapMInputDivWrapper").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 			});
 
 			module("interaction");
@@ -113,9 +113,9 @@
 				bChange = false;
 				bValid = true;
 				oDRS2.focus();
-				jQuery("#DRS2").children("input").val("01+04+2013 - 10+04+2014");
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("01+04+2013 - 10+04+2014");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DRS2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				ok(bChange, "DRS2: change event fired by typing invalid date");
 				ok(!bValid, "DRS2: invalid typed date is not valid")
 				ok(jQuery.sap.equal(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
@@ -123,9 +123,9 @@
 				bChange = false;
 				bValid = true;
 				oDRS2.focus();
-				jQuery("#DRS2").children("input").val("02+04+2014 - 11+04+2014");
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("02+04+2014 - 11+04+2014");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DRS2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				ok(bChange, "DRS2: change event fired by typing valid date");
 				ok(bValid, "DRS2: valid typed date is valid")
 				ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
@@ -134,9 +134,9 @@
 				bChange = false;
 				bValid = true;
 				oDRS2.focus();
-				jQuery("#DRS2").children("input").val("01+04+2014 - 10+04+2015");
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").val("01+04+2014 - 10+04+2015");
 				qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DRS2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				jQuery("#DRS2").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				ok(bChange, "DRS2: change event fired by typing invalid date");
 				ok(!bValid, "DRS2: invalid typed date is not valid")
 				ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");

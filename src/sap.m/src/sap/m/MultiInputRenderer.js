@@ -93,7 +93,13 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		InputRenderer.openInputTag.call(this, oRm, oControl);
 	};
 
-	MultiInputRenderer.writeInnerContent = function(oRm, oControl) {
+	/**
+	 * Write the decorations of the input.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	MultiInputRenderer.writeDecorations = function(oRm, oControl) {
 
 	};
 
@@ -111,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 	MultiInputRenderer.addInnerStyles = function(oRm, oControl) {
 		if (oControl._isMultiLineMode && oControl._bShowIndicator === true && oControl.getTokens().length > 1) {
-			oRm.addStyle("opacity", 0);
+			 oRm.addStyle("opacity", 0);
 		}
 	};
 
