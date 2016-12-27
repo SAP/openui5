@@ -4,8 +4,10 @@
 
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/m/Text',
 		'sap/m/Button', 'sap/m/Image', 'sap/ui/core/ResizeHandler', 'sap/ui/Device', 'sap/m/MessagePage',
-		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager'],
-	function (jQuery, library, Control, Popup, Text, Button, Image, ResizeHandler, Device, MessagePage, Icon, VerticalLayout, InstanceManager) {
+		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager', 'sap/ui/core/InvisibleText'],
+	function (jQuery, library, Control, Popup, Text,
+			Button, Image, ResizeHandler, Device, MessagePage,
+			Icon, VerticalLayout, InstanceManager, InvisibleText) {
 
 		'use strict';
 
@@ -93,7 +95,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * A layout control used to display the error texts when the image could not be loaded.
 					 * @private
 					 */
-					_verticalLayout: {type: 'sap.ui.layout.VerticalLayout', multiple: false, visibility: 'hidden'}
+					_verticalLayout: {type: 'sap.ui.layout.VerticalLayout', multiple: false, visibility: 'hidden'},
+					/**
+					 * Hidden text used for accessibility of the popup.
+					 * @private
+					 */
+					_invisiblePopupText: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 				},
 				events: {},
 				defaultAggregation: 'imageContent'
@@ -113,7 +120,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._resizeListenerId = null;
 			this._$lightBox = null;
 
-			this._closeButtonText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIGHTBOX_CLOSE_BUTTON");
+			this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			this._closeButtonText = this._rb.getText("LIGHTBOX_CLOSE_BUTTON");
+
+			// create an ARIA announcement for enlarged image
+			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				this.setAggregation("_invisiblePopupText", new InvisibleText());
+			}
 		};
 
 		LightBox.prototype.onBeforeRendering = function () {
@@ -145,6 +159,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					break;
 				default:
 					break;
+			}
+
+			var oInvisiblePopupText = this.getAggregation('_invisiblePopupText');
+			if (oImageContent && oInvisiblePopupText) {
+				oInvisiblePopupText.setText(this._rb.getText("LIGHTBOX_ARIA_ENLARGED", oImageContent.getTitle()));
 			}
 
 			this._isRendering = true;
@@ -320,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		LightBox.prototype._createErrorControls = function() {
-			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var resourceBundle = this._rb;
 			var errorMessageTitle;
 			var errorMessageSubtitle;
 

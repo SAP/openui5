@@ -215,4 +215,42 @@
         // assert
         assert.strictEqual(actualResult, expectedResult, 'The result should be "ERROR"');
     });
+
+    //================================================================================
+    // LightBox accessibility
+    //================================================================================
+
+    QUnit.module('Accessibility', {
+        setup: function() {
+            this.LightBox = new sap.m.LightBox({
+                imageContent : [
+                    new sap.m.LightBoxItem()
+                ]
+            });
+        },
+        teardown: function() {
+            this.LightBox.close();
+            this.LightBox.destroy();
+        }
+    });
+
+
+    QUnit.test('ACC state', function(assert) {
+        var oImageContent = this.LightBox.getImageContent()[0],
+            sImageSource = '../images/demo/nature/elephant.jpg',
+            oLightBoxPopup = this.LightBox._oPopup;
+
+        oImageContent.setImageSrc(sImageSource);
+
+        sap.ui.getCore().applyChanges();
+
+        this.LightBox.open();
+        this.clock.tick(500);
+
+        var oLightBoxPopup = this.LightBox._oPopup;
+        var $popupContent = oLightBoxPopup.getContent().$();
+
+        assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
+        assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
+    });
 })();
