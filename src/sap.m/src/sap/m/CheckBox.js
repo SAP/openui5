@@ -133,12 +133,6 @@ sap.ui.define(['jquery.sap.global',
 		IconPool.insertFontFaceStyle();
 	};
 
-	CheckBox.prototype.onAfterRendering = function() {
-		if (!this.getText() && !this.$().attr("aria-labelledby")) {
-			this.$().attr("aria-label", " ");
-		}
-	};
-
 	CheckBox.prototype.exit = function() {
 		this._oLabel = null;
 		delete this._iTabIndex;
