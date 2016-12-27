@@ -37,13 +37,15 @@ public class LogDownloader {
 	
 	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "openui5", all_servers);
 	private static final ApplicationConfig openui5beta_config = new ApplicationConfig("openui5beta", "openui5", eu_server);
+	private static final ApplicationConfig openui5nightly_config = new ApplicationConfig("openui5nightly", "openui5", eu_server);
 	private static final ApplicationConfig openui5test_config = new ApplicationConfig("openui5test", "openui5", eu_server);
 	
 	
 	// SETTINGS
 	private static final ApplicationConfig[] APPLICATION_CONFIGS = {
-		openui5_config,
-		openui5beta_config
+		//openui5_config,
+		//openui5beta_config
+		openui5nightly_config
 		//openui5test_config
 	};
 
@@ -55,7 +57,7 @@ public class LogDownloader {
 	private static final String DATA_FILE_NAME = "data";
 	
 	private static String NEO_PATH = null;
-	private static final String DEFAULT_NEO_PATH = "\"C:\\Program Files (x86)\\neo-java-web-sdk-1.65.10\\tools\\neo.bat\"";
+	private static final String DEFAULT_NEO_PATH = "\"C:\\Program Files (x86)\\neo-java-web-sdk\\tools\\neo.bat\"";
 	
 	private static final boolean DEV_MODE = false;
 
