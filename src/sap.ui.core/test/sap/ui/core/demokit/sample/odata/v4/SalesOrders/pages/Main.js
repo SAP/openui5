@@ -384,10 +384,10 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				},
 				checkFavoriteProductID : function () {
 					return this.waitFor({
-						controlType : "sap.m.Text",
+						controlType : "sap.m.Input",
 						id : "FavoriteProductID",
-						matchers : new Properties({text : "HT-1000"}),
-						success : function (oText) {
+						matchers : new Properties({value : "HT-1000"}),
+						success : function () {
 							Opa5.assert.ok(true, "Product ID 'HT-1000' found");
 						},
 						viewName : sViewName
