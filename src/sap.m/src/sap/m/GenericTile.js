@@ -178,9 +178,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	/**
 	 * Creates the content specific for the given scope in order for it to be rendered, if it does not exist already.
 	 *
+	 * @param {string} sTileClass indicates the tile's CSS class name
 	 * @private
 	 */
-	GenericTile.prototype._initScopeContent = function() {
+	GenericTile.prototype._initScopeContent = function(sTileClass) {
 		switch (this.getScope()) {
 			case library.GenericTileScope.Actions:
 				if (this.getState && this.getState() === library.LoadState.Disabled) {
@@ -188,14 +189,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
 					id: this.getId() + "-action-more",
+					size: "1rem",
+					useIconTooltip: false,
 					src: "sap-icon://overflow"
-				}).addStyleClass("sapMGTMoreIcon");
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
 
 				this._oRemoveButton = this._oRemoveButton || new Button({
 					id: this.getId() + "-action-remove",
 					icon: "sap-icon://decline",
 					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
-				}).addStyleClass("sapUiSizeCompact sapMGTRemoveButton");
+				}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
 				break;
@@ -246,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this.getTileContent()[i].setDisabled(this.getState() === library.LoadState.Disabled);
 		}
 
-		this._initScopeContent();
+		this._initScopeContent("sapMGT");
 		this._generateFailedText();
 
 		this.$().unbind("mouseenter", this._updateAriaAndTitle);

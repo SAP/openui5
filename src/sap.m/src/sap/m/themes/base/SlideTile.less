@@ -6,12 +6,89 @@
 .sapMST {
 	background: transparent;
 	position: relative;
-	overflow: hidden;
 	display: inline-block;
 	font-size: 0;
 	border-radius: 0.125rem;
 	outline: none;
 	box-shadow: @sapUiShadowLevel0;
+
+	.sapMSTOverflowHidden {
+		overflow: hidden;
+		position: relative;
+		height: 100%;
+		width: 100%;
+	}
+
+	&.sapMSTScopeActions {
+
+		.sapMSTMoreIcon {
+			height: 1rem;
+			position: absolute;
+			right: 0.75rem;
+			bottom: 0.563rem;
+			z-index: 1;
+			color: @sapUiButtonIconColor;
+			&:focus {
+				outline: none;
+			}
+		}
+
+		.sapMSTRemoveButton {
+			width: 1.375rem;
+			height: 1.375rem;
+			border-radius: 50%;
+			padding: 0px;
+			position: absolute;
+			top: -0.5rem;
+			right: -0.5rem;
+			z-index: 3;
+			overflow: hidden;
+			border: 1px solid @sapUiButtonBorderColor;
+			background-color: @sapUiButtonBackground;
+			color: @sapUiButtonTextColor;
+			&:before {
+				color: @sapUiButtonIconColor;
+			}
+
+			.sapMBtnFocusDiv {
+				display: none;
+			}
+
+			.sapMBtnInner {
+				width: 100%;
+				height: 100%;
+				min-width: 0px;
+				border-radius: 50%;
+				border: none;
+				outline-offset: -2px;
+			}
+
+			.sapMBtnIcon {
+				font-size: 0.75rem;
+				margin: 0px;
+				width: 100%;
+
+				&:before {
+					position: relative;
+					top: -0.125rem;
+				}
+			}
+
+			&:focus > .sapMFocusable {
+				outline: none;
+			}
+
+			/* The touch area has a different size and is slightly moved to the left and bottom */
+			&:before {
+				content: "";
+				position: absolute;
+				top: -1px;
+				bottom: -0.6875rem;
+				left: -0.6875rem;
+				right: -0.0625rem;
+			}
+		}
+	}
 }
 
 .sapMSTWrapper {

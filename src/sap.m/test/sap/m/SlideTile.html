@@ -176,7 +176,7 @@
 			path : "/feedTiles"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oNewsTileContent = new sap.m.TileContent({
 		footer : "{footer}",
@@ -195,7 +195,7 @@
 			path : "/newsTiles"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oOneSlideTile = new sap.m.SlideTile("st-one", {
 		displayTime : "{/displayTime}",
@@ -206,7 +206,7 @@
 			path : "/oneTile"
 		},
 		press: handleActionsPress
-	});
+	}).addStyleClass("sapUiTinyMarginTop");
 
 	var oTileNoContent = new sap.m.SlideTile("st-noContent");
 

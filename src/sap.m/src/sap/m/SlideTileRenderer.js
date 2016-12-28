@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/m/GenericTileScope"], function(GenericTileScope) {
 	"use strict";
 
 	/**
@@ -19,11 +19,14 @@ sap.ui.define([], function() {
 	 */
 	SlideTileRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString(),
+			sScope = oControl.getScope(),
+			sScopeClass = jQuery.sap.encodeCSS("sapMSTScope" + sScope),
 			iLength;
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMST");
+		oRm.addClass(sScopeClass);
 		if (!this._bAnimationPause) {
 			oRm.addClass("sapMSTPauseIcon");
 		}
@@ -39,6 +42,24 @@ sap.ui.define([], function() {
 		if (iLength > 1) {
 			this._renderTilesIndicator(oRm, oControl);
 		}
+		this._renderTiles(oRm, oControl, iLength);
+		if (sScope === GenericTileScope.Actions) {
+			this._renderActionsScope(oRm, oControl);
+		}
+		oRm.write("<div");
+		oRm.addClass("sapMSTFocusDiv");
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-focus");
+		oRm.write(">");
+		oRm.write("</div>");
+		oRm.write("</div>");
+	};
+
+	SlideTileRenderer._renderTiles = function(oRm, oControl, iLength) {
+		oRm.write("<div");
+		oRm.addClass("sapMSTOverflowHidden");
+		oRm.writeClasses();
+		oRm.write(">");
 		for (var i = 0; i < iLength; i++) {
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-wrapper-" + i);
@@ -48,12 +69,6 @@ sap.ui.define([], function() {
 			oRm.renderControl(oControl.getTiles()[i]);
 			oRm.write("</div>");
 		}
-		oRm.write("<div");
-		oRm.addClass("sapMSTFocusDiv");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-focus");
-		oRm.write(">");
-		oRm.write("</div>");
 		oRm.write("</div>");
 	};
 
@@ -95,6 +110,10 @@ sap.ui.define([], function() {
 		}
 	};
 
+	SlideTileRenderer._renderActionsScope = function(oRm, oControl) {
+		oRm.renderControl(oControl._oRemoveButton);
+		oRm.renderControl(oControl._oMoreIcon);
+	};
 
 	return SlideTileRenderer;
 
