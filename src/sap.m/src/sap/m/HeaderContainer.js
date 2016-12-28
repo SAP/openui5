@@ -204,6 +204,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						this.addDelegate(this._oItemNavigation);
 						this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
 						this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
+						this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this._handleBeforeFocus, this);
 						if (Device.browser.msie || Device.browser.edge) {
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, this._handleFocusAgain, this);
 						}
@@ -262,6 +263,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype.onsaptabprevious = function(oEvt) {
+		this.$().find(".sapMHdrCntrItemCntr").css("border-color", "");
 		var oFocusables = this.$().find(":focusable"); // all tabstops in the control
 		var iThis = oFocusables.index(oEvt.target); // focused element index
 		var oPrev = oFocusables.eq(iThis - 1).get(0); // previous tab stop element
@@ -542,6 +544,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	HeaderContainer.prototype._handleFocusAgain = function(oEvt) {
 		oEvt.getParameter("event").preventDefault();
+	};
+
+	HeaderContainer.prototype._handleBeforeFocus = function(oEvt) {
+		var oOriginalEvent = oEvt.getParameter("event");
+		if (jQuery(oOriginalEvent.target).hasClass("sapMHdrCntrItemCntr") ||
+			jQuery(oOriginalEvent.target).hasClass("sapMScrollContScroll") ||
+			jQuery.sap.PseudoEvents.sapprevious.fnCheck(oOriginalEvent) ||
+			jQuery.sap.PseudoEvents.sapnext.fnCheck(oOriginalEvent) ) {
+			this.$().find(".sapMHdrCntrItemCntr").css("border-color", "");
+		} else {
+			this.$().find(".sapMHdrCntrItemCntr").css("border-color", "transparent");
+		}
 	};
 
 	/**
