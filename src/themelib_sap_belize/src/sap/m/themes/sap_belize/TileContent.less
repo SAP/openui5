@@ -3,25 +3,13 @@
 /* Belize theme                       */
 /* ================================== */
 
-/* Footer CSS */
-.sapMTileCntFtrTxt {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	color: @sapUiTileTextColor;
-}
+@_sap_m_TileContent_NewsFooterTextColor: lighten(@sapUiTileTextColor, 45);
 
 .sapMTileCnt.News {
-	background-color: fade(darken(@sapUiBrand, 18), 85%);
-
-	.sapMTileCntFtrTxt {
-		color: lighten(@sapUiContentLabelColor, 45);
-		text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
-	}
+	background-color: fade(darken(@sapUiBrand, 18), 85);
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMTileCntFtrTxt {
-		font-size: @sapMFontSmallSize;
-	}
+.sapMTileCnt.News .sapMTileCntFtrTxt {
+	color: @_sap_m_TileContent_NewsFooterTextColor;
+	text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
 }
