@@ -555,20 +555,71 @@
 					oLabeloRBGroupRBG6, oRBGroupRBG6
 				]});
 
+				var aItems = {
+					radioSelected: 2,
+					columns: 3,
+					radioButtons: [
+						{
+							Text: "Value",
+							Enabled: true,
+							FieldType: "First"
+
+						},
+						{
+							Text: "Data Object",
+							Enabled: true,
+							FieldType: "Second"
+
+						},
+						{
+							Text: "Func",
+							Enabled: true,
+							FieldType: "Third"
+
+						}
+					]
+
+				};
+
+
+				var oRadioGroup = new sap.m.RadioButtonGroup({
+					selectedIndex : "{aitems>/radioSelected}",
+					columns : "{aitems>/columns}",
+					buttons: {
+						path: "aitems>/radioButtons",
+						template: new sap.m.RadioButton({
+							text: "{aitems>Text}",
+							enabled: "{aitems>Enabled}"
+						})
+					}
+				});
+
+				oRadioGroup.setModel(new sap.ui.model.json.JSONModel(aItems), "aitems");
+
+				var oLabeloRBGroupRBG7 = new sap.m.Label({ text: "Group created with data binding", labelFor: oRadioGroup});
+
+				var flexBoxRBG7 = new sap.m.FlexBox("rbg7", {
+					alignItems: "Start",
+					direction: "Column",
+					items: [
+						oLabeloRBGroupRBG7, oRadioGroup
+					]});
+
 				var app = new sap.m.App("myApp", {initialPage:"rbg", autoFocus: false});
 
 				var page = new sap.m.Page("rbg", {
 				title:"Test Page for sap.m.RadioButtonGroup",
 				content : [
-					flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4,flexBoxRBG6,flexBoxRBG5
+					flexBoxRBG1, flexBoxRBG1a, flexBoxRBG2, flexBoxRBG3, flexBoxRBG3a, flexBoxRBG4, flexBoxRBG6, flexBoxRBG7, flexBoxRBG5
 				]});
 
 				app.addPage(page);
-				app.placeAt("body");
+				app.placeAt("content");
 			});
 		</script>
 	</head>
 
 	<body class="sapUiBody" role="application" id="body" >
+		<div id="content"></div>
 	</body>
 </html>
