@@ -14,7 +14,6 @@
 		src="../../../../resources/sap-ui-core.js"></script>
 		
 <script src="Settings.js"></script>
-
 <script>
 
 (new sap.m.Button({
@@ -53,13 +52,26 @@ var aColumns = ["CostCenter", "CostCenterText", "CostElement", "CostElementText"
 for (var i = 0; i < aColumns.length; i++) {
 	oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 		label: aColumns[i],
-		template: new sap.m.Text({text: "{" + aColumns[i] + "}"}),
+		template: getTemplate(aColumns[i]),
 		sortProperty: aColumns[i],
 		filterProperty: aColumns[i],
 		leadingProperty: aColumns[i],
-		width: "120px",
+		width: "200px",
 		summed: aColumns[i] === "PlannedCosts"
 	}));
+}
+
+function getTemplate(sField) {
+	switch (sField) {
+		case "PlannedCosts":
+			return new sap.ui.unified.Currency({value: {path: sField, type: new sap.ui.model.type.String()}});
+		case "Currency":
+			//return new sap.m.Text({text: "{" + sField + "}", wrapping: false});
+			//return new sap.m.Link({text: "{" + sField + "}"});
+			return new sap.m.Label({text: "{" + sField + "}"});
+		default:
+			return new sap.m.Text({text: "{" + sField + "}", wrapping: false});
+	}
 }
 
 // set Model and bind Table

@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	TreeItemBaseRenderer.getAccessibilityState = function(oLI) {
 		var mAccessibilityState = ListItemBaseRenderer.getAccessibilityState.call(this, oLI);
 
-		mAccessibilityState.level = oLI.getLevel();
+		mAccessibilityState.level = oLI.getLevel() + 1;
 		mAccessibilityState.expanded = oLI.getExpanded();
 
 		return mAccessibilityState;

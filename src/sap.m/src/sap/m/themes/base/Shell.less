@@ -1,7 +1,7 @@
-
-/* ============================================= */
-/* CSS for control sap.m/Shell.control */
-/* ============================================= */
+/* ============================ */
+/* CSS for control sap.m/Shell  */
+/* Base theme                   */
+/* ============================ */
 
 @sapMShellAppWidthLimit: 1280px;
 @sapMShellAppWidthLimitBy2: @sapMShellAppWidthLimit / 2;
@@ -12,8 +12,6 @@
 
 @sapMShellMinWidthForLogoAside: 1480px;     // = @sapMShellAppWidthLimit + 200; but additions do not work in LESS for media query arguments
 @sapMShellMinWidthForBigLogoAside: 1680px;  // = @sapMShellAppWidthLimit + 400; but additions do not work in LESS for media query arguments
-
-@sapMShellContentBG: fade(lighten(@sapBackgroundColor, 5), 30);
 
 .sapMShell {
 	width: 100%;
@@ -38,7 +36,6 @@
 	display: none;
 }
 
-
 .sapMShellBG {
 	position: absolute;
 	left: 0;
@@ -46,7 +43,6 @@
 	width: 100%;
 	height: 100%;
 }
-
 
 .sapMShellCentralBox {
 	position: relative;
@@ -100,22 +96,24 @@
 	html.sap-desktop .sapMShellLogo {
 		position: absolute;
 		float: left;
-
 		display: -webkit-flex;
 		display: flex;
 		height: 40px;
 		margin: 0.75em;
 		margin-left: 0;
 	}
+	
 	html[data-sap-ui-browser^="ie"].sap-desktop .sapMShellLogo {
 		display: block;
 	}
+	
 	html[data-sap-ui-browser^="ie"].sap-desktop .sapMShellLogoImgAligner {
 		display: inline-block;
 		height: 100%;
 		vertical-align: middle;
 		margin-right: -0.25em;
 	}
+	
 	html[data-sap-ui-browser^="ie"].sap-desktop .sapMShellLogoImg {
 		vertical-align: middle;
 		display: inline-block;
@@ -131,8 +129,8 @@
 		display: block;
 		position: relative;
 		height: 4.25rem;
-		color: @sapUiDarkText;
-		border-bottom: 0.0625rem solid @sapUiShellBorderColor;
+		color: @sapUiPageHeaderTextColor;
+		border-bottom: 1px solid @sapUiShellBorderColor;
 	}
 
 	html.sap-desktop .sapMShellHeaderText {
@@ -157,11 +155,14 @@
 		cursor: pointer;
 		padding: 0.75em 0.57em; /* text size is 14px here... */
 	}
+	
 	html.sap-desktop .sapMShellHeaderLogout:focus {
 		outline: none;
 	}
+	
 	html.sap-desktop .sapMShellHeaderLogout:active {
 		background-color: @sapUiButtonActiveBackground;
+		color: @sapUiButtonActiveTextColor;
 		outline: none;
 	}
 
@@ -171,8 +172,11 @@
 		bottom: 0;
 		height: auto !important; /* important because overwritten by SplitApp/App control */
 	}
+	
+	.sapMShellHeader {
+		border-top: 4px solid transparent;
+	}
 }
-
 
 @media (min-height: 769px) and (max-width: 640px) { /* logo would appear above but the window is really slim */
 	html.sap-desktop  .sapMShellLogo {
@@ -193,7 +197,7 @@
 		width: @sapMShellAppWidthLimit;
 		margin-left: -@sapMShellAppWidthLimitBy2; /* @sapMShellAppWidthLimit divided by 2 */
 		left: 50%;
-		background-color: @sapMShellContentBG;
+		background-color: fade(lighten(@sapUiBaseBG, 5), 30);
 	}
 }
 
@@ -211,13 +215,13 @@
 		height: auto;
 		width: 80px;
 		text-align: center;
-
 		display: block;
 		right: @sapMShellAppWidthLimit;
 		top: 0;
 		margin: 0.75em;
 		margin-left: 0;
 	}
+	
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellLogoImg {
 		max-width: 80px;
 		max-height: 80px;
@@ -238,4 +242,13 @@
 		max-width: 160px;
 		max-height: 160px;
 	}
+}
+
+.sapUiUfdShell .sapMShellHeader {
+	border-top: none;
+}
+
+html.sap-desktop .sapMShellHeaderText {
+	font-size: @sapMFontHeader2Size;
+	color: @sapUiShellTextColor;
 }

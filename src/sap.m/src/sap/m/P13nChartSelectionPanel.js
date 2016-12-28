@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nChartSelectionPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nSelectionPanel', './P13nSelectionItem', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'
-], function(jQuery, ColumnListItem, P13nSelectionPanel, P13nSelectionItem, SearchField, Table, library, Control, JSONModel) {
+	'jquery.sap.global', './ColumnListItem', './P13nSelectionPanel', './P13nChartSelectionItem', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'
+], function(jQuery, ColumnListItem, P13nSelectionPanel, P13nChartSelectionItem, SearchField, Table, library, Control, JSONModel) {
 	"use strict";
 
 	/**
@@ -345,7 +345,7 @@ sap.ui.define([
 				return;
 			}
 			// Create a new dimMeasureItem if an item have been changed to 'selected'
-			oSelectionItem = new sap.m.P13nSelectionItem({
+			oSelectionItem = new sap.m.P13nChartSelectionItem({
 				columnKey: oModelItem.columnKey,
 				selected: oModelItem.persistentSelected,
 				index: oModelItem.persistentIndex,

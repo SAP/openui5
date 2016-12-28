@@ -91,8 +91,8 @@ sap.ui.define([
 
 		if (iNextLevel === 1) {
 
-			if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(sCurrentLayout) !== -1) {
-				// From a 2-column layout to a 2-column layout - preserve
+			if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded, LT.MidColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
+				// From a 2-column layout to a 2-column layout, or from a page in fullscreen to another page in fullscreen - preserve
 				sNextLayout = sCurrentLayout;
 			} else {
 				// From any other layout to 2-column layout - default 2-column

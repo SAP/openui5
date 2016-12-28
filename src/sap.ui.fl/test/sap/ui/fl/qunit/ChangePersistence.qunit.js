@@ -50,6 +50,20 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
+	QUnit.test("the cache key returns a tag if no cache key could be determined", function (assert) {
+		var oMockedWrappedContent = {
+			changes: [{}],
+			etag: "",
+			status: "success"
+		};
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+
+		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
+			assert.equal(oCacheKeyResponse, ChangePersistence.NOTAG);
+		});
+	});
+
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
 

@@ -547,10 +547,12 @@ sap.ui.define([
 	 * Discard changes on the server.
 	 *
 	 * @param {array} aChanges array of {sap.ui.fl.Change} to be discarded
-	 * @returns {Promise} promise that resolves without parameters.
+	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
+	 * @returns {Promise} promise that resolves without parameters
 	 */
-	FlexController.prototype.discardChanges = function (aChanges) {
-		var sActiveLayer = Utils.getCurrentLayer(false);
+	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
+		var sActiveLayer = Utils.getCurrentLayer(!!bDiscardPersonalization);
+
 		aChanges.forEach(function (oChange) {
 			// only discard changes of the currently active layer (CUSTOMER vs PARTNER vs VENDOR)
 			if (oChange && oChange.getLayer && oChange.getLayer() === sActiveLayer) {

@@ -3,12 +3,5 @@
 /* Belize Plus theme            */
 /* ============================ */
 
-.sapContrastPlus .sapMToken,
-.sapContrastPlus.sapMToken {
-     border: 1px solid lighten(@sapUiButtonBackground, 15);
-}
-
-.sapContrastPlus .sapMToken:focus,
-.sapContrastPlus.sapMToken:focus {
-	outline-color: @sapUiContentFocusColor;
-}
+@_sap_m_Token_BorderColor: lighten(@sapUiButtonBackground, 15);
+@_sap_m_Token_HoverBorderColor: lighten(@sapUiButtonHoverBackground, 5);

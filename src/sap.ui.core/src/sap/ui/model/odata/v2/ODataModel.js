@@ -1370,12 +1370,7 @@ sap.ui.define([
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 			}
 		}.bind(this));
-		//handle calls after update
-		var aCallAfterUpdate = this.aCallAfterUpdate;
-		this.aCallAfterUpdate = [];
-		for (var i = 0; i < aCallAfterUpdate.length; i++) {
-			aCallAfterUpdate[i]();
-		}
+		this._processAfterUpdate();
 	};
 
 	/**
@@ -1878,10 +1873,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the default mode to retrieve the count of collections in this model.
+	 * Sets the default mode how to retrieve the item count for a collection in this model.
 	 *
-	 * Count can be determined either by sending a separate <code>$count</code> request, or by including
-	 * parameter <code>$inlinecount=allpages</code> in some or all data requests, or both of them or not at all.
+	 * The count can be determined in the following ways
+	 * <ul>
+	 * <li>by sending a separate <code>$count</code> request</li>
+	 * <li>by adding parameter <code>$inlinecount=allpages</code> to one or all data requests</li>
+	 * <li>a combination of the previous two</li>
+	 * <li>not at all (questions about the size of the collection can't be answered then)</li>
+	 * </ul>
+	 * See {@link sap.ui.model.odata.CountMode} for all enumeration values and more details.
+	 *
+	 * Note that a call to this method does not modify the count mode for existing list bindings,
+	 * only bindings that are created afterwards will use the new mode when no mode is defined at their creation.
+	 *
+	 * If no default count mode is set for an <code>ODataModel</code> (v2), the mode <code>Request</code> will be used.
 	 *
 	 * @param {sap.ui.model.odata.CountMode} sCountMode The new default count mode for this model
 	 * @since 1.20
@@ -1919,9 +1925,10 @@ sap.ui.define([
 			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
+			vValue = vValue.split("?")[0];
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey;
+		return sKey && this._normalizeKey(sKey);
 	};
 
 	/**
@@ -1975,6 +1982,29 @@ sap.ui.define([
 		}
 		sKey += ")";
 		return sKey;
+	};
+
+	/**
+	 * Normalizes the given canonical key.
+	 *
+	 * Although keys contained in OData response must be canonical, there are
+	 * minor differences (like capitalization of suffixes for Decimal, Double,
+	 * Float) which can differ and cause equality checks to fail.
+	 *
+	 * @param {string} sKey The canonical key of an entity
+	 * @returns {string} Normalized key of the entry
+	 * @private
+	 */
+	ODataModel.prototype._normalizeKey = function(sKey) {
+		var rString = /([(=,])('.*?')([,)])/g,
+			rNumType = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g;
+		function normalizeEncoding(value, p1, p2, p3) {
+			return p1 + encodeURIComponent(decodeURI(p2)) + p3;
+		}
+		function normalizeCase(value) {
+			return value.toLowerCase();
+		}
+		return sKey.replace(rString, normalizeEncoding).replace(rNumType, normalizeCase);
 	};
 
 	/**
@@ -2587,6 +2617,8 @@ sap.ui.define([
 					that._processError(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
 				}
 			}
+
+			that._processAfterUpdate();
 		}
 
 		oRequest.request.eventInfo = {
@@ -2688,6 +2720,8 @@ sap.ui.define([
 					processResponse(oRequest, oError, bAborted);
 				}
 			});
+
+			that._processAfterUpdate();
 
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, fnError, true);
@@ -2872,7 +2906,7 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					if (aChangeSet[i].bRefreshAfterChange) {
 						var oRequest = aChangeSet[i].request,
-							sKey = oRequest.requestUri.split('?')[0];
+							sKey = that._getKey(oRequest.requestUri);
 						if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 							var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 							if (oEntityMetadata) {
@@ -3246,6 +3280,19 @@ sap.ui.define([
 			} else {
 				 this.fireRequestCompleted(oEventInfo);
 			}
+		}
+	};
+
+	/**
+	 * Process handlers registered for execution after update.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._processAfterUpdate = function() {
+		var aCallAfterUpdate = this.aCallAfterUpdate;
+		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
 		}
 	};
 
@@ -4492,7 +4539,7 @@ sap.ui.define([
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry,
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
-			bFunction = false, that = this;
+			bFunction = false, that = this, bCreated;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			jQuery.each(oChangedObject,function(sKey) {
@@ -4546,9 +4593,12 @@ sap.ui.define([
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			bCreated = oEntityMetadata && oEntityMetadata.created;
 			delete this.mChangedEntities[sKey].__metadata;
-			// check for 'empty' complex types objects and delete it
-			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			// check for 'empty' complex types objects and delete it - not for created entities
+			if (!bCreated) {
+				updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			}
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;

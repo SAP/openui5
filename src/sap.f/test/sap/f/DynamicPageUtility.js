@@ -13,8 +13,9 @@ var getLabel = function (sText, sLabelFor) {
         }
     },
     getLabelWithSelect = function (sValue) {
+        var oSelect = getSelect(10);
         return new sap.ui.layout.VerticalLayout({
-            content: [getLabel(sValue), getSelect(10)]
+            content: [getLabel(sValue, oSelect), oSelect]
         })
     },
     getLabelWithSelectCombo = function (iCount) {
@@ -63,13 +64,16 @@ var getLabel = function (sText, sLabelFor) {
                 new sap.m.ToolbarSpacer(),
                 oToggleFooterButton,
                 new sap.m.Button({
-                    icon: "sap-icon://add"
+                    icon: "sap-icon://add",
+                    tooltip: "add"
                 }),
                 new sap.m.Button({
-                    icon: "sap-icon://edit"
+                    icon: "sap-icon://edit",
+                    tooltip: "edit"
                 }),
                 new sap.m.Button({
-                    icon: "sap-icon://delete"
+                    icon: "sap-icon://delete",
+                    tooltip: "delete"
                 })
             ]
         })

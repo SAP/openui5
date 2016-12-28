@@ -2324,7 +2324,7 @@
 
 		var $labels = oInput._oSuggestionPopup.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
 
-		equals($labels[0].innerHTML.indexOf('<span'), 0, "Texts is highlighted");
+		ok($labels[0].innerHTML.indexOf('<span') > -1, "Texts is highlighted");
 
 		oInput.destroy();
 	});
@@ -2392,7 +2392,7 @@
 		this.clock.tick(50);
 
 		equal(fnCallback.callCount, 1, "change event handler only called once");
-		equal(oInput.getSelectedKey(), "2", "selected key is correct");
+		equal(oInput.getSelectedKey(), "1", "selected key is correct");
 
 		oInput.destroy();
 	});
@@ -2689,6 +2689,24 @@
 		oInfo = oInput.getAccessibilityInfo();
 		strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
 		oInput.destroy();
+	});
+
+	test("Popup", function() {
+		var oInput = createInputWithSuggestions();
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("It").trigger("input");
+
+		this.clock.tick(300);
+
+		var $popover = oInput._oSuggestionPopup.$();
+		ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
+
+		oInput.destroy();
+
 	});
 </script>
 

@@ -450,15 +450,7 @@ sap.ui.define([
 
 		onAfterRendering: function(oEvent) {
 			VerticalScrollingHelper.restoreScrollPosition(this);
-
-			// The timeout is required because after the first rendering, if visibleRowCountMode is "Auto",
-			// _updateTableSizes is called in a promise, which calls _updateHSb, which sets the width of the horizontal scrollbar.
-			// And that triggers a scroll event, whose handler will reset the horizontal scroll position to 0. Oh yes, this really happens...
-			jQuery.sap.clearDelayedCall(this._mTimeouts.restoreHorizontalScrollPositionId);
-			this._mTimeouts.restoreHorizontalScrollPositionId = jQuery.sap.delayedCall(0, this, function() {
-				HorizontalScrollingHelper.restoreScrollPosition(this);
-				delete this._mTimeouts.restoreHorizontalScrollPositionId;
-			}.bind(this));
+			HorizontalScrollingHelper.restoreScrollPosition(this);
 		},
 
 		onfocusin: function(oEvent) {
@@ -605,7 +597,7 @@ sap.ui.define([
 			var iRowCount = oTable._getRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();
 			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+			var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
 			var iSize = bPage ? iScrollableRowCount : 1;
 
 			if (bDown) {
@@ -643,7 +635,7 @@ sap.ui.define([
 
 			var oTable = this.getTable();
 			var bScrolled = false;
-			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+			var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
 
 			if (bDown) {
 				var iFirstVisibleRow = oTable._getRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);

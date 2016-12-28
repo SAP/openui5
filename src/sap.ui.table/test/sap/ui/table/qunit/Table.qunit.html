@@ -238,8 +238,8 @@
 			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + i);
 			oCell.focus();
 			if (bKeyboard) {
-				qutils.triggerKeyEvent("keydown", oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-				qutils.triggerKeyEvent("keyup", oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
+				qutils.triggerKeydown(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
+				qutils.triggerKeyup(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
 			} else {
 				qutils.triggerEvent("click", oCell, {metaKey : !!bCtrlKey, ctrlKey : !!bCtrlKey, shiftKey: !!bShiftKey});
 			}
@@ -268,16 +268,16 @@
 		checkSelection("MultiToggle - After 4th selection", [2, 3]);
 		triggerSelectionOnRow(3, true, false, false);
 		checkSelection("MultiToggle - After 5th selection", [2]);
-		triggerSelectionOnRow(0, true, true, false);
+		triggerSelectionOnRow(0, true, false, false);
 		checkSelection("MultiToggle - After 6th selection", [0, 2]);
 		var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel0");
 		oCell.focus();
-		qutils.triggerKeyEvent("keydown", document.activeElement, "SHIFT", true, false, false);
-		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyEvent("keydown", document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyEvent("keyup", document.activeElement, "SHIFT", true, false, false);
+		qutils.triggerKeydown(document.activeElement, "SHIFT", false, false, false);
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
 		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
 		triggerSelectionOnRow(2, false, false, true);
 		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
@@ -326,10 +326,21 @@
 		assert.equal(oTable.getEnableColumnReordering(),true,"Reordering is allowed");
 	});
 
-	QUnit.test("FirstVisibleRow", 1, function(assert) {
+	QUnit.test("FirstVisibleRow", 4, function(assert) {
+		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow row is: 5");
+
 		oTable.setFirstVisibleRow(4, false);
 		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getFirstVisibleRow(), 4, "First Visible Row correct!");
+		assert.equal(oTable.getFirstVisibleRow(), 4, "FirstVisibleRow has been set to: 4");
+
+		oTable.setFirstVisibleRow(-1, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getFirstVisibleRow(), 0, "FirstVisibleRow has been set to: 0");
+
+		var iMaxRowIndex = aData.length - oTable.getVisibleRowCount();
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow has been set to: " + iMaxRowIndex);
 	});
 
 	QUnit.test("ColumnHeaderHeight", 2, function(assert) {
@@ -402,6 +413,63 @@
 		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
 		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "CSS class sapUiTableRActS");
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
+	});
+
+	QUnit.test("Localization Change", function(assert) {
+		var bInvalidated = false;
+		var sChange = "";
+
+		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
+			sap.ui.table.Table.prototype._adaptLocalization.apply(this, arguments);
+			if (bRtlChanged) {
+				sChange += "RTL";
+			}
+			if (bLangChanged) {
+				sChange += "LANG";
+			}
+		};
+
+		oTable.invalidate = function() {
+			bInvalidated = true;
+			return sap.ui.table.Table.prototype.invalidate.apply(this, arguments);
+		};
+
+		var oRowAction = new sap.ui.table.RowAction();
+		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
+		oTable.setRowActionTemplate(oRowAction);
+		sap.ui.getCore().applyChanges();
+
+		//RTL + Language
+		oTable.onlocalizationChanged({changes : {rtl: "", language: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on RTL and Language change");
+		assert.equal(sChange, "RTLLANG", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//RTL
+		oTable.onlocalizationChanged({changes : {rtl: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on RTL change");
+		assert.equal(sChange, "RTL", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//Language
+		oTable.onlocalizationChanged({changes : {language: ""}});
+		assert.ok(bInvalidated, "Table was invalidated on Language change");
+		assert.equal(sChange, "LANG", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
+
+		//Other localization event
+		oTable.onlocalizationChanged({changes : {}});
+		assert.ok(!bInvalidated, "Table was not invalidated on other localization event");
+		assert.equal(sChange, "", "Change type");
+		sap.ui.getCore().applyChanges();
+		bInvalidated = false;
+		sChange = "";
 	});
 
 
@@ -1317,6 +1385,16 @@
 		assert.ok(spy.notCalled, "destroyRows was not called");
 	});
 
+	QUnit.test("BindRows", function(assert) {
+		var spy = this.spy(sap.ui.table.Table.prototype, "bindRows");
+		new sap.ui.table.Table({
+			rows: {path: "/modelData"},
+			columns: [new sap.ui.table.Column()]
+		});
+
+		assert.ok(spy.calledOnce, "bindRows was called");
+	});
+
 	QUnit.module("Callbacks", {
 		afterEach: destroyTable
 	});
@@ -1600,7 +1678,7 @@
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
 		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateBindingLength()).length, 3, "fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
-		assert.equal(oTable._getSanitizedFirstVisibleRow(true), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
+		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		oTable.setVisibleRowCount(250);
 		sap.ui.getCore().applyChanges();
 		oTable._updateFixedBottomRows();

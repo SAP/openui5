@@ -444,6 +444,10 @@ function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams) {
 		aLabels.push(oTable.getId() + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 	}
 
+	if (iCol == 1) {
+		aLabels.push(oTable.getId() + "-ariacolmenu");
+	}
+
 	assert.strictEqual(
 		($Cell.attr("aria-labelledby") || "").trim(),
 		aLabels.join(" "),
@@ -487,11 +491,7 @@ QUnit.asyncTest("aria-describedby with Focus", function(assert) {
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getColumnHeader(i, true, assert);
-		assert.strictEqual(
-			($Cell.attr("aria-describedby") || "").trim(),
-			i == 1 ? oTable.getId() + "-ariacolmenu" : "",
-			"aria-describedby of column header " + i
-		);
+		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 	}
 	setFocusOutsideOfTable();
 	setTimeout(function() {
@@ -504,11 +504,7 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 	var $Cell;
 	for (var i = 0; i < aFields.length; i++) {
 		$Cell = getColumnHeader(i, false, assert);
-		assert.strictEqual(
-			($Cell.attr("aria-describedby") || "").trim(),
-			i == 1 ? oTable.getId() + "-ariacolmenu" : "",
-			"aria-describedby of column header " + i
-		);
+		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 	}
 	setFocusOutsideOfTable();
 });

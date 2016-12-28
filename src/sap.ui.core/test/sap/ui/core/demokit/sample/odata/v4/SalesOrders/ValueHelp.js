@@ -18,6 +18,7 @@ sap.ui.define([
 
 	var ValueHelp = Input.extend("sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp", {
 			init : function () {
+				Input.prototype.init.call(this);
 				this.setEditable(false);
 				this.setTooltip("No value help");
 				this.sValueListType = TestUtils.isRealOData() ? undefined : ValueListType.None;

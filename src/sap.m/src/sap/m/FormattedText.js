@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 					/**
 					 * Determines whether strings that appear to be links will be converted to HTML anchor tags,
 					 * and what are the criteria for recognizing them.
-					 * @since 1.46
+					 * @since 1.45.5
 					 */
 					convertLinksToAnchorTags: {type: "sap.m.LinkConversion", group: "Behavior", defaultValue: sap.m.LinkConversion.None},
 
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 					 * <b>Note:</b> Applicable only if <code>ConvertLinksToAnchorTags</code> property is used with a value other than <code>sap.m.LinkConversion.None</code>.
 					 * Options are the standard values for the <code>target</code> attribute of the HTML anchor tag:
 					 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
-					 * @since 1.46
+					 * @since 1.45.5
 					 */
 					convertedLinksDefaultTarget: {type: "string", group: "Behavior", defaultValue: "_blank"},
 

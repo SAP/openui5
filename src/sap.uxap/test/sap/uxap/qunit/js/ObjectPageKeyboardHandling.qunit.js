@@ -441,14 +441,6 @@
 		assert.strictEqual($btn.is(":focus"), true, "Interactiove element must be focused back again");
 	});
 
-	QUnit.test("ObjectPageSection F7 - SubSection without remebered control", function (assert) {
-		var $title = jQuery(jQuery("#UxAP-70_KeyboardHandling--multiple-sub-section-2-headerTitle")[0]);
-		$subSection = core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2").$();
-
-		sap.ui.test.qunit.triggerKeydown($subSection, jQuery.sap.KeyCodes.F7);
-		assert.strictEqual($title.is(":focus"), true, "First interactive control must be focused");
-	});
-
 	QUnit.test("ObjectPageSection F7 - interactive control inside Section with only one SubSection", function (assert) {
 		var $btn = core.byId("UxAP-70_KeyboardHandling--interactive-el-multiple-sub-section").$(),
 			$subSection = core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2").$();
@@ -476,47 +468,6 @@
 
 		sap.ui.test.qunit.triggerKeydown($subSection, jQuery.sap.KeyCodes.F7);
 		assert.strictEqual($btnToolbar.is(":focus"), true, "Button must be focused");
-	});
-
-	/*******************************************************************************
-	 * ObjectPage F6
-	 ******************************************************************************/
-
-	QUnit.test("ObjectPageAnchorBar F6 - after anchor bar focus must be at sub section title", function (assert) {
-		var oAncorBar = getAnchorBar(),
-			aAnchors = oAncorBar.getContent();
-
-		var $btn = aAnchors[0].getDomRef(),
-			$subSectionTitle = jQuery(jQuery("#__section0-headerTitle")[0]),
-			$subSectionTitle2 = jQuery(jQuery("#__section2-headerTitle")[0]);
-
-		$btn.focus();
-		sap.ui.test.qunit.triggerKeydown($btn, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($subSectionTitle.is(":focus"), true, "SubSection title must be focused");
-
-		sap.ui.test.qunit.triggerKeydown($subSectionTitle, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($subSectionTitle2.is(":focus"), true, "Second SubSection title must be focused");
-	});
-
-	QUnit.test("ObjectPageAnchorBar F6 - after anchor bar focus must be at sub section title", function (assert) {
-		var $section = core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section").$(),
-			$subSectionTitle = jQuery(jQuery("#UxAP-70_KeyboardHandling--single-sub-section-headerTitle")[0]),
-			$button1 = core.byId("__button0").$(),
-			$link = core.byId("__link1").$(),
-			$subSectionTitle2 = jQuery(jQuery("#UxAP-70_KeyboardHandling--multiple-sub-section-1-headerTitle")[0]);
-
-		$section.focus();
-		sap.ui.test.qunit.triggerKeydown($section, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($subSectionTitle.is(":focus"), true, "SubSection title must be focused");
-
-		sap.ui.test.qunit.triggerKeydown($subSectionTitle, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($button1.is(":focus"), true, "Second SubSection title must be focused");
-
-		sap.ui.test.qunit.triggerKeydown($button1, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($link.is(":focus"), true, "Second SubSection title must be focused");
-
-		sap.ui.test.qunit.triggerKeydown($button1, jQuery.sap.KeyCodes.F6);
-		assert.strictEqual($subSectionTitle2.is(":focus"), true, "Second SubSection title must be focused");
 	});
 
 }(jQuery, QUnit, sinon));

@@ -87,9 +87,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			Element.apply(this,arguments);
 			this.bOutput = this.getDomRef() != null; // whether this control has already produced output
 
-			if (this._sapUiCoreLocalBusy_initBusyIndicator) {
-				this._sapUiCoreLocalBusy_initBusyIndicator();
-			}
 		},
 
 		renderer : null // Control has no renderer
@@ -581,7 +578,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 		ResizeHandler.deregisterAllForControl(this.getId());
 
-		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
+		// Controls can have their visible-property set to "false" in which case the Element's destroy method will
 		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
 		if (!this.getVisible()) {
 			var oPlaceholder = document.getElementById(RenderManager.createInvisiblePlaceholderId(this));
@@ -736,7 +733,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			return this;
 		}
 
-		//No rerendering
+		//No rerendering - should be modeled as a non-invalidating property once we have that
 		this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
 
 		if (bBusy) {
@@ -780,30 +777,30 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	};
 
 	/**
-	 * Check if the control is currently in busy state
+	 * Check if the control is currently in busy state.
 	 *
 	 * @public
-	 * @deprecated Use getBusy instead
+	 * @deprecated As of 1.15, use {@link #getBusy} instead
 	 * @return boolean
+	 * @function
 	 */
-	Control.prototype.isBusy = function() {
-		return this.getProperty("busy");
-	};
+	Control.prototype.isBusy = Control.prototype.getBusy;
 
 	/**
-	 * Define the delay, after which the busy indicator will show up
+	 * Define the delay, after which the busy indicator will show up.
 	 *
 	 * @public
 	 * @param {int} iDelay The delay in ms
 	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
 	 */
 	Control.prototype.setBusyIndicatorDelay = function(iDelay) {
+		// should be modeled as a non-invalidating property once we have that
 		this.setProperty("busyIndicatorDelay", iDelay, /*bSuppressInvalidate*/ true);
 		return this;
 	};
 
 	/**
-	 * Cleanup all timers which might have been created by the busy indicator
+	 * Cleanup all timers which might have been created by the busy indicator.
 	 *
 	 * @private
 	 */
@@ -935,7 +932,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
 	 * @protected
 	 */
-	//sap.ui.core.Control.prototype.getAccessibilityInfo = function() { return null; };
+	//Control.prototype.getAccessibilityInfo = function() { return null; };
 
 	return Control;
 

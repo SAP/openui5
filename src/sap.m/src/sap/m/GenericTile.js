@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The mode of the GenericTile.
 				 */
-				"mode" : {type: "sap.m.GenericTileMode", group : "Appearance", defaultValue : library.GenericTileMode.ContentMode},
+				"mode" : {type: "sap.m.GenericTileMode", group : "Appearance", defaultValue : sap.m.GenericTileMode.ContentMode},
 				/**
 				 * The header of the tile.
 				 */
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The frame type: 1x1 or 2x1.
 				 */
-				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : library.FrameType.OneByOne},
+				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : sap.m.FrameType.OneByOne},
 				/**
 				 * The URI of the background image.
 				 */
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The content of the tile.
 				 */
-				"tileContent" : {type : "sap.m.TileContent", multiple : true},
+				"tileContent" : {type : "sap.m.TileContent", multiple : true, bindable : "bindable"},
 				/**
 				 * An icon or image to be displayed in the control.
 				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.TileContent control instead.
@@ -115,7 +115,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 						 * In Display scope, the parameter value is only Press.
 						 * @experimental since 1.46.0
 						 */
-						"action": { type: "string" }
+						"action": { type: "string" },
+
+						/**
+						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
+						 * In Actions scope the domRef points to the DOM Element of the remove icon (if pressed) or the more icon.
+						 * @experimental since 1.46.0
+						 */
+						"domRef" : { type: "any" }
 					}
 				}
 			}
@@ -137,15 +144,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	/* --- Lifecycle Handling --- */
 
 	GenericTile.prototype.init = function() {
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oTitle = new Text(this.getId() + "-title");
 		this._oTitle.addStyleClass("sapMGTTitle");
 		this._oTitle.cacheLineHeight = false;
 		this.setAggregation("_titleText", this._oTitle, true);
 
-		this._sFailedToLoad = this._rb.getText("INFOTILE_CANNOT_LOAD_TILE");
-		this._sLoading = this._rb.getText("INFOTILE_LOADING");
+		this._sFailedToLoad = this._oRb.getText("INFOTILE_CANNOT_LOAD_TILE");
+		this._sLoading = this._oRb.getText("INFOTILE_LOADING");
 
 		this._oFailedText = new Text(this.getId() + "-failed-txt", {
 			maxLines : 2
@@ -164,6 +171,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.addStyleClass("sapMGenericTileLoading");
 		this._oBusy.setBusyIndicatorDelay(0);
+
+		this._bTilePress = true;
 	};
 
 	/**
@@ -174,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._initScopeContent = function() {
 		switch (this.getScope()) {
 			case library.GenericTileScope.Actions:
-				if (this.getState() === library.LoadState.Disabled) {
+				if (this.getState && this.getState() === library.LoadState.Disabled) {
 					break;
 				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
@@ -185,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				this._oRemoveButton = this._oRemoveButton || new Button({
 					id: this.getId() + "-action-remove",
 					icon: "sap-icon://decline",
-					tooltip: this._rb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
 				}).addStyleClass("sapUiSizeCompact sapMGTRemoveButton");
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
@@ -665,7 +674,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype.ontap = function(event) {
 		var oParams;
-		if (this.getState() !== library.LoadState.Disabled) {
+		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
 			this.$().focus();
 			oParams = this._getEventParams(event);
 			this.firePress(oParams);
@@ -889,6 +898,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
+		if (this.getScope() === library.GenericTileScope.Actions) {
+			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
+		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
 
@@ -1016,13 +1028,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			bIsFirst = false;
 		}
 
-		// when MicroChart in GenericTile, set MicroChart tooltip as GenericTile tooltip
-		for (var i = 0; i < aTiles.length; i++) {
-			oContent = aTiles[i].getContent();
-			if (oContent && oContent.getMetadata().getLibraryName() === "sap.suite.ui.microchart") {
-				sTooltip += (bIsFirst ? "" : "\n") + oContent.getTooltip_AsString();
+		// when MicroChart is in GenericTile, set MicroChart tooltip as GenericTile tooltip (not valid in actions scope)
+		if (this.getScope() !== library.GenericTileScope.Actions) {
+			for (var i = 0; i < aTiles.length; i++) {
+				oContent = aTiles[i].getContent();
+				if (oContent && oContent.getMetadata().getLibraryName() === "sap.suite.ui.microchart") {
+					sTooltip += (bIsFirst ? "" : "\n") + oContent.getTooltip_AsString();
+				}
+				bIsFirst = false;
 			}
-			bIsFirst = false;
 		}
 
 		// when user does not set tooltip, apply the tooltip above
@@ -1173,16 +1187,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._getEventParams = function(oEvent) {
 		var oParams,
 			sAction = GenericTile._Action.Press,
-			sScope = this.getScope();
+			sScope = this.getScope(),
+			oDomRef = this.getDomRef();
 
 		if (sScope === library.GenericTileScope.Actions && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
 			sAction = GenericTile._Action.Remove;
+			oDomRef = this._oRemoveButton.getPopupAnchorDomRef();
+		} else if (sScope === library.GenericTileScope.Actions) {
+			oDomRef = this._oMoreIcon.getDomRef();
 		}
 		oParams = {
 			scope : sScope,
-			action : sAction
+			action : sAction,
+			domRef : oDomRef
 		};
 		return oParams;
+	};
+
+	/**
+	 * Provides an interface to switch on or off the tile's press event. Used in SlideTile for Actions scope.
+	 *
+	 * @param {boolean} value If set to true, the press event of the tile is active.
+	 * @protected
+	 * @since 1.46
+	 */
+	GenericTile.prototype.setPressEnabled = function(value) {
+		this._bTilePress = value;
 	};
 
 	return GenericTile;

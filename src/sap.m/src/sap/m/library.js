@@ -279,11 +279,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Bar": {
 					"moveElements": "default"
 				},
+				"sap.m.DatePicker": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
+				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.RadioButton": {
 					"hideControl": "default",
 					"renameRadioButton": "sap/m/changeHandler/RenameRadioButton",
 					"unhideControl": "default"
 				},
+				"sap.m.RatingIndicator": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Toolbar": {
 					"moveElements": "default"
 				}
@@ -984,7 +995,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.46.0
+	 * @since 1.45.5
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.LinkConversion = {

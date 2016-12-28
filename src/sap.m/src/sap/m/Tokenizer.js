@@ -363,12 +363,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				that._doScrollToEnd();
 			});
 		}
-
-		if (this._bCopyToClipboardSupport) {
-			this.$().on("copy", function(oEvent){
-				that.oncopy(oEvent);
-			});
-		}
 	};
 
 	Tokenizer.prototype.invalidate = function(oOrigin) {
@@ -378,32 +372,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			Control.prototype.invalidate.call(this, oOrigin);
 		}
-	};
-
-	/**
-	 * Handles the copy event
-	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
-	 * @private
-	 */
-	Tokenizer.prototype.oncopy = function(oEvent) {
-		var aSelectedTokens = this.getSelectedTokens();
-		var sSelectedText = "";
-		for (var i = 0; i < aSelectedTokens.length; i++) {
-			sSelectedText = sSelectedText + (i > 0 ? "\r\n" : "") + aSelectedTokens[i].getText();
-		}
-
-		if (!sSelectedText) {
-			return;
-		}
-
-		if (window.clipboardData) {
-			window.clipboardData.setData("text", sSelectedText);
-		} else {
-			oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
-		}
-		oEvent.preventDefault();
 	};
 
 	/**
@@ -447,7 +415,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle the key down event for Ctrl+ a , Ctrl+ c
+	 * Handle the key down event for Ctrl+ a , Ctrl+ c and Ctrl+ x
 	 *
 	 * @param {jQuery.Event}
 	 *            oEvent - the occuring event
@@ -472,8 +440,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		}
 
+		// ctrl/meta + c OR ctrl/meta + Insert
 		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
 			this._copy();
+		}
+
+		// ctr/meta + x OR Shift + Delete
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+			if (this.getEditable()) {
+				this._cut();
+			} else {
+				this._copy();
+			}
 		}
 	};
 
@@ -487,26 +465,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._copy = function() {
 		var self = this;
 		var copy = function(oEvent) {
-				var aSelectedTokens = self.getSelectedTokens(),
-					sSelectedText = "",
-					token;
+			var aSelectedTokens = self.getSelectedTokens(),
+				sSelectedText = "",
+				token;
 
-				for (var i = 0; i < aSelectedTokens.length; i++) {
-					token = aSelectedTokens[i];
-					sSelectedText = sSelectedText + (i > 0 ? "\r\n" : "") + token.getText();
-				}
+			for (var i = 0; i < aSelectedTokens.length; i++) {
+				token = aSelectedTokens[i];
+				sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
+			}
 
-				if (!sSelectedText) {
-					return;
-				}
+			if (!sSelectedText) {
+				return;
+			}
 
-				if (oEvent.clipboardData) {
-					oEvent.clipboardData.setData('text/plain', sSelectedText);
-				} else {
-					oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
-				}
+			if (oEvent.clipboardData) {
+				oEvent.clipboardData.setData('text/plain', sSelectedText);
+			} else {
+				oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+			}
 
-				oEvent.preventDefault();
+			oEvent.preventDefault();
 		};
 
 		document.addEventListener('copy', copy);
@@ -514,6 +492,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		document.execCommand('copy');
 
 		document.removeEventListener('copy', copy);
+	};
+
+	/**
+	 * Handles the cut event
+	 *
+	 * @param {ClipboardEvent}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype._cut = function() {
+		var self = this;
+		var fnCut = function(oEvent) {
+			var aSelectedTokens = self.getSelectedTokens(),
+			sSelectedText = "",
+			token;
+
+		for (var i = 0; i < aSelectedTokens.length; i++) {
+			token = aSelectedTokens[i];
+			sSelectedText += (i > 0 ? "\r\n" : "") + token.getText();
+			if (token.getEditable()) {
+				self.removeToken(token);
+			}
+		}
+
+		if (!sSelectedText) {
+			return;
+		}
+
+		if (oEvent.clipboardData) {
+			oEvent.clipboardData.setData('text/plain', sSelectedText);
+		} else {
+			oEvent.originalEvent.clipboardData.setData('text/plain', sSelectedText);
+		}
+		oEvent.preventDefault();
+	};
+
+	document.addEventListener('cut', fnCut);
+
+	document.execCommand('cut');
+
+	document.removeEventListener('cut', fnCut);
 	};
 
 	/**
@@ -1001,6 +1020,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	Tokenizer.prototype.updateTokens = function () {
+		this.destroyTokens();
+		this.updateAggregation("tokens");
+	};
+
 	/**
 	 * Function removes all selected tokens
 	 *
@@ -1018,7 +1042,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (i = 0; i < length; i++) {
 			token = tokensToBeDeleted[i];
 			if (token.getEditable()) {
-				this.removeToken(token);
+				token.destroy();
 			}
 		}
 

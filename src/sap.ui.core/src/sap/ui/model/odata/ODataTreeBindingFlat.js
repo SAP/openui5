@@ -2733,10 +2733,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 */
 	ODataTreeBindingFlat.prototype.getRowIndexByNode = function (oNode) {
 		var iDelta = 0;
+		var oChildNode;
+		var i;
 
 		if (oNode.isDeepOne) {
+			// traverse up through the parent chain to the last server indexed node
 			while (oNode.parent) {
+				// count the number of nodes which appear before the current one
 				iDelta += oNode.positionInParent + 1;
+
+				for (i = 0; i < oNode.positionInParent; i++) {
+					oChildNode = oNode.parent.children[i];
+					// if the deep node is expanded, the number of its children should also be counted
+					if (oChildNode && oChildNode.nodeState.expanded) {
+						iDelta += oChildNode.magnitude;
+					}
+				}
 				oNode = oNode.parent;
 			}
 		}

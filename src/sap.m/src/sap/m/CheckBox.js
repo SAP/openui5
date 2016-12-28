@@ -120,7 +120,8 @@ sap.ui.define(['jquery.sap.global',
 					selected : {type : "boolean"}
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	EnabledPropagator.call(CheckBox.prototype);
@@ -131,12 +132,6 @@ sap.ui.define(['jquery.sap.global',
 	CheckBox.prototype.init = function() {
 		this.addActiveState(this);
 		IconPool.insertFontFaceStyle();
-	};
-
-	CheckBox.prototype.onAfterRendering = function() {
-		if (!this.getText() && !this.$().attr("aria-labelledby")) {
-			this.$().attr("aria-label", " ");
-		}
 	};
 
 	CheckBox.prototype.exit = function() {

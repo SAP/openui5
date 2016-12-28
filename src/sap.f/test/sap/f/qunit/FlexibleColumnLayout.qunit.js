@@ -1,3 +1,4 @@
+jQuery.sap.require("sap.f.FlexibleColumnLayout");
 (function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, LT, bDebugMode) {
 	"use strict";
 	var oCore = sap.ui.getCore(),
@@ -14,6 +15,10 @@
 				new Button({text: "Button"})
 			]
 		});
+	};
+
+	var fnGetResourceBundleText = function (sResourceBundleKey){
+		return FlexibleColumnLayout._getResourceBundle().getText(sResourceBundleKey);
 	};
 
 	var fnCreateFCL = function (oMetadata) {
@@ -782,6 +787,44 @@
 		assert.ok(oSpyBack.called, "The proper backToPage method was called");
 
 		this.clock.restore();
+	});
+
+	QUnit.module("ScreenReader supprot", {
+		beforeEach: function () {
+			this.oFCL = oFactory.createFCL()
+		},
+		afterEach: function () {
+			this.oFCL = null;
+		}
+	});
+
+	QUnit.test("Each column has correct region role and it's labeled correctly", function (assert) {
+		var fnGetLabelText = function (sColumnName) {
+			return sap.ui.getCore().byId(this.oFCL.$(sColumnName).attr("aria-labelledby")).getText();
+		}.bind(this);
+
+		assert.strictEqual(this.oFCL.$("beginColumn").attr("role"), "region", "Begin column has correct role");
+		assert.strictEqual(this.oFCL.$("midColumn").attr("role"), "region", "Middle column has correct role");
+		assert.strictEqual(this.oFCL.$("endColumn").attr("role"), "region", "End column has correct role");
+
+		assert.strictEqual(fnGetLabelText("beginColumn"), fnGetResourceBundleText("FCL_BEGIN_COLUMN_REGION_TEXT"), "Begin column is labeled correctly");
+		assert.strictEqual(fnGetLabelText("midColumn"), fnGetResourceBundleText("FCL_MID_COLUMN_REGION_TEXT"), "Middle column is labeled correctly");
+		assert.strictEqual(fnGetLabelText("endColumn"), fnGetResourceBundleText("FCL_END_COLUMN_REGION_TEXT"), "End column is labeled correctly");
+	});
+
+	QUnit.test("Navigation buttons have correct tooltips", function (assert) {
+		var fnGetButtonTooltip = function (sAggregationName) {
+			return this.oFCL.getAggregation(sAggregationName).getTooltip();
+		}.bind(this);
+
+		assert.strictEqual(fnGetButtonTooltip("_beginColumnBackArrow"),
+			fnGetResourceBundleText("FCL_BEGIN_COLUMN_BACK_ARROW"), "Begin column back arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_midColumnBackArrow"),
+			fnGetResourceBundleText("FCL_MID_COLUMN_BACK_ARROW"), "Mid column back arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_midColumnForwardArrow"),
+			fnGetResourceBundleText("FCL_MID_COLUMN_FORWARD_ARROW"), "Mid column forward arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_endColumnForwardArrow"),
+			fnGetResourceBundleText("FCL_END_COLUMN_FORWARD_ARROW"), "End column forward arrow has correct tooltip");
 	});
 
 

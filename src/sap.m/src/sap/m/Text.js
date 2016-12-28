@@ -68,7 +68,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null}
-		}
+		},
+		designTime: true
 	}});
 
 	/**

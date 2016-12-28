@@ -368,11 +368,14 @@ sap.ui.define([
 		},
 
 		onSetBindingContext : function () {
-			var oText = this.getView().byId("FavoriteProductID"),
-				oBindingContext = oText.getModel().createBindingContext("/ProductList('HT-1000')");
+			var oView = this.getView(),
+				oInput = oView.byId("FavoriteProductID"),
+				oBindingContext = oInput.getModel().createBindingContext("/ProductList('HT-1000')");
 
-			oText.setBindingContext(oBindingContext);
-			oText.bindProperty("text", "ProductID");
+			oInput.setBindingContext(oBindingContext);
+			oInput.bindProperty("value", "ProductID");
+			oInput.bindProperty("tooltip", "ProductID");
+			oView.byId("FavoriteProductID").focus();
 		},
 
 		onSortByGrossAmount : function () {

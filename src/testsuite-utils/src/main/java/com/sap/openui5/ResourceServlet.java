@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -70,20 +71,28 @@ public class ResourceServlet extends HttpServlet {
 
       if (url != null && method.matches("GET|HEAD")) {
 
-        URLConnection connection = url.openConnection();
-        this.prepareResponse(response, connection);
+        InputStream is = null;
+        try {
 
-        if ("GET".equals(method)) {
-          InputStream is = connection.getInputStream();
-          OutputStream os = response.getOutputStream();
-          IOUtils.copyLarge(is, os);
+          URLConnection conn = url.openConnection();
+          conn.connect();
+          is = conn.getInputStream();
+
+          this.prepareResponse(response, conn);
+
+          if ("GET".equals(method)) {
+            OutputStream os = response.getOutputStream();
+            IOUtils.copyLarge(is, os);
+            os.flush();
+            os.close();
+          }
+
+          response.setStatus(HttpServletResponse.SC_OK);
+          this.log("[200] " + request.getRequestURI());
+
+        } finally {
           IOUtils.closeQuietly(is);
-          os.flush();
-          os.close();
         }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        this.log("[200] " + request.getRequestURI());
 
       } else {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -98,14 +107,15 @@ public class ResourceServlet extends HttpServlet {
   /**
    * prepares the response and sets the response headers properly
    * @param response response object
-   * @param connection URL connection of the content to return
+   * @param conn URL connection of the content to return
+   * @throws IOException
    */
-  private void prepareResponse(HttpServletResponse response, URLConnection connection) {
+  private void prepareResponse(HttpServletResponse response, URLConnection conn) throws IOException {
 
-    String url = connection.getURL().toString();
+    String url = conn.getURL().toString();
 
     // determine the content type (special case for properties request)
-    String contentType = connection.getContentType();
+    String contentType = conn.getContentType();
     if (contentType == null || "content/unknown".equals(contentType)) {
       if (PATTERN_PROPERTIES_REQUEST.matcher(url).matches()) {
         contentType = "text/plain;charset=ISO-8859-1";
@@ -114,9 +124,19 @@ public class ResourceServlet extends HttpServlet {
       }
     }
 
-    // set the relevant headers (caching, cors, resource location, ...)
+    // determine the last modified timestamp
+    long lastModified;
+    // for JAR files we do not open the connection to avoid resource leaks!
+    if (conn instanceof JarURLConnection) {
+      File jarFile = new File(((JarURLConnection) conn).getJarFile().getName());
+      lastModified = jarFile.lastModified();
+    } else {
+      lastModified = conn.getLastModified();
+    }
+
+    // set the relevant headers (content type, last modified, resource location, ...)
     response.setContentType(contentType);
-    response.addDateHeader("Last-Modified", connection.getLastModified());
+    response.addDateHeader("Last-Modified", lastModified);
     response.addHeader("x-sap-ResourceUrl", url);
 
   } // method: prepareResponse

@@ -250,17 +250,17 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sEmployees1Expand3LevelsXML],
 			//Filter ANDing Tests
 			//Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)
-			"Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			"Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m":
 				[200, oCountHeaders, "9"],
-			"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m":
 				[200, oXMLHeaders, sProductsForFilterANDing1],
-			"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "5"],
-			"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing2],
-			"Products/$count?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products/$count?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "6"],
-			"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing3],
 					"Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages":
 				[200, oJSONHeaders, sRegionsJSON],

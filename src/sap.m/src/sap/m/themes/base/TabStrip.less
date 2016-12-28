@@ -1,6 +1,8 @@
-/* ============================================= */
-/* CSS for control sap.m/TabStrip.control        */
-/* ============================================= */
+/* =============================== */
+/* CSS for control sap.m/TabStrip  */
+/* Base theme                      */
+/* =============================== */
+
 .sapMTabStrip {
 	position: relative;
 	height: 3rem;
@@ -87,7 +89,7 @@
 	}
 }
 
-.sapUiSizeCompact .sapMTabStrip{
+.sapUiSizeCompact .sapMTabStrip {
 	.sapMTSTabs .sapMTabStripItem .sapMTSItemCloseBtnCnt {
 		height: 100%;
 	}
@@ -168,10 +170,89 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs 
 	}
 }
 
+.sapMTabStrip {
+	background: @sapUiPageHeaderBackground;
+	box-shadow: inset 0 -0.125rem 0 0 @sapUiPageHeaderBorderColor;
+	.sapMTSLeftOverflowButtons {
+		background: linear-gradient(90deg, @sapUiPageHeaderBackground 0%, @sapUiPageHeaderBackground 75%, fade(@sapUiPageHeaderBackground, 0) 100%);
+		bottom: 0.125rem;
+		& .sapMBtn.sapMBtnBase {
+			padding-bottom: 0rem;
+		}
+	}
+	.sapMTSTabsContainer {
+		right: 7.5rem;
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				padding: 0 0 0 0.5rem;
+				background: transparent;
+				color: @sapUiGroupTitleTextColor;
+				.sapMTabStripItemLabel {
+					font-size: @sapMFontMediumSize;
+				}
+				&:hover {
+					color:@sapUiGroupTitleTextColor;
+				}
+				&.sapMTabStripItemSelected {
+					color: @sapUiGroupTitleTextColor;
+					border-bottom: solid 0.125rem @sapUiSelected;
+				}
+				&:focus {
+					outline: none;
+				}
+				position: relative;
+				&:focus::before {
+					pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					border: 1px dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+	.sapMTSRightOverflowButtons {
+		background: linear-gradient(90deg, fade(@sapUiPageHeaderBackground, 0) 0%, @sapUiPageHeaderBackground 25%, @sapUiPageHeaderBackground 100%);
+		bottom: 0.125rem;
+		right: 5.5rem;
+		& .sapMBtn.sapMBtnBase {
+			padding-left: 1rem;
+			padding-bottom: 0rem;
+		}
+	}
+	.sapMTSAddNewTabBtn {
+		margin-left: 0.5rem;
+	}
+}
+
+.sapUiSizeCozy .sapMTabStrip{
+	.sapMTSRightOverflowButtons{
+		right: 6rem;
+		width: 4rem;
+	}
+}
+
 html.sap-phone {
 	.sapMTabStrip .sapMTSTouchArea {
 		position: inherit;
 		right: inherit;
+		
+		.sapMTSSlt .sapMSltLabel{
+			position: absolute;
+			left: 0;
+			padding: 0 0 0 1rem;
+		}
+		.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			position: absolute;
+			right: 2.5rem;
+		}
+		.sapMBtn.sapMBtnBase {
+			position: absolute;
+			right: 0;
+		}
 	}
 	.sapMTabStrip .sapMSltWithArrow {
 		visibility: visible;

@@ -1,9 +1,10 @@
-/* ============================================= */
-/* CSS for control sap.m/Tokenizer.control BlueCrystal theme*/
-/* ============================================= */
+/* ================================ */
+/* CSS for control sap.m/Tokenizer  */
+/* BlueCrystal theme                */
+/* ================================ */
 
 html.sap-desktop .sapMTokenizer:focus {
-	outline: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
@@ -11,7 +12,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMTokenizer:focus {
 		&:before {
-			border: 1px dotted @sapUiFocus;
+			border: 1px dotted @sapUiContentFocusColor;
 		}
 	}
 }

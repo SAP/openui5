@@ -841,13 +841,17 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @protected
 	 */
 	ListBase.prototype.isAllSelectableSelected = function() {
+		if (!this.getMode() != sap.m.ListMode.MultiSelect) {
+			return false;
+		}
+
 		var aItems = this.getItems(true),
 			iSelectedItemCount = this.getSelectedItems().length,
 			iSelectableItemCount = aItems.filter(function(oItem) {
 				return oItem.isSelectable();
 			}).length;
 
-		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
+		return (aItems.length > 0) && (iSelectedItemCount == iSelectableItemCount);
 	};
 
 	/*
@@ -1449,12 +1453,34 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LIST");
 	};
 
-	ListBase.prototype.getAccessibilityDescription = function() {
-		var sDescription = "",
+	ListBase.prototype.getAccessibilityStates = function() {
+		if (!this.getItems(true).length) {
+			return "";
+		}
+
+		var sStates = "",
 			mMode = sap.m.ListMode,
 			sMode = this.getMode(),
-			oHeaderTBar = this.getHeaderToolbar(),
+			oBinding = this.getBinding("rows"),
 			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		if (sMode == mMode.MultiSelect) {
+			sStates += oBundle.getText("LIST_MULTISELECTABLE") + " ";
+		} else if (sMode == mMode.Delete) {
+			sStates += oBundle.getText("LIST_DELETABLE") + " ";
+		} else if (sMode != mMode.None) {
+			sStates += oBundle.getText("LIST_SELECTABLE") + " ";
+		}
+		if (oBinding && oBinding.isGrouped()) {
+			sStates += oBundle.getText("LIST_GROUPED") + " ";
+		}
+
+		return sStates;
+	};
+
+	ListBase.prototype.getAccessibilityDescription = function() {
+		var sDescription = "",
+			oHeaderTBar = this.getHeaderToolbar();
 
 		if (oHeaderTBar) {
 			var oTitle = oHeaderTBar.getTitleControl();
@@ -1465,37 +1491,25 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			sDescription = this.getHeaderText() + " ";
 		}
 
-		if (this.getItems().length) {
-			if (sMode == mMode.MultiSelect) {
-				sDescription += oBundle.getText("LIST_MULTISELECTABLE") + " ";
-			} else if (sMode == mMode.Delete) {
-				sDescription += oBundle.getText("LIST_DELETABLE") + " ";
-			} else if (sMode != mMode.None) {
-				sDescription += oBundle.getText("LIST_SELECTABLE") + " ";
-			}
-		} else if (this.getShowNoData()) {
-			sDescription += this.getNoDataText() + " ";
-		}
-
+		sDescription += this.getAccessibilityType() + " ";
+		sDescription += this.getAccessibilityStates() + " ";
 		sDescription += this.getFooterText();
+
 		return sDescription.trim();
 	};
 
 	ListBase.prototype.getAccessibilityInfo = function() {
 		return {
-			type: this.getAccessibilityType(),
 			description: this.getAccessibilityDescription(),
 			focusable: true
 		};
 	};
 
-	// this gets called when items are focused
-	ListBase.prototype.onItemFocusIn = function(oItem) {
+	ListBase.prototype.getAccessbilityPosition = function(oItem) {
 		var iSetSize = 0,
 			aItems = this.getVisibleItems(),
 			iPosInset = aItems.indexOf(oItem) + 1,
-			oBinding = this.getBinding("items"),
-			oItemDomRef = oItem.getDomRef();
+			oBinding = this.getBinding("items");
 
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
@@ -1509,18 +1523,33 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			iSetSize = aItems.length;
 		}
 
+		return {
+			setSize : iSetSize,
+			posInset: iPosInset
+		};
+	};
+
+	// this gets called when items are focused
+	ListBase.prototype.onItemFocusIn = function(oItem) {
+		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+			return;
+		}
+
+		var oItemDomRef = oItem.getDomRef(),
+			mPosition = this.getAccessbilityPosition(oItem);
+
 		if (!oItem.getContentAnnouncement) {
 			// let the screen reader announce the whole content
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
-			oItemDomRef.setAttribute("aria-posinset", iPosInset);
-			oItemDomRef.setAttribute("aria-setsize", iSetSize);
+			oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
+			oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
 		} else {
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				sDescription = oAccInfo.type + " ";
 
-			sDescription += oBundle.getText("LIST_ITEM_POSITION", [iPosInset, iSetSize]) + " ";
+			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
 			sDescription += oAccInfo.description;
 			this.updateInvisibleText(sDescription, oItemDomRef);
 		}
@@ -1530,10 +1559,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		var oInvisibleText = ListBase.getInvisibleText(),
 			$FocusedItem = jQuery(oItemDomRef || document.activeElement);
 
-		if (this.bAnnounceDetails) {
-			this.bAnnounceDetails = false;
-			var oAccInfo = this.getAccessibilityInfo();
-			sText = oAccInfo.type + " " + oAccInfo.description + " " + sText;
+		if (this.iAnnounceDetails) {
+			if (this.iAnnounceDetails == 1) {
+				sText = this.getAccessibilityStates() + " " + sText;
+			} else {
+				sText = this.getAccessibilityInfo().description + " " + sText;
+			}
+			this.iAnnounceDetails = 0;
 		}
 
 		oInvisibleText.setText(sText.trim());
@@ -1847,7 +1879,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 		// get the last tabbable item or itself and focus
 		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
-		this.bAnnounceDetails = true;
+		this.iAnnounceDetails = 2;
 		$FocusElement.focus();
 	};
 
@@ -1877,13 +1909,19 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		oEvent.setMarked();
 	};
 
+	ListBase.prototype.onsapfocusleave = function(oEvent) {
+		if (!this.iAnnounceDetails && this._oItemNavigation && !this.getNavigationRoot().contains(oEvent.target)) {
+			this.iAnnounceDetails = 1;
+		}
+	};
+
 	// this gets called when items up arrow key is pressed for the edit keyboard mode
 	ListBase.prototype.onItemArrowUpDown = function(oListItem, oEvent) {
 		var aItems = this.getItems(true),
 			iIndex = aItems.indexOf(oListItem) + (oEvent.type == "sapup" ? -1 : 1),
 			oItem = aItems[iIndex];
 
-		if (oItem.isGroupHeader()) {
+		if (oItem && oItem.isGroupHeader()) {
 			oItem = aItems[iIndex + (oEvent.type == "sapup" ? -1 : 1)];
 		}
 

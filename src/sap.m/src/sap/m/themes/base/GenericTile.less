@@ -29,6 +29,7 @@
 	height: 11rem;
 }
 
+.sapMGTHdrTxt,
 .sapMGTHdrTxt > .sapMGTTitle,
 .sapMGTSubHdrTxt,
 .sapMGT .sapMGTContent {
@@ -48,9 +49,11 @@
 }
 
 .sapMGTContent {
+	height: 6.375rem;
 	display: inline-block;
 	white-space: nowrap;
 	width: 100%;
+	overflow: hidden;
 }
 
 .sapMGTHdrTxt {
@@ -119,7 +122,8 @@
 		position: absolute;
 		top: -0.5rem;
 		right: -0.5rem;
-		z-index: 1;
+		z-index: 3;
+		overflow: hidden;
 
 		.sapMBtnFocusDiv {
 			display: none;
@@ -157,6 +161,29 @@
 			bottom: -0.6875rem;
 			left: -0.6875rem;
 			right: -0.0625rem;
+		}
+	}
+}
+
+.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage {
+
+	.sapMTileCntContent {
+		&:after {
+		  content: none;
+		}
+	}
+
+	.sapMGTContent {
+		&:before {
+			position: absolute;
+			display: block;
+			content: "";
+			top: 0rem;
+			bottom: 0rem;
+			left: 0rem;
+			right: 0rem;
+			background-color: fade(@sapUiTileBackground, 70);
+			border-radius: 0.125rem;
 		}
 	}
 }
@@ -375,8 +402,10 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		margin-right: 0.5rem;
 	}
 
-	.sapMGTLineMode.sapMGTScopeActions  .sapMGTHdrTxt:last-of-type {
-		padding-right: 4rem;
+	.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTDisabled) {
+		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+			padding-right: 4rem;
+		}
 	}
 
 	.sapMGTActionsContainer {
@@ -426,10 +455,6 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	.sapMGTLineMode .sapMGTHdrTxt {
 		max-height: none !important;
 	}
-
-	.sapMGTLineMode.sapMGTScopeActions .sapMGTSubHdrTxt {
-		padding-right: 4rem;
-	}
 }
 
 /* Fix for rendering order on tablets in RTL */
@@ -450,6 +475,7 @@ html[dir=rtl] .sapMGTLineMode {
 	right: 0px;
 	left: 0px;
 	bottom: 0px;
+	border-radius: 0.25rem;
 }
 
 .sapMGTFocusDiv {
@@ -501,6 +527,10 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 
 .sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk {
 	vertical-align: bottom;
+}
+
+.sapMGT.sapMGTBackgroundImage {
+	border: none;
 }
 
 /* the following is needed for non-webkit browsers that don't support line-clamping */
@@ -566,6 +596,10 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 	.sapMGT.TwoByOne {
 		width: 19rem;
 		height: 9.25rem;
+	}
+
+	.sapMGTContent {
+		height: 5.5rem;
 	}
 
 	.sapMGTHdrContent {

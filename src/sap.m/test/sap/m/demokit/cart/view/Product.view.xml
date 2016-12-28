@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.cart.view.Product"
+	controllerName="sap.ui.demo.cart.controller.Product"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -9,13 +9,13 @@
 		id="page"
 		title="{Name}"
 		showNavButton="{device>/isPhone}"
-		navButtonPress="handleNavButtonPress" >
+		navButtonPress="onNavButtonPress" >
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
 				visible="{device>/isPhone}"
 				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
-				press="handleCartButtonPress" />
+				press="onCartButtonPress" />
 		</headerContent>
 		<footer>
 			<Toolbar>
@@ -24,7 +24,7 @@
 					icon="sap-icon://add"
 					text="{i18n>PRODUCT_ADD_BUTTON_TEXT}"
 					tooltip="{i18n>PRODUCT_ADD_BUTTON_TOOLTIP}"
-					press="handleAddButtonPress" />
+					press="onAddButtonPress" />
 			</Toolbar>
 		</footer>
 		<content>
@@ -37,11 +37,17 @@
 				numberUnit="EUR">
 				<attributes>
 					<ObjectAttribute
+						title="{i18n>PRODUCT_SUPPLIER_ATTRIBUTE_TEXT}"
 						text="{SupplierName}" />
 					<ObjectAttribute
+						title="{i18n>PRODUCT_DESCRIPTION_ATTRIBUTE_TEXT}"
 						text="{ShortDescription}" />
 					<ObjectAttribute
-						text="{Weight}g" />
+						title="{i18n>PRODUCT_WEIGHT_ATTRIBUTE_TEXT}"
+						text="{Weight} {WeightUnit}"/>
+					<ObjectAttribute
+						title="{i18n>PRODUCT_MEASURES_ATTRIBUTE_TEXT}"
+						text="{Width} {Unit}, {Depth} {Unit}, {Height} {Unit}"/>
 				</attributes>
 				<firstStatus>
 					<ObjectStatus
@@ -57,13 +63,27 @@
 			</ObjectHeader>
 			<VBox alignItems="Center">
 				<Image
+					id = "productImage"
 					src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
 					decorative="true"
-					densityAware="false" />
+					class="sapUiSmallMargin"
+					press="onPicturePress"
+					width="100%"
+					/>
 			</VBox>
 		</content>
+
+		<dependents>
+			<LightBox id="lightBox">
+				<imageContent>
+					<LightBoxItem
+							imageSrc="{PictureUrl}"
+							title="{Name}"></LightBoxItem>
+				</imageContent>
+			</LightBox>
+		</dependents>
 	</Page>
 </mvc:View>

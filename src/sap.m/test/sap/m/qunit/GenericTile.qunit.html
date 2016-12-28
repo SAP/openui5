@@ -1251,6 +1251,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Display, "Event parameter 'scope' is 'Display'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
+		assert.equal(oParams.domRef, this.oGenericTile.getDomRef(), "Event parameter 'domRef' points to GenericTile")
 	});
 
 	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'Remove'", function(assert) {
@@ -1270,6 +1271,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Remove, "Event parameter 'action' is 'Remove'");
+		assert.equal(oParams.domRef, this.oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button")
 	});
 
 	QUnit.test("Internal method _getEventParams in scope 'Actions', tap icon 'More'", function(assert) {
@@ -1289,6 +1291,7 @@
 		//Assert
 		assert.equal(oParams.scope, sap.m.GenericTileScope.Actions, "Event parameter 'scope' is 'Actions'");
 		assert.equal(oParams.action, sap.m.GenericTile._Action.Press, "Event parameter 'action' is 'Press'");
+		assert.equal(oParams.domRef, this.oGenericTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon")
 	});
 
 	QUnit.module("Internal methods for ARIA-label and tooltip handling", {
@@ -1415,6 +1418,20 @@
 		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
 	});
 
+	QUnit.test("Internal method _getAriaText for actions scope", function() {
+		//Arrange
+		this.oGenericTile.setScope("Actions");
+		this.oGenericTile._getAriaAndTooltipText = function() {
+			return "ARIA and tooltip test";
+		}
+		sap.ui.getCore().applyChanges();
+		//Act
+		var sAriaText = this.oGenericTile._getAriaText();
+		var sActionsText = this.oGenericTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT");
+		//Assert
+		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test", "Expected text for ARIA-label generated for actions scope");
+	});
+
 	QUnit.test("Internal method _getTooltipText", function(assert) {
 		//Arrange
 		var sTooltipText;
@@ -1477,7 +1494,7 @@
 	QUnit.test("Generation of text for ARIA-label, Loading state", function(assert) {
 		//Arrange
 		this.oGenericTile.setState(sap.m.LoadState.Loading);
-		var sLoadingText = "Comparative Annual Totals\nExpenses By Region\n20M\nAscending\nGood\nEUR\nCurrent Quarter\n" + this.oGenericTile._rb.getText("INFOTILE_LOADING");
+		var sLoadingText = "Comparative Annual Totals\nExpenses By Region\n20M\nAscending\nGood\nEUR\nCurrent Quarter\n" + this.oGenericTile._oRb.getText("INFOTILE_LOADING");
 		//Act
 		var sAriaLabel = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
@@ -2002,6 +2019,22 @@
 		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
 	});
 
+	QUnit.test("No press event when press event disabled", function(assert) {
+		//Arrange
+		var bEventNotTriggered = true;
+		this.oGenericTile.attachEvent("press", handlePress);
+		this.oGenericTile.setPressEnabled(false);
+
+		//Act
+		this.oGenericTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			bEventNotTriggered = false;
+		}
+		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
+	});
+
 	QUnit.test("Press event on 'tap' with correct parameters in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -2020,6 +2053,7 @@
 	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 
 		//Act
@@ -2042,7 +2076,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when ENTER down")
+		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered on ENTER down")
 	});
 
 	QUnit.test("ENTER key event in Display scope", function(assert) {
@@ -2055,12 +2089,13 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on ENTER up");
 	});
 
 	QUnit.test("ENTER key event in Actions scope", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event('keyup');
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
@@ -2069,7 +2104,70 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when ENTER up");
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on ENTER up");
+	});
+
+	QUnit.test("SPACE key event in Display scope", function(assert) {
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on SPACE up");
+	});
+
+	QUnit.test("SPACE key event in Display scope with correct parameters", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Display);
+		this.oGenericTile.attachEvent("press", handlePress);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		function handlePress(oEvent) {
+		assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Display, "Press event has correct parameter 'scope'");
+		assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+		}
+	});
+
+	QUnit.test("SPACE key event in Actions scope", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered on SPACE up");
+	});
+
+	QUnit.test("SPACE key event in Actions scope with correct parameters", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		this.oGenericTile.attachEvent("press", handlePress);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+
+		//Act
+		this.oGenericTile.$().trigger(e);
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+		}
 	});
 
 	QUnit.test("DELETE key event in Display scope", function(assert) {
@@ -2082,7 +2180,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when DELETE up");
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered on DELETE up");
 	});
 
 	QUnit.test("BACKSPACE key event in Display scope", function(assert) {
@@ -2095,7 +2193,7 @@
 		this.oGenericTile.$().trigger(e);
 
 		//Assert
-		assert.ok(!this.ftnPressHandler.called, "No press event is triggered when BACKSPACE up");
+		assert.ok(!this.ftnPressHandler.called, "No press event is triggered on BACKSPACE up");
 	});
 
 	QUnit.test("DELETE key event in Actions scope with correct parameters", function(assert) {
@@ -2118,6 +2216,7 @@
 	QUnit.test("BACKSPACE key event in Actions scope with correct parameters", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event('keyup');
 		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;

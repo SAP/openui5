@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 */
 				"subheader" : {type : "string", group : "Misc", defaultValue : null}
 			},
+			defaultAggregation : "_contentText",
 			aggregations : {
 				/**
 				 * The hidden aggregation for the content text.

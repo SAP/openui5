@@ -713,13 +713,12 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			var oPointerExtension = this._getPointerExtension();
 			var $Cell = TableUtils.getCell(this, oEvent.target);
 			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var $Target = jQuery(oEvent.target);
 
 			// check whether item navigation should be reapplied from scratch
 			this._getKeyboardExtension().initItemNavigation();
 
 			if (oEvent.button === 0) { // left mouse button
-				var $Target = jQuery(oEvent.target);
-
 				if (oEvent.target === this.getDomRef("sb")) { // mousedown on interactive resize bar
 					InteractiveResizeHelper.initInteractiveResizing(this, oEvent);
 
@@ -764,6 +763,11 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 
 			if (oEvent.button === 2) { // Right mouse button.
+				if (ExtensionHelper._skipClick(oEvent, $Target, oCellInfo)) {
+					oPointerExtension._bShowDefaultMenu = true;
+					return;
+				}
+
 				if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
 					var oColumnHeaderCellInfo = TableUtils.getColumnHeaderCellInfo($Cell);
 					var oColumn = this.getColumns()[oColumnHeaderCellInfo.index];
@@ -772,6 +776,8 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 					if (!bMenuOpen) {
 						oPointerExtension._bShowMenu = true;
+					} else {
+						oPointerExtension._bHideMenu = true;
 					}
 
 				} else if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
@@ -780,6 +786,8 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 					if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
 						oPointerExtension._bShowMenu = true;
+					} else {
+						oPointerExtension._bHideMenu = true;
 					}
 				}
 			}
@@ -852,26 +860,25 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		},
 
 		oncontextmenu: function(oEvent) {
-			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var oPointerExtension = this._getPointerExtension();
 
-			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
-				oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+			if (oPointerExtension._bShowDefaultMenu) {
+				oEvent.setMarked("handledByPointerExtension");
+				delete oPointerExtension._bShowDefaultMenu;
 
+			} else if (oPointerExtension._bShowMenu) {
+				oEvent.setMarked("handledByPointerExtension");
 				oEvent.preventDefault(); // To prevent opening the default browser context menu.
+				TableUtils.Menu.openContextMenu(this, oEvent.target, false);
+				delete oPointerExtension._bShowMenu;
 
-				var oPointerExtension = this._getPointerExtension();
-				var bRightMouseClick = oEvent.button === 2;
-
-				if (oPointerExtension._bShowMenu && bRightMouseClick) {
-					TableUtils.Menu.openContextMenu(this, oEvent.target, false);
-					delete oPointerExtension._bShowMenu;
-				}
+			} else if (oPointerExtension._bHideMenu) {
+				oEvent.setMarked("handledByPointerExtension");
+				oEvent.preventDefault(); // To prevent opening the default browser context menu.
+				delete oPointerExtension._bHideMenu;
 			}
 		}
 	};
-
-
 
 	/**
 	 * Extension for sap.ui.table.Table which handles mouse and touch related things.

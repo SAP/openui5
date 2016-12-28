@@ -1,16 +1,21 @@
+/* ================================== */
+/* CSS for control sap.m/SplitButton  */
+/* BlueCrystal theme                  */
+/* ================================== */
+
 .sapMSB:focus .sapMSBInner::after {
 	top: 0.3125rem;
 	bottom: 0.3125rem;
 	left: 0.0625rem;
 	right: 0.0625rem;
-	border: 0.0625rem dotted @sapUiFocus;
+	border: 0.0625rem dotted @sapUiContentFocusColor;
 }
 
 .sapMSB.sapMSBEmphasized:focus .sapMSBInner::after,
 .sapMSB.sapMSBAccept:focus .sapMSBInner::after,
 .sapMSB.sapMSBReject:focus .sapMSBInner::after,
 .sapMIBar-CTX.sapMFooter-CTX .sapMSB:focus .sapMSBInner::after {
-	border-color: @sapUiInvertedFocus;
+	border-color: @sapUiContentContrastFocusColor;
 }
 
 .sapUiSizeCompact {

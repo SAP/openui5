@@ -35,7 +35,7 @@ module.exports = function(grunt, config) {
 					name: library.name
 				}
 			}
-		}
+		};
 	});
 
 	return openui5_theme;

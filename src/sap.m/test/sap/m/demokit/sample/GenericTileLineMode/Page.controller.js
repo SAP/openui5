@@ -10,7 +10,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 
 		press : function(evt) {
 			var oTile = evt.getSource();
-			MessageToast.show("The GenericTile \"" + oTile.getHeader() + "\" was pressed.");
+
+			if (evt.getParameter("action") === "Remove") {
+				MessageToast.show("Remove action of GenericTile \"" + oTile.getHeader() + "\" has been pressed.");
+			} else {
+				MessageToast.show("The GenericTile \"" + oTile.getHeader() + "\" has been pressed.");
+			}
 		}
 	});
 

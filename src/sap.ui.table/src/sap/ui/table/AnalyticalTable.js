@@ -154,12 +154,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.exit = function() {
-		if (this._oGroupHeaderMenu) {
-			this._oGroupHeaderMenu.destroy();
-			this._oGroupHeaderMenu = null;
-		}
-
+		this._cleanupGroupHeaderMenu();
 		Table.prototype.exit.apply(this, arguments);
+	};
+
+	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
+		Table.prototype._adaptLocalization.apply(this, arguments);
+		if (bLangChanged) {
+			this._cleanupGroupHeaderMenu();
+		}
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -213,7 +216,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		// Sanitize the arguments for API Compatibility: sName, sPath, oTemplate, oSorter, aFilters
 		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
 
-		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
+		var vReturn = Table.prototype.bindRows.call(this, oBindingInfoSanitized);
 
 		this._updateTotalRow(true);
 
@@ -723,6 +726,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 		return this._oGroupHeaderMenu;
 
+	};
+
+	AnalyticalTable.prototype._cleanupGroupHeaderMenu = function() {
+		if (this._oGroupHeaderMenu) {
+			this._oGroupHeaderMenu.destroy();
+			this._oGroupHeaderMenu = null;
+			this._oGroupHeaderMenuVisibilityItem = null;
+			this._oGroupHeaderMoveUpItem = null;
+			this._oGroupHeaderMoveDownItem = null;
+		}
 	};
 
 	AnalyticalTable.prototype.expand = function(iRowIndex) {

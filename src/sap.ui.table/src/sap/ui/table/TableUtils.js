@@ -913,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			if (oBinding && iFixedBottomRowCount > 0) {
 				var iVisibleRowCount = oTable.getVisibleRowCount();
-				var iFirstVisibleRow = oTable._getSanitizedFirstVisibleRow();
+				var iFirstVisibleRow = oTable.getFirstVisibleRow();
 
 				if (oTable._iBindingLength >= iVisibleRowCount) {
 					iFirstFixedButtomIndex = iVisibleRowCount - iFixedBottomRowCount;

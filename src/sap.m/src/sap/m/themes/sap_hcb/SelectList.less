@@ -1,108 +1,39 @@
-/* ===================================================================*/
-/* CSS for control sap.m/SelectList.control High Contrast Black theme */
-/* ================================================================== */
-
-/* ====================================================== */
-/* Select List                                            */
-/* ====================================================== */
-
-/* ------------------------------ */
-/* list                           */
-/* ------------------------------ */
-
-.sapMSelectList {
-	background: @sapHCStandardBG;
-}
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* High Contrast Black theme         */
+/* ================================= */
 
 /* ------------------------------ */
 /* item                           */
 /* ------------------------------ */
 
 .sapMSelectListItemBase {
-	font-size: @sapMFontMediumSize;
-	height: 2.5rem;
-	cursor: pointer;
-	border-bottom: 0.0625rem @sapHCReducedAltFG solid;
-}
-
-.sapMSelectListItem {
-	padding: 0 1rem 0 1rem;
-	line-height: 2.5rem;
+	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
 /* selected */
-
 .sapMSelectListItemBaseSelected {
-	background: @sapHCHighlightAltBG;
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -3px;
-}
-
-/* hover */
-
-.sapMSelectListItemBaseHoverable:hover {
-	background: @sapHCHighlightBG;
-}
-
-/* pressed */
-
-.sapMSelectListItemBase.sapMSelectListItemBasePressed {
-	color: @sapHCStandardFG;
-	background: @sapHCHighlightBG;
+	background: @sapUiListSelectionBackgroundColor;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
 }
 
 /* disabled */
-
 .sapMSelectListItemBaseDisabled {
-	opacity: 0.5;
-	color: @sapHCReducedFG;
+	background: @sapUiHcReducedBackground;
+	color: @sapUiContentDisabledTextColor;
 }
 
 /* focus */
-
 html.sap-desktop li.sapMSelectListItemBase:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
 }
 
 /* FIX: IE and Edge do not support css outline-offset */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
-		border: 0.125rem dotted @sapHCStandardFG;
+		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
-}
-
-/* ------------------------------ */
-/* cell                           */
-/* ------------------------------ */
-
-.sapMSelectListCell {
-	padding-left: 1rem;
-}
-
-.sapMSelectListLastCell {
-	padding-right: 1rem;
-}
-
-/* ------------------------------ */
-/* separator                      */
-/* ------------------------------ */
-
-.sapMSelectListSeparatorItem {
-	border: 1px solid @sapHCStandardFG;
-}
-
-/* compact size  */
-
-/* ------------------------------ */
-/* commons styles                 */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMSelectListItemBase {
-	height: 2rem;
-}
-
-.sapUiSizeCompact .sapMSelectListItem {
-	line-height: 2rem;
 }

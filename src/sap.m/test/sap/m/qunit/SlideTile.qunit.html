@@ -21,6 +21,36 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script>
 
+	QUnit.module("Property scope values", {
+		beforeEach: function() {
+			this.oSlideTile = new sap.m.SlideTile();
+		},
+		afterEach: function() {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("Default value of scope", function(assert) {
+		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Display);
+	});
+
+	QUnit.test("Change value of scope", function(assert) {
+		//Arrange
+		var result = this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		//Assert
+		assert.strictEqual(result, this.oSlideTile, "'this' is returned");
+		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Actions);
+	});
+
+	QUnit.test("Change value of scope twice", function(assert) {
+		//Arrange
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Display);
+		//Assert
+		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Display);
+	});
+
 	function fnCreateSlideTile() {
 			//Model
 			var oSlideTileData = {
@@ -479,6 +509,82 @@
 		assert.ok(this.oSlideTile._bAnimationPause === true, "The animation is stopped");
 		assert.ok(!this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The play icon is set");
 	});
+
+	QUnit.module("Event Tests", {
+		beforeEach : function() {
+			fnCreateSlideTile.call(this);
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("No press event on 'tap' in Display scope", function(assert) {
+		//Arrange
+		var bEventNotTriggered = true;
+		this.oSlideTile.attachEvent("press", handlePress);
+
+		//Act
+		this.oSlideTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			bEventNotTriggered = false;
+		}
+		assert.ok(bEventNotTriggered, "No press event is triggered on mouse click.");
+	});
+
+	QUnit.test("Press event of inner GenericTile on 'tap' in Display scope", function(assert) {
+		//Arrange
+		var oGenericTile = this.oSlideTile.getTiles()[0];
+		oGenericTile.attachEvent("press", handlePress);
+
+		//Act
+		oGenericTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.ok(true, "Press event of GenericTile is triggered on mouse click.");
+		}
+	});
+
+	QUnit.test("Press event of inner GenericTile on 'tap' in Actions scope", function(assert) {
+		//Arrange
+		var bEventNotTriggered = true,
+			oGenericTile = this.oSlideTile.getTiles()[0];
+		oGenericTile.attachEvent("press", handlePress);
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oGenericTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			bEventNotTriggered = false;
+		}
+		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
+	});
+
+	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
+		//Arrange
+		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
+		sap.ui.getCore().applyChanges();
+		this.oSlideTile.attachEvent("press", handlePress);
+
+		//Act
+		this.oSlideTile.$().trigger('tap');
+
+		//Assert
+		function handlePress(oEvent) {
+			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
+		}
+	});
+
 </script>
 </head>
 <body id="body" class="sapUiBody">

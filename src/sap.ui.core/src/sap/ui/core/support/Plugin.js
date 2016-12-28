@@ -179,22 +179,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	};
 
 	/**
-	 * Adds the given css name to the tool window
+	 * Adds the given stylesheet to the Support Tool's HTML page.
 	 *
-	 * @param {string} sCssModulePath to the css file without .css extension
+	 * A &lt;link&gt; tag will be added to the head of the HTML page, referring to the given
+	 * CSS resource. The URL of the resource is determined from the given resource name
+	 * by calling {@link jQuery.sap.getResourcePath}.
+	 *
+	 * A plugin should call this method only when it is {@link #runsAsToolPlugin running inside the tool window}.
+	 *
+	 * @param {string} sCssResourcePath Resource name of a CSS file, but without the '.css' extension
 	 * @private
 	 * @sap-restricted
 	 */
-	Plugin.prototype.addStylesheet = function(sCssModulePath) {
-		if (!sCssModulePath) {
+	Plugin.prototype.addStylesheet = function(sCssResourcePath) {
+		if (!sCssResourcePath) {
 			return;
 		}
-		var sPath = jQuery.sap.getModulePath(sCssModulePath, ".css"),
+		var sPath = jQuery.sap.getResourcePath(sCssResourcePath + ".css"),
 			oCssDomLink = document.createElement("link");
 		oCssDomLink.setAttribute("rel", "stylesheet");
 		oCssDomLink.setAttribute("type", "text/css");
 		oCssDomLink.setAttribute("href", sPath);
-		var oHead  = document.getElementsByTagName('head')[0];
+		var oHead = document.getElementsByTagName('head')[0];
 		oHead.appendChild(oCssDomLink);
 	};
 

@@ -21,6 +21,9 @@
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
 		<!-- Test functions -->
 		<script>
@@ -726,6 +729,193 @@
 				strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 			});
 
+			module("Events", {
+				beforeEach: function () {
+					this.oDP = new sap.m.DatePicker("EDP").placeAt("uiArea6");
+					sap.ui.getCore().applyChanges();
+
+					this.oSpy = sinon.spy();
+				},
+				afterEach: function () {
+					this.oSpy = null;
+
+					this.oDP.destroy();
+					this.oDP = null;
+				}
+			});
+
+			test("navigate", function () {
+				// Arrange
+				this.oDP.attachEvent("navigate", this.oSpy);
+
+				// Act
+				qutils.triggerEvent("click", "EDP-icon");
+
+				// Assert
+				strictEqual(this.oSpy.callCount, 1, "Event handler should be called once after opening picker");
+
+				// Act
+				qutils.triggerEvent("click", "EDP-cal--Head-next");
+
+				// Assert
+				strictEqual(this.oSpy.callCount, 2, "Event handler should be called second time after navigating in calendar");
+			});
+
+			module("SpecialDates - lazy loading", {
+				beforeEach: function () {
+					this.oDP = new sap.m.DatePicker("SDP", {
+						dateValue: new Date(2016, 0, 1),
+						navigate: this.fHandleNavigate.bind(this)
+					}).placeAt("uiArea6");
+					sap.ui.getCore().applyChanges();
+
+					// Open date picker
+					qutils.triggerEvent("click", "SDP-icon");
+				},
+				afterEach: function () {
+					this.oDP.destroy();
+					this.oDP = null;
+
+					this.oStartDate = null;
+					this.oEndDate = null;
+				},
+				fHandleNavigate: function (oEvent) {
+					var oDateRange = oEvent.getParameter("dateRange"),
+						oDP = oEvent.getSource();
+
+					this.oStartDate = oDateRange.getStartDate();
+					this.oEndDate = oDateRange.getEndDate();
+
+					// Clear currently loaded special dates
+					oDP.removeAllAggregation("specialDates");
+
+					// Add new special date at start
+					oDP.addSpecialDate(
+						new sap.ui.unified.DateTypeRange({
+							startDate: this.oStartDate,
+							type: "Type03"
+						})
+					);
+
+					// Add new special date at end
+					oDP.addSpecialDate(
+						new sap.ui.unified.DateTypeRange({
+							startDate: this.oEndDate,
+							type: "Type03"
+						})
+					);
+				},
+				assertSpecialDatesMarked: function (fnDone) {
+					var oDateFormat = sap.ui.core.format.DateFormat.getInstance({pattern: "YYYYMMdd"});
+
+					// We use 200 ms timeout here to place the test on a safe place on the event loop queue
+					// to catch all the ui updates happening with multiple delayed calls.
+					setTimeout(function () {
+						var $Days = this.oDP._oCalendar.$().find(".sapUiCalItemType03");
+						assert.strictEqual($Days.length, 2, "There should be only two special days visible");
+						assert.strictEqual(jQuery($Days[0]).data("sap-day").toString(),
+							oDateFormat.format(this.oStartDate, false),
+							"The first special date '" + this.oStartDate + "' should be marked in the newly displayed month");
+						assert.strictEqual(jQuery($Days[1]).data("sap-day").toString(),
+							oDateFormat.format(this.oEndDate, false),
+							"The second special date '" + this.oEndDate + "' should be marked in the newly displayed month");
+
+						fnDone();
+					}.bind(this), 200);
+				},
+				/**
+				 * Click on a calendar month from the monthPicker
+				 * @param iIndex {int} 0..11 zero based index of the month
+				 */
+				clickOnMonth: function (iIndex) {
+					var $Items = jQuery("#SDP-cal--MP").find(".sapUiCalItem"),
+						$Target = $Items[iIndex];
+
+					qutils.triggerEvent("mousedown", $Target);
+					qutils.triggerEvent("mouseup", $Target);
+				},
+				/**
+				 * Click on a calendar year from the yearPicker
+				 * @param iYear {int} Year
+				 */
+				clickOnYear: function (iYear) {
+					var $Target = jQuery('[data-sap-year-start="' + iYear + '0101"]', '#SDP-cal--YP');
+
+					qutils.triggerEvent("mousedown", $Target);
+					qutils.triggerEvent("mouseup", $Target);
+				}
+			});
+
+			test("Changing month using the next arrow", function (assert) {
+				var fnDone = assert.async();
+
+				// Act - click on next button
+				qutils.triggerEvent("click", "SDP-cal--Head-next");
+
+				// Assert
+				this.assertSpecialDatesMarked(fnDone);
+			});
+
+			test("Changing month using the back arrow", function (assert) {
+				var fnDone = assert.async();
+
+				// Act - click on previous button
+				qutils.triggerEvent("click", "SDP-cal--Head-prev");
+
+				// Assert
+				this.assertSpecialDatesMarked(fnDone);
+			});
+
+			test("Changing month using the month picker", function (assert) {
+				var fnDone = assert.async();
+
+				// Act
+				var that = this;
+				setTimeout(function () {
+					// Open month picker
+					qutils.triggerEvent("click", "SDP-cal--Head-B1");
+
+					// Click on March
+					that.clickOnMonth(2);
+
+					// Assert
+					that.assertSpecialDatesMarked(fnDone);
+				}, 0);
+			});
+
+			test("Changing month using the year picker", function (assert) {
+				var fnDone = assert.async();
+
+				// Act
+				var that = this;
+				setTimeout(function () {
+					// Open month picker
+					qutils.triggerEvent("click", "SDP-cal--Head-B2");
+
+					// Click on 2015
+					that.clickOnYear(2015);
+
+					// Assert
+					that.assertSpecialDatesMarked(fnDone);
+				}, 0);
+			});
+
+			module("Private methods", {
+				beforeEach: function () {
+					this.oDP = new sap.m.DatePicker();
+				},
+				afterEach: function () {
+					this.oDP.destroy();
+					this.oDP = null;
+				}
+			});
+
+			test("_getVisibleDatesRange", function () {
+				// Assert
+				ok(this.oDP._getVisibleDatesRange(new sap.ui.unified.Calendar()) instanceof sap.ui.unified.DateRange,
+					"The method should return sap.ui.unified.DateRange");
+			});
+
 			//set the input value to an invalid one
 			function simulateUserInputViaTheInputField(){
 				bChange = false;
@@ -749,7 +939,7 @@
 				$Date.focus();
 				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(oDP2.getValue() !== "11/190/2016",
-                        "The value has successfully changed after a selection from the calendar");
+					"The value has successfully changed after a selection from the calendar");
 			}
 
 		</script>

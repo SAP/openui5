@@ -151,8 +151,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * @private
 	 */
 	Token.prototype.ontouchstart = function(oEvent) {
-		// prevent default or else the icon may get focused
-		oEvent.preventDefault();
+		if (oEvent.target.id === this.getId() + "-icon") {
+			// prevent default or else the icon may get focused
+			oEvent.preventDefault();
+		}
 	};
 
 	/**

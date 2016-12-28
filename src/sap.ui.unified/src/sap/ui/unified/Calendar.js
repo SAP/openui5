@@ -237,6 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setAggregation("yearPicker",oYearPicker);
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
+		this._oSelectedDay = undefined; //needed for a later usage here after its assignment in the Month.js
 
 	};
 
@@ -1324,6 +1325,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 	};
 
+	/**
+	* Returns an array of currently visible days
+	* @returns {Array} visible days
+	* @private
+	*/
+	Calendar.prototype._getVisibleDays = function () {
+	   var oMonth = this.getAggregation("month")[0];
+	   return oMonth._getVisibleDays(oMonth._getDate(), false);
+	};
+
 	/*
 	 * sets the date in the used Month controls
 	 * @param {sap.ui.unified.Calendar} this Calendar instance
@@ -1778,8 +1789,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aMonths = this.getAggregation("month");
 			for (var i = 0; i < aMonths.length; i++) {
 				var oMonth = aMonths[i];
+
 				if (oMonth.getId() != oEvent.oSource.getId()) {
-					oMonth._updateSelection();
+					oMonth._updateSelection(this._oSelectedDay);
 				}
 			}
 		}

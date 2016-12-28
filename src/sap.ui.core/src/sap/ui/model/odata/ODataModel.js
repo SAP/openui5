@@ -1298,11 +1298,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Sets the default way to retrieve the count of collections in this model.
-	 * Count can be determined either by sending a separate $count request, including
-	 * $inlinecount=allpages in data requests, both of them or not at all.
+	 * Sets the default mode how to retrieve the item count for a collection in this model.
 	 *
-	 * @param {sap.ui.model.odata.CountMode} sCountMode
+	 * The count can be determined in the following ways
+	 * <ul>
+	 * <li>by sending a separate <code>$count</code> request</li>
+	 * <li>by adding parameter <code>$inlinecount=allpages</code> to one or all data requests</li>
+	 * <li>a combination of the previous two</li>
+	 * <li>not at all (questions about the size of the collection can't be answered then)</li>
+	 * </ul>
+	 * See {@link sap.ui.model.odata.CountMode} for all enumeration values and more details.
+	 *
+	 * Note that a call to this method does not modify the count mode for existing list bindings,
+	 * only bindings that are created afterwards will use the new mode when no mode is defined at their creation.
+	 *
+	 * If no default count mode is set for an <code>ODataModel</code> (v1), the mode <code>Both</code>
+	 * will be used for compatibility reasons.
+	 *
+	 * @param {sap.ui.model.odata.CountMode} sCountMode The new default count mode for this model
 	 * @since 1.20
 	 * @public
 	 */

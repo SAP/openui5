@@ -69,8 +69,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	// class name for the navigation items
 	Table.prototype.sNavItemClass = "sapMListTblRow";
 
-	// announce details for the initial focus
-	Table.prototype.bAnnounceDetails = true;
+	// announce all details at the initial focus
+	Table.prototype.bAnnounceDetails = 2;
 
 	Table.prototype.init = function() {
 		this._iItemNeedsColumn = 0;
@@ -435,7 +435,13 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	};
 
 	Table.prototype._setHeaderAnnouncement = function() {
-		var sAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sAnnouncement = oBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
+
+		if (this.isAllSelectableSelected()) {
+			sAnnouncement += oBundle.getText("LIST_ALL_SELECTED");
+		}
+
 		this.getColumns(true).forEach(function(oColumn, i) {
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
@@ -518,9 +524,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	};
 
 	Table.prototype.onfocusin = function(oEvent) {
-		var oTarget = oEvent.target,
-			$Target = jQuery(oTarget);
-
+		var oTarget = oEvent.target;
 		if (oTarget.id === this.getId("tblHeader")) {
 			this._setHeaderAnnouncement();
 		} else if (oTarget.id === this.getId("tblFooter")) {
@@ -529,21 +533,13 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 			this.updateInvisibleText(this.getNoDataText(), oTarget);
 		}
 
-		// Workaround for table row focus in IE.
-		// Removing and adding sapMLIBNativeOutline class which forces IE to rerender its Native focus.
-		if ($Target.hasClass("sapMLIBNativeOutline")) {
-			$Target.removeClass("sapMLIBNativeOutline");
-			window.setTimeout(function() {
-				$Target.addClass("sapMLIBNativeOutline");
-			}, 0);
-		}
-
 		ListBase.prototype.onfocusin.call(this, oEvent);
 	};
 
 	Table.prototype.onsapfocusleave = function(oEvent) {
-		if (this._oItemNavigation && !this.getNavigationRoot().contains(oEvent.target)) {
-			this.bAnnounceDetails = true;
+		ListBase.prototype.onsapfocusleave.call(this, oEvent);
+		if (this.iAnnounceDetails) {
+			this.iAnnounceDetails = 2;
 		}
 	};
 
