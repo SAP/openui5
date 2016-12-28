@@ -63,6 +63,11 @@
 			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 			subheader : "SAP News"
 		}],
+		feedTileContent : [{
+			footer : "New Notifications",
+			contentText : "@@notify Great outcome of the Presentation today. New functionality well received.",
+			subheader : "About 1 minute ago in Computer Market"
+		}],
 		frameTypes : Object.keys(sap.m.FrameType),
 		indicators: Object.keys(sap.m.DeviationIndicator),
 		modes : Object.keys(sap.m.GenericTileMode),
@@ -186,6 +191,34 @@
 		}
 	});
 	oGenericTile3.addStyleClass("sapUiSmallMargin");
+
+	var oFeedTileContent = new sap.m.TileContent("feed-tile-cont-2x1", {
+		footer : "{footer}",
+		frameType : sap.m.FrameType.TwoByOne,
+		content : new sap.m.FeedContent({
+			contentText : "{contentText}",
+			subheader : "{subheader}"
+		})
+	});
+
+	var oGenericTile4 = new sap.m.GenericTile({
+		mode : "{/mode}",
+		tooltip : "{/tooltip}",
+		header : "{/header}",
+		subheader : "{/subheader}",
+		frameType : sap.m.FrameType.TwoByOne,
+		state : "{/state}",
+		scope : "{/scope}",
+		headerImage : "{/headerImage}",
+		imageDescription : "{/imageDescription}",
+		press : fnPress,
+		failedText : "{/failedText}",
+		tileContent : {
+			template : oFeedTileContent,
+			path : "/feedTileContent"
+		}
+	});
+	oGenericTile4.addStyleClass("sapUiSmallMargin");
 
 	var oModeLabel = new sap.m.Label({
 		id: "mode-label",
@@ -436,7 +469,7 @@
 
 	var oControlForm = new sap.ui.layout.Grid("numeric-content-form", {
 		defaultSpan : "XL4 L4 M6 S12",
-		content : [oGenericTile1, oGenericTile2, oGenericTile3]
+		content : [oGenericTile1, oGenericTile2, oGenericTile3, oGenericTile4]
 	});
 
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
