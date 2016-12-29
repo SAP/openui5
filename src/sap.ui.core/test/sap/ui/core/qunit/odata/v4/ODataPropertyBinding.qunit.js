@@ -207,8 +207,8 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
-			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
-			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("oCachePromise"), true);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
 		});
@@ -241,8 +241,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), sPath);
-		assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
-		assert.strictEqual(oBinding.oCache, oCache);
+		assert.strictEqual(oBinding.hasOwnProperty("oCachePromise"), true);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
 	});
@@ -335,10 +335,10 @@ sap.ui.require([
 			oBinding = oModel.bindProperty("Name", oInitialContext);
 
 			if (oFixture.sInit === "base") {
-				assert.strictEqual(oBinding.oCache, oCache);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			} else {
-				assert.strictEqual(oBinding.oCache, undefined);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdate")
@@ -352,7 +352,8 @@ sap.ui.require([
 			//code under test
 			oBinding.setContext(oTargetContext);
 
-			assert.strictEqual(oBinding.oCache, oFixture.sTarget === "base" ? oCache : undefined);
+			assert.strictEqual(oBinding.oCachePromise.getResult(),
+				oFixture.sTarget === "base" ? oCache : undefined);
 		});
 	});
 
@@ -947,7 +948,7 @@ sap.ui.require([
 
 			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.returns(oTypePromise);
-			this.oSandbox.mock(oBinding.oCache).expects("fetchValue")
+			this.oSandbox.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 				.withExactArgs(sGroupId || "$auto", undefined, sinon.match.func, sinon.match.object)
 				.callsArg(2)
 				.returns(oReadPromise);
@@ -981,7 +982,8 @@ sap.ui.require([
 			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
-		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
+		this.oSandbox.mock(oControl.getBinding("text").oCachePromise.getResult())
+			.expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
 			"Cannot set value on this binding", "/ProductList('HT-1000')/Name", sClassName);
@@ -1006,7 +1008,8 @@ sap.ui.require([
 		});
 		oControl.setBindingContext(this.oModel.createBindingContext("/ProductList('HT-1000')"));
 
-		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
+		this.oSandbox.mock(oControl.getBinding("text").oCachePromise.getResult())
+			.expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
 			"Cannot set value on this binding", "/ProductList('HT-1000')/Name", sClassName);
@@ -1035,7 +1038,7 @@ sap.ui.require([
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
 		oPropertyBinding = oControl.getBinding("text");
-		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCache);
+		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult());
 		oPropertyBindingCacheMock.expects("update")
 			.withExactArgs("updateGroupId", "Name", "foo", "ProductList('HT-1000')")
 			.returns(Promise.resolve());
@@ -1261,8 +1264,8 @@ sap.ui.require([
 		var oPropertyBinding = this.oModel.bindProperty("/absolute"),
 			oResult = {};
 
-		this.oSandbox.mock(oPropertyBinding.oCache).expects("hasPendingChangesForPath")
-			.withExactArgs("").returns(oResult);
+		this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult())
+			.expects("hasPendingChangesForPath").withExactArgs("").returns(oResult);
 
 		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
 	});
@@ -1308,7 +1311,7 @@ sap.ui.require([
 	QUnit.test("destroy: absolute binding", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("/absolute");
 
-		this.oSandbox.mock(oPropertyBinding.oCache).expects("deregisterChange")
+		this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult()).expects("deregisterChange")
 			.withExactArgs(undefined, oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
 			.withExactArgs("foo", 42);
@@ -1317,7 +1320,7 @@ sap.ui.require([
 
 		oPropertyBinding.destroy("foo", 42);
 
-		assert.strictEqual(oPropertyBinding.oCache, null);
+		assert.strictEqual(oPropertyBinding.oCachePromise, null);
 	});
 
 	//*********************************************************************************************
