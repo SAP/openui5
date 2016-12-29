@@ -525,7 +525,7 @@
 				assert.strictEqual(this.oComboBox.getPicker().getDomRef(), null, "ComboBox's Popover does not exists in the DOM");
 				assert.ok(!this.oComboBox.getPicker().isOpen(), "ComboBox's Popover is closed");
 
-				var oPressArrow = new sap.ui.test.actions.Press({idSuffix: "arrow"});
+				var oPressArrow = new sap.ui.test.actions.Press();
 				oPressArrow.executeOn(this.oComboBox);
 
 				this.clock.tick(500);
