@@ -84,22 +84,28 @@ sap.ui.define([
 		var sCurrentLayout = this._oFCL.getLayout(),
 			sNextLayout;
 
-		// From any layout, going to level 1 is showing the begin column only
+		// Level 0 - the first page
 		if (iNextLevel === 0) {
+			// From any layout, going to level 0 is always showing the begin column only
 			sNextLayout = LT.OneColumn;
 		}
 
+		// Level 1 - the second page
 		if (iNextLevel === 1) {
 
-			if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded, LT.MidColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
-				// From a 2-column layout to a 2-column layout, or from a page in fullscreen to another page in fullscreen - preserve
+			if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(sCurrentLayout) !== -1) {
+				// From a 2-column layout - preserve
 				sNextLayout = sCurrentLayout;
+			} else if ([LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
+				// From any fullscreen layout - should go to mid fullscreen
+				sNextLayout = LT.MidColumnFullScreen;
 			} else {
-				// From any other layout to 2-column layout - default 2-column
+				// From 1-column layout or any 3-column layout - default 2-column layout
 				sNextLayout = this._defaultTwoColumnLayoutType;
 			}
 		}
 
+		// Level 2 - the third page
 		if (iNextLevel === 2) {
 
 			if (this._mode === "MasterDetail") {
@@ -115,20 +121,19 @@ sap.ui.define([
 				} else if ([LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(sCurrentLayout) !== -1) {
 					// From a 3-column layout where end column is visible, should preserve the current layout
 					sNextLayout = sCurrentLayout;
-				} else if (sCurrentLayout === LT.MidColumnFullScreen) {
-					// From mid fullscreen, should go to end fullscreen
-					sNextLayout = LT.EndColumnFullScreen;
-				} else if (sCurrentLayout === LT.EndColumnFullScreen) {
-					// From end fullscreen, should remain in end fullscreen
+				} else if ([LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
+					// From any fullscreen layout, should go to end fullscreen
 					sNextLayout = LT.EndColumnFullScreen;
 				} else {
-					// In all other cases, should go to default 3-column
+					// From 1-column layout or any 2-column layout - should go to default 3-column layout
 					sNextLayout = this._defaultThreeColumnLayoutType;
 				}
 			}
 		}
 
+		// Level 3 and above - further pages
 		if (iNextLevel > 2) {
+			// Any level above 2 is unconditionally shown in end fullscreen
 			sNextLayout = LT.EndColumnFullScreen;
 		}
 
