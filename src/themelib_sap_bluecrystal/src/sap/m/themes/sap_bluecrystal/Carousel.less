@@ -1,68 +1,15 @@
-/* ============================================= */
-/* CSS for control sap.m/Carousel.control        */
-/* BlueCrystal theme                             */
-/* ============================================= */
-
-/* Carousel controls: Bulleted */
-.sapMCrslBulleted > span {
-	text-indent: 2rem;
-	line-height: 0;
-	text-decoration: none;
-	overflow: hidden;
-	display: inline-block;
-	padding: 0.25rem;
-	width: 0;
-	height: 0;
-	margin: 0 0.25rem;
-	color: lighten(@sapUiBase, 9.8);
-	background-color: lighten(@sapUiBase, 9.8);
-	-webkit-transition: background-color 0.1s ease-in;
-	-moz-transition: background-color 0.1s ease-in;
-	transition: background-color 0.1s ease-in;
-	box-shadow: 0 0px 0.0625rem 0.0625rem @sapUiLightShadowTint;
-	border-radius: 50%;
-}
-
-.sapMCrslBulleted > span:hover,.sapMCrslBulleted > span:focus {
-	cursor: default;
-	outline: none;
-}
-
-.sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapUiSelected;
-	background-color: @sapUiSelected;
-}
-
+/* =============================== */
+/* CSS for control sap.m/Carousel  */
+/* BlueCrystal theme               */
+/* =============================== */
 
 /* Carousel controls: HUD */
-.sapMCrslHud {
-	padding-top: 0;
-}
-
 .sapMCrslHud a {
-	z-index: 2;
-	opacity: 0;
-	display: none;
-	position: absolute;
-	top: calc(50% - 3.875rem);
-	margin: -1.5625px 0 0 0;
-	padding: 0;
-	width: 3rem;
-	height: 3rem;
-	text-decoration: none;
-	overflow: hidden;
-	border-radius: 50%;
-	-webkit-transition: opacity 0.1s ease-in;
-	-moz-transition: opacity 0.1s ease-in;
-	transition: opacity 0.1s ease-in;
-    box-shadow: 0 0.0625rem 0.25rem fade(@sapUiDarkShadowTint, 30);}
-
-.sapMCrsl{
-	box-sizing: border-box;
-	border:1px solid transparent;
+	opacity: 0.5;
 }
+
 .sapMCrsl:focus {
-	border: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 .sapMCrsl:hover .sapMCrslHud a {
@@ -70,129 +17,59 @@
 	display: block;
 }
 
-.sapMCrsl .sapMCrslHud a:hover,
-.sapMCrsl .sapMCrslHud a:focus {
-	opacity: 1;
-	display: block;
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+  outline: none;
 }
 
-.sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
-.sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
-	opacity: 0;
-	display: none;
-}
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+  	&::before {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+		border: 1px solid @sapUiContentContrastFocusColor;
+	}
 
-.sapMCrslHud .sapMCrslHudInner {
-	border-radius: 50%;
-	margin:0.25rem;
-	background-color: @sapUiHighlight;
-	color: @sapUiInvertedElement;
-	font-family: "SAP-icons";
-	font-size: 1.375rem;
-	font-weight: bold;
-	text-indent: 0;
-	text-align: center;
-	display: table;
-	z-index: 9;
-	width: 2.5rem;
-	height: 2.5rem;
-}
-
-
-
-.sapMCrslHud .sapMCrslPrev {
-	left: 0.625rem;
-}
-
-.sapMCrslHud .sapMCrslNext {
-	right: 0.625rem;
-}
-
-.sapMCrslHud .sapMCrslPrev:focus,
-.sapMCrslHud .sapMCrslNext:focus {
-  outline: 1px dotted @sapUiFocus;
-}
-
-html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslNext > .sapMCrslHudInner > .sapUiIcon {
-	left: auto;
-	right: 0;
-	text-indent: 0.0625rem;
-}
-
-html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
-.sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon {
-	right: auto;
-	left: 0;
-	text-indent: -0.0625rem;
-}
-
-.sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
-	cursor: inherit !important;
-}
-
-/* extra bits */
-
-/* captions */
-.sapMCrslCaption {
-	margin: 0;
-	padding: 0.625rem;
-	height: auto;
-	text-align: center;
-}
-
-
-/* Default Themes/Sytles for Slider */
-.sapMCrslFluid .sapMCrslItem {
-	margin-right: 1.25rem;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-.sapMCrslControls,
-.sapMCrslHud {
-	.sapMCrslPrev,
-	.sapMCrslNext {
-		border-radius: 50%;
-		margin: 0.25rem;
-		background-color: white;
-		color: @sapUiInvertedElement;
-		font-family: "SAP-icons";
-		font-size: 1.375rem;
-		font-weight: bold;
-		text-indent: 0;
-		text-align: center;
-		display: table;
-		z-index: 9;
-		border:1px solid @sapUiLightestBorder;
+  	&::after {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 }
 
-.sapMCrslControls,
-.sapMCrslHud {
-	.sapMCrslArrowInner {
-		border-radius: 50%;
-		margin:0.2rem;
-		background-color: @sapUiHighlight;
-		color: @sapUiInvertedElement;
-		font-family: "SAP-icons";
-		font-size: 1.375rem;
-		font-weight: bold;
-		text-indent: 0;
-		text-align: center;
-		display: table;
-		z-index: 9;
-		width: 2.5rem;
-		height: 2.5rem;
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext:focus .sapUiIcon,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev .sapUiIcon:focus,
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
+  	&::before {
+		position: absolute;
+		padding-top: 0.425rem;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		border: 1px solid @sapUiContentContrastFocusColor;
 	}
-}
-.sapMCrslControls,
-.sapMCrslHud {
-	.sapMCrslArrowInner {
-		.sapUiIcon{
-			font-size: 1.375rem;
-		}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 }
