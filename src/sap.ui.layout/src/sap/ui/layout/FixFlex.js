@@ -198,7 +198,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 			}
 
 			// Add scrolling for entire FixFlex
-			if (nFlexSize < parseInt(this.getMinFlexSize(), 10)) {
+			if (nFlexSize <= parseInt(this.getMinFlexSize(), 10)) {
 				$this.addClass("sapUiFixFlexScrolling");
 				$this.removeClass("sapUiFixFlexInnerScrolling");
 
