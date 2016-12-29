@@ -396,7 +396,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
 				that.fireElementOverlayCreated({elementOverlay : oElementOverlay});
 			}).catch(function(oError) {
-				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError);
+				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError.stack || oError);
 				if (oError instanceof Error) {
 					that.fireSyncFailed();
 				}
