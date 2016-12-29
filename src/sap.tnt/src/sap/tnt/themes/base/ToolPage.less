@@ -21,7 +21,6 @@
 .display-flex() {
   display: -webkit-box;
   display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
 }
 
@@ -29,14 +28,12 @@
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
 }
 
 .flex-grow(@flex-grow) {
   -webkit-box-flex: @flex-grow;
   -webkit-flex-grow: @flex-grow;
-  -ms-flex: @flex-grow @flex-grow;
   flex-grow: @flex-grow;
 }
 
@@ -147,19 +144,16 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 
   .sapTntToolPageMain {
     -webkit-transform: translateX(@sapTntToolPageAsideWidth);
-    -ms-transform: translateX(@sapTntToolPageAsideWidth);
     transform: translateX(@sapTntToolPageAsideWidth);
   }
 
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
       -webkit-transform: translateX(-@sapTntToolPageAsideWidth);
-      -ms-transform: translateX(-@sapTntToolPageAsideWidth);
       transform: translateX(-@sapTntToolPageAsideWidth);
     }
     .sapTntToolPageMain {
       -webkit-transform: translateX(0);
-      -ms-transform: translateX(0);
       transform: translateX(0);
     }
   }
@@ -243,19 +237,16 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 
   .sapTntToolPageMain {
     -webkit-transform: translateX(@sapTntToolPageCompactAsideWidth);
-    -ms-transform: translateX(@sapTntToolPageCompactAsideWidth);
     transform: translateX(@sapTntToolPageCompactAsideWidth);
   }
 
   .sapTntToolPageAsideCollapsed {
     .sapTntToolPageAside {
       -webkit-transform: translateX(-@sapTntToolPageCompactAsideWidth);
-      -ms-transform: translateX(-@sapTntToolPageCompactAsideWidth);
       transform: translateX(-@sapTntToolPageCompactAsideWidth);
     }
     .sapTntToolPageMain {
       -webkit-transform: translateX(0);
-      -ms-transform: translateX(0);
       transform: translateX(0);
     }
   }
@@ -269,19 +260,16 @@ html[dir=rtl] {
   &.sap-phone {
     .sapTntToolPageMain {
       -webkit-transform: translateX(-@sapTntToolPageAsideWidth);
-      -ms-transform: translateX(-@sapTntToolPageAsideWidth);
       transform: translateX(-@sapTntToolPageAsideWidth);
     }
 
     .sapTntToolPageAsideCollapsed {
       .sapTntToolPageAside {
         -webkit-transform: translateX(@sapTntToolPageAsideWidth);
-        -ms-transform: translateX(@sapTntToolPageAsideWidth);
         transform: translateX(@sapTntToolPageAsideWidth);
       }
       .sapTntToolPageMain {
         -webkit-transform: translateX(0);
-        -ms-transform: translateX(0);
         transform: translateX(0);
       }
     }
@@ -290,19 +278,16 @@ html[dir=rtl] {
   &.sap-phone .sapUiSizeCompact {
     .sapTntToolPageMain {
       -webkit-transform: translateX(-@sapTntToolPageCompactAsideWidth);
-      -ms-transform: translateX(-@sapTntToolPageCompactAsideWidth);
       transform: translateX(-@sapTntToolPageCompactAsideWidth);
     }
 
     .sapTntToolPageAsideCollapsed {
       .sapTntToolPageAside {
         -webkit-transform: translateX(@sapTntToolPageCompactAsideWidth);
-        -ms-transform: translateX(@sapTntToolPageCompactAsideWidth);
         transform: translateX(@sapTntToolPageCompactAsideWidth);
       }
       .sapTntToolPageMain {
         -webkit-transform: translateX(0);
-        -ms-transform: translateX(0);
         transform: translateX(0);
       }
     }

@@ -3,11 +3,6 @@
 /* Base theme                              */
 /* ======================================= */
 
-html[data-sap-ui-browser="ie9"] .sapMPersoDialog .sapMPersoDialogFixedBar .sapMPersoDialogSelectAllCb {
-	// in IE9 the list items have 1rem padding so this align the checkbox
-	margin-left: 1rem;
-}
-
 .sapMPersoDialogFixedBar {
 	position: relative;
 
@@ -37,11 +32,6 @@ html[data-sap-ui-browser="ie9"] .sapMPersoDialog .sapMPersoDialogFixedBar .sapMP
 .sapMPersoDialog:not(.sapMDialogPhone) .sapMDialogScroll {
 	max-width: 25rem;
 }
-/* CSS 0120031469 0000631910 2014: in ie9 dialog always takes max width. to prevent this
-   an explicit width 24.875rem (398px = 400px - 2px) is set on the content section */
-html[data-sap-ui-browser='ie9'] .sapMPersoDialog > .sapMDialogSection {
-	width: 24.875rem;
-}
 
 .sapMPersoDialogLI .sapMILILabel {
 	max-width: none;
@@ -62,10 +52,4 @@ html[data-sap-ui-browser='ie9'] .sapMPersoDialog > .sapMDialogSection {
 
 .sapMPersoDialogLIHeader{
 	border-bottom: 0;
-}
-
-html[data-sap-ui-browser='ie10'] .sapMPersoDialogLI .sapMILILabel {
-	-ms-flex-preferred-size: 15rem;
-	-ms-flex-negative: 0;
-	-ms-flex-positive: 1;
 }

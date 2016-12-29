@@ -30,7 +30,6 @@
 }
 
 .sapMBsyIndAnimation(@name) {
-	-moz-animation:    @name 2s linear 0s infinite normal none;
 	-webkit-animation: @name 2s linear 0s infinite normal none;
 	animation:         @name 2s linear 0s infinite normal none;
 }
@@ -42,18 +41,11 @@ html[dir='rtl'] .sapMBsyIndIcon {
 .sapMBsyIndIcon {
 	vertical-align: middle;
 	-webkit-transform: rotate(0deg) translateZ(0);
-	-ms-transform: rotate(0deg) translateZ(0);
 	transform: rotate(0deg) translateZ(0);
 	-webkit-transition-duration: 0ms;
-	-ms-transition-duration: 0ms;
 	transition-duration: 0ms;
 
 	.sapMBsyIndAnimation(sapMBsyIndRotate);
-}
-
-@-moz-keyframes sapMBsyIndRotate {
-	from { -moz-transform: rotate(0deg); }
-	to { -moz-transform: rotate(360deg); }
 }
 
 @-webkit-keyframes sapMBsyIndRotate {
@@ -64,11 +56,6 @@ html[dir='rtl'] .sapMBsyIndIcon {
 @keyframes sapMBsyIndRotate {
 	from { transform:rotate(0deg) translateZ(0); }
 	to { transform:rotate(360deg) translateZ(0); }
-}
-
-@-moz-keyframes sapMBsyIndRotateRTL {
-	from { -moz-transform: rotate(0deg); }
-	to { -moz-transform: rotate(-360deg); }
 }
 
 @-webkit-keyframes sapMBsyIndRotateRTL {

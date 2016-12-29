@@ -12,8 +12,6 @@
 
 .sapFDynamicPageContent {
 	-webkit-flex-grow: 1;
-	-moz-flex-grow: 1;
-	-ms-flex-grow: 1;
 	flex-grow: 1;
 
 	background: @sapUiGroupContentBackground;
@@ -86,14 +84,10 @@
 	-webkit-overflow-scrolling: touch;
 
 	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
 
 	-webkit-flex-direction: column;
-	-moz-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 }
 
@@ -116,8 +110,6 @@
 
 .sapFDynamicPageContentWrapper {
 	-webkit-flex-grow: 1;
-	-moz-flex-grow: 1;
-	-ms-flex-grow: 1;
 	flex-grow: 1;
 }
 
@@ -125,12 +117,8 @@
 .sapFDynamicPage.sapFNavItem {
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -moz-box;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-flex-direction: column;
-	-moz-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 }
 
@@ -159,34 +147,16 @@
 html[data-sap-ui-animation='on'] .sapFDynamicPage {
 	.sapFDynamicPageActualFooterControlShow {
 		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
-		-moz-animation: bounceShow 0.35s forwards ease-in-out;
-		-o-animation: bounceShow 0.35s forwards ease-in-out;
 		animation: bounceShow 0.35s forwards ease-in-out;
 	}
 	.sapFDynamicPageActualFooterControlHide {
 		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
-		-moz-animation: bounceHide 0.35s forwards ease-in-out;
-		-o-animation: bounceHide 0.35s forwards ease-in-out;
 		animation: bounceHide 0.35s forwards ease-in-out;
 	}
 
 	@-webkit-keyframes bounceShow {
 		0% {
 			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
-			transform: translateY(100%);
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-	@-moz-keyframes bounceShow {
-		0% {
-			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -197,8 +167,6 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 	@keyframes bounceShow {
 		0% {
 			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -209,31 +177,11 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 	@-webkit-keyframes bounceHide {
 		0% {
 			-webkit-transform: translateY(-5%);
-			-moz-transform: translateY(-5%);
-			-o-transform: translateY(-5%);
 			transform: translateY(-5%);
 			opacity: 1;
 		}
 		100% {
 			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
-			transform: translateY(100%);
-			opacity: 0;
-		}
-	}
-	@-moz-keyframes bounceHide {
-		0% {
-			-webkit-transform: translateY(-5%);
-			-moz-transform: translateY(-5%);
-			-o-transform: translateY(-5%);
-			transform: translateY(-5%);
-			opacity: 1;
-		}
-		100% {
-			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -241,15 +189,11 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 	@keyframes bounceHide {
 		0% {
 			-webkit-transform: translateY(-5%);
-			-moz-transform: translateY(-5%);
-			-o-transform: translateY(-5%);
 			transform: translateY(-5%);
 			opacity: 1;
 		}
 		100% {
 			-webkit-transform: translateY(100%);
-			-moz-transform: translateY(100%);
-			-o-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}

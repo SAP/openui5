@@ -19,10 +19,8 @@
 	/* while there is no drag&drop the cursor should be default */
 	/*cursor: move;*/
 	-webkit-user-select: none;
-	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	-o-user-select: none;
 	user-select: none;
 	outline: none;
 	z-index: 2; /* needed when the NotiBar has to cover the Table's row headers */
@@ -68,7 +66,6 @@
 	background-color: @sapUiNotificationBarBG;
 	cursor: pointer;
 	-webkit-transition: all 0.2s linear;
-	-moz-transition: all 0.2s linear;
 	transition: all 0.2s linear;
 }
 
@@ -200,9 +197,7 @@ html[dir=rtl] .sapUiNotifierCallout {
 
 .sapUiNotifierCallout .sapUiCltArr.sapUiCltBaseArr {
 	position: absolute;
-	-moz-transform: rotate(0deg);
 	-webkit-transform: rotate(0deg);
-	-ms-transform: rotate(0deg);
 	transform: rotate(0deg);
 	background-color: transparent;
 	/* currently the values must be defined separately to ensure the generating of the CSS-file */
@@ -329,10 +324,8 @@ li.sapUiInPlaceMessage > div.sapUiNotifierMessageText:focus {
 	max-height: 30px;
 	overflow: hidden;
 	-webkit-user-select: text;
-	-khtml-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
-	-o-user-select: text;
 	user-select: text;
 }
 
