@@ -67,6 +67,19 @@
 	margin: 0.8125rem;
 }
 
+/* Read only */
+.sapMRbGRo {
+	.sapMRb .sapMRbBOut {
+		background-color: @sapUiFieldReadOnlyBackground;
+		border-color: @sapUiFieldReadOnlyBorderColor;
+	}
+
+	.sapMRb.sapMRbSel .sapMRbBInn {
+		background-color: @sapUiContentNonInteractiveIconColor;
+	}
+}
+
+/* Right to left */
 .sapMRbG[dir=rtl] .sapMRbB {
 	right: 0;
 }
@@ -76,6 +89,7 @@
 	padding-right: 3rem;
 }
 
+/* Compact Size */
 .sapUiSizeCompact {
 	.sapMRbG .sapMRbHasLabel .sapMRbB {
 		width: 2rem;

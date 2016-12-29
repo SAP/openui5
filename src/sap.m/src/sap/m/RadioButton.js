@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.RadioButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './RadioButtonGroup'],
+	function(jQuery, library, Control, EnabledPropagator, RadioButtonGroup) {
 	"use strict";
 
 
@@ -165,6 +165,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RadioButton.prototype.ontap = function(oEvent) {
 
 		if (!this.getEnabled() || !this.getEditable()) {
+			return;
+		}
+
+		var oParent = this.getParent();
+
+		// check if the RadioButton is part of a RadioButtonGroup which is disabled/readonly
+		if (oParent instanceof RadioButtonGroup && (!oParent.getEnabled() || !oParent.getEditable())) {
 			return;
 		}
 
@@ -337,6 +344,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oEvent.preventDefault();
 		this.ontap(oEvent);
 	};
+
+	RadioButton.prototype.setEnabled = function(bEnabled) {
+		this.setProperty("enabled", bEnabled, false);
+
+		return this;
+	};
+
+
 
 	// #############################################################################
 	// Overwritten methods that are also generated in RadioButton.API.js
