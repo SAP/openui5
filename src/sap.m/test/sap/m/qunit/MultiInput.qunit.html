@@ -783,6 +783,19 @@
 		strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
 	});
 
+	test("Placeholder opacity", function() {
+		// assert
+		ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
+
+		// act
+		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
+	});
+
 </script>
 
 </head>
