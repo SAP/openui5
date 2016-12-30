@@ -39,9 +39,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 			}
 			if (aMatches[1].length > sAbsoluteLimit.length || aMatches[1] > sAbsoluteLimit) {
 				if (bNegative) {
-					return getText("EnterIntMin", [oType.formatValue(oRange.minimum, "string")]);
+					return getText("EnterNumberMin", [oType.formatValue(oRange.minimum, "string")]);
 				} else {
-					return getText("EnterIntMax", [oType.formatValue(oRange.maximum, "string")]);
+					return getText("EnterNumberMax", [oType.formatValue(oRange.maximum, "string")]);
 				}
 			}
 			return undefined;

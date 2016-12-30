@@ -1206,7 +1206,8 @@ sap.ui.require([
 		$Precision : 20,
 		$Scale : 5,
 		$Type : "Edm.Decimal",
-		__constraints : {precision : 20, scale : 5}
+		__constraints : {maximum : "100.00", maximumExclusive : true, minimum : "0.00",
+			precision : 20, scale : 5}
 	}, {
 		$Precision : 20,
 		$Scale : "variable",
@@ -1268,7 +1269,29 @@ sap.ui.require([
 					oMetaModelMock.expects("fetchObject")
 						.withExactArgs("@com.sap.vocabularies.Common.v1.IsDigitSequence",
 							oMetaContext)
-						.returns(_SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
+						.returns(
+							_SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
+				} else if (oProperty.$Type === "Edm.Decimal") { // simulate annotation for decimals
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs("@Org.OData.Validation.V1.Minimum", oMetaContext)
+						.returns(
+							_SyncPromise.resolve(oConstraints && oConstraints.minimum));
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs(
+							"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive",
+							oMetaContext)
+						.returns(
+							_SyncPromise.resolve(oConstraints && oConstraints.minimumExlusive));
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs("@Org.OData.Validation.V1.Maximum", oMetaContext)
+						.returns(
+							_SyncPromise.resolve(oConstraints && oConstraints.maximum));
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs(
+							"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive",
+							oMetaContext)
+						.returns(
+							_SyncPromise.resolve(oConstraints && oConstraints.maximumExclusive));
 				}
 
 				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();

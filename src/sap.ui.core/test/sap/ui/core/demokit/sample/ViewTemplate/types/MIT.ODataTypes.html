@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: OData Types</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Test Validation.Minimum on Edm.Decimal</h1>
+		<h2>DESCRIPTION</h2>
+		Test the behavior when you enter incorrect values.
+		<h2>PREPARATION</h2>
+		To check console errors, open the developer tools before you start the application. Check
+		with each step that there are no errors and warnings.
+
+		<h3>Testing With Mock Data</h3>
+		Start the OData Types application with one of the following URLs; adjust host and port if
+		necessary:
+		<ul>
+			<li> As explored application: http://&lt;host>:&lt;port>/sapui5-sdk-dist/explored.html#/sample/sap.ui.core.sample.ViewTemplate.types/preview</li>
+			<li> Local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.types">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.types</a></li>
+		</ul>
+
+		<h3>Testing Against Backend System</h3>
+		Configure your Web IDE to execute the OData Types application against an ABAP backend
+		system.<br>
+		Start the OData Types application with the following URL; adjust host and port if necessary:
+		<ul>
+			<li>Local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.types&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.types&amp;realOData=true</a></li>
+		</ul>
+
+		<h2>REALIZE AND CHECK</h2>
+		<h3>Enter an invalid value for Validation.Minimum on Edm.Decimal</h3>
+		<p>Proceed as follows:</p>
+		<ol>
+			<li>Start the application.</li>
+			<li>Enter a value less than or equal to 100 in the
+			<code>sap.ui.model.odata.type.Decimal (minimum: 100 (exclusive), maximum: 1000)</code>
+			field.</li>
+			<li><b>Check</b>: You get a validation error.</li>
+		</ol>
+	</body>
+</html>

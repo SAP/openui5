@@ -48,8 +48,14 @@
 					Action="com.sap.gateway.default.zui5_edm_types_v4.v0001.ResetEdmTypes"
 					EntitySet="com.sap.gateway.default.zui5_edm_types_v4.v0001.Container/EdmTypesCollection" />
 			</EntityContainer>
+			<Annotations Target="SAP__self.EdmTypes/Decimal">
+				<Annotation Term="Org.OData.Validation.V1.Minimum" String="0.00"/>
+				<Annotation Term="Org.OData.Validation.V1.Maximum" String="100000.00">
+					<Annotation Term="Org.OData.Validation.V1.Exclusive"/>
+				</Annotation>
+			</Annotations>
 			<Annotations Target="SAP__self.EdmTypes/DigitSequence">
-				<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence"/>
 			</Annotations>
 			<Annotations Target="SAP__self.EdmTypes">
 				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">

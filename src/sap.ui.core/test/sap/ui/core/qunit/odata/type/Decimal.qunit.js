@@ -63,7 +63,19 @@ sap.ui.require([
 		{i : {precision : 0, scale : 3}, o : {scale : 3},
 			warning : "Illegal precision: 0"},
 		{i : {precision : 2, scale : 3}, o : {precision : 2, scale : Infinity},
-			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"}
+			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"},
+		{i : {minimum : "foo"}, o : undefined,
+			warning : "Illegal minimum: foo"},
+		{i : {minimum : "foo123"}, o : undefined,
+			warning : "Illegal minimum: foo123"},
+		{i : {maximum : "1234,56"}, o : undefined,
+			warning : "Illegal maximum: 1234,56"},
+		{i : {maximum : "#1234.56"}, o : undefined,
+			warning : "Illegal maximum: #1234.56"},
+		{i : {minimumExclusive : "foo"}, o : undefined,
+			warning : "Illegal minimumExclusive: foo"},
+		{i : {maximumExclusive : "X"}, o : undefined,
+			warning : "Illegal maximumExclusive: X"}
 	].forEach(function (oFixture) {
 		QUnit.test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType = new Decimal();
@@ -263,7 +275,21 @@ sap.ui.require([
 			error : "EnterNumberIntegerFraction 2 1"},
 		// excess zeros are treated as error (parseValue removes them)
 		{value : "1.0", error : "EnterInt"},
-		{value : "012", constraints : {precision : 2}, error : "EnterNumberInteger 2"}
+		{value : "012", constraints : {precision : 2}, error : "EnterNumberInteger 2"},
+		{value : "99", constraints : {minimum : "100"},
+			error : "EnterNumberMin 100"},
+		{value : "99.999", constraints : {precision : 6, scale : 3, minimum : "100"},
+			error : "EnterNumberMin 100.000"},
+		{value : "-100", constraints : {minimum : "100"},
+			error : "EnterNumberMin 100"},
+		{value : "100", constraints : {minimum : "100", minimumExclusive: true},
+			error : "EnterNumberMinExclusive 100"},
+		{value : "1001", constraints : {maximum : "1000"},
+			error : "EnterNumberMax 1,000"},
+		{value : "1000.001", constraints : {precision : 7, scale : 3, maximum : "1000"},
+			error : "EnterNumberMax 1,000.000"},
+		{value : "1000", constraints : {maximum : "1000", maximumExclusive: true},
+			error : "EnterNumberMaxExclusive 1,000"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate : " + oFixture.value, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -292,6 +318,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("validate success  for minimum and maximum without exclusive", function (assert) {
+		var oType = new Decimal({}, {precision : 7, scale : 3, minimum : "100", maximum : "1000"});
+
+		["100", "1000", "+100.1"].forEach(
+			function (sValue) {
+				oType.validateValue(sValue);
+			}
+		);
+	});
+	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
 		var oControl = new Control(),
 			oType = new Decimal();
@@ -304,7 +340,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('scale="variable"', function (assert) {
-		var oType = new Decimal();
+		var oType;
 
 		oType = new Decimal({}, {precision : 3, scale : "variable"});
 		["123", "12.3", "-1.23"].forEach(function (sValue) {
@@ -334,11 +370,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setConstraints w/ strings", function (assert) {
-		var oType = new Decimal();
+		var oType;
 
 		oType = new Decimal({},
-			{nullable : "false", precision : "10", scale : "3"});
-		assert.deepEqual(oType.oConstraints, {nullable : false, precision : 10, scale : 3});
+			{maximum : "1000", maximumExclusive : "true", minimum : "100",
+				minimumExclusive : true, nullable : "false", precision : "10", scale : "3"});
+		assert.deepEqual(oType.oConstraints, {maximum : "1000", maximumExclusive : true,
+			minimum : "100", minimumExclusive : true, nullable : false, precision : 10, scale : 3});
 
 		oType = new Decimal({}, {nullable : "true"});
 		assert.strictEqual(oType.oConstraints, undefined);

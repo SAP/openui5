@@ -109,6 +109,8 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
+			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000"/>
+			<Input id="Decimal_ID" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3, minimum: '100', minimumExclusive: true, maximum: '1000'}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Double" />
 			<Label text="no constraints"/>
