@@ -117,18 +117,10 @@ html[data-sap-ui-browser^="cr"] .sapUiBtnS > .sapUiBtnTxt {
 	margin-top: 1px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS,
-html[data-sap-ui-browser="ie10"] .sapUiBtnS{
-	padding-top: 2px;
-}
-
-html[data-sap-ui-browser="ie11"] .sapUiBtnS > .sapUiBtnTxt,
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite{
+html[data-sap-ui-browser="ie11"] .sapUiBtnS > .sapUiBtnTxt {
 	padding-top: 1px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco,
-html[data-sap-ui-browser="ie9"] .sapUiBtnS > .sapUiBtnTxt,
 html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco{
 	margin-top: -1px;
 }
@@ -225,11 +217,6 @@ html[data-sap-ui-browser^="ie"] .sapUiBtnS.sapUiBtnDsbl:active > .sapUiBtnTxt{
 	margin-top: -2px;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > .sapUiBtnTxt,
-html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .sapUiBtnTxt{
-	margin-top: 0;
-}
-
 /* emphasized button */
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
 	background-color: @sapUiButtonEmphasizedBackground;
@@ -242,7 +229,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-image: url(img/button/EmphButton_regular_BG.png);
 	background-repeat: repeat-x;
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 	background-color: @sapUiButtonEmphasizedBackground;
 	color: @sapUiButtonEmphasizedTextColor;
@@ -320,7 +306,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-image: url(img/button/EmphButton_accept_BG.png);
 	background-repeat: repeat-x;
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 }*/
 
@@ -401,7 +386,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	background-image: url(img/button/EmphButton_reject_BG.png);
 	background-repeat: repeat-x;
 	background-size: 1px 100%;
-	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
 }*/
 
@@ -455,10 +439,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtn > span.sapUiBtnIco{
 	font-size: 16px;
 	margin-top: 1px;
-}
-
-html[data-sap-ui-browser="ie10"] .sapUiBtn > span.sapUiBtnIco{
-	margin-top: -1px;
 }
 
 .sapUiBtnS.sapUiBtnNorm > span.sapUiBtnIco{
@@ -525,14 +505,4 @@ html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco {
 .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl > span.sapUiBtnIco {  /* switch back for lite button: make disabled icon look "reduced" */
 	opacity: .5;
 	filter: alpha(opacity=50);
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiBtnS,
-html[data-sap-ui-browser="ie10"] .sapUiBtnS {
-	> img,
-	> span.sapUiBtnTxt,
-	&.sapUiBtnIconOnly > span.sapUiBtnIco,
-	> span.sapUiBtnIco {
-		margin-top: 0;
-	}
 }

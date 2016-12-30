@@ -32,11 +32,6 @@
 	border-bottom: 1px solid @sapUiShellBorderColor;
 	background-image: linear-gradient(to bottom, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
 	background-image: -webkit-linear-gradient(top, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
-	background-image: -ms-linear-gradient(top, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
 	background-attachment: fixed;
 	background-repeat: repeat, no-repeat;
-}
-
-html[data-sap-ui-browser="ie9"] .sapUiUfdShellCurtain {
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiUfdShellCurtainBGStartColor_IE}', EndColorStr='@{sapUiUfdShellCurtainBGEndColor_IE}',GradientType=0)";
 }

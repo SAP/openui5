@@ -98,7 +98,6 @@ objectPageHeader Content
 		* NOTE: It`s needed in case PI is direct child of OPHeaderContent only.
 		*/
 		> .sapMPI {
-			display: -ms-inline-flexbox;
 			display: -webkit-inline-flex;
 			display: inline-flex;
 		}
@@ -272,20 +271,10 @@ html[data-sap-ui-browser^="cr4"] .sapUxAPObjectPageHeaderContentImageContainer >
 	display: flex;
 }
 
-html[data-sap-ui-browser="ie10"] .sapUxAPObjectPageHeaderContentFlexBox {
-	display: -ms-flexbox;
-	-ms-flex-direction: row;
-	-ms-flex-align: end;
-}
-
 .sapUxAPObjectPageHeaderContentCellLeft {
 	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	min-width: 25%;
-}
-
-html[data-sap-ui-browser="ie10"] .sapUxAPObjectPageHeaderContentCellLeft {
-	-ms-flex: 1;
 }
 
 .sapUxAPObjectPageHeaderContentCellRight {
