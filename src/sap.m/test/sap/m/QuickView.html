@@ -256,10 +256,6 @@
 			}
 		});
 
-		var oQuickView1 = new sap.m.QuickView({
-			placement : sap.m.PlacementType.VerticalPreferedBottom
-		});
-
 		var oQuickView2 = new sap.m.QuickView("QV2", {
 			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			pages : [
@@ -322,13 +318,6 @@
 			}
 		});
 
-		var oOpenEmptyQuickViewButton = new sap.m.Button("EmptyQVButton", {
-			text: "Open empty quick view",
-			press: function() {
-				oQuickView1.openBy(this);
-			}
-		});
-
 		var oSinglePageQuickViewButton = new sap.m.Button("SinglePageQVButton", {
 			text: "Open a single page quick view",
 			press: function() {
@@ -384,7 +373,6 @@
 			content : [
 				oButton,
 				//oModifyJsonButton,
-				oOpenEmptyQuickViewButton,
 				oSinglePageQuickViewButton,
 				oPanel
 			]
