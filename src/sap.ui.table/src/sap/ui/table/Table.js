@@ -1191,6 +1191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._updateTableSizes = function(bForceUpdateTableSizes, bSkipHandleRowCountMode) {
 		var oDomRef = this.getDomRef();
+		var that = this;
 
 		if (this._bInvalid || !oDomRef) {
 			return;
@@ -1312,7 +1313,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 		this._updateHSb(oTableSizes);
 
-		var that = this;
 		var $this = this.$();
 
 		if (TableUtils.hasRowActions(this)) {
