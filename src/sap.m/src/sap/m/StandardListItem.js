@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
 		sAnnouncement += this.getTitle() + " " + this.getDescription() + " " + this.getInfo() + " ";
 
-		if (sInfoState != "None") {
+		if (sInfoState != "None" && sInfoState != this.getHighlight()) {
 			sAnnouncement += oBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
 		}
 

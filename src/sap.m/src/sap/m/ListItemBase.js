@@ -57,7 +57,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines the counter value of the list items.
 			 */
-			counter : {type : "int", group : "Misc", defaultValue : null}
+			counter : {type : "int", group : "Misc", defaultValue : null},
+
+			/**
+			 * Defines the highlight state of the list items.
+			 * The highlight state provides a visual indication that can be related to a value state or as a general highlighting which can vary depending on the application use-case.
+			 * @since 1.44.6
+			 */
+			highlight : {type : "sap.ui.core.MessageType", group : "Appearance", defaultValue : "None"}
 		},
 		associations: {
 
@@ -190,10 +197,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.init = function() {
 		this._active = false;
 		this._bGroupHeader = false;
+		this._bNeedsHighlight = false;
 	};
 
 	ListItemBase.prototype.onAfterRendering = function() {
 		this.informList("DOMUpdate", true);
+		this._checkHighlight();
 	};
 
 	/*
@@ -291,14 +300,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.getAccessibilityDescription = function(oBundle) {
 		var aOutput = [],
 			mType = sap.m.ListType,
-			sType = this.getType();
+			sType = this.getType(),
+			sHighlight = this.getHighlight();
 
 		if (this.getSelected()) {
 			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
 		}
 
+		if (sHighlight != "None") {
+			aOutput.push(oBundle.getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase()));
+		}
+
 		if (this.getUnread() && this.getListProperty("showUnread")) {
 			aOutput.push(oBundle.getText("LIST_ITEM_UNREAD"));
+		}
+
+		if (this.getContentAnnouncement) {
+			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
 		}
 
 		if (this.getCounter()) {
@@ -314,10 +332,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (sType == mType.Active || sType == mType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
 			}
-		}
-
-		if (this.getContentAnnouncement) {
-			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
 		}
 
 		return aOutput.join(" ");
@@ -571,6 +585,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ListItemBase.prototype.exit = function() {
 		this._oLastFocused = null;
+		this._checkHighlight(false);
 		this.setActive(false);
 		this.destroyControls([
 			"Delete",
@@ -687,6 +702,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					sMode == mMode.SingleSelect ||
 					sMode == mMode.MultiSelect)
 				));
+	};
+
+	// informs the list when item's highlight is changed
+	ListItemBase.prototype._checkHighlight = function(bNeedsHighlight) {
+		if (bNeedsHighlight == undefined) {
+			bNeedsHighlight = (this.getVisible() && this.getHighlight() != "None");
+		}
+
+		if (this._bNeedsHighlight != bNeedsHighlight) {
+			this._bNeedsHighlight = bNeedsHighlight;
+			this.informList("HighlightChange", bNeedsHighlight);
+		}
 	};
 
 	/**
